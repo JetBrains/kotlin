@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor.CoroutinesCompatibilityMode.COMPATIBLE
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor.CoroutinesCompatibilityMode.NEEDS_WRAPPER
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -38,7 +36,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 class DeprecationResolver(
     storageManager: StorageManager,
     private val languageVersionSettings: LanguageVersionSettings,
-    private val coroutineCompatibilitySupport: CoroutineCompatibilitySupport,
     private val deprecationSettings: DeprecationSettings
 ) {
     private val deprecations = storageManager.createMemoizedFunction { descriptor: DeclarationDescriptor ->
@@ -226,7 +223,6 @@ class DeprecationResolver(
         for (deprecation in getDeprecationByVersionRequirement(this)) {
             result.add(deprecation)
         }
-        getDeprecationByCoroutinesVersion(this)?.let(result::add)
         getDeprecationFromUserData(this)?.let(result::add)
     }
 
@@ -241,19 +237,6 @@ class DeprecationResolver(
                 descriptor is FunctionDescriptor &&
                 descriptor.valueParameters.singleOrNull()?.type?.let(KotlinBuiltIns::isInt) == true &&
                 languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_3
-
-    private fun getDeprecationByCoroutinesVersion(target: DeclarationDescriptor): DeprecatedExperimentalCoroutine? {
-        if (target !is DeserializedMemberDescriptor) return null
-
-        target.coroutinesExperimentalCompatibilityMode.let { mode ->
-            return when {
-                mode == COMPATIBLE -> null
-                mode == NEEDS_WRAPPER && coroutineCompatibilitySupport.enabled ->
-                    DeprecatedExperimentalCoroutine(target, DeprecationLevelValue.WARNING)
-                else -> DeprecatedExperimentalCoroutine(target, DeprecationLevelValue.ERROR)
-            }
-        }
-    }
 
     private fun getDeprecationFromUserData(target: DeclarationDescriptor): Deprecation? =
         target.safeAs<CallableDescriptor>()?.getUserData(DEPRECATED_FUNCTION_KEY)

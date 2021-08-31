@@ -135,7 +135,7 @@ class AndroidSubplugin :
                 )
             )
             kotlinCompilation.compileKotlinTaskProvider.configure {
-                it.inputs.files(getLayoutDirectories(project, sourceSet.res.srcDirs)).withPathSensitivity(PathSensitivity.RELATIVE)
+                it.source(getLayoutDirectories(project, sourceSet.res.srcDirs))
             }
         }
 

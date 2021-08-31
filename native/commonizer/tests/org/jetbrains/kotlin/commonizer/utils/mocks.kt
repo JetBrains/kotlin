@@ -47,11 +47,13 @@ internal fun mockClassType(
 )
 
 private fun createValidClassifierId(classifierId: String): CirEntityId {
-    check(classifierId.none { it == '.' || it == '\\' || it == '?' }) { "Malformed classifier ID: $classifierId" }
+    check(classifierId.none { it == '\\' || it == '?' }) { "Malformed classifier ID: $classifierId" }
     return CirEntityId.create(classifierId)
 }
 
 internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
+    classifierIndices = TargetDependent.empty(),
+    targetDependencies = TargetDependent.empty(),
     commonizedNodes = object : CirCommonizedClassifierNodes {
         override fun classNode(classId: CirEntityId) = CirClassNode(
             classId,
@@ -61,6 +63,7 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
                     annotations = emptyList(),
                     name = CirName.create("Any"),
                     typeParameters = emptyList(),
+                    supertypes = emptyList(),
                     visibility = Visibilities.Public,
                     modality = Modality.OPEN,
                     kind = ClassKind.CLASS,
@@ -84,9 +87,7 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
 internal class MockModulesProvider private constructor(
     private val modules: Map<String, ModuleDescriptor>,
 ) : ModulesProvider {
-    private val moduleInfos = modules.keys.map { name -> fakeModuleInfo(name) }
-
-    override fun loadModuleInfos() = moduleInfos
+    override val moduleInfos = modules.keys.map { name -> fakeModuleInfo(name) }
 
     override fun loadModuleMetadata(name: String): SerializedMetadata {
         val module = modules[name] ?: error("No such module: $name")

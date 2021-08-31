@@ -34,34 +34,34 @@ fun <K: Any> takeArrayOfNotNullK(x: Array<K>) {}
 fun <K> takeArrayOfNullableK(x: Array<K?>) {}
 
 fun <R> main(a: ReturnTypeWithWarnings<R>) {
-    val x1 = a.foo1()
-    takeNotNullStringAndKNullable(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x1<!>)
+    val x1 = <!DEBUG_INFO_EXPRESSION_TYPE("ReturnTypeWithWarnings.A<kotlin.String?, R..R?!>..ReturnTypeWithWarnings.A<kotlin.String?, R..R?!>?!")!>a.foo1()<!>
+    takeNotNullStringAndKNullable(<!ARGUMENT_TYPE_MISMATCH!>x1<!>)
     takeNullableStringAndKNullable(x1)
-    takeNotNullStringAndNotNullK(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, TYPE_MISMATCH!>x1<!>)
-    takeNullableStringAndNotNullK(<!TYPE_MISMATCH!>x1<!>)
-    takeNotNullString(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo41.foo411<!>)
+    takeNotNullStringAndNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x1<!>)
+    takeNullableStringAndNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x1<!>)
+    takeNotNullString(a.foo41.foo411)
 
-    val x2 = a.foo2()
-    takeNotNullStringAndKNullable(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x2<!>)
-    takeNullableStringAndKNullable(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x2<!>)
-    takeNotNullStringAndNotNullK(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, TYPE_MISMATCH!>x2<!>)
-    takeNullableStringAndNotNullK(<!TYPE_MISMATCH!>x2<!>)
+    val x2 = <!DEBUG_INFO_EXPRESSION_TYPE("ReturnTypeWithWarnings.A<kotlin.String, R..R?!>..ReturnTypeWithWarnings.A<kotlin.String, R..R?!>?!")!>a.foo2()<!>
+    takeNotNullStringAndKNullable(x2)
+    takeNullableStringAndKNullable(<!ARGUMENT_TYPE_MISMATCH!>x2<!>)
+    takeNotNullStringAndNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x2<!>)
+    takeNullableStringAndNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x2<!>)
 
-    val x3 = a.foo3
-    takeNotNullStringAndKNullable(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x3<!>)
-    takeNullableStringAndKNullable(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x3<!>)
-    takeNotNullStringAndNotNullK(<!TYPE_MISMATCH!>x3<!>)
-    takeNullableStringAndNotNullK(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, TYPE_MISMATCH!>x3<!>)
+    val x3 = <!DEBUG_INFO_EXPRESSION_TYPE("ReturnTypeWithWarnings.A<kotlin.String, R..R?!>..ReturnTypeWithWarnings.A<kotlin.String, R..R?!>?!")!>a.foo3<!>
+    takeNotNullStringAndKNullable(x3)
+    takeNullableStringAndKNullable(<!ARGUMENT_TYPE_MISMATCH!>x3<!>)
+    takeNotNullStringAndNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x3<!>)
+    takeNullableStringAndNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x3<!>)
 
-    val x4 = a.foo4
-    takeArrayOfNotNullString(<!TYPE_MISMATCH!>x4<!>)
-    takeArrayOfNullableString(<!TYPE_MISMATCH!>x4<!>)
-    takeArrayOfNotNullK(<!TYPE_MISMATCH!>x4<!>)
-    takeArrayOfNullableK(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x4<!>)
+    val x4 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<R..R?!>..kotlin.Array<out R..R?!>")!>a.foo4<!>
+    takeArrayOfNotNullString(<!ARGUMENT_TYPE_MISMATCH!>x4<!>)
+    takeArrayOfNullableString(<!ARGUMENT_TYPE_MISMATCH!>x4<!>)
+    takeArrayOfNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x4<!>)
+    takeArrayOfNullableK(x4)
 
-    val x5 = a.foo5()
-    takeArrayOfNotNullString(<!TYPE_MISMATCH!>x5<!>)
-    takeArrayOfNullableString(<!TYPE_MISMATCH!>x5<!>)
-    takeArrayOfNotNullK(<!TYPE_MISMATCH!>x5<!>)
-    takeArrayOfNullableK(<!TYPE_MISMATCH!>x5<!>)
+    val x5 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<kotlin.String..kotlin.String?!>?..kotlin.Array<out kotlin.String..kotlin.String?!>??")!>a.foo5()<!>
+    takeArrayOfNotNullString(<!ARGUMENT_TYPE_MISMATCH!>x5<!>)
+    takeArrayOfNullableString(<!ARGUMENT_TYPE_MISMATCH!>x5<!>)
+    takeArrayOfNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x5<!>)
+    takeArrayOfNullableK(<!ARGUMENT_TYPE_MISMATCH!>x5<!>)
 }

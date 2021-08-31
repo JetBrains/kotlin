@@ -25,7 +25,7 @@ fun case_4(value_1: Number, block: (() -> Unit)?): Boolean? {
         returns(null) implies (block == null)
     }<!>
 
-    return value_1 == null
+    return <!SENSELESS_COMPARISON!>value_1 == null<!>
 }
 
 // TESTCASE NUMBER: 5
@@ -48,7 +48,7 @@ fun <T> T?.case_6(value_1: Number, value_2: String?): Boolean? {
         returnsNotNull() implies (value_2 == null)
     }<!>
 
-    return value_1 == null
+    return <!SENSELESS_COMPARISON!>value_1 == null<!>
 }
 
 // FILE: main.kt
@@ -116,7 +116,7 @@ fun case_5(value_1: Number?, value_2: String?) {
 fun case_6(value_1: Number, value_2: String?, value_3: Any?) {
     when (value_3.case_6(value_1, value_2)) {
         true -> {
-            println(value_3.equals(""))
+            println(value_3.equals("")) // OK because `value_3` is `Nothing?` and `equals` resolves to `kotlin/text/equals`, which has `String?` as receiver type.
             println(value_2<!UNSAFE_CALL!>.<!>length)
         }
         false -> {

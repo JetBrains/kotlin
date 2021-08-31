@@ -13,19 +13,28 @@ class BuildMetricsReporterImpl : BuildMetricsReporter {
             BuildTime::class.java
         )
     private val myBuildTimes = BuildTimes()
+    private val myBuildMetrics = BuildPerformanceMetrics()
     private val myBuildAttributes = BuildAttributes()
 
-    override fun startMeasure(metric: BuildTime, startNs: Long) {
-        if (metric in myBuildTimeStartNs) {
-            error("$metric was restarted before it finished")
+    override fun startMeasure(time: BuildTime, startNs: Long) {
+        if (time in myBuildTimeStartNs) {
+            error("$time was restarted before it finished")
         }
-        myBuildTimeStartNs[metric] = startNs
+        myBuildTimeStartNs[time] = startNs
     }
 
-    override fun endMeasure(metric: BuildTime, endNs: Long) {
-        val startNs = myBuildTimeStartNs.remove(metric) ?: error("$metric finished before it started")
-        val durationNs = endNs - startNs
-        myBuildTimes.add(metric, durationNs)
+    override fun endMeasure(time: BuildTime, endNs: Long) {
+        val startNs = myBuildTimeStartNs.remove(time) ?: error("$time finished before it started")
+        val durationMs = (endNs - startNs) / 1_000_000
+        myBuildTimes.add(time, durationMs)
+    }
+
+    override fun addTimeMetric(time: BuildTime, durationMs: Long) {
+        myBuildTimes.add(time, durationMs)
+    }
+
+    override fun addMetric(metric: BuildPerformanceMetric, value: Long) {
+        myBuildMetrics.add(metric, value)
     }
 
     override fun addAttribute(attribute: BuildAttribute) {
@@ -35,6 +44,7 @@ class BuildMetricsReporterImpl : BuildMetricsReporter {
     override fun getMetrics(): BuildMetrics =
         BuildMetrics(
             buildTimes = myBuildTimes,
+            buildPerformanceMetrics = myBuildMetrics,
             buildAttributes = myBuildAttributes
         )
 
@@ -43,5 +53,6 @@ class BuildMetricsReporterImpl : BuildMetricsReporter {
 
         myBuildAttributes.addAll(metrics.buildAttributes)
         myBuildTimes.addAll(metrics.buildTimes)
+        myBuildMetrics.addAll(metrics.buildPerformanceMetrics)
     }
 }

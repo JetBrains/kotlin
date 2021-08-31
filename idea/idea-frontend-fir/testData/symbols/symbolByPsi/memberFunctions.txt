@@ -21,6 +21,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
@@ -45,6 +46,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -60,7 +62,10 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null

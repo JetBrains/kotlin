@@ -22,6 +22,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(constructor, "FirPrimaryConstructor") {
+            publicImplementation()
             defaultTrue("isPrimary", withGetter = true)
         }
 
@@ -45,7 +46,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(import)
 
         impl(resolvedImport) {
-            delegateFields(listOf("aliasName", "importedFqName", "isAllUnder"), "delegate")
+            delegateFields(listOf("aliasName", "aliasSource", "importedFqName", "isAllUnder"), "delegate")
 
             default("source") {
                 delegate = "delegate"
@@ -168,7 +169,9 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             default("origin", "FirFunctionCallOrigin.Operator")
         }
 
-        impl(qualifiedAccessExpression)
+        impl(propertyAccessExpression) {
+            publicImplementation()
+        }
 
         noImpl(expressionWithSmartcast)
         noImpl(expressionWithSmartcastToNull)
@@ -273,14 +276,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(resolvedQualifier) {
             isMutable("packageFqName", "relativeClassFqName", "isNullableLHSForCallableReference")
-            default("classId") {
-                value = """
-                    |relativeClassFqName?.let {
-                    |    ClassId(packageFqName, it, false)
-                    |}
-                """.trimMargin()
-                withGetter = true
-            }
+            defaultClassIdFromRelativeClassName()
         }
 
         impl(resolvedReifiedParameterReference)
@@ -492,6 +488,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(errorResolvedQualifier) {
             defaultFalse("resolvedToCompanionObject", withGetter = true)
+            defaultClassIdFromRelativeClassName()
         }
 
         noImpl(userTypeRef)
@@ -539,7 +536,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             "FirTypeProjectionWithVarianceImpl",
             "FirCallableReferenceAccessImpl",
             "FirThisReceiverExpressionImpl",
-            "FirQualifiedAccessExpressionImpl",
+            "FirPropertyAccessExpressionImpl",
             "FirFunctionCallImpl",
             "FirAnonymousFunctionImpl",
             "FirWhenExpressionImpl",
@@ -571,4 +568,17 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             useTypes(implicitTypeRefType)
         }
     }
+
+    private fun ImplementationContext.defaultClassIdFromRelativeClassName() {
+        default("classId") {
+            value = """
+                |relativeClassFqName?.let {
+                |    ClassId(packageFqName, it, false)
+                |}
+                """.trimMargin()
+            withGetter = true
+        }
+    }
 }
+
+

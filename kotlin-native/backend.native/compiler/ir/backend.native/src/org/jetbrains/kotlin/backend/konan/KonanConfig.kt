@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.UserVisibleIrModulesSupport
+import org.jetbrains.kotlin.backend.konan.serialization.KonanUserVisibleIrModulesSupport
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -27,12 +29,21 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 
-    internal val distribution = Distribution(
-            configuration.get(KonanConfigKeys.KONAN_HOME) ?: KonanHomeProvider.determineKonanHome(),
-            false,
-            configuration.get(KonanConfigKeys.RUNTIME_FILE),
-            configuration.get(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES)
-    )
+    internal val distribution = run {
+        val overridenProperties = mutableMapOf<String, String>().apply {
+            configuration.get(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES)?.let(this::putAll)
+            configuration.get(KonanConfigKeys.LLVM_VARIANT)?.getKonanPropertiesEntry()?.let { (key, value) ->
+                put(key, value)
+            }
+        }
+
+        Distribution(
+                configuration.get(KonanConfigKeys.KONAN_HOME) ?: KonanHomeProvider.determineKonanHome(),
+                false,
+                configuration.get(KonanConfigKeys.RUNTIME_FILE),
+                overridenProperties
+        )
+    }
 
     private val platformManager = PlatformManager(distribution)
     internal val targetManager = platformManager.targetManager(configuration.get(KonanConfigKeys.TARGET))
@@ -45,11 +56,44 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             ?: target.family.isAppleFamily // Default is true for Apple targets.
     val generateDebugTrampoline = debug && configuration.get(KonanConfigKeys.GENERATE_DEBUG_TRAMPOLINE) ?: false
 
-    val memoryModel: MemoryModel get() = configuration.get(KonanConfigKeys.MEMORY_MODEL)!!
+    val memoryModel: MemoryModel by lazy {
+        when (configuration.get(BinaryOptions.memoryModel)!!) {
+            MemoryModel.STRICT -> MemoryModel.STRICT
+            MemoryModel.RELAXED -> MemoryModel.RELAXED
+            MemoryModel.EXPERIMENTAL -> {
+                if (!target.supportsThreads()) {
+                    configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                            "Experimental memory model requires threads, which are not supported on target ${target.name}. Used strict memory model.")
+                    MemoryModel.STRICT
+                } else if (destroyRuntimeMode == DestroyRuntimeMode.LEGACY) {
+                    configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                            "Experimental memory model is incompatible with 'legacy' destroy runtime mode. Used strict memory model.")
+                    MemoryModel.STRICT
+                } else {
+                    MemoryModel.EXPERIMENTAL
+                }
+            }
+        }
+    }
     val destroyRuntimeMode: DestroyRuntimeMode get() = configuration.get(KonanConfigKeys.DESTROY_RUNTIME_MODE)!!
     val gc: GC get() = configuration.get(KonanConfigKeys.GARBAGE_COLLECTOR)!!
     val gcAggressive: Boolean get() = configuration.get(KonanConfigKeys.GARBAGE_COLLECTOR_AGRESSIVE)!!
-    val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(KonanConfigKeys.RUNTIME_ASSERTS_MODE)!!
+    val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
+    val workerExceptionHandling: WorkerExceptionHandling get() = configuration.get(KonanConfigKeys.WORKER_EXCEPTION_HANDLING)!!
+    val runtimeLogs: String? get() = configuration.get(KonanConfigKeys.RUNTIME_LOGS)
+    val freezing: Freezing by lazy {
+        val freezingMode = configuration.get(BinaryOptions.freezing)
+        when {
+            freezingMode == null -> Freezing.Default
+            memoryModel != MemoryModel.EXPERIMENTAL && freezingMode != Freezing.Default -> {
+                configuration.report(
+                        CompilerMessageSeverity.ERROR,
+                        "`freezing` can only be adjusted with experimental MM. Falling back to default behavior.")
+                Freezing.Default
+            }
+            else -> freezingMode
+        }
+    }
 
     val needVerifyIr: Boolean
         get() = configuration.get(KonanConfigKeys.VERIFY_IR) == true
@@ -89,6 +133,15 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     )
 
     val resolvedLibraries get() = resolve.resolvedLibraries
+
+    internal val userVisibleIrModulesSupport = KonanUserVisibleIrModulesSupport(
+            externalDependenciesLoader = UserVisibleIrModulesSupport.ExternalDependenciesLoader.from(
+                    externalDependenciesFile = configuration.get(KonanConfigKeys.EXTERNAL_DEPENDENCIES)?.let(::File),
+                    onMalformedExternalDependencies = { warningMessage ->
+                        configuration.report(CompilerMessageSeverity.STRONG_WARNING, warningMessage)
+                    }),
+            konanKlibDir = File(distribution.klib)
+    )
 
     internal val cacheSupport = CacheSupport(configuration, resolvedLibraries, target, produce)
 
@@ -132,23 +185,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {
         add(if (debug) "debug.bc" else "release.bc")
-        val effectiveMemoryModel = when (memoryModel) {
-            MemoryModel.STRICT -> MemoryModel.STRICT
-            MemoryModel.RELAXED -> MemoryModel.RELAXED
-            MemoryModel.EXPERIMENTAL -> {
-                if (!target.supportsThreads()) {
-                    configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                            "Experimental memory model requires threads, which are not supported on target ${target.name}. Used strict memory model.")
-                    MemoryModel.STRICT
-                } else if (destroyRuntimeMode == DestroyRuntimeMode.LEGACY) {
-                    configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                            "Experimental memory model is incompatible with 'legacy' destroy runtime mode. Used strict memory model.")
-                    MemoryModel.STRICT
-                } else {
-                    MemoryModel.EXPERIMENTAL
-                }
-            }
-        }
         val useMimalloc = if (configuration.get(KonanConfigKeys.ALLOCATION_MODE) == "mimalloc") {
             if (target.supportsMimallocAllocator()) {
                 true
@@ -160,7 +196,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         } else {
             false
         }
-        when (effectiveMemoryModel) {
+        when (memoryModel) {
             MemoryModel.STRICT -> {
                 add("strict.bc")
                 add("legacy_memory_manager.bc")
@@ -205,10 +241,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             File(distribution.defaultNatives(target)).child("exceptionsSupport.bc").absolutePath
 
     internal val nativeLibraries: List<String> =
-        configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
+            configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
 
     internal val includeBinaries: List<String> =
-        configuration.getList(KonanConfigKeys.INCLUDED_BINARY_FILES)
+            configuration.getList(KonanConfigKeys.INCLUDED_BINARY_FILES)
 
     internal val languageVersionSettings =
             configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
@@ -221,6 +257,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     internal val isInteropStubs: Boolean get() = manifestProperties?.getProperty("interop") == "true"
+
+    internal val propertyLazyInitialization: Boolean get() = configuration.get(KonanConfigKeys.PROPERTY_LAZY_INITIALIZATION)!!
 }
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String)

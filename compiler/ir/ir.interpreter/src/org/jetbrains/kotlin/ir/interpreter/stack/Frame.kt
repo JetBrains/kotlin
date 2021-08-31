@@ -11,12 +11,13 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.interpreter.Instruction
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
 import org.jetbrains.kotlin.ir.interpreter.state.State
+import org.jetbrains.kotlin.ir.interpreter.state.StateWithClosure
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
-internal class Frame(subFrame: SubFrame, val irFile: IrFile? = null) {
-    private val innerStack = mutableListOf(subFrame)
+internal class Frame(subFrameOwner: IrElement, val irFile: IrFile? = null) {
+    private val innerStack = ArrayDeque<SubFrame>().apply { add(SubFrame(subFrameOwner)) }
     private var currentInstruction: Instruction? = null
 
     private val currentFrame get() = innerStack.last()
@@ -26,13 +27,14 @@ internal class Frame(subFrame: SubFrame, val irFile: IrFile? = null) {
         const val NOT_DEFINED = "Not defined"
     }
 
-    fun addSubFrame(frame: SubFrame) {
-        innerStack.add(frame)
+    fun addSubFrame(subFrameOwner: IrElement) {
+        innerStack.add(SubFrame(subFrameOwner))
     }
 
     fun removeSubFrame() {
-        currentFrame.peekState()?.let { if (innerStack.size > 1) innerStack[innerStack.size - 2].pushState(it) }
+        val state = currentFrame.peekState()
         removeSubFrameWithoutDataPropagation()
+        if (!hasNoSubFrames() && state != null) currentFrame.pushState(state)
     }
 
     fun removeSubFrameWithoutDataPropagation() {
@@ -41,43 +43,47 @@ internal class Frame(subFrame: SubFrame, val irFile: IrFile? = null) {
 
     fun hasNoSubFrames() = innerStack.isEmpty()
     fun hasNoInstructions() = hasNoSubFrames() || (innerStack.size == 1 && innerStack.first().isEmpty())
-
-    fun addInstruction(instruction: Instruction) {
-        currentFrame.pushInstruction(instruction)
-    }
-
-    fun popInstruction(): Instruction {
-        return currentFrame.popInstruction().apply { currentInstruction = this }
-    }
-
+    fun pushInstruction(instruction: Instruction) = currentFrame.pushInstruction(instruction)
+    fun popInstruction(): Instruction = currentFrame.popInstruction().apply { currentInstruction = this }
     fun dropInstructions() = currentFrame.dropInstructions()
 
-    fun pushState(state: State) {
-        currentFrame.pushState(state)
-    }
-
+    fun pushState(state: State) = currentFrame.pushState(state)
     fun popState(): State = currentFrame.popState()
     fun peekState(): State? = currentFrame.peekState()
 
-    fun addVariable(variable: Variable) {
-        currentFrame.addVariable(variable)
-    }
+    fun storeState(symbol: IrSymbol, state: State?) = currentFrame.storeState(symbol, state)
+    fun storeState(symbol: IrSymbol, variable: Variable) = currentFrame.storeState(symbol, variable)
 
-    fun getState(symbol: IrSymbol): State {
-        return (innerStack.lastIndex downTo 0).firstNotNullOfOrNull { innerStack[it].getState(symbol) }
-            ?: throw InterpreterError("$symbol not found") // TODO better message
-    }
-
-    fun setState(symbol: IrSymbol, newState: State) {
+    private inline fun forEachSubFrame(block: (SubFrame) -> Unit) {
+        // TODO speed up reverse iteration or do it forward
         (innerStack.lastIndex downTo 0).forEach {
-            if (innerStack[it].containsVariable(symbol))
-                return innerStack[it].setState(symbol, newState)
+            block(innerStack[it])
         }
     }
 
-    fun containsVariable(symbol: IrSymbol): Boolean = (innerStack.lastIndex downTo 0).any { innerStack[it].containsVariable(symbol) }
+    fun loadState(symbol: IrSymbol): State {
+        forEachSubFrame { it.loadState(symbol)?.let { state -> return state } }
+        throw InterpreterError("$symbol not found") // TODO better message
+    }
 
-    fun getAll(): List<Variable> = innerStack.flatMap { it.getAll() }
+    fun rewriteState(symbol: IrSymbol, newState: State) {
+        forEachSubFrame { if (it.containsStateInMemory(symbol)) return it.rewriteState(symbol, newState) }
+    }
+
+    fun containsStateInMemory(symbol: IrSymbol): Boolean {
+        forEachSubFrame { if (it.containsStateInMemory(symbol)) return true }
+        return false
+    }
+
+    fun copyMemoryInto(newFrame: Frame) {
+        this.getAll().forEach { (symbol, variable) -> if (!newFrame.containsStateInMemory(symbol)) newFrame.storeState(symbol, variable) }
+    }
+
+    fun copyMemoryInto(closure: StateWithClosure) {
+        getAll().reversed().forEach { (symbol, variable) -> closure.upValues[symbol] = variable }
+    }
+
+    private fun getAll(): List<Pair<IrSymbol, Variable>> = innerStack.flatMap { it.getAll() }
 
     private fun getLineNumberForCurrentInstruction(): String {
         irFile ?: return ""
@@ -105,14 +111,14 @@ internal class Frame(subFrame: SubFrame, val irFile: IrFile? = null) {
     }
 }
 
-internal class SubFrame(val owner: IrElement) {
-    private val instructions = mutableListOf<Instruction>()
+private class SubFrame(val owner: IrElement) {
+    private val instructions = ArrayDeque<Instruction>()
     private val dataStack = DataStack()
-    private val memory = mutableListOf<Variable>()
+    private val memory = mutableMapOf<IrSymbol, Variable>()
 
     // Methods to work with instruction
     fun isEmpty() = instructions.isEmpty()
-    fun pushInstruction(instruction: Instruction) = instructions.add(0, instruction)
+    fun pushInstruction(instruction: Instruction) = instructions.addFirst(instruction)
     fun popInstruction(): Instruction = instructions.removeFirst()
     fun dropInstructions() = instructions.lastOrNull()?.apply { instructions.clear() }
 
@@ -122,22 +128,25 @@ internal class SubFrame(val owner: IrElement) {
     fun peekState(): State? = dataStack.peek()
 
     // Methods to work with memory
-    fun addVariable(variable: Variable) {
-        memory += variable
+    fun storeState(symbol: IrSymbol, variable: Variable) {
+        memory[symbol] = variable
     }
 
-    private fun getVariable(symbol: IrSymbol): Variable? = memory.firstOrNull { it.symbol == symbol }
-    fun containsVariable(symbol: IrSymbol): Boolean = getVariable(symbol) != null
-    fun getState(symbol: IrSymbol): State? = getVariable(symbol)?.state
-    fun setState(symbol: IrSymbol, newState: State) {
-        getVariable(symbol)?.state = newState
+    fun storeState(symbol: IrSymbol, state: State?) {
+        memory[symbol] = Variable(state)
     }
 
-    fun getAll(): List<Variable> = memory
+    fun containsStateInMemory(symbol: IrSymbol): Boolean = memory[symbol] != null
+    fun loadState(symbol: IrSymbol): State? = memory[symbol]?.state
+    fun rewriteState(symbol: IrSymbol, newState: State) {
+        memory[symbol]?.state = newState
+    }
+
+    fun getAll(): List<Pair<IrSymbol, Variable>> = memory.toList()
 }
 
 private class DataStack {
-    private val stack = mutableListOf<State>()
+    private val stack = ArrayDeque<State>()
 
     fun push(state: State) {
         stack.add(state)

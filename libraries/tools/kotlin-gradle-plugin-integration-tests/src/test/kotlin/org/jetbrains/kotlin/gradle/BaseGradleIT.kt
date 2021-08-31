@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.gradle
 
 import com.intellij.testFramework.TestDataFile
@@ -464,11 +469,11 @@ abstract class BaseGradleIT {
 
         val errors = "(?m)^.*\\[ERROR] \\[\\S+] (.*)$".toRegex().findAll(output)
         val errorMessage = buildString {
-            appendln("Gradle build failed")
-            appendln()
+            appendLine("Gradle build failed")
+            appendLine()
             if (errors.any()) {
-                appendln("Possible errors:")
-                errors.forEach { match -> appendln(match.groupValues[1]) }
+                appendLine("Possible errors:")
+                errors.forEach { match -> appendLine(match.groupValues[1]) }
             }
         }
         fail(errorMessage)
@@ -517,7 +522,7 @@ abstract class BaseGradleIT {
     }
 
     fun CompiledProject.assertNotContains(regex: Regex) {
-        assertNull(regex.find(output), "Output should not contain '$regex'")
+        assertNull(regex.find(output)?.value, "Output should not contain '$regex'")
     }
 
     fun CompiledProject.assertNoWarnings(sanitize: (String) -> String = { it }) {
@@ -567,7 +572,7 @@ abstract class BaseGradleIT {
         return this
     }
 
-    private fun Iterable<File>.projectRelativePaths(project: Project): Iterable<String> {
+    internal fun Iterable<File>.projectRelativePaths(project: Project): Iterable<String> {
         return map { it.canonicalFile.toRelativeString(project.projectDir) }
     }
 
@@ -670,6 +675,12 @@ abstract class BaseGradleIT {
         }
     }
 
+    fun CompiledProject.assertTasksRegisteredRegex(vararg tasks: String) {
+        for (task in tasks) {
+            assertContainsRegex("'Register task $task'".toRegex())
+        }
+    }
+
     fun CompiledProject.assertTasksNotRegistered(vararg tasks: String) {
         for (task in tasks) {
             assertNotContains("'Register task $task'")
@@ -691,6 +702,12 @@ abstract class BaseGradleIT {
     fun CompiledProject.assertTasksNotRealized(vararg tasks: String) {
         for (task in tasks) {
             assertNotContains("'Realize task $task'")
+        }
+    }
+
+    fun CompiledProject.assertTasksNotRealizedRegex(vararg tasks: String) {
+        for (task in tasks) {
+            assertNotContains("'Realize task $task'".toRegex())
         }
     }
 
@@ -851,10 +868,10 @@ Finished executing task ':$taskName'|
             }
 
         val xmlString = buildString {
-            appendln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
-            appendln("<results>")
+            appendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+            appendLine("<results>")
             files.forEach { file ->
-                appendln(
+                appendLine(
                     file.readText()
                         .trimTrailingWhitespaces()
                         .replace(projectDir.absolutePath, "/\$PROJECT_DIR$")
@@ -862,7 +879,7 @@ Finished executing task ':$taskName'|
                         .replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "")
                 )
             }
-            appendln("</results>")
+            appendLine("</results>")
         }
 
         val doc = SAXBuilder().build(xmlString.reader())

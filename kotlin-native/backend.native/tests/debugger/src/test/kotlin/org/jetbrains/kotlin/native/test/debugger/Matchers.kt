@@ -173,7 +173,7 @@ fun dwarfDumpComplexTest(test:ToolDriverHelper.()->Unit) {
 
     with(Files.createTempDirectory("dwarfdump_test_complex")) {
         toFile().deleteOnExit()
-        val driver = ToolDriverHelper(ToolDriver(), this).test()
+        ToolDriverHelper(ToolDriver(), this).test()
     }
 }
 
@@ -186,7 +186,7 @@ fun lldbComplexTest(test:ToolDriverHelper.()->Unit) {
 
     with(Files.createTempDirectory("lldb_test_complex")) {
         toFile().deleteOnExit()
-        val driver = ToolDriverHelper(ToolDriver(), this).test()
+        ToolDriverHelper(ToolDriver(), this).test()
     }
 }
 

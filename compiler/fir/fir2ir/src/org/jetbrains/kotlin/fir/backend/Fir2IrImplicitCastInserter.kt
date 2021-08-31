@@ -61,6 +61,8 @@ class Fir2IrImplicitCastInserter(
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: IrElement): IrElement = data
 
+    override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: IrElement): IrElement = data
+
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: IrElement): IrElement = data
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: IrElement): IrElement = data

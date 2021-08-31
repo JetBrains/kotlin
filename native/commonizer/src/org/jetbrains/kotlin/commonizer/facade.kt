@@ -8,11 +8,14 @@ package org.jetbrains.kotlin.commonizer
 import kotlinx.metadata.klib.ChunkedKlibModuleFragmentWriteStrategy
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.Status
 import org.jetbrains.kotlin.commonizer.core.CommonizationVisitor
+import org.jetbrains.kotlin.commonizer.mergedtree.CirClassifierIndex
 import org.jetbrains.kotlin.commonizer.mergedtree.CirCommonizedClassifierNodes
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.commonizer.mergedtree.CirRootNode
 import org.jetbrains.kotlin.commonizer.metadata.CirTreeSerializer
+import org.jetbrains.kotlin.commonizer.transformer.AliasedTypeSubstitutor
+import org.jetbrains.kotlin.commonizer.transformer.UnderscoredTypeAliasTypeSubstitutor
 import org.jetbrains.kotlin.commonizer.transformer.InlineTypeAliasCirNodeTransformer
 import org.jetbrains.kotlin.commonizer.transformer.TypeSubstitutionCirNodeTransformer
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
@@ -52,6 +55,8 @@ internal fun commonizeTarget(
 
     parameters.logger.progress(output, "Commonized declarations from ${inputs.targets}") {
         val classifiers = CirKnownClassifiers(
+            classifierIndices = availableTrees.mapValue(::CirClassifierIndex),
+            targetDependencies = availableTrees.mapValue(CirTreeRoot::dependencies),
             commonizedNodes = CirCommonizedClassifierNodes.default(),
             commonDependencies = parameters.dependencyClassifiers(output)
         )
@@ -59,7 +64,16 @@ internal fun commonizeTarget(
         val mergedTree = mergeCirTree(parameters.storageManager, classifiers, availableTrees)
 
         InlineTypeAliasCirNodeTransformer(parameters.storageManager, classifiers).invoke(mergedTree)
-        TypeSubstitutionCirNodeTransformer(parameters.storageManager, classifiers, availableTrees).invoke(mergedTree)
+
+        TypeSubstitutionCirNodeTransformer(
+            parameters.storageManager, classifiers,
+            AliasedTypeSubstitutor(classifiers.commonDependencies, classifiers.classifierIndices)
+        ).invoke(mergedTree)
+
+        TypeSubstitutionCirNodeTransformer(
+            parameters.storageManager, classifiers,
+            UnderscoredTypeAliasTypeSubstitutor(classifiers.classifierIndices)
+        ).invoke(mergedTree)
 
         mergedTree.accept(CommonizationVisitor(classifiers, mergedTree), Unit)
 

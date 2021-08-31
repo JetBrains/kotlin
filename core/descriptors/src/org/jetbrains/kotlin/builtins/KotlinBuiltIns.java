@@ -305,7 +305,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getSuspendFunction(int parameterCount) {
-        return getBuiltInClassByFqName(COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier(getSuspendFunctionName(parameterCount))));
+        return getBuiltInClassByFqName(COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier(getSuspendFunctionName(parameterCount))));
     }
 
     @NotNull
@@ -316,7 +316,7 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getKSuspendFunction(int parameterCount) {
         Name name = Name.identifier(FunctionClassKind.KSuspendFunction.getClassNamePrefix() + parameterCount);
-        return getBuiltInClassByFqName(COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(name));
+        return getBuiltInClassByFqName(COROUTINES_PACKAGE_FQ_NAME.child(name));
     }
 
     @NotNull

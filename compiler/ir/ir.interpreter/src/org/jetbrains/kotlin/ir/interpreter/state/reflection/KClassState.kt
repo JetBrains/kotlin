@@ -51,7 +51,10 @@ internal class KClassState(val classReference: IrClass, override val irClass: Ir
                             else -> TODO()
                         }
                     }
-                    is IrFunction -> KFunctionProxy(KFunctionState(it, callInterceptor.irBuiltIns), callInterceptor)
+                    is IrFunction -> {
+                        val irClass = callInterceptor.irBuiltIns.kFunctionN(it.valueParameters.size)
+                        KFunctionProxy(KFunctionState(it, irClass, callInterceptor.environment), callInterceptor)
+                    }
                     else -> TODO()
                 }
             }
@@ -62,20 +65,23 @@ internal class KClassState(val classReference: IrClass, override val irClass: Ir
         if (_constructors != null) return _constructors!!
         _constructors = classReference.declarations
             .filterIsInstance<IrConstructor>()
-            .map { KFunctionProxy(KFunctionState(it, callInterceptor.irBuiltIns), callInterceptor) }
+            .map {
+                val irClass = callInterceptor.irBuiltIns.kFunctionN(it.valueParameters.size)
+                KFunctionProxy(KFunctionState(it, irClass, callInterceptor.environment), callInterceptor)
+            }
         return _constructors!!
     }
 
     fun getTypeParameters(callInterceptor: CallInterceptor): List<KTypeParameter> {
         if (_typeParameters != null) return _typeParameters!!
-        val kTypeParameterIrClass = irClass.getIrClassOfReflectionFromList("typeParameters")
+        val kTypeParameterIrClass = callInterceptor.environment.kTypeParameterClass.owner
         _typeParameters = classReference.typeParameters.map { KTypeParameterProxy(KTypeParameterState(it, kTypeParameterIrClass), callInterceptor) }
         return _typeParameters!!
     }
 
     fun getSupertypes(callInterceptor: CallInterceptor): List<KType> {
         if (_supertypes != null) return _supertypes!!
-        val kTypeIrClass = irClass.getIrClassOfReflectionFromList("supertypes")
+        val kTypeIrClass = callInterceptor.environment.kTypeClass.owner
         _supertypes = (classReference.superTypes.map { it } + callInterceptor.irBuiltIns.anyType).toSet()
             .map { KTypeProxy(KTypeState(it, kTypeIrClass), callInterceptor) }
         return _supertypes!!

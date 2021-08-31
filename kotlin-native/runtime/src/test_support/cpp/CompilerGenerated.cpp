@@ -8,6 +8,16 @@
 #include "ObjectTestSupport.hpp"
 #include "Types.h"
 
+using kotlin::test_support::internal::createCleanerWorkerMock;
+using kotlin::test_support::internal::shutdownCleanerWorkerMock;
+using kotlin::test_support::internal::reportUnhandledExceptionMock;
+using kotlin::test_support::internal::Kotlin_runUnhandledExceptionHookMock;
+
+testing::MockFunction<KInt()>* kotlin::test_support::internal::createCleanerWorkerMock = nullptr;
+testing::MockFunction<void(KInt, bool)>* kotlin::test_support::internal::shutdownCleanerWorkerMock = nullptr;
+testing::MockFunction<void(KRef)>* kotlin::test_support::internal::reportUnhandledExceptionMock = nullptr;
+testing::MockFunction<void(KRef)>* kotlin::test_support::internal::Kotlin_runUnhandledExceptionHookMock = nullptr;
+
 namespace {
 
 struct EmptyPayload {
@@ -49,15 +59,13 @@ struct KBox {
     const T value;
 };
 
-testing::StrictMock<testing::MockFunction<KInt()>>* createCleanerWorkerMock = nullptr;
-testing::StrictMock<testing::MockFunction<void(KInt, bool)>>* shutdownCleanerWorkerMock = nullptr;
-
 } // namespace
 
 extern "C" {
 
 extern const int32_t KonanNeedDebugInfo = 1;
 extern const int32_t Kotlin_runtimeAssertsMode = static_cast<int32_t>(kotlin::compiler::RuntimeAssertsMode::kPanic);
+extern const char* const Kotlin_runtimeLogs = nullptr;
 
 extern const TypeInfo* theAnyTypeInfo = theAnyTypeInfoHolder.typeInfo();
 extern const TypeInfo* theArrayTypeInfo = theArrayTypeInfoHolder.typeInfo();
@@ -177,6 +185,10 @@ void RUNTIME_NORETURN ThrowIncorrectDereferenceException() {
     throw std::runtime_error("Not implemented for tests");
 }
 
+void RUNTIME_NORETURN ThrowFileFailedToInitializeException() {
+    throw std::runtime_error("Not implemented for tests");
+}
+
 void RUNTIME_NORETURN ThrowIllegalObjectSharingException(KConstNativePtr typeInfo, KConstNativePtr address) {
     throw std::runtime_error("Not implemented for tests");
 }
@@ -186,15 +198,19 @@ void RUNTIME_NORETURN ThrowFreezingException(KRef toFreeze, KRef blocker) {
 }
 
 void ReportUnhandledException(KRef throwable) {
-    konan::consolePrintf("Uncaught Kotlin exception.");
+    if (!reportUnhandledExceptionMock) throw std::runtime_error("Not implemented for tests");
+
+    return reportUnhandledExceptionMock->Call(throwable);
 }
 
 RUNTIME_NORETURN OBJ_GETTER(DescribeObjectForDebugging, KConstNativePtr typeInfo, KConstNativePtr address) {
     throw std::runtime_error("Not implemented for tests");
 }
 
-void OnUnhandledException(KRef throwable) {
-    throw std::runtime_error("Not implemented for tests");
+void Kotlin_runUnhandledExceptionHook(KRef throwable) {
+    if (!Kotlin_runUnhandledExceptionHookMock) throw std::runtime_error("Not implemented for tests");
+
+    return Kotlin_runUnhandledExceptionHookMock->Call(throwable);
 }
 
 void Kotlin_WorkerBoundReference_freezeHook(KRef thiz) {
@@ -256,6 +272,46 @@ extern KBox<KLong> LONG_CACHE[] = {
         {{}, 1},
 };
 
+OBJ_GETTER(Kotlin_boxByte, KByte value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_boxShort, KShort value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_boxInt, KInt value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_boxLong, KLong value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_boxUByte, KUByte value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_boxUShort, KUShort value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_boxUInt, KUInt value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_boxULong, KULong value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_boxFloat, KFloat value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_boxDouble, KDouble value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
 RUNTIME_NORETURN OBJ_GETTER(Kotlin_Throwable_getMessage, KRef throwable) {
     throw std::runtime_error("Not implemented for tests");
 }
@@ -274,10 +330,3 @@ KInt Kotlin_CleanerImpl_createCleanerWorker() {
 
 } // extern "C"
 
-ScopedStrictMockFunction<KInt()> ScopedCreateCleanerWorkerMock() {
-    return ScopedStrictMockFunction<KInt()>(&createCleanerWorkerMock);
-}
-
-ScopedStrictMockFunction<void(KInt, bool)> ScopedShutdownCleanerWorkerMock() {
-    return ScopedStrictMockFunction<void(KInt, bool)>(&shutdownCleanerWorkerMock);
-}

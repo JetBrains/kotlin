@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -304,7 +304,7 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
         val name = Name.identifier(value)
         val firEnumEntry = firElement.collectEnumEntries().find { it.name == name }
 
-        return if (firEnumEntry != null) buildQualifiedAccessExpression {
+        return if (firEnumEntry != null) buildPropertyAccessExpression {
             calleeReference = buildResolvedNamedReference {
                 this.name = name
                 resolvedSymbol = firEnumEntry.symbol
@@ -314,7 +314,7 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
                 it.isStatic && it.modality == Modality.FINAL && it.name == name
             }
             if (firStaticProperty != null) {
-                buildQualifiedAccessExpression {
+                buildPropertyAccessExpression {
                     calleeReference = buildResolvedNamedReference {
                         this.name = name
                         resolvedSymbol = firStaticProperty.symbol

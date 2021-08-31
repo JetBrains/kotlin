@@ -8,26 +8,31 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.idea.fir.getCandidateSymbols
 import org.jetbrains.kotlin.idea.fir.isImplicitFunctionCall
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.calls.*
 import org.jetbrains.kotlin.idea.frontend.api.components.KtCallResolver
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.buildSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableLikeSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper
@@ -70,7 +75,15 @@ internal class KtFirCallResolver(
             is FirFunctionCall -> resolveCall(fir)
             is FirAnnotationCall -> fir.asAnnotationCall()
             is FirDelegatedConstructorCall -> fir.asDelegatedConstructorCall()
+            is FirConstructor -> fir.asDelegatedConstructorCall()
             is FirSafeCallExpression -> fir.regularQualifiedAccess.safeAs<FirFunctionCall>()?.let { resolveCall(it) }
+            else -> null
+        }
+    }
+
+    override fun resolveCall(call: KtArrayAccessExpression): KtCall? = withValidityAssertion {
+        return when (val fir = call.getOrBuildFir(firResolveState)) {
+            is FirFunctionCall -> resolveCall(fir)
             else -> null
         }
     }
@@ -94,24 +107,24 @@ internal class KtFirCallResolver(
     }
 
     private fun FirFunctionCall.createCallByVariableLikeSymbolCall(variableLikeSymbol: KtVariableLikeSymbol): KtCall? {
-        return when (val callReference = calleeReference) {
+        val (functionSymbol, target) = when (val callReference = calleeReference) {
             is FirResolvedNamedReference -> {
                 val functionSymbol = callReference.resolvedSymbol as? FirNamedFunctionSymbol
-                val callableId = functionSymbol?.callableId ?: return null
-                (callReference.resolvedSymbol.fir.buildSymbol(firSymbolBuilder) as? KtFunctionSymbol)
-                    ?.let {
-                        if (callableId in kotlinFunctionInvokeCallableIds) {
-                            KtFunctionalTypeVariableCall(variableLikeSymbol, KtSuccessCallTarget(it))
-                        } else {
-                            KtVariableWithInvokeFunctionCall(variableLikeSymbol, KtSuccessCallTarget(it))
-                        }
-                    }
+                (functionSymbol?.fir?.buildSymbol(firSymbolBuilder) as? KtFunctionSymbol)?.let {
+                    functionSymbol to KtSuccessCallTarget(it)
+                } ?: return null
             }
-            is FirErrorNamedReference -> KtVariableWithInvokeFunctionCall(
-                variableLikeSymbol,
-                callReference.createErrorCallTarget(source)
-            )
+            is FirErrorNamedReference -> {
+                val functionSymbol = callReference.candidateSymbol as? FirNamedFunctionSymbol
+                functionSymbol to callReference.createErrorCallTarget(source)
+            }
             else -> error("Unexpected call reference ${callReference::class.simpleName}")
+        }
+        val callableId = functionSymbol?.callableId ?: return null
+        return if (callableId in kotlinFunctionInvokeCallableIds) {
+            KtFunctionalTypeVariableCall(variableLikeSymbol, createArgumentMapping(), target)
+        } else {
+            KtVariableWithInvokeFunctionCall(variableLikeSymbol, createArgumentMapping(), target)
         }
     }
 
@@ -131,8 +144,21 @@ internal class KtFirCallResolver(
         return KtDelegatedConstructorCall(createArgumentMapping(), target, kind)
     }
 
+    private fun FirConstructor.asDelegatedConstructorCall(): KtDelegatedConstructorCall? {
+        // A delegation call may not be present in the source code:
+        //
+        //   class A {
+        //     constructor(i: Int)   // <--- implicit constructor delegation call (empty element after RPAR)
+        //   }
+        //
+        // and FIR built/found from that implicit `KtConstructorDelegationCall` is `FirConstructor`,
+        // which may have a pointer to the delegated constructor.
+        return delegatedConstructor?.asDelegatedConstructorCall()
+    }
+
     private fun FirReference.createCallTarget(): KtCallTarget? {
         return when (this) {
+            is FirSuperReference -> createCallTarget(source)
             is FirResolvedNamedReference -> getKtFunctionOrConstructorSymbol()?.let { KtSuccessCallTarget(it) }
             is FirErrorNamedReference -> createErrorCallTarget(source)
             is FirErrorReferenceWithCandidate -> createErrorCallTarget(source)
@@ -150,28 +176,28 @@ internal class KtFirCallResolver(
         }
     }
 
-    private fun FirCall.createArgumentMapping(): LinkedHashMap<KtValueArgument, KtValueParameterSymbol> {
-        val ktArgumentMapping = LinkedHashMap<KtValueArgument, KtValueParameterSymbol>()
+    private fun FirCall.createArgumentMapping(): LinkedHashMap<KtExpression, KtValueParameterSymbol> {
+        val ktArgumentMapping = LinkedHashMap<KtExpression, KtValueParameterSymbol>()
         argumentMapping?.let {
-            fun FirExpression.findKtValueArgument(): KtValueArgument? {
-                // For spread and named arguments, the source is the KtValueArgument.
-                // For other arguments, the source is the KtExpression itself and its parent should be the KtValueArgument.
-                val psi = when (this) {
-                    is FirNamedArgumentExpression, is FirSpreadArgumentExpression -> realPsi
-                    else -> realPsi?.parent
+            fun FirExpression.findKtExpression(): KtExpression? {
+                // For spread, named, and lambda arguments, the source is the KtValueArgument.
+                // For other arguments (including array indices), the source is the KtExpression.
+                return when (this) {
+                    is FirNamedArgumentExpression, is FirSpreadArgumentExpression, is FirLambdaArgumentExpression ->
+                        realPsi.safeAs<KtValueArgument>()?.getArgumentExpression()
+                    else -> realPsi as? KtExpression
                 }
-                return psi as? KtValueArgument
             }
 
             for ((firExpression, firValueParameter) in it.entries) {
                 val parameterSymbol = firValueParameter.buildSymbol(firSymbolBuilder) as KtValueParameterSymbol
                 if (firExpression is FirVarargArgumentsExpression) {
                     for (varargArgument in firExpression.arguments) {
-                        val valueArgument = varargArgument.findKtValueArgument() ?: continue
+                        val valueArgument = varargArgument.findKtExpression() ?: continue
                         ktArgumentMapping[valueArgument] = parameterSymbol
                     }
                 } else {
-                    val valueArgument = firExpression.findKtValueArgument() ?: continue
+                    val valueArgument = firExpression.findKtExpression() ?: continue
                     ktArgumentMapping[valueArgument] = parameterSymbol
                 }
             }
@@ -195,6 +221,29 @@ internal class KtFirCallResolver(
 
     private fun FirResolvedNamedReference.getKtFunctionOrConstructorSymbol(): KtFunctionLikeSymbol? =
         resolvedSymbol.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol
+
+    private fun FirSuperReference.createCallTarget(qualifiedAccessSource: FirSourceElement?): KtCallTarget? =
+        when (val type = superTypeRef.coneType) {
+            is ConeKotlinErrorType ->
+                KtErrorCallTarget(
+                    (firSymbolBuilder.classifierBuilder.buildClassLikeSymbolByLookupTag(type.lookupTag) as? KtSymbolWithMembers)?.let {
+                        analysisSession.getPrimaryConstructor(it)?.let { ctor -> listOf(ctor) }
+                    } ?: emptyList(),
+                    source?.let { type.diagnostic.asKtDiagnostic(it, qualifiedAccessSource, diagnosticCache) }
+                        ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, type.diagnostic.reason, token)
+                )
+            is ConeClassLikeType ->
+                type.classId?.let { classId ->
+                    (firSymbolBuilder.classifierBuilder.buildClassLikeSymbolByClassId(classId) as? KtSymbolWithMembers)?.let {
+                        analysisSession.getPrimaryConstructor(it)?.let { ctor -> KtSuccessCallTarget(ctor) }
+                    }
+                }
+            else ->
+                error("Unexpected type in super reference: ${type::class}")
+        }
+
+    private fun KtAnalysisSession.getPrimaryConstructor(symbolWithMembers: KtSymbolWithMembers): KtConstructorSymbol? =
+        symbolWithMembers.getDeclaredMemberScope().getConstructors().firstOrNull { it.isPrimary }
 
     companion object {
         private val kotlinFunctionInvokeCallableIds = (0..23).flatMapTo(hashSetOf()) { arity ->

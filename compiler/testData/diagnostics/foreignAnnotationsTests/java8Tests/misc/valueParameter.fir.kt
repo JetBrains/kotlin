@@ -32,25 +32,25 @@ fun <K: Any> getArrayOfNotNullK() = null as Array<K>
 fun <K> getArrayOfNullableK() = null as Array<K?>
 
 fun <R> main(a: ValueParameter<R>) {
-    a.foo1(<!TYPE_MISMATCH!>getNotNullStringAndKNullable()<!>)
+    a.foo1(<!ARGUMENT_TYPE_MISMATCH!>getNotNullStringAndKNullable()<!>)
     a.foo1(getNullableStringAndKNullable())
-    a.foo1(<!TYPE_MISMATCH!>getNotNullStringAndNotNullK()<!>)
-    a.foo1(<!TYPE_MISMATCH!>getNullableStringAndNotNullK()<!>)
+    a.foo1(<!ARGUMENT_TYPE_MISMATCH!>getNotNullStringAndNotNullK()<!>)
+    a.foo1(<!ARGUMENT_TYPE_MISMATCH!>getNullableStringAndNotNullK()<!>)
 
-    a.foo2(<!TYPE_MISMATCH!>getNotNullStringAndKNullable()<!>)
-    a.foo2(<!TYPE_MISMATCH!>getNullableStringAndKNullable()<!>)
-    a.foo2(<!TYPE_MISMATCH!>getNotNullStringAndNotNullK()<!>)
-    a.foo2(getNullableStringAndNotNullK())
+    a.foo2(getNotNullStringAndKNullable())
+    a.foo2(<!ARGUMENT_TYPE_MISMATCH!>getNullableStringAndKNullable()<!>)
+    a.foo2(<!ARGUMENT_TYPE_MISMATCH!>getNotNullStringAndNotNullK()<!>)
+    a.foo2(<!ARGUMENT_TYPE_MISMATCH!>getNullableStringAndNotNullK()<!>)
 
-    a.foo3(<!TYPE_MISMATCH!>getNotNullStringAndKNullable()<!>)
-    a.foo3(<!TYPE_MISMATCH!>getNullableStringAndKNullable()<!>)
-    a.foo3(getNotNullStringAndNotNullK())
-    a.foo3(<!TYPE_MISMATCH!>getNullableStringAndNotNullK()<!>)
+    a.foo3(getNotNullStringAndKNullable())
+    a.foo3(<!ARGUMENT_TYPE_MISMATCH!>getNullableStringAndKNullable()<!>)
+    a.foo3(<!ARGUMENT_TYPE_MISMATCH!>getNotNullStringAndNotNullK()<!>)
+    a.foo3(<!ARGUMENT_TYPE_MISMATCH!>getNullableStringAndNotNullK()<!>)
 
-    a.foo4(<!TYPE_MISMATCH!>getArrayOfNotNullString()<!>)
-    a.foo4(<!TYPE_MISMATCH!>getArrayOfNullableString()<!>)
+    a.foo4(<!ARGUMENT_TYPE_MISMATCH!>getArrayOfNotNullString()<!>)
+    a.foo4(<!ARGUMENT_TYPE_MISMATCH!>getArrayOfNullableString()<!>)
     a.foo4(getArrayOfNotNullK())
-    a.foo4(<!TYPE_MISMATCH!>getArrayOfNullableK()<!>)
+    a.foo4(getArrayOfNullableK())
 
     a.foo5(getArrayOfNotNullString())
     a.foo5(getArrayOfNullableString())
@@ -58,5 +58,5 @@ fun <R> main(a: ValueParameter<R>) {
     a.foo5(getArrayOfNullableK())
 
     a.foo41(getNotNullString())
-    a.foo411(<!TYPE_MISMATCH!>getNotNullString()<!>)
+    a.foo411(<!ARGUMENT_TYPE_MISMATCH!>getNotNullString()<!>)
 }

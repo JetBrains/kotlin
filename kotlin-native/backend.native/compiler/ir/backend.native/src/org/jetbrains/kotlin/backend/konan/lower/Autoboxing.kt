@@ -133,8 +133,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     private val IrCall.callTarget: IrFunction
-        get() = if (superQualifierSymbol == null && symbol.owner.isOverridable) {
-            // A virtual call.
+        get() = if (this.isVirtualCall) {
             symbol.owner
         } else {
             symbol.owner.target

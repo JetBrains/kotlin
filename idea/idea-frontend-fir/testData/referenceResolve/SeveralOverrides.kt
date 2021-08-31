@@ -15,4 +15,3 @@ fun test(c: C) {
 }
 
 // MULTIRESOLVE
-// REF: (in B).foo()

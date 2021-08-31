@@ -8,16 +8,15 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
-import org.jetbrains.kotlin.ir.linkage.KotlinIrLinkerInternalException
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -50,38 +49,27 @@ abstract class KotlinIrLinker(
 
     abstract val translationPluginContext: TranslationPluginContext?
 
-    internal val triedToDeserializeDeclarationForSymbol = mutableSetOf<IrSymbol>()
-    val deserializedSymbols = mutableSetOf<IrSymbol>()
+    private val triedToDeserializeDeclarationForSymbol = mutableSetOf<IrSymbol>()
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
-    public open fun handleNoModuleDeserializerFound(idSignature: IdSignature, currentModule: ModuleDescriptor, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer {
-        val message = buildString {
-            append("Module ${currentModule.name} has reference $idSignature, unfortunately neither itself nor its dependencies ")
-            dependencies.joinTo(this, "\n\t", "[\n\t", "\n]") { it.moduleDescriptor.name.asString() }
-            append(" contain this declaration")
-            append("\n")
-            append("Please check that project configuration is correct and has required dependencies.")
-        }
-        messageLogger.report(IrMessageLogger.Severity.ERROR, message, null)
+    protected open val userVisibleIrModulesSupport: UserVisibleIrModulesSupport = UserVisibleIrModulesSupport.DEFAULT
 
-        throw KotlinIrLinkerInternalException
+    fun handleSignatureIdNotFoundInModuleWithDependencies(
+        idSignature: IdSignature,
+        moduleDeserializer: IrModuleDeserializer
+    ): IrModuleDeserializer {
+        throw SignatureIdNotFoundInModuleWithDependencies(
+            idSignature = idSignature,
+            problemModuleDeserializer = moduleDeserializer,
+            allModuleDeserializers = deserializersForModules.values,
+            userVisibleIrModulesSupport = userVisibleIrModulesSupport
+        ).raiseIssue(messageLogger)
     }
 
-    public open fun resolveModuleDeserializer(module: ModuleDescriptor, signature: IdSignature?): IrModuleDeserializer {
-        return deserializersForModules[module.name.asString()] ?: run {
-            val message = buildString {
-                append("Could not load module ")
-                append(module)
-                signature?.let {
-                    append("; It was an attempt to find deserializer for ")
-                    append(it)
-                }
-            }
-            messageLogger.report(IrMessageLogger.Severity.ERROR, message, null)
-
-            throw KotlinIrLinkerInternalException
-        }
+    fun resolveModuleDeserializer(module: ModuleDescriptor, idSignature: IdSignature?): IrModuleDeserializer {
+        return deserializersForModules[module.name.asString()]
+            ?: throw NoDeserializerForModule(module.name, idSignature).raiseIssue(messageLogger)
     }
 
     protected abstract fun createModuleDeserializer(
@@ -103,7 +91,7 @@ abstract class KotlinIrLinker(
 
     private fun findDeserializedDeclarationForSymbol(symbol: IrSymbol): DeclarationDescriptor? {
 
-        if (symbol in triedToDeserializeDeclarationForSymbol || symbol in deserializedSymbols) {
+        if (symbol in triedToDeserializeDeclarationForSymbol) {
             return null
         }
         triedToDeserializeDeclarationForSymbol.add(symbol)
@@ -155,7 +143,11 @@ abstract class KotlinIrLinker(
         }
 
         if (!symbol.isBound) {
-            findDeserializedDeclarationForSymbol(symbol) ?: tryResolveCustomDeclaration(symbol) ?: return null
+            try {
+                findDeserializedDeclarationForSymbol(symbol) ?: tryResolveCustomDeclaration(symbol) ?: return null
+            } catch (e: IrSymbolTypeMismatchException) {
+                throw SymbolTypeMismatch(e, deserializersForModules.values, userVisibleIrModulesSupport).raiseIssue(messageLogger)
+            }
         }
 
         // TODO: we do have serializations for those, but let's just create a stub for now.
@@ -205,7 +197,6 @@ abstract class KotlinIrLinker(
         finalizeExpectActualLinker()
         fakeOverrideBuilder.provideFakeOverrides()
         triedToDeserializeDeclarationForSymbol.clear()
-        deserializedSymbols.clear()
 
         // TODO: fix IrPluginContext to make it not produce additional external reference
         // symbolTable.noUnboundLeft("unbound after fake overrides:")
@@ -332,6 +323,11 @@ abstract class KotlinIrLinker(
 
     fun deserializeHeadersWithInlineBodies(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary): IrModuleFragment =
         deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, DeserializationStrategy.WITH_INLINE_BODIES)
+
+    @Suppress("UNUSED_PARAMETER")
+    fun deserializeDirtyFiles(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary, dirtyFiles: Collection<String>): IrModuleFragment {
+        return deserializeFullModule(moduleDescriptor, kotlinLibrary)
+    }
 }
 
 enum class DeserializationStrategy(

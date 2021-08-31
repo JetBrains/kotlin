@@ -80,6 +80,10 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
         return EnumValue(outerClassId, enumEntry.name)
     }
 
+    override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: Nothing?): ConstantValue<*>? {
+        return visitQualifiedAccessExpression(propertyAccessExpression, data)
+    }
+
     override fun visitFunctionCall(
         functionCall: FirFunctionCall,
         data: Nothing?

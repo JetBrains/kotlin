@@ -11,6 +11,7 @@ KtFirKotlinPropertySymbol:
   initializer: 10
   isConst: false
   isExtension: false
+  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -22,6 +23,9 @@ KtFirKotlinPropertySymbol:
   setter: null
   symbolKind: MEMBER
   visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  setterDeprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -46,6 +50,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -61,7 +66,10 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null

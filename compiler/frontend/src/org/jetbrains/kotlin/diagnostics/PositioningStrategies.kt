@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
-import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.cfg.UnreachableCode
@@ -379,6 +378,12 @@ object PositioningStrategies {
     val DATA_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.DATA_KEYWORD)
 
     @JvmField
+    val OPERATOR_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.OPERATOR_KEYWORD)
+
+    @JvmField
+    val ENUM_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.ENUM_KEYWORD)
+
+    @JvmField
     val FOR_REDECLARATION: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             val nameIdentifier = when (element) {
@@ -495,6 +500,10 @@ object PositioningStrategies {
     @JvmField
     val INNER_MODIFIER: PositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(TokenSet.create(KtTokens.INNER_KEYWORD))
+
+    @JvmField
+    val INLINE_PARAMETER_MODIFIER: PositioningStrategy<KtModifierListOwner> =
+        ModifierSetBasedPositioningStrategy(TokenSet.create(KtTokens.NOINLINE_KEYWORD, KtTokens.CROSSINLINE_KEYWORD))
 
     @JvmField
     val VARIANCE_IN_PROJECTION: PositioningStrategy<KtTypeProjection> = object : PositioningStrategy<KtTypeProjection>() {
@@ -837,28 +846,18 @@ object PositioningStrategies {
         }
     }
 
-    val RESERVED_UNDERSCORE: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+    val NAME_IDENTIFIER: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             if (element is PsiNameIdentifierOwner) {
                 val nameIdentifier = element.nameIdentifier
                 if (nameIdentifier != null) {
                     return super.mark(nameIdentifier)
                 }
-            } else if (element is KtImportDirective) {
-                return super.mark(element.alias?.nameIdentifier ?: element)
-            } else if (element is KtReturnExpression) {
-                val prevSibling = element.getPrevSiblingIgnoringWhitespace()
-                if (prevSibling is KtContainerNode) {
-                    return mark(prevSibling)
-                }
-            } else if (element !is LeafPsiElement) {
-                val ranges = element.collectDescendantsOfType<LeafPsiElement> { descendant -> descendant.text.all { it == '_' } }
-                    .map { markSingleElement(it) }
-                if (ranges.isNotEmpty()) {
-                    return ranges
-                }
+            } else if (element is KtLabelReferenceExpression) {
+                return super.mark(element.getReferencedNameElement())
             }
-            return super.mark(element)
+
+            return DEFAULT.mark(element)
         }
     }
 
@@ -945,6 +944,28 @@ object PositioningStrategies {
             return super.mark(element)
         }
     }
+
+    val LABEL: PositioningStrategy<KtElement> = object : PositioningStrategy<KtElement>() {
+        override fun mark(element: KtElement): List<TextRange> {
+            return super.mark((element as? KtExpressionWithLabel)?.labelQualifier ?: element)
+        }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    val COMMAS: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            return buildList {
+                for (child in element.allChildren) {
+                    if (child.node.elementType == KtTokens.COMMA) {
+                        add(markSingleElement(child))
+                    }
+                }
+            }
+        }
+    }
+
+    val NON_FINAL_MODIFIER_OR_NAME: PositioningStrategy<KtModifierListOwner> =
+        ModifierSetBasedPositioningStrategy(TokenSet.create(KtTokens.ABSTRACT_KEYWORD, KtTokens.OPEN_KEYWORD, KtTokens.SEALED_KEYWORD))
 
     /**
      * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for

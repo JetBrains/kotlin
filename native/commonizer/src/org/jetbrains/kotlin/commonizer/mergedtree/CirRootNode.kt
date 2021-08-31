@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
 class CirRootNode(
+    val dependencies: CirProvidedClassifiers,
     override val targetDeclarations: CommonizedGroup<CirRoot>,
     override val commonDeclaration: NullableLazyValue<CirRoot>
 ) : CirNode<CirRoot, CirRoot> {

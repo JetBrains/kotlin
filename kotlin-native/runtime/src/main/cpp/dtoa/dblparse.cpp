@@ -24,6 +24,9 @@
 #include "../KString.h"
 #include "../Natives.h"
 #include "../utf8.h"
+#include "../KotlinMath.h"
+#include "../ReturnSlot.h"
+#include "../DoubleConversions.h"
 
 #if defined(LINUX) || defined(FREEBSD) || defined(ZOS) || defined(MACOSX) || defined(AIX)
 #define USE_LL
@@ -285,6 +288,15 @@ KDouble createDouble (const char *s, KInt e)
 
 }
 
+#ifdef KONAN_WASM
+double konan_pow(double base, double exponent) {
+    knjs__Math_pow(doubleUpper(base), doubleLower(base), doubleUpper(exponent), doubleLower(exponent));
+    return ReturnSlot_getDouble();
+}
+#else
+#define konan_pow(arg1, arg2) pow(arg1, arg2)
+#endif
+
 KDouble
 createDouble1 (U_64 * f, IDATA length, KInt e)
 {
@@ -307,7 +319,7 @@ createDouble1 (U_64 * f, IDATA length, KInt e)
     }
   else if (e >= 0 && e < APPROX_MAX_MAGNITUDE)
     {
-      result = toDoubleHighPrecision (f, length) * pow (10.0, (double) e);
+      result = toDoubleHighPrecision (f, length) * konan_pow (10.0, (double) e);
     }
   else if (e >= APPROX_MAX_MAGNITUDE)
     {
@@ -327,14 +339,14 @@ createDouble1 (U_64 * f, IDATA length, KInt e)
     }
   else if (e > APPROX_MIN_MAGNITUDE)
     {
-      result = toDoubleHighPrecision (f, length) / pow (10.0, (double) -e);
+      result = toDoubleHighPrecision (f, length) / konan_pow (10.0, (double) -e);
     }
 
   if (e <= APPROX_MIN_MAGNITUDE)
     {
 
-      result = toDoubleHighPrecision (f, length) * pow (10.0, (double) (e + 52));
-      result = result * pow (10.0, (double) -52);
+      result = toDoubleHighPrecision (f, length) * konan_pow (10.0, (double) (e + 52));
+      result = result * konan_pow (10.0, (double) -52);
 
     }
 

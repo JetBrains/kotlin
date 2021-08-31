@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -132,6 +132,8 @@ public fun <K, V> linkedMapOf(vararg pairs: Pair<K, V>): LinkedHashMap<K, V> = p
  *
  * Entries of the map are iterated in the order they were added by the [builderAction].
  *
+ * The returned map is serializable (JVM).
+ *
  * @sample samples.collections.Builders.Maps.buildMapSample
  */
 @SinceKotlin("1.3")
@@ -158,6 +160,8 @@ internal expect inline fun <K, V> buildMapInternal(builderAction: MutableMap<K, 
  * [capacity] is used to hint the expected number of pairs added in the [builderAction].
  *
  * Entries of the map are iterated in the order they were added by the [builderAction].
+ *
+ * The returned map is serializable (JVM).
  *
  * @throws IllegalArgumentException if the given [capacity] is negative.
  *

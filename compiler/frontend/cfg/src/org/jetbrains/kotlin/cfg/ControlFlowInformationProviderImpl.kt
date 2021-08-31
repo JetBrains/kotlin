@@ -554,12 +554,7 @@ class ControlFlowInformationProviderImpl private constructor(
     }
 
     private fun reportValReassigned(expression: KtExpression, variableDescriptor: VariableDescriptor, ctxt: VariableInitContext) {
-        val diagnosticFactory = if (languageVersionSettings.supportsFeature(LanguageFeature.RestrictionOfValReassignmentViaBackingField))
-            VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR
-        else
-            VAL_REASSIGNMENT_VIA_BACKING_FIELD
-
-        report(diagnosticFactory.on(expression, variableDescriptor), ctxt)
+        report(VAL_REASSIGNMENT_VIA_BACKING_FIELD.on(languageVersionSettings, expression, variableDescriptor), ctxt)
     }
 
     private fun checkAssignmentBeforeDeclaration(ctxt: VariableInitContext, expression: KtExpression) =

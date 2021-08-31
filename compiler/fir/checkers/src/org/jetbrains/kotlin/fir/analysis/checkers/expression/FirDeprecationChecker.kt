@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.descriptors.Deprecation
+import org.jetbrains.kotlin.descriptors.DeprecationLevelValue
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirRealSourceElementKind
@@ -14,8 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.Deprecation
-import org.jetbrains.kotlin.fir.declarations.DeprecationLevelValue
 import org.jetbrains.kotlin.fir.declarations.getDeprecation
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -32,7 +32,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
 
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!allowedSourceKinds.contains(expression.source?.kind)) return
-        if (expression is FirAnnotationCall) return //checked by FirDeprecatedTypeChecker
+        if (expression is FirAnnotationCall || expression is FirDelegatedConstructorCall) return //checked by FirDeprecatedTypeChecker
         val resolvable = expression as? FirResolvable ?: return
         val reference = resolvable.calleeReference as? FirResolvedNamedReference ?: return
         val referencedSymbol = reference.resolvedSymbol

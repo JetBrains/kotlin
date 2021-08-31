@@ -5,14 +5,10 @@
 
 package org.jetbrains.kotlin.idea.fir.frontend.api.symbols
 
-import com.intellij.DynamicBundle
-import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.psi.impl.smartPointers.SmartPointerAnchorProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
 import org.jetbrains.kotlin.idea.fir.analyseOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.fir.frontend.api.test.framework.AbstractHLApiSingleFileTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.KotlinOutOfBlockModificationTrackerFactory
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
@@ -41,7 +37,7 @@ abstract class AbstractSymbolTest : AbstractHLApiSingleFileTest() {
             collectSymbols(ktFile, testServices).map { symbol ->
                 PointerWithRenderedSymbol(
                     if (createPointers) symbol.createPointer() else null,
-                    DebugSymbolRenderer.render(symbol)
+                    with(DebugSymbolRenderer) { renderExtra(symbol) }
                 )
             }
         }
@@ -72,8 +68,8 @@ abstract class AbstractSymbolTest : AbstractHLApiSingleFileTest() {
         val restored = analyseOnPooledThreadInReadAction(ktFile) {
             pointersWithRendered.map { (pointer, expectedRender) ->
                 val restored = pointer!!.restoreSymbol()
-                    ?: error("Symbol $expectedRender was not not restored")
-                DebugSymbolRenderer.render(restored)
+                    ?: error("Symbol $expectedRender was not restored")
+                with(DebugSymbolRenderer) { renderExtra(restored) }
             }
         }
         val actual = restored.joinToString(separator = "\n")
@@ -81,14 +77,14 @@ abstract class AbstractSymbolTest : AbstractHLApiSingleFileTest() {
     }
 
     private fun doOutOfBlockModification(ktFile: KtFile) {
-        ServiceManager.getService(ktFile.project, KotlinOutOfBlockModificationTrackerFactory::class.java)
+        ServiceManager.getService(ktFile.project, KotlinModificationTrackerFactory::class.java)
             .incrementModificationsCount()
     }
 }
 
 private object SymbolTestDirectives : SimpleDirectivesContainer() {
     val DO_NOT_CHECK_SYMBOL_RESTORE by directive(
-        description = "Symbol restoring for some symbols in current test is not yet supported yet",
+        description = "Symbol restoring for some symbols in current test is not supported yet",
         applicability = DirectiveApplicability.Global
     )
 }

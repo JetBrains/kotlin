@@ -104,7 +104,7 @@ RuntimeState* initRuntime() {
           // Switch thread state because worker and globals inits require the runnable state.
           // This call may block if GC requested suspending threads.
           stateGuard = kotlin::ThreadStateGuard(result->memoryState, kotlin::ThreadState::kRunnable);
-          result->worker = WorkerInit(result->memoryState, true);
+          result->worker = WorkerInit(result->memoryState);
           firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
           if (!kotlin::kSupportsMultipleMutators && !firstRuntime) {
               konan::consoleErrorf("This GC implementation does not support multiple mutator threads.");
@@ -128,7 +128,7 @@ RuntimeState* initRuntime() {
           // Switch thread state because worker and globals inits require the runnable state.
           // This call may block if GC requested suspending threads.
           stateGuard = kotlin::ThreadStateGuard(result->memoryState, kotlin::ThreadState::kRunnable);
-          result->worker = WorkerInit(result->memoryState, true);
+          result->worker = WorkerInit(result->memoryState);
   }
 
   InitOrDeinitGlobalVariables(ALLOC_THREAD_LOCAL_GLOBALS, result->memoryState);
@@ -408,6 +408,65 @@ RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeededFromKotlin() {
         case MemoryModel::kRelaxed:
             Kotlin_initRuntimeIfNeeded();
     }
+}
+
+static constexpr int FILE_NOT_INITIALIZED = 0;
+static constexpr int FILE_BEING_INITIALIZED = 1;
+static constexpr int FILE_INITIALIZED = 2;
+static constexpr int FILE_FAILED_TO_INITIALIZE = 3;
+
+void CallInitGlobalPossiblyLock(int volatile* state, void (*init)()) {
+    int localState = *state;
+    if (localState == FILE_INITIALIZED) return;
+    if (localState == FILE_FAILED_TO_INITIALIZE)
+        ThrowFileFailedToInitializeException();
+    int threadId = konan::currentThreadId();
+    if ((localState & 3) == FILE_BEING_INITIALIZED) {
+        if ((localState & ~3) != (threadId << 2)) {
+            do {
+                localState = *state;
+                if (localState == FILE_FAILED_TO_INITIALIZE)
+                    ThrowFileFailedToInitializeException();
+            } while (localState != FILE_INITIALIZED);
+        }
+        return;
+    }
+    if (compareAndSwap(state, FILE_NOT_INITIALIZED, FILE_BEING_INITIALIZED | (threadId << 2)) == FILE_NOT_INITIALIZED) {
+        // actual initialization
+#if KONAN_NO_EXCEPTIONS
+        init();
+#else
+        try {
+            init();
+        } catch (...) {
+            *state = FILE_FAILED_TO_INITIALIZE;
+            throw;
+        }
+#endif
+        *state = FILE_INITIALIZED;
+    } else {
+        do {
+            localState = *state;
+            if (localState == FILE_FAILED_TO_INITIALIZE)
+                ThrowFileFailedToInitializeException();
+        } while (localState != FILE_INITIALIZED);
+    }
+}
+
+void CallInitThreadLocal(int volatile* globalState, int* localState, void (*init)()) {
+    if (*localState == FILE_FAILED_TO_INITIALIZE || (globalState != nullptr && *globalState == FILE_FAILED_TO_INITIALIZE))
+        ThrowFileFailedToInitializeException();
+    *localState = FILE_INITIALIZED;
+#if KONAN_NO_EXCEPTIONS
+    init();
+#else
+    try {
+        init();
+    } catch(...) {
+        *localState = FILE_FAILED_TO_INITIALIZE;
+        throw;
+    }
+#endif
 }
 
 }  // extern "C"

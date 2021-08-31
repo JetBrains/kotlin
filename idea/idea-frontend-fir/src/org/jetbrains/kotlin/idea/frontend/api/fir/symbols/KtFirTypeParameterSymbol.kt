@@ -44,4 +44,7 @@ internal class KtFirTypeParameterSymbol(
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         TODO("Creating symbols for library type parameters is not supported yet")
     }
+
+    override fun equals(other: Any?): Boolean = symbolEquals(other)
+    override fun hashCode(): Int = symbolHashCode()
 }

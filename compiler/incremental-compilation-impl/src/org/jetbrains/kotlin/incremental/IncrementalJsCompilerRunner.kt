@@ -20,8 +20,9 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
-import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.isIrBackendEnabled
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -186,11 +187,14 @@ class IncrementalJsCompilerRunner(
     ): ExitCode {
         val freeArgsBackup = args.freeArgs
 
+        val compiler = K2JSCompiler()
         return try {
             args.freeArgs += sourcesToCompile.map { it.absolutePath }
-            K2JSCompiler().exec(messageCollector, services, args)
+            compiler.exec(messageCollector, services, args)
         } finally {
             args.freeArgs = freeArgsBackup
+//            reporter.report { compiler.defaultPerformanceManager.renderCompilerPerformance() }
+            reportPerformanceData(compiler.defaultPerformanceManager)
         }
     }
 

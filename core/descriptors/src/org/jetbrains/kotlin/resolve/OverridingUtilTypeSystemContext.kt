@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerContext
 import org.jetbrains.kotlin.types.checker.ClassicTypeSystemContext
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.checker.createClassicTypeCheckerState
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 class OverridingUtilTypeSystemContext(
@@ -25,16 +25,15 @@ class OverridingUtilTypeSystemContext(
         return super.areEqualTypeConstructors(c1, c2) || areEqualTypeConstructorsByAxioms(c1, c2)
     }
 
-    override fun newBaseTypeCheckerContext(
+    override fun newTypeCheckerState(
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean
-    ): AbstractTypeCheckerContext {
-        return ClassicTypeCheckerContext(
+    ): TypeCheckerState {
+        return createClassicTypeCheckerState(
             errorTypesEqualToAnything,
             stubTypesEqualToAnything,
-            allowedTypeVariable = true,
-            kotlinTypeRefiner,
-            typeSystemContext = this
+            typeSystemContext = this,
+            kotlinTypeRefiner = kotlinTypeRefiner
         )
     }
 

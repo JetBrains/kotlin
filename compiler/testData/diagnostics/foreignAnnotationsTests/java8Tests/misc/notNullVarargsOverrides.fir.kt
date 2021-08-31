@@ -9,8 +9,8 @@ public class BaseClass {
 // FILE: main.kt
 class A : BaseClass() {
     // org.checkerframework.checker.nullness.qual.NonNull has @Target TYPE_USE, so it affects only elements type
-    <!NOTHING_TO_OVERRIDE!>override<!> fun loadCache(vararg args: Any?) {
-        super.loadCache(*<!TYPE_MISMATCH!>args<!>)
+    override fun loadCache(vararg args: Any?) {
+        super.loadCache(*args)
     }
 }
 

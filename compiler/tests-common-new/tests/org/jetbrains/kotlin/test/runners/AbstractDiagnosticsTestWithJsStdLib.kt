@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
+import org.jetbrains.kotlin.test.builders.classicFrontendStep
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
@@ -45,11 +47,13 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractKotlinCompilerTest(
             ::CoroutineHelpersSourceFilesProvider,
         )
 
-        useFrontendFacades(::ClassicFrontendFacade)
-        useFrontendHandlers(
-            ::DeclarationsDumpHandler,
-            ::ClassicDiagnosticsHandler,
-            ::DynamicCallsDumpHandler,
-        )
+        classicFrontendStep()
+        classicFrontendHandlersStep {
+            useHandlers(
+                ::DeclarationsDumpHandler,
+                ::ClassicDiagnosticsHandler,
+                ::DynamicCallsDumpHandler,
+            )
+        }
     }
 }

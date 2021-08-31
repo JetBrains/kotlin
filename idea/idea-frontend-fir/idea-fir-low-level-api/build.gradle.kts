@@ -17,7 +17,7 @@ dependencies {
     testCompile(project(":idea-frontend-fir"))
     implementation(project(":compiler:ir.psi2ir"))
     implementation(project(":compiler:fir:entrypoint"))
-
+    implementation(project(":analysis:analysis-api-providers"))
 
     compile(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
@@ -33,6 +33,7 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testApiJUnit5()
     testCompile(project(":kotlin-reflect"))
+    testImplementation(project(":analysis:symbol-light-classes"))
 
     testRuntimeOnly(intellijDep()) {
         includeJars(

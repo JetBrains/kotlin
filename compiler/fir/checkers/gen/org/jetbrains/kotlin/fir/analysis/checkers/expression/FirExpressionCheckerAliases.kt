@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
 import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 typealias FirBasicExpressionChecker = FirExpressionChecker<FirStatement>
 typealias FirQualifiedAccessChecker = FirExpressionChecker<FirQualifiedAccess>
 typealias FirQualifiedAccessExpressionChecker = FirExpressionChecker<FirQualifiedAccessExpression>
+typealias FirCallChecker = FirExpressionChecker<FirCall>
 typealias FirFunctionCallChecker = FirExpressionChecker<FirFunctionCall>
 typealias FirVariableAssignmentChecker = FirExpressionChecker<FirVariableAssignment>
 typealias FirTryExpressionChecker = FirExpressionChecker<FirTryExpression>

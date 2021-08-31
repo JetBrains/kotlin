@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 
 inline class Foo(val x: Int)

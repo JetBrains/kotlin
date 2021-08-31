@@ -7,14 +7,14 @@ class TestWithEquals {
 }
 
 fun bar(i: Test?) {
-    if (i == null) foo(<!ARGUMENT_TYPE_MISMATCH!>i<!>)
+    if (i == null) foo(i)
 }
 
 fun bar(i: TestWithEquals?) {
-    if (i == null) foo(<!ARGUMENT_TYPE_MISMATCH!>i<!>)
-    if (null == i) foo(<!ARGUMENT_TYPE_MISMATCH!>i<!>)
+    if (i == null) foo(i)
+    if (null == i) foo(i)
     when (i) {
-        null -> foo(<!ARGUMENT_TYPE_MISMATCH!>i<!>)
+        null -> foo(i)
     }
 }
 

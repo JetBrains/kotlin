@@ -14,6 +14,7 @@ KtFirConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirValueParameterSymbol:
   annotatedType: [] kotlin/Int
@@ -27,6 +28,7 @@ KtFirValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirConstructorSymbol:
   annotatedType: [] A
@@ -42,8 +44,11 @@ KtFirConstructorSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(x)]
+  valueParameters: [
+    KtFirValueParameterSymbol(x)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirValueParameterSymbol:
   annotatedType: [] kotlin/Int
@@ -57,6 +62,7 @@ KtFirValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirValueParameterSymbol:
   annotatedType: [] kotlin/String
@@ -70,6 +76,7 @@ KtFirValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirConstructorSymbol:
   annotatedType: [] A
@@ -85,8 +92,12 @@ KtFirConstructorSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(y), KtFirValueParameterSymbol(z)]
+  valueParameters: [
+    KtFirValueParameterSymbol(y)
+    KtFirValueParameterSymbol(z)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -102,7 +113,10 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null

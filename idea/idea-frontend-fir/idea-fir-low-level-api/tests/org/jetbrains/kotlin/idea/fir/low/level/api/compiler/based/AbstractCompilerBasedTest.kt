@@ -12,6 +12,13 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
+import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.providers.KotlinModuleInfoProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinPackageProviderFactory
+import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticPackageProviderFactory
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
@@ -25,19 +32,15 @@ import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
-import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
 import org.jetbrains.kotlin.fir.session.FirModuleInfoBasedModuleData
-import org.jetbrains.kotlin.idea.asJava.IDEKotlinAsJavaFirSupport
 import org.jetbrains.kotlin.idea.fir.low.level.api.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.*
-import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.DeclarationProviderTestImpl
-import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.KotlinOutOfBlockModificationTrackerFactoryTestImpl
-import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.KtPackageProviderTestImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.SealedClassInheritorsProviderTestImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSessionProvider
+import org.jetbrains.kotlin.light.classes.symbol.IDEKotlinAsJavaFirSupport
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -51,7 +54,8 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.frontend.fir.*
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.getAnalyzerServices
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
@@ -83,10 +87,9 @@ abstract class AbstractCompilerBasedTest : AbstractKotlinCompilerTest() {
 
         configureTest()
         defaultConfiguration(this)
-        unregisterAllFacades()
+
         useAdditionalService(::TestModuleInfoProvider)
         usePreAnalysisHandlers(::ModuleRegistrarPreAnalysisHandler.bind(disposable))
-        useFrontendFacades(::LowLevelFirFrontendFacade)
     }
 
     open fun TestConfigurationBuilder.configureTest() {}
@@ -96,7 +99,7 @@ abstract class AbstractCompilerBasedTest : AbstractKotlinCompilerTest() {
         testServices: TestServices
     ) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
 
-        override val additionalDirectives: List<DirectivesContainer>
+        override val directiveContainers: List<DirectivesContainer>
             get() = listOf(FirDiagnosticsDirectives)
 
         override fun analyze(module: TestModule): FirOutputArtifact {
@@ -188,7 +191,7 @@ class ModuleRegistrarPreAnalysisHandler(
                 testServices,
                 parentDisposable
             )
-            (project as MockProject).registerTestServices(configurator, allKtFiles)
+            (project as MockProject).registerTestServices(configurator, allKtFiles, testServices)
         }
     }
 }
@@ -231,7 +234,6 @@ class FirModuleResolveStateConfiguratorForSingleModuleTestImpl(
     testServices: TestServices,
     private val parentDisposable: Disposable,
 ) : FirModuleResolveStateConfigurator() {
-    private val moduleInfoProvider = testServices.moduleInfoProvider
     private val compilerConfigurationProvider = testServices.compilerConfigurationProvider
     private val librariesScope = ProjectScope.getLibrariesScope(project)//todo incorrect?
     private val sealedClassInheritorsProvider = SealedClassInheritorsProviderTestImpl()
@@ -280,11 +282,6 @@ class FirModuleResolveStateConfiguratorForSingleModuleTestImpl(
         return sealedClassInheritorsProvider
     }
 
-    override fun getModuleInfoFor(element: KtElement): ModuleInfo {
-        val containingFile = element.containingKtFile
-        return moduleInfoProvider.getModuleInfoByKtFile(containingFile)
-    }
-
     override fun configureSourceSession(session: FirSession) {
     }
 }
@@ -292,6 +289,7 @@ class FirModuleResolveStateConfiguratorForSingleModuleTestImpl(
 fun MockProject.registerTestServices(
     configurator: FirModuleResolveStateConfiguratorForSingleModuleTestImpl,
     allKtFiles: List<KtFile>,
+    testServices: TestServices,
 ) {
     registerService(
         FirModuleResolveStateConfigurator::class.java,
@@ -299,20 +297,22 @@ fun MockProject.registerTestServices(
     )
     registerService(FirIdeResolveStateService::class.java)
     registerService(
-        KotlinOutOfBlockModificationTrackerFactory::class.java,
-        KotlinOutOfBlockModificationTrackerFactoryTestImpl::class.java
+        KotlinModificationTrackerFactory::class.java,
+        KotlinStaticModificationTrackerFactory::class.java
     )
-    registerService(KtDeclarationProviderFactory::class.java, object : KtDeclarationProviderFactory() {
-        override fun createDeclarationProvider(searchScope: GlobalSearchScope): DeclarationProvider {
-            return DeclarationProviderTestImpl(searchScope, allKtFiles.filter { searchScope.contains(it.virtualFile) })
-        }
-    })
-    registerService(KtPackageProviderFactory::class.java, object : KtPackageProviderFactory() {
-        override fun createPackageProvider(searchScope: GlobalSearchScope): KtPackageProvider {
-            return KtPackageProviderTestImpl(searchScope, allKtFiles.filter { searchScope.contains(it.virtualFile) })
-        }
-    })
+    registerService(KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(allKtFiles))
+    registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(allKtFiles))
+    registerService(KotlinModuleInfoProvider::class.java, TestKotlinModuleInfoProvider(testServices))
     reRegisterJavaElementFinder(this)
+}
+
+private class TestKotlinModuleInfoProvider(testServices: TestServices): KotlinModuleInfoProvider() {
+    private val moduleInfoProvider = testServices.moduleInfoProvider
+    override fun getModuleInfo(element: KtElement): ModuleInfo {
+        val containingFile = element.containingKtFile
+        return moduleInfoProvider.getModuleInfoByKtFile(containingFile)
+    }
+
 }
 
 @OptIn(InvalidWayOfUsingAnalysisSession::class)
@@ -329,5 +329,6 @@ private fun reRegisterJavaElementFinder(project: Project) {
             IDEKotlinAsJavaFirSupport(project)
         )
     }
+    @Suppress("DEPRECATION")
     PsiElementFinder.EP.getPoint(project).registerExtension(JavaElementFinder(project))
 }

@@ -1,5 +1,5 @@
 <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>public<!> class B
-<!INCOMPATIBLE_MODIFIERS!>protected<!> <!INCOMPATIBLE_MODIFIERS!>internal<!> class C
+<!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> <!INCOMPATIBLE_MODIFIERS!>internal<!> class C
 
 <!INCOMPATIBLE_MODIFIERS!>final<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> class D
 <!INCOMPATIBLE_MODIFIERS!>final<!> <!INCOMPATIBLE_MODIFIERS!>open<!> class E
@@ -20,7 +20,7 @@ abstract class K {
     <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> val i2: Int
 }
 
-private open <!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>class L<!> : K()
+private open <!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>class L<!> : K()
 private abstract class M : K()
 
 class X {

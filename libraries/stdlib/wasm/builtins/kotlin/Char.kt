@@ -13,7 +13,7 @@ import kotlin.wasm.internal.*
  *
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.
  */
-@WasmPrimitive
+@WasmAutoboxed
 @Suppress("NOTHING_TO_INLINE")
 public class Char private constructor(public val value: Char) : Comparable<Char> {
     /**
@@ -76,7 +76,7 @@ public class Char private constructor(public val value: Char) : Comparable<Char>
         this.toInt().toShort()
 
     /** Returns the value of this character as a `Int`. */
-    @WasmReinterpret
+    @WasmNoOpCast
     public fun toInt(): Int =
         implementedAsIntrinsic
 
@@ -93,7 +93,7 @@ public class Char private constructor(public val value: Char) : Comparable<Char>
         this.toInt().toDouble()
 
     override fun toString(): String =
-        charToString(this)
+        String(charArrayOf(this))
 
     override fun hashCode(): Int =
         this.toInt().hashCode()
@@ -154,7 +154,3 @@ public class Char private constructor(public val value: Char) : Comparable<Char>
         public const val SIZE_BITS: Int = 16
     }
 }
-
-@WasmImport("runtime", "Char_toString")
-private fun charToString(c: Char): String = implementedAsIntrinsic
-

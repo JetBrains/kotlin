@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package abstract
 
 abstract class MyAbstractClass() {

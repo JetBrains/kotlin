@@ -49,7 +49,7 @@ interface NotExperimentalExtension : ExperimentalType {
 
 fun use(arg: NotExperimentalExtension) {
     arg.foo()
-    arg.<!EXPERIMENTAL_API_USAGE_ERROR!>bar<!>()
+    arg.<!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>bar<!>()
 }
 
 @Marker

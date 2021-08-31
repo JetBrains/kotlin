@@ -1,2 +1,14 @@
 public abstract interface TwoSuperclasses : R|kotlin/Any| {
+    public abstract interface Sub : R|test/TwoSuperclasses.Super1|, R|test/TwoSuperclasses.Super2| {
+        public abstract fun <C : R|ft<kotlin/CharSequence, kotlin/CharSequence?>|> foo(c: R|ft<C, C?>|): R|kotlin/Unit|
+
+    }
+    public abstract interface Super1 : R|kotlin/Any| {
+        public abstract fun <A : R|ft<kotlin/CharSequence, kotlin/CharSequence?>|> foo(a: R|ft<A, A?>|): R|kotlin/Unit|
+
+    }
+    public abstract interface Super2 : R|kotlin/Any| {
+        public abstract fun <B : R|ft<kotlin/CharSequence, kotlin/CharSequence?>|> foo(a: R|ft<B, B?>|): R|kotlin/Unit|
+
+    }
 }

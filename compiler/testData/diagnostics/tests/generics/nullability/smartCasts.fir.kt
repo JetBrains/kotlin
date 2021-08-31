@@ -9,7 +9,7 @@ fun CharSequence.bar4() {}
 fun <T : CharSequence?> foo(x: T) {
 
     if (x != null) {
-        if (x != null) {}
+        if (<!SENSELESS_COMPARISON!>x != null<!>) {}
 
         x.length
         x<!UNNECESSARY_SAFE_CALL!>?.<!>length

@@ -20,13 +20,14 @@ import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.compilerRunner.registerCommonizerClasspathConfigurationIfNecessary
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
@@ -38,12 +39,9 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.addNpmDependencyExtension
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.KOTLIN_COMPILER_EMBEDDABLE
-import org.jetbrains.kotlin.gradle.tasks.KOTLIN_KLIB_COMMONIZER_EMBEDDABLE
-import org.jetbrains.kotlin.gradle.tasks.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
-import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
@@ -51,7 +49,7 @@ import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
-abstract class KotlinBasePluginWrapper : Plugin<Project> {
+abstract class KotlinBasePluginWrapper: Plugin<Project> {
 
     private val log = Logging.getLogger(this.javaClass)
 
@@ -72,7 +70,6 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
     override fun apply(project: Project) {
         val kotlinPluginVersion = project.getKotlinPluginVersion()
 
-        val listenerRegistryHolder = BuildEventsListenerRegistryHolder.getInstance(project)
         val statisticsReporter = KotlinBuildStatsService.getOrCreateInstance(project)
         statisticsReporter?.report(StringMetrics.KOTLIN_COMPILER_VERSION, kotlinPluginVersion)
 
@@ -90,7 +87,7 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
         }
         project.registerCommonizerClasspathConfigurationIfNecessary()
 
-        val kotlinGradleBuildServices = KotlinGradleBuildServices.getInstance(project, listenerRegistryHolder)
+        val kotlinGradleBuildServices = KotlinGradleBuildServices.getInstance(project, BuildEventsListenerRegistryHolder.getInstance(project))
 
         kotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, kotlinPluginVersion)
 
@@ -148,6 +145,7 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
         KotlinUsages.setupAttributesMatchingStrategy(project, this)
         KotlinJsCompilerAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
         ProjectLocalConfigurations.setupAttributesMatchingStrategy(this)
+        CInteropKlibLibraryElements.setupAttributesMatchingStrategy(this)
     }
 
     internal abstract fun getPlugin(
@@ -196,8 +194,7 @@ open class Kotlin2JsPluginWrapper @Inject constructor(
         get() = Kotlin2JsProjectExtension::class
 }
 
-open class KotlinJsPluginWrapper @Inject constructor(
-) : KotlinBasePluginWrapper() {
+open class KotlinJsPluginWrapper : KotlinBasePluginWrapper() {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
         KotlinJsPlugin(project.getKotlinPluginVersion())
 
@@ -228,8 +225,7 @@ open class KotlinJsPluginWrapper @Inject constructor(
     override fun createTestRegistry(project: Project) = KotlinTestsRegistry(project, "test")
 }
 
-open class KotlinMultiplatformPluginWrapper @Inject constructor(
-) : KotlinBasePluginWrapper() {
+open class KotlinMultiplatformPluginWrapper : KotlinBasePluginWrapper() {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
         KotlinMultiplatformPlugin()
 
@@ -252,7 +248,9 @@ open class KotlinMultiplatformPluginWrapper @Inject constructor(
     }
 }
 
-open class KotlinPm20PluginWrapper @Inject constructor(private val objectFactory: ObjectFactory) : KotlinBasePluginWrapper() {
+open class KotlinPm20PluginWrapper @Inject constructor(
+    private val objectFactory: ObjectFactory
+) : KotlinBasePluginWrapper() {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
         objectFactory.newInstance(KotlinPm20GradlePlugin::class.java)
 

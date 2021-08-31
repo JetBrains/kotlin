@@ -95,12 +95,17 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             )
         }
 
-        override fun convertValueParameter(valueParameter: KtParameter, defaultTypeRef: FirTypeRef?): FirValueParameter {
+        override fun convertValueParameter(
+            valueParameter: KtParameter,
+            defaultTypeRef: FirTypeRef?,
+            valueParameterDeclaration: ValueParameterDeclaration
+        ): FirValueParameter {
             val replacementParameter = replacementApplier?.tryReplace(valueParameter) ?: valueParameter
             check(replacementParameter is KtParameter)
             return super.convertValueParameter(
                 valueParameter = replacementParameter,
-                defaultTypeRef = defaultTypeRef
+                defaultTypeRef = defaultTypeRef,
+                valueParameterDeclaration = valueParameterDeclaration
             )
         }
     }

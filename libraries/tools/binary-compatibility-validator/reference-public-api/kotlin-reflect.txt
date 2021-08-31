@@ -6,6 +6,10 @@ public final class kotlin/reflect/full/IllegalPropertyDelegateAccessException : 
 	public fun <init> (Ljava/lang/IllegalAccessException;)V
 }
 
+public final class kotlin/reflect/full/KAnnotatedElements {
+	public static final fun findAnnotations (Lkotlin/reflect/KAnnotatedElement;Lkotlin/reflect/KClass;)Ljava/util/List;
+}
+
 public final class kotlin/reflect/full/KCallables {
 	public static final fun callSuspend (Lkotlin/reflect/KCallable;[Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun callSuspendBy (Lkotlin/reflect/KCallable;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

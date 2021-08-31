@@ -422,8 +422,13 @@ class GccBasedLinker(targetProperties: GccConfigurables)
 class MingwLinker(targetProperties: MingwConfigurables)
     : LinkerFlags(targetProperties), MingwConfigurables by targetProperties {
 
-    private val ar = "$absoluteTargetToolchain/bin/ar"
-    private val linker = "$absoluteLlvmHome/bin/clang++"
+    // TODO: Maybe always use llvm-ar?
+    private val ar = if (HostManager.hostIsMingw) {
+        "$absoluteTargetToolchain/bin/ar"
+    } else {
+        "$absoluteLlvmHome/bin/llvm-ar"
+    }
+    private val clang = "$absoluteLlvmHome/bin/clang++"
 
     override val useCompilerDriverAsLinker: Boolean get() = true
 
@@ -440,11 +445,6 @@ class MingwLinker(targetProperties: MingwConfigurables)
         val dir = File("$absoluteLlvmHome/lib/clang/").listFiles.firstOrNull()?.absolutePath
         return if (dir != null) "$dir/lib/windows/libclang_rt.$libraryName-$targetSuffix.a" else null
     }
-
-    /**
-     * Handle to command that runs LLD -### (i.e. without actual linkage) with arguments from [finalLinkCommands].
-     */
-    var lldCompatibilityChecker: ((Command) -> Unit)? = null
 
     override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
                                    libraries: List<String>, linkerArgs: List<String>,
@@ -471,7 +471,13 @@ class MingwLinker(targetProperties: MingwConfigurables)
             // --gc-sections flag may affect profiling.
             // See https://clang.llvm.org/docs/SourceBasedCodeCoverage.html#drawbacks-and-limitations.
             // TODO: switching to lld may help.
-            if (optimize && !needsProfileLibrary) +linkerOptimizationFlags
+            if (optimize && !needsProfileLibrary) {
+                // TODO: Can be removed after LLD update.
+                //  See KT-48085.
+                if (!dynamic) {
+                    +linkerOptimizationFlags
+                }
+            }
             if (!debug) +linkerNoDebugFlags
             if (dynamic) +linkerDynamicFlags
             +libraries
@@ -482,30 +488,7 @@ class MingwLinker(targetProperties: MingwConfigurables)
             +additionalArguments
         }
 
-        if (HostManager.hostIsMingw) {
-            lldCompatibilityChecker?.let { checkLldCompatibiity ->
-                // -### flag allows to avoid actual linkage process.
-                val konanCxaDemangleSymbol = when (target) {
-                    KonanTarget.MINGW_X64 -> "Konan_cxa_demangle"
-                    KonanTarget.MINGW_X86 -> "_Konan_cxa_demangle"
-                    else -> error("Unexpected target: $target")
-                }
-                val lldCommand = Command(linker).constructLinkerArguments(
-                        // Add -fuse-ld to the end of the list to override previous appearances.
-                        additionalArguments = listOf("-fuse-ld=$absoluteLldLocation", "-Wl,-###"),
-                        // LLD doesn't support defsym.
-                        skipDefaultArguments = listOf("-Wl,--defsym,__cxa_demangle=$konanCxaDemangleSymbol")
-                )
-                checkLldCompatibiity(lldCommand)
-            }
-        }
-
-        return listOf(when {
-            HostManager.hostIsMingw -> Command(linker)
-            else -> Command("wine64", "$linker.exe")
-        }.constructLinkerArguments(
-                additionalArguments = listOf("-fuse-ld=${absoluteTargetToolchain}/bin/ld.exe")
-        ))
+        return listOf(Command(clang).constructLinkerArguments(additionalArguments = listOf("-fuse-ld=$absoluteLinker")))
     }
 }
 

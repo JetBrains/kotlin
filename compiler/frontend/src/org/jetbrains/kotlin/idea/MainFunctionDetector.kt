@@ -52,10 +52,6 @@ class MainFunctionDetector {
         this.languageVersionSettings = languageVersionSettings
     }
 
-    fun hasMain(declarations: List<KtDeclaration>): Boolean {
-        return findMainFunction(declarations) != null
-    }
-
     @JvmOverloads
     fun isMain(
         function: KtNamedFunction,
@@ -177,9 +173,6 @@ class MainFunctionDetector {
 
         return null
     }
-
-    private fun findMainFunction(declarations: List<KtDeclaration>) =
-        declarations.filterIsInstance<KtNamedFunction>().find { isMain(it) }
 
     private fun isParameterNumberSuitsForMain(
         parametersCount: Int,

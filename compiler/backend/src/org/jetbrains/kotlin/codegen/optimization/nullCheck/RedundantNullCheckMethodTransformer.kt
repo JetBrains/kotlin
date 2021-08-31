@@ -441,7 +441,7 @@ fun MethodNode.usesLocalExceptParameterNullCheck(index: Int): Boolean =
         it is VarInsnNode && it.opcode == Opcodes.ALOAD && it.`var` == index && !it.isParameterCheckedForNull()
     }
 
-internal fun AbstractInsnNode.isParameterCheckedForNull(): Boolean =
+fun AbstractInsnNode.isParameterCheckedForNull(): Boolean =
     next?.takeIf { it.opcode == Opcodes.LDC }?.next?.isCheckParameterIsNotNull() == true
 
 internal fun AbstractInsnNode.isCheckParameterIsNotNull() =

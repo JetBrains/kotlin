@@ -104,7 +104,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
             copyTypeParametersFrom(irFunction)
             val resultField = addField {
                 origin = JvmLoweredDeclarationOrigin.CONTINUATION_CLASS_RESULT_FIELD
-                name = Name.identifier(context.state.languageVersionSettings.dataFieldName())
+                name = Name.identifier(CONTINUATION_RESULT_FIELD_NAME)
                 type = context.ir.symbols.resultOfAnyType
                 visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
             }
@@ -377,7 +377,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
 // the result is called 'view', just to be consistent with old backend.
 private fun IrSimpleFunction.suspendFunctionViewOrStub(context: JvmBackendContext): IrSimpleFunction {
     if (!isSuspend) return this
-    return context.suspendFunctionOriginalToView.getOrPut(suspendFunctionOriginal()) { createSuspendFunctionStub(context) }
+    return context.suspendFunctionOriginalToView.getOrPut(this) { createSuspendFunctionStub(context) }
 }
 
 internal fun IrSimpleFunction.suspendFunctionOriginal(): IrSimpleFunction =

@@ -1,0 +1,2 @@
+expression: { /* Argument */ }
+expected type: java/lang/Runnable

@@ -3,16 +3,19 @@ package org.jetbrains.kotlin.konan.target
 // TODO: This all needs to go to konan.properties
 
 fun KonanTarget.supportsCodeCoverage(): Boolean =
-        this == KonanTarget.MINGW_X64 ||
-        this == KonanTarget.LINUX_X64 ||
-        this == KonanTarget.MACOS_X64 ||
-        this == KonanTarget.IOS_X64
+        // TODO: Disabled for now, because we don't support
+        //  coverage format from LLVM 11.
+        false
+//        this == KonanTarget.MINGW_X64 ||
+//        this == KonanTarget.LINUX_X64 ||
+//        this == KonanTarget.MACOS_X64 ||
+//        this == KonanTarget.IOS_X64
 
 fun KonanTarget.supportsMimallocAllocator(): Boolean =
      when(this) {
         is KonanTarget.LINUX_X64 -> true
-        is KonanTarget.MINGW_X86 -> true
-        is KonanTarget.MINGW_X64 -> true
+        is KonanTarget.MINGW_X86 -> HostManager.hostIsMingw
+        is KonanTarget.MINGW_X64 -> HostManager.hostIsMingw
         is KonanTarget.MACOS_X64 -> true
         is KonanTarget.LINUX_ARM64 -> true
         is KonanTarget.LINUX_ARM32_HFP -> true

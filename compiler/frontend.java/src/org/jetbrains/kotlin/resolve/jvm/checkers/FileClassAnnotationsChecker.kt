@@ -41,6 +41,7 @@ object FileClassAnnotationsChecker : AdditionalAnnotationChecker {
         entries: List<KtAnnotationEntry>,
         actualTargets: List<KotlinTarget>,
         trace: BindingTrace,
+        annotated: KtAnnotated?,
         languageVersionSettings: LanguageVersionSettings
     ) {
         val fileAnnotationsToCheck = arrayListOf<Pair<KtAnnotationEntry, ClassDescriptor>>()
@@ -49,7 +50,7 @@ object FileClassAnnotationsChecker : AdditionalAnnotationChecker {
             val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: continue
             val classDescriptor = descriptor.annotationClass ?: continue
             // This check matters for the applicable annotations only.
-            val applicableTargets = AnnotationChecker.applicableTargetSet(classDescriptor)
+            val applicableTargets = AnnotationChecker.applicableTargetSetFromTargetAnnotationOrNull(classDescriptor)
             if (applicableTargets == null || !applicableTargets.contains(KotlinTarget.FILE)) continue
             fileAnnotationsToCheck.add(Pair(entry, classDescriptor))
         }

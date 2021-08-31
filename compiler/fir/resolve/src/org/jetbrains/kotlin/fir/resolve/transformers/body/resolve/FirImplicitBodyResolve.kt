@@ -63,8 +63,12 @@ fun <F : FirClassLikeDeclaration> F.runContractAndBodiesResolutionForLocalClass(
     localClassesNavigationInfo: LocalClassesNavigationInfo,
     firTowerDataContextCollector: FirTowerDataContextCollector? = null
 ): F {
+    val prevDesignation =
+        (components.context.returnTypeCalculator as? ReturnTypeCalculatorWithJump)?.designationMapForLocalClasses ?: emptyMap()
+
     val (designationMap, targetedClasses) = localClassesNavigationInfo.run {
-        designationMap to parentForClass.keys + this@runContractAndBodiesResolutionForLocalClass
+        (prevDesignation + designationMap) to
+                (parentForClass.keys + this@runContractAndBodiesResolutionForLocalClass) + components.context.targetedLocalClasses
     }
 
     val implicitBodyResolveComputationSession =

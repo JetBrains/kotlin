@@ -381,6 +381,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var unrestrictedBuilderInference: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xself-upper-bound-inference",
+        description = "Support inferring type arguments based on only self upper bounds of the corresponding type parameters"
+    )
+    var selfUpperBoundInference: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
@@ -421,6 +427,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
             if (unrestrictedBuilderInference) {
                 put(LanguageFeature.UnrestrictedBuilderInference, LanguageFeature.State.ENABLED)
+            }
+
+            if (selfUpperBoundInference) {
+                put(LanguageFeature.TypeInferenceOnCallsWithSelfTypes, LanguageFeature.State.ENABLED)
             }
 
             if (newInference) {

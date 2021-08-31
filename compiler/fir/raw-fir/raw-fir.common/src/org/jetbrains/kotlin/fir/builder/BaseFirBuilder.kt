@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes.*
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnderscoreIsReserved
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -34,7 +36,9 @@ import org.jetbrains.kotlin.lexer.KtTokens.OPEN_QUOTE
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.parsing.*
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -108,7 +112,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
     fun callableIdForName(name: Name) =
         when {
-            context.className.shortNameOrSpecial() == ANONYMOUS_OBJECT_NAME -> CallableId(ANONYMOUS_CLASS_ID, name)
+            context.className.shortNameOrSpecial() == SpecialNames.ANONYMOUS -> CallableId(ANONYMOUS_CLASS_ID, name)
             context.className.isRoot && !context.inLocalContext -> CallableId(context.packageFqName, name)
             context.inLocalContext -> {
                 val pathFqName =
@@ -209,8 +213,12 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
     }
 
-    fun FirLoopBuilder.prepareTarget(): FirLoopTarget {
-        label = context.firLabels.pop()
+    fun FirLoopBuilder.prepareTarget(): FirLoopTarget = prepareTarget(context.firLabels.pop())
+
+    fun stashLabel(): FirLabel? = context.firLabels.pop()
+
+    fun FirLoopBuilder.prepareTarget(label: FirLabel?): FirLoopTarget {
+        this.label = label
         val target = FirLoopTarget(label?.name)
         context.firLoopTargets += target
         return target
@@ -487,7 +495,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             val initialValueVar = generateTemporaryVariable(
                 baseModuleData,
                 desugaredSource,
-                Name.special("<unary>"),
+                SpecialNames.UNARY,
                 unwrappedArgument.convert()
             )
 
@@ -625,7 +633,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             val initialValueVar = generateTemporaryVariable(
                 baseModuleData,
                 desugaredSource,
-                Name.special("<unary>"),
+                SpecialNames.UNARY,
                 firArgument
             )
 
@@ -765,7 +773,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             val initialValueVar = generateTemporaryVariable(
                 baseModuleData,
                 desugaredSource,
-                Name.special("<unary>"),
+                SpecialNames.UNARY,
                 firArgument
             )
 
@@ -1083,7 +1091,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             classTypeRefWithCorrectSourceKind: FirTypeRef,
             firPropertyReturnTypeRefWithCorrectSourceKind: FirTypeRef
         ) =
-            buildQualifiedAccessExpression {
+             buildPropertyAccessExpression {
                 source = parameterSource
                 typeRef = firPropertyReturnTypeRefWithCorrectSourceKind
                 dispatchReceiver = buildThisReceiverExpression {
@@ -1174,12 +1182,12 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
     protected fun FirCallableDeclaration.initContainingClassAttr() {
         val currentDispatchReceiverType = currentDispatchReceiverType() ?: return
-        containingClassAttr = currentDispatchReceiverType.lookupTag
+        containingClassForStaticMemberAttr = currentDispatchReceiverType.lookupTag
     }
 
-    private fun FirVariable.toQualifiedAccess(): FirQualifiedAccessExpression = buildQualifiedAccessExpression {
+    private fun FirVariable.toQualifiedAccess(): FirQualifiedAccessExpression = buildPropertyAccessExpression {
         calleeReference = buildResolvedNamedReference {
-            source = this@toQualifiedAccess.source
+            source = this@toQualifiedAccess.source?.fakeElement(FirFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
             name = this@toQualifiedAccess.name
             resolvedSymbol = this@toQualifiedAccess.symbol
         }
@@ -1195,12 +1203,55 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
     }
 
-    /**** Common utils ****/
-    companion object {
-        val ANONYMOUS_OBJECT_NAME = Name.special("<anonymous>")
+    protected fun buildLabelAndErrorSource(rawName: String, source: FirSourceElement): Pair<FirLabel, FirSourceElement?> {
+        val firLabel = buildLabel {
+            name = KtPsiUtil.unquoteIdentifier(rawName)
+            this.source = source
+        }
 
-        val DESTRUCTURING_NAME = Name.special("<destruct>")
+        return Pair(firLabel, if (rawName.isUnderscore) firLabel.source else null)
+    }
 
-        val ITERATOR_NAME = Name.special("<iterator>")
+    protected fun buildExpressionWithErrorLabel(
+        element: FirElement?,
+        errorLabelSource: FirSourceElement?,
+        elementSource: FirSourceElement
+    ): FirElement {
+        return if (element != null) {
+            if (errorLabelSource != null) {
+                buildErrorExpression {
+                    this.source = element.source
+                    this.expression = element as? FirExpression
+                    diagnostic = ConeUnderscoreIsReserved(errorLabelSource)
+                }
+            } else {
+                element
+            }
+        } else {
+            buildErrorExpression(elementSource, ConeSimpleDiagnostic("Empty label", DiagnosticKind.Syntax))
+        }
+    }
+
+    protected fun convertValueParameterName(
+        safeName: Name,
+        rawName: String?,
+        valueParameterDeclaration: ValueParameterDeclaration
+    ): Name {
+        return if (valueParameterDeclaration == ValueParameterDeclaration.LAMBDA && rawName == "_"
+            ||
+            valueParameterDeclaration == ValueParameterDeclaration.CATCH &&
+            safeName.asString() == "_" &&
+            baseSession.safeLanguageVersionSettings?.supportsFeature(LanguageFeature.ForbidReferencingToUnderscoreNamedParameterOfCatchBlock) == true
+        ) {
+            SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+        } else {
+            safeName
+        }
+    }
+
+    enum class ValueParameterDeclaration {
+        OTHER,
+        LAMBDA,
+        CATCH
     }
 }

@@ -1,2 +1,14 @@
 public abstract interface InheritedOverridden : R|kotlin/Any| {
+    public open class Sub : R|test/InheritedOverridden.Super| {
+        public open fun foo(r: R|ft<java/lang/Runnable, java/lang/Runnable?>|): R|kotlin/Unit|
+
+        public constructor(): R|test/InheritedOverridden.Sub|
+
+    }
+    public open class Super : R|kotlin/Any| {
+        public open fun foo(r: R|ft<java/lang/Runnable, java/lang/Runnable?>|): R|kotlin/Unit|
+
+        public constructor(): R|test/InheritedOverridden.Super|
+
+    }
 }

@@ -1,0 +1,123 @@
+@kotlin.annotation.Retention(value=BINARY)
+@kotlin.jvm.internal.RepeatableContainer
+@java.lang.annotation.Retention(value=CLASS)
+@kotlin.Metadata
+public annotation class RetentionBinary$Container {
+    // source: 'retentionAndTarget.kt'
+    public abstract method value(): RetentionBinary[]
+    public inner class RetentionBinary$Container
+}
+
+@kotlin.annotation.Repeatable
+@kotlin.annotation.Retention(value=BINARY)
+@java.lang.annotation.Retention(value=CLASS)
+@java.lang.annotation.Repeatable(value=RetentionBinary$Container::class)
+@kotlin.Metadata
+public annotation class RetentionBinary {
+    // source: 'retentionAndTarget.kt'
+    public inner class RetentionBinary$Container
+}
+
+@kotlin.jvm.internal.RepeatableContainer
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class RetentionRuntime$Container {
+    // source: 'retentionAndTarget.kt'
+    public abstract method value(): RetentionRuntime[]
+    public inner class RetentionRuntime$Container
+}
+
+@kotlin.annotation.Repeatable
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Repeatable(value=RetentionRuntime$Container::class)
+@kotlin.Metadata
+public annotation class RetentionRuntime {
+    // source: 'retentionAndTarget.kt'
+    public inner class RetentionRuntime$Container
+}
+
+@kotlin.annotation.Retention(value=SOURCE)
+@kotlin.jvm.internal.RepeatableContainer
+@java.lang.annotation.Retention(value=SOURCE)
+@kotlin.Metadata
+public annotation class RetentionSource$Container {
+    // source: 'retentionAndTarget.kt'
+    public abstract method value(): RetentionSource[]
+    public inner class RetentionSource$Container
+}
+
+@kotlin.annotation.Repeatable
+@kotlin.annotation.Retention(value=SOURCE)
+@java.lang.annotation.Retention(value=SOURCE)
+@java.lang.annotation.Repeatable(value=RetentionSource$Container::class)
+@kotlin.Metadata
+public annotation class RetentionSource {
+    // source: 'retentionAndTarget.kt'
+    public inner class RetentionSource$Container
+}
+
+@kotlin.annotation.Target(allowedTargets=[ANNOTATION_CLASS, TYPE])
+@kotlin.jvm.internal.RepeatableContainer
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[ANNOTATION_TYPE, TYPE_USE])
+@kotlin.Metadata
+public annotation class TargetAnnotationClassAndTypeOnly$Container {
+    // source: 'retentionAndTarget.kt'
+    public abstract method value(): TargetAnnotationClassAndTypeOnly[]
+    public inner class TargetAnnotationClassAndTypeOnly$Container
+}
+
+@kotlin.annotation.Repeatable
+@kotlin.annotation.Target(allowedTargets=[ANNOTATION_CLASS, TYPE])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[ANNOTATION_TYPE, TYPE_USE])
+@java.lang.annotation.Repeatable(value=TargetAnnotationClassAndTypeOnly$Container::class)
+@kotlin.Metadata
+public annotation class TargetAnnotationClassAndTypeOnly {
+    // source: 'retentionAndTarget.kt'
+    public inner class TargetAnnotationClassAndTypeOnly$Container
+}
+
+@kotlin.annotation.Target(allowedTargets=[CLASS])
+@kotlin.jvm.internal.RepeatableContainer
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[TYPE])
+@kotlin.Metadata
+public annotation class TargetClassOnly$Container {
+    // source: 'retentionAndTarget.kt'
+    public abstract method value(): TargetClassOnly[]
+    public inner class TargetClassOnly$Container
+}
+
+@kotlin.annotation.Repeatable
+@kotlin.annotation.Target(allowedTargets=[CLASS])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[TYPE])
+@java.lang.annotation.Repeatable(value=TargetClassOnly$Container::class)
+@kotlin.Metadata
+public annotation class TargetClassOnly {
+    // source: 'retentionAndTarget.kt'
+    public inner class TargetClassOnly$Container
+}
+
+@kotlin.annotation.Target(allowedTargets=[])
+@kotlin.jvm.internal.RepeatableContainer
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[])
+@kotlin.Metadata
+public annotation class TargetEmpty$Container {
+    // source: 'retentionAndTarget.kt'
+    public abstract method value(): TargetEmpty[]
+    public inner class TargetEmpty$Container
+}
+
+@kotlin.annotation.Repeatable
+@kotlin.annotation.Target(allowedTargets=[])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[])
+@java.lang.annotation.Repeatable(value=TargetEmpty$Container::class)
+@kotlin.Metadata
+public annotation class TargetEmpty {
+    // source: 'retentionAndTarget.kt'
+    public inner class TargetEmpty$Container
+}

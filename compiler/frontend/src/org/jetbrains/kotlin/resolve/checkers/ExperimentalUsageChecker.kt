@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
-import org.jetbrains.kotlin.resolve.deprecation.CoroutineCompatibilitySupport
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationSettings
@@ -176,7 +175,12 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             val result = SmartSet.create<Experimentality>()
             if (this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
                 for (overridden in overriddenDescriptors) {
-                    result.addAll(overridden.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings, visited, useFutureError))
+                    result.addAll(overridden.loadExperimentalities(
+                        moduleAnnotationsResolver,
+                        languageVersionSettings,
+                        visited,
+                        useFutureError = !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures)
+                    ))
                 }
                 return result
             }
@@ -333,7 +337,6 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             val deprecationResolver = DeprecationResolver(
                 LockBasedStorageManager("ExperimentalUsageChecker"),
                 languageVersionSettings,
-                CoroutineCompatibilitySupport.ENABLED,
                 DeprecationSettings.Default
             )
 

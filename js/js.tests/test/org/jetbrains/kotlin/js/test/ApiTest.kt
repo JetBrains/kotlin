@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.ir.backend.js.MainModule
+import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -72,13 +73,19 @@ class ApiTest : KotlinTestWithEnvironment() {
             val project = environment.project
             val configuration = environment.configuration
 
-            return loadIr(
+            val klibModule = ModulesStructure(
                 project,
                 MainModule.Klib(File(fullRuntimeKlib).canonicalPath),
-                AnalyzerWithCompilerReport(configuration),
                 configuration,
                 listOf(fullRuntimeKlib),
                 emptyList(),
+                false,
+                false,
+                emptyMap()
+            )
+
+            return loadIr(
+                klibModule,
                 IrFactoryImpl,
                 verifySignatures = true
             ).module.descriptor.packagesSerialized()

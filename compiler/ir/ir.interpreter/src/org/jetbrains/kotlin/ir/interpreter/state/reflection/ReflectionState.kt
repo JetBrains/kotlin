@@ -5,53 +5,36 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state.reflection
 
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
+import org.jetbrains.kotlin.ir.interpreter.stack.Fields
 import org.jetbrains.kotlin.ir.interpreter.state.State
-import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.render
 import kotlin.math.min
 
 internal abstract class ReflectionState : State {
-    override val fields: MutableList<Variable> = mutableListOf()
+    override val fields: Fields = mutableMapOf()
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? = null
-
-    protected fun IrClass.getIrClassOfReflectionFromList(name: String): IrClass {
-        val property = this.declarations.single { it.nameForIrSerialization.asString() == name } as IrProperty
-        val list = property.getter!!.returnType as IrSimpleType
-        return list.arguments.single().typeOrNull!!.classOrNull!!.owner
-    }
-
-    protected fun IrClass.getIrClassOfReflection(name: String): IrClass {
-        val property = this.declarations.single { it.nameForIrSerialization.asString() == name } as IrProperty
-        val type = property.getter!!.returnType as IrSimpleType
-        return type.classOrNull!!.owner
-    }
 
     private fun renderReceivers(dispatchReceiver: IrType?, extensionReceiver: IrType?): String {
         return buildString {
             if (dispatchReceiver != null) {
-                append(dispatchReceiver.renderType())
-                append(".")
+                append(dispatchReceiver.renderType()).append(".")
             }
-            val addParentheses = dispatchReceiver != null && extensionReceiver != null
-            if (addParentheses) append("(")
+
             if (extensionReceiver != null) {
-                append(extensionReceiver.renderType())
-                append(".")
+                val addParentheses = dispatchReceiver != null
+                if (addParentheses) append("(")
+                append(extensionReceiver.renderType()).append(".")
+                if (addParentheses) append(")")
             }
-            if (addParentheses) append(")")
         }
     }
 
@@ -79,7 +62,12 @@ internal abstract class ReflectionState : State {
     }
 
     protected fun IrType.renderType(): String {
-        var renderedType = this.render()
+        var renderedType = this.render().replace("<root>.", "")
+        if (renderedType.contains("<get-")) {
+            val startIndex = renderedType.indexOf("<get-")
+            val lastTriangle = renderedType.indexOf('>', startIndex) + 1
+            renderedType = renderedType.replaceRange(startIndex, lastTriangle, "get")
+        }
         do {
             val index = renderedType.indexOf(" of ")
             if (index == -1) break

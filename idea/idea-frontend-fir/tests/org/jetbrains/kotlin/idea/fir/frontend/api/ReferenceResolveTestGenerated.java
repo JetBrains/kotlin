@@ -577,6 +577,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     }
 
     @Test
+    @TestMetadata("WrongNumberOfTypeArguments4.kt")
+    public void testWrongNumberOfTypeArguments4() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/referenceResolve/WrongNumberOfTypeArguments4.kt");
+    }
+
+    @Test
     @TestMetadata("WrongNumberOfTypeArgumentsInSupertype.kt")
     public void testWrongNumberOfTypeArgumentsInSupertype() throws Exception {
         runTest("idea/idea-frontend-fir/testData/referenceResolve/WrongNumberOfTypeArgumentsInSupertype.kt");
@@ -966,6 +972,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         }
 
         @Test
+        @TestMetadata("ResolveNamedCompanionInCompanionType.kt")
+        public void testResolveNamedCompanionInCompanionType() throws Exception {
+            runTest("idea/idea-frontend-fir/testData/referenceResolve/nestedTypes/ResolveNamedCompanionInCompanionType.kt");
+        }
+
+        @Test
         @TestMetadata("ResolveStartOfPackageInType.kt")
         public void testResolveStartOfPackageInType() throws Exception {
             runTest("idea/idea-frontend-fir/testData/referenceResolve/nestedTypes/ResolveStartOfPackageInType.kt");
@@ -1073,6 +1085,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         @TestMetadata("callableReference3.kt")
         public void testCallableReference3() throws Exception {
             runTest("idea/idea-frontend-fir/testData/referenceResolve/qualifiedAccess/callableReference3.kt");
+        }
+
+        @Test
+        @TestMetadata("nullSafeCallExpression.kt")
+        public void testNullSafeCallExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/testData/referenceResolve/qualifiedAccess/nullSafeCallExpression.kt");
         }
 
         @Test

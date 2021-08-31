@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -298,7 +299,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
     private String getName(ClassDescriptor classDescriptor) {
         String base = peekFromStack(nameStack);
-        Name descriptorName = safeIdentifier(classDescriptor.getName());
+        Name descriptorName = SpecialNames.safeIdentifier(classDescriptor.getName());
         if (DescriptorUtils.isTopLevelDeclaration(classDescriptor)) {
             return base.isEmpty() ? descriptorName.asString() : base + '/' + descriptorName;
         }
@@ -476,7 +477,6 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         SimpleFunctionDescriptor jvmSuspendFunctionView =
                 CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
                         functionDescriptor,
-                        languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
                         this.bindingContext
                 );
 
@@ -713,54 +713,6 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         super.visitCallExpression(expression);
         checkSamCall(expression);
         checkCrossinlineCall(expression);
-        recordSuspendFunctionTypeWrapperForArguments(expression);
-    }
-
-    private void recordSuspendFunctionTypeWrapperForArguments(@NotNull KtCallExpression expression) {
-        ResolvedCall<?> call = CallUtilKt.getResolvedCall(expression, bindingContext);
-        if (call == null) return;
-
-        CallableDescriptor descriptor = call.getResultingDescriptor();
-        if (!CodegenUtilKt.needsExperimentalCoroutinesWrapper(descriptor)) return;
-
-        List<ResolvedValueArgument> argumentsByIndex = call.getValueArgumentsByIndex();
-        if (argumentsByIndex == null) return;
-
-        for (ValueParameterDescriptor parameter : descriptor.getValueParameters()) {
-            ResolvedValueArgument resolvedValueArgument = argumentsByIndex.get(parameter.getIndex());
-            if (!(resolvedValueArgument instanceof ExpressionValueArgument)) continue;
-            ValueArgument valueArgument = ((ExpressionValueArgument) resolvedValueArgument).getValueArgument();
-            if (valueArgument == null) continue;
-            KtExpression argumentExpression = valueArgument.getArgumentExpression();
-            if (argumentExpression == null) continue;
-
-            recordSuspendFunctionTypeWrapperForArgument(parameter, argumentExpression);
-        }
-
-        ReceiverValue receiver = call.getExtensionReceiver();
-        if (descriptor.getExtensionReceiverParameter() != null && receiver instanceof ExpressionReceiver) {
-            recordSuspendFunctionTypeWrapperForArgument(
-                    descriptor.getExtensionReceiverParameter(),
-                    ((ExpressionReceiver) receiver).getExpression()
-            );
-        }
-    }
-
-    private void recordSuspendFunctionTypeWrapperForArgument(ParameterDescriptor parameter, KtExpression argumentExpression) {
-        if (FunctionTypesKt.isSuspendFunctionTypeOrSubtype(parameter.getType())) {
-
-            // SuspendFunctionN type is mapped to is mapped to FunctionTypeN+1, but we also need to remove an argument for return type
-            // So, it could be parameter.getType().getArguments().size() + 1 - 1
-            int functionTypeArity = parameter.getType().getArguments().size();
-
-            Type functionType = Type.getObjectType(NUMBERED_FUNCTION_PREFIX + functionTypeArity);
-
-            bindingTrace.record(
-                    FUNCTION_TYPE_FOR_SUSPEND_WRAPPER,
-                    argumentExpression,
-                    functionType
-            );
-        }
     }
 
     private void checkCrossinlineCall(@NotNull KtCallExpression expression) {
@@ -1060,7 +1012,15 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         ClassDescriptor classDescriptor = (ClassDescriptor) type.getConstructor().getDeclarationDescriptor();
         assert classDescriptor != null : "because it's enum";
 
-        WhenByEnumsMapping mapping = new WhenByEnumsMapping(classDescriptor, currentClassName, fieldNumber);
+        boolean isPublicAbi = false;
+        for (FunctionDescriptor descriptor : functionsStack) {
+            if (descriptor.isInline()) {
+                isPublicAbi = !DescriptorVisibilities.isPrivate(descriptor.getVisibility());
+                break;
+            }
+        }
+
+        WhenByEnumsMapping mapping = new WhenByEnumsMapping(classDescriptor, currentClassName, fieldNumber, isPublicAbi);
 
         for (ConstantValue<?> constant : switchCodegenProvider.getAllConstants(expression)) {
             if (constant instanceof NullValue) continue;

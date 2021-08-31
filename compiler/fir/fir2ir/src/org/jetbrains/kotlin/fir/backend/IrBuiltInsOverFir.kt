@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.reflect.KProperty
@@ -744,7 +745,7 @@ class IrBuiltInsOverFir(
         visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC,
         build: IrConstructor.() -> Unit = {}
     ): IrConstructorSymbol {
-        val name = Name.special("<init>")
+        val name = SpecialNames.INIT
         val signature =
             IdSignature.CommonSignature(this.packageFqName!!.asString(), classId!!.relativeClassName.child(name).asString(), null, 0)
         val ctor = irFactory.createConstructor(

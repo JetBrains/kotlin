@@ -15,7 +15,7 @@ interface FirTarget<E : FirTargetElement> {
 fun foo(target: FirTarget<FirFunction<*>>, property: FirProperty) {
     val functionTarget = target.labeledElement
     val x = (functionTarget as? FirFunction)?.let {
-        if (<!EQUALITY_NOT_APPLICABLE_WARNING!>property.getter === functionTarget<!>) {
+        if (property.getter === functionTarget) {
             return@let 1
         }
         0

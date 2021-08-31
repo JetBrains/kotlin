@@ -96,9 +96,9 @@ fun case_8(x: Boolean?) {
 // TESTCASE NUMBER: 9
 fun case_9(x: Boolean?) {
     while (x ?: return)
-    while (x == null)
+    while (<!SENSELESS_COMPARISON!>x == null<!>)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Nothing")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>.equals(10)
 }
 
@@ -196,11 +196,11 @@ fun case_17(x: Boolean?, y: Boolean?) {
             true -> x!!
             false -> x!!
             null -> if (true) if (true) if (true) if (true) if (true) when (y) {
-                true -> when (y) {
+                <!SENSELESS_COMPARISON!>true<!> -> when (y) {
                     else -> if (true) if (true) if (true) if (true) if (true) x!! else x!! else x!! else x!! else x!! else x!!
                 }
-                false -> x!!
-                null -> if (true) if (true) if (true) if (true) if (true) x!! else x!! else x!! else x!! else x!! else x!!
+                <!SENSELESS_COMPARISON!>false<!> -> x!!
+                <!SENSELESS_NULL_IN_WHEN!>null<!> -> if (true) if (true) if (true) if (true) if (true) x!! else x!! else x!! else x!! else x!! else x!!
             } else x!! else x!! else x!! else x!! else x!!
         }
         break@loop

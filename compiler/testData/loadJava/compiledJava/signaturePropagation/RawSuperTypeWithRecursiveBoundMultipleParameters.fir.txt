@@ -1,4 +1,20 @@
 public open class RawSuperTypeWithRecursiveBoundMultipleParameters : R|kotlin/Any| {
     public constructor(): R|test/RawSuperTypeWithRecursiveBoundMultipleParameters|
 
+    public open inner class Derived : R|kotlin/Any|, R|test/RawSuperTypeWithRecursiveBoundMultipleParameters.Super<ft<kotlin/Any, kotlin/Any?>, ft<test/RawSuperTypeWithRecursiveBoundMultipleParameters.Super<*, *>, test/RawSuperTypeWithRecursiveBoundMultipleParameters.Super<*, *>?>>| {
+        public open fun foo(o: R|ft<kotlin/Any, kotlin/Any?>|, o1: R|ft<kotlin/Any, kotlin/Any?>|): R|kotlin/Unit|
+
+        @R|java/lang/Override|() public open fun foo(r: R|ft<kotlin/Any, kotlin/Any?>|, t: R|ft<test/RawSuperTypeWithRecursiveBoundMultipleParameters.Super<ft<kotlin/Any, kotlin/Any?>, ft<test/RawSuperTypeWithRecursiveBoundMultipleParameters.Super<*, *>, test/RawSuperTypeWithRecursiveBoundMultipleParameters.Super<*, *>?>>, test/RawSuperTypeWithRecursiveBoundMultipleParameters.Super<*, *>?>|): R|kotlin/Unit|
+
+        @R|java/lang/Override|() public open fun dummy(): R|kotlin/Unit|
+
+        public constructor(): R|test/RawSuperTypeWithRecursiveBoundMultipleParameters.Derived|
+
+    }
+    public abstract interface Super<R : R|ft<kotlin/Any, kotlin/Any?>|, T : R|ft<test/RawSuperTypeWithRecursiveBoundMultipleParameters.Super<ft<R, R?>, ft<T, T?>>, test/RawSuperTypeWithRecursiveBoundMultipleParameters.Super<ft<R, R?>, ft<T, T?>>?>|> : R|kotlin/Any| {
+        public abstract fun foo(r: R|ft<R, R?>|, t: R|ft<T, T?>|): R|kotlin/Unit|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
 }

@@ -29,20 +29,15 @@ public class Derived extends Base { }
 
 // FILE: main.kt
 fun main(a: IgnoreAnnotations, x: Derived): Unit {
-    // jspecify_nullness_mismatch
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(x, null)<!>.foo()
-    // jspecify_nullness_mismatch, jspecify_nullness_mismatch
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, x)<!>.foo()
+    a.foo(x, null)<!UNSAFE_CALL!>.<!>foo()
+    a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, x)<!UNSAFE_CALL!>.<!>foo()
 
-    // jspecify_nullness_mismatch
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.field<!>.foo()
+    a.field<!UNSAFE_CALL!>.<!>foo()
 
-    // jspecify_nullness_mismatch
-    a.everythingNotNullable(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>).foo()
+    a.everythingNotNullable(<!NULL_FOR_NONNULL_TYPE!>null<!>).foo()
     a.everythingNotNullable(x).foo()
 
-    // jspecify_nullness_mismatch
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.everythingNullable(null)<!>.foo()
+    a.everythingNullable(null)<!UNSAFE_CALL!>.<!>foo()
 
     a.everythingUnknown(null).foo()
 }

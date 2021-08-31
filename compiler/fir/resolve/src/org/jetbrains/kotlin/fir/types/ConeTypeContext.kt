@@ -16,23 +16,24 @@ import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.resolve.correspondingSupertypesCache
+import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext.SupertypesPolicy.DoCustomTransform
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext.SupertypesPolicy.LowerIfFlexible
+import org.jetbrains.kotlin.types.TypeCheckerState
+import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.DoCustomTransform
+import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.LowerIfFlexible
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.*
 
@@ -405,15 +406,15 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun SimpleTypeMarker.isStubType(): Boolean {
-        return this is ConeStubType // TODO: distinguish stub types for builder inference and for subtyping
+        return this is ConeStubType
     }
 
     override fun SimpleTypeMarker.isStubTypeForVariableInSubtyping(): Boolean {
-        return this is ConeStubType // TODO: distinguish stub types for builder inference and for subtyping
+        return this is ConeStubTypeForTypeVariableInSubtyping
     }
 
     override fun SimpleTypeMarker.isStubTypeForBuilderInference(): Boolean {
-        return this is ConeStubType // TODO: distinguish stub types for builder inference and for subtyping
+        return this is ConeStubTypeForBuilderInference
     }
 
     override fun intersectTypes(types: List<SimpleTypeMarker>): SimpleTypeMarker {
@@ -443,6 +444,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
                 }
             }
             is ConeIntersectionType -> intersectedTypes.all { it.isNullableType() }
+            is ConeClassLikeType -> directExpansionType(session)?.isNullableType() ?: false
             else -> false
         }
     }
@@ -563,18 +565,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     private fun TypeConstructorMarker.unknownConstructorError(): Nothing {
         error("Unknown type constructor: ${this::class}")
     }
-}
 
-class ConeTypeCheckerContext(
-    override val isErrorTypeEqualsToAnything: Boolean,
-    override val isStubTypeEqualsToAnything: Boolean,
-    override val typeSystemContext: ConeInferenceContext,
-    val kotlinTypePreparator: ConeTypePreparator = ConeTypePreparator.getDefault(typeSystemContext.session),
-) : AbstractTypeCheckerContext() {
-
-    val session: FirSession = typeSystemContext.session
-
-    override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy = with(typeSystemContext) {
+    override fun substitutionSupertypePolicy(type: SimpleTypeMarker): TypeCheckerState.SupertypesPolicy {
         if (type.argumentsCount() == 0) return LowerIfFlexible
         require(type is ConeKotlinType)
         val declaration = when (type) {
@@ -593,7 +585,7 @@ class ConeTypeCheckerContext(
             ConeSubstitutor.Empty
         }
         return object : DoCustomTransform() {
-            override fun transformType(context: AbstractTypeCheckerContext, type: KotlinTypeMarker): SimpleTypeMarker {
+            override fun transformType(state: TypeCheckerState, type: KotlinTypeMarker): SimpleTypeMarker {
                 val lowerBound = type.lowerBoundIfFlexible()
                 require(lowerBound is ConeKotlinType)
                 return substitutor.substituteOrSelf(lowerBound) as SimpleTypeMarker
@@ -602,14 +594,7 @@ class ConeTypeCheckerContext(
         }
     }
 
-    override fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
-        return kotlinTypePreparator.prepareType(type)
+    override fun KotlinTypeMarker.isTypeVariableType(): Boolean {
+        return this is ConeTypeVariableType
     }
-
-    override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
-        return kotlinTypePreparator.prepareType(type)
-    }
-
-    override val KotlinTypeMarker.isAllowedTypeVariable: Boolean
-        get() = this is ConeKotlinType && this is ConeTypeVariableType
 }

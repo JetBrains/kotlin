@@ -8,12 +8,12 @@ package kotlin.script.experimental.jvmhost.test
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmReplCompilerBase
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import org.junit.Assert
 import org.junit.Test
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.BasicJvmReplEvaluator
-import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
@@ -212,7 +212,7 @@ class ReplTest : TestCase() {
 
     @Test
     fun testAddNewAnnotationHandler() {
-        val replCompiler = KJvmReplCompilerBase.create(defaultJvmScriptingHostConfiguration)
+        val replCompiler = KJvmReplCompilerBase<ReplCodeAnalyzerBase>()
         val replEvaluator = BasicJvmReplEvaluator()
         val compilationConfiguration = ScriptCompilationConfiguration().with {
             updateClasspath(classpathFromClass<NewAnn>())
@@ -224,7 +224,10 @@ class ReplTest : TestCase() {
                 replEvaluator.eval(it, evaluationConfiguration)
             }
         }
-        assertTrue("Expecting 1 got $res0", res0 is ResultWithDiagnostics.Success && (res0.value.get().result as ResultValue.Value).value == 1)
+        assertTrue(
+            "Expecting 1 got $res0",
+            res0 is ResultWithDiagnostics.Success && (res0.value.get().result as ResultValue.Value).value == 1
+        )
 
         var handlerInvoked = false
 
@@ -239,11 +242,17 @@ class ReplTest : TestCase() {
         }
 
         val res1 = runBlocking {
-            replCompiler.compile("@file:kotlin.script.experimental.jvmhost.test.NewAnn()\n2".toScriptSource("Line_1.kts"), compilationConfiguration2).onSuccess {
+            replCompiler.compile(
+                "@file:kotlin.script.experimental.jvmhost.test.NewAnn()\n2".toScriptSource("Line_1.kts"),
+                compilationConfiguration2
+            ).onSuccess {
                 replEvaluator.eval(it, evaluationConfiguration)
             }
         }
-        assertTrue("Expecting 2 got $res1", res1 is ResultWithDiagnostics.Success && (res1.value.get().result as ResultValue.Value).value == 2)
+        assertTrue(
+            "Expecting 2 got $res1",
+            res1 is ResultWithDiagnostics.Success && (res1.value.get().result as ResultValue.Value).value == 2
+        )
 
         assertTrue("Refinement handler on annotation is not invoked", handlerInvoked)
     }
@@ -275,7 +284,7 @@ class ReplTest : TestCase() {
             evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
             limit: Int = 0
         ): Sequence<ResultWithDiagnostics<EvaluatedSnippet>> {
-            val replCompiler = KJvmReplCompilerBase.create(defaultJvmScriptingHostConfiguration)
+            val replCompiler = KJvmReplCompilerBase<ReplCodeAnalyzerBase>()
             val replEvaluator = BasicJvmReplEvaluator()
             val currentEvalConfig = evaluationConfiguration ?: ScriptEvaluationConfiguration()
             val snipetsLimited = if (limit == 0) snippets else snippets.take(limit)

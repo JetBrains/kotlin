@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.utils.withExtension
 import java.io.File
 
 class FirIrDumpIdenticalChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
-    override val directives: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
     private val simpleDumpChecker = object : FirIdenticalCheckerHelper(testServices) {

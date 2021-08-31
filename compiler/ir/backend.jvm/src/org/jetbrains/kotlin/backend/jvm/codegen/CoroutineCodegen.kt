@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_IMPL_NAME_SUFFIX
 import org.jetbrains.kotlin.codegen.coroutines.reportSuspensionPointInsideMonitor
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.isReleaseCoroutines
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -45,7 +45,7 @@ internal fun MethodNode.acceptWithStateMachine(
 ) {
     val state = classCodegen.context.state
     val languageVersionSettings = state.languageVersionSettings
-    assert(languageVersionSettings.isReleaseCoroutines()) { "Experimental coroutines are unsupported in JVM_IR backend" }
+    assert(languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) { "Experimental coroutines are unsupported in JVM_IR backend" }
     val element = if (irFunction.isSuspend)
         irFunction.psiElement ?: classCodegen.irClass.psiElement
     else
@@ -67,21 +67,20 @@ internal fun MethodNode.acceptWithStateMachine(
 
     val visitor = CoroutineTransformerMethodVisitor(
         methodVisitor, access, name, desc, signature, exceptions.toTypedArray(),
+        containingClassInternalName = classCodegen.type.internalName,
         obtainClassBuilderForCoroutineState = obtainContinuationClassBuilder,
+        isForNamedFunction = irFunction.isSuspend,
+        shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
+        disableTailCallOptimizationForFunctionReturningUnit = irFunction.isSuspend && irFunction.suspendFunctionOriginal().let {
+            it.returnType.isUnit() && it.anyOfOverriddenFunctionsReturnsNonUnit()
+        },
         reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(element as KtElement, state, it) },
         lineNumber = lineNumber,
-        sourceFile = classCodegen.irClass.file.name,
-        languageVersionSettings = languageVersionSettings,
-        shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
-        containingClassInternalName = classCodegen.type.internalName,
-        isForNamedFunction = irFunction.isSuspend, // SuspendLambda.invokeSuspend is not suspend
+        sourceFile = classCodegen.irClass.file.name, // SuspendLambda.invokeSuspend is not suspend
         needDispatchReceiver = irFunction.isSuspend && (irFunction.dispatchReceiverParameter != null
                 || irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION),
         internalNameForDispatchReceiver = classCodegen.type.internalName,
         putContinuationParameterToLvt = false,
-        disableTailCallOptimizationForFunctionReturningUnit = irFunction.isSuspend && irFunction.suspendFunctionOriginal().let {
-            it.returnType.isUnit() && it.anyOfOverriddenFunctionsReturnsNonUnit()
-        },
         useOldSpilledVarTypeAnalysis = state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS),
         initialVarsCountByType = varsCountByType,
     )

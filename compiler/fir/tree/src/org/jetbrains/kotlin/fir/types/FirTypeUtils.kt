@@ -9,12 +9,13 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.ConstantValueKind
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -39,6 +40,7 @@ val FirTypeRef.isNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing
 val FirTypeRef.isNullableNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, true)
 val FirTypeRef.isUnit: Boolean get() = isBuiltinType(StandardClassIds.Unit, false)
 val FirTypeRef.isBoolean: Boolean get() = isBuiltinType(StandardClassIds.Boolean, false)
+val FirTypeRef.isInt: Boolean get() = isBuiltinType(StandardClassIds.Int, false)
 val FirTypeRef.isEnum: Boolean get() = isBuiltinType(StandardClassIds.Enum, false)
 val FirTypeRef.isArrayType: Boolean
     get() =
@@ -50,6 +52,14 @@ val FirExpression.isNullLiteral: Boolean
             this.kind == ConstantValueKind.Null &&
             this.value == null &&
             this.source != null
+
+@OptIn(ExperimentalContracts::class)
+fun FirExpression.isStableSmartcast(): Boolean {
+    contract {
+        returns(true) implies (this@isStableSmartcast is FirExpressionWithSmartcast)
+    }
+    return this is FirExpressionWithSmartcast && this.isStable
+}
 
 private val FirTypeRef.classLikeTypeOrNull: ConeClassLikeType?
     get() = when (this) {
@@ -141,7 +151,7 @@ fun FirTypeProjection.toConeTypeProjection(): ConeTypeProjection =
         else -> error("!")
     }
 
-fun AbstractTypeCheckerContext.makesSenseToBeDefinitelyNotNull(
+fun TypeCheckerState.makesSenseToBeDefinitelyNotNull(
     type: ConeKotlinType,
     useCorrectedNullabilityForFlexibleTypeParameters: Boolean
 ): Boolean {

@@ -19,8 +19,10 @@
 #include <llvm/IR/LegacyPassManager.h>
 #include <llvm/Analysis/TargetLibraryInfo.h>
 #include <llvm/Transforms/Instrumentation.h>
+#include <llvm/Transforms/ObjCARC.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/Path.h>
+
 #include <utility>
 #include <string>
 #include <vector>
@@ -141,6 +143,7 @@ static llvm::GlobalVariable* emitCoverageGlobal(
     // Create the deferred function records array
     auto functionRecordsTy = llvm::ArrayType::get(functionRecordTy, FunctionRecords.size());
     auto functionRecordsVal = llvm::ConstantArray::get(functionRecordsTy, FunctionRecords);
+    const unsigned NRecords = 0;
 
     llvm::Type *CovDataHeaderTypes[] = {
 #define COVMAP_HEADER(Type, LLVMType, Name, Init) LLVMType,
@@ -203,7 +206,7 @@ LLVMValueRef LLVMCoverageEmit(LLVMModuleRef moduleRef,
 
     const std::string &section = getInstrProfSectionName(IPSK_covmap, Triple(module.getTargetTriple()).getObjectFormat());
     coverageGlobal->setSection(section);
-    coverageGlobal->setAlignment(8);
+    coverageGlobal->setAlignment(llvm::Align(8));
     return wrap(coverageGlobal);
 }
 
@@ -227,6 +230,11 @@ void LLVMAddInstrProfPass(LLVMPassManagerRef passManagerRef, const char* outputF
 void LLVMKotlinAddTargetLibraryInfoWrapperPass(LLVMPassManagerRef passManagerRef, const char* targetTriple) {
   legacy::PassManagerBase *passManager = unwrap(passManagerRef);
   passManager->add(new TargetLibraryInfoWrapperPass(Triple(targetTriple)));
+}
+
+void LLVMAddObjCARCContractPass(LLVMPassManagerRef passManagerRef) {
+    legacy::PassManagerBase *passManager = unwrap(passManagerRef);
+    passManager->add(createObjCARCContractPass());
 }
 
 void LLVMKotlinInitializeTargets() {

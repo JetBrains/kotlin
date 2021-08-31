@@ -72,16 +72,16 @@ FILE fqName:<root> fileName:/kt47082.kt
       RETURN type=kotlin.Nothing from='public final fun foo <R> (r: <root>.Receiver<R of <root>.foo>): R of <root>.foo declared in <root>'
         CALL 'public final fun produce <E> (block: @[ExtensionFunctionType] kotlin.Function1<<root>.Derived<E of <root>.produce>, kotlin.Unit>): E of <root>.produce declared in <root>' type=R of <root>.foo origin=null
           <E>: R of <root>.foo
-          block: FUN_EXPR type=kotlin.Function1<<root>.Derived<R of <root>.foo>, kotlin.Unit> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Derived<R of <root>.foo>) returnType:kotlin.Unit
-              $receiver: VALUE_PARAMETER name:<this> type:<root>.Derived<R of <root>.foo>
+          block: FUN_EXPR type=kotlin.Function1<<root>.Derived<IrErrorType(null)>, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Derived<IrErrorType(null)>) returnType:kotlin.Unit
+              $receiver: VALUE_PARAMETER name:<this> type:<root>.Derived<IrErrorType(null)>
               BLOCK_BODY
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                   CALL 'public final fun toChannel <E, C> (destination: C of <root>.toChannel): C of <root>.toChannel declared in <root>' type=<root>.Derived<IrErrorType(null)> origin=null
                     <E>: R of <root>.foo
                     <C>: <root>.Derived<IrErrorType(null)>
                     $receiver: GET_VAR 'r: <root>.Receiver<R of <root>.foo> declared in <root>.foo' type=<root>.Receiver<R of <root>.foo> origin=null
-                    destination: GET_VAR '<this>: <root>.Derived<R of <root>.foo> declared in <root>.foo.<anonymous>' type=<root>.Derived<IrErrorType(null)> origin=null
+                    destination: GET_VAR '<this>: <root>.Derived<IrErrorType(null)> declared in <root>.foo.<anonymous>' type=<root>.Derived<IrErrorType(null)> origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'

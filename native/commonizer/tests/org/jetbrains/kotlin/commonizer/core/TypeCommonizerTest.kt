@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
+import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.utils.isUnderStandardKotlinPackages
@@ -25,6 +26,8 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     fun initialize() {
         // reset cache
         classifiers = CirKnownClassifiers(
+            classifierIndices = TargetDependent.empty(),
+            targetDependencies = TargetDependent.empty(),
             commonizedNodes = CirCommonizedClassifierNodes.default(),
             commonDependencies = object : CirProvidedClassifiers {
                 override fun hasClassifier(classifierId: CirEntityId) = classifierId.packageName.isUnderStandardKotlinPackages
@@ -431,6 +434,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
                         annotations = emptyList(),
                         name = type.classifierId.relativeNameSegments.last(),
                         typeParameters = emptyList(),
+                        supertypes = emptyList(),
                         visibility = Visibilities.Public,
                         modality = Modality.FINAL,
                         kind = ClassKind.CLASS,

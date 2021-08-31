@@ -10,6 +10,8 @@
 #include <thread>
 #include <mutex>
 
+#include "Logging.hpp"
+
 namespace {
 
 bool isSuspendedOrNative(kotlin::mm::ThreadData& thread) noexcept {
@@ -46,12 +48,20 @@ std::condition_variable gSuspendsionCondVar;
 
 NO_EXTERNAL_CALLS_CHECK bool kotlin::mm::ThreadSuspensionData::suspendIfRequested() noexcept {
     if (IsThreadSuspensionRequested()) {
-        std::unique_lock lock(gSuspensionMutex);
-        if (IsThreadSuspensionRequested()) {
-            AutoReset scopedAssign(&suspended_, true);
-            gSuspendsionCondVar.wait(lock, []() { return !IsThreadSuspensionRequested(); });
-            return true;
-        }
+        return suspendIfRequestedSlowPath();
+    }
+    return false;
+}
+
+NO_EXTERNAL_CALLS_CHECK bool kotlin::mm::ThreadSuspensionData::suspendIfRequestedSlowPath() noexcept {
+    std::unique_lock lock(gSuspensionMutex);
+    if (IsThreadSuspensionRequested()) {
+        auto threadId = konan::currentThreadId();
+        RuntimeLogDebug({kTagGC, kTagMM}, "Suspending thread %d", threadId);
+        AutoReset scopedAssign(&suspended_, true);
+        gSuspendsionCondVar.wait(lock, []() { return !IsThreadSuspensionRequested(); });
+        RuntimeLogDebug({kTagGC, kTagMM}, "Resuming thread %d", threadId);
+        return true;
     }
     return false;
 }

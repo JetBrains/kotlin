@@ -26,6 +26,7 @@ class FirImportBuilder {
     var importedFqName: FqName? = null
     var isAllUnder: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var aliasName: Name? = null
+    var aliasSource: FirSourceElement? = null
 
     fun build(): FirImport {
         return FirImportImpl(
@@ -33,6 +34,7 @@ class FirImportBuilder {
             importedFqName,
             isAllUnder,
             aliasName,
+            aliasSource,
         )
     }
 

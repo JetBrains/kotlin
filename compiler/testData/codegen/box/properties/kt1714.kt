@@ -23,7 +23,7 @@ fun test(a : A) {
     }
 }
 
-public fun box() : String {
+fun box() : String {
     AImpl().test
     test(AImpl())
     return "OK"

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -31,9 +32,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtConstantValue
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
-import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
-import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.*
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.CallableId
@@ -89,7 +88,6 @@ internal class KtFirKotlinPropertySymbol(
 
     override val callableIdIfNonLocal: CallableId? get() = getCallableIdIfNonLocal()
 
-
     override val getter: KtPropertyGetterSymbol? by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { property ->
         property.getter?.let { builder.callableBuilder.buildPropertyAccessorSymbol(it) } as? KtPropertyGetterSymbol
     }
@@ -104,6 +102,10 @@ internal class KtFirKotlinPropertySymbol(
 
     override val isConst: Boolean get() = firRef.withFir { it.isConst }
 
+    override val isFromPrimaryConstructor: Boolean
+        get() = firRef.withFir {
+            it.fromPrimaryConstructor == true || it.source?.kind == FirFakeSourceElementKind.PropertyFromParameter
+        }
     override val isOverride: Boolean get() = firRef.withFir { it.isOverride }
     override val isStatic: Boolean get() = firRef.withFir { it.isStatic }
 
@@ -123,6 +125,10 @@ internal class KtFirKotlinPropertySymbol(
             }
             KtSymbolKind.ACCESSOR -> TODO("Creating symbol for accessors is not supported yet")
             KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(name.asString())
+            KtSymbolKind.SAM_CONSTRUCTOR -> throw WrongSymbolForSamConstructor(this::class.java.simpleName)
         }
     }
+
+    override fun equals(other: Any?): Boolean = symbolEquals(other)
+    override fun hashCode(): Int = symbolHashCode()
 }

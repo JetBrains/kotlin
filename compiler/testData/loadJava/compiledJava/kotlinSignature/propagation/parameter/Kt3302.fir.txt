@@ -1,2 +1,18 @@
 public abstract interface Kt3302 : R|kotlin/Any| {
+    public abstract interface BSONObject : R|kotlin/Any| {
+        public abstract fun put(@R|org/jetbrains/annotations/NotNull|() s: R|@EnhancedNullability kotlin/String|, @R|org/jetbrains/annotations/NotNull|() o: R|@EnhancedNullability kotlin/Any|): R|ft<kotlin/Any, kotlin/Any?>|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
+    public abstract interface BasicBSONObject : R|test/Kt3302.LinkedHashMap<ft<kotlin/String, kotlin/String?>, ft<kotlin/Any, kotlin/Any?>>|, R|test/Kt3302.BSONObject| {
+        @R|java/lang/Override|() public abstract fun put(key: R|ft<kotlin/String, kotlin/String?>|, value: R|ft<kotlin/Any, kotlin/Any?>|): R|ft<kotlin/Any, kotlin/Any?>|
+
+    }
+    public abstract interface LinkedHashMap<K : R|ft<kotlin/Any, kotlin/Any?>|, V : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public abstract fun put(key: R|ft<K, K?>|, value: R|ft<V, V?>|): R|ft<V, V?>|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
 }

@@ -258,6 +258,7 @@ object CirDeserializers {
         annotations = annotations(source.flags, typeResolver, source::annotations),
         name = name,
         typeParameters = source.typeParameters.compactMap { typeParameter(it, typeResolver) },
+        supertypes = source.filteredSupertypes.compactMap { type(it, typeResolver) },
         visibility = visibility(source.flags),
         modality = modality(source.flags),
         kind = classKind(source.flags),
@@ -267,9 +268,7 @@ object CirDeserializers {
         isValue = Flag.Class.IS_VALUE(source.flags),
         isInner = Flag.Class.IS_INNER(source.flags),
         isExternal = Flag.Class.IS_EXTERNAL(source.flags)
-    ).apply {
-        supertypes = source.filteredSupertypes.compactMap { type(it, typeResolver) }
-    }
+    )
 
     fun defaultEnumEntry(
         name: CirName,
@@ -281,6 +280,15 @@ object CirDeserializers {
         annotations = annotations.compactMap { annotation(it, typeResolver) },
         name = name,
         typeParameters = emptyList(),
+        supertypes = listOf(
+            CirClassType.createInterned(
+                classId = enumClassId,
+                outerType = null,
+                visibility = visibility(enumClass.flags),
+                arguments = emptyList(),
+                isMarkedNullable = false
+            )
+        ),
         visibility = Visibilities.Public,
         modality = Modality.FINAL,
         kind = ClassKind.ENUM_ENTRY,
@@ -290,16 +298,7 @@ object CirDeserializers {
         isValue = false,
         isInner = false,
         isExternal = false
-    ).apply {
-        val enumClassType = CirClassType.createInterned(
-            classId = enumClassId,
-            outerType = null,
-            visibility = visibility(enumClass.flags),
-            arguments = emptyList(),
-            isMarkedNullable = false
-        )
-        supertypes = listOf(enumClassType)
-    }
+    )
 
     @Suppress("NOTHING_TO_INLINE")
     private inline fun classKind(flags: Flags): ClassKind =

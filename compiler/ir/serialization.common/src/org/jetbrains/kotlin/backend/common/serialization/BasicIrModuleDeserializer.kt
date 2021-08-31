@@ -27,8 +27,7 @@ abstract class BasicIrModuleDeserializer(
     override val klib: IrLibrary,
     override val strategy: DeserializationStrategy,
     libraryAbiVersion: KotlinAbiVersion,
-    private val containsErrorCode: Boolean = false,
-    private val useGlobalSignatures: Boolean = false,
+    private val containsErrorCode: Boolean = false
 ) :
     IrModuleDeserializer(moduleDescriptor, libraryAbiVersion) {
 
@@ -98,9 +97,7 @@ abstract class BasicIrModuleDeserializer(
         fileLocalDeserializationState.addIdSignature(topLevelSignature)
         moduleDeserializationState.enqueueFile(fileLocalDeserializationState)
 
-        return fileLocalDeserializationState.fileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind).also {
-            linker.deserializedSymbols.add(it)
-        }
+        return fileLocalDeserializationState.fileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind)
     }
 
     override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, linker.builtIns, emptyList())
@@ -118,9 +115,7 @@ abstract class BasicIrModuleDeserializer(
             strategy.needBodies,
             allowErrorNodes,
             strategy.inlineBodies,
-            moduleDeserializer,
-            useGlobalSignatures,
-            linker::handleNoModuleDeserializerFound,
+            moduleDeserializer
         )
 
         fileToDeserializerMap[file] = fileDeserializationState.fileDeserializer
@@ -146,6 +141,13 @@ abstract class BasicIrModuleDeserializer(
 
     override fun deserializeReachableDeclarations() {
         moduleDeserializationState.deserializeReachableDeclarations()
+    }
+
+    override fun signatureDeserializerForFile(fileName: String): IdSignatureDeserializer {
+        val fileDeserializer = fileToDeserializerMap.entries.find { it.key.fileEntry.name == fileName }?.value
+            ?: error("No file deserializer for $fileName")
+
+        return fileDeserializer.symbolDeserializer.signatureDeserializer
     }
 }
 

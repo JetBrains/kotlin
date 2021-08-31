@@ -483,25 +483,49 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
 
         // propagating facts for (... == true) and (... == false)
-        if (const.kind == ConstantValueKind.Boolean) {
-            val constValue = const.value as Boolean
-            val shouldInvert = isEq xor constValue
+        when (const.kind) {
+            ConstantValueKind.Boolean -> {
+                val constValue = const.value as Boolean
+                val shouldInvert = isEq xor constValue
 
-            logicSystem.translateVariableFromConditionInStatements(
-                flow,
-                operandVariable,
-                expressionVariable,
-                shouldRemoveOriginalStatements = operandVariable.isSynthetic()
-            ) {
-                when (it.condition.operation) {
-                    Operation.EqNull, Operation.NotEqNull -> {
-                        (expressionVariable eq isEq) implies (it.effect)
-                    }
-                    Operation.EqTrue, Operation.EqFalse -> {
-                        if (shouldInvert) (it.condition.invert()) implies (it.effect)
-                        else it
+                logicSystem.translateVariableFromConditionInStatements(
+                    flow,
+                    operandVariable,
+                    expressionVariable,
+                    shouldRemoveOriginalStatements = operandVariable.isSynthetic()
+                ) {
+                    when (it.condition.operation) {
+                        // Whatever the result is after comparing operandVariable with `true` or `false` cannot let you imply effects that apply
+                        // when the operandVariable is null. Hence we return null here.
+                        Operation.EqNull -> null
+                        Operation.NotEqNull -> {
+                            (expressionVariable eq isEq) implies (it.effect)
+                        }
+                        Operation.EqTrue, Operation.EqFalse -> {
+                            if (shouldInvert) (it.condition.invert()) implies (it.effect)
+                            else it
+                        }
                     }
                 }
+            }
+            ConstantValueKind.Null -> {
+                logicSystem.translateVariableFromConditionInStatements(
+                    flow,
+                    operandVariable,
+                    expressionVariable,
+                    shouldRemoveOriginalStatements = operandVariable.isSynthetic()
+                ) {
+                    when (it.condition.operation) {
+                        Operation.EqNull -> (expressionVariable eq isEq) implies (it.effect)
+                        Operation.NotEqNull -> (expressionVariable eq !isEq) implies (it.effect)
+                        // Whatever the result is after comparing operandVariable with `null` cannot let you imply effects that apply when the
+                        // operandVariable is true or false.
+                        Operation.EqTrue, Operation.EqFalse -> null
+                    }
+                }
+            }
+            else -> {
+                // Inconclusive if the user code compares with other constants.
             }
         }
     }
@@ -817,8 +841,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         graphBuilder.enterFinallyBlock().mergeIncomingFlow(updateReceivers = true, shouldForkFlow = true)
     }
 
-    fun exitFinallyBlock(tryExpression: FirTryExpression) {
-        graphBuilder.exitFinallyBlock(tryExpression).mergeIncomingFlow()
+    fun exitFinallyBlock() {
+        graphBuilder.exitFinallyBlock().mergeIncomingFlow()
     }
 
     fun exitTryExpression(callCompleted: Boolean) {
@@ -1100,14 +1124,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
 
         if (isAssignment) {
-            if (initializer is FirConstExpression<*> && initializer.kind == ConstantValueKind.Null) {
-                flow.addTypeStatement(
-                    propertyVariable typeEq
-                            property.returnTypeRef.coneType.withNullability(ConeNullability.NULLABLE, components.session.typeContext)
-                )
-            } else {
-                flow.addTypeStatement(propertyVariable typeEq initializer.typeRef.coneType)
-            }
+            flow.addTypeStatement(propertyVariable typeEq initializer.typeRef.coneType)
         }
     }
 

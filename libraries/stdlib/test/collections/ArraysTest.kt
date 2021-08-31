@@ -1470,7 +1470,8 @@ class ArraysTest {
         doTest(build = { map {'a' + it}.toCharArray() },        reverse = { reverse() }, snapshot = { toList() })
         doTest(build = { map {it % 2 == 0}.toBooleanArray() },  reverse = { reverse() }, snapshot = { toList() })
         doTest(build = { map {it.toString()}.toTypedArray() },  reverse = { reverse() }, snapshot = { toList() })
-        doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> },  reverse = { reverse() }, snapshot = { toList() })
+        @Suppress("USELESS_CAST")
+        doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> }, reverse = { reverse() }, snapshot = { toList() })
         doTest(build = { map {it.toUInt()}.toUIntArray() },     reverse = { reverse() }, snapshot = { toList() })
         doTest(build = { map {it.toULong()}.toULongArray() },   reverse = { reverse() }, snapshot = { toList() })
         doTest(build = { map {it.toUByte()}.toUByteArray() },   reverse = { reverse() }, snapshot = { toList() })
@@ -1503,6 +1504,7 @@ class ArraysTest {
         }
 
         doTest(build = { map {it.toString()}.toTypedArray() },  reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
+        @Suppress("USELESS_CAST")
         doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> },  reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
 
         doTest(build = { map {it}.toIntArray() },               reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
@@ -1928,6 +1930,7 @@ class ArraysTest {
         testStableSort({ sort(1, 5) }, { sort(1, 5) })
         testStableSort({ sort(0, 6) }, { sort(0, 6) })
         doTest(build = { map {it.toString()}.toTypedArray() }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
+        @Suppress("USELESS_CAST")
         doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
 
         doTest(build = { map {it}.toIntArray() }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
@@ -1971,6 +1974,7 @@ class ArraysTest {
         testStableSort({ sortDescending(1, 5) }, { sortDescending(1, 5) })
         testStableSort({ sortDescending(0, 6) }, { sortDescending(0, 6) })
         doTest(build = { map {it.toString()}.toTypedArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
+        @Suppress("USELESS_CAST")
         doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
 
         doTest(build = { map {it}.toIntArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
@@ -1997,6 +2001,7 @@ class ArraysTest {
             checkSorted<Array<String>>({ sortedArray() }, { sortedArrayDescending()}, { iterator() } )
         }
 
+        @Suppress("USELESS_CAST")
         with (arrayData("ac", "aD", "aba") { toList().toTypedArray() as Array<out String> }) {
             checkSorted<List<String>>({ sorted() }, { sortedDescending() }, { iterator() })
             checkSorted<Array<out String>>({ sortedArray() }, { sortedArrayDescending()}, { iterator() } )

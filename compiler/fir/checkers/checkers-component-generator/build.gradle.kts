@@ -5,6 +5,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":generators"))
     implementation(project(":compiler:fir:tree"))
     implementation(project(":compiler:fir:tree:tree-generator"))
     implementation(project(":compiler:resolution.common"))

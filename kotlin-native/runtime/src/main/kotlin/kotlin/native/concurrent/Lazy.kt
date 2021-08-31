@@ -121,3 +121,78 @@ internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
  * such as object signletons, or in cases where it's guaranteed not to have cyclical garbage.
  */
 public fun <T> atomicLazy(initializer: () -> T): Lazy<T> = AtomicLazyImpl(initializer)
+
+@Suppress("UNCHECKED_CAST")
+internal class SynchronizedLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
+    private var initializer = FreezableAtomicReference<(() -> T)?>(initializer)
+    private var valueRef = FreezableAtomicReference<Any?>(UNINITIALIZED)
+    private val lock = Lock()
+
+    override val value: T
+        get() {
+            val _v1 = valueRef.value
+            if (_v1 !== UNINITIALIZED) {
+                return _v1 as T
+            }
+
+            return locked(lock) {
+                val _v2 = valueRef.value
+                if (_v2 === UNINITIALIZED) {
+                    val wasFrozen = this.isFrozen
+                    val typedValue = initializer.value!!()
+                    if (this.isFrozen) {
+                        if (!wasFrozen) {
+                            throw InvalidMutabilityException("Frozen during lazy computation")
+                        }
+                        typedValue.freeze()
+                    }
+                    valueRef.value = typedValue
+                    initializer.value = null
+                    typedValue
+                } else {
+                    _v2 as T
+                }
+            }
+        }
+
+    override fun isInitialized() = valueRef.value !== UNINITIALIZED
+
+    override fun toString(): String = if (isInitialized()) value.toString() else "Lazy value not initialized yet."
+}
+
+
+@Suppress("UNCHECKED_CAST")
+internal class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
+    private var initializer = FreezableAtomicReference<(() -> T)?>(initializer)
+    private var valueRef = FreezableAtomicReference<Any?>(UNINITIALIZED)
+
+    override val value: T
+        get() {
+            val value = valueRef.value
+            if (value !== UNINITIALIZED) {
+                return value as T
+            }
+
+            val initializerValue = initializer.value
+            // if we see null in initializer here, it means that the value is already set by another thread
+            if (initializerValue != null) {
+                val wasFrozen = this.isFrozen
+                val newValue = initializerValue()
+                if (this.isFrozen) {
+                    if (!wasFrozen) {
+                        throw InvalidMutabilityException("Frozen during lazy computation")
+                    }
+                    newValue.freeze()
+                }
+                if (valueRef.compareAndSet(UNINITIALIZED, newValue)) {
+                    initializer.value = null
+                    return newValue
+                }
+            }
+            return valueRef.value as T
+        }
+
+    override fun isInitialized(): Boolean = valueRef.value !== UNINITIALIZED
+
+    override fun toString(): String = if (isInitialized()) value.toString() else "Lazy value not initialized yet."
+}

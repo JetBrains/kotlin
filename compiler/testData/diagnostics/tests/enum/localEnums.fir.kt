@@ -1,20 +1,20 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun foo() {
-    enum class A {
+    <!WRONG_MODIFIER_TARGET!>enum<!> class A {
         FOO,
         BAR
     }
     val foo = A.FOO
     val b = object {
-        enum class B {}
+        <!WRONG_MODIFIER_TARGET!>enum<!> class B {}
     }
     class C {
-        enum class D {}
+        <!WRONG_MODIFIER_TARGET!>enum<!> class D {}
     }
     val f = {
-        enum class E {}
+        <!WRONG_MODIFIER_TARGET!>enum<!> class E {}
     }
 
-    enum class<!SYNTAX!><!> {}
+    <!WRONG_MODIFIER_TARGET!>enum<!> class<!SYNTAX!><!> {}
 }

@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based
 
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.removeDirectiveFromFile
 
@@ -19,13 +18,12 @@ class IdeTestIgnoreHandler(testServices: TestServices) : AfterAnalysisChecker(te
         private val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
     }
 
-    override val directives: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirIdeDirectives)
 
     override fun check(failedAssertions: List<WrappedException>) {
         if (!isFirIdeIgnoreDirectivePresent()) return
         if (failedAssertions.isNotEmpty()) return
-        val moduleStructure = testServices.moduleStructure
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
 
         if (!isTeamCityBuild) {

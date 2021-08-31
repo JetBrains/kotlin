@@ -22,7 +22,8 @@ class SingleClassTestModel(
     private val skipIgnored: Boolean,
     private val testRunnerMethodName: String,
     private val additionalRunnerArguments: List<String>,
-    override val annotations: List<AnnotationModel>
+    override val annotations: List<AnnotationModel>,
+    override val tags: List<String>
 ) : TestClassModel() {
     override val name: String
         get() = testClassName
@@ -46,7 +47,7 @@ class SingleClassTestModel(
     private fun getTestMethodsFromFile(file: File): Collection<MethodModel> {
         return listOf(
             SimpleTestMethodModel(
-                rootFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored
+                rootFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored, tags = emptyList()
             )
         )
     }
@@ -73,5 +74,8 @@ class SingleClassTestModel(
         override fun shouldBeGenerated(): Boolean {
             return true
         }
+
+        override val tags: List<String>
+            get() = emptyList()
     }
 }

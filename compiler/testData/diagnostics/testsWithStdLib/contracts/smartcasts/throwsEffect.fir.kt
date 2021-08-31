@@ -60,7 +60,7 @@ fun testAtLeastOnceFlow(x: Any?) {
     do {
         myAssert(x is String)
         x.length
-    } while (x != null)
+    } while (<!SENSELESS_COMPARISON!>x != null<!>)
 
     x.length
 }

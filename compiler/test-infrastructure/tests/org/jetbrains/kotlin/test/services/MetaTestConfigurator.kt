@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.test.services
 
-import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.model.ServicesAndDirectivesContainer
 
-abstract class MetaTestConfigurator(protected val testServices: TestServices) {
-    open val directives: List<DirectivesContainer>
-        get() = emptyList()
-
+abstract class MetaTestConfigurator(protected val testServices: TestServices) : ServicesAndDirectivesContainer {
     open fun transformTestDataPath(testDataFileName: String): String = testDataFileName
 
     open fun shouldSkipTest(): Boolean = false

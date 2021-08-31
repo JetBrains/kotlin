@@ -5,18 +5,20 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.EnumWhenLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal val enumWhenPhase = makeIrFilePhase(
     ::MappedEnumWhenLowering,
@@ -57,7 +60,7 @@ internal val enumWhenPhase = makeIrFilePhase(
 // The latter would not need to be recompiled if new entries were added before `X`
 // at the negligible cost of an additional initializer per run + one array read per call.
 //
-private class MappedEnumWhenLowering(context: CommonBackendContext) : EnumWhenLowering(context) {
+private class MappedEnumWhenLowering(context: JvmBackendContext) : EnumWhenLowering(context) {
     private val intArray = context.irBuiltIns.primitiveArrayForType.getValue(context.irBuiltIns.intType)
     private val intArrayConstructor = intArray.constructors.single { it.owner.valueParameters.size == 1 }
     private val intArrayGet = intArray.functions.single { it.owner.name == OperatorNameConventions.GET }
@@ -68,8 +71,14 @@ private class MappedEnumWhenLowering(context: CommonBackendContext) : EnumWhenLo
     // of the classes in which they are used. This field tracks which container is the innermost one.
     private var state: EnumMappingState? = null
 
+    private class EnumMappingClass(
+        val field: IrField,
+        val ordinals: MutableMap<IrEnumEntry, Int> = mutableMapOf(),
+        var isPublicAbi: Boolean = false,
+    )
+
     private inner class EnumMappingState {
-        val mappings = mutableMapOf<IrClass /* enum */, Pair<MutableMap<IrEnumEntry, Int>, IrField>>()
+        val mappings = mutableMapOf<IrClass /* enum */, EnumMappingClass>()
         val mappingsClass by lazy {
             context.irFactory.buildClass {
                 name = Name.identifier("WhenMappings")
@@ -79,39 +88,46 @@ private class MappedEnumWhenLowering(context: CommonBackendContext) : EnumWhenLo
             }
         }
 
-        fun getMappingForClass(enumClass: IrClass): Pair<MutableMap<IrEnumEntry, Int>, IrField> =
+        fun getMappingForClass(enumClass: IrClass): EnumMappingClass =
             mappings.getOrPut(enumClass) {
-                mutableMapOf<IrEnumEntry, Int>() to mappingsClass.addField {
+                EnumMappingClass(mappingsClass.addField {
                     name = Name.identifier("\$EnumSwitchMapping\$${mappings.size}")
                     type = intArray.defaultType
                     origin = JvmLoweredDeclarationOrigin.ENUM_MAPPINGS_FOR_WHEN
                     isFinal = true
                     isStatic = true
-                }
+                })
             }
+
+        val isPublicAbi: Boolean
+            get() = mappings.values.any { it.isPublicAbi }
     }
 
     override fun mapConstEnumEntry(entry: IrEnumEntry): Int {
-        val (mapping) = state!!.getMappingForClass(entry.parentAsClass)
+        val mapping = state!!.getMappingForClass(entry.parentAsClass).ordinals
         // Index 0 (default value for integers) is reserved for unknown ordinals.
         return mapping.getOrPut(entry) { mapping.size + 1 }
     }
 
     override fun mapRuntimeEnumEntry(builder: IrBuilderWithScope, subject: IrExpression): IrExpression =
         builder.irCall(intArrayGet).apply {
-            val (_, field) = state!!.getMappingForClass(subject.type.getClass()!!)
-            dispatchReceiver = builder.irGetField(null, field)
+            val mapping = state!!.getMappingForClass(subject.type.getClass()!!)
+
+            mapping.isPublicAbi = mapping.isPublicAbi ||
+                    (builder.scope.scopeOwnerSymbol.owner.safeAs<IrDeclaration>()?.isInPublicInlineScope ?: false)
+
+            dispatchReceiver = builder.irGetField(null, mapping.field)
             putValueArgument(0, super.mapRuntimeEnumEntry(builder, subject))
         }
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
         val oldState = state
-        state = EnumMappingState()
+        val mappingState = EnumMappingState()
+        state = mappingState
         super.visitClassNew(declaration)
 
-        for ((enum, mappingAndField) in state!!.mappings) {
-            val (mapping, field) = mappingAndField
-            val builder = context.createIrBuilder(state!!.mappingsClass.symbol)
+        for ((enum, mapping) in mappingState.mappings) {
+            val builder = context.createIrBuilder(mappingState.mappingsClass.symbol)
             val enumValues = enum.functions.single {
                 it.name.toString() == "values"
                         && it.dispatchReceiverParameter == null
@@ -120,10 +136,10 @@ private class MappedEnumWhenLowering(context: CommonBackendContext) : EnumWhenLo
                         && it.returnType.isBoxedArray
                         && it.returnType.getArrayElementType(context.irBuiltIns).classOrNull == enum.symbol
             }
-            field.initializer = builder.irExprBody(builder.irBlock {
+            mapping.field.initializer = builder.irExprBody(builder.irBlock {
                 val enumSize = irCall(refArraySize).apply { dispatchReceiver = irCall(enumValues) }
                 val result = irTemporary(irCall(intArrayConstructor).apply { putValueArgument(0, enumSize) })
-                for ((entry, index) in mapping) {
+                for ((entry, index) in mapping.ordinals) {
                     val runtimeEntry = IrGetEnumValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, enum.defaultType, entry.symbol)
                     +irCall(intArraySet).apply {
                         dispatchReceiver = irGet(result)
@@ -135,8 +151,13 @@ private class MappedEnumWhenLowering(context: CommonBackendContext) : EnumWhenLo
             })
         }
 
-        if (state!!.mappings.isNotEmpty()) {
-            declaration.declarations += state!!.mappingsClass.apply { parent = declaration }
+        if (mappingState.mappings.isNotEmpty()) {
+            declaration.declarations += mappingState.mappingsClass.apply {
+                parent = declaration
+                if (mappingState.isPublicAbi) {
+                    (context as JvmBackendContext).publicAbiSymbols += symbol
+                }
+            }
         }
         state = oldState
         return declaration

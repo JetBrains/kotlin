@@ -243,6 +243,39 @@ void onThreadExit(void (*destructor)(void*), void* destructorParameter) {
 #endif  // !KONAN_NO_THREADS
 }
 
+#if KONAN_LINUX
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/syscall.h>
+#endif
+
+NO_EXTERNAL_CALLS_CHECK int currentThreadId() {
+#if KONAN_NO_THREADS
+#if KONAN_WASM || KONAN_ZEPHYR
+    // No way to do that.
+    return 0;
+#else
+#error "How to find currentThreadId()?"
+#endif
+#else  // !KONAN_NO_THREADS
+#if defined(KONAN_OSX) or defined(KONAN_IOS) or defined(KONAN_TVOS) or defined(KONAN_WATCHOS)
+    uint64_t tid;
+    pthread_t self = pthread_self();
+    RuntimeCheck(!pthread_threadid_np(self, &tid), "Error getting thread id");
+    RuntimeCheck((*(reinterpret_cast<int32_t*>(&tid) + 1)) == 0, "Thread id is not a uint32");
+    return tid;
+#elif KONAN_ANDROID
+    return gettid();
+#elif KONAN_LINUX
+    return syscall(__NR_gettid);
+#elif KONAN_WINDOWS
+  return GetCurrentThreadId();
+#else
+#error "How to find currentThreadId()?"
+#endif
+#endif  // !KONAN_NO_THREADS
+}
+
 // Process execution.
 void abort(void) {
   ::abort();
@@ -479,7 +512,7 @@ extern "C" {
     int _ZNSt3__112__next_primeEj(unsigned long n) {
         return _ZNSt3__212__next_primeEj(n);
     }
-    void __assert_fail(const char * assertion, const char * file, unsigned int line, const char * function) {
+    void __assert_fail(const char* assertion, const char* file, int line, const char* function) {
         char buf[1024];
         konan::snprintf(buf, sizeof(buf), "%s:%d in %s: runtime assert: %s\n", file, line, function, assertion);
         Konan_abort(buf);

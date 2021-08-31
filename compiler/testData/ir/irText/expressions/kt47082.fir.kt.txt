@@ -19,7 +19,7 @@ fun <E : Any?, C : Base<E>> Receiver<E>.toChannel(destination: C): C {
 }
 
 fun <R : Any?> foo(r: Receiver<R>): R {
-  return produce<R>(block = local fun Derived<R>.<anonymous>() {
+  return produce<R>(block = local fun Derived<ErrorType>.<anonymous>() {
     r.toChannel<R, Derived<ErrorType>>(destination = <this>) /*~> Unit */
   }
 )
@@ -28,3 +28,4 @@ fun <R : Any?> foo(r: Receiver<R>): R {
 fun box(): String {
   return "OK"
 }
+

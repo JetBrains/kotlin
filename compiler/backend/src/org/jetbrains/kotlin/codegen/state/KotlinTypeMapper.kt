@@ -92,7 +92,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
     private val typePreprocessor: ((KotlinType) -> KotlinType?)? = null,
     private val namePreprocessor: ((ClassDescriptor) -> String?)? = null
 ) : KotlinTypeMapperBase() {
-    private val isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
     val jvmDefaultMode = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
     var useOldManglingRulesForFunctionAcceptingInlineClass: Boolean = useOldInlineClassesManglingScheme
         set(value) {
@@ -124,10 +123,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
             if (classBuilderMode.generateBodies) {
                 throw IllegalStateException(generateErrorMessageForErrorType(kotlinType, descriptor))
             }
-        }
-
-        override fun releaseCoroutines(): Boolean {
-            return isReleaseCoroutines
         }
 
         override fun preprocessType(kotlinType: KotlinType): KotlinType? {
@@ -193,7 +188,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         }
 
         if (descriptor.isSuspendFunctionNotSuspensionView()) {
-            return mapReturnType(getOrCreateJvmSuspendFunctionView(descriptor as SimpleFunctionDescriptor, isReleaseCoroutines), sw)
+            return mapReturnType(getOrCreateJvmSuspendFunctionView(descriptor as SimpleFunctionDescriptor), sw)
         }
 
         if (hasVoidReturnType(descriptor)) {
@@ -804,7 +799,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         }
 
         if (f.isSuspendFunctionNotSuspensionView()) {
-            return mapSignature(getOrCreateJvmSuspendFunctionView(f, isReleaseCoroutines), kind, skipGenericSignature)
+            return mapSignature(getOrCreateJvmSuspendFunctionView(f), kind, skipGenericSignature)
         }
 
         if (isDeclarationOfBigArityFunctionInvoke(f) || isDeclarationOfBigArityCreateCoroutineMethod(f)) {

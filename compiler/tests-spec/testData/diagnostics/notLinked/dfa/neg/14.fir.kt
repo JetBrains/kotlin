@@ -28,7 +28,7 @@ fun case_3(x: Boolean?) {
 
 // TESTCASE NUMBER: 4
 fun case_4(x: Boolean?) {
-    if (if (x != null) x else x != null) {
+    if (if (x != null) x else <!SENSELESS_COMPARISON!>x != null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!><!UNSAFE_CALL!>.<!>not()
     }

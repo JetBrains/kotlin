@@ -23,15 +23,18 @@ import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirErrorImportBuilder {
+    var aliasSource: FirSourceElement? = null
     lateinit var diagnostic: ConeDiagnostic
     lateinit var delegate: FirImport
 
     fun build(): FirErrorImport {
         return FirErrorImportImpl(
+            aliasSource,
             diagnostic,
             delegate,
         )
     }
+
 }
 
 @OptIn(ExperimentalContracts::class)

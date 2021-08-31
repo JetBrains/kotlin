@@ -7,6 +7,18 @@
 #define RUNTIME_COMPILER_CONSTANTS_H
 
 #include <cstdint>
+#if __has_include(<string_view>)
+#include <string_view>
+#elif __has_include(<experimental/string_view>)
+// TODO: Remove when wasm32 is gone.
+#include <xlocale.h>
+#include <experimental/string_view>
+namespace std {
+using string_view = std::experimental::string_view;
+}
+#else
+#error "No <string_view>"
+#endif
 
 #include "Common.h"
 
@@ -15,6 +27,7 @@
 // These are defined by setRuntimeConstGlobals in IrToBitcode.kt
 extern "C" const int32_t KonanNeedDebugInfo;
 extern "C" const int32_t Kotlin_runtimeAssertsMode;
+extern "C" const char* const Kotlin_runtimeLogs;
 
 namespace kotlin {
 namespace compiler {
@@ -32,6 +45,12 @@ enum class RuntimeAssertsMode : int32_t {
     kPanic = 2,
 };
 
+// Must match WorkerExceptionHandling in WorkerExceptionHandling.kt
+enum class WorkerExceptionHandling : int32_t {
+    kLegacy = 0,
+    kUseHook = 1,
+};
+
 DestroyRuntimeMode destroyRuntimeMode() noexcept;
 
 bool gcAggressive() noexcept;
@@ -43,6 +62,14 @@ ALWAYS_INLINE inline bool shouldContainDebugInfo() noexcept {
 ALWAYS_INLINE inline RuntimeAssertsMode runtimeAssertsMode() noexcept {
     return static_cast<RuntimeAssertsMode>(Kotlin_runtimeAssertsMode);
 }
+
+WorkerExceptionHandling workerExceptionHandling() noexcept;
+
+ALWAYS_INLINE inline std::string_view runtimeLogs() noexcept {
+    return Kotlin_runtimeLogs == nullptr ? std::string_view() : std::string_view(Kotlin_runtimeLogs);
+}
+
+bool freezingEnabled() noexcept;
 
 } // namespace compiler
 } // namespace kotlin

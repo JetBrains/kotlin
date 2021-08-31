@@ -1,0 +1,22 @@
+@kotlin.annotation.Repeatable
+@java.lang.annotation.Repeatable(value=test.As::class)
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class test/A {
+    // source: 'kotlinAnnotationWithBothRepeatables.kt'
+    public abstract method value(): java.lang.String
+}
+
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class test/As {
+    // source: 'kotlinAnnotationWithBothRepeatables.kt'
+    public abstract method value(): test.A[]
+}
+
+@test.As(value=[test.A(value="a1"), test.A(value="a2")])
+@kotlin.Metadata
+public final class test/Z {
+    // source: 'kotlinAnnotationWithBothRepeatables.kt'
+    public method <init>(): void
+}

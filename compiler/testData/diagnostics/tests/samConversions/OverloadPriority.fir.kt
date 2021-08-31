@@ -22,10 +22,10 @@ public interface J {
 
 // FILE: 1.kt
 fun test(j: J) {
-    j.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>({ <!UNRESOLVED_REFERENCE!>it<!> checkType { _<Any>() }; "" }, "") <!INAPPLICABLE_CANDIDATE!>checkType<!> { _<Int>() }
+    j.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>({ <!UNRESOLVED_REFERENCE!>it<!> checkType { _<Any>() }; "" }, "") <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Int>() }
 
-    j.<!OVERLOAD_RESOLUTION_AMBIGUITY!>bas<!>({ <!UNRESOLVED_REFERENCE!>it<!> checkType { _<Any>() }; "" }, "") <!INAPPLICABLE_CANDIDATE!>checkType<!> { _<Int>() }
+    j.<!OVERLOAD_RESOLUTION_AMBIGUITY!>bas<!>({ <!UNRESOLVED_REFERENCE!>it<!> checkType { _<Any>() }; "" }, "") <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Int>() }
 
     // NI: TODO
-    j.bar { it checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any>() }; "" } checkType { _<Int>() }
+    j.bar { it checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Any>() }; "" } checkType { _<Int>() }
 }

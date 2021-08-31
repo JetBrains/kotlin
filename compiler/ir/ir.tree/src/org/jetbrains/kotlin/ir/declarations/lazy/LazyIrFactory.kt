@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.types.Variance
 
 // An IrFactory that does not recreate declarations for already bound symbols.
 class LazyIrFactory(
@@ -155,4 +156,18 @@ class LazyIrFactory(
         symbol.owner
     else
         delegate.createTypeAlias(startOffset, endOffset, symbol, name, visibility, expandedType, isActual, origin)
+
+    override fun createTypeParameter(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrTypeParameterSymbol,
+        name: Name,
+        index: Int,
+        isReified: Boolean,
+        variance: Variance
+    ): IrTypeParameter = if (symbol.isBound)
+        symbol.owner
+    else
+        delegate.createTypeParameter(startOffset, endOffset, origin, symbol, name, index, isReified, variance)
 }

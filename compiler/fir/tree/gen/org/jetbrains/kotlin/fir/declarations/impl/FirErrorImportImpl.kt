@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirErrorImportImpl(
+    override val aliasSource: FirSourceElement?,
     override val diagnostic: ConeDiagnostic,
     override var delegate: FirImport,
 ) : FirErrorImport() {

@@ -21,7 +21,7 @@ abstract class AbstractHLExpressionTypeTest : AbstractHLApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile) as KtExpression
         val type = executeOnPooledThreadInReadAction {
-            analyse(expression) { expression.getKtType().render() }
+            analyse(expression) { expression.getKtType()?.render() }
         }
         val actual = buildString {
             appendLine("expression: ${expression.text}")

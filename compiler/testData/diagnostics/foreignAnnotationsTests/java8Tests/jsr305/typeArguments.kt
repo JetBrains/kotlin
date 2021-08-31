@@ -84,9 +84,9 @@ fun main(a: test.A, l: L<Map<String, Int>, Int?>, l1: L<Map<String, Int>, Int>) 
     a.bar(<!TYPE_MISMATCH!>l1 <!UNCHECKED_CAST!>as L<Map<String, Int>, Int?><!><!>)
 
     a.baz1().t().containsKey("")
-    a.baz1().t().<!TYPE_INFERENCE_ONLY_INPUT_TYPES!>containsKey<!>(null)
+    a.baz1().t().<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>containsKey<!>(null)
     a.baz1().t().containsValue(1)
-    a.baz1().t().<!TYPE_INFERENCE_ONLY_INPUT_TYPES!>containsValue<!>(null)
+    a.baz1().t().<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>containsValue<!>(null)
     a.baz1().s().hashCode()
 
     a.baz1().setT(l.t())
@@ -100,8 +100,8 @@ fun main(a: test.A, l: L<Map<String, Int>, Int?>, l1: L<Map<String, Int>, Int>) 
     a.baz2().s().hashCode()
 
     a.baz3().t().containsKey("")
-    a.baz3().t().<!TYPE_INFERENCE_ONLY_INPUT_TYPES!>containsKey<!>(null)
+    a.baz3().t().<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>containsKey<!>(null)
     a.baz3().t().containsValue(1)
-    a.baz3().t().<!TYPE_INFERENCE_ONLY_INPUT_TYPES!>containsValue<!>(null)
+    a.baz3().t().<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>containsValue<!>(null)
     a.baz3().s().hashCode()
 }

@@ -67,6 +67,7 @@ object UnusedChecker : FirControlFlowChecker() {
 
         override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
             val variableSymbol = node.fir.symbol
+            if (node.fir.source == null) return
             if (variableSymbol.isLoopIterator) return
             val dataPerNode = data[node] ?: return
             for (dataPerLabel in dataPerNode.values) {

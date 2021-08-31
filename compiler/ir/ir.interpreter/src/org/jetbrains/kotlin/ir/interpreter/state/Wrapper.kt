@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.*
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
+import org.jetbrains.kotlin.ir.interpreter.stack.Field
+import org.jetbrains.kotlin.ir.interpreter.stack.Fields
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -21,11 +24,11 @@ import java.util.*
 import kotlin.collections.HashMap
 import kotlin.collections.LinkedHashMap
 
-internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex {
-    override val fields: MutableList<Variable> = mutableListOf()
+internal class Wrapper(val value: Any, override val irClass: IrClass, environment: IrInterpreterEnvironment) : Complex {
+    override val fields: Fields = mutableMapOf()
 
     override var superWrapperClass: Wrapper? = null
-    override var outerClass: Variable? = null
+    override var outerClass: Field? = null
 
     private val receiverClass = irClass.defaultType.getClass(true)
 
@@ -34,28 +37,29 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
         when {
             javaClass == HashMap::class.java -> {
                 val nodeClass = javaClass.declaredClasses.single { it.name.contains("\$Node") }
-                val mutableMap = irClass.superTypes.mapNotNull { it.classOrNull?.owner }.single { it.isInterface }
-                javaClassToIrClass += nodeClass to mutableMap.declarations.filterIsInstance<IrClass>().single()
+                val mutableMap = irClass.superTypes.mapNotNull { it.classOrNull?.owner }
+                    .single { it.name == StandardNames.FqNames.mutableMap.shortName() }
+                environment.javaClassToIrClass += nodeClass to mutableMap.declarations.filterIsInstance<IrClass>().single()
             }
             javaClass == LinkedHashMap::class.java -> {
                 val entryClass = javaClass.declaredClasses.single { it.name.contains("\$Entry") }
-                val mutableMap = irClass.superTypes.mapNotNull { it.classOrNull?.owner }.single { it.isInterface }
-                javaClassToIrClass += entryClass to mutableMap.declarations.filterIsInstance<IrClass>().single()
+                val mutableMap = irClass.superTypes.mapNotNull { it.classOrNull?.owner }
+                    .single { it.name == StandardNames.FqNames.mutableMap.shortName() }
+                environment.javaClassToIrClass += entryClass to mutableMap.declarations.filterIsInstance<IrClass>().single()
             }
             javaClass.canonicalName == "java.util.Collections.SingletonMap" -> {
-                javaClassToIrClass += AbstractMap.SimpleEntry::class.java to irClass.declarations.filterIsInstance<IrClass>().single()
-                javaClassToIrClass += AbstractMap.SimpleImmutableEntry::class.java to irClass.declarations.filterIsInstance<IrClass>().single()
+                val irClassMapEntry = irClass.declarations.filterIsInstance<IrClass>().single()
+                environment.javaClassToIrClass += AbstractMap.SimpleEntry::class.java to irClassMapEntry
+                environment.javaClassToIrClass += AbstractMap.SimpleImmutableEntry::class.java to irClassMapEntry
             }
         }
-        if (javaClassToIrClass[value::class.java].let { it == null || irClass.isSubclassOf(it) }) {
+        if (environment.javaClassToIrClass[value::class.java].let { it == null || irClass.isSubclassOf(it) }) {
             // second condition guarantees that implementation class will not be replaced with its interface
             // for example: map will store ArrayList instead of just List
             // this is needed for parallel calculations
-            javaClassToIrClass[value::class.java] = irClass
+            environment.javaClassToIrClass[value::class.java] = irClass
         }
     }
-
-    constructor(value: Any) : this(value, javaClassToIrClass[value::class.java]!!)
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? = null
 
@@ -73,7 +77,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
 
     // This method is used to get correct java method name
     private fun getJavaOriginalName(irFunction: IrFunction): String? {
-        return when (irFunction.getLastOverridden().fqNameWhenAvailable?.asString()) {
+        return when (irFunction.getLastOverridden().fqName) {
             "kotlin.collections.Map.<get-entries>" -> "entrySet"
             "kotlin.collections.Map.<get-keys>" -> "keySet"
             "kotlin.CharSequence.get" -> "charAt"
@@ -88,11 +92,12 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
 
     companion object {
         private val companionObjectValue = mapOf<String, Any>("kotlin.text.Regex\$Companion" to Regex.Companion)
-        private val javaClassToIrClass = mutableMapOf<Class<*>, IrClass>()
 
         // TODO remove later; used for tests only
         private val intrinsicClasses = setOf(
-            "kotlin.text.StringBuilder", "kotlin.Pair", "kotlin.collections.HashMap",
+            "kotlin.text.StringBuilder", "kotlin.Pair", "kotlin.collections.ArrayList",
+            "kotlin.collections.HashMap", "kotlin.collections.LinkedHashMap",
+            "kotlin.collections.HashSet", "kotlin.collections.LinkedHashSet",
             "kotlin.text.RegexOption", "kotlin.text.Regex", "kotlin.text.Regex.Companion", "kotlin.text.MatchGroup",
         )
 
@@ -102,21 +107,13 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
             "kotlin.collections.arrayListOf(Array)" to "kotlin.collections.CollectionsKt",
             "Char.kotlin.text.isWhitespace()" to "kotlin.text.CharsKt",
             "Array.kotlin.collections.toMutableList()" to "kotlin.collections.ArraysKt",
+            "Array.kotlin.collections.copyToArrayOfAny(Boolean)" to "kotlin.collections.CollectionsKt",
         )
 
-        fun associateJavaClassWithIrClass(javaClass: Class<*>, irClass: IrClass) {
-            javaClassToIrClass += javaClass to irClass
-        }
-
-        private fun IrDeclarationWithName.getSignature(): String? {
-            val fqName = this.fqNameWhenAvailable?.asString()
-            return when (this) {
-                is IrFunction -> {
-                    val receiver = (dispatchReceiverParameter ?: extensionReceiverParameter)?.type?.getOnlyName()?.let { "$it." } ?: ""
-                    this.valueParameters.joinToString(prefix = "$receiver$fqName(", postfix = ")") { it.type.getOnlyName() }
-                }
-                else -> fqName
-            }
+        private fun IrFunction.getSignature(): String {
+            val fqName = this.fqName
+            val receiver = (dispatchReceiverParameter ?: extensionReceiverParameter)?.type?.getOnlyName()?.let { "$it." } ?: ""
+            return this.valueParameters.joinToString(prefix = "$receiver$fqName(", postfix = ")") { it.type.getOnlyName() }
         }
 
         private fun IrFunction.getJvmClassName(): String? {
@@ -124,10 +121,9 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
         }
 
         fun mustBeHandledWithWrapper(declaration: IrDeclarationWithName): Boolean {
-            val fqName = declaration.fqNameWhenAvailable?.asString()
             return when (declaration) {
                 is IrFunction -> declaration.getSignature() in intrinsicFunctionToHandler
-                else -> fqName in intrinsicClasses || fqName?.startsWith("java") == true
+                else -> declaration.fqName.let { it in intrinsicClasses || it.startsWith("java") }
             }
         }
 
@@ -148,10 +144,10 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
             return MethodHandles.lookup().findVirtual(receiverClass, methodName, methodType)
         }
 
-        fun getCompanionObject(irClass: IrClass): Wrapper {
+        fun getCompanionObject(irClass: IrClass, environment: IrInterpreterEnvironment): Wrapper {
             val objectName = irClass.internalName()
             val objectValue = companionObjectValue[objectName] ?: throw InternalError("Companion object $objectName cannot be interpreted")
-            return Wrapper(objectValue, irClass)
+            return Wrapper(objectValue, irClass, environment)
         }
 
         fun getConstructorMethod(irConstructor: IrFunction): MethodHandle? {
@@ -182,7 +178,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
             val jvmEnumClass = Class.forName(intrinsicName)
 
             val methodType = MethodType.methodType(jvmEnumClass, String::class.java)
-            return MethodHandles.lookup().findStatic(jvmEnumClass, "valueOf", methodType)
+            return MethodHandles.lookup().findStatic(jvmEnumClass, StandardNames.ENUM_VALUE_OF.identifier, methodType)
         }
 
         private fun IrFunction.getMethodType(): MethodType {
@@ -201,15 +197,15 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
 
         private fun IrType.getClass(asObject: Boolean): Class<out Any> {
             val owner = this.classOrNull?.owner
-            val fqName = owner?.fqNameWhenAvailable?.asString()
+            val fqName = owner?.fqName
             val notNullType = this.makeNotNull()
             //TODO check if primitive array is possible here
             return when {
                 notNullType.isPrimitiveType() || notNullType.isString() -> getPrimitiveClass(notNullType, asObject)!!
                 notNullType.isArray() -> {
-                    val argumentFqName = (this as IrSimpleType).arguments.single().typeOrNull?.classOrNull?.owner?.fqNameWhenAvailable
+                    val argumentFqName = (this as IrSimpleType).arguments.single().typeOrNull?.classOrNull?.owner?.fqName
                     when {
-                        argumentFqName != null && argumentFqName.asString() != "kotlin.Any" -> argumentFqName.let { Class.forName("[L$it;") }
+                        argumentFqName != null && argumentFqName != "kotlin.Any" -> argumentFqName.let { Class.forName("[L$it;") }
                         else -> Array<Any?>::class.java
                     }
                 }
@@ -240,6 +236,13 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
                 fqName == "kotlin.collections.ListIterator" || fqName == "kotlin.collections.MutableListIterator" -> ListIterator::class.java
                 fqName == "kotlin.collections.Iterator" || fqName == "kotlin.collections.MutableIterator" -> Iterator::class.java
                 fqName == "kotlin.collections.Map.Entry" || fqName == "kotlin.collections.MutableMap.MutableEntry" -> Map.Entry::class.java
+                fqName == "kotlin.collections.ArrayList" -> ArrayList::class.java
+                fqName == "kotlin.collections.HashMap" -> HashMap::class.java
+                fqName == "kotlin.collections.HashSet" -> HashSet::class.java
+                fqName == "kotlin.collections.LinkedHashMap" -> LinkedHashMap::class.java
+                fqName == "kotlin.collections.LinkedHashSet" -> LinkedHashSet::class.java
+                fqName == "kotlin.text.StringBuilder" -> StringBuilder::class.java
+                fqName == "kotlin.text.Appendable" -> Appendable::class.java
                 fqName == null -> Any::class.java // null if this.isTypeParameter()
                 else -> Class.forName(owner.internalName())
             }

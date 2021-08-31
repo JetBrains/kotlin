@@ -5,20 +5,23 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.isCompatible
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
+import org.jetbrains.kotlin.fir.expressions.FirOperation
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.areCompatible
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.render
 
 object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
     override fun check(expression: FirEqualityOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -26,17 +29,27 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         if (arguments.size != 2) return
         val lType = arguments[0].typeRef.coneType
         val rType = arguments[1].typeRef.coneType
+        checkCompatibility(lType, rType, context, expression, reporter)
+        checkSensibleness(lType, rType, context, expression, reporter)
+    }
+
+    private fun checkCompatibility(
+        lType: ConeKotlinType,
+        rType: ConeKotlinType,
+        context: CheckerContext,
+        expression: FirEqualityOperatorCall,
+        reporter: DiagnosticReporter
+    ) {
         // If one of the type is already `Nothing?`, we skip reporting further comparison. This is to allow comparing with `null`, which has
         // type `Nothing?`
         if (lType.isNullableNothing || rType.isNullableNothing) return
         val inferenceContext = context.session.inferenceComponents.ctx
-        val intersectionType = inferenceContext.intersectTypesOrNull(listOf(lType, rType)) as? ConeIntersectionType ?: return
 
         val compatibility = try {
-            intersectionType.intersectedTypes.areCompatible(inferenceContext)
+            inferenceContext.isCompatible(lType, rType)
         } catch (e: Throwable) {
             throw IllegalStateException(
-                "Exception while determining type compatibility: type ${intersectionType.render()}, " +
+                "Exception while determining type compatibility: lType: $lType, rType: $rType, " +
                         "equality ${expression.render()}, " +
                         "file ${context.containingDeclarations.filterIsInstance<FirFile>().firstOrNull()?.name}",
                 e
@@ -95,5 +108,36 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         if (isEnum) return true
         val firRegularClass = (this as? ConeClassLikeType)?.lookupTag?.toFirRegularClass(context.session) ?: return false
         return firRegularClass.isEnumClass
+    }
+
+    private fun checkSensibleness(
+        lType: ConeKotlinType,
+        rType: ConeKotlinType,
+        context: CheckerContext,
+        expression: FirEqualityOperatorCall,
+        reporter: DiagnosticReporter
+    ) {
+        val type = when {
+            rType.isNullableNothing -> lType
+            lType.isNullableNothing -> rType
+            else -> return
+        }
+        if (type is ConeKotlinErrorType) return
+        val isPositiveCompare = expression.operation == FirOperation.EQ || expression.operation == FirOperation.IDENTITY
+        val compareResult = with(context.session.typeContext) {
+            when {
+                // `null` literal has type `Nothing?`
+                type.isNullableNothing -> isPositiveCompare
+                !type.isNullableType() -> !isPositiveCompare
+                else -> return
+            }
+        }
+        // We only report `SENSELESS_NULL_IN_WHEN` if `lType = type` because `lType` is the type of the when subject. This diagnostic is
+        // only intended for cases where the branch condition contains a null.
+        if (expression.source?.elementType != KtNodeTypes.BINARY_EXPRESSION && type === lType) {
+            reporter.reportOn(expression.source, FirErrors.SENSELESS_NULL_IN_WHEN, context)
+        } else {
+            reporter.reportOn(expression.source, FirErrors.SENSELESS_COMPARISON, expression, compareResult, context)
+        }
     }
 }

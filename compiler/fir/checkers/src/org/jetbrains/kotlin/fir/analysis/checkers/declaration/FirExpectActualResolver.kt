@@ -441,7 +441,7 @@ object FirExpectActualResolver {
         if (expectedType == null) return actualType == null
         if (actualType == null) return false
 
-        val typeCheckerContext = ConeInferenceContextForExpectActual(expectSession, actualSession).newBaseTypeCheckerContext(
+        val typeCheckerContext = ConeInferenceContextForExpectActual(expectSession, actualSession).newTypeCheckerState(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = true
         )

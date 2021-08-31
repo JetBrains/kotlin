@@ -10,16 +10,14 @@ import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.test.directives.model.*
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.SimpleDirective
+import org.jetbrains.kotlin.test.directives.model.ValueDirective
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
+import org.jetbrains.kotlin.test.model.ServicesAndDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 
-abstract class EnvironmentConfigurator(protected val testServices: TestServices) {
-    open val directivesContainers: List<DirectivesContainer>
-        get() = emptyList()
-
-    open val additionalServices: List<ServiceRegistrationData>
-        get() = emptyList()
-
+abstract class EnvironmentConfigurator(protected val testServices: TestServices) : ServicesAndDirectivesContainer {
     protected val moduleStructure: TestModuleStructure
         get() = testServices.moduleStructure
 

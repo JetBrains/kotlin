@@ -22,6 +22,7 @@ internal class FirImportImpl(
     override val importedFqName: FqName?,
     override val isAllUnder: Boolean,
     override val aliasName: Name?,
+    override val aliasSource: FirSourceElement?,
 ) : FirPureAbstractElement(), FirImport {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 

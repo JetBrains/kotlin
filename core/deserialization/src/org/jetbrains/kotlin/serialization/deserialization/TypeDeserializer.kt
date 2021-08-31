@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotations
@@ -20,13 +22,14 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
+private val EXPERIMENTAL_CONTINUATION_FQ_NAME = FqName("kotlin.coroutines.experimental.Continuation")
+
 class TypeDeserializer(
     private val c: DeserializationContext,
     private val parent: TypeDeserializer?,
     typeParameterProtos: List<ProtoBuf.TypeParameter>,
     private val debugName: String,
-    private val containerPresentableName: String,
-    var experimentalSuspendFunctionTypeEncountered: Boolean = false
+    private val containerPresentableName: String
 ) {
     private val classifierDescriptors: (Int) -> ClassifierDescriptor? =
         c.storageManager.createMemoizedFunctionWithNullableValues { fqNameIndex ->
@@ -195,12 +198,12 @@ class TypeDeserializer(
     }
 
     private fun transformRuntimeFunctionTypeToSuspendFunction(funType: KotlinType): SimpleType? {
-        val isReleaseCoroutines = c.components.configuration.releaseCoroutines
-
         val continuationArgumentType = funType.getValueParameterTypesFromFunctionType().lastOrNull()?.type ?: return null
         val continuationArgumentFqName = continuationArgumentType.constructor.declarationDescriptor?.fqNameSafe
-        if (continuationArgumentType.arguments.size != 1 || !(isContinuation(continuationArgumentFqName, true) ||
-                    isContinuation(continuationArgumentFqName, false))
+        // Before 1.6 we put experimental continuation as last parameter of suspend functional types to .kotlin_metadata files.
+        // Read them as suspend functional types instead of ordinary types with experimental continuation parameter.
+        if (continuationArgumentType.arguments.size != 1 ||
+            !(continuationArgumentFqName == CONTINUATION_INTERFACE_FQ_NAME || continuationArgumentFqName == EXPERIMENTAL_CONTINUATION_FQ_NAME)
         ) {
             return funType as SimpleType?
         }
@@ -211,10 +214,6 @@ class TypeDeserializer(
         if (c.containingDeclaration.safeAs<CallableDescriptor>()?.fqNameOrNull() == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME) {
             return createSimpleSuspendFunctionType(funType, suspendReturnType)
         }
-
-        // Load experimental suspend function type as suspend function type
-        experimentalSuspendFunctionTypeEncountered = experimentalSuspendFunctionTypeEncountered ||
-                (isReleaseCoroutines && isContinuation(continuationArgumentFqName, !isReleaseCoroutines))
 
         return createSimpleSuspendFunctionType(funType, suspendReturnType)
     }

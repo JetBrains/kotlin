@@ -16,14 +16,16 @@ plugins {
 
 fun registerListDependenciesTask(sourceSet: KotlinSourceSet) {
     tasks.register("list${sourceSet.name.capitalize()}Dependencies") {
+        val dependencyConfiguration = project.configurations.getByName(
+            "${sourceSet.name}IntransitiveDependenciesMetadata"
+        )
+
         dependsOn("commonize")
+        dependsOn(dependencyConfiguration)
+
         doLast {
-            val dependencies = project.configurations.findByName(
-                "${sourceSet.name}IntransitiveDependenciesMetadata"
-            )?.files.orEmpty()
-
+            val dependencies = dependencyConfiguration.files.orEmpty()
             logger.quiet("${sourceSet.name} Dependencies | Count: ${dependencies.size}")
-
             dependencies.forEach { dependencyFile ->
                 logger.quiet("Dependency: ${dependencyFile.path}")
             }
@@ -32,20 +34,20 @@ fun registerListDependenciesTask(sourceSet: KotlinSourceSet) {
 }
 
 kotlin {
-
-    when {
+    val nativePlatform = when {
         isMac -> macosX64("nativePlatform")
         isLinux -> linuxX64("nativePlatform")
         isWindows -> mingwX64("nativePlatform")
         else -> throw IllegalStateException("Unsupported host")
     }
 
-    when {
+    val unsupportedNativePlatform = when {
         isMac -> mingwX64("unsupportedNativePlatform")
         else -> macosX64("unsupportedNativePlatform")
     }
 
     jvm()
+
 
     val commonMain by sourceSets.getting
     val jvmMain by sourceSets.getting
@@ -62,6 +64,16 @@ kotlin {
                 -unsupportedNativePlatformMain
             }
         }
+    }
+
+    nativePlatform.compilations.getByName("main").cinterops.create("dummy") {
+        headers("libs/include/dummy.h")
+        compilerOpts.add("-Ilibs/include")
+    }
+
+    unsupportedNativePlatform.compilations.getByName("main").cinterops.create("dummy") {
+        headers("libs/include/dummy.h")
+        compilerOpts.add("-Ilibs/include")
     }
 
     registerListDependenciesTask(commonMain)

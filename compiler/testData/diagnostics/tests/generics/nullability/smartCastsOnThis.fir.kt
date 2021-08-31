@@ -8,7 +8,7 @@ fun CharSequence.bar4() {}
 
 fun <T : String?> T.foo() {
     if (this != null) {
-        if (this != null) {}
+        if (<!SENSELESS_COMPARISON!>this != null<!>) {}
 
         length
         this<!UNNECESSARY_SAFE_CALL!>?.<!>length

@@ -44,7 +44,7 @@ internal class FirDesignatedContractsResolveTransformerForIDE(
 
     override fun transformDeclaration(phaseRunner: FirPhaseRunner) {
         if (designation.declaration.resolvePhase >= FirResolvePhase.CONTRACTS) return
-        designation.declaration.ensurePhase(FirResolvePhase.STATUS)
+        designation.declaration.ensurePhase(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
 
         FirLazyBodiesCalculator.calculateLazyBodiesInside(designation)
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.CONTRACTS) {

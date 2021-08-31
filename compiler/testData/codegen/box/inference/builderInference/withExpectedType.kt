@@ -1,4 +1,4 @@
-// !LANGUAGE: +UnrestrictedBuilderInference
+// !LANGUAGE: +UnrestrictedBuilderInference -UseBuilderInferenceOnlyIfNeeded
 // WITH_RUNTIME
 // !DIAGNOSTICS: -EXPERIMENTAL_API_USAGE_ERROR -CAST_NEVER_SUCCEEDS
 // IGNORE_BACKEND_FIR: JVM_IR

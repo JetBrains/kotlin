@@ -13,13 +13,13 @@ public class ClassTypeParameterBound <T extends @NotNull String> {
 }
 
 // FILE: main.kt
-fun main(x: ClassTypeParameterBound<<!UPPER_BOUND_VIOLATED!>String?<!>>, y: ClassTypeParameterBound<String>, a: String?, b: String) {
-    val x2 = ClassTypeParameterBound<<!UPPER_BOUND_VIOLATED!>String?<!>>()
+fun main(x: ClassTypeParameterBound<String?>, y: ClassTypeParameterBound<String>, a: String?, b: String) {
+    val x2 = ClassTypeParameterBound<String?>()
     val y2 = ClassTypeParameterBound<String>()
 
-    val x3 = ClassTypeParameterBound(<!TYPE_MISMATCH!>a<!>)
+    val x3 = ClassTypeParameterBound(a)
     val y3 = ClassTypeParameterBound(b)
 
-    val x4: ClassTypeParameterBound<<!UPPER_BOUND_VIOLATED!>String?<!>> = <!TYPE_MISMATCH!>ClassTypeParameterBound()<!>
+    val x4: ClassTypeParameterBound<String?> = ClassTypeParameterBound()
     val y4: ClassTypeParameterBound<String> = ClassTypeParameterBound()
 }

@@ -86,9 +86,6 @@ class KlibMetadataSerializerExtension(
         if (exportKDoc) descriptor.findKDocString()?.let { proto.setExtension(KlibMetadataProtoBuf.functionKdoc, it) }
         super.serializeFunction(descriptor, proto, versionRequirementTable, childSerializer)
     }
-
-    override fun releaseCoroutines() =
-        languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
 }
 
 fun DeclarationDescriptorWithSource.findKDocString(): String? {

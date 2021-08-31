@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
@@ -65,9 +63,7 @@ class FileDeserializationState(
     deserializeBodies: Boolean,
     allowErrorNodes: Boolean,
     deserializeInlineFunctions: Boolean,
-    moduleDeserializer: IrModuleDeserializer,
-    useGlobalSignatures: Boolean,
-    handleNoModuleDeserializerFound: (IdSignature, ModuleDescriptor, Collection<IrModuleDeserializer>) -> IrModuleDeserializer,
+    moduleDeserializer: IrModuleDeserializer
 ) {
 
     val symbolDeserializer =
@@ -76,16 +72,16 @@ class FileDeserializationState(
             fileProto.actualList,
             ::addIdSignature,
             linker::handleExpectActualMapping,
-            useGlobalSignatures = useGlobalSignatures,
         ) { idSig, symbolKind ->
 
             val topLevelSig = idSig.topLevelSignature()
-            val actualModuleDeserializer =
-                moduleDeserializer.findModuleDeserializerForTopLevelId(topLevelSig) ?: handleNoModuleDeserializerFound(
-                    idSig,
-                    moduleDeserializer.moduleDescriptor,
-                    moduleDeserializer.moduleDependencies
-                )
+            val actualModuleDeserializer = moduleDeserializer.findModuleDeserializerForTopLevelId(topLevelSig)
+                ?: run {
+                    // The symbol might be gone in newer version of dependency KLIB. Then the KLIB that was compiled against
+                    // the older version of dependency KLIB will still have a reference to non-existing symbol. And the linker will have to
+                    // handle such situation appropriately. See KT-41378.
+                    linker.handleSignatureIdNotFoundInModuleWithDependencies(idSig, moduleDeserializer)
+                }
 
             actualModuleDeserializer.deserializeIrSymbol(idSig, symbolKind)
         }

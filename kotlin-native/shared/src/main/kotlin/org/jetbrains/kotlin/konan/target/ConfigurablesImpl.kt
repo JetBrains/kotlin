@@ -27,9 +27,6 @@ class GccConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir:
 class AndroidConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir: String?)
     : AndroidConfigurables, KonanPropertiesLoader(target, properties, baseDir)
 
-class MingwConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir: String?)
-    : MingwConfigurables, KonanPropertiesLoader(target, properties, baseDir)
-
 class WasmConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir: String?)
     : WasmConfigurables, KonanPropertiesLoader(target, properties, baseDir)
 

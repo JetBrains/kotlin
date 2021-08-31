@@ -5,102 +5,98 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.Companion.classActualTargets
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.analysis.checkers.FirModifier
-import org.jetbrains.kotlin.fir.analysis.checkers.FirModifierList
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
+import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory2
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.utils.hasBody
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
-import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.resolve.*
 
 object FirModifierChecker : FirBasicDeclarationChecker() {
+    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (declaration is FirFile) return
 
-    private enum class CompatibilityType {
-        COMPATIBLE,
-        COMPATIBLE_FOR_CLASSES, // for functions and properties: error
-        REDUNDANT_1_TO_2,       // first is redundant to second: warning
-        REDUNDANT_2_TO_1,       // second is redundant to first: warning
-        DEPRECATED,             // pair is deprecated and will soon become incompatible: warning
-        REPEATED,               // first and second are the same: error
-        INCOMPATIBLE,           // pair is incompatible: error
+        val source = declaration.source ?: return
+        if (source.kind is FirFakeSourceElementKind) return
+
+        if (declaration is FirProperty) {
+            fun checkPropertyAccessor(propertyAccessor: FirPropertyAccessor?) {
+                if (propertyAccessor != null && !propertyAccessor.hasBody) {
+                    check(propertyAccessor, context, reporter)
+                }
+            }
+
+            checkPropertyAccessor(declaration.getter)
+            checkPropertyAccessor(declaration.setter)
+        }
+
+        source.getModifierList()?.let { checkModifiers(it, declaration, context, reporter) }
     }
 
-    // first modifier in pair should also be first in spelling order and declaration's modifier list
-    private val compatibilityTypeMap = hashMapOf<Pair<KtModifierKeywordToken, KtModifierKeywordToken>, CompatibilityType>()
+    private fun checkModifiers(
+        list: FirModifierList,
+        owner: FirDeclaration,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        if (list.modifiers.isEmpty()) return
 
-    private fun recordCompatibilityType(compatibilityType: CompatibilityType, vararg list: KtModifierKeywordToken) {
-        for (firstKeyword in list) {
-            for (secondKeyword in list) {
-                if (firstKeyword != secondKeyword) {
-                    compatibilityTypeMap[Pair(firstKeyword, secondKeyword)] = compatibilityType
+        // general strategy: report no more than one error and any number of warnings
+        // therefore, a track of nodes with already reported errors should be kept
+        val reportedNodes = hashSetOf<FirModifier<*>>()
+
+        val actualTargets = getActualTargetList(owner).defaultTargets
+
+        val parent = context.findClosest<FirDeclaration> {
+            it !is FirPrimaryConstructor &&
+                    it !is FirProperty &&
+                    it.source?.kind !is FirFakeSourceElementKind
+        }
+
+        val actualParents = when (parent) {
+            is FirAnonymousObject -> KotlinTarget.LOCAL_CLASS_LIST
+            is FirClass -> classActualTargets(
+                parent.classKind,
+                isInnerClass = (parent as? FirMemberDeclaration)?.isInner ?: false,
+                isCompanionObject = (parent as? FirRegularClass)?.isCompanion ?: false,
+                isLocalClass = parent.isLocal
+            )
+            is FirPropertyAccessor -> if (parent.isSetter) KotlinTarget.PROPERTY_SETTER_LIST else KotlinTarget.PROPERTY_GETTER_LIST
+            is FirFunction -> KotlinTarget.FUNCTION_LIST
+            is FirEnumEntry -> KotlinTarget.ENUM_ENTRY_LIST
+            else -> KotlinTarget.FILE_LIST
+        }
+
+        val modifiers = list.modifiers
+        for ((secondIndex, secondModifier) in modifiers.withIndex()) {
+            for (firstIndex in 0 until secondIndex) {
+                checkCompatibilityType(modifiers[firstIndex], secondModifier, reporter, reportedNodes, owner, context)
+            }
+            if (secondModifier !in reportedNodes) {
+                val modifierSource = secondModifier.source
+                val modifier = secondModifier.token
+                when {
+                    !checkTarget(modifierSource, modifier, actualTargets, parent, context, reporter) -> reportedNodes += secondModifier
+                    !checkParent(modifierSource, modifier, actualParents, context, reporter) -> reportedNodes += secondModifier
                 }
             }
         }
     }
-
-    private fun recordPairsCompatibleForClasses(vararg list: KtModifierKeywordToken) {
-        recordCompatibilityType(CompatibilityType.COMPATIBLE_FOR_CLASSES, *list)
-    }
-
-    private fun recordDeprecatedPairs(vararg list: KtModifierKeywordToken) {
-        recordCompatibilityType(CompatibilityType.DEPRECATED, *list)
-    }
-
-    private fun recordIncompatiblePairs(vararg list: KtModifierKeywordToken) {
-        recordCompatibilityType(CompatibilityType.INCOMPATIBLE, *list)
-    }
-
-    // note that order matters: the first argument is redundant to the second, not the other way around
-    private fun recordRedundantPairs(redundantKeyword: KtModifierKeywordToken, sufficientKeyword: KtModifierKeywordToken) {
-        compatibilityTypeMap[Pair(redundantKeyword, sufficientKeyword)] = CompatibilityType.REDUNDANT_1_TO_2
-        compatibilityTypeMap[Pair(sufficientKeyword, redundantKeyword)] = CompatibilityType.REDUNDANT_2_TO_1
-    }
-
-    // building the compatibility type mapping
-    init {
-        recordIncompatiblePairs(IN_KEYWORD, OUT_KEYWORD) // Variance
-        recordIncompatiblePairs(PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD) // Visibilities
-        recordIncompatiblePairs(HEADER_KEYWORD, EXPECT_KEYWORD, IMPL_KEYWORD, ACTUAL_KEYWORD)
-        recordIncompatiblePairs(FINAL_KEYWORD, ABSTRACT_KEYWORD)
-        recordIncompatiblePairs(FINAL_KEYWORD, OPEN_KEYWORD, SEALED_KEYWORD)
-        recordIncompatiblePairs(CROSSINLINE_KEYWORD, NOINLINE_KEYWORD)
-
-        recordIncompatiblePairs(DATA_KEYWORD, OPEN_KEYWORD)
-        recordIncompatiblePairs(DATA_KEYWORD, INNER_KEYWORD)
-        recordIncompatiblePairs(DATA_KEYWORD, ABSTRACT_KEYWORD)
-        recordIncompatiblePairs(DATA_KEYWORD, SEALED_KEYWORD)
-        recordIncompatiblePairs(DATA_KEYWORD, INLINE_KEYWORD)
-
-        recordIncompatiblePairs(CONST_KEYWORD, ABSTRACT_KEYWORD)
-        recordIncompatiblePairs(CONST_KEYWORD, OPEN_KEYWORD)
-        recordIncompatiblePairs(CONST_KEYWORD, OVERRIDE_KEYWORD)
-
-        recordIncompatiblePairs(PRIVATE_KEYWORD, OVERRIDE_KEYWORD)
-        recordPairsCompatibleForClasses(PRIVATE_KEYWORD, OPEN_KEYWORD)
-        recordPairsCompatibleForClasses(PRIVATE_KEYWORD, ABSTRACT_KEYWORD)
-
-        // 1. subclasses contained inside a sealed class can not be instantiated, because their constructors needs
-        // an instance of an outer sealed (effectively abstract) class
-        // 2. subclasses of a non-top-level sealed class must be declared inside the class
-        // (see the KEEP https://github.com/Kotlin/KEEP/blob/master/proposals/sealed-class-inheritance.md)
-        recordIncompatiblePairs(SEALED_KEYWORD, INNER_KEYWORD)
-
-        recordRedundantPairs(OPEN_KEYWORD, ABSTRACT_KEYWORD)
-        recordRedundantPairs(ABSTRACT_KEYWORD, SEALED_KEYWORD)
-    }
-
-    private fun deduceCompatibilityType(firstKeyword: KtModifierKeywordToken, secondKeyword: KtModifierKeywordToken): CompatibilityType =
-        if (firstKeyword == secondKeyword) {
-            CompatibilityType.REPEATED
-        } else {
-            compatibilityTypeMap[Pair(firstKeyword, secondKeyword)] ?: CompatibilityType.COMPATIBLE
-        }
 
     private fun checkCompatibilityType(
         firstModifier: FirModifier<*>,
@@ -110,94 +106,169 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         owner: FirDeclaration?,
         context: CheckerContext
     ) {
-        val firstToken = firstModifier.token
-        val secondToken = secondModifier.token
-        when (val compatibilityType = deduceCompatibilityType(firstToken, secondToken)) {
-            CompatibilityType.COMPATIBLE -> {
+        val firstModifierToken = firstModifier.token
+        val secondModifierToken = secondModifier.token
+        when (val compatibilityType = compatibility(firstModifierToken, secondModifierToken)) {
+            Compatibility.COMPATIBLE -> {
             }
-            CompatibilityType.REPEATED ->
-                if (reportedNodes.add(secondModifier)) reporter.reportRepeatedModifier(secondModifier, secondToken, context)
-            CompatibilityType.REDUNDANT_2_TO_1 ->
-                reporter.reportRedundantModifier(secondModifier, secondToken, firstToken, context)
-            CompatibilityType.REDUNDANT_1_TO_2 ->
-                reporter.reportRedundantModifier(firstModifier, firstToken, secondToken, context)
-            CompatibilityType.DEPRECATED -> {
-                reporter.reportDeprecatedModifierPair(firstModifier, firstToken, secondToken, context)
-                reporter.reportDeprecatedModifierPair(secondModifier, secondToken, firstToken, context)
+            Compatibility.REPEATED ->
+                if (reportedNodes.add(secondModifier)) {
+                    reporter.reportOn(secondModifier.source, FirErrors.REPEATED_MODIFIER, secondModifierToken, context)
+                }
+            Compatibility.REDUNDANT -> {
+                reporter.reportOn(
+                    secondModifier.source,
+                    FirErrors.REDUNDANT_MODIFIER,
+                    secondModifierToken,
+                    firstModifierToken,
+                    context
+                )
             }
-            CompatibilityType.INCOMPATIBLE, CompatibilityType.COMPATIBLE_FOR_CLASSES -> {
-                if (compatibilityType == CompatibilityType.COMPATIBLE_FOR_CLASSES && owner is FirClass) {
+            Compatibility.REVERSE_REDUNDANT -> {
+                reporter.reportOn(
+                    firstModifier.source,
+                    FirErrors.REDUNDANT_MODIFIER,
+                    firstModifierToken,
+                    secondModifierToken,
+                    context
+                )
+            }
+            Compatibility.DEPRECATED -> {
+                reporter.reportOn(
+                    firstModifier.source,
+                    FirErrors.DEPRECATED_MODIFIER_PAIR,
+                    firstModifierToken,
+                    secondModifierToken,
+                    context
+                )
+                reporter.reportOn(
+                    secondModifier.source,
+                    FirErrors.DEPRECATED_MODIFIER_PAIR,
+                    secondModifierToken,
+                    firstModifierToken,
+                    context
+                )
+            }
+            Compatibility.INCOMPATIBLE, Compatibility.COMPATIBLE_FOR_CLASSES_ONLY -> {
+                if (compatibilityType == Compatibility.COMPATIBLE_FOR_CLASSES_ONLY && owner is FirClass) {
                     return
                 }
-                if (reportedNodes.add(firstModifier)) reporter.reportIncompatibleModifiers(firstModifier, firstToken, secondToken, context)
-                if (reportedNodes.add(secondModifier)) reporter.reportIncompatibleModifiers(secondModifier, secondToken, firstToken, context)
-            }
-        }
-    }
-
-    private fun checkModifiers(
-        list: FirModifierList,
-        owner: FirDeclaration,
-        reporter: DiagnosticReporter,
-        context: CheckerContext
-    ) {
-        // general strategy: report no more than one error and any number of warnings
-        // therefore, a track of nodes with already reported errors should be kept
-        val reportedNodes = hashSetOf<FirModifier<*>>()
-
-        val modifiers = list.modifiers
-        for (secondModifier in modifiers) {
-            for (firstModifier in modifiers) {
-                if (firstModifier == secondModifier) {
-                    break
+                if (reportedNodes.add(firstModifier)) {
+                    reporter.reportOn(
+                        firstModifier.source,
+                        FirErrors.INCOMPATIBLE_MODIFIERS,
+                        firstModifierToken,
+                        secondModifierToken,
+                        context
+                    )
                 }
-                checkCompatibilityType(firstModifier, secondModifier, reporter, reportedNodes, owner, context)
+                if (reportedNodes.add(secondModifier)) {
+                    reporter.reportOn(
+                        secondModifier.source,
+                        FirErrors.INCOMPATIBLE_MODIFIERS,
+                        secondModifierToken,
+                        firstModifierToken,
+                        context
+                    )
+                }
             }
         }
     }
 
-    private fun isDeclarationMappedToSourceCorrectly(declaration: FirDeclaration, source: FirSourceElement): Boolean =
-        when (source.elementType) {
-            KtNodeTypes.CLASS -> declaration is FirClass
-            KtNodeTypes.OBJECT_DECLARATION -> declaration is FirClass
-            KtNodeTypes.PROPERTY -> declaration is FirProperty
-            KtNodeTypes.VALUE_PARAMETER -> declaration is FirValueParameter
-            // TODO more FIR-PSI relations possibly have to be added
-            else -> true
+    private fun checkTarget(
+        modifierSource: FirSourceElement,
+        modifierToken: KtModifierKeywordToken,
+        actualTargets: List<KotlinTarget>,
+        parent: FirDeclaration?,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ): Boolean {
+        fun checkModifier(factory: FirDiagnosticFactory2<KtModifierKeywordToken, String>): Boolean {
+            val map = when (factory) {
+                FirErrors.WRONG_MODIFIER_TARGET -> possibleTargetMap
+                FirErrors.DEPRECATED_MODIFIER_FOR_TARGET -> deprecatedTargetMap
+                else -> redundantTargetMap
+            }
+            val set = map[modifierToken] ?: emptySet()
+            val checkResult = if (factory == FirErrors.WRONG_MODIFIER_TARGET) {
+                actualTargets.none { it in set }
+            } else {
+                actualTargets.any { it in set }
+            }
+            if (checkResult) {
+                reporter.reportOn(
+                    modifierSource,
+                    factory,
+                    modifierToken,
+                    actualTargets.firstOrThis(),
+                    context
+                )
+                return false
+            }
+            return true
         }
 
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration is FirFile) return
+        if (!checkModifier(FirErrors.WRONG_MODIFIER_TARGET)) {
+            return false
+        }
 
-        val source = declaration.source ?: return
-        if (!isDeclarationMappedToSourceCorrectly(declaration, source)) return
-        if (context.containingDeclarations.last() is FirDefaultPropertyAccessor) return
+        if (parent is FirRegularClass) {
+            if (modifierToken == KtTokens.EXPECT_KEYWORD || modifierToken == KtTokens.HEADER_KEYWORD) {
+                reporter.reportOn(modifierSource, FirErrors.WRONG_MODIFIER_TARGET, modifierToken, "nested class", context)
+                return false
+            }
+        }
 
-        val modifierList = source.getModifierList()
-        modifierList?.let { checkModifiers(it, declaration, reporter, context) }
+        val deprecatedModifierReplacement = deprecatedModifierMap[modifierToken]
+        if (deprecatedModifierReplacement != null) {
+            reporter.reportOn(
+                modifierSource,
+                FirErrors.DEPRECATED_MODIFIER,
+                modifierToken,
+                deprecatedModifierReplacement,
+                context
+            )
+        } else if (checkModifier(FirErrors.DEPRECATED_MODIFIER_FOR_TARGET)) {
+            checkModifier(FirErrors.REDUNDANT_MODIFIER_FOR_TARGET)
+        }
+
+        return true
     }
 
-    private fun DiagnosticReporter.reportRepeatedModifier(
-        modifier: FirModifier<*>, keyword: KtModifierKeywordToken, context: CheckerContext
-    ) {
-        reportOn(modifier.source, FirErrors.REPEATED_MODIFIER, keyword, context)
+    private fun checkParent(
+        modifierSource: FirSourceElement,
+        modifierToken: KtModifierKeywordToken,
+        actualParents: List<KotlinTarget>,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ): Boolean {
+        val deprecatedParents = deprecatedParentTargetMap[modifierToken]
+        if (deprecatedParents != null && actualParents.any { it in deprecatedParents }) {
+            reporter.reportOn(
+                modifierSource,
+                FirErrors.DEPRECATED_MODIFIER_CONTAINING_DECLARATION,
+                modifierToken,
+                actualParents.firstOrThis(),
+                context
+            )
+            return true
+        }
+
+        val possibleParentPredicate = possibleParentTargetPredicateMap[modifierToken] ?: return true
+        if (actualParents.any { possibleParentPredicate.isAllowed(it, context.session.languageVersionSettings) }) return true
+
+        reporter.reportOn(
+            modifierSource,
+            FirErrors.WRONG_MODIFIER_CONTAINING_DECLARATION,
+            modifierToken,
+            actualParents.firstOrThis(),
+            context
+        )
+
+        return false
     }
 
-    private fun DiagnosticReporter.reportRedundantModifier(
-        modifier: FirModifier<*>, firstKeyword: KtModifierKeywordToken, secondKeyword: KtModifierKeywordToken, context: CheckerContext
-    ) {
-        reportOn(modifier.source, FirErrors.REDUNDANT_MODIFIER, firstKeyword, secondKeyword, context)
-    }
-
-    private fun DiagnosticReporter.reportDeprecatedModifierPair(
-        modifier: FirModifier<*>, firstKeyword: KtModifierKeywordToken, secondKeyword: KtModifierKeywordToken, context: CheckerContext
-    ) {
-        reportOn(modifier.source, FirErrors.DEPRECATED_MODIFIER_PAIR, firstKeyword, secondKeyword, context)
-    }
-
-    private fun DiagnosticReporter.reportIncompatibleModifiers(
-        modifier: FirModifier<*>, firstKeyword: KtModifierKeywordToken, secondKeyword: KtModifierKeywordToken, context: CheckerContext
-    ) {
-        reportOn(modifier.source, FirErrors.INCOMPATIBLE_MODIFIERS, firstKeyword, secondKeyword, context)
+    private fun List<KotlinTarget>.firstOrThis(): String {
+        return firstOrNull()?.description ?: "this"
     }
 }

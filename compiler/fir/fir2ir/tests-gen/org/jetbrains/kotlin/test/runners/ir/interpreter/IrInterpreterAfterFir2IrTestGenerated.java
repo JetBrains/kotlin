@@ -122,12 +122,6 @@ public class IrInterpreterAfterFir2IrTestGenerated extends AbstractIrInterpreter
     }
 
     @Test
-    @TestMetadata("doubleArrayOf.kt")
-    public void testDoubleArrayOf() throws Exception {
-        runTest("compiler/testData/ir/interpreter/doubleArrayOf.kt");
-    }
-
-    @Test
     @TestMetadata("elvis.kt")
     public void testElvis() throws Exception {
         runTest("compiler/testData/ir/interpreter/elvis.kt");
@@ -296,6 +290,12 @@ public class IrInterpreterAfterFir2IrTestGenerated extends AbstractIrInterpreter
     }
 
     @Test
+    @TestMetadata("samConversion.kt")
+    public void testSamConversion() throws Exception {
+        runTest("compiler/testData/ir/interpreter/samConversion.kt");
+    }
+
+    @Test
     @TestMetadata("scopeFunctions.kt")
     public void testScopeFunctions() throws Exception {
         runTest("compiler/testData/ir/interpreter/scopeFunctions.kt");
@@ -380,6 +380,12 @@ public class IrInterpreterAfterFir2IrTestGenerated extends AbstractIrInterpreter
         @TestMetadata("arrayOf.kt")
         public void testArrayOf() throws Exception {
             runTest("compiler/testData/ir/interpreter/collections/arrayOf.kt");
+        }
+
+        @Test
+        @TestMetadata("doubleArrayOf.kt")
+        public void testDoubleArrayOf() throws Exception {
+            runTest("compiler/testData/ir/interpreter/collections/doubleArrayOf.kt");
         }
 
         @Test
@@ -692,6 +698,12 @@ public class IrInterpreterAfterFir2IrTestGenerated extends AbstractIrInterpreter
         @Test
         public void testAllFilesPresentInReference() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/reference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("getClass.kt")
+        public void testGetClass() throws Exception {
+            runTest("compiler/testData/ir/interpreter/reference/getClass.kt");
         }
 
         @Test

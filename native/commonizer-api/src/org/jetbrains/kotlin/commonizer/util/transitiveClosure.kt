@@ -18,7 +18,7 @@ public inline fun <reified T> transitiveClosure(seed: T, edges: T.() -> Iterable
     val initialEdges = seed.edges()
     if (initialEdges is Collection && initialEdges.isEmpty()) return emptySet()
 
-    val queue = deque<T>()
+    val queue = deque<T>(initialEdges.count() * 2)
     val results = mutableSetOf<T>()
     queue.addAll(initialEdges)
     while (queue.isNotEmpty()) {
@@ -34,7 +34,7 @@ public inline fun <reified T> transitiveClosure(seed: T, edges: T.() -> Iterable
 
 @OptIn(ExperimentalStdlibApi::class)
 @PublishedApi
-internal inline fun <reified T> deque(): MutableList<T> {
-    return if (KotlinVersion.CURRENT.isAtLeast(1, 4)) ArrayDeque()
-    else mutableListOf()
+internal inline fun <reified T> deque(initialSize: Int): MutableList<T> {
+    return if (KotlinVersion.CURRENT.isAtLeast(1, 4)) ArrayDeque(initialSize)
+    else ArrayList(initialSize)
 }

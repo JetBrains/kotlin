@@ -37,13 +37,7 @@ object InconsistentOperatorFromJavaCallChecker : CallChecker {
             val containingClass = callableDescriptor.containingDeclaration as? ClassDescriptor ?: continue
             if (containingClass.fqNameOrNull() != CONCURRENT_HASH_MAP_FQ_NAME) continue
 
-            val diagnosticFactory =
-                if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitConcurrentHashMapContains))
-                    ErrorsJvm.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR
-                else
-                    ErrorsJvm.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR
-
-            context.trace.report(diagnosticFactory.on(reportOn))
+            context.trace.report(ErrorsJvm.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR.on(context.languageVersionSettings, reportOn))
             break
         }
     }

@@ -69,16 +69,22 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
+            val jvmOnlyBoxTests = listOf(
+                "testsWithJava9",
+                "testsWithJava15",
+                "testsWithJava17",
+            )
+
             testClass<AbstractJsCodegenBoxTest> {
-                model("codegen/box", targetBackend = TargetBackend.JS, excludeDirs = listOf("compileKotlinAgainstKotlin"))
+                model("codegen/box", targetBackend = TargetBackend.JS, excludeDirs = jvmOnlyBoxTests + "compileKotlinAgainstKotlin")
             }
 
             testClass<AbstractIrJsCodegenBoxTest> {
-                model("codegen/box", targetBackend = TargetBackend.JS_IR, excludeDirs = listOf("compileKotlinAgainstKotlin"))
+                model("codegen/box", targetBackend = TargetBackend.JS_IR, excludeDirs = jvmOnlyBoxTests + "compileKotlinAgainstKotlin")
             }
 
             testClass<AbstractIrJsCodegenBoxErrorTest> {
-                model("codegen/boxError", targetBackend = TargetBackend.JS_IR, excludeDirs = listOf("compileKotlinAgainstKotlin"))
+                model("codegen/boxError", targetBackend = TargetBackend.JS_IR, excludeDirs = jvmOnlyBoxTests + "compileKotlinAgainstKotlin")
             }
 
             testClass<AbstractIrCodegenBoxWasmTest> {
@@ -104,12 +110,12 @@ fun main(args: Array<String>) {
                         "delegatedProperty",
 
                         "compileKotlinAgainstKotlin"
-                    )
+                    ) + jvmOnlyBoxTests
                 )
             }
 
             testClass<AbstractIrJsCodegenBoxES6Test> {
-                model("codegen/box", targetBackend = TargetBackend.JS_IR_ES6)
+                model("codegen/box", targetBackend = TargetBackend.JS_IR_ES6, excludeDirs = jvmOnlyBoxTests)
             }
 
             testClass<AbstractJsCodegenInlineTest> {

@@ -148,6 +148,7 @@ class JavaSymbolProvider(
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? {
         return try {
+            if (!hasTopLevelClassOf(classId)) return null
             getFirJavaClass(classId)
         } catch (e: ProcessCanceledException) {
             null
@@ -155,7 +156,9 @@ class JavaSymbolProvider(
     }
 
     fun getFirJavaClass(classId: ClassId, content: KotlinClassFinder.Result.ClassFileContent? = null): FirRegularClassSymbol? {
-        if (!hasTopLevelClassOf(classId)) return null
+        // Enforce loading of outer class first
+        classId.outerClassId?.let { getFirJavaClass(it) }
+
         return classCache.getValue(classId, content)
     }
 
@@ -401,7 +404,7 @@ class JavaSymbolProvider(
                 origin = FirDeclarationOrigin.Java
                 addAnnotationsFrom(this@JavaSymbolProvider.session, javaField, javaTypeParameterStack)
             }.apply {
-                containingClassAttr = ConeClassLikeLookupTagImpl(classId)
+                containingClassForStaticMemberAttr = ConeClassLikeLookupTagImpl(classId)
             }
             else -> buildJavaField {
                 source = (javaField as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
@@ -431,7 +434,7 @@ class JavaSymbolProvider(
                 }
             }.apply {
                 if (javaField.isStatic) {
-                    containingClassAttr = ConeClassLikeLookupTagImpl(classId)
+                    containingClassForStaticMemberAttr = ConeClassLikeLookupTagImpl(classId)
                 }
             }
         }
@@ -490,7 +493,7 @@ class JavaSymbolProvider(
             }
         }.apply {
             if (javaMethod.isStatic) {
-                containingClassAttr = ConeClassLikeLookupTagImpl(classId)
+                containingClassForStaticMemberAttr = ConeClassLikeLookupTagImpl(classId)
             }
         }
     }
@@ -551,7 +554,7 @@ class JavaSymbolProvider(
                 annotationBuilder = { emptyList() }
             }
         }.apply {
-            containingClassAttr = ownerClassBuilder.symbol.toLookupTag()
+            containingClassForStaticMemberAttr = ownerClassBuilder.symbol.toLookupTag()
         }
     }
 
@@ -575,7 +578,7 @@ class JavaSymbolProvider(
             isPrimary = true
             annotationBuilder = { emptyList() }
         }.apply {
-            containingClassAttr = ownerClassBuilder.symbol.toLookupTag()
+            containingClassForStaticMemberAttr = ownerClassBuilder.symbol.toLookupTag()
         }
     }
 

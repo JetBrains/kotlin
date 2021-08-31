@@ -8,10 +8,6 @@ package org.jetbrains.kotlin.backend.common.lower.loops.handlers
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.loops.*
-import org.jetbrains.kotlin.backend.common.lower.loops.ProgressionDirection
-import org.jetbrains.kotlin.backend.common.lower.loops.ProgressionHandler
-import org.jetbrains.kotlin.backend.common.lower.loops.ProgressionHeaderInfo
-import org.jetbrains.kotlin.backend.common.lower.loops.ProgressionType
 import org.jetbrains.kotlin.backend.common.lower.matchers.SimpleCalleeMatcher
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -80,16 +76,41 @@ internal class RangeToHandler(private val context: CommonBackendContext) :
     private fun IrExpression.convertToExclusiveUpperBound(): IrConstImpl<out Any>? {
         val irConst = this as? IrConst<*> ?: return null
         return when (irConst.kind) {
-            IrConstKind.Char ->
-                IrConstImpl.char(startOffset, endOffset, type, IrConstKind.Char.valueOf(irConst).inc())
-            IrConstKind.Byte ->
-                IrConstImpl.byte(startOffset, endOffset, type, IrConstKind.Byte.valueOf(irConst).inc())
-            IrConstKind.Short ->
-                IrConstImpl.short(startOffset, endOffset, type, IrConstKind.Short.valueOf(irConst).inc())
-            IrConstKind.Int ->
-                IrConstImpl.int(startOffset, endOffset, type, IrConstKind.Int.valueOf(irConst).inc())
-            IrConstKind.Long ->
-                IrConstImpl.long(startOffset, endOffset, type, IrConstKind.Long.valueOf(irConst).inc())
+            IrConstKind.Char -> {
+                val charValue = IrConstKind.Char.valueOf(irConst)
+                if (charValue != Char.MAX_VALUE)
+                    IrConstImpl.char(startOffset, endOffset, type, charValue.inc())
+                else
+                    null
+            }
+            IrConstKind.Byte -> {
+                val byteValue = IrConstKind.Byte.valueOf(irConst)
+                if (byteValue != Byte.MAX_VALUE)
+                    IrConstImpl.byte(startOffset, endOffset, type, byteValue.inc())
+                else
+                    null
+            }
+            IrConstKind.Short -> {
+                val shortValue = IrConstKind.Short.valueOf(irConst)
+                if (shortValue != Short.MAX_VALUE)
+                    IrConstImpl.short(startOffset, endOffset, type, shortValue.inc())
+                else
+                    null
+            }
+            IrConstKind.Int -> {
+                val intValue = IrConstKind.Int.valueOf(irConst)
+                if (intValue != Int.MAX_VALUE)
+                    IrConstImpl.int(startOffset, endOffset, type, intValue.inc())
+                else
+                    null
+            }
+            IrConstKind.Long -> {
+                val longValue = IrConstKind.Long.valueOf(irConst)
+                if (longValue != Long.MAX_VALUE)
+                    IrConstImpl.long(startOffset, endOffset, type, longValue.inc())
+                else
+                    null
+            }
             else ->
                 null
         }

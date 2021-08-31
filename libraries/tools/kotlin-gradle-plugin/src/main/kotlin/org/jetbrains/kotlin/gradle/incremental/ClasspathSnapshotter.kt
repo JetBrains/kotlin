@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.incremental
 
 import org.jetbrains.kotlin.gradle.incremental.ClasspathEntryContentsReader.Companion.DEFAULT_CLASS_FILTER
+import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import java.io.File
 import java.util.zip.ZipInputStream
 
@@ -18,8 +19,8 @@ object ClasspathEntrySnapshotter {
             ClasspathEntryContentsReader.from(classpathEntry).readContents(DEFAULT_CLASS_FILTER)
 
         val pathsToSnapshots = LinkedHashMap<String, ClassSnapshot>()
-        pathsToContents.mapValuesTo(pathsToSnapshots) { (invariantSeparatorsRelativePath, classContents) ->
-            ClassSnapshotter.snapshot(invariantSeparatorsRelativePath, classContents)
+        pathsToContents.mapValuesTo(pathsToSnapshots) { (_, classContents) ->
+            ClassSnapshotter.snapshot(classContents)
         }
 
         return ClasspathEntrySnapshot(pathsToSnapshots)
@@ -30,9 +31,9 @@ object ClasspathEntrySnapshotter {
 @Suppress("SpellCheckingInspection")
 object ClassSnapshotter {
 
-    fun snapshot(invariantSeparatorsRelativePath: String, classContents: ByteArray): ClassSnapshot {
-        // TODO WORK-IN-PROGRESS
-        return ClassSnapshot()
+    fun snapshot(classContents: ByteArray): ClassSnapshot {
+        return KotlinClassInfo.tryCreateFrom(classContents)?.let { KotlinClassSnapshot(it) }
+            ?: JavaClassSnapshot
     }
 }
 

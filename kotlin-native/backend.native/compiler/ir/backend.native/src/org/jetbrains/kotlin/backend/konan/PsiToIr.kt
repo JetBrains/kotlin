@@ -101,7 +101,8 @@ internal fun Context.psiToIr(
                 stubGenerator,
                 irProviderForCEnumsAndCStructs,
                 exportedDependencies,
-                config.cachedLibraries
+                config.cachedLibraries,
+                config.userVisibleIrModulesSupport
         ).also { linker ->
 
             // context.config.librariesWithDependencies could change at each iteration.

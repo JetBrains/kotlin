@@ -85,7 +85,7 @@ fun checkUpperBoundViolated(
                 substitution[typeParameterSymbol] = typeArgumentType
             } else {
                 substitution[typeParameterSymbol] =
-                    ConeStubType(ConeTypeVariable("", typeParameterSymbol.toLookupTag()), ConeNullability.NOT_NULL)
+                    ConeStubTypeForTypeVariableInSubtyping(ConeTypeVariable("", typeParameterSymbol.toLookupTag()), ConeNullability.NOT_NULL)
             }
         }
     }

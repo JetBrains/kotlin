@@ -1209,6 +1209,10 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         qualifiedAccessExpression.typeArguments.renderTypeArguments()
     }
 
+    override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
+        visitQualifiedAccessExpression(propertyAccessExpression)
+    }
+
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression) {
         visitQualifiedAccessExpression(thisReceiverExpression)
     }

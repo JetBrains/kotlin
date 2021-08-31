@@ -15,7 +15,7 @@ class A : BaseClass() {
 
 class B : BaseClass() {
     // org.checkerframework.checker.nullness.qual.Nullable has @Target TYPE_USE, so it affects only elements type
-    <!NOTHING_TO_OVERRIDE!>override<!> fun loadCache(vararg args: Any) {
+    override fun loadCache(vararg args: Any) {
         super.loadCache(*args)
     }
 }

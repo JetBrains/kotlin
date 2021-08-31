@@ -11,7 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.file.PsiPackageImpl
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.idea.fir.low.level.api.createPackageProvider
+import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
@@ -37,6 +37,24 @@ class KtFirPackageSymbol(
     override fun createPointer(): KtSymbolPointer<KtPackageSymbol> = symbolPointer { session ->
         check(session is KtFirAnalysisSession)
         session.firSymbolBuilder.createPackageSymbolIfOneExists(fqName)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as KtFirPackageSymbol
+
+        if (fqName != other.fqName) return false
+        if (token != other.token) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = fqName.hashCode()
+        result = 31 * result + token.hashCode()
+        return result
     }
 }
 

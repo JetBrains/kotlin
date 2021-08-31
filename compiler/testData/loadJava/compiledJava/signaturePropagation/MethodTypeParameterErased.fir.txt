@@ -1,2 +1,12 @@
 public abstract interface MethodTypeParameterErased : R|kotlin/Any| {
+    public abstract interface Bug<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public abstract fun <RET : R|ft<test/MethodTypeParameterErased.Bug<ft<T, T?>>, test/MethodTypeParameterErased.Bug<ft<T, T?>>?>|> save(): R|ft<RET, RET?>|
+
+    }
+    public open class SubBug : R|kotlin/Any|, R|test/MethodTypeParameterErased.Bug<ft<kotlin/Any, kotlin/Any?>>| {
+        public open fun save(): R|ft<test/MethodTypeParameterErased.SubBug, test/MethodTypeParameterErased.SubBug?>|
+
+        public constructor(): R|test/MethodTypeParameterErased.SubBug|
+
+    }
 }

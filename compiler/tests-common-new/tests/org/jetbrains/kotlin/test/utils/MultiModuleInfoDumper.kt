@@ -7,21 +7,15 @@ package org.jetbrains.kotlin.test.utils
 
 import org.jetbrains.kotlin.test.model.TestModule
 
-abstract class MultiModuleInfoDumper {
-    abstract fun builderForModule(module: TestModule): StringBuilder
-    abstract fun generateResultingDump(): String
-    abstract fun isEmpty(): Boolean
-}
-
 // TODO: consider about tests with multiple testdata files
-class MultiModuleInfoDumperImpl(private val moduleHeaderTemplate: String? = "Module: %s") : MultiModuleInfoDumper() {
+class MultiModuleInfoDumper(private val moduleHeaderTemplate: String? = "Module: %s") {
     private val builderByModule = LinkedHashMap<TestModule, StringBuilder>()
 
-    override fun builderForModule(module: TestModule): StringBuilder {
+    fun builderForModule(module: TestModule): StringBuilder {
         return builderByModule.getOrPut(module, ::StringBuilder)
     }
 
-    override fun generateResultingDump(): String {
+    fun generateResultingDump(): String {
         builderByModule.values.singleOrNull()?.let { return it.toString() }
         return buildString {
             for ((module, builder) in builderByModule) {
@@ -31,7 +25,7 @@ class MultiModuleInfoDumperImpl(private val moduleHeaderTemplate: String? = "Mod
         }
     }
 
-    override fun isEmpty(): Boolean {
+    fun isEmpty(): Boolean {
         return builderByModule.isEmpty()
     }
 }

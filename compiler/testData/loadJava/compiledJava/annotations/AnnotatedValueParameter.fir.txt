@@ -3,4 +3,8 @@ public open class AnnotatedValueParameter : R|kotlin/Any| {
 
     public constructor(): R|test/AnnotatedValueParameter|
 
+    public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/String|): R|test/AnnotatedValueParameter.Anno|
+
+    }
 }

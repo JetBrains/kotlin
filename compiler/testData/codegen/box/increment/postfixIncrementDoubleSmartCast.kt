@@ -1,4 +1,4 @@
-public fun box() : String {
+fun box() : String {
     var i : Int?
     i = 10
     // We have "double" smart cast here:

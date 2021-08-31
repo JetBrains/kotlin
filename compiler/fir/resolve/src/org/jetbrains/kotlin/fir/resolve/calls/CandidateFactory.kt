@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -17,8 +18,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
@@ -49,9 +49,10 @@ class CandidateFactory private constructor(
         scope: FirScope?,
         dispatchReceiverValue: ReceiverValue? = null,
         extensionReceiverValue: ReceiverValue? = null,
-        builtInExtensionFunctionReceiverValue: ReceiverValue? = null
+        builtInExtensionFunctionReceiverValue: ReceiverValue? = null,
+        objectsByName: Boolean = false
     ): Candidate {
-        return Candidate(
+        val result = Candidate(
             symbol, dispatchReceiverValue, extensionReceiverValue,
             explicitReceiverKind, context.inferenceComponents.constraintSystemFactory, baseSystem,
             builtInExtensionFunctionReceiverValue?.receiverExpression?.let {
@@ -65,6 +66,23 @@ class CandidateFactory private constructor(
                 ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> false
             }
         )
+
+        // The counterpart in FE 1.0 checks if the given descriptor is VariableDescriptor yet not PropertyDescriptor.
+        // Here, we explicitly check if the referred declaration/symbol is value parameter, local variable, or backing field.
+        val callSite = callInfo.callSite
+        if (callSite is FirCallableReferenceAccess) {
+            if (symbol is FirValueParameterSymbol || symbol is FirPropertySymbol && symbol.isLocal || symbol is FirBackingFieldSymbol) {
+                result.addDiagnostic(Unsupported("References to variables aren't supported yet", callSite.calleeReference.source))
+            }
+        } else if (objectsByName &&
+            context.bodyResolveContext.qualifierPartIndexFromEnd == 0 &&
+            symbol is FirRegularClassSymbol &&
+            symbol.classKind != ClassKind.OBJECT &&
+            symbol.companionObjectSymbol == null
+        ) {
+            result.addDiagnostic(NoCompanionObject)
+        }
+        return result
     }
 
     private fun ReceiverValue?.isCandidateFromCompanionObjectTypeScope(): Boolean {
@@ -124,12 +142,10 @@ class CandidateFactory private constructor(
 
 fun PostponedArgumentsAnalyzerContext.addSubsystemFromExpression(statement: FirStatement) {
     when (statement) {
-        is FirFunctionCall,
         is FirQualifiedAccessExpression,
         is FirWhenExpression,
         is FirTryExpression,
         is FirCheckNotNullCall,
-        is FirCallableReferenceAccess,
         is FirElvisExpression
         -> (statement as FirResolvable).candidate()?.let { addOtherSystem(it.system.asReadOnlyStorage()) }
 

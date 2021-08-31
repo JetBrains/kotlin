@@ -232,7 +232,9 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
         declaration.parent.acceptVoid(this)
 
         val isStaticProperty = if (accessor != null)
-            accessor.let { it.dispatchReceiverParameter == null && declaration.parent !is IrPackageFragment }
+            accessor.let {
+                it.dispatchReceiverParameter == null && declaration.parent !is IrPackageFragment && !declaration.parent.isFacadeClass
+            }
         else {
             // Fake override for a Java field
             val backingField = declaration.resolveFakeOverride()?.backingField

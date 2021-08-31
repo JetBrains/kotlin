@@ -144,7 +144,8 @@ targetList.forEach { targetName ->
                 "${targetName}LegacyMemoryManager",
                 "${targetName}Strict",
                 "${targetName}Release",
-                "${targetName}StdAlloc"
+                "${targetName}StdAlloc",
+                "${targetName}Objc"
             )
     ) {
         includeRuntime()
@@ -160,7 +161,8 @@ targetList.forEach { targetName ->
                 "${targetName}Strict",
                 "${targetName}Release",
                 "${targetName}Mimalloc",
-                "${targetName}OptAlloc"
+                "${targetName}OptAlloc",
+                "${targetName}Objc"
             )
     ) {
         includeRuntime()
@@ -177,7 +179,8 @@ targetList.forEach { targetName ->
                 "${targetName}SameThreadMsGc",
                 "${targetName}Release",
                 "${targetName}Mimalloc",
-                "${targetName}OptAlloc"
+                "${targetName}OptAlloc",
+                "${targetName}Objc"
             )
     ) {
         headersDirs += files("src/gc/stms/cpp", "src/gc/common/cpp", "src/mm/cpp")
@@ -194,7 +197,8 @@ targetList.forEach { targetName ->
                 "${targetName}CommonGc",
                 "${targetName}SameThreadMsGc",
                 "${targetName}Release",
-                "${targetName}StdAlloc"
+                "${targetName}StdAlloc",
+                "${targetName}Objc"
             )
     ) {
         headersDirs += files("src/gc/stms/cpp", "src/gc/common/cpp", "src/mm/cpp")
@@ -212,7 +216,8 @@ targetList.forEach { targetName ->
                 "${targetName}NoopGc",
                 "${targetName}Release",
                 "${targetName}Mimalloc",
-                "${targetName}OptAlloc"
+                "${targetName}OptAlloc",
+                "${targetName}Objc"
             )
     ) {
         headersDirs += files("src/gc/noop/cpp", "src/gc/common/cpp", "src/mm/cpp")
@@ -229,7 +234,8 @@ targetList.forEach { targetName ->
                 "${targetName}CommonGc",
                 "${targetName}NoopGc",
                 "${targetName}Release",
-                "${targetName}StdAlloc"
+                "${targetName}StdAlloc",
+                "${targetName}Objc"
             )
     ) {
         headersDirs += files("src/gc/noop/cpp", "src/gc/common/cpp", "src/mm/cpp")

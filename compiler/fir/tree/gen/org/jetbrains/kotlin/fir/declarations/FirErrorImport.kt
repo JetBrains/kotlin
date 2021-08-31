@@ -24,6 +24,7 @@ abstract class FirErrorImport : FirPureAbstractElement(), FirImport, FirDiagnost
     abstract override val importedFqName: FqName?
     abstract override val isAllUnder: Boolean
     abstract override val aliasName: Name?
+    abstract override val aliasSource: FirSourceElement?
     abstract override val diagnostic: ConeDiagnostic
     abstract val delegate: FirImport
 

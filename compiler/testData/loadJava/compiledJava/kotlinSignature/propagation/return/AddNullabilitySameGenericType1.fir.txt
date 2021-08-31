@@ -1,2 +1,12 @@
 public abstract interface AddNullabilitySameGenericType1 : R|kotlin/Any| {
+    public abstract interface Sub : R|test/AddNullabilitySameGenericType1.Super| {
+        public abstract fun foo(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|
+
+    }
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun foo(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
 }

@@ -70,6 +70,7 @@ abstract class AbstractFirUseSiteMemberScope(
         functionSymbol: FirNamedFunctionSymbol,
         processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction =
+        //directOverriddenFunctions might be not filled for functionSymbol if it is not from processFunctionsByName call
         doProcessDirectOverriddenCallables(
             functionSymbol, processor, directOverriddenFunctions, superTypesScope,
             FirTypeScope::processDirectOverriddenFunctionsWithBaseScope

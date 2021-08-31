@@ -9,7 +9,7 @@ fun foo(i : Int?, a : Any?) {
    }
 }
 
-fun box () : String {
+fun box() : String {
     foo(2, "239")
     return "OK"
 }

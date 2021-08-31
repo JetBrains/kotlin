@@ -8,4 +8,20 @@ public final enum class Enum : R|kotlin/Enum<ft<test/Enum, test/Enum?>>| {
     public final static fun valueOf(value: R|kotlin/String|): R|test/Enum| {
     }
 
+    public open inner class Inner : R|kotlin/Any| {
+        public/*package*/ open fun bar(): R|kotlin/Unit|
+
+        public/*package*/ open fun valueOf(s: R|ft<kotlin/String, kotlin/String?>|): R|kotlin/Unit|
+
+        public constructor(): R|test/Enum.Inner|
+
+    }
+    public open class Nested : R|kotlin/Any| {
+        public/*package*/ open fun foo(): R|kotlin/Unit|
+
+        public/*package*/ open fun values(): R|kotlin/Unit|
+
+        public constructor(): R|test/Enum.Nested|
+
+    }
 }

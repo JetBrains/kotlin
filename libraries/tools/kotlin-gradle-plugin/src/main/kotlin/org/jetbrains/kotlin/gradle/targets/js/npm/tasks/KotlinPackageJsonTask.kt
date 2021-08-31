@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fakePackageJsonValue
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.MayBeUpToDatePackageJsonTasksRegistry
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
@@ -21,11 +23,17 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getValue
 import java.io.File
 
-open class KotlinPackageJsonTask : DefaultTask() {
+abstract class KotlinPackageJsonTask : DefaultTask() {
 
     init {
         onlyIf {
             npmResolutionManager.isConfiguringState()
+        }
+        outputs.upToDateWhen {
+            // this way we will ensure that we need to resolve dependencies for the compilation in case of UP-TO-DATE task
+            // used in KotlinCompilationNpmResolver#getResolutionOrResolveIfForced
+            mayBeUpToDateTasksRegistry.get().markForNpmDependenciesResolve(it as KotlinPackageJsonTask)
+            true
         }
     }
 
@@ -36,6 +44,9 @@ open class KotlinPackageJsonTask : DefaultTask() {
 
     @Transient
     private lateinit var compilation: KotlinJsCompilation
+
+    @get:Internal
+    internal abstract val mayBeUpToDateTasksRegistry: Property<MayBeUpToDatePackageJsonTasksRegistry>
 
     private val compilationDisambiguatedName by lazy {
         compilation.disambiguatedName
@@ -106,6 +117,10 @@ open class KotlinPackageJsonTask : DefaultTask() {
                 task.compilation = compilation
                 task.description = "Create package.json file for $compilation"
                 task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
+                task.mayBeUpToDateTasksRegistry.apply {
+                    set(MayBeUpToDatePackageJsonTasksRegistry.registerIfAbsent(project))
+                    disallowChanges()
+                }
 
                 task.dependsOn(target.project.provider { task.findDependentTasks() })
                 task.dependsOn(npmCachesSetupTask)

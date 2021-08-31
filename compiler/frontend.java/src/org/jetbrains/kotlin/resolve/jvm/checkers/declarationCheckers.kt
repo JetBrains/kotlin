@@ -195,6 +195,10 @@ class SynchronizedAnnotationChecker : DeclarationChecker {
                 context.trace.report(ErrorsJvm.SYNCHRONIZED_IN_INTERFACE.on(annotationEntry))
             } else if (descriptor.modality == Modality.ABSTRACT) {
                 context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_ABSTRACT.on(annotationEntry))
+            } else if (descriptor.isInline) {
+                context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_INLINE.on(annotationEntry))
+            } else if (descriptor.isSuspend) {
+                context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_SUSPEND.on(annotationEntry))
             }
         }
     }
@@ -235,13 +239,7 @@ class OverloadsAnnotationChecker : DeclarationChecker {
                 diagnosticHolder.report(ErrorsJvm.OVERLOADS_LOCAL.on(annotationEntry))
 
             descriptor.isAnnotationConstructor() -> {
-                val diagnostic =
-                    if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses))
-                        ErrorsJvm.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR
-                    else
-                        ErrorsJvm.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR_WARNING
-
-                diagnosticHolder.report(diagnostic.on(annotationEntry))
+                diagnosticHolder.report(ErrorsJvm.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR.on(context.languageVersionSettings, annotationEntry))
             }
 
             !descriptor.visibility.isPublicAPI && descriptor.visibility != DescriptorVisibilities.INTERNAL ->

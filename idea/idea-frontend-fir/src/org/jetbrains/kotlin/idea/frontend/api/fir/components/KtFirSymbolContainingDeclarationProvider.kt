@@ -15,14 +15,10 @@ import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtSymbolContainingDeclarationProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
-import org.jetbrains.kotlin.psi.KtPrimaryConstructor
+import org.jetbrains.kotlin.psi.*
 
 internal class KtFirSymbolContainingDeclarationProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -46,7 +42,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
                 getContainingDeclarationForLibrarySymbol(symbol)
             KtSymbolOrigin.PROPERTY_BACKING_FIELD -> getContainingDeclarationForBackingFieldSymbol(symbol)
             KtSymbolOrigin.INTERSECTION_OVERRIDE -> TODO()
-            KtSymbolOrigin.SAM_CONSTRUCTOR -> TODO()
+            KtSymbolOrigin.SAM_CONSTRUCTOR -> null
             KtSymbolOrigin.DELEGATED -> TODO()
         }
     }
@@ -81,12 +77,18 @@ internal class KtFirSymbolContainingDeclarationProvider(
         }
 
         return when (symbol.origin) {
-            KtSymbolOrigin.SOURCE -> thisSource.parentOfType()
+            KtSymbolOrigin.SOURCE -> thisSource.getContainingKtDeclaration()
                 ?: error("Containing declaration should present for non-toplevel declaration")
             KtSymbolOrigin.SOURCE_MEMBER_GENERATED -> thisSource as KtDeclaration
             else -> error("Unsupported declaration origin ${symbol.origin}")
         }
     }
+
+    private fun PsiElement.getContainingKtDeclaration(): KtDeclaration? =
+        when (val container = this.parentOfType<KtDeclaration>()) {
+            is KtDestructuringDeclaration -> container.parentOfType()
+            else -> container
+        }
 
     private fun getContainingDeclarationForLibrarySymbol(symbol: KtSymbolWithKind): KtSymbolWithKind = with(analysisSession) {
         require(symbol.origin == KtSymbolOrigin.LIBRARY || symbol.origin == KtSymbolOrigin.JAVA)

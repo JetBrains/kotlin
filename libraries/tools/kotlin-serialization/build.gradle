@@ -17,10 +17,6 @@ dependencies {
     embedded(project(":kotlinx-serialization-compiler-plugin")) { transitive = false }
 }
 
-tasks.withType(project.compileKotlin.class) {
-    kotlinOptions.freeCompilerArgs += ["-Xskip-runtime-version-check"]
-}
-
 jar {
     manifestAttributes(manifest, project)
 }

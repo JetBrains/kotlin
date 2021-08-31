@@ -6,6 +6,8 @@
 package runtime.text.parse0
 
 import kotlin.test.*
+import kotlin.native.OsFamily
+import kotlin.native.Platform
 
 @Test
 fun runTest() {
@@ -51,31 +53,33 @@ fun checkDouble() {
     assertTrue("NaN".toDouble().isNaN(), "NaN is expected for parsing NaN")
     assertTrue("-NaN".toDouble().isNaN(), "NaN is expected for parsing -NaN")
 
-    assertFailsWith<NumberFormatException> {
-        "+-5.0".toDouble()
-    }
-    assertFailsWith<NumberFormatException> {
-        "d".toDouble()
-    }
-    assertFailsWith<NumberFormatException> {
-        "5.5.3e123d".toDouble()
-    }
+    if (Platform.osFamily != OsFamily.WASM) {
+        assertFailsWith<NumberFormatException> {
+            "+-5.0".toDouble()
+        }
+        assertFailsWith<NumberFormatException> {
+            "d".toDouble()
+        }
+        assertFailsWith<NumberFormatException> {
+            "5.5.3e123d".toDouble()
+        }
 
-    // regression of incorrect processing of long lines - such values returned Infinity
-    assertFailsWith<NumberFormatException> {
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".toDouble()
-    }
-    assertFailsWith<NumberFormatException> {
-        "+-my free text           with different letters $3213#.  e ".toDouble()
-    }
-    assertFailsWith<NumberFormatException> {
-        "eeeeeEEEEEeeeeeee".toDouble()
-    }
-    assertFailsWith<NumberFormatException> {
-        "InfinityN".toDouble()
-    }
-    assertFailsWith<NumberFormatException> {
-        "NaNPICEZy".toDouble()
+        // regression of incorrect processing of long lines - such values returned Infinity
+        assertFailsWith<NumberFormatException> {
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".toDouble()
+        }
+        assertFailsWith<NumberFormatException> {
+            "+-my free text           with different letters $3213#.  e ".toDouble()
+        }
+        assertFailsWith<NumberFormatException> {
+            "eeeeeEEEEEeeeeeee".toDouble()
+        }
+        assertFailsWith<NumberFormatException> {
+            "InfinityN".toDouble()
+        }
+        assertFailsWith<NumberFormatException> {
+            "NaNPICEZy".toDouble()
+        }
     }
 }
 
@@ -103,37 +107,39 @@ fun checkFloat() {
     assertTrue("NaN".toFloat().isNaN(), "NaN is expected for parsing NaN")
     assertTrue("-NaN".toFloat().isNaN(), "NaN is expected for parsing -NaN")
 
-    assertFailsWith<NumberFormatException> {
-        "+-5.0f".toFloat()
-    }
-    assertFailsWith<NumberFormatException> {
-        "f".toFloat()
-    }
-    assertFailsWith<NumberFormatException> {
-        "5.5.3e123f".toFloat()
-    }
+    if (Platform.osFamily != OsFamily.WASM) {
+        assertFailsWith<NumberFormatException> {
+            "+-5.0f".toFloat()
+        }
+        assertFailsWith<NumberFormatException> {
+            "f".toFloat()
+        }
+        assertFailsWith<NumberFormatException> {
+            "5.5.3e123f".toFloat()
+        }
 
-    // regression of incorrect processing of long lines - such values returned Infinity
-    assertFailsWith<NumberFormatException> {
-        // should be more than 38 symbols
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".toFloat()
-    }
-    assertFailsWith<NumberFormatException> {
-        // should be more than 38 symbols
-        "this string is not a numb3r, am I right?????????????".toFloat()
-    }
-    assertFailsWith<NumberFormatException> {
-        // should be more than 38 symbols
-        "+-my free text           with different letters $3213#.  e ".toFloat()
-    }
-    assertFailsWith<NumberFormatException> {
-        // should be more than 38 symbols
-        "eeeeeEEEEEeeeeeee".toFloat()
-    }
-    assertFailsWith<NumberFormatException> {
-        "InfinityN".toFloat()
-    }
-    assertFailsWith<NumberFormatException> {
-        "NaNPICEZy".toFloat()
+        // regression of incorrect processing of long lines - such values returned Infinity
+        assertFailsWith<NumberFormatException> {
+            // should be more than 38 symbols
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".toFloat()
+        }
+        assertFailsWith<NumberFormatException> {
+            // should be more than 38 symbols
+            "this string is not a numb3r, am I right?????????????".toFloat()
+        }
+        assertFailsWith<NumberFormatException> {
+            // should be more than 38 symbols
+            "+-my free text           with different letters $3213#.  e ".toFloat()
+        }
+        assertFailsWith<NumberFormatException> {
+            // should be more than 38 symbols
+            "eeeeeEEEEEeeeeeee".toFloat()
+        }
+        assertFailsWith<NumberFormatException> {
+            "InfinityN".toFloat()
+        }
+        assertFailsWith<NumberFormatException> {
+            "NaNPICEZy".toFloat()
+        }
     }
 }

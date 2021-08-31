@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 
 sealed class FirMetadataSource : MetadataSource {
     abstract val fir: FirDeclaration
@@ -19,7 +20,7 @@ sealed class FirMetadataSource : MetadataSource {
 
     override val name: Name?
         get() = when (val fir = fir) {
-            is FirConstructor -> Name.special("<init>")
+            is FirConstructor -> SpecialNames.INIT
             is FirSimpleFunction -> fir.name
             is FirRegularClass -> fir.name
             is FirProperty -> fir.name

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.RECURSIVE_ALL
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumperImpl
 import org.jetbrains.kotlin.test.utils.withExtension
 
 class DynamicCallsDumpHandler(testServices: TestServices) : ClassicFrontendAnalysisHandler(testServices) {
@@ -26,10 +25,10 @@ class DynamicCallsDumpHandler(testServices: TestServices) : ClassicFrontendAnaly
         private const val DYNAMIC_PREFIX = ".dynamic.txt"
     }
 
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(DiagnosticsDirectives)
 
-    private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumperImpl(moduleHeaderTemplate = "// -- Module: <%s> --")
+    private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper(moduleHeaderTemplate = "// -- Module: <%s> --")
 
     override fun processModule(module: TestModule, info: ClassicFrontendOutputArtifact) {
         val dynamicCallDescriptors = mutableListOf<DeclarationDescriptor>()

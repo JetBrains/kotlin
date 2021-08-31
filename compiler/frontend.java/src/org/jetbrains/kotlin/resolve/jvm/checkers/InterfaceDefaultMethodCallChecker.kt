@@ -51,8 +51,7 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker 
             isStaticDeclaration(descriptor) &&
             isInterface(descriptor.containingDeclaration) &&
             descriptor is JavaCallableMemberDescriptor) {
-            val diagnostic = if (isDefaultCallsProhibited(context)) INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET_ERROR else INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET
-            context.trace.report(diagnostic.on(reportOn))
+            context.trace.report(INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET.on(context.languageVersionSettings, reportOn))
         }
 
         val superCallExpression = getSuperCallExpression(resolvedCall.call) ?: return
@@ -76,9 +75,7 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker 
             }
 
             if (!supportDefaults) {
-                val diagnostic =
-                    if (isDefaultCallsProhibited(context)) DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET_ERROR else DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET
-                context.trace.report(diagnostic.on(reportOn))
+                context.trace.report(DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET.on(context.languageVersionSettings, reportOn))
             }
         }
     }
@@ -104,8 +101,6 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker 
         return null
     }
 
-    private fun isDefaultCallsProhibited(context: CallCheckerContext) =
-        context.languageVersionSettings.supportsFeature(LanguageFeature.DefaultMethodsCallFromJava6TargetError)
 
     private fun getSuperCallLabelTarget(
         bindingContext: BindingContext,

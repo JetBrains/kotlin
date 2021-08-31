@@ -60,7 +60,7 @@ const val INLINE_FUN_VAR_SUFFIX = "\$iv"
 internal const val FIRST_FUN_LABEL = "$$$$\$ROOT$$$$$"
 internal const val SPECIAL_TRANSFORMATION_NAME = "\$special"
 const val INLINE_TRANSFORMATION_SUFFIX = "\$inlined"
-internal const val INLINE_CALL_TRANSFORMATION_SUFFIX = "$" + INLINE_TRANSFORMATION_SUFFIX
+internal const val INLINE_CALL_TRANSFORMATION_SUFFIX = "$$INLINE_TRANSFORMATION_SUFFIX"
 internal const val INLINE_FUN_THIS_0_SUFFIX = "\$inline_fun"
 internal const val DEFAULT_LAMBDA_FAKE_CALL = "$$\$DEFAULT_LAMBDA_FAKE_CALL$$$"
 internal const val CAPTURED_FIELD_FOLD_PREFIX = "$$$"
@@ -68,11 +68,10 @@ internal const val CAPTURED_FIELD_FOLD_PREFIX = "$$$"
 private const val NON_LOCAL_RETURN = "$$$$\$NON_LOCAL_RETURN$$$$$"
 const val CAPTURED_FIELD_PREFIX = "$"
 private const val NON_CAPTURED_FIELD_PREFIX = "$$"
-private const val INLINE_MARKER_CLASS_NAME = "kotlin/jvm/internal/InlineMarker"
+internal const val INLINE_MARKER_CLASS_NAME = "kotlin/jvm/internal/InlineMarker"
 private const val INLINE_MARKER_BEFORE_METHOD_NAME = "beforeInlineCall"
 private const val INLINE_MARKER_AFTER_METHOD_NAME = "afterInlineCall"
 private const val INLINE_MARKER_FINALLY_START = "finallyStart"
-
 private const val INLINE_MARKER_FINALLY_END = "finallyEnd"
 private const val INLINE_MARKER_BEFORE_SUSPEND_ID = 0
 private const val INLINE_MARKER_AFTER_SUSPEND_ID = 1
@@ -225,7 +224,7 @@ internal fun isSamWrapperConstructorCall(internalName: String, methodName: Strin
     isConstructor(methodName) && isSamWrapper(internalName)
 
 internal fun isAnonymousClass(internalName: String) =
-    !isSamWrapper(internalName) &&
+    !internalName.contains("\$sam\$") &&
             internalName.substringAfterLast('/').substringAfterLast("$", "").isInteger()
 
 fun wrapWithMaxLocalCalc(methodNode: MethodNode) =
@@ -302,7 +301,7 @@ internal fun firstLabelInChain(node: LabelNode): LabelNode {
 internal fun areLabelsBeforeSameInsn(first: LabelNode, second: LabelNode): Boolean =
     firstLabelInChain(first) == firstLabelInChain(second)
 
-internal val MethodNode?.nodeText: String
+val MethodNode?.nodeText: String
     get() {
         if (this == null) {
             return "Not generated"
@@ -349,6 +348,116 @@ fun AbstractInsnNode?.insnText(insnList: InsnList): String {
         else ->
             insnText
     }
+}
+
+fun MethodNode.dumpBody(): String {
+    val sw = StringWriter()
+    val pw = PrintWriter(sw)
+
+    fun LabelNode.labelRef() =
+        "L#${this@dumpBody.instructions.indexOf(this)}"
+
+    pw.println("${this.name} ${this.desc}")
+
+    for (tcb in this.tryCatchBlocks) {
+        pw.println("  TRYCATCHBLOCK start:${tcb.start.labelRef()} end:${tcb.end.labelRef()} handler:${tcb.handler.labelRef()}")
+    }
+
+    for ((i, insn) in this.instructions.toArray().withIndex()) {
+        when (insn.type) {
+            AbstractInsnNode.INSN ->
+                pw.println("$i\t${Printer.OPCODES[insn.opcode]}")
+            AbstractInsnNode.INT_INSN ->
+                pw.println("$i\t${Printer.OPCODES[insn.opcode]} ${(insn as IntInsnNode).operand}")
+            AbstractInsnNode.VAR_INSN ->
+                pw.println("$i\t${Printer.OPCODES[insn.opcode]} ${(insn as VarInsnNode).`var`}")
+            AbstractInsnNode.TYPE_INSN ->
+                pw.println("$i\t${Printer.OPCODES[insn.opcode]} ${(insn as TypeInsnNode).desc}")
+            AbstractInsnNode.FIELD_INSN -> {
+                val fieldInsn = insn as FieldInsnNode
+                pw.println("$i\t${Printer.OPCODES[insn.opcode]} ${fieldInsn.owner}#${fieldInsn.name} ${fieldInsn.desc}")
+            }
+            AbstractInsnNode.METHOD_INSN -> {
+                val methodInsn = insn as MethodInsnNode
+                pw.println("$i\t${Printer.OPCODES[insn.opcode]} ${methodInsn.owner}#${methodInsn.name} ${methodInsn.desc}")
+            }
+            AbstractInsnNode.INVOKE_DYNAMIC_INSN -> {
+                val indyInsn = insn as InvokeDynamicInsnNode
+                pw.println("$i\t${Printer.OPCODES[insn.opcode]} ${indyInsn.name} ${indyInsn.desc}")
+                val bsmTag = when (val tag = indyInsn.bsm.tag) {
+                    Opcodes.H_GETFIELD -> "H_GETFIELD"
+                    Opcodes.H_GETSTATIC -> "H_GETSTATIC"
+                    Opcodes.H_PUTFIELD -> "H_PUTFIELD"
+                    Opcodes.H_PUTSTATIC -> "H_PUTSTATIC"
+                    Opcodes.H_INVOKEVIRTUAL -> "H_INVOKEVIRTUAL"
+                    Opcodes.H_INVOKESTATIC -> "H_INVOKESTATIC"
+                    Opcodes.H_INVOKESPECIAL -> "H_INVOKESPECIAL"
+                    Opcodes.H_NEWINVOKESPECIAL -> "H_NEWINVOKESPECIAL"
+                    Opcodes.H_INVOKEINTERFACE -> "H_INVOKEINTERFACE"
+                    else -> "<$tag>"
+                }
+                pw.println("\t$bsmTag ${indyInsn.bsm.owner}#${indyInsn.bsm.name} ${indyInsn.bsm.desc} [")
+                for (bsmArg in indyInsn.bsmArgs) {
+                    pw.println("\t$bsmArg")
+                }
+                pw.println("\t]")
+            }
+            AbstractInsnNode.JUMP_INSN ->
+                pw.println("$i\t${Printer.OPCODES[insn.opcode]} ${(insn as JumpInsnNode).label.labelRef()}")
+            AbstractInsnNode.LABEL ->
+                pw.println("$i\tL#$i")
+            AbstractInsnNode.LDC_INSN ->
+                pw.println("$i\tLDC ${(insn as LdcInsnNode).cst}")
+            AbstractInsnNode.IINC_INSN -> {
+                val iincInsn = insn as IincInsnNode
+                pw.println("$i\tIINC ${iincInsn.`var`} incr:${iincInsn.incr}")
+            }
+            AbstractInsnNode.TABLESWITCH_INSN -> {
+                val switchInsn = insn as TableSwitchInsnNode
+                pw.println("$i\tTABLESWITCH min:${switchInsn.min} max:${switchInsn.max}{")
+                for (k in switchInsn.labels.indices) {
+                    pw.println("\t${k + switchInsn.min}: ${switchInsn.labels[k].labelRef()}")
+                }
+                pw.println("\tdefault: ${switchInsn.dflt.labelRef()}")
+                pw.println("\t}")
+            }
+            AbstractInsnNode.LOOKUPSWITCH_INSN -> {
+                val switchInsn = insn as LookupSwitchInsnNode
+                pw.println("$i\tLOOKUPSWITCH {")
+                for (k in switchInsn.labels.indices) {
+                    val key = switchInsn.keys[k]
+                    val label = switchInsn.labels[k]
+                    pw.println("\t$key: ${label.labelRef()}")
+                }
+                pw.println("\t}")
+            }
+            AbstractInsnNode.MULTIANEWARRAY_INSN -> {
+                val manInsn = insn as MultiANewArrayInsnNode
+                pw.println("$i\t${Printer.OPCODES[insn.opcode]} ${manInsn.desc} dims:${manInsn.dims} ")
+            }
+            AbstractInsnNode.FRAME -> {
+                // TODO dump frame if needed
+                pw.println("$i\tFRAME {...}")
+            }
+            AbstractInsnNode.LINE -> {
+                val lineInsn = insn as LineNumberNode
+                pw.println("$i\tLINENUMBER ${lineInsn.line} ${lineInsn.start.labelRef()}")
+            }
+            else -> {
+                pw.println("$i\t??? $insn")
+            }
+        }
+    }
+
+    for (lv in this.localVariables) {
+        pw.println("  LOCALVARIABLE ${lv.index} ${lv.name} ${lv.desc} ${lv.start.labelRef()} ${lv.end.labelRef()}")
+        if (lv.signature != null) {
+            pw.println("    // signature: ${lv.signature}")
+        }
+    }
+
+    pw.flush()
+    return sw.toString()
 }
 
 internal val AbstractInsnNode?.insnOpcodeText: String
@@ -535,17 +644,15 @@ internal fun isInlineMarker(insn: AbstractInsnNode): Boolean {
     return isInlineMarker(insn, null)
 }
 
-private fun isInlineMarker(insn: AbstractInsnNode, name: String?): Boolean {
-    if (insn !is MethodInsnNode) {
-        return false
-    }
+internal fun isInlineMarker(insn: AbstractInsnNode, name: String?): Boolean {
+    if (insn.opcode != Opcodes.INVOKESTATIC) return false
 
-    return insn.getOpcode() == Opcodes.INVOKESTATIC &&
-            insn.owner == INLINE_MARKER_CLASS_NAME &&
+    val methodInsn = insn as MethodInsnNode
+    return methodInsn.owner == INLINE_MARKER_CLASS_NAME &&
             if (name != null)
-                insn.name == name
+                methodInsn.name == name
             else
-                insn.name == INLINE_MARKER_BEFORE_METHOD_NAME || insn.name == INLINE_MARKER_AFTER_METHOD_NAME
+                methodInsn.name == INLINE_MARKER_BEFORE_METHOD_NAME || methodInsn.name == INLINE_MARKER_AFTER_METHOD_NAME
 }
 
 internal fun isBeforeInlineMarker(insn: AbstractInsnNode): Boolean {

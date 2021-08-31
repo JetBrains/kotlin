@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility.Permissiveness
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
@@ -261,7 +261,7 @@ internal fun containerRelation(
     }
 }
 
-private fun TypeCheckerProviderContext.createTypeCheckerContext(): AbstractTypeCheckerContext = newBaseTypeCheckerContext(
+private fun TypeCheckerProviderContext.createTypeCheckerContext(): TypeCheckerState = newTypeCheckerState(
     errorTypesEqualToAnything = false,
     stubTypesEqualToAnything = true
 )

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 
 class BodyResolveContext(
     val returnTypeCalculator: ReturnTypeCalculator,
@@ -74,7 +75,7 @@ class BodyResolveContext(
         get() = towerDataContextsForClassParts.towerDataContextForCallableReferences
 
     @set:PrivateForInline
-    var containers: MutableList<FirDeclaration> = mutableListOf()
+    var containers: ArrayDeque<FirDeclaration> = ArrayDeque()
 
     @set:PrivateForInline
     var containingClass: FirRegularClass? = null
@@ -117,7 +118,7 @@ class BodyResolveContext(
         return try {
             f()
         } finally {
-            containers.removeAt(containers.size - 1)
+            containers.removeLast()
         }
     }
 
@@ -129,7 +130,7 @@ class BodyResolveContext(
         return try {
             f()
         } finally {
-            containers.removeAt(containers.size - 1)
+            containers.removeLast()
             containingClass = oldContainingClass
         }
     }
@@ -168,6 +169,17 @@ class BodyResolveContext(
             l()
         } finally {
             towerDataMode = initialMode
+        }
+    }
+
+    var qualifierPartIndexFromEnd: Int = -1
+
+    inline fun <R> withIncrementedQualifierPartIndex(l: () -> R): R {
+        qualifierPartIndexFromEnd++
+        return try {
+            l()
+        } finally {
+            qualifierPartIndexFromEnd--
         }
     }
 
@@ -612,7 +624,9 @@ class BodyResolveContext(
         valueParameter: FirValueParameter,
         f: () -> T
     ): T {
-        storeVariable(valueParameter)
+        if (!valueParameter.name.isSpecial || valueParameter.name != UNDERSCORE_FOR_UNUSED_VAR) {
+            storeVariable(valueParameter)
+        }
         return withContainer(valueParameter, f)
     }
 

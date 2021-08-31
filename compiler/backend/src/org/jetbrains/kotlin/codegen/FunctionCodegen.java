@@ -481,8 +481,7 @@ public class FunctionCodegen {
         }
 
         if (!functionDescriptor.isExternal()) {
-            generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, memberCodegen, state.getJvmDefaultMode(),
-                               state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines));
+            generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, memberCodegen, state.getJvmDefaultMode());
         }
         else if (staticInCompanionObject) {
             // native @JvmStatic foo() in companion object should delegate to the static native function moved to the outer class
@@ -583,8 +582,7 @@ public class FunctionCodegen {
             @NotNull JvmMethodSignature signature,
             @NotNull FunctionGenerationStrategy strategy,
             @NotNull MemberCodegen<?> parentCodegen,
-            @NotNull JvmDefaultMode jvmDefaultMode,
-            boolean isReleaseCoroutines
+            @NotNull JvmDefaultMode jvmDefaultMode
     ) {
         mv.visitCode();
 
@@ -594,8 +592,7 @@ public class FunctionCodegen {
         KotlinTypeMapper typeMapper = parentCodegen.typeMapper;
         if (BuiltinSpecialBridgesUtil.shouldHaveTypeSafeBarrier(functionDescriptor, typeMapper::mapAsmMethod)) {
             generateTypeCheckBarrierIfNeeded(
-                    new InstructionAdapter(mv), functionDescriptor, signature.getReturnType(), null, typeMapper,
-                    isReleaseCoroutines);
+                    new InstructionAdapter(mv), functionDescriptor, signature.getReturnType(), null, typeMapper);
         }
 
         Label methodEntry = null;
@@ -1430,8 +1427,7 @@ public class FunctionCodegen {
         MemberCodegen.markLineNumberForDescriptor(owner.getThisDescriptor(), iv);
 
         if (delegateTo.getArgumentTypes().length > 0 && isSpecialBridge) {
-            generateTypeCheckBarrierIfNeeded(iv, descriptor, bridge.getReturnType(), delegateTo.getArgumentTypes(), typeMapper,
-                                             state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines));
+            generateTypeCheckBarrierIfNeeded(iv, descriptor, bridge.getReturnType(), delegateTo.getArgumentTypes(), typeMapper);
         }
 
         iv.load(0, OBJECT_TYPE);
@@ -1477,8 +1473,7 @@ public class FunctionCodegen {
             @NotNull FunctionDescriptor descriptor,
             @NotNull Type returnType,
             @Nullable Type[] delegateParameterTypes,
-            @NotNull KotlinTypeMapper typeMapper,
-            boolean isReleaseCoroutines
+            @NotNull KotlinTypeMapper typeMapper
     ) {
         BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription typeSafeBarrierDescription =
                 BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor);
@@ -1512,7 +1507,7 @@ public class FunctionCodegen {
                 } else {
                     targetBoxedType = boxType(delegateParameterTypes[i]);
                 }
-                CodegenUtilKt.generateIsCheck(iv, kotlinType, targetBoxedType, isReleaseCoroutines);
+                CodegenUtilKt.generateIsCheck(iv, kotlinType, targetBoxedType);
                 iv.ifeq(defaultBranch);
             }
         }

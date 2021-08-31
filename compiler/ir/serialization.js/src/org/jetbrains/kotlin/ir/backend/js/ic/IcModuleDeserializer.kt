@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.IrLongArrayMemoryReader
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
@@ -33,8 +34,7 @@ class IcModuleDeserializer(
     override val klib: IrLibrary,
     override val strategy: DeserializationStrategy,
     private val containsErrorCode: Boolean = false,
-    private val useGlobalSignatures: Boolean = false,
-) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
+) : IrModuleDeserializer(moduleDescriptor, (klib as KotlinLibrary).versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
 
     private val fileToDeserializerMap = mutableMapOf<IrFile, IrFileDeserializer>()
 
@@ -91,13 +91,12 @@ class IcModuleDeserializer(
             ?: error("No deserializer for file $file in module ${moduleDescriptor.name}")
 
     // TODO: fix to topLevel checker
-    override fun contains(idSig: IdSignature): Boolean = idSig in moduleReversedFileIndex || idSig in icModuleReversedFileIndex
+    override fun contains(idSig: IdSignature): Boolean = idSig.topLevelSignature() in moduleReversedFileIndex || idSig in icModuleReversedFileIndex
 
     override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         assert(idSig.isPubliclyVisible)
 
-        if (idSig in icModuleReversedFileIndex) {
-            val icDeserializer = icModuleReversedFileIndex[idSig]!!
+        icModuleReversedFileIndex[idSig]?.let { icDeserializer ->
             return icDeserializer.deserializeIrSymbol(idSig, symbolKind)
         }
 
@@ -105,14 +104,11 @@ class IcModuleDeserializer(
         val icDeserializer = moduleReversedFileIndex[topLevelSignature]
             ?: error("No file for $topLevelSignature (@ $idSig) in module $moduleDescriptor")
 
-        val symbol = icDeserializer.originalFileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind).also {
-            linker.deserializedSymbols.add(it)
-        }
+        val symbol = icDeserializer.originalFileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind)
 
         if (!symbol.isBound) {
             topLevelSignature.originalEnqueue(icDeserializer)
             idSig.enqueue(icDeserializer)
-            linker.modulesWithReachableTopLevels.add(this)
         }
 
         return symbol
@@ -123,8 +119,6 @@ class IcModuleDeserializer(
     private val pathToIcFileData = icData.files.associateBy {
         it.file.path
     }
-
-    private val publicSignatureToIcFileDeserializer = mutableMapOf<IdSignature, IcFileDeserializer>()
 
     private fun deserializeIrFile(
         fileProto: ProtoFile,
@@ -147,12 +141,9 @@ class IcModuleDeserializer(
             allowErrorNodes,
             strategy.inlineBodies,
             moduleDeserializer,
-            useGlobalSignatures,
-            linker::handleNoModuleDeserializerFound,
             { fileDeserializer -> originalEnqueue(fileDeserializer) },
             icFileData,
             mapping.state,
-            publicSignatureToIcFileDeserializer,
             { fileDeserializer -> enqueue(fileDeserializer) },
         )
 
@@ -167,14 +158,15 @@ class IcModuleDeserializer(
             moduleReversedFileIndex.putIfAbsent(it, icDeserializer) // TODO Why not simple put?
         }
 
-        icDeserializer.init()
         icDeserializer.reversedSignatureIndex.keys.forEach {
-            if (it in icModuleReversedFileIndex) {
-                val existed = icModuleReversedFileIndex[it]!!
-                error("Duplicate signature $it in both ${existed.originalFileDeserializer.file.path} and in ${file.path}")
-            }
+            if (it.isPubliclyVisible) {
+                if (it in icModuleReversedFileIndex) {
+                    val existed = icModuleReversedFileIndex[it]!!
+                    error("Duplicate signature $it in both ${existed.originalFileDeserializer.file.path} and in ${file.path}")
+                }
 
-            icModuleReversedFileIndex[it] = icDeserializer
+                icModuleReversedFileIndex[it] = icDeserializer
+            }
         }
 
         if (strategy.theWholeWorld) {
@@ -226,16 +218,19 @@ class IcModuleDeserializer(
             val icFileDeserializer = fileQueue.removeFirst()
             val signature = signatureQueue.removeFirst()
 
-            val declaration = icFileDeserializer.deserializeDeclaration(signature) ?: icFileDeserializer.deserializeAnyDeclaration(signature) ?: continue
+            val declaration =
+                icFileDeserializer.deserializeDeclaration(signature) ?: icFileDeserializer.deserializeAnyDeclaration(signature)
 
-            icFileDeserializer.injectCarriers(declaration, signature)
+            if (declaration != null) {
+                icFileDeserializer.injectCarriers(declaration, signature)
 
-            icFileDeserializer.mappingsDeserializer(signature, declaration)
+                icFileDeserializer.mappingsDeserializer(signature, declaration)
 
-            // Make sure all members are loaded
-            if (declaration is IrClass) {
-                icFileDeserializer.loadClassOrder(signature)?.let {
-                    classToDeclarationSymbols[declaration] = it
+                // Make sure all members are loaded
+                if (declaration is IrClass) {
+                    icFileDeserializer.loadClassOrder(signature)?.let {
+                        classToDeclarationSymbols[declaration] = it
+                    }
                 }
             }
         }

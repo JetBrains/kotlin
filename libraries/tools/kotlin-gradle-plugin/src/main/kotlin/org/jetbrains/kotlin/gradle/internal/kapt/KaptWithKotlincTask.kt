@@ -12,6 +12,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
+import org.gradle.work.InputChanges
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
-import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
+import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import java.io.File
 import javax.inject.Inject
 
@@ -71,7 +72,7 @@ abstract class KaptWithKotlincTask @Inject constructor(
             ignoreClasspathResolutionErrors
         ))
 
-        args.pluginClasspaths = pluginClasspath.toSortedPathsArray()
+        args.pluginClasspaths = pluginClasspath.toPathsArray()
 
         val pluginOptionsWithKapt: CompilerPluginOptions = pluginOptions.withWrappedKaptOptions(
             withApClasspath = kaptClasspath,
@@ -97,11 +98,11 @@ abstract class KaptWithKotlincTask @Inject constructor(
     private val reportingSettings = objectFactory.property(ReportingSettings::class.java)
 
     @TaskAction
-    fun compile(inputs: IncrementalTaskInputs) {
+    fun compile(inputChanges: InputChanges) {
         logger.debug("Running kapt annotation processing using the Kotlin compiler")
         checkAnnotationProcessorClasspath()
 
-        val incrementalChanges = getIncrementalChanges(inputs)
+        val incrementalChanges = getIncrementalChanges(inputChanges)
         if (incrementalChanges is KaptIncrementalChanges.Known) {
             changedFiles = incrementalChanges.changedSources.toList()
             classpathChanges = incrementalChanges.changedClasspathJvmNames.toList()

@@ -55,4 +55,7 @@ internal class KtFirEnumEntrySymbol(
             )
         }
     }
+
+    override fun equals(other: Any?): Boolean = symbolEquals(other)
+    override fun hashCode(): Int = symbolHashCode()
 }

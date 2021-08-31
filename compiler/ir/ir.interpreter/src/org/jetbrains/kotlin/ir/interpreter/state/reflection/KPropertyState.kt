@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
+import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
 import org.jetbrains.kotlin.ir.interpreter.state.State
@@ -23,9 +24,13 @@ internal class KPropertyState(val property: IrProperty, override val irClass: Ir
     private var _parameters: List<KParameter>? = null
     private var _returnType: KType? = null
 
+    fun convertGetterToKFunctionState(environment: IrInterpreterEnvironment): KFunctionState {
+        return KFunctionState(property.getter!!, environment.irBuiltIns.functionN(1), environment)
+    }
+
     fun getParameters(callInterceptor: CallInterceptor): List<KParameter> {
         if (_parameters != null) return _parameters!!
-        val kParameterIrClass = irClass.getIrClassOfReflectionFromList("parameters")
+        val kParameterIrClass = callInterceptor.environment.kParameterClass.owner
         var index = 0
         val instanceParameter = property.getter?.dispatchReceiverParameter?.takeIf { receiver == null }
             ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.INSTANCE), callInterceptor) }
@@ -37,7 +42,7 @@ internal class KPropertyState(val property: IrProperty, override val irClass: Ir
 
     fun getReturnType(callInterceptor: CallInterceptor): KType {
         if (_returnType != null) return _returnType!!
-        val kTypeIrClass = irClass.getIrClassOfReflection("returnType")
+        val kTypeIrClass = callInterceptor.environment.kTypeClass.owner
         _returnType = KTypeProxy(KTypeState(property.getter!!.returnType, kTypeIrClass), callInterceptor)
         return _returnType!!
     }

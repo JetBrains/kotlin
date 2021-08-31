@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 
 class DiagnosticTestWithJavacSkipConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices) {
-    override val directives: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(DiagnosticsDirectives)
 
     override fun shouldSkipTest(): Boolean {

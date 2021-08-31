@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 annotation class My(
     public val x: Int,
     <!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> val y: Int,

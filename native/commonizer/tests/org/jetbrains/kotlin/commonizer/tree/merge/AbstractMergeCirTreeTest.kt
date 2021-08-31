@@ -88,6 +88,8 @@ abstract class AbstractMergeCirTreeTest : KtInlineSourceCommonizerTestCase() {
 
     private fun createDefaultKnownClassifiers(): CirKnownClassifiers {
         return CirKnownClassifiers(
+            TargetDependent.empty(),
+            TargetDependent.empty(),
             CirCommonizedClassifierNodes.default(),
             CirProvidedClassifiers.of(
                 CirFictitiousFunctionClassifiers,

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.services.dependencyProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 
 class BytecodeInliningHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {}

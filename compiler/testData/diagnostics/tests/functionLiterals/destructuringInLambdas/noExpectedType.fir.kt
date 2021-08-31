@@ -18,7 +18,7 @@ fun bar() {
     y checkType { _<(A) -> Unit>() }
 
     val y2 = { (a: Number, b): A ->
-        a checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
+        a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
         b checkType { _<String>() }
     }
 

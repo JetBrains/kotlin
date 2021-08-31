@@ -5,6 +5,7 @@
 import kotlin.test.*
 
 import kotlin.native.concurrent.*
+import kotlin.native.internal.*
 
 fun mainLegacyMM() {
     assertFailsWith<InvalidMutabilityException> {
@@ -12,8 +13,8 @@ fun mainLegacyMM() {
     }
 
     val x = 42
-    val old = setUnhandledExceptionHook({
-        throwable: Throwable -> println("value $x: ${throwable::class.simpleName}")
+    val old = setUnhandledExceptionHook({ throwable: Throwable ->
+        println("value $x: ${throwable::class.simpleName}. Runnable state: ${Debugging.isThreadStateRunnable}")
     }.freeze())
 
     assertNull(old)
@@ -26,8 +27,8 @@ fun mainExperimentalMM() {
     assertNull(unset)
 
     val x = 42
-    val old = setUnhandledExceptionHook {
-        throwable: Throwable -> println("value $x: ${throwable::class.simpleName}")
+    val old = setUnhandledExceptionHook { throwable: Throwable ->
+        println("value $x: ${throwable::class.simpleName}. Runnable state: ${Debugging.isThreadStateRunnable}")
     }
 
     assertNotNull(old)

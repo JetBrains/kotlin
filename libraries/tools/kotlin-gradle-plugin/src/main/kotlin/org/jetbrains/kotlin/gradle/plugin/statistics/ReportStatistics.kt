@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.stat
 
+import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTime
+
 data class CompileStatData(
     val version: Int = 1,
     val projectName: String?,
@@ -14,7 +18,13 @@ data class CompileStatData(
     val duration: Long,
     val tags: List<String>,
     val changes: List<String>,
-    val statData: Map<String, Long>
+    val buildUuid: String = "Unset",
+    val kotlinVersion: String = "0.0.0",
+    val hostName: String = "Unset",
+    val timeInMillis: Long,
+    val nonIncrementalAttributes: Map<BuildAttribute, Int>,
+    val timeData: Map<BuildTime, Long>,
+    val perfData: Map<BuildPerformanceMetric, Long>
 )
 
 interface ReportStatistics {

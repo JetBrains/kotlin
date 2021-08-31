@@ -4,7 +4,7 @@ open class A {
 
 class B : <!SUPERTYPE_NOT_INITIALIZED!>A<!> {
     fun g() {
-        <!NOT_A_SUPERTYPE!>super<String><!>.<!UNRESOLVED_REFERENCE!>f<!>()
+        super<<!NOT_A_SUPERTYPE!>String<!>>.f()
         super<A>.f()
     }
 }

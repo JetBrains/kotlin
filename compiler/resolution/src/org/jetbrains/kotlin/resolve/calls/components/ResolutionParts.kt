@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.cast
+import org.jetbrains.kotlin.utils.addToStdlib.compactIfPossible
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal object CheckVisibility : ResolutionPart() {
@@ -95,7 +97,7 @@ internal object ArgumentsToCandidateParameterDescriptor : ResolutionPart() {
                 map[argument] = valueParameter
             }
         }
-        resolvedCall.argumentToCandidateParameter = map
+        resolvedCall.argumentToCandidateParameter = map.compactIfPossible()
     }
 }
 
@@ -272,12 +274,16 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
 internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         for ((argument, parameter) in resolvedCall.argumentToCandidateParameter) {
-            if (!callComponents.statelessCallbacks.isCoroutineCall(argument, parameter)) continue
+            if (!callComponents.statelessCallbacks.isBuilderInferenceCall(argument, parameter)) continue
             val receiverType = parameter.type.getReceiverTypeFromFunctionType() ?: continue
+            val dontUseBuilderInferenceIfPossible =
+                callComponents.languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceOnlyIfNeeded)
 
             if (argument is LambdaKotlinCallArgument && !argument.hasBuilderInferenceAnnotation) {
                 argument.hasBuilderInferenceAnnotation = true
             }
+
+            if (dontUseBuilderInferenceIfPossible) continue
 
             for (freshVariable in resolvedCall.freshVariablesSubstitutor.freshVariables) {
                 if (resolvedCall.typeArgumentMappingByOriginal.getTypeArgument(freshVariable.originalTypeParameter) is SimpleTypeArgument)

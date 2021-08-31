@@ -1,6 +1,6 @@
 @CompileTimeCalculation
 class A {
-    const val a = <!EVALUATED: `10`!>{ 10 }()<!>
+    const val a = <!EVALUATED: `10`!>{ 10 }()<!> // lambda is needed to avoid computions by old frontend
 
     companion object {
         const val static = <!EVALUATED: `-10`!>{ -10 }()<!>
@@ -16,7 +16,7 @@ object ObjectWithConst {
     const val a = 100
     const val b = <!EVALUATED: `Value in a: 100`!>concat("Value in a: ", a)<!>
 
-    val nonConst = "Not const field in compile time object"
+    val nonConst = { "Not const field in compile time object" }()
 
     fun concat(first: String, second: Any) = "$first$second"
 }

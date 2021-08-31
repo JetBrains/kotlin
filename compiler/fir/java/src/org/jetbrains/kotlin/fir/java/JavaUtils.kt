@@ -776,13 +776,22 @@ private fun FirConstExpression<*>.setProperType(session: FirSession): FirConstEx
 private fun JavaType.toFirResolvedTypeRef(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
 ): FirResolvedTypeRef {
-    if (this is JavaClassifierType) return toFirResolvedTypeRef(
-        session,
-        javaTypeParameterStack,
-        isForSupertypes = false,
-        forTypeParameterBounds = false
-    )
-    return buildResolvedTypeRef {
-        type = ConeClassErrorType(ConeSimpleDiagnostic("Unexpected JavaType: $this", DiagnosticKind.Java))
+    return when (this) {
+        is JavaClassifierType -> toFirResolvedTypeRef(
+            session,
+            javaTypeParameterStack,
+            isForSupertypes = false,
+            forTypeParameterBounds = false
+        )
+        is JavaPrimitiveType -> buildResolvedTypeRef {
+            type = toConeKotlinTypeWithoutEnhancement(
+                session,
+                javaTypeParameterStack,
+            )
+            this@toFirResolvedTypeRef.annotations.mapTo(annotations) { it.toFirAnnotationCall(session, javaTypeParameterStack) }
+        }
+        else -> buildResolvedTypeRef {
+            type = ConeClassErrorType(ConeSimpleDiagnostic("Unexpected JavaType: ${this@toFirResolvedTypeRef}", DiagnosticKind.Java))
+        }
     }
 }

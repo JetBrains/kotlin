@@ -122,6 +122,12 @@ bool operator!=(
 template <class T>
 class KonanDeleter {
 public:
+    KonanDeleter() = default;
+
+    // This is needed for `KStdUniquePtr` covariance: if `U*` converts to `T*` then `KStdUniquePtr<U>` converts to `KStdUniquePtr<T>`.
+    template <class U, std::enable_if_t<std::is_convertible_v<U*, T*>, std::nullptr_t> = nullptr>
+    KonanDeleter(KonanDeleter<U>) {}
+
     void operator()(T* instance) noexcept { konanDestructInstance(instance); }
 };
 

@@ -14,7 +14,7 @@ fun test_2(list: List<Set<A>>) {
 
 fun test_3(list: List<Set<A>>) {
     sequence {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>list.flatMapTo(mutableSetOf()) { it }<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableSet<A>")!>list.flatMapTo(mutableSetOf()) { it }<!>
         yield(A())
     }
 }
@@ -22,6 +22,6 @@ fun test_3(list: List<Set<A>>) {
 fun test_4(list: List<Set<A>>) {
     sequence {
         yield(A())
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableSet<A>"), TYPE_MISMATCH, TYPE_MISMATCH!>list.flatMapTo(mutableSetOf()) { it }<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableSet<A>")!>list.flatMapTo(mutableSetOf()) { it }<!>
     }
 }

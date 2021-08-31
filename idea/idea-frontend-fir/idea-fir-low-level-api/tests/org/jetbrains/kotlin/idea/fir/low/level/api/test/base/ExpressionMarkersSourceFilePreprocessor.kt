@@ -55,7 +55,7 @@ internal class ExpressionMarkersSourceFilePreprocessor(testServices: TestService
     }
 }
 
-class ExpressionMarkerProvider(testServices: TestServices) : TestService {
+class ExpressionMarkerProvider : TestService {
     private val selected = mutableMapOf<String, TextRange>()
 
     @PrivateForInline

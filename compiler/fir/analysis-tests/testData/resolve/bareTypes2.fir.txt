@@ -21,7 +21,7 @@ FILE: bareTypes2.kt
         when ((R|<local>/x| as? R|C|)?.{ $subj$.R|/A.field| }) {
             ($subj$ is R|kotlin/String|) ->  {
                 when () {
-                    ==((R|<local>/x| as? R|B<C>|)?.{ $subj$.R|/A.cond| }, Boolean(true)) ->  {
+                    ==((R|<local>/x| as? R|B<*>|)?.{ $subj$.R|/A.cond| }, Boolean(true)) ->  {
                         R|<local>/x|.R|/C.foo|()
                     }
                 }

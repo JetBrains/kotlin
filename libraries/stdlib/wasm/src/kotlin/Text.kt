@@ -52,6 +52,7 @@ actual class Regex {
      *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
+     * @sample samples.text.Regexps.splitToSequence
      */
     public actual fun splitToSequence(input: CharSequence, limit: Int): Sequence<String> = TODO("Wasm stdlib: Text")
 
@@ -287,7 +288,7 @@ public actual fun CharArray.concatToString(startIndex: Int, endIndex: Int): Stri
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public actual fun String.toCharArray(): CharArray = TODO("Wasm stdlib: Text")
+public actual fun String.toCharArray(): CharArray = this.chars
 
 /**
  * Returns a [CharArray] containing characters of this string or its substring.

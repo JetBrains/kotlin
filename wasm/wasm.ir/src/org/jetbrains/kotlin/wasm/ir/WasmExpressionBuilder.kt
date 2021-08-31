@@ -145,5 +145,9 @@ abstract class WasmExpressionBuilder {
     fun buildRttCanon(decl: WasmSymbol<WasmTypeDeclaration>) {
         buildInstr(WasmOp.RTT_CANON, WasmImmediate.TypeIdx(decl))
     }
+
+    fun buildDrop() {
+        buildInstr(WasmOp.DROP)
+    }
 }
 

@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.backend.js.MainModule
+import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.loadKlib
+import org.jetbrains.kotlin.ir.backend.js.prepareAnalyzedSourceModule
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
@@ -32,7 +34,6 @@ import org.jetbrains.kotlin.test.TestFiles
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.Closeable
 import java.io.File
-import java.lang.Boolean.getBoolean
 
 private val wasmRuntimeKlib =
     loadKlib(System.getProperty("kotlin.wasm.stdlib.path"))
@@ -46,6 +47,7 @@ abstract class BasicWasmBoxTest(
 
     private val spiderMonkey by lazy { SpiderMonkeyEngine() }
 
+    @Suppress("UNUSED_PARAMETER")
     fun doTestWithCoroutinesPackageReplacement(filePath: String, coroutinesPackage: String) {
         TODO("TestWithCoroutinesPackageReplacement are not supported")
     }
@@ -109,10 +111,15 @@ abstract class BasicWasmBoxTest(
         testFunction: String
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
-        val debugMode = getBoolean("kotlin.wasm.debugMode")
+        val debugMode: Int = when (System.getProperty("kotlin.wasm.debugMode")) {
+            "2", "super_debug" -> 2
+            "1", "true", "debug" -> 1
+            "0", "false", "", null -> 0
+            else -> 0
+        }
 
-        val phaseConfig = if (debugMode) {
-            val allPhasesSet = wasmPhases.toPhaseMap().values.toSet()
+        val phaseConfig = if (debugMode >= 1) {
+            val allPhasesSet = if (debugMode >= 2) wasmPhases.toPhaseMap().values.toSet() else emptySet()
             val dumpOutputDir = File(outputWatFile.parent, outputWatFile.nameWithoutExtension + "-irdump")
             println("\n ------ Dumping phases to file://$dumpOutputDir")
             println("\n ------  KT file://${testFile.absolutePath}")
@@ -122,7 +129,7 @@ abstract class BasicWasmBoxTest(
             PhaseConfig(
                 wasmPhases,
                 dumpToDirectory = dumpOutputDir.path,
-                // toDumpStateAfter = allPhasesSet,
+                toDumpStateAfter = allPhasesSet,
                 // toValidateStateAfter = allPhasesSet,
                 // dumpOnlyFqName = null
             )
@@ -130,16 +137,20 @@ abstract class BasicWasmBoxTest(
             PhaseConfig(wasmPhases)
         }
 
+        val sourceModule = prepareAnalyzedSourceModule(
+            config.project,
+            filesToCompile,
+            config.configuration,
+            // TODO: Bypass the resolver fow wasm.
+            listOf(System.getProperty("kotlin.wasm.stdlib.path")!!),
+            emptyList(),
+            AnalyzerWithCompilerReport(config.configuration)
+        )
+
         val compilerResult = compileWasm(
-            project = config.project,
-            mainModule = MainModule.SourceFiles(filesToCompile),
-            analyzer = AnalyzerWithCompilerReport(config.configuration),
-            configuration = config.configuration,
+            sourceModule,
             phaseConfig = phaseConfig,
             irFactory = IrFactoryImpl,
-            // TODO: Bypass the resolver fow wasm.
-            dependencies = listOf(System.getProperty("kotlin.wasm.stdlib.path")!!),
-            friendDependencies = emptyList(),
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
         )
 
@@ -149,9 +160,9 @@ abstract class BasicWasmBoxTest(
         val testRunner = """
             const wasmBinary = read(String.raw`${outputWasmFile.absoluteFile}`, 'binary');
             const wasmModule = new WebAssembly.Module(wasmBinary);
-            const wasmInstance = new WebAssembly.Instance(wasmModule, { runtime, js_code });
+            wasmInstance = new WebAssembly.Instance(wasmModule, { runtime, js_code });
 
-            const actualResult = wasmInstance.exports.$testFunction();
+            const actualResult = importStringFromWasm(wasmInstance.exports.$testFunction());
             if (actualResult !== "OK")
                 throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;
         """.trimIndent()

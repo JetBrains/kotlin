@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
@@ -56,7 +57,7 @@ class TypeAliasConstructorDescriptorImpl private constructor(
     kind: Kind,
     source: SourceElement
 ) : TypeAliasConstructorDescriptor,
-    FunctionDescriptorImpl(typeAliasDescriptor, original, annotations, Name.special("<init>"), kind, source) {
+    FunctionDescriptorImpl(typeAliasDescriptor, original, annotations, SpecialNames.INIT, kind, source) {
 
     init {
         isActual = typeAliasDescriptor.isActual

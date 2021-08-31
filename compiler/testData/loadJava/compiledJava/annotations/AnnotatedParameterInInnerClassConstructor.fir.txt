@@ -1,4 +1,16 @@
 public/*package*/ open class AnnotatedParameterInInnerClassConstructor : R|kotlin/Any| {
     public/*package*/ constructor(): R|test/AnnotatedParameterInInnerClassConstructor|
 
+    public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/String|): R|test/AnnotatedParameterInInnerClassConstructor.Anno|
+
+    }
+    public/*package*/ open inner class Inner : R|kotlin/Any| {
+        public/*package*/ constructor(@R|test/AnnotatedParameterInInnerClassConstructor.Anno|(String(a)) a: R|ft<kotlin/String, kotlin/String?>|, @R|test/AnnotatedParameterInInnerClassConstructor.Anno|(String(b)) b: R|ft<kotlin/String, kotlin/String?>|): R|test/AnnotatedParameterInInnerClassConstructor.Inner|
+
+    }
+    public/*package*/ open inner class InnerGeneric<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public/*package*/ constructor<T : R|ft<kotlin/Any, kotlin/Any?>|>(@R|test/AnnotatedParameterInInnerClassConstructor.Anno|(String(a)) a: R|ft<kotlin/String, kotlin/String?>|, @R|test/AnnotatedParameterInInnerClassConstructor.Anno|(String(b)) b: R|ft<kotlin/String, kotlin/String?>|): R|test/AnnotatedParameterInInnerClassConstructor.InnerGeneric<T>|
+
+    }
 }

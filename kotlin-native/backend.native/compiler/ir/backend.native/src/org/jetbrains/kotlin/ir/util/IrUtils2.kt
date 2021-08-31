@@ -374,8 +374,8 @@ val IrType.isSimpleTypeWithQuestionMark: Boolean
 fun IrClass.defaultOrNullableType(hasQuestionMark: Boolean) =
         if (hasQuestionMark) this.defaultType.makeNullable() else this.defaultType
 
-fun IrFunction.isRestrictedSuspendFunction(languageVersionSettings: LanguageVersionSettings): Boolean =
-        this.descriptor.extensionReceiverParameter?.type?.isRestrictsSuspensionReceiver(languageVersionSettings) == true
+fun IrFunction.isRestrictedSuspendFunction(): Boolean =
+        this.descriptor.extensionReceiverParameter?.type?.isRestrictsSuspensionReceiver() == true
 
 fun IrBuilderWithScope.irByte(value: Byte) =
         IrConstImpl.byte(startOffset, endOffset, context.irBuiltIns.byteType, value)

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.generators.builtins
 
-import org.jetbrains.kotlin.generators.builtins.ProgressionKind.*
+import org.jetbrains.kotlin.generators.builtins.ProgressionKind.CHAR
 import java.io.PrintWriter
 
 enum class PrimitiveType(val byteSize: Int) {
@@ -18,7 +18,7 @@ enum class PrimitiveType(val byteSize: Int) {
     DOUBLE(8),
     BOOLEAN(1);
 
-    val capitalized: String get() = name.toLowerCase().capitalize()
+    val capitalized: String get() = name.lowercase().replaceFirstChar(Char::uppercase)
     val bitSize = byteSize * 8
 
     val isFloatingPoint: Boolean get() = this in floatingPoint
@@ -38,7 +38,7 @@ enum class UnsignedType {
     UINT,
     ULONG;
 
-    val capitalized: String get() = name.substring(0, 2) + name.substring(2).toLowerCase()
+    val capitalized: String get() = name.substring(0, 2) + name.substring(2).lowercase()
     val asSigned: PrimitiveType = PrimitiveType.valueOf(name.substring(1))
 
     val byteSize = (1 shl ordinal)
@@ -51,7 +51,7 @@ enum class ProgressionKind {
     INT,
     LONG;
 
-    val capitalized: String get() = name.toLowerCase().capitalize()
+    val capitalized: String get() = name.lowercase().replaceFirstChar(Char::uppercase)
 }
 
 fun progressionIncrementType(kind: ProgressionKind) = when (kind) {

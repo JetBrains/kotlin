@@ -9,4 +9,3 @@ fun f() {
     <caret>A.Named
 }
 
-// REF: (t).A

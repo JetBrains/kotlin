@@ -11,10 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.ClassBuilder;
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
-import org.jetbrains.org.objectweb.asm.ClassVisitor;
-import org.jetbrains.org.objectweb.asm.FieldVisitor;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.*;
 import org.jetbrains.org.objectweb.asm.commons.FieldRemapper;
 
@@ -25,6 +22,7 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
     private final ClassBuilder builder;
     private final Remapper remapper;
     private final Map<String, FieldVisitor> spilledCoroutineVariables = new HashMap<>();
+    private ClassVisitor visitor = null;
 
     public RemappingClassBuilder(@NotNull ClassBuilder builder, @NotNull Remapper remapper) {
         this.builder = builder;
@@ -126,8 +124,27 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
     }
 
     @Override
+    public void visitInnerClass(@NotNull String name, @Nullable String outerName, @Nullable String innerName, int access) {
+        getVisitor().visitInnerClass(name, outerName, innerName, access);
+    }
+
+    @Override
+    public void visitOuterClass(@NotNull String owner, @Nullable String name, @Nullable String desc) {
+        getVisitor().visitOuterClass(owner, name, desc);
+    }
+
+    @NotNull
+    @Override
+    public RecordComponentVisitor newRecordComponent(@NotNull String name, @NotNull String desc, @Nullable String signature) {
+        return getVisitor().visitRecordComponent(name, desc, signature);
+    }
+
+    @Override
     @NotNull
     public ClassVisitor getVisitor() {
-        return new ClassRemapper(builder.getVisitor(), remapper);
+        if (visitor == null) {
+            visitor = new ClassRemapper(builder.getVisitor(), remapper);
+        }
+        return visitor;
     }
 }

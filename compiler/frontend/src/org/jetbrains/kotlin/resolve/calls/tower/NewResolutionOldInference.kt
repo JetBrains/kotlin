@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInfixCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
 import org.jetbrains.kotlin.resolve.calls.context.*
-import org.jetbrains.kotlin.resolve.calls.inference.CoroutineInferenceSupport
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSupport
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl
@@ -61,8 +61,8 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.compactIfPossible
 import org.jetbrains.kotlin.utils.sure
-import java.util.*
 
 class NewResolutionOldInference(
     private val candidateResolver: CandidateResolver,
@@ -71,7 +71,7 @@ class NewResolutionOldInference(
     private val dynamicCallableDescriptors: DynamicCallableDescriptors,
     private val syntheticScopes: SyntheticScopes,
     private val languageVersionSettings: LanguageVersionSettings,
-    private val coroutineInferenceSupport: CoroutineInferenceSupport,
+    private val builderInferenceSupport: BuilderInferenceSupport,
     private val deprecationResolver: DeprecationResolver,
     private val typeApproximator: TypeApproximator,
     private val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter,
@@ -218,7 +218,7 @@ class NewResolutionOldInference(
         }
 
         val overloadResults = convertToOverloadResults<D>(candidates, tracing, context)
-        coroutineInferenceSupport.checkCoroutineCalls(context, tracing, overloadResults)
+        builderInferenceSupport.checkBuilderInferenceCalls(context, tracing, overloadResults)
         return overloadResults
     }
 
@@ -601,7 +601,7 @@ fun transformToReceiverWithSmartCastInfo(
     val dataFlowValue = dataFlowValueFactory.createDataFlowValue(receiver, bindingContext, containingDescriptor)
     return ReceiverValueWithSmartCastInfo(
         receiver,
-        dataFlowInfo.getCollectedTypes(dataFlowValue, languageVersionSettings),
+        dataFlowInfo.getCollectedTypes(dataFlowValue, languageVersionSettings).compactIfPossible(),
         dataFlowValue.isStable
     )
 }

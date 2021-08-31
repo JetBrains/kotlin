@@ -195,7 +195,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     private fun generateDoc(kind: PrimitiveType) {
         out.println("/**")
         out.println(" * Represents a ${typeDescriptions[kind]}.")
-        out.println(" * On the JVM, non-nullable values of this type are represented as values of the primitive type `${kind.name.toLowerCase()}`.")
+        out.println(" * On the JVM, non-nullable values of this type are represented as values of the primitive type `${kind.name.lowercase()}`.")
         out.println(" */")
     }
 

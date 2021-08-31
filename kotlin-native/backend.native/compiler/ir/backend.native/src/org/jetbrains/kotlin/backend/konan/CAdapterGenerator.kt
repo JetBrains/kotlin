@@ -465,7 +465,7 @@ private class ExportedElement(val kind: ElementKind,
                     "result", cfunction[0], Direction.KOTLIN_TO_C, builder)
             builder.append("  return $result;\n")
         }
-        builder.append("   } catch (ExceptionObjHolder& e) { TerminateWithUnhandledException(e.GetExceptionObject()); } \n")
+        builder.append("   } catch (ExceptionObjHolder& e) { std::terminate(); } \n")
 
         builder.append("}\n")
 
@@ -902,6 +902,8 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         // Include header into C++ source.
         headerFile.forEachLine { it -> output(it) }
 
+        output("#include <exception>")
+
         output("""
         |struct KObjHeader;
         |typedef struct KObjHeader KObjHeader;
@@ -924,7 +926,6 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |void Kotlin_initRuntimeIfNeeded();
         |void Kotlin_mm_switchThreadStateRunnable() RUNTIME_NOTHROW;
         |void Kotlin_mm_switchThreadStateNative() RUNTIME_NOTHROW;
-        |void TerminateWithUnhandledException(KObjHeader*) RUNTIME_NORETURN;
         |
         |KObjHeader* CreateStringFromCString(const char*, KObjHeader**);
         |char* CreateCStringFromString(const KObjHeader*);

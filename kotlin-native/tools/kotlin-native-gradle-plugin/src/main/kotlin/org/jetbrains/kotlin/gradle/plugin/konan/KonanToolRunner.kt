@@ -20,7 +20,15 @@ import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.Action
-import org.gradle.process.JavaExecSpec
+import org.gradle.api.GradleException
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.jvm.toolchain.JavaLauncher
+import org.gradle.jvm.toolchain.JavaToolchainService
+import org.gradle.jvm.toolchain.JavaToolchainSpec
+import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin.ProjectProperty.KONAN_HOME
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -29,7 +37,7 @@ import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import java.nio.file.Files
 import org.jetbrains.kotlin.*
 
-internal interface KonanToolRunner: Named {
+internal interface KonanToolRunner : Named {
     val mainClass: String
     val classpath: FileCollection
     val jvmArgs: List<String>
@@ -45,7 +53,7 @@ internal abstract class KonanCliRunner(
         val project: Project,
         private val additionalJvmArgs: List<String>,
         private val konanHome: String
-): KonanToolRunner {
+) : KonanToolRunner {
     override val mainClass = "org.jetbrains.kotlin.cli.utilities.MainKt"
 
     override fun getName() = toolName
@@ -58,18 +66,18 @@ internal abstract class KonanCliRunner(
     }
 
     protected val blacklistProperties: Set<String> =
-        setOf(
-                "java.endorsed.dirs", // Fix for KT-25887
-                "user.dir"            // Don't propagate the working dir of the current Gradle process
-        )
+            setOf(
+                    "java.endorsed.dirs", // Fix for KT-25887
+                    "user.dir"            // Don't propagate the working dir of the current Gradle process
+            )
 
     override val classpath: FileCollection =
             project.fileTree("$konanHome/konan/lib/")
-            .apply { include("*.jar")  }
+                    .apply { include("*.jar") }
 
     override val jvmArgs = HostManager.defaultJvmArgs.toMutableList().apply {
         if (additionalJvmArgs.none { it.startsWith("-Xmx") } &&
-            project.jvmArgs.none { it.startsWith("-Xmx") }) {
+                project.jvmArgs.none { it.startsWith("-Xmx") }) {
             add("-Xmx3G")
         }
         addAll(additionalJvmArgs)
@@ -81,11 +89,11 @@ internal abstract class KonanCliRunner(
     private fun String.escapeQuotes() = replace("\"", "\\\"")
 
     private fun Sequence<Pair<String, String>>.escapeQuotesForWindows() =
-        if (HostManager.hostIsMingw) {
-            map { (key, value) -> key.escapeQuotes() to value.escapeQuotes() }
-        } else {
-            this
-        }
+            if (HostManager.hostIsMingw) {
+                map { (key, value) -> key.escapeQuotes() to value.escapeQuotes() }
+            } else {
+                this
+            }
 
     open protected fun transformArgs(args: List<String>): List<String> = args
 
@@ -97,21 +105,31 @@ internal abstract class KonanCliRunner(
                     "Please change it to the compiler root directory and rerun the build.")
         }
 
-        project.javaexec(object :Action<JavaExecSpec> {
-            override fun execute(exec: JavaExecSpec) {
-                exec.main = mainClass
-                exec.classpath = classpath
-                exec.jvmArgs(jvmArgs)
-                exec.systemProperties(
-                    System.getProperties().asSequence()
+        @Suppress("UNCHECKED_CAST")
+        val launcher = project.getProperty(KonanPlugin.ProjectProperty.KONAN_JVM_LAUNCHER) as? Provider<JavaLauncher>
+                ?: throw IllegalStateException("Missing property: ${KonanPlugin.ProjectProperty.KONAN_JVM_LAUNCHER}")
+
+        project.exec(object : Action<ExecSpec> {
+            override fun execute(exec: ExecSpec) {
+                exec.executable = launcher.get().executablePath.toString()
+                val properties = System.getProperties().asSequence()
                         .map { (k, v) -> k.toString() to v.toString() }
                         .filter { (k, _) -> k !in this@KonanCliRunner.blacklistProperties }
+                        .filter { (k, _) -> !k.startsWith("sun") && !k.startsWith("java") }
                         .escapeQuotesForWindows()
                         .toMap()
-                )
-                exec.systemProperty("konan.home", project.kotlinNativeDist.absolutePath)
-                exec.args(listOf(toolName) + transformArgs(args))
-                this@KonanCliRunner.blacklistEnvironment.forEach { environment.remove(it) }
+                        .toMutableMap()
+                properties.put("konan.home", project.kotlinNativeDist.absolutePath)
+
+                exec.args(mutableListOf<String>().apply {
+                    addAll(jvmArgs)
+                    addAll(properties.entries.map { "-D${it.key}=${it.value}" })
+                    add("-cp")
+                    add(classpath.joinToString(separator = System.getProperty("path.separator")))
+                    add(mainClass)
+                    addAll(listOf(toolName) + transformArgs(args))
+                })
+                blacklistEnvironment.forEach { environment.remove(it) }
                 exec.environment(environment)
             }
         })
@@ -125,21 +143,20 @@ internal class KonanInteropRunner(
 ) : KonanCliRunner("cinterop", "Kotlin/Native cinterop tool", project, additionalJvmArgs, konanHome) {
     init {
         if (HostManager.host == KonanTarget.MINGW_X64) {
-	    //TODO: Oh-ho-ho fix it in more convinient way.
+            //TODO: Oh-ho-ho fix it in more convinient way.
             environment.put("PATH", DependencyProcessor.defaultDependenciesRoot.absolutePath +
-                    "\\msys2-mingw-w64-x86_64-clang-llvm-lld-compiler_rt-8.0.1" +
+                    "\\llvm-11.1.0-windows-x64" +
                     "\\bin;${environment.get("PATH")}")
         }
     }
 }
 
 internal class KonanCompilerRunner(
-    project: Project,
-    additionalJvmArgs: List<String> = emptyList(),
-    val useArgFile: Boolean = true,
-    konanHome: String = project.konanHome
-) : KonanCliRunner("konanc", "Kotlin/Native compiler", project, additionalJvmArgs, konanHome)
-{
+        project: Project,
+        additionalJvmArgs: List<String> = emptyList(),
+        val useArgFile: Boolean = true,
+        konanHome: String = project.konanHome
+) : KonanCliRunner("konanc", "Kotlin/Native compiler", project, additionalJvmArgs, konanHome) {
     override fun transformArgs(args: List<String>): List<String> {
         if (!useArgFile) {
             return args

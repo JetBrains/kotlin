@@ -8,7 +8,7 @@ private fun validFun() {}
 private val validVal = 1
 
 <!CONFLICTING_OVERLOADS!>private fun invalidFun0()<!> {}
-<!REDECLARATION!>private val invalidProp0 = 1<!>
+private val <!REDECLARATION!>invalidProp0<!> = 1
 
 // NB invalidFun0 and invalidProp0 are conflicting overloads, since the following is an ambiguity:
 fun useInvalidFun0() = invalidFun0()
@@ -36,7 +36,7 @@ private val validVal = 1
 
 <!CONFLICTING_OVERLOADS!>private fun invalidFun0()<!> {}
 
-<!REDECLARATION!>private val invalidProp0 = 1<!>
+private val <!REDECLARATION!>invalidProp0<!> = 1
 
 <!CONFLICTING_OVERLOADS!>internal fun invalidFun3()<!> {}
 <!CONFLICTING_OVERLOADS!>internal fun invalidFun4()<!> {}

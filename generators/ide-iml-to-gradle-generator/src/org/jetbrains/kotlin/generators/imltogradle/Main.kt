@@ -22,8 +22,9 @@ import kotlin.system.measureNanoTime
 
 private lateinit var intellijModuleNameToGradleDependencyNotationsMapping: Map<String, List<GradleDependencyNotation>>
 private val KOTLIN_REPO_ROOT = File(".").canonicalFile
-private val INTELLIJ_REPO_ROOT = KOTLIN_REPO_ROOT.resolve("kotlin-ide")
-private val INTELLIJ_COMMUNITY_REPO_ROOT = INTELLIJ_REPO_ROOT.resolve("kotlin").takeIf { it.exists() } ?: INTELLIJ_REPO_ROOT
+val DEFAULT_KOTLIN_SNAPSHOT_VERSION = KOTLIN_REPO_ROOT.resolve("gradle.properties").readProperty("defaultSnapshotVersion")
+private val INTELLIJ_REPO_ROOT = KOTLIN_REPO_ROOT.resolve("intellij").resolve("community").takeIf { it.exists() }
+    ?: KOTLIN_REPO_ROOT.resolve("intellij")
 
 private val intellijModuleNameToGradleDependencyNotationsMappingManual: List<Pair<String, GradleDependencyNotation>> = listOf(
     "intellij.platform.jps.build" to GradleDependencyNotation("jpsBuildTest()"),
@@ -46,6 +47,7 @@ val jsonUrlPrefixes = mapOf(
     "202" to "https://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_IjPlatform202_IntellijArtifactMappings/113235432:id",
     "203" to "https://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_IjPlatform203_IntellijArtifactMappings/117989041:id",
     "211" to "https://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_IjPlatform211_IntellijArtifactMappings/121258191:id",
+    "212" to "https://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_IjPlatform211_IntellijArtifactMappings/131509697:id",
 )
 
 fun main() {
@@ -62,10 +64,7 @@ fun main() {
         }
         .toList()
 
-    val ideaMajorVersion = KOTLIN_REPO_ROOT.resolve("local.properties").takeIf { it.exists() }
-        ?.inputStream()
-        ?.use { Properties().apply { load(it) }.getProperty("attachedIntellijVersion") }
-        ?: error("Can't find 'attachedIntellijVersion' in 'local.properties'")
+    val ideaMajorVersion = KOTLIN_REPO_ROOT.resolve("local.properties").readProperty("attachedIntellijVersion")
 
     intellijModuleNameToGradleDependencyNotationsMapping = fetchJsonsFromBuildserver(ideaMajorVersion)
         .flatMap { jsonStr ->
@@ -100,7 +99,11 @@ fun main() {
         error("It's not allowed to have imls in same directory:\n$report")
     }
 
-    imlFiles.mapNotNull { imlFile -> ijCommunityModuleNameToJpsModuleMapping[imlFile.nameWithoutExtension]?.let { imlFile to it } }
+    imlFiles
+        .mapNotNull { imlFile ->
+            ijCommunityModuleNameToJpsModuleMapping[imlFile.nameWithoutExtension]?.let { imlFile to it }
+        }
+        .filter { (_, jpsModule) -> jpsModule.name != "kotlin.util.compiler-dependencies" }
         .forEach { (imlFile, jpsModule) ->
             println("Processing iml ${imlFile}")
             imlFile.parentFile.resolve("build.gradle.kts").writeText(convertJpsModule(imlFile, jpsModule))
@@ -115,12 +118,12 @@ fun convertJpsLibrary(lib: JpsLibrary, scope: JpsJavaDependencyScope, exported: 
         mavenRepositoryLibraryDescriptor == null -> {
             lib.getRootUrls(JpsOrderRootType.COMPILED)
                 .map {
-                    it.removePrefix("jar://").removeSuffix("!/")
+                    val relativeToCommunity = it.removePrefix("jar://").removeSuffix("!/")
                         .removePrefix(KOTLIN_REPO_ROOT.canonicalPath.replace("\\", "/"))
-                }
-                .map {
-                    check(it.startsWith("/kotlin-ide/intellij/")) { "Only jars from Community repo are accepted $it" }
-                    val relativeToCommunity = it.removePrefix("/kotlin-ide/intellij/").removePrefix("community/")
+                        .also {
+                            check(it.startsWith("/intellij/")) { "Only jars from Community repo are accepted $it" }
+                        }
+                        .removePrefix("/intellij/").removePrefix("community/")
                     JpsLikeJarDependency(
                         "files(intellijCommunityDir.resolve(\"$relativeToCommunity\").canonicalPath)",
                         scope,
@@ -129,14 +132,14 @@ fun convertJpsLibrary(lib: JpsLibrary, scope: JpsJavaDependencyScope, exported: 
                     )
                 }
         }
-        lib.name == "kotlinc.kotlin-stdlib-jdk8" -> {
+        lib.name == "kotlin-stdlib-jdk8" -> {
             listOf(
                 JpsLikeJarDependency("kotlinStdlib()", scope, dependencyConfiguration = null, exported = exported),
                 // TODO remove hack (for some reason we have to specify :kotlin-stdlib-jdk7 explicitly, otherwise compilation doesn't pass)
                 JpsLikeJarDependency("project(\":kotlin-stdlib-jdk7\")", scope, dependencyConfiguration = null, exported = exported)
             )
         }
-        lib.name.startsWith("kotlinc.") -> {
+        lib.name.startsWith("kotlinc.") || mavenRepositoryLibraryDescriptor.version == DEFAULT_KOTLIN_SNAPSHOT_VERSION -> {
             val artifactId = mavenRepositoryLibraryDescriptor.artifactId
             val dependencyNotation =
                 if (KOTLIN_REPO_ROOT.resolve("prepare/ide-plugin-dependencies/$artifactId").exists())
@@ -214,7 +217,7 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
         .mapValues { entry -> entry.value.joinToString("\n") { convertJpsModuleSourceRoot(imlFile, it) } }
         .let { Pair(it[false] ?: "", it[true] ?: "") }
 
-    val mavenRepos = INTELLIJ_COMMUNITY_REPO_ROOT.resolve(".idea/jarRepositories.xml").readXml().traverseChildren()
+    val mavenRepos = INTELLIJ_REPO_ROOT.resolve(".idea/jarRepositories.xml").readXml().traverseChildren()
         .filter { it.getAttributeValue("name") == "url" }
         .map { it.getAttributeValue("value")!! }
         .map { "maven { setUrl(\"$it\") }" }

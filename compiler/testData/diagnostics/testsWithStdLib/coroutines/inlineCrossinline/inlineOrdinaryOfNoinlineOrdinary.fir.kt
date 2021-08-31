@@ -27,6 +27,6 @@ suspend fun calculate() = "OK"
 
 fun box() {
     test {
-        calculate()
+        <!ILLEGAL_SUSPEND_FUNCTION_CALL!>calculate<!>()
     }
 }

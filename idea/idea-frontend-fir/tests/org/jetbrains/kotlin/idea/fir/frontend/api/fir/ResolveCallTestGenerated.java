@@ -25,9 +25,63 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     }
 
     @Test
+    @TestMetadata("delegatedConstructorCall_super.kt")
+    public void testDelegatedConstructorCall_super() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/delegatedConstructorCall_super.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorCall_super_unresolved.kt")
+    public void testDelegatedConstructorCall_super_unresolved() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/delegatedConstructorCall_super_unresolved.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorCall_this.kt")
+    public void testDelegatedConstructorCall_this() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/delegatedConstructorCall_this.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorCall_this_unresolved.kt")
+    public void testDelegatedConstructorCall_this_unresolved() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/delegatedConstructorCall_this_unresolved.kt");
+    }
+
+    @Test
     @TestMetadata("functionCallInTheSameFile.kt")
     public void testFunctionCallInTheSameFile() throws Exception {
         runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/functionCallInTheSameFile.kt");
+    }
+
+    @Test
+    @TestMetadata("functionCallWithLambdaArgument.kt")
+    public void testFunctionCallWithLambdaArgument() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/functionCallWithLambdaArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("functionCallWithNamedArgument.kt")
+    public void testFunctionCallWithNamedArgument() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/functionCallWithNamedArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("functionCallWithNonTrailingLambdaArgument.kt")
+    public void testFunctionCallWithNonTrailingLambdaArgument() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/functionCallWithNonTrailingLambdaArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("functionCallWithSpreadArgument.kt")
+    public void testFunctionCallWithSpreadArgument() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/functionCallWithSpreadArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("functionCallWithVarargArgument.kt")
+    public void testFunctionCallWithVarargArgument() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/functionCallWithVarargArgument.kt");
     }
 
     @Test
@@ -40,6 +94,12 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     @TestMetadata("functionWithReceiverSafeCall.kt")
     public void testFunctionWithReceiverSafeCall() throws Exception {
         runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/functionWithReceiverSafeCall.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitConstructorDelegationCall.kt")
+    public void testImplicitConstructorDelegationCall() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/implicitConstructorDelegationCall.kt");
     }
 
     @Test
@@ -70,6 +130,12 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     @TestMetadata("simpleCallWithNonMatchingArgs.kt")
     public void testSimpleCallWithNonMatchingArgs() throws Exception {
         runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/simpleCallWithNonMatchingArgs.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedSuperReference.kt")
+    public void testUnresolvedSuperReference() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/unresolvedSuperReference.kt");
     }
 
     @Test

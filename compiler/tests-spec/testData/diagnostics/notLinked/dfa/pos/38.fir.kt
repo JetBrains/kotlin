@@ -45,7 +45,7 @@ fun case_4(x: ClassWithSixTypeParameters<*, *, *, *, *, *>?) {
         x.y
         x.z
         x.u
-        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithSixTypeParameters<*, *, *, *, *, *>")!>x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>.ip2test()
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithSixTypeParameters<*, kotlin.Nothing, *, *, kotlin.Nothing, *>")!>x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>.ip2test()
         <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<*, *, *, *, *, *>? & InterfaceWithTwoTypeParameters<*, *> & ClassWithSixTypeParameters<*, *, *, *, *, *>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<*, *, *, *, *, *>? & InterfaceWithTwoTypeParameters<*, *> & ClassWithSixTypeParameters<*, *, *, *, *, *>")!>x<!>.x
     }

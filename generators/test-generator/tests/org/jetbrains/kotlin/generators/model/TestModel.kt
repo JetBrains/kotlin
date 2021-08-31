@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.model
 interface TestEntityModel {
     val name: String
     val dataString: String?
+    val tags: List<String>
 }
 
 interface ClassModel : TestEntityModel {

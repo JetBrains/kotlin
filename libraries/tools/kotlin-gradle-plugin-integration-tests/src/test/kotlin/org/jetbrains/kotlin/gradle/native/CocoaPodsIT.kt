@@ -62,6 +62,7 @@ class CocoaPodsIT : BaseGradleIT() {
     private val templateProjectName = "native-cocoapods-template"
     private val groovyTemplateProjectName = "native-cocoapods-template-groovy"
     private val cocoapodsTestsProjectName = "native-cocoapods-tests"
+    private val cocoapodsCommonizationProjectName = "native-cocoapods-commonization"
 
     private val dummyTaskName = ":$DUMMY_FRAMEWORK_TASK_NAME"
     private val podspecTaskName = ":$POD_SPEC_TASK_NAME"
@@ -901,6 +902,31 @@ class CocoaPodsIT : BaseGradleIT() {
             "-Pkotlin.native.cocoapods.configuration=Debug",
             "-Pkotlin.native.cocoapods.generate.wrapper=true"
         )
+    }
+
+    @Test
+    fun testCinteropCommonizationOff() {
+        project = getProjectByName(cocoapodsCommonizationProjectName)
+        hooks.addHook {
+            assertTasksExecuted(":commonizeNativeDistribution")
+            assertTasksNotExecuted(":cinteropAFNetworkingIosArm64")
+            assertTasksNotExecuted(":cinteropAFNetworkingIosX64")
+            assertTasksNotExecuted(":commonizeCInterop")
+        }
+        project.testWithWrapper(":commonize")
+    }
+
+    @Test
+    fun testCinteropCommonizationOn() {
+        project = getProjectByName(cocoapodsCommonizationProjectName)
+        project.gradleProperties().appendLine("kotlin.mpp.enableCInteropCommonization=true")
+        hooks.addHook {
+            assertTasksExecuted(":commonizeNativeDistribution")
+            assertTasksExecuted(":cinteropAFNetworkingIosArm64")
+            assertTasksExecuted(":cinteropAFNetworkingIosX64")
+            assertTasksExecuted(":commonizeCInterop")
+        }
+        project.testWithWrapper(":compileIosMainKotlinMetadata")
     }
 
     // paths

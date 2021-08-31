@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.ApproximateIntegerLiteralTypesInReceiverPosition
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.math.BigInteger
 import java.util.*
 
@@ -379,7 +381,7 @@ private class ConstantExpressionEvaluatorVisitor(
     private val languageVersionSettings = constantExpressionEvaluator.languageVersionSettings
     private val builtIns = constantExpressionEvaluator.module.builtIns
     private val defaultValueForDontCreateIntegerLiteralType =
-        languageVersionSettings.supportsFeature(LanguageFeature.ApproximateIntegerLiteralTypesInReceiverPosition)
+        languageVersionSettings.supportsFeature(ApproximateIntegerLiteralTypesInReceiverPosition)
 
     fun evaluate(expression: KtExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
         val recordedCompileTimeConstant = ConstantExpressionEvaluator.getPossiblyErrorConstant(expression, trace.bindingContext)
@@ -666,10 +668,12 @@ private class ConstantExpressionEvaluatorVisitor(
             val usesNonConstValAsConstant = usesNonConstValAsConstant(argumentForReceiver.expression)
             val isNumberConversionMethod = resultingDescriptorName in OperatorConventions.NUMBER_CONVERSIONS
             val isCharCode = argumentForReceiver.ctcType == CHAR && resultingDescriptorName == StandardNames.CHAR_CODE
-            val dontCreateILT = !isUnaryPlusMinus && !hasIntegerLiteralType(receiverExpression)
+            val dontCreateILT = defaultValueForDontCreateIntegerLiteralType &&
+                    !isUnaryPlusMinus &&
+                    !hasIntegerLiteralType(receiverExpression)
             return createConstant(
                 result,
-                expectedType,
+                expectedType.takeUnless { dontCreateILT },
                 CompileTimeConstant.Parameters(
                     canBeUsedInAnnotation,
                     !isNumberConversionMethod && !isCharCode && isArgumentPure,
@@ -678,7 +682,7 @@ private class ConstantExpressionEvaluatorVisitor(
                     usesVariableAsConstant,
                     usesNonConstValAsConstant,
                     isConvertableConstVal = false,
-                    dontCreateILT = defaultValueForDontCreateIntegerLiteralType && dontCreateILT
+                    dontCreateILT = dontCreateILT
                 )
             )
         } else if (argumentsEntrySet.size == 1) {
@@ -713,6 +717,7 @@ private class ConstantExpressionEvaluatorVisitor(
                 usesVariableAsConstant(argumentForReceiver.expression) || usesVariableAsConstant(argumentForParameter.expression)
             val usesNonConstValAsConstant =
                 usesNonConstValAsConstant(argumentForReceiver.expression) || usesNonConstValAsConstant(argumentForParameter.expression)
+            val dontCreateILT = defaultValueForDontCreateIntegerLiteralType && !hasIntegerLiteralType(receiverExpression)
             val parameters = CompileTimeConstant.Parameters(
                 canBeUsedInAnnotation,
                 areArgumentsPure,
@@ -721,13 +726,17 @@ private class ConstantExpressionEvaluatorVisitor(
                 usesVariableAsConstant,
                 usesNonConstValAsConstant,
                 isConvertableConstVal = false,
-                dontCreateILT = defaultValueForDontCreateIntegerLiteralType && !hasIntegerLiteralType(receiverExpression)
+                dontCreateILT = dontCreateILT
             )
             return when (resultingDescriptorName) {
                 OperatorNameConventions.COMPARE_TO -> createCompileTimeConstantForCompareTo(result, callExpression)?.wrap(parameters)
                 OperatorNameConventions.EQUALS -> createCompileTimeConstantForEquals(result, callExpression)?.wrap(parameters)
                 else -> {
-                    createConstant(result, expectedType, parameters)
+                    createConstant(
+                        result,
+                        expectedType.takeUnless { dontCreateILT },
+                        parameters
+                    )
                 }
             }
         }

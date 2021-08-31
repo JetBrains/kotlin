@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 enum class E {
     <!WRONG_MODIFIER_TARGET!>public<!> <!WRONG_MODIFIER_TARGET!>final<!> SUBCLASS {
         fun foo() {}

@@ -22,6 +22,7 @@ internal fun addLlvmFunctionWithDefaultAttributes(
         type: LLVMTypeRef
 ): LLVMValueRef = LLVMAddFunction(module, name, type)!!.also {
     addDefaultLlvmFunctionAttributes(context, it)
+    addTargetCpuAndFeaturesAttributes(context, it)
 }
 
 /**
@@ -32,6 +33,18 @@ private fun addDefaultLlvmFunctionAttributes(context: Context, llvmFunction: LLV
     if (shouldEnforceFramePointer(context)) {
         // Note: this is default for clang on at least on iOS and macOS.
         enforceFramePointer(llvmFunction, context)
+    }
+}
+
+/**
+ * Set target cpu and its features to make LLVM generate correct machine code.
+ */
+private fun addTargetCpuAndFeaturesAttributes(context: Context, llvmFunction: LLVMValueRef) {
+    context.config.platform.targetCpu?.let {
+        LLVMAddTargetDependentFunctionAttr(llvmFunction, "target-cpu", it)
+    }
+    context.config.platform.targetCpuFeatures?.let {
+        LLVMAddTargetDependentFunctionAttr(llvmFunction, "target-features", it)
     }
 }
 

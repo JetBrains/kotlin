@@ -92,10 +92,12 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor, val 
     open fun fileDeserializers(): Collection<IrFileDeserializer> = error("Unsupported")
 
     val compatibilityMode: CompatibilityMode get() = CompatibilityMode(libraryAbiVersion)
+
+    open fun signatureDeserializerForFile(fileName: String): IdSignatureDeserializer = error("Unsupported")
 }
 
 // Used to resolve built in symbols like `kotlin.ir.internal.*` or `kotlin.FunctionN`
-open class IrModuleDeserializerWithBuiltIns(
+class IrModuleDeserializerWithBuiltIns(
     private val builtIns: IrBuiltIns,
     private val delegate: IrModuleDeserializer
 ) : IrModuleDeserializer(delegate.moduleDescriptor, delegate.libraryAbiVersion) {
@@ -108,11 +110,9 @@ open class IrModuleDeserializerWithBuiltIns(
     private val irBuiltInsMap = builtIns.knownBuiltins.map {
         val symbol = (it as IrSymbolOwner).symbol
         symbol.signature to symbol
-    }.toMap() + additionalBuiltIns(builtIns)
+    }.toMap()
 
-    protected open fun additionalBuiltIns(builtIns: IrBuiltIns): Map<IdSignature, IrSymbol> = emptyMap()
-
-    protected open fun checkIsFunctionInterface(idSig: IdSignature): Boolean {
+    private fun checkIsFunctionInterface(idSig: IdSignature): Boolean {
         val publicSig = idSig.asPublic()
         return publicSig != null &&
                 publicSig.packageFqName in functionalPackages &&
@@ -121,9 +121,10 @@ open class IrModuleDeserializerWithBuiltIns(
     }
 
     override operator fun contains(idSig: IdSignature): Boolean {
-        if (idSig in irBuiltInsMap) return true
+        val topLevel = idSig.topLevelSignature()
+        if (topLevel in irBuiltInsMap) return true
 
-        return checkIsFunctionInterface(idSig) || idSig in delegate
+        return checkIsFunctionInterface(topLevel) || idSig in delegate
     }
 
     override fun referenceSimpleFunctionByLocalSignature(file: IrFile, idSignature: IdSignature) : IrSimpleFunctionSymbol =
@@ -150,7 +151,16 @@ open class IrModuleDeserializerWithBuiltIns(
         }
     }
 
-    protected open fun resolveFunctionalInterface(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
+    private fun resolveFunctionalInterface(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
+        if (symbolKind == BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL) {
+            val composite = idSig as IdSignature.CompositeSignature
+            val classSignature = idSig.container
+            val classSymbol = resolveFunctionalInterface(classSignature, BinarySymbolData.SymbolKind.CLASS_SYMBOL) as IrClassSymbol
+            val typeParameterSig = composite.inner as IdSignature.LocalSignature
+            val typeParameterIndex = typeParameterSig.index()
+            val typeParameter = classSymbol.owner.typeParameters[typeParameterIndex]
+            return typeParameter.symbol
+        }
         val publicSig = idSig.asPublic() ?: error("$idSig has to be public")
 
         val fqnParts = publicSig.nameSegments
@@ -184,7 +194,9 @@ open class IrModuleDeserializerWithBuiltIns(
     override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         irBuiltInsMap[idSig]?.let { return it }
 
-        if (checkIsFunctionInterface(idSig)) return resolveFunctionalInterface(idSig, symbolKind)
+        val topLevel = idSig.topLevelSignature()
+
+        if (checkIsFunctionInterface(topLevel)) return resolveFunctionalInterface(idSig, symbolKind)
 
         return delegate.deserializeIrSymbol(idSig, symbolKind)
     }
@@ -220,6 +232,10 @@ open class IrModuleDeserializerWithBuiltIns(
 
     override fun postProcess() {
         delegate.postProcess()
+    }
+
+    override fun signatureDeserializerForFile(fileName: String): IdSignatureDeserializer {
+        return delegate.signatureDeserializerForFile(fileName)
     }
 }
 

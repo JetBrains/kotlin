@@ -23,7 +23,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
     public class Tests {
         @Test
         public void testAllFilesPresentInTests() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
         @Test
@@ -81,6 +81,12 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         }
 
         @Test
+        @TestMetadata("kt47833.kt")
+        public void testKt47833() throws Exception {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt47833.kt");
+        }
+
+        @Test
         @TestMetadata("kt47920.kt")
         public void testKt47920() throws Exception {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt47920.kt");
@@ -134,7 +140,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         public class Jsr305 {
             @Test
             public void testAllFilesPresentInJsr305() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
             @Test
@@ -173,7 +179,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
             public class Ignore {
                 @Test
                 public void testAllFilesPresentInIgnore() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/ignore"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/ignore"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
                 @Test
@@ -189,7 +195,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
             public class NullabilityWarnings {
                 @Test
                 public void testAllFilesPresentInNullabilityWarnings() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
                 @Test
@@ -240,7 +246,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 public class FromPlatformTypes {
                     @Test
                     public void testAllFilesPresentInFromPlatformTypes() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
 
                     @Test
@@ -370,7 +376,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 public class TypeQualifierDefault {
                     @Test
                     public void testAllFilesPresentInTypeQualifierDefault() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
 
                     @Test
@@ -429,7 +435,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
             public class TypeQualifierDefault {
                 @Test
                 public void testAllFilesPresentInTypeQualifierDefault() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
                 @Test
@@ -494,7 +500,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         public class Jsr305NullabilityWarnings {
             @Test
             public void testAllFilesPresentInJsr305NullabilityWarnings() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
             @Nested
@@ -503,7 +509,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
             public class Migration {
                 @Test
                 public void testAllFilesPresentInMigration() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
                 @Test
@@ -568,7 +574,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         public class TypeQualifierDefault {
             @Test
             public void testAllFilesPresentInTypeQualifierDefault() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
             @Test
@@ -585,7 +591,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
     public class Java8Tests {
         @Test
         public void testAllFilesPresentInJava8Tests() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
         @Test
@@ -612,7 +618,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         public class Jspecify {
             @Test
             public void testAllFilesPresentInJspecify() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
             @Nested
@@ -621,7 +627,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
             public class StrictMode {
                 @Test
                 public void testAllFilesPresentInStrictMode() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
                 @Test
@@ -631,21 +637,9 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 }
 
                 @Test
-                @TestMetadata("AnnotatedBoundsOfWildcard.fir.kt")
-                public void testAnnotatedBoundsOfWildcard_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/AnnotatedBoundsOfWildcard.fir.kt");
-                }
-
-                @Test
                 @TestMetadata("Captured.kt")
                 public void testCaptured() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Captured.kt");
-                }
-
-                @Test
-                @TestMetadata("Captured.fir.kt")
-                public void testCaptured_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Captured.fir.kt");
                 }
 
                 @Test
@@ -655,21 +649,9 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 }
 
                 @Test
-                @TestMetadata("Defaults.fir.kt")
-                public void testDefaults_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Defaults.fir.kt");
-                }
-
-                @Test
                 @TestMetadata("IgnoreAnnotations.kt")
                 public void testIgnoreAnnotations() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/IgnoreAnnotations.kt");
-                }
-
-                @Test
-                @TestMetadata("IgnoreAnnotations.fir.kt")
-                public void testIgnoreAnnotations_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/IgnoreAnnotations.fir.kt");
                 }
 
                 @Test
@@ -697,21 +679,9 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 }
 
                 @Test
-                @TestMetadata("NonPlatformTypeParameter.fir.kt")
-                public void testNonPlatformTypeParameter_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NonPlatformTypeParameter.fir.kt");
-                }
-
-                @Test
                 @TestMetadata("NullnessUnspecifiedTypeParameter.kt")
                 public void testNullnessUnspecifiedTypeParameter() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullnessUnspecifiedTypeParameter.kt");
-                }
-
-                @Test
-                @TestMetadata("NullnessUnspecifiedTypeParameter.fir.kt")
-                public void testNullnessUnspecifiedTypeParameter_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullnessUnspecifiedTypeParameter.fir.kt");
                 }
 
                 @Test
@@ -721,21 +691,9 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 }
 
                 @Test
-                @TestMetadata("SelfType.fir.kt")
-                public void testSelfType_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/SelfType.fir.kt");
-                }
-
-                @Test
                 @TestMetadata("Simple.kt")
                 public void testSimple() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Simple.kt");
-                }
-
-                @Test
-                @TestMetadata("Simple.fir.kt")
-                public void testSimple_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Simple.fir.kt");
                 }
 
                 @Test
@@ -745,33 +703,15 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 }
 
                 @Test
-                @TestMetadata("TypeArgumentsFromParameterBounds.fir.kt")
-                public void testTypeArgumentsFromParameterBounds_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/TypeArgumentsFromParameterBounds.fir.kt");
-                }
-
-                @Test
                 @TestMetadata("TypeParameterBounds.kt")
                 public void testTypeParameterBounds() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/TypeParameterBounds.kt");
                 }
 
                 @Test
-                @TestMetadata("TypeParameterBounds.fir.kt")
-                public void testTypeParameterBounds_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/TypeParameterBounds.fir.kt");
-                }
-
-                @Test
                 @TestMetadata("WildcardsWithDefault.kt")
                 public void testWildcardsWithDefault() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/WildcardsWithDefault.kt");
-                }
-
-                @Test
-                @TestMetadata("WildcardsWithDefault.fir.kt")
-                public void testWildcardsWithDefault_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/WildcardsWithDefault.fir.kt");
                 }
             }
 
@@ -781,7 +721,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
             public class WarnMode {
                 @Test
                 public void testAllFilesPresentInWarnMode() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
                 @Test
@@ -791,21 +731,9 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 }
 
                 @Test
-                @TestMetadata("AnnotatedBoundsOfWildcard.fir.kt")
-                public void testAnnotatedBoundsOfWildcard_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/AnnotatedBoundsOfWildcard.fir.kt");
-                }
-
-                @Test
                 @TestMetadata("Captured.kt")
                 public void testCaptured() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Captured.kt");
-                }
-
-                @Test
-                @TestMetadata("Captured.fir.kt")
-                public void testCaptured_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Captured.fir.kt");
                 }
 
                 @Test
@@ -815,21 +743,9 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 }
 
                 @Test
-                @TestMetadata("Defaults.fir.kt")
-                public void testDefaults_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Defaults.fir.kt");
-                }
-
-                @Test
                 @TestMetadata("IgnoreAnnotations.kt")
                 public void testIgnoreAnnotations() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/IgnoreAnnotations.kt");
-                }
-
-                @Test
-                @TestMetadata("IgnoreAnnotations.fir.kt")
-                public void testIgnoreAnnotations_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/IgnoreAnnotations.fir.kt");
                 }
 
                 @Test
@@ -845,21 +761,9 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 }
 
                 @Test
-                @TestMetadata("NonPlatformTypeParameter.fir.kt")
-                public void testNonPlatformTypeParameter_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NonPlatformTypeParameter.fir.kt");
-                }
-
-                @Test
                 @TestMetadata("NullnessUnspecifiedTypeParameter.kt")
                 public void testNullnessUnspecifiedTypeParameter() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullnessUnspecifiedTypeParameter.kt");
-                }
-
-                @Test
-                @TestMetadata("NullnessUnspecifiedTypeParameter.fir.kt")
-                public void testNullnessUnspecifiedTypeParameter_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullnessUnspecifiedTypeParameter.fir.kt");
                 }
 
                 @Test
@@ -869,21 +773,9 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 }
 
                 @Test
-                @TestMetadata("SelfType.fir.kt")
-                public void testSelfType_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/SelfType.fir.kt");
-                }
-
-                @Test
                 @TestMetadata("Simple.kt")
                 public void testSimple() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Simple.kt");
-                }
-
-                @Test
-                @TestMetadata("Simple.fir.kt")
-                public void testSimple_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Simple.fir.kt");
                 }
 
                 @Test
@@ -893,33 +785,15 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 }
 
                 @Test
-                @TestMetadata("TypeArgumentsFromParameterBounds.fir.kt")
-                public void testTypeArgumentsFromParameterBounds_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/TypeArgumentsFromParameterBounds.fir.kt");
-                }
-
-                @Test
                 @TestMetadata("TypeParameterBounds.kt")
                 public void testTypeParameterBounds() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/TypeParameterBounds.kt");
                 }
 
                 @Test
-                @TestMetadata("TypeParameterBounds.fir.kt")
-                public void testTypeParameterBounds_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/TypeParameterBounds.fir.kt");
-                }
-
-                @Test
                 @TestMetadata("WildcardsWithDefault.kt")
                 public void testWildcardsWithDefault() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/WildcardsWithDefault.kt");
-                }
-
-                @Test
-                @TestMetadata("WildcardsWithDefault.fir.kt")
-                public void testWildcardsWithDefault_fir() throws Exception {
-                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/WildcardsWithDefault.fir.kt");
                 }
             }
         }
@@ -930,7 +804,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         public class Jsr305 {
             @Test
             public void testAllFilesPresentInJsr305() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
             @Test
@@ -970,19 +844,13 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         public class Misc {
             @Test
             public void testAllFilesPresentInMisc() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
             @Test
             @TestMetadata("annotatedTypeArguments.kt")
             public void testAnnotatedTypeArguments() throws Exception {
                 runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/annotatedTypeArguments.kt");
-            }
-
-            @Test
-            @TestMetadata("annotatedTypeArguments.fir.kt")
-            public void testAnnotatedTypeArguments_fir() throws Exception {
-                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/annotatedTypeArguments.fir.kt");
             }
 
             @Test
@@ -998,27 +866,9 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
             }
 
             @Test
-            @TestMetadata("classTypeParameterBoundWithWarnings.fir.kt")
-            public void testClassTypeParameterBoundWithWarnings_fir() throws Exception {
-                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/classTypeParameterBoundWithWarnings.fir.kt");
-            }
-
-            @Test
-            @TestMetadata("classTypeParameterBound.fir.kt")
-            public void testClassTypeParameterBound_fir() throws Exception {
-                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/classTypeParameterBound.fir.kt");
-            }
-
-            @Test
             @TestMetadata("enhancedRecursiveStarProjection.kt")
             public void testEnhancedRecursiveStarProjection() throws Exception {
                 runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/enhancedRecursiveStarProjection.kt");
-            }
-
-            @Test
-            @TestMetadata("enhancedRecursiveStarProjection.fir.kt")
-            public void testEnhancedRecursiveStarProjection_fir() throws Exception {
-                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/enhancedRecursiveStarProjection.fir.kt");
             }
 
             @Test
@@ -1028,33 +878,15 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
             }
 
             @Test
-            @TestMetadata("methodWithTypeParameter.fir.kt")
-            public void testMethodWithTypeParameter_fir() throws Exception {
-                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/methodWithTypeParameter.fir.kt");
-            }
-
-            @Test
             @TestMetadata("notNullVarargsOverrides.kt")
             public void testNotNullVarargsOverrides() throws Exception {
                 runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/notNullVarargsOverrides.kt");
             }
 
             @Test
-            @TestMetadata("notNullVarargsOverrides.fir.kt")
-            public void testNotNullVarargsOverrides_fir() throws Exception {
-                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/notNullVarargsOverrides.fir.kt");
-            }
-
-            @Test
             @TestMetadata("nullableVarargsOverrides.kt")
             public void testNullableVarargsOverrides() throws Exception {
                 runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/nullableVarargsOverrides.kt");
-            }
-
-            @Test
-            @TestMetadata("nullableVarargsOverrides.fir.kt")
-            public void testNullableVarargsOverrides_fir() throws Exception {
-                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/nullableVarargsOverrides.fir.kt");
             }
 
             @Test
@@ -1070,21 +902,9 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
             }
 
             @Test
-            @TestMetadata("returnTypeDifferentConstructor.fir.kt")
-            public void testReturnTypeDifferentConstructor_fir() throws Exception {
-                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeDifferentConstructor.fir.kt");
-            }
-
-            @Test
             @TestMetadata("returnTypeOverrideInKotlin.kt")
             public void testReturnTypeOverrideInKotlin() throws Exception {
                 runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeOverrideInKotlin.kt");
-            }
-
-            @Test
-            @TestMetadata("returnTypeOverrideInKotlin.fir.kt")
-            public void testReturnTypeOverrideInKotlin_fir() throws Exception {
-                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeOverrideInKotlin.fir.kt");
             }
 
             @Test
@@ -1094,27 +914,9 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
             }
 
             @Test
-            @TestMetadata("returnTypeWithWarnings.fir.kt")
-            public void testReturnTypeWithWarnings_fir() throws Exception {
-                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeWithWarnings.fir.kt");
-            }
-
-            @Test
-            @TestMetadata("returnType.fir.kt")
-            public void testReturnType_fir() throws Exception {
-                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnType.fir.kt");
-            }
-
-            @Test
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/simple.kt");
-            }
-
-            @Test
-            @TestMetadata("simple.fir.kt")
-            public void testSimple_fir() throws Exception {
-                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/simple.fir.kt");
             }
 
             @Test
@@ -1136,18 +938,6 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
             }
 
             @Test
-            @TestMetadata("valueParameterWithWarnings.fir.kt")
-            public void testValueParameterWithWarnings_fir() throws Exception {
-                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/valueParameterWithWarnings.fir.kt");
-            }
-
-            @Test
-            @TestMetadata("valueParameter.fir.kt")
-            public void testValueParameter_fir() throws Exception {
-                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/valueParameter.fir.kt");
-            }
-
-            @Test
             @TestMetadata("warningsBasedOnEnhancedBasedType.kt")
             public void testWarningsBasedOnEnhancedBasedType() throws Exception {
                 runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/warningsBasedOnEnhancedBasedType.kt");
@@ -1161,7 +951,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
     public class Java9Tests {
         @Test
         public void testAllFilesPresentInJava9Tests() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
         @Nested
@@ -1170,7 +960,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         public class Jspecify {
             @Test
             public void testAllFilesPresentInJspecify() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
             @Nested
@@ -1179,7 +969,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
             public class ModuleAnnotations {
                 @Test
                 public void testAllFilesPresentInModuleAnnotations() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
                 @Nested
@@ -1188,7 +978,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 public class Strict {
                     @Test
                     public void testAllFilesPresentInStrict() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/strict"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/strict"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
 
                     @Test
@@ -1264,7 +1054,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 public class Warn {
                     @Test
                     public void testAllFilesPresentInWarn() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/warn"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/warn"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
 
                     @Test

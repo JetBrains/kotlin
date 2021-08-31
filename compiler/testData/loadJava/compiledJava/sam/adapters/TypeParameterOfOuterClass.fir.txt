@@ -1,4 +1,10 @@
 public open class TypeParameterOfOuterClass<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
     public constructor<T : R|ft<kotlin/Any, kotlin/Any?>|>(): R|test/TypeParameterOfOuterClass<T>|
 
+    public open inner class Inner<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public open fun foo(comparator: R|ft<java/util/Comparator<ft<T, T?>>, java/util/Comparator<ft<T, T?>>?>|): R|kotlin/Unit|
+
+        public constructor(): R|test/TypeParameterOfOuterClass.Inner<T>|
+
+    }
 }

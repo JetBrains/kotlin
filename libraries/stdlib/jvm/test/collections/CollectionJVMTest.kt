@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,8 @@ package test.collections
 import test.assertStaticAndRuntimeTypeIs
 import test.io.deserializeFromHex
 import test.io.serializeAndDeserialize
+import test.io.serializeToByteArray
+import java.io.NotSerializableException
 import java.util.*
 import kotlin.test.*
 
@@ -186,7 +188,7 @@ class CollectionJVMTest {
         val result = serializeAndDeserialize(value)
 
         assertEquals(value, result)
-        assertTrue(value === result)
+        assertSame(value, result)
     }
 
     @Test fun deserializeEmptyList() = testPersistedDeserialization(
@@ -205,4 +207,57 @@ class CollectionJVMTest {
         val actual = deserializeFromHex<Any>(hexValue)
         assertEquals(expected, actual)
     }
+
+    @Test
+    fun builtListIsSerializable() {
+        val source = buildList<Any?> {
+            repeat(5) { add(it.toLong()) }
+            add("string")
+            add(null)
+            assertFailsWith<NotSerializableException> { serializeToByteArray(this@buildList) }
+            assertFailsWith<NotSerializableException> { serializeToByteArray(this@buildList.subList(0, 2)) }
+        }
+        testCollectionBuilderSerialization(source)
+        testCollectionBuilderSerialization(source.subList(0, source.size - 1))
+    }
+
+    @Test
+    fun builtSetIsSerializable() {
+        val source = buildSet<Any?> {
+            repeat(5) { add(it.toShort()) }
+            repeat(5) { add(it.toLong()) }
+            add("string")
+            add('c')
+            add(null)
+            assertFailsWith<NotSerializableException> { serializeToByteArray(this@buildSet) }
+        }
+        testCollectionBuilderSerialization(source)
+    }
+
+    @Test
+    fun builtMapIsSerializable() {
+        val source = buildMap<Any?, Any?> {
+            repeat(5) { put(it.toShort(), it.toLong()) }
+            put('s', "string")
+            put(null, null)
+            assertFailsWith<NotSerializableException> { serializeToByteArray(this@buildMap) }
+        }
+        testCollectionBuilderSerialization(source)
+    }
+
+
+    private fun testCollectionBuilderSerialization(value: Any) {
+        val result = serializeAndDeserialize(value)
+        assertEquals(value, result)
+        assertEquals(value.javaClass, result.javaClass)
+        assertReadOnly(result)
+    }
+
+    private fun assertReadOnly(collection: Any) {
+        when (collection) {
+            is MutableCollection<*> -> assertFails { collection.clear() }
+            is MutableMap<*, *> -> assertFails { collection.clear() }
+        }
+    }
+
 }

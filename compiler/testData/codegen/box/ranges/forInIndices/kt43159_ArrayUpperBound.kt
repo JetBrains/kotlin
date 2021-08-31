@@ -1,6 +1,7 @@
 // KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 // IGNORE_BACKEND: JVM, JVM_IR
+// IGNORE_BACKEND_FIR: JVM_IR
 
 fun <T : IntArray> test(array: T): Int {
     var sum = 0

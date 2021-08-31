@@ -18,10 +18,10 @@ open class A {
         protected set(value) {}
 
     inline fun call() {
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>test<!>()
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>z<!>
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_WARNING!>test<!>()
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_WARNING!>z<!>
         zVar
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>zVar<!> = "123"
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_WARNING!>zVar<!> = "123"
     }
 
     internal inline fun callFromInternal() {
@@ -32,10 +32,10 @@ open class A {
 
     @PublishedApi
     internal inline fun callFromPublished() {
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>test<!>()
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>z<!>
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_WARNING!>test<!>()
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_WARNING!>z<!>
         zVar
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>zVar<!> = "123"
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_WARNING!>zVar<!> = "123"
     }
 
     protected inline fun callFromProtected() {
@@ -48,13 +48,13 @@ open class A {
 
 class B : A() {
     inline fun testB() {
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>test<!>()
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_WARNING!>test<!>()
     }
 }
 
 class C : JavaClass() {
     inline fun call() {
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>bind<!>()
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_WARNING!>bind<!>()
     }
 
     internal inline fun callFromInternal() {
@@ -67,7 +67,7 @@ class C : JavaClass() {
 
     @PublishedApi
     internal inline fun callFromPublished() {
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>bind<!>()
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_WARNING!>bind<!>()
     }
 }
 

@@ -5,26 +5,22 @@
 
 package org.jetbrains.kotlin.test
 
+import org.jetbrains.kotlin.test.model.AbstractTestFacade
+import org.jetbrains.kotlin.test.model.AnalysisHandler
+
 sealed class WrappedException(
     cause: Throwable,
     val priority: Int,
     val additionalPriority: Int
 ) : Exception(cause), Comparable<WrappedException> {
-    sealed class FromFacade(cause: Throwable, additionalPriority: Int) : WrappedException(cause, 0, additionalPriority) {
-        class Frontend(cause: Throwable) : FromFacade(cause, 1)
-        class Converter(cause: Throwable) : FromFacade(cause, 2)
-        class Backend(cause: Throwable) : FromFacade(cause, 3)
-
+    class FromFacade(cause: Throwable, val facade: AbstractTestFacade<*, *>) : WrappedException(cause, 0, 1) {
         override val message: String
             get() = "Exception was thrown"
     }
 
     class FromMetaInfoHandler(cause: Throwable) : WrappedException(cause, 1, 1)
 
-    class FromFrontendHandler(cause: Throwable) : WrappedException(cause, 1, 1)
-    class FromBackendHandler(cause: Throwable) : WrappedException(cause, 1, 2)
-    class FromBinaryHandler(cause: Throwable) : WrappedException(cause, 1, 3)
-    class FromUnknownHandler(cause: Throwable) : WrappedException(cause, 1, 4)
+    class FromHandler(cause: Throwable, val handler: AnalysisHandler<*>) : WrappedException(cause, 1, 2)
 
     class FromAfterAnalysisChecker(cause: Throwable) : WrappedException(cause, 2, 1)
 

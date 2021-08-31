@@ -74,6 +74,11 @@ public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
         runTest("compiler/testData/codegen/script/kt22029.kts");
     }
 
+    @TestMetadata("kt48025.kts")
+    public void testKt48025() throws Exception {
+        runTest("compiler/testData/codegen/script/kt48025.kts");
+    }
+
     @TestMetadata("localDelegatedProperty.kts")
     public void testLocalDelegatedProperty() throws Exception {
         runTest("compiler/testData/codegen/script/localDelegatedProperty.kts");

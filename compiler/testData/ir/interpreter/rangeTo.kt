@@ -1,3 +1,7 @@
+// this hack is used to ensure that iterator will be resolved first
+@CompileTimeCalculation internal class IntProgressionIterator(first: Int, last: Int, val step: Int) : IntIterator()
+@CompileTimeCalculation public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, endInclusive, 1), ClosedRange<Int>
+
 const val range = (1..10).<!EVALUATED: `1`!>first<!>
 
 @CompileTimeCalculation

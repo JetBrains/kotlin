@@ -53,6 +53,15 @@ abstract class CheckerContext {
 
     abstract fun dropDeclaration()
 
+    fun <T> withDeclaration(declaration: FirDeclaration, f: (CheckerContext) -> T): T {
+        val newContext = addDeclaration(declaration)
+        try {
+            return f(newContext)
+        } finally {
+            newContext.dropDeclaration()
+        }
+    }
+
     abstract fun addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall: FirStatement): CheckerContext
 
     abstract fun dropQualifiedAccessOrAnnotationCall()

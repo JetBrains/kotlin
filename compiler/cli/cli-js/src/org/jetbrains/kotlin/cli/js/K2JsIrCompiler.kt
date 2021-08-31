@@ -38,10 +38,12 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.ic.actualizeCacheForModule
 import org.jetbrains.kotlin.ir.backend.js.ic.buildCache
 import org.jetbrains.kotlin.ir.backend.js.ic.checkCaches
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
+import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -64,12 +66,15 @@ enum class ProduceKind {
 
 class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
-    override val performanceManager: CommonCompilerPerformanceManager =
+    override val defaultPerformanceManager: CommonCompilerPerformanceManager =
         object : CommonCompilerPerformanceManager("Kotlin to JS (IR) Compiler") {}
 
     override fun createArguments(): K2JSCompilerArguments {
         return K2JSCompilerArguments()
     }
+
+    @Suppress("UNUSED_PARAMETER")
+    private fun usePerFileInvalidator(configuration: CompilerConfiguration): Boolean = false
 
     override fun doExecute(
         arguments: K2JSCompilerArguments,
@@ -138,7 +143,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         configurationJs.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
 
-        if (!checkKotlinPackageUsage(environmentForJS, sourcesFiles)) return ExitCode.COMPILATION_ERROR
+        if (!checkKotlinPackageUsage(environmentForJS.configuration, sourcesFiles)) return ExitCode.COMPILATION_ERROR
 
         val outputFilePath = arguments.outputFile
         if (outputFilePath == null) {
@@ -200,23 +205,55 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 MainModule.Klib(includes)
             }
 
+            val perFileCache = usePerFileInvalidator(configuration)
+
             val start = System.currentTimeMillis()
-            if (buildCache(
+
+            val updated = if (perFileCache) {
+                actualizeCacheForModule(includes, outputFilePath, configuration, libraries, icCaches)
+            } else {
+                buildCache(
                     cachePath = outputFilePath,
                     project = projectJs,
                     mainModule = mainModule,
-                    analyzer = AnalyzerWithCompilerReport(config.configuration),
                     configuration = config.configuration,
                     dependencies = libraries,
                     friendDependencies = friendLibraries,
                     icCache = checkCaches(libraries, icCaches, skipLib = mainModule.libPath)
                 )
-            ) {
-                messageCollector.report(INFO, "IC cache building duration: ${System.currentTimeMillis() - start}ms")
+            }
+
+            val invalidationType = if (perFileCache) "per-file" else "per-module"
+            if (updated) {
+                messageCollector.report(INFO, "IC $invalidationType cache building duration: ${System.currentTimeMillis() - start}ms")
             } else {
-                messageCollector.report(INFO, "IC cache up-to-date check duration: ${System.currentTimeMillis() - start}ms")
+                messageCollector.report(INFO, "IC $invalidationType cache up-to-date check duration: ${System.currentTimeMillis() - start}ms")
             }
             return OK
+        }
+
+        // Run analysis if main module is sources
+        lateinit var sourceModule: ModulesStructure
+        if (arguments.includes == null) {
+            do {
+                sourceModule = prepareAnalyzedSourceModule(
+                    projectJs,
+                    environmentForJS.getSourceFiles(),
+                    configurationJs,
+                    libraries,
+                    friendLibraries,
+                    AnalyzerWithCompilerReport(config.configuration),
+                    icUseGlobalSignatures = icCaches.isNotEmpty(),
+                    icUseStdlibCache = icCaches.isNotEmpty(),
+                    icCache = if (icCaches.isNotEmpty()) checkCaches(libraries, icCaches, skipLib = arguments.includes).data else emptyMap()
+                )
+                val result = sourceModule.jsFrontEndResult.jsAnalysisResult
+                if (result is JsAnalysisResult.RetryWithAdditionalRoots) {
+                    environmentForJS.addKotlinSourceRoots(result.additionalKotlinRoots)
+                }
+            } while (result is JsAnalysisResult.RetryWithAdditionalRoots)
+            if (!sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode)
+                return OK
         }
 
         if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
@@ -225,12 +262,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             }
 
             generateKLib(
-                project = config.project,
-                files = sourcesFiles,
-                analyzer = AnalyzerWithCompilerReport(config.configuration),
-                configuration = config.configuration,
-                dependencies = libraries,
-                friendDependencies = friendLibraries,
+                sourceModule,
                 irFactory = PersistentIrFactory(), // TODO IrFactoryImpl?
                 outputKlibPath = outputFile.path,
                 nopack = arguments.irProduceKlibDir,
@@ -246,28 +278,33 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
             val includes = arguments.includes
 
-            val mainModule = if (includes != null) {
+            val module = if (includes != null) {
                 if (sourcesFiles.isNotEmpty()) {
                     messageCollector.report(ERROR, "Source files are not supported when -Xinclude is present")
                 }
                 val includesPath = File(includes).canonicalPath
                 val mainLibPath = libraries.find { File(it).canonicalPath == includesPath }
                     ?: error("No library with name $includes ($includesPath) found")
-                MainModule.Klib(mainLibPath)
+                val kLib = MainModule.Klib(mainLibPath)
+                ModulesStructure(
+                    projectJs,
+                    kLib,
+                    configurationJs,
+                    libraries,
+                    friendLibraries,
+                    icUseGlobalSignatures = icCaches.isNotEmpty(),
+                    icUseStdlibCache = icCaches.isNotEmpty(),
+                    icCache = if (icCaches.isNotEmpty()) checkCaches(libraries, icCaches, skipLib = includes).data else emptyMap()
+                )
             } else {
-                MainModule.SourceFiles(sourcesFiles)
+                sourceModule
             }
 
             if (arguments.wasm) {
                 val res = compileWasm(
-                    projectJs,
-                    mainModule,
-                    AnalyzerWithCompilerReport(config.configuration),
-                    config.configuration,
+                    module,
                     PhaseConfig(wasmPhases),
                     IrFactoryImpl,
-                    dependencies = libraries,
-                    friendDependencies = friendLibraries,
                     exportedDeclarations = setOf(FqName("main"))
                 )
                 val outputWasmFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "wasm")!!
@@ -278,7 +315,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 val runner = """
                     const wasmBinary = read(String.raw`${outputWasmFile.absoluteFile}`, 'binary');
                     const wasmModule = new WebAssembly.Module(wasmBinary);
-                    const wasmInstance = new WebAssembly.Instance(wasmModule, { runtime, js_code });
+                    wasmInstance = new WebAssembly.Instance(wasmModule, { runtime, js_code });
                     wasmInstance.exports.main();
                 """.trimIndent()
 
@@ -289,14 +326,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             val start = System.currentTimeMillis()
 
             val compiledModule = compile(
-                projectJs,
-                mainModule,
-                AnalyzerWithCompilerReport(config.configuration),
-                config.configuration,
+                module,
                 phaseConfig,
                 if (arguments.irDceDriven) PersistentIrFactory() else IrFactoryImpl,
-                dependencies = libraries,
-                friendDependencies = friendLibraries,
                 mainArguments = mainCallArguments,
                 generateFullJs = !arguments.irDce,
                 generateDceJs = arguments.irDce,
@@ -316,8 +348,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     messageCollector
                 ),
                 lowerPerModule = icCaches.isNotEmpty(),
-                useStdlibCache = icCaches.isNotEmpty(),
-                icCache = if (icCaches.isNotEmpty()) checkCaches(libraries, icCaches, skipLib = includes).data else emptyMap(),
             )
 
             messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")

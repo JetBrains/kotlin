@@ -75,6 +75,7 @@ class FirStatusResolver(
                     ProcessorAction.NEXT
                 }
             }.map {
+                it.ensureResolved(FirResolvePhase.STATUS)
                 it.status as FirResolvedDeclarationStatus
             }
         }
@@ -258,7 +259,13 @@ class FirStatusResolver(
                         }
                     }
                     else -> {
-                        if (declaration.isOverride && containingClass.modality != Modality.FINAL) Modality.OPEN else Modality.FINAL
+                        if (declaration.isOverride &&
+                            (containingClass.modality != Modality.FINAL || containingClass.classKind == ClassKind.ENUM_CLASS)
+                        ) {
+                            Modality.OPEN
+                        } else {
+                            Modality.FINAL
+                        }
                     }
                 }
             }

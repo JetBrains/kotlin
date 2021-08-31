@@ -457,7 +457,7 @@ class DescriptorSerializer private constructor(
     }
 
     private fun MutableVersionRequirementTable.writeVersionRequirementDependingOnCoroutinesVersion(): Int =
-        writeVersionRequirement(if (extension.releaseCoroutines()) LanguageFeature.ReleaseCoroutines else LanguageFeature.Coroutines)
+        writeVersionRequirement(LanguageFeature.ReleaseCoroutines)
 
     private fun CallableMemberDescriptor.isSuspendOrHasSuspendTypesInSignature(): Boolean {
         if (this is FunctionDescriptor && isSuspend) return true
@@ -624,7 +624,7 @@ class DescriptorSerializer private constructor(
         }
 
         if (type.isSuspendFunctionType) {
-            val functionType = type(transformSuspendFunctionToRuntimeFunctionType(type, extension.releaseCoroutines()))
+            val functionType = type(transformSuspendFunctionToRuntimeFunctionType(type))
             functionType.flags = Flags.getTypeFlags(true, false)
             return functionType
         }

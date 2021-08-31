@@ -47,7 +47,7 @@ fun test3() {
 
     fooSetRef.invoke(foo, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
 
-    foo.x.<!INAPPLICABLE_CANDIDATE!>bar<!>()
+    foo.x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>bar<!>()
 }
 
 fun test4() {
@@ -56,5 +56,5 @@ fun test4() {
 
     fooSetRef.invoke(foo, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
 
-    foo.x.<!INAPPLICABLE_CANDIDATE!>bar<!>()
+    foo.x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>bar<!>()
 }

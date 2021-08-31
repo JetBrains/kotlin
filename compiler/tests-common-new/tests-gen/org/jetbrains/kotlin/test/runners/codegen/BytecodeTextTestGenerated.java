@@ -296,6 +296,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     }
 
     @Test
+    @TestMetadata("kt48367.kt")
+    public void testKt48367() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/kt48367.kt");
+    }
+
+    @Test
     @TestMetadata("kt5016.kt")
     public void testKt5016() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/kt5016.kt");
@@ -713,15 +719,33 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
-        @TestMetadata("safeCallToPrimitiveEquality.kt")
-        public void testSafeCallToPrimitiveEquality() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/safeCallToPrimitiveEquality.kt");
+        @TestMetadata("safeCallToPrimitiveEquality1.kt")
+        public void testSafeCallToPrimitiveEquality1() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/safeCallToPrimitiveEquality1.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallToPrimitiveEquality2.kt")
+        public void testSafeCallToPrimitiveEquality2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/safeCallToPrimitiveEquality2.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallToPrimitiveEquality3.kt")
+        public void testSafeCallToPrimitiveEquality3() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/safeCallToPrimitiveEquality3.kt");
         }
 
         @Test
         @TestMetadata("safeCallWithElvis.kt")
         public void testSafeCallWithElvis() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/safeCallWithElvis.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallWithElvisMultipleFiles.kt")
+        public void testSafeCallWithElvisMultipleFiles() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/safeCallWithElvisMultipleFiles.kt");
         }
 
         @Test
@@ -1550,6 +1574,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("inlinePrimaryDefaults.kt")
         public void testInlinePrimaryDefaults() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/constructors/inlinePrimaryDefaults.kt");
+        }
+
+        @Test
+        @TestMetadata("innerClassConstructor.kt")
+        public void testInnerClassConstructor() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/constructors/innerClassConstructor.kt");
         }
 
         @Test
@@ -3145,6 +3175,30 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("noFakeVariableForInlineOnlyFun.kt")
+        public void testNoFakeVariableForInlineOnlyFun() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inline/noFakeVariableForInlineOnlyFun.kt");
+        }
+
+        @Test
+        @TestMetadata("noFakeVariableForInlineOnlyFunFromStdlib.kt")
+        public void testNoFakeVariableForInlineOnlyFunFromStdlib() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inline/noFakeVariableForInlineOnlyFunFromStdlib.kt");
+        }
+
+        @Test
+        @TestMetadata("noFakeVariableForInlineOnlyFunMap.kt")
+        public void testNoFakeVariableForInlineOnlyFunMap() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inline/noFakeVariableForInlineOnlyFunMap.kt");
+        }
+
+        @Test
+        @TestMetadata("noFakeVariableForInlineOnlyFunWithLambda.kt")
+        public void testNoFakeVariableForInlineOnlyFunWithLambda() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inline/noFakeVariableForInlineOnlyFunWithLambda.kt");
+        }
+
+        @Test
         @TestMetadata("noSynAccessor.kt")
         public void testNoSynAccessor() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inline/noSynAccessor.kt");
@@ -3218,6 +3272,28 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             public void testSimple() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/inline/property/simple.kt");
             }
+        }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/bytecodeText/inlineArgsInPlace")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InlineArgsInPlace {
+        @Test
+        public void testAllFilesPresentInInlineArgsInPlace() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inlineArgsInPlace"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @Test
+        @TestMetadata("println.kt")
+        public void testPrintln() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineArgsInPlace/println.kt");
+        }
+
+        @Test
+        @TestMetadata("sin.kt")
+        public void testSin() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineArgsInPlace/sin.kt");
         }
     }
 
@@ -3732,6 +3808,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("javaPrimitiveType.kt")
         public void testJavaPrimitiveType() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/intrinsics/javaPrimitiveType.kt");
+        }
+
+        @Test
+        @TestMetadata("postfixIncrDecr.kt")
+        public void testPostfixIncrDecr() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/intrinsics/postfixIncrDecr.kt");
         }
     }
 
@@ -4801,6 +4883,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("samWrapperInInlineLambda2.kt")
+        public void testSamWrapperInInlineLambda2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperInInlineLambda2.kt");
+        }
+
+        @Test
         @TestMetadata("samWrapperOfLambda.kt")
         public void testSamWrapperOfLambda() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperOfLambda.kt");
@@ -4964,6 +5052,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("concatDynamic.kt")
         public void testConcatDynamic() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamic.kt");
+        }
+
+        @Test
+        @TestMetadata("concatDynamic199.kt")
+        public void testConcatDynamic199() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamic199.kt");
         }
 
         @Test
@@ -5156,6 +5250,46 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("useAppendCharForOneCharStringUsingPlus.kt")
         public void testUseAppendCharForOneCharStringUsingPlus() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/useAppendCharForOneCharStringUsingPlus.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/bytecodeText/temporaryVals")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TemporaryVals {
+        @Test
+        public void testAllFilesPresentInTemporaryVals() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/temporaryVals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @Test
+        @TestMetadata("arrayCompoundAssignment.kt")
+        public void testArrayCompoundAssignment() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/temporaryVals/arrayCompoundAssignment.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallChain1.kt")
+        public void testSafeCallChain1() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/temporaryVals/safeCallChain1.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallChain2.kt")
+        public void testSafeCallChain2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/temporaryVals/safeCallChain2.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallChainMemberExt1.kt")
+        public void testSafeCallChainMemberExt1() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/temporaryVals/safeCallChainMemberExt1.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallChainMemberExt2.kt")
+        public void testSafeCallChainMemberExt2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/temporaryVals/safeCallChainMemberExt2.kt");
         }
     }
 

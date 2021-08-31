@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 // `doRemove` means should expect-declaration be removed from IR
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -100,10 +103,11 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
         // the `actual fun` or `actual constructor` for this may be in a different module.
         // Nothing we can do with those.
         // TODO they may not actually have the defaults though -- may be a frontend bug.
-        val expectFunction = function.findExpectForActual()
-        val expectParameter = expectFunction?.valueParameters?.get(index) ?: return
+        val expectFunction =
+            function.descriptor.findExpectForActual().safeAs<FunctionDescriptor>()?.let { symbolTable.referenceFunction(it).owner }
+                ?: return
 
-        val defaultValue = expectParameter.defaultValue ?: return
+        val defaultValue = expectFunction.valueParameters[index].defaultValue ?: return
 
         val expectToActual = expectFunction to function
         if (expectToActual !in typeParameterSubstitutionMap) {
@@ -129,30 +133,19 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
         }
     }
 
-    private fun IrFunction.findActualForExpected(): IrFunction? =
-        descriptor.findActualForExpect()?.let { symbolTable.referenceFunction(it).owner }
-
-    private fun IrFunction.findExpectForActual(): IrFunction? =
-        descriptor.findExpectForActual()?.let { symbolTable.referenceFunction(it).owner }
-
-    private fun IrClass.findActualForExpected(): IrClass? =
-        descriptor.findActualForExpect()?.let { symbolTable.referenceClass(it).owner }
-
-    private inline fun <reified T : MemberDescriptor> T.findActualForExpect() = with(ExpectedActualResolver) {
-        val descriptor = this@findActualForExpect
-
-        if (!descriptor.isExpect) error(this)
-
-        findCompatibleActualForExpected(descriptor.module).singleOrNull()
-    } as T?
-
-    private inline fun <reified T : MemberDescriptor> T.findExpectForActual() = with(ExpectedActualResolver) {
-        val descriptor = this@findExpectForActual
-
-        if (!descriptor.isActual) error(this) else {
-            findCompatibleExpectedForActual(descriptor.module).singleOrNull()
+    private fun MemberDescriptor.findActualForExpect(): MemberDescriptor? {
+        if (!isExpect) error(this)
+        return with(ExpectedActualResolver) {
+            findCompatibleActualForExpected(this@findActualForExpect.module).singleOrNull()
         }
-    } as T?
+    }
+
+    private fun MemberDescriptor.findExpectForActual(): MemberDescriptor? {
+        if (!isActual) error(this)
+        return with(ExpectedActualResolver) {
+            findCompatibleExpectedForActual(this@findExpectForActual.module).singleOrNull()
+        }
+    }
 
     private fun IrExpression.remapExpectValueSymbols(): IrExpression {
         return this.transform(object : IrElementTransformerVoid() {
@@ -179,22 +172,25 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
         }
 
         val parameter = symbol.owner
-        val parent = parameter.parent
 
-        return when (parent) {
+        return when (val parent = parameter.parent) {
             is IrClass -> {
                 assert(parameter == parent.thisReceiver)
-                parent.findActualForExpected()!!.thisReceiver!!
+                symbolTable.referenceClass(parent.descriptor.findActualForExpect() as ClassDescriptor).owner.thisReceiver!!
             }
 
-            is IrFunction -> when (parameter) {
-                parent.dispatchReceiverParameter ->
-                    parent.findActualForExpected()!!.dispatchReceiverParameter!!
-                parent.extensionReceiverParameter ->
-                    parent.findActualForExpected()!!.extensionReceiverParameter!!
-                else -> {
-                    assert(parent.valueParameters[parameter.index] == parameter)
-                    parent.findActualForExpected()!!.valueParameters[parameter.index]
+            is IrFunction -> {
+                val actualFunction =
+                    symbolTable.referenceFunction(parent.descriptor.findActualForExpect() as FunctionDescriptor).owner
+                when (parameter) {
+                    parent.dispatchReceiverParameter ->
+                        actualFunction.dispatchReceiverParameter!!
+                    parent.extensionReceiverParameter ->
+                        actualFunction.extensionReceiverParameter!!
+                    else -> {
+                        assert(parent.valueParameters[parameter.index] == parameter)
+                        actualFunction.valueParameters[parameter.index]
+                    }
                 }
             }
 

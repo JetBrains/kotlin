@@ -67,6 +67,107 @@ void Kotlin_ObjCExport_resumeContinuationSuccess(KRef continuation, KRef result)
     throw std::runtime_error("Not implemented for tests");
 }
 
+// Declarations from the "objc" module (see ObjCExportCollections.mm).
+OBJ_GETTER0(Kotlin_NSArrayAsKList_create) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER0(Kotlin_NSMutableArrayAsKMutableList_create) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER0(Kotlin_NSSetAsKSet_create) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER0(Kotlin_NSDictionaryAsKMap_create) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+KBoolean Kotlin_Iterator_hasNext(KRef iterator) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_Iterator_next, KRef iterator) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+KInt Kotlin_Collection_getSize(KRef collection) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+KBoolean Kotlin_Set_contains(KRef set, KRef element) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_Set_getElement, KRef set, KRef element) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_Set_iterator, KRef set) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+void Kotlin_MutableCollection_removeObject(KRef collection, KRef element) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+void Kotlin_MutableCollection_addObject(KRef list, KRef obj) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_MutableSet_createWithCapacity, KInt capacity) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+KInt Kotlin_Map_getSize(KRef map) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+KBoolean Kotlin_Map_containsKey(KRef map, KRef key) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_Map_get, KRef map, KRef key) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_Map_keyIterator, KRef map) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_List_get, KRef list, KInt index) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_MutableMap_createWithCapacity, KInt capacity) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+void Kotlin_MutableMap_set(KRef map, KRef key, KRef value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+void Kotlin_MutableMap_remove(KRef map, KRef key) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+void Kotlin_MutableList_addObjectAtIndex(KRef list, KInt index, KRef obj) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+void Kotlin_MutableList_removeObjectAtIndex(KRef list, KInt index) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+void Kotlin_MutableList_removeLastObject(KRef list) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+void Kotlin_MutableList_setObject(KRef list, KInt index, KRef obj) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
 } // extern "C"
 
 #endif // KONAN_OBJC_INTEROP

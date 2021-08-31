@@ -31,8 +31,8 @@ inline fun <reified T, reified K> case_3() {
     var x: T? = 10 as T
     x = null
     if (x is K) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!! & K!!")!>x<!>.equals(10)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!! & K!!")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & kotlin.Nothing")!>x<!>.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & kotlin.Nothing")!>x<!>
         println(1)
     }
 }
@@ -61,8 +61,8 @@ inline fun <reified T, reified K> case_6() {
     var x: T? = 10 as T
     if (x is K) {
         x = null
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & kotlin.Nothing?")!>x<!>
         println(1)
     }
 }

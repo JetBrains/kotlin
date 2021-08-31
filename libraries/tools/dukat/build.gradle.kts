@@ -5,7 +5,7 @@ plugins {
 dependencies {
     implementation(kotlinStdlib())
     implementation("org.jetbrains.dukat:dukat:0.5.8-rc.4")
-    implementation("org.jsoup:jsoup:1.8.2")
+    implementation("org.jsoup:jsoup:1.14.2")
 }
 
 task("downloadIDL", JavaExec::class) {

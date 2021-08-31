@@ -1,0 +1,2 @@
+expression: { /* Type Cast */ }
+expected type: java/lang/Runnable

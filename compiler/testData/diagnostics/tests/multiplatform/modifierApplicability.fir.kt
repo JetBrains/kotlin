@@ -2,21 +2,21 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect typealias Foo = String
+<!WRONG_MODIFIER_TARGET!>expect<!> typealias Foo = String
 
-class Outer expect constructor() {
-    expect class Nested
+class Outer <!WRONG_MODIFIER_TARGET!>expect<!> constructor() {
+    <!WRONG_MODIFIER_TARGET!>expect<!> class Nested
 
-    expect init {}
+    <!WRONG_MODIFIER_TARGET!>expect<!> init {}
 
-    <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>expect fun foo()<!>
-    expect val bar: Int
+    <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!><!WRONG_MODIFIER_TARGET!>expect<!> fun foo()<!>
+    <!WRONG_MODIFIER_TARGET!>expect<!> val bar: Int
 }
 
 fun foo() {
-    expect fun localFun()
-    expect var x = 42
-    expect class Bar
+    <!WRONG_MODIFIER_TARGET!>expect<!> fun localFun()
+    <!WRONG_MODIFIER_TARGET!>expect<!> var x = 42
+    <!WRONG_MODIFIER_TARGET!>expect<!> class Bar
 }
 
 // MODULE: m2-jvm
@@ -25,11 +25,11 @@ fun foo() {
 class Outer <!ACTUAL_WITHOUT_EXPECT!>actual constructor()<!> {
     actual class Nested
 
-    actual init {}
+    <!WRONG_MODIFIER_TARGET!>actual<!> init {}
 }
 
 fun foo() {
-    actual fun localFun() {}
-    actual var x = 42
-    actual class Bar
+    <!WRONG_MODIFIER_TARGET!>actual<!> fun localFun() {}
+    <!WRONG_MODIFIER_TARGET!>actual<!> var x = 42
+    <!WRONG_MODIFIER_TARGET!>actual<!> class Bar
 }

@@ -84,7 +84,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
 
         @InlineSourcesCommonizationTestDsl
         fun registerDependency(vararg targets: String, builder: InlineSourceBuilder.ModuleBuilder.() -> Unit) {
-            registerDependency(targets = targets.map(::parseCommonizerTarget).toTypedArray(), builder)
+            registerDependency(targets = targets.map(::parseCommonizerTarget).withAllLeaves().toTypedArray(), builder)
         }
 
         @InlineSourcesCommonizationTestDsl

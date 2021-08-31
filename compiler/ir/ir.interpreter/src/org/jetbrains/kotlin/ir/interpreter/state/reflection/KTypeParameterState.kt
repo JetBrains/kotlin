@@ -16,7 +16,7 @@ internal class KTypeParameterState(val irTypeParameter: IrTypeParameter, overrid
 
     fun getUpperBounds(callInterceptor: CallInterceptor): List<KType> {
         if (_upperBounds != null) return _upperBounds!!
-        val kTypeIrClass = irClass.getIrClassOfReflectionFromList("upperBounds")
+        val kTypeIrClass = callInterceptor.environment.kTypeClass.owner
         _upperBounds = irTypeParameter.superTypes.map { KTypeProxy(KTypeState(it, kTypeIrClass), callInterceptor) }
         return _upperBounds!!
     }

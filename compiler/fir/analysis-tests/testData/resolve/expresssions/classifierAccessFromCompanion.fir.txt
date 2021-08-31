@@ -23,7 +23,7 @@ FILE: classifierAccessFromCompanion.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final val f: R|kotlin/Unit| = Q|Factory.Function|
+            public final val f: R|kotlin/Unit| = R|kotlin/Unit|
                 public get(): R|kotlin/Unit|
 
             public final val x: R|Factory.Function.Default| = Q|Factory.Function.Default|

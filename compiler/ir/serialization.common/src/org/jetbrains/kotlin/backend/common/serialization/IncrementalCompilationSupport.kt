@@ -84,6 +84,16 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     override fun file(index: Int): ByteArray = icData[index].fileData
 
     override fun fileCount(): Int = icData.size
+
+    override fun types(fileIndex: Int): ByteArray = icData[fileIndex].types
+
+    override fun signatures(fileIndex: Int): ByteArray = icData[fileIndex].signatures
+
+    override fun strings(fileIndex: Int): ByteArray = icData[fileIndex].strings
+
+    override fun declarations(fileIndex: Int): ByteArray = icData[fileIndex].declarations
+
+    override fun bodies(fileIndex: Int): ByteArray = icData[fileIndex].bodies
 }
 
 class CurrentModuleWithICDeserializer(

@@ -32,8 +32,10 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.checker.*;
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.checker.KotlinTypePreparator;
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
+import org.jetbrains.kotlin.types.checker.NewKotlinTypeCheckerImpl;
 import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.*;
@@ -309,7 +311,7 @@ public class OverridingUtil {
             return OverrideCompatibilityInfo.conflict("Type parameter number mismatch");
         }
 
-        Pair<NewKotlinTypeCheckerImpl, ClassicTypeCheckerContext> typeChecker = createTypeChecker(superTypeParameters, subTypeParameters);
+        Pair<NewKotlinTypeCheckerImpl, TypeCheckerState> typeChecker = createTypeChecker(superTypeParameters, subTypeParameters);
 
         for (int i = 0; i < superTypeParameters.size(); i++) {
             if (!areTypeParametersEquivalent(
@@ -385,7 +387,7 @@ public class OverridingUtil {
     }
 
     @NotNull
-    private Pair<NewKotlinTypeCheckerImpl, ClassicTypeCheckerContext> createTypeChecker(
+    private Pair<NewKotlinTypeCheckerImpl, TypeCheckerState> createTypeChecker(
             @NotNull List<TypeParameterDescriptor> firstParameters,
             @NotNull List<TypeParameterDescriptor> secondParameters
     ) {
@@ -393,19 +395,19 @@ public class OverridingUtil {
                 "Should be the same number of type parameters: " + firstParameters + " vs " + secondParameters;
 
         NewKotlinTypeCheckerImpl typeChecker = new NewKotlinTypeCheckerImpl(kotlinTypeRefiner, KotlinTypePreparator.Default.INSTANCE);
-        ClassicTypeCheckerContext context = createTypeCheckerContext(firstParameters, secondParameters);
+        TypeCheckerState state = createTypeCheckerState(firstParameters, secondParameters);
 
-        return new Pair<NewKotlinTypeCheckerImpl, ClassicTypeCheckerContext>(typeChecker, context);
+        return new Pair<NewKotlinTypeCheckerImpl, TypeCheckerState>(typeChecker, state);
     }
 
     @NotNull
-    private ClassicTypeCheckerContext createTypeCheckerContext(
+    private TypeCheckerState createTypeCheckerState(
             @NotNull List<TypeParameterDescriptor> firstParameters,
             @NotNull List<TypeParameterDescriptor> secondParameters
     ) {
         if (firstParameters.isEmpty()) {
-            return (ClassicTypeCheckerContext) new OverridingUtilTypeSystemContext(null, equalityAxioms, kotlinTypeRefiner)
-                    .newBaseTypeCheckerContext(true, true);
+            return new OverridingUtilTypeSystemContext(null, equalityAxioms, kotlinTypeRefiner)
+                    .newTypeCheckerState(true, true);
         }
 
         Map<TypeConstructor, TypeConstructor> matchingTypeConstructors = new HashMap<TypeConstructor, TypeConstructor>();
@@ -413,8 +415,8 @@ public class OverridingUtil {
             matchingTypeConstructors.put(firstParameters.get(i).getTypeConstructor(), secondParameters.get(i).getTypeConstructor());
         }
 
-        return (ClassicTypeCheckerContext) new OverridingUtilTypeSystemContext(matchingTypeConstructors, equalityAxioms, kotlinTypeRefiner)
-                .newBaseTypeCheckerContext(true, true);
+        return new OverridingUtilTypeSystemContext(matchingTypeConstructors, equalityAxioms, kotlinTypeRefiner)
+                .newTypeCheckerState(true, true);
     }
 
     @Nullable
@@ -436,7 +438,7 @@ public class OverridingUtil {
     private boolean areTypesEquivalent(
             @NotNull KotlinType typeInSuper,
             @NotNull KotlinType typeInSub,
-            @NotNull Pair<NewKotlinTypeCheckerImpl, ClassicTypeCheckerContext> typeChecker
+            @NotNull Pair<NewKotlinTypeCheckerImpl, TypeCheckerState> typeChecker
     ) {
         boolean bothErrors = KotlinTypeKt.isError(typeInSuper) && KotlinTypeKt.isError(typeInSub);
         if (bothErrors) return true;
@@ -447,7 +449,7 @@ public class OverridingUtil {
     private boolean areTypeParametersEquivalent(
             @NotNull TypeParameterDescriptor superTypeParameter,
             @NotNull TypeParameterDescriptor subTypeParameter,
-            @NotNull Pair<NewKotlinTypeCheckerImpl, ClassicTypeCheckerContext> typeChecker
+            @NotNull Pair<NewKotlinTypeCheckerImpl, TypeCheckerState> typeChecker
     ) {
         List<KotlinType> superBounds = superTypeParameter.getUpperBounds();
         List<KotlinType> subBounds = new ArrayList<KotlinType>(subTypeParameter.getUpperBounds());
@@ -585,7 +587,7 @@ public class OverridingUtil {
 
         if (!isVisibilityMoreSpecific(a, b)) return false;
 
-        Pair<NewKotlinTypeCheckerImpl, ClassicTypeCheckerContext> checker =
+        Pair<NewKotlinTypeCheckerImpl, TypeCheckerState> checker =
                 DEFAULT.createTypeChecker(a.getTypeParameters(), b.getTypeParameters());
 
         if (a instanceof FunctionDescriptor) {
@@ -642,7 +644,7 @@ public class OverridingUtil {
             @NotNull KotlinType aReturnType,
             @NotNull CallableDescriptor b,
             @NotNull KotlinType bReturnType,
-            @NotNull Pair<NewKotlinTypeCheckerImpl, ClassicTypeCheckerContext> typeChecker
+            @NotNull Pair<NewKotlinTypeCheckerImpl, TypeCheckerState> typeChecker
     ) {
         return typeChecker.getFirst().isSubtypeOf(typeChecker.getSecond(), aReturnType.unwrap(), bReturnType.unwrap());
     }

@@ -11,16 +11,20 @@ import kotlin.native.concurrent.*
 
 const val WORKERS_COUNT = 20
 
-class C(private val initializer: () -> Int) {
-    val data by lazy { initializer() }
+class IntHolder(val value:Int)
+
+class C(mode: LazyThreadSafetyMode, private val initializer: () -> IntHolder) {
+    val data by lazy(mode) { initializer() }
 }
 
-fun concurrentLazyAccess(freeze: Boolean) {
+fun concurrentLazyAccess(freeze: Boolean, mode: LazyThreadSafetyMode) {
+    // in old mm PUBLICATION is in fact SYNCHRONIZED, while SYNCHRONIZED is not supported
+    val argumentMode = if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) mode else LazyThreadSafetyMode.PUBLICATION
     val initializerCallCount = AtomicInt(0)
 
-    val c = C {
+    val c = C(argumentMode) {
         initializerCallCount.increment()
-        42
+        IntHolder(42)
     }
     if (freeze) {
         c.freeze()
@@ -40,14 +44,18 @@ fun concurrentLazyAccess(freeze: Boolean) {
     while (inited.value < workers.size) {}
     canStart.value = 1
 
-    futures.forEach {
-        assertEquals(42, it.result)
+    val results = futures.map { it.result }
+    results.forEach {
+        assertEquals(42, it.value)
+        assertSame(results[0], it)
     }
     workers.forEach {
         it.requestTermination().result
     }
 
-    assertEquals(1, initializerCallCount.value)
+    if (mode == LazyThreadSafetyMode.SYNCHRONIZED) {
+        assertEquals(1, initializerCallCount.value)
+    }
 }
 
 @Test
@@ -55,11 +63,13 @@ fun concurrentLazyAccessUnfrozen() {
     if (Platform.memoryModel != MemoryModel.EXPERIMENTAL) {
         return
     }
-    concurrentLazyAccess(false)
+    concurrentLazyAccess(false, LazyThreadSafetyMode.SYNCHRONIZED)
+    concurrentLazyAccess(false, LazyThreadSafetyMode.PUBLICATION)
 }
 
 @Test
 fun concurrentLazyAccessFrozen() {
-    concurrentLazyAccess(true)
+    concurrentLazyAccess(true, LazyThreadSafetyMode.SYNCHRONIZED)
+    concurrentLazyAccess(true, LazyThreadSafetyMode.PUBLICATION)
 }
 

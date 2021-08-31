@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 
 internal class InlineTypeAliasCirNodeTransformer(
     private val storageManager: StorageManager,
-    private val classifiers: CirKnownClassifiers
+    private val classifiers: CirKnownClassifiers,
 ) : CirNodeTransformer {
     override fun invoke(root: CirRootNode) {
         root.modules.values.forEach(::invoke)
@@ -65,7 +65,7 @@ internal class InlineTypeAliasCirNodeTransformer(
 
         val intoArtificialClass = ArtificialAliasedCirClass(
             pointingTypeAlias = fromTypeAlias,
-            pointedClass = fromAliasedClassNode?.targetDeclarations?.get(targetIndex) ?: fromTypeAlias.toArtificialCirClass()
+            pointedClass = fromAliasedClassNode?.targetDeclarations?.get(targetIndex) ?: fromTypeAlias.toArtificialCirClass(targetIndex)
         )
 
         intoClassNode.targetDeclarations[targetIndex] = intoArtificialClass
@@ -120,6 +120,23 @@ internal class InlineTypeAliasCirNodeTransformer(
         this.classes[typeAliasNode.classifierName] = classNode
         return classNode
     }
+
+    private fun CirTypeAlias.toArtificialCirClass(targetIndex: Int): CirClass = CirClass.create(
+        annotations = emptyList(), name = name, typeParameters = typeParameters, supertypes = resolveSupertypes(targetIndex),
+        visibility = this.visibility, modality = Modality.FINAL, kind = ClassKind.CLASS,
+        companion = null, isCompanion = false, isData = false, isValue = false, isInner = false, isExternal = false
+    )
+
+    private fun CirTypeAlias.resolveSupertypes(targetIndex: Int): List<CirType> {
+        if (expandedType.isMarkedNullable) return emptyList()
+        val resolver = SimpleCirSupertypesResolver(
+            classifiers = classifiers.classifierIndices[targetIndex],
+            dependencies = CirProvidedClassifiers.of(
+                classifiers.commonDependencies, classifiers.targetDependencies[targetIndex]
+            )
+        )
+        return resolver.supertypes(expandedType).toList()
+    }
 }
 
 private typealias ClassNodeIndex = Map<CirEntityId, CirClassNode>
@@ -138,8 +155,5 @@ private data class ArtificialAliasedCirClass(
         set(_) = throw UnsupportedOperationException("Can't set companion on artificial class (pointed by $pointingTypeAlias)")
 }
 
-private fun CirTypeAlias.toArtificialCirClass(): CirClass = CirClass.create(
-    annotations = emptyList(), name = name, typeParameters = typeParameters,
-    visibility = this.visibility, modality = Modality.FINAL, kind = ClassKind.CLASS,
-    companion = null, isCompanion = false, isData = false, isValue = false, isInner = false, isExternal = false
-).also { it.supertypes = emptyList() }
+
+

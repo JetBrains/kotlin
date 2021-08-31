@@ -311,7 +311,7 @@ class MockKotlinCompilation(
     override val compileDependencyConfigurationName: String get() = throw UnsupportedOperationException()
     override var compileDependencyFiles: FileCollection
         get() = throw UnsupportedOperationException()
-        set(value) = throw UnsupportedOperationException()
+        set(_) = throw UnsupportedOperationException()
     override val output: KotlinCompilationOutput get() = throw UnsupportedOperationException()
     override val compileKotlinTaskName: String get() = throw UnsupportedOperationException()
     override val compileKotlinTask: KotlinCompile<KotlinCommonOptions> get() = throw UnsupportedOperationException()

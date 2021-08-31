@@ -1,18 +1,19 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.test.impl
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.test.Constructor
-import org.jetbrains.kotlin.test.TestConfiguration
-import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.ResultingArtifact
+import org.jetbrains.kotlin.test.model.ServicesAndDirectivesContainer
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.impl.ModuleStructureExtractorImpl
 import org.jetbrains.kotlin.test.utils.TestDisposable
@@ -24,9 +25,7 @@ class TestConfigurationImpl(
     defaultsProvider: DefaultsProvider,
     assertions: AssertionsService,
 
-    facades: List<Constructor<AbstractTestFacade<*, *>>>,
-
-    analysisHandlers: List<Constructor<AnalysisHandler<*>>>,
+    steps: List<TestStepBuilder<*, *>>,
 
     sourcePreprocessors: List<Constructor<SourceFilePreprocessor>>,
     additionalMetaInfoProcessors: List<Constructor<AdditionalMetaInfoProcessor>>,
@@ -45,6 +44,7 @@ class TestConfigurationImpl(
 
     directives: List<DirectivesContainer>,
     override val defaultRegisteredDirectives: RegisteredDirectives,
+    override val startingArtifactFactory: (TestModule) -> ResultingArtifact<*>,
     additionalServices: List<ServiceRegistrationData>
 ) : TestConfiguration() {
     override val rootDisposable: Disposable = TestDisposable()
@@ -67,35 +67,28 @@ class TestConfigurationImpl(
     }
 
     private val environmentConfigurators: List<EnvironmentConfigurator> =
-        environmentConfigurators.map { it.invoke(testServices) }.also { configurators ->
-            configurators.flatMapTo(allDirectives) { it.directivesContainers }
-            for (configurator in configurators) {
-                configurator.additionalServices.forEach { testServices.register(it) }
-            }
-        }
+        environmentConfigurators
+            .map { it.invoke(testServices) }
+            .also { it.registerDirectivesAndServices() }
 
     override val preAnalysisHandlers: List<PreAnalysisHandler> =
         preAnalysisHandlers.map { it.invoke(testServices) }
 
     override val moduleStructureExtractor: ModuleStructureExtractor = ModuleStructureExtractorImpl(
         testServices,
-        additionalSourceProviders.map { it.invoke(testServices) }.also {
-            it.flatMapTo(allDirectives) { provider -> provider.directives }
-        },
+        additionalSourceProviders
+            .map { it.invoke(testServices) }
+            .also { it.registerDirectivesAndServices() },
         moduleStructureTransformers,
         this.environmentConfigurators
     )
 
-    override val metaTestConfigurators: List<MetaTestConfigurator> = metaTestConfigurators.map {
-        it.invoke(testServices).also { configurator ->
-            allDirectives += configurator.directives
-        }
+    override val metaTestConfigurators: List<MetaTestConfigurator> = metaTestConfigurators.map { constructor ->
+        constructor.invoke(testServices).also { it.registerDirectivesAndServices() }
     }
 
-    override val afterAnalysisCheckers: List<AfterAnalysisChecker> = afterAnalysisCheckers.map {
-        it.invoke(testServices).also { checker ->
-            allDirectives += checker.directives
-        }
+    override val afterAnalysisCheckers: List<AfterAnalysisChecker> = afterAnalysisCheckers.map { constructor ->
+        constructor.invoke(testServices).also { it.registerDirectivesAndServices() }
     }
 
     init {
@@ -120,61 +113,23 @@ class TestConfigurationImpl(
         }
     }
 
-    private val facades: Map<TestArtifactKind<*>, Map<TestArtifactKind<*>, AbstractTestFacade<*, *>>> =
-        facades
-            .map { it.invoke(testServices) }
-            .groupBy { it.inputKind }
-            .mapValues { (frontendKind, converters) ->
-                converters.groupBy { it.outputKind }.mapValues {
-                    it.value.singleOrNull() ?: manyFacadesError("converters", "$frontendKind -> ${it.key}")
-                }
-            }
-
-
-    private val analysisHandlers: Map<TestArtifactKind<*>, List<AnalysisHandler<*>>> =
-        analysisHandlers.map { it.invoke(testServices).also(this::registerDirectivesAndServices) }
-            .groupBy { it.artifactKind }
-            .withDefault { emptyList() }
-
-    private fun manyFacadesError(name: String, kinds: String): Nothing {
-        error("Too many $name passed for $kinds configuration")
-    }
-
-    private fun registerDirectivesAndServices(handler: AnalysisHandler<*>) {
-        allDirectives += handler.directivesContainers
-        testServices.register(handler.additionalServices)
-    }
-
-    init {
-        testServices.apply {
-            this@TestConfigurationImpl.facades.values.forEach {
-                it.values.forEach { facade ->
-                    register(facade.additionalServices)
-                    allDirectives += facade.additionalDirectives
-                }
+    override val steps: List<TestStep<*, *>> = steps
+        .map { it.createTestStep(testServices) }
+        .onEach { step ->
+            when (step) {
+                is TestStep.FacadeStep<*, *> -> step.facade.registerDirectivesAndServices()
+                is TestStep.HandlersStep<*> -> step.handlers.registerDirectivesAndServices()
             }
         }
+
+    // ---------------------------------- utils ----------------------------------
+
+    private fun ServicesAndDirectivesContainer.registerDirectivesAndServices() {
+        allDirectives += directiveContainers
+        testServices.register(additionalServices)
     }
 
-    override fun <I : ResultingArtifact<I>, O : ResultingArtifact<O>> getFacade(
-        inputKind: TestArtifactKind<I>,
-        outputKind: TestArtifactKind<O>
-    ): AbstractTestFacade<I, O> {
-        @Suppress("UNCHECKED_CAST")
-        return facades[inputKind]?.get(outputKind) as AbstractTestFacade<I, O>?
-            ?: facadeNotFoundError(inputKind, outputKind)
-    }
-
-    private fun facadeNotFoundError(from: Any, to: Any): Nothing {
-        error("Facade for converting '$from' to '$to' not found")
-    }
-
-    override fun <A : ResultingArtifact<A>> getHandlers(artifactKind: TestArtifactKind<A>): List<AnalysisHandler<A>> {
-        @Suppress("UNCHECKED_CAST")
-        return analysisHandlers.getValue(artifactKind) as List<AnalysisHandler<A>>
-    }
-
-    override fun getAllHandlers(): List<AnalysisHandler<*>> {
-        return analysisHandlers.values.flatten()
+    private fun List<ServicesAndDirectivesContainer>.registerDirectivesAndServices() {
+        this.forEach { it.registerDirectivesAndServices() }
     }
 }

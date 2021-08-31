@@ -126,6 +126,11 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             useTypes(stubReferenceType)
         }
 
+        builder(propertyAccessExpression) {
+            parents += qualifiedAccessBuilder
+            defaultNoReceivers()
+        }
+
         builder(callableReferenceAccess) {
             parents += qualifiedAccessBuilder
             defaultNull("explicitReceiver")
@@ -187,11 +192,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             }
         }
         builder(implicitInvokeCall, init = configurationForFunctionCallBuilder)
-
-        builder(qualifiedAccessExpression) {
-            parents += qualifiedAccessBuilder
-            defaultNoReceivers()
-        }
 
         builder(getClassCall) {
             parents += callBuilder
@@ -342,7 +342,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         val elementsWithDefaultTypeRef = listOf(
             thisReceiverExpression,
             callableReferenceAccess,
-            qualifiedAccessExpression,
+            propertyAccessExpression,
             functionCall,
             anonymousFunction,
             whenExpression,

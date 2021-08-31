@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.types.SimpleType
 import java.util.*
 
 object JavaAnnotationMapper {
-    // Java8-specific thing
     internal val DEPRECATED_ANNOTATION_MESSAGE = Name.identifier("message")
     internal val TARGET_ANNOTATION_ALLOWED_TARGETS = Name.identifier("allowedTargets")
     internal val RETENTION_ANNOTATION_VALUE = Name.identifier("value")
@@ -52,7 +51,6 @@ object JavaAnnotationMapper {
         when (annotation.classId) {
             ClassId.topLevel(TARGET_ANNOTATION) -> JavaTargetAnnotationDescriptor(annotation, c)
             ClassId.topLevel(RETENTION_ANNOTATION) -> JavaRetentionAnnotationDescriptor(annotation, c)
-            ClassId.topLevel(REPEATABLE_ANNOTATION) -> JavaAnnotationDescriptor(c, annotation, StandardNames.FqNames.repeatable)
             ClassId.topLevel(DOCUMENTED_ANNOTATION) -> JavaAnnotationDescriptor(c, annotation, StandardNames.FqNames.mustBeDocumented)
             ClassId.topLevel(DEPRECATED_ANNOTATION) -> null
             else -> LazyJavaAnnotationDescriptor(c, annotation, isFreshlySupportedAnnotation)
@@ -76,12 +74,10 @@ object JavaAnnotationMapper {
         }
     }
 
-    // kotlin.annotation.annotation is treated separately
     private val kotlinToJavaNameMap: Map<FqName, FqName> =
         mapOf(
             StandardNames.FqNames.target to TARGET_ANNOTATION,
             StandardNames.FqNames.retention to RETENTION_ANNOTATION,
-            StandardNames.FqNames.repeatable to REPEATABLE_ANNOTATION,
             StandardNames.FqNames.mustBeDocumented to DOCUMENTED_ANNOTATION
         )
 
@@ -90,7 +86,6 @@ object JavaAnnotationMapper {
             TARGET_ANNOTATION to StandardNames.FqNames.target,
             RETENTION_ANNOTATION to StandardNames.FqNames.retention,
             DEPRECATED_ANNOTATION to StandardNames.FqNames.deprecated,
-            REPEATABLE_ANNOTATION to StandardNames.FqNames.repeatable,
             DOCUMENTED_ANNOTATION to StandardNames.FqNames.mustBeDocumented
         )
 }

@@ -9,4 +9,4 @@ fun <T, Q> List<T>.map1(f: (T)-> Q): List<T>? = tail!!.map1(f)
 
 fun <T, Q> List<T>.map2(f: (T)-> Q): List<T>? = tail.sure().map2(f)
 
-fun <T, Q> List<T>.map3(f: (T)-> Q): List<T>? = tail.<!INAPPLICABLE_CANDIDATE!>sure<!><T>().<!INAPPLICABLE_CANDIDATE!>map3<!>(f)
+fun <T, Q> List<T>.map3(f: (T)-> Q): List<T>? = tail.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>sure<!><T>().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>map3<!>(f)

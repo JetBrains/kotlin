@@ -50,15 +50,25 @@ class CacheSupport(
             library to cachePath
         }
 
-        val optimized = configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
-        if (optimized && (explicitCacheFiles.isNotEmpty() || implicitCacheDirectories.isNotEmpty()))
-            configuration.report(CompilerMessageSeverity.WARNING, "Cached libraries will not be used for optimized compilation")
+        val hasCachedLibs = explicitCacheFiles.isNotEmpty() || implicitCacheDirectories.isNotEmpty()
 
+        val ignoreReason = when {
+            configuration.getBoolean(KonanConfigKeys.OPTIMIZATION) -> "for optimized compilation"
+            configuration.get(BinaryOptions.memoryModel) == MemoryModel.EXPERIMENTAL -> "with experimental memory model"
+            configuration.getBoolean(KonanConfigKeys.PROPERTY_LAZY_INITIALIZATION) -> "with experimental lazy top levels initialization"
+            else -> null
+        }
+
+        if (ignoreReason != null && hasCachedLibs) {
+            configuration.report(CompilerMessageSeverity.WARNING, "Cached libraries will not be used $ignoreReason")
+        }
+
+        val ignoreCachedLibraries = ignoreReason != null
         CachedLibraries(
                 target = target,
                 allLibraries = allLibraries,
-                explicitCaches = if (optimized) emptyMap() else explicitCaches,
-                implicitCacheDirectories = if (optimized) emptyList() else implicitCacheDirectories
+                explicitCaches = if (ignoreCachedLibraries) emptyMap() else explicitCaches,
+                implicitCacheDirectories = if (ignoreCachedLibraries) emptyList() else implicitCacheDirectories
         )
     }
 

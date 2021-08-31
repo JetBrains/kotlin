@@ -20,18 +20,19 @@ abstract class AbstractFileScopeTest : AbstractHLApiSingleFileTest() {
             analyse(ktFile) {
                 val symbol = ktFile.getFileSymbol()
                 val scope = symbol.getFileScope()
+                with(DebugSymbolRenderer) {
+                    val renderedSymbol = renderExtra(symbol)
+                    val callableNames = scope.getPossibleCallableNames()
+                    val renderedCallables = scope.getCallableSymbols().map { renderExtra(it) }
+                    val classifierNames = scope.getPossibleClassifierNames()
+                    val renderedClassifiers = scope.getClassifierSymbols().map { renderExtra(it) }
 
-                val renderedSymbol = DebugSymbolRenderer.render(symbol)
-                val callableNames = scope.getPossibleCallableNames()
-                val renderedCallables = scope.getCallableSymbols().map { DebugSymbolRenderer.render(it) }
-                val classifierNames = scope.getPossibleClassifierNames()
-                val renderedClassifiers = scope.getClassifierSymbols().map { DebugSymbolRenderer.render(it) }
-
-                "FILE SYMBOL:\n" + renderedSymbol +
-                        "\nCALLABLE NAMES:\n" + callableNames.joinToString(prefix = "[", postfix = "]\n", separator = ", ") +
-                        "\nCALLABLE SYMBOLS:\n" + renderedCallables.joinToString(separator = "\n") +
-                        "\nCLASSIFIER NAMES:\n" + classifierNames.joinToString(prefix = "[", postfix = "]\n", separator = ", ") +
-                        "\nCLASSIFIER SYMBOLS:\n" + renderedClassifiers.joinToString(separator = "\n")
+                    "FILE SYMBOL:\n" + renderedSymbol +
+                            "\nCALLABLE NAMES:\n" + callableNames.joinToString(prefix = "[", postfix = "]\n", separator = ", ") +
+                            "\nCALLABLE SYMBOLS:\n" + renderedCallables.joinToString(separator = "\n") +
+                            "\nCLASSIFIER NAMES:\n" + classifierNames.joinToString(prefix = "[", postfix = "]\n", separator = ", ") +
+                            "\nCLASSIFIER SYMBOLS:\n" + renderedClassifiers.joinToString(separator = "\n")
+                }
             }
         }
 

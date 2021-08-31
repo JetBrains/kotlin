@@ -6,6 +6,6 @@ fun box() : String {
     return "OK"
 }
 
-inline fun test(p: Any) {
+<!NOTHING_TO_INLINE!>inline<!> fun test(p: Any) {
     p.toString()
 }

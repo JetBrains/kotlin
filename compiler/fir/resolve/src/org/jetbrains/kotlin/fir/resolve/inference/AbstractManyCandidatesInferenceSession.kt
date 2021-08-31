@@ -30,7 +30,7 @@ abstract class AbstractManyCandidatesInferenceSession(
             ?.currentStorage()
             ?: ConstraintStorage.Empty
 
-    override fun <T> addCompetedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
+    override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
         // do nothing
     }
 

@@ -23,7 +23,7 @@ abstract class FirInferenceSession {
 
     abstract fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement
     abstract fun <T> addErrorCall(call: T) where T : FirResolvable, T : FirStatement
-    abstract fun <T> addCompetedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement
+    abstract fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement
 
     abstract fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
@@ -45,7 +45,7 @@ abstract class FirStubInferenceSession : FirInferenceSession() {
 
     override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {}
     override fun <T> addErrorCall(call: T) where T : FirResolvable, T : FirStatement {}
-    override fun <T> addCompetedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {}
+    override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {}
 
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,

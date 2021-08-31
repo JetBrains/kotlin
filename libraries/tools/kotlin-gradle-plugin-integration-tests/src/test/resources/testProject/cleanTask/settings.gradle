@@ -2,6 +2,7 @@ pluginManagement {
     repositories {
         maven { url '<mavenLocalUrl>' }
         gradlePluginPortal()
+        mavenCentral()
     }
 }
 

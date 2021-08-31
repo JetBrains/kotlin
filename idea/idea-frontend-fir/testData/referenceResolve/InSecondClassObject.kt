@@ -12,4 +12,3 @@ class Many {
     }
 }
 
-// REF: (test).A

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
+import org.jetbrains.kotlin.fir.resolve.FirSamResolverImpl
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeInfoProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
@@ -16,6 +18,12 @@ internal class KtFirTypeInfoProvider(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
 ) : KtTypeInfoProvider(), KtFirAnalysisSessionComponent {
+
+    override fun isFunctionalInterfaceType(type: KtType): Boolean {
+        val coneType = (type as KtFirType).coneType
+        val samResolver = FirSamResolverImpl(analysisSession.rootModuleSession, ScopeSession())
+        return samResolver.getFunctionTypeForPossibleSamType(coneType) != null
+    }
 
     override fun canBeNull(type: KtType): Boolean = (type as KtFirType).coneType.canBeNull
 }

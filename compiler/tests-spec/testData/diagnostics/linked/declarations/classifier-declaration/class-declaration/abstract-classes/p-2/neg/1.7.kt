@@ -69,13 +69,13 @@ fun case2() {
 
 // TESTCASE NUMBER: 3
 
-<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>class Case3<!> : BaseKotlin() {}
+<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>class Case3<!> : BaseKotlin() {}
 
 fun case3() {
     val v = Case3()
     v.boo(true)
 
-    val o = <!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>object<!> : BaseKotlin() {}
+    val o = <!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>object<!> : BaseKotlin() {}
 }
 
 /*
@@ -83,12 +83,12 @@ fun case3() {
 */
 abstract class AbstractClassCase4 : BaseKotlin() {}
 
-<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>class Case4<!> : AbstractClassCase4() {}
+<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>class Case4<!> : AbstractClassCase4() {}
 
 fun case4() {
     val v = Case4()
     v.boo(true)
-    val o = <!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>object<!> : AbstractClassCase4() {}
+    val o = <!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>object<!> : AbstractClassCase4() {}
 
 }
 

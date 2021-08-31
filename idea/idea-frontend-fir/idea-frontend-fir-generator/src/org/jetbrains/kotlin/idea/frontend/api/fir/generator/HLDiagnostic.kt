@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.generator
 
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticData
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticParameter
 import kotlin.reflect.KType
 
 data class HLDiagnostic(
     val original: DiagnosticData,
+    val severity: Severity?,
     val className: String,
     val implClassName: String,
     val parameters: List<HLDiagnosticParameter>,

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
+import org.jetbrains.kotlin.fir.languageVersionSettings
 
 abstract class DiagnosticReporter {
     abstract fun report(diagnostic: FirDiagnostic?, context: CheckerContext)
@@ -73,6 +74,74 @@ fun <A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOn(
     positioningStrategy: SourceElementPositioningStrategy? = null
 ) {
     source?.let { report(factory.on(it, a, b, c, d, positioningStrategy), context) }
+}
+
+@OptIn(InternalDiagnosticFactoryMethod::class)
+fun DiagnosticReporter.reportOn(
+    source: FirSourceElement?,
+    factory: FirDiagnosticFactoryForDeprecation0,
+    context: CheckerContext,
+    positioningStrategy: SourceElementPositioningStrategy? = null
+) {
+    reportOn(source, factory.chooseFactory(context), context, positioningStrategy)
+}
+
+@OptIn(InternalDiagnosticFactoryMethod::class)
+fun <A : Any> DiagnosticReporter.reportOn(
+    source: FirSourceElement?,
+    factory: FirDiagnosticFactoryForDeprecation1<A>,
+    a: A,
+    context: CheckerContext,
+    positioningStrategy: SourceElementPositioningStrategy? = null
+) {
+    reportOn(source, factory.chooseFactory(context), a, context, positioningStrategy)
+}
+
+@OptIn(InternalDiagnosticFactoryMethod::class)
+fun <A : Any, B : Any> DiagnosticReporter.reportOn(
+    source: FirSourceElement?,
+    factory: FirDiagnosticFactoryForDeprecation2<A, B>,
+    a: A,
+    b: B,
+    context: CheckerContext,
+    positioningStrategy: SourceElementPositioningStrategy? = null
+) {
+    reportOn(source, factory.chooseFactory(context), a, b, context, positioningStrategy)
+}
+
+@OptIn(InternalDiagnosticFactoryMethod::class)
+fun <A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
+    source: FirSourceElement?,
+    factory: FirDiagnosticFactoryForDeprecation3<A, B, C>,
+    a: A,
+    b: B,
+    c: C,
+    context: CheckerContext,
+    positioningStrategy: SourceElementPositioningStrategy? = null
+) {
+    reportOn(source, factory.chooseFactory(context), a, b, c, context, positioningStrategy)
+}
+
+@OptIn(InternalDiagnosticFactoryMethod::class)
+fun <A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOn(
+    source: FirSourceElement?,
+    factory: FirDiagnosticFactoryForDeprecation4<A, B, C, D>,
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    context: CheckerContext,
+    positioningStrategy: SourceElementPositioningStrategy? = null
+) {
+    reportOn(source, factory.chooseFactory(context), a, b, c, d, context, positioningStrategy)
+}
+
+fun <F : AbstractFirDiagnosticFactory> FirDiagnosticFactoryForDeprecation<F>.chooseFactory(context: CheckerContext): F {
+    return if (context.session.languageVersionSettings.supportsFeature(deprecatingFeature)) {
+        errorFactory
+    } else {
+        warningFactory
+    }
 }
 
 inline fun withSuppressedDiagnostics(

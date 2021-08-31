@@ -24,9 +24,9 @@ private class Outer<E> {
 
             doubleStringInt = Outer<Double>().Inner<String>().foo<Int>()()
 
-            doubleStringInt.e.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Double>() }
-            doubleStringInt.f.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
-            doubleStringInt.g.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
+            doubleStringInt.e.checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Double>() }
+            doubleStringInt.f.checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
+            doubleStringInt.g.checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
         }
     }
 }

@@ -54,8 +54,6 @@ compileKotlin {
     }
 }
 
-configureJvmIrBackend(project)
-
 jar {
     manifestAttributes(manifest, project, "internal")
 }

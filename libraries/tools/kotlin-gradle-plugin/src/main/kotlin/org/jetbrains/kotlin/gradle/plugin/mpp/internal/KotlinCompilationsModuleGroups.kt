@@ -44,7 +44,7 @@ internal class KotlinCompilationsModuleGroups {
             val newLeader = singleOrNull { it.isMain() }
                 ?: singleOrNull { it.name.contains("main", true) }
                 ?: singleOrNull { !it.name.contains("test", true) }
-                ?: minBy { it.name }!!
+                ?: minByOrNull { it.name }!!
 
             forEach { moduleLeaderCompilationMap[it] = newLeader }
         }

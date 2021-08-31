@@ -27,7 +27,7 @@ internal class KtFirAnnotationCall(
     override val token: ValidityToken get() = containingDeclaration.token
 
     override val psi: KtCallElement? by containingDeclaration.withFirAndCache { fir ->
-        fir.findPsi(fir.moduleData.session) as? KtCallElement
+        annotationCallRef.findPsi(fir.moduleData.session) as? KtCallElement
     }
 
     override val classId: ClassId? by cached {
@@ -42,5 +42,15 @@ internal class KtFirAnnotationCall(
         mapAnnotationParameters(annotationCallRef, fir.moduleData.session).map { (name, expression) ->
             KtNamedConstantValue(name, expression.convertConstantExpression())
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is KtFirAnnotationCall) return false
+        if (this.token != other.token) return false
+        return annotationCallRef == other.annotationCallRef
+    }
+
+    override fun hashCode(): Int {
+        return token.hashCode() * 31 + annotationCallRef.hashCode()
     }
 }

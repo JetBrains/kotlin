@@ -156,6 +156,7 @@ class StubIrBridgeBuilder(
                             val getAddressExpression = getGlobalAddressExpression(extra.cGlobalName, propertyAccessor)
                             propertyAccessorBridgeBodies[propertyAccessor] = typeInfo.argFromBridged(getAddressExpression, kotlinFile, nativeBacked = propertyAccessor) + "!!"
                         }
+                        else -> {}
                     }
                 }
 
@@ -187,6 +188,7 @@ class StubIrBridgeBuilder(
                         }
                         propertyAccessorBridgeBodies[propertyAccessor] = setter
                     }
+                    else -> {}
                 }
 
                 is PropertyAccessor.Setter.WriteBits -> {
@@ -223,6 +225,11 @@ class StubIrBridgeBuilder(
                         simpleBridgeGenerator.insertNativeBridge(propertyAccessor, emptyList(), wrapper.lines)
                     }
                 }
+                is PropertyAccessor.Getter.ArrayMemberAt,
+                is PropertyAccessor.Getter.GetConstructorParameter,
+                is PropertyAccessor.Getter.GetEnumEntry,
+                is PropertyAccessor.Getter.MemberAt,
+                is PropertyAccessor.Setter.MemberAt -> {}
             }
         }
 

@@ -10,5 +10,5 @@ fun main() {
     val c : ListOfLists<*> = b
     val d : ArrayList<ArrayList<*>> = <!INITIALIZER_TYPE_MISMATCH!>c.x<!>
 
-    c.x checkType { <!INAPPLICABLE_CANDIDATE!>_<!><ArrayList<out ArrayList<*>>>() }
+    c.x checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><ArrayList<out ArrayList<*>>>() }
 }

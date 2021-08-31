@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression
@@ -90,10 +92,20 @@ internal object FirLazyBodiesCalculator {
             firProperty.replaceInitializer(newProperty.initializer)
         }
 
-        val delegate = firProperty.delegate
-        if (delegate is FirWrappedDelegateExpression && delegate.expression is FirLazyExpression) {
-            val newDelegate = newProperty.delegate as FirWrappedDelegateExpression
+        val delegate = firProperty.delegate as? FirWrappedDelegateExpression
+        val delegateExpression = delegate?.expression
+        if (delegateExpression is FirLazyExpression) {
+            val newDelegate = newProperty.delegate as? FirWrappedDelegateExpression
+            check(newDelegate != null) { "Invalid replacement delegate" }
             delegate.replaceExpression(newDelegate.expression)
+
+            val delegateProviderCall = delegate.delegateProvider as? FirFunctionCall
+            val delegateProviderExplicitReceiver = delegateProviderCall?.explicitReceiver
+            if (delegateProviderExplicitReceiver is FirLazyExpression) {
+                val newDelegateProviderExplicitReceiver = (newDelegate.delegateProvider as? FirFunctionCall)?.explicitReceiver
+                check(newDelegateProviderExplicitReceiver != null) { "Invalid replacement expression" }
+                delegateProviderCall.replaceExplicitReceiver(newDelegateProviderExplicitReceiver)
+            }
         }
     }
 

@@ -10,7 +10,7 @@ class D
 
 fun test1(a: A, b: B, c: C) {
     assertEquals1(a, b)
-    <!TYPE_INFERENCE_ONLY_INPUT_TYPES!>assertEquals1<!>(b, c)
+    <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>assertEquals1<!>(b, c)
 
     assertEquals1(3, 3)
     assertEquals1(1 or 2, 2 or 1)

@@ -15,7 +15,7 @@ class NpmVersions : Serializable {
     val dukat = NpmPackageVersion("dukat", "0.5.8-rc.4")
     val webpack4 = NpmPackageVersion("webpack", "4.46.0")
     val webpackCli3 = NpmPackageVersion("webpack-cli", "3.3.12")
-    val webpackDevServer = NpmPackageVersion("webpack-dev-server", "4.0.0-beta.2")
+    val webpackDevServer = NpmPackageVersion("webpack-dev-server", "4.0.0")
     val webpackDevServer3 = NpmPackageVersion("webpack-dev-server", "3.11.2")
     val sourceMapLoader1 = NpmPackageVersion("source-map-loader", "1.1.0")
     val webpack = NpmPackageVersion("webpack", "5.38.1")

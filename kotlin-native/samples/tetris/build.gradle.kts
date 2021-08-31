@@ -21,7 +21,6 @@ kotlin {
         mingwX64()
         mingwX86()
     }
-    linuxArm32Hfp()
 
     targets.withType<KotlinNativeTarget> {
         sourceSets["${targetName}Main"].apply {
@@ -40,9 +39,9 @@ kotlin {
                     val windresTask = tasks.register<Exec>(taskName) {
                         val llvmDir = when (preset) {
                             presets["mingwX86"] -> kotlinNativeDataPath.resolve(
-                                    "dependencies/msys2-mingw-w64-i686-clang-llvm-lld-compiler_rt-8.0.1/bin")
+                                    "dependencies/msys2-mingw-w64-i686-1/bin")
                             presets["mingwX64"] -> kotlinNativeDataPath.resolve(
-                                    "dependencies/msys2-mingw-w64-x86_64-clang-llvm-lld-compiler_rt-8.0.1/bin")
+                                    "dependencies/msys2-mingw-w64-x86_64-1/bin")
                             else -> throw GradleException("Unsupported presets")
                         }.toString()
                         inputs.file(inFile)
@@ -86,7 +85,6 @@ kotlin {
                         "-lsetupapi",
                         "-mwindows"
                     )
-                    presets["linuxArm32Hfp"] -> linkerOpts(kotlinNativeDataPath.resolve("dependencies/target-sysroot-2-raspberrypi/usr/lib/libSDL2.so").absolutePath)
                 }
 
                 val distTaskName = linkTaskName.replaceFirst("link", "dist")
@@ -112,7 +110,6 @@ kotlin {
                     presets["linuxX64"] -> includeDirs("/usr/include", "/usr/include/x86_64-linux-gnu", "/usr/include/SDL2")
                     presets["mingwX64"] -> includeDirs(mingw64Path.resolve("include/SDL2"))
                     presets["mingwX86"] -> includeDirs(mingw32Path.resolve("include/SDL2"))
-                    presets["linuxArm32Hfp"] -> includeDirs(kotlinNativeDataPath.resolve("dependencies/target-sysroot-2-raspberrypi/usr/include/SDL2"))
                 }
             }
         }

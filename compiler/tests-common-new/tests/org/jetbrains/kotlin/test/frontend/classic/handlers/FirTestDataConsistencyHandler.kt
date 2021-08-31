@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.test.frontend.classic.handlers
 
-import org.jetbrains.kotlin.codeMetaInfo.clearTextFromDiagnosticMarkup
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTest
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.services.testInfo
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.utils.firTestDataFile
 import java.io.File
 
-class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnalysisChecker(testServices) {
-    override val directives: List<DirectivesContainer>
+open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
     override fun check(failedAssertions: List<WrappedException>) {
@@ -32,28 +31,32 @@ class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnalysisC
             runFirTestAndGeneratedTestData(testData, firTestData)
             return
         }
-        var originalFileContent = clearTextFromDiagnosticMarkup(testData.readText()).trim()
-        var firFileContent = clearTextFromDiagnosticMarkup(firTestData.readText()).trim()
-        if (System.lineSeparator() != "\n") {
-            originalFileContent = originalFileContent.replace("\r\n", "\n")
-            firFileContent = firFileContent.replace("\r\n", "\n")
-        }
-        if (originalFileContent != firFileContent) {
-            testServices.assertions.assertEqualsToFile(
-                firTestData,
-                originalFileContent,
-                message = {
-                    "Original and fir test data aren't identical. " +
-                            "Please, add changes from ${testData.name} to ${firTestData.name}"
-                }
-            )
+        val firPreprocessedTextData = firTestData.preprocessSource()
+        val originalPreprocessedTextData = testData.preprocessSource()
+        testServices.assertions.assertEquals(firPreprocessedTextData, originalPreprocessedTextData) {
+            "Original and FIR test data aren't identical. " +
+                    "Please, add changes from ${testData.name} to ${firTestData.name}"
         }
     }
 
+    private fun File.preprocessSource(): String {
+        val content = testServices.sourceFileProvider.getContentOfSourceFile(
+            TestFile(path, readText().trim(), this, 0, isAdditional = false, RegisteredDirectives.Empty)
+        )
+        // Note: convertLineSeparators() does not work on Windows properly (\r\n are left intact for some reason)
+        if (System.lineSeparator() != "\n") {
+            return content.replace("\r\n", "\n")
+        }
+        return content
+    }
+
     private fun runFirTestAndGeneratedTestData(testData: File, firTestData: File) {
-        firTestData.writeText(clearTextFromDiagnosticMarkup(testData.readText()))
-        val test = object : AbstractFirDiagnosticTest() {}
+        firTestData.writeText(testData.preprocessSource())
+        val test = correspondingFirTest()
         test.initTestInfo(testServices.testInfo.copy(className = "${testServices.testInfo.className}_fir_anonymous"))
         test.runTest(firTestData.absolutePath)
     }
+
+    protected open fun correspondingFirTest(): AbstractKotlinCompilerTest =
+        object : AbstractFirDiagnosticTest() {}
 }

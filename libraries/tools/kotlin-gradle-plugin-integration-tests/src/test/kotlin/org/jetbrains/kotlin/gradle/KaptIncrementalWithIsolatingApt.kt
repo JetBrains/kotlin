@@ -96,7 +96,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         )
         project.build("build") {
             assertSuccessful()
-            assertContains("Unable to use existing data, re-initializing classpath information for KAPT.")
+            assertContains("The input changes require a full rebuild for incremental task ':kaptKotlin'.")
         }
     }
 
@@ -127,7 +127,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         }
         project.build("build") {
             assertSuccessful()
-            assertContains("Unable to use existing data, re-initializing classpath information for KAPT.")
+            assertContains("The input changes require a full rebuild for incremental task ':kaptKotlin'.")
         }
     }
 

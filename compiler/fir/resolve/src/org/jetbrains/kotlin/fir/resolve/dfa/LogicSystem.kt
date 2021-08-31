@@ -47,7 +47,7 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         newVariable: DataFlowVariable,
         shouldRemoveOriginalStatements: Boolean,
         filter: (Implication) -> Boolean = { true },
-        transform: (Implication) -> Implication = { it },
+        transform: (Implication) -> Implication? = { it },
     )
 
     abstract fun approveStatementsInsideFlow(

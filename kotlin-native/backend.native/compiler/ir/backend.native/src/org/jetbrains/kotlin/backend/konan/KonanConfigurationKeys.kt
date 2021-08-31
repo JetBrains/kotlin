@@ -68,8 +68,6 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("list available targets")
         val MANIFEST_FILE: CompilerConfigurationKey<String?> 
                 = CompilerConfigurationKey.create("provide manifest addend file")
-        val MEMORY_MODEL: CompilerConfigurationKey<MemoryModel>
-                = CompilerConfigurationKey.create("memory model")
         val META_INFO: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create("generate metadata")
         val METADATA_KLIB: CompilerConfigurationKey<Boolean>
@@ -161,7 +159,13 @@ class KonanConfigKeys {
         val GARBAGE_COLLECTOR: CompilerConfigurationKey<GC> = CompilerConfigurationKey.create("gc")
         val GARBAGE_COLLECTOR_AGRESSIVE: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("turn on agressive GC mode")
         val CHECK_LLD_COMPATIBILITY: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("check compatibility with LLD")
-        val RUNTIME_ASSERTS_MODE: CompilerConfigurationKey<RuntimeAssertsMode> = CompilerConfigurationKey.create("enable runtime asserts")
+        val PROPERTY_LAZY_INITIALIZATION: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("lazy top level properties initialization")
+        val WORKER_EXCEPTION_HANDLING: CompilerConfigurationKey<WorkerExceptionHandling> = CompilerConfigurationKey.create("unhandled exception processing in Worker.executeAfter")
+        val EXTERNAL_DEPENDENCIES: CompilerConfigurationKey<String?> =
+                CompilerConfigurationKey.create("use external dependencies to enhance IR linker error messages")
+        val LLVM_VARIANT: CompilerConfigurationKey<LlvmVariant?> = CompilerConfigurationKey.create("llvm variant")
+        val RUNTIME_LOGS: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("enable runtime logging")
     }
 }
 

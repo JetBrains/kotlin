@@ -1,4 +1,28 @@
 public open class InnerOfGeneric : R|kotlin/Any| {
     public constructor(): R|test/InnerOfGeneric|
 
+    public abstract inner class A<K : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public constructor<K : R|ft<kotlin/Any, kotlin/Any?>|>(): R|test/InnerOfGeneric.A<K>|
+
+        public abstract inner class Inner<K : R|ft<kotlin/Any, kotlin/Any?>|> : R|test/InnerOfGeneric.S<ft<K, K?>>| {
+            public constructor(): R|test/InnerOfGeneric.A.Inner<K>|
+
+        }
+    }
+    public open inner class B<L : R|ft<kotlin/Any, kotlin/Any?>|> : R|test/InnerOfGeneric.A<ft<L, L?>>| {
+        public constructor<L : R|ft<kotlin/Any, kotlin/Any?>|>(): R|test/InnerOfGeneric.B<L>|
+
+        public open inner class SubInner<L : R|ft<kotlin/Any, kotlin/Any?>|> : R|test/InnerOfGeneric.A.Inner<ft<L, L?>>| {
+            @R|java/lang/Override|() public open operator fun iterator(): R|ft<kotlin/collections/MutableIterator<ft<L, L?>>, kotlin/collections/Iterator<ft<L, L?>>?>|
+
+            public constructor(): R|test/InnerOfGeneric.B.SubInner<L>|
+
+        }
+    }
+    public open inner class S<E : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public open operator fun iterator(): R|ft<kotlin/collections/MutableIterator<ft<E, E?>>, kotlin/collections/Iterator<ft<E, E?>>?>|
+
+        public constructor<E : R|ft<kotlin/Any, kotlin/Any?>|>(): R|test/InnerOfGeneric.S<E>|
+
+    }
 }

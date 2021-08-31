@@ -2,7 +2,7 @@
 
 enum class Enum {
     ENTRY_WITH_CLASS {
-        inner class TestInner
+        <!WRONG_MODIFIER_CONTAINING_DECLARATION!>inner<!> class TestInner
 
         <!NESTED_CLASS_NOT_ALLOWED!>class TestNested<!>
 
@@ -10,10 +10,10 @@ enum class Enum {
 
         <!LOCAL_OBJECT_NOT_ALLOWED!>object TestObject<!>
 
-        enum class TestEnumClass {
+        <!WRONG_MODIFIER_TARGET!>enum<!> class TestEnumClass {
             OTHER_ENTRY
         }
 
-        companion object {}
+        <!WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object {}
     }
 }

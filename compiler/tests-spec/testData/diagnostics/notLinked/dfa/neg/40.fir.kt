@@ -9,7 +9,7 @@
 fun case_1(x: Pair<*, *>) {
     if (x.first !is String) return
     x.first
-    x.first.length
+    <!SMARTCAST_IMPOSSIBLE!>x.first<!>.length
 }
 
 /*
@@ -19,5 +19,5 @@ fun case_1(x: Pair<*, *>) {
 fun case_2(x: Pair<*, *>) {
     if (x.first !is String?) throw Exception()
     x.first
-    x.first?.length
+    x.first?.<!UNRESOLVED_REFERENCE!>length<!>
 }

@@ -3,12 +3,16 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assume
 import org.junit.Test
 import java.io.File
+import java.util.zip.ZipFile
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
@@ -427,6 +431,31 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
             assertSuccessful()
         }
     }
+
+    @Test
+    fun `test KotlinToolingMetadataArtifact is bundled into apk`(): Unit = with(Project("kotlinToolingMetadataAndroid")) {
+        build("assembleDebug") {
+            assertSuccessful()
+            assertTasksNotExecuted(":${BuildKotlinToolingMetadataTask.defaultTaskName}")
+
+            val debugApk = project.projectDir.resolve("build/outputs/apk/debug/project-debug.apk")
+            assertTrue(debugApk.exists(), "Missing debug apk ${debugApk.path}")
+            ZipFile(debugApk).use { zip ->
+                assertNull(zip.getEntry("kotlin-tooling-metadata.json"), "Expected metadata *not* being packaged into debug apk")
+            }
+        }
+
+        build("assembleRelease") {
+            assertSuccessful()
+            assertTasksExecuted(":${BuildKotlinToolingMetadataTask.defaultTaskName}")
+            val releaseApk = project.projectDir.resolve("build/outputs/apk/release/project-release-unsigned.apk")
+
+            assertTrue(releaseApk.exists(), "Missing release apk ${releaseApk.path}")
+            ZipFile(releaseApk).use { zip ->
+                assertNotNull(zip.getEntry("kotlin-tooling-metadata.json"), "Expected metadata being packaged into release apk")
+            }
+        }
+    }
 }
 
 open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
@@ -559,7 +588,7 @@ open class KotlinAndroid34GradleIT : KotlinAndroid3GradleIT() {
                 "kotlin-stdlib:\$kotlin_version",
                 "kotlin-stdlib"
             ) + "\n" +
-                """
+                    """
                 apply plugin: 'maven-publish'
 
                 android {
@@ -789,6 +818,7 @@ fun getSomething() = 10
 
         project.build("assembleDebug", options = options) {
             assertSuccessful()
+            output
         }
 
         val androidModuleKt = project.projectDir.getFileByName("AndroidModule.kt")
@@ -801,13 +831,22 @@ fun getSomething() = 10
 
         project.build(":app:assembleDebug", options = options) {
             assertSuccessful()
-            assertCompiledKotlinSources(project.relativize(androidModuleKt))
             assertTasksExecuted(
                 ":app:kaptGenerateStubsDebugKotlin",
                 ":app:kaptDebugKotlin",
                 ":app:compileDebugKotlin",
                 ":app:compileDebugJavaWithJavac"
             )
+
+            // Output is combined with previous build, but we are only interested in the compilation
+            // from second build to avoid false positive test failure
+            val filteredOutput = output
+                .lineSequence()
+                .filter { it.contains("[KOTLIN] compile iteration:") }
+                .drop(1)
+                .joinToString(separator = "/n")
+            val actualSources = getCompiledKotlinSources(filteredOutput).projectRelativePaths(project)
+            assertSameFiles(project.relativize(androidModuleKt), actualSources, "Compiled Kotlin files differ:\n  ")
         }
     }
 

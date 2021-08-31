@@ -28,6 +28,7 @@ private:
         int32_t instanceSize_ = 0;
         KStdVector<int32_t> objOffsets_;
         int32_t flags_ = 0;
+        const TypeInfo* superType_ = nullptr;
     };
 
 public:
@@ -43,6 +44,11 @@ public:
 
         ObjectBuilder&& removeFlag(Konan_TypeFlags flag) noexcept {
             flags_ &= ~flag;
+            return std::move(*this);
+        }
+
+        ObjectBuilder&& setSuperType(const TypeInfo* superType) noexcept {
+            superType_ = superType;
             return std::move(*this);
         }
     };
@@ -75,6 +81,7 @@ public:
             typeInfo_.objOffsetsCount_ = objOffsets_.size();
         }
         typeInfo_.flags_ = builder.flags_;
+        typeInfo_.superType_ = builder.superType_;
     }
 
     TypeInfo* typeInfo() noexcept { return &typeInfo_; }

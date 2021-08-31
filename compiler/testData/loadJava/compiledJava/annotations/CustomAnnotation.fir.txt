@@ -1,2 +1,19 @@
 public abstract interface CustomAnnotation : R|kotlin/Any| {
+    public final annotation class MyAnnotation : R|kotlin/Annotation| {
+        public constructor(value: R|test/CustomAnnotation.MyEnum|): R|test/CustomAnnotation.MyAnnotation|
+
+    }
+    public final enum class MyEnum : R|kotlin/Enum<ft<test/CustomAnnotation.MyEnum, test/CustomAnnotation.MyEnum?>>| {
+        public final static enum entry ONE: R|@EnhancedNullability test/CustomAnnotation.MyEnum|
+        public final static fun values(): R|kotlin/Array<test/CustomAnnotation.MyEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|test/CustomAnnotation.MyEnum| {
+        }
+
+    }
+    @R|test/CustomAnnotation.MyAnnotation|(R|test/CustomAnnotation.MyEnum.ONE|()) public open class MyTest : R|kotlin/Any| {
+        public constructor(): R|test/CustomAnnotation.MyTest|
+
+    }
 }

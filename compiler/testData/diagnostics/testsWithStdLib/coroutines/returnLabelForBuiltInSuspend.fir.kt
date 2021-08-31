@@ -1,12 +1,12 @@
 // SKIP_TXT
 fun bar() {
     suspend {
-        return@suspend
+        <!RETURN_FOR_BUILT_IN_SUSPEND!>return@suspend<!>
     }
 
     suspend {
         run {
-            return@suspend
+            <!RETURN_FOR_BUILT_IN_SUSPEND!>return@suspend<!>
         }
     }
 
@@ -21,7 +21,7 @@ fun bar() {
     val x = suspend@{
         suspend {
             // Might be resolved to outer lambda, but doesn't make sense because suspend-lambdas here is noinline
-            return@suspend
+            <!RETURN_FOR_BUILT_IN_SUSPEND!>return@suspend<!>
         }
     }
 }

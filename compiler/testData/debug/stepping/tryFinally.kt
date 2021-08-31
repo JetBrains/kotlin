@@ -69,8 +69,9 @@ fun box() {
 // test.kt:10 foo
 // test.kt:11 foo
 // test.kt:25 mightThrow2
-// test.kt:14 foo
 // LINENUMBERS JVM
+// test.kt:14 foo
 // test.kt:10 foo
 // LINENUMBERS JVM_IR
+// test.kt:12 foo
 // test.kt:13 foo

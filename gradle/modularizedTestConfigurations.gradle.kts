@@ -13,19 +13,20 @@ val ideaSandboxDir: File by extra
 val ideaSdkPath: String
     get() = IntellijRootUtils.getIntellijRootDir(rootProject).absolutePath
 
-val pathToKotlinModularizedTestData = kotlinBuildProperties.pathToKotlinModularizedTestData
-
-fun MutableList<String>.addModularizedTestArgs(prefix: String, benchFilter: String?) {
-    add("-${prefix}fir.bench.prefix=$pathToKotlinModularizedTestData")
-    add("-${prefix}fir.bench.jps.dir=$pathToKotlinModularizedTestData/test-project-model-dump")
+fun MutableList<String>.addModularizedTestArgs(prefix: String, path: String, additionalParameters: Map<String, String>, benchFilter: String?) {
+    add("-${prefix}fir.bench.prefix=$path")
+    add("-${prefix}fir.bench.jps.dir=$path/test-project-model-dump")
     add("-${prefix}fir.bench.passes=1")
     add("-${prefix}fir.bench.dump=true")
+    for ((name, value) in additionalParameters) {
+        add("-$prefix$name=$value")
+    }
     if (benchFilter != null) {
         add("-${prefix}fir.bench.filter=$benchFilter")
     }
 }
 
-fun generateVmParametersForJpsConfiguration(benchFilter: String?): String {
+fun generateVmParametersForJpsConfiguration(path: String, additionalParameters: Map<String, String>, benchFilter: String?): String {
     val vmParameters = mutableListOf(
         "-ea",
         "-XX:+HeapDumpOnOutOfMemoryError",
@@ -42,13 +43,13 @@ fun generateVmParametersForJpsConfiguration(benchFilter: String?): String {
         "-Duse.jps=true",
         "-Djava.awt.headless=true"
     )
-    vmParameters.addModularizedTestArgs(prefix = "D", benchFilter = benchFilter)
+    vmParameters.addModularizedTestArgs(prefix = "D", path = path, additionalParameters = additionalParameters, benchFilter = benchFilter)
     return vmParameters.joinToString(" ")
 }
 
-fun generateArgsForGradleConfiguration(benchFilter: String?): String {
+fun generateArgsForGradleConfiguration(path: String, additionalParameters: Map<String, String>, benchFilter: String?): String {
     val args = mutableListOf<String>()
-    args.addModularizedTestArgs(prefix = "P", benchFilter = benchFilter)
+    args.addModularizedTestArgs(prefix = "P", path = path, additionalParameters = additionalParameters, benchFilter = benchFilter)
     return args.joinToString(" ")
 }
 
@@ -113,8 +114,8 @@ fun String.convertNameToRunConfigurationFile(prefix: String = ""): File {
     return rootDir.resolve(".idea/runConfigurations/${fileName}")
 }
 
-fun generateJpsConfiguration(name: String, testClassName: String, benchFilter: String?) {
-    val vmParameters = generateVmParametersForJpsConfiguration(benchFilter)
+fun generateJpsConfiguration(name: String, testClassName: String, path: String, additionalParameters: Map<String, String>, benchFilter: String?) {
+    val vmParameters = generateVmParametersForJpsConfiguration(path, additionalParameters, benchFilter)
     val content = generateXmlContentForJpsConfiguration(
         name = name,
         testClassName = testClassName,
@@ -123,8 +124,8 @@ fun generateJpsConfiguration(name: String, testClassName: String, benchFilter: S
     name.convertNameToRunConfigurationFile("JPS").writeText(content)
 }
 
-fun generateGradleConfiguration(name: String, testClassName: String, benchFilter: String?) {
-    val vmParameters = generateArgsForGradleConfiguration(benchFilter)
+fun generateGradleConfiguration(name: String, testClassName: String, path: String, additionalParameters: Map<String, String>, benchFilter: String?) {
+    val vmParameters = generateArgsForGradleConfiguration(path, additionalParameters, benchFilter)
     val content = generateXmlContentForGradleConfiguration(
         name = name,
         testClassName = testClassName,
@@ -133,23 +134,49 @@ fun generateGradleConfiguration(name: String, testClassName: String, benchFilter
     name.convertNameToRunConfigurationFile().writeText(content)
 }
 
-if (pathToKotlinModularizedTestData != null) {
+data class Configuration(val path: String, val name: String, val additionalParameters: Map<String, String> = emptyMap()) {
+    companion object {
+        operator fun invoke(path: String?, name: String, additionalParameters: Map<String, String> = emptyMap()): Configuration? {
+            return path?.let { Configuration(it, name, additionalParameters) }
+        }
+    }
+}
+
+val languageVersionKey = "fir.bench.language.version"
+val useBuildFileKey = "fir.bench.use.build.file"
+
+val testDataPathList = listOfNotNull(
+    Configuration(kotlinBuildProperties.pathToKotlinModularizedTestData, "Kotlin"),
+    Configuration(kotlinBuildProperties.pathToIntellijModularizedTestData, "IntelliJ", mapOf(useBuildFileKey to "true")),
+    Configuration(kotlinBuildProperties.pathToYoutrackModularizedTestData, "YouTrack", mapOf(languageVersionKey to "1.5"))
+)
+
+val additionalConfigurationsWithFilter = mapOf(
+    "Kotlin" to listOf(
+        "Kotlin. All main modules" to ".*/main",
+        "Kotlin. idea.main module" to ".*/idea/build/.*/main",
+        "Kotlin. idea.test module" to ".*/idea/build/.*/test"
+    )
+)
+
+for ((path, projectName, additionalParameters) in testDataPathList) {
     rootProject.afterEvaluate {
-        val configurations = listOf(
-            "Full kotlin" to null,
-            "All main modules" to ".*/main",
-            "idea.main module" to ".*/idea/build/.*/main",
-            "idea.test module" to ".*/idea/build/.*/test"
+        val configurations = mutableListOf<Pair<String, String?>>(
+            "Full $projectName" to null
         )
+
+        additionalConfigurationsWithFilter[projectName]?.let {
+            configurations.addAll(it)
+        }
 
         val jpsBuildEnabled = kotlinBuildProperties.isInJpsBuildIdeaSync
 
         for ((name, benchFilter) in configurations) {
-            generateGradleConfiguration("[MT] $name", "FirResolveModularizedTotalKotlinTest", benchFilter)
-            generateGradleConfiguration("[FP] $name", "FullPipelineModularizedTest", benchFilter)
+            generateGradleConfiguration("[MT] $name", "FirResolveModularizedTotalKotlinTest", path, additionalParameters, benchFilter)
+            generateGradleConfiguration("[FP] $name", "FullPipelineModularizedTest", path, additionalParameters, benchFilter)
             if (jpsBuildEnabled) {
-                generateJpsConfiguration("[MT-JPS] $name", "FirResolveModularizedTotalKotlinTest", benchFilter)
-                generateJpsConfiguration("[FP-JPS] $name", "FullPipelineModularizedTest", benchFilter)
+                generateJpsConfiguration("[MT-JPS] $name", "FirResolveModularizedTotalKotlinTest", path, additionalParameters, benchFilter)
+                generateJpsConfiguration("[FP-JPS] $name", "FullPipelineModularizedTest", path, additionalParameters, benchFilter)
             }
         }
     }

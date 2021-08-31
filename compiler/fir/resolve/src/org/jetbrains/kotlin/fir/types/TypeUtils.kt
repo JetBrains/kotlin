@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -55,7 +55,7 @@ fun ConeDefinitelyNotNullType.Companion.create(
     return when {
         original is ConeDefinitelyNotNullType -> original
         typeContext
-            .newBaseTypeCheckerContext(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false)
+            .newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false)
             .makesSenseToBeDefinitelyNotNull(original, useCorrectedNullabilityForFlexibleTypeParameters) ->
 
             ConeDefinitelyNotNullType(
@@ -110,6 +110,13 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes, typeSystem
             lowerBound.withAttributes(attributes, typeSystemContext),
             upperBound.withAttributes(attributes, typeSystemContext)
         )
+        is ConeTypeVariableType -> ConeTypeVariableType(nullability, lookupTag, attributes)
+        is ConeCapturedType -> ConeCapturedType(
+            captureStatus, lowerType, nullability, constructor, attributes, isProjectionNotNull,
+        )
+        // TODO: Consider correct application of attributes to ConeIntersectionType
+        // Currently, ConeAttributes.union works a bit strange, because it lefts only `other` parts
+        is ConeIntersectionType -> this
         else -> error("Not supported: $this: ${this.render()}")
     } as T
 }
@@ -149,7 +156,8 @@ fun <T : ConeKotlinType> T.withNullability(
             ConeNullability.UNKNOWN -> this // TODO: is that correct?
             ConeNullability.NOT_NULL -> this
         }
-        is ConeStubType -> ConeStubType(variable, nullability)
+        is ConeStubTypeForBuilderInference -> ConeStubTypeForBuilderInference(variable, nullability)
+        is ConeStubTypeForTypeVariableInSubtyping -> ConeStubTypeForTypeVariableInSubtyping(variable, nullability)
         is ConeDefinitelyNotNullType -> when (nullability) {
             ConeNullability.NOT_NULL -> this
             ConeNullability.NULLABLE -> original.withNullability(nullability, typeContext)
@@ -197,16 +205,19 @@ fun ConeKotlinType.toSymbol(session: FirSession): FirBasedSymbol<*>? {
 
 fun ConeKotlinType.toFirResolvedTypeRef(
     source: FirSourceElement? = null,
+    delegatedTypeRef: FirTypeRef? = null
 ): FirResolvedTypeRef {
     return if (this is ConeKotlinErrorType) {
         buildErrorTypeRef {
             this.source = source
             diagnostic = this@toFirResolvedTypeRef.diagnostic
+            this.delegatedTypeRef = delegatedTypeRef
         }
     } else {
         buildResolvedTypeRef {
             this.source = source
             type = this@toFirResolvedTypeRef
+            this.delegatedTypeRef = delegatedTypeRef
         }
     }
 }
@@ -273,12 +284,15 @@ fun FirTypeRef.withReplacedConeType(
 fun FirTypeRef.approximated(
     typeApproximator: ConeTypeApproximator,
     toSuper: Boolean,
-    conf: TypeApproximatorConfiguration = TypeApproximatorConfiguration.PublicDeclaration
 ): FirTypeRef {
+    val alternativeType = (coneType as? ConeIntersectionType)?.alternativeType ?: coneType
+    if (alternativeType !== coneType && !alternativeType.requiresApproximationInPublicPosition()) {
+        return withReplacedConeType(alternativeType)
+    }
     val approximatedType = if (toSuper)
-        typeApproximator.approximateToSuperType(coneType, conf)
+        typeApproximator.approximateToSuperType(alternativeType, TypeApproximatorConfiguration.PublicDeclaration)
     else
-        typeApproximator.approximateToSubType(coneType, conf)
+        typeApproximator.approximateToSubType(alternativeType, TypeApproximatorConfiguration.PublicDeclaration)
     return withReplacedConeType(approximatedType)
 }
 
@@ -510,3 +524,8 @@ private class CapturedArguments(val capturedArguments: Array<ConeTypeProjection>
     }
 }
 
+fun ConeKotlinType.isSubtypeOf(superType: ConeKotlinType, session: FirSession): Boolean =
+    AbstractTypeChecker.isSubtypeOf(
+        session.typeContext.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false),
+        this, superType,
+    )

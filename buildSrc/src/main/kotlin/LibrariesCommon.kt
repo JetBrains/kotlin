@@ -11,6 +11,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.get
 import org.gradle.process.CommandLineArgumentProvider
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @JvmOverloads
 fun Project.configureJava9Compilation(
@@ -18,6 +19,11 @@ fun Project.configureJava9Compilation(
     moduleOutputs: Collection<FileCollection> = setOf(sourceSets["main"].output)
 ) {
     configurations["java9CompileClasspath"].extendsFrom(configurations["compileClasspath"])
+
+    tasks.named("compileJava9Kotlin", KotlinCompile::class.java) {
+        configureTaskToolchain(JdkMajorVersion.JDK_9)
+        kotlinOptions.jvmTarget = JdkMajorVersion.JDK_9.targetName
+    }
 
     tasks.named("compileJava9Java", JavaCompile::class.java) {
         dependsOn(moduleOutputs)

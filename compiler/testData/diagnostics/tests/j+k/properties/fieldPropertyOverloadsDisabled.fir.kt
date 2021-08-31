@@ -20,9 +20,9 @@ public abstract class CollectionWithSize implements java.util.Collection<String>
 // FILE: main.kt
 
 fun main(c: CollectionWithSize) {
-    CompressionType.ZIP.<!OVERLOAD_RESOLUTION_AMBIGUITY!>name<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { _<Double>() }
-    c.<!OVERLOAD_RESOLUTION_AMBIGUITY!>size<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { _<String>() }
+    CompressionType.ZIP.<!OVERLOAD_RESOLUTION_AMBIGUITY!>name<!> <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Double>() }
+    c.<!OVERLOAD_RESOLUTION_AMBIGUITY!>size<!> <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<String>() }
 
-    CompressionType.ZIP::<!OVERLOAD_RESOLUTION_AMBIGUITY!>name<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { _<kotlin.reflect.KProperty0<Double>>() }
-    c::<!OVERLOAD_RESOLUTION_AMBIGUITY!>size<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { _<kotlin.reflect.KProperty0<String>>() }
+    CompressionType.ZIP::<!OVERLOAD_RESOLUTION_AMBIGUITY!>name<!> <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<kotlin.reflect.KProperty0<Double>>() }
+    c::<!OVERLOAD_RESOLUTION_AMBIGUITY!>size<!> <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<kotlin.reflect.KProperty0<String>>() }
 }

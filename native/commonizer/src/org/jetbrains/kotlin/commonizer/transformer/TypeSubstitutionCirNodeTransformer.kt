@@ -7,15 +7,8 @@ package org.jetbrains.kotlin.commonizer.transformer
 
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.ParentNode
-import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
+import org.jetbrains.kotlin.commonizer.utils.fastForEach
 import org.jetbrains.kotlin.storage.StorageManager
-
-internal fun TypeSubstitutionCirNodeTransformer(
-    storageManager: StorageManager, classifiers: CirKnownClassifiers, roots: Iterable<CirTreeRoot>
-): TypeSubstitutionCirNodeTransformer {
-    val typeSubstitutor = CirAliasTypeSubstitutor(classifiers.commonDependencies, roots.map(::CirClassifierIndex))
-    return TypeSubstitutionCirNodeTransformer(storageManager, classifiers, typeSubstitutor)
-}
 
 internal class TypeSubstitutionCirNodeTransformer(
     private val storageManager: StorageManager,
@@ -34,16 +27,16 @@ internal class TypeSubstitutionCirNodeTransformer(
     }
 
     private operator fun invoke(pkg: CirPackageNode, index: Int) {
-        pkg.functions.values.toList().forEach { function -> this(pkg, function, index, CirMemberContext.empty) }
-        pkg.properties.values.toList().forEach { property -> this(pkg, property, index, CirMemberContext.empty) }
-        pkg.classes.values.toList().forEach { clazz -> this(clazz, index, CirMemberContext.empty) }
+        pkg.functions.values.toTypedArray().fastForEach { function -> this(pkg, function, index, CirMemberContext.empty) }
+        pkg.properties.values.toTypedArray().fastForEach { property -> this(pkg, property, index, CirMemberContext.empty) }
+        pkg.classes.values.toTypedArray().fastForEach { clazz -> this(clazz, index, CirMemberContext.empty) }
     }
 
     private operator fun invoke(clazz: CirClassNode, index: Int, context: CirMemberContext) {
         val contextWithClass = context.withContextOf(clazz.targetDeclarations[index] ?: return)
-        clazz.functions.values.toList().forEach { function -> this(clazz, function, index, contextWithClass) }
-        clazz.properties.values.toList().forEach { property -> this(clazz, property, index, contextWithClass) }
-        clazz.classes.values.toList().forEach { innerClass -> this(innerClass, index, contextWithClass) }
+        clazz.functions.values.toTypedArray().fastForEach { function -> this(clazz, function, index, contextWithClass) }
+        clazz.properties.values.toTypedArray().fastForEach { property -> this(clazz, property, index, contextWithClass) }
+        clazz.classes.values.toTypedArray().fastForEach { innerClass -> this(innerClass, index, contextWithClass) }
     }
 
     private operator fun invoke(parent: CirNodeWithMembers<*, *>, function: CirFunctionNode, index: Int, context: CirMemberContext) {

@@ -34,7 +34,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         expectedStderr: String = "",
         expectedExitCode: Int = 0,
         workDirectory: File? = null,
-        environment: Map<String, String> = emptyMap(),
+        environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
     ) {
         val executableFileName = if (SystemInfo.isWindows) "$executableName.bat" else executableName
         val launcherFile = File(PathUtil.kotlinPathsForDistDirectory.homePath, "bin/$executableFileName")

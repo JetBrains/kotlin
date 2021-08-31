@@ -1,13 +1,13 @@
-<!REDECLARATION!>val Test1 = null<!>
-<!REDECLARATION!>class Test1<!>
+val <!REDECLARATION!>Test1<!> = null
+class <!REDECLARATION!>Test1<!>
 
-<!REDECLARATION!>val Test2 = null<!>
-<!REDECLARATION!>interface Test2<!>
+val <!REDECLARATION!>Test2<!> = null
+interface <!REDECLARATION!>Test2<!>
 
-<!REDECLARATION!>val Test3 = null<!>
-<!REDECLARATION!>object Test3<!>
+val <!REDECLARATION!>Test3<!> = null
+object <!REDECLARATION!>Test3<!>
 
-<!REDECLARATION!>val Test4 = null<!>
-<!REDECLARATION!>class Test4<!>
-<!REDECLARATION!>interface Test4<!>
-<!REDECLARATION!>object Test4<!>
+val <!REDECLARATION!>Test4<!> = null
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Test4<!>
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Test4<!>
+object <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Test4<!>

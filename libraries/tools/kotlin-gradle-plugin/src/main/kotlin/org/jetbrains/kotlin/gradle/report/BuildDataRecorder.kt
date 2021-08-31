@@ -72,8 +72,8 @@ private class TaskRecord(
     override val endNs: Long
         get() = myEndNs
 
-    override val totalTimeNs: Long
-        get() = endNs - startNs
+    override val totalTimeMs: Long
+        get() = (endNs - startNs) / 1_000_000
 
     override val resultState: TaskState
         get() = myTaskState
@@ -87,7 +87,7 @@ private class TaskRecord(
     fun processResult(state: TaskState, executionResult: TaskExecutionResult?) {
         myEndNs = System.nanoTime()
         myTaskState = state
-        myBuildMetrics.buildTimes.add(BuildTime.GRADLE_TASK, totalTimeNs)
+        myBuildMetrics.buildTimes.add(BuildTime.GRADLE_TASK, totalTimeMs)
 
         if (executionResult != null) {
             myBuildMetrics.addAll(executionResult.buildMetrics)

@@ -599,6 +599,7 @@ class Collections {
         }
 
         @Sample
+        @Suppress("UNUSED_VARIABLE")
         fun firstNotNullOf() {
             data class Rectangle(val height: Int, val width: Int) {
                 val area: Int get() = height * width

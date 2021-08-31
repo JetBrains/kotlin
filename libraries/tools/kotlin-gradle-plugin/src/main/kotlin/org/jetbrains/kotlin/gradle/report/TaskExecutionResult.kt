@@ -20,6 +20,7 @@ internal class TaskExecutionInfo(
 )
 
 internal enum class TaskExecutionProperties {
-    ABI_SNAPSHOT
+    ABI_SNAPSHOT,
+    ARTIFACT_TRANSFORM
     ;
 }

@@ -118,9 +118,17 @@ open class FastMethodAnalyzer<V : Value>(
                 }
 
             } catch (e: AnalyzerException) {
-                throw AnalyzerException(e.node, "Error at instruction #$insn ${insnNode.insnText}: ${e.message}", e)
+                throw AnalyzerException(
+                    e.node,
+                    "Error at instruction #$insn ${insnNode.insnText(method.instructions)}: ${e.message}\ncurrent: ${current.dump()}",
+                    e
+                )
             } catch (e: Exception) {
-                throw AnalyzerException(insnNode, "Error at instruction #$insn ${insnNode.insnText}: ${e.message}", e)
+                throw AnalyzerException(
+                    insnNode,
+                    "Error at instruction #$insn ${insnNode.insnText(method.instructions)}: ${e.message}\ncurrent: ${current.dump()}",
+                    e
+                )
             }
 
         }
@@ -245,11 +253,39 @@ open class FastMethodAnalyzer<V : Value>(
                 true
             }
             else ->
-                oldFrame.merge(frame, interpreter)
+                try {
+                    oldFrame.merge(frame, interpreter)
+                } catch (e: AnalyzerException) {
+                    throw AnalyzerException(null, "${e.message}\nframe: ${frame.dump()}\noldFrame: ${oldFrame.dump()}")
+                }
         }
         if (changes && !queued[dest]) {
             queued[dest] = true
             queue[top++] = dest
+        }
+    }
+
+    private fun Frame<V>.dump(): String {
+        return buildString {
+            append("{\n")
+            append("  locals: [\n")
+            for (i in 0 until method.maxLocals) {
+                append("    #$i: ${this@dump.getLocal(i)}\n")
+            }
+            append("  ]\n")
+            val stackSize = this@dump.stackSize
+            append("  stack: size=")
+            append(stackSize)
+            if (stackSize == 0) {
+                append(" []\n")
+            } else {
+                append(" [\n")
+                for (i in 0 until stackSize) {
+                    append("    #$i: ${this@dump.getStack(i)}\n")
+                }
+                append("  ]\n")
+            }
+            append("}\n")
         }
     }
 }

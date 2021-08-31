@@ -11,6 +11,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.RelativePath
 import org.gradle.api.logging.Logger
+import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.gradle.tasks.PodspecTask.Companion.retrievePods
 import org.jetbrains.kotlin.gradle.tasks.PodspecTask.Companion.retrieveSpecRepos
 import org.jetbrains.kotlin.konan.target.Family
 import java.io.File
+import java.io.IOException
 import java.io.Reader
 import java.net.URI
 import java.util.*
@@ -64,41 +66,23 @@ open class PodInstallTask : DefaultTask() {
             project.provider { it.parentFile.resolve("Pods").resolve("Pods.xcodeproj") }
         }
 
-
     @TaskAction
     fun doPodInstall() {
         podfile.orNull?.parentFile?.also { podfileDir ->
-            val podInstallProcess = ProcessBuilder("pod", "install").apply {
-                directory(podfileDir)
-            }.start()
-            val podInstallRetCode = podInstallProcess.waitFor()
-            val podInstallOutput = podInstallProcess.inputStream.use { it.reader().readText() }
+            val podInstallCommand = listOf("pod", "install")
 
-            check(podInstallRetCode == 0) {
-                val specReposMessages = retrieveSpecRepos(project)?.let { MissingSpecReposMessage(it).missingMessage }
-                val cocoapodsMessages = retrievePods(project)?.map { MissingCocoapodsMessage(it, project).missingMessage }
+            runCommand(podInstallCommand,
+                       project.logger,
+                       errorHandler = { returnCode, output, _ ->
+                           CocoapodsErrorHandlingUtil.handlePodInstallError(returnCode, output, project, frameworkName.get())
+                       },
+                       exceptionHandler = { e: IOException ->
+                           CocoapodsErrorHandlingUtil.handle(e, podInstallCommand)
+                       },
+                       processConfiguration = {
+                           directory(podfileDir)
+                       })
 
-                listOfNotNull(
-                    "Executing of 'pod install' failed with code $podInstallRetCode.",
-                    "Error message:",
-                    podInstallOutput,
-                    specReposMessages?.let {
-                        """
-                            |Please, check that file "${podfile.get().path}" contains following lines in header:
-                            |$it
-                            |
-                        """.trimMargin()
-                    },
-                    cocoapodsMessages?.let {
-                        """
-                            |Please, check that each target depended on ${frameworkName.get()} contains following dependencies:
-                            |${it.joinToString("\n")}
-                            |
-                        """.trimMargin()
-                    }
-
-                ).joinToString("\n")
-            }
             with(podsXcodeProjDirProvider) {
                 check(this != null && get().exists() && get().isDirectory) {
                     "The directory 'Pods/Pods.xcodeproj' was not created as a result of the `pod install` call."
@@ -106,11 +90,6 @@ open class PodInstallTask : DefaultTask() {
             }
         }
     }
-}
-
-private interface ExtendedErrorDiagnostic {
-    fun isAppropriateOutput(output: String): Boolean
-    val message: String
 }
 
 abstract class DownloadCocoapodsTask : DefaultTask() {
@@ -303,14 +282,23 @@ open class PodDownloadGitTask : DownloadCocoapodsTask() {
 private fun runCommand(
     command: List<String>,
     logger: Logger,
-    extendedErrorDiagnostic: ExtendedErrorDiagnostic? = null,
-    errorHandler: ((retCode: Int, process: Process) -> Unit)? = null,
+    errorHandler: ((retCode: Int, output: String, process: Process) -> String?)? = null,
+    exceptionHandler: ((ex: IOException) -> Unit)? = null,
     processConfiguration: ProcessBuilder.() -> Unit = { }
 ): String {
-    val process = ProcessBuilder(command)
-        .apply {
-            this.processConfiguration()
-        }.start()
+    var process: Process? = null
+    try {
+        process = ProcessBuilder(command)
+            .apply {
+                this.processConfiguration()
+            }.start()
+    } catch (e: IOException) {
+        if (exceptionHandler != null) exceptionHandler(e) else throw e
+    }
+
+    if (process == null) {
+        throw IllegalStateException("Failed to run command ${command.joinToString(" ")}")
+    }
 
     var inputText = ""
     var errorText = ""
@@ -340,12 +328,14 @@ private fun runCommand(
     )
 
     check(retCode == 0) {
-        errorHandler?.invoke(retCode, process)
+        errorHandler?.invoke(retCode, inputText, process)
             ?: """
                 |Executing of '${command.joinToString(" ")}' failed with code $retCode and message: 
                 |
+                |$inputText
+                |
                 |$errorText
-                |${extendedErrorDiagnostic?.takeIf { it.isAppropriateOutput(inputText) }?.message ?: ""}
+                |
                 """.trimMargin()
     }
 
@@ -406,23 +396,18 @@ open class PodGenTask : DefaultTask() {
             podspec.get().absolutePath
         )
 
-        val podGenDiagnostic = object : ExtendedErrorDiagnostic {
-            override fun isAppropriateOutput(output: String): Boolean =
-                output.contains("deployment target") || output.contains("requested platforms: [\"${family.platformLiteral}\"]")
-
-            override val message: String
-                get() =
-                    """
-                        |Tip: try to configure deployment_target for ALL targets as follows:
-                        |cocoapods {
-                        |   ...
-                        |   ${family.name.toLowerCase()}.deploymentTarget = "..."
-                        |   ...
-                        |}
-                    """.trimMargin()
-        }
-
-        runCommand(podGenProcessArgs, project.logger, podGenDiagnostic) { directory(syntheticDir) }
+        runCommand(
+            podGenProcessArgs,
+            project.logger,
+            exceptionHandler = { e: IOException ->
+                CocoapodsErrorHandlingUtil.handle(e, podGenProcessArgs)
+            },
+            errorHandler = { retCode, output, _ ->
+                CocoapodsErrorHandlingUtil.handlePodGenError(retCode, output, family)
+            },
+            processConfiguration = {
+                directory(syntheticDir)
+            })
 
         val podsXcprojFile = podsXcodeProjDir.get()
         check(podsXcprojFile.exists() && podsXcprojFile.isDirectory) {
@@ -594,5 +579,91 @@ data class PodBuildSettingsProperties(
 
         private fun Properties.readNullableProperty(propertyName: String) =
             getProperty(propertyName)
+    }
+}
+
+private object CocoapodsErrorHandlingUtil {
+    fun handle(e: IOException, command: List<String>) {
+        if (e.message?.contains("No such file or directory") == true) {
+            val message = """ 
+               |'${command.take(2).joinToString(" ")}' command failed with an exception:
+               | ${e.message}
+               |        
+               |        Possible reason: CocoaPods is not installed
+               |        Please check that CocoaPods v1.10 or above and cocoapods-generate plugin are installed.
+               |        
+               |        To check CocoaPods version type 'pod --version' in the terminal
+               |        
+               |        To install CocoaPods execute 'sudo gem install cocoapods'
+               |        To install cocoapod-generate execute 'sudo gem install cocoapods-generate'
+               |
+            """.trimMargin()
+            throw IllegalStateException(message)
+        } else {
+            throw e
+        }
+    }
+
+    fun handlePodInstallError(retCode: Int, error: String, project: Project, frameworkName: String): String {
+        val specReposMessages = retrieveSpecRepos(project)?.let { MissingSpecReposMessage(it).missingMessage }
+        val cocoapodsMessages = retrievePods(project)?.map { MissingCocoapodsMessage(it, project).missingMessage }
+
+        return listOfNotNull(
+            "'pod install' command failed with code $retCode.",
+            "Error message:",
+            error,
+            specReposMessages?.let {
+                """
+                    |       Please, check that podfile contains following lines in header:
+                    |       $it
+                    |
+                """.trimMargin()
+            },
+            cocoapodsMessages?.let {
+                """
+                   |        Please, check that each target depended on $frameworkName contains following dependencies:
+                   |        ${it.joinToString("\n")}
+                   |        
+                """.trimMargin()
+            }
+
+        ).joinToString("\n")
+    }
+
+    fun handlePodGenError(retCode: Int, error: String, family: Family): String? {
+
+        var message = """
+            |'pod gen' command failed with return code: $retCode
+            |
+            |       Error: ${error.lines().filter { it.contains("[!]") }?.joinToString("\n")}
+        """.trimMargin()
+
+        if (error.contains("Unknown command: `gen`")) {
+            message += """
+                |
+                |       Possible reason: cocoapod-generate is not installed
+                |       To install cocoapod-generate execute 'sudo gem install cocoapods-generate' in the terminal
+                |       
+            """.trimMargin()
+            return message
+        } else if (
+            error.contains("deployment target") ||
+            error.contains("requested platforms:") ||
+            error.contains("no platform was specified")
+        ) {
+            message += """
+                |       
+                |       Possible reason: ${family.name.toLowerCase()} deployment target is not configured
+                |       Configure deployment_target for ALL targets as follows:
+                |       cocoapods {
+                |          ...
+                |          ${family.name.toLowerCase()}.deploymentTarget = "..."
+                |          ...
+                |       }
+                |       
+            """.trimMargin()
+            return message
+        }
+        return null
     }
 }

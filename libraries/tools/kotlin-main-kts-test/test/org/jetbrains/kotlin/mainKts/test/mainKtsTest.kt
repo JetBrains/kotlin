@@ -122,6 +122,18 @@ class MainKtsTest {
     }
 
     @Test
+    fun testDuplicateImportError() {
+        val res = evalFile(File("$TEST_DATA_ROOT/import-duplicate-test.main.kts"))
+        assertFailed("Duplicate imports:", res)
+    }
+
+    @Test
+    fun testCyclicImportError() {
+        val res = evalFile(File("$TEST_DATA_ROOT/import-cycle-1.main.kts"))
+        assertFailed("Unable to handle recursive script dependencies", res)
+    }
+
+    @Test
     fun testCompilerOptions() {
 
         val out = captureOut {

@@ -11,7 +11,7 @@
 
 annotation class Ann(vararg val s: String)
 
-@Ann(s = "value")
+@Ann(s = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!>"value"<!>)
 fun test1() {}
 
 @Ann(s = *arrayOf("value"))
@@ -20,7 +20,7 @@ fun test2() {}
 @Ann(s = *["value"])
 fun test3() {}
 
-@JavaAnn(value = "value")
+@JavaAnn(value = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!>"value"<!>)
 fun test4() {}
 
 @JavaAnn("value", path = arrayOf("path"))

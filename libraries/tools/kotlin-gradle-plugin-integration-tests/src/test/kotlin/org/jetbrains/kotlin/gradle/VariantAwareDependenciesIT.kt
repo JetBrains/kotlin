@@ -346,6 +346,40 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testResolveCompatibilityMetadataVariantWithNative() = with(Project("native-libraries")) {
+        setupWorkingDir()
+        val nestedProjectName = "nested"
+        embedProject(Project("native-libraries"), nestedProjectName)
+
+        projectDir.resolve("gradle.properties").appendText(
+            "\n" + """
+                kotlin.mpp.enableGranularSourceSetsMetadata=true
+                kotlin.mpp.enableCompatibilityMetadataVariant=true
+            """
+        )
+
+        val resolveConfigurationTaskName = "resolveConfiguration"
+        val marker = "###=>"
+
+        gradleBuildScript().appendText(
+            "\n" + """
+                dependencies { "commonMainImplementation"(project(":$nestedProjectName")) }
+                tasks.create("$resolveConfigurationTaskName") {
+                    doFirst {
+                        println("$marker" + configurations.getByName("metadataCompileClasspath").toList())
+                    }
+                }
+            """
+        )
+
+        build(resolveConfigurationTaskName) {
+            assertSuccessful()
+            val output = output.lines().single { marker in it }.substringAfter(marker).removeSurrounding("[", "]").split(",")
+            assertTrue { output.any { "$nestedProjectName-1.0.jar" in it } }
+        }
+    }
+
 }
 
 internal fun BaseGradleIT.Project.embedProject(other: BaseGradleIT.Project, renameTo: String? = null) {
@@ -361,10 +395,12 @@ internal fun BaseGradleIT.Project.embedProject(other: BaseGradleIT.Project, rena
     }
     if (projectName == other.projectName) {
         val embeddedModuleDir = projectDir.resolve(embeddedModuleName)
-        val buildFile = embeddedModuleDir.resolve("build.gradle").takeIf { it.exists() }
-            ?: embeddedModuleDir.resolve("build.gradle.kts")
-        buildFile.modify {
-            it.lines().dropLast(4).joinToString(separator = "\n")
+        embeddedModuleDir.walk().forEach {
+            if (it.name.contains("build.gradle")) {
+                it.modify { string ->
+                    string.lines().dropLast(5).joinToString(separator = "\n")
+                }
+            }
         }
     }
     testCase.apply {

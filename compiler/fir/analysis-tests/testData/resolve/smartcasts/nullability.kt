@@ -175,3 +175,10 @@ fun test_13(q: QImplMutable?) {
         <!SMARTCAST_IMPOSSIBLE!>q.data<!>.s.inc() // should be bad
     }
 }
+
+fun test_14(q: Q) {
+    // `q.data` is a property that has an open getter
+    if (q.data == null) {
+        q.data<!UNSAFE_CALL!>.<!>s // should be UNSAFE_CALL and NOT SMARTCAST_IMPOSSIBLE
+    }
+}

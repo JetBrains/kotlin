@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/anonymousFunction.kt
     FIELD PROPERTY_BACKING_FIELD name:anonymous type:kotlin.Function0<kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
         FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
-          FUN name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
               CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anonymous> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Unit>

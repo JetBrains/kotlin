@@ -59,7 +59,9 @@ class Android25ProjectHandler(
 
         val preJavaClasspathKey = variantData.registerPreJavacGeneratedBytecode(preJavaKotlinOutput)
         kotlinTask.configure { kotlinTaskInstance ->
-            kotlinTaskInstance.inputs.files(variantData.getSourceFolders(SourceKind.JAVA)).withPathSensitivity(PathSensitivity.RELATIVE)
+            kotlinTaskInstance.source(
+                variantData.getSourceFolders(SourceKind.JAVA)
+            )
 
             kotlinTaskInstance.classpath = project.files()
                 .from(variantData.getCompileClasspath(preJavaClasspathKey))

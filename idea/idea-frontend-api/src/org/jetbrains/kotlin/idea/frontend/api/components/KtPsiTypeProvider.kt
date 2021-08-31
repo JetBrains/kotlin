@@ -18,6 +18,6 @@ public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtType.asPsiType(
         context: PsiElement,
         mode: TypeMappingMode = TypeMappingMode.DEFAULT
-    ): PsiType? =
+    ): PsiType =
         analysisSession.psiTypeProvider.asPsiType(this, context, mode)
 }

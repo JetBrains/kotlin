@@ -10,6 +10,7 @@ KtFirJavaFieldSymbol:
   receiverType: null
   symbolKind: MEMBER
   visibility: Private
+  deprecationStatus: null
 
 KtFirJavaFieldSymbol:
   annotatedType: [] kotlin/Int
@@ -23,6 +24,7 @@ KtFirJavaFieldSymbol:
   receiverType: null
   symbolKind: MEMBER
   visibility: Private
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -47,6 +49,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: PackageVisibility
+  deprecationStatus: null
 
 KtFirJavaFieldSymbol:
   annotatedType: [] kotlin/Int
@@ -60,6 +63,7 @@ KtFirJavaFieldSymbol:
   receiverType: null
   symbolKind: MEMBER
   visibility: Private
+  deprecationStatus: null
 
 KtFirSyntheticJavaPropertySymbol:
   annotatedType: [] kotlin/Int
@@ -73,6 +77,7 @@ KtFirSyntheticJavaPropertySymbol:
   hasSetter: false
   initializer: null
   isExtension: false
+  isFromPrimaryConstructor: false
   isOverride: false
   isStatic: false
   isVal: true
@@ -85,6 +90,9 @@ KtFirSyntheticJavaPropertySymbol:
   setter: null
   symbolKind: MEMBER
   visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  setterDeprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -109,30 +117,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-
-KtFirFunctionSymbol:
-  annotatedType: [] kotlin/Char
-  annotationClassIds: []
-  annotations: []
-  callableIdIfNonLocal: java/lang/String.charAt
-  dispatchType: java/lang/String
-  hasStableParameterNames: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  modality: OPEN
-  name: charAt
-  origin: JAVA
-  receiverType: null
-  symbolKind: MEMBER
-  typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
-  visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -155,8 +140,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -179,8 +167,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -203,8 +194,12 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -227,8 +222,12 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
@@ -251,8 +250,12 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: PackageVisibility
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
@@ -275,13 +278,24 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1), KtFirValueParameterSymbol(p2), KtFirValueParameterSymbol(p3)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+    KtFirValueParameterSymbol(p3)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
-  annotationClassIds: [kotlin/Deprecated]
-  annotations: [kotlin/Deprecated(message = Deprecated in Java)]
+  annotationClassIds: [
+    kotlin/Deprecated
+  ]
+  annotations: [
+    kotlin/Deprecated(message = Deprecated in Java)
+      psi: null
+  ]
   callableIdIfNonLocal: java/lang/String.getBytes
   dispatchType: java/lang/String
   hasStableParameterNames: false
@@ -299,8 +313,14 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1), KtFirValueParameterSymbol(p2), KtFirValueParameterSymbol(p3)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+    KtFirValueParameterSymbol(p3)
+  ]
   visibility: Public
+  deprecationStatus: Deprecation(level=WARNING, inheritable=false, message=Deprecated in Java)
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/ByteArray, kotlin/ByteArray?>
@@ -323,8 +343,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/ByteArray, kotlin/ByteArray?>
@@ -347,8 +370,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/ByteArray, kotlin/ByteArray?>
@@ -373,6 +399,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -395,8 +422,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -419,8 +449,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -443,8 +476,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -467,8 +503,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -491,8 +530,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -515,8 +557,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -539,8 +584,14 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1), KtFirValueParameterSymbol(p2), KtFirValueParameterSymbol(p3)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+    KtFirValueParameterSymbol(p3)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -563,8 +614,15 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1), KtFirValueParameterSymbol(p2), KtFirValueParameterSymbol(p3), KtFirValueParameterSymbol(p4)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+    KtFirValueParameterSymbol(p3)
+    KtFirValueParameterSymbol(p4)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -587,8 +645,12 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -611,8 +673,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -635,8 +700,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -661,6 +729,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -683,8 +752,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -707,8 +779,12 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -731,8 +807,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -755,8 +834,12 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -779,8 +862,12 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Private
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -803,8 +890,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -827,8 +917,12 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -851,8 +945,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -875,8 +972,12 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -899,8 +1000,12 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Private
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/String, kotlin/String?>
@@ -923,8 +1028,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/String, kotlin/String?>
@@ -947,8 +1055,12 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/CharSequence
@@ -971,8 +1083,12 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/String, kotlin/String?>
@@ -995,8 +1111,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/String, kotlin/String?>
@@ -1019,8 +1138,12 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/String, kotlin/String?>
@@ -1043,8 +1166,12 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -1067,8 +1194,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -1091,8 +1221,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/String, kotlin/String?>
@@ -1115,8 +1248,12 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/String, kotlin/String?>
@@ -1139,8 +1276,12 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>
@@ -1163,8 +1304,12 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>
@@ -1187,8 +1332,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/String, kotlin/String?>
@@ -1211,8 +1359,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/String, kotlin/String?>
@@ -1237,6 +1388,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/String, kotlin/String?>
@@ -1259,8 +1411,11 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/String, kotlin/String?>
@@ -1285,6 +1440,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/String, kotlin/String?>
@@ -1309,6 +1465,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
@@ -1333,6 +1490,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/CharArray, kotlin/CharArray?>
@@ -1357,6 +1515,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/String, kotlin/String?>
@@ -1381,14 +1540,15 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Char
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: kotlin/CharSequence.get
-  dispatchType: @EnhancedNullability kotlin/CharSequence
-  hasStableParameterNames: true
+  callableIdIfNonLocal: java/lang/String.get
+  dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1397,14 +1557,17 @@ KtFirFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
-  modality: ABSTRACT
+  modality: OPEN
   name: get
-  origin: LIBRARY
+  origin: JAVA
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(index)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -1420,10 +1583,15 @@ KtFirNamedClassOrObjectSymbol:
   modality: OPEN
   name: CaseInsensitiveComparator
   origin: JAVA
-  superTypes: [[] kotlin/Any, [] java/util/Comparator<ft<kotlin/String, kotlin/String?>>, [] java/io/Serializable]
+  superTypes: [
+    [] kotlin/Any
+    [] java/util/Comparator<ft<kotlin/String, kotlin/String?>>
+    [] java/io/Serializable
+  ]
   symbolKind: MEMBER
   typeParameters: []
   visibility: Private
+  deprecationStatus: null
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1441,6 +1609,7 @@ KtFirConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1456,8 +1625,11 @@ KtFirConstructorSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1473,8 +1645,11 @@ KtFirConstructorSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1490,8 +1665,13 @@ KtFirConstructorSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1), KtFirValueParameterSymbol(p2)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1507,13 +1687,23 @@ KtFirConstructorSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1), KtFirValueParameterSymbol(p2)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
-  annotationClassIds: [kotlin/Deprecated]
-  annotations: [kotlin/Deprecated(message = Deprecated in Java)]
+  annotationClassIds: [
+    kotlin/Deprecated
+  ]
+  annotations: [
+    kotlin/Deprecated(message = Deprecated in Java)
+      psi: null
+  ]
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1524,13 +1714,24 @@ KtFirConstructorSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1), KtFirValueParameterSymbol(p2), KtFirValueParameterSymbol(p3)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+    KtFirValueParameterSymbol(p3)
+  ]
   visibility: Public
+  deprecationStatus: Deprecation(level=WARNING, inheritable=false, message=Deprecated in Java)
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
-  annotationClassIds: [kotlin/Deprecated]
-  annotations: [kotlin/Deprecated(message = Deprecated in Java)]
+  annotationClassIds: [
+    kotlin/Deprecated
+  ]
+  annotations: [
+    kotlin/Deprecated(message = Deprecated in Java)
+      psi: null
+  ]
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1541,42 +1742,12 @@ KtFirConstructorSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
-
-KtFirConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: []
-  annotations: []
-  callableIdIfNonLocal: null
-  containingClassIdIfNonLocal: java/lang/String
-  dispatchType: null
-  hasStableParameterNames: false
-  isExtension: false
-  isPrimary: false
-  origin: JAVA
-  receiverType: null
-  symbolKind: MEMBER
-  typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1), KtFirValueParameterSymbol(p2), KtFirValueParameterSymbol(p3)]
-  visibility: Public
-
-KtFirConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: []
-  annotations: []
-  callableIdIfNonLocal: null
-  containingClassIdIfNonLocal: java/lang/String
-  dispatchType: null
-  hasStableParameterNames: false
-  isExtension: false
-  isPrimary: false
-  origin: JAVA
-  receiverType: null
-  symbolKind: MEMBER
-  typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1), KtFirValueParameterSymbol(p2), KtFirValueParameterSymbol(p3)]
-  visibility: Public
+  deprecationStatus: Deprecation(level=WARNING, inheritable=false, message=Deprecated in Java)
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1592,8 +1763,14 @@ KtFirConstructorSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+    KtFirValueParameterSymbol(p3)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1609,8 +1786,14 @@ KtFirConstructorSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+    KtFirValueParameterSymbol(p3)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1626,8 +1809,12 @@ KtFirConstructorSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1), KtFirValueParameterSymbol(p2)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1643,8 +1830,12 @@ KtFirConstructorSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1660,8 +1851,13 @@ KtFirConstructorSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1677,8 +1873,11 @@ KtFirConstructorSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1694,13 +1893,62 @@ KtFirConstructorSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
+  visibility: Public
+  deprecationStatus: null
+
+KtFirConstructorSymbol:
+  annotatedType: [] java/lang/String
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: null
+  containingClassIdIfNonLocal: java/lang/String
+  dispatchType: null
+  hasStableParameterNames: false
+  isExtension: false
+  isPrimary: false
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
+  visibility: Public
+  deprecationStatus: null
+
+KtFirConstructorSymbol:
+  annotatedType: [] java/lang/String
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: null
+  containingClassIdIfNonLocal: java/lang/String
+  dispatchType: null
+  hasStableParameterNames: false
+  isExtension: false
+  isPrimary: false
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: PackageVisibility
+  deprecationStatus: null
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
-  annotationClassIds: [kotlin/Deprecated]
-  annotations: [kotlin/Deprecated(message = Deprecated in Java)]
+  annotationClassIds: [
+    kotlin/Deprecated
+  ]
+  annotations: [
+    kotlin/Deprecated(message = Deprecated in Java)
+      psi: null
+  ]
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1711,5 +1959,10 @@ KtFirConstructorSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(p0), KtFirValueParameterSymbol(p1), KtFirValueParameterSymbol(p2)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+  ]
   visibility: PackageVisibility
+  deprecationStatus: Deprecation(level=WARNING, inheritable=false, message=Deprecated in Java)

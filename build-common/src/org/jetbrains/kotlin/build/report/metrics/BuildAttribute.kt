@@ -15,22 +15,22 @@ enum class BuildAttributeKind : Serializable {
     }
 }
 
-enum class BuildAttribute(val kind: BuildAttributeKind) : Serializable {
-    NO_BUILD_HISTORY(BuildAttributeKind.REBUILD_REASON),
-    NO_ABI_SNAPSHOT(BuildAttributeKind.REBUILD_REASON),
-    CACHE_CORRUPTION(BuildAttributeKind.REBUILD_REASON),
-    UNKNOWN_CHANGES_IN_GRADLE_INPUTS(BuildAttributeKind.REBUILD_REASON),
-    JAVA_CHANGE_UNTRACKED_FILE_IS_REMOVED(BuildAttributeKind.REBUILD_REASON),
-    JAVA_CHANGE_UNEXPECTED_PSI(BuildAttributeKind.REBUILD_REASON),
-    JAVA_CHANGE_UNKNOWN_QUALIFIER(BuildAttributeKind.REBUILD_REASON),
-    DEP_CHANGE_REMOVED_ENTRY(BuildAttributeKind.REBUILD_REASON),
-    DEP_CHANGE_HISTORY_IS_NOT_FOUND(BuildAttributeKind.REBUILD_REASON),
-    DEP_CHANGE_HISTORY_CANNOT_BE_READ(BuildAttributeKind.REBUILD_REASON),
-    DEP_CHANGE_HISTORY_NO_KNOWN_BUILDS(BuildAttributeKind.REBUILD_REASON),
-    DEP_CHANGE_NON_INCREMENTAL_BUILD_IN_DEP(BuildAttributeKind.REBUILD_REASON),
-    IN_PROCESS_EXECUTION(BuildAttributeKind.REBUILD_REASON),
-    OUT_OF_PROCESS_EXECUTION(BuildAttributeKind.REBUILD_REASON),
-    IC_IS_NOT_ENABLED(BuildAttributeKind.REBUILD_REASON);
+enum class BuildAttribute(val kind: BuildAttributeKind, val readableString: String) : Serializable {
+    NO_BUILD_HISTORY(BuildAttributeKind.REBUILD_REASON, "Build history file not found"),
+    NO_ABI_SNAPSHOT(BuildAttributeKind.REBUILD_REASON, "ABI snapshot not found"),
+    CACHE_CORRUPTION(BuildAttributeKind.REBUILD_REASON, "Cache corrupted"),
+    UNKNOWN_CHANGES_IN_GRADLE_INPUTS(BuildAttributeKind.REBUILD_REASON, "Unknown Gradle changes"),
+    JAVA_CHANGE_UNTRACKED_FILE_IS_REMOVED(BuildAttributeKind.REBUILD_REASON, "Untracked Java file is removed"),
+    JAVA_CHANGE_UNEXPECTED_PSI(BuildAttributeKind.REBUILD_REASON, "Java PSI file is expected"),
+    JAVA_CHANGE_UNKNOWN_QUALIFIER(BuildAttributeKind.REBUILD_REASON, "Unknown Java qualifier name"),
+    DEP_CHANGE_REMOVED_ENTRY(BuildAttributeKind.REBUILD_REASON, "Jar file is removed form dependency"),
+    DEP_CHANGE_HISTORY_IS_NOT_FOUND(BuildAttributeKind.REBUILD_REASON, "Dependency history not found"),
+    DEP_CHANGE_HISTORY_CANNOT_BE_READ(BuildAttributeKind.REBUILD_REASON, "Dependency history can not be read"),
+    DEP_CHANGE_HISTORY_NO_KNOWN_BUILDS(BuildAttributeKind.REBUILD_REASON, "Dependency history id not available"),
+    DEP_CHANGE_NON_INCREMENTAL_BUILD_IN_DEP(BuildAttributeKind.REBUILD_REASON, "Non incremental build in history"),
+    IN_PROCESS_EXECUTION(BuildAttributeKind.REBUILD_REASON, "In-process execution"),
+    OUT_OF_PROCESS_EXECUTION(BuildAttributeKind.REBUILD_REASON, "Out of process execution"),
+    IC_IS_NOT_ENABLED(BuildAttributeKind.REBUILD_REASON, "Incremental compilation is not enabled");
 
     companion object {
         const val serialVersionUID = 0L

@@ -3,4 +3,8 @@ public open class WildcardBounds : R|kotlin/Any| {
 
     public constructor(): R|test/WildcardBounds|
 
+    public/*package*/ open class A<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public/*package*/ constructor<T : R|ft<kotlin/Any, kotlin/Any?>|>(): R|test/WildcardBounds.A<T>|
+
+    }
 }

@@ -13,14 +13,13 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumperImpl
 
 class FirDumpHandler(
     testServices: TestServices
 ) : FirAnalysisHandler(testServices) {
-    private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumperImpl()
+    private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper()
 
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {

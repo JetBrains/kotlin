@@ -29,6 +29,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("annotationOnDeclarationWithDifferentArguments.kt")
+    public void testAnnotationOnDeclarationWithDifferentArguments() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/annotationOnDeclarationWithDifferentArguments.kt");
+    }
+
     @TestMetadata("annotationUsedAsAnnotationArgument.kt")
     public void testAnnotationUsedAsAnnotationArgument() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/annotationUsedAsAnnotationArgument.kt");
@@ -616,6 +621,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/namedArrayInAnnotation.kt");
         }
 
+        @TestMetadata("nestedClassInAnnotationArgument.kt")
+        public void testNestedClassInAnnotationArgument() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/arguments/nestedClassInAnnotationArgument.kt");
+        }
+
         @TestMetadata("noParameterForName.kt")
         public void testNoParameterForName() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/noParameterForName.kt");
@@ -946,6 +956,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("tryCatch.kt")
         public void testTryCatch() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/tryCatch.kt");
+        }
+
+        @TestMetadata("variableInitializedInTryBlock.kt")
+        public void testVariableInitializedInTryBlock() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/cfg/variableInitializedInTryBlock.kt");
         }
 
         @TestMetadata("when.kt")
@@ -2580,6 +2595,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/localClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("anonymousInAnonymous.kt")
+        public void testAnonymousInAnonymous() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/anonymousInAnonymous.kt");
+        }
+
         @TestMetadata("implicitInAnonymous.kt")
         public void testImplicitInAnonymous() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/implicitInAnonymous.kt");
@@ -2684,6 +2704,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("protobufExt.kt")
         public void testProtobufExt() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/overrides/protobufExt.kt");
+        }
+
+        @TestMetadata("sameValueParametersDifferentReceiver.kt")
+        public void testSameValueParametersDifferentReceiver() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/overrides/sameValueParametersDifferentReceiver.kt");
         }
 
         @TestMetadata("simple.kt")
@@ -3047,6 +3072,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("equalsAndIdentity.kt")
         public void testEqualsAndIdentity() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/equalsAndIdentity.kt");
+        }
+
+        @TestMetadata("incorrectSmartcastToNothing.kt")
+        public void testIncorrectSmartcastToNothing() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/incorrectSmartcastToNothing.kt");
         }
 
         @TestMetadata("kt10240.kt")

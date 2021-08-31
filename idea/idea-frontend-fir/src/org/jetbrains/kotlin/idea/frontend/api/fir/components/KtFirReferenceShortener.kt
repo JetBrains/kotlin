@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
+import org.jetbrains.kotlin.fir.expressions.FirErrorResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
@@ -315,6 +316,12 @@ private class ElementsToShortenCollector(
         super.visitResolvedQualifier(resolvedQualifier)
 
         processTypeQualifier(resolvedQualifier)
+    }
+
+    override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier) {
+        super.visitErrorResolvedQualifier(errorResolvedQualifier)
+
+        processTypeQualifier(errorResolvedQualifier)
     }
 
     override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {

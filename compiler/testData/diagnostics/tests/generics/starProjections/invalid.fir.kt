@@ -12,9 +12,9 @@ class Inv2<T : Inv2<in T>>(val x: T)
 fun main(a: A<*>, j: JavaClass<*>, i2: Inv2<*>) {
     // Probably it's too restrictive to suppose star projection type here as Any?,
     // but looks like we can refine it later
-    a.foo() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any?>() }
-    j.foo() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any?>() }
-    i2.x checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any?>() }
+    a.foo() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Any?>() }
+    j.foo() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Any?>() }
+    i2.x checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Any?>() }
 
     j.bar(<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>Any()<!>)
     j.bar(null)

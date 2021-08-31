@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker;
-import org.jetbrains.kotlin.types.refinement.TypeRefinement;
 
 import java.util.Collection;
 import java.util.List;

@@ -3,7 +3,7 @@ package foo
 class CC<T>
 class DD<T, T2>
 
-val v1 = D<caret>D<C<caret>C>
+val v1 = D<caret>D<CC>
 
-// REF1: (foo).DD
-// REF2: (foo).CC
+
+

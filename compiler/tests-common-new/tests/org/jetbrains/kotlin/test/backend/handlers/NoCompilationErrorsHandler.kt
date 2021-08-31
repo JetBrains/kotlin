@@ -18,7 +18,7 @@ class NoCompilationErrorsHandler(testServices: TestServices) : ClassicFrontendAn
     testServices,
     failureDisablesNextSteps = true
 ) {
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
     override fun processModule(module: TestModule, info: ClassicFrontendOutputArtifact) {

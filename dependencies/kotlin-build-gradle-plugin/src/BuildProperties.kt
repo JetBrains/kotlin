@@ -80,8 +80,6 @@ class KotlinBuildProperties(
 
     val localBootstrapPath: String? = getOrNull("bootstrap.local.path") as String?
 
-    val useIRForLibraries: Boolean = getBoolean("kotlin.build.useIRForLibraries")
-
     val useFir: Boolean = getBoolean("kotlin.build.useFir")
 
     val useFirForLibraries: Boolean = getBoolean("kotlin.build.useFirForLibraries")
@@ -99,8 +97,6 @@ class KotlinBuildProperties(
     val rootProjectDir: File = propertiesProvider.rootProjectDir
 
     val isKotlinNativeEnabled: Boolean = getBoolean("kotlin.native.enabled")
-
-    val pathToKotlinModularizedTestData: String? = getOrNull("kotlin.fir.modularized.testdata") as String?
 }
 
 private const val extensionName = "kotlinBuildProperties"

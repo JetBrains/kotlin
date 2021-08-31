@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.interpreter.accessesTopLevelOrObjectField
+import org.jetbrains.kotlin.ir.interpreter.fqName
+import org.jetbrains.kotlin.ir.interpreter.isAccessToObject
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -110,7 +112,7 @@ class IrCompileTimeChecker(
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Nothing?): Boolean {
-        // to get object value we need nothing but it will contain only fields with compile time annotation
+        // to get object value we need nothing, but it will contain only fields with compile time annotation
         return true
     }
 
@@ -119,10 +121,7 @@ class IrCompileTimeChecker(
     }
 
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): Boolean {
-        val owner = expression.symbol.owner
-        val parent = owner.parent as IrSymbolOwner
-        val isObjectReceiver = (parent as? IrClass)?.isObject == true && owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER
-        return visitedStack.contains(parent) || isObjectReceiver
+        return visitedStack.contains(expression.symbol.owner.parent) || expression.isAccessToObject()
     }
 
     override fun visitSetValue(expression: IrSetValue, data: Nothing?): Boolean {
@@ -132,7 +131,7 @@ class IrCompileTimeChecker(
     override fun visitGetField(expression: IrGetField, data: Nothing?): Boolean {
         val owner = expression.symbol.owner
         val property = owner.correspondingPropertySymbol?.owner
-        val fqName = owner.fqNameForIrSerialization
+        val fqName = owner.fqName
         fun isJavaStaticWithPrimitiveOrString(): Boolean {
             return owner.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && owner.isStatic &&
                     (owner.type.isPrimitiveType() || owner.type.isStringClassType())
@@ -140,7 +139,7 @@ class IrCompileTimeChecker(
         return when {
             // TODO fix later; used it here because java boolean resolves very strange,
             //  its type is flexible (so its not primitive) and there is no initializer at backing field
-            fqName.toString().let { it == "java.lang.Boolean.FALSE" || it == "java.lang.Boolean.TRUE" } -> true
+            fqName == "java.lang.Boolean.FALSE" || fqName == "java.lang.Boolean.TRUE" -> true
             isJavaStaticWithPrimitiveOrString() -> owner.initializer?.accept(this, data) == true
             expression.receiver == null -> property?.isConst == true && owner.initializer?.accept(this, null) == true
             owner.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && property?.isConst == true -> {
@@ -214,14 +213,12 @@ class IrCompileTimeChecker(
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Nothing?): Boolean {
         return when (expression.operator) {
             IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF,
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
-            IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST, IrTypeOperator.SAFE_CAST,
-            IrTypeOperator.IMPLICIT_NOTNULL -> {
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, IrTypeOperator.IMPLICIT_NOTNULL, IrTypeOperator.SAM_CONVERSION,
+            IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST, IrTypeOperator.SAFE_CAST -> {
                 val operand = expression.typeOperand.classifierOrNull?.owner
                 if (operand is IrTypeParameter && !visitedStack.contains(operand.parent)) return false
                 expression.argument.accept(this, data)
             }
-            IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> false
             else -> false
         }
     }

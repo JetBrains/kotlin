@@ -1,7 +1,6 @@
 // !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 // IGNORE_FIR_DIAGNOSTICS
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 
 // WITH_RUNTIME
 
@@ -15,10 +14,10 @@ annotation class Ann(
         val p6: Float
 )
 
-val prop1: Byte = 10.mod(2)
-val prop2: Short = 10.mod(-3)
+val prop1: Byte = 10.mod(2.toByte())
+val prop2: Short = 10.mod((-3).toShort())
 val prop3: Int = (-10).mod(4)
-val prop4: Long = (-10).mod(-5)
+val prop4: Long = (-10).mod((-5).toLong())
 val prop5: Double = 0.25.mod(-100.0)
 val prop6: Float = 100f.mod(0.33f)
 

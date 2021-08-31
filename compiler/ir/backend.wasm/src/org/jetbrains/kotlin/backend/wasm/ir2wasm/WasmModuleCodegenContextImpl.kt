@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -27,6 +28,9 @@ class WasmModuleCodegenContextImpl(
 ) : WasmModuleCodegenContext {
     private val typeTransformer =
         WasmTypeTransformer(this, backendContext.irBuiltIns)
+
+    override val scratchMemAddr: WasmSymbol<Int>
+        get() = wasmFragment.scratchMemAddr
 
     override fun transformType(irType: IrType): WasmType {
         return with(typeTransformer) { irType.toWasmValueType() }
@@ -54,12 +58,18 @@ class WasmModuleCodegenContextImpl(
         return with(typeTransformer) { irType.toWasmResultType() }
     }
 
+    override fun transformExportedResultType(irType: IrType): WasmType? {
+        // Exported strings are passed as pointers to the raw memory
+        if (irType.getClass() == backendContext.irBuiltIns.stringType.getClass())
+            return WasmI32
+        return with(typeTransformer) { irType.toWasmResultType() }
+    }
+
     override fun transformBlockResultType(irType: IrType): WasmType? {
         return with(typeTransformer) { irType.toWasmBlockResultType() }
     }
 
     override fun referenceStringLiteral(string: String): WasmSymbol<Int> {
-        wasmFragment.stringLiterals.add(string)
         return wasmFragment.stringLiteralId.reference(string)
     }
 

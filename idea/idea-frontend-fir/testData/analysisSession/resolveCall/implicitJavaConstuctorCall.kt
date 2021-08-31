@@ -5,5 +5,3 @@ fun call() {
 
 // FILE: A.java
 class A {}
-
-// CALL: KtFunctionCall: targetFunction = <constructor>(): A

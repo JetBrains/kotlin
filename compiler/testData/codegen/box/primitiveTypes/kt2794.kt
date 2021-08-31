@@ -1,4 +1,4 @@
-fun box () : String {
+fun box() : String {
    val b = 4.toByte()
    val s = 5.toShort()
    val c: Char = 'A'

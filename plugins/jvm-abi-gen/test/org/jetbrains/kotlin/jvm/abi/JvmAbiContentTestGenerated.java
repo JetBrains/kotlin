@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,15 +23,40 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class JvmAbiContentTestGenerated extends AbstractJvmAbiContentTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
     }
 
     public void testAllFilesPresentInContent() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/content"), Pattern.compile("^([^\\.]+)$"), null, false);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/content"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, false);
+    }
+
+    @TestMetadata("annotation")
+    public void testAnnotation() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/content/annotation/");
+    }
+
+    @TestMetadata("annotationInstantiation")
+    public void testAnnotationInstantiation() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/content/annotationInstantiation/");
+    }
+
+    @TestMetadata("anonymousAnnotationInstantiation")
+    public void testAnonymousAnnotationInstantiation() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/content/anonymousAnnotationInstantiation/");
+    }
+
+    @TestMetadata("anonymousWhenMapping")
+    public void testAnonymousWhenMapping() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/content/anonymousWhenMapping/");
     }
 
     @TestMetadata("class")
     public void testClass() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/content/class/");
+    }
+
+    @TestMetadata("whenMapping")
+    public void testWhenMapping() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/content/whenMapping/");
     }
 }

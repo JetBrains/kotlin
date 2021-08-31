@@ -1,0 +1,2 @@
+expression: { /* Return */ }
+expected type: java/lang/Runnable

@@ -5,7 +5,7 @@ fun main(x1: Double?, range: ClosedRange<Double>) {
     }
 
     when {
-        x1 == null -> throw Exception()
+        <!SENSELESS_COMPARISON!>x1 == null<!> -> throw Exception()
         x1 in range -> {}
     }
 }

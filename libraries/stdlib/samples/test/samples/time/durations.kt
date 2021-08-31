@@ -6,6 +6,7 @@
 package samples.time
 
 import samples.*
+import kotlin.test.*
 
 import kotlin.time.*
 
@@ -41,6 +42,28 @@ class Durations {
         assertPrints(Duration.minutes(1230).toString(DurationUnit.SECONDS), "73800s")
     }
 
+    @Sample
+    fun parse() {
+        val isoFormatString = "PT1H30M"
+        val defaultFormatString = "1h 30m"
+        val singleUnitFormatString = "1.5h"
+        val invalidFormatString = "1 hour 30 minutes"
 
+        assertPrints(Duration.parse(isoFormatString), "1h 30m")
+        assertPrints(Duration.parse(defaultFormatString), "1h 30m")
+        assertPrints(Duration.parse(singleUnitFormatString), "1h 30m")
+        assertFails { Duration.parse(invalidFormatString) }
+        assertPrints(Duration.parseOrNull(invalidFormatString), "null")
+    }
+
+    @Sample
+    fun parseIsoString() {
+        val isoFormatString = "PT1H30M"
+        val defaultFormatString = "1h 30m"
+
+        assertPrints(Duration.parseIsoString(isoFormatString), "1h 30m")
+        assertFails { Duration.parseIsoString(defaultFormatString) }
+        assertPrints(Duration.parseIsoStringOrNull(defaultFormatString), "null")
+    }
 
 }

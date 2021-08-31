@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
@@ -259,7 +260,7 @@ class IrDescriptorBasedFunctionFactory(
             buildSimpleType()
         }
         val vDeclaration = irFactory.createValueParameter(
-            offset, offset, classOrigin, vSymbol, Name.special("<this>"), -1, type, null,
+            offset, offset, classOrigin, vSymbol, SpecialNames.THIS, -1, type, null,
             isCrossinline = false,
             isNoinline = false,
             isHidden = false,

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object PrimitiveTypes {
+object StandardTypes {
     val Boolean: ConeClassLikeType = StandardClassIds.Boolean.createType()
     val Char: ConeClassLikeType = StandardClassIds.Char.createType()
     val Byte: ConeClassLikeType = StandardClassIds.Byte.createType()
@@ -23,6 +23,8 @@ object PrimitiveTypes {
     val Long: ConeClassLikeType = StandardClassIds.Long.createType()
     val Float: ConeClassLikeType = StandardClassIds.Float.createType()
     val Double: ConeClassLikeType = StandardClassIds.Double.createType()
+
+    val Any: ConeClassLikeType = StandardClassIds.Any.createType()
 }
 
 private fun ClassId.createType(): ConeClassLikeType = 

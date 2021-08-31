@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class A {
     <!WRONG_MODIFIER_TARGET!>external<!> constructor() {}
     inner class B {

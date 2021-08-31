@@ -27,13 +27,10 @@ public class Derived extends Base {
 
 // FILE: main.kt
 fun main(a: Simple, x: Derived): Unit {
-    // jspecify_nullness_mismatch
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(x, null)<!>.foo()
-    // jspecify_nullness_mismatch, jspecify_nullness_mismatch
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, x)<!>.foo()
+    a.foo(x, null)<!UNSAFE_CALL!>.<!>foo()
+    a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, x)<!UNSAFE_CALL!>.<!>foo()
 
     a.bar().foo()
 
-    // jspecify_nullness_mismatch
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.field<!>.foo()
+    a.field<!UNSAFE_CALL!>.<!>foo()
 }

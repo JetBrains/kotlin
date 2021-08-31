@@ -174,7 +174,7 @@ abstract class AbstractTypeApproximator(
         val needApproximate = conf.localTypes && constructor.isLocalType()
         if (!needApproximate) return null
         val superConstructor = constructor.supertypes().first().typeConstructor()
-        val typeCheckerContext = newBaseTypeCheckerContext(
+        val typeCheckerContext = newTypeCheckerState(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false
         )
@@ -271,7 +271,7 @@ abstract class AbstractTypeApproximator(
         }
         val baseSubType = type.lowerType() ?: nothingType()
 
-        if (conf.capturedType(ctx, type)) {
+        if (!conf.capturedType(ctx, type)) {
             /**
              * Here everything is ok if bounds for this captured type should not be approximated.
              * But. If such bounds contains some unauthorized types, then we cannot leave this captured type "as is".

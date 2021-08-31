@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.test.preprocessors
 
-import org.jetbrains.kotlin.test.frontend.classic.handlers.JspecifyDiagnosticComplianceHandler.Companion.diagnosticsToJspecifyMarks
+import org.jetbrains.kotlin.test.frontend.classic.handlers.diagnosticsToJspecifyMarks
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.*
 

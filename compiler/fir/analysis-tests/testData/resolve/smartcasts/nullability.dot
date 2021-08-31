@@ -1413,4 +1413,59 @@ digraph nullability_kt {
     534 -> {535};
     535 -> {536};
 
+    subgraph cluster_107 {
+        color=red
+        537 [label="Enter function test_14" style="filled" fillcolor=red];
+        subgraph cluster_108 {
+            color=blue
+            538 [label="Enter block"];
+            subgraph cluster_109 {
+                color=blue
+                539 [label="Enter when"];
+                subgraph cluster_110 {
+                    color=blue
+                    540 [label="Enter when branch condition "];
+                    541 [label="Access variable R|<local>/q|"];
+                    542 [label="Access variable R|/Q.data|"];
+                    543 [label="Const: Null(null)"];
+                    544 [label="Equality operator =="];
+                    545 [label="Exit when branch condition"];
+                }
+                546 [label="Synthetic else branch"];
+                547 [label="Enter when branch result"];
+                subgraph cluster_111 {
+                    color=blue
+                    548 [label="Enter block"];
+                    549 [label="Access variable R|<local>/q|"];
+                    550 [label="Access variable R|/Q.data|"];
+                    551 [label="Access variable <Inapplicable(UNSAFE_CALL): /MyData.s>#"];
+                    552 [label="Exit block"];
+                }
+                553 [label="Exit when branch result"];
+                554 [label="Exit when"];
+            }
+            555 [label="Exit block"];
+        }
+        556 [label="Exit function test_14" style="filled" fillcolor=red];
+    }
+    537 -> {538};
+    538 -> {539};
+    539 -> {540};
+    540 -> {541};
+    541 -> {542};
+    542 -> {543};
+    543 -> {544};
+    544 -> {545};
+    545 -> {547 546};
+    546 -> {554};
+    547 -> {548};
+    548 -> {549};
+    549 -> {550};
+    550 -> {551};
+    551 -> {552};
+    552 -> {553};
+    553 -> {554};
+    554 -> {555};
+    555 -> {556};
+
 }

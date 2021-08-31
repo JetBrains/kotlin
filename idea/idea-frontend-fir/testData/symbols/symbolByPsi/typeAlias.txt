@@ -2,8 +2,11 @@ KtFirTypeParameterSymbol:
   isReified: false
   name: T
   origin: SOURCE
-  upperBounds: [kotlin/Any?]
+  upperBounds: [
+    kotlin/Any?
+  ]
   variance: INVARIANT
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -19,17 +22,25 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: X
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: TOP_LEVEL
-  typeParameters: [KtFirTypeParameterSymbol(T)]
+  typeParameters: [
+    KtFirTypeParameterSymbol(T)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirTypeParameterSymbol:
   isReified: false
   name: Z
   origin: SOURCE
-  upperBounds: [kotlin/Any?]
+  upperBounds: [
+    kotlin/Any?
+  ]
   variance: INVARIANT
+  deprecationStatus: null
 
 KtFirTypeAliasSymbol:
   classIdIfNonLocal: Y
@@ -37,3 +48,4 @@ KtFirTypeAliasSymbol:
   name: Y
   origin: SOURCE
   symbolKind: TOP_LEVEL
+  deprecationStatus: null

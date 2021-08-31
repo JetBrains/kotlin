@@ -219,4 +219,17 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    @DisplayName("Should be compatible with project isolation")
+    @GradleTestVersions(minVersion = "7.1.1", maxVersion = "7.1.1")
+    fun testProjectIsolation(gradleVersion: GradleVersion) {
+        project(
+            projectName = "instantExecution",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(configurationCache = true, projectIsolation = true),
+        ) {
+            build(":main-project:compileKotlin")
+        }
+    }
 }

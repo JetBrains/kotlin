@@ -46,4 +46,7 @@ internal class KtFirAnonymousObjectSymbol(
     override fun createPointer(): KtSymbolPointer<KtAnonymousObjectSymbol> =
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)
             ?: throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException("Cannot create pointer for KtFirAnonymousObjectSymbol")
+
+    override fun equals(other: Any?): Boolean = symbolEquals(other)
+    override fun hashCode(): Int = symbolHashCode()
 }

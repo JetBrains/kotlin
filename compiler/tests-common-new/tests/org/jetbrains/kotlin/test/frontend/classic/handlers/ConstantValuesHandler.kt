@@ -48,7 +48,7 @@ class ConstantValuesHandler(testServices: TestServices) : ClassicFrontendAnalysi
         UsesVariableAsConstant
     }
 
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(DiagnosticsDirectives)
 
     private val metaInfoHandler = testServices.globalMetadataInfoHandler

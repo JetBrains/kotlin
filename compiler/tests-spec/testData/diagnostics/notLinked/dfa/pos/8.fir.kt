@@ -56,17 +56,17 @@ fun case_2(a: Inv<Inv<Inv<Inv<Inv<Inv<Int?>?>?>?>?>?>?) {
 fun case_3(a: Inv<Int>?) {
     if (a != null) {
         val b = a
-        if (a == null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & Inv<kotlin.Int>")!>b<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & Inv<kotlin.Int>")!>b<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & Inv<kotlin.Int>")!>b<!>.propT
-            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & Inv<kotlin.Int>")!>b<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & Inv<kotlin.Int>")!>b<!>.propNullableT
-            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & Inv<kotlin.Int>")!>b<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & Inv<kotlin.Int>")!>b<!>.funT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & Inv<kotlin.Int>")!>b<!>.funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & Inv<kotlin.Int>")!>b<!>.funNullableT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & Inv<kotlin.Int>")!>b<!>.funNullableAny()
+        if (<!SENSELESS_COMPARISON!>a == null<!>) {
+            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & kotlin.Nothing")!>b<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & kotlin.Nothing")!>b<!>.equals(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & kotlin.Nothing")!>b<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & kotlin.Nothing")!>b<!>.propAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & kotlin.Nothing")!>b<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & kotlin.Nothing")!>b<!>.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & kotlin.Nothing")!>b<!>.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & kotlin.Nothing")!>b<!>.funAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & kotlin.Nothing")!>b<!>.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>? & kotlin.Nothing")!>b<!>.funNullableAny()
         }
     }
 }

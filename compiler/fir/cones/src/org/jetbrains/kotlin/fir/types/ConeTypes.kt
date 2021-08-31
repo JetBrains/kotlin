@@ -32,6 +32,20 @@ object ConeStarProjection : ConeTypeProjection() {
 
 sealed class ConeKotlinTypeProjection : ConeTypeProjection() {
     abstract val type: ConeKotlinType
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ConeKotlinTypeProjection) return false
+
+        if (kind != other.kind) return false
+        if (type != other.type) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return type.hashCode() * 31 + kind.hashCode()
+    }
 }
 
 data class ConeKotlinTypeProjectionIn(override val type: ConeKotlinType) : ConeKotlinTypeProjection() {
@@ -212,11 +226,10 @@ data class ConeCapturedType(
 
 data class ConeTypeVariableType(
     override val nullability: ConeNullability,
-    override val lookupTag: ConeClassifierLookupTag
+    override val lookupTag: ConeClassifierLookupTag,
+    override val attributes: ConeAttributes = ConeAttributes.Empty,
 ) : ConeLookupTagBasedType() {
     override val typeArguments: Array<out ConeTypeProjection> get() = emptyArray()
-
-    override val attributes: ConeAttributes get() = ConeAttributes.Empty
 }
 
 data class ConeDefinitelyNotNullType(val original: ConeKotlinType) : ConeSimpleKotlinType(), DefinitelyNotNullTypeMarker {
@@ -227,7 +240,7 @@ data class ConeDefinitelyNotNullType(val original: ConeKotlinType) : ConeSimpleK
         get() = ConeNullability.NOT_NULL
 
     override val attributes: ConeAttributes
-        get() = ConeAttributes.Empty
+        get() = original.attributes
 
     companion object
 }
@@ -279,10 +292,10 @@ fun ConeIntersectionType.withAlternative(alternativeType: ConeKotlinType): ConeI
 }
 
 fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
-    return ConeIntersectionType(intersectedTypes.map(func))
+    return ConeIntersectionType(intersectedTypes.map(func), alternativeType?.let(func))
 }
 
-class ConeStubType(val variable: ConeTypeVariable, override val nullability: ConeNullability) : StubTypeMarker, ConeSimpleKotlinType() {
+sealed class ConeStubType(val variable: ConeTypeVariable, override val nullability: ConeNullability) : StubTypeMarker, ConeSimpleKotlinType() {
     override val typeArguments: Array<out ConeTypeProjection>
         get() = emptyArray()
 
@@ -308,6 +321,9 @@ class ConeStubType(val variable: ConeTypeVariable, override val nullability: Con
         return result
     }
 }
+
+class ConeStubTypeForBuilderInference(variable: ConeTypeVariable, nullability: ConeNullability) : ConeStubType(variable, nullability)
+class ConeStubTypeForTypeVariableInSubtyping(variable: ConeTypeVariable, nullability: ConeNullability) : ConeStubType(variable, nullability)
 
 open class ConeTypeVariable(name: String, originalTypeParameter: TypeParameterMarker? = null) : TypeVariableMarker {
     val typeConstructor = ConeTypeVariableTypeConstructor(name, originalTypeParameter)

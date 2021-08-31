@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.isStableSmartcast
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.ImplicitReceiverSmartCast
 import org.jetbrains.kotlin.idea.frontend.api.ImplicitReceiverSmartcastKind
@@ -41,13 +42,13 @@ internal class KtFirSmartcastProvider(
             (extensionReceiver !is FirExpressionWithSmartcast || !extensionReceiver.isStable)
         ) return emptyList()
         buildList {
-            (dispatchReceiver as? FirExpressionWithSmartcast)?.takeIf { it.isStable }?.let { smartCasted ->
+            dispatchReceiver.takeIf { it.isStableSmartcast() }?.let { smartCasted ->
                 ImplicitReceiverSmartCast(
                     smartCasted.typeRef.coneTypeSafe<ConeKotlinType>()?.asKtType() ?: return@let null,
                     ImplicitReceiverSmartcastKind.DISPATCH
                 )
             }?.let(::add)
-            (extensionReceiver as? FirExpressionWithSmartcast)?.takeIf { it.isStable }?.let { smartCasted ->
+            extensionReceiver.takeIf { it.isStableSmartcast() }?.let { smartCasted ->
                 ImplicitReceiverSmartCast(
                     smartCasted.typeRef.coneTypeSafe<ConeKotlinType>()?.asKtType() ?: return@let null,
                     ImplicitReceiverSmartcastKind.EXTENSION

@@ -7,55 +7,42 @@ package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
-import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.classic.ClassicJvmBackendFacade
-import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
-import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
-import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.services.ModuleTransformerForSwitchingBackend
-import org.jetbrains.kotlin.test.services.ModuleTransformerForTwoFilesBoxTests
+import org.jetbrains.kotlin.test.services.SplittingModuleTransformerForBoxTests
 
 @OptIn(TestInfrastructureInternals::class)
-open class AbstractBackendAgainstBackendBoxTestBase(
+abstract class AbstractBoxInlineWithDifferentBackendsTest(
     targetBackend: TargetBackend,
-    val backendForLib: TargetBackend,
-    val backendForMain: TargetBackend
-) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
-    override fun TestConfigurationBuilder.configuration() {
-        commonConfigurationForCodegenTest(
-            FrontendKinds.ClassicFrontend,
-            ::ClassicFrontendFacade,
-            ::ClassicFrontend2ClassicBackendConverter,
-            ::ClassicJvmBackendFacade
-        )
-        useFrontend2BackendConverters(::ClassicFrontend2IrConverter)
-        useBackendFacades(::JvmIrBackendFacade)
+    backendForLib: TargetBackend,
+    backendForMain: TargetBackend
+) : AbstractBoxWithDifferentBackendsTest(targetBackend, backendForLib, backendForMain) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.apply {
+            applyDumpSmapDirective()
 
-        commonHandlersForBoxTest()
-        useInlineHandlers()
+            resetModuleStructureTransformers()
+            useModuleStructureTransformers(
+                SplittingModuleTransformerForBoxTests(),
+                ModuleTransformerForSwitchingBackend(backendForLib, backendForMain)
+            )
 
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor.bind(CodegenTestDirectives.IGNORE_BACKEND_MULTI_MODULE))
-
-        useModuleStructureTransformers(
-            ModuleTransformerForTwoFilesBoxTests(),
-            ModuleTransformerForSwitchingBackend(backendForLib, backendForMain)
-        )
+            configureJvmArtifactsHandlersStep {
+                inlineHandlers()
+            }
+        }
     }
 }
 
-open class AbstractJvmIrAgainstOldBoxInlineTest : AbstractBackendAgainstBackendBoxTestBase(
+open class AbstractJvmIrAgainstOldBoxInlineTest : AbstractBoxInlineWithDifferentBackendsTest(
     targetBackend = TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD,
     backendForLib = TargetBackend.JVM,
     backendForMain = TargetBackend.JVM_IR
 )
 
-open class AbstractJvmOldAgainstIrBoxInlineTest : AbstractBackendAgainstBackendBoxTestBase(
+open class AbstractJvmOldAgainstIrBoxInlineTest : AbstractBoxInlineWithDifferentBackendsTest(
     targetBackend = TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR,
     backendForLib = TargetBackend.JVM_IR,
     backendForMain = TargetBackend.JVM_OLD

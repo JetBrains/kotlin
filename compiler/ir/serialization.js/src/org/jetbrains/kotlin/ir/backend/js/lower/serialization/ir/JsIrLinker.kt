@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.serialization.*
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
 import org.jetbrains.kotlin.ir.backend.js.ic.IcModuleDeserializer
-import org.jetbrains.kotlin.ir.backend.js.ic.IdSignatureSerializerWithForIC
 import org.jetbrains.kotlin.ir.backend.js.ic.SerializedIcData
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -32,17 +30,9 @@ class JsIrLinker(
     override val translationPluginContext: TranslationPluginContext?,
     private val icData: ICData? = null,
     private val loweredIcData: Map<ModuleDescriptor, SerializedIcData> = emptyMap(),
-    private val useGlobalSignatures: Boolean = false,
 ) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, emptyList()) {
 
-    override val fakeOverrideBuilder = FakeOverrideBuilder(
-        this, symbolTable, JsManglerIr, IrTypeSystemContextImpl(builtIns), signatureSerializerFactory = { publicSignatureBuilder, table ->
-            if (useGlobalSignatures) IdSignatureSerializerWithForIC(publicSignatureBuilder, table) else IdSignatureSerializer(
-                publicSignatureBuilder,
-                table
-            )
-        }
-    )
+    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JsManglerIr, IrTypeSystemContextImpl(builtIns))
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
         moduleDescriptor === moduleDescriptor.builtIns.builtInsModule
@@ -62,7 +52,6 @@ class JsIrLinker(
                 klib,
                 strategy,
                 containsErrorCode = klib.libContainsErrorCode,
-                useGlobalSignatures = useGlobalSignatures
             )
         }
         return JsModuleDeserializer(moduleDescriptor, klib, strategy, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT, klib.libContainsErrorCode)
@@ -71,18 +60,14 @@ class JsIrLinker(
     val mapping: JsMapping by lazy { JsMapping(symbolTable.irFactory) }
 
     private inner class JsModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, strategy: DeserializationStrategy, libraryAbiVersion: KotlinAbiVersion, allowErrorCode: Boolean) :
-        BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategy, libraryAbiVersion, allowErrorCode, useGlobalSignatures)
+        BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategy, libraryAbiVersion, allowErrorCode)
 
     override fun maybeWrapWithBuiltInAndInit(
         moduleDescriptor: ModuleDescriptor,
         moduleDeserializer: IrModuleDeserializer
     ): IrModuleDeserializer {
         return if (isBuiltInModule(moduleDescriptor)) {
-            if (useGlobalSignatures) {
-                IrIcModuleDeserializerWithBuiltIns(builtIns, moduleDeserializer)
-            } else {
-                IrModuleDeserializerWithBuiltIns(builtIns, moduleDeserializer)
-            }
+            IrModuleDeserializerWithBuiltIns(builtIns, moduleDeserializer)
         } else moduleDeserializer
     }
 

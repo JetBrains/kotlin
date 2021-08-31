@@ -73,18 +73,6 @@ internal fun createDeprecationDiagnostic(
     }
 }
 
-@DefaultImplementation(CoroutineCompatibilitySupport::class)
-class CoroutineCompatibilitySupport private constructor(val enabled: Boolean) : PlatformSpecificExtension<CoroutineCompatibilitySupport>{
-    @Suppress("unused")
-    constructor() : this(true)
-
-    companion object {
-        val ENABLED = CoroutineCompatibilitySupport(true)
-
-        val DISABLED = CoroutineCompatibilitySupport(false)
-    }
-}
-
 @DefaultImplementation(DeprecationSettings.Default::class)
 interface DeprecationSettings {
     fun propagatedToOverrides(deprecationAnnotation: AnnotationDescriptor): Boolean

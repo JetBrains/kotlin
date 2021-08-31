@@ -450,7 +450,7 @@ private fun isBareTypeParameterWithNullableUpperBound(type: IrType): Boolean {
 
 private val RETENTION_PARAMETER_NAME = Name.identifier("value")
 
-private fun IrClass.getAnnotationRetention(): KotlinRetention? {
+internal fun IrClass.getAnnotationRetention(): KotlinRetention? {
     val retentionArgument =
         getAnnotation(StandardNames.FqNames.retention)?.getValueArgument(RETENTION_PARAMETER_NAME)
                 as? IrGetEnumValue ?: return null

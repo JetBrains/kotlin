@@ -40,7 +40,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = KlibMetadataVersion(*versionArray)
 
-    override val performanceManager:CommonCompilerPerformanceManager by lazy {
+    override val defaultPerformanceManager: CommonCompilerPerformanceManager by lazy {
         K2NativeCompilerPerformanceManager()
     }
 
@@ -130,6 +130,11 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
         with(KonanConfigKeys) {
             with(configuration) {
+                // Can be overwritten by explicit arguments below.
+                parseBinaryOptions(arguments, configuration).forEach { optionWithValue ->
+                    configuration.put(optionWithValue)
+                }
+
                 arguments.kotlinHome?.let { put(KONAN_HOME, it) }
 
                 put(NODEFAULTLIBS, arguments.nodefaultlibs || !arguments.libraryToAddToCache.isNullOrEmpty())
@@ -160,7 +165,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
                 arguments.outputName ?.let { put(OUTPUT, it) }
                 val outputKind = CompilerOutputKind.valueOf(
-                    (arguments.produce ?: "program").toUpperCase())
+                    (arguments.produce ?: "program").uppercase())
                 put(PRODUCE, outputKind)
                 put(METADATA_KLIB, arguments.metadataKlib)
 
@@ -227,7 +232,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
                 put(ENABLE_ASSERTIONS, arguments.enableAssertions)
 
-                val memoryModel = when (arguments.memoryModel) {
+                val memoryModelFromArgument = when (arguments.memoryModel) {
                     "relaxed" -> {
                         configuration.report(STRONG_WARNING, "Relaxed memory model is not yet fully functional")
                         MemoryModel.RELAXED
@@ -240,7 +245,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     }
                 }
 
-                put(MEMORY_MODEL, memoryModel)
+                // TODO: revise priority and/or report conflicting values.
+                val memoryModel = get(BinaryOptions.memoryModel) ?: memoryModelFromArgument
+                put(BinaryOptions.memoryModel, memoryModel)
 
                 when {
                     arguments.generateWorkerTestRunner -> put(GENERATE_TEST_RUNNER, TestRunnerKind.WORKER)
@@ -253,6 +260,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     CHECK_DEPENDENCIES,
                     configuration.kotlinSourceRoots.isNotEmpty()
                             || !arguments.includes.isNullOrEmpty()
+                            || outputKind.isCache
                             || arguments.checkDependencies
                 )
                 if (arguments.friendModules != null)
@@ -318,24 +326,46 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     configuration.report(ERROR, "-Xgc-aggressive is only supported for -memory-model experimental")
                 }
                 put(GARBAGE_COLLECTOR_AGRESSIVE, arguments.gcAggressive)
-                put(CHECK_LLD_COMPATIBILITY, when (val it = arguments.checkLldCompatibility) {
+                put(PROPERTY_LAZY_INITIALIZATION, when (arguments.propertyLazyInitialization) {
+                    null -> {
+                        when (memoryModel) {
+                            MemoryModel.EXPERIMENTAL -> true
+                            else -> false
+                        }
+                    }
                     "enable" -> true
                     "disable" -> false
-                    null -> true
                     else -> {
-                        configuration.report(ERROR, "Unsupported '-Xcheck-compatibility-with-lld' value: $it. Possible values are 'enable'/'disable'")
-                        true
+                        configuration.report(ERROR, "Expected 'enable' or 'disable' for lazy property initialization")
+                        false
                     }
                 })
-                put(RUNTIME_ASSERTS_MODE, when (arguments.runtimeAssertsMode) {
-                    "ignore" -> RuntimeAssertsMode.IGNORE
-                    "log" -> RuntimeAssertsMode.LOG
-                    "panic" -> RuntimeAssertsMode.PANIC
+                put(WORKER_EXCEPTION_HANDLING, when (arguments.workerExceptionHandling) {
+                    null -> if (memoryModel == MemoryModel.EXPERIMENTAL) WorkerExceptionHandling.USE_HOOK else WorkerExceptionHandling.LEGACY
+                    "legacy" -> WorkerExceptionHandling.LEGACY
+                    "use-hook" -> WorkerExceptionHandling.USE_HOOK
                     else -> {
-                        configuration.report(ERROR, "Unsupported runtime asserts mode ${arguments.runtimeAssertsMode}")
-                        RuntimeAssertsMode.IGNORE
+                        configuration.report(ERROR, "Unsupported worker exception handling mode ${arguments.workerExceptionHandling}")
+                        WorkerExceptionHandling.LEGACY
                     }
                 })
+
+                arguments.externalDependencies?.let { put(EXTERNAL_DEPENDENCIES, it) }
+                putIfNotNull(LLVM_VARIANT, when (val variant = arguments.llvmVariant) {
+                    "user" -> LlvmVariant.User
+                    "dev" -> LlvmVariant.Dev
+                    null -> null
+                    else -> {
+                        val file = File(variant)
+                        if (!file.exists) {
+                            configuration.report(ERROR, "`-Xllvm-variant` should be `user`, `dev` or an absolute path. Got: $variant")
+                            null
+                        } else {
+                            LlvmVariant.Custom(file)
+                        }
+                    }
+                })
+                putIfNotNull(RUNTIME_LOGS, arguments.runtimeLogs)
             }
         }
     }
@@ -377,7 +407,7 @@ private fun selectFrameworkType(
         configuration.report(
             STRONG_WARNING,
             "'$STATIC_FRAMEWORK_FLAG' is only supported when producing frameworks, " +
-            "but the compiler is producing ${outputKind.name.toLowerCase()}"
+            "but the compiler is producing ${outputKind.name.lowercase()}"
         )
         false
     } else {
@@ -428,7 +458,7 @@ private fun selectExportedLibraries(
             outputKind != CompilerOutputKind.STATIC && outputKind != CompilerOutputKind.DYNAMIC) {
         configuration.report(STRONG_WARNING,
                 "-Xexport-library is only supported when producing frameworks or native libraries, " +
-                "but the compiler is producing ${outputKind.name.toLowerCase()}")
+                "but the compiler is producing ${outputKind.name.lowercase()}")
 
         emptyList()
     } else {
@@ -446,7 +476,7 @@ private fun selectIncludes(
     return if (includes.isNotEmpty() && outputKind == CompilerOutputKind.LIBRARY) {
         configuration.report(
             ERROR,
-            "The $INCLUDE_ARG flag is not supported when producing ${outputKind.name.toLowerCase()}"
+            "The $INCLUDE_ARG flag is not supported when producing ${outputKind.name.lowercase()}"
         )
         emptyList()
     } else {
@@ -515,7 +545,7 @@ private fun parseShortModuleName(
         configuration.report(
                 STRONG_WARNING,
                 "$SHORT_MODULE_NAME_ARG is only supported when producing a Kotlin library, " +
-                    "but the compiler is producing ${outputKind.name.toLowerCase()}"
+                    "but the compiler is producing ${outputKind.name.lowercase()}"
         )
         null
     } else {
@@ -539,22 +569,64 @@ private fun parseDebugPrefixMap(
     }
 }.toMap()
 
+private class BinaryOptionWithValue<T : Any>(val option: BinaryOption<T>, val value: T)
+
+private fun <T : Any> CompilerConfiguration.put(binaryOptionWithValue: BinaryOptionWithValue<T>) {
+    this.put(binaryOptionWithValue.option.compilerConfigurationKey, binaryOptionWithValue.value)
+}
+
+private fun parseBinaryOptions(
+        arguments: K2NativeCompilerArguments,
+        configuration: CompilerConfiguration
+): List<BinaryOptionWithValue<*>> {
+    val keyValuePairs = parseKeyValuePairs(arguments.binaryOptions, configuration) ?: return emptyList()
+
+    return keyValuePairs.mapNotNull { (key, value) ->
+        val option = BinaryOptions.getByName(key)
+        if (option == null) {
+            configuration.report(STRONG_WARNING, "Unknown binary option '$key'")
+            null
+        } else {
+            parseBinaryOption(option, value, configuration)
+        }
+    }
+}
+
+private fun <T : Any> parseBinaryOption(
+        option: BinaryOption<T>,
+        valueName: String,
+        configuration: CompilerConfiguration
+): BinaryOptionWithValue<T>? {
+    val value = option.valueParser.parse(valueName)
+    return if (value == null) {
+        configuration.report(STRONG_WARNING, "Unknown value '$valueName' of binary option '${option.name}'. " +
+                "Possible values are: ${option.valueParser.validValuesHint}")
+        null
+    } else {
+        BinaryOptionWithValue(option, value)
+    }
+}
+
 private fun parseOverrideKonanProperties(
         arguments: K2NativeCompilerArguments,
         configuration: CompilerConfiguration
-): Map<String, String>? =
-        arguments.overrideKonanProperties?.mapNotNull {
-            val keyValueSeparatorIndex = it.indexOf('=')
-            if (keyValueSeparatorIndex > 0) {
-                it.substringBefore('=') to it.substringAfter('=')
-            } else {
-                configuration.report(
-                        ERROR,
-                        "incorrect property format: expected '<key>=<value>', got '$it'"
-                )
-                null
-            }
-        }?.toMap()
+): Map<String, String>? = parseKeyValuePairs(arguments.overrideKonanProperties, configuration)
+
+private fun parseKeyValuePairs(
+        argumentValue: Array<String>?,
+        configuration: CompilerConfiguration
+): Map<String, String>? = argumentValue?.mapNotNull {
+    val keyValueSeparatorIndex = it.indexOf('=')
+    if (keyValueSeparatorIndex > 0) {
+        it.substringBefore('=') to it.substringAfter('=')
+    } else {
+        configuration.report(
+                ERROR,
+                "incorrect property format: expected '<key>=<value>', got '$it'"
+        )
+        null
+    }
+}?.toMap()
 
 
 

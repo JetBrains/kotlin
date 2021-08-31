@@ -143,7 +143,7 @@ object UncaughtExceptionPath : EdgeLabel(label = "onUncaughtException")
 // TODO: Label `return`ing edge with this.
 class ReturnPath(
     returnTargetSymbol: FirFunctionSymbol<*>
-) : EdgeLabel(label = "return@${returnTargetSymbol.callableId}")
+) : EdgeLabel(label = "\"return@${returnTargetSymbol.callableId}\"")
 
 enum class EdgeKind(
     val usedInDfa: Boolean,

@@ -15,7 +15,7 @@ open class B {
     override fun foo() {
         super.foo()
 
-        super.<!UNRESOLVED_REFERENCE!>bar<!>() // should be ambiguity (NB: really we should have overridden bar in C)
+        <!AMBIGUOUS_SUPER!>super<!>.bar() // should be ambiguity (NB: really we should have overridden bar in C)
 
         super.baz() // Ok
         baz()       // Ok

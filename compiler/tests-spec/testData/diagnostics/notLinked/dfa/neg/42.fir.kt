@@ -153,7 +153,7 @@ fun case_14(x: Any) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Float")!>x<!>.<!UNRESOLVED_REFERENCE!>NaN<!>
         } else {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>x<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
         }
     }
 }

@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.ideaExt.idea
 import java.io.File
 
@@ -9,8 +8,6 @@ plugins {
 
 val compilerModules: Array<String> by rootProject.extra
 val otherCompilerModules = compilerModules.filter { it != path }
-
-val tasksWithWarnings: List<String> by rootProject.extra
 
 val antLauncherJar by configurations.creating
 
@@ -65,18 +62,6 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     apply(plugin = "idea")
     idea {
         this.module.generatedSourceDirs.add(generationRoot)
-    }
-}
-
-if (!kotlinBuildProperties.disableWerror) {
-    allprojects {
-        tasks.withType<KotlinCompile<*>> {
-            if (path !in tasksWithWarnings) {
-                kotlinOptions {
-                    allWarningsAsErrors = true
-                }
-            }
-        }
     }
 }
 

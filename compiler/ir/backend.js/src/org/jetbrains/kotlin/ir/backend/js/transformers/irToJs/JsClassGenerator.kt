@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -162,19 +163,21 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         // interface II : I
         // II.prototype.foo = I.prototype.foo
         if (!irClass.isInterface) {
-            declaration.realOverrideTarget.let {
-                val implClassDeclaration = it.parent as IrClass
+            declaration.collectRealOverrides()
+                .find { it.modality != Modality.ABSTRACT }
+                ?.let {
+                    val implClassDeclaration = it.parent as IrClass
 
-                if (implClassDeclaration.shouldCopyFrom()) {
-                    val implMethodName = context.getNameForMemberFunction(it)
-                    val implClassName = context.getNameForClass(implClassDeclaration)
+                    if (implClassDeclaration.shouldCopyFrom()) {
+                        val implMethodName = context.getNameForMemberFunction(it)
+                        val implClassName = context.getNameForClass(implClassDeclaration)
 
-                    val implClassPrototype = prototypeOf(implClassName.makeRef())
-                    val implMemberRef = JsNameRef(implMethodName, implClassPrototype)
+                        val implClassPrototype = prototypeOf(implClassName.makeRef())
+                        val implMemberRef = JsNameRef(implMethodName, implClassPrototype)
 
-                    classModel.postDeclarationBlock.statements += jsAssignment(memberRef, implMemberRef).makeStmt()
+                        classModel.postDeclarationBlock.statements += jsAssignment(memberRef, implMemberRef).makeStmt()
+                    }
                 }
-            }
         }
 
         return Pair(memberRef, null)
@@ -235,8 +238,12 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private fun isCoroutineClass(): Boolean = irClass.superTypes.any { it.isSuspendFunctionTypeOrSubtype() }
 
     private fun generateSuspendArity(): JsPropertyInitializer {
-        val arity = irClass.declarations.filterIsInstance<IrSimpleFunction>().first { it.isSuspend }.valueParameters.size
-        return JsPropertyInitializer(JsNameRef(Namer.METADATA_SUSPEND_ARITY), JsIntLiteral(arity))
+        val arity = context.staticContext.backendContext.mapping.suspendArityStore[irClass]!!
+            .map { it.valueParameters.size }
+            .distinct()
+            .map { JsIntLiteral(it) }
+
+        return JsPropertyInitializer(JsNameRef(Namer.METADATA_SUSPEND_ARITY), JsArrayLiteral(arity))
     }
 
     private fun generateSuperClasses(): JsPropertyInitializer {
@@ -245,7 +252,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             JsArrayLiteral(
                 irClass.superTypes.mapNotNull {
                     val symbol = it.classifierOrFail as IrClassSymbol
-                    val isFunctionType = it.run { isFunctionOrKFunction() || isSuspendFunctionOrKFunction() }
+                    val isFunctionType = it.isFunctionType()
                     // TODO: make sure that there is a test which breaks when isExternal is used here instead of isEffectivelyExternal
                     val requireInMetadata = if (context.staticContext.backendContext.baseClassIntoMetadata)
                         !it.isAny()
@@ -259,6 +266,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             )
         )
     }
+
+    private fun IrType.isFunctionType() = isFunctionOrKFunction() || isSuspendFunctionOrKFunction()
 
     private fun generateAssociatedKeyProperties(): List<JsPropertyInitializer> {
         var result = emptyList<JsPropertyInitializer>()

@@ -46,6 +46,9 @@ object JvmAbi {
 
     const val IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS = "-impl"
 
+    const val REPEATABLE_ANNOTATION_CONTAINER_NAME = "Container"
+    val REPEATABLE_ANNOTATION_CONTAINER_META_ANNOTATION = ClassId.fromString("kotlin/jvm/internal/RepeatableContainer")
+
     /**
      * @param baseName JVM name of the property getter since Kotlin 1.4, or Kotlin name of the property otherwise.
      */

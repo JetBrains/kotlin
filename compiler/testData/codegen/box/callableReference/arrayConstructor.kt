@@ -1,6 +1,9 @@
 // WITH_RUNTIME
 
 fun g(b: (Int, (Int) -> String) -> Array<String>): Array<String> =
-    b(1) { "OK" }
+    b(1) { "O" }
 
-fun box(): String = g(::Array)[0]
+inline fun h(b: (Int, (Int) -> String) -> Array<String>): Array<String> =
+    b(1) { "K" }
+
+fun box(): String = g(::Array)[0] + h(::Array)[0]

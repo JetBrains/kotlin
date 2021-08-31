@@ -44,6 +44,11 @@ internal object LazyTransformerFactory {
             designation.firFile.moduleData.session,
             scopeSession,
         )
+        FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS -> FirDesignatedAnnotationArgumentsResolveTransformerForIDE(
+            designation,
+            designation.firFile.moduleData.session,
+            scopeSession,
+        )
         FirResolvePhase.CONTRACTS -> FirDesignatedContractsResolveTransformerForIDE(
             designation,
             designation.firFile.moduleData.session,

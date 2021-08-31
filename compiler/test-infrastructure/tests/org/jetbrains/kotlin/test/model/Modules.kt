@@ -16,6 +16,7 @@ data class TestModule(
     val targetPlatform: TargetPlatform,
     val targetBackend: TargetBackend?,
     val frontendKind: FrontendKind<*>,
+    val backendKind: BackendKind<*>,
     val binaryKind: BinaryKind<*>,
     val files: List<TestFile>,
     val allDependencies: List<DependencyDescription>,
@@ -60,6 +61,9 @@ class TestFile(
 ) {
     val name: String = relativePath.split("/").last()
 }
+
+val TestFile.nameWithoutExtension: String
+    get() = name.substringBeforeLast(".")
 
 enum class DependencyRelation {
     RegularDependency,

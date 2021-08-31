@@ -21,7 +21,7 @@ class CodegenHelpersSourceFilesProvider(testServices: TestServices) : Additional
         private const val IR_BACKEND_PATH = "$HELPERS_PATH/CodegenTestHelpersIR.kt"
     }
 
-    override val directives: List<DirectivesContainer> =
+    override val directiveContainers: List<DirectivesContainer> =
         listOf(CodegenTestDirectives)
 
     @OptIn(ExperimentalStdlibApi::class)

@@ -505,10 +505,15 @@ class CallAndReferenceGenerator(
                                 return applyArgumentsWithReorderingIfNeeded(argumentMapping, valueParameters, substitutor, annotationMode)
                             }
                         }
+                        // Case without argument mapping (deserialized annotation)
+                        // TODO: support argument mapping in deserialized annotations and remove me
                         for ((index, argument) in call.arguments.withIndex()) {
-                            val valueParameter = valueParameters?.get(index)
+                            val valueParameter = when (argument) {
+                                is FirNamedArgumentExpression -> valueParameters?.find { it.name == argument.name }
+                                else -> null
+                            } ?: valueParameters?.get(index)
                             val argumentExpression = convertArgument(argument, valueParameter, substitutor)
-                            putValueArgument(index, argumentExpression)
+                            putValueArgument(valueParameters?.indexOf(valueParameter)?.takeIf { it >= 0 } ?: index, argumentExpression)
                         }
                     }
                 } else {
@@ -690,7 +695,7 @@ class CallAndReferenceGenerator(
         // If the type of the argument is already an explicitly subtype of the type of the parameter, we don't need SAM conversion.
         if (argument.typeRef !is FirResolvedTypeRef ||
             AbstractTypeChecker.isSubtypeOf(
-                session.inferenceComponents.ctx.newBaseTypeCheckerContext(
+                session.inferenceComponents.ctx.newTypeCheckerState(
                     errorTypesEqualToAnything = false, stubTypesEqualToAnything = true
                 ),
                 argument.typeRef.coneType,

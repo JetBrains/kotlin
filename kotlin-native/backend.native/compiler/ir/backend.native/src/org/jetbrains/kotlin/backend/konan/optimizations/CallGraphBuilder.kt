@@ -55,7 +55,7 @@ internal class CallGraphBuilder(
         val context: Context,
         val moduleDFG: ModuleDFG,
         val externalModulesDFG: ExternalModulesDFG,
-        val devirtualizationAnalysisResult: Devirtualization.AnalysisResult,
+        val devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult,
         val nonDevirtualizedCallSitesUnfoldFactor: Int
 ) {
 
@@ -77,7 +77,7 @@ internal class CallGraphBuilder(
     private val functionStack = mutableListOf<HandleFunctionParams>()
 
     fun build(): CallGraph {
-        val rootSet = Devirtualization.computeRootSet(context, moduleDFG, externalModulesDFG)
+        val rootSet = DevirtualizationAnalysis.computeRootSet(context, moduleDFG, externalModulesDFG)
         for (symbol in rootSet) {
             val function = moduleDFG.functions[symbol]
             if (function == null)

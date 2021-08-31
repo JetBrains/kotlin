@@ -191,7 +191,9 @@ class ParcelizeIrTransformer(private val context: IrPluginContext, private val a
             }
         }
 
-        val creatorType = androidSymbols.androidOsParcelableCreator.typeWith(declaration.defaultType)
+        // Since the `CREATOR` object cannot refer to the type parameters of the parcelable class we use a star projected type
+        val declarationType = declaration.symbol.starProjectedType
+        val creatorType = androidSymbols.androidOsParcelableCreator.typeWith(declarationType)
 
         if (!declaration.descriptor.hasCreatorField()) {
             declaration.addField {
@@ -217,14 +219,14 @@ class ParcelizeIrTransformer(private val context: IrPluginContext, private val a
                         }
                     }
 
-                    val arrayType = context.irBuiltIns.arrayClass.typeWith(declaration.defaultType.makeNullable())
+                    val arrayType = context.irBuiltIns.arrayClass.typeWith(declarationType.makeNullable())
                     addFunction("newArray", arrayType).apply {
                         overriddenSymbols = listOf(androidSymbols.androidOsParcelableCreator.getSimpleFunction(name.asString())!!)
                         val sizeParameter = addValueParameter("size", context.irBuiltIns.intType)
                         body = context.createIrBuilder(symbol).run {
                             irExprBody(
                                 parcelerNewArray(parcelerObject, sizeParameter)
-                                    ?: irCall(androidSymbols.arrayOfNulls, arrayType).apply {
+                                    ?: irCall(context.irBuiltIns.arrayOfNulls, arrayType).apply {
                                         putTypeArgument(0, arrayType)
                                         putValueArgument(0, irGet(sizeParameter))
                                     }
@@ -232,7 +234,7 @@ class ParcelizeIrTransformer(private val context: IrPluginContext, private val a
                         }
                     }
 
-                    addFunction("createFromParcel", declaration.defaultType).apply {
+                    addFunction("createFromParcel", declarationType).apply {
                         overriddenSymbols = listOf(androidSymbols.androidOsParcelableCreator.getSimpleFunction(name.asString())!!)
                         val parcelParameter = addValueParameter("parcel", androidSymbols.androidOsParcel.defaultType)
 

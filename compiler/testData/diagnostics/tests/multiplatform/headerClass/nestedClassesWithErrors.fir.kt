@@ -5,14 +5,14 @@
 expect class B {
     class N {
         <!EXPECTED_DECLARATION_WITH_BODY!>fun body()<!> {}
-        expect fun extraHeader()
+        <!WRONG_MODIFIER_TARGET!>expect<!> fun extraHeader()
     }
 }
 
 expect class C {
-    expect class N
-    expect enum class E
-    expect inner class I
+    <!WRONG_MODIFIER_TARGET!>expect<!> class N
+    <!WRONG_MODIFIER_TARGET!>expect<!> enum class E
+    <!WRONG_MODIFIER_TARGET!>expect<!> inner class I
 }
 
 expect class D {
@@ -39,7 +39,7 @@ actual class C {
     actual inner class I
 }
 
-<!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>actual class D<!>
+actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>D<!>
 
 actual class E {
     class N

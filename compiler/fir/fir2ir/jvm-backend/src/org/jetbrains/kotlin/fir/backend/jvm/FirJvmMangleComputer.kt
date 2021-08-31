@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
@@ -127,7 +128,7 @@ open class FirJvmMangleComputer(
             return
         }
 
-        val name = (this as? FirSimpleFunction)?.name ?: Name.special("<anonymous>")
+        val name = (this as? FirSimpleFunction)?.name ?: SpecialNames.ANONYMOUS
         builder.append(name.asString())
 
         platformSpecificSuffix()?.let {

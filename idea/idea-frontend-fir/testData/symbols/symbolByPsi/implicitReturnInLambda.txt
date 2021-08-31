@@ -10,6 +10,7 @@ KtFirValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirLocalVariableSymbol:
   annotatedType: [] kotlin/Int
@@ -20,6 +21,7 @@ KtFirLocalVariableSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirAnonymousFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -29,7 +31,10 @@ KtFirAnonymousFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
-  valueParameters: [KtFirValueParameterSymbol(a)]
+  valueParameters: [
+    KtFirValueParameterSymbol(a)
+  ]
+  deprecationStatus: null
 
 KtFirLocalVariableSymbol:
   annotatedType: [] kotlin/Function1<kotlin/Int, kotlin/Int>
@@ -40,6 +45,7 @@ KtFirLocalVariableSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirValueParameterSymbol:
   annotatedType: [] kotlin/Int
@@ -53,6 +59,7 @@ KtFirValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirLocalVariableSymbol:
   annotatedType: [] kotlin/Int
@@ -63,6 +70,7 @@ KtFirLocalVariableSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirAnonymousFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -72,7 +80,10 @@ KtFirAnonymousFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
-  valueParameters: [KtFirValueParameterSymbol(a)]
+  valueParameters: [
+    KtFirValueParameterSymbol(a)
+  ]
+  deprecationStatus: null
 
 KtFirLocalVariableSymbol:
   annotatedType: [] kotlin/Function1<kotlin/Int, kotlin/Int>
@@ -83,6 +94,7 @@ KtFirLocalVariableSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirLocalVariableSymbol:
   annotatedType: [] kotlin/Int
@@ -93,6 +105,7 @@ KtFirLocalVariableSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirAnonymousFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -102,7 +115,10 @@ KtFirAnonymousFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
-  valueParameters: [KtFirValueParameterSymbol(it)]
+  valueParameters: [
+    KtFirValueParameterSymbol(it)
+  ]
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
@@ -127,6 +143,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirValueParameterSymbol:
   annotatedType: [] kotlin/Function1<kotlin/Int, kotlin/Int>
@@ -140,6 +157,7 @@ KtFirValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
@@ -162,5 +180,8 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: TOP_LEVEL
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(lmbd)]
+  valueParameters: [
+    KtFirValueParameterSymbol(lmbd)
+  ]
   visibility: Private
+  deprecationStatus: null

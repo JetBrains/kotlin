@@ -5,16 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory1
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -62,9 +57,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker() {
         lateinit var symbol: FirTypeParameterSymbol
         if (typeArgument is ConeTypeParameterType) {
             factory = if (isArray) {
-                if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNonReifiedArraysAsReifiedTypeArguments))
-                    FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY else
-                    FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY_WARNING
+                FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY.chooseFactory(context)
             } else {
                 FirErrors.TYPE_PARAMETER_AS_REIFIED
             }

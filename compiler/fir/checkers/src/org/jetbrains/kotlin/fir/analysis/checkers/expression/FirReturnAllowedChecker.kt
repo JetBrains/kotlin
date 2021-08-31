@@ -6,14 +6,18 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 
 object FirReturnAllowedChecker : FirReturnExpressionChecker() {
     override fun check(expression: FirReturnExpression, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -24,6 +28,25 @@ object FirReturnAllowedChecker : FirReturnExpressionChecker() {
 
         if (!isReturnAllowed(targetSymbol, context)) {
             reporter.reportOn(source, FirErrors.RETURN_NOT_ALLOWED, context)
+        }
+
+        if (targetSymbol is FirAnonymousFunctionSymbol) {
+            val label = targetSymbol.label
+            if (label?.source?.kind !is FirRealSourceElementKind) {
+                val functionCall = context.qualifiedAccessOrAnnotationCalls.asReversed().find {
+                    it is FirFunctionCall &&
+                            ((it.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirNamedFunctionSymbol)?.callableId ==
+                            FirSuspendCallChecker.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_CALLABLE_ID
+                }
+                if (functionCall is FirFunctionCall &&
+                    functionCall.arguments.any {
+                        it is FirLambdaArgumentExpression &&
+                                (it.expression as? FirAnonymousFunctionExpression)?.anonymousFunction?.symbol == targetSymbol
+                    }
+                ) {
+                    reporter.reportOn(source, FirErrors.RETURN_FOR_BUILT_IN_SUSPEND, context)
+                }
+            }
         }
 
         val containingDeclaration = context.containingDeclarations.last()

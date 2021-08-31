@@ -11,10 +11,12 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
 import org.jetbrains.kotlin.idea.frontend.api.*
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityTokenFactory
 import org.jetbrains.kotlin.psi.KtElement
@@ -35,8 +37,15 @@ class KtFirAnalysisSessionProvider(private val project: Project) : KtAnalysisSes
         }
     }
 
-    @InvalidWayOfUsingAnalysisSession
-    fun getCachedAnalysisSession(resolveState: FirModuleResolveState, token: ValidityToken): KtAnalysisSession? {
+    override fun getAnalysisSessionBySymbol(contextSymbol: KtSymbol): KtAnalysisSession {
+        require(contextSymbol is KtFirSymbol<*>)
+        val resolveState = contextSymbol.firRef.resolveState
+        val token = contextSymbol.token
+        return getCachedAnalysisSession(resolveState, token)
+            ?: error("analysis session was not found for ${contextSymbol::class}, symbol.isValid=${contextSymbol.isValid()}")
+    }
+
+    private fun getCachedAnalysisSession(resolveState: FirModuleResolveState, token: ValidityToken): KtAnalysisSession? {
         return cache.getCachedAnalysisSession(resolveState to token::class)
     }
 

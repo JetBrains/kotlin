@@ -31,10 +31,22 @@ internal object Android {
             "android-${API}/arch-${architectureMap.getValue(target)}"
 }
 
-class ClangArgs(private val configurables: Configurables) : Configurables by configurables {
+sealed class ClangArgs(
+        private val configurables: Configurables,
+        private val forJni: Boolean
+) {
+
+    private val absoluteTargetToolchain = configurables.absoluteTargetToolchain
+    private val absoluteTargetSysRoot = configurables.absoluteTargetSysRoot
+    private val absoluteLlvmHome = configurables.absoluteLlvmHome
+    private val target = configurables.target
+    private val targetTriple = configurables.targetTriple
+
+    // TODO: Should be dropped in favor of real MSVC target.
+    private val argsForWindowsJni = forJni && target == KonanTarget.MINGW_X64
 
     private val clangArgsSpecificForKonanSources
-        get() = runtimeDefinitions.map { "-D$it" }
+        get() = configurables.runtimeDefinitions.map { "-D$it" }
 
     private val binDir = when (HostManager.host) {
         KonanTarget.LINUX_X64 -> "$absoluteTargetToolchain/bin"
@@ -45,34 +57,50 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
     }
     // TODO: Use buildList
     private val commonClangArgs: List<String> = mutableListOf<List<String>>().apply {
-        add(listOf("-B$binDir", "-fno-stack-protector"))
+        // Currently, MinGW toolchain contains old LLVM 8, and -fuse-ld=lld picks linker from there.
+        // And, unfortunately, `-fuse-ld=<absolute path>` doesn't work correctly for MSVC toolchain.
+        // That's why we just don't add $absoluteTargetToolchain/bin to binary search path in case of JNI compilation.
+        // TODO: Can be removed after MinGW sysroot update.
+        if (!argsForWindowsJni) {
+            add(listOf("-B$binDir"))
+        } else {
+            require(configurables is MingwConfigurables)
+            add(configurables.msvc.compilerFlags())
+            add(configurables.windowsKit.compilerFlags())
+            // Do not depend on link.exe from Visual Studio.
+            add(listOf("-fuse-ld=lld"))
+        }
+        add(listOf("-fno-stack-protector"))
         if (configurables is GccConfigurables) {
             add(listOf("--gcc-toolchain=${configurables.absoluteGccToolchain}"))
         }
-        if (configurables is AppleConfigurables) {
-            val osVersionMin = when (target) {
-                // Here we workaround Clang 8 limitation: macOS major version should be 10.
-                // So we compile runtime with version 10.16 and then override version in BitcodeCompiler.
-                // TODO: Fix with LLVM Update.
-                KonanTarget.MACOS_ARM64 -> "10.16"
-                else -> configurables.osVersionMin
+        val targetString: String = when {
+            argsForWindowsJni -> "x86_64-pc-windows-msvc"
+            configurables is AppleConfigurables -> {
+                val osVersionMin = when (target) {
+                    // Here we workaround Clang 8 limitation: macOS major version should be 10.
+                    // So we compile runtime with version 10.16 and then override version in BitcodeCompiler.
+                    // TODO: Fix with LLVM Update.
+                    KonanTarget.MACOS_ARM64 -> "10.16"
+                    else -> configurables.osVersionMin
+                }
+                targetTriple.copy(
+                        architecture = when (targetTriple.architecture) {
+                            // TODO: LLVM 8 doesn't support arm64_32.
+                            //  We can use armv7k because they are compatible at bitcode level.
+                            "arm64_32" -> "armv7k"
+                            else -> targetTriple.architecture
+                        },
+                        os = "${targetTriple.os}$osVersionMin"
+                ).toString()
             }
-            val targetArg = targetTriple.copy(
-                    architecture = when (targetTriple.architecture) {
-                        // TODO: LLVM 8 doesn't support arm64_32.
-                        //  We can use armv7k because they are compatible at bitcode level.
-                        "arm64_32" -> "armv7k"
-                        else -> targetTriple.architecture
-                    },
-                    os = "${targetTriple.os}$osVersionMin"
-            )
-            add(listOf("-target", targetArg.toString()))
-        } else {
-            add(listOf("-target", configurables.targetTriple.toString()))
+            else -> configurables.targetTriple.toString()
         }
+        add(listOf("-target", targetString))
         val hasCustomSysroot = configurables is ZephyrConfigurables
                 || configurables is WasmConfigurables
                 || configurables is AndroidConfigurables
+                || argsForWindowsJni
         if (!hasCustomSysroot) {
             when (configurables) {
                 // isysroot and sysroot on darwin are _almost_ synonyms.
@@ -80,7 +108,6 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                 is AppleConfigurables -> add(listOf("-isysroot", absoluteTargetSysRoot))
                 else -> add(listOf("--sysroot=$absoluteTargetSysRoot"))
             }
-
         }
         // PIC is not required on Windows (and Clang will fail with `error: unsupported option '-fPIC'`)
         if (configurables !is MingwConfigurables) {
@@ -135,8 +162,8 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                 "-nostdinc",
                 // TODO: make it a libGcc property?
                 // We need to get rid of wasm sysroot first.
-                "-isystem $targetToolchain/../lib/gcc/arm-none-eabi/7.2.1/include",
-                "-isystem $targetToolchain/../lib/gcc/arm-none-eabi/7.2.1/include-fixed",
+                "-isystem ${configurables.targetToolchain}/../lib/gcc/arm-none-eabi/7.2.1/include",
+                "-isystem ${configurables.targetToolchain}/../lib/gcc/arm-none-eabi/7.2.1/include-fixed",
                 "-isystem$absoluteTargetSysRoot/include/libcxx",
                 "-isystem$absoluteTargetSysRoot/include/libc"
         ) + (configurables as ZephyrConfigurables).constructClangArgs()
@@ -145,16 +172,6 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
     }
 
     val clangPaths = listOf("$absoluteLlvmHome/bin", binDir)
-
-    private val jdkDir by lazy {
-        val home = File.javaHome.absoluteFile
-        if (home.child("include").exists)
-            home.absolutePath
-        else
-            home.parentFile.absolutePath
-    }
-
-    val hostCompilerArgsForJni = listOf("", HostManager.jniHostPlatformIncludeDir).map { "-I$jdkDir/include/$it" }.toTypedArray()
 
     /**
      * Clang args for Objectice-C and plain C compilation.
@@ -166,12 +183,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
      */
     val clangXXArgs: Array<String> = clangArgs + when (configurables) {
         is AppleConfigurables -> arrayOf(
-                "-stdlib=libc++",
-                // Starting from Xcode 12.5, platform SDKs contain C++ stdlib.
-                // It results in two c++ stdlib in search path (one from LLVM, another from SDK).
-                // We workaround this problem by explicitly specifying path to stdlib.
-                // TODO: Revise after LLVM update.
-                "-nostdinc++", "-isystem", "$absoluteLlvmHome/include/c++/v1"
+                "-stdlib=libc++"
         )
         else -> emptyArray()
     }
@@ -185,7 +197,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             // See e.g. http://lists.llvm.org/pipermail/cfe-dev/2013-November/033680.html
             // We workaround the problem with -isystem flag below.
             // TODO: Revise after update to LLVM 10.
-            listOf("-isystem", "$absoluteLlvmHome/lib/clang/$llvmVersion/include")
+            listOf("-isystem", "$absoluteLlvmHome/lib/clang/${configurables.llvmVersion}/include")
 
     /**
      * libclang args for plain C and Objective-C.
@@ -218,5 +230,31 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
     fun clangCXX(vararg userArgs: String) = targetClangXXCmd + userArgs.asList()
 
     fun llvmAr(vararg userArgs: String) = targetArCmd + userArgs.asList()
+
+    /**
+     * Should be used when compiling library for JNI.
+     * For example, it is used for Kotlin/Native's Clang and LLVM libraries.
+     */
+    class Jni(configurables: Configurables) : ClangArgs(configurables, forJni = true) {
+        private val jdkDir by lazy {
+            val home = File.javaHome.absoluteFile
+            if (home.child("include").exists)
+                home.absolutePath
+            else
+                home.parentFile.absolutePath
+        }
+
+        val hostCompilerArgsForJni: Array<String> by lazy {
+            listOf("", HostManager.jniHostPlatformIncludeDir)
+                    .map { "-I$jdkDir/include/$it" }
+                    .toTypedArray()
+        }
+    }
+
+    /**
+     * Used for compiling native code that meant to be run on end-user's hardware.
+     * E.g., Kotlin/Native runtime and interop stubs.
+     */
+    class Native(configurables: Configurables) : ClangArgs(configurables, forJni = false)
 }
 

@@ -75,8 +75,6 @@ compileTestKotlin {
     ]
 }
 
-configureJvmIrBackend(project)
-
 LibrariesCommon.configureJava9Compilation(project, 'kotlin.stdlib.jdk8')
 
 task testJdk6Tests(type: Test) { thisTask ->

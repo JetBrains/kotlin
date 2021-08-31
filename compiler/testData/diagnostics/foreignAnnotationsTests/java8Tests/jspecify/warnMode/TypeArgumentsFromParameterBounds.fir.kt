@@ -34,12 +34,9 @@ fun main(
     a: A, b: B
 ): Unit {
     a.bar(aNotNullNotNullNotNull)
-    // jspecify_nullness_mismatch
-    a.bar(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>aNotNullNotNullNull<!>)
-    // jspecify_nullness_mismatch
-    a.bar(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>aNotNullNullNotNull<!>)
-    // jspecify_nullness_mismatch
-    a.bar(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>aNotNullNullNull<!>)
+    a.bar(aNotNullNotNullNull)
+    a.bar(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNotNull<!>)
+    a.bar(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
 
     b.bar(aNotNullNotNullNotNull)
     b.bar(aNotNullNotNullNull)

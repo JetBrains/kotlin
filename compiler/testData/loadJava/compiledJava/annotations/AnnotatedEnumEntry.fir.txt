@@ -8,4 +8,12 @@ public final enum class AnnotatedEnumEntry : R|kotlin/Enum<ft<test/AnnotatedEnum
     public final static fun valueOf(value: R|kotlin/String|): R|test/AnnotatedEnumEntry| {
     }
 
+    public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/String|): R|test/AnnotatedEnumEntry.Anno|
+
+    }
+    public final annotation class Anno2 : R|kotlin/Annotation| {
+        public constructor(): R|test/AnnotatedEnumEntry.Anno2|
+
+    }
 }

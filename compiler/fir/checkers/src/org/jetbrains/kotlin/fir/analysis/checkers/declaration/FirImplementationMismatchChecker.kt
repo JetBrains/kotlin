@@ -6,18 +6,20 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
+import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembers
@@ -25,12 +27,14 @@ import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeCheckerState
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 object FirImplementationMismatchChecker : FirClassChecker() {
 
@@ -42,7 +46,7 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         val classKind = declaration.classKind
         if (classKind == ClassKind.ANNOTATION_CLASS || classKind == ClassKind.ENUM_CLASS) return
 
-        val typeCheckerContext = context.session.typeContext.newBaseTypeCheckerContext(
+        val typeCheckerState = context.session.typeContext.newTypeCheckerState(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false
         )
@@ -51,10 +55,10 @@ object FirImplementationMismatchChecker : FirClassChecker() {
 
         for (name in classScope.getCallableNames()) {
             classScope.processFunctionsByName(name) {
-                checkInheritanceClash(declaration, context, dedupReporter, typeCheckerContext, it, classScope)
+                checkInheritanceClash(declaration, context, dedupReporter, typeCheckerState, it, classScope)
             }
             classScope.processPropertiesByName(name) {
-                checkInheritanceClash(declaration, context, dedupReporter, typeCheckerContext, it, classScope)
+                checkInheritanceClash(declaration, context, dedupReporter, typeCheckerState, it, classScope)
                 checkValOverridesVar(declaration, context, dedupReporter, it, classScope)
             }
             checkConflictingMembers(declaration, context, dedupReporter, classScope, name)
@@ -65,7 +69,7 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         containingClass: FirClass,
         context: CheckerContext,
         reporter: DiagnosticReporter,
-        typeCheckerContext: ConeTypeCheckerContext,
+        typeCheckerState: TypeCheckerState,
         symbol: FirCallableSymbol<*>,
         classScope: FirTypeScope
     ) {
@@ -95,9 +99,9 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         ): Boolean {
             val inheritedTypeSubstituted = inheritedType.substituteTypeParameters(inheritedMember, baseMember, context)
             return if (baseMember is FirPropertySymbol && baseMember.isVar)
-                AbstractTypeChecker.equalTypes(typeCheckerContext, inheritedTypeSubstituted, baseType)
+                AbstractTypeChecker.equalTypes(typeCheckerState, inheritedTypeSubstituted, baseType)
             else
-                AbstractTypeChecker.isSubtypeOf(typeCheckerContext, inheritedTypeSubstituted, baseType)
+                AbstractTypeChecker.isSubtypeOf(typeCheckerState, inheritedTypeSubstituted, baseType)
         }
 
         val intersectionSymbols = when {
@@ -182,6 +186,7 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         reporter.reportOn(containingClass.source, FirErrors.VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION, symbol, overriddenVar, context)
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     private fun checkConflictingMembers(
         containingClass: FirClass,
         context: CheckerContext,
@@ -200,7 +205,10 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         }
 
         val sameArgumentGroups = allFunctions.groupBy { function ->
-            function.valueParameterSymbols.map { it.resolvedReturnTypeRef.coneType }
+            buildList<ConeKotlinType> {
+                addIfNotNull(function.resolvedReceiverTypeRef?.type)
+                function.valueParameterSymbols.mapTo(this) { it.resolvedReturnTypeRef.coneType }
+            }
         }.values
 
         val clashes = sameArgumentGroups.mapNotNull { fs ->

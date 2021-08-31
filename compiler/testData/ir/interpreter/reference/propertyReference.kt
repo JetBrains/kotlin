@@ -23,3 +23,10 @@ const val mutablePropertyWithReceiverName = B(10)::b.<!EVALUATED: `b`!>name<!>
 const val mutablePropertyWithReceiverGet = B(11)::b.<!EVALUATED: `11`!>get()<!>
 const val mutablePropertyWithReceiverSet = B(12).apply { this::b.set(13) }.<!EVALUATED: `13`!>b<!>
 const val mutablePropertyWithReceiverInvoke = B(14)::b.<!EVALUATED: `14`!>invoke()<!>
+
+@CompileTimeCalculation
+var <T> T.bar : T
+    get() = this
+    set(value) { }
+
+const val barToString = String::bar.<!EVALUATED: `var T.bar: T`!>toString()<!>

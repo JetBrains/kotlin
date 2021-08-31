@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
@@ -32,8 +33,7 @@ object SelfCallInNestedObjectConstructorChecker : CallChecker {
         if (constructedObject.kind != ClassKind.OBJECT) return
         val containingClass = constructedObject.containingDeclaration as? ClassDescriptor ?: return
         if (candidateDescriptor.constructedClass == containingClass) {
-            val reportError = context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSelfCallsInNestedObjects)
-            val visitor = Visitor(containingClass, context.trace, reportError)
+            val visitor = Visitor(containingClass, context.trace, context.languageVersionSettings)
             resolvedCall.call.valueArgumentList?.accept(visitor)
         }
     }
@@ -41,7 +41,7 @@ object SelfCallInNestedObjectConstructorChecker : CallChecker {
     private class Visitor(
         val containingClass: ClassDescriptor,
         val trace: BindingTrace,
-        val reportError: Boolean
+        val languageVersionSettings: LanguageVersionSettings
     ) : KtVisitorVoid() {
         override fun visitKtElement(element: KtElement) {
             element.acceptChildren(this, null)
@@ -65,12 +65,7 @@ object SelfCallInNestedObjectConstructorChecker : CallChecker {
             val receiverType = receiver?.type ?: return
             val receiverClass = receiverType.constructor.declarationDescriptor as? ClassDescriptor ?: return
             if (DescriptorUtils.isSubclass(receiverClass, containingClass)) {
-                val factory = if (reportError) {
-                    Errors.SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR
-                } else {
-                    Errors.SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_WARNING
-                }
-                trace.report(factory.on(argument))
+                trace.report(Errors.SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR.on(languageVersionSettings, argument))
             }
         }
     }

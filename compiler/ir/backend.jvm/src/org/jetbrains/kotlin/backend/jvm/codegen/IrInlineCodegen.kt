@@ -39,6 +39,38 @@ class IrInlineCodegen(
     InlineCodegen<ExpressionCodegen>(codegen, state, signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner),
     IrInlineCallGenerator {
 
+    private val inlineArgumentsInPlace = canInlineArgumentsInPlace()
+
+    private fun canInlineArgumentsInPlace(): Boolean {
+        if (!function.isInlineOnly())
+            return false
+
+        var actualParametersCount = function.valueParameters.size
+        if (function.dispatchReceiverParameter != null)
+            ++actualParametersCount
+        if (function.extensionReceiverParameter != null)
+            ++actualParametersCount
+        if (actualParametersCount == 0)
+            return false
+
+        if (function.valueParameters.any { it.isInlineParameter() })
+            return false
+
+        return canInlineArgumentsInPlace(sourceCompiler.compileInlineFunction(jvmSignature).node)
+    }
+
+    override fun beforeCallStart() {
+        if (inlineArgumentsInPlace) {
+            codegen.visitor.addInplaceCallStartMarker()
+        }
+    }
+
+    override fun afterCallEnd() {
+        if (inlineArgumentsInPlace) {
+            codegen.visitor.addInplaceCallEndMarker()
+        }
+    }
+
     override fun generateAssertField() {
         // May be inlining code into `<clinit>`, in which case it's too late to modify the IR and
         // `generateAssertFieldIfNeeded` will return a statement for which we need to emit bytecode.
@@ -55,8 +87,8 @@ class IrInlineCodegen(
     ) {
         val isInlineParameter = irValueParameter.isInlineParameter()
         if (isInlineParameter && argumentExpression.isInlineIrExpression()) {
-            val irReference = (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
-            val lambdaInfo = IrExpressionLambdaImpl(codegen, irReference, irValueParameter)
+            val irReference = (argumentExpression as IrBlock).statements.last() as IrFunctionReference
+            val lambdaInfo = IrExpressionLambdaImpl(codegen, irReference)
             rememberClosure(parameterType, irValueParameter.index, lambdaInfo)
             lambdaInfo.generateLambdaBody(sourceCompiler)
             lambdaInfo.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
@@ -65,30 +97,46 @@ class IrInlineCodegen(
                 putCapturedToLocalVal(onStack, param, ir.type.toIrBasedKotlinType())
             }
         } else {
-            val kind = when (irValueParameter.origin) {
-                IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION -> ValueKind.DEFAULT_MASK
-                IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION -> ValueKind.METHOD_HANDLE_IN_DEFAULT
-                else -> when {
-                    argumentExpression is IrContainerExpression && argumentExpression.origin == IrStatementOrigin.DEFAULT_VALUE ->
-                        if (isInlineParameter) ValueKind.DEFAULT_INLINE_PARAMETER else ValueKind.DEFAULT_PARAMETER
-                    // TODO ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND?
-                    isInlineParameter && irValueParameter.type.isSuspendFunctionTypeOrSubtype() ->
-                        ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER
-                    else -> ValueKind.GENERAL
-                }
+            val kind = when {
+                irValueParameter.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION ->
+                    ValueKind.DEFAULT_MASK
+                irValueParameter.origin == IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION ->
+                    ValueKind.METHOD_HANDLE_IN_DEFAULT
+                argumentExpression is IrContainerExpression && argumentExpression.origin == IrStatementOrigin.DEFAULT_VALUE ->
+                    if (isInlineParameter)
+                        ValueKind.DEFAULT_INLINE_PARAMETER
+                    else
+                        ValueKind.DEFAULT_PARAMETER
+                // TODO ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND?
+                isInlineParameter && irValueParameter.type.isSuspendFunctionTypeOrSubtype() ->
+                    ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER
+                else ->
+                    ValueKind.GENERAL
             }
 
             val onStack = when (kind) {
-                ValueKind.METHOD_HANDLE_IN_DEFAULT -> StackValue.constant(null, AsmTypes.OBJECT_TYPE)
-                ValueKind.DEFAULT_MASK -> StackValue.constant((argumentExpression as IrConst<*>).value, Type.INT_TYPE)
-                ValueKind.DEFAULT_PARAMETER, ValueKind.DEFAULT_INLINE_PARAMETER -> StackValue.createDefaultValue(parameterType)
-                // Here we replicate the old backend: reusing the locals for everything except extension receivers.
-                // TODO when stopping at a breakpoint placed in an inline function, arguments which reuse an existing
-                //   local will not be visible in the debugger, so this needs to be reconsidered.
-                else -> if (irValueParameter.index >= 0)
-                    codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo)
-                else
-                    codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
+                ValueKind.METHOD_HANDLE_IN_DEFAULT ->
+                    StackValue.constant(null, AsmTypes.OBJECT_TYPE)
+                ValueKind.DEFAULT_MASK ->
+                    StackValue.constant((argumentExpression as IrConst<*>).value, Type.INT_TYPE)
+                ValueKind.DEFAULT_PARAMETER, ValueKind.DEFAULT_INLINE_PARAMETER ->
+                    StackValue.createDefaultValue(parameterType)
+                else -> {
+                    if (inlineArgumentsInPlace) {
+                        codegen.visitor.addInplaceArgumentStartMarker()
+                    }
+                    // Here we replicate the old backend: reusing the locals for everything except extension receivers.
+                    // TODO when stopping at a breakpoint placed in an inline function, arguments which reuse an existing
+                    //   local will not be visible in the debugger, so this needs to be reconsidered.
+                    val argValue = if (irValueParameter.index >= 0)
+                        codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo)
+                    else
+                        codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
+                    if (inlineArgumentsInPlace) {
+                        codegen.visitor.addInplaceArgumentEndMarker()
+                    }
+                    argValue
+                }
             }
 
             val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toIrBasedKotlinType())
@@ -117,9 +165,8 @@ class IrInlineCodegen(
 class IrExpressionLambdaImpl(
     codegen: ExpressionCodegen,
     val reference: IrFunctionReference,
-    irValueParameter: IrValueParameter
 ) : ExpressionLambda(), IrExpressionLambda {
-    override val isExtensionLambda: Boolean = irValueParameter.type.isExtensionFunctionType && reference.extensionReceiver == null
+    override val isExtensionLambda: Boolean = function.extensionReceiverParameter != null && reference.extensionReceiver == null
 
     val function: IrFunction
         get() = reference.symbol.owner
@@ -167,8 +214,8 @@ fun IrExpression.isInlineIrExpression() =
     when (this) {
         is IrBlock -> origin.isInlineIrExpression()
         is IrCallableReference<*> -> true.also {
-            assert((0 until valueArgumentsCount).count { getValueArgument(it) != null } == 0) {
-                "Expecting 0 value arguments for bounded callable reference: ${dump()}"
+            assert((0 until valueArgumentsCount).none { getValueArgument(it) != null }) {
+                "Expecting 0 value arguments for bound callable reference: ${dump()}"
             }
         }
         else -> false

@@ -46,7 +46,7 @@ internal class DefaultModulesProvider(libraries: Collection<NativeLibrary>) : Mo
         this.moduleInfoMap = moduleInfoMap
     }
 
-    override fun loadModuleInfos(): Collection<ModuleInfo> = moduleInfoMap.values
+    override val moduleInfos: Collection<ModuleInfo> get() = moduleInfoMap.values
 
     override fun loadModuleMetadata(name: String): SerializedMetadata {
         val library = libraryMap[name]?.library ?: error("No such library: $name")

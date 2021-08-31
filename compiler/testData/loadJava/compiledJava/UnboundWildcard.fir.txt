@@ -5,4 +5,6 @@ public final class UnboundWildcard : R|kotlin/Any| {
 
     public constructor(): R|test/UnboundWildcard|
 
+    public abstract interface MyClass<T : R|ft<kotlin/CharSequence, kotlin/CharSequence?>|> : R|kotlin/Any| {
+    }
 }

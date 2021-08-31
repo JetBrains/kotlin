@@ -26,7 +26,7 @@ fun case_4(value_1: Number, block: (() -> Unit)?): Boolean? {
         returns(null) implies (block != null)
     }
 
-    return value_1 == null
+    return <!SENSELESS_COMPARISON!>value_1 == null<!>
 }
 
 // TESTCASE NUMBER: 5
@@ -49,7 +49,7 @@ fun <T> T?.case_6(value_1: Number, value_2: String?): Boolean? {
         returnsNotNull() implies (value_2 != null)
     }<!>
 
-    return value_1 == null
+    return <!SENSELESS_COMPARISON!>value_1 == null<!>
 }
 
 // FILE: main.kt

@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.idea.asJava.applyIf
-import org.jetbrains.kotlin.idea.asJava.ifTrue
 import org.jetbrains.kotlin.idea.frontend.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.idea.frontend.api.components.RendererModifier
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.PublicTypeApproximator
@@ -27,6 +25,8 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal class FirIdeRenderer private constructor(
     private var containingDeclaration: FirDeclaration?,

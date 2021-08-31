@@ -15,22 +15,22 @@ import org.jetbrains.kotlin.fir.originalForIntersectionOverrideAttr
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.components.KtOverrideInfoProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.buildSymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.components.KtFirAnalysisSessionComponent
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.util.ImplementationStatus
 
-class KtFirOverrideInfoProvider(
-    override val analysisSession: KtAnalysisSession,
+internal class KtFirOverrideInfoProvider(
+    override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
-) : KtOverrideInfoProvider() {
-
-    private val firAnalysisSession = analysisSession as KtFirAnalysisSession
+) : KtOverrideInfoProvider(), KtFirAnalysisSessionComponent {
 
     override fun isVisible(memberSymbol: KtCallableSymbol, classSymbol: KtClassOrObjectSymbol): Boolean {
         require(memberSymbol is KtFirSymbol<*>)
@@ -60,7 +60,7 @@ class KtFirOverrideInfoProvider(
                 if (parentClassFir !is FirClass) return@inner null
 
                 memberFir.symbol.getImplementationStatus(
-                    SessionHolderImpl(firAnalysisSession.rootModuleSession, ScopeSession()),
+                    SessionHolderImpl(rootModuleSession, ScopeSession()),
                     parentClassFir.symbol
                 )
             }
@@ -71,9 +71,9 @@ class KtFirOverrideInfoProvider(
         require(symbol is KtFirSymbol<*>)
         return symbol.firRef.withFir(FirResolvePhase.STATUS) { firDeclaration ->
             if (firDeclaration !is FirCallableDeclaration) return@withFir null
-            with(analysisSession) {
-                getOriginalOverriddenSymbol(firDeclaration)?.containingClass()?.classId?.getCorrespondingToplevelClassOrObjectSymbol()
-            }
+            val containingClass =
+                getOriginalOverriddenSymbol(firDeclaration)?.containingClass()?.toSymbol(rootModuleSession) ?: return@withFir null
+            analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(containingClass.fir) as? KtClassOrObjectSymbol
         }
     }
 

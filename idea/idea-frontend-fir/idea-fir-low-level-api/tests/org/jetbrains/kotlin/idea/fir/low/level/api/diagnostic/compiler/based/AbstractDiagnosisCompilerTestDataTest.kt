@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
 
 abstract class AbstractDiagnosisCompilerTestDataTest : AbstractCompilerBasedTest() {
     override fun TestConfigurationBuilder.configureTest() {
-        baseFirDiagnosticTestConfiguration()
+        baseFirDiagnosticTestConfiguration(frontendFacade = ::LowLevelFirFrontendFacade)
         addIdeTestIgnoreHandler()
     }
 }

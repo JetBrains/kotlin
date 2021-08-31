@@ -83,9 +83,6 @@ abstract class KotlinCompileCommon @Inject constructor(
     override fun getSourceRoots(): SourceRoots =
         SourceRoots.KotlinOnly.create(getSource(), sourceFilesExtensions.get())
 
-    override fun findKotlinCompilerClasspath(project: Project): List<File> =
-        findKotlinMetadataCompilerClasspath(project)
-
     override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         args.apply { fillDefaultValues() }
         super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
@@ -124,7 +121,7 @@ abstract class KotlinCompileCommon @Inject constructor(
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
         val environment = GradleCompilerEnvironment(
-            computedCompilerClasspath, messageCollector, outputItemCollector,
+            defaultCompilerClasspath, messageCollector, outputItemCollector,
             reportingSettings = reportingSettings,
             outputFiles = allOutputFiles()
         )

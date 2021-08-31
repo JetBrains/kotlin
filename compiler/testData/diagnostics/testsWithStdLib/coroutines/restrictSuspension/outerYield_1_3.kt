@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ReleaseCoroutines +ExperimentalBuilderInference
 // !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // SKIP_TXT

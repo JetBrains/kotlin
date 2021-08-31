@@ -16,16 +16,16 @@
 
 package example
 
+import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CliOption
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
+import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
-import com.intellij.mock.MockProject
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
 
 public object ExampleConfigurationKeys {
     public val EXAMPLE_KEY: CompilerConfigurationKey<String> = CompilerConfigurationKey.create<String>("example argument")
@@ -46,7 +46,7 @@ public class ExampleCommandLineProcessor : CommandLineProcessor {
         when (option) {
             EXAMPLE_OPTION -> configuration.put(ExampleConfigurationKeys.EXAMPLE_KEY, value)
             EXAMPLE_LEGACY_OPTION -> configuration.put(ExampleConfigurationKeys.EXAMPLE_LEGACY_KEY, value)
-            else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
+            else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
         }
     }
 }

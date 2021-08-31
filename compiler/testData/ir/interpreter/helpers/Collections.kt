@@ -136,6 +136,16 @@ public fun <T, C : MutableCollection<in T>> Iterable<T>.toCollection(destination
     return destination
 }
 
+public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
+    return mapTo(ArrayList<R>(if (this is Collection<*>) this.size else 10), transform)
+}
+
+public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapTo(destination: C, transform: (T) -> R): C {
+    for (item in this)
+        destination.add(transform(item))
+    return destination
+}
+
 internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
     0 -> emptyList()
     1 -> listOf(this[0])

@@ -312,7 +312,7 @@ public final class kotlin/UByteArray : java/util/Collection, kotlin/jvm/internal
 	public fun removeAll (Ljava/util/Collection;)Z
 	public fun retainAll (Ljava/util/Collection;)Z
 	public static final fun set-VurrAj0 ([BIB)V
-	public final fun size ()I
+	public synthetic fun size ()I
 	public fun toArray ()[Ljava/lang/Object;
 	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 	public fun toString ()Ljava/lang/String;
@@ -371,7 +371,7 @@ public final class kotlin/UIntArray : java/util/Collection, kotlin/jvm/internal/
 	public fun removeAll (Ljava/util/Collection;)Z
 	public fun retainAll (Ljava/util/Collection;)Z
 	public static final fun set-VXSXFK8 ([III)V
-	public final fun size ()I
+	public synthetic fun size ()I
 	public fun toArray ()[Ljava/lang/Object;
 	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 	public fun toString ()Ljava/lang/String;
@@ -430,7 +430,7 @@ public final class kotlin/ULongArray : java/util/Collection, kotlin/jvm/internal
 	public fun removeAll (Ljava/util/Collection;)Z
 	public fun retainAll (Ljava/util/Collection;)Z
 	public static final fun set-k8EXiF4 ([JIJ)V
-	public final fun size ()I
+	public synthetic fun size ()I
 	public fun toArray ()[Ljava/lang/Object;
 	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 	public fun toString ()Ljava/lang/String;
@@ -489,7 +489,7 @@ public final class kotlin/UShortArray : java/util/Collection, kotlin/jvm/interna
 	public fun removeAll (Ljava/util/Collection;)Z
 	public fun retainAll (Ljava/util/Collection;)Z
 	public static final fun set-01HTLdE ([SIS)V
-	public final fun size ()I
+	public synthetic fun size ()I
 	public fun toArray ()[Ljava/lang/Object;
 	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 	public fun toString ()Ljava/lang/String;
@@ -605,7 +605,6 @@ public abstract class kotlin/collections/AbstractIterator : java/util/Iterator, 
 }
 
 public abstract class kotlin/collections/AbstractList : kotlin/collections/AbstractCollection, java/util/List, kotlin/jvm/internal/markers/KMappedMarker {
-	public static final field Companion Lkotlin/collections/AbstractList$Companion;
 	protected fun <init> ()V
 	public fun add (ILjava/lang/Object;)V
 	public fun addAll (ILjava/util/Collection;)Z
@@ -624,7 +623,6 @@ public abstract class kotlin/collections/AbstractList : kotlin/collections/Abstr
 }
 
 public abstract class kotlin/collections/AbstractMap : java/util/Map, kotlin/jvm/internal/markers/KMappedMarker {
-	public static final field Companion Lkotlin/collections/AbstractMap$Companion;
 	protected fun <init> ()V
 	public fun clear ()V
 	public fun containsKey (Ljava/lang/Object;)Z
@@ -685,7 +683,6 @@ public abstract class kotlin/collections/AbstractMutableSet : java/util/Abstract
 }
 
 public abstract class kotlin/collections/AbstractSet : kotlin/collections/AbstractCollection, java/util/Set, kotlin/jvm/internal/markers/KMappedMarker {
-	public static final field Companion Lkotlin/collections/AbstractSet$Companion;
 	protected fun <init> ()V
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
@@ -693,7 +690,6 @@ public abstract class kotlin/collections/AbstractSet : kotlin/collections/Abstra
 }
 
 public final class kotlin/collections/ArrayDeque : kotlin/collections/AbstractMutableList {
-	public static final field Companion Lkotlin/collections/ArrayDeque$Companion;
 	public fun <init> ()V
 	public fun <init> (I)V
 	public fun <init> (Ljava/util/Collection;)V
@@ -4035,6 +4031,9 @@ public class kotlin/jvm/internal/ReflectionFactory {
 	public fun setUpperBounds (Lkotlin/reflect/KTypeParameter;Ljava/util/List;)V
 	public fun typeOf (Lkotlin/reflect/KClassifier;Ljava/util/List;Z)Lkotlin/reflect/KType;
 	public fun typeParameter (Ljava/lang/Object;Ljava/lang/String;Lkotlin/reflect/KVariance;Z)Lkotlin/reflect/KTypeParameter;
+}
+
+public abstract interface annotation class kotlin/jvm/internal/RepeatableContainer : java/lang/annotation/Annotation {
 }
 
 public final class kotlin/jvm/internal/ShortCompanionObject {

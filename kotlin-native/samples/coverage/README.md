@@ -1,5 +1,7 @@
 # Code Coverage usage sample
 
+⚠️ Kotlin/Native support for code coverage is [far from beign ready](../../CODE_COVERAGE.md). Anything might be broken.
+
 This example shows how to collect coverage information during execution of the test suite. 
 Please note that this functionality will be incorporated into Gradle plugin so you won't need to do it by hand in the nearest future. 
 

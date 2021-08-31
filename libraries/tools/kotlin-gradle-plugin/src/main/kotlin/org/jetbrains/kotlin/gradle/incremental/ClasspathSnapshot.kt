@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.incremental
 
-import java.io.*
+import org.jetbrains.kotlin.incremental.KotlinClassInfo
 
 /** Snapshot of a classpath. It consists of a list of [ClasspathEntrySnapshot]s. */
 class ClasspathSnapshot(val classpathEntrySnapshots: List<ClasspathEntrySnapshot>)
@@ -18,48 +18,20 @@ class ClasspathEntrySnapshot(
      * jar).
      */
     val classSnapshots: LinkedHashMap<String, ClassSnapshot>
-) : Serializable {
-
-    companion object {
-        private const val serialVersionUID = 0L
-    }
-}
+)
 
 /**
- * Snapshot of a class. It contains information to compute the source files that need to be recompiled during an incremental run of the
- * `KotlinCompile` task.
+ * Snapshot of a class. It contains minimal information about a class to compute the source files that need to be recompiled during an
+ * incremental run of the `KotlinCompile` task.
+ *
+ * It's important that this class contain only the minimal required information, as it will be part of the classpath snapshot of the
+ * `KotlinCompile` task and the task needs to support compile avoidance. For example, this class should contain public method signatures,
+ * and should not contain private method signatures, or method implementations.
  */
-class ClassSnapshot : Serializable {
+sealed class ClassSnapshot
 
-    // TODO WORK-IN-PROGRESS
+/** [ClassSnapshot] of a Kotlin class. */
+class KotlinClassSnapshot(val classInfo: KotlinClassInfo) : ClassSnapshot()
 
-    companion object {
-        private const val serialVersionUID = 0L
-    }
-}
-
-/** Utility to read/write a [ClasspathSnapshot] from/to a file. */
-object ClasspathSnapshotSerializer {
-
-    fun readFromFiles(classpathEntrySnapshotFiles: List<File>): ClasspathSnapshot {
-        return ClasspathSnapshot(classpathEntrySnapshotFiles.map { ClasspathEntrySnapshotSerializer.readFromFile(it) })
-    }
-}
-
-/** Utility to read/write a [ClasspathEntrySnapshot] from/to a file. */
-object ClasspathEntrySnapshotSerializer {
-
-    fun readFromFile(classpathEntrySnapshotFile: File): ClasspathEntrySnapshot {
-        check(classpathEntrySnapshotFile.isFile) { "`${classpathEntrySnapshotFile.path}` does not exist (or is a directory)." }
-        return ObjectInputStream(FileInputStream(classpathEntrySnapshotFile).buffered()).use {
-            it.readObject() as ClasspathEntrySnapshot
-        }
-    }
-
-    fun writeToFile(classpathEntrySnapshot: ClasspathEntrySnapshot, classpathEntrySnapshotFile: File) {
-        check(classpathEntrySnapshotFile.parentFile.exists()) { "Parent dir of `${classpathEntrySnapshotFile.path}` does not exist." }
-        ObjectOutputStream(FileOutputStream(classpathEntrySnapshotFile).buffered()).use {
-            it.writeObject(classpathEntrySnapshot)
-        }
-    }
-}
+/** [ClassSnapshot] of a Java class. */
+object JavaClassSnapshot : ClassSnapshot()

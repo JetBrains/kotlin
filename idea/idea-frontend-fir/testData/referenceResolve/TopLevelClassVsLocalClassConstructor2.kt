@@ -8,4 +8,3 @@ fun test() {
     <caret>Conflict()
 }
 
-// REF: (test).Conflict

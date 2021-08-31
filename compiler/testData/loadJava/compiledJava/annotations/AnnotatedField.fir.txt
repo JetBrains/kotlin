@@ -5,4 +5,8 @@ public open class AnnotatedField : R|kotlin/Any| {
 
     public constructor(): R|test/AnnotatedField|
 
+    public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/String|): R|test/AnnotatedField.Anno|
+
+    }
 }

@@ -25,7 +25,7 @@ abstract class NotRange4() {
 }
 
 abstract class ImproperIterator3 {
-    abstract operator fun hasNext() : Int
+    abstract <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun hasNext() : Int
     abstract operator fun next() : Int
 }
 

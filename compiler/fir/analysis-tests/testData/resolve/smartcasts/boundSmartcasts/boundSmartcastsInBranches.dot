@@ -702,44 +702,45 @@ digraph boundSmartcastsInBranches_kt {
                     293 [label="Access variable R|<local>/x|"];
                     294 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
                     295 [label="Access variable R|<local>/y|"];
-                    296 [label="Access variable R|kotlin/String.length|"];
-                    297 [label="Access variable R|<local>/z|"];
-                    298 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
-                    299 [label="Exit block"];
+                    296 [label="Stub" style="filled" fillcolor=gray];
+                    297 [label="Access variable R|kotlin/String.length|" style="filled" fillcolor=gray];
+                    298 [label="Access variable R|<local>/z|" style="filled" fillcolor=gray];
+                    299 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#" style="filled" fillcolor=gray];
+                    300 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                300 [label="Exit when branch result"];
-                301 [label="Exit when"];
+                301 [label="Exit when branch result" style="filled" fillcolor=gray];
+                302 [label="Exit when"];
             }
             subgraph cluster_67 {
                 color=blue
-                302 [label="Enter when"];
+                303 [label="Enter when"];
                 subgraph cluster_68 {
                     color=blue
-                    303 [label="Enter when branch condition "];
-                    304 [label="Access variable R|<local>/z|"];
-                    305 [label="Const: Null(null)"];
-                    306 [label="Equality operator !="];
-                    307 [label="Exit when branch condition"];
+                    304 [label="Enter when branch condition "];
+                    305 [label="Access variable R|<local>/z|"];
+                    306 [label="Const: Null(null)"];
+                    307 [label="Equality operator !="];
+                    308 [label="Exit when branch condition"];
                 }
-                308 [label="Synthetic else branch"];
-                309 [label="Enter when branch result"];
+                309 [label="Synthetic else branch"];
+                310 [label="Enter when branch result"];
                 subgraph cluster_69 {
                     color=blue
-                    310 [label="Enter block"];
-                    311 [label="Access variable R|<local>/x|"];
-                    312 [label="Access variable R|kotlin/String.length|"];
-                    313 [label="Access variable R|<local>/y|"];
-                    314 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
-                    315 [label="Access variable R|<local>/z|"];
-                    316 [label="Access variable R|kotlin/String.length|"];
-                    317 [label="Exit block"];
+                    311 [label="Enter block"];
+                    312 [label="Access variable R|<local>/x|"];
+                    313 [label="Access variable R|kotlin/String.length|"];
+                    314 [label="Access variable R|<local>/y|"];
+                    315 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    316 [label="Access variable R|<local>/z|"];
+                    317 [label="Access variable R|kotlin/String.length|"];
+                    318 [label="Exit block"];
                 }
-                318 [label="Exit when branch result"];
-                319 [label="Exit when"];
+                319 [label="Exit when branch result"];
+                320 [label="Exit when"];
             }
-            320 [label="Exit block"];
+            321 [label="Exit block"];
         }
-        321 [label="Exit function test_7" style="filled" fillcolor=red];
+        322 [label="Exit function test_7" style="filled" fillcolor=red];
     }
     202 -> {203};
     203 -> {204};
@@ -829,26 +830,27 @@ digraph boundSmartcastsInBranches_kt {
     287 -> {288};
     288 -> {289};
     289 -> {291 290};
-    290 -> {301};
+    290 -> {302};
     291 -> {292};
     292 -> {293};
     293 -> {294};
     294 -> {295};
-    295 -> {296};
-    296 -> {297};
-    297 -> {298};
-    298 -> {299};
-    299 -> {300};
-    300 -> {301};
-    301 -> {302};
+    295 -> {322}    [label=onUncaughtException];
+    295 -> {296} [style=dotted];
+    296 -> {297} [style=dotted];
+    297 -> {298} [style=dotted];
+    298 -> {299} [style=dotted];
+    299 -> {300} [style=dotted];
+    300 -> {301} [style=dotted];
+    301 -> {302} [style=dotted];
     302 -> {303};
     303 -> {304};
     304 -> {305};
     305 -> {306};
     306 -> {307};
-    307 -> {309 308};
-    308 -> {319};
-    309 -> {310};
+    307 -> {308};
+    308 -> {310 309};
+    309 -> {320};
     310 -> {311};
     311 -> {312};
     312 -> {313};
@@ -860,5 +862,6 @@ digraph boundSmartcastsInBranches_kt {
     318 -> {319};
     319 -> {320};
     320 -> {321};
+    321 -> {322};
 
 }

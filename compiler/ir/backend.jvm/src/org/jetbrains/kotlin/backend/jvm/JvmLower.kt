@@ -41,14 +41,14 @@ private class PatchDeclarationParents : FileLoweringPass {
     }
 }
 
-private val validateIrBeforeLowering = makeCustomPhase<JvmBackendContext, IrModuleFragment>(
-    { context, module -> validationCallback(context, module, checkProperties = true) },
+private val validateIrBeforeLowering = makeCustomPhase(
+    ::validateIr,
     name = "ValidateIrBeforeLowering",
     description = "Validate IR before lowering"
 )
 
-private val validateIrAfterLowering = makeCustomPhase<JvmBackendContext, IrModuleFragment>(
-    { context, module -> validationCallback(context, module, checkProperties = true) },
+private val validateIrAfterLowering = makeCustomPhase(
+    ::validateIr,
     name = "ValidateIrAfterLowering",
     description = "Validate IR after lowering"
 )
@@ -323,6 +323,7 @@ private val jvmFilePhases = listOf(
 
     inventNamesForLocalClassesPhase,
     kCallableNamePropertyPhase,
+    repeatedAnnotationPhase,
     annotationPhase,
     annotationImplementationPhase,
     polymorphicSignaturePhase,

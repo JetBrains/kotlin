@@ -107,7 +107,7 @@ fun test_7() {
         y<!UNSAFE_CALL!>.<!>length // Bad
         z.length // OK
     }
-    if (y != null) {
+    if (<!SENSELESS_COMPARISON!>y != null<!>) {
         x<!UNSAFE_CALL!>.<!>length // Bad
         y.length // OK
         z<!UNSAFE_CALL!>.<!>length // Bad

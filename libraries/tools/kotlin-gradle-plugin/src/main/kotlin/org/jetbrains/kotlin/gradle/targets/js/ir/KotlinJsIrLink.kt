@@ -110,7 +110,7 @@ abstract class KotlinJsIrLink @Inject constructor(
                 compilerRunner.get(),
                 { createCompilerArgs() },
                 { objects.fileCollection() },
-                computedCompilerClasspath,
+                defaultCompilerClasspath,
                 logger,
                 reportingSettings
             )

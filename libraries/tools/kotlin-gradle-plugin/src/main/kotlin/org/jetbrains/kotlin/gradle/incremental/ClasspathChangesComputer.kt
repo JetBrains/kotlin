@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.incremental
 
+import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.ICReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.incremental.*
 import java.io.File
 import org.jetbrains.kotlin.gradle.incremental.ChangesCollectorResult.Success
 import org.jetbrains.kotlin.gradle.incremental.ChangesCollectorResult.Failure
+import org.jetbrains.kotlin.incremental.storage.FileToCanonicalPathConverter
+import java.util.*
 
 /** Computes [ClasspathChanges] between two [ClasspathSnapshot]s .*/
 object ClasspathChangesComputer {
@@ -65,20 +66,39 @@ object ClasspathChangesComputer {
         for (key in current.classSnapshots.keys) {
             val currentSnapshot = current.classSnapshots[key]!!
             val previousSnapshot = previous.classSnapshots[key] ?: return Failure.AddedRemovedClasses
-            val result = collectClassChanges(currentSnapshot, previousSnapshot, changesCollector)
-            if (result is Failure) {
-                return result
+            if (currentSnapshot !is KotlinClassSnapshot || previousSnapshot !is KotlinClassSnapshot) {
+                return Failure.NotYetImplemented
             }
+            // TODO: Store results in changesCollector
+            collectKotlinClassChanges(currentSnapshot, previousSnapshot)
         }
         return Success
     }
 
-    private fun collectClassChanges(
-        current: ClassSnapshot,
-        previous: ClassSnapshot,
-        changesCollector: ChangesCollector
-    ): ChangesCollectorResult {
-        return Failure.NotYetImplemented
+    @TestOnly
+    internal fun collectKotlinClassChanges(current: KotlinClassSnapshot, previous: KotlinClassSnapshot): DirtyData {
+        // TODO Create IncrementalJvmCache early once and reuse it here
+        val workingDir =
+            FileUtil.createTempDirectory(this::class.java.simpleName, "_WorkingDir_${UUID.randomUUID()}", /* deleteOnExit */ true)
+        val incrementalJvmCache = IncrementalJvmCache(workingDir, /* targetOutputDir */ null, FileToCanonicalPathConverter)
+
+        // Store previous snapshot in incrementalJvmCache, the returned ChangesCollector result is not used.
+        incrementalJvmCache.saveClassToCache(
+            kotlinClassInfo = previous.classInfo,
+            sourceFiles = null,
+            changesCollector = ChangesCollector()
+        )
+
+        // Compute changes between the current snapshot and the previously stored snapshot, and store the result in changesCollector.
+        val changesCollector = ChangesCollector()
+        incrementalJvmCache.saveClassToCache(
+            kotlinClassInfo = current.classInfo,
+            sourceFiles = null,
+            changesCollector = changesCollector
+        )
+
+        workingDir.deleteRecursively()
+        return changesCollector.getDirtyData(listOf(incrementalJvmCache), NoOpBuildReporter.NoOpICReporter)
     }
 }
 
@@ -106,8 +126,10 @@ private object NoOpBuildReporter : BuildReporter(NoOpICReporter, NoOpBuildMetric
     }
 
     object NoOpBuildMetricsReporter : BuildMetricsReporter {
-        override fun startMeasure(metric: BuildTime, startNs: Long) {}
-        override fun endMeasure(metric: BuildTime, endNs: Long) {}
+        override fun startMeasure(time: BuildTime, startNs: Long) {}
+        override fun endMeasure(time: BuildTime, endNs: Long) {}
+        override fun addTimeMetric(metric: BuildTime, durationMs: Long) {}
+        override fun addMetric(metric: BuildPerformanceMetric, value: Long) {}
         override fun addAttribute(attribute: BuildAttribute) {}
         override fun getMetrics(): BuildMetrics = BuildMetrics()
         override fun addMetrics(metrics: BuildMetrics?) {}

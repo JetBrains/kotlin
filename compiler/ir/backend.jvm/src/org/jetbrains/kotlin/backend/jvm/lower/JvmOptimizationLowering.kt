@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal val jvmOptimizationLoweringPhase = makeIrFilePhase(
     ::JvmOptimizationLowering,
@@ -102,302 +103,362 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
         AsmUtil.isPrimitive(context.typeMapper.mapType(this))
 
     override fun lower(irFile: IrFile) {
-        val transformer = object : IrElementTransformer<IrClass?> {
+        irFile.transformChildren(Transformer(), null)
+    }
 
-            // Thread the current class through the transformations in order to replace
-            // final default accessor calls with direct backing field access when
-            // possible.
-            override fun visitClass(declaration: IrClass, data: IrClass?): IrStatement {
-                declaration.transformChildren(this, declaration)
-                return declaration
+    inner class Transformer : IrElementTransformer<IrClass?> {
+
+        private val dontTouchTemporaryVals = HashSet<IrVariable>()
+
+        // Thread the current class through the transformations in order to replace
+        // final default accessor calls with direct backing field access when
+        // possible.
+        override fun visitClass(declaration: IrClass, data: IrClass?): IrStatement {
+            declaration.transformChildren(this, declaration)
+            return declaration
+        }
+
+        // For some functions, we clear the current class field since the code could end up
+        // in another class then the one it is nested under in the IR.
+        // TODO: Loosen this up for local functions for lambdas passed as an inline lambda
+        // argument to an inline function. In that case the code does end up in the current class.
+        override fun visitFunction(declaration: IrFunction, data: IrClass?): IrStatement {
+            val codeMightBeGeneratedInDifferentClass = declaration.isSuspend ||
+                    declaration.isInline ||
+                    declaration.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+            declaration.transformChildren(this, data.takeUnless { codeMightBeGeneratedInDifferentClass })
+            return declaration
+        }
+
+        override fun visitCall(expression: IrCall, data: IrClass?): IrExpression {
+            expression.transformChildren(this, data)
+
+            if (expression.symbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
+                if (data == null) return expression
+                val simpleFunction = (expression.symbol.owner as? IrSimpleFunction) ?: return expression
+                val property = simpleFunction.correspondingPropertySymbol?.owner ?: return expression
+                if (property.isLateinit) return expression
+                return optimizePropertyAccess(expression, simpleFunction, property, data)
             }
 
-            // For some functions, we clear the current class field since the code could end up
-            // in another class then the one it is nested under in the IR.
-            // TODO: Loosen this up for local functions for lambdas passed as an inline lambda
-            // argument to an inline function. In that case the code does end up in the current class.
-            override fun visitFunction(declaration: IrFunction, data: IrClass?): IrStatement {
-                val codeMightBeGeneratedInDifferentClass = declaration.isSuspend ||
-                        declaration.isInline ||
-                        declaration.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
-                declaration.transformChildren(this, data.takeUnless { codeMightBeGeneratedInDifferentClass })
-                return declaration
+            if (isNegation(expression, context) && isNegation(expression.dispatchReceiver!!, context)) {
+                return (expression.dispatchReceiver as IrCall).dispatchReceiver!!
             }
 
-            override fun visitCall(expression: IrCall, data: IrClass?): IrExpression {
-                expression.transformChildren(this, data)
+            getOperandsIfCallToEQEQOrEquals(expression)?.let { (left, right) ->
+                if (left.isNullConst() && right.isNullConst())
+                    return IrConstImpl.constTrue(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
 
-                if (expression.symbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
-                    if (data == null) return expression
-                    val simpleFunction = (expression.symbol.owner as? IrSimpleFunction) ?: return expression
-                    val property = simpleFunction.correspondingPropertySymbol?.owner ?: return expression
-                    if (property.isLateinit) return expression
-                    return optimizePropertyAccess(expression, simpleFunction, property, data)
-                }
+                if (left.isNullConst() && right is IrConst<*> || right.isNullConst() && left is IrConst<*>)
+                    return IrConstImpl.constFalse(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
 
-                if (isNegation(expression, context) && isNegation(expression.dispatchReceiver!!, context)) {
-                    return (expression.dispatchReceiver as IrCall).dispatchReceiver!!
-                }
-
-                getOperandsIfCallToEQEQOrEquals(expression)?.let { (left, right) ->
-                    if (left.isNullConst() && right.isNullConst())
-                        return IrConstImpl.constTrue(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
-
-                    if (left.isNullConst() && right is IrConst<*> || right.isNullConst() && left is IrConst<*>)
-                        return IrConstImpl.constFalse(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
-
-                    if (expression.symbol == context.irBuiltIns.eqeqSymbol) {
-                        if (right.type.isJvmPrimitive()) {
-                            parseSafeCall(left)?.let { return rewriteSafeCallEqeqPrimitive(it, expression) }
-                        }
-                        if (left.type.isJvmPrimitive()) {
-                            parseSafeCall(right)?.let { return rewritePrimitiveEqeqSafeCall(it, expression) }
-                        }
+                if (expression.symbol == context.irBuiltIns.eqeqSymbol) {
+                    if (right.type.isJvmPrimitive()) {
+                        parseSafeCall(left)?.let { return rewriteSafeCallEqeqPrimitive(it, expression) }
+                    }
+                    if (left.type.isJvmPrimitive()) {
+                        parseSafeCall(right)?.let { return rewritePrimitiveEqeqSafeCall(it, expression) }
                     }
                 }
-
-                return expression
             }
 
-            private fun IrBuilderWithScope.ifSafe(safeCall: SafeCallInfo, expr: IrExpression): IrExpression =
-                irBlock(origin = IrStatementOrigin.SAFE_CALL) {
-                    +safeCall.tmpVal
-                    +irIfThenElse(expr.type, safeCall.ifNullBranch.condition, irFalse(), expr)
-                }
+            return expression
+        }
 
-            // Fuse safe call with primitive equality to avoid boxing the primitive. `a?.x == p`:
-            //     { val tmp = a; if (tmp == null) null else tmp.x } == p`
-            // is transformed to:
-            //     { val tmp = a; if (tmp == null) false else tmp.x == p }
-            // Note that the original IR implied that `p` is always evaluated, but the rewritten version
-            // only does so if `a` is not null. This is how the old backend does it, and it's consistent
-            // with `a?.x?.equals(p)`.
-            private fun rewriteSafeCallEqeqPrimitive(safeCall: SafeCallInfo, eqeqCall: IrCall): IrExpression =
-                context.createJvmIrBuilder(safeCall.scopeSymbol).run {
-                    ifSafe(safeCall, eqeqCall.apply { putValueArgument(0, safeCall.ifNotNullBranch.result) })
-                }
-
-            // Fuse safe call with primitive equality to avoid boxing the primitive. 'p == a?.x':
-            //     p == { val tmp = a; if (tmp == null) null else tmp.x }
-            // is transformed to:
-            //     { val tmp_p = p; { val tmp = a; if (tmp == null) false else p == tmp } }
-            // Note that `p` is evaluated even if `a` is null, which is again consistent with both the old backend
-            // and `p.equals(a?.x)`.
-            private fun rewritePrimitiveEqeqSafeCall(safeCall: SafeCallInfo, eqeqCall: IrCall): IrExpression =
-                context.createJvmIrBuilder(safeCall.scopeSymbol).run {
-                    val primitive = eqeqCall.getValueArgument(0)!!
-                    if (primitive.isTrivial()) {
-                        ifSafe(safeCall, eqeqCall.apply { putValueArgument(1, safeCall.ifNotNullBranch.result) })
-                    } else {
-                        // The extra block for `p`'s variable is intentional as adding it into the inner block
-                        // would make it no longer look like a safe call to `IfNullExpressionFusionLowering`.
-                        irBlock {
-                            +ifSafe(safeCall, eqeqCall.apply {
-                                putValueArgument(0, irGet(irTemporary(primitive)))
-                                putValueArgument(1, safeCall.ifNotNullBranch.result)
-                            })
-                        }
-                    }
-                }
-
-            private fun optimizePropertyAccess(
-                expression: IrCall,
-                accessor: IrSimpleFunction,
-                property: IrProperty,
-                currentClass: IrClass
-            ): IrExpression {
-                if (accessor.parentAsClass == currentClass &&
-                    property.backingField?.parentAsClass == currentClass &&
-                    accessor.modality == Modality.FINAL &&
-                    !accessor.isExternal
-                ) {
-                    val backingField = property.backingField!!
-                    val receiver = expression.dispatchReceiver
-                    return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).irBlock(expression) {
-                        if (backingField.isStatic && receiver != null) {
-                            // If the field is static, evaluate the receiver for potential side effects.
-                            +receiver.coerceToUnit(context.irBuiltIns, this@JvmOptimizationLowering.context.typeSystem)
-                        }
-                        if (accessor.valueParameters.size > 0) {
-                            +irSetField(
-                                receiver.takeUnless { backingField.isStatic },
-                                backingField,
-                                expression.getValueArgument(expression.valueArgumentsCount - 1)!!
-                            )
-                        } else {
-                            +irGetField(receiver.takeUnless { backingField.isStatic }, backingField)
-                        }
-                    }
-                }
-                return expression
+        private fun IrBuilderWithScope.ifSafe(safeCall: SafeCallInfo, expr: IrExpression): IrExpression =
+            irBlock(origin = IrStatementOrigin.SAFE_CALL) {
+                +safeCall.tmpVal
+                +irIfThenElse(expr.type, safeCall.ifNullBranch.condition, irFalse(), expr)
             }
 
-            override fun visitWhen(expression: IrWhen, data: IrClass?): IrExpression {
-                val isCompilerGenerated = expression.origin == null
-                expression.transformChildren(this, data)
-                // Remove all branches with constant false condition.
-                expression.branches.removeIf {
-                    it.condition.isFalseConst() && isCompilerGenerated
-                }
-                if (expression.origin == IrStatementOrigin.ANDAND) {
-                    assert(
-                        expression.type.isBoolean()
-                                && expression.branches.size == 2
-                                && expression.branches[1].condition.isTrueConst()
-                                && expression.branches[1].result.isFalseConst()
-                    ) {
-                        "ANDAND condition should have an 'if true then false' body on its second branch. " +
-                                "Failing expression: ${expression.dump()}"
-                    }
-                    // Replace conjunction condition with intrinsic "and" function call
-                    return IrCallImpl.fromSymbolOwner(
-                        expression.startOffset,
-                        expression.endOffset,
-                        context.irBuiltIns.booleanType,
-                        context.irBuiltIns.andandSymbol
-                    ).apply {
-                        putValueArgument(0, expression.branches[0].condition)
-                        putValueArgument(1, expression.branches[0].result)
-                    }
-                }
-                if (expression.origin == IrStatementOrigin.OROR) {
-                    assert(
-                        expression.type.isBoolean()
-                                && expression.branches.size == 2
-                                && expression.branches[0].result.isTrueConst()
-                                && expression.branches[1].condition.isTrueConst()
-                    ) {
-                        "OROR condition should have an 'if a then true' body on its first branch, " +
-                                "and an 'if true then b' body on its second branch. " +
-                                "Failing expression: ${expression.dump()}"
-                    }
-                    return IrCallImpl.fromSymbolOwner(
-                        expression.startOffset,
-                        expression.endOffset,
-                        context.irBuiltIns.booleanType,
-                        context.irBuiltIns.ororSymbol
-                    ).apply {
-                        putValueArgument(0, expression.branches[0].condition)
-                        putValueArgument(1, expression.branches[1].result)
-                    }
-                }
-                // If the only condition that is left has a constant true condition remove the
-                // when in favor of the result. If there are no conditions left, remove the when
-                // entirely and replace it with an empty block.
-                return if (expression.branches.size == 0) {
-                    IrBlockImpl(expression.startOffset, expression.endOffset, context.irBuiltIns.unitType)
+        // Fuse safe call with primitive equality to avoid boxing the primitive. `a?.x == p`:
+        //     { val tmp = a; if (tmp == null) null else tmp.x } == p`
+        // is transformed to:
+        //     { val tmp = a; if (tmp == null) false else tmp.x == p }
+        // Note that the original IR implied that `p` is always evaluated, but the rewritten version
+        // only does so if `a` is not null. This is how the old backend does it, and it's consistent
+        // with `a?.x?.equals(p)`.
+        private fun rewriteSafeCallEqeqPrimitive(safeCall: SafeCallInfo, eqeqCall: IrCall): IrExpression =
+            context.createJvmIrBuilder(safeCall.scopeSymbol).run {
+                ifSafe(safeCall, eqeqCall.apply { putValueArgument(0, safeCall.ifNotNullBranch.result) })
+            }
+
+        // Fuse safe call with primitive equality to avoid boxing the primitive. 'p == a?.x':
+        //     p == { val tmp = a; if (tmp == null) null else tmp.x }
+        // is transformed to:
+        //     { val tmp_p = p; { val tmp = a; if (tmp == null) false else p == tmp } }
+        // Note that `p` is evaluated even if `a` is null, which is again consistent with both the old backend
+        // and `p.equals(a?.x)`.
+        private fun rewritePrimitiveEqeqSafeCall(safeCall: SafeCallInfo, eqeqCall: IrCall): IrExpression =
+            context.createJvmIrBuilder(safeCall.scopeSymbol).run {
+                val primitive = eqeqCall.getValueArgument(0)!!
+                if (primitive.isTrivial()) {
+                    ifSafe(safeCall, eqeqCall.apply { putValueArgument(1, safeCall.ifNotNullBranch.result) })
                 } else {
-                    expression.branches.first().takeIf { it.condition.isTrueConst() && isCompilerGenerated }?.result ?: expression
-                }
-            }
-
-            private fun isImmutableTemporaryVariableWithConstantValue(statement: IrStatement): Boolean {
-                return statement is IrVariable &&
-                        statement.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE &&
-                        !statement.isVar &&
-                        statement.initializer is IrConst<*>
-            }
-
-            private fun removeUnnecessaryTemporaryVariables(statements: MutableList<IrStatement>) {
-                // Remove declarations of immutable temporary variables with constant values.
-                // IrGetValue operations for such temporary variables are replaced
-                // by the initializer IrConst. This makes sure that we do not load and
-                // store constants in/from locals. For example
-                //
-                //     "StringConstant"!!
-                //
-                // introduces a temporary variable for the string constant and generates
-                // a null check
-                //
-                //     block
-                //       temp = "StringConstant"
-                //       when (eq(temp, null))
-                //          (true) -> throwNpe()
-                //          (false) -> temp
-                //
-                // When generating code, this stores the string constant in a local and loads
-                // it from there. The removal of the temporary and the replacement of the loads
-                // of the temporary (see visitGetValue) with the constant avoid generating local
-                // loads and stores by turning this into
-                //
-                //     block
-                //       when (eq("StringConstant", null))
-                //          (true) -> throwNpe()
-                //          (false) -> "StringConstant"
-                //
-                // which allows the equality check to be simplified away and we end up with
-                // just a const string load.
-                statements.removeIf {
-                    isImmutableTemporaryVariableWithConstantValue(it)
-                }
-
-                // Remove a block that contains only two statements: the declaration of a temporary
-                // variable and a load of the value of that temporary variable with just the initializer
-                // for the temporary variable. We only perform this transformation for compiler generated
-                // temporary variables. Local variables can be changed at runtime and therefore eliminating
-                // an actual local variable changes debugging behavior.
-                //
-                // This helps avoid temporary variables even for side-effecting expressions when they are
-                // not needed. Having a temporary variable leads to local loads and stores in the
-                // generated java bytecode which are not necessary. For example
-                //
-                //     42.toLong()!!
-                //
-                // introduces a temporary variable for the toLong() call and a null check
-                //    block
-                //      temp = 42.toLong()
-                //      when (eq(temp, null))
-                //        (true) -> throwNep()
-                //        (false) -> temp
-                //
-                // the when is simplified because long is a primitive type, which leaves us with
-                //
-                //    block
-                //      temp = 42.toLong()
-                //      temp
-                //
-                // which can be simplified to simply
-                //
-                //    block
-                //      42.toLong()
-                //
-                // Doing so we avoid local loads and stores.
-                if (statements.size == 2) {
-                    val first = statements[0]
-                    val second = statements[1]
-                    if (first is IrVariable
-                        && first.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
-                        && second is IrGetValue
-                        && first.symbol == second.symbol
-                    ) {
-                        statements.clear()
-                        first.initializer?.let { statements.add(it) }
+                    // The extra block for `p`'s variable is intentional as adding it into the inner block
+                    // would make it no longer look like a safe call to `IfNullExpressionFusionLowering`.
+                    irBlock {
+                        +ifSafe(safeCall, eqeqCall.apply {
+                            putValueArgument(0, irGet(irTemporary(primitive)))
+                            putValueArgument(1, safeCall.ifNotNullBranch.result)
+                        })
                     }
                 }
             }
 
-            override fun visitBlockBody(body: IrBlockBody, data: IrClass?): IrBody {
-                body.transformChildren(this, data)
-                removeUnnecessaryTemporaryVariables(body.statements)
-                return body
+        private fun optimizePropertyAccess(
+            expression: IrCall,
+            accessor: IrSimpleFunction,
+            property: IrProperty,
+            currentClass: IrClass
+        ): IrExpression {
+            if (accessor.parentAsClass == currentClass &&
+                property.backingField?.parentAsClass == currentClass &&
+                accessor.modality == Modality.FINAL &&
+                !accessor.isExternal
+            ) {
+                val backingField = property.backingField!!
+                val receiver = expression.dispatchReceiver
+                return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).irBlock(expression) {
+                    if (backingField.isStatic && receiver != null && receiver !is IrGetValue) {
+                        // If the field is static, evaluate the receiver for potential side effects.
+                        +receiver.coerceToUnit(context.irBuiltIns, this@JvmOptimizationLowering.context.typeSystem)
+                    }
+                    if (accessor.valueParameters.isNotEmpty()) {
+                        +irSetField(
+                            receiver.takeUnless { backingField.isStatic },
+                            backingField,
+                            expression.getValueArgument(expression.valueArgumentsCount - 1)!!
+                        )
+                    } else {
+                        +irGetField(receiver.takeUnless { backingField.isStatic }, backingField)
+                    }
+                }
+            }
+            return expression
+        }
+
+        override fun visitWhen(expression: IrWhen, data: IrClass?): IrExpression {
+            val isCompilerGenerated = expression.origin == null
+            expression.transformChildren(this, data)
+            // Remove all branches with constant false condition.
+            expression.branches.removeIf {
+                it.condition.isFalseConst() && isCompilerGenerated
+            }
+            if (expression.origin == IrStatementOrigin.ANDAND) {
+                assert(
+                    expression.type.isBoolean()
+                            && expression.branches.size == 2
+                            && expression.branches[1].condition.isTrueConst()
+                            && expression.branches[1].result.isFalseConst()
+                ) {
+                    "ANDAND condition should have an 'if true then false' body on its second branch. " +
+                            "Failing expression: ${expression.dump()}"
+                }
+                // Replace conjunction condition with intrinsic "and" function call
+                return IrCallImpl.fromSymbolOwner(
+                    expression.startOffset,
+                    expression.endOffset,
+                    context.irBuiltIns.booleanType,
+                    context.irBuiltIns.andandSymbol
+                ).apply {
+                    putValueArgument(0, expression.branches[0].condition)
+                    putValueArgument(1, expression.branches[0].result)
+                }
+            }
+            if (expression.origin == IrStatementOrigin.OROR) {
+                assert(
+                    expression.type.isBoolean()
+                            && expression.branches.size == 2
+                            && expression.branches[0].result.isTrueConst()
+                            && expression.branches[1].condition.isTrueConst()
+                ) {
+                    "OROR condition should have an 'if a then true' body on its first branch, " +
+                            "and an 'if true then b' body on its second branch. " +
+                            "Failing expression: ${expression.dump()}"
+                }
+                return IrCallImpl.fromSymbolOwner(
+                    expression.startOffset,
+                    expression.endOffset,
+                    context.irBuiltIns.booleanType,
+                    context.irBuiltIns.ororSymbol
+                ).apply {
+                    putValueArgument(0, expression.branches[0].condition)
+                    putValueArgument(1, expression.branches[1].result)
+                }
             }
 
-            override fun visitContainerExpression(expression: IrContainerExpression, data: IrClass?): IrExpression {
-                expression.transformChildren(this, data)
-                removeUnnecessaryTemporaryVariables(expression.statements)
-                return expression
+            // If there are no conditions left, remove the 'when' entirely and replace it with an empty block.
+            if (expression.branches.size == 0) {
+                return IrBlockImpl(expression.startOffset, expression.endOffset, context.irBuiltIns.unitType)
             }
 
-            override fun visitGetValue(expression: IrGetValue, data: IrClass?): IrExpression {
-                // Replace IrGetValue of an immutable temporary variable with a constant
-                // initializer with the constant initializer.
-                val variable = expression.symbol.owner
-                return if (isImmutableTemporaryVariableWithConstantValue(variable))
-                    ((variable as IrVariable).initializer!! as IrConst<*>).copyWithOffsets(expression.startOffset, expression.endOffset)
-                else
+            // If the only condition that is left has a constant true condition, remove the 'when' in favor of the result.
+            val firstBranch = expression.branches.first()
+            if (firstBranch.condition.isTrueConst() && isCompilerGenerated) {
+                return firstBranch.result
+            }
+
+            return expression
+        }
+
+        private fun getInlineableValueForTemporaryVal(statement: IrStatement): IrExpression? {
+            val variable = statement as? IrVariable ?: return null
+            if (variable.origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE || variable.isVar) return null
+            if (variable in dontTouchTemporaryVals) return null
+
+            when (val initializer = variable.initializer) {
+                is IrConst<*> ->
+                    return initializer
+                is IrGetValue ->
+                    when (val initializerValue = initializer.symbol.owner) {
+                        is IrVariable ->
+                            return when {
+                                initializerValue.isVar ->
+                                    null
+                                initializerValue.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE ->
+                                    getInlineableValueForTemporaryVal(initializerValue)
+                                        ?: initializer
+                                else ->
+                                    initializer
+                            }
+                        is IrValueParameter ->
+                            return if (initializerValue.isAssignable)
+                                null
+                            else
+                                initializer
+                    }
+            }
+
+            return null
+        }
+
+        private fun removeUnnecessaryTemporaryVariables(statements: MutableList<IrStatement>) {
+            // Remove declarations of immutable temporary variables that can be inlined.
+            statements.removeIf {
+                getInlineableValueForTemporaryVal(it) != null
+            }
+
+            // Remove a block that contains only two statements: the declaration of a temporary
+            // variable and a load of the value of that temporary variable with just the initializer
+            // for the temporary variable. We only perform this transformation for compiler generated
+            // temporary variables. Local variables can be changed at runtime and therefore eliminating
+            // an actual local variable changes debugging behavior.
+            //
+            // This helps avoid temporary variables even for side-effecting expressions when they are
+            // not needed. Having a temporary variable leads to local loads and stores in the
+            // generated java bytecode which are not necessary. For example
+            //
+            //     42.toLong()!!
+            //
+            // introduces a temporary variable for the toLong() call and a null check
+            //    block
+            //      temp = 42.toLong()
+            //      when (eq(temp, null))
+            //        (true) -> throwNep()
+            //        (false) -> temp
+            //
+            // the when is simplified because long is a primitive type, which leaves us with
+            //
+            //    block
+            //      temp = 42.toLong()
+            //      temp
+            //
+            // which can be simplified to simply
+            //
+            //    block
+            //      42.toLong()
+            //
+            // Doing so we avoid local loads and stores.
+            if (statements.size == 2) {
+                val first = statements[0]
+                val second = statements[1]
+                if (first is IrVariable
+                    && first.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+                    && second is IrGetValue
+                    && first.symbol == second.symbol
+                ) {
+                    statements.clear()
+                    first.initializer?.let { statements.add(it) }
+                }
+            }
+        }
+
+        override fun visitBlockBody(body: IrBlockBody, data: IrClass?): IrBody {
+            body.transformChildren(this, data)
+            removeUnnecessaryTemporaryVariables(body.statements)
+            return body
+        }
+
+        override fun visitContainerExpression(expression: IrContainerExpression, data: IrClass?): IrExpression {
+            val safeCall = parseSafeCall(expression)
+            if (safeCall != null) {
+                // Don't optimize out temporary values for safe calls (yet), so that safe call-based equality checks can be optimized.
+                dontTouchTemporaryVals.add(safeCall.tmpVal)
+            }
+
+            if (expression.origin == IrStatementOrigin.WHEN) {
+                // Don't optimize out 'when' subject initialized with a variable,
+                // otherwise we might get somewhat weird debugging behavior.
+                val subject = expression.statements.firstOrNull()
+                if (subject is IrVariable && subject.initializer is IrGetValue) {
+                    dontTouchTemporaryVals.add(subject)
+                }
+            }
+
+            if (expression.origin == IrStatementOrigin.POSTFIX_DECR || expression.origin == IrStatementOrigin.POSTFIX_INCR) {
+                expression.rewritePostfixIncrDecr()?.let { return it }
+            }
+
+            expression.transformChildren(this, data)
+            removeUnnecessaryTemporaryVariables(expression.statements)
+            return expression
+        }
+
+        private fun IrContainerExpression.rewritePostfixIncrDecr(): IrCall? {
+            return when (origin) {
+                IrStatementOrigin.POSTFIX_INCR, IrStatementOrigin.POSTFIX_DECR -> {
+                    val tmpVar = this.statements[0] as? IrVariable ?: return null
+                    val getIncrVar = tmpVar.initializer as? IrGetValue ?: return null
+                    if (!getIncrVar.type.isInt()) return null
+
+                    val setVar = this.statements[1] as? IrSetValue ?: return null
+                    if (setVar.symbol != getIncrVar.symbol) return null
+                    val setVarValue = setVar.value as? IrCall ?: return null
+                    val calleeName = setVarValue.symbol.owner.name
+                    if (calleeName != OperatorNameConventions.INC && calleeName != OperatorNameConventions.DEC) return null
+                    val calleeArg = setVarValue.dispatchReceiver as? IrGetValue ?: return null
+                    if (calleeArg.symbol != tmpVar.symbol) return null
+
+                    val getTmpVar = this.statements[2] as? IrGetValue ?: return null
+                    if (getTmpVar.symbol != tmpVar.symbol) return null
+
+                    val intrinsicSymbol =
+                        if (calleeName == OperatorNameConventions.INC)
+                            context.ir.symbols.intPostfixIncr
+                        else
+                            context.ir.symbols.intPostfixDecr
+
+                    return IrCallImpl.fromSymbolOwner(this.startOffset, this.endOffset, intrinsicSymbol)
+                        .apply { putValueArgument(0, getIncrVar) }
+                }
+                else ->
+                    null
+            }
+        }
+
+        override fun visitGetValue(expression: IrGetValue, data: IrClass?): IrExpression {
+            // Replace IrGetValue of an immutable temporary variable with a constant
+            // initializer with the constant initializer.
+            val variable = expression.symbol.owner
+            return when (val replacement = getInlineableValueForTemporaryVal(variable)) {
+                is IrConst<*> ->
+                    replacement.copyWithOffsets(expression.startOffset, expression.endOffset)
+                is IrGetValue ->
+                    replacement.copyWithOffsets(expression.startOffset, expression.endOffset)
+                else ->
                     expression
             }
         }
-        irFile.transformChildren(transformer, null)
     }
 }

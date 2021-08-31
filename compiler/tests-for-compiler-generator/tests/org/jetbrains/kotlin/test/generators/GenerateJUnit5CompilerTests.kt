@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.runners.codegen.*
 import org.jetbrains.kotlin.test.runners.ir.AbstractFir2IrTextTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractIrTextTest
 import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractIrInterpreterAfterFir2IrTest
+import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractIrInterpreterAfterPsi2IrTest
 import org.jetbrains.kotlin.visualizer.fir.AbstractFirVisualizerTest
 import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizerTest
 import org.junit.jupiter.api.parallel.Execution
@@ -49,21 +50,21 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractForeignAnnotationsSourceJavaTest> {
-                model("diagnostics/foreignAnnotationsTests/tests")
-                model("diagnostics/foreignAnnotationsTests/java8Tests")
-                model("diagnostics/foreignAnnotationsTests/java9Tests")
+                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java9Tests", excludedPattern = excludedFirTestdataPattern)
             }
 
             testClass<AbstractForeignAnnotationsCompiledJavaTest> {
-                model("diagnostics/foreignAnnotationsTests/tests")
-                model("diagnostics/foreignAnnotationsTests/java8Tests")
-                model("diagnostics/foreignAnnotationsTests/java9Tests")
+                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java9Tests", excludedPattern = excludedFirTestdataPattern)
             }
 
             testClass<AbstractForeignAnnotationsCompiledJavaWithPsiClassReadingTest> {
-                model("diagnostics/foreignAnnotationsTests/tests")
-                model("diagnostics/foreignAnnotationsTests/java8Tests",)
-                model("diagnostics/foreignAnnotationsTests/java9Tests")
+                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java9Tests", excludedPattern = excludedFirTestdataPattern)
             }
 
             testClass<AbstractBlackBoxCodegenTest> {
@@ -72,6 +73,14 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
 
             testClass<AbstractIrBlackBoxCodegenTest> {
                 model("codegen/box")
+            }
+
+            testClass<AbstractBlackBoxCodegenTest>("BlackBoxModernJdkCodegenTestGenerated") {
+                model("codegen/boxModernJdk")
+            }
+
+            testClass<AbstractIrBlackBoxCodegenTest>("IrBlackBoxModernJdkCodegenTestGenerated") {
+                model("codegen/boxModernJdk")
             }
 
             testClass<AbstractJvmIrAgainstOldBoxTest> {
@@ -145,6 +154,30 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
                 model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
             }
+
+            testClass<AbstractFirForeignAnnotationsSourceJavaTest>(
+                suiteTestClassName = "FirOldFrontendForeignAnnotationsSourceJavaTestGenerated"
+            ) {
+                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java9Tests", excludedPattern = excludedFirTestdataPattern)
+            }
+
+            testClass<AbstractFirForeignAnnotationsCompiledJavaTest>(
+                suiteTestClassName = "FirOldFrontendForeignAnnotationsCompiledJavaTestGenerated"
+            ) {
+                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java9Tests", excludedPattern = excludedFirTestdataPattern)
+            }
+
+            testClass<AbstractFirForeignAnnotationsCompiledJavaWithPsiClassReadingTest>(
+                suiteTestClassName = "FirOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated"
+            ) {
+                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java9Tests", excludedPattern = excludedFirTestdataPattern)
+            }
         }
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {
@@ -157,6 +190,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractIrInterpreterAfterFir2IrTest> {
+                model("ir/interpreter", excludeDirs = listOf("helpers"))
+            }
+
+            testClass<AbstractIrInterpreterAfterPsi2IrTest> {
                 model("ir/interpreter", excludeDirs = listOf("helpers"))
             }
         }

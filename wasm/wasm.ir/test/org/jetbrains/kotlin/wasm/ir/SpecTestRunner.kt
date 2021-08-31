@@ -11,8 +11,8 @@ import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import org.jetbrains.kotlin.wasm.ir.convertors.MyByteReader
-import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmBinaryToIR
+import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -128,6 +128,7 @@ data class SpecTest(
     )
 }
 
+@Suppress("UNUSED_PARAMETER")
 private fun runSpecTest(specTest: SpecTest, testDir: File, wastFile: File, wabtOptions: List<String>) {
     for (command in specTest.commands) {
         if (command is SpecTest.Command.Module) {

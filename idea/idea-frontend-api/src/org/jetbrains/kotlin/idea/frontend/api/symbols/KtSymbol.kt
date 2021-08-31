@@ -67,6 +67,12 @@ public enum class KtSymbolOrigin {
      */
     JAVA,
 
+    /**
+     * A synthetic function that is called as a lambda argument when creating a SAM interface object, e.g.,
+     * ```
+     * val isEven = <caret>IntPredicate { it % 2 == 0 }
+     * ```
+     */
     SAM_CONSTRUCTOR,
 
     /**

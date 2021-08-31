@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,11 +23,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvmAbiTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
     }
 
     public void testAllFilesPresentInCompile() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compile"), Pattern.compile("^([^\\.]+)$"), null, false);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compile"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, false);
     }
 
     @TestMetadata("anonymousObject")
@@ -44,6 +45,11 @@ public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvm
         runTest("plugins/jvm-abi-gen/testData/compile/clinit/");
     }
 
+    @TestMetadata("inlineAnnotationInstantiation")
+    public void testInlineAnnotationInstantiation() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/inlineAnnotationInstantiation/");
+    }
+
     @TestMetadata("inlineAnonymousObject")
     public void testInlineAnonymousObject() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compile/inlineAnonymousObject/");
@@ -54,9 +60,54 @@ public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvm
         runTest("plugins/jvm-abi-gen/testData/compile/inlineCapture/");
     }
 
+    @TestMetadata("inlineNoRegeneration")
+    public void testInlineNoRegeneration() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/inlineNoRegeneration/");
+    }
+
     @TestMetadata("inlineReifiedFunction")
     public void testInlineReifiedFunction() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compile/inlineReifiedFunction/");
+    }
+
+    @TestMetadata("inlineWhenMappings")
+    public void testInlineWhenMappings() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/inlineWhenMappings/");
+    }
+
+    @TestMetadata("innerObjectRegeneration")
+    public void testInnerObjectRegeneration() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/innerObjectRegeneration/");
+    }
+
+    @TestMetadata("kt-40133")
+    public void testKt_40133() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/kt-40133/");
+    }
+
+    @TestMetadata("kt-40340")
+    public void testKt_40340() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/kt-40340/");
+    }
+
+    @TestMetadata("privateAnnotationsFromJavaApp")
+    public void testPrivateAnnotationsFromJavaApp() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/privateAnnotationsFromJavaApp/");
+    }
+
+    @TestMetadata("privateAnnotationsFromJavaLib")
+    public void testPrivateAnnotationsFromJavaLib() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/privateAnnotationsFromJavaLib/");
+    }
+
+    @TestMetadata("privateClassesFromJavaApp")
+    public void testPrivateClassesFromJavaApp() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/privateClassesFromJavaApp/");
+    }
+
+    @TestMetadata("privateClassesFromJavaLib")
+    public void testPrivateClassesFromJavaLib() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/privateClassesFromJavaLib/");
     }
 
     @TestMetadata("privateOnlyConstructors")

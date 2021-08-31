@@ -13,7 +13,7 @@ internal fun CommonizerParameters.commonModuleNames(target: CommonizerTarget): S
     if (supportedTargets.isEmpty()) return emptySet() // Nothing to do
 
     val allModuleNames: List<Set<String>> = supportedTargets.toList().map { targetProvider ->
-        targetProvider.modulesProvider.loadModuleInfos().mapTo(HashSet()) { it.name }
+        targetProvider.modulesProvider.moduleInfos.mapTo(HashSet()) { it.name }
     }
 
     return allModuleNames.reduce { a, b -> a intersect b } // there are modules that are present in every target

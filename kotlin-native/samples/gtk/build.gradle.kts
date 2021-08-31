@@ -57,6 +57,7 @@ kotlin {
                             "include/pango-1.0",
                             "include/gtk-3.0",
                             "include/glib-2.0",
+                            "include/harfbuzz",
                             "lib/glib-2.0/include"
                         ).forEach {
                             includeDirs(mingwPath.resolve(it))

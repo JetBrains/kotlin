@@ -92,7 +92,13 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                     "codegen/box",
                     targetBackend = TargetBackend.JVM,
                     skipIgnored = true,
-                    excludeDirs = listOf("ranges/stepped", "compileKotlinAgainstKotlin")
+                    excludeDirs = listOf(
+                        "ranges/stepped",
+                        "compileKotlinAgainstKotlin",
+                        "testsWithJava9",
+                        "testsWithJava15",
+                        "testsWithJava17"
+                    )
                 )
             }
 
@@ -102,22 +108,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
 
             testClass<AbstractAsmLikeInstructionListingTest> {
                 model("codegen/asmLike", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractJdk15BlackBoxCodegenTest> {
-                model("codegen/java15/box")
-            }
-
-            testClass<AbstractJdk15IrBlackBoxCodegenTest> {
-                model("codegen/java15/box", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractJdk9BlackBoxCodegenTest> {
-                model("codegen/java9/box")
-            }
-
-            testClass<AbstractJdk9IrBlackBoxCodegenTest> {
-                model("codegen/java9/box", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractScriptCodegenTest> {
@@ -253,14 +243,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                     testMethod = "doTestWithoutAPT",
                     targetBackend = TargetBackend.JVM
                 )
-            }
-
-            testClass<AbstractCompileKotlinAgainstKotlinJdk15Test> {
-                model("compileKotlinAgainstKotlinJdk15")
-            }
-
-            testClass<AbstractIrCompileKotlinAgainstKotlinJdk15Test> {
-                model("compileKotlinAgainstKotlinJdk15", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractModuleXmlParserTest> {

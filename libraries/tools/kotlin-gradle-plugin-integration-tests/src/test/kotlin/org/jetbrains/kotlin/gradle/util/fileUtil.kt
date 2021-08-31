@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.gradle.util
 
 import java.io.File
@@ -70,7 +75,9 @@ fun normalizePath(path: String): String {
 }
 
 private fun normalizeTail(prefixEnd: Int, path: String, separator: Boolean): String {
+    @Suppress("NAME_SHADOWING")
     var separator = separator
+
     val result = StringBuilder(path.length)
     result.append(path, 0, prefixEnd)
     var start = prefixEnd

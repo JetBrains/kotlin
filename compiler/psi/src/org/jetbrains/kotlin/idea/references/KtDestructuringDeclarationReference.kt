@@ -20,6 +20,10 @@ abstract class KtDestructuringDeclarationReference(
 
     abstract override fun canRename(): Boolean
 
+    override fun resolve() = multiResolve(false).asSequence()
+        .map { it.element }
+        .first { it is KtDestructuringDeclarationEntry }
+
     override fun handleElementRename(newElementName: String): PsiElement? {
         if (canRename()) return expression
         throw IncorrectOperationException()

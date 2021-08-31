@@ -17,7 +17,14 @@ class FE1FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
         args.useOldBackend = !USE_BE_IR
         args.useFir = false
         args.jvmDefault = "compatibility"
-        args.optIn = arrayOf("kotlin.RequiresOptIn")
+        args.apiVersion = "1.4"
+        args.optIn = arrayOf(
+            "kotlin.RequiresOptIn",
+            "kotlin.contracts.ExperimentalContracts",
+            "kotlin.io.path.ExperimentalPathApi",
+            "org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
+        )
+        args.multiPlatform = true
     }
 
     fun testTotalKotlin() {

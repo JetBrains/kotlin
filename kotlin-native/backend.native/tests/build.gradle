@@ -120,11 +120,11 @@ if (ext.isExperimentalMM) {
 // TODO: It also makes sense to test -g without asserts, and also to test -opt with asserts.
 if (project.globalTestArgs.contains("-g")) {
     tasks.withType(KonanCompileNativeBinary.class).configureEach {
-        extraOpts "-Xruntime-asserts-mode=panic"
+        extraOpts "-Xbinary=runtimeAssertionsMode=panic"
     }
 
     tasks.withType(RunExternalTestGroup.class).configureEach {
-        flags = (flags ?: []) + "-Xruntime-asserts-mode=panic"
+        flags = (flags ?: []) + "-Xbinary=runtimeAssertionsMode=panic"
     }
 }
 
@@ -327,6 +327,9 @@ Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
                     baseDir  "$testOutputLocal/$name"
                     extraOpts task.flags
                     extraOpts project.globalTestArgs
+                    if (targetName == "mingw_x64" || targetName == "mingw_x86") {
+                        extraOpts "-linker-option", "-Wl,--out-implib,$testOutputLocal/$name/$targetName/${name}.dll.a"
+                    }
                 }
             }
             def buildTask = UtilsKt.findKonanBuildTask(project, name, target)
@@ -1005,6 +1008,98 @@ task worker_exception_messages(type: KonanLocalTest) {
     source = "runtime/workers/worker_exception_messages.kt"
 }
 
+standaloneTest("worker_exceptions") {
+    flags = ["-tr", "-Xworker-exception-handling=use-hook"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    outputChecker = {
+        !it.contains("testExecuteAfterStartQuiet error") && it.contains("testExecuteStart error") && !it.contains("testExecuteStartQuiet error")
+    }
+    source = "runtime/workers/worker_exceptions.kt"
+}
+
+standaloneTest("worker_exceptions_legacy") {
+    flags = ["-tr", "-Xworker-exception-handling=legacy"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    outputChecker = {
+        it.contains("testExecuteAfterStartLegacy error") && it.contains("testExecuteStartLegacy error")
+    }
+    source = "runtime/workers/worker_exceptions_legacy.kt"
+}
+
+standaloneTest("worker_exceptions_terminate") {
+    flags = ["-Xworker-exception-handling=use-hook"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    expectedExitStatusChecker = { it != 0 }
+    outputChecker = {
+        it.contains("some error") && !it.contains("Will not happen")
+    }
+    source = "runtime/workers/worker_exceptions_terminate.kt"
+}
+
+standaloneTest("worker_exceptions_terminate_legacy") {
+    flags = ["-Xworker-exception-handling=legacy"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    outputChecker = {
+        it.contains("some error") && it.contains("Will not happen")
+    }
+    source = "runtime/workers/worker_exceptions_terminate.kt"
+}
+
+standaloneTest("worker_exceptions_terminate_hook") {
+    flags = ["-Xworker-exception-handling=use-hook"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    outputChecker = {
+        it.contains("hook called") && !it.contains("some error") && it.contains("Will happen")
+    }
+    source = "runtime/workers/worker_exceptions_terminate_hook.kt"
+}
+
+standaloneTest("worker_exceptions_terminate_hook_legacy") {
+    flags = ["-Xworker-exception-handling=legacy"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    outputChecker = {
+        !it.contains("hook called") && it.contains("some error") && it.contains("Will happen")
+    }
+    source = "runtime/workers/worker_exceptions_terminate_hook.kt"
+}
+
+standaloneTest("worker_exceptions_terminate_current") {
+    flags = ["-Xworker-exception-handling=use-hook"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    expectedExitStatusChecker = { it != 0 }
+    outputChecker = {
+        it.contains("some error") && !it.contains("Will not happen")
+    }
+    source = "runtime/workers/worker_exceptions_terminate_current.kt"
+}
+
+standaloneTest("worker_exceptions_terminate_current_legacy") {
+    flags = ["-Xworker-exception-handling=legacy"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    outputChecker = {
+        it.contains("some error") && it.contains("Will not happen")
+    }
+    source = "runtime/workers/worker_exceptions_terminate_current.kt"
+}
+
+standaloneTest("worker_exceptions_terminate_hook_current") {
+    flags = ["-Xworker-exception-handling=use-hook"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    outputChecker = {
+        it.contains("hook called") && !it.contains("some error") && it.contains("Will happen")
+    }
+    source = "runtime/workers/worker_exceptions_terminate_hook_current.kt"
+}
+
+standaloneTest("worker_exceptions_terminate_hook_current_legacy") {
+    flags = ["-Xworker-exception-handling=legacy"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    outputChecker = {
+        !it.contains("hook called") && it.contains("some error") && it.contains("Will happen")
+    }
+    source = "runtime/workers/worker_exceptions_terminate_hook_current.kt"
+}
+
 standaloneTest("worker_threadlocal_no_leak") {
     disabled = (project.testTarget == 'wasm32') // Needs pthreads.
     source = "runtime/workers/worker_threadlocal_no_leak.kt"
@@ -1375,6 +1470,131 @@ task initializers_correctOrder1(type: KonanLocalTest) {
 task initializers_correctOrder2(type: KonanLocalTest) {
     goldValue = "42\n"
     source = "codegen/initializers/correctOrder2.kt"
+}
+
+standaloneTest("initializers_correctOrder3") {
+    source = "codegen/initializers/correctOrder3.kt"
+    goldValue = "3\n"
+}
+
+standaloneTest("initializers_globalInitedAfterAccessingFile") {
+    source = "codegen/initializers/globalInitedAfterAccessingFile.kt"
+}
+
+standaloneTest("initializers_globalNotInitedAfterAccessingClassInternals") {
+    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization=enable') || isExperimentalMM
+    source = "codegen/initializers/globalNotInitedAfterAccessingClassInternals.kt"
+}
+
+standaloneTest("initializers_globalInitedBeforeThreadLocal") {
+    source = "codegen/initializers/globalInitedBeforeThreadLocal.kt"
+}
+
+standaloneTest("initializers_eagerInitializationGlobal1") {
+    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization=enable') || isExperimentalMM
+    source = "codegen/initializers/eagerInitializationGlobal1.kt"
+}
+
+standaloneTest("initializers_eagerInitializationGlobal2") {
+    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization=enable') || isExperimentalMM
+    source = "codegen/initializers/eagerInitializationGlobal2.kt"
+}
+
+standaloneTest("initializers_eagerInitializationThreadLocal1") {
+    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization=enable') || isExperimentalMM
+    source = "codegen/initializers/eagerInitializationThreadLocal1.kt"
+}
+
+standaloneTest("initializers_eagerInitializationThreadLocal2") {
+    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization=enable') || isExperimentalMM
+    source = "codegen/initializers/eagerInitializationThreadLocal2.kt"
+}
+
+standaloneTest("initializers_workers1") {
+    expectedFail = (project.testTarget == 'wasm32') // Workers are not supported
+    source = "codegen/initializers/workers1.kt"
+    goldValue = "42\n3\n"
+}
+
+standaloneTest("initializers_workers2") {
+    expectedFail = (project.testTarget == 'wasm32') // Workers are not supported
+    source = "codegen/initializers/workers2.kt"
+    goldValue = "42\n42\n"
+}
+
+standaloneTest("initializers_failInInitializer1") {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
+    source = "codegen/initializers/failInInitializer1.kt"
+    goldValue = "caught\n"
+    flags = ['-Xir-property-lazy-initialization=enable']
+}
+
+standaloneTest("initializers_failInInitializer2") {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
+    source = "codegen/initializers/failInInitializer2.kt"
+    goldValue = "caught\ncaught2\n"
+    flags = ['-Xir-property-lazy-initialization=enable']
+}
+
+standaloneTest("initializers_failInInitializer3") {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
+    source = "codegen/initializers/failInInitializer3.kt"
+    goldValue = "caught\ncaught2\n"
+    flags = ['-Xir-property-lazy-initialization=enable']
+}
+
+standaloneTest("initializers_failInInitializer4") {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
+    source = "codegen/initializers/failInInitializer4.kt"
+    goldValue = "caught\ncaught2\n"
+    flags = ['-Xir-property-lazy-initialization=enable']
+}
+
+standaloneTest("initializers_when1") {
+    source = "codegen/initializers/when1.kt"
+    goldValue = "42\n"
+}
+
+standaloneTest("initializers_when2") {
+    source = "codegen/initializers/when2.kt"
+    goldValue = "42\n"
+}
+
+standaloneTest("initializers_throw1") {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
+    source = "codegen/initializers/throw1.kt"
+    goldValue = "42\n"
+}
+
+standaloneTest("initializers_throw2") {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
+    source = "codegen/initializers/throw2.kt"
+    goldValue = "42\n"
+}
+
+standaloneTest("initializers_while1") {
+    source = "codegen/initializers/while1.kt"
+    goldValue = "42\n"
+}
+
+standaloneTest("initializers_while2") {
+    source = "codegen/initializers/while2.kt"
+    goldValue = "42\n"
+}
+
+standaloneTest("initializers_while3") {
+    source = "codegen/initializers/while3.kt"
+    goldValue = "42\n"
+}
+
+standaloneTest("initializers_return1") {
+    source = "codegen/initializers/return1.kt"
+    goldValue = "42\n"
+}
+
+standaloneTest("initializers_return2") {
+    source = "codegen/initializers/return2.kt"
+    goldValue = "42\n"
 }
 
 linkTest("initializers_linkTest1") {
@@ -2152,7 +2372,10 @@ standaloneTest("link_testLib_explicitly") {
     enabled = project.target.name == project.hostName
 
     dependsOn installTestLib
-    goldValue = "This is a side effect of a test library linked into the binary.\nYou should not be seeing this.\n\nHello\n"
+    if (project.globalTestArgs.contains('-Xir-property-lazy-initialization=enable') || isExperimentalMM)
+        goldValue = "Hello\n"
+    else
+        goldValue = "This is a side effect of a test library linked into the binary.\nYou should not be seeing this.\n\nHello\n"
     source = "link/omit/hello.kt"
     // We force library inclusion, so need to see the warning banner.
     flags = ['-l', 'testLibrary', '-r', testLibraryDir]
@@ -2450,9 +2673,66 @@ standaloneTest("kt-37572") {
 
 standaloneTest("custom_hook") {
     enabled = (project.testTarget != 'wasm32') // Uses exceptions.
-    goldValue = "value 42: Error\n"
-    expectedExitStatus = 1
+    outputChecker = {
+        it.contains("value 42: Error. Runnable state: true") && it.contains("Uncaught Kotlin exception: kotlin.Error: an error")
+    }
+    expectedExitStatusChecker = { it != 0 }
     source = "runtime/exceptions/custom_hook.kt"
+}
+
+standaloneTest("custom_hook_memory_leak") {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    outputChecker = {
+        it.contains("Hook 42") && it.contains("Uncaught Kotlin exception: kotlin.Error: an error")
+    }
+    expectedExitStatusChecker = { it != 0 }
+    source = "runtime/exceptions/custom_hook_memory_leak.kt"
+}
+
+standaloneTest("custom_hook_get") {
+    source = "runtime/exceptions/custom_hook_get.kt"
+}
+
+standaloneTest("custom_hook_no_reset") {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    outputChecker = {
+        it.contains("Hook called") && it.contains("Uncaught Kotlin exception: kotlin.Error: some error")
+    }
+    expectedExitStatusChecker = { it != 0 }
+    source = "runtime/exceptions/custom_hook_no_reset.kt"
+}
+
+standaloneTest("custom_hook_throws") {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    outputChecker = {
+        it.contains("Hook called") && it.contains("Uncaught Kotlin exception: kotlin.Error: another error") && !it.contains("some error")
+    }
+    expectedExitStatusChecker = { it != 0 }
+    source = "runtime/exceptions/custom_hook_throws.kt"
+}
+
+standaloneTest("custom_hook_unhandled_exception") {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    goldValue = ""
+    source = "runtime/exceptions/custom_hook_unhandled_exception.kt"
+}
+
+standaloneTest("custom_hook_terminate") {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    outputChecker = {
+        it.contains("Hook called")
+    }
+    expectedExitStatusChecker = { it != 0 }
+    source = "runtime/exceptions/custom_hook_terminate.kt"
+}
+
+standaloneTest("custom_hook_terminate_unhandled_exception") {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    outputChecker = {
+        it.contains("Hook called") && it.contains("Uncaught Kotlin exception: kotlin.Error: some error") && !it.contains("Not going to happen")
+    }
+    expectedExitStatusChecker = { it != 0 }
+    source = "runtime/exceptions/custom_hook_terminate_unhandled_exception.kt"
 }
 
 standaloneTest("exception_in_global_init") {
@@ -2470,6 +2750,21 @@ task rethrow_exception(type: KonanLocalTest) {
 task throw_from_catch(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Uses exceptions.
     source = "runtime/exceptions/throw_from_catch.kt"
+}
+
+standaloneTest("terminate") {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    expectedExitStatusChecker = { it != 0 }
+    source = "runtime/exceptions/terminate.kt"
+}
+
+standaloneTest("unhandled_exception") {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    outputChecker = {
+        it.contains("Uncaught Kotlin exception: kotlin.Error: some error")
+    }
+    expectedExitStatusChecker = { it != 0 }
+    source = "runtime/exceptions/unhandled_exception.kt"
 }
 
 standaloneTest("runtime_math_exceptions") {
@@ -2691,7 +2986,7 @@ task runtime_basic_standard(type: KonanLocalTest) {
 }
 
 standaloneTest("runtime_basic_assert_failed") {
-    expectedExitStatus = 1
+    expectedExitStatusChecker = { it != 0 }
     source = "runtime/basic/assert_failed.kt"
 }
 
@@ -3008,6 +3303,7 @@ standaloneTest("stress_gc_allocations") {
         (project.testTarget != "watchos_arm64") &&
         (project.testTarget != "watchos_x86") &&
         (project.testTarget != "watchos_x64") &&
+        (project.testTarget != "watchos_simulator_arm64") &&
         !isNoopGC
     source = "runtime/memory/stress_gc_allocations.kt"
     flags = ['-tr', '-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
@@ -3040,6 +3336,36 @@ standaloneTest("mpp_optional_expectation") {
             '-Xmulti-platform',
             "-Xcommon-sources=$srcPath"
     ]
+}
+
+standaloneTest("freezing_control_basic_full") {
+    enabled = isExperimentalMM
+    source = "runtime/freezing_control/basic.kt"
+    flags = [
+            '-Xbinary=freezing=full',
+            '-friend-modules', project.rootProject.file("${UtilsKt.getKotlinNativeDist(project)}/klib/common/stdlib").absolutePath
+    ]
+    arguments = ['full']
+}
+
+standaloneTest("freezing_control_basic_disabled") {
+    enabled = isExperimentalMM
+    source = "runtime/freezing_control/basic.kt"
+    flags = [
+            '-Xbinary=freezing=disabled',
+            '-friend-modules', project.rootProject.file("${UtilsKt.getKotlinNativeDist(project)}/klib/common/stdlib").absolutePath
+    ]
+    arguments = ['disabled']
+}
+
+standaloneTest("freezing_control_basic_explicitOnly") {
+    enabled = isExperimentalMM
+    source = "runtime/freezing_control/basic.kt"
+    flags = [
+            '-Xbinary=freezing=explicitOnly',
+            '-friend-modules', project.rootProject.file("${UtilsKt.getKotlinNativeDist(project)}/klib/common/stdlib").absolutePath
+    ]
+    arguments = ['explicitOnly']
 }
 
 task unit1(type: KonanLocalTest) {
@@ -3293,6 +3619,10 @@ task inline_correctOrderFunctionReference(type: KonanLocalTest) {
 task inline_coercionToUnit(type: KonanLocalTest) {
     goldValue = "kotlin.Unit\n"
     source = "codegen/inline/coercionToUnit.kt"
+}
+
+task inline_redundantCoercionsCleaner(type: KonanLocalTest) {
+    source = "codegen/inline/redundantCoercionsCleaner.kt"
 }
 
 task classDeclarationInsideInline(type: KonanLocalTest) {
@@ -4020,7 +4350,7 @@ Task interopTestMultifile(String name, Closure<KonanInteropTest> configureClosur
 }
 
 standaloneTest("interop_objc_allocException") {
-    disabled = !isAppleTarget(project) || isExperimentalMM // Experimental MM doesn't support thread state switching for terminate handlers yet.
+    disabled = !isAppleTarget(project)
     expectedExitStatus = 0
     source = "interop/objc/allocException.kt"
     UtilsKt.dependsOnPlatformLibs(it)
@@ -4228,6 +4558,24 @@ interopTest("interop_threadStates_callbacksWithExceptions") {
     interop = "threadStates"
 }
 
+interopTest("interop_threadStates_unhandledException") {
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+            !isExperimentalMM // No thread state switching in the legacy MM.
+    source = "interop/threadStates/unhandledException.kt"
+    interop = "threadStates"
+    outputChecker = { it.contains("Error. Runnable state: true") }
+    expectedExitStatusChecker = { it != 0 }
+}
+
+interopTest("interop_threadStates_unhandledExceptionInForeignThread") {
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+            !isExperimentalMM // No thread state switching in the legacy MM.
+    source = "interop/threadStates/unhandledExceptionInForeignThread.kt"
+    interop = "threadStates"
+    outputChecker = { it.contains("Error. Runnable state: true") }
+    expectedExitStatusChecker = { it != 0 }
+}
+
 interopTest("interop_withSpaces") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     interop ='withSpaces'
@@ -4344,48 +4692,6 @@ interopTest("interop_cppSkiaSignature") {
             "SkData()\nSkData(19)\nSkData(SkData*)\nSkData(SkData*, SkData*)\nSkData(200)\nSkData(436)\n"+
             "true true true true true\n"
     UtilsKt.dependsOnPlatformLibs(it)
-}
-
-/**
- * Check that compiler properly reports linker options that aren't supported by LLD.
- * @param withImportLibrary create an import library if true. Thus, LLD shoudn't complain.
- * @param shouldShowWarning compiler should show warning from LLD if true.
- * @param compilerFlags additional flags that will be passed to Kotlin/Native.
- */
-void driverCheckLldCompatibilityTest(String taskName, boolean withImportLibrary, boolean shouldShowWarning, List<String> compilerFlags) {
-    tasks.register(taskName, KonanDriverTest) {
-        source = "interop/mingw_dll_linkage/main.kt"
-
-        flags = ["-linker-option", "-lrary", "-linker-option", "-L", "-linker-option", "$buildDir/$taskName"] +
-                compilerFlags
-
-        compilerMessages = true
-        goldValue = "lld doesn't support linking directly against"
-        outputChecker = { out ->
-            shouldShowWarning ? out.contains(goldValue) : !out.contains(goldValue)
-        }
-
-        doBeforeBuild {
-            mkdir("$buildDir/$taskName")
-            execClangForCompilerTests(project.target) {
-                args "$projectDir/interop/mingw_dll_linkage/library.c"
-                args '-shared', '-o', "$buildDir/$taskName/library.dll"
-                if (withImportLibrary) {
-                    args "-Wl,--out-implib", "-Wl,$buildDir/$taskName/library.dll.a"
-                }
-            }
-            copy {
-                from("$buildDir/$taskName/library.dll")
-                into("$testOutputLocal/$name/$target/")
-            }
-        }
-    }
-}
-
-if (isWindowsTarget(project)) {
-    driverCheckLldCompatibilityTest("driver_lld_with_import_library", true, false, [])
-    driverCheckLldCompatibilityTest("driver_lld_without_import_library", false, true, [])
-    driverCheckLldCompatibilityTest("driver_lld_without_import_library_no_check", false, false, ["-Xcheck-compatibility-with-lld=disable"])
 }
 
 /*
@@ -4552,7 +4858,6 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_foreignExceptionMode_default") {
-        enabled = !isExperimentalMM // Experimental MM doesn't support thread state switching for terminate handlers yet.
         source = "interop/objc/foreignException/objcExceptionMode.kt"
         interop = 'foreignExceptionMode_default'
         goldValue = "OK: Ends with uncaught exception handler\n"
@@ -4612,6 +4917,19 @@ if (PlatformInfo.isAppleTarget(project)) {
                 UtilsKt.codesign(project, "$buildDir/libobjc_kt42172.dylib")
             }
         }
+    }
+
+    standaloneTest("objc_arc_contract") {
+        doBeforeBuild {
+            mkdir(buildDir)
+            ExecLlvmKt.execLlvmUtility(project, "llvm-as") {
+                args "$projectDir/interop/objc_arc_contract/main.ll"
+                args "-o", "$buildDir/objc_arc_contract.bc"
+            }
+        }
+        source = "interop/objc_arc_contract/main.kt"
+        goldValue = "ok\n"
+        flags = ["-native-library", "$buildDir/objc_arc_contract.bc"]
     }
 }
 
@@ -4710,6 +5028,15 @@ for (i in 0..2) {
     }
 }
 
+dynamicTest("produce_dynamic_unhandledException") {
+    disabled = (project.testTarget == 'wasm32') || // Uses exceptions + dynamic is unsupported for wasm.
+            (cacheTesting != null) // Disabled due to KT-47828.
+    source = "produce_dynamic/unhandledException/unhandled.kt"
+    cSource = "$projectDir/produce_dynamic/unhandledException/main.cpp"
+    clangTool = "clang++"
+    expectedExitStatusChecker = { it != 0 }
+    outputChecker = { str -> str.startsWith("Kotlin hook: Exception. Runnable state: true") }
+}
 
 dynamicTest("interop_concurrentRuntime") {
     disabled = (project.target.name != project.hostName)

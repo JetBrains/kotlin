@@ -85,6 +85,7 @@ private val Project.isNativeDependencyPropagationEnabled: Boolean
 internal fun Project.isAllowCommonizer(
     kotlinVersion: String = getKotlinPluginVersion()
 ): Boolean {
+    assert(state.executed) { "'isAllowCommonizer' can only be called after project evaluation" }
     multiplatformExtensionOrNull ?: return false
 
     //register commonizer only for 1.4+, only for HMPP projects

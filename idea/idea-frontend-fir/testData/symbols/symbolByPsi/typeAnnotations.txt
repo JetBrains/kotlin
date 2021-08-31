@@ -1,6 +1,11 @@
 KtFirNamedClassOrObjectSymbol:
-  annotationClassIds: [kotlin/annotation/Target]
-  annotations: [kotlin/annotation/Target(allowedTargets = KtUnsupportedConstantValue)]
+  annotationClassIds: [
+    kotlin/annotation/Target
+  ]
+  annotations: [
+    kotlin/annotation/Target(allowedTargets = KtUnsupportedConstantValue)
+      psi: KtAnnotationEntry
+  ]
   classIdIfNonLocal: Anno1
   classKind: ANNOTATION_CLASS
   companionObject: null
@@ -12,14 +17,22 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: Anno1
   origin: SOURCE
-  superTypes: [[] kotlin/Annotation]
+  superTypes: [
+    [] kotlin/Annotation
+  ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
-  annotationClassIds: [kotlin/annotation/Target]
-  annotations: [kotlin/annotation/Target(allowedTargets = KtUnsupportedConstantValue)]
+  annotationClassIds: [
+    kotlin/annotation/Target
+  ]
+  annotations: [
+    kotlin/annotation/Target(allowedTargets = KtUnsupportedConstantValue)
+      psi: KtAnnotationEntry
+  ]
   classIdIfNonLocal: Anno2
   classKind: ANNOTATION_CLASS
   companionObject: null
@@ -31,14 +44,22 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: Anno2
   origin: SOURCE
-  superTypes: [[] kotlin/Annotation]
+  superTypes: [
+    [] kotlin/Annotation
+  ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
-  annotationClassIds: [kotlin/annotation/Target]
-  annotations: [kotlin/annotation/Target(allowedTargets = KtUnsupportedConstantValue)]
+  annotationClassIds: [
+    kotlin/annotation/Target
+  ]
+  annotations: [
+    kotlin/annotation/Target(allowedTargets = KtUnsupportedConstantValue)
+      psi: KtAnnotationEntry
+  ]
   classIdIfNonLocal: Anno3
   classKind: ANNOTATION_CLASS
   companionObject: null
@@ -50,14 +71,22 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: Anno3
   origin: SOURCE
-  superTypes: [[] kotlin/Annotation]
+  superTypes: [
+    [] kotlin/Annotation
+  ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
-  annotationClassIds: [kotlin/annotation/Target]
-  annotations: [kotlin/annotation/Target(allowedTargets = KtUnsupportedConstantValue)]
+  annotationClassIds: [
+    kotlin/annotation/Target
+  ]
+  annotations: [
+    kotlin/annotation/Target(allowedTargets = KtUnsupportedConstantValue)
+      psi: KtAnnotationEntry
+  ]
   classIdIfNonLocal: Anno4
   classKind: ANNOTATION_CLASS
   companionObject: null
@@ -69,10 +98,13 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: Anno4
   origin: SOURCE
-  superTypes: [[] kotlin/Annotation]
+  superTypes: [
+    [] kotlin/Annotation
+  ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -88,13 +120,19 @@ KtFirNamedClassOrObjectSymbol:
   modality: ABSTRACT
   name: I
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirValueParameterSymbol:
-  annotatedType: [Anno2()] @R|Anno2|()  I
+  annotatedType: [
+    Anno2()
+      psi: KtAnnotationEntry
+  ] @R|Anno2|()  I
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: null
@@ -105,9 +143,13 @@ KtFirValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
-  annotatedType: [Anno3()] @R|Anno2|()  I
+  annotatedType: [
+    Anno3()
+      psi: KtAnnotationEntry
+  ] @R|Anno2|()  I
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /X.f
@@ -127,11 +169,17 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(arg)]
+  valueParameters: [
+    KtFirValueParameterSymbol(arg)
+  ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirKotlinPropertySymbol:
-  annotatedType: [Anno4()] @R|Anno2|()  I
+  annotatedType: [
+    Anno4()
+      psi: KtAnnotationEntry
+  ] @R|Anno2|()  I
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /X.x
@@ -143,6 +191,7 @@ KtFirKotlinPropertySymbol:
   initializer: KtUnsupportedConstantValue
   isConst: false
   isExtension: false
+  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -154,6 +203,9 @@ KtFirKotlinPropertySymbol:
   setter: null
   symbolKind: MEMBER
   visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  setterDeprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -169,7 +221,13 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: X
   origin: SOURCE
-  superTypes: [[Anno1()] @R|Anno2|()  I]
+  superTypes: [
+    [
+      Anno1()
+        psi: KtAnnotationEntry
+    ] @R|Anno2|()  I
+  ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null

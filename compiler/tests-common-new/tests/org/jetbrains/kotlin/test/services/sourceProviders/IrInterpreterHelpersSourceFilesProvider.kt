@@ -30,15 +30,17 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
         private val ANNOTATIONS_PATHS = arrayOf(
             "./libraries/stdlib/src/kotlin/annotations",
             "./libraries/stdlib/src/kotlin/internal/Annotations.kt",
+            "./libraries/stdlib/src/kotlin/experimental/inferenceMarker.kt",
             "./libraries/stdlib/jvm/runtime/kotlin/jvm/annotations/JvmPlatformAnnotations.kt",
         )
         private const val REFLECT_PATH = "./libraries/stdlib/jvm/src/kotlin/reflect"
         private val EXCLUDES = listOf(
-            "src/kotlin/UStrings.kt", "src/kotlin/UMath.kt", "src/kotlin/UNumbers.kt", "src/kotlin/reflect/TypesJVM.kt"
+            "src/kotlin/UStrings.kt", "src/kotlin/UMath.kt", "src/kotlin/UNumbers.kt", "src/kotlin/reflect/TypesJVM.kt",
+            "core/builtins/src/kotlin/CompileTimeAnnotations.kt"
         )
     }
 
-    override val directives: List<DirectivesContainer> =
+    override val directiveContainers: List<DirectivesContainer> =
         listOf(AdditionalFilesDirectives)
 
     private fun getTestFilesForEachDirectory(vararg directories: String): List<TestFile> {

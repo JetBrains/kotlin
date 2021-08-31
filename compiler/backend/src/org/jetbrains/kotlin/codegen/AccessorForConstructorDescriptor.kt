@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
@@ -26,7 +26,7 @@ class AccessorForConstructorDescriptor(
     containingDeclaration: DeclarationDescriptor,
     override val superCallTarget: ClassDescriptor?,
     override val accessorKind: AccessorKind
-) : AbstractAccessorForFunctionDescriptor(containingDeclaration, Name.special("<init>")),
+) : AbstractAccessorForFunctionDescriptor(containingDeclaration, SpecialNames.INIT),
     ClassConstructorDescriptor,
     AccessorForCallableDescriptor<ConstructorDescriptor> {
 

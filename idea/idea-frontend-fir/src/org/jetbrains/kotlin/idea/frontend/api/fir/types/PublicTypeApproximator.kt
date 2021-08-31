@@ -16,7 +16,7 @@ internal object PublicTypeApproximator {
         session: FirSession,
     ): ConeKotlinType? {
         val approximator = session.inferenceComponents.approximator
-        return approximator.approximateToSuperType(type, PublicApproximatorConfiguration) as ConeKotlinType?
+        return approximator.approximateToSuperType(type, PublicApproximatorConfiguration)
     }
 
     private object PublicApproximatorConfiguration : TypeApproximatorConfiguration.AllFlexibleSameValue() {

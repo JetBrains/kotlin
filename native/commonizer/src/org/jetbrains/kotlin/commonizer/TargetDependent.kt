@@ -27,6 +27,22 @@ sealed interface TargetDependent<T> : Iterable<T> {
     fun getOrNull(target: CommonizerTarget): T? {
         return if (target in targets) get(target) else null
     }
+
+    operator fun get(index: Int): T = get(targets[index])
+
+    fun getOrNull(index: Int): T? {
+        return getOrNull(targets.getOrNull(index) ?: return null)
+    }
+
+    companion object {
+        @Suppress("UNCHECKED_CAST")
+        fun <T> empty(): TargetDependent<T> = Empty as TargetDependent<T>
+    }
+
+    object Empty : TargetDependent<Any?> {
+        override val targets: List<CommonizerTarget> = emptyList()
+        override fun get(target: CommonizerTarget) = throwMissingTarget(target)
+    }
 }
 
 internal fun <T : Any> TargetDependent<T?>.filterNonNull(): TargetDependent<T> {
@@ -66,6 +82,8 @@ internal fun <T> TargetDependent(keys: Iterable<CommonizerTarget>, factory: (tar
     return FactoryBasedTargetDependent(keys.toList(), factory)
 }
 
+internal fun <T> TargetDependent(vararg pairs: Pair<CommonizerTarget, T>) = pairs.toMap().toTargetDependent()
+
 internal fun <T> EagerTargetDependent(keys: Iterable<CommonizerTarget>, factory: (target: CommonizerTarget) -> T): TargetDependent<T> {
     return keys.associateWith(factory).toTargetDependent()
 }
@@ -90,7 +108,7 @@ private class FactoryBasedTargetDependent<T>(
     @Suppress("UNCHECKED_CAST")
     override fun get(target: CommonizerTarget): T {
         val indexOfTarget = indexOf(target)
-        if (indexOfTarget < 0) throw NoSuchElementException("Missing target $target")
+        if (indexOfTarget < 0) throwMissingTarget(target)
         val storedValue = values[indexOfTarget]
         if (storedValue == Uninitialized) {
             val producedValue = factory?.invoke(target)
@@ -106,3 +124,5 @@ private class FactoryBasedTargetDependent<T>(
         return storedValue as T
     }
 }
+
+private fun throwMissingTarget(target: CommonizerTarget): Nothing = throw NoSuchElementException("Missing target $target")

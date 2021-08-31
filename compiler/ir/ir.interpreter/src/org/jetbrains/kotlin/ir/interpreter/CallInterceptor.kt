@@ -7,25 +7,18 @@ package org.jetbrains.kotlin.ir.interpreter
 
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.interpreter.builtins.interpretBinaryFunction
 import org.jetbrains.kotlin.ir.interpreter.builtins.interpretTernaryFunction
 import org.jetbrains.kotlin.ir.interpreter.builtins.interpretUnaryFunction
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
+import org.jetbrains.kotlin.ir.interpreter.exceptions.verify
+import org.jetbrains.kotlin.ir.interpreter.exceptions.withExceptionHandler
 import org.jetbrains.kotlin.ir.interpreter.intrinsics.IntrinsicEvaluator
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.ReflectionState
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isArray
@@ -33,7 +26,6 @@ import org.jetbrains.kotlin.ir.types.isUnsignedType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import java.lang.invoke.MethodHandle
 
 internal interface CallInterceptor {
@@ -41,9 +33,9 @@ internal interface CallInterceptor {
     val irBuiltIns: IrBuiltIns
     val interpreter: IrInterpreter
 
-    fun interceptProxy(irFunction: IrFunction, valueArguments: List<Variable>, expectedResultClass: Class<*> = Any::class.java): Any?
-    fun interceptCall(call: IrCall, irFunction: IrFunction, receiver: State?, args: List<State>, defaultAction: () -> Unit)
-    fun interceptConstructor(constructorCall: IrFunctionAccessExpression, receiver: State, args: List<State>, defaultAction: () -> Unit)
+    fun interceptProxy(irFunction: IrFunction, valueArguments: List<State>, expectedResultClass: Class<*> = Any::class.java): Any?
+    fun interceptCall(call: IrCall, irFunction: IrFunction, args: List<State>, defaultAction: () -> Unit)
+    fun interceptConstructor(constructorCall: IrFunctionAccessExpression, args: List<State>, defaultAction: () -> Unit)
     fun interceptGetObjectValue(expression: IrGetObjectValue, defaultAction: () -> Unit)
     fun interceptEnumEntry(enumEntry: IrEnumEntry, defaultAction: () -> Unit)
     fun interceptJavaStaticField(expression: IrGetField)
@@ -55,24 +47,23 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     override val irBuiltIns: IrBuiltIns = environment.irBuiltIns
     private val bodyMap: Map<IdSignature, IrBody> = interpreter.bodyMap
 
-    override fun interceptProxy(irFunction: IrFunction, valueArguments: List<Variable>, expectedResultClass: Class<*>): Any? {
-        val irCall = IrCallImpl.fromSymbolOwner(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.returnType, irFunction.symbol as IrSimpleFunctionSymbol
-        )
+    override fun interceptProxy(irFunction: IrFunction, valueArguments: List<State>, expectedResultClass: Class<*>): Any? {
+        val irCall = irFunction.createCall()
         return interpreter.withNewCallStack(irCall) {
-            this@withNewCallStack.environment.callStack.addInstruction(SimpleInstruction(irCall))
-            valueArguments.forEach { this@withNewCallStack.environment.callStack.addVariable(it) }
-        }.wrap(this@DefaultCallInterceptor, remainArraysAsIs = true, extendFrom = expectedResultClass)
+            this@withNewCallStack.environment.callStack.pushInstruction(SimpleInstruction(irCall))
+            valueArguments.forEach { this@withNewCallStack.environment.callStack.pushState(it) }
+        }.wrap(this@DefaultCallInterceptor, remainArraysAsIs = false, extendFrom = expectedResultClass)
     }
 
-    override fun interceptCall(call: IrCall, irFunction: IrFunction, receiver: State?, args: List<State>, defaultAction: () -> Unit) {
+    override fun interceptCall(call: IrCall, irFunction: IrFunction, args: List<State>, defaultAction: () -> Unit) {
         val isInlineOnly = irFunction.hasAnnotation(FqName("kotlin.internal.InlineOnly"))
+        val isSyntheticDefault = irFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
+        val receiver = if (irFunction.dispatchReceiverParameter != null) args[0] else null
         when {
-            receiver is Wrapper && !isInlineOnly -> receiver.getMethod(irFunction).invokeMethod(irFunction, args)
+            receiver is Wrapper && !isInlineOnly && !isSyntheticDefault -> receiver.getMethod(irFunction).invokeMethod(irFunction, args)
             Wrapper.mustBeHandledWithWrapper(irFunction) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction, args)
             handleIntrinsicMethods(irFunction) -> return
-            receiver is KFunctionState && call.symbol.owner.name.asString() == "invoke" -> handleInvoke(call, receiver, args)
-            receiver is ReflectionState -> Wrapper.getReflectionMethod(irFunction).invokeMethod(irFunction, args)
+            receiver.mustBeHandledAsReflection(call) -> Wrapper.getReflectionMethod(irFunction).invokeMethod(irFunction, args)
             receiver is Primitive<*> -> calculateBuiltIns(irFunction, args) // check for js char, js long and get field for primitives
             irFunction.body == null ->
                 irFunction.trySubstituteFunctionBody() ?: irFunction.tryCalculateLazyConst() ?: calculateBuiltIns(irFunction, args)
@@ -80,72 +71,26 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         }
     }
 
-    // TODO unite this logic with interpretCall
-    private fun handleInvoke(call: IrCall, functionState: KFunctionState, args: List<State>) {
-        val invokedFunction = functionState.irFunction
-
-        var index = 1 // drop first arg that is reference to function
-        val dispatchReceiver = invokedFunction.dispatchReceiverParameter?.let { functionState.getField(it.symbol) ?: args[index++] }
-        val extensionReceiver = invokedFunction.extensionReceiverParameter?.let { functionState.getField(it.symbol) ?: args[index++] }
-        val valueArguments = invokedFunction.valueParameters.map { args[index++] }
-
-        val function = when (val symbol = invokedFunction.symbol) {
-            is IrSimpleFunctionSymbol -> {
-                val irCall = IrCallImpl.fromSymbolOwner(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, invokedFunction.returnType, invokedFunction.symbol as IrSimpleFunctionSymbol
-                )
-                val actualFunction = dispatchReceiver?.getIrFunctionByIrCall(irCall) ?: invokedFunction
-                callStack.newFrame(actualFunction)
-                callStack.addInstruction(SimpleInstruction(actualFunction))
-                callStack.addVariable(Variable(actualFunction.symbol, KTypeState(call.type, irBuiltIns.anyClass.owner)))
-
-                actualFunction
-            }
-            is IrConstructorSymbol -> {
-                val irConstructorCall = IrConstructorCallImpl.fromSymbolOwner(invokedFunction.returnType, symbol)
-                callStack.newSubFrame(irConstructorCall)
-                callStack.addInstruction(SimpleInstruction(irConstructorCall))
-                callStack.addVariable(Variable(invokedFunction.parentAsClass.thisReceiver!!.symbol, Common(invokedFunction.parentAsClass)))
-
-                invokedFunction
-            }
-            else -> TODO("unsupported symbol $symbol for invoke")
-        }
-
-        function.dispatchReceiverParameter?.let { callStack.addVariable(Variable(it.symbol, dispatchReceiver!!)) }
-        function.extensionReceiverParameter?.let { callStack.addVariable(Variable(it.symbol, extensionReceiver!!)) }
-        function.valueParameters.forEachIndexed { i, param -> callStack.addVariable(Variable(param.symbol, valueArguments[i])) }
-
-        callStack.loadUpValues(functionState)
-        if (extensionReceiver is StateWithClosure) callStack.loadUpValues(extensionReceiver)
-        if (dispatchReceiver is Complex && function.parentClassOrNull?.isInner == true) {
-            generateSequence(dispatchReceiver.outerClass) { (it.state as? Complex)?.outerClass }.forEach { callStack.addVariable(it) }
-        }
-
-        if (invokedFunction.symbol is IrConstructorSymbol) return
-        this.interceptCall(call, function, dispatchReceiver, listOfNotNull(dispatchReceiver, extensionReceiver) + valueArguments) {
-            callStack.addInstruction(CompoundInstruction(function))
-        }
-    }
-
-    override fun interceptConstructor(
-        constructorCall: IrFunctionAccessExpression, receiver: State, args: List<State>, defaultAction: () -> Unit
-    ) {
+    override fun interceptConstructor(constructorCall: IrFunctionAccessExpression, args: List<State>, defaultAction: () -> Unit) {
+        val receiver = callStack.loadState(constructorCall.getThisReceiver())
         val irConstructor = constructorCall.symbol.owner
         val irClass = irConstructor.parentAsClass
         when {
-            Wrapper.mustBeHandledWithWrapper(irClass) || irClass.fqNameWhenAvailable!!.startsWith(Name.identifier("java")) -> {
+            Wrapper.mustBeHandledWithWrapper(irClass) -> {
                 Wrapper.getConstructorMethod(irConstructor).invokeMethod(irConstructor, args)
-                if (constructorCall !is IrConstructorCall) (receiver as Common).superWrapperClass = callStack.popState() as Wrapper
+                when {
+                    irClass.isSubclassOfThrowable() -> (receiver as ExceptionState).copyFieldsFrom(callStack.popState() as Wrapper)
+                    constructorCall is IrConstructorCall -> callStack.rewriteState(constructorCall.getThisReceiver(), callStack.popState())
+                    else -> (receiver as Complex).superWrapperClass = callStack.popState() as Wrapper
+                }
             }
             irClass.defaultType.isArray() || irClass.defaultType.isPrimitiveArray() -> {
                 // array constructor doesn't have body so must be treated separately
-                callStack.addVariable(Variable(irConstructor.symbol, KTypeState(constructorCall.type, irBuiltIns.anyClass.owner)))
-                assert(handleIntrinsicMethods(irConstructor)) { "Unsupported intrinsic constructor: ${irConstructor.render()}" }
+                verify(handleIntrinsicMethods(irConstructor)) { "Unsupported intrinsic constructor: ${irConstructor.render()}" }
             }
             irClass.defaultType.isUnsignedType() -> {
                 val propertySymbol = irClass.declarations.single { it is IrProperty }.symbol
-                callStack.pushState(receiver.apply { fields += Variable(propertySymbol, args.single()) })
+                callStack.pushState(receiver.apply { this.setField(propertySymbol, args.single()) })
             }
             else -> defaultAction()
         }
@@ -155,7 +100,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         val objectClass = expression.symbol.owner
         when {
             Wrapper.mustBeHandledWithWrapper(objectClass) -> {
-                val result = Wrapper.getCompanionObject(objectClass)
+                val result = Wrapper.getCompanionObject(objectClass, environment)
                 environment.mapOfObjects[expression.symbol] = result
                 callStack.pushState(result)
             }
@@ -167,7 +112,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         val enumClass = enumEntry.symbol.owner.parentAsClass
         when {
             Wrapper.mustBeHandledWithWrapper(enumClass) -> {
-                val enumEntryName = enumEntry.name.asString().toState(environment.irBuiltIns.stringType)
+                val enumEntryName = environment.convertToState(enumEntry.name.asString(), environment.irBuiltIns.stringType)
                 val valueOfFun = enumClass.declarations.single { it.nameForIrSerialization.asString() == "valueOf" } as IrFunction
                 Wrapper.getEnumEntry(enumClass).invokeMethod(valueOfFun, listOf(enumEntryName))
                 environment.mapOfEnums[enumEntry.symbol] = callStack.popState() as Complex
@@ -178,23 +123,23 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
 
     override fun interceptJavaStaticField(expression: IrGetField) {
         val field = expression.symbol.owner
-        assert(field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic)
-        assert(field.initializer?.expression !is IrConst<*>)
-        callStack.pushState(Wrapper.getStaticGetter(field).invokeWithArguments().toState(field.type))
+        verify(field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic)
+        verify(field.initializer?.expression !is IrConst<*>)
+        callStack.pushState(environment.convertToState(Wrapper.getStaticGetter(field).invokeWithArguments(), field.type))
     }
 
     private fun MethodHandle?.invokeMethod(irFunction: IrFunction, args: List<State>) {
-        this ?: return assert(handleIntrinsicMethods(irFunction)) { "Unsupported intrinsic function: ${irFunction.render()}" }
+        this ?: return verify(handleIntrinsicMethods(irFunction)) { "Unsupported intrinsic function: ${irFunction.render()}" }
         val argsForMethodInvocation = irFunction.getArgsForMethodInvocation(this@DefaultCallInterceptor, this.type(), args)
         withExceptionHandler(environment) {
             val result = this.invokeWithArguments(argsForMethodInvocation) // TODO if null return Unit
-            callStack.pushState(result.toState(result.getType(irFunction.returnType)))
+            callStack.pushState(environment.convertToState(result, result.getType(irFunction.returnType)))
         }
     }
 
     private fun handleIntrinsicMethods(irFunction: IrFunction): Boolean {
         val instructions = IntrinsicEvaluator.unwindInstructions(irFunction, environment) ?: return false
-        instructions.forEach { callStack.addInstruction(it) }
+        instructions.forEach { callStack.pushInstruction(it) }
         return true
     }
 
@@ -225,13 +170,13 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
                 else -> throw InterpreterError("Unsupported number of arguments for invocation as builtin function: $methodName")
             }
             // TODO check "result is Unit"
-            callStack.pushState(result.toState(result.getType(irFunction.returnType)))
+            callStack.pushState(environment.convertToState(result, result.getType(irFunction.returnType)))
         }
     }
 
     private fun calculateRangeTo(type: IrType, args: List<State>) {
         val constructor = type.classOrNull!!.owner.constructors.first()
-        val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
+        val constructorCall = constructor.createConstructorCall()
         val constructorValueParameters = constructor.valueParameters.map { it.symbol }
 
         val primitiveValueParameters = args.map { it as Primitive<*> }
@@ -239,7 +184,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             constructorCall.putValueArgument(index, primitive.value.toIrConst(constructorValueParameters[index].owner.type))
         }
 
-        callStack.addInstruction(CompoundInstruction(constructorCall))
+        callStack.pushInstruction(CompoundInstruction(constructorCall))
     }
 
     private fun Any?.getType(defaultType: IrType): IrType {
@@ -261,7 +206,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     private fun IrFunction.trySubstituteFunctionBody(): IrElement? {
         val signature = this.symbol.signature ?: return null
         this.body = bodyMap[signature] ?: return null
-        callStack.addInstruction(CompoundInstruction(this))
+        callStack.pushInstruction(CompoundInstruction(this))
         return body
     }
 
@@ -269,6 +214,6 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     private fun IrFunction.tryCalculateLazyConst(): IrExpression? {
         if (this !is IrSimpleFunction) return null
         val expression = this.correspondingPropertySymbol?.owner?.backingField?.initializer?.expression
-        return expression?.apply { callStack.addInstruction(CompoundInstruction(this)) }
+        return expression?.apply { callStack.pushInstruction(CompoundInstruction(this)) }
     }
 }

@@ -572,17 +572,17 @@ digraph kt44814_kt {
                 }
                 subgraph cluster_59 {
                     color=blue
-                    177 [label="Enter when branch condition  [4]"];
-                    178 [label="Type operator: ($subj$ is R|FirPsiSourceElement|) [5]"];
-                    179 [label="Exit when branch condition [4]"];
+                    177 [label="Enter when branch condition  [5]"];
+                    178 [label="Type operator: ($subj$ is R|FirPsiSourceElement|) [6]"];
+                    179 [label="Exit when branch condition [5]"];
                 }
                 subgraph cluster_60 {
                     color=blue
-                    180 [label="Enter when branch condition  [4]"];
-                    181 [label="Type operator: ($subj$ is R|FirLightSourceElement|) [5]"];
-                    182 [label="Exit when branch condition [4]"];
+                    180 [label="Enter when branch condition  [6]"];
+                    181 [label="Type operator: ($subj$ is R|FirLightSourceElement|) [7]"];
+                    182 [label="Exit when branch condition [6]"];
                 }
-                183 [label="Enter when branch result [5]"];
+                183 [label="Enter when branch result [7]"];
                 subgraph cluster_61 {
                     color=blue
                     184 [label="Enter block [7]"];
@@ -623,7 +623,7 @@ digraph kt44814_kt {
                     202 [label="Exit block [7]"];
                 }
                 203 [label="Exit when branch result [6]"];
-                204 [label="Enter when branch result [5]"];
+                204 [label="Enter when branch result [6]"];
                 subgraph cluster_64 {
                     color=blue
                     205 [label="Enter block [6]"];
@@ -796,10 +796,10 @@ digraph kt44814_kt {
                 }
                 subgraph cluster_72 {
                     color=blue
-                    261 [label="Enter when branch condition else [4]"];
-                    262 [label="Exit when branch condition [4]"];
+                    261 [label="Enter when branch condition else [5]"];
+                    262 [label="Exit when branch condition [5]"];
                 }
-                263 [label="Enter when branch result [5]"];
+                263 [label="Enter when branch result [6]"];
                 subgraph cluster_73 {
                     color=blue
                     264 [label="Enter block [6]"];

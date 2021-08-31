@@ -21,6 +21,13 @@ fun foo() : String {
     )
 }
 
+// JVM_TEMPLATES
 // 12 ALOAD
 // 2 ASTORE
 // 0 InlineMarker
+
+// JVM_IR_TEMPLATES
+// 11 ALOAD
+// 1 ASTORE
+// 0 InlineMarker
+

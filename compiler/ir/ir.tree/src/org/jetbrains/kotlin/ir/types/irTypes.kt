@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -77,7 +78,12 @@ val IrType.classifierOrNull: IrClassifierSymbol?
     get() = safeAs<IrSimpleType>()?.classifier
 
 val IrType.classOrNull: IrClassSymbol?
-    get() = classifierOrNull as? IrClassSymbol
+    get() =
+        when (val classifier = classifierOrNull)  {
+            is IrClassSymbol -> classifier
+            is IrScriptSymbol -> classifier.owner.targetClass
+            else -> null
+        }
 
 val IrType.classFqName: FqName?
     get() = classOrNull?.owner?.fqNameWhenAvailable

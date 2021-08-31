@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.getOuterClass
 import org.jetbrains.kotlin.fir.scopes.PACKAGE_MEMBER
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -197,7 +200,8 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                             }
                     }
                 }
-                else -> {}
+                else -> {
+                }
             }
             if (declarationName != null) {
                 session.lookupTracker?.recordLookup(
@@ -213,17 +217,89 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
         when (declaration) {
             is FirFile -> checkFile(declaration, inspector, context)
             is FirRegularClass -> checkRegularClass(declaration, inspector)
-            else -> return
+            else -> {
+            }
         }
 
-        inspector.declarationConflictingSymbols.forEach { (declaration, symbols) ->
-            when {
-                symbols.isEmpty() -> {}
-                declaration is FirSimpleFunction || declaration is FirConstructor -> {
-                    reporter.reportOn(declaration.source, FirErrors.CONFLICTING_OVERLOADS, symbols, context)
+        inspector.declarationConflictingSymbols.forEach { (conflictingDeclaration, symbols) ->
+            val source = conflictingDeclaration.source
+            if (source != null && symbols.isNotEmpty()) {
+                when (conflictingDeclaration) {
+                    is FirSimpleFunction,
+                    is FirConstructor -> {
+                        reporter.reportOn(source, FirErrors.CONFLICTING_OVERLOADS, symbols, context)
+                    }
+                    else -> {
+                        val factory = if (conflictingDeclaration is FirClassLikeDeclaration &&
+                            getOuterClass(conflictingDeclaration, context.session) == null &&
+                            symbols.any { it is FirClassLikeSymbol<*> }
+                        ) {
+                            FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION
+                        } else {
+                            FirErrors.REDECLARATION
+                        }
+                        reporter.reportOn(source, factory, symbols, context)
+                    }
+                }
+            }
+        }
+
+        if (declaration.source?.kind !is FirFakeSourceElementKind) {
+            when (declaration) {
+                is FirMemberDeclaration -> {
+                    if (declaration is FirFunction) {
+                        checkConflictingParameters(declaration.valueParameters, context, reporter)
+                    }
+                    checkConflictingParameters(declaration.typeParameters, context, reporter)
+                }
+                is FirTypeParametersOwner -> {
+                    checkConflictingParameters(declaration.typeParameters, context, reporter)
                 }
                 else -> {
-                    reporter.reportOn(declaration.source, FirErrors.REDECLARATION, symbols, context)
+                }
+            }
+        }
+    }
+
+    private fun checkConflictingParameters(parameters: List<FirElement>, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (parameters.size <= 1) return
+
+        val multimap = ListMultimap<Name, FirBasedSymbol<*>>()
+        for (parameter in parameters) {
+            val name: Name
+            val symbol: FirBasedSymbol<*>
+            when (parameter) {
+                is FirValueParameter -> {
+                    symbol = parameter.symbol
+                    name = parameter.name
+                }
+                is FirOuterClassTypeParameterRef -> {
+                    continue
+                }
+                is FirTypeParameterRef -> {
+                    symbol = parameter.symbol
+                    name = symbol.name
+                }
+                is FirTypeParameter -> {
+                    symbol = parameter.symbol
+                    name = parameter.name
+                }
+                else -> throw AssertionError("Invalid parameter type")
+            }
+            if (!name.isSpecial) {
+                multimap.put(name, symbol)
+            }
+        }
+        for (key in multimap.keys) {
+            val conflictingParameters = multimap[key]
+            if (conflictingParameters.size > 1) {
+                for (parameter in conflictingParameters) {
+                    reporter.reportOn(
+                        parameter.source,
+                        FirErrors.REDECLARATION,
+                        conflictingParameters,
+                        context
+                    )
                 }
             }
         }

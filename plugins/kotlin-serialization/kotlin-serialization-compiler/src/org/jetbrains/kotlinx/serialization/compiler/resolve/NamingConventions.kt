@@ -139,7 +139,6 @@ internal object SerializationDependencies {
     val LAZY_FQ = FqName("kotlin.Lazy")
     val LAZY_FUNC_FQ = FqName("kotlin.lazy")
     val LAZY_MODE_FQ = FqName("kotlin.LazyThreadSafetyMode")
-    val KPROPERTY1_FQ = FqName("kotlin.reflect.KProperty1")
     val FUNCTION0_FQ = FqName("kotlin.Function0")
     val LAZY_PUBLICATION_MODE_NAME = Name.identifier("PUBLICATION")
 }

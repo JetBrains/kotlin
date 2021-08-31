@@ -142,7 +142,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun SimpleTypeMarker.asCapturedType(): CapturedTypeMarker? {
         require(this is SimpleType, this::errorMessage)
-        return this as? NewCapturedType
+        return if (this is SimpleTypeWithEnhancement) origin.asCapturedType() else this as? NewCapturedType
     }
 
     override fun SimpleTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker? {
@@ -326,8 +326,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         require(this is SimpleType, this::errorMessage)
         return !isError &&
                 constructor.declarationDescriptor !is TypeAliasDescriptor &&
-                (constructor.declarationDescriptor != null || this is CapturedType || this is NewCapturedType || this is DefinitelyNotNullType || constructor is IntegerLiteralTypeConstructor)
+                (constructor.declarationDescriptor != null || this is CapturedType || this is NewCapturedType || this is DefinitelyNotNullType || constructor is IntegerLiteralTypeConstructor || isSingleClassifierTypeWithEnhancement())
     }
+
+    private fun SimpleTypeMarker.isSingleClassifierTypeWithEnhancement() =
+        this is SimpleTypeWithEnhancement && origin.isSingleClassifierType()
 
     override fun KotlinTypeMarker.contains(predicate: (KotlinTypeMarker) -> Boolean): Boolean {
         require(this is KotlinType, this::errorMessage)
@@ -385,11 +388,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     }
 
 
-    override fun newBaseTypeCheckerContext(
+    override fun newTypeCheckerState(
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean
-    ): AbstractTypeCheckerContext {
-        return ClassicTypeCheckerContext(errorTypesEqualToAnything, stubTypesEqualToAnything, typeSystemContext = this)
+    ): TypeCheckerState {
+        return createClassicTypeCheckerState(errorTypesEqualToAnything, stubTypesEqualToAnything, typeSystemContext = this)
     }
 
     override fun nullableNothingType(): SimpleTypeMarker {
@@ -408,7 +411,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return builtIns.anyType
     }
 
-    open val builtIns: KotlinBuiltIns
+    val builtIns: KotlinBuiltIns
         get() = throw UnsupportedOperationException("Not supported")
 
     override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker {
@@ -785,6 +788,24 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         } else {
             createFlexibleType(this, this.withNullability(true))
         }
+
+    override fun substitutionSupertypePolicy(type: SimpleTypeMarker): TypeCheckerState.SupertypesPolicy {
+        require(type is SimpleType, type::errorMessage)
+        val substitutor = TypeConstructorSubstitution.create(type).buildSubstitutor()
+
+        return object : TypeCheckerState.SupertypesPolicy.DoCustomTransform() {
+            override fun transformType(state: TypeCheckerState, type: KotlinTypeMarker): SimpleTypeMarker {
+                return substitutor.safeSubstitute(
+                    type.lowerBoundIfFlexible() as KotlinType,
+                    Variance.INVARIANT
+                ).asSimpleType()!!
+            }
+        }
+    }
+
+    override fun KotlinTypeMarker.isTypeVariableType(): Boolean {
+        return this is UnwrappedType && constructor is NewTypeVariableConstructor
+    }
 }
 
 fun TypeVariance.convertVariance(): Variance {

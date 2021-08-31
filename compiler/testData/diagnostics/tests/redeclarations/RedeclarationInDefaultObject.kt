@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class A {
     companion object B {
         class <!REDECLARATION!>G<!>

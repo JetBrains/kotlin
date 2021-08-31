@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -40,6 +39,7 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
         entries: List<KtAnnotationEntry>,
         actualTargets: List<KotlinTarget>,
         trace: BindingTrace,
+        annotated: KtAnnotated?,
         languageVersionSettings: LanguageVersionSettings
     ) {
         var isAnnotatedWithExperimental = false
@@ -59,7 +59,8 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
             }
             val annotationClass = annotation.annotationClass ?: continue
             if (annotationClass.annotations.any { it.fqName in OptInNames.EXPERIMENTAL_FQ_NAMES }) {
-                val possibleTargets = AnnotationChecker.applicableTargetSet(annotationClass).orEmpty().intersect(actualTargets)
+                val applicableTargets = AnnotationChecker.applicableTargetSet(annotationClass)
+                val possibleTargets = applicableTargets.intersect(actualTargets)
                 val annotationUseSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
                 if (PROPERTY_GETTER in possibleTargets ||
                     annotationUseSiteTarget == AnnotationUseSiteTarget.PROPERTY_GETTER
@@ -81,7 +82,6 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
                 ) {
                     trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET.on(entry, "field"))
                 }
-                val annotated = entry.getStrictParentOfType<KtAnnotated>() ?: continue
                 if (annotated is KtCallableDeclaration &&
                     annotated !is KtPropertyAccessor &&
                     annotationUseSiteTarget == null &&

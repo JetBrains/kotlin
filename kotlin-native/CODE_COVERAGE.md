@@ -2,10 +2,11 @@
 Kotlin/Native has a code coverage support that is based on Clang's 
 [Source-based Code Coverage](https://clang.llvm.org/docs/SourceBasedCodeCoverage.html).
  
-**Please note**:
-1. Coverage support is in it's very early days and is in active development. Known issues are:
+## **Please note**:
+1. ⚠️ Coverage support is far from being ready for usage. Known issues are:
     * Coverage information may be inaccurate.
     * Line execution counts may be wrong.
+    * The thing might just not work.
 
 2. Most of described functionality will be incorporated into Gradle plugin.
 

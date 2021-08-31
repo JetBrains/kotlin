@@ -170,6 +170,13 @@ class FirCallCompletionResultsWriterTransformer(
         return result
     }
 
+    override fun transformPropertyAccessExpression(
+        propertyAccessExpression: FirPropertyAccessExpression,
+        data: ExpectedArgumentType?
+    ): FirStatement {
+        return transformQualifiedAccessExpression(propertyAccessExpression, data)
+    }
+
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ExpectedArgumentType?): FirStatement {
         val calleeReference = functionCall.calleeReference as? FirNamedReferenceWithCandidate
             ?: return functionCall
@@ -406,6 +413,10 @@ class FirCallCompletionResultsWriterTransformer(
             session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, qualifiedAccessExpression.source, null)
             return qualifiedAccessExpression
         }
+
+        override fun transformPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: Any?): FirStatement {
+            return transformQualifiedAccessExpression(propertyAccessExpression, data)
+        }
     }
 
     private fun FirTypeRef.substitute(candidate: Candidate): ConeKotlinType =
@@ -504,7 +515,7 @@ class FirCallCompletionResultsWriterTransformer(
             .map {
                 finalSubstitutor.substituteOrSelf(it).let { substitutedType ->
                     typeApproximator.approximateToSuperType(
-                        substitutedType, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference,
+                        substitutedType, TypeApproximatorConfiguration.TypeArgumentApproximation,
                     ) ?: substitutedType
                 }
             }

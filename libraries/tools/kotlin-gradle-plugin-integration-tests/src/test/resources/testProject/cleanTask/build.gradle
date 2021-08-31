@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlatform
 
 import java.io.File
 import java.time.*
+import java.util.concurrent.*
 
 plugins {
     id "org.jetbrains.kotlin.js" version "<pluginMarkerVersion>"
@@ -25,6 +26,28 @@ tasks.create("checkDownloadedFolder") {
         println(downloadedFolder.lastModified())
         if (!successUpdated) {
             throw new InvalidUserDataException("Unable to update last modified date")
+        }
+    }
+}
+
+tasks.create("checkIfLastModifiedNotNow") {
+    description = "check if last modified is not current date now"
+    dependsOn "build"
+    doLast {
+        println("check downloaded folder existance")
+        def downloadedFolder = new File(project.gradle.gradleUserHomeDir, nodeJsLocation)
+        if (!downloadedFolder.exists() || !downloadedFolder.isDirectory()) {
+            throw new InvalidUserDataException("Downloaded folder was not found")
+        }
+
+        def now = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+
+        def lastModified = downloadedFolder.lastModified()
+        def lastModified1 = lastModified + TimeUnit.DAYS.toMillis(1);
+        def lastModified2 = lastModified - TimeUnit.DAYS.toMillis(1);
+
+        if (now < lastModified1 || now < lastModified2) {
+            throw new InvalidUserDataException("Last modified date was updated")
         }
     }
 }

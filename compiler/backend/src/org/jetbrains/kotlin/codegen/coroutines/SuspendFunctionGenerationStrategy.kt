@@ -88,18 +88,17 @@ class SuspendFunctionGenerationStrategy(
         return CoroutineTransformerMethodVisitor(
             mv, access, name, desc, null, null, containingClassInternalName, this::classBuilderForCoroutineState,
             isForNamedFunction = true,
+            shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
+            disableTailCallOptimizationForFunctionReturningUnit = originalSuspendDescriptor.returnType?.isUnit() == true &&
+                    originalSuspendDescriptor.overriddenDescriptors.isNotEmpty() &&
+                    !originalSuspendDescriptor.allOverriddenFunctionsReturnUnit(),
             reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(declaration, state, it) },
             lineNumber = CodegenUtil.getLineNumberForElement(declaration, false) ?: 0,
             sourceFile = declaration.containingKtFile.name,
-            shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
             needDispatchReceiver = originalSuspendDescriptor.dispatchReceiverParameter != null,
             internalNameForDispatchReceiver = (originalSuspendDescriptor.containingDeclaration as? ClassDescriptor)?.let {
                 if (it.isInlineClass()) state.typeMapper.mapType(it).internalName else null
             } ?: containingClassInternalNameOrNull(),
-            languageVersionSettings = languageVersionSettings,
-            disableTailCallOptimizationForFunctionReturningUnit = originalSuspendDescriptor.returnType?.isUnit() == true &&
-                    originalSuspendDescriptor.overriddenDescriptors.isNotEmpty() &&
-                    !originalSuspendDescriptor.allOverriddenFunctionsReturnUnit(),
             useOldSpilledVarTypeAnalysis = state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS)
         )
     }
@@ -155,8 +154,7 @@ class SuspendFunctionGenerationStrategy(
                     needDispatchReceiver,
                     internalNameForDispatchReceiver,
                     containingClassInternalName,
-                    classBuilderForCoroutineState,
-                    languageVersionSettings
+                    classBuilderForCoroutineState
                 )
                 addFakeContinuationConstructorCallMarker(this, false)
                 pop() // Otherwise stack-transformation breaks

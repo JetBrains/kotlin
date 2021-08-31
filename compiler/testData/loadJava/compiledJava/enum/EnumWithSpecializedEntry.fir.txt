@@ -7,4 +7,8 @@ public final enum class EnumWithSpecializedEntry : R|kotlin/Enum<ft<test/EnumWit
     public final static fun valueOf(value: R|kotlin/String|): R|test/EnumWithSpecializedEntry| {
     }
 
+    public/*package*/ open class Nested : R|kotlin/Any| {
+        public/*package*/ constructor(): R|test/EnumWithSpecializedEntry.Nested|
+
+    }
 }

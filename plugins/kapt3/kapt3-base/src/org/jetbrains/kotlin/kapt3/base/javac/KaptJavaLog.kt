@@ -17,7 +17,20 @@ import javax.tools.Diagnostic
 import javax.tools.JavaFileObject
 import javax.tools.JavaFileObject.Kind
 import javax.tools.SimpleJavaFileObject
-import com.sun.tools.javac.util.List as JavacList
+
+interface KaptJavaLogBase {
+    val interceptorData: DiagnosticInterceptorData
+
+    val reportedDiagnostics: List<JCDiagnostic>
+
+    fun flush(kind: Log.WriterKind?)
+
+    fun flush()
+
+    class DiagnosticInterceptorData {
+        var files: Map<JavaFileObject, JCTree.JCCompilationUnit> = emptyMap()
+    }
+}
 
 class KaptJavaLog(
     private val projectBaseDir: File?,
@@ -25,9 +38,9 @@ class KaptJavaLog(
     errWriter: PrintWriter,
     warnWriter: PrintWriter,
     noticeWriter: PrintWriter,
-    val interceptorData: DiagnosticInterceptorData,
+    override val interceptorData: KaptJavaLogBase.DiagnosticInterceptorData,
     private val mapDiagnosticLocations: Boolean
-) : Log(context, errWriter, warnWriter, noticeWriter) {
+) : Log(context, errWriter, warnWriter, noticeWriter), KaptJavaLogBase {
     private val stubLineInfo = KaptStubLineInformation()
     private val javacMessages = JavacMessages.instance(context)
 
@@ -35,7 +48,7 @@ class KaptJavaLog(
         context.put(Log.outKey, noticeWriter)
     }
 
-    val reportedDiagnostics: List<JCDiagnostic>
+    override val reportedDiagnostics: List<JCDiagnostic>
         get() = _reportedDiagnostics
 
     private val _reportedDiagnostics = mutableListOf<JCDiagnostic>()
@@ -217,10 +230,6 @@ class KaptJavaLog(
             "compiler.err.not.def.public.cant.access"
         )
     }
-
-    class DiagnosticInterceptorData {
-        var files: Map<JavaFileObject, JCTree.JCCompilationUnit> = emptyMap()
-    }
 }
 
 private val LINE_SEPARATOR: String = System.getProperty("line.separator")
@@ -256,7 +265,7 @@ private fun JCDiagnostic.Factory.errorJava9Aware(
     }
 }
 
-private data class KotlinFileObject(val file: File) : SimpleJavaFileObject(file.toURI(), Kind.SOURCE) {
+/*private*/internal data class KotlinFileObject(val file: File) : SimpleJavaFileObject(file.toURI(), Kind.SOURCE) {
     override fun openOutputStream() = file.outputStream()
     override fun openWriter() = file.writer()
     override fun openInputStream() = file.inputStream()

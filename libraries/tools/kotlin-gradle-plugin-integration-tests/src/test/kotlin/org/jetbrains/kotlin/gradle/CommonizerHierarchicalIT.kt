@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.konan.file.File
 import org.junit.Test
@@ -23,6 +22,7 @@ class CommonizerHierarchicalIT : BaseGradleIT() {
                 }
 
                 build(":p1:compileAppleMainKotlinMetadata") {
+
                     assertSuccessful()
                     assertFileExists("p1/build/classes/kotlin/metadata/appleMain/klib/p1_appleMain.klib")
                 }

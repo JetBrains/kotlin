@@ -1,4 +1,8 @@
 public open class AnnotatedConstructor : R|kotlin/Any| {
     @R|test/AnnotatedConstructor.Anno|(String(constructor)) public constructor(): R|test/AnnotatedConstructor|
 
+    public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/String|): R|test/AnnotatedConstructor.Anno|
+
+    }
 }

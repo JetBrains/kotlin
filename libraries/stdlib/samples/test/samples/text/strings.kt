@@ -495,4 +495,16 @@ class Strings {
 
         assertPrints("abc".toBooleanStrictOrNull(), "null")
     }
+
+    @Sample
+    fun splitToSequence() {
+        val colors = "green, red , brown&blue, orange, pink&green"
+        val regex = "[,\\s]+".toRegex()
+
+        val mixedColor = colors.splitToSequence(regex)
+            .onEach { println(it) }
+            .firstOrNull { it.contains('&') }
+
+        assertPrints(mixedColor, "brown&blue")
+    }
 }

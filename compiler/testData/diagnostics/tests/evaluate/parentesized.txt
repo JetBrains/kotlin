@@ -6,7 +6,8 @@ public val b3: kotlin.Int = 6
 public val b4: kotlin.Long = 6.toLong()
 public val i1: kotlin.Int = 6
 public val i2: kotlin.Int = 6
-public val p1: kotlin.Byte = 6.toByte()
-public val p2: kotlin.Short = 6.toShort()
+public val p1: kotlin.Byte = 6
+public val p2: kotlin.Short = 6
 public val p3: kotlin.Int = 6
-public val p4: kotlin.Long = 6.toLong()
+public val p4: kotlin.Long = 6
+

@@ -26,11 +26,6 @@ extern "C" {
 // Throws arbitrary exception.
 void ThrowException(KRef exception);
 
-// RuntimeUtils.kt
-void OnUnhandledException(KRef throwable);
-
-RUNTIME_NORETURN void TerminateWithUnhandledException(KRef exception);
-
 void SetKonanTerminateHandler();
 
 RUNTIME_NOTHROW OBJ_GETTER(Kotlin_getExceptionObject, void* holder);
@@ -58,6 +53,7 @@ void RUNTIME_NORETURN ThrowIllegalArgumentException();
 void RUNTIME_NORETURN ThrowIllegalStateException();
 void RUNTIME_NORETURN ThrowInvalidMutabilityException(KConstRef where);
 void RUNTIME_NORETURN ThrowIncorrectDereferenceException();
+void RUNTIME_NORETURN ThrowFileFailedToInitializeException();
 void RUNTIME_NORETURN ThrowIllegalObjectSharingException(KConstNativePtr typeInfo, KConstNativePtr address);
 void RUNTIME_NORETURN ThrowFreezingException(KRef toFreeze, KRef blocker);
 // Prints out message of Throwable.
@@ -66,5 +62,12 @@ void PrintThrowable(KRef);
 #ifdef __cplusplus
 } // extern "C"
 #endif
+
+namespace kotlin {
+
+void ProcessUnhandledException(KRef exception) noexcept;
+void RUNTIME_NORETURN TerminateWithUnhandledException(KRef exception) noexcept;
+
+} // namespace kotlin
 
 #endif // RUNTIME_NAMES_H

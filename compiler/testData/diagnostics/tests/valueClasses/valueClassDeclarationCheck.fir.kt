@@ -49,4 +49,4 @@ final value class D0(val x: Int)
 <!INLINE_CLASS_NOT_FINAL!>abstract<!> value class D2(val x: Int)
 <!INLINE_CLASS_NOT_FINAL!>sealed<!> value class D3(val x: Int)
 
-value data class D4(val x: String)
+<!INCOMPATIBLE_MODIFIERS!>value<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class D4(val x: String)

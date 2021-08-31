@@ -16,7 +16,10 @@ import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.script.experimental.api.KotlinType
 
-class ReplImplicitsExtensionsResolutionFilter : ImplicitsExtensionsResolutionFilter {
+class ReplImplicitsExtensionsResolutionFilter(
+    classesToSkip: Collection<KotlinType> = emptyList(),
+    classesToSkipAfterFirstTime: Collection<KotlinType> = emptyList()
+) : ImplicitsExtensionsResolutionFilter {
     private val lock = ReentrantReadWriteLock()
     private var classesToSkipNames: Set<String> = emptySet()
     private var classesToSkipFirstTimeNames: Set<String> = emptySet()
@@ -27,6 +30,10 @@ class ReplImplicitsExtensionsResolutionFilter : ImplicitsExtensionsResolutionFil
     ) = lock.write {
         classesToSkipNames = classesToSkip.mapTo(hashSetOf()) { it.typeName }
         classesToSkipFirstTimeNames = classesToSkipAfterFirstTime.mapTo(hashSetOf()) { it.typeName }
+    }
+
+    init {
+        update(classesToSkip, classesToSkipAfterFirstTime)
     }
 
     override fun getScopesWithInfo(

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +UnrestrictedBuilderInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 

@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,11 +23,16 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
     }
 
     public void testAllFilesPresentInCompare() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compare"), Pattern.compile("^([^\\.]+)$"), null, false);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compare"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, false);
+    }
+
+    @TestMetadata("anonymousObjects")
+    public void testAnonymousObjects() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/anonymousObjects/");
     }
 
     @TestMetadata("classFlags")
@@ -49,14 +55,54 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
         runTest("plugins/jvm-abi-gen/testData/compare/constant/");
     }
 
+    @TestMetadata("declarationOrder")
+    public void testDeclarationOrder() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/declarationOrder/");
+    }
+
+    @TestMetadata("declarationOrderInline")
+    public void testDeclarationOrderInline() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderInline/");
+    }
+
+    @TestMetadata("declarationOrderInlineCall")
+    public void testDeclarationOrderInlineCall() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderInlineCall/");
+    }
+
+    @TestMetadata("declarationOrderInlineNonInline")
+    public void testDeclarationOrderInlineNonInline() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderInlineNonInline/");
+    }
+
+    @TestMetadata("declarationOrderPrivateInline")
+    public void testDeclarationOrderPrivateInline() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderPrivateInline/");
+    }
+
     @TestMetadata("functionBody")
     public void testFunctionBody() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/functionBody/");
     }
 
+    @TestMetadata("inlineFunInPrivateClass")
+    public void testInlineFunInPrivateClass() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/inlineFunInPrivateClass/");
+    }
+
+    @TestMetadata("inlineFunInPrivateNestedClass")
+    public void testInlineFunInPrivateNestedClass() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/inlineFunInPrivateNestedClass/");
+    }
+
     @TestMetadata("inlineFunctionBody")
     public void testInlineFunctionBody() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/inlineFunctionBody/");
+    }
+
+    @TestMetadata("lambdas")
+    public void testLambdas() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/lambdas/");
     }
 
     @TestMetadata("parameterName")
@@ -77,6 +123,11 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
     @TestMetadata("superClass")
     public void testSuperClass() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/superClass/");
+    }
+
+    @TestMetadata("syntheticAccessors")
+    public void testSyntheticAccessors() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/syntheticAccessors/");
     }
 
     @TestMetadata("topLevelPrivateMembers")

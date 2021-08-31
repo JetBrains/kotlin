@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @Target(AnnotationTarget.CLASS)
 annotation class My
 data class Pair(val a: Int, val b: Int)

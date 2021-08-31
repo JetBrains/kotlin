@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumperImpl
+import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 
 class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
@@ -27,10 +27,10 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
         const val SMAP_NON_SEP_EXT = "smap-nonseparate-compilation"
     }
 
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
-    private val dumper = MultiModuleInfoDumperImpl(moduleHeaderTemplate = null)
+    private val dumper = MultiModuleInfoDumper(moduleHeaderTemplate = null)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         if (!GENERATE_SMAP) return

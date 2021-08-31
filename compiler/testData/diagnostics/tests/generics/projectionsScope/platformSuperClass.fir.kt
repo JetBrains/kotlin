@@ -9,10 +9,10 @@ public class Clazz<T> {
 // FILE: main.kt
 fun test(clazz: Clazz<*>) {
     clazz.t checkType { _<Any?>() }
-    clazz.getSuperClass() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Clazz<*>?>() }
+    clazz.getSuperClass() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Clazz<*>?>() }
     clazz.getSuperClass().t checkType { _<Any?>() }
 
-    clazz.superClass checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Clazz<*>?>() }
+    clazz.superClass checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Clazz<*>?>() }
     clazz.superClass.t checkType { _<Any?>() }
 
     // See KT-9294

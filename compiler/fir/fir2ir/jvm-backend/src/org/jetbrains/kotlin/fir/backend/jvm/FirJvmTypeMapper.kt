@@ -92,18 +92,18 @@ class FirJvmTypeMapper(val session: FirSession) : TypeMappingContext<JvmSignatur
         typeContext.hasNothingInNonContravariantPosition(type)
     }
 
-    private fun FirClassLikeSymbol<*>.toRegularClassSymbol(): FirRegularClassSymbol? = when (this) {
-        is FirRegularClassSymbol -> this
-        is FirTypeAliasSymbol -> {
-            val expandedType = fir.expandedTypeRef.coneType.fullyExpandedType(session) as? ConeClassLikeType
-            expandedType?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol
-        }
-        else -> null
-    }
-
     private fun ConeKotlinType.buildPossiblyInnerType(): PossiblyInnerConeType? {
         if (this !is ConeClassLikeType) return null
-        return buildPossiblyInnerType(lookupTag.toSymbol(session)?.toRegularClassSymbol(), 0)
+
+        return when (val symbol = lookupTag.toSymbol(session)) {
+            is FirRegularClassSymbol -> buildPossiblyInnerType(symbol, 0)
+            is FirTypeAliasSymbol -> {
+                val expandedType = fullyExpandedType(session) as? ConeClassLikeType
+                val classSymbol = expandedType?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol
+                classSymbol?.let { expandedType.buildPossiblyInnerType(it, 0) }
+            }
+            else -> null
+        }
     }
 
     private fun ConeClassLikeType.parentClassOrNull(): FirRegularClassSymbol? {

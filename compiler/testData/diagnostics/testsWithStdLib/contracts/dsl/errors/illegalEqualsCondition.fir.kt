@@ -18,7 +18,7 @@ fun identityEqualsWithVariables(x: Any?, y: Any?) {
 
 fun equalConstants() {
     contract {
-        <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (null == null)<!>
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (<!SENSELESS_COMPARISON!>null == null<!>)<!>
     }
 }
 

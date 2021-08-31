@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors
 
-import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
-import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
+import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -30,19 +29,15 @@ fun ModuleDescriptor.resolveClassByFqName(fqName: FqName, lookupLocation: Lookup
             ?.getContributedClassifier(fqName.shortName(), lookupLocation) as? ClassDescriptor
 }
 
-fun ModuleDescriptor.findContinuationClassDescriptorOrNull(lookupLocation: LookupLocation, releaseCoroutines: Boolean) =
-    if (releaseCoroutines)
-        resolveClassByFqName(CONTINUATION_INTERFACE_FQ_NAME_RELEASE, lookupLocation)
-    else
-        resolveClassByFqName(CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL, lookupLocation)
+fun ModuleDescriptor.findContinuationClassDescriptorOrNull(lookupLocation: LookupLocation): ClassDescriptor? =
+    resolveClassByFqName(CONTINUATION_INTERFACE_FQ_NAME, lookupLocation)
 
-fun ModuleDescriptor.findContinuationClassDescriptor(lookupLocation: LookupLocation, releaseCoroutines: Boolean) =
-    findContinuationClassDescriptorOrNull(lookupLocation, releaseCoroutines).sure { "Continuation interface is not found" }
+fun ModuleDescriptor.findContinuationClassDescriptor(lookupLocation: LookupLocation) =
+    findContinuationClassDescriptorOrNull(lookupLocation).sure { "Continuation interface is not found" }
 
-fun ModuleDescriptor.getContinuationOfTypeOrAny(kotlinType: KotlinType, isReleaseCoroutines: Boolean) =
+fun ModuleDescriptor.getContinuationOfTypeOrAny(kotlinType: KotlinType) =
     module.findContinuationClassDescriptorOrNull(
-        NoLookupLocation.FROM_DESERIALIZATION,
-        isReleaseCoroutines
+        NoLookupLocation.FROM_DESERIALIZATION
     )?.defaultType?.let {
         KotlinTypeFactory.simpleType(
             it,

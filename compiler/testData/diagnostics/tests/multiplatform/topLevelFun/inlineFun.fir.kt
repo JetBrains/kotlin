@@ -14,5 +14,5 @@ actual fun nonInlineFun() { }
 // MODULE: m3-js()()(m1-common)
 // FILE: js.kt
 
-actual inline fun inlineFun() { }
-actual inline fun nonInlineFun() { }
+actual <!NOTHING_TO_INLINE!>inline<!> fun inlineFun() { }
+actual <!NOTHING_TO_INLINE!>inline<!> fun nonInlineFun() { }

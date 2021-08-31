@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -14,11 +15,14 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.util.PerformanceCounter
 import java.io.FileOutputStream
 import java.io.PrintStream
 import java.nio.file.Files
 import java.nio.file.Path
+
+private val USE_BUILD_FILE: Boolean = System.getProperty("fir.bench.use.build.file", "true").toBooleanLenient()!!
 
 abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
 
@@ -126,12 +130,40 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
     private fun configureBaseArguments(args: K2JVMCompilerArguments, moduleData: ModuleData, tmp: Path) {
         args.reportPerf = true
         args.jvmTarget = "1.8"
-        args.classpath = moduleData.classpath.joinToString(separator = ":") { it.absolutePath }
-        args.javaSourceRoots = moduleData.javaSourceRoots.map { it.absolutePath }.toTypedArray()
         args.allowKotlinPackage = true
+        if (USE_BUILD_FILE) {
+            configureArgsUsingBuildFile(args, moduleData, tmp)
+        } else {
+            configureRegularArgs(args, moduleData, tmp)
+        }
+    }
+
+    private fun configureRegularArgs(args: K2JVMCompilerArguments, moduleData: ModuleData, tmp: Path) {
+        args.classpath = moduleData.classpath.joinToString(separator = ":") { it.absolutePath }
+        args.javaSourceRoots = moduleData.javaSourceRoots.map { it.path.absolutePath }.toTypedArray()
         args.freeArgs = moduleData.sources.map { it.absolutePath }
         args.destination = tmp.toAbsolutePath().toFile().toString()
         args.friendPaths = moduleData.friendDirs.map { it.canonicalPath }.toTypedArray()
+    }
+
+    private fun configureArgsUsingBuildFile(args: K2JVMCompilerArguments, moduleData: ModuleData, tmp: Path) {
+        val builder = KotlinModuleXmlBuilder()
+        builder.addModule(
+            moduleData.name,
+            tmp.toAbsolutePath().toFile().toString(),
+            sourceFiles = moduleData.sources,
+            javaSourceRoots = moduleData.javaSourceRoots.map { JvmSourceRoot(it.path, it.packagePrefix) },
+            classpathRoots = moduleData.classpath,
+            commonSourceFiles = emptyList(),
+            modularJdkRoot = moduleData.modularJdkRoot,
+            "java-production",
+            isTests = false,
+            emptySet(),
+            friendDirs = moduleData.friendDirs
+        )
+        val modulesFile = tmp.toFile().resolve("modules.xml")
+        modulesFile.writeText(builder.asText().toString())
+        args.buildFile = modulesFile.absolutePath
     }
 
     abstract fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData)

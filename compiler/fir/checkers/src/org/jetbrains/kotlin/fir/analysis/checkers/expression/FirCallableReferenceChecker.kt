@@ -50,15 +50,5 @@ object FirCallableReferenceChecker : FirQualifiedAccessExpressionChecker() {
         ) {
             reporter.reportOn(source, FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED, referredSymbol, context)
         }
-        // The counterpart in FE 1.0 checks if the given descriptor is VariableDescriptor yet not PropertyDescriptor.
-        // Here, we explicitly check if the referred declaration/symbol is value parameter, local variable, or backing field.
-        if (
-            referredSymbol is FirValueParameterSymbol ||
-            (referredSymbol is FirPropertySymbol && referredSymbol.isLocal) ||
-            reference.resolvedSymbol is FirBackingFieldSymbol
-        ) {
-            // TODO: we can't set positioning strategy to meta error. Should report on reference expression, not entire reference access.
-            reporter.reportOn(source, FirErrors.UNSUPPORTED, "References to variables aren't supported yet", context)
-        }
     }
 }

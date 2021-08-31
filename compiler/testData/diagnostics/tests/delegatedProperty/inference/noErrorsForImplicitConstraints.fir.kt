@@ -35,7 +35,7 @@ class MyProperty2<T, R> {
         throw Exception()
     }
 
-    operator fun setValue(i: Int) {
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun setValue(i: Int) {
         println("set")
     }
 }

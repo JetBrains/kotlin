@@ -7,7 +7,6 @@
 #define RUNTIME_MM_THREAD_DATA_H
 
 #include <atomic>
-#include <pthread.h>
 
 #include "GlobalData.hpp"
 #include "GlobalsRegistry.hpp"
@@ -29,7 +28,7 @@ namespace mm {
 // Pin it in memory to prevent accidental copying.
 class ThreadData final : private Pinned {
 public:
-    ThreadData(pthread_t threadId) noexcept :
+    explicit ThreadData(int threadId) noexcept :
         threadId_(threadId),
         globalsThreadQueue_(GlobalsRegistry::Instance()),
         stableRefThreadQueue_(StableRefRegistry::Instance()),
@@ -39,7 +38,7 @@ public:
 
     ~ThreadData() = default;
 
-    pthread_t threadId() const noexcept { return threadId_; }
+    int threadId() const noexcept { return threadId_; }
 
     GlobalsRegistry::ThreadQueue& globalsThreadQueue() noexcept { return globalsThreadQueue_; }
 
@@ -75,7 +74,7 @@ public:
     }
 
 private:
-    const pthread_t threadId_;
+    const int threadId_;
     GlobalsRegistry::ThreadQueue globalsThreadQueue_;
     ThreadLocalStorage tls_;
     StableRefRegistry::ThreadQueue stableRefThreadQueue_;

@@ -1,0 +1,21 @@
+package
+
+public final class KtCharSeq : MyCharSequence {
+    public constructor KtCharSeq()
+    public open override /*1*/ /*fake_override*/ val length: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): kotlin.Char
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun subSequence(/*0*/ startIndex: kotlin.Int, /*1*/ endIndex: kotlin.Int): kotlin.CharSequence
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class MyCharSequence : kotlin.CharSequence {
+    public constructor MyCharSequence()
+    public open override /*1*/ val length: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun get(/*0*/ index: kotlin.Int): kotlin.Char
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ fun subSequence(/*0*/ startIndex: kotlin.Int, /*1*/ endIndex: kotlin.Int): kotlin.CharSequence
+    public open override /*1*/ fun toString(): kotlin.String
+}

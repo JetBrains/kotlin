@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.wasm.ir.*
 
@@ -82,9 +81,6 @@ class WasmTypeTransformer(
             builtIns.doubleType ->
                 WasmF64
 
-            builtIns.stringType ->
-                WasmExternRef
-
             builtIns.nothingNType ->
                 WasmExternRef
 
@@ -92,6 +88,7 @@ class WasmTypeTransformer(
             builtIns.nothingType ->
                 WasmExternRef
 
+            // this also handles builtIns.stringType
             else -> {
                 val klass = this.getClass()
                 val ic = context.backendContext.inlineClassesUtils.getInlinedClass(this)
@@ -99,7 +96,7 @@ class WasmTypeTransformer(
                 if (klass != null && klass.hasWasmForeignAnnotation()) {
                     WasmExternRef
                 } else if (ic != null) {
-                    getInlineClassUnderlyingType(ic).toWasmValueType()
+                    context.backendContext.inlineClassesUtils.getInlineClassUnderlyingType(ic).toWasmValueType()
                 } else {
                     this.toWasmGcRefType()
                 }

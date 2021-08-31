@@ -21,6 +21,9 @@ class RunTestMethodModel(
     override val name = METHOD_NAME
     override val dataString: String? = null
 
+    override val tags: List<String>
+        get() = emptyList()
+
     override fun imports(): Collection<Class<*>> {
         return super.imports() + if (isWithTargetBackend()) setOf(TargetBackend::class.java) else emptySet()
     }

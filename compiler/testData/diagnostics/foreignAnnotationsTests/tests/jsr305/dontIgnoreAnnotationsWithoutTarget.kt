@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // JSR305_GLOBAL_REPORT: strict

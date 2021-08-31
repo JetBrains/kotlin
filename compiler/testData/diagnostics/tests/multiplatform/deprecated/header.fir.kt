@@ -2,29 +2,29 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-header class My
+<!DEPRECATED_MODIFIER!>header<!> class My
 
-header fun foo(): Int
+<!DEPRECATED_MODIFIER!>header<!> fun foo(): Int
 
-header val x: String
+<!DEPRECATED_MODIFIER!>header<!> val x: String
 
-header object O
+<!DEPRECATED_MODIFIER!>header<!> object O
 
-header enum class E {
+<!DEPRECATED_MODIFIER!>header<!> enum class E {
     FIRST
 }
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-impl class My
+<!DEPRECATED_MODIFIER!>impl<!> class My
 
-impl fun foo() = 42
+<!DEPRECATED_MODIFIER!>impl<!> fun foo() = 42
 
-impl val x get() = "Hello"
+<!DEPRECATED_MODIFIER!>impl<!> val x get() = "Hello"
 
-impl object O
+<!DEPRECATED_MODIFIER!>impl<!> object O
 
-impl enum class E {
+<!DEPRECATED_MODIFIER!>impl<!> enum class E {
     FIRST
 }

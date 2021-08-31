@@ -1,4 +1,16 @@
 public open class InnerClass : R|kotlin/Any| {
     public constructor(): R|test/InnerClass|
 
+    public open inner class Inner : R|kotlin/Any| {
+        public open fun foo(): R|kotlin/Unit|
+
+        public constructor(): R|test/InnerClass.Inner|
+
+    }
+    public open class Nested : R|kotlin/Any| {
+        public open fun bar(): R|kotlin/Unit|
+
+        public constructor(): R|test/InnerClass.Nested|
+
+    }
 }

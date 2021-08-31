@@ -1,0 +1,11 @@
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class test/A {
+    // source: 'test.kt'
+}
+@kotlin.Metadata
+public final class test/Test {
+    // source: 'test.kt'
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method anonymousAnnotationInstantiation(): test.A
+}

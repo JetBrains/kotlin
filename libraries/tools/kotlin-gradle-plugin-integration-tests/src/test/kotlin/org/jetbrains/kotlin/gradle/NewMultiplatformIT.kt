@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.checkNativeC
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.native.*
 import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
-import org.jetbrains.kotlin.gradle.native.configureMemoryInGradleProperties
 import org.jetbrains.kotlin.gradle.native.transformNativeTestProject
 import org.jetbrains.kotlin.gradle.native.transformNativeTestProjectWithPluginDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
@@ -177,7 +177,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 it.replace(Regex("""\.version\(.*\)"""), "")
             }
             gradleBuildScript(subproject = libProject.projectDir.name).modify {
-                it.lines().dropLast(4).joinToString(separator = "\n")
+                it.lines().dropLast(5).joinToString(separator = "\n")
             }
 
             build(
@@ -386,7 +386,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 it.replace(Regex("""\.version\(.*\)"""), "")
             }
             gradleBuildScript(subproject = libProject.projectDir.name).modify {
-                it.lines().dropLast(4).joinToString(separator = "\n")
+                it.lines().dropLast(5).joinToString(separator = "\n")
             }
 
             build(
@@ -459,7 +459,9 @@ class NewMultiplatformIT : BaseGradleIT() {
     private fun doTestJvmWithJava(testJavaSupportInJvmTargets: Boolean) =
         with(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
             embedProject(Project("sample-lib-gradle-kotlin-dsl", directoryPrefix = "new-mpp-lib-and-app"))
-            configureMemoryInGradleProperties()
+            gradleProperties().apply {
+                configureJvmMemory()
+            }
 
             lateinit var classesWithoutJava: Set<String>
 
@@ -989,7 +991,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             libProject.projectDir.copyRecursively(projectDir.resolve(libProject.projectDir.name))
             gradleBuildScript(libProject.projectDir.name).modify {
-                it.lines().dropLast(4).joinToString(separator = "\n")
+                it.lines().dropLast(5).joinToString(separator = "\n")
             }
             projectDir.resolve("settings.gradle").appendText("\ninclude '${libProject.projectDir.name}'")
             gradleBuildScript().modify {
@@ -1199,7 +1201,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             appProject.setupWorkingDir(false)
             appProject.projectDir.copyRecursively(projectDir.resolve("sample-app"))
             gradleBuildScript("sample-app").modify {
-                it.lines().dropLast(4).joinToString(separator = "\n")
+                it.lines().dropLast(5).joinToString(separator = "\n")
             }
 
             gradleSettingsScript().writeText("include 'sample-app'") // disables feature preview 'GRADLE_METADATA', resets rootProject name
@@ -1509,9 +1511,14 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         testDependencies()
 
-        // Then run with Gradle Kotlin DSL; the build script needs only one correction to be a valid GK DSL script:
+        // Then run with Gradle Kotlin DSL; the build script needs some correction to be a valid GK DSL script:
         gradleBuildScript("app").run {
-            modify { originalBuildscriptContent.replace(": ", " = ") }
+            modify {
+                originalBuildscriptContent
+                    .replace(": ", " = ")
+                    .replace("def ", " val ")
+                    .replace("new File(cacheRedirectorFile)", "File(cacheRedirectorFile)")
+            }
             renameTo(projectDir.resolve("app/build.gradle.kts"))
         }
 

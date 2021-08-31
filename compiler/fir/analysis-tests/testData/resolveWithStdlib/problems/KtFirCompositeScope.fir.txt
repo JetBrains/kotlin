@@ -20,7 +20,7 @@ FILE: KtFirCompositeScope.kt
         public final fun getAllNames(): R|kotlin/collections/Set<kotlin/String>| {
             ^getAllNames R|/withValidityAssertion|<R|kotlin/collections/Set<kotlin/String>|>(<L> = withValidityAssertion@fun <anonymous>(): R|kotlin/collections/Set<kotlin/String>| <inline=Inline, kind=UNKNOWN>  {
                 ^ R|/buildSet|<R|kotlin/String|>(<L> = buildSet@fun R|kotlin/collections/MutableSet<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
-                    this@R|/KtFirCompositeScope|.R|/KtFirCompositeScope.subScopes|.R|kotlin/collections/flatMapTo|<R|KtScope|, R|kotlin/String|, R|kotlin/collections/MutableSet<Stub: TypeVariable(E)>|>(this@R|special/anonymous|, <L> = flatMapTo@fun <anonymous>(it: R|KtScope|): R|kotlin/collections/Iterable<kotlin/String>| <inline=Inline, kind=UNKNOWN>  {
+                    this@R|/KtFirCompositeScope|.R|/KtFirCompositeScope.subScopes|.R|kotlin/collections/flatMapTo|<R|KtScope|, R|kotlin/String|, R|kotlin/collections/MutableSet<Stub (builder inference): TypeVariable(E)>|>(this@R|special/anonymous|, <L> = flatMapTo@fun <anonymous>(it: R|KtScope|): R|kotlin/collections/Iterable<kotlin/String>| <inline=Inline, kind=UNKNOWN>  {
                         ^ R|<local>/it|.R|/KtScope.getAllNames|()
                     }
                     )

@@ -2,7 +2,7 @@
 fun foo(i: Int): Int = foo(i + 1)
 const val overflow = <!WAS_NOT_EVALUATED: `
 Exception java.lang.StackOverflowError
-	at StackOverflowKt.foo(stackOverflow.kt:1)
+	at StackOverflowKt.foo(stackOverflow.kt:2)
 	at StackOverflowKt.foo(stackOverflow.kt:2)
 	at StackOverflowKt.foo(stackOverflow.kt:2)
 	at StackOverflowKt.foo(stackOverflow.kt:2)

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 
 internal class KtFirTypeAndAnnotations<T : FirDeclaration>(
     private val containingDeclaration: FirRefWithValidityCheck<T>,
-    typeResolvePhase: FirResolvePhase,
+    @Suppress("UNUSED_PARAMETER") typeResolvePhase: FirResolvePhase,
     _builder: KtSymbolByFirBuilder,
     private val typeRef: (T) -> FirTypeRef,
 ) : KtTypeAndAnnotations() {

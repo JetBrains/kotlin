@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// IGNORE_BACKEND: JS, JS_IR, JVM
+// IGNORE_BACKEND: JVM, JS
 // !LANGUAGE: +SuspendFunctionAsSupertype
 
 import kotlin.coroutines.*

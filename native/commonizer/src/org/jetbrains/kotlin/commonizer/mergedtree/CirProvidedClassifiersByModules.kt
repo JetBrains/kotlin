@@ -12,11 +12,8 @@ import org.jetbrains.kotlin.commonizer.ModulesProvider.CInteropModuleAttributes
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirPackageName
-import org.jetbrains.kotlin.commonizer.utils.NON_EXISTING_CLASSIFIER_ID
-import org.jetbrains.kotlin.commonizer.utils.compactMap
-import org.jetbrains.kotlin.commonizer.utils.compactMapIndexed
-import org.jetbrains.kotlin.commonizer.utils.isUnderKotlinNativeSyntheticPackages
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers.Companion.FALLBACK_FORWARD_DECLARATION_CLASS
+import org.jetbrains.kotlin.commonizer.utils.*
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -24,7 +21,7 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.types.Variance
 
-internal class CirProvidedClassifiersByModules private constructor(
+internal class CirProvidedClassifiersByModules internal constructor(
     private val hasForwardDeclarations: Boolean,
     private val classifiers: Map<CirEntityId, CirProvided.Classifier>,
 ) : CirProvidedClassifiers {
@@ -36,24 +33,14 @@ internal class CirProvidedClassifiersByModules private constructor(
         }
 
     override fun classifier(classifierId: CirEntityId) =
-        if (classifierId.packageName.isUnderKotlinNativeSyntheticPackages) {
-            if (hasForwardDeclarations) FALLBACK_FORWARD_DECLARATION_CLASS else null
-        } else {
-            classifiers[classifierId]
-        }
+        classifiers[classifierId] ?: if (hasForwardDeclarations && classifierId.packageName.isUnderKotlinNativeSyntheticPackages)
+            FALLBACK_FORWARD_DECLARATION_CLASS else null
 
     companion object {
         fun load(modulesProvider: ModulesProvider): CirProvidedClassifiers {
             val classifiers = THashMap<CirEntityId, CirProvided.Classifier>()
-            var hasForwardDeclarations = false
 
-            modulesProvider.loadModuleInfos().forEach { moduleInfo ->
-                moduleInfo.cInteropAttributes?.let { cInteropAttributes ->
-                    // this is a C-interop module
-                    hasForwardDeclarations = true
-                    readExportedForwardDeclarations(cInteropAttributes, classifiers::set)
-                }
-
+            modulesProvider.moduleInfos.forEach { moduleInfo ->
                 val metadata = modulesProvider.loadModuleMetadata(moduleInfo.name)
                 readModule(metadata, classifiers::set)
             }
@@ -61,10 +48,19 @@ internal class CirProvidedClassifiersByModules private constructor(
             if (classifiers.isEmpty)
                 return CirProvidedClassifiers.EMPTY
 
-            return CirProvidedClassifiersByModules(hasForwardDeclarations, classifiers)
+            return CirProvidedClassifiersByModules(false, classifiers)
         }
 
-        private val FALLBACK_FORWARD_DECLARATION_CLASS = CirProvided.RegularClass(emptyList(), Visibilities.Public)
+        fun loadExportedForwardDeclarations(modulesProvider: ModulesProvider): CirProvidedClassifiers {
+            val classifiers = THashMap<CirEntityId, CirProvided.Classifier>()
+
+            modulesProvider.moduleInfos.mapNotNull { moduleInfo -> moduleInfo.cInteropAttributes }
+                .forEach { attrs -> readExportedForwardDeclarations(attrs, classifiers::set) }
+
+            if (classifiers.isEmpty) return CirProvidedClassifiers.EMPTY
+            return CirProvidedClassifiersByModules(true, classifiers)
+        }
+
     }
 }
 
@@ -85,7 +81,10 @@ private fun readExportedForwardDeclarations(
         val syntheticClassId = CirEntityId.create(syntheticPackageName, className)
         val aliasedClassId = CirEntityId.create(mainPackageName, className)
 
-        consumer(aliasedClassId, CirProvided.ExportedForwardDeclarationClass(syntheticClassId))
+        val clazz = CirProvided.ExportedForwardDeclarationClass(syntheticClassId)
+
+        consumer(syntheticClassId, clazz)
+        consumer(aliasedClassId, clazz)
     }
 }
 
@@ -125,7 +124,9 @@ private fun readModule(metadata: SerializedMetadata, consumer: (CirEntityId, Cir
 }
 
 private class ClassProtosToRead {
-    data class ClassEntry(val classId: CirEntityId, val proto: ProtoBuf.Class)
+    data class ClassEntry(
+        val classId: CirEntityId, val proto: ProtoBuf.Class, val strings: NameResolver
+    )
 
     // key = parent class ID (or NON_EXISTING_CLASSIFIER_ID for top-level classes)
     // value = class protos under this parent class (MutableList to preserve order of classes)
@@ -138,7 +139,7 @@ private class ClassProtosToRead {
             val classId = CirEntityId.create(strings.getQualifiedClassName(classProto.fqName))
             val parentClassId: CirEntityId = classId.getParentEntityId() ?: NON_EXISTING_CLASSIFIER_ID
 
-            groupedByParentClassId.getValue(parentClassId) += ClassEntry(classId, classProto)
+            groupedByParentClassId.getValue(parentClassId) += ClassEntry(classId, classProto, strings)
         }
     }
 
@@ -155,12 +156,23 @@ private fun readClass(
 ) {
     val (classId, classProto) = classEntry
 
+    val typeParameterNameToIndex = HashMap<Int, Int>()
+
     val typeParameters = readTypeParameters(
         typeParameterProtos = classProto.typeParameterList,
-        typeParameterIndexOffset = typeParameterIndexOffset
+        typeParameterIndexOffset = typeParameterIndexOffset,
+        nameToIndexMapper = typeParameterNameToIndex::set
     )
+    val typeReadContext = TypeReadContext(classEntry.strings, TypeTable(classProto.typeTable), typeParameterNameToIndex)
+
+    val supertypes = (classProto.supertypeList.map { readType(it, typeReadContext) } +
+            classProto.supertypeIdList.map { readType(classProto.typeTable.getType(it), typeReadContext) })
+        .filterNot { type -> type is CirProvided.ClassType && type.classId == ANY_CLASS_ID }
+
+
     val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(classProto.flags))
-    val clazz = CirProvided.RegularClass(typeParameters, visibility)
+    val kind = ProtoEnumFlags.classKind(Flags.CLASS_KIND.get(classProto.flags))
+    val clazz = CirProvided.RegularClass(typeParameters, supertypes, visibility, kind)
 
     consumer(classId, clazz)
 

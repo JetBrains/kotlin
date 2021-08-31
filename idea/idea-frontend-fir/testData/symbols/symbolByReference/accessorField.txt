@@ -7,3 +7,4 @@ KtFirBackingFieldSymbol:
   owningProperty: KtFirKotlinPropertySymbol(x)
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null

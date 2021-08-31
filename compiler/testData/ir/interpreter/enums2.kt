@@ -24,3 +24,18 @@ const val b3 = Color.RED.<!EVALUATED: `0xFF0000`!>getColorAsString()<!>
 
 const val c1 = Color.BLACK.<!EVALUATED: `0`!>getColorAsInt()<!>
 const val c2 = Color.RED.<!EVALUATED: `16711680`!>getColorAsInt()<!>
+
+@CompileTimeCalculation
+enum class EnumWithoutPrimary {
+    X(), Y(10);
+
+    val someProp: Int
+
+    constructor() : this(0) {}
+    constructor(value: Int) {
+        someProp = value
+    }
+}
+
+const val d1 = EnumWithoutPrimary.X.<!EVALUATED: `0`!>someProp<!>
+const val d2 = EnumWithoutPrimary.Y.<!EVALUATED: `10`!>someProp<!>

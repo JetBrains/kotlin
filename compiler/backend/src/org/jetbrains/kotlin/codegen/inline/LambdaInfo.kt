@@ -104,7 +104,7 @@ class DefaultLambda(info: ExtractedDefaultLambda, sourceCompiler: SourceCompiler
         // TODO: suspend lambdas are their own continuations, so the body is pre-inlined into `invokeSuspend`
         //   and thus can't be detangled from the state machine. To make them inlinable, this needs to be redesigned.
         //   See `SuspendLambdaLowering`.
-        require(!sourceCompiler.state.languageVersionSettings.isCoroutineSuperClass(superName)) {
+        require(!superName.isCoroutineSuperClass()) {
             "suspend default lambda ${lambdaClassType.internalName} cannot be inlined; use a function reference instead"
         }
 

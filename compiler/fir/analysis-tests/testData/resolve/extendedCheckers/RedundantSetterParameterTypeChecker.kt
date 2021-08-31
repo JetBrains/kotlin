@@ -2,15 +2,15 @@
 @Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class Ann
 
-<!REDECLARATION!>var x: Int
+var <!REDECLARATION!>x<!>: Int
     get() = 1
-    set(@Ann private x) { }<!>
+    set(@Ann <!WRONG_MODIFIER_TARGET!>private<!> x) { }
 
 
-<!REDECLARATION!>var x: String = ""
+var <!REDECLARATION!>x<!>: String = ""
     set(param: <!REDUNDANT_SETTER_PARAMETER_TYPE!>String<!>) {
         field = "$param "
-    }<!>
+    }
 
 class My {
     var y: Int = 1

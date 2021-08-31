@@ -80,8 +80,8 @@ data class IncorporationConstraintPosition(
     override fun toString(): String = "Incorporate $initialConstraint from position $from"
 }
 
-object CoroutinePosition : ConstraintPosition() {
-    override fun toString(): String = "for coroutine call"
+object BuilderInferencePosition : ConstraintPosition() {
+    override fun toString(): String = "For builder inference call"
 }
 
 // TODO: should be used only in SimpleConstraintSystemImpl

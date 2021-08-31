@@ -1,2 +1,10 @@
 public abstract interface RecursiveAnnotation2 : R|kotlin/Any| {
+    public final annotation class A : R|kotlin/Annotation| {
+        public constructor(value: R|test/RecursiveAnnotation2.B|): R|test/RecursiveAnnotation2.A|
+
+    }
+    @R|test/RecursiveAnnotation2.A|(@R|test/RecursiveAnnotation2.B|(String(test)) ) public final annotation class B : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/String|): R|test/RecursiveAnnotation2.B|
+
+    }
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: a.kt
 val <!REDECLARATION!>a<!> : Int = 1
 <!CONFLICTING_OVERLOADS!>fun f()<!> {

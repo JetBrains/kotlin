@@ -24,7 +24,6 @@ import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Type
-import java.util.*
 
 abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnotationOwner, ReflectJavaModifierListOwner, JavaMember {
     abstract val member: Member
@@ -53,7 +52,7 @@ abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnotationOw
         for (i in parameterTypes.indices) {
             val type = ReflectJavaType.create(parameterTypes[i])
             val name = names?.run {
-                getOrNull(i + shift) ?: error("No parameter with index $i+$shift (name=$name type=$type) in $this@ReflectJavaMember")
+                getOrNull(i + shift) ?: error("No parameter with index $i+$shift (name=$name type=$type) in ${this@ReflectJavaMember}")
             }
             val isParamVararg = isVararg && i == parameterTypes.lastIndex
             result.add(ReflectJavaValueParameter(type, parameterAnnotations[i], name, isParamVararg))
@@ -89,10 +88,8 @@ private object Java8ParameterNamesLoader {
     }
 
     fun loadParameterNames(member: Member): List<String>? {
-        var cache = cache
-        if (cache == null) {
-            cache = buildCache(member)
-            this.cache = cache
+        val cache = cache ?: synchronized(this) {
+            cache ?: buildCache(member).also { cache = it }
         }
 
         val getParameters = cache.getParameters ?: return null

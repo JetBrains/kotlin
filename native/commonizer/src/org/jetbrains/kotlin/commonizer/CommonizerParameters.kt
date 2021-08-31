@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.commonizer
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.mergedtree.CirFictitiousFunctionClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
+import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiersByModules
 import org.jetbrains.kotlin.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
@@ -25,6 +26,20 @@ data class CommonizerParameters(
 )
 
 internal fun CommonizerParameters.dependencyClassifiers(target: CommonizerTarget): CirProvidedClassifiers {
-    val modulesProvider = dependenciesProvider[target]
-    return CirProvidedClassifiers.of(CirFictitiousFunctionClassifiers, CirProvidedClassifiers.by(modulesProvider))
+    val targetModulesProvider = targetProviders.getOrNull(target)?.modulesProvider
+    val dependenciesModulesProvider = dependenciesProvider[target]
+
+    val providedByTarget = if (targetModulesProvider != null)
+        CirProvidedClassifiersByModules.loadExportedForwardDeclarations(targetModulesProvider) else null
+
+    val providedByDependencies = if (dependenciesModulesProvider != null)
+        CirProvidedClassifiers.of(
+            CirProvidedClassifiersByModules.load(dependenciesModulesProvider),
+            CirProvidedClassifiersByModules.loadExportedForwardDeclarations(dependenciesModulesProvider)
+        ) else null
+
+
+    return CirProvidedClassifiers.of(
+        *listOfNotNull(CirFictitiousFunctionClassifiers, providedByTarget, providedByDependencies).toTypedArray()
+    )
 }

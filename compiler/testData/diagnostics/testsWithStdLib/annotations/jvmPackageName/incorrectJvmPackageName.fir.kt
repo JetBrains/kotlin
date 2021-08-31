@@ -1,17 +1,17 @@
 // !DIAGNOSTICS: -INVISIBLE_MEMBER -INVISIBLE_REFERENCE
 
 // FILE: b.kt
-@file:JvmPackageName("")
+<!JVM_PACKAGE_NAME_CANNOT_BE_EMPTY!>@file:JvmPackageName("")<!>
 package b
 fun b() {}
 
 // FILE: c.kt
-@file:JvmPackageName("invalid-fq-name")
+<!JVM_PACKAGE_NAME_MUST_BE_VALID_NAME!>@file:JvmPackageName("invalid-fq-name")<!>
 package c
 fun c() {}
 
 // FILE: d.kt
-@file:JvmPackageName("d")
+<!JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES!>@file:JvmPackageName("d")<!>
 package d
 class D
 fun d() {}

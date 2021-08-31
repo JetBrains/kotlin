@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatData
 import org.jetbrains.kotlin.gradle.plugin.stat.ReportStatistics
 import org.jetbrains.kotlin.incremental.ChangedFiles
+import java.net.InetAddress
 
 enum class TaskExecutionState {
     SKIPPED,
@@ -27,10 +28,11 @@ enum class TaskExecutionState {
     ;
 }
 
-class KotlinBuildEsStatListener(val projectName: String) : OperationCompletionListener, AutoCloseable, TaskExecutionListener {
-    val reportStatistics: ReportStatistics = ReportStatisticsToElasticSearch
+class KotlinBuildEsStatListener(val projectName: String, val reportStatistics: List<ReportStatistics>, val buildUuid: String) :
+    OperationCompletionListener, AutoCloseable, TaskExecutionListener {
 
     val label by lazy { CompilerSystemProperties.KOTLIN_STAT_LABEl_PROPERTY.value }
+    val hostName by lazy { InetAddress.getLocalHost().hostName }
 
     override fun onFinish(event: FinishEvent?) {
         if (event is TaskFinishEvent) {
@@ -38,9 +40,11 @@ class KotlinBuildEsStatListener(val projectName: String) : OperationCompletionLi
             val taskPath = event.descriptor.taskPath
             val duration = event.result.endTime - event.result.startTime
             val taskResult = when (result) {
-                is TaskSuccessResult -> if (result.isFromCache) TaskExecutionState.FROM_CACHE
-                else if (result.isUpToDate) TaskExecutionState.UP_TO_DATE
-                else TaskExecutionState.SUCCESS
+                is TaskSuccessResult -> when {
+                    result.isFromCache -> TaskExecutionState.FROM_CACHE
+                    result.isUpToDate -> TaskExecutionState.UP_TO_DATE
+                    else -> TaskExecutionState.SUCCESS
+                }
 
                 is TaskSkippedResult -> TaskExecutionState.SKIPPED
                 is TaskFailureResult -> TaskExecutionState.FAILED
@@ -56,9 +60,10 @@ class KotlinBuildEsStatListener(val projectName: String) : OperationCompletionLi
             return;
         }
         val taskExecutionResult = TaskExecutionResults[taskPath]
-        val statData = taskExecutionResult?.buildMetrics?.buildTimes?.asMap()?.mapKeys { (key, _) -> key.name } ?: emptyMap()
-        val changedFiles = taskExecutionResult?.taskInfo?.changedFiles
-        val changes = when (changedFiles) {
+        val timeData = taskExecutionResult?.buildMetrics?.buildTimes?.asMap()?.filterValues { value -> value != 0L } ?: emptyMap()
+        val perfData = taskExecutionResult?.buildMetrics?.buildPerformanceMetrics?.asMap()?.mapValues { it.value / 1000 }
+            ?.filterValues { value -> value != 0L } ?: emptyMap()
+        val changes = when (val changedFiles = taskExecutionResult?.taskInfo?.changedFiles) {
             is ChangedFiles.Known -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
             is ChangedFiles.Dependencies -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
             else -> emptyList<String>()
@@ -66,14 +71,16 @@ class KotlinBuildEsStatListener(val projectName: String) : OperationCompletionLi
         }
         val compileStatData = CompileStatData(
             duration = duration, taskResult = taskResult.name, label = label,
-            statData = statData, projectName = projectName, taskName = taskPath, changes = changes,
-            tags = taskExecutionResult?.taskInfo?.properties?.map { it.name } ?: emptyList()
+            timeData = timeData, perfData = perfData, projectName = projectName, taskName = taskPath, changes = changes,
+            tags = taskExecutionResult?.taskInfo?.properties?.map { it.name } ?: emptyList(),
+            nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap() ?: emptyMap(),
+            hostName = hostName, kotlinVersion = "1.6", buildUuid = buildUuid, timeInMillis = System.currentTimeMillis()
         )
-        reportStatistics.report(compileStatData)
+        reportStatistics.forEach { it.report(compileStatData) }
     }
 
     private fun availableForStat(taskPath: String): Boolean {
-        return taskPath.contains("compileKotlin")
+        return taskPath.contains("Kotlin") && (TaskExecutionResults[taskPath] != null)
     }
 
     override fun afterExecute(task: Task, taskState: TaskState) {

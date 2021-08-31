@@ -55,16 +55,21 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
     private fun SmartPrinter.printDiagnostic(diagnostic: DiagnosticData) {
         print("val ${diagnostic.name} by ${diagnostic.getFactoryFunction()}")
         printTypeArguments(diagnostic.getAllTypeArguments())
-        printPositioningStrategy(diagnostic)
+        printPositioningStrategyAndLanguageFeature(diagnostic)
         println()
     }
 
-    private fun SmartPrinter.printPositioningStrategy(diagnostic: DiagnosticData) {
-        print("(")
-        if (!diagnostic.hasDefaultPositioningStrategy()) {
-            print(diagnostic.positioningStrategy.expressionToCreate)
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun SmartPrinter.printPositioningStrategyAndLanguageFeature(diagnostic: DiagnosticData) {
+        val argumentsList = buildList {
+            if (diagnostic is DeprecationDiagnosticData) {
+                add(diagnostic.featureForError.name)
+            }
+            if (!diagnostic.hasDefaultPositioningStrategy()) {
+                add(diagnostic.positioningStrategy.expressionToCreate)
+            }
         }
-        print(")")
+        print(argumentsList.joinToString(", ", prefix = "(", postfix = ")"))
     }
 
 
@@ -124,14 +129,19 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
                 add(PositioningStrategy.importToAdd)
             }
         }
+        for (deprecationDiagnostic in diagnosticList.allDiagnostics.filterIsInstance<DeprecationDiagnosticData>()) {
+            add("org.jetbrains.kotlin.config.LanguageFeature.${deprecationDiagnostic.featureForError.name}")
+        }
     }
 
 
     private val KType.kClass: KClass<*>
         get() = classifier as KClass<*>
 
-    private fun DiagnosticData.getFactoryFunction(): String =
-        severity.name.lowercase() + parameters.size
+    private fun DiagnosticData.getFactoryFunction(): String = when (this) {
+        is RegularDiagnosticData -> severity.name.lowercase()
+        is DeprecationDiagnosticData -> "deprecationError"
+    } + parameters.size
 }
 
 private inline fun <T> SmartPrinter.printSeparatedWithComma(list: List<T>, printItem: (T) -> Unit) {

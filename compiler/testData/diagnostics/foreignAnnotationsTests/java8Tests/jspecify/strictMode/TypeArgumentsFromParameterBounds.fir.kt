@@ -1,6 +1,6 @@
-// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 // JSPECIFY_STATE: strict
 // MUTE_FOR_PSI_CLASS_FILES_READING
+// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 
 // FILE: TypeArgumentsFromParameterBounds.java
 import org.jspecify.nullness.*;
@@ -35,12 +35,11 @@ fun main(
     a: A, b: B
 ): Unit {
     a.bar(aNotNullNotNullNotNull)
+    a.bar(aNotNullNotNullNull)
     // jspecify_nullness_mismatch
-    a.bar(<!TYPE_MISMATCH!>aNotNullNotNullNull<!>)
+    a.bar(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNotNull<!>)
     // jspecify_nullness_mismatch
-    a.bar(<!TYPE_MISMATCH!>aNotNullNullNotNull<!>)
-    // jspecify_nullness_mismatch
-    a.bar(<!TYPE_MISMATCH!>aNotNullNullNull<!>)
+    a.bar(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
 
     b.bar(aNotNullNotNullNotNull)
     b.bar(aNotNullNotNullNull)

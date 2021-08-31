@@ -15,7 +15,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ExternalDependency
-import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.junit.JUnitOptions
@@ -35,12 +35,13 @@ import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.jvm.JvmCompilationsTestRunSource
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.KotlinTaskTestRun
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+
+internal const val KOTLIN_MODULE_GROUP = "org.jetbrains.kotlin"
+internal const val KOTLIN_COMPILER_EMBEDDABLE = "kotlin-compiler-embeddable"
 
 internal fun customizeKotlinDependencies(project: Project) {
     configureStdlibDefaultDependency(project)
@@ -185,7 +186,7 @@ private fun chooseAndAddStdlibDependency(
     }
 
     val isStdlibAddedByUser = sourceSetDependencyConfigurations
-        .flatMap { it.allDependencies }
+        .flatMap { it.allNonProjectDependencies() }
         .any { dependency -> dependency.group == KOTLIN_MODULE_GROUP && dependency.name in stdlibModules }
 
     if (!isStdlibAddedByUser) {
@@ -201,7 +202,7 @@ private fun chooseAndAddStdlibDependency(
 
         // If the exact same module is added in the source sets hierarchy, possibly even with a different scope, we don't add it
         val moduleAddedInHierarchy = hierarchySourceSetsDependencyConfigurations.any {
-            it.allDependencies.any { dependency -> dependency.group == KOTLIN_MODULE_GROUP && dependency.name == stdlibModuleName }
+            it.allNonProjectDependencies().any { dependency -> dependency.group == KOTLIN_MODULE_GROUP && dependency.name == stdlibModuleName }
         }
 
         if (stdlibModuleName != null && !moduleAddedInHierarchy)
@@ -252,8 +253,6 @@ private fun stdlibModuleForJvmCompilations(compilations: Iterable<KotlinCompilat
 
 //region kotlin-test
 internal fun configureKotlinTestDependency(project: Project) {
-    if (!isGradleVersionAtLeast(6, 0))
-        return
     if (!PropertiesProvider(project).kotlinTestInferJvmVariant)
         return
 
@@ -274,7 +273,7 @@ internal fun configureKotlinTestDependency(project: Project) {
             val configuration = project.sourceSetDependencyConfigurationByScope(kotlinSourceSet, scope)
             var finalizingDependencies = false
 
-            configuration.dependencies.matching(::isKotlinTestRootDependency).apply {
+            configuration.nonProjectDependencies().matching(::isKotlinTestRootDependency).apply {
                 firstOrNull()?.let { versionOrNullBySourceSet[kotlinSourceSet] = it.version }
                 whenObjectRemoved {
                     if (!finalizingDependencies && !any())
@@ -380,7 +379,7 @@ private fun KotlinTargetWithTests<*, *>.findTestRunsByCompilation(byCompilation:
 }
 //endregion
 
-private fun Project.kotlinDependency(moduleName: String, versionOrNull: String?) =
+internal fun Project.kotlinDependency(moduleName: String, versionOrNull: String?) =
     project.dependencies.create("$KOTLIN_MODULE_GROUP:$moduleName${versionOrNull?.prependIndent(":").orEmpty()}")
 
 private fun Project.tryWithDependenciesIfUnresolved(configuration: Configuration, action: (DependencySet) -> Unit) {
@@ -400,3 +399,7 @@ private fun Project.tryWithDependenciesIfUnresolved(configuration: Configuration
         reportAlreadyResolved()
     }
 }
+
+private fun Configuration.allNonProjectDependencies() = allDependencies.matching { it !is ProjectDependency }
+
+private fun Configuration.nonProjectDependencies() = dependencies.matching { it !is ProjectDependency }

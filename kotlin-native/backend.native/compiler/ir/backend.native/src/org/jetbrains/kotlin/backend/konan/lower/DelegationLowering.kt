@@ -97,6 +97,7 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
             ).apply {
                 parent = irFile
                 annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.sharedImmutable.owner)
+                annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.eagerInitialization.owner)
             }
 
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
@@ -161,11 +162,10 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
 
         if (kProperties.isNotEmpty()) {
             val initializers = kProperties.values.sortedBy { it.second }.map { it.first }
-            // TODO: move to object for lazy initialization.
-            irFile.declarations.add(0, kPropertiesField.apply {
-                initializer = IrExpressionBodyImpl(startOffset, endOffset,
-                        context.createArrayOfExpression(startOffset, endOffset, kPropertyImplType, initializers))
-            })
+            // TODO: replace with static initialization.
+            kPropertiesField.initializer = IrExpressionBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                    context.createArrayOfExpression(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, kPropertyImplType, initializers))
+            irFile.declarations.add(0, kPropertiesField)
         }
     }
 
@@ -292,6 +292,5 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
         return type.classifier == expectedClass
     }
 
-    private object DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION :
-            IrDeclarationOriginImpl("KPROPERTIES_FOR_DELEGATION")
+    private object DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION : IrDeclarationOriginImpl("KPROPERTIES_FOR_DELEGATION")
 }

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionStatelessCa
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.components.SimpleConstraintSystemImpl
-import org.jetbrains.kotlin.resolve.calls.inference.isCoroutineCallWithAdditionalInference
+import org.jetbrains.kotlin.resolve.calls.inference.isBuilderInferenceCall
 import org.jetbrains.kotlin.resolve.calls.model.CallableReferenceKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCall
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
@@ -92,8 +92,8 @@ class KotlinResolutionStatelessCallbacksImpl(
     override fun getVariableCandidateIfInvoke(functionCall: KotlinCall) =
         functionCall.safeAs<PSIKotlinCallForInvoke>()?.variableCall
 
-    override fun isCoroutineCall(argument: KotlinCallArgument, parameter: ValueParameterDescriptor): Boolean =
-        isCoroutineCallWithAdditionalInference(parameter, argument.psiCallArgument.valueArgument, languageVersionSettings)
+    override fun isBuilderInferenceCall(argument: KotlinCallArgument, parameter: ValueParameterDescriptor): Boolean =
+        isBuilderInferenceCall(parameter, argument.psiCallArgument.valueArgument, languageVersionSettings)
 
     override fun isApplicableCallForBuilderInference(
         descriptor: CallableDescriptor,

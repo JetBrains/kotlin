@@ -17,27 +17,20 @@ public object CommonizerOutputFileLayout {
     }
 
     public val CommonizerTarget.fileName: String
-        get() {
-            val identityString = identityString
-            return if (identityString.length <= maxFileNameLength) identityString
-            else {
-                val hashSuffix = "[--$identityStringHash]"
-                return identityString.take(maxFileNameLength - hashSuffix.length) + hashSuffix
-            }
+        get() = ensureMaxFileNameLength(identityString)
+
+    public fun ensureMaxFileNameLength(fileName: String): String {
+        return if (fileName.length <= maxFileNameLength) fileName
+        else {
+            val hashSuffix = "[--${base64Hash(fileName)}]"
+            return fileName.take(maxFileNameLength - hashSuffix.length) + hashSuffix
         }
+    }
 
-    public val Set<CommonizerTarget>.fileName: String
-        get() = this.joinToString(";") { it.identityString }.base64Hash
-
-
-    private val CommonizerTarget.identityStringHash: String
-        get() = identityString.base64Hash
-
-    private val String.base64Hash: String
-        get() {
-            val sha = MessageDigest.getInstance("SHA-1")
-            val base64 = Base64.getUrlEncoder()
-            return base64.encode(sha.digest(this.encodeToByteArray())).decodeToString()
-        }
+    public fun base64Hash(value: String): String {
+        val sha = MessageDigest.getInstance("SHA-1")
+        val base64 = Base64.getUrlEncoder()
+        return base64.encode(sha.digest(value.encodeToByteArray())).decodeToString()
+    }
 }
 

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.types.AbstractTypePreparator
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
-abstract class ConeTypePreparator(val session: FirSession) : AbstractTypePreparator {
+class ConeTypePreparator(val session: FirSession) : AbstractTypePreparator() {
     override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
         return when (type) {
             is ConeClassLikeType -> type.fullyExpandedType(session)
@@ -25,9 +25,5 @@ abstract class ConeTypePreparator(val session: FirSession) : AbstractTypePrepara
             }
             else -> type
         }
-    }
-
-    companion object {
-        fun getDefault(session: FirSession) = object : ConeTypePreparator(session) {}
     }
 }

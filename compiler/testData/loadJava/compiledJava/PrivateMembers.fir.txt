@@ -9,4 +9,14 @@ public open class PrivateMembers : R|kotlin/Any| {
 
     private constructor(): R|test/PrivateMembers|
 
+    private open inner class Inner : R|kotlin/Any| {
+        private constructor(): R|test/PrivateMembers.Inner|
+
+    }
+    private open class Nested : R|kotlin/Any| {
+        private open static fun staticMethodInNested(): R|kotlin/Unit|
+
+        private constructor(): R|test/PrivateMembers.Nested|
+
+    }
 }

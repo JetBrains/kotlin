@@ -23,6 +23,6 @@ interface Foo1
 
 fun foo2(): Int = 0
 
-<!ACTUAL_WITHOUT_EXPECT, REDECLARATION!>actual class Foo3<!>
+<!ACTUAL_WITHOUT_EXPECT!>actual class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo3<!><!>
 
-<!REDECLARATION!>class Foo3<!>
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo3<!>

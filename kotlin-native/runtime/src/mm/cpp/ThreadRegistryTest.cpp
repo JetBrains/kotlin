@@ -24,7 +24,7 @@ TEST(ThreadRegistryTest, RegisterCurrentThread) {
         } registration;
 
         auto* threadData = registration.node->Get();
-        EXPECT_EQ(pthread_self(), threadData->threadId());
+        EXPECT_EQ(konan::currentThreadId(), threadData->threadId());
         EXPECT_EQ(threadData, mm::ThreadRegistry::Instance().CurrentThreadData());
     });
     t.join();

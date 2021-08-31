@@ -26,5 +26,5 @@ fun foo() {
     if (z != null) bar(z)
     bar(<!ARGUMENT_TYPE_MISMATCH!>z<!>)
     bar(z!!)
-    if (z != null) bar(z<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
+    if (<!SENSELESS_COMPARISON!>z != null<!>) bar(z<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
 }

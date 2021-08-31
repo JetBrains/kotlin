@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceiver
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.typeContext
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.render
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
@@ -63,28 +63,14 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                     (if (isGet) "getValue" else "setValue") + "(${functionCall.arguments.joinToString(", ") { it.typeRef.coneType.render() }})"
                 val delegateDescription = if (isGet) "delegate" else "delegate for var (read-write property)"
 
-                fun reportInapplicableDiagnostics(
-                    candidateApplicability: CandidateApplicability,
-                    candidates: Collection<FirBasedSymbol<*>>
-                ) {
-                    if (candidateApplicability == CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER) {
-                        reporter.reportOn(
-                            errorNamedReference.source,
-                            FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING,
-                            expectedFunctionSignature,
-                            delegateType,
-                            delegateDescription,
-                            context
-                        )
-                    } else {
-                        reporter.reportOn(
-                            errorNamedReference.source,
-                            FirErrors.DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE,
-                            expectedFunctionSignature,
-                            candidates,
-                            context
-                        )
-                    }
+                fun reportInapplicableDiagnostics(candidates: Collection<FirBasedSymbol<*>>) {
+                    reporter.reportOn(
+                        errorNamedReference.source,
+                        FirErrors.DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE,
+                        expectedFunctionSignature,
+                        candidates,
+                        context
+                    )
                 }
 
                 return when (val diagnostic = errorNamedReference.diagnostic) {
@@ -110,12 +96,23 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                                 context
                             )
                         } else {
-                            reportInapplicableDiagnostics(diagnostic.applicability, diagnostic.candidates.map { it.symbol })
+                            reportInapplicableDiagnostics(diagnostic.candidates.map { it.symbol })
                         }
                         true
                     }
+                    is ConeInapplicableWrongReceiver -> {
+                        reporter.reportOn(
+                            errorNamedReference.source,
+                            FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING,
+                            expectedFunctionSignature,
+                            delegateType,
+                            delegateDescription,
+                            context
+                        )
+                        true
+                    }
                     is ConeInapplicableCandidateError -> {
-                        reportInapplicableDiagnostics(diagnostic.applicability, listOf(diagnostic.candidate.symbol))
+                        reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
                         true
                     }
                     else -> false

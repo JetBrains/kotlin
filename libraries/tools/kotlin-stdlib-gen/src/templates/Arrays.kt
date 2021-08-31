@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
@@ -680,7 +680,7 @@ object ArrayOps : TemplateGroupBase() {
                     if (primitive == null)
                         "return this.asDynamic().concat(arrayOf(element))"
                     else
-                        "return plus(${primitive.name.toLowerCase()}ArrayOf(element))"
+                        "return plus(${primitive.name.lowercase()}ArrayOf(element))"
                 }
             }
             on(Platform.Native) {
@@ -946,7 +946,7 @@ object ArrayOps : TemplateGroupBase() {
     val f_copyOfRangeJvmImpl = fn("copyOfRangeImpl(fromIndex: Int, toIndex: Int)") {
         include(InvariantArraysOfObjects, ArraysOfPrimitives)
         platforms(Platform.JVM)
-    } builderWith { primitive ->
+    } builderWith { _ ->
         since("1.3")
         visibility("internal")
         annotation("@PublishedApi")

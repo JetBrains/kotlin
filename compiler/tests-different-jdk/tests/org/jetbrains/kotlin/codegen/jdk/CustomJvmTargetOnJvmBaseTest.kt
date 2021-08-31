@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.test.runners.codegen.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.platform.runner.JUnitPlatform
+import org.junit.platform.suite.api.ExcludeTags
 import org.junit.platform.suite.api.IncludeClassNamePatterns
 import org.junit.platform.suite.api.SelectClasses
 import org.junit.platform.suite.api.UseTechnicalNames
@@ -28,6 +29,7 @@ import org.junit.runner.RunWith
     IrCompileKotlinAgainstInlineKotlinTestGenerated::class
 )
 @IncludeClassNamePatterns(".*Test.*Generated")
+@ExcludeTags("<modernJava>")
 @UseTechnicalNames
 abstract class CustomJvmTargetOnJvmBaseTest
 
@@ -63,6 +65,16 @@ class JvmTarget8OnJvm15 : CustomJvmTargetOnJvmBaseTest()
 
 @RunWith(JUnitPlatform::class)
 class JvmTarget15OnJvm15 : CustomJvmTargetOnJvmBaseTest()
+
+@RunWith(JUnitPlatform::class)
+class JvmTarget6OnJvm17 : CustomJvmTargetOnJvmBaseTest()
+
+@RunWith(JUnitPlatform::class)
+class JvmTarget8OnJvm17 : CustomJvmTargetOnJvmBaseTest()
+
+@RunWith(JUnitPlatform::class)
+class JvmTarget17OnJvm17 : CustomJvmTargetOnJvmBaseTest()
+
 
 // LAST JDK from JdkMajorVersion available on machine
 @RunWith(JUnitPlatform::class)

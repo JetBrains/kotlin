@@ -14,8 +14,8 @@ fun case_1(x: Any?) {
 // TESTCASE NUMBER: 2
 fun case_2(x: Any?) {
     (x as Nothing?)!!
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>x<!><!UNSAFE_CALL{LT}!>.<!><!UNRESOLVED_REFERENCE!>inv<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!><!UNRESOLVED_REFERENCE{LT}!>inv<!>()
 }
 
 // TESTCASE NUMBER: 3
@@ -37,8 +37,8 @@ fun case_4(x: Any?) {
 // TESTCASE NUMBER: 5
 fun case_5(x: Any?) {
     if (x as Nothing? is Nothing) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>x<!><!UNSAFE_CALL{LT}!>.<!><!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!><!UNRESOLVED_REFERENCE{LT}!>inv<!>()
     }
 }
 

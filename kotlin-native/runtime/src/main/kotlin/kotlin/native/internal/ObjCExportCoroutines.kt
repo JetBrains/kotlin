@@ -29,10 +29,13 @@ private object EmptyCompletion : Continuation<Any?> {
     override val context: CoroutineContext
         get() = EmptyCoroutineContext
 
+    @OptIn(ExperimentalStdlibApi::class)
     override fun resumeWith(result: Result<Any?>) {
         val exception = result.exceptionOrNull() ?: return
-        TerminateWithUnhandledException(exception)
-        // Throwing the exception from [resumeWith] is not generally expected.
+        processUnhandledException(exception)
+        terminateWithUnhandledException(exception)
+        // Terminate even if unhandled exception hook has finished successfully, because
+        // throwing the exception from [resumeWith] is not generally expected.
         // Also terminating is consistent with other pieces of ObjCExport machinery.
     }
 }

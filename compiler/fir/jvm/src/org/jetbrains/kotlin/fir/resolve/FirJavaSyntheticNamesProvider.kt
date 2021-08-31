@@ -28,6 +28,8 @@ object FirJavaSyntheticNamesProvider : FirSyntheticNamesProvider() {
         if (name.isSpecial) return emptyList()
         val identifier = name.identifier
         if (identifier.isEmpty()) return emptyList()
+        val firstChar = identifier[0]
+        if (!firstChar.isJavaIdentifierStart() || firstChar in 'A'..'Z') return emptyList()
         val result = ArrayList<Name>(3)
         val standardName = Name.identifier(GETTER_PREFIX + identifier.capitalizeAsciiOnly())
         val length = identifier.length

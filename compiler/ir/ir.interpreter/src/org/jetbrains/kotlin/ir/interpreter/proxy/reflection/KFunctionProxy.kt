@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
+import org.jetbrains.kotlin.ir.interpreter.state.hasTheSameFieldsWith
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
-import org.jetbrains.kotlin.ir.interpreter.toState
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.statements
 import kotlin.reflect.*
@@ -51,10 +51,12 @@ internal class KFunctionProxy(
     override fun call(vararg args: Any?): Any? {
         // TODO check arity
         var index = 0
-        val dispatchReceiver = state.irFunction.dispatchReceiverParameter?.let { Variable(it.symbol, args[index++].toState(it.type)) }
-        val extensionReceiver = state.irFunction.extensionReceiverParameter?.let { Variable(it.symbol, args[index++].toState(it.type)) }
-        val valueArguments = listOfNotNull(dispatchReceiver, extensionReceiver) +
-                state.irFunction.valueParameters.map { parameter -> Variable(parameter.symbol, args[index++].toState(parameter.type)) }
+        val dispatchReceiver = state.irFunction.dispatchReceiverParameter?.let { environment.convertToState(args[index++], it.type) }
+        val extensionReceiver = state.irFunction.extensionReceiverParameter?.let { environment.convertToState(args[index++], it.type) }
+        val argsVariables = state.irFunction.valueParameters.map { parameter ->
+            environment.convertToState(args[index++], parameter.type)
+        }
+        val valueArguments = listOfNotNull(dispatchReceiver, extensionReceiver) + argsVariables
         return callInterceptor.interceptProxy(state.irFunction, valueArguments)
     }
 
@@ -77,7 +79,9 @@ internal class KFunctionProxy(
         if (this === other) return true
         if (other !is KFunctionProxy) return false
         if (arity != other.arity || isSuspend != other.isSuspend) return false
-        if (state.fields.zip(other.state.fields).any { (first, second) -> first.state !== second.state }) return false
+        // SAM wrappers for Java do not implement equals
+        if (this.state.funInterface?.classOrNull?.owner?.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return this.state === other.state
+        if (!state.hasTheSameFieldsWith(other.state)) return false
 
         return when {
             state.irFunction.isAdapter() && other.state.irFunction.isAdapter() -> state.irFunction.eqaulsByAdapteeCall(other.state.irFunction)

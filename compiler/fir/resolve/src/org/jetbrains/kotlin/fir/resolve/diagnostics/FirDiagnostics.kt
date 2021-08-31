@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.fir.resolve.diagnostics
 
 import kotlinx.collections.immutable.ImmutableList
+import org.jetbrains.kotlin.descriptors.Deprecation
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.declarations.Deprecation
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithSource
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -64,11 +63,28 @@ class ConeHiddenCandidateError(
     override val reason: String get() = "HIDDEN: ${describeSymbol(candidateSymbol)} is invisible"
 }
 
+class ConeInapplicableWrongReceiver(val candidates: Collection<FirBasedSymbol<*>>) : ConeDiagnostic() {
+    override val reason: String
+        get() = "None of the following candidates is applicable because of receiver type mismatch: ${
+            candidates.map {
+                describeSymbol(
+                    it
+                )
+            }
+        }"
+}
+
 class ConeInapplicableCandidateError(
     val applicability: CandidateApplicability,
     val candidate: Candidate,
 ) : ConeDiagnostic() {
     override val reason: String get() = "Inapplicable($applicability): ${describeSymbol(candidate.symbol)}"
+}
+
+class ConeNoCompanionObject(
+    val symbol: FirRegularClassSymbol
+) : ConeDiagnostic() {
+    override val reason: String get() = "Classifier ''$symbol'' does not have a companion object, and thus must be initialized here"
 }
 
 class ConeConstraintSystemHasContradiction(
@@ -107,20 +123,23 @@ class ConeIllegalAnnotationError(val name: Name) : ConeDiagnostic() {
     override val reason: String get() = "Not a legal annotation: $name"
 }
 
-abstract class ConeUnmatchedTypeArgumentsError(val desiredCount: Int, val type: FirClassLikeSymbol<*>) : ConeDiagnostic()
+interface ConeUnmatchedTypeArgumentsError {
+    val desiredCount: Int
+    val symbol: FirClassLikeSymbol<*>
+}
 
 class ConeWrongNumberOfTypeArgumentsError(
-    val desiredCount: Int,
-    val symbol: FirRegularClassSymbol,
-    val source: FirSourceElement?
-) : ConeDiagnostic() {
+    override val desiredCount: Int,
+    override val symbol: FirRegularClassSymbol,
+    source: FirSourceElement
+) : ConeDiagnosticWithSource(source), ConeUnmatchedTypeArgumentsError {
     override val reason: String get() = "Wrong number of type arguments"
 }
 
 class ConeNoTypeArgumentsOnRhsError(
-    desiredCount: Int,
-    type: FirClassLikeSymbol<*>
-) : ConeUnmatchedTypeArgumentsError(desiredCount, type) {
+    override val desiredCount: Int,
+    override val symbol: FirClassLikeSymbol<*>
+) : ConeDiagnostic(), ConeUnmatchedTypeArgumentsError {
     override val reason: String get() = "No type arguments on RHS"
 }
 
@@ -154,9 +173,11 @@ class ConeImportFromSingleton(val name: Name) : ConeDiagnostic() {
     override val reason: String get() = "Import from singleton $name is not allowed"
 }
 
-class ConeUnsupportedDynamicType() : ConeDiagnostic() {
-    override val reason: String get() = "Dynamic types are not supported in this context"
+open class ConeUnsupported(val message: String, val source: FirSourceElement? = null) : ConeDiagnostic() {
+    override val reason: String get() = message
 }
+
+class ConeUnsupportedDynamicType : ConeUnsupported("Dynamic types are not supported in this context")
 
 class ConeDeprecated(val source: FirSourceElement?, val symbol: FirBasedSymbol<*>, val deprecation: Deprecation) : ConeDiagnostic() {
     override val reason: String get() = "Deprecated: ${deprecation.message}"

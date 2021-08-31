@@ -339,6 +339,7 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
      *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
+     * @sample samples.text.Regexps.splitToSequence
      */
     @SinceKotlin("1.5")
     @ExperimentalStdlibApi

@@ -142,7 +142,7 @@ interface FirDeclarationPresenter {
         appendRepresentation(it.returnTypeRef)
     }
 
-    fun represent(it: FirProperty) = buildString {
+    fun represent(it: FirVariable) = buildString {
         append('[')
         it.receiverTypeRef?.let {
             appendRepresentation(it)
@@ -241,7 +241,7 @@ open class FirDeclarationInspector(
             declaration is FirSimpleFunction -> collectFunction(presenter.represent(declaration), declaration)
             declaration is FirRegularClass -> collectNonFunctionDeclaration(presenter.represent(declaration), declaration)
             declaration is FirTypeAlias -> collectNonFunctionDeclaration(presenter.represent(declaration), declaration)
-            declaration is FirProperty -> collectNonFunctionDeclaration(presenter.represent(declaration), declaration)
+            declaration is FirVariable -> collectNonFunctionDeclaration(presenter.represent(declaration), declaration)
         }
     }
 

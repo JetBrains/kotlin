@@ -406,8 +406,4 @@ class JvmSerializerExtension @JvmOverloads constructor(
             return builder.build()
         }
     }
-
-    override fun releaseCoroutines(): Boolean {
-        return languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
-    }
 }

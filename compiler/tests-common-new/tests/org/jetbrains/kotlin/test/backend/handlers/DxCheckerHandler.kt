@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.codegen.D8Checker
 import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
+import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_DEXING
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RUN_DEX_CHECKER
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 
 class DxCheckerHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
@@ -28,7 +29,7 @@ class DxCheckerHandler(testServices: TestServices) : JvmBinaryArtifactHandler(te
             D8Checker.check(info.classFileFactory)
         } catch (e: Throwable) {
             if (!GeneratorsFileUtil.isTeamCityBuild &&
-                module.targetBackend !in module.directives[CodegenTestDirectives.IGNORE_BACKEND]
+                !testServices.codegenSuppressionChecker.failuresInModuleAreIgnored(module)
             ) {
                 try {
                     val javaDir = compiledClassesManager.getCompiledJavaDirForModule(module)

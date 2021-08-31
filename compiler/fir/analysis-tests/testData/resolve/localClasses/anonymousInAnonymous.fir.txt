@@ -1,0 +1,27 @@
+FILE: anonymousInAnonymous.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lval base: R|<anonymous>| = object : R|kotlin/Any| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun bar(): R|<anonymous>| {
+                ^bar object : R|kotlin/Any| {
+                    private constructor(): R|<anonymous>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final fun buz(): R|kotlin/String| {
+                        ^buz this@R|/<anonymous>|.R|/<anonymous>.foobar|
+                    }
+
+                }
+
+            }
+
+            public final val foobar: R|kotlin/String| = String()
+                public get(): R|kotlin/String|
+
+        }
+
+    }

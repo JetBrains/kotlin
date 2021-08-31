@@ -176,7 +176,7 @@ fun deserializeClassToSymbol(
                     }
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 }.apply {
-                    containingClassAttr = context.dispatchReceiver!!.lookupTag
+                    containingClassForStaticMemberAttr = context.dispatchReceiver!!.lookupTag
                 }
 
                 property

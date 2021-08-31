@@ -3,12 +3,15 @@
 // JVM_TARGET: 15
 // ENABLE_JVM_PREVIEW
 
-@JvmRecord
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
 class BasicRecord(val x: String)
 
 @JvmRecord
 data class BasicDataRecord(val x: String)
 
 @JvmRecord
-<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class BasicRecordWithSuperClass<!>(val x: String) : Record()
+data class VarInConstructor(<!JVM_RECORD_NOT_VAL_PARAMETER!>var x: String<!>)
+
+@JvmRecord
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class BasicRecordWithSuperClass<!>(val x: String) : <!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>Record<!>()
 

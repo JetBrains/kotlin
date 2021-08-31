@@ -25,7 +25,7 @@ fun main(
         mll: MutableList<MutableList<String>>, ll: List<List<String>>
 ) {
     // Lists
-    a.foo(ml)
+    a.foo(<!JAVA_TYPE_MISMATCH!>ml<!>)
     a.foo(l)
     a.foo(ml as MutableList<Any>)
     a.foo(l as List<Any>)
@@ -41,25 +41,25 @@ fun main(
     a.foo(l.iterator())
 
     // Sets
-    a.foo(ms)
+    a.foo(<!JAVA_TYPE_MISMATCH!>ms<!>)
     a.foo(s)
     a.foo(ms as MutableSet<Any>)
     a.foo(s as Set<Any>)
 
     // Maps
-    a.foo(mm)
+    a.foo(<!JAVA_TYPE_MISMATCH!>mm<!>)
     a.foo(m)
     a.foo(mm as MutableMap<Any, Any>)
     a.foo(m as Map<Any, Any>)
 
     // Map entries
-    a.foo(mme)
+    a.foo(<!JAVA_TYPE_MISMATCH!>mme<!>)
     a.foo(me)
     a.foo(mme as MutableMap.MutableEntry<Any, Any>)
     a.foo(me as Map.Entry<Any, Any>)
 
     // Lists of lists
-    a.foo1(mll)
+    a.foo1(<!JAVA_TYPE_MISMATCH!>mll<!>)
     a.foo1(ll)
     a.foo1(mll as MutableList<MutableList<Any>>)
     a.foo1(ll as List<List<Any>>)

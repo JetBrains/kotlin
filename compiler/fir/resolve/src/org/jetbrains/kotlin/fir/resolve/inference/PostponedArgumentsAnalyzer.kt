@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
-import org.jetbrains.kotlin.resolve.calls.inference.model.CoroutinePosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.BuilderInferencePosition
 import org.jetbrains.kotlin.types.model.StubTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.freshTypeConstructor
@@ -176,7 +176,7 @@ class PostponedArgumentsAnalyzer(
                     val variable = variableWithConstraints.typeVariable as ConeTypeVariable
 
                     c.getBuilder().unmarkPostponedVariable(variable)
-                    c.getBuilder().addEqualityConstraint(variable.defaultType, resultType, CoroutinePosition)
+                    c.getBuilder().addEqualityConstraint(variable.defaultType, resultType, BuilderInferencePosition)
                 }
             }
         }

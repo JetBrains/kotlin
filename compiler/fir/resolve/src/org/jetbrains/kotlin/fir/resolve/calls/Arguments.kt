@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.TypeSystemCommonSuperTypesContext
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -319,6 +318,15 @@ private fun Candidate.captureTypeFromExpressionOrNull(argumentType: ConeKotlinTy
         return captureTypeFromExpressionOrNull(argumentType.lowerBound, context)
     }
 
+    if (argumentType is ConeIntersectionType) {
+        val intersectedTypes = argumentType.intersectedTypes.map { captureTypeFromExpressionOrNull(it, context) ?: it }
+        if (intersectedTypes == argumentType.intersectedTypes) return null
+        return ConeIntersectionType(
+            intersectedTypes,
+            argumentType.alternativeType?.let { captureTypeFromExpressionOrNull(it, context) ?: it }
+        )
+    }
+
     if (argumentType !is ConeClassLikeType) return null
 
     argumentType.fullyExpandedType(context.session).let {
@@ -347,7 +355,7 @@ fun isArgumentTypeMismatchDueToNullability(
 private fun checkApplicabilityForArgumentType(
     csBuilder: ConstraintSystemBuilder,
     argument: FirExpression,
-    argumentType: ConeKotlinType,
+    argumentTypeBeforeCapturing: ConeKotlinType,
     expectedType: ConeKotlinType?,
     position: SimpleConstraintSystemConstraintPosition,
     isReceiver: Boolean,
@@ -356,6 +364,9 @@ private fun checkApplicabilityForArgumentType(
     context: ResolutionContext
 ) {
     if (expectedType == null) return
+
+    // todo run this approximation only once for call
+    val argumentType = captureFromTypeParameterUpperBoundIfNeeded(argumentTypeBeforeCapturing, expectedType, context.session)
 
     fun subtypeError(actualExpectedType: ConeKotlinType): ResolutionDiagnostic {
         if (argument.isNullLiteral && actualExpectedType.nullability == ConeNullability.NOT_NULL) {
@@ -396,7 +407,7 @@ private fun checkApplicabilityForArgumentType(
 
     if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
         val smartcastExpression = argument as? FirExpressionWithSmartcast
-        if (smartcastExpression != null && smartcastExpression.smartcastStability != SmartcastStability.STABLE_VALUE) {
+        if (smartcastExpression != null && !smartcastExpression.isStable) {
             val unstableType = smartcastExpression.smartcastType.coneType
             if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, position)) {
                 sink.reportDiagnostic(UnstableSmartCast(smartcastExpression, expectedType))
@@ -526,7 +537,7 @@ fun FirExpression.isFunctional(
             val returnTypeCompatible =
                 expectedReturnType is ConeTypeParameterType ||
                         AbstractTypeChecker.isSubtypeOf(
-                            session.inferenceComponents.ctx.newBaseTypeCheckerContext(
+                            session.inferenceComponents.ctx.newTypeCheckerState(
                                 errorTypesEqualToAnything = false,
                                 stubTypesEqualToAnything = true
                             ),
@@ -546,7 +557,7 @@ fun FirExpression.isFunctional(
                 val expectedParameterType = expectedParameter.lowerBoundIfFlexible()
                 expectedParameterType is ConeTypeParameterType ||
                         AbstractTypeChecker.isSubtypeOf(
-                            session.inferenceComponents.ctx.newBaseTypeCheckerContext(
+                            session.inferenceComponents.ctx.newTypeCheckerState(
                                 errorTypesEqualToAnything = false,
                                 stubTypesEqualToAnything = true
                             ),

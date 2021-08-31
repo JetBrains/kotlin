@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -329,6 +328,7 @@ class ExpressionCodegen(
                 irFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
 
     private fun generateNonNullAssertion(param: IrValueParameter) {
+        if (param.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS) return
         val asmType = param.type.asmType
         if (!param.type.unboxInlineClass().isNullable() && !isPrimitive(asmType)) {
             mv.load(findLocalIndex(param.symbol), asmType)
@@ -461,11 +461,13 @@ class ExpressionCodegen(
         require(callee.parent is IrClass) { "Unhandled intrinsic in ExpressionCodegen: ${callee.render()}" }
         val callable = methodSignatureMapper.mapToCallableMethod(expression, irFunction)
         val callGenerator = getOrCreateCallGenerator(expression, data, callable.signature)
-        val isSuspensionPoint = expression.isSuspensionPoint()
 
-        if (isSuspensionPoint != SuspensionPointKind.NEVER) {
+        val suspensionPointKind = expression.getSuspensionPointKind()
+        if (suspensionPointKind != SuspensionPointKind.NEVER) {
             addInlineMarker(mv, isStartNotEnd = true)
         }
+
+        callGenerator.beforeCallStart()
 
         expression.dispatchReceiver?.let { receiver ->
             val type = if (expression.superQualifierSymbol != null) receiver.asmType else callable.owner
@@ -490,21 +492,23 @@ class ExpressionCodegen(
 
         expression.markLineNumber(true)
 
-        if (isSuspensionPoint != SuspensionPointKind.NEVER) {
-            addSuspendMarker(mv, isStartNotEnd = true, isSuspensionPoint == SuspensionPointKind.NOT_INLINE)
+        if (suspensionPointKind != SuspensionPointKind.NEVER) {
+            addSuspendMarker(mv, isStartNotEnd = true, suspensionPointKind == SuspensionPointKind.NOT_INLINE)
         }
 
         callGenerator.genCall(callable, this, expression, isInsideCondition)
 
         val unboxedInlineClassIrType = callee.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
 
-        if (isSuspensionPoint != SuspensionPointKind.NEVER) {
-            addSuspendMarker(mv, isStartNotEnd = false, isSuspensionPoint == SuspensionPointKind.NOT_INLINE)
+        if (suspensionPointKind != SuspensionPointKind.NEVER) {
+            addSuspendMarker(mv, isStartNotEnd = false, suspensionPointKind == SuspensionPointKind.NOT_INLINE)
             if (unboxedInlineClassIrType != null) {
                 generateResumePathUnboxing(mv, unboxedInlineClassIrType, typeMapper)
             }
             addInlineMarker(mv, isStartNotEnd = false)
         }
+
+        callGenerator.afterCallEnd()
 
         return when {
             (expression.type.isNothing() || expression.type.isUnit()) && irFunction.shouldContainSuspendMarkers() -> {
@@ -530,7 +534,7 @@ class ExpressionCodegen(
                 MaterialValue(this, unboxedInlineClassIrType.asmType, unboxedInlineClassIrType).apply {
                     if (!irFunction.shouldContainSuspendMarkers()) {
                         // Since the coroutine transformer won't run, we need to do this manually.
-                        mv.generateCoroutineSuspendedCheck(state.languageVersionSettings)
+                        mv.generateCoroutineSuspendedCheck()
                     }
                     mv.checkcast(type)
                 }
@@ -541,17 +545,24 @@ class ExpressionCodegen(
         }
     }
 
-    private fun IrFunctionAccessExpression.isSuspensionPoint(): SuspensionPointKind = when {
-        !symbol.owner.isSuspend || !irFunction.shouldContainSuspendMarkers() -> SuspensionPointKind.NEVER
-        // Copy-pasted bytecode blocks are not suspension points.
-        symbol.owner.isInline ->
-            if (symbol.owner.name.asString() == "suspendCoroutineUninterceptedOrReturn" &&
-                symbol.owner.getPackageFragment()?.fqName == FqName("kotlin.coroutines.intrinsics")
-            ) SuspensionPointKind.ALWAYS else SuspensionPointKind.NEVER
-        // This includes inline lambdas, but only in functions intended for the inliner; in others, they stay as `f.invoke()`.
-        dispatchReceiver.isReadOfInlineLambda() -> SuspensionPointKind.NOT_INLINE
-        else -> SuspensionPointKind.ALWAYS
-    }
+    private fun IrFunctionAccessExpression.getSuspensionPointKind(): SuspensionPointKind =
+        when {
+            !symbol.owner.isSuspend || !irFunction.shouldContainSuspendMarkers() ->
+                SuspensionPointKind.NEVER
+            // Copy-pasted bytecode blocks are not suspension points.
+            symbol.owner.isInline ->
+                if (symbol.owner.name.asString() == "suspendCoroutineUninterceptedOrReturn" &&
+                    symbol.owner.getPackageFragment()?.fqName == FqName("kotlin.coroutines.intrinsics")
+                )
+                    SuspensionPointKind.ALWAYS
+                else
+                    SuspensionPointKind.NEVER
+            // This includes inline lambdas, but only in functions intended for the inliner; in others, they stay as `f.invoke()`.
+            dispatchReceiver.isReadOfInlineLambda() ->
+                SuspensionPointKind.NOT_INLINE
+            else ->
+                SuspensionPointKind.ALWAYS
+        }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: BlockInfo): PromisedValue {
         val callee = expression.symbol.owner
@@ -586,16 +597,10 @@ class ExpressionCodegen(
         val owner = typeMapper.mapClass(callee.constructedClass)
         val signature = methodSignatureMapper.mapSignatureSkipGeneric(callee)
 
-        closureReifiedMarkers[expression.symbol.owner.parentAsClass]?.let {
-            if (it.wereUsedReifiedParameters()) {
-                putNeedClassReificationMarker(mv)
-                propagateChildReifiedTypeParametersUsages(it)
-            }
-        }
-
         // IR constructors have no receiver and return the new instance, but on JVM they are void-returning
         // instance methods named <init>.
         markLineNumber(expression)
+        putNeedClassReificationMarker(callee.constructedClass)
         mv.anew(owner)
         mv.dup()
 
@@ -645,7 +650,8 @@ class ExpressionCodegen(
     internal fun genOrGetLocal(expression: IrExpression, type: Type, parameterType: IrType, data: BlockInfo): StackValue =
         if (expression is IrGetValue)
             StackValue.local(
-                findLocalIndex(expression.symbol), frameMap.typeOf(expression.symbol),
+                findLocalIndex(expression.symbol),
+                frameMap.typeOf(expression.symbol),
                 expression.symbol.owner.realType.toIrBasedKotlinType()
             )
         else
@@ -724,6 +730,9 @@ class ExpressionCodegen(
             assert(expression.type.isUnit())
             unitValue
         } else {
+            if (expression.symbol.owner.origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE) {
+                putNeedClassReificationMarker(expression.symbol.owner.parentAsClass)
+            }
             mv.visitFieldInsn(if (isStatic) Opcodes.GETSTATIC else Opcodes.GETFIELD, ownerName, fieldName, fieldType.descriptor)
             MaterialValue(this, fieldType, callee.type)
         }
@@ -758,7 +767,7 @@ class ExpressionCodegen(
         val index = frameMap.getIndex(irSymbol)
         if (index >= 0)
             return index
-        throw AssertionError("Non-mapped local declaration: $irSymbol\n in ${irFunction.dump()}")
+        throw AssertionError("Non-mapped local declaration: ${irSymbol.owner.dump()}\n in ${irFunction.dump()}")
     }
 
     private fun handlePlusMinus(expression: IrSetValue, value: IrExpression?, isMinus: Boolean): Boolean {
@@ -903,6 +912,14 @@ class ExpressionCodegen(
         return unitValue
     }
 
+    private fun putNeedClassReificationMarker(declaration: IrClass) {
+        val reifiedTypeParameters = closureReifiedMarkers[declaration] ?: return
+        if (reifiedTypeParameters.wereUsedReifiedParameters()) {
+            putNeedClassReificationMarker(mv)
+            propagateChildReifiedTypeParametersUsages(reifiedTypeParameters)
+        }
+    }
+
     private fun generateGlobalReturnFlagIfPossible(expression: IrExpression, label: String) {
         if (state.isInlineDisabled) {
             context.psiErrorBuilder.at(expression, irFunction).report(Errors.NON_LOCAL_RETURN_IN_DISABLED_INLINE)
@@ -1038,7 +1055,7 @@ class ExpressionCodegen(
                     putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, ReifiedTypeInliner.OperationKind.IS)
                     mv.instanceOf(type)
                 } else {
-                    TypeIntrinsics.instanceOf(mv, kotlinType, type, state.languageVersionSettings.isReleaseCoroutines())
+                    TypeIntrinsics.instanceOf(mv, kotlinType, type)
                 }
                 expression.onStack
             }
@@ -1148,6 +1165,11 @@ class ExpressionCodegen(
 
     override fun visitBreakContinue(jump: IrBreakContinue, data: BlockInfo): PromisedValue {
         jump.markLineNumber(startOffset = true)
+        // Make sure that the line number has an instruction so that the debugger can always
+        // break on the break/continue. As an example, unwindBlockStack could otherwise
+        // generate a new line number immediately which would lead to the line number for
+        // the break/continue being ignored.
+        mv.nop()
         val endLabel = Label()
         val stackElement = unwindBlockStack(endLabel, data) { it.loop == jump.loop }
         if (stackElement == null) {
@@ -1203,7 +1225,7 @@ class ExpressionCodegen(
             val afterStore = markNewLabel()
 
             val catchBody = clause.result
-            var catchBlockInfo = BlockInfo(data)
+            val catchBlockInfo = BlockInfo(data)
             catchBlockInfo.variables.add(VariableInfo(parameter, index, descriptorType, afterStore))
 
             val catchResult = catchBody.accept(this, catchBlockInfo)
@@ -1228,6 +1250,10 @@ class ExpressionCodegen(
             // Generate `try { ... } catch (e: Any?) { <finally>; throw e }` around every part of
             // the try-catch that is not a copy-pasted `finally` block.
             val defaultCatchStart = markNewLabel()
+            // Make sure the ASTORE generated below has the line number of the
+            // finally block and does not take over the line number of whatever
+            // was generated before.
+            tryInfo.onExit.markLineNumber(true)
             // While keeping this value on the stack should be enough, the bytecode validator will
             // complain if a catch block does not start with ASTORE.
             val savedException = frameMap.enterTemp(AsmTypes.JAVA_THROWABLE_TYPE)
@@ -1327,12 +1353,11 @@ class ExpressionCodegen(
     override fun visitThrow(expression: IrThrow, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
         val exception = expression.value.accept(this, data)
-        // Avoid unecessary CHECKCASTs to java/lang/Throwable. If the exception is not of type Object
-        // then it must be some subtype of throwable and we don't need to coerce it.
-        if (exception.type == OBJECT_TYPE)
-            exception.materializeAt(context.irBuiltIns.throwableType)
-        else
+        // Avoid unnecessary CHECKCASTs to java/lang/Throwable.
+        if (exception.irType.isSubtypeOfClass(context.irBuiltIns.throwableClass))
             exception.materialize()
+        else
+            exception.materializeAt(context.irBuiltIns.throwableType)
         mv.athrow()
         return unitValue
     }
@@ -1404,7 +1429,9 @@ class ExpressionCodegen(
     }
 
     private fun getOrCreateCallGenerator(
-        element: IrFunctionAccessExpression, data: BlockInfo, signature: JvmMethodSignature
+        element: IrFunctionAccessExpression,
+        data: BlockInfo,
+        signature: JvmMethodSignature
     ): IrCallGenerator {
         if (!element.symbol.owner.isInlineFunctionCall(context) ||
             classCodegen.irClass.fileParent.fileEntry is MultifileFacadeFileEntry ||

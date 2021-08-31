@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class A<T> {
     fun T.foo() {}
     fun Out<T>.bar() {}

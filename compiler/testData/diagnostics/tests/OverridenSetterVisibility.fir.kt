@@ -13,11 +13,11 @@ abstract class ATest {
 class Test: ATest(), ITest {
     override var prop : Int
         get() = 12
-        private set(value) {}
+        <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>private<!> set(value) {}
 
     override var prop2 : Int
         get() = 14
-        <!SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>internal<!> set(value) {}
+        <!CANNOT_CHANGE_ACCESS_PRIVILEGE, SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>internal<!> set(value) {}
 }
 
 fun main() {

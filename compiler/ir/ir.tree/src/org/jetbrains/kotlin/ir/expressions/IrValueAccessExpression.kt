@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 
 abstract class IrValueAccessExpression : IrDeclarationReference() {
     abstract override val symbol: IrValueSymbol
     abstract val origin: IrStatementOrigin?
 }
 
-abstract class IrGetValue : IrValueAccessExpression()
+abstract class IrGetValue : IrValueAccessExpression() {
+    abstract fun copyWithOffsets(newStartOffset: Int, newEndOffset: Int): IrGetValue
+}
 
 abstract class IrSetValue : IrValueAccessExpression() {
     abstract override val symbol: IrValueSymbol

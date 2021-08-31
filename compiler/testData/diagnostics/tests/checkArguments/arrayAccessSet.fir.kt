@@ -16,7 +16,7 @@ object D {
 }
 
 object Z {
-    operator fun set() {
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun set() {
     }
 }
 

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // NULLABILITY_ANNOTATIONS: @io.reactivex.rxjava3.annotations:strict
 
 // FILE: A.java

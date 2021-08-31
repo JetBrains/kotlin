@@ -30,7 +30,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.31")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.32")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
     }
 }
@@ -80,7 +80,7 @@ tasks.withType<KotlinCompile>().configureEach {
 
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.31")
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.32")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
     api("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
     api("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}")
@@ -130,6 +130,15 @@ gradlePlugin {
         create("runtimeTesting") {
             id = "runtime-testing"
             implementationClass = "org.jetbrains.kotlin.testing.native.RuntimeTestingPlugin"
+        }
+    }
+}
+
+afterEvaluate {
+    tasks.withType<KotlinCompile>().configureEach {
+        kotlinOptions {
+            languageVersion = "1.4"
+            apiVersion = "1.4"
         }
     }
 }

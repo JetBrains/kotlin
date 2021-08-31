@@ -16,13 +16,14 @@ import org.jetbrains.kotlin.storage.StorageManager
 
 internal fun buildRootNode(
     storageManager: StorageManager,
+    dependencies: CirProvidedClassifiers,
     size: Int
 ): CirRootNode = buildNode(
     storageManager = storageManager,
     size = size,
     nodeRelationship = null,
     commonizerProducer = ::RootCommonizer,
-    nodeProducer = ::CirRootNode
+    nodeProducer = { targetDeclarations, commonDeclaration -> CirRootNode(dependencies, targetDeclarations, commonDeclaration) }
 )
 
 internal fun buildModuleNode(
@@ -128,7 +129,7 @@ private fun <T : CirDeclaration, R : CirDeclaration, N : CirNode<T, R>> buildNod
     storageManager: StorageManager,
     size: Int,
     nodeRelationship: CirNodeRelationship?,
-    commonizerProducer: () -> Commonizer<T, R>,
+    commonizerProducer: () -> Commonizer<T, R?>,
     recursionMarker: R? = null,
     nodeProducer: (CommonizedGroup<T>, NullableLazyValue<R>) -> N
 ): N {

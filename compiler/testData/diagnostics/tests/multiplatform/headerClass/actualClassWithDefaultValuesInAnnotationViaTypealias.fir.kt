@@ -45,4 +45,4 @@ actual annotation class Foo5
 
 actual annotation class Foo6(val s: String = "value")
 
-<!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>actual typealias Foo7 = Bar2<!>
+actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo7<!> = Bar2

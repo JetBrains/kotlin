@@ -1,4 +1,12 @@
 public open class ClassObjectInParam : R|kotlin/Any| {
     public constructor(): R|test/ClassObjectInParam|
 
+    public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/reflect/KClass<*>|): R|test/ClassObjectInParam.Anno|
+
+    }
+    @R|test/ClassObjectInParam.Anno|(<getClass>(<getClass>(R|ft<test/ClassObjectInParam, test/ClassObjectInParam?>|))) public open class Nested : R|kotlin/Any| {
+        public constructor(): R|test/ClassObjectInParam.Nested|
+
+    }
 }

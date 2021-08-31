@@ -49,4 +49,5 @@ class A {
 
 fun calcRequiredLayoutSize(count: Int, max: Int, toInt: Int) = 0
 
-// 3 ISTORE 10
+
+// 2 ISTORE 10

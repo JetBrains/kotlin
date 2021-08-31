@@ -1,5 +1,5 @@
 KT element: KtOperationReferenceExpression
-FIR element: FirFunctionCallImpl
+FIR element: FirResolvedNamedReferenceImpl
 
 FIR element rendered:
-R|<local>/x|.R|kotlin/Boolean.not|()
+R|kotlin/Boolean.not|

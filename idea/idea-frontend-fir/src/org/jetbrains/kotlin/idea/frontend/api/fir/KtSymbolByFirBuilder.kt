@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.createPackageProvider
 import org.jetbrains.kotlin.idea.frontend.api.KtStarProjectionTypeArgument
 import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgument
 import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgumentWithVariance
@@ -114,7 +114,7 @@ internal class KtSymbolByFirBuilder private constructor(
 
     fun buildFileSymbol(fir: FirFile) = filesCache.cache(fir) { KtFirFileSymbol(fir, resolveState, token) }
 
-    private val packageProvider = project.createPackageProvider( GlobalSearchScope.allScope(project))//todo scope
+    private val packageProvider = project.createPackageProvider(GlobalSearchScope.allScope(project))//todo scope
 
     fun createPackageSymbolIfOneExists(packageFqName: FqName): KtFirPackageSymbol? {
         val exists =
@@ -191,7 +191,13 @@ internal class KtSymbolByFirBuilder private constructor(
     inner class FunctionLikeSymbolBuilder {
         fun buildFunctionLikeSymbol(fir: FirFunction): KtFunctionLikeSymbol {
             return when (fir) {
-                is FirSimpleFunction -> buildFunctionSymbol(fir)
+                is FirSimpleFunction -> {
+                    if (fir.origin == FirDeclarationOrigin.SamConstructor) {
+                        buildSamConstructorSymbol(fir)
+                    } else {
+                        buildFunctionSymbol(fir)
+                    }
+                }
                 is FirConstructor -> buildConstructorSymbol(fir)
                 is FirAnonymousFunction -> buildAnonymousFunctionSymbol(fir)
                 else -> throwUnexpectedElementError(fir)
@@ -199,6 +205,7 @@ internal class KtSymbolByFirBuilder private constructor(
         }
 
         fun buildFunctionSymbol(fir: FirSimpleFunction): KtFirFunctionSymbol {
+            check(fir.origin != FirDeclarationOrigin.SamConstructor)
             return symbolsCache.cache(fir) { KtFirFunctionSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
         }
 
@@ -211,6 +218,11 @@ internal class KtSymbolByFirBuilder private constructor(
             return symbolsCache.cache(originalFir) {
                 KtFirConstructorSymbol(originalFir, resolveState, token, this@KtSymbolByFirBuilder)
             }
+        }
+
+        fun buildSamConstructorSymbol(fir: FirSimpleFunction): KtFirSamConstructorSymbol {
+            check(fir.origin == FirDeclarationOrigin.SamConstructor)
+            return symbolsCache.cache(fir) { KtFirSamConstructorSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
         }
     }
 

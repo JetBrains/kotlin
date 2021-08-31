@@ -15,7 +15,7 @@ interface CirClass : CirClassifier, CirContainingClass {
     val isValue: Boolean
     val isInner: Boolean
     val isExternal: Boolean
-    var supertypes: List<CirType>
+    val supertypes: List<CirType>
 
     companion object {
         @Suppress("NOTHING_TO_INLINE")
@@ -23,6 +23,7 @@ interface CirClass : CirClassifier, CirContainingClass {
             annotations: List<CirAnnotation>,
             name: CirName,
             typeParameters: List<CirTypeParameter>,
+            supertypes: List<CirType>,
             visibility: Visibility,
             modality: Modality,
             kind: ClassKind,
@@ -31,11 +32,12 @@ interface CirClass : CirClassifier, CirContainingClass {
             isData: Boolean,
             isValue: Boolean,
             isInner: Boolean,
-            isExternal: Boolean
+            isExternal: Boolean,
         ): CirClass = CirClassImpl(
             annotations = annotations,
             name = name,
             typeParameters = typeParameters,
+            supertypes = supertypes,
             visibility = visibility,
             modality = modality,
             kind = kind,
@@ -53,6 +55,7 @@ data class CirClassImpl(
     override val annotations: List<CirAnnotation>,
     override val name: CirName,
     override val typeParameters: List<CirTypeParameter>,
+    override val supertypes: List<CirType>,
     override val visibility: Visibility,
     override val modality: Modality,
     override val kind: ClassKind,
@@ -62,13 +65,4 @@ data class CirClassImpl(
     override val isValue: Boolean,
     override val isInner: Boolean,
     override val isExternal: Boolean,
-) : CirClass {
-    private var _supertypes: List<CirType>? = null
-
-    override var supertypes: List<CirType>
-        get() = _supertypes ?: error("${::supertypes.name} has not been initialized yet")
-        set(value) {
-            check(_supertypes == null) { "Re-initialization of ${::supertypes.name}" }
-            _supertypes = value
-        }
-}
+) : CirClass

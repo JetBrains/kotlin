@@ -136,6 +136,8 @@ class JvmBackendContext(
 
     val directInvokedLambdas = mutableListOf<IrAttributeContainer>()
 
+    val publicAbiSymbols = mutableSetOf<IrClassSymbol>()
+
     init {
         state.mapInlineClass = { descriptor ->
             typeMapper.mapType(referenceClass(descriptor).defaultType)

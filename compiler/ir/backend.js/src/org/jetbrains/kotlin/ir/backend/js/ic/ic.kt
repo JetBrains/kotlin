@@ -29,7 +29,6 @@ import java.io.PrintWriter
 
 fun prepareSingleLibraryIcCache(
     project: Project,
-    analyzer: AbstractAnalyzerWithCompilerReport,
     configuration: CompilerConfiguration,
     libPath: String,
     dependencies: Collection<String>,
@@ -41,21 +40,23 @@ fun prepareSingleLibraryIcCache(
     val controller = WholeWorldStageController()
     irFactory.stageController = controller
 
-    val (context, deserializer, allModules) = prepareIr(
+    val depsDescriptor = ModulesStructure(
         project,
         MainModule.Klib(libPath),
-        analyzer,
         configuration,
         dependencies,
         friendDependencies,
+        true,
+        true,
+        icCache
+    )
+    val (context, deserializer, allModules) = prepareIr(
+        depsDescriptor,
         exportedDeclarations,
         null,
         false,
         false,
         irFactory,
-        useGlobalSignatures = true,
-        useStdlibCache = true,
-        icCache = icCache
     )
 
     val moduleFragment = allModules.last()
@@ -118,12 +119,7 @@ private fun dumpIr(module: IrModuleFragment, fileName: String) {
 }
 
 fun icCompile(
-    project: Project,
-    mainModule: MainModule,
-    analyzer: AbstractAnalyzerWithCompilerReport,
-    configuration: CompilerConfiguration,
-    dependencies: Collection<String>,
-    friendDependencies: Collection<String>,
+    depsDescriptor: ModulesStructure,
     mainArguments: List<String>?,
     exportedDeclarations: Set<FqName> = emptySet(),
     generateFullJs: Boolean = true,
@@ -137,8 +133,6 @@ fun icCompile(
     baseClassIntoMetadata: Boolean = false,
     safeExternalBoolean: Boolean = false,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
-    useStdlibCache: Boolean,
-    icCache: Map<String, SerializedIcData> = emptyMap()
 ): CompilerResult {
 
     val irFactory = PersistentIrFactory()
@@ -146,12 +140,7 @@ fun icCompile(
     irFactory.stageController = controller
 
     val (context, _, allModules, moduleToName, loweredIrLoaded) = prepareIr(
-        project,
-        mainModule,
-        analyzer,
-        configuration,
-        dependencies,
-        friendDependencies,
+        depsDescriptor,
         exportedDeclarations,
         dceRuntimeDiagnostic,
         es6mode,
@@ -160,10 +149,7 @@ fun icCompile(
         baseClassIntoMetadata,
         legacyPropertyAccess,
         safeExternalBoolean,
-        safeExternalBooleanDiagnostic,
-        useStdlibCache,
-        useStdlibCache,
-        icCache,
+        safeExternalBooleanDiagnostic
     )
 
     val modulesToLower = allModules.filter { it !in loweredIrLoaded }
@@ -220,12 +206,7 @@ fun lowerPreservingIcData(module: IrModuleFragment, context: JsIrBackendContext,
 }
 
 private fun prepareIr(
-    project: Project,
-    mainModule: MainModule,
-    analyzer: AbstractAnalyzerWithCompilerReport,
-    configuration: CompilerConfiguration,
-    dependencies: Collection<String>,
-    friendDependencies: Collection<String>,
+    depsDescriptor: ModulesStructure,
     exportedDeclarations: Set<FqName> = emptySet(),
     dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
     es6mode: Boolean = false,
@@ -235,26 +216,13 @@ private fun prepareIr(
     baseClassIntoMetadata: Boolean = false,
     safeExternalBoolean: Boolean = false,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
-    useGlobalSignatures: Boolean,
-    useStdlibCache: Boolean,
-    icCache: Map<String, SerializedIcData>,
 ): PreparedIr {
-    val cacheProvider: LoweringsCacheProvider? = when {
-        useStdlibCache -> object : LoweringsCacheProvider {
-            override fun cacheByPath(path: String): SerializedIcData? {
-                return icCache[path]
-            }
-        }
-        useGlobalSignatures -> EmptyLoweringsCacheProvider
-        else -> null
-    }
-
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName, loweredIrLoaded) =
-        loadIr(project, mainModule, analyzer, configuration, dependencies, friendDependencies, irFactory, false, cacheProvider)
+        loadIr(depsDescriptor, irFactory, false)
 
     val moduleDescriptor = moduleFragment.descriptor
 
-    val allModules = when (mainModule) {
+    val allModules = when (depsDescriptor.mainModule) {
         is MainModule.SourceFiles -> dependencyModules + listOf(moduleFragment)
         is MainModule.Klib -> dependencyModules
     }
@@ -265,7 +233,7 @@ private fun prepareIr(
         symbolTable,
         allModules.first(),
         exportedDeclarations,
-        configuration,
+        depsDescriptor.compilerConfiguration,
         es6mode = es6mode,
         dceRuntimeDiagnostic = dceRuntimeDiagnostic,
         propertyLazyInitialization = propertyLazyInitialization,

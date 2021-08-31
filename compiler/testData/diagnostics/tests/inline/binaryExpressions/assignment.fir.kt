@@ -2,7 +2,7 @@
 
 operator fun <T, U> Function1<T, U>.minusAssign(p: Function1<T, U>) {}
 
-inline operator fun <T, U> Function1<T, U>.modAssign(p: Function1<T, U>) = {
+inline <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun <T, U> Function1<T, U>.modAssign(p: Function1<T, U>) = {
     this += p
     p += this
 }
@@ -14,7 +14,7 @@ inline operator fun <T, U> Function1<T, U>.plusAssign(p: Function1<T, U>) {
 
 operator fun <T, U, V> @ExtensionFunctionType Function2<T, U, V>.minusAssign(ext : @ExtensionFunctionType Function2<T, U, V>) {}
 
-inline operator fun <T, U, V> @ExtensionFunctionType Function2<T, U, V>.modAssign(ext : @ExtensionFunctionType Function2<T, U, V>) = {
+inline <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun <T, U, V> @ExtensionFunctionType Function2<T, U, V>.modAssign(ext : @ExtensionFunctionType Function2<T, U, V>) = {
     this += ext
     ext += this
 }

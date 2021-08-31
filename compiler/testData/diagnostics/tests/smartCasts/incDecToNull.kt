@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class IncDec {
     <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun inc(): Unit {}
 }

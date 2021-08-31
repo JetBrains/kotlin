@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.codegen.optimization
 
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicVerifier
 
-class MethodVerifier(private val checkPoint: String) : MethodTransformer() {
+class MethodVerifier(private val checkPoint: String, private val generationState: GenerationState) : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
+        if (!generationState.shouldValidateBytecode) return
         try {
             analyze(internalClassName, methodNode, BasicVerifier())
         } catch (e: Throwable) {

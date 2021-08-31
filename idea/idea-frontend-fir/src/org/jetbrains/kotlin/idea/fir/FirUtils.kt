@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.fir
 
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.util.OperatorNameConventions
-
 
 fun FirFunctionCall.isImplicitFunctionCall(): Boolean {
     if (dispatchReceiver !is FirQualifiedAccessExpression) return false
@@ -35,9 +33,7 @@ fun FirReference.getResolvedSymbolOfNameReference(): FirBasedSymbol<*>? =
     (this as? FirResolvedNamedReference)?.resolvedSymbol
 
 internal fun FirReference.getResolvedKtSymbolOfNameReference(builder: KtSymbolByFirBuilder): KtSymbol? =
-    (getResolvedSymbolOfNameReference()?.fir as? FirDeclaration)?.let { firDeclaration ->
-        builder.buildSymbol(firDeclaration)
-    }
+    getResolvedSymbolOfNameReference()?.fir?.let(builder::buildSymbol)
 
 internal fun FirErrorNamedReference.getCandidateSymbols(): Collection<FirBasedSymbol<*>> =
     when (val diagnostic = diagnostic) {

@@ -7,6 +7,7 @@ KtFirEnumEntrySymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: MEMBER
+  deprecationStatus: null
 
 KtFirEnumEntrySymbol:
   annotatedType: [] X
@@ -17,6 +18,7 @@ KtFirEnumEntrySymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: MEMBER
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -32,7 +34,10 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: X
   origin: SOURCE
-  superTypes: [[] kotlin/Enum<X>]
+  superTypes: [
+    [] kotlin/Enum<X>
+  ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null

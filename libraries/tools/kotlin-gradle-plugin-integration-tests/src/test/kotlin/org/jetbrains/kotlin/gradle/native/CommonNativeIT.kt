@@ -23,7 +23,9 @@ class CommonNativeIT : BaseGradleIT() {
         libTargets: List<String>,
         appTargets: List<String>
     ) = with(transformProjectWithPluginsDsl(projectName, directoryPrefix = "native-apple-devices-common")) {
-        configureMemoryInGradleProperties()
+        gradleProperties().apply {
+            configureJvmMemory()
+        }
 
         val libCompileTasks = libTargets.map { ":lib:compileKotlin${it.capitalize()}" }
         val appCompileTasks = appTargets.map { ":app:compileKotlin${it.capitalize()}" }

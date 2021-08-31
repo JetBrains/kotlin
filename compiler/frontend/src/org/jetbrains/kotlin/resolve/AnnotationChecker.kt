@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
-import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotatedWithKotlinRepeatable
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
@@ -34,7 +34,8 @@ import org.jetbrains.kotlin.types.isError
 
 class AnnotationChecker(
     private val additionalCheckers: Iterable<AdditionalAnnotationChecker>,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val platformAnnotationFeaturesSupport: PlatformAnnotationFeaturesSupport,
 ) {
     fun check(annotated: KtAnnotated, trace: BindingTrace, descriptor: DeclarationDescriptor? = null) {
         val actualTargets = getActualTargetList(annotated, descriptor, trace.bindingContext)
@@ -100,7 +101,12 @@ class AnnotationChecker(
     }
 
     fun checkExpression(expression: KtExpression, trace: BindingTrace) {
-        checkEntries(expression.getAnnotationEntries(), getActualTargetList(expression, null, trace.bindingContext), trace)
+        checkEntries(
+            expression.getAnnotationEntries(),
+            getActualTargetList(expression, null, trace.bindingContext),
+            trace,
+            expression.parent as? KtAnnotated
+        )
         if (expression is KtCallElement && languageVersionSettings.supportsFeature(ProperCheckAnnotationsTargetInTypeUsePositions)) {
             val typeArguments = expression.typeArguments.mapNotNull { it.typeReference }
             for (typeArgument in typeArguments) {
@@ -132,7 +138,7 @@ class AnnotationChecker(
 
             val useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget() ?: property.getDefaultUseSiteTarget(descriptor)
             val existingAnnotations = propertyAnnotations[useSiteTarget] ?: continue
-            if (classDescriptor in existingAnnotations && !classDescriptor.isRepeatableAnnotation()) {
+            if (classDescriptor in existingAnnotations && !isRepeatableAnnotation(classDescriptor)) {
                 if (reportError) {
                     trace.reportDiagnosticOnce(Errors.REPEATED_ANNOTATION.on(entry))
                 } else {
@@ -169,13 +175,7 @@ class AnnotationChecker(
                 }
                 val actualTargets = getActualTargetList(reference, null, trace.bindingContext)
                 if (entry.useSiteTarget != null && isSuperType) {
-                    val reportError = languageVersionSettings.supportsFeature(ProhibitUseSiteTargetAnnotationsOnSuperTypes)
-                    val diagnostic = if (reportError) {
-                        Errors.ANNOTATION_ON_SUPERCLASS.on(entry)
-                    } else {
-                        Errors.ANNOTATION_ON_SUPERCLASS_WARNING.on(entry)
-                    }
-                    trace.report(diagnostic)
+                    trace.report(Errors.ANNOTATION_ON_SUPERCLASS.on(languageVersionSettings, entry))
                 } else if (shouldRunCheck && (languageVersionSettings.supportsFeature(ProperCheckAnnotationsTargetInTypeUsePositions) || checkWithoutLanguageFeature)) {
                     checkAnnotationEntry(entry, actualTargets, trace)
                 }
@@ -231,7 +231,7 @@ class AnnotationChecker(
             val duplicateAnnotation = useSiteTarget in existingTargetsForAnnotation
                     || (existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) })
 
-            if (duplicateAnnotation && !classDescriptor.isRepeatableAnnotation()) {
+            if (duplicateAnnotation && !isRepeatableAnnotation(classDescriptor)) {
                 trace.report(Errors.REPEATED_ANNOTATION.on(entry))
             }
 
@@ -239,7 +239,7 @@ class AnnotationChecker(
         }
 
         for (checker in additionalCheckers) {
-            checker.checkEntries(entries, actualTargets.defaultTargets, trace, languageVersionSettings)
+            checker.checkEntries(entries, actualTargets.defaultTargets, trace, annotated, languageVersionSettings)
         }
     }
 
@@ -292,6 +292,9 @@ class AnnotationChecker(
         }
     }
 
+    private fun isRepeatableAnnotation(descriptor: ClassDescriptor): Boolean =
+        descriptor.isAnnotatedWithKotlinRepeatable() || platformAnnotationFeaturesSupport.isRepeatableAnnotationClass(descriptor)
+
     companion object {
         private val TARGET_ALLOWED_TARGETS = Name.identifier("allowedTargets")
 
@@ -299,16 +302,21 @@ class AnnotationChecker(
             val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: return KotlinTarget.DEFAULT_TARGET_SET
             // For descriptor with error type, all targets are considered as possible
             if (descriptor.type.isError) return KotlinTarget.ALL_TARGET_SET
-            return descriptor.annotationClass?.let(this::applicableTargetSet) ?: KotlinTarget.DEFAULT_TARGET_SET
+            return descriptor.annotationClass?.let(this::applicableTargetSetFromTargetAnnotationOrNull) ?: KotlinTarget.DEFAULT_TARGET_SET
         }
 
         @JvmStatic
         fun applicableTargetSet(descriptor: AnnotationDescriptor): Set<KotlinTarget> {
             val classDescriptor = descriptor.annotationClass ?: return emptySet()
-            return applicableTargetSet(classDescriptor) ?: KotlinTarget.DEFAULT_TARGET_SET
+            return applicableTargetSet(classDescriptor)
         }
 
-        fun applicableTargetSet(classDescriptor: ClassDescriptor): Set<KotlinTarget>? {
+        fun applicableTargetSet(classDescriptor: ClassDescriptor): Set<KotlinTarget> {
+            val targetEntryDescriptor = classDescriptor.annotations.findAnnotation(StandardNames.FqNames.target)
+            return targetEntryDescriptor?.let { loadAnnotationTargets(it) } ?: KotlinTarget.DEFAULT_TARGET_SET
+        }
+
+        fun applicableTargetSetFromTargetAnnotationOrNull(classDescriptor: ClassDescriptor): Set<KotlinTarget>? {
             val targetEntryDescriptor = classDescriptor.annotations.findAnnotation(StandardNames.FqNames.target) ?: return null
             return loadAnnotationTargets(targetEntryDescriptor)
         }
@@ -394,6 +402,7 @@ interface AdditionalAnnotationChecker {
         entries: List<KtAnnotationEntry>,
         actualTargets: List<KotlinTarget>,
         trace: BindingTrace,
+        annotated: KtAnnotated?,
         languageVersionSettings: LanguageVersionSettings
     )
 }

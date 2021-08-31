@@ -6,4 +6,3 @@ class ATest
 @[Annotation<ATest>(javaClass<<caret>ATest>())]
 class BTest
 
-// REF: (testing).ATest

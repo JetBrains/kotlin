@@ -56,6 +56,7 @@ public:
 
     private:
         void SafePointRegular(size_t weight) noexcept;
+        void SafePointRegularSlowPath() noexcept;
 
         SameThreadMarkAndSweep& gc_;
         mm::ThreadData& threadData_;
@@ -81,6 +82,9 @@ public:
 
 private:
     mm::ObjectFactory<SameThreadMarkAndSweep>::FinalizerQueue PerformFullGC() noexcept;
+
+    size_t epoch_ = 0;
+    uint64_t lastGCTimestampUs_ = 0;
 
     size_t threshold_ = 100000;  // Roughly 1 safepoint per 10ms (on a subset of examples on one particular machine).
     size_t allocationThresholdBytes_ = 10 * 1024 * 1024;  // 10MiB by default.

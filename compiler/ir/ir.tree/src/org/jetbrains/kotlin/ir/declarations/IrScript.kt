@@ -38,4 +38,6 @@ abstract class IrScript :
     abstract var earlierScripts: List<IrScriptSymbol>?
 
     abstract var targetClass: IrClassSymbol?
+
+    abstract var constructor: IrConstructor?
 }

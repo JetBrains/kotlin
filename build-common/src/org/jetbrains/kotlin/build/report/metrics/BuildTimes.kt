@@ -12,13 +12,13 @@ class BuildTimes : Serializable {
     private val myBuildTimes = EnumMap<BuildTime, Long>(BuildTime::class.java)
 
     fun addAll(other: BuildTimes) {
-        for ((bt, timeNs) in other.myBuildTimes) {
-            add(bt, timeNs)
+        for ((bt, timeMs) in other.myBuildTimes) {
+            add(bt, timeMs)
         }
     }
 
-    fun add(buildTime: BuildTime, timeNs: Long) {
-        myBuildTimes[buildTime] = myBuildTimes.getOrDefault(buildTime, 0) + timeNs
+    fun add(buildTime: BuildTime, timeMs: Long) {
+        myBuildTimes[buildTime] = myBuildTimes.getOrDefault(buildTime, 0) + timeMs
     }
 
     fun asMap(): Map<BuildTime, Long> = myBuildTimes

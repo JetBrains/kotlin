@@ -31,3 +31,18 @@ const val c2 = Person().<!EVALUATED: `<NOT_GIVEN> <NULL>`!>wholeName<!>
 
 const val d1 = Person("Ivan", 20).<!EVALUATED: `20`!>age<!>
 const val d2 = Person("Ivan", 20).<!EVALUATED: `Ivan <NULL>`!>wholeName<!>
+
+@CompileTimeCalculation
+class A {
+    val prop: Int
+    constructor(arg: Boolean) {
+        if (arg) {
+            prop = 1
+            return
+        }
+        prop = 2
+    }
+}
+
+const val e1 = A(true).<!EVALUATED: `1`!>prop<!>
+const val e2 = A(false).<!EVALUATED: `2`!>prop<!>

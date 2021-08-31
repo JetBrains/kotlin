@@ -32,10 +32,10 @@ import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.providers.getSymbolByTypeRef
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -146,7 +146,7 @@ fun BodyResolveComponents.typeForQualifier(resolvedQualifier: FirResolvedQualifi
     val classSymbol = resolvedQualifier.symbol
     val resultType = resolvedQualifier.resultType
     if (classSymbol != null) {
-        classSymbol.ensureResolved(FirResolvePhase.DECLARATIONS)
+        classSymbol.ensureResolved(FirResolvePhase.TYPES)
         val declaration = classSymbol.fir
         if (declaration !is FirTypeAlias || resolvedQualifier.typeArguments.isEmpty()) {
             typeForQualifierByDeclaration(declaration, resultType, session)?.let { return it }
@@ -266,10 +266,21 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
         } else {
             SmartcastStability.STABLE_VALUE
         }
+
     val originalType = qualifiedAccessExpression.resultType.coneType
+    val allTypes = typesFromSmartCast.also {
+        it += originalType
+    }
+    val intersectedType = ConeTypeIntersector.intersectTypes(session.inferenceComponents.ctx, allTypes)
+    if (intersectedType == originalType) return qualifiedAccessExpression
+    val intersectedTypeRef = buildResolvedTypeRef {
+        source = qualifiedAccessExpression.resultType.source?.fakeElement(FirFakeSourceElementKind.SmartCastedTypeRef)
+        type = intersectedType
+        annotations += qualifiedAccessExpression.resultType.annotations
+        delegatedTypeRef = qualifiedAccessExpression.resultType
+    }
     // For example, if (x == null) { ... },
-    //   we don't want to smartcast to Nothing?, but we want to record the nullability to its own kind of node.
-    // TODO: should we differentiate x == null v.s. x is Nothing?
+    //   we need to track the type without `Nothing?` so that resolution with this as receiver can go through properly.
     if (typesFromSmartCast.any { it.isNullableNothing }) {
         val typesFromSmartcastWithoutNullableNothing =
             typesFromSmartCast.filterTo(mutableListOf()) { !it.isNullableNothing }.also {
@@ -285,24 +296,13 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
         }
         return buildExpressionWithSmartcastToNull {
             originalExpression = qualifiedAccessExpression
-            // TODO: Use Nothing? during resolution?
-            smartcastType = intersectedTypeRefWithoutNullableNothing
-            // NB: Nothing? in types from smartcast in DFA is recorded here (and the expression kind itself).
+            smartcastType = intersectedTypeRef
+            smartcastTypeWithoutNullableNothing = intersectedTypeRefWithoutNullableNothing
             this.typesFromSmartCast = typesFromSmartCast
             this.smartcastStability = smartcastStability
         }
     }
-    val allTypes = typesFromSmartCast.also {
-        it += originalType
-    }
-    val intersectedType = ConeTypeIntersector.intersectTypes(session.inferenceComponents.ctx, allTypes)
-    if (intersectedType == originalType) return qualifiedAccessExpression
-    val intersectedTypeRef = buildResolvedTypeRef {
-        source = qualifiedAccessExpression.resultType.source?.fakeElement(FirFakeSourceElementKind.SmartCastedTypeRef)
-        type = intersectedType
-        annotations += qualifiedAccessExpression.resultType.annotations
-        delegatedTypeRef = qualifiedAccessExpression.resultType
-    }
+
     return buildExpressionWithSmartcast {
         originalExpression = qualifiedAccessExpression
         smartcastType = intersectedTypeRef
@@ -339,7 +339,13 @@ fun FirAnnotationCall.fqName(session: FirSession): FqName? {
 }
 
 fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(nullableReceiverExpression: FirExpression, session: FirSession) {
-    val receiverType = nullableReceiverExpression.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
+    // If the receiver expression is smartcast to `null`, it would have `Nothing?` as its type, which may not have members called by user
+    // code. Hence, we fallback to the type before intersecting with `Nothing?`.
+    val receiverType = ((nullableReceiverExpression as? FirExpressionWithSmartcastToNull)
+        ?.takeIf { it.isStable }
+        ?.smartcastTypeWithoutNullableNothing
+        ?: nullableReceiverExpression.typeRef)
+        .coneTypeSafe<ConeKotlinType>() ?: return
 
     val expandedReceiverType = if (receiverType is ConeClassLikeType) receiverType.fullyExpandedType(session) else receiverType
 
@@ -407,7 +413,7 @@ private fun initialTypeOfCandidate(candidate: Candidate, typeRef: FirResolvedTyp
     return candidate.substitutor.substituteOrSelf(typeRef.type)
 }
 
-fun FirCallableDeclaration.getContainingClass(session: FirSession): FirRegularClass? = this.containingClassAttr?.let { lookupTag ->
+fun FirCallableDeclaration.getContainingClass(session: FirSession): FirRegularClass? = this.containingClassForStaticMemberAttr?.let { lookupTag ->
     session.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirRegularClass
 }
 
@@ -496,7 +502,7 @@ fun getOuterClassAndActualTypeParametersCount(klass: FirRegularClass, session: F
     return Pair(outerClass, result)
 }
 
-fun getOuterClass(klass: FirRegularClass, session: FirSession): FirRegularClass? {
+fun getOuterClass(klass: FirClassLikeDeclaration, session: FirSession): FirRegularClass? {
     val classId = klass.symbol.classId
     val parentId = classId.relativeClassName.parent()
     if (!parentId.isRoot) {

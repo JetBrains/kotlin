@@ -97,6 +97,8 @@ dependencies {
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompileOnly(project(":kotlin-annotation-processing"))
     testCompileOnly(project(":kotlin-annotation-processing-gradle"))
+
+    compileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.6.3")
 }
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {

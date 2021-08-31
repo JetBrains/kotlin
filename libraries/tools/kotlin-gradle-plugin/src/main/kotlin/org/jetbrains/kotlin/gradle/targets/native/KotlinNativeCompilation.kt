@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeFragmentMetadataC
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
+import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -122,16 +122,10 @@ class KotlinNativeCompilation(
         get() = lowerCamelCaseName(target.disambiguationClassifier, compilationPurpose, "binaries")
 
     override fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
-        with(target.project) {
-            // Kotlin native does not support either 'compileOnly' or 'runtimeOnly' configurations
-            dependencies.add(
-                implementationConfigurationName,
-                project.files({ other.output.classesDirs })
-            )
+        compileDependencyFiles += other.output.classesDirs + project.filesProvider { other.compileDependencyFiles }
 
-            configurations.named(implementationConfigurationName).configure {
-                it.extendsFrom(configurations.findByName(other.implementationConfigurationName))
-            }
+        target.project.configurations.named(implementationConfigurationName).configure { configuration ->
+            configuration.extendsFrom(target.project.configurations.findByName(other.implementationConfigurationName))
         }
     }
 }

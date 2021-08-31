@@ -5,4 +5,5 @@
 
 package org.jetbrains.kotlin.ir.linkage
 
-object KotlinIrLinkerInternalException : Exception("Kotlin IR Linker exception")
+// Used to terminate linking process. Detailed linkage errors are reported separately to IrMessageLogger.
+class KotlinIrLinkerInternalException : Exception("Kotlin IR Linker exception")

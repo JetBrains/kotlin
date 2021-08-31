@@ -108,12 +108,12 @@ internal object EscapeAnalysis {
 
     // A special marker field for external types implemented in the runtime (mainly, arrays).
     // The types being passed to the constructor are not used in the analysis - just put there anything.
-    private val intestinesField = DataFlowIR.Field(null, DataFlowIR.Type.Virtual, 1L, "inte\$tines")
+    private val intestinesField = DataFlowIR.Field(DataFlowIR.Type.Virtual, -1, "inte\$tines")
 
     // A special marker field for return values.
     // Basically we substitute [return x] with [ret.v@lue = x].
     // This is done in order to not handle return parameter somewhat specially.
-    private val returnsValueField = DataFlowIR.Field(null, DataFlowIR.Type.Virtual, 2L, "v@lue")
+    private val returnsValueField = DataFlowIR.Field(DataFlowIR.Type.Virtual, -2, "v@lue")
 
     // Roles in which particular object reference is being used.
     private enum class Role {
@@ -231,6 +231,13 @@ internal object EscapeAnalysis {
                             for (value in node.values)
                                 assignRole(node, Role.ASSIGNED, RoleInfoEntry(value.node, null))
                         }
+                        is DataFlowIR.Node.AllocInstance,
+                        is DataFlowIR.Node.Call,
+                        is DataFlowIR.Node.Const,
+                        is DataFlowIR.Node.FunctionReference,
+                        is DataFlowIR.Node.Null,
+                        is DataFlowIR.Node.Parameter,
+                        is DataFlowIR.Node.Scope -> {}
                     }
                 }
                 FunctionAnalysisResult(function, nodesRoles)
@@ -296,8 +303,8 @@ internal object EscapeAnalysis {
                 for (i in path.indices) {
                     if (i >= other.path.size)
                         return 1
-                    if (path[i].hash != other.path[i].hash)
-                        return path[i].hash.compareTo(other.path[i].hash)
+                    if (path[i].index != other.path[i].index)
+                        return path[i].index.compareTo(other.path[i].index)
                 }
                 if (path.size < other.path.size) return -1
                 return 0
@@ -320,7 +327,7 @@ internal object EscapeAnalysis {
                 append(root ?: kind.toString())
                 path.forEach {
                     append('.')
-                    append(it.name ?: "<no_name@${it.hash}>")
+                    append(it.name ?: "<no_name@${it.index}>")
                 }
             }
 

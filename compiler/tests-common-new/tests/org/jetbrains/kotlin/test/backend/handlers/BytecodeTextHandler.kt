@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_TEXT
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.TREAT_AS_ONE_FILE
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.isKtFile
-import java.util.LinkedHashMap
 
 class BytecodeTextHandler(testServices: TestServices, private val shouldEnableExplicitly: Boolean = false) :
     JvmBinaryArtifactHandler(testServices) {
@@ -25,14 +25,14 @@ class BytecodeTextHandler(testServices: TestServices, private val shouldEnableEx
         private const val IGNORED_PREFIX = "helpers/"
     }
 
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         if (shouldEnableExplicitly && CHECK_BYTECODE_TEXT !in module.directives) return
 
         val targetBackend = module.targetBackend!!
-        val isIgnored = targetBackend in module.directives[CodegenTestDirectives.IGNORE_BACKEND]
+        val isIgnored = testServices.codegenSuppressionChecker.failuresInModuleAreIgnored(module)
         val files = module.files.filter { it.isKtFile }
         if (files.size > 1 && TREAT_AS_ONE_FILE !in module.directives) {
             processMultiFileTest(files, info, targetBackend, !isIgnored)

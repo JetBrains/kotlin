@@ -1,0 +1,3 @@
+FILE: jvm.kt
+    @R|some/Nls|(R|some/Nls.Capitalization.Title|) public final fun f(): R|kotlin/Unit| {
+    }

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.Project
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
@@ -59,8 +58,6 @@ abstract class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), Kotl
     @get:Input
     override val keep: MutableList<String> = mutableListOf()
 
-    override fun findKotlinCompilerClasspath(project: Project): List<File> = findKotlinJsDceClasspath(project)
-
     override fun keep(vararg fqn: String) {
         keep += fqn
     }
@@ -90,7 +87,7 @@ abstract class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), Kotl
         val exitCode = runToolInSeparateProcess(
             allArgs,
             K2JSDce::class.java.name,
-            computedCompilerClasspath,
+            defaultCompilerClasspath,
             log,
             buildDir,
             jvmArgs

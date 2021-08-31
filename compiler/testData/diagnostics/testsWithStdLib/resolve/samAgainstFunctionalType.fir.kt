@@ -23,7 +23,7 @@ public class StaticOverrides {
 // FILE: test.kt
 
 fun test() {
-    StaticOverrides.A.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> {} <!INAPPLICABLE_CANDIDATE!>checkType<!> { _<Boolean>() }
+    StaticOverrides.A.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> {} <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Boolean>() }
     StaticOverrides.B.foo {} checkType { _<String>() }
-    StaticOverrides.C.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> {} <!INAPPLICABLE_CANDIDATE!>checkType<!> { _<Boolean>() }
+    StaticOverrides.C.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> {} <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Boolean>() }
 }

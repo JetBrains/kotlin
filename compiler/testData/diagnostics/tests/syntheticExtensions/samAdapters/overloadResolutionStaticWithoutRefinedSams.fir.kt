@@ -12,8 +12,8 @@ public class A {
 // FILE: 1.kt
 fun fn() {}
 fun x(r: Runnable) {
-    A.foo(::fn) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
-    A.foo {} checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+    A.foo(::fn) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
+    A.foo {} checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
 
     A.foo(null) checkType { _<Int>() }
     A.foo(Runnable { }) checkType { _<Int>() }

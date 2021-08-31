@@ -32,7 +32,7 @@ suspend fun calculate() = "OK"
 fun box() {
     builder {
         test {
-            calculate()
+            <!NON_LOCAL_SUSPENSION_POINT!>calculate<!>()
         }
     }
 }

@@ -248,7 +248,7 @@ class JvmSymbols(
     val assertionErrorConstructor = javaLangAssertionError.constructors.single()
 
     val continuationClass: IrClassSymbol =
-        createClass(StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE, ClassKind.INTERFACE) { klass ->
+        createClass(StandardNames.CONTINUATION_INTERFACE_FQ_NAME, ClassKind.INTERFACE) { klass ->
             klass.addTypeParameter("T", irBuiltIns.anyNType, Variance.IN_VARIANCE)
         }
 
@@ -811,7 +811,6 @@ class JvmSymbols(
         addFunction("equals", irBuiltIns.booleanType, isStatic = true).apply {
             addValueParameter("a", arrayType)
             addValueParameter("b", arrayType)
-
         }
     }
 
@@ -855,6 +854,19 @@ class JvmSymbols(
     val divideUnsignedLong: IrSimpleFunctionSymbol = javaLangLong.functionByName("divideUnsigned")
     val remainderUnsignedLong: IrSimpleFunctionSymbol = javaLangLong.functionByName("remainderUnsigned")
     val toUnsignedStringLong: IrSimpleFunctionSymbol = javaLangLong.functionByName("toUnsignedString")
+
+    val intPostfixIncr = createPostfixIncrDecrFun("<int++>", irBuiltIns.intType)
+    val intPostfixDecr = createPostfixIncrDecrFun("<int-->", irBuiltIns.intType)
+
+    private fun createPostfixIncrDecrFun(intrinsicName: String, type: IrType): IrSimpleFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.special(intrinsicName)
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            parent = kotlinJvmInternalPackage
+            addValueParameter("value", type)
+            returnType = type
+        }.symbol
 
     private fun createJavaPrimitiveClass(fqName: FqName, type: IrType): IrClassSymbol = createClass(fqName) { klass ->
         klass.addFunction("compareUnsigned", irBuiltIns.intType, isStatic = true).apply {
@@ -946,6 +958,11 @@ class JvmSymbols(
 
     val runSuspendFunction: IrSimpleFunctionSymbol =
         kotlinCoroutinesJvmInternalRunSuspendKt.functionByName("runSuspend")
+
+    val repeatableContainer: IrClassSymbol =
+        createClass(FqName("kotlin.jvm.internal.RepeatableContainer"), ClassKind.ANNOTATION_CLASS).apply {
+            owner.addConstructor { isPrimary = true }
+        }
 
     val javaAnnotations = JavaAnnotations()
 

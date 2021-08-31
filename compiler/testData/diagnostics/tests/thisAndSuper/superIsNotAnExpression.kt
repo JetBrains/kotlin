@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun any(a : Any) {}
 
 fun notAnExpression() {

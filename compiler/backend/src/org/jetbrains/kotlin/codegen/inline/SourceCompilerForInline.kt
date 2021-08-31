@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
@@ -24,10 +26,16 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 class InlineCallSiteInfo(
     val ownerClassName: String,
     val method: Method,
-    val isInlineOrInsideInline: Boolean,
+    val inlineScopeVisibility: DescriptorVisibility?,
     val file: PsiFile?,
     val lineNumber: Int
-)
+) {
+    val isInlineOrInsideInline: Boolean
+        get() = inlineScopeVisibility != null
+
+    val isInPublicInlineScope: Boolean
+        get() = inlineScopeVisibility != null && !DescriptorVisibilities.isPrivate(inlineScopeVisibility)
+}
 
 interface SourceCompilerForInline {
     val state: GenerationState

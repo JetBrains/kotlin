@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.common.psi.PsiSourceManager
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
+import org.jetbrains.kotlin.backend.jvm.ir.isSyntheticSingleton
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.buildAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
@@ -26,7 +29,6 @@ import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -54,7 +56,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
-import java.util.concurrent.ConcurrentHashMap
 
 interface MetadataSerializer {
     fun serialize(metadata: MetadataSource): Pair<MessageLite, JvmStringTable>?
@@ -258,7 +259,20 @@ class ClassCodegen private constructor(
             extraFlags = extraFlags or JvmAnnotationNames.METADATA_SCRIPT_FLAG
         }
 
-        writeKotlinMetadata(visitor, state, kind, extraFlags) { av ->
+        // There are four kinds of classes which are regenerated during inlining.
+        // 1) Anonymous classes which are in the scope of an inline function.
+        // 2) SAM wrappers used in an inline function. These are identified by name, since they
+        //    can be reused in different functions and are thus generated in the enclosing top-level
+        //    class instead of inside of an inline function.
+        // 3) WhenMapping classes used from public inline functions. These are collected in
+        //    `JvmBackendContext.publicAbiSymbols` in `MappedEnumWhenLowering`.
+        // 4) Annotation implementation classes used from public inline function. Similar to
+        //    public WhenMapping classes, these are collected in `publicAbiSymbols` in
+        //    `JvmAnnotationImplementationTransformer`.
+        val isPublicAbi = irClass.symbol in context.publicAbiSymbols || irClass.isInlineSamWrapper ||
+                type.isAnonymousClass && irClass.isInPublicInlineScope
+
+        writeKotlinMetadata(visitor, state, kind, isPublicAbi, extraFlags) { av ->
             if (metadata != null) {
                 metadataSerializer.serialize(metadata)?.let { (proto, stringTable) ->
                     DescriptorAsmUtil.writeAnnotationData(av, proto, stringTable)
@@ -313,7 +327,7 @@ class ClassCodegen private constructor(
         if (field.origin != JvmLoweredDeclarationOrigin.CONTINUATION_CLASS_RESULT_FIELD) {
             val skipNullabilityAnnotations =
                 flags and (Opcodes.ACC_SYNTHETIC or Opcodes.ACC_ENUM) != 0 ||
-                        field.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_STATIC_CALLABLE_REFERENCE_INSTANCE
+                        (field.origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE && irClass.isSyntheticSingleton)
             object : AnnotationCodegen(this@ClassCodegen, context, skipNullabilityAnnotations) {
                 override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                     return fv.visitAnnotation(descr, visible)
@@ -335,7 +349,7 @@ class ClassCodegen private constructor(
         }
     }
 
-    private val generatedInlineMethods = ConcurrentHashMap<IrFunction, SMAPAndMethodNode>()
+    private val generatedInlineMethods = mutableMapOf<IrFunction, SMAPAndMethodNode>()
 
     fun generateMethodNode(method: IrFunction): SMAPAndMethodNode {
         if (!method.isInline && !method.isSuspendCapturingCrossinline()) {
@@ -437,7 +451,7 @@ class ClassCodegen private constructor(
         for (klass in innerClasses) {
             val innerClass = typeMapper.classInternalName(klass)
             val outerClass =
-                if (klass.isSamWrapper || klass.attributeOwnerId in context.isEnclosedInConstructor)
+                if (klass.isSamWrapper || klass.isAnnotationImplementation || klass.attributeOwnerId in context.isEnclosedInConstructor)
                     null
                 else {
                     when (val parent = klass.parent) {
@@ -452,10 +466,16 @@ class ClassCodegen private constructor(
     }
 
     private val IrClass.isAnonymousInnerClass: Boolean
-        get() = isSamWrapper || name.isSpecial // NB '<Continuation>' is treated as anonymous inner class here
+        get() = isSamWrapper || name.isSpecial || isAnnotationImplementation // NB '<Continuation>' is treated as anonymous inner class here
+
+    private val IrClass.isInlineSamWrapper: Boolean
+        get() = isSamWrapper && visibility == DescriptorVisibilities.PUBLIC
 
     private val IrClass.isSamWrapper: Boolean
         get() = origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
+
+    private val IrClass.isAnnotationImplementation: Boolean
+        get() = origin == ANNOTATION_IMPLEMENTATION
 
     override fun addInnerClassInfoFromAnnotation(innerClass: IrClass) {
         // It's necessary for proper recovering of classId by plain string JVM descriptor when loading annotations
@@ -470,20 +490,10 @@ class ClassCodegen private constructor(
     private val IrDeclaration.descriptorOrigin: JvmDeclarationOrigin
         get() {
             val psiElement = PsiSourceManager.findPsiElement(this)
-            // For declarations inside lambdas, produce a descriptor which refers back to the original function.
-            // This is needed for plugins which check for lambdas inside of inline functions using the descriptor
-            // contained in JvmDeclarationOrigin. This matches the behavior of the JVM backend.
-            // TODO: this is really not very useful, as this does nothing for other anonymous objects.
-            val isLambda = irClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
-                    irClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
-            val descriptor = if (isLambda)
-                irClass.attributeOwnerId.safeAs<IrFunctionReference>()?.symbol?.owner?.toIrBasedDescriptor() ?: toIrBasedDescriptor()
-            else
-                toIrBasedDescriptor()
             return if (origin == IrDeclarationOrigin.FILE_CLASS)
-                JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, psiElement, descriptor)
+                JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, psiElement, toIrBasedDescriptor())
             else
-                OtherOrigin(psiElement, descriptor)
+                OtherOrigin(psiElement, toIrBasedDescriptor())
         }
 
     companion object {
@@ -579,3 +589,7 @@ private fun storeSerializedIr(av: AnnotationVisitor, serializedIr: ByteArray) {
     }
     partsVisitor.visitEnd()
 }
+
+// From `isAnonymousClass` in inlineCodegenUtils.kt
+private val Type.isAnonymousClass: Boolean
+    get() = internalName.substringAfterLast("$", "").toIntOrNull() != null

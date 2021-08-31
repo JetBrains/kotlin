@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface Tr
 
 class A { companion object }

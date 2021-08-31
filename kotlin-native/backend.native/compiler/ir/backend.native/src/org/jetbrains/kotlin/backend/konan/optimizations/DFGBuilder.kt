@@ -42,9 +42,8 @@ internal class ExternalModulesDFG(val allTypes: List<DataFlowIR.Type.Declared>,
                                   val publicFunctions: Map<Long, DataFlowIR.FunctionSymbol.Public>,
                                   val functionDFGs: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>)
 
-private fun IrClass.getOverridingOf(function: IrFunction) = (function as? IrSimpleFunction)?.let {
-    it.allOverriddenFunctions.atMostOne { it.parent == this }
-}
+internal object STATEMENT_ORIGIN_PRODUCER_INVOCATION : IrStatementOriginImpl("PRODUCER_INVOCATION")
+internal object STATEMENT_ORIGIN_JOB_INVOCATION : IrStatementOriginImpl("JOB_INVOCATION")
 
 private fun IrTypeOperator.isCast() =
         this == IrTypeOperator.CAST || this == IrTypeOperator.IMPLICIT_CAST || this == IrTypeOperator.SAFE_CAST
@@ -336,7 +335,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                         executeImplProducerInvoke.returnType,
                         executeImplProducerInvoke.symbol,
                         executeImplProducerInvoke.symbol.owner.typeParameters.size,
-                        executeImplProducerInvoke.symbol.owner.valueParameters.size)
+                        executeImplProducerInvoke.symbol.owner.valueParameters.size,
+                        STATEMENT_ORIGIN_PRODUCER_INVOCATION)
                 producerInvocation.dispatchReceiver = expression.getValueArgument(2)
 
                 expressions += producerInvocation to currentLoop
@@ -347,7 +347,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                         jobFunctionReference.symbol.owner.returnType,
                         jobFunctionReference.symbol as IrSimpleFunctionSymbol,
                         jobFunctionReference.symbol.owner.typeParameters.size,
-                        jobFunctionReference.symbol.owner.valueParameters.size)
+                        jobFunctionReference.symbol.owner.valueParameters.size,
+                        STATEMENT_ORIGIN_JOB_INVOCATION)
                 jobInvocation.putValueArgument(0, producerInvocation)
 
                 expressions += jobInvocation to currentLoop
@@ -446,6 +447,16 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             .single { it.name == OperatorNameConventions.INVOKE }
     private val reinterpret = symbols.reinterpret
     private val objCObjectRawValueGetter = symbols.interopObjCObjectRawValueGetter
+
+    private val fields = mutableMapOf<IrField, DataFlowIR.Field>()
+    private fun IrField.toDataFlowIRField() = fields.getOrPut(this) {
+        val name = name.asString()
+        DataFlowIR.Field(
+                symbolTable.mapType(type),
+                1 + fields.size,
+                takeName { name }
+        )
+    }
 
     private class Scoped<out T : Any>(val value: T, val scope: DataFlowIR.Node.Scope)
 
@@ -706,9 +717,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                 getContinuationSymbol -> getContinuation().value
 
                                 in arrayGetSymbols -> {
-                                    val callee = value.symbol.owner
-                                    val actualCallee = (value.superQualifierSymbol?.owner?.getOverridingOf(callee)
-                                            ?: callee).target
+                                    val actualCallee = value.actualCallee
 
                                     DataFlowIR.Node.ArrayRead(
                                             symbolTable.mapFunction(actualCallee),
@@ -719,9 +728,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                 }
 
                                 in arraySetSymbols -> {
-                                    val callee = value.symbol.owner
-                                    val actualCallee = (value.superQualifierSymbol?.owner?.getOverridingOf(callee)
-                                            ?: callee).target
+                                    val actualCallee = value.actualCallee
                                     DataFlowIR.Node.ArrayWrite(
                                             symbolTable.mapFunction(actualCallee),
                                             array = expressionToEdge(value.dispatchReceiver!!),
@@ -761,67 +768,64 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                                 else
                                                     it
                                             }
-                                    if (callee is IrConstructor) {
-                                        error("Constructor call should be done with IrConstructorCall")
-                                    } else {
-                                        if (callee.isOverridable && value.superQualifierSymbol == null) {
-                                            val owner = callee.parentAsClass
-                                            val actualReceiverType = value.dispatchReceiver!!.type
-                                            val actualReceiverClassifier = actualReceiverType.classifierOrFail
 
-                                            val receiverType =
-                                                    if (actualReceiverClassifier is IrTypeParameterSymbol
-                                                            || !callee.isReal /* Could be a bridge. */)
-                                                        symbolTable.mapClassReferenceType(owner)
-                                                    else {
-                                                        val actualClassAtCallsite =
-                                                                (actualReceiverClassifier as IrClassSymbol).descriptor
+                                    if (value.isVirtualCall) {
+                                        val owner = callee.parentAsClass
+                                        val actualReceiverType = value.dispatchReceiver!!.type
+                                        val actualReceiverClassifier = actualReceiverType.classifierOrFail
+
+                                        val receiverType =
+                                                if (actualReceiverClassifier is IrTypeParameterSymbol
+                                                        || !callee.isReal /* Could be a bridge. */)
+                                                    symbolTable.mapClassReferenceType(owner)
+                                                else {
+                                                    val actualClassAtCallsite =
+                                                            (actualReceiverClassifier as IrClassSymbol).descriptor
 //                                                        assert (DescriptorUtils.isSubclass(actualClassAtCallsite, owner.descriptor)) {
 //                                                            "Expected an inheritor of ${owner.descriptor}, but was $actualClassAtCallsite"
 //                                                        }
-                                                        if (DescriptorUtils.isSubclass(actualClassAtCallsite, owner.descriptor)) {
-                                                            symbolTable.mapClassReferenceType(actualReceiverClassifier.owner) // Box if inline class.
-                                                        } else {
-                                                            symbolTable.mapClassReferenceType(owner)
-                                                        }
+                                                    if (DescriptorUtils.isSubclass(actualClassAtCallsite, owner.descriptor)) {
+                                                        symbolTable.mapClassReferenceType(actualReceiverClassifier.owner) // Box if inline class.
+                                                    } else {
+                                                        symbolTable.mapClassReferenceType(owner)
                                                     }
+                                                }
 
-                                            val isAnyMethod = callee.target.parentAsClass.isAny()
-                                            if (owner.isInterface && !isAnyMethod) {
-                                                val itablePlace = context.getLayoutBuilder(owner).itablePlace(callee)
-                                                DataFlowIR.Node.ItableCall(
-                                                        symbolTable.mapFunction(callee.target),
-                                                        receiverType,
-                                                        itablePlace.interfaceId,
-                                                        itablePlace.methodIndex,
-                                                        arguments,
-                                                        mapReturnType(value.type, callee.target.returnType),
-                                                        value
-                                                )
-                                            } else {
-                                                val vtableIndex = if (isAnyMethod)
-                                                    context.getLayoutBuilder(context.irBuiltIns.anyClass.owner).vtableIndex(callee.target)
-                                                else
-                                                    context.getLayoutBuilder(owner).vtableIndex(callee)
-                                                DataFlowIR.Node.VtableCall(
-                                                        symbolTable.mapFunction(callee.target),
-                                                        receiverType,
-                                                        vtableIndex,
-                                                        arguments,
-                                                        mapReturnType(value.type, callee.target.returnType),
-                                                        value
-                                                )
-                                            }
-                                        } else {
-                                            val actualCallee = (value.superQualifierSymbol?.owner?.getOverridingOf(callee) ?: callee).target
-                                            DataFlowIR.Node.StaticCall(
-                                                    symbolTable.mapFunction(actualCallee),
+                                        val isAnyMethod = callee.target.parentAsClass.isAny()
+                                        if (owner.isInterface && !isAnyMethod) {
+                                            val itablePlace = context.getLayoutBuilder(owner).itablePlace(callee)
+                                            DataFlowIR.Node.ItableCall(
+                                                    symbolTable.mapFunction(callee.target),
+                                                    receiverType,
+                                                    itablePlace.interfaceId,
+                                                    itablePlace.methodIndex,
                                                     arguments,
-                                                    actualCallee.dispatchReceiverParameter?.let { symbolTable.mapType(it.type) },
-                                                    mapReturnType(value.type, actualCallee.returnType),
+                                                    mapReturnType(value.type, callee.target.returnType),
+                                                    value
+                                            )
+                                        } else {
+                                            val vtableIndex = if (isAnyMethod)
+                                                context.getLayoutBuilder(context.irBuiltIns.anyClass.owner).vtableIndex(callee.target)
+                                            else
+                                                context.getLayoutBuilder(owner).vtableIndex(callee)
+                                            DataFlowIR.Node.VtableCall(
+                                                    symbolTable.mapFunction(callee.target),
+                                                    receiverType,
+                                                    vtableIndex,
+                                                    arguments,
+                                                    mapReturnType(value.type, callee.target.returnType),
                                                     value
                                             )
                                         }
+                                    } else {
+                                        val actualCallee = value.actualCallee
+                                        DataFlowIR.Node.StaticCall(
+                                                symbolTable.mapFunction(actualCallee),
+                                                arguments,
+                                                actualCallee.dispatchReceiverParameter?.let { symbolTable.mapType(it.type) },
+                                                mapReturnType(value.type, actualCallee.returnType),
+                                                value
+                                        )
                                     }
                                 }
                             }
@@ -842,16 +846,9 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
                             is IrGetField -> {
                                 val receiver = value.receiver?.let { expressionToEdge(it) }
-                                val receiverType = value.receiver?.let { symbolTable.mapType(it.type) }
-                                val name = value.symbol.owner.name.asString()
                                 DataFlowIR.Node.FieldRead(
                                         receiver,
-                                        DataFlowIR.Field(
-                                                receiverType,
-                                                symbolTable.mapType(value.symbol.owner.type),
-                                                name.localHash.value,
-                                                takeName { name }
-                                        ),
+                                        value.symbol.owner.toDataFlowIRField(),
                                         mapReturnType(value.type, value.symbol.owner.type),
                                         value
                                 )
@@ -859,16 +856,9 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
                             is IrSetField -> {
                                 val receiver = value.receiver?.let { expressionToEdge(it) }
-                                val receiverType = value.receiver?.let { symbolTable.mapType(it.type) }
-                                val name = value.symbol.owner.name.asString()
                                 DataFlowIR.Node.FieldWrite(
                                         receiver,
-                                        DataFlowIR.Field(
-                                                receiverType,
-                                                symbolTable.mapType(value.symbol.owner.type),
-                                                name.localHash.value,
-                                                takeName { name }
-                                        ),
+                                        value.symbol.owner.toDataFlowIRField(),
                                         expressionToEdge(value.value),
                                         mapReturnType(value.value.type, value.symbol.owner.type)
                                 )

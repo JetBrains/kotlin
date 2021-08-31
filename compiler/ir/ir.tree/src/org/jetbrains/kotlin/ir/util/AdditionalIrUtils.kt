@@ -58,11 +58,9 @@ val IrClass.classId: ClassId?
 val IrDeclaration.nameForIrSerialization: Name
     get() = when (this) {
         is IrDeclarationWithName -> this.name
-        is IrConstructor -> SPECIAL_INIT_NAME
+        is IrConstructor -> SpecialNames.INIT
         else -> error(this)
     }
-
-private val SPECIAL_INIT_NAME = Name.special("<init>")
 
 val IrValueParameter.isVararg get() = this.varargElementType != null
 

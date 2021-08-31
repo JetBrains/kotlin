@@ -5,39 +5,62 @@
 
 package org.jetbrains.kotlin.test.runners.codegen
 
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.BytecodeListingHandler
 import org.jetbrains.kotlin.test.backend.handlers.BytecodeTextHandler
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureClassicFrontendHandlersStep
+import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_DEXING
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.USE_JAVAC_BASED_ON_JVM_TARGET
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JVM_TARGET
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest.Companion.DISABLED_BY_DEFAULT_UNUSED_DIAGNOSTICS
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 
-abstract class AbstractJvmBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendOutput<R>>(
+abstract class AbstractJvmBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>>(
     val targetFrontend: FrontendKind<R>,
     targetBackend: TargetBackend
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
     abstract val frontendFacade: Constructor<FrontendFacade<R>>
-    abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, *>>
-    abstract val backendFacade: Constructor<BackendFacade<*, BinaryArtifacts.Jvm>>
+    abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>
+    abstract val backendFacade: Constructor<BackendFacade<I, BinaryArtifacts.Jvm>>
 
     override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForCodegenTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
 
-        useFrontendHandlers(
-            ::ClassicDiagnosticsHandler,
-            ::FirDiagnosticsHandler
-        )
-        commonHandlersForBoxTest()
-        useArtifactsHandlers(::BytecodeListingHandler)
-        useArtifactsHandlers(::BytecodeTextHandler.bind(true))
+        configureClassicFrontendHandlersStep {
+            useHandlers(
+                ::ClassicDiagnosticsHandler
+            )
+        }
+
+        configureFirHandlersStep {
+            useHandlers(
+                ::FirDiagnosticsHandler
+            )
+        }
+
+        configureCommonHandlersForBoxTest()
+
+        configureJvmArtifactsHandlersStep {
+            useHandlers(
+                ::BytecodeListingHandler,
+                ::BytecodeTextHandler.bind(true)
+            )
+        }
+
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
 
         defaultDirectives {
@@ -50,6 +73,28 @@ abstract class AbstractJvmBlackBoxCodegenTestBase<R : ResultingArtifact.Frontend
             }
         }
 
+        forTestsMatching("compiler/testData/codegen/boxModernJdk/testsWithJava11/*") {
+            configureModernJavaTest(TestJdkKind.FULL_JDK_11, JvmTarget.JVM_11)
+        }
+
+        forTestsMatching("compiler/testData/codegen/boxModernJdk/testsWithJava15/*") {
+            configureModernJavaTest(TestJdkKind.FULL_JDK_15, JvmTarget.JVM_15)
+        }
+
+        forTestsMatching("compiler/testData/codegen/boxModernJdk/testsWithJava17/*") {
+            configureModernJavaTest(TestJdkKind.FULL_JDK_17, JvmTarget.JVM_17)
+        }
+
         enableMetaInfoHandler()
+    }
+
+    private fun TestConfigurationBuilder.configureModernJavaTest(jdkKind: TestJdkKind, jvmTarget: JvmTarget) {
+        defaultDirectives {
+            JDK_KIND with jdkKind
+            JVM_TARGET with jvmTarget
+            +WITH_STDLIB
+            +USE_JAVAC_BASED_ON_JVM_TARGET
+            +IGNORE_DEXING
+        }
     }
 }

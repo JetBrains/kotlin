@@ -19,7 +19,7 @@ internal abstract class OneToManyMappingsBuilder(bmpUnicodeDataLines: List<Unico
 
         val charCode = line.char.hexToInt()
 
-        check(charCode <= Char.MAX_VALUE.toInt()) { "Handle special casing for the supplementary code point: $line" }
+        check(charCode <= Char.MAX_VALUE.code) { "Handle special casing for the supplementary code point: $line" }
 
         val mapping = mapping(charCode, line) ?: return
 

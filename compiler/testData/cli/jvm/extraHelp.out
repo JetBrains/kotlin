@@ -146,6 +146,8 @@ where advanced options include:
   -Xuse-old-spilled-var-type-analysis
                              Use old, SourceInterpreter-based analysis for fields, used for spilled variables in coroutines
   -Xuse-type-table           Use type table in metadata serialization
+  -Xvalidate-bytecode        Validate generated JVM bytecode before and after optimizations
+  -Xvalidate-ir              Validate IR before and after lowering
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type
   -Xbuiltins-from-sources    Compile builtIns from sources
@@ -193,6 +195,7 @@ where advanced options include:
   -Xread-deserialized-contracts Enable reading of contracts from metadata
   -Xreport-output-files      Report source to output files mapping
   -Xreport-perf              Report detailed performance statistics
+  -Xself-upper-bound-inference Support inferring type arguments based on only self upper bounds of the corresponding type parameters
   -Xskip-metadata-version-check Allow to load classes with bad metadata version and pre-release classes
   -Xskip-prerelease-check    Allow to load pre-release classes
   -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent or experimental language or API versions

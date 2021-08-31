@@ -46,7 +46,7 @@ internal class KtUltraLightSuspendContinuationParameter(
         get() {
             val descriptor = ktFunction.resolve() as? FunctionDescriptor
             val returnType = descriptor?.returnType ?: return null
-            return support.moduleDescriptor.getContinuationOfTypeOrAny(returnType, support.isReleasedCoroutine)
+            return support.moduleDescriptor.getContinuationOfTypeOrAny(returnType)
         }
 
     private val psiType by lazyPub {

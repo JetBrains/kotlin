@@ -511,6 +511,18 @@ default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise""
     )
     var serializeIr: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xvalidate-ir",
+        description = "Validate IR before and after lowering"
+    )
+    var validateIr: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xvalidate-bytecode",
+        description = "Validate generated JVM bytecode before and after optimizations"
+    )
+    var validateBytecode: Boolean by FreezableVar(false)
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector, languageVersion)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics

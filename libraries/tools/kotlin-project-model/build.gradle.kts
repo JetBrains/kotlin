@@ -20,7 +20,7 @@ pill {
 kotlin.target.compilations.all {
     kotlinOptions.languageVersion = "1.4"
     kotlinOptions.apiVersion = "1.4"
-    kotlinOptions.freeCompilerArgs += listOf("-Xskip-prerelease-check")
+    kotlinOptions.freeCompilerArgs += listOf("-Xskip-prerelease-check", "-Xsuppress-version-warnings")
 }
 
 tasks.named<Jar>("jar") {

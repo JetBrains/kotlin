@@ -13,6 +13,7 @@ import org.gradle.api.invocation.Gradle
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.model.ReplacedBy
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -21,7 +22,9 @@ import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.api.tasks.incremental.IncrementalTaskInputs
+import org.gradle.work.ChangeType
+import org.gradle.work.Incremental
+import org.gradle.work.InputChanges
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.metrics.*
@@ -35,7 +38,6 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner.Companion.normal
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.incremental.*
-import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskConfigurator
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
@@ -73,19 +75,28 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>
     CompilerArgumentAwareWithInput<T>,
     TaskWithLocalState {
 
-    @InputFiles
-    @PathSensitive(PathSensitivity.RELATIVE)
+    @ReplacedBy("stableSources")
     override fun getSource() = super.getSource()
 
-    @get:Input
-    internal var useFallbackCompilerSearch: Boolean = false
+    @get:InputFiles
+    @get:SkipWhenEmpty
+    @get:IgnoreEmptyDirectories
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    internal val stableSources: FileCollection = project.files(
+        { source }
+    )
+
+    @Incremental
+    override fun getClasspath(): FileCollection {
+        return super.getClasspath()
+    }
 
     @get:Internal
     override val metrics: BuildMetricsReporter =
         BuildMetricsReporterImpl()
 
     /**
-     * By default should be set by plugin from [COMPILER_CLASSPATH_CONFIGURATION_NAME] configuration.
+     * By default, should be set by plugin from [COMPILER_CLASSPATH_CONFIGURATION_NAME] configuration.
      *
      * Empty classpath will fail the build.
      */
@@ -93,20 +104,10 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>
     internal val defaultCompilerClasspath: ConfigurableFileCollection =
         project.objects.fileCollection()
 
-    @get:Classpath
-    internal val computedCompilerClasspath: FileCollection = project.objects.fileCollection().from({
-        when {
-            useFallbackCompilerSearch -> findKotlinCompilerClasspath(project)
-            else -> defaultCompilerClasspath
-        }
-    })
-
-    protected abstract fun findKotlinCompilerClasspath(project: Project): List<File>
-
     init {
-        doFirst {
+        this.doFirst {
             require(!defaultCompilerClasspath.isEmpty) {
-                "Default Kotlin compiler classpath is empty! Task: ${path} (${this::class.qualifiedName})"
+                "Default Kotlin compiler classpath is empty! Task: $path (${this::class.qualifiedName})"
             }
         }
     }
@@ -277,6 +278,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
     @get:InputFiles
     @get:IgnoreEmptyDirectories
+    @get:Incremental
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val commonSourceSet: ConfigurableFileCollection = objects.fileCollection()
 
@@ -320,7 +322,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
     private val systemPropertiesService = CompilerSystemPropertiesService.registerIfAbsent(project.gradle)
 
     @TaskAction
-    fun execute(inputs: IncrementalTaskInputs) {
+    fun execute(inputChanges: InputChanges) {
         metrics.measure(BuildTime.GRADLE_TASK_ACTION) {
             systemPropertiesService.get().startIntercept()
             CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
@@ -329,7 +331,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
             // then Gradle forces next build to be non-incremental (see Gradle's DefaultTaskArtifactStateRepository#persistNewOutputs)
             // To prevent this, we backup outputs before incremental build and restore when exception is thrown
             val outputsBackup: TaskOutputsBackup? =
-                if (isIncrementalCompilationEnabled() && inputs.isIncremental)
+                if (isIncrementalCompilationEnabled() && inputChanges.isIncremental)
                     metrics.measure(BuildTime.BACKUP_OUTPUT) {
                         TaskOutputsBackup(allOutputFiles())
                     }
@@ -337,12 +339,24 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
             if (!isIncrementalCompilationEnabled()) {
                 clearLocalState("IC is disabled")
-            } else if (!inputs.isIncremental) {
+            } else if (!inputChanges.isIncremental) {
                 clearLocalState("Task cannot run incrementally")
             }
 
             try {
-                executeImpl(inputs)
+                executeImpl(inputChanges)
+                metrics.measure(BuildTime.CALCULATE_OUTPUT_SIZE) {
+                    metrics.addMetric(
+                        BuildPerformanceMetric.SNAPSHOT_SIZE,
+                        taskBuildDirectory.file("build-history.bin").get().asFile.length() +
+                                taskBuildDirectory.file("last-build.bin").get().asFile.length() +
+                                taskBuildDirectory.file("abi-snapshot.bin").get().asFile.length()
+                    )
+                    metrics.addMetric(BuildPerformanceMetric.OUTPUT_SIZE,
+                                      taskBuildDirectory.dir("caches-jvm").get().asFileTree.files.filter { it.isFile }.map { it.length() }
+                                          .sum()
+                    )
+                }
             } catch (t: Throwable) {
                 if (outputsBackup != null) {
                     metrics.measure(BuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
@@ -359,13 +373,21 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
     private val projectDir = project.rootProject.projectDir
 
-    private fun executeImpl(inputs: IncrementalTaskInputs) {
+    @get:Internal
+    protected open val incrementalProps: List<FileCollection>
+        get() = listOfNotNull(
+            stableSources,
+            classpath,
+            commonSourceSet
+        )
+
+    private fun executeImpl(inputChanges: InputChanges) {
         val sourceRoots = getSourceRoots()
         val allKotlinSources = sourceRoots.kotlinSourceFiles
 
         logger.kotlinDebug { "All kotlin sources: ${allKotlinSources.pathsAsStringRelativeTo(projectDir)}" }
 
-        if (!inputs.isIncremental && skipCondition()) {
+        if (!inputChanges.isIncremental && skipCondition()) {
             // Skip running only if non-incremental run. Otherwise, we may need to do some cleanup.
             logger.kotlinDebug { "No Kotlin files found, skipping Kotlin compiler task" }
             return
@@ -374,7 +396,33 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
         sourceRoots.log(this.name, logger)
         val args = prepareCompilerArguments()
         taskBuildDirectory.get().asFile.mkdirs()
-        callCompilerAsync(args, sourceRoots, ChangedFiles(inputs))
+        callCompilerAsync(
+            args,
+            sourceRoots,
+            getChangedFiles(inputChanges, incrementalProps)
+        )
+    }
+
+    protected fun getChangedFiles(
+        inputChanges: InputChanges,
+        incrementalProps: List<FileCollection>
+    ) = if (!inputChanges.isIncremental) {
+        ChangedFiles.Unknown()
+    } else {
+        incrementalProps
+            .fold(mutableListOf<File>() to mutableListOf<File>()) { (modified, removed), prop ->
+                inputChanges.getFileChanges(prop).forEach {
+                    when (it.changeType) {
+                        ChangeType.ADDED, ChangeType.MODIFIED -> modified.add(it.file)
+                        ChangeType.REMOVED -> removed.add(it.file)
+                        else -> Unit
+                    }
+                }
+                modified to removed
+            }
+            .run {
+                ChangedFiles.Known(first, second)
+            }
     }
 
     @Internal
@@ -549,6 +597,7 @@ abstract class KotlinCompile @Inject constructor(
         abstract val useClasspathSnapshot: Property<Boolean>
 
         @get:Classpath
+        @get:Incremental
         @get:Optional // Set if useClasspathSnapshot == true
         abstract val classpathSnapshot: ConfigurableFileCollection
 
@@ -593,9 +642,6 @@ abstract class KotlinCompile @Inject constructor(
         incremental = true
     }
 
-    override fun findKotlinCompilerClasspath(project: Project): List<File> =
-        findKotlinJvmCompilerClasspath(project)
-
     override fun createCompilerArgs(): K2JVMCompilerArguments =
         K2JVMCompilerArguments()
 
@@ -606,12 +652,20 @@ abstract class KotlinCompile @Inject constructor(
                 ignoreClasspathResolutionErrors
             )
         )
+
+        // This method could be called on configuration phase to calculate `filteredArgumentsMap` property
+        if (state.executing) {
+            defaultKotlinJavaToolchain.get().updateJvmTarget(this, args)
+        }
     }
 
     @get:Internal
     internal val compilerArgumentsContributor: CompilerArgumentsContributor<K2JVMCompilerArguments> by lazy {
         KotlinJvmCompilerArgumentsContributor(KotlinJvmCompilerArgumentsProvider(this))
     }
+
+    override val incrementalProps: List<FileCollection>
+        get() = super.incrementalProps + listOf(classpathSnapshotProperties.classpathSnapshot)
 
     override fun getSourceRoots(): SourceRoots.ForJvm = jvmSourceRoots
 
@@ -645,7 +699,7 @@ abstract class KotlinCompile @Inject constructor(
         } else null
 
         val environment = GradleCompilerEnvironment(
-            computedCompilerClasspath, messageCollector, outputItemCollector,
+            defaultCompilerClasspath, messageCollector, outputItemCollector,
             outputFiles = allOutputFiles(),
             reportingSettings = reportingSettings,
             incrementalCompilationEnvironment = icEnv,
@@ -736,8 +790,8 @@ abstract class KotlinCompile @Inject constructor(
         val currentSnapshotFiles = classpathSnapshotProperties.classpathSnapshot.files.toList()
         val previousSnapshotFiles = getClasspathSnapshotFilesInDir(classpathSnapshotProperties.classpathSnapshotDir.get().asFile)
 
-        val currentSnapshot = ClasspathSnapshotSerializer.readFromFiles(currentSnapshotFiles)
-        val previousSnapshot = ClasspathSnapshotSerializer.readFromFiles(previousSnapshotFiles)
+        val currentSnapshot = ClasspathSnapshotSerializer.load(currentSnapshotFiles)
+        val previousSnapshot = ClasspathSnapshotSerializer.load(previousSnapshotFiles)
 
         return ClasspathChangesComputer.getChanges(currentSnapshot, previousSnapshot)
     }
@@ -912,9 +966,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:Optional
     abstract val optionalOutputFile: RegularFileProperty
 
-    override fun findKotlinCompilerClasspath(project: Project): List<File> =
-        findKotlinJsCompilerClasspath(project)
-
     override fun createCompilerArgs(): K2JSCompilerArguments =
         K2JSCompilerArguments()
 
@@ -940,6 +991,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
     @get:InputFiles
     @get:IgnoreEmptyDirectories
+    @get:Incremental
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val friendDependencies: FileCollection = objectFactory
@@ -1014,6 +1066,9 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:Internal
     internal val absolutePathProvider = project.projectDir.absolutePath
 
+    override val incrementalProps: List<FileCollection>
+        get() = super.incrementalProps + listOf(friendDependencies)
+
     override fun callCompilerAsync(args: K2JSCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
         sourceRoots as SourceRoots.KotlinOnly
 
@@ -1057,7 +1112,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         } else null
 
         val environment = GradleCompilerEnvironment(
-            computedCompilerClasspath, messageCollector, outputItemCollector,
+            defaultCompilerClasspath, messageCollector, outputItemCollector,
             outputFiles = allOutputFiles(),
             reportingSettings = reportingSettings,
             incrementalCompilationEnvironment = icEnv

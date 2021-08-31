@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.ir.interpreter.state
 
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 internal interface StateWithClosure {
-    val upValues: MutableList<Variable>
+    val upValues: MutableMap<IrSymbol, Variable>
 }

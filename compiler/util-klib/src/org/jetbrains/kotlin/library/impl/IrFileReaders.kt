@@ -99,12 +99,12 @@ abstract class IrMultiArrayReader(private val buffer: ReadBuffer) {
     fun tableItemBytes(row: Int, column: Int): ByteArray {
         val rowOffset = indexToOffset[row]
 
-        val collumnOffsets = indexIndexToOffset.getOrPut(row) {
+        val columnOffsets = indexIndexToOffset.getOrPut(row) {
             readOffsets(rowOffset)
         }
 
-        val dataOffset = collumnOffsets[column]
-        val dataSize = collumnOffsets[column + 1] - dataOffset
+        val dataOffset = columnOffsets[column]
+        val dataSize = columnOffsets[column + 1] - dataOffset
         val result = ByteArray(dataSize)
 
         buffer.position = rowOffset + dataOffset
@@ -152,6 +152,16 @@ abstract class IrMultiTableReader<K>(private val buffer: ReadBuffer, private val
             result[key] = offset to size
         }
 
+        return result
+    }
+
+    fun tableItemBytes(idx: Int): ByteArray {
+        val rowOffset = indexToOffset[idx]
+        val nextOffset = indexToOffset[idx + 1]
+        val size = nextOffset - rowOffset
+        val result = ByteArray(size)
+        buffer.position = rowOffset
+        buffer.get(result, 0, size)
         return result
     }
 

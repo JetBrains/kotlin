@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -118,6 +118,8 @@ public fun <T : Any> setOfNotNull(vararg elements: T?): Set<T> {
  *
  * Elements of the set are iterated in the order they were added by the [builderAction].
  *
+ * The returned set is serializable (JVM).
+ *
  * @sample samples.collections.Builders.Sets.buildSetSample
  */
 @SinceKotlin("1.3")
@@ -144,6 +146,8 @@ internal expect inline fun <E> buildSetInternal(builderAction: MutableSet<E>.() 
  * [capacity] is used to hint the expected number of elements added in the [builderAction].
  *
  * Elements of the set are iterated in the order they were added by the [builderAction].
+ *
+ * The returned set is serializable (JVM).
  *
  * @throws IllegalArgumentException if the given [capacity] is negative.
  *

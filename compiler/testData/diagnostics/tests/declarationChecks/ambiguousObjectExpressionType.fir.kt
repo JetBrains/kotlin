@@ -93,7 +93,7 @@ class Foo {
 
 private val packagePrivateProperty = object : MyClass(), MyTrait {}
 
-protected val packageProtectedProperty = object : MyClass(), MyTrait {}
+<!WRONG_MODIFIER_TARGET!>protected<!> val packageProtectedProperty = object : MyClass(), MyTrait {}
 
 val packageInternalProperty = object : MyClass(), MyTrait {}
 
@@ -101,7 +101,7 @@ internal val packageInternal2Property = object : MyClass(), MyTrait {}
 
 public val packagePublicProperty = object : MyClass(), MyTrait {}
 
-protected fun packageProtectedFunction() = object : MyClass(), MyTrait {}
+<!WRONG_MODIFIER_TARGET!>protected<!> fun packageProtectedFunction() = object : MyClass(), MyTrait {}
 
 fun packageInternalFunction() = object : MyClass(), MyTrait {}
 

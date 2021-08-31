@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -63,7 +62,19 @@ internal object ConeTypeCompatibilityChecker {
         HARD_INCOMPATIBLE,
     }
 
-    fun Collection<ConeKotlinType>.areCompatible(ctx: ConeInferenceContext): Compatibility {
+    fun ConeInferenceContext.isCompatible(a: ConeKotlinType, b: ConeKotlinType): Compatibility {
+        if (a is ConeIntersectionType) {
+            return a.intersectedTypes.minOf { isCompatible(it, b) }
+        }
+        if (b is ConeIntersectionType) {
+            return b.intersectedTypes.minOf { isCompatible(a, it) }
+        }
+
+        val intersectionType = intersectTypesOrNull(listOf(a, b)) as? ConeIntersectionType ?: return Compatibility.COMPATIBLE
+        return intersectionType.intersectedTypes.areCompatible(this)
+    }
+
+    private fun Collection<ConeKotlinType>.areCompatible(ctx: ConeInferenceContext): Compatibility {
         // If all types are nullable, then `null` makes the given types compatible.
         if (all { with(ctx) { it.isNullableType() } }) return Compatibility.COMPATIBLE
 

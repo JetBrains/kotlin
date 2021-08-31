@@ -4787,6 +4787,7 @@ public final class ProtoBuf {
      *
      * <pre>
      *suspend
+     *definitelyNonNull
      * </pre>
      */
     boolean hasFlags();
@@ -4795,6 +4796,7 @@ public final class ProtoBuf {
      *
      * <pre>
      *suspend
+     *definitelyNonNull
      * </pre>
      */
     int getFlags();
@@ -5930,6 +5932,7 @@ public final class ProtoBuf {
      *
      * <pre>
      *suspend
+     *definitelyNonNull
      * </pre>
      */
     public boolean hasFlags() {
@@ -5940,6 +5943,7 @@ public final class ProtoBuf {
      *
      * <pre>
      *suspend
+     *definitelyNonNull
      * </pre>
      */
     public int getFlags() {
@@ -7123,6 +7127,7 @@ public final class ProtoBuf {
        *
        * <pre>
        *suspend
+       *definitelyNonNull
        * </pre>
        */
       public boolean hasFlags() {
@@ -7133,6 +7138,7 @@ public final class ProtoBuf {
        *
        * <pre>
        *suspend
+       *definitelyNonNull
        * </pre>
        */
       public int getFlags() {
@@ -7143,6 +7149,7 @@ public final class ProtoBuf {
        *
        * <pre>
        *suspend
+       *definitelyNonNull
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -7156,6 +7163,7 @@ public final class ProtoBuf {
        *
        * <pre>
        *suspend
+       *definitelyNonNull
        * </pre>
        */
       public Builder clearFlags() {

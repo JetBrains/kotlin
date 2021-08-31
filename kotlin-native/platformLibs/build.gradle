@@ -42,6 +42,10 @@ private String defFileToLibName(String target, String name) {
 }
 //#endregion
 
+if (HostManager.host.name == "macos_arm64") {
+    JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_17)
+}
+
 // TODO: I think most for the non-DSL language below can either be incorporated into DSL
 // or moved out of .gradle file.
 rootProject.project("kotlin-native").ext.platformManager.enabled.each { target ->
@@ -85,7 +89,9 @@ rootProject.project("kotlin-native").ext.platformManager.enabled.each { target -
         libTask.configure {
             it.dependsOn df.config.depends.collect { defFileToLibName(targetName, it) }
             it.dependsOn ":kotlin-native:${targetName}CrossDist"
-            it.enableParallel = true
+            it.enableParallel = project.hasProperty("kotlin.native.platformLibs.parallel")
+                    ? project.findProperty("kotlin.native.platformLibs.parallel")?.toString()?.toBoolean()
+                    : HostManager.host != "macos_arm64"
         }
 
         def klibInstallTask = tasks.register("$libName", KlibInstall) {

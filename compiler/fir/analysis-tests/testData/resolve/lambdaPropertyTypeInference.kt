@@ -26,9 +26,9 @@ fun case1(javaClass: JavaClass?) {
 
     validType.checkType { _<Function1<JavaClass, Boolean>>() } //ok
 
-    invalidType.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Function1<Nothing, Boolean>>() } //(!!!)
+    invalidType.checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Function1<Nothing, Boolean>>() } //(!!!)
 
-    Case1(javaClass).x.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Function1<Nothing, Boolean>>() } //(!!!)
+    Case1(javaClass).x.checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Function1<Nothing, Boolean>>() } //(!!!)
 }
 
 class Case1(val javaClass: JavaClass?) {
@@ -55,9 +55,9 @@ fun case2(kotlinClass: KotlinClass?) {
 
     validType.checkType { _<Function1<KotlinClass, Boolean>>() } //ok
 
-    invalidType.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Function1<Nothing, Boolean>>() }  //(!!!)
+    invalidType.checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Function1<Nothing, Boolean>>() }  //(!!!)
 
-    Case2(kotlinClass).x.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Function1<Nothing, Boolean>>() } //(!!!)
+    Case2(kotlinClass).x.checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Function1<Nothing, Boolean>>() } //(!!!)
 }
 
 class Case2(val kotlinClass: KotlinClass?) {

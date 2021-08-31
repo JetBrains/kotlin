@@ -32,6 +32,7 @@ class ToolDriver(
     else
         arrayOf("-target", target())
 
+    @Suppress("UNUSED_PARAMETER")
     private fun compile(output: Path, vararg args: String, argsCalculator:() -> Array<String>) {
         check(!Files.exists(output))
         val allArgs = arrayOf(*crossPlatform(), *argsCalculator())
@@ -74,9 +75,9 @@ class ToolDriver(
         DwarfUtilParser().parse(StringReader(out)).tags.toList().processor()
     }
 
-    fun swiftc(output: Path, swiftSrc: Path, vararg args: String) {
+    fun swiftc(output: Path, swiftSrc: Path, vararg args: String): String {
         val swiftProcess = subprocess(DistProperties.swiftc, "-o", output.toString(), swiftSrc.toString(), *args)
-        val out = swiftProcess.takeIf { it.process.exitValue() == 0 }?.stdout ?: error(swiftProcess.stderr)
+        return swiftProcess.takeIf { it.process.exitValue() == 0 }?.stdout ?: error(swiftProcess.stderr)
     }
 }
 

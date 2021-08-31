@@ -41,6 +41,7 @@ internal class KtToFirMapping(firElement: FirElement, recorder: FirElementsRecor
 
     private val userTypeMapping = ConcurrentHashMap<KtUserType, FirElement>()
     fun getElement(ktElement: KtElement, state: FirModuleResolveState): FirElement? {
+
         mapping[ktElement]?.let { return it }
 
         val userType = when (ktElement) {
@@ -94,7 +95,7 @@ internal sealed class ReanalyzableStructureElement<KT : KtDeclaration, S : FirBa
     override val diagnostics = FileStructureElementDiagnostics(
         firFile,
         lockProvider,
-        SingleNonLocalDeclarationDiagnosticRetriever(firSymbol.fir as FirDeclaration)
+        SingleNonLocalDeclarationDiagnosticRetriever(firSymbol.fir)
     )
 
     companion object {
@@ -139,13 +140,16 @@ internal class ReanalyzableFunctionStructureElement(
                 it.replaceResolvePhase(minOf(it.resolvePhase, upgradedPhase))
             }
 
-            firLazyDeclarationResolver.lazyResolveDeclaration(
+            val resolvedDeclaration = firLazyDeclarationResolver.lazyResolveDeclaration(
                 firDeclarationToResolve = originalFunction,
                 moduleFileCache = cache,
                 scopeSession = ScopeSession(),
                 toPhase = FirResolvePhase.BODY_RESOLVE,
                 checkPCE = true,
             )
+            check(resolvedDeclaration === originalFunction) {
+                "Reanalysed declaration not expected to be updated"
+            }
 
             ReanalyzableFunctionStructureElement(
                 firFile,
@@ -196,15 +200,19 @@ internal class ReanalyzablePropertyStructureElement(
                 getter?.replaceResolvePhase(upgradedPhase)
                 setter?.replaceResolvePhase(upgradedPhase)
                 replaceResolvePhase(upgradedPhase)
+                replaceInitializerAndAccessorsAreResolved(false)
             }
 
-            firLazyDeclarationResolver.lazyResolveDeclaration(
+            val resolvedDeclaration = firLazyDeclarationResolver.lazyResolveDeclaration(
                 firDeclarationToResolve = originalProperty,
                 moduleFileCache = cache,
                 scopeSession = ScopeSession(),
                 toPhase = FirResolvePhase.BODY_RESOLVE,
                 checkPCE = true,
             )
+            check(resolvedDeclaration === originalProperty) {
+                "Reanalysed declaration not expected to be updated"
+            }
 
             ReanalyzablePropertyStructureElement(
                 firFile,

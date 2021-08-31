@@ -32,7 +32,7 @@ class A {
 
     suspend operator fun contains(b: A) = this == b
     suspend operator fun get(a: A) = a
-    suspend operator fun equals(a: A) = a === this
+    suspend <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun equals(a: A) = a === this
     suspend operator fun set(a: A, b: A) {}
 
     suspend operator fun provideDelegate(a: A, p: KProperty<*>) = a

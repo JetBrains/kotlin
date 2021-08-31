@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.load.java.components.JavaDeprecationSettings
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.deprecation.CoroutineCompatibilitySupport
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
@@ -71,9 +70,6 @@ class CliLightClassGenerationSupport(
         private val traceHolder: CliTraceHolder
             get() = (getInstance(project) as CliLightClassGenerationSupport).traceHolder
 
-        override val isReleasedCoroutine
-            get() = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
-
         override fun possiblyHasAlias(file: KtFile, shortName: Name): Boolean = true
 
         override val moduleDescriptor get() = traceHolder.module
@@ -84,7 +80,6 @@ class CliLightClassGenerationSupport(
             get() = DeprecationResolver(
                 LockBasedStorageManager.NO_LOCKS,
                 languageVersionSettings,
-                CoroutineCompatibilitySupport.ENABLED,
                 JavaDeprecationSettings
             )
 

@@ -26,7 +26,7 @@ fun case_2(x: Unit?) {
 
 // TESTCASE NUMBER: 3
 fun case_3(x: Nothing?) {
-    if (x != null) else return
+    if (<!SENSELESS_COMPARISON!>x != null<!>) else return
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>.hashCode()
 }
@@ -358,7 +358,7 @@ fun case_26(x: Unit?, y: List<*>) {
 
 // TESTCASE NUMBER: 27
 fun case_27(x: Nothing?) = (l@ {
-    if (x != null) else return@l
+    if (<!SENSELESS_COMPARISON!>x != null<!>) else return@l
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>.hashCode()
 })()

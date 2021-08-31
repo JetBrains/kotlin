@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -19,10 +18,6 @@ object TailrecFunctionChecker : DeclarationChecker {
 
         if (descriptor.isEffectivelyFinal(false)) return
 
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitTailrecOnVirtualMember)) {
-            context.trace.report(Errors.TAILREC_ON_VIRTUAL_MEMBER.on(declaration))
-        } else {
-            context.trace.report(Errors.TAILREC_ON_VIRTUAL_MEMBER_ERROR.on(declaration))
-        }
+        context.trace.report(Errors.TAILREC_ON_VIRTUAL_MEMBER.on(context.languageVersionSettings, declaration))
     }
 }

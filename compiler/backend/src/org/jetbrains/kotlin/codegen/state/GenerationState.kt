@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.RootContext
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
+import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
 import org.jetbrains.kotlin.codegen.inline.GlobalInlineContext
 import org.jetbrains.kotlin.codegen.inline.InlineCache
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
@@ -37,7 +38,6 @@ import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.deprecation.CoroutineCompatibilitySupport
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.diagnostics.PrecomputedSuppressCache
@@ -158,8 +158,7 @@ class GenerationState private constructor(
         CompilerDeserializationConfiguration(languageVersionSettings)
 
     val deprecationProvider = DeprecationResolver(
-        LockBasedStorageManager.NO_LOCKS, languageVersionSettings, CoroutineCompatibilitySupport.ENABLED,
-        JavaDeprecationSettings
+        LockBasedStorageManager.NO_LOCKS, languageVersionSettings, JavaDeprecationSettings
     )
 
     init {
@@ -299,6 +298,8 @@ class GenerationState private constructor(
                 !configuration.getBoolean(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS)
     val functionsWithInlineClassReturnTypesMangled: Boolean =
         languageVersionSettings.supportsFeature(LanguageFeature.MangleClassMembersReturningInlineClasses)
+    val shouldValidateIr = configuration.getBoolean(JVMConfigurationKeys.VALIDATE_IR)
+    val shouldValidateBytecode = configuration.getBoolean(JVMConfigurationKeys.VALIDATE_BYTECODE)
 
     val rootContext: CodegenContext<*> = RootContext(this)
 
@@ -369,7 +370,8 @@ class GenerationState private constructor(
                 extension.interceptClassBuilderFactory(classBuilderFactory, originalFrontendBindingContext, diagnostics)
             }
 
-        this.factory = ClassFileFactory(this, interceptedBuilderFactory)
+        val finalizers = ClassFileFactoryFinalizerExtension.getInstances(project)
+        this.factory = ClassFileFactory(this, interceptedBuilderFactory, finalizers)
     }
 
     fun beforeCompile() {

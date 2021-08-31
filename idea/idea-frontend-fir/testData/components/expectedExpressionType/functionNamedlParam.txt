@@ -1,2 +1,2 @@
 expression: av
-expected type: null
+expected type: kotlin/Boolean

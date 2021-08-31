@@ -1,13 +1,15 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.collections.builders
 
+import java.io.NotSerializableException
+
 internal class SetBuilder<E> internal constructor(
     private val backing: MapBuilder<E, *>
-) : MutableSet<E>, AbstractMutableSet<E>() {
+) : MutableSet<E>, AbstractMutableSet<E>(), Serializable {
 
     constructor() : this(MapBuilder<E, Nothing>())
 
@@ -17,6 +19,12 @@ internal class SetBuilder<E> internal constructor(
         backing.build()
         return this
     }
+
+    private fun writeReplace(): Any =
+        if (backing.isReadOnly)
+            SerializedCollection(this, SerializedCollection.tagSet)
+        else
+            throw NotSerializableException("The set cannot be serialized while it is being built.")
 
     override val size: Int get() = backing.size
     override fun isEmpty(): Boolean = backing.isEmpty()

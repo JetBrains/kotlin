@@ -7,3 +7,4 @@ KtFirEnumEntrySymbol:
   origin: LIBRARY
   receiverType: null
   symbolKind: MEMBER
+  deprecationStatus: null

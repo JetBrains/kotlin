@@ -163,10 +163,11 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
                             }
                             transformedReturnableBlock.transformChildrenVoid(object: IrElementTransformerVoid() {
                                 override fun visitExpression(expression: IrExpression): IrExpression {
+                                    expression.transformChildrenVoid()
                                     foldedReturnableBlockValues[expression]?.let {
                                         return it.getFullExpression(coercion, cast)
                                     }
-                                    return super.visitExpression(expression)
+                                    return expression
                                 }
 
                                 override fun visitReturn(expression: IrReturn): IrExpression {

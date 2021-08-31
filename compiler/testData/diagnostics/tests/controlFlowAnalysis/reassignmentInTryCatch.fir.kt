@@ -22,7 +22,7 @@ fun f2() {
     finally {
         <!VAL_REASSIGNMENT!>n<!> = 2
     }
-    n.hashCode()
+    <!UNINITIALIZED_VARIABLE!>n<!>.hashCode()
 }
 
 fun g1(flag: Boolean) {

@@ -96,6 +96,4 @@ class KotlinJavascriptSerializerExtension(
         val psiFile = file.psiFile
         return (psiFile as? KtFile)?.let { fileRegistry.lookup(KotlinPsiFileMetadata(it)) }
     }
-
-    override fun releaseCoroutines() = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
 }

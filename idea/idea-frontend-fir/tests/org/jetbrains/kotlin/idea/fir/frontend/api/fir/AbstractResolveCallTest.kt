@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.expressionMarkerPro
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
+import org.jetbrains.kotlin.idea.frontend.api.calls.KtDelegatedConstructorCallKind
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtErrorCallTarget
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtSuccessCallTarget
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
@@ -41,10 +42,11 @@ abstract class AbstractResolveCallTest : AbstractHLApiSingleModuleTest() {
     }
 
     private fun KtAnalysisSession.resolveCall(element: PsiElement): KtCall? = when (element) {
-        is KtCallExpression -> element.resolveCall()
+        is KtCallElement -> element.resolveCall()
         is KtBinaryExpression -> element.resolveCall()
+        is KtUnaryExpression -> element.resolveCall()
         is KtValueArgument -> resolveCall(element.getArgumentExpression()!!)
-        else -> error("Selected should be either KtCallExpression or KtBinaryExpression but was $element")
+        else -> error("Selected should be either KtCallElement, KtBinaryExpression, or KtUnaryExpression, but was $element")
     }
 
 }
@@ -59,18 +61,17 @@ private fun KtCall.stringRepresentation(): String {
                 append("<receiver>: ${receiver.type.render()}")
                 if (valueParameters.isNotEmpty()) append(", ")
             }
-            valueParameters.joinTo(this) { parameter ->
-                "${parameter.name}: ${parameter.annotatedType.type.render()}"
-            }
+            valueParameters.joinTo(this) { it.stringValue() }
             append(")")
             append(": ${annotatedType.type.render()}")
         }
-        is KtValueParameterSymbol -> "$name: ${annotatedType.type.render()}"
+        is KtValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${annotatedType.type.render()}"
         is KtSuccessCallTarget -> symbol.stringValue()
         is KtErrorCallTarget -> "ERR<${this.diagnostic.defaultMessage}, [${candidates.joinToString { it.stringValue() }}]>"
         is Boolean -> toString()
         is Map<*, *> -> entries.joinToString(prefix = "{ ", postfix = " }") { (k, v) -> "${k?.stringValue()} -> (${v?.stringValue()})" }
-        is KtValueArgument -> this.text
+        is KtExpression -> this.text
+        is KtDelegatedConstructorCallKind -> toString()
         else -> error("unexpected parameter type ${this::class}")
     }
 

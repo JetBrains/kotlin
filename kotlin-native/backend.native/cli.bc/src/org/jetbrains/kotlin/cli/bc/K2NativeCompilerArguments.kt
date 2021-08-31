@@ -142,6 +142,15 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     )
     var exportedLibraries: Array<String>? = null
 
+    @Argument(
+            value = "-Xexternal-dependencies",
+            valueDescription = "<path>",
+            description = "Path to the file containing external dependencies.\n" +
+                    "External dependencies are required for verbose output in case of IR linker errors,\n" +
+                    "but they do not affect compilation at all."
+    )
+    var externalDependencies: String? = null
+
     @Argument(value="-Xfake-override-validator", description = "Enable IR fake override validator")
     var fakeOverrideValidator: Boolean = false
 
@@ -314,15 +323,33 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value="-Xgc-aggressive", description = "Make GC agressive. Works only with -memory-model experimental")
     var gcAggressive: Boolean = false
 
-    @Argument(
-            value = "-Xcheck-compatibility-with-lld",
-            valueDescription = "{disable|enable}",
-            description = "Check that linker flags are compatible with LLD."
-    )
-    var checkLldCompatibility: String? = null
+    @Argument(value = "-Xir-property-lazy-initialization", valueDescription = "{disable|enable}", description = "Initialize top level properties lazily per file")
+    var propertyLazyInitialization: String? = null
 
-    @Argument(value="-Xruntime-asserts-mode", valueDescription = "<mode>", description = "Enable asserts in runtime. Possible values: 'ignore', 'log', 'panic'")
-    var runtimeAssertsMode: String? = "ignore"
+    // TODO: Remove when legacy MM is gone.
+    @Argument(
+            value = "-Xworker-exception-handling",
+            valueDescription = "<mode>",
+            description = "Unhandled exception processing in Worker.executeAfter. Possible values: 'legacy', 'use-hook'. The default value is 'legacy', for -memory-model experimental the default value is 'use-hook'"
+    )
+    var workerExceptionHandling: String? = null
+
+    @Argument(
+            value = "-Xllvm-variant",
+            valueDescription = "{dev|user}",
+            description = "Choose LLVM distribution which will be used during compilation."
+    )
+    var llvmVariant: String? = null
+
+    @Argument(
+            value = "-Xbinary",
+            valueDescription = "<option=value>",
+            description = "Specify binary option"
+    )
+    var binaryOptions: Array<String>? = null
+
+    @Argument(value = "-Xruntime-logs", valueDescription = "<tag1=level1,tag2=level2,...>", description = "Enable logging for runtime with tags.")
+    var runtimeLogs: String? = null
 
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
             super.configureAnalysisFlags(collector, languageVersion).also {

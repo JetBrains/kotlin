@@ -6,7 +6,7 @@ class AImpl : A {
     override val v: Int = 5
 }
 
-public fun box() : String {
+fun box() : String {
     val a: A = AImpl()
     a.v
     return "OK"

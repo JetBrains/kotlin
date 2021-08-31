@@ -13,16 +13,17 @@ import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isMappedIntrinsicCompanionObjectClassId
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -42,6 +43,8 @@ class JvmCachedDeclarations(
     private val defaultImplsClasses = ConcurrentHashMap<IrClass, IrClass>()
     private val defaultImplsRedirections = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
     private val defaultImplsOriginalMethods = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
+
+    private val repeatedAnnotationSyntheticContainers = ConcurrentHashMap<IrClass, IrClass>()
 
     fun getFieldForEnumEntry(enumEntry: IrEnumEntry): IrField =
         singletonFieldDeclarations.getOrPut(enumEntry) {
@@ -271,6 +274,50 @@ class JvmCachedDeclarations(
                 annotations = fakeOverride.annotations
                 copyCorrespondingPropertyFrom(fakeOverride)
             }
+        }
+
+    fun getRepeatedAnnotationSyntheticContainer(annotationClass: IrClass): IrClass =
+        repeatedAnnotationSyntheticContainers.getOrPut(annotationClass) {
+            val containerClass = context.irFactory.buildClass {
+                kind = ClassKind.ANNOTATION_CLASS
+                name = Name.identifier(JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME)
+            }.apply {
+                createImplicitParameterDeclarationWithWrappedDescriptor()
+                parent = annotationClass
+                superTypes = listOf(context.irBuiltIns.annotationType)
+            }
+
+            val propertyName = Name.identifier("value")
+            val propertyType = context.irBuiltIns.arrayClass.typeWith(annotationClass.typeWith())
+
+            containerClass.addConstructor {
+                isPrimary = true
+            }.apply {
+                addValueParameter(propertyName, propertyType)
+            }
+
+            containerClass.addProperty {
+                name = propertyName
+            }.apply property@{
+                backingField = context.irFactory.buildField {
+                    name = propertyName
+                    type = propertyType
+                }.apply {
+                    parent = containerClass
+                    correspondingPropertySymbol = this@property.symbol
+                }
+                addDefaultGetter(containerClass, context.irBuiltIns)
+            }
+
+            containerClass.annotations = annotationClass.annotations
+                .filter {
+                    it.isAnnotationWithEqualFqName(StandardNames.FqNames.retention) ||
+                            it.isAnnotationWithEqualFqName(StandardNames.FqNames.target)
+                }
+                .map { it.deepCopyWithSymbols(containerClass) } +
+                    context.createJvmIrBuilder(containerClass.symbol).irCall(context.ir.symbols.repeatableContainer.constructors.single())
+
+            containerClass
         }
 }
 

@@ -154,7 +154,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         result = if (result.finallyBlock != null) {
             result.also { dataFlowAnalyzer.enterFinallyBlock() }
                 .transformFinallyBlock(transformer, ResolutionMode.ContextIndependent)
-                .also(dataFlowAnalyzer::exitFinallyBlock)
+                .also { dataFlowAnalyzer.exitFinallyBlock() }
         } else {
             result
         }

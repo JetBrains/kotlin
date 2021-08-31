@@ -13,6 +13,7 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.tokens.AlwaysAccessibleValidityTokenFactory
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ReadActionConfinementValidityTokenFactory
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityTokenFactory
@@ -37,6 +38,18 @@ public abstract class KtAnalysisSessionProvider : Disposable {
 
     @InvalidWayOfUsingAnalysisSession
     public abstract fun getAnalysisSession(contextElement: KtElement, factory: ValidityTokenFactory): KtAnalysisSession
+
+    @InvalidWayOfUsingAnalysisSession
+    public abstract fun getAnalysisSessionBySymbol(contextSymbol: KtSymbol): KtAnalysisSession
+
+    @InvalidWayOfUsingAnalysisSession
+    public inline fun <R> analyzeWithSymbolAsContext(
+        contextSymbol: KtSymbol,
+        action: KtAnalysisSession.() -> R
+    ): R {
+        val analysisSession = getAnalysisSessionBySymbol(contextSymbol)
+        return action(analysisSession)
+    }
 
     @InvalidWayOfUsingAnalysisSession
     public inline fun <R> analyseInDependedAnalysisSession(

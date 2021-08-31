@@ -34,7 +34,6 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
             return IrCustomParcelSerializer(parceler)
         }
 
-        // TODO inline classes
         val classifier = irType.erasedUpperBound
         val classifierFqName = classifier.fqNameWhenAvailable?.asString()
         when (classifierFqName) {
@@ -71,6 +70,16 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
                 return wrapNullableSerializerIfNeeded(irType, sizeSerializer)
             "android.util.SizeF" ->
                 return wrapNullableSerializerIfNeeded(irType, sizeFSerializer)
+
+            // Unsigned primitive types
+            "kotlin.UByte" ->
+                return wrapNullableSerializerIfNeeded(irType, ubyteSerializer)
+            "kotlin.UShort" ->
+                return wrapNullableSerializerIfNeeded(irType, ushortSerializer)
+            "kotlin.UInt" ->
+                return wrapNullableSerializerIfNeeded(irType, uintSerializer)
+            "kotlin.ULong" ->
+                return wrapNullableSerializerIfNeeded(irType, ulongSerializer)
 
             // Built-in non-parameterized container types.
             "kotlin.IntArray" ->
@@ -275,6 +284,12 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
     private val booleanSerializer = IrWrappedIntParcelSerializer(irBuiltIns.booleanType)
     private val shortSerializer = IrWrappedIntParcelSerializer(irBuiltIns.shortType)
     private val charSerializer = IrWrappedIntParcelSerializer(irBuiltIns.charType)
+
+    // Unsigned primitive types
+    private val ubyteSerializer = IrUnsafeCoerceWrappedSerializer(byteSerializer, symbols.kotlinUByte.defaultType, irBuiltIns.byteType)
+    private val ushortSerializer = IrUnsafeCoerceWrappedSerializer(shortSerializer, symbols.kotlinUShort.defaultType, irBuiltIns.shortType)
+    private val uintSerializer = IrUnsafeCoerceWrappedSerializer(intSerializer, symbols.kotlinUInt.defaultType, irBuiltIns.intType)
+    private val ulongSerializer = IrUnsafeCoerceWrappedSerializer(longSerializer, symbols.kotlinULong.defaultType, irBuiltIns.longType)
 
     private val charSequenceSerializer = IrCharSequenceParcelSerializer()
 

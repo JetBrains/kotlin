@@ -6,7 +6,7 @@ FILE: referenceToField.kt
 
         public final val x: R|kotlin/Int| = Int(1)
             public get(): R|kotlin/Int| {
-                ::F|/A.x|
+                ::<References to variables aren't supported yet>#
                 ^ this@R|/A|.F|/A.x|
             }
 

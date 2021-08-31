@@ -281,6 +281,21 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/extraArgumentPassedInObsoleteForm.args");
         }
 
+        @TestMetadata("extraBooleanArgumentEqualsFalse.args")
+        public void testExtraBooleanArgumentEqualsFalse() throws Exception {
+            runTest("compiler/testData/cli/jvm/extraBooleanArgumentEqualsFalse.args");
+        }
+
+        @TestMetadata("extraBooleanArgumentEqualsNonsense.args")
+        public void testExtraBooleanArgumentEqualsNonsense() throws Exception {
+            runTest("compiler/testData/cli/jvm/extraBooleanArgumentEqualsNonsense.args");
+        }
+
+        @TestMetadata("extraBooleanArgumentEqualsTrue.args")
+        public void testExtraBooleanArgumentEqualsTrue() throws Exception {
+            runTest("compiler/testData/cli/jvm/extraBooleanArgumentEqualsTrue.args");
+        }
+
         @TestMetadata("extraHelp.args")
         public void testExtraHelp() throws Exception {
             runTest("compiler/testData/cli/jvm/extraHelp.args");
@@ -324,6 +339,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("firStdlibDependency.args")
         public void testFirStdlibDependency() throws Exception {
             runTest("compiler/testData/cli/jvm/firStdlibDependency.args");
+        }
+
+        @TestMetadata("firVsClassicAnnotation.args")
+        public void testFirVsClassicAnnotation() throws Exception {
+            runTest("compiler/testData/cli/jvm/firVsClassicAnnotation.args");
         }
 
         @TestMetadata("flagAllowingResultAsReturnType.args")
@@ -754,6 +774,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("sanitized-name.clash.args")
         public void testSanitized_name_clash() throws Exception {
             runTest("compiler/testData/cli/jvm/sanitized-name.clash.args");
+        }
+
+        @TestMetadata("selfUpperBoundInference.args")
+        public void testSelfUpperBoundInference() throws Exception {
+            runTest("compiler/testData/cli/jvm/selfUpperBoundInference.args");
         }
 
         @TestMetadata("signatureClash.args")

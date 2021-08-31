@@ -228,7 +228,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         val sourceFiles = environment.getSourceFiles()
         configuration[CLIConfigurationKeys.PERF_MANAGER]?.notifyCompilerInitialized(
-            sourceFiles.size, environment.countLinesOfCode(sourceFiles), targetDescription
+            sourceFiles, targetDescription
         )
 
         return if (messageCollector.hasErrors()) null else environment
@@ -274,8 +274,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     }
 
-    override val performanceManager: CommonCompilerPerformanceManager
-        get() = error("Unsupported")
+    override val defaultPerformanceManager: CommonCompilerPerformanceManager = K2JVMCompilerPerformanceManager()
 
     override fun createPerformanceManager(arguments: K2JVMCompilerArguments, services: Services): CommonCompilerPerformanceManager {
         val externalManager = services[CommonCompilerPerformanceManager::class.java]

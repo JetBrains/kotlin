@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeCustomPhase
@@ -19,11 +18,14 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -31,8 +33,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal val scriptsToClassesPhase = makeCustomPhase<JvmBackendContext, IrModuleFragment>(
     name = "ScriptsToClasses",
@@ -95,44 +99,20 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext) {
 
         irScriptClass.thisReceiver = irScript.thisReceiver.transform(scriptTransformer, null)
 
-        irScriptClass.addConstructor {
-            isPrimary = true
-        }.also { irConstructor ->
-
-            fun addConstructorParameter(valueParameter: IrValueParameter, createCorrespondingProperty: Boolean): IrValueParameter {
-                val newValueParameter = valueParameter.patchForClass() as IrValueParameter
-                irConstructor.valueParameters = irConstructor.valueParameters + newValueParameter
-                if (createCorrespondingProperty) {
-                    irScriptClass.addSimplePropertyFrom(
-                        newValueParameter,
-                        IrExpressionBodyImpl(
-                            IrGetValueImpl(
-                                newValueParameter.startOffset, newValueParameter.endOffset,
-                                newValueParameter.type,
-                                newValueParameter.symbol,
-                                IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
-                            )
-                        )
-                    )
-                }
-                return newValueParameter
-            }
-
-            irScript.earlierScriptsParameter?.let { earlierScriptdParameter ->
-                addConstructorParameter(earlierScriptdParameter, false)
-            }
-            val copiedExplicitParameters = irScript.explicitCallParameters.map { addConstructorParameter(it, false) }
-            irScript.implicitReceiversParameters.forEach { addConstructorParameter(it, false) }
-            irScript.providedProperties.forEach { addConstructorParameter(it.first, false) }
-
-            irConstructor.body = context.createIrBuilder(irConstructor.symbol).irBlockBody {
+        irScript.constructor?.patchForClass()?.safeAs<IrConstructor>()!!.also { constructor ->
+            val explicitParamsStartIndex = if (irScript.earlierScriptsParameter == null) 0 else 1
+            val explicitParameters = constructor.valueParameters.subList(
+                explicitParamsStartIndex,
+                irScript.explicitCallParameters.size + explicitParamsStartIndex
+            )
+            constructor.body = context.createIrBuilder(constructor.symbol).irBlockBody {
                 val baseClassCtor = irScript.baseClass.classOrNull?.owner?.constructors?.firstOrNull()
                 // TODO: process situation with multiple constructors (should probably be an error)
                 if (baseClassCtor == null) {
                     +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
                 } else {
                     +irDelegatingConstructorCall(baseClassCtor).also {
-                        copiedExplicitParameters.forEachIndexed { idx, valueParameter ->
+                        explicitParameters.forEachIndexed { idx, valueParameter ->
                             it.putValueArgument(
                                 idx,
                                 IrGetValueImpl(
@@ -150,7 +130,10 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext) {
                     context.irBuiltIns.unitType
                 )
             }
+            irScriptClass.declarations.add(constructor)
+            constructor.parent = irScriptClass
         }
+
         var hasMain = false
         irScript.statements.forEach { scriptStatement ->
             when (scriptStatement) {
@@ -276,36 +259,10 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext) {
                     field.initializer = initializer
                 }
 
-                property.addSimpleFieldGetter(from.type, this, field)
+                property.addDefaultGetter(this, context.irBuiltIns)
             }
         }
     }
-
-    private fun IrProperty.addSimpleFieldGetter(type: IrType, irScriptClass: IrClass, field: IrField) =
-        addGetter {
-            returnType = type
-        }.apply {
-            dispatchReceiverParameter = irScriptClass.thisReceiver!!.copyTo(this)
-            body = IrBlockBodyImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
-                    IrReturnImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        context.irBuiltIns.nothingType,
-                        symbol,
-                        IrGetFieldImpl(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                            field.symbol,
-                            type,
-                            IrGetValueImpl(
-                                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                dispatchReceiverParameter!!.type,
-                                dispatchReceiverParameter!!.symbol
-                            )
-                        )
-                    )
-                )
-            )
-        }
 }
 
 data class ScriptToClassTransformerContext(
@@ -478,7 +435,7 @@ private class ScriptToClassTransformer(
     override fun visitGetField(expression: IrGetField): IrExpression {
         if (irScript.earlierScripts != null) {
             val receiver = expression.receiver
-            if (receiver is IrGetValue && receiver.symbol.owner.name == Name.special("<this>")) {
+            if (receiver is IrGetValue && receiver.symbol.owner.name == SpecialNames.THIS) {
                 val newReceiver = getAccessCallForEarlierScript(expression, receiver.type)
                 if (newReceiver != null) {
                     val newGetField =
@@ -494,7 +451,7 @@ private class ScriptToClassTransformer(
         if (irScript.earlierScripts != null) {
             val target = expression.symbol.owner
             val receiver: IrValueParameter? = target.dispatchReceiverParameter
-            if (receiver?.name == Name.special("<this>")) {
+            if (receiver?.name == SpecialNames.THIS) {
                 val newReceiver = getAccessCallForEarlierScript(expression, receiver.type)
                 if (newReceiver != null) {
                     expression.dispatchReceiver = newReceiver

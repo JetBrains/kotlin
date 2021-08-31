@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JVM_TARGET
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.LAMBDAS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SAM_CONVERSIONS
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SERIALIZE_IR
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.STRING_CONCAT
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
@@ -124,7 +125,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         }
     }
 
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(JvmEnvironmentConfigurationDirectives)
 
     override val additionalServices: List<ServiceRegistrationData>
@@ -145,6 +146,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         register(NO_UNIFIED_NULL_CHECKS, JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS)
         register(PARAMETERS_METADATA, JVMConfigurationKeys.PARAMETERS_METADATA)
         register(JVM_TARGET, JVMConfigurationKeys.JVM_TARGET)
+        register(SERIALIZE_IR, JVMConfigurationKeys.SERIALIZE_IR)
     }
 
     @OptIn(ExperimentalPathApi::class, ExperimentalStdlibApi::class)
@@ -169,8 +171,14 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             TestJdkKind.FULL_JDK_9 -> {
                 configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk9Home())
             }
+            TestJdkKind.FULL_JDK_11 -> {
+                configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk11Home())
+            }
             TestJdkKind.FULL_JDK_15 -> {
                 configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk15Home())
+            }
+            TestJdkKind.FULL_JDK_17 -> {
+                configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk17Home())
             }
             TestJdkKind.FULL_JDK -> {
                 if (SystemInfo.IS_AT_LEAST_JAVA9) {
@@ -255,6 +263,9 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         if (CodegenTestDirectives.DUMP_IR_FOR_GIVEN_PHASES in module.directives) {
             configuration.putCustomPhaseConfigWithEnabledDump(module)
         }
+
+        configuration.put(JVMConfigurationKeys.VALIDATE_IR, true)
+        configuration.put(JVMConfigurationKeys.VALIDATE_BYTECODE, true)
     }
 
     private fun addJavaSourceRootsByJavaModules(configuration: CompilerConfiguration, moduleInfoFiles: List<TestFile>) {

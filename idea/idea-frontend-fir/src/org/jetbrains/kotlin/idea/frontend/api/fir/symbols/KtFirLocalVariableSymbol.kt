@@ -49,4 +49,7 @@ internal class KtFirLocalVariableSymbol(
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(name.asString())
     }
+
+    override fun equals(other: Any?): Boolean = symbolEquals(other)
+    override fun hashCode(): Int = symbolHashCode()
 }

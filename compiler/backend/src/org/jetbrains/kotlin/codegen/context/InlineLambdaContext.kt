@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.codegen.context
 
 import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineUninterceptedOrReturn
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.binding.MutableClosure
-import org.jetbrains.kotlin.config.coroutinesPackageFqName
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.isTopLevelInPackage
@@ -17,25 +17,26 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 class InlineLambdaContext(
-        functionDescriptor: FunctionDescriptor,
-        contextKind: OwnerKind,
-        parentContext: CodegenContext<*>,
-        closure: MutableClosure?,
-        val isCrossInline: Boolean,
-        private val isPropertyReference: Boolean
+    functionDescriptor: FunctionDescriptor,
+    contextKind: OwnerKind,
+    parentContext: CodegenContext<*>,
+    closure: MutableClosure?,
+    val isCrossInline: Boolean,
+    private val isPropertyReference: Boolean
 ) : MethodContext(functionDescriptor, contextKind, parentContext, closure, false) {
 
     override fun getFirstCrossInlineOrNonInlineContext(): CodegenContext<*> {
         if (isCrossInline && !isSuspendIntrinsicParameter()) return this
 
-        val parent = if (isPropertyReference) parentContext as? AnonymousClassContext else  { parentContext as? ClosureContext } ?:
-                     throw AssertionError(
-                             "Parent of inlining lambda body should be " +
-                             "${if (isPropertyReference) "ClosureContext" else "AnonymousClassContext"}, but: $parentContext"
-                     )
+        val parent = if (isPropertyReference) parentContext as? AnonymousClassContext else {
+            parentContext as? ClosureContext
+        } ?: throw AssertionError(
+            "Parent of inlining lambda body should be " +
+                    "${if (isPropertyReference) "ClosureContext" else "AnonymousClassContext"}, but: $parentContext"
+        )
 
-        val grandParent = parent.parentContext ?:
-                          throw AssertionError("Parent context of lambda class context should exist: $contextDescriptor")
+        val grandParent =
+            parent.parentContext ?: throw AssertionError("Parent context of lambda class context should exist: $contextDescriptor")
         return grandParent.firstCrossInlineOrNonInlineContext
     }
 
@@ -44,7 +45,7 @@ class InlineLambdaContext(
         if (contextDescriptor !is AnonymousFunctionDescriptor) return false
         val resolvedCall = (contextDescriptor.source.getPsi() as? KtElement).getParentResolvedCall(state.bindingContext) ?: return false
         val descriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return false
-        return descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(state.languageVersionSettings)
-                || descriptor.isTopLevelInPackage("suspendCoroutine", state.languageVersionSettings.coroutinesPackageFqName().asString())
+        return descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn()
+                || descriptor.isTopLevelInPackage("suspendCoroutine", StandardNames.COROUTINES_PACKAGE_FQ_NAME.asString())
     }
 }

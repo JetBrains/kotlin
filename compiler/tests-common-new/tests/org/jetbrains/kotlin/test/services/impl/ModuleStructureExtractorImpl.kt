@@ -307,6 +307,7 @@ class ModuleStructureExtractorImpl(
                 targetPlatform = targetPlatform,
                 targetBackend = targetBackend,
                 frontendKind = currentModuleFrontendKind ?: defaultsProvider.defaultFrontend,
+                backendKind = BackendKinds.fromTargetBackend(targetBackend),
                 binaryKind = defaultsProvider.defaultArtifactKind ?: targetPlatform.toArtifactKind(),
                 files = filesOfCurrentModule,
                 allDependencies = dependenciesOfCurrentModule,

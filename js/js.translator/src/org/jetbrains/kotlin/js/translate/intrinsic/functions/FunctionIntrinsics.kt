@@ -38,7 +38,6 @@ class FunctionIntrinsics {
         AsDynamicFIF,
         CoroutineContextFIF,
         SuspendCoroutineUninterceptedOrReturnFIF,
-        InterceptedFIF,
         TypeOfFIF
     )
 

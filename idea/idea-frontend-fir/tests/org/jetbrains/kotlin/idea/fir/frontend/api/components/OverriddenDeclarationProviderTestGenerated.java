@@ -25,6 +25,12 @@ public class OverriddenDeclarationProviderTestGenerated extends AbstractOverridd
     }
 
     @Test
+    @TestMetadata("inLocalClass.kt")
+    public void testInLocalClass() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/overridenDeclarations/inLocalClass.kt");
+    }
+
+    @Test
     @TestMetadata("inOtherFile.kt")
     public void testInOtherFile() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/overridenDeclarations/inOtherFile.kt");

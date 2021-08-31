@@ -1,7 +1,6 @@
 // !LANGUAGE: +StrictJavaNullabilityAssertions +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_LIGHT_ANALYSIS
 
 // FILE: box.kt

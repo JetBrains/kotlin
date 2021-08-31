@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/selfUpperBoundInference.kt
+-d
+$TEMP_DIR$
+-Xself-upper-bound-inference

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface Test<in I, out O> {
     val internal_val: <!TYPE_VARIANCE_CONFLICT!>I<!>
     public val public_val: <!TYPE_VARIANCE_CONFLICT!>I<!>

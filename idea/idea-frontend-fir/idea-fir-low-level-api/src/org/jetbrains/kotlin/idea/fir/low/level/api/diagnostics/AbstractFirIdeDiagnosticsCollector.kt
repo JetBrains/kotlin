@@ -10,13 +10,15 @@ import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.ComposedDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.ComposedExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.components.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmDeclarationCheckers
-import org.jetbrains.kotlin.fir.checkers.*
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.jvm.diagnostics.FirJvmDefaultErrorMessages
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.moduleSourceInfo
 import org.jetbrains.kotlin.platform.SimplePlatform
@@ -41,8 +43,9 @@ private object CheckersFactory {
     ): List<AbstractDiagnosticCollectorComponent> {
         val moduleInfo = session.moduleData.moduleSourceInfo
         val platform = moduleInfo.platform.componentPlatforms.first()
+        installPlatformSpecificErrorMessages(platform)
         val declarationCheckers = createDeclarationCheckers(useExtendedCheckers, platform)
-        val expressionCheckers = createExpressionCheckers(useExtendedCheckers)
+        val expressionCheckers = createExpressionCheckers(useExtendedCheckers, platform)
         val typeCheckers = createTypeCheckers(useExtendedCheckers)
 
         @OptIn(ExperimentalStdlibApi::class)
@@ -66,13 +69,35 @@ private object CheckersFactory {
                 add(CommonDeclarationCheckers)
                 when (platform) {
                     is JvmPlatform -> add(JvmDeclarationCheckers)
+                    else -> {
+                    }
                 }
             }
         }
     }
 
-    private fun createExpressionCheckers(useExtendedCheckers: Boolean): ExpressionCheckers =
-        if (useExtendedCheckers) ExtendedExpressionCheckers else CommonExpressionCheckers
+    private fun createExpressionCheckers(useExtendedCheckers: Boolean, platform: SimplePlatform): ExpressionCheckers {
+        return if (useExtendedCheckers) {
+            ExtendedExpressionCheckers
+        } else {
+            createExpressionCheckers {
+                add(CommonExpressionCheckers)
+                when (platform) {
+                    is JvmPlatform -> add(JvmExpressionCheckers)
+                    else -> {
+                    }
+                }
+            }
+        }
+    }
+
+    private fun installPlatformSpecificErrorMessages(platform: SimplePlatform) {
+        when (platform) {
+            is JvmPlatform -> FirJvmDefaultErrorMessages.installJvmErrorMessages()
+            else -> {
+            }
+        }
+    }
 
     private fun createTypeCheckers(useExtendedCheckers: Boolean): TypeCheckers? =
         if (useExtendedCheckers) null else CommonTypeCheckers
@@ -91,6 +116,21 @@ private object CheckersFactory {
             1 -> declarationCheckers.single()
             else -> ComposedDeclarationCheckers().apply {
                 declarationCheckers.forEach(::register)
+            }
+        }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private inline fun createExpressionCheckers(
+        createExpressionCheckers: MutableList<ExpressionCheckers>.() -> Unit
+    ): ExpressionCheckers = createExpressionCheckers(buildList(createExpressionCheckers))
+
+    @OptIn(CheckersComponentInternal::class)
+    private fun createExpressionCheckers(expressionCheckers: List<ExpressionCheckers>): ExpressionCheckers {
+        return when (expressionCheckers.size) {
+            1 -> expressionCheckers.single()
+            else -> ComposedExpressionCheckers().apply {
+                expressionCheckers.forEach(::register)
             }
         }
     }

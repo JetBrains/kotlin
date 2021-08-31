@@ -22,7 +22,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.SmartHashSet
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature.AbstractClassMemberNotImplementedWithIntermediateAbstractClass
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -42,7 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesi
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeCheckerImpl
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import java.util.*
 
@@ -270,11 +269,7 @@ class OverrideResolver(
             }
 
             if (abstractInvisibleSuper.isNotEmpty() && !canHaveAbstractMembers) {
-                if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitInvisibleAbstractMethodsInSuperclasses)) {
-                    trace.report(INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER.on(klass, classDescriptor, abstractInvisibleSuper))
-                } else {
-                    trace.report(INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_WARNING.on(klass, classDescriptor, abstractInvisibleSuper))
-                }
+                trace.report(INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER.on(languageVersionSettings, klass, classDescriptor, abstractInvisibleSuper))
             }
 
             conflictingInterfaceMembers.removeAll(conflictingReturnTypes)
@@ -410,11 +405,7 @@ class OverrideResolver(
         if (overridden != null) {
             val baseClassifier = overridden.containingDeclaration
             val dataModifier = findDataModifierForDataClass(copyFunction.containingDeclaration)
-            if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitDataClassesOverridingCopy)) {
-                trace.report(DATA_CLASS_OVERRIDE_DEFAULT_VALUES_ERROR.on(dataModifier, copyFunction, baseClassifier))
-            } else {
-                trace.report(DATA_CLASS_OVERRIDE_DEFAULT_VALUES_WARNING.on(dataModifier, copyFunction, baseClassifier))
-            }
+            trace.report(DATA_CLASS_OVERRIDE_DEFAULT_VALUES.on(languageVersionSettings, dataModifier, copyFunction, baseClassifier))
         }
     }
 
@@ -713,6 +704,7 @@ class OverrideResolver(
             var overridesClassMember = false
             var overridesNonAbstractInterfaceMember = false
             var overridesAbstractInBaseClass: CallableMemberDescriptor? = null
+            var overridesNonAbstractInBaseClass: CallableMemberDescriptor? = null
             var fakeOverrideInBaseClass: CallableMemberDescriptor? = null
             for (overridden in relevantDirectlyOverridden) {
                 val containingDeclaration = overridden.containingDeclaration as? ClassDescriptor ?: continue
@@ -727,6 +719,8 @@ class OverrideResolver(
                     overridesClassMember = true
                     if (overridden.modality === Modality.ABSTRACT) {
                         overridesAbstractInBaseClass = overridden
+                    } else {
+                        overridesNonAbstractInBaseClass = overridden
                     }
                 } else if (containingDeclaration.kind == ClassKind.INTERFACE) {
                     overriddenInterfaceMembers.add(overridden)
@@ -736,7 +730,7 @@ class OverrideResolver(
                 }
             }
 
-            if (overridesAbstractInBaseClass != null) {
+            if (overridesAbstractInBaseClass != null && overridesNonAbstractInBaseClass == null) {
                 reportingStrategy.abstractBaseClassMemberNotImplemented(overridesAbstractInBaseClass)
             } else if (!onlyBaseClassMembers && !overridesClassMember &&
                 overridesNonAbstractInterfaceMember && overriddenInterfaceMembers.size > 1

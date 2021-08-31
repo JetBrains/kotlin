@@ -643,6 +643,66 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
         "OROR" -> when (typeA) {
             "Boolean" -> if (typeB == "Boolean") return (a as Boolean) || (b as Boolean)
         }
+        "mod" -> when (typeA) {
+            "Byte" -> when (typeB) {
+                "Byte" -> return (a as Byte).mod(b as Byte)
+                "Short" -> return (a as Byte).mod(b as Short)
+                "Int" -> return (a as Byte).mod(b as Int)
+                "Long" -> return (a as Byte).mod(b as Long)
+            }
+            "Short" -> when (typeB) {
+                "Byte" -> return (a as Short).mod(b as Byte)
+                "Short" -> return (a as Short).mod(b as Short)
+                "Int" -> return (a as Short).mod(b as Int)
+                "Long" -> return (a as Short).mod(b as Long)
+            }
+            "Int" -> when (typeB) {
+                "Byte" -> return (a as Int).mod(b as Byte)
+                "Short" -> return (a as Int).mod(b as Short)
+                "Int" -> return (a as Int).mod(b as Int)
+                "Long" -> return (a as Int).mod(b as Long)
+            }
+            "Long" -> when (typeB) {
+                "Byte" -> return (a as Long).mod(b as Byte)
+                "Short" -> return (a as Long).mod(b as Short)
+                "Int" -> return (a as Long).mod(b as Int)
+                "Long" -> return (a as Long).mod(b as Long)
+            }
+            "Float" -> when (typeB) {
+                "Float" -> return (a as Float).mod(b as Float)
+                "Double" -> return (a as Float).mod(b as Double)
+            }
+            "Double" -> when (typeB) {
+                "Float" -> return (a as Double).mod(b as Float)
+                "Double" -> return (a as Double).mod(b as Double)
+            }
+        }
+        "floorDiv" -> when (typeA) {
+            "Byte" -> when (typeB) {
+                "Byte" -> return (a as Byte).floorDiv(b as Byte)
+                "Short" -> return (a as Byte).floorDiv(b as Short)
+                "Int" -> return (a as Byte).floorDiv(b as Int)
+                "Long" -> return (a as Byte).floorDiv(b as Long)
+            }
+            "Short" -> when (typeB) {
+                "Byte" -> return (a as Short).floorDiv(b as Byte)
+                "Short" -> return (a as Short).floorDiv(b as Short)
+                "Int" -> return (a as Short).floorDiv(b as Int)
+                "Long" -> return (a as Short).floorDiv(b as Long)
+            }
+            "Int" -> when (typeB) {
+                "Byte" -> return (a as Int).floorDiv(b as Byte)
+                "Short" -> return (a as Int).floorDiv(b as Short)
+                "Int" -> return (a as Int).floorDiv(b as Int)
+                "Long" -> return (a as Int).floorDiv(b as Long)
+            }
+            "Long" -> when (typeB) {
+                "Byte" -> return (a as Long).floorDiv(b as Byte)
+                "Short" -> return (a as Long).floorDiv(b as Short)
+                "Int" -> return (a as Long).floorDiv(b as Int)
+                "Long" -> return (a as Long).floorDiv(b as Long)
+            }
+        }
     }
     throw InterpreterMethodNotFoundError("Unknown function: $name($typeA, $typeB)")
 }

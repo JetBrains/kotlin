@@ -13,6 +13,6 @@ fun <F : String?> bar(x: F) {
     foo1<<!UPPER_BOUND_VIOLATED!>F<!>>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 
     x<!UNSAFE_CALL!>.<!>foo2()
-    x.<!INAPPLICABLE_CANDIDATE!>foo2<!><F>()
+    x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo2<!><F>()
 }
 

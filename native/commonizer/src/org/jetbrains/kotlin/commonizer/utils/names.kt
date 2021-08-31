@@ -43,6 +43,12 @@ private val KOTLIN_NATIVE_SYNTHETIC_PACKAGES: List<CirPackageName> = ForwardDecl
         CirPackageName.create(packageFqName)
     }
 
+internal val CNAMES_STRUCTS_PACKAGE = CirPackageName.create("cnames.structs")
+
+internal val OBJCNAMES_CLASSES_PACKAGE = CirPackageName.create("objcnames.classes")
+
+internal val OBJCNAMES_PROTOCOLS_PACKAGE = CirPackageName.create("objcnames.protocols")
+
 private val CINTEROP_PACKAGE: CirPackageName = CirPackageName.create("kotlinx.cinterop")
 
 private val OBJC_INTEROP_CALLABLE_ANNOTATIONS: List<CirName> = listOf(

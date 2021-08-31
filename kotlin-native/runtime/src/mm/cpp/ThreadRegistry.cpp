@@ -6,6 +6,7 @@
 #include "ThreadRegistry.hpp"
 
 #include "GlobalData.hpp"
+#include "Porting.h"
 #include "ThreadData.hpp"
 #include "ThreadState.hpp"
 
@@ -17,7 +18,7 @@ mm::ThreadRegistry& mm::ThreadRegistry::Instance() noexcept {
 }
 
 mm::ThreadRegistry::Node* mm::ThreadRegistry::RegisterCurrentThread() noexcept {
-    auto* threadDataNode = list_.Emplace(pthread_self());
+    auto* threadDataNode = list_.Emplace(konan::currentThreadId());
     AssertThreadState(threadDataNode->Get(), ThreadState::kNative);
     Node*& currentDataNode = currentThreadDataNode_;
     RuntimeAssert(!IsCurrentThreadRegistered(), "This thread already had some data assigned to it.");
@@ -40,7 +41,8 @@ std::unique_lock<mm::ThreadRegistry::Mutex> mm::ThreadRegistry::Lock() noexcept 
 }
 
 ALWAYS_INLINE mm::ThreadData* mm::ThreadRegistry::CurrentThreadData() const noexcept {
-    return CurrentThreadDataNode()->Get();
+    auto* threadDataNode = CurrentThreadDataNode();
+    return threadDataNode ? threadDataNode->Get() : nullptr;
 }
 
 mm::ThreadRegistry::ThreadRegistry() = default;

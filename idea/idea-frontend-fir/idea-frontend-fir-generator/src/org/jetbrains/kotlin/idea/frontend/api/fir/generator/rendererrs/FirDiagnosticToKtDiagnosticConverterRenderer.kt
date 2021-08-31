@@ -28,7 +28,11 @@ object FirDiagnosticToKtDiagnosticConverterRenderer : AbstractDiagnosticsDataCla
     }
 
     private fun SmartPrinter.printConverter(diagnostic: HLDiagnostic) {
-        println("add(${diagnostic.original.containingObjectName}.${diagnostic.original.name}) { firDiagnostic ->")
+        print("add(${diagnostic.original.containingObjectName}.${diagnostic.original.name}")
+        if (diagnostic.severity != null) {
+            print(".${diagnostic.severity.name.lowercase()}Factory")
+        }
+        println(") { firDiagnostic ->")
         withIndent {
             println("${diagnostic.implClassName}(")
             withIndent {

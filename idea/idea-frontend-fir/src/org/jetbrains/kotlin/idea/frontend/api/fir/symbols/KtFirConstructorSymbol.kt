@@ -87,4 +87,7 @@ internal class KtFirConstructorSymbol(
             ?: error("ClassId should present for member declaration")
         return KtFirConstructorSymbolPointer(ownerClassId, isPrimary, firRef.withFir { it.createSignature() })
     }
+
+    override fun equals(other: Any?): Boolean = symbolEquals(other)
+    override fun hashCode(): Int = symbolHashCode()
 }
