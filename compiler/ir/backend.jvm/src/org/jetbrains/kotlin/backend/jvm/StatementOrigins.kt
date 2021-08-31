@@ -10,4 +10,5 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 interface JvmLoweredStatementOrigin {
     object DEFAULT_STUB_CALL_TO_IMPLEMENTATION : IrStatementOriginImpl("DEFAULT_STUB_CALL_TO_IMPLEMENTATION")
     object INLINE_LAMBDA : IrStatementOriginImpl("INLINE_LAMBDA")
+    object FAKE_CONTINUATION : IrStatementOriginImpl("FAKE_CONTINUATION")
 }

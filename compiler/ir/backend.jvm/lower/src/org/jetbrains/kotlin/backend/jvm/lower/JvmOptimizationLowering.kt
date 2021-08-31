@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.Modality
@@ -119,12 +120,12 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
 
         // For some functions, we clear the current class field since the code could end up
         // in another class then the one it is nested under in the IR.
-        // TODO: Loosen this up for local functions for lambdas passed as an inline lambda
-        // argument to an inline function. In that case the code does end up in the current class.
+        // TODO: replace this with the code from SyntheticAccessorLowering that returns the current class
+        //   or package accounting for all inline functions and lambdas.
         override fun visitFunction(declaration: IrFunction, data: IrClass?): IrStatement {
             val codeMightBeGeneratedInDifferentClass = declaration.isSuspend ||
                     declaration.isInline ||
-                    declaration.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+                    declaration.origin == JvmLoweredDeclarationOrigin.INLINE_LAMBDA
             declaration.transformChildren(this, data.takeUnless { codeMightBeGeneratedInDifferentClass })
             return declaration
         }
