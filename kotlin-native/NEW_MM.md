@@ -146,4 +146,39 @@ A number of known performance issues:
   the application with a larger memory footprint than necessary, making it a more likely target to be terminated by the OS.
 * WASM (or indeed any target that does not have pthreads) is not supported with the new MM.
 
+## Workarounds
+
+### Unexpected object freezing
+Some libraries might not be ready for the new memory model and freeze-transparency of `kotlinx.coroutines`, so unexpected `InvalidMutabilityException` 
+or `FreezingException` might appear.
+To workaround such cases, we added a `freezing` binary option that disables freezing fully (`disabled`) or 
+partially (`explicitOnly`).
+The former disables freezing mechanism at runtime (thus, making it no-op) while the latter disables automatic freezing of 
+[`@SharedImmutable`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/-shared-immutable/) globals, 
+but keeps direct calls to [`freeze`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/freeze.html) fully functional. 
+Similar to the [new memory model](#switch-to-the-new-memory-model), there are several ways to enable this option:
+* In `gradle.properties`: 
+```properties
+kotlin.native.binary.freezing=disabled
+```
+* In Gradle build script:
+```kotlin
+// build.gradle.kts
+
+kotlin.targets.withType(KotlinNativeTarget::class.java) {
+    binaries.all {
+        binaryOptions["freezing"] = "disabled"
+    }
+}
+```
+* Compiler flag: 
+```
+-Xbinary=freezing=disabled
+```
+Please note that this option works only with the new MM.
+
+If you want not just workaround the problem, but actually track down the source of the exceptions then
+[`ensureNeverFrozen`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/ensure-never-frozen.html) is your best friend.
+
+---
 **TODO**: A place to submit feedback
