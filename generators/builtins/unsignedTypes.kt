@@ -597,7 +597,9 @@ public class ${elementType}Range(start: $elementType, endInclusive: $elementType
         return last + 1u
     }
 
-    override fun contains(value: $elementType): Boolean = first <= value && value <= last
+    override fun contains(value: $elementType): Boolean = 
+        @Suppress("USELESS_CAST") (value as Any? is $elementType) && // TODO: Eliminate this check after KT-30016 gets fixed.
+        first <= value && value <= last
 
     /**
      * Checks if the range is empty.
@@ -678,6 +680,7 @@ internal constructor(
     @SinceKotlin("1.6")
     override fun contains(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") /* for the backward compatibility with old names */ value: $elementType): Boolean =
         when {
+            @Suppress("USELESS_CAST") (value as Any? !is $elementType) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
             step > 0 && value >= first && value <= last -> (value - first) % step.to$elementType() == $zero
             step < 0 && value <= first && value >= last -> (first - value) % (-step).to$elementType() == $zero
             else -> false
@@ -685,7 +688,7 @@ internal constructor(
 
     @SinceKotlin("1.6")
     override fun containsAll(elements: Collection<$elementType>): Boolean =
-        if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in this }
+        if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in (this as Collection<Any?>) }
 
 
     companion object {

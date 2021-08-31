@@ -67,7 +67,9 @@ public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInc
         return last + 1
     }
 
-    override fun contains(value: $t): Boolean = first <= value && value <= last
+    override fun contains(value: $t): Boolean = 
+        @Suppress("USELESS_CAST") (value as Any? is $t) && // TODO: Eliminate this check after KT-30016 gets fixed.
+        first <= value && value <= last
 
     /** 
      * Checks whether the range is empty.
