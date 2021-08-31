@@ -84,11 +84,11 @@ class FirCallResolver(
 
         return components.context.withIncrementedQualifierPartIndex {
             val name = functionCall.calleeReference.name
-            val result = collectCandidates(functionCall, name)
+            val result = collectCandidates(functionCall, name, origin = functionCall.origin)
 
             var forceCandidates: Collection<Candidate>? = null
             if (result.candidates.isEmpty()) {
-                val newResult = collectCandidates(functionCall, name, CallKind.VariableAccess)
+                val newResult = collectCandidates(functionCall, name, CallKind.VariableAccess, origin = functionCall.origin)
                 if (newResult.candidates.isNotEmpty()) {
                     forceCandidates = newResult.candidates
                 }
@@ -152,7 +152,8 @@ class FirCallResolver(
     private fun <T : FirQualifiedAccess> collectCandidates(
         qualifiedAccess: T,
         name: Name,
-        forceCallKind: CallKind? = null
+        forceCallKind: CallKind? = null,
+        origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular
     ): ResolutionResult {
         val explicitReceiver = qualifiedAccess.explicitReceiver
         val argumentList = (qualifiedAccess as? FirFunctionCall)?.argumentList ?: FirEmptyArgumentList
@@ -172,6 +173,7 @@ class FirCallResolver(
             session,
             components.file,
             transformer.components.containingDeclarations,
+            origin = origin
         )
         towerResolver.reset()
         val result = towerResolver.runResolver(info, transformer.resolutionContext)

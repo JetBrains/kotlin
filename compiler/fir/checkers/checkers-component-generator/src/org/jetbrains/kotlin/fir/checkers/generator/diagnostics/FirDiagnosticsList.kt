@@ -1145,6 +1145,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirNamedFunctionSymbol>("functionSymbol")
             parameter<String>("operator")
         }
+        val PROPERTY_AS_OPERATOR by error<PsiElement>(PositioningStrategy.OPERATOR) {
+            parameter<FirPropertySymbol>("property")
+        }
     }
 
     val TYPE_ALIAS by object : DiagnosticGroup("Type alias") {

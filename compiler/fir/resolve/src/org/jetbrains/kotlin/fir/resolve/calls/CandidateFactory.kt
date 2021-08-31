@@ -82,6 +82,10 @@ class CandidateFactory private constructor(
         ) {
             result.addDiagnostic(NoCompanionObject)
         }
+        if (callInfo.origin == FirFunctionCallOrigin.Operator && symbol is FirPropertySymbol) {
+            // Flag all property references that are resolved from an convention operator call.
+            result.addDiagnostic(PropertyAsOperator)
+        }
         return result
     }
 

@@ -596,6 +596,7 @@ object FirErrors {
     val INCOMPATIBLE_ENUM_COMPARISON_ERROR by error2<KtElement, ConeKotlinType, ConeKotlinType>()
     val INC_DEC_SHOULD_NOT_RETURN_UNIT by error0<KtExpression>(SourceElementPositioningStrategies.OPERATOR)
     val ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT by error2<KtExpression, FirNamedFunctionSymbol, String>(SourceElementPositioningStrategies.OPERATOR)
+    val PROPERTY_AS_OPERATOR by error1<PsiElement, FirPropertySymbol>(SourceElementPositioningStrategies.OPERATOR)
 
     // Type alias
     val TOPLEVEL_TYPEALIASES_ONLY by error0<KtTypeAlias>()

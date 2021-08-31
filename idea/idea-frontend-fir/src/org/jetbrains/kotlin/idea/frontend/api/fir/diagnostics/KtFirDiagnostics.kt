@@ -2186,6 +2186,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val operator: String
     }
 
+    abstract class PropertyAsOperator : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = PropertyAsOperator::class
+        abstract val property: KtVariableSymbol
+    }
+
     abstract class ToplevelTypealiasesOnly : KtFirDiagnostic<KtTypeAlias>() {
         override val diagnosticClass get() = ToplevelTypealiasesOnly::class
     }

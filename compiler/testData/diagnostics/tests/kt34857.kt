@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference
 
 val Int.plusAssign: (Int) -> Unit

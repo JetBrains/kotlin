@@ -99,3 +99,5 @@ class InfixCallOfNonInfixFunction(val function: FirNamedFunctionSymbol) : Resolu
 class OperatorCallOfNonOperatorFunction(val function: FirNamedFunctionSymbol) : ResolutionDiagnostic(INAPPLICABLE_MODIFIER)
 
 class Unsupported(val message: String, val source: FirSourceElement? = null) : ResolutionDiagnostic(UNSUPPORTED)
+
+object PropertyAsOperator : ResolutionDiagnostic(PROPERTY_AS_OPERATOR)

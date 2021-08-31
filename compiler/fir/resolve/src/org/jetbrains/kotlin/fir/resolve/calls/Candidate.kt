@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
@@ -55,7 +56,8 @@ data class CallInfo(
     // Four properties for callable references only
     val expectedType: ConeKotlinType? = null,
     val outerCSBuilder: ConstraintSystemBuilder? = null,
-    val lhs: DoubleColonLHS? = null
+    val lhs: DoubleColonLHS? = null,
+    val origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
 ) {
     val arguments: List<FirExpression> get() = argumentList.arguments
 

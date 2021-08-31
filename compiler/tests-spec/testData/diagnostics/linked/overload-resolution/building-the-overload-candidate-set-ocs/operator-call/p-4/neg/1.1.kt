@@ -82,10 +82,30 @@ class Arifm() {
     operator fun invoke(i: Int) {}
 }
 
+class Contains() {
+    operator fun invoke(i: Int): Boolean = true
+}
+
+class Getter() {
+    operator fun invoke(i: Int): Int = 1
+}
+
+class Setter() {
+    operator fun invoke(i: Int, j: Int) {}
+}
+
+class Unary<B>() {
+    operator fun invoke(): B = TODO()
+}
+
 class B() {
     val plus = Arifm()
     val minus = Arifm()
     val compareTo = Comp()
+    val contains = Contains()
+    val get = Getter()
+    val set = Setter()
+    val unaryPlus = Unary<B>()
 }
 
 fun case3() {
@@ -94,7 +114,12 @@ fun case3() {
     b <!PROPERTY_AS_OPERATOR!>-<!> 5
     b <!PROPERTY_AS_OPERATOR!><<!> 5
     b <!PROPERTY_AS_OPERATOR!>>=<!> 5
+    1 <!PROPERTY_AS_OPERATOR!>in<!> b
+    <!PROPERTY_AS_OPERATOR!>b[2]<!>
+    <!PROPERTY_AS_OPERATOR!>b[3]<!> = 4
+    <!PROPERTY_AS_OPERATOR!>+<!>b
 }
+
 // FILE: TestCase4.kt
 /*
  * TESTCASE NUMBER: 4

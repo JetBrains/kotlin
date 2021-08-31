@@ -20,6 +20,7 @@ enum class CandidateApplicability {
     UNSTABLE_SMARTCAST, // unstable smart cast
     CONVENTION_ERROR, // missing infix, operator etc
     RESOLVED_LOW_PRIORITY,
+    PROPERTY_AS_OPERATOR, // using property of functional type as an operator. From resolution perspective, this is considered successful.
     RESOLVED_NEED_PRESERVE_COMPATIBILITY, // call resolved successfully, but using new features that changes resolve
     RESOLVED_WITH_ERROR, // call has error, but it is still successful from resolution perspective
     RESOLVED, // call success or has uncompleted inference or in other words possible successful candidate

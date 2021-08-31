@@ -206,6 +206,10 @@ class ConeLocalVariableNoTypeOrInitializer(val variable: FirVariable) : ConeDiag
     override val reason: String get() = "Cannot infer variable type without initializer / getter / delegate"
 }
 
+class ConePropertyAsOperator(val symbol: FirPropertySymbol) : ConeDiagnostic {
+    override val reason: String get() = "Cannot use a property as an operator"
+}
+
 private fun describeSymbol(symbol: FirBasedSymbol<*>): String {
     return when (symbol) {
         is FirClassLikeSymbol<*> -> symbol.classId.asString()

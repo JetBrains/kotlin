@@ -3522,6 +3522,14 @@ internal class AssignmentOperatorShouldReturnUnitImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class PropertyAsOperatorImpl(
+    override val property: KtVariableSymbol,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.PropertyAsOperator(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class ToplevelTypealiasesOnlyImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

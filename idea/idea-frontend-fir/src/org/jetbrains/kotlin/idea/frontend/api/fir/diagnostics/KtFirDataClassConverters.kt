@@ -3131,6 +3131,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.PROPERTY_AS_OPERATOR) { firDiagnostic ->
+        PropertyAsOperatorImpl(
+            firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a.fir),
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.TOPLEVEL_TYPEALIASES_ONLY) { firDiagnostic ->
         ToplevelTypealiasesOnlyImpl(
             firDiagnostic as FirPsiDiagnostic,
