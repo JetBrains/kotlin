@@ -65,3 +65,12 @@ internal fun getProgressionLastElement(start: ULong, end: ULong, step: Long): UL
     step < 0 -> if (start <= end) end else end + differenceModulo(start, end, (-step).toULong())
     else -> throw kotlin.IllegalArgumentException("Step is zero.")
 }
+
+// turn unsigned difference between progression first and last into Int size
+@SinceKotlin("1.6")
+internal fun unsignedIncrementAndClamp(diff: UInt): Int =
+    if (diff < Int.MAX_VALUE.toUInt()) diff.toInt() + 1 else Int.MAX_VALUE
+
+@SinceKotlin("1.6")
+internal fun unsignedIncrementAndClamp(diff: ULong): Int =
+    if (diff < Int.MAX_VALUE.toULong()) diff.toInt() + 1 else Int.MAX_VALUE

@@ -572,14 +572,13 @@ class UnsignedRangeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
 
         val zero = if (type == UnsignedType.ULONG) "0UL" else "0U"
         val one = if (type == UnsignedType.ULONG) "1L" else "1"
-        val incToInt = ".let { if (it < Int.MAX_VALUE.to$elementType()) it.toInt().inc() else Int.MAX_VALUE }"
         val sizeBody = """
         when {
             isEmpty() -> 0
-            step == $one -> (last - first)$incToInt
-            step > 0 -> ((last - first) / step.to$elementType())$incToInt
-            step < 0 -> ((first - last) / (-step).to$elementType())$incToInt
-            else -> error("Invariant is broken: step cannot be 0")
+            step == $one -> unsignedIncrementAndClamp(last - first)
+            step > 0 -> unsignedIncrementAndClamp((last - first) / step.to$elementType())
+            step < 0 -> unsignedIncrementAndClamp((first - last) / (-step).to$elementType())
+            else -> error("Progression invariant is broken: step == 0")
         }
 """.trim()
         out.println(

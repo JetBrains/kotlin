@@ -70,3 +70,28 @@ internal fun getProgressionLastElement(start: Long, end: Long, step: Long): Long
     step < 0 -> if (start <= end) end else end + differenceModulo(start, end, -step)
     else -> throw kotlin.IllegalArgumentException("Step is zero.")
 }
+
+// turn unsigned difference between first and last into Int size
+internal fun unsignedIncrementAndClamp(diff: Int): Int =
+    if (diff xor Int.MIN_VALUE < Int.MAX_VALUE xor Int.MIN_VALUE) diff + 1 else Int.MAX_VALUE
+
+internal fun unsignedIncrementAndClamp(diff: Long): Int =
+    if (diff xor Long.MIN_VALUE < Int.MAX_VALUE.toLong() xor Long.MIN_VALUE) diff.toInt() + 1 else Int.MAX_VALUE
+
+internal fun unsignedIncrementAndClamp(diff: /*U*/Int, step: Int /* > 0 */): Int =
+    unsignedIncrementAndClamp((diff.toLong() and 0xFFFF_FFFFL) / step.toLong())
+
+internal fun unsignedIncrementAndClamp(diff: /*U*/Long, step: Long /* > 0 */): Int =
+    unsignedIncrementAndClamp(unsignedDivide(diff, step))
+
+private fun unsignedDivide(dividend: /*U*/Long, divisor: Long /* > 0 */): Long {
+    if (dividend >= 0) {
+        return dividend / divisor
+    }
+
+    val quotient = ((dividend ushr 1) / divisor) shl 1
+    val rem = dividend - quotient * divisor
+    return quotient + if ((rem xor Long.MIN_VALUE) >= (divisor xor Long.MIN_VALUE)) 1 else 0
+}
+
+

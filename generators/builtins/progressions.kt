@@ -65,52 +65,17 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             else -> ""
         }
         val one = if (kind == LONG) "1L" else "1"
-        val two = if (kind == LONG) "2L" else "2"
-        val incToInt =
-            ".let { if (it < Int.MAX_VALUE${if (kind == LONG) ".toLong()" else ""}) it${if (kind == LONG) ".toInt()" else ""}.inc() else Int.MAX_VALUE }"
-        val sizeBody = "if (isEmpty()) 0 else " +
+        val sizeBody = "" +
                 when (kind) {
-                    CHAR -> "(last - first) / step + $one"
+                    CHAR -> "if (isEmpty()) 0 else (last - first) / step + $one"
                     else -> """
         when {
-            step == $one ->
-                if (first >= $zero || last < $zero || last <= $incrementType.MAX_VALUE + first)
-                    (last - first)$incToInt
-                else Int.MAX_VALUE
-            step == -$one ->
-                if (last >= $zero || first < $zero || first <= $incrementType.MAX_VALUE + last)
-                    (first - last)$incToInt
-                else Int.MAX_VALUE
-            step > $incrementType.MIN_VALUE / $two && step < $incrementType.MAX_VALUE / $two -> {
-                //(last - first) / step =
-                // = (last / step * step + last % step - first / step * step - first % step) / step =
-                // = last / step - first / step + (last % step - first % step) / step
-
-                //no overflow because |step| >= 2
-                //$incrementType.MIN_VALUE / 2 <= last / step <= $incrementType.MAX_VALUE / 2
-                //$incrementType.MIN_VALUE / 2 <= first / step <= $incrementType.MAX_VALUE / 2
-                //$incrementType.MIN_VALUE / 2 - $incrementType.MAX_VALUE / 2 <= last / step - first / step <= $incrementType.MAX_VALUE / 2 - $incrementType.MIN_VALUE / 2
-                //$incrementType.MIN_VALUE + $one <= last / step - first / step <= $incrementType.MAX_VALUE
-                val div = last / step - first / step // >= 0 because either step > 0 && last >= first or step < 0 && last <= first
-                //no overflow because $incrementType.MIN_VALUE / 2 < step < $incrementType.MAX_VALUE / 2
-                //min($incrementType.MIN_VALUE / 2, -($incrementType.MAX_VALUE / 2)) < first % step < max($incrementType.MAX_VALUE / 2, -($incrementType.MIN_VALUE / 2))
-                //$incrementType.MIN_VALUE / 2 < first % step <= $incrementType.MAX_VALUE / 2
-                //$incrementType.MIN_VALUE / 2 <= first % step <= $incrementType.MAX_VALUE / 2
-                //$incrementType.MIN_VALUE / 2 <= last % step <= $incrementType.MAX_VALUE / 2
-                //$incrementType.MIN_VALUE <= last % step - first % step <= $incrementType.MAX_VALUE
-                val rem = (last % step - first % step) / step
-                if (div <= $incrementType.MAX_VALUE - rem)
-                    (div + rem)$incToInt
-                else
-                    Int.MAX_VALUE
-            }
-            else -> {
-                //number of items is < 5 (the smallest (by its absolute value) step is $incrementType.MAX_VALUE / 2, so if progression starts at $incrementType.MIN_VALUE, it contains 4 elements
-                var count = 0
-                for (item in this) count++
-                count
-                //count() is not used as it may recursively use size property for Collections
-            }
+            isEmpty() -> 0
+            step == $one -> unsignedIncrementAndClamp(last - first)
+            step == -$one -> unsignedIncrementAndClamp(first - last)
+            step > 0 -> unsignedIncrementAndClamp(last - first, step)
+            step < 0 -> unsignedIncrementAndClamp(first - last, -step)
+            else -> error("Progression invariant is broken: step == 0")
         }""".trim()
                 }
 
@@ -167,17 +132,11 @@ public open class $progression
     override val size: Int
         get() = $sizeBody
 
-    private infix fun $t.mod(n: $incrementType): $incrementType {
-        val positiveN = kotlin.math.abs(n)
-        val r = ${if (kind == CHAR) "(this - Char.MIN_VALUE)" else "this"} % positiveN
-        return if (r < $zero) r + positiveN else r
-    }
-
     @SinceKotlin("1.6")
     override fun contains(value: $t): Boolean = when {
         @Suppress("USELESS_CAST") (value as Any? !is $t) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
-        step > $zero && value >= first && value <= last -> value mod step == first mod step
-        step < $zero && value <= first && value >= last -> value mod step == first mod step
+        step > $zero && value >= first && value <= last ||
+        step < $zero && value <= first && value >= last -> value$elementToIncrement.mod(step) == first$elementToIncrement.mod(step)
         else -> false
     }
 
@@ -204,6 +163,7 @@ public open class $progression
 
     override fun generateBody() {
         out.println("import kotlin.internal.getProgressionLastElement")
+        out.println("import kotlin.internal.unsignedIncrementAndClamp")
         out.println()
         for (kind in ProgressionKind.values()) {
             generateDiscreteBody(kind)

@@ -100,10 +100,10 @@ internal constructor(
     override val size: Int
         get() = when {
             isEmpty() -> 0
-            step == 1 -> (last - first).let { if (it < Int.MAX_VALUE.toUInt()) it.toInt().inc() else Int.MAX_VALUE }
-            step > 0 -> ((last - first) / step.toUInt()).let { if (it < Int.MAX_VALUE.toUInt()) it.toInt().inc() else Int.MAX_VALUE }
-            step < 0 -> ((first - last) / (-step).toUInt()).let { if (it < Int.MAX_VALUE.toUInt()) it.toInt().inc() else Int.MAX_VALUE }
-            else -> error("Invariant is broken: step cannot be 0")
+            step == 1 -> unsignedIncrementAndClamp(last - first)
+            step > 0 -> unsignedIncrementAndClamp((last - first) / step.toUInt())
+            step < 0 -> unsignedIncrementAndClamp((first - last) / (-step).toUInt())
+            else -> error("Progression invariant is broken: step == 0")
         }
 
     @SinceKotlin("1.6")

@@ -9,6 +9,7 @@
 package kotlin.ranges
 
 import kotlin.internal.getProgressionLastElement
+import kotlin.internal.unsignedIncrementAndClamp
 
 /**
  * A progression of values of type `Char`.
@@ -63,17 +64,11 @@ public open class CharProgression
     override val size: Int
         get() = if (isEmpty()) 0 else (last - first) / step + 1
 
-    private infix fun Char.mod(n: Int): Int {
-        val positiveN = kotlin.math.abs(n)
-        val r = (this - Char.MIN_VALUE) % positiveN
-        return if (r < 0) r + positiveN else r
-    }
-
     @SinceKotlin("1.6")
     override fun contains(value: Char): Boolean = when {
         @Suppress("USELESS_CAST") (value as Any? !is Char) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
-        step > 0 && value >= first && value <= last -> value mod step == first mod step
-        step < 0 && value <= first && value >= last -> value mod step == first mod step
+        step > 0 && value >= first && value <= last ||
+        step < 0 && value <= first && value >= last -> value.code.mod(step) == first.code.mod(step)
         else -> false
     }
 
@@ -145,58 +140,20 @@ public open class IntProgression
 
     @SinceKotlin("1.6")
     override val size: Int
-        get() = if (isEmpty()) 0 else when {
-            step == 1 ->
-                if (first >= 0 || last < 0 || last <= Int.MAX_VALUE + first)
-                    (last - first).let { if (it < Int.MAX_VALUE) it.inc() else Int.MAX_VALUE }
-                else Int.MAX_VALUE
-            step == -1 ->
-                if (last >= 0 || first < 0 || first <= Int.MAX_VALUE + last)
-                    (first - last).let { if (it < Int.MAX_VALUE) it.inc() else Int.MAX_VALUE }
-                else Int.MAX_VALUE
-            step > Int.MIN_VALUE / 2 && step < Int.MAX_VALUE / 2 -> {
-                //(last - first) / step =
-                // = (last / step * step + last % step - first / step * step - first % step) / step =
-                // = last / step - first / step + (last % step - first % step) / step
-
-                //no overflow because |step| >= 2
-                //Int.MIN_VALUE / 2 <= last / step <= Int.MAX_VALUE / 2
-                //Int.MIN_VALUE / 2 <= first / step <= Int.MAX_VALUE / 2
-                //Int.MIN_VALUE / 2 - Int.MAX_VALUE / 2 <= last / step - first / step <= Int.MAX_VALUE / 2 - Int.MIN_VALUE / 2
-                //Int.MIN_VALUE + 1 <= last / step - first / step <= Int.MAX_VALUE
-                val div = last / step - first / step // >= 0 because either step > 0 && last >= first or step < 0 && last <= first
-                //no overflow because Int.MIN_VALUE / 2 < step < Int.MAX_VALUE / 2
-                //min(Int.MIN_VALUE / 2, -(Int.MAX_VALUE / 2)) < first % step < max(Int.MAX_VALUE / 2, -(Int.MIN_VALUE / 2))
-                //Int.MIN_VALUE / 2 < first % step <= Int.MAX_VALUE / 2
-                //Int.MIN_VALUE / 2 <= first % step <= Int.MAX_VALUE / 2
-                //Int.MIN_VALUE / 2 <= last % step <= Int.MAX_VALUE / 2
-                //Int.MIN_VALUE <= last % step - first % step <= Int.MAX_VALUE
-                val rem = (last % step - first % step) / step
-                if (div <= Int.MAX_VALUE - rem)
-                    (div + rem).let { if (it < Int.MAX_VALUE) it.inc() else Int.MAX_VALUE }
-                else
-                    Int.MAX_VALUE
-            }
-            else -> {
-                //number of items is < 5 (the smallest (by its absolute value) step is Int.MAX_VALUE / 2, so if progression starts at Int.MIN_VALUE, it contains 4 elements
-                var count = 0
-                for (item in this) count++
-                count
-                //count() is not used as it may recursively use size property for Collections
-            }
+        get() = when {
+            isEmpty() -> 0
+            step == 1 -> unsignedIncrementAndClamp(last - first)
+            step == -1 -> unsignedIncrementAndClamp(first - last)
+            step > 0 -> unsignedIncrementAndClamp(last - first, step)
+            step < 0 -> unsignedIncrementAndClamp(first - last, -step)
+            else -> error("Progression invariant is broken: step == 0")
         }
-
-    private infix fun Int.mod(n: Int): Int {
-        val positiveN = kotlin.math.abs(n)
-        val r = this % positiveN
-        return if (r < 0) r + positiveN else r
-    }
 
     @SinceKotlin("1.6")
     override fun contains(value: Int): Boolean = when {
         @Suppress("USELESS_CAST") (value as Any? !is Int) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
-        step > 0 && value >= first && value <= last -> value mod step == first mod step
-        step < 0 && value <= first && value >= last -> value mod step == first mod step
+        step > 0 && value >= first && value <= last ||
+        step < 0 && value <= first && value >= last -> value.mod(step) == first.mod(step)
         else -> false
     }
 
@@ -268,58 +225,20 @@ public open class LongProgression
 
     @SinceKotlin("1.6")
     override val size: Int
-        get() = if (isEmpty()) 0 else when {
-            step == 1L ->
-                if (first >= 0L || last < 0L || last <= Long.MAX_VALUE + first)
-                    (last - first).let { if (it < Int.MAX_VALUE.toLong()) it.toInt().inc() else Int.MAX_VALUE }
-                else Int.MAX_VALUE
-            step == -1L ->
-                if (last >= 0L || first < 0L || first <= Long.MAX_VALUE + last)
-                    (first - last).let { if (it < Int.MAX_VALUE.toLong()) it.toInt().inc() else Int.MAX_VALUE }
-                else Int.MAX_VALUE
-            step > Long.MIN_VALUE / 2L && step < Long.MAX_VALUE / 2L -> {
-                //(last - first) / step =
-                // = (last / step * step + last % step - first / step * step - first % step) / step =
-                // = last / step - first / step + (last % step - first % step) / step
-
-                //no overflow because |step| >= 2
-                //Long.MIN_VALUE / 2 <= last / step <= Long.MAX_VALUE / 2
-                //Long.MIN_VALUE / 2 <= first / step <= Long.MAX_VALUE / 2
-                //Long.MIN_VALUE / 2 - Long.MAX_VALUE / 2 <= last / step - first / step <= Long.MAX_VALUE / 2 - Long.MIN_VALUE / 2
-                //Long.MIN_VALUE + 1L <= last / step - first / step <= Long.MAX_VALUE
-                val div = last / step - first / step // >= 0 because either step > 0 && last >= first or step < 0 && last <= first
-                //no overflow because Long.MIN_VALUE / 2 < step < Long.MAX_VALUE / 2
-                //min(Long.MIN_VALUE / 2, -(Long.MAX_VALUE / 2)) < first % step < max(Long.MAX_VALUE / 2, -(Long.MIN_VALUE / 2))
-                //Long.MIN_VALUE / 2 < first % step <= Long.MAX_VALUE / 2
-                //Long.MIN_VALUE / 2 <= first % step <= Long.MAX_VALUE / 2
-                //Long.MIN_VALUE / 2 <= last % step <= Long.MAX_VALUE / 2
-                //Long.MIN_VALUE <= last % step - first % step <= Long.MAX_VALUE
-                val rem = (last % step - first % step) / step
-                if (div <= Long.MAX_VALUE - rem)
-                    (div + rem).let { if (it < Int.MAX_VALUE.toLong()) it.toInt().inc() else Int.MAX_VALUE }
-                else
-                    Int.MAX_VALUE
-            }
-            else -> {
-                //number of items is < 5 (the smallest (by its absolute value) step is Long.MAX_VALUE / 2, so if progression starts at Long.MIN_VALUE, it contains 4 elements
-                var count = 0
-                for (item in this) count++
-                count
-                //count() is not used as it may recursively use size property for Collections
-            }
+        get() = when {
+            isEmpty() -> 0
+            step == 1L -> unsignedIncrementAndClamp(last - first)
+            step == -1L -> unsignedIncrementAndClamp(first - last)
+            step > 0 -> unsignedIncrementAndClamp(last - first, step)
+            step < 0 -> unsignedIncrementAndClamp(first - last, -step)
+            else -> error("Progression invariant is broken: step == 0")
         }
-
-    private infix fun Long.mod(n: Long): Long {
-        val positiveN = kotlin.math.abs(n)
-        val r = this % positiveN
-        return if (r < 0L) r + positiveN else r
-    }
 
     @SinceKotlin("1.6")
     override fun contains(value: Long): Boolean = when {
         @Suppress("USELESS_CAST") (value as Any? !is Long) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
-        step > 0L && value >= first && value <= last -> value mod step == first mod step
-        step < 0L && value <= first && value >= last -> value mod step == first mod step
+        step > 0L && value >= first && value <= last ||
+        step < 0L && value <= first && value >= last -> value.mod(step) == first.mod(step)
         else -> false
     }
 
