@@ -10,6 +10,8 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.classKind
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -251,24 +253,24 @@ private class FirShorteningContext(val firResolveState: FirModuleResolveState) {
     fun toClassSymbol(classId: ClassId) =
         firSession.symbolProvider.getClassLikeSymbolByFqName(classId)
 
-    fun convertToImportableName(callableId: CallableId): FqName? {
+    fun convertToImportableName(callableSymbol: FirCallableSymbol<*>): FqName? {
+        val callableId = callableSymbol.callableId
+
+        // if classId == null, callable is topLevel
         val classId = callableId.classId
-        return if (classId == null) {
-            callableId.packageName.child(callableId.callableName)
-        } else {
-            // Java static members, enums, and object members can be imported
-            val containingClass = firSession.symbolProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass ?: return null
-            if (containingClass.origin == FirDeclarationOrigin.Java ||
+            ?: return callableId.asSingleFqName()
+
+        if (callableSymbol is FirConstructorSymbol) return classId.asSingleFqName()
+
+        val containingClass = callableSymbol.getContainingClassSymbol(firSession) ?: return null
+
+        // Java static members, enums, and object members can be imported
+        val canBeImported = containingClass.origin == FirDeclarationOrigin.Java ||
                 containingClass.classKind == ClassKind.ENUM_CLASS ||
                 containingClass.classKind == ClassKind.OBJECT
-            ) {
-                callableId.asSingleFqName()
-            } else {
-                null
-            }
-        }
-    }
 
+        return if (canBeImported) callableId.asSingleFqName() else null
+    }
 }
 
 private sealed class ElementToShorten {
@@ -482,18 +484,13 @@ private class ElementsToShortenCollector(
     ) {
         val option = callableShortenOption(calledSymbol)
         if (option == ShortenOption.DO_NOT_SHORTEN) return
-        val callableId = calledSymbol.callableId
 
         val scopes = shorteningContext.findScopesAtPosition(expressionToGetScope, namesToImport, towerContextProvider) ?: return
-        val availableCallables = findCallableInScopes(scopes, callableId.callableName)
+        val availableCallables = findCallableInScopes(scopes, calledSymbol.name)
 
-        val nameToImport = if (calledSymbol is FirConstructorSymbol) {
-            // A constructor is imported by the class name.
-            calledSymbol.containingClass()?.classId?.asSingleFqName()
-        } else {
-            shorteningContext.convertToImportableName(callableId)
-        }
-        val (matchedCallables, otherCallables) = availableCallables.partition { it.symbol.callableId == callableId }
+        val nameToImport = shorteningContext.convertToImportableName(calledSymbol)
+
+        val (matchedCallables, otherCallables) = availableCallables.partition { it.symbol.callableId == calledSymbol.callableId }
         val callToShorten = when {
             // TODO: instead of allowing import only if the other callables are all with kind `DEFAULT_STAR`, we should allow import if
             //  the requested import kind has higher priority than the available symbols.
