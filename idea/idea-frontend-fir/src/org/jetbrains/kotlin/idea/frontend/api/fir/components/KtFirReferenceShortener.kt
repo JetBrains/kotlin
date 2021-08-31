@@ -10,11 +10,8 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.classKind
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
@@ -53,6 +50,7 @@ import org.jetbrains.kotlin.idea.frontend.api.components.ShortenCommand
 import org.jetbrains.kotlin.idea.frontend.api.components.ShortenOption
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.addImportToFile
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
@@ -253,24 +251,8 @@ private class FirShorteningContext(val firResolveState: FirModuleResolveState) {
     fun toClassSymbol(classId: ClassId) =
         firSession.symbolProvider.getClassLikeSymbolByFqName(classId)
 
-    fun convertToImportableName(callableSymbol: FirCallableSymbol<*>): FqName? {
-        val callableId = callableSymbol.callableId
-
-        // if classId == null, callable is topLevel
-        val classId = callableId.classId
-            ?: return callableId.asSingleFqName()
-
-        if (callableSymbol is FirConstructorSymbol) return classId.asSingleFqName()
-
-        val containingClass = callableSymbol.getContainingClassSymbol(firSession) ?: return null
-
-        // Java static members, enums, and object members can be imported
-        val canBeImported = containingClass.origin == FirDeclarationOrigin.Java ||
-                containingClass.classKind == ClassKind.ENUM_CLASS ||
-                containingClass.classKind == ClassKind.OBJECT
-
-        return if (canBeImported) callableId.asSingleFqName() else null
-    }
+    fun convertToImportableName(callableSymbol: FirCallableSymbol<*>): FqName? =
+        callableSymbol.computeImportableName(firSession)
 }
 
 private sealed class ElementToShorten {

@@ -5,12 +5,8 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.classKind
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
@@ -19,7 +15,6 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -29,6 +24,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirFile
 import org.jetbrains.kotlin.idea.frontend.api.assertIsValidAndAccessible
 import org.jetbrains.kotlin.idea.frontend.api.components.KtImportOptimizer
 import org.jetbrains.kotlin.idea.frontend.api.components.KtImportOptimizerResult
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -184,7 +180,7 @@ internal class KtFirImportOptimizer(
             }
 
             private fun saveCallable(resolvedSymbol: FirCallableSymbol<*>, referencedByName: Name) {
-                val importableName = resolvedSymbol.computeImportableName() ?: return
+                val importableName = resolvedSymbol.computeImportableName(firSession) ?: return
 
                 saveReferencedItem(importableName, referencedByName)
             }
@@ -195,27 +191,6 @@ internal class KtFirImportOptimizer(
         })
 
         return usedImports
-    }
-
-    // DUP in KtFirReferenceShortener
-    private fun FirCallableSymbol<*>.computeImportableName(): FqName? {
-        // if classId == null, callable is topLevel
-        val classId = callableId.classId
-            ?: return callableId.packageName.child(callableId.callableName)
-
-        if (this is FirConstructorSymbol) return classId.asSingleFqName()
-
-        val containingClass = getContainingClassSymbol(firSession) ?: return null
-
-        // Java static members, enums, and object members can be imported
-        return if (containingClass.origin == FirDeclarationOrigin.Java ||
-            containingClass.classKind == ClassKind.ENUM_CLASS ||
-            containingClass.classKind == ClassKind.OBJECT
-        ) {
-            classId.asSingleFqName()
-        } else {
-            null
-        }
     }
 }
 
