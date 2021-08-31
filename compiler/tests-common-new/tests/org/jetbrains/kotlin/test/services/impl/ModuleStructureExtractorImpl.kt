@@ -47,11 +47,11 @@ class ModuleStructureExtractorImpl(
         private val allowedExtensionsForFiles = listOf(".kt", ".kts", ".java")
 
         /*
-         * ([\w-]+) module name
+         * ([^()\n]+) module name
          * \((.*?)\) module dependencies
          * (\((.*?)\)(\((.*?)\))?)? module friendDependencies and dependsOnDependencies
          */
-        private val moduleDirectiveRegex = """([\w-]+)(\((.*?)\)(\((.*?)\)(\((.*?)\))?)?)?""".toRegex()
+        private val moduleDirectiveRegex = """([^()\n]+)(\((.*?)\)(\((.*?)\)(\((.*?)\))?)?)?""".toRegex()
     }
 
     override fun splitTestDataByModules(
