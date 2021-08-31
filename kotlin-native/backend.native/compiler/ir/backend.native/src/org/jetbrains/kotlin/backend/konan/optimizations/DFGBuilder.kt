@@ -860,7 +860,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                         receiver,
                                         value.symbol.owner.toDataFlowIRField(),
                                         expressionToEdge(value.value),
-                                        mapReturnType(value.value.type, value.symbol.owner.type)
+                                        mapReturnType(value.symbol.owner.type, value.value.type)
                                 )
                             }
 
