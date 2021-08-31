@@ -11,4 +11,5 @@ interface JvmLoweredStatementOrigin {
     object DEFAULT_STUB_CALL_TO_IMPLEMENTATION : IrStatementOriginImpl("DEFAULT_STUB_CALL_TO_IMPLEMENTATION")
     object DO_WHILE_COUNTER_LOOP: IrStatementOriginImpl("DO_WHILE_COUNTER_LOOP")
     object INLINE_LAMBDA : IrStatementOriginImpl("INLINE_LAMBDA")
+    object FAKE_CONTINUATION : IrStatementOriginImpl("FAKE_CONTINUATION")
 }

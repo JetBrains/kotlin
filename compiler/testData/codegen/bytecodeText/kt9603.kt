@@ -3,7 +3,8 @@ class A {
         private set
 
     fun test() {
-        { prop }()
+        val f = { prop }
+        f()
     }
 }
 

@@ -132,7 +132,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                         (function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
                                 (isCompatibilityMode || jvmDefaultMode == JvmDefaultMode.ENABLE) &&
                                 function.isCompiledToJvmDefault(jvmDefaultMode)) -> {
-                    if (function.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA || function.origin == IrDeclarationOrigin.LOCAL_FUNCTION) {
+                    if (function.origin == JvmLoweredDeclarationOrigin.INLINE_LAMBDA) {
                         //move as is
                         val defaultImplsClass = context.cachedDeclarations.getDefaultImplsClass(irClass)
                         defaultImplsClass.declarations.add(function)

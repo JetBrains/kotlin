@@ -47,4 +47,5 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object FIELD_FOR_STATIC_CALLABLE_REFERENCE_INSTANCE : IrDeclarationOriginImpl("FIELD_FOR_STATIC_CALLABLE_REFERENCE_INSTANCE")
     object ABSTRACT_BRIDGE_STUB : IrDeclarationOriginImpl("ABSTRACT_BRIDGE_STUB")
     object INVOVEDYNAMIC_CALL_TARGET : IrDeclarationOriginImpl("INVOVEDYNAMIC_CALL_TARGET")
+    object INLINE_LAMBDA : IrDeclarationOriginImpl("INLINE_LAMBDA")
 }

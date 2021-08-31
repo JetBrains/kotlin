@@ -208,11 +208,7 @@ class ExpressionCodegen(
 
     // TODO remove
     fun gen(expression: IrExpression, type: Type, irType: IrType, data: BlockInfo): StackValue {
-        if (expression.attributeOwnerId === context.fakeContinuation) {
-            addFakeContinuationMarker(mv)
-        } else {
-            expression.accept(this, data).materializeAt(type, irType)
-        }
+        expression.accept(this, data).materializeAt(type, irType)
         return StackValue.onStack(type, irType.toIrBasedKotlinType())
     }
 
@@ -444,7 +440,12 @@ class ExpressionCodegen(
     }
 
     override fun visitContainerExpression(expression: IrContainerExpression, data: BlockInfo) =
-        visitStatementContainer(expression, data)
+        if (expression.origin == JvmLoweredStatementOrigin.FAKE_CONTINUATION) {
+            addFakeContinuationMarker(mv)
+            expression.onStack
+        } else {
+            visitStatementContainer(expression, data)
+        }
 
     override fun visitCall(expression: IrCall, data: BlockInfo): PromisedValue {
         val intrinsic = classCodegen.context.irIntrinsics.getIntrinsic(expression.symbol)
