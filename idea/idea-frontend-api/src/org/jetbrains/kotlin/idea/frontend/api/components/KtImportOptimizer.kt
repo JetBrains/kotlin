@@ -14,6 +14,13 @@ public abstract class KtImportOptimizer : ValidityTokenOwner {
 }
 
 public interface KtImportOptimizerMixIn : KtAnalysisSessionMixIn {
+
+    /**
+     * Takes [file] and inspects its imports and their usages,
+     * so they can be optimized based on the resulting [KtImportOptimizerResult].
+     *
+     * Does **not** change the file.
+     */
     public fun analyseImports(file: KtFile): KtImportOptimizerResult {
         return analysisSession.importOptimizer.analyseImports(file)
     }
