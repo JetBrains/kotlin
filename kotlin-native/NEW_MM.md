@@ -36,7 +36,7 @@ Together with the new MM we are bringing in another set of changes:
 
 ### Update the Kotlin/Native compiler
 
-Update to Kotlin/Native 1.6.0-dev (**TODO**: specify the exact version) and enable dev repositories (**TODO**: Remove after we update to M1):
+Update to Kotlin/Native 1.6.0-M1-124 and enable dev repositories:
 ```kotlin
 // build.gradle.kts
 
@@ -77,13 +77,26 @@ kotlin.targets.withType(KotlinNativeTarget::class.java) {
 To fully take advantage of the new MM, newer versions of libraries were released:
 * `kotlinx.coroutines`: `1.5.1-new-mm-dev2` at https://maven.pkg.jetbrains.space/public/p/kotlinx-coroutines/maven
   * No freezing, every common primitive (Channels, Flows, coroutines) work through worker boundaries.
+  * Unlike `native-mt` version, library objects are transparent for `freeze`: if you freeze e.g. a channel, all of its internals will get frozen, 
+    and it won't work as expected. In particular, this can happen when freezing something that captures a channel.
   * `Dispatchers.Default` is backed by a pool of workers on Linux and Windows, and by a global queue on Apple targets.
   * `newSingleThreadContext` to create coroutine dispatcher backed by a worker.
   * `newFixedThreadPoolContext` to create coroutine dispatcher backed by a pool of `N` workers.
   * `Dispatchers.Main` backed by main queue on Darwin and by standalone worker on other platforms. **NOTE**: _Don't use `Dispatchers.Main` in unit-tests, because nothing is processing the main thread queue in unit-tests._
 * `ktor`: `1.6.2-native-mm-eap-196` at https://maven.pkg.jetbrains.space/public/p/ktor/eap
 
+### Using previous versions of the libraries
+
+You can continue using previous versions of the libraries in your project.
 Older versions (including `native-mt` for `kotlinx.coroutines`) could still be used, and the existing code will work just like with the previous MM.
+The only known exception is creating Ktor HTTP client with default engine using `HttpClient()`. You will get 
+```
+kotlin.IllegalStateException: Failed to find HttpClientEngineContainer. Consider adding [HttpClientEngine] implementation in dependencies.
+```
+To fix this, specify the engine explicitly, by replacing `HttpClient()` with `HttpClient(Ios)` or other supported engine
+(see [the documentation](https://ktor.io/docs/http-client-engines.html#native) for more details).
+
+Other libraries might also have compatibility issues. If you encounter any, please report to the library authors.
 
 ## Performance issues
 
