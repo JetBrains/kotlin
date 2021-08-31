@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.components
 
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 
-public abstract class KtImportOptimizer {
+public abstract class KtImportOptimizer : ValidityTokenOwner {
     public abstract fun analyseImports(file: KtFile): KtImportOptimizerResult
 }
 

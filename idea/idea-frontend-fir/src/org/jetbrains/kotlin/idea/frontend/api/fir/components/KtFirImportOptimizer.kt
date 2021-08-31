@@ -26,8 +26,10 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.isInvokeFunction
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirFile
+import org.jetbrains.kotlin.idea.frontend.api.assertIsValidAndAccessible
 import org.jetbrains.kotlin.idea.frontend.api.components.KtImportOptimizer
 import org.jetbrains.kotlin.idea.frontend.api.components.KtImportOptimizerResult
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -38,12 +40,15 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal class KtFirImportOptimizer(
+    override val token: ValidityToken,
     private val firResolveState: FirModuleResolveState
 ) : KtImportOptimizer() {
     private val firSession: FirSession
         get() = firResolveState.rootModuleSession
 
     override fun analyseImports(file: KtFile): KtImportOptimizerResult {
+        assertIsValidAndAccessible()
+
         val firFile = file.getOrBuildFirFile(firResolveState).apply { ensureResolved(FirResolvePhase.BODY_RESOLVE) }
 
         val existingImports = file.importDirectives
