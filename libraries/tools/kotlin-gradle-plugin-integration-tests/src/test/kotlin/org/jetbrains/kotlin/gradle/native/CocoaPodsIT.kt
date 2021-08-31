@@ -1424,21 +1424,26 @@ class CocoaPodsIT : BaseGradleIT() {
                     spec.module_name              = "#{spec.name}_umbrella"
                     spec.dependency 'pod_dependency', '1.0'
                     spec.dependency 'subspec_dependency/Core', '1.0'
+                    spec.pod_target_xcconfig = {
+                        'KOTLIN_PROJECT_PATH' => ':kotlin-library',
+                        'PRODUCT_MODULE_NAME' => 'kotlin_library',
+                    }
                     spec.script_phases = [
                         {
                             :name => 'Build kotlin_library',
                             :execution_position => :before_compile,
                             :shell_path => '/bin/sh',
                             :script => <<-SCRIPT
+                                if [ "YES" = "${'$'}COCOAPODS_SKIP_KOTLIN_BUILD" ]; then
+                                  echo "Skipping Gradle build task invocation due to COCOAPODS_SKIP_KOTLIN_BUILD environment variable set to \"YES\""
+                                  exit 0
+                                fi
                                 set -ev
                                 REPO_ROOT="${'$'}PODS_TARGET_SRCROOT"
-                                "${'$'}REPO_ROOT/../gradlew" -p "${'$'}REPO_ROOT" :kotlin-library:syncFramework \
+                                "${'$'}REPO_ROOT/../gradlew" -p "${'$'}REPO_ROOT" ${'$'}KOTLIN_PROJECT_PATH:syncFramework \
                                     -Pkotlin.native.cocoapods.platform=${'$'}PLATFORM_NAME \
                                     -Pkotlin.native.cocoapods.archs="${'$'}ARCHS" \
-                                    -Pkotlin.native.cocoapods.configuration=${'$'}CONFIGURATION \
-                                    -Pkotlin.native.cocoapods.cflags="${'$'}OTHER_CFLAGS" \
-                                    -Pkotlin.native.cocoapods.paths.headers="${'$'}HEADER_SEARCH_PATHS" \
-                                    -Pkotlin.native.cocoapods.paths.frameworks="${'$'}FRAMEWORK_SEARCH_PATHS"
+                                    -Pkotlin.native.cocoapods.configuration=${'$'}CONFIGURATION
                             SCRIPT
                         }
                     ]
@@ -1457,21 +1462,26 @@ class CocoaPodsIT : BaseGradleIT() {
                     spec.vendored_frameworks      = "build/cocoapods/framework/${frameworkName ?: "second_library"}.framework"
                     spec.libraries                = "c++"
                     spec.module_name              = "#{spec.name}_umbrella"
+                    spec.pod_target_xcconfig = {
+                        'KOTLIN_PROJECT_PATH' => ':second-library',
+                        'PRODUCT_MODULE_NAME' => 'second_library',
+                    }
                     spec.script_phases = [
                         {
                             :name => 'Build second_library',
                             :execution_position => :before_compile,
                             :shell_path => '/bin/sh',
                             :script => <<-SCRIPT
+                                if [ "YES" = "${'$'}COCOAPODS_SKIP_KOTLIN_BUILD" ]; then
+                                  echo "Skipping Gradle build task invocation due to COCOAPODS_SKIP_KOTLIN_BUILD environment variable set to \"YES\""
+                                  exit 0
+                                fi
                                 set -ev
                                 REPO_ROOT="${'$'}PODS_TARGET_SRCROOT"
-                                "${'$'}REPO_ROOT/../gradlew" -p "${'$'}REPO_ROOT" :second-library:syncFramework \
+                                "${'$'}REPO_ROOT/../gradlew" -p "${'$'}REPO_ROOT" ${'$'}KOTLIN_PROJECT_PATH:syncFramework \
                                     -Pkotlin.native.cocoapods.platform=${'$'}PLATFORM_NAME \
                                     -Pkotlin.native.cocoapods.archs="${'$'}ARCHS" \
-                                    -Pkotlin.native.cocoapods.configuration=${'$'}CONFIGURATION \
-                                    -Pkotlin.native.cocoapods.cflags="${'$'}OTHER_CFLAGS" \
-                                    -Pkotlin.native.cocoapods.paths.headers="${'$'}HEADER_SEARCH_PATHS" \
-                                    -Pkotlin.native.cocoapods.paths.frameworks="${'$'}FRAMEWORK_SEARCH_PATHS"
+                                    -Pkotlin.native.cocoapods.configuration=${'$'}CONFIGURATION
                             SCRIPT
                         }
                     ]
