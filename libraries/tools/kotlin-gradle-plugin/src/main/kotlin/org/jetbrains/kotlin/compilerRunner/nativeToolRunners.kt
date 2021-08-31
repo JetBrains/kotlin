@@ -11,10 +11,9 @@ import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.isAtLeast
 import org.jetbrains.kotlin.gradle.plugin.mpp.nativeUseEmbeddableCompilerJar
-import org.jetbrains.kotlin.gradle.tasks.CacheBuilder
+import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.CompilerVersion
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyString
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -42,7 +41,7 @@ internal fun Project.getKonanCacheKind(target: KonanTarget): NativeCacheKind {
     return when {
         targetCacheKind != null -> targetCacheKind
         commonCacheKind != null -> commonCacheKind
-        else -> CacheBuilder.defaultCacheKindForTarget(target)
+        else -> KonanPropertiesBuildService.registerIfAbsent(gradle).get().defaultCacheKindForTarget(target)
     }
 }
 

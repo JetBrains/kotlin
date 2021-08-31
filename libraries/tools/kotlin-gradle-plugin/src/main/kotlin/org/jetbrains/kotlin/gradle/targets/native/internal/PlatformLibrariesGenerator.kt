@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.tasks.CacheBuilder
 import org.jetbrains.kotlin.gradle.tasks.addArg
 import org.jetbrains.kotlin.gradle.utils.lifecycleWithDuration
@@ -35,12 +36,15 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
     private val defDirectory =
         File(distribution.platformDefs(konanTarget)).absoluteFile
 
+    private val konanPropertiesService: KonanPropertiesBuildService
+        get() = KonanPropertiesBuildService.registerIfAbsent(project.gradle).get()
+
     private val konanCacheKind: NativeCacheKind by lazy {
         project.getKonanCacheKind(konanTarget)
     }
 
     private val shouldBuildCaches: Boolean =
-        CacheBuilder.cacheWorksFor(konanTarget, project) && konanCacheKind != NativeCacheKind.NONE
+        konanPropertiesService.cacheWorksFor(konanTarget) && konanCacheKind != NativeCacheKind.NONE
 
     private val mode: String? by lazy {
         PropertiesProvider(project).nativePlatformLibrariesMode
@@ -117,6 +121,10 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
                 CacheBuilder.getRootCacheDirectory(File(konanHome), konanTarget, true, konanCacheKind).absolutePath
             )
             args.addArg("-cache-arg", "-g")
+            val additionalCacheFlags = konanPropertiesService.additionalCacheFlags(konanTarget)
+            additionalCacheFlags.forEach {
+                args.addArg("-cache-arg", it)
+            }
         }
 
         mode?.let {

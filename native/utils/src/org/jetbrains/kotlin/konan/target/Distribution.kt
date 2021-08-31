@@ -69,13 +69,11 @@ class Distribution(
         result
     }
 
+    /**
+     * Consider using [org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService] in case of Gradle.
+     */
     val compilerVersion by lazy {
-        val propertyVersion = properties["compilerVersion"]?.toString()
-        val bundleVersion = if (konanHome.contains("-1"))
-            konanHome.substring(konanHome.lastIndexOf("-1") + 1)
-        else
-            null
-        propertyVersion ?: bundleVersion
+        getCompilerVersion(properties["compilerVersion"]?.toString(), konanHome)
     }
 
     val klib = "$konanHome/klib"
@@ -97,6 +95,20 @@ class Distribution(
     val subTargetProvider = object: SubTargetProvider {
         override fun availableSubTarget(genericName: String) =
                 additionalPropertyFiles(genericName).map { it.name }
+    }
+
+    companion object {
+        /**
+         * Try to guess compiler version using [konanHome].
+         */
+        private fun getBundleVersion(konanHome: String): String? =
+            if (konanHome.contains("-1"))
+                konanHome.substring(konanHome.lastIndexOf("-1") + 1)
+            else
+                null
+
+        fun getCompilerVersion(propertyVersion: String?, konanHome: String): String? =
+            propertyVersion ?: getBundleVersion(konanHome)
     }
 }
 
