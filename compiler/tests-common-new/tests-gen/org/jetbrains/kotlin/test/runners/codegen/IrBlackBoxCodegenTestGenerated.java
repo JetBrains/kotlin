@@ -16119,6 +16119,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("namedArgumentOnTypeAnnotation.kt")
+        public void testNamedArgumentOnTypeAnnotation() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/namedArgumentOnTypeAnnotation.kt");
+        }
+
+        @Test
         @TestMetadata("noSymbolForIntRangeIterator.kt")
         public void testNoSymbolForIntRangeIterator() throws Exception {
             runTest("compiler/testData/codegen/box/fir/noSymbolForIntRangeIterator.kt");

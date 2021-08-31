@@ -97,4 +97,8 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
     ): ConstantValue<*> {
         return ArrayValue(varargArgumentsExpression.arguments.mapNotNull { it.accept(this, null) })
     }
+
+    override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: Nothing?): ConstantValue<*>? {
+        return namedArgumentExpression.expression.accept(this, null)
+    }
 }
