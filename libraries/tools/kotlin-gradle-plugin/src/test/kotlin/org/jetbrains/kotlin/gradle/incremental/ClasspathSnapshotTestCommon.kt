@@ -26,9 +26,11 @@ abstract class ClasspathSnapshotTestCommon {
     private val gson by lazy { GsonBuilder().setPrettyPrinting().create() }
     protected fun Any.toGson(): String = gson.toJson(this)
 
-    data class SourceFile(val baseDir: File, val unixStyleRelativePath: String) {
+    class SourceFile(val baseDir: File, relativePath: String) {
+        val unixStyleRelativePath: String
+
         init {
-            check(!unixStyleRelativePath.contains("\\")) { "Unix-style relative path must not contain '\\': $unixStyleRelativePath" }
+            unixStyleRelativePath = relativePath.replace('\\', '/')
         }
 
         fun asFile() = File(baseDir, unixStyleRelativePath)
@@ -71,7 +73,7 @@ abstract class ClasspathSnapshotTestCommon {
             // Currently, we use the precompiled classes in the test data.
             return listOf(
                 ClassFile(
-                    File(testDataDir.path + "/classes/" + sourceFile.baseDir.path.substringAfterLast('/')),
+                    File(testDataDir.path + "/classes/" + sourceFile.baseDir.name),
                     sourceFile.unixStyleRelativePath.replace(".kt", ".class")
                 )
             )
