@@ -4438,6 +4438,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("arrayAccessSetNotEnoughArgs.kt")
+            public void testArrayAccessSetNotEnoughArgs() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/checkArguments/arrayAccessSetNotEnoughArgs.kt");
+            }
+
+            @Test
             @TestMetadata("arrayAccessSetTooManyArgs.kt")
             public void testArrayAccessSetTooManyArgs() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/checkArguments/arrayAccessSetTooManyArgs.kt");

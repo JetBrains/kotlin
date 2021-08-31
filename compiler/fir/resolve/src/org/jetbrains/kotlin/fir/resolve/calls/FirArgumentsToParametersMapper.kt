@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.getAsForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -41,7 +42,8 @@ data class ArgumentMapping(
                 is ResolvedCallArgument.VarargArgument -> resolvedArgument.arguments.forEach {
                     argumentToParameterMapping[it] = valueParameter
                 }
-                ResolvedCallArgument.DefaultArgument -> {}
+                ResolvedCallArgument.DefaultArgument -> {
+                }
             }
         }
         return argumentToParameterMapping
@@ -63,7 +65,7 @@ fun BodyResolveComponents.mapArguments(
         return EmptyArgumentMapping
     }
 
-    val argumentsInParenthesis: MutableList<FirExpression> = mutableListOf()
+    val nonLambdaArguments: MutableList<FirExpression> = mutableListOf()
     val excessLambdaArguments: MutableList<FirExpression> = mutableListOf()
     var externalArgument: FirExpression? = null
     for (argument in arguments) {
@@ -74,17 +76,17 @@ fun BodyResolveComponents.mapArguments(
                 excessLambdaArguments.add(argument)
             }
         } else {
-            argumentsInParenthesis.add(argument)
+            nonLambdaArguments.add(argument)
         }
     }
 
-    // If this is an overloading indexed access operator, it could have default values or a vararg parameter in the middle.
+    // If this is an indexed access set operator, it could have default values or a vararg parameter in the middle.
     // For proper argument mapping, wrap the last one, which is supposed to be the updated value, as a named argument.
-    if ((function as? FirSimpleFunction)?.isOperator == true &&
-        function.name == Name.identifier("set") &&
+    val isIndexedSetOperator = function is FirSimpleFunction && function.isOperator && function.name == OperatorNameConventions.SET
+    if (isIndexedSetOperator &&
         function.valueParameters.any { it.defaultValue != null || it.isVararg }
     ) {
-        val v = argumentsInParenthesis.last()
+        val v = nonLambdaArguments.last()
         if (v !is FirNamedArgumentExpression) {
             val namedV = buildNamedArgumentExpression {
                 source = v.source
@@ -92,13 +94,13 @@ fun BodyResolveComponents.mapArguments(
                 isSpread = false
                 name = function.valueParameters.last().name
             }
-            argumentsInParenthesis.removeAt(argumentsInParenthesis.size - 1)
-            argumentsInParenthesis.add(namedV)
+            nonLambdaArguments.removeAt(nonLambdaArguments.size - 1)
+            nonLambdaArguments.add(namedV)
         }
     }
 
-    val processor = FirCallArgumentsProcessor(session, function, this, originScope)
-    processor.processArgumentsInParenthesis(argumentsInParenthesis)
+    val processor = FirCallArgumentsProcessor(session, function, this, originScope, isIndexedSetOperator)
+    processor.processNonLambdaArguments(nonLambdaArguments)
     if (externalArgument != null) {
         processor.processExternalArgument(externalArgument)
     }
@@ -113,6 +115,7 @@ private class FirCallArgumentsProcessor(
     private val function: FirFunction,
     private val bodyResolveComponents: BodyResolveComponents,
     private val originScope: FirScope?,
+    private val isIndexedSetOperator: Boolean
 ) {
     private var state = State.POSITION_ARGUMENTS
     private var currentPositionedParameterIndex = 0
@@ -132,11 +135,11 @@ private class FirCallArgumentsProcessor(
         NAMED_ONLY_ARGUMENTS
     }
 
-    fun processArgumentsInParenthesis(arguments: List<FirExpression>) {
+    fun processNonLambdaArguments(arguments: List<FirExpression>) {
         for (argument in arguments) {
             // process position argument
             if (argument !is FirNamedArgumentExpression) {
-                if (processPositionArgument(argument)) {
+                if (processPositionArgument(argument, isLastArgument = argument === arguments.last())) {
                     state = State.VARARG_POSITION
                 }
             }
@@ -155,13 +158,31 @@ private class FirCallArgumentsProcessor(
     }
 
     // return true, if it was mapped to vararg parameter
-    private fun processPositionArgument(argument: FirExpression): Boolean {
+    private fun processPositionArgument(argument: FirExpression, isLastArgument: Boolean): Boolean {
         if (state == State.NAMED_ONLY_ARGUMENTS) {
             addDiagnostic(MixingNamedAndPositionArguments(argument))
             return false
         }
 
-        val parameter = parameters.getOrNull(currentPositionedParameterIndex)
+        // The last parameter of an indexed set operator should be reserved for the last argument (the assigned value).
+        // We don't want the assigned value mapped to an index parameter if some of the index arguments are absent.
+        val assignedParameterIndex = if (isIndexedSetOperator) {
+            val lastParameterIndex = parameters.lastIndex
+            when {
+                isLastArgument -> lastParameterIndex
+                currentPositionedParameterIndex >= lastParameterIndex -> {
+                    // This is an extra index argument that should NOT be mapped to the parameter for the assigned value.
+                    -1
+                }
+                else -> {
+                    // This is an index argument that can be properly mapped.
+                    currentPositionedParameterIndex
+                }
+            }
+        } else {
+            currentPositionedParameterIndex
+        }
+        val parameter = parameters.getOrNull(assignedParameterIndex)
         if (parameter == null) {
             addDiagnostic(TooManyArguments(argument, function))
             return false

@@ -115,6 +115,42 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     }
 
     @Test
+    @TestMetadata("indexedGet.kt")
+    public void testIndexedGet() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/indexedGet.kt");
+    }
+
+    @Test
+    @TestMetadata("indexedGetWithNotEnoughArgs.kt")
+    public void testIndexedGetWithNotEnoughArgs() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/indexedGetWithNotEnoughArgs.kt");
+    }
+
+    @Test
+    @TestMetadata("indexedGetWithTooManyArgs.kt")
+    public void testIndexedGetWithTooManyArgs() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/indexedGetWithTooManyArgs.kt");
+    }
+
+    @Test
+    @TestMetadata("indexedSet.kt")
+    public void testIndexedSet() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/indexedSet.kt");
+    }
+
+    @Test
+    @TestMetadata("indexedSetWithNotEnoughArgs.kt")
+    public void testIndexedSetWithNotEnoughArgs() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/indexedSetWithNotEnoughArgs.kt");
+    }
+
+    @Test
+    @TestMetadata("indexedSetWithTooManyArgs.kt")
+    public void testIndexedSetWithTooManyArgs() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/indexedSetWithTooManyArgs.kt");
+    }
+
+    @Test
     @TestMetadata("javaFunctionCall.kt")
     public void testJavaFunctionCall() throws Exception {
         runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/javaFunctionCall.kt");

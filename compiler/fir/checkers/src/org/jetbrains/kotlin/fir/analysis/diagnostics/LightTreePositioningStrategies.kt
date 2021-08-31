@@ -437,6 +437,16 @@ object LightTreePositioningStrategies {
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
+            if (node.tokenType == KtNodeTypes.BINARY_EXPRESSION &&
+                tree.findDescendantByTypes(node, KtTokens.ALL_ASSIGNMENTS) != null
+            ) {
+                val lhs = tree.firstChildExpression(node)
+                lhs?.let {
+                    tree.unwrapParenthesesLabelsAndAnnotations(it)?.let { unwrapped ->
+                        return markElement(unwrapped, startOffset, endOffset, tree, node)
+                    }
+                }
+            }
             val nodeToStart = when (node.tokenType) {
                 in KtTokens.QUALIFIED_ACCESS -> tree.findLastChildByType(node, KtNodeTypes.CALL_EXPRESSION) ?: node
                 else -> node

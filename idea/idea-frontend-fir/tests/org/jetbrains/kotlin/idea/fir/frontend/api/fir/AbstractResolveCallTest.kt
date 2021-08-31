@@ -45,8 +45,9 @@ abstract class AbstractResolveCallTest : AbstractHLApiSingleModuleTest() {
         is KtCallElement -> element.resolveCall()
         is KtBinaryExpression -> element.resolveCall()
         is KtUnaryExpression -> element.resolveCall()
+        is KtArrayAccessExpression -> element.resolveCall()
         is KtValueArgument -> resolveCall(element.getArgumentExpression()!!)
-        else -> error("Selected should be either KtCallElement, KtBinaryExpression, or KtUnaryExpression, but was $element")
+        else -> error("Selected element type (${element::class.simpleName}) is not supported for resolveCall()")
     }
 
 }

@@ -2182,9 +2182,9 @@ open class RawFirBuilder(
 
         override fun visitArrayAccessExpression(expression: KtArrayAccessExpression, data: Unit): FirElement {
             val arrayExpression = expression.arrayExpression
-            val getArgument = context.arraySetArgument.remove(expression)
+            val setArgument = context.arraySetArgument.remove(expression)
             return buildFunctionCall {
-                val isGet = getArgument == null
+                val isGet = setArgument == null
                 source = (if (isGet) expression else expression.parent).toFirSourceElement()
                 calleeReference = buildSimpleNamedReference {
                     source = expression.toFirSourceElement().fakeElement(FirFakeSourceElementKind.ArrayAccessNameReference)
@@ -2195,8 +2195,8 @@ open class RawFirBuilder(
                     for (indexExpression in expression.indexExpressions) {
                         arguments += indexExpression.toFirExpression("Incorrect index expression")
                     }
-                    if (getArgument != null) {
-                        arguments += getArgument
+                    if (setArgument != null) {
+                        arguments += setArgument
                     }
                 }
                 origin = FirFunctionCallOrigin.Operator
