@@ -61,7 +61,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         irFile.transformChildrenVoid(this)
 
         for (accessor in pendingAccessorsToAdd) {
-            assert(accessor.fileOrNull == irFile || accessor.isAllowedToBeAddedToForeignFile()) {
+            assert(accessor.fileOrNull == irFile) {
                 "SyntheticAccessorLowering should not attempt to modify other files!\n" +
                         "While lowering this file: ${irFile.render()}\n" +
                         "Trying to add this accessor: ${accessor.render()}"
@@ -710,8 +710,9 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         /// This function needs to single out those cases where Java accessibility rules differ from Kotlin's.
         val declarationRaw = owner as IrDeclarationWithVisibility
 
-        // There is never a problem with visibility of inline functions, as those don't end up as Java entities
-        if (declarationRaw is IrFunction && declarationRaw.isInline) return true
+        // If this expression won't actually result in a JVM instruction call, access modifiers don't matter.
+        if (declarationRaw is IrFunction && (declarationRaw.isInline || context.irIntrinsics.getIntrinsic(declarationRaw.symbol) != null))
+            return true
 
         // Enum entry constructors are generated as package-private and are accessed only from corresponding enum class
         if (declarationRaw is IrConstructor && declarationRaw.constructedClass.isEnumEntry) return true
@@ -804,12 +805,6 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         }
         return context as? IrPackageFragment
     }
-
-    // monitorEnter/monitorExit are the only functions which are accessed "illegally" (see kotlin/util/Synchronized.kt).
-    // Since they are intrinsified in the codegen, SyntheticAccessorLowering should not crash on attempt to add accessors for them.
-    private fun IrFunction.isAllowedToBeAddedToForeignFile(): Boolean =
-        (name.asString() == "access\$monitorEnter" || name.asString() == "access\$monitorExit") &&
-                context.irIntrinsics.getIntrinsic(symbol) != null
 }
 
 private fun IrFunction.isCoroutineIntrinsic(): Boolean =
