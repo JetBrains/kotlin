@@ -6,7 +6,7 @@ headers = assert.h complex.h ctype.h dirent.h errno.h fcntl.h \
     time.h uchar.h unistd.h utime.h wchar.h wctype.h
 noStringConversion = send sendto recv
 compilerOpts = -DUNICODE -DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -DWINAPI_FAMILY=3 -DOEMRESOURCE -D_POSIX_C_SOURCE=1
-linkerOpts = -lWs2_32
+linkerOpts = -lws2_32
 
 ---
 // Wrapper to access errno variable.
