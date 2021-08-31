@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNull
@@ -101,14 +99,7 @@ private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: Scope
 fun FirClassSymbol<*>.defaultType(): ConeClassLikeType = fir.defaultType()
 
 fun FirClass.defaultType(): ConeClassLikeType =
-    when (this) {
-        is FirRegularClass -> defaultType()
-        is FirAnonymousObject -> defaultType()
-        else -> error("Unknown class ${this::class}")
-    }
-
-fun FirRegularClass.defaultType(): ConeClassLikeTypeImpl {
-    return ConeClassLikeTypeImpl(
+    ConeClassLikeTypeImpl(
         symbol.toLookupTag(),
         typeParameters.map {
             ConeTypeParameterTypeImpl(
@@ -118,20 +109,6 @@ fun FirRegularClass.defaultType(): ConeClassLikeTypeImpl {
         }.toTypedArray(),
         isNullable = false
     )
-}
-
-fun FirAnonymousObject.defaultType(): ConeClassLikeType {
-    return ConeClassLikeTypeImpl(
-        symbol.toLookupTag(),
-        typeParameters.map {
-            ConeTypeParameterTypeImpl(
-                it.symbol.toLookupTag(),
-                isNullable = false
-            )
-        }.toTypedArray(),
-        isNullable = false
-    )
-}
 
 fun ClassId.defaultType(parameters: List<FirTypeParameterSymbol>): ConeClassLikeType =
     ConeClassLikeTypeImpl(
@@ -143,6 +120,13 @@ fun ClassId.defaultType(parameters: List<FirTypeParameterSymbol>): ConeClassLike
             )
         }.toTypedArray(),
         isNullable = false,
+    )
+
+fun FirClass.typeWithStarProjections(): ConeClassLikeType =
+    ConeClassLikeTypeImpl(
+        symbol.toLookupTag(),
+        typeParameters.map { ConeStarProjection }.toTypedArray(),
+        isNullable = false
     )
 
 val TYPE_PARAMETER_SCOPE_KEY = scopeSessionKey<FirTypeParameterSymbol, FirTypeScope>()

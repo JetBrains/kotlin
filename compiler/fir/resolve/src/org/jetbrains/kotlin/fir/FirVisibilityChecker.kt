@@ -214,7 +214,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             stubTypesEqualToAnything = false
         )
         return AbstractTypeChecker.isSubtypeOf(
-            typeCheckerState, dispatchReceiverType.fullyExpandedType(session), containingUseSiteClass.defaultType()
+            typeCheckerState, dispatchReceiverType.fullyExpandedType(session), containingUseSiteClass.typeWithStarProjections()
         )
     }
 

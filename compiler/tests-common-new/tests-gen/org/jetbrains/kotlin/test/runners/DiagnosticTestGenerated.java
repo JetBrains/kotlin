@@ -25719,6 +25719,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("generic.kt")
+                public void testGeneric() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/scopes/protectedVisibility/generic.kt");
+                }
+
+                @Test
                 @TestMetadata("innerClassInJava.kt")
                 public void testInnerClassInJava() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/scopes/protectedVisibility/innerClassInJava.kt");
