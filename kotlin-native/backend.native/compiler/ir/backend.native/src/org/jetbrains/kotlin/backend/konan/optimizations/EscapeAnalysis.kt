@@ -563,7 +563,7 @@ internal object EscapeAnalysis {
                     context.log { "Escape analysis is not changed" }
                 } else {
                     context.log { "Escape analysis was refined:\n$endResult" }
-                    if (numberOfRuns[function]!! > 2) {
+                    if (numberOfRuns[function]!! > 1) {
                         // TODO: suboptimal. May be it is possible somehow handle the entire component at once?
                         context.log {
                             "WARNING: Escape analysis for $function seems not to be converging." +
