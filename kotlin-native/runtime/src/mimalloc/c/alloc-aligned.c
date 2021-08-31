@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-Copyright (c) 2018, Microsoft Research, Daan Leijen
+Copyright (c) 2018-2021, Microsoft Research, Daan Leijen
 This is free software; you can redistribute it and/or modify it under the
 terms of the MIT license. A copy of the license can be found in the file
 "licenses/third_party/mimalloc_LICENSE.txt" at the root of this distribution.
@@ -8,7 +8,7 @@ terms of the MIT license. A copy of the license can be found in the file
 #include "mimalloc.h"
 #include "mimalloc-internal.h"
 
-#include <string.h>  // memset, memcpy
+#include <string.h>  // memset
 
 // ------------------------------------------------------
 // Aligned Allocation
@@ -21,7 +21,7 @@ static void* mi_heap_malloc_zero_aligned_at(mi_heap_t* const heap, const size_t 
   if (mi_unlikely(size > PTRDIFF_MAX)) return NULL;   // we don't allocate more than PTRDIFF_MAX (see <https://sourceware.org/ml/libc-announce/2019/msg00001.html>)
   if (mi_unlikely(alignment==0 || !_mi_is_power_of_two(alignment))) return NULL; // require power-of-two (see <https://en.cppreference.com/w/c/memory/aligned_alloc>)
   const uintptr_t align_mask = alignment-1;  // for any x, `(x & align_mask) == (x % alignment)`
-  
+
   // try if there is a small block available with just the right alignment
   const size_t padsize = size + MI_PADDING_SIZE;
   if (mi_likely(padsize <= MI_SMALL_SIZE_MAX)) {
@@ -46,7 +46,7 @@ static void* mi_heap_malloc_zero_aligned_at(mi_heap_t* const heap, const size_t 
     mi_assert_internal(p == NULL || ((uintptr_t)p % alignment) == 0);
     return p;
   }
-  
+
   // otherwise over-allocate
   void* p = _mi_heap_malloc_zero(heap, size + alignment - 1, zero);
   if (p == NULL) return NULL;
@@ -55,7 +55,7 @@ static void* mi_heap_malloc_zero_aligned_at(mi_heap_t* const heap, const size_t 
   uintptr_t adjust = alignment - (((uintptr_t)p + offset) & align_mask);
   mi_assert_internal(adjust <= alignment);
   void* aligned_p = (adjust == alignment ? p : (void*)((uintptr_t)p + adjust));
-  if (aligned_p != p) mi_page_set_has_aligned(_mi_ptr_page(p), true); 
+  if (aligned_p != p) mi_page_set_has_aligned(_mi_ptr_page(p), true);
   mi_assert_internal(((uintptr_t)aligned_p + offset) % alignment == 0);
   mi_assert_internal( p == _mi_page_ptr_unalign(_mi_ptr_segment(aligned_p),_mi_ptr_page(aligned_p),aligned_p) );
   return aligned_p;
@@ -137,7 +137,7 @@ static void* mi_heap_realloc_zero_aligned_at(mi_heap_t* heap, void* p, size_t ne
           memset((uint8_t*)newp + start, 0, newsize - start);
         }
       }
-      memcpy(newp, p, (newsize > size ? size : newsize));
+      _mi_memcpy_aligned(newp, p, (newsize > size ? size : newsize));
       mi_free(p); // only free if successful
     }
     return newp;

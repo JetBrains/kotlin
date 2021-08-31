@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-Copyright (c) 2018, Microsoft Research, Daan Leijen
+Copyright (c) 2018-2020, Microsoft Research, Daan Leijen
 This is free software; you can redistribute it and/or modify it under the
 terms of the MIT license. A copy of the license can be found in the file
 "licenses/third_party/mimalloc_LICENSE.txt" at the root of this distribution.
@@ -37,7 +37,6 @@ terms of the MIT license. A copy of the license can be found in the file
 extern malloc_zone_t* malloc_default_purgeable_zone(void) __attribute__((weak_import));
 #endif
 
-
 /* ------------------------------------------------------
    malloc zone members
 ------------------------------------------------------ */
@@ -67,7 +66,7 @@ static void* zone_valloc(malloc_zone_t* zone, size_t size) {
 
 static void zone_free(malloc_zone_t* zone, void* p) {
   UNUSED(zone);
-  return mi_free(p);
+  mi_free(p);
 }
 
 static void* zone_realloc(malloc_zone_t* zone, void* p, size_t newsize) {
@@ -192,63 +191,85 @@ static malloc_zone_t* mi_get_default_zone()
   }
 }
 
-static void __attribute__((constructor)) _mi_macos_override_malloc()
-{
-  static malloc_introspection_t intro;
-  memset(&intro, 0, sizeof(intro));
+static malloc_introspection_t mi_introspect = {
+  .enumerator = &intro_enumerator,
+  .good_size = &intro_good_size,
+  .check = &intro_check,
+  .print = &intro_print,
+  .log = &intro_log,
+  .force_lock = &intro_force_lock,
+  .force_unlock = &intro_force_unlock,
+#if defined(MAC_OS_X_VERSION_10_6) && \
+    MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+  .zone_locked = &intro_zone_locked,
+  .statistics = &intro_statistics,
+#endif
+};
 
-  intro.enumerator = &intro_enumerator;
-  intro.good_size = &intro_good_size;
-  intro.check = &intro_check;
-  intro.print = &intro_print;
-  intro.log = &intro_log;
-  intro.force_lock = &intro_force_lock;
-  intro.force_unlock = &intro_force_unlock;
+static malloc_zone_t mi_malloc_zone = {
+  .size = &zone_size,
+  .zone_name = "mimalloc",
+  .introspect = &mi_introspect,
+  .malloc = &zone_malloc,
+  .calloc = &zone_calloc,
+  .valloc = &zone_valloc,
+  .free = &zone_free,
+  .realloc = &zone_realloc,
+  .destroy = &zone_destroy,
+  .batch_malloc = &zone_batch_malloc,
+  .batch_free = &zone_batch_free,
+#if defined(MAC_OS_X_VERSION_10_6) && \
+    MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+  // switch to version 9 on OSX 10.6 to support memalign.
+  .version = 9,
+  .memalign = &zone_memalign,
+  .free_definite_size = &zone_free_definite_size,
+  .pressure_relief = &zone_pressure_relief,
+#else
+  .version = 4,
+#endif
+};
 
-  static malloc_zone_t zone;
-  memset(&zone, 0, sizeof(zone));
 
-  zone.version = 4;
-  zone.zone_name = "mimalloc";
-  zone.size = &zone_size;
-  zone.introspect = &intro;
-  zone.malloc = &zone_malloc;
-  zone.calloc = &zone_calloc;
-  zone.valloc = &zone_valloc;
-  zone.free = &zone_free;
-  zone.realloc = &zone_realloc;
-  zone.destroy = &zone_destroy;
-  zone.batch_malloc = &zone_batch_malloc;
-  zone.batch_free = &zone_batch_free;
+#if defined(MI_SHARED_LIB_EXPORT) && defined(MI_INTERPOSE)
 
+static malloc_zone_t *mi_malloc_default_zone(void) {
+  return &mi_malloc_zone;
+}
+// TODO: should use the macros in alloc-override but they aren't available here.
+__attribute__((used)) static struct {
+  const void *replacement;
+  const void *target;
+} replace_malloc_default_zone[] __attribute__((section("__DATA, __interpose"))) = {
+  { (const void*)mi_malloc_default_zone, (const void*)malloc_default_zone },
+};
+#endif
+
+static void __attribute__((constructor(0))) _mi_macos_override_malloc() {
   malloc_zone_t* purgeable_zone = NULL;
 
 #if defined(MAC_OS_X_VERSION_10_6) && \
     MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-  // switch to version 9 on OSX 10.6 to support memalign.
-  zone.version = 9;
-  zone.memalign = &zone_memalign;
-  zone.free_definite_size = &zone_free_definite_size;
-  zone.pressure_relief = &zone_pressure_relief;
-  intro.zone_locked = &intro_zone_locked;
-  intro.statistics = &intro_statistics;
-
   // force the purgeable zone to exist to avoid strange bugs
   if (malloc_default_purgeable_zone) {
     purgeable_zone = malloc_default_purgeable_zone();
   }
 #endif
 
-  // Register our zone
-  malloc_zone_register(&zone);
-
+  // Register our zone.
+  // thomcc: I think this is still needed to put us in the zone list.
+  malloc_zone_register(&mi_malloc_zone);
   // Unregister the default zone, this makes our zone the new default
   // as that was the last registered.
   malloc_zone_t *default_zone = mi_get_default_zone();
-  malloc_zone_unregister(default_zone);
+  // thomcc: Unsure if the next test is *always* false or just false in the
+  // cases I've tried. I'm also unsure if the code inside is needed. at all
+  if (default_zone != &mi_malloc_zone) {
+    malloc_zone_unregister(default_zone);
 
-  // Reregister the default zone so free and realloc in that zone keep working.
-  malloc_zone_register(default_zone);
+    // Reregister the default zone so free and realloc in that zone keep working.
+    malloc_zone_register(default_zone);
+  }
 
   // Unregister, and re-register the purgeable_zone to avoid bugs if it occurs
   // earlier than the default zone.
@@ -256,7 +277,8 @@ static void __attribute__((constructor)) _mi_macos_override_malloc()
     malloc_zone_unregister(purgeable_zone);
     malloc_zone_register(purgeable_zone);
   }
+
 }
 
 #endif // MI_MALLOC_OVERRIDE
-#endif
+#endif // KONAN_MI_MALLOC

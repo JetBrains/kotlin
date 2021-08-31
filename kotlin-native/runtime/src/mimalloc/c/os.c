@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-Copyright (c) 2018, Microsoft Research, Daan Leijen
+Copyright (c) 2018-2021, Microsoft Research, Daan Leijen
 This is free software; you can redistribute it and/or modify it under the
 terms of the MIT license. A copy of the license can be found in the file
 "licenses/third_party/mimalloc_LICENSE.txt" at the root of this distribution.
@@ -28,7 +28,7 @@ terms of the MIT license. A copy of the license can be found in the file
 
 
 #if defined(_WIN32)
-#include <Windows.h>
+#include <windows.h>
 #elif defined(__wasi__)
 // stdlib.h is all we need, and has already been included in mimalloc.h
 #else
@@ -65,8 +65,15 @@ static void* mi_align_up_ptr(void* p, size_t alignment) {
   return (void*)_mi_align_up((uintptr_t)p, alignment);
 }
 
-static uintptr_t _mi_align_down(uintptr_t sz, size_t alignment) {
-  return (sz / alignment) * alignment;
+static inline uintptr_t _mi_align_down(uintptr_t sz, size_t alignment) {
+  mi_assert_internal(alignment != 0);
+  uintptr_t mask = alignment - 1;
+  if ((alignment & mask) == 0) { // power of two?
+    return (sz & ~mask);
+  }
+  else {
+    return ((sz / alignment) * alignment);
+  }
 }
 
 static void* mi_align_down_ptr(void* p, size_t alignment) {
@@ -106,7 +113,7 @@ size_t _mi_os_good_alloc_size(size_t size) {
   else if (size < 8*MiB) align_size = 256*KiB;
   else if (size < 32*MiB) align_size = 1*MiB;
   else align_size = 4*MiB;
-  if (size >= (SIZE_MAX - align_size)) return size; // possible overflow?
+  if (mi_unlikely(size >= (SIZE_MAX - align_size))) return size; // possible overflow?
   return _mi_align_up(size, align_size);
 }
 
@@ -261,7 +268,7 @@ static void* mi_win_virtual_allocx(void* addr, size_t size, size_t try_alignment
       return NULL;
     }
     // fall through
-  }
+  } 
 #endif
 #if defined(MEM_EXTENDED_PARAMETER_TYPE_BITS)
   // on modern Windows try use VirtualAlloc2 for aligned allocation
@@ -358,7 +365,7 @@ static void* mi_unix_mmap(void* addr, size_t size, size_t try_alignment, int pro
   int fd = -1;
   #if defined(MAP_ALIGNED)  // BSD
   if (try_alignment > 0) {
-    size_t n = _mi_bsr(try_alignment);
+    size_t n = mi_bsr(try_alignment);
     if (((size_t)1 << n) == try_alignment && n >= 12 && n <= 30) {  // alignment is a power of 2 and 4096 <= alignment <= 1GiB
       flags |= MAP_ALIGNED(n);
     }
@@ -421,7 +428,7 @@ static void* mi_unix_mmap(void* addr, size_t size, size_t try_alignment, int pro
         #endif
         if (large_only) return p;
         if (p == NULL) {
-          mi_atomic_store_release(&large_page_try_ok, 10UL);  // on error, don't try again for the next N allocations
+          mi_atomic_store_release(&large_page_try_ok, (uintptr_t)10);  // on error, don't try again for the next N allocations
         }
       }
     }
@@ -435,7 +442,7 @@ static void* mi_unix_mmap(void* addr, size_t size, size_t try_alignment, int pro
     // though since properly aligned allocations will already use large pages if available
     // in that case -- in particular for our large regions (in `memory.c`).
     // However, some systems only allow THP if called with explicit `madvise`, so
-    // when large OS pages are enabled for mimalloc, we call `madvice` anyways.
+    // when large OS pages are enabled for mimalloc, we call `madvise` anyways.
     if (allow_large && use_large_os_page(size, try_alignment)) {
       if (madvise(p, size, MADV_HUGEPAGE) == 0) {
         *is_large = true; // possibly
@@ -465,20 +472,36 @@ static void* mi_unix_mmap(void* addr, size_t size, size_t try_alignment, int pro
 #if (MI_INTPTR_SIZE >= 8) && (defined(_WIN32) || (defined(MI_OS_USE_MMAP) && !defined(MAP_ALIGNED)))
 static mi_decl_cache_align _Atomic(uintptr_t) aligned_base;
 
-// Return a 4MiB aligned address that is probably available
-static void* mi_os_get_aligned_hint(size_t try_alignment, size_t size) {
+// Return a 4MiB aligned address that is probably available.
+// If this returns NULL, the OS will determine the address but on some OS's that may not be 
+// properly aligned which can be more costly as it needs to be adjusted afterwards.
+// For a size > 1GiB this always returns NULL in order to guarantee good ASLR randomization; 
+// (otherwise an initial large allocation of say 2TiB has a 50% chance to include (known) addresses 
+//  in the middle of the 2TiB - 6TiB address range (see issue #372))
+
+#define KK_HINT_BASE ((uintptr_t)2 << 40)  // 2TiB start
+#define KK_HINT_AREA ((uintptr_t)4 << 40)  // upto 6TiB   (since before win8 there is "only" 8TiB available to processes)
+#define KK_HINT_MAX  ((uintptr_t)30 << 40) // wrap after 30TiB (area after 32TiB is used for huge OS pages)
+
+static void* mi_os_get_aligned_hint(size_t try_alignment, size_t size) 
+{
   if (try_alignment == 0 || try_alignment > MI_SEGMENT_SIZE) return NULL;
   if ((size%MI_SEGMENT_SIZE) != 0) return NULL;
+  if (size > 1*GiB) return NULL;  // guarantee the chance of fixed valid address is at most 1/(KK_HINT_AREA / 1<<30) = 1/4096.
+  #if (MI_SECURE>0)
+  size += MI_SEGMENT_SIZE;        // put in `MI_SEGMENT_SIZE` virtual gaps between hinted blocks; this splits VLA's but increases guarded areas.
+  #endif
+
   uintptr_t hint = mi_atomic_add_acq_rel(&aligned_base, size);
-  if (hint == 0 || hint > ((intptr_t)30<<40)) { // try to wrap around after 30TiB (area after 32TiB is used for huge OS pages)
-    uintptr_t init = ((uintptr_t)4 << 40); // start at 4TiB area
-    #if (MI_SECURE>0 || MI_DEBUG==0)     // security: randomize start of aligned allocations unless in debug mode
+  if (hint == 0 || hint > KK_HINT_MAX) {   // wrap or initialize
+    uintptr_t init = KK_HINT_BASE;
+    #if (MI_SECURE>0 || MI_DEBUG==0)       // security: randomize start of aligned allocations unless in debug mode
     uintptr_t r = _mi_heap_random_next(mi_get_default_heap());
-    init = init + (MI_SEGMENT_SIZE * ((r>>17) & 0xFFFFF));  // (randomly 20 bits)*4MiB == 0 to 4TiB
+    init = init + ((MI_SEGMENT_SIZE * ((r>>17) & 0xFFFFF)) % KK_HINT_AREA);  // (randomly 20 bits)*4MiB == 0 to 4TiB
     #endif
     uintptr_t expected = hint + size;
     mi_atomic_cas_strong_acq_rel(&aligned_base, &expected, init);
-    hint = mi_atomic_add_acq_rel(&aligned_base, size); // this may still give 0 or > 30TiB but that is ok, it is a hint after all
+    hint = mi_atomic_add_acq_rel(&aligned_base, size); // this may still give 0 or > KK_HINT_MAX but that is ok, it is a hint after all
   }
   if (hint%try_alignment != 0) return NULL;
   return (void*)hint;
@@ -623,9 +646,9 @@ void  _mi_os_free(void* p, size_t size, mi_stats_t* stats) {
   _mi_os_free_ex(p, size, true, stats);
 }
 
-void* _mi_os_alloc_aligned(size_t size, size_t alignment, bool commit, bool* large, mi_os_tld_t* tld)
+void* _mi_os_alloc_aligned(size_t size, size_t alignment, bool commit, bool* large, mi_stats_t* tld_stats)
 {
-  UNUSED(tld);
+  UNUSED(tld_stats);
   if (size == 0) return NULL;
   size = _mi_os_good_alloc_size(size);
   alignment = _mi_align_up(alignment, _mi_os_page_size());
@@ -721,6 +744,9 @@ static bool mi_os_commitx(void* addr, size_t size, bool commit, bool conservativ
     // for commit, just change the protection
     err = mprotect(start, csize, (PROT_READ | PROT_WRITE));
     if (err != 0) { err = errno; }
+    #if defined(MADV_FREE_REUSE)
+      while ((err = madvise(start, csize, MADV_FREE_REUSE)) != 0 && errno == EAGAIN) { errno = 0; }
+    #endif
   }
   #else
   err = mprotect(start, csize, (commit ? (PROT_READ | PROT_WRITE) : PROT_NONE));
@@ -747,7 +773,7 @@ bool _mi_os_decommit(void* addr, size_t size, mi_stats_t* tld_stats) {
   return mi_os_commitx(addr, size, false, true /* conservative */, &is_zero, stats);
 }
 
-static bool mi_os_commit_unreset(void* addr, size_t size, bool* is_zero, mi_stats_t* stats) {
+static bool mi_os_commit_unreset(void* addr, size_t size, bool* is_zero, mi_stats_t* stats) {  
   return mi_os_commitx(addr, size, true, true /* conservative */, is_zero, stats);
 }
 
@@ -782,10 +808,17 @@ static bool mi_os_resetx(void* addr, size_t size, bool reset, mi_stats_t* stats)
   if (p != start) return false;
 #else
 #if defined(MADV_FREE)
-  static _Atomic(uintptr_t) advice = ATOMIC_VAR_INIT(MADV_FREE);
-  int err = madvise(start, csize, (int)mi_atomic_load_relaxed(&advice));
-  if (err != 0 && errno == EINVAL && advice == MADV_FREE) {
-    // if MADV_FREE is not supported, fall back to MADV_DONTNEED from now on
+  #if defined(MADV_FREE_REUSABLE)
+    #define KK_MADV_FREE_INITIAL  MADV_FREE_REUSABLE
+  #else
+    #define KK_MADV_FREE_INITIAL  MADV_FREE
+  #endif
+  static _Atomic(uintptr_t) advice = ATOMIC_VAR_INIT(KK_MADV_FREE_INITIAL);
+  int oadvice = (int)mi_atomic_load_relaxed(&advice);
+  int err;
+  while ((err = madvise(start, csize, oadvice)) != 0 && errno == EAGAIN) { errno = 0;  };
+  if (err != 0 && errno == EINVAL && oadvice == KK_MADV_FREE_INITIAL) {  
+    // if MADV_FREE/MADV_FREE_REUSABLE is not supported, fall back to MADV_DONTNEED from now on
     mi_atomic_store_release(&advice, (uintptr_t)MADV_DONTNEED);
     err = madvise(start, csize, MADV_DONTNEED);
   }
@@ -1090,7 +1123,7 @@ void _mi_os_free_huge_pages(void* p, size_t size, mi_stats_t* stats) {
 /* ----------------------------------------------------------------------------
 Support NUMA aware allocation
 -----------------------------------------------------------------------------*/
-#ifdef _WIN32
+#ifdef _WIN32  
 static size_t mi_os_numa_nodex() {
   USHORT numa_node = 0;
   if (pGetCurrentProcessorNumberEx != NULL && pGetNumaProcessorNodeEx != NULL) {
@@ -1106,7 +1139,7 @@ static size_t mi_os_numa_nodex() {
     DWORD pnum = GetCurrentProcessorNumber();
     UCHAR nnode = 0;
     BOOL ok = GetNumaProcessorNode((UCHAR)pnum, &nnode);
-    if (ok) numa_node = nnode;
+    if (ok) numa_node = nnode;    
   }
   return numa_node;
 }
@@ -1169,17 +1202,23 @@ static size_t mi_os_numa_node_countx(void) {
 }
 #endif
 
-size_t _mi_numa_node_count = 0;   // cache the node count
+_Atomic(size_t)  _mi_numa_node_count; // = 0   // cache the node count
 
 size_t _mi_os_numa_node_count_get(void) {
-  if (mi_unlikely(_mi_numa_node_count <= 0)) {
+  size_t count = mi_atomic_load_acquire(&_mi_numa_node_count);
+  if (count <= 0) {
     long ncount = mi_option_get(mi_option_use_numa_nodes); // given explicitly?
-    if (ncount <= 0) ncount = (long)mi_os_numa_node_countx();        // or detect dynamically
-    _mi_numa_node_count = (size_t)(ncount <= 0 ? 1 : ncount);
-    _mi_verbose_message("using %zd numa regions\n", _mi_numa_node_count);
+    if (ncount > 0) {
+      count = (size_t)ncount;
+    }
+    else {
+      count = mi_os_numa_node_countx(); // or detect dynamically
+      if (count == 0) count = 1;
+    }    
+    mi_atomic_store_release(&_mi_numa_node_count, count); // save it
+    _mi_verbose_message("using %zd numa regions\n", count);
   }
-  mi_assert_internal(_mi_numa_node_count >= 1);
-  return _mi_numa_node_count;
+  return count;
 }
 
 int _mi_os_numa_node_get(mi_os_tld_t* tld) {

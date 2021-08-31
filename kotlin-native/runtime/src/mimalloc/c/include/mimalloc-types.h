@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-Copyright (c) 2018, Microsoft Research, Daan Leijen
+Copyright (c) 2018-2021, Microsoft Research, Daan Leijen
 This is free software; you can redistribute it and/or modify it under the
 terms of the MIT license. A copy of the license can be found in the file
 "licenses/third_party/mimalloc_LICENSE.txt" at the root of this distribution.
@@ -12,7 +12,7 @@ terms of the MIT license. A copy of the license can be found in the file
 
 #include <stddef.h>   // ptrdiff_t
 #include <stdint.h>   // uintptr_t, uint16_t, etc
-#include <mimalloc-atomic.h>  // _Atomic
+#include "mimalloc-atomic.h"  // _Atomic
 
 #ifdef _MSC_VER
 #pragma warning(disable:4214) // bitfield is not int
@@ -265,7 +265,7 @@ typedef enum mi_page_kind_e {
 typedef struct mi_segment_s {
   // memory fields
   size_t               memid;            // id for the os-level memory manager
-  bool                 mem_is_fixed;     // `true` if we cannot decommit/reset/protect in this memory (i.e. when allocated using large OS pages)
+  bool                 mem_is_pinned;    // `true` if we cannot decommit/reset/protect in this memory (i.e. when allocated using large OS pages)
   bool                 mem_is_committed; // `true` if the whole segment is eagerly committed
 
   // segment fields
@@ -274,7 +274,7 @@ typedef struct mi_segment_s {
   struct mi_segment_s* prev;
 
   size_t               abandoned;        // abandoned pages (i.e. the original owning thread stopped) (`abandoned <= used`)
-  size_t               abandoned_visits; // count how often this segment is visited in the abandoned list (to force reclaim it it is too long)
+  size_t               abandoned_visits; // count how often this segment is visited in the abandoned list (to force reclaim if it is too long)
 
   size_t               used;             // count of pages in use (`used <= capacity`)
   size_t               capacity;         // count of available pages (`#free + used`)
@@ -420,6 +420,7 @@ typedef struct mi_stats_s {
   mi_stat_count_t segments_abandoned;
   mi_stat_count_t pages_abandoned;
   mi_stat_count_t threads;
+  mi_stat_count_t normal;
   mi_stat_count_t huge;
   mi_stat_count_t giant;
   mi_stat_count_t malloc;
@@ -429,10 +430,11 @@ typedef struct mi_stats_s {
   mi_stat_counter_t commit_calls;
   mi_stat_counter_t page_no_retire;
   mi_stat_counter_t searches;
+  mi_stat_counter_t normal_count;
   mi_stat_counter_t huge_count;
   mi_stat_counter_t giant_count;
 #if MI_STAT>1
-  mi_stat_count_t normal[MI_BIN_HUGE+1];
+  mi_stat_count_t normal_bins[MI_BIN_HUGE+1];
 #endif
 } mi_stats_t;
 
@@ -451,6 +453,7 @@ void _mi_stat_counter_increase(mi_stat_counter_t* stat, size_t amount);
 #define mi_stat_counter_increase(stat,amount) (void)0
 #endif
 
+#define mi_heap_stat_counter_increase(heap,stat,amount)  mi_stat_counter_increase( (heap)->tld->stats.stat, amount)
 #define mi_heap_stat_increase(heap,stat,amount)  mi_stat_increase( (heap)->tld->stats.stat, amount)
 #define mi_heap_stat_decrease(heap,stat,amount)  mi_stat_decrease( (heap)->tld->stats.stat, amount)
 

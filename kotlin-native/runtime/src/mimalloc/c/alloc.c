@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-Copyright (c) 2018, Microsoft Research, Daan Leijen
+Copyright (c) 2018-2021, Microsoft Research, Daan Leijen
 This is free software; you can redistribute it and/or modify it under the
 terms of the MIT license. A copy of the license can be found in the file
 "licenses/third_party/mimalloc_LICENSE.txt" at the root of this distribution.
@@ -8,7 +8,7 @@ terms of the MIT license. A copy of the license can be found in the file
 #include "mimalloc-internal.h"
 #include "mimalloc-atomic.h"
 
-#include <string.h>  // memset, memcpy, strlen
+#include <string.h>  // memset, strlen
 #include <stdlib.h>  // malloc, exit
 
 #define MI_IN_ALLOC_C
@@ -23,27 +23,34 @@ terms of the MIT license. A copy of the license can be found in the file
 // Fall back to generic allocation only if the list is empty.
 extern inline void* _mi_page_malloc(mi_heap_t* heap, mi_page_t* page, size_t size) mi_attr_noexcept {
   mi_assert_internal(page->xblock_size==0||mi_page_block_size(page) >= size);
-  mi_block_t* block = page->free;
+  mi_block_t* const block = page->free;
   if (mi_unlikely(block == NULL)) {
     return _mi_malloc_generic(heap, size);
   }
   mi_assert_internal(block != NULL && _mi_ptr_page(block) == page);
   // pop from the free list
-  page->free = mi_block_next(page, block);
   page->used++;
+  page->free = mi_block_next(page, block);
   mi_assert_internal(page->free == NULL || _mi_ptr_page(page->free) == page);
+
 #if (MI_DEBUG>0)
   if (!page->is_zero) { memset(block, MI_DEBUG_UNINIT, size); }
 #elif (MI_SECURE!=0)
   block->next = 0;  // don't leak internal data
 #endif
-#if (MI_STAT>1)
+
+#if (MI_STAT>0)
   const size_t bsize = mi_page_usable_block_size(page);
   if (bsize <= MI_LARGE_OBJ_SIZE_MAX) {
+    mi_heap_stat_increase(heap, normal, bsize);
+    mi_heap_stat_counter_increase(heap, normal_count, 1);
+#if (MI_STAT>1)
     const size_t bin = _mi_bin(bsize);
-    mi_heap_stat_increase(heap, normal[bin], 1);
+    mi_heap_stat_increase(heap, normal_bins[bin], 1);
+#endif
   }
 #endif
+
 #if (MI_PADDING > 0) && defined(MI_ENCODE_FREELIST)
   mi_padding_t* const padding = (mi_padding_t*)((uint8_t*)block + mi_page_usable_block_size(page));
   ptrdiff_t delta = ((uint8_t*)padding - (uint8_t*)block - (size - MI_PADDING_SIZE));
@@ -54,6 +61,7 @@ extern inline void* _mi_page_malloc(mi_heap_t* heap, mi_page_t* page, size_t siz
   const size_t maxpad = (delta > MI_MAX_ALIGN_SIZE ? MI_MAX_ALIGN_SIZE : delta); // set at most N initial padding bytes
   for (size_t i = 0; i < maxpad; i++) { fill[i] = MI_DEBUG_PADDING; }
 #endif
+
   return block;
 }
 
@@ -282,6 +290,49 @@ static void mi_padding_shrink(const mi_page_t* page, const mi_block_t* block, co
 }
 #endif
 
+// only maintain stats for smaller objects if requested
+#if (MI_STAT>0)
+static void mi_stat_free(const mi_page_t* page, const mi_block_t* block) {
+#if (MI_STAT < 2)
+  UNUSED(block);
+#endif
+  mi_heap_t* const heap = mi_heap_get_default();
+  const size_t bsize = mi_page_usable_block_size(page);
+#if (MI_STAT>1)
+  const size_t usize = mi_page_usable_size_of(page, block);
+  mi_heap_stat_decrease(heap, malloc, usize);
+#endif
+  if (bsize <= MI_LARGE_OBJ_SIZE_MAX) {
+    mi_heap_stat_decrease(heap, normal, bsize);
+#if (MI_STAT > 1)
+    mi_heap_stat_decrease(heap, normal_bins[_mi_bin(bsize)], 1);
+#endif
+  }
+}
+#else
+static void mi_stat_free(const mi_page_t* page, const mi_block_t* block) {
+  UNUSED(page); UNUSED(block);
+}
+#endif
+
+#if (MI_STAT>0)
+// maintain stats for huge objects
+static void mi_stat_huge_free(const mi_page_t* page) {
+  mi_heap_t* const heap = mi_heap_get_default();
+  const size_t bsize = mi_page_block_size(page); // to match stats in `page.c:mi_page_huge_alloc`
+  if (bsize <= MI_HUGE_OBJ_SIZE_MAX) {
+    mi_heap_stat_decrease(heap, huge, bsize);
+  }
+  else {
+    mi_heap_stat_decrease(heap, giant, bsize);
+  }
+}
+#else
+static void mi_stat_huge_free(const mi_page_t* page) {
+  UNUSED(page);
+}
+#endif
+
 // ------------------------------------------------------
 // Free
 // ------------------------------------------------------
@@ -300,6 +351,7 @@ static mi_decl_noinline void _mi_free_block_mt(mi_page_t* page, mi_block_t* bloc
   // huge page segments are always abandoned and can be freed immediately
   mi_segment_t* const segment = _mi_page_segment(page);
   if (segment->page_kind==MI_PAGE_HUGE) {
+    mi_stat_huge_free(page);
     _mi_segment_huge_page_free(segment, page, block);
     return;
   }
@@ -343,7 +395,6 @@ static mi_decl_noinline void _mi_free_block_mt(mi_page_t* page, mi_block_t* bloc
   }
 }
 
-
 // regular free
 static inline void _mi_free_block(mi_page_t* page, bool local, mi_block_t* block)
 {
@@ -383,6 +434,7 @@ mi_block_t* _mi_page_ptr_unalign(const mi_segment_t* segment, const mi_page_t* p
 static void mi_decl_noinline mi_free_generic(const mi_segment_t* segment, bool local, void* p) {
   mi_page_t* const page = _mi_segment_page_of(segment, p);
   mi_block_t* const block = (mi_page_has_aligned(page) ? _mi_page_ptr_unalign(segment, page, p) : (mi_block_t*)p);
+  mi_stat_free(page, block);
   _mi_free_block(page, local, block);
 }
 
@@ -430,19 +482,11 @@ void mi_free(void* p) mi_attr_noexcept
   mi_page_t* const page = _mi_segment_page_of(segment, p);
   mi_block_t* const block = (mi_block_t*)p;
 
-#if (MI_STAT>1)
-  mi_heap_t* const heap = mi_heap_get_default();
-  const size_t bsize = mi_page_usable_block_size(page);
-  mi_heap_stat_decrease(heap, malloc, bsize);
-  if (bsize <= MI_LARGE_OBJ_SIZE_MAX) { // huge page stats are accounted for in `_mi_page_retire`
-    mi_heap_stat_decrease(heap, normal[_mi_bin(bsize)], 1);
-  }
-#endif
-
   if (mi_likely(tid == segment->thread_id && page->flags.full_aligned == 0)) {  // the thread id matches and it is not a full page, nor has aligned blocks
     // local, and not full or aligned
     if (mi_unlikely(mi_check_is_double_free(page,block))) return;
     mi_check_padding(page, block);
+    mi_stat_free(page, block);
     #if (MI_DEBUG!=0)
     memset(block, MI_DEBUG_FREED, mi_page_block_size(page));
     #endif
@@ -513,6 +557,7 @@ void* _mi_externs[] = {
   (void*)&_mi_page_malloc,
   (void*)&mi_malloc,
   (void*)&mi_malloc_small,
+  (void*)&mi_zalloc_small,
   (void*)&mi_heap_malloc,
   (void*)&mi_heap_zalloc,
   (void*)&mi_heap_malloc_small
@@ -584,7 +629,7 @@ void* _mi_heap_realloc_zero(mi_heap_t* heap, void* p, size_t newsize, bool zero)
       size_t start = (size >= sizeof(intptr_t) ? size - sizeof(intptr_t) : 0);
       memset((uint8_t*)newp + start, 0, newsize - start);
     }
-    memcpy(newp, p, (newsize > size ? size : newsize));
+    _mi_memcpy_aligned(newp, p, (newsize > size ? size : newsize));
     mi_free(p); // only free if successful
   }
   return newp;
@@ -651,7 +696,7 @@ mi_decl_restrict char* mi_heap_strdup(mi_heap_t* heap, const char* s) mi_attr_no
   if (s == NULL) return NULL;
   size_t n = strlen(s);
   char* t = (char*)mi_heap_malloc(heap,n+1);
-  if (t != NULL) memcpy(t, s, n + 1);
+  if (t != NULL) _mi_memcpy(t, s, n + 1);
   return t;
 }
 
@@ -667,7 +712,7 @@ mi_decl_restrict char* mi_heap_strndup(mi_heap_t* heap, const char* s, size_t n)
   mi_assert_internal(m <= n);
   char* t = (char*)mi_heap_malloc(heap, m+1);
   if (t == NULL) return NULL;
-  memcpy(t, s, m);
+  _mi_memcpy(t, s, m);
   t[m] = 0;
   return t;
 }
@@ -682,7 +727,7 @@ mi_decl_restrict char* mi_strndup(const char* s, size_t n) mi_attr_noexcept {
 #ifndef PATH_MAX
 #define PATH_MAX MAX_PATH
 #endif
-#include <Windows.h>
+#include <windows.h>
 mi_decl_restrict char* mi_heap_realpath(mi_heap_t* heap, const char* fname, char* resolved_name) mi_attr_noexcept {
   // todo: use GetFullPathNameW to allow longer file names
   char buf[PATH_MAX];
@@ -746,7 +791,12 @@ but we call `exit` instead (i.e. not returning).
 #ifdef __cplusplus
 #include <new>
 static bool mi_try_new_handler(bool nothrow) {
-  std::new_handler h = std::get_new_handler();
+  #if defined(_MSC_VER) || (__cplusplus >= 201103L)
+    std::new_handler h = std::get_new_handler();
+  #else
+    std::new_handler h = std::set_new_handler();
+    std::set_new_handler(h);
+  #endif
   if (h==NULL) {
     if (!nothrow) throw std::bad_alloc();
     return false;

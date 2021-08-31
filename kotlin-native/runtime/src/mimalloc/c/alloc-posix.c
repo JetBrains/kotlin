@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-Copyright (c) 2018,2019, Microsoft Research, Daan Leijen
+Copyright (c) 2018-2021, Microsoft Research, Daan Leijen
 This is free software; you can redistribute it and/or modify it under the
 terms of the MIT license. A copy of the license can be found in the file
 "licenses/third_party/mimalloc_LICENSE.txt" at the root of this distribution.
@@ -17,7 +17,7 @@ terms of the MIT license. A copy of the license can be found in the file
 // ------------------------------------------------------
 
 #include <errno.h>
-#include <string.h>  // memcpy
+#include <string.h>  // memset
 #include <stdlib.h>  // getenv
 
 #ifdef _MSC_VER
@@ -77,7 +77,7 @@ mi_decl_restrict void* mi_pvalloc(size_t size) mi_attr_noexcept {
 }
 
 mi_decl_restrict void* mi_aligned_alloc(size_t alignment, size_t size) mi_attr_noexcept {
-  if (alignment==0 || !_mi_is_power_of_two(alignment)) return NULL; 
+  if (alignment==0 || !_mi_is_power_of_two(alignment)) return NULL;
   if ((size&(alignment-1)) != 0) return NULL; // C11 requires integral multiple, see <https://en.cppreference.com/w/c/memory/aligned_alloc>
   void* p = (mi_malloc_satisfies_alignment(alignment, size) ? mi_malloc(size) : mi_malloc_aligned(size, alignment));
   mi_assert_internal(((uintptr_t)p % alignment) == 0);
@@ -103,7 +103,7 @@ mi_decl_restrict unsigned short* mi_wcsdup(const unsigned short* s) mi_attr_noex
   size_t size = (len+1)*sizeof(unsigned short);
   unsigned short* p = (unsigned short*)mi_malloc(size);
   if (p != NULL) {
-    memcpy(p,s,size);
+    _mi_memcpy(p,s,size);
   }
   return p;
 }

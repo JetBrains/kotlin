@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------
-Copyright (c) 2018, Microsoft Research, Daan Leijen
+Copyright (c) 2018-2021, Microsoft Research, Daan Leijen
 This is free software; you can redistribute it and/or modify it under the
 terms of the MIT license. A copy of the license can be found in the file
 "licenses/third_party/mimalloc_LICENSE.txt" at the root of this distribution.
@@ -92,7 +92,7 @@ static bool mi_heap_page_collect(mi_heap_t* heap, mi_page_queue_t* pq, mi_page_t
   mi_collect_t collect = *((mi_collect_t*)arg_collect);
   _mi_page_free_collect(page, collect >= MI_FORCE);
   if (mi_page_all_free(page)) {
-    // no more used blocks, free the page.
+    // no more used blocks, free the page. 
     // note: this will free retired pages as well.
     _mi_page_free(page, pq, collect >= MI_FORCE);
   }
@@ -114,10 +114,10 @@ static bool mi_heap_page_never_delayed_free(mi_heap_t* heap, mi_page_queue_t* pq
 
 static void mi_heap_collect_ex(mi_heap_t* heap, mi_collect_t collect)
 {
-  if (!mi_heap_is_initialized(heap)) return;
+  if (heap==NULL || !mi_heap_is_initialized(heap)) return;
   _mi_deferred_free(heap, collect >= MI_FORCE);
 
-  // note: never reclaim on collect but leave it to threads that need storage to reclaim
+  // note: never reclaim on collect but leave it to threads that need storage to reclaim 
   if (
   #ifdef NDEBUG
       collect == MI_FORCE
@@ -130,7 +130,7 @@ static void mi_heap_collect_ex(mi_heap_t* heap, mi_collect_t collect)
     // if all memory is freed by now, all segments should be freed.
     _mi_abandoned_reclaim_all(heap, &heap->tld->segments);
   }
-
+  
   // if abandoning, mark all pages to no longer add to delayed_free
   if (collect == MI_ABANDON) {
     mi_heap_visit_pages(heap, &mi_heap_page_never_delayed_free, NULL, NULL);
@@ -193,7 +193,7 @@ mi_heap_t* mi_heap_new(void) {
   mi_heap_t* bheap = mi_heap_get_backing();
   mi_heap_t* heap = mi_heap_malloc_tp(bheap, mi_heap_t);  // todo: OS allocate in secure mode?
   if (heap==NULL) return NULL;
-  memcpy(heap, &_mi_heap_empty, sizeof(mi_heap_t));
+  _mi_memcpy_aligned(heap, &_mi_heap_empty, sizeof(mi_heap_t));
   heap->tld = bheap->tld;
   heap->thread_id = _mi_thread_id();
   _mi_random_split(&bheap->random, &heap->random);
@@ -213,13 +213,14 @@ uintptr_t _mi_heap_random_next(mi_heap_t* heap) {
 
 // zero out the page queues
 static void mi_heap_reset_pages(mi_heap_t* heap) {
+  mi_assert_internal(heap != NULL);
   mi_assert_internal(mi_heap_is_initialized(heap));
   // TODO: copy full empty heap instead?
   memset(&heap->pages_free_direct, 0, sizeof(heap->pages_free_direct));
 #ifdef MI_MEDIUM_DIRECT
   memset(&heap->pages_free_medium, 0, sizeof(heap->pages_free_medium));
 #endif
-  memcpy(&heap->pages, &_mi_heap_empty.pages, sizeof(heap->pages));
+  _mi_memcpy_aligned(&heap->pages, &_mi_heap_empty.pages, sizeof(heap->pages));
   heap->thread_delayed_free = NULL;
   heap->page_count = 0;
 }
@@ -228,6 +229,7 @@ static void mi_heap_reset_pages(mi_heap_t* heap) {
 static void mi_heap_free(mi_heap_t* heap) {
   mi_assert(heap != NULL);
   mi_assert_internal(mi_heap_is_initialized(heap));
+  if (heap==NULL || !mi_heap_is_initialized(heap)) return;
   if (mi_heap_is_backing(heap)) return; // dont free the backing heap
 
   // reset default
@@ -238,7 +240,7 @@ static void mi_heap_free(mi_heap_t* heap) {
   // remove ourselves from the thread local heaps list
   // linear search but we expect the number of heaps to be relatively small
   mi_heap_t* prev = NULL;
-  mi_heap_t* curr = heap->tld->heaps;
+  mi_heap_t* curr = heap->tld->heaps; 
   while (curr != heap && curr != NULL) {
     prev = curr;
     curr = curr->next;
@@ -272,17 +274,20 @@ static bool _mi_heap_page_destroy(mi_heap_t* heap, mi_page_queue_t* pq, mi_page_
   const size_t bsize = mi_page_block_size(page);
   if (bsize > MI_LARGE_OBJ_SIZE_MAX) {
     if (bsize > MI_HUGE_OBJ_SIZE_MAX) {
-      _mi_stat_decrease(&heap->tld->stats.giant, bsize);
+      mi_heap_stat_decrease(heap, giant, bsize);
     }
     else {
-      _mi_stat_decrease(&heap->tld->stats.huge, bsize);
+      mi_heap_stat_decrease(heap, huge, bsize);
     }
   }
-#if (MI_STAT>1)
+#if (MI_STAT)
   _mi_page_free_collect(page, false);  // update used count
   const size_t inuse = page->used;
   if (bsize <= MI_LARGE_OBJ_SIZE_MAX) {
-    mi_heap_stat_decrease(heap, normal[_mi_bin(bsize)], inuse);
+    mi_heap_stat_decrease(heap, normal, bsize * inuse);
+#if (MI_STAT>1)
+    mi_heap_stat_decrease(heap, normal_bins[_mi_bin(bsize)], inuse);
+#endif
   }
   mi_heap_stat_decrease(heap, malloc, bsize * inuse);  // todo: off for aligned blocks...
 #endif
@@ -310,7 +315,7 @@ void mi_heap_destroy(mi_heap_t* heap) {
   mi_assert(mi_heap_is_initialized(heap));
   mi_assert(heap->no_reclaim);
   mi_assert_expensive(mi_heap_is_valid(heap));
-  if (!mi_heap_is_initialized(heap)) return;
+  if (heap==NULL || !mi_heap_is_initialized(heap)) return;
   if (!heap->no_reclaim) {
     // don't free in case it may contain reclaimed pages
     mi_heap_delete(heap);
@@ -335,8 +340,8 @@ static void mi_heap_absorb(mi_heap_t* heap, mi_heap_t* from) {
 
   // reduce the size of the delayed frees
   _mi_heap_delayed_free(from);
-
-  // transfer all pages by appending the queues; this will set a new heap field
+  
+  // transfer all pages by appending the queues; this will set a new heap field 
   // so threads may do delayed frees in either heap for a while.
   // note: appending waits for each page to not be in the `MI_DELAYED_FREEING` state
   // so after this only the new heap will get delayed frees
@@ -349,15 +354,17 @@ static void mi_heap_absorb(mi_heap_t* heap, mi_heap_t* from) {
   }
   mi_assert_internal(from->page_count == 0);
 
-  // and do outstanding delayed frees in the `from` heap
+  // and do outstanding delayed frees in the `from` heap  
   // note: be careful here as the `heap` field in all those pages no longer point to `from`,
-  // turns out to be ok as `_mi_heap_delayed_free` only visits the list and calls a
+  // turns out to be ok as `_mi_heap_delayed_free` only visits the list and calls a 
   // the regular `_mi_free_delayed_block` which is safe.
-  _mi_heap_delayed_free(from);
-  mi_assert_internal(from->thread_delayed_free == NULL);
+  _mi_heap_delayed_free(from);  
+  #if !defined(_MSC_VER) || (_MSC_VER > 1900) // somehow the following line gives an error in VS2015, issue #353
+  mi_assert_internal(mi_atomic_load_ptr_relaxed(mi_block_t,&from->thread_delayed_free) == NULL);
+  #endif
 
   // and reset the `from` heap
-  mi_heap_reset_pages(from);
+  mi_heap_reset_pages(from);  
 }
 
 // Safe delete a heap without freeing any still allocated blocks in that heap.
@@ -366,7 +373,7 @@ void mi_heap_delete(mi_heap_t* heap)
   mi_assert(heap != NULL);
   mi_assert(mi_heap_is_initialized(heap));
   mi_assert_expensive(mi_heap_is_valid(heap));
-  if (!mi_heap_is_initialized(heap)) return;
+  if (heap==NULL || !mi_heap_is_initialized(heap)) return;
 
   if (!mi_heap_is_backing(heap)) {
     // tranfer still used pages to the backing heap
@@ -381,8 +388,9 @@ void mi_heap_delete(mi_heap_t* heap)
 }
 
 mi_heap_t* mi_heap_set_default(mi_heap_t* heap) {
+  mi_assert(heap != NULL);
   mi_assert(mi_heap_is_initialized(heap));
-  if (!mi_heap_is_initialized(heap)) return NULL;
+  if (heap==NULL || !mi_heap_is_initialized(heap)) return NULL;
   mi_assert_expensive(mi_heap_is_valid(heap));
   mi_heap_t* old = mi_get_default_heap();
   _mi_heap_set_default_direct(heap);
@@ -408,7 +416,7 @@ static mi_heap_t* mi_heap_of_block(const void* p) {
 
 bool mi_heap_contains_block(mi_heap_t* heap, const void* p) {
   mi_assert(heap != NULL);
-  if (!mi_heap_is_initialized(heap)) return false;
+  if (heap==NULL || !mi_heap_is_initialized(heap)) return false;
   return (heap == mi_heap_of_block(p));
 }
 
@@ -426,7 +434,7 @@ static bool mi_heap_page_check_owned(mi_heap_t* heap, mi_page_queue_t* pq, mi_pa
 
 bool mi_heap_check_owned(mi_heap_t* heap, const void* p) {
   mi_assert(heap != NULL);
-  if (!mi_heap_is_initialized(heap)) return false;
+  if (heap==NULL || !mi_heap_is_initialized(heap)) return false;
   if (((uintptr_t)p & (MI_INTPTR_SIZE - 1)) != 0) return false;  // only aligned pointers
   bool found = false;
   mi_heap_visit_pages(heap, &mi_heap_page_check_owned, (void*)p, &found);

@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-Copyright (c) 2018-2020, Microsoft Research, Daan Leijen
+Copyright (c) 2018-2021, Microsoft Research, Daan Leijen
 This is free software; you can redistribute it and/or modify it under the
 terms of the MIT license. A copy of the license can be found in the file
 "licenses/third_party/mimalloc_LICENSE.txt" at the root of this distribution.
@@ -8,7 +8,7 @@ terms of the MIT license. A copy of the license can be found in the file
 #ifndef MIMALLOC_H
 #define MIMALLOC_H
 
-#define MI_MALLOC_VERSION 167   // major + 2 digits minor
+#define MI_MALLOC_VERSION 171   // major + 2 digits minor
 
 // ------------------------------------------------------
 // Compiler specific attributes
@@ -264,6 +264,10 @@ mi_decl_nodiscard mi_decl_export bool mi_is_redirected(void) mi_attr_noexcept;
 mi_decl_export int mi_reserve_huge_os_pages_interleave(size_t pages, size_t numa_nodes, size_t timeout_msecs) mi_attr_noexcept;
 mi_decl_export int mi_reserve_huge_os_pages_at(size_t pages, int numa_node, size_t timeout_msecs) mi_attr_noexcept;
 
+mi_decl_export int  mi_reserve_os_memory(size_t size, bool commit, bool allow_large) mi_attr_noexcept;
+mi_decl_export bool mi_manage_os_memory(void* start, size_t size, bool is_committed, bool is_large, bool is_zero, int numa_node) mi_attr_noexcept;
+
+
 // deprecated
 mi_decl_export int  mi_reserve_huge_os_pages(size_t pages, double max_secs, size_t* pages_reserved) mi_attr_noexcept;
 
@@ -302,6 +306,7 @@ typedef enum mi_option_e {
   mi_option_reset_decommits,
   mi_option_large_os_pages,         // implies eager commit
   mi_option_reserve_huge_os_pages,
+  mi_option_reserve_os_memory,
   mi_option_segment_cache,
   mi_option_page_reset,
   mi_option_abandoned_page_reset,
@@ -309,8 +314,10 @@ typedef enum mi_option_e {
   mi_option_eager_commit_delay,
   mi_option_reset_delay,
   mi_option_use_numa_nodes,
+  mi_option_limit_os_alloc,
   mi_option_os_tag,
   mi_option_max_errors,
+  mi_option_max_warnings,
   _mi_option_last
 } mi_option_t;
 

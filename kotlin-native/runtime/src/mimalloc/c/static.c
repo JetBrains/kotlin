@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-Copyright (c) 2018, Microsoft Research, Daan Leijen
+Copyright (c) 2018-2020, Microsoft Research, Daan Leijen
 This is free software; you can redistribute it and/or modify it under the
 terms of the MIT license. A copy of the license can be found in the file
 "licenses/third_party/mimalloc_LICENSE.txt" at the root of this distribution.
@@ -23,6 +23,7 @@ terms of the MIT license. A copy of the license can be found in the file
 #include "stats.c"
 #include "random.c"
 #include "os.c"
+#include "bitmap.c"
 #include "arena.c"
 #include "region.c"
 #include "segment.c"
