@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.isExternalObjCClassMethod
-import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering.Companion.isLoweredFunctionReference
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.isPublicApi
@@ -254,7 +253,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 interfaceTableSize, interfaceTablePtr,
                 reflectionInfo.packageName,
                 reflectionInfo.relativeName,
-                flagsFromClass(irClass) or reflectionInfo.reflectionFlags,
+                flagsFromClass(irClass),
                 context.getLayoutBuilder(irClass).classId,
                 llvmDeclarations.writableTypeInfoGlobal?.pointer,
                 associatedObjects = genAssociatedObjects(irClass)
@@ -497,6 +496,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val objOffsetsPtr = staticData.placeGlobalConstArray("", int32Type, objOffsets)
         val objOffsetsCount = objOffsets.size
 
+        val reflectionInfo = ReflectionInfo(null, null)
+
         val writableTypeInfoType = runtime.writableTypeInfoType
         val writableTypeInfo = if (writableTypeInfoType == null) {
             null
@@ -540,8 +541,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 objOffsets = objOffsetsPtr, objOffsetsCount = objOffsetsCount,
                 interfaces = interfacesPtr, interfacesCount = interfaces.size,
                 interfaceTableSize = interfaceTableSize, interfaceTable = interfaceTablePtr,
-                packageName = ReflectionInfo.EMPTY.packageName,
-                relativeName = ReflectionInfo.EMPTY.relativeName,
+                packageName = reflectionInfo.packageName,
+                relativeName = reflectionInfo.relativeName,
                 flags = flagsFromClass(irClass) or (if (immutable) TF_IMMUTABLE else 0),
                 classId = typeHierarchyInfo.classIdLo,
                 writableTypeInfo = writableTypeInfo,
@@ -556,45 +557,20 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
     private val OverriddenFunctionInfo.implementation get() = getImplementation(context)
 
-    data class ReflectionInfo(val packageName: String?, val relativeName: String?, val reflectionFlags: Int) {
-        companion object {
-            val EMPTY = ReflectionInfo(null, null, 0)
-        }
+    data class ReflectionInfo(val packageName: String?, val relativeName: String?)
+
+    private fun getReflectionInfo(irClass: IrClass): ReflectionInfo = when {
+        irClass.isAnonymousObject -> ReflectionInfo(packageName = null, relativeName = null)
+
+        irClass.isLocal -> ReflectionInfo(packageName = null, relativeName = irClass.name.asString())
+
+        else -> ReflectionInfo(
+                packageName = irClass.findPackage().fqNameForIrSerialization.asString(),
+                relativeName = generateSequence(irClass) { it.parent as? IrClass }
+                        .toList().reversed()
+                        .joinToString(".") { it.name.asString() }
+        )
     }
-
-    private fun getReflectionInfo(irClass: IrClass): ReflectionInfo {
-        val packageName: String = irClass.findPackage().fqName.asString() // Compute and store package name in TypeInfo anyways.
-        val relativeName: String?
-        val flags: Int
-
-        when {
-            irClass.isAnonymousObject -> {
-                relativeName = context.getLocalClassName(irClass)
-                flags = 0 // Forbid to use package and relative names in KClass.[simpleName|qualifiedName].
-            }
-            irClass.isLocal -> {
-                relativeName = context.getLocalClassName(irClass)
-                flags = TF_REFLECTION_SHOW_REL_NAME // Only allow relative name to be used in KClass.simpleName.
-            }
-            isLoweredFunctionReference(irClass) -> {
-                // TODO: might return null so use fallback here, to be fixed in KT-47194
-                relativeName = context.getLocalClassName(irClass) ?: generateDefaultRelativeName(irClass)
-                flags = 0 // Forbid to use package and relative names in KClass.[simpleName|qualifiedName].
-            }
-            else -> {
-                relativeName = generateDefaultRelativeName(irClass)
-                flags = TF_REFLECTION_SHOW_PKG_NAME or TF_REFLECTION_SHOW_REL_NAME // Allow both package and relative names to be used in
-                // KClass.[simpleName|qualifiedName].
-            }
-        }
-
-        return ReflectionInfo(packageName, relativeName, flags)
-    }
-
-    private fun generateDefaultRelativeName(irClass: IrClass) =
-            generateSequence(irClass) { it.parent as? IrClass }
-                    .toList().reversed()
-                    .joinToString(".") { it.name.asString() }
 
     fun dispose() {
         debugRuntimeOrNull?.let { LLVMDisposeModule(it) }
@@ -610,5 +586,4 @@ private const val TF_LEAK_DETECTOR_CANDIDATE = 16
 private const val TF_SUSPEND_FUNCTION = 32
 private const val TF_HAS_FINALIZER = 64
 private const val TF_HAS_FREEZE_HOOK = 128
-private const val TF_REFLECTION_SHOW_PKG_NAME = 256
-private const val TF_REFLECTION_SHOW_REL_NAME = 512
+
