@@ -5,6 +5,7 @@
       <array>
         <option value="$PROJECT_DIR$/compiler/testData" />
         <option value="$PROJECT_DIR$/compiler/fir/analysis-tests/testData" />
+        <option value="$PROJECT_DIR$/compiler/tests-spec/testData" />
       </array>
     </option>
   </component>
