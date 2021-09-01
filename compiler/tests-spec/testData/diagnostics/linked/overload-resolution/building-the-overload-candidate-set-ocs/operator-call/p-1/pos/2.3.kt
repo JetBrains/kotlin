@@ -3,14 +3,14 @@
 // SKIP_TXT
 
 /*
- * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-448
  * MAIN LINK: overload-resolution, building-the-overload-candidate-set-ocs, operator-call -> paragraph 1 -> sentence 2
  * SECONDARY LINKS: statements, assignments, operator-assignments -> paragraph 2 -> sentence 1
  * statements, assignments, operator-assignments -> paragraph 2 -> sentence 2
  * statements, assignments, operator-assignments -> paragraph 2 -> sentence 3
- * NUMBER: 10
+ * NUMBER: 3
  * DESCRIPTION: Non-extension member callables
  */
 
@@ -20,17 +20,17 @@ package testPackCase1
 
 fun case1(a: A, c: C) {
 
-    <!DEBUG_INFO_CALL("fqName: testPackCase1.B.plusAssign; typeCall: operator function")!>a?.b <!UNSAFE_OPERATOR_CALL!>+=<!> c<!>
-    a?.b <!UNSAFE_CALL!>.<!><!DEBUG_INFO_CALL("fqName: testPackCase1.B.plusAssign; typeCall: operator function")!>plusAssign(c)<!>
+    <!DEBUG_INFO_CALL("fqName: testPackCase1.B.plusAssign; typeCall: operator function")!>a?.b += c<!>
+    a?.b .<!DEBUG_INFO_CALL("fqName: testPackCase1.B.plusAssign; typeCall: operator function")!>plusAssign(c)<!>
 
     val x = {
-        <!DEBUG_INFO_CALL("fqName: testPackCase1.B.plusAssign; typeCall: operator function")!>a?.b <!UNSAFE_OPERATOR_CALL!>+=<!> c<!>
-        a?.b<!UNSAFE_CALL!>.<!><!DEBUG_INFO_CALL("fqName: testPackCase1.B.plusAssign; typeCall: operator function")!>plusAssign(c)<!>
+        <!DEBUG_INFO_CALL("fqName: testPackCase1.B.plusAssign; typeCall: operator function")!>a?.b += c<!>
+        a?.b.<!DEBUG_INFO_CALL("fqName: testPackCase1.B.plusAssign; typeCall: operator function")!>plusAssign(c)<!>
     }()
 
-    <!DEBUG_INFO_CALL("fqName: testPackCase1.B.plusAssign; typeCall: operator function")!>a?.b <!UNSAFE_OPERATOR_CALL!>+=<!> { c }()<!>
+    <!DEBUG_INFO_CALL("fqName: testPackCase1.B.plusAssign; typeCall: operator function")!>a?.b += { c }()<!>
 
-    a?.b<!UNSAFE_CALL!>.<!><!DEBUG_INFO_CALL("fqName: testPackCase1.B.plusAssign; typeCall: operator function")!>plusAssign({ c }())<!>
+    a?.b.<!DEBUG_INFO_CALL("fqName: testPackCase1.B.plusAssign; typeCall: operator function")!>plusAssign({ c }())<!>
 }
 
 class A(val b: B)
