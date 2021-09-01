@@ -15,7 +15,14 @@ fun foo() {
 // 7 ALOAD
 // 2 LSTORE
 // 3 LLOAD
-// 1 MAXLOCALS = 10
 // 0 InlineMarker
+
+// JVM_TEMPLATES
+// 1 MAXLOCALS = 10
 // 16 ISTORE
 // 11 ILOAD
+
+// JVM_IR_TEMPLATES
+// 1 MAXLOCALS = 9
+// 13 ISTORE
+// 8 ILOAD

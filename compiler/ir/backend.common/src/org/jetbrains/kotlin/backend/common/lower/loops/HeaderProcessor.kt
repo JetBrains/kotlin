@@ -44,6 +44,10 @@ interface ForLoopHeader {
      */
     val consumesLoopVariableComponents: Boolean
 
+    /** `true` if it's possible to use loop variable as induction variable in this kind of loop */
+    val canReuseLoopVariableAsInductionVariable: Boolean
+        get() = false
+
     /** Statements used to initialize an iteration of the loop (e.g., assign loop variable). */
     fun initializeIteration(
         loopVariable: IrVariable?,
@@ -56,6 +60,13 @@ interface ForLoopHeader {
     fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?): LoopReplacement
 }
 
+internal const val inductionVariableName = "inductionVariable"
+
+internal fun IrStatement.isInductionVariable(context: CommonBackendContext) =
+    this is IrVariable &&
+            origin == context.inductionVariableOrigin &&
+            name.asString() == inductionVariableName
+
 abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
     val headerInfo: T,
     builder: DeclarationIrBuilder,
@@ -63,6 +74,8 @@ abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
 ) : ForLoopHeader {
 
     override val consumesLoopVariableComponents = false
+
+    override val canReuseLoopVariableAsInductionVariable get() = true
 
     val inductionVariable: IrVariable
 
@@ -92,8 +105,9 @@ abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                 inductionVariable =
                     scope.createTmpVariable(
                         headerInfo.first.asElementType(),
-                        nameHint = "inductionVariable",
+                        nameHint = inductionVariableName,
                         isMutable = true,
+                        origin = this@NumericForLoopHeader.context.inductionVariableOrigin,
                         irType = elementClass.defaultType
                     )
 
@@ -317,7 +331,11 @@ class ProgressionLoopHeader(
                 //       // Loop body
                 //     } while (loopVar != last)
                 //   }
-                val newLoop = IrDoWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, oldLoop.origin).apply {
+                val newLoopOrigin = if (preferJavaLikeCounterLoop)
+                    this@ProgressionLoopHeader.context.doWhileCounterLoopOrigin
+                else
+                    oldLoop.origin
+                val newLoop = IrDoWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, newLoopOrigin).apply {
                     val loopVariableExpression = irGet(loopVariable!!).let {
                         headerInfo.progressionType.run {
                             if (this is UnsignedProgressionType) {
@@ -331,6 +349,10 @@ class ProgressionLoopHeader(
                     body = newBody
                 }
 
+                if (preferJavaLikeCounterLoop) {
+                    moveInductionVariableUpdateToLoopCondition(newLoop)
+                }
+
                 val loopCondition = buildLoopCondition(this@with)
                 LoopReplacement(newLoop, irIfThen(loopCondition, newLoop))
             } else if (preferJavaLikeCounterLoop && !headerInfo.isLastInclusive) {
@@ -338,25 +360,17 @@ class ProgressionLoopHeader(
                 // (`for (int i = first; i < lastExclusive; ++i) { ... }`).
                 // Otherwise loop-related optimizations will not kick in, resulting in significant performance degradation.
                 //
-                // If possible, use a do-while loop:
+                // Use a do-while loop:
                 //   do {
                 //       if ( !( inductionVariable < last ) ) break
                 //       val loopVariable = inductionVariable
                 //       <body>
                 //   } while ( { inductionVariable += step; true } )
                 // This loop form is equivalent to the Java counter loop shown above.
-                //
-                // Otherwise, use a simple while loop:
-                //   while (inductionVar < last) {
-                //     val loopVar = inductionVar
-                //     inductionVar += step
-                //     // Loop body
-                //   }
 
                 val newLoopCondition = buildLoopCondition(this@with)
 
                 buildJavaLikeDoWhileCounterLoop(oldLoop, newLoopCondition, newBody)
-                    ?: buildJavaLikeWhileCounterLoop(oldLoop, newLoopCondition, newBody)
             } else {
                 // Use an if-guarded do-while loop (note the difference in loop condition):
                 //
@@ -383,11 +397,52 @@ class ProgressionLoopHeader(
             it.name == OperatorNameConventions.NOT
         } ?: error("No '${OperatorNameConventions.NOT}' in ${context.irBuiltIns.booleanClass.owner.render()}")
 
+    private fun moveInductionVariableUpdateToLoopCondition(doWhileLoop: IrDoWhileLoop) {
+        // On JVM, it's important that induction variable update happens in the end of the loop
+        // (otherwise HotSpot will not treat it as a counter loop).
+        // Moving induction variable update to loop condition (instead of just placing it in the end of loop body)
+        // also allows reusing loop variable as induction variable later.
+        //
+        // Transform a loop in the form:
+        //      do {
+        //          { <next> }
+        //          <body>
+        //      } while (<condition>)
+        // to
+        //      do {
+        //          { <next'> }
+        //          <body>
+        //      } while ( { if (!<condition>) break; <updateInductionVar>; true } )
+        val doWhileBody = doWhileLoop.body as? IrContainerExpression ?: return
+        if (doWhileBody.origin != IrStatementOrigin.FOR_LOOP_INNER_WHILE) return
+        val doWhileLoopNext = doWhileBody.statements[0] as? IrContainerExpression ?: return
+        if (doWhileLoopNext.origin != IrStatementOrigin.FOR_LOOP_NEXT) return
+
+        val updateInductionVarIndex = doWhileLoopNext.statements
+            .indexOfFirst { it is IrSetValue && it.symbol.owner.isInductionVariable(context) }
+        if (updateInductionVarIndex < 0) return
+        val updateInductionVar = doWhileLoopNext.statements[updateInductionVarIndex]
+        doWhileLoopNext.statements.removeAt(updateInductionVarIndex)
+
+        val loopCondition = doWhileLoop.condition
+        val loopConditionStartOffset = loopCondition.startOffset
+        val loopConditionEndOffset = loopCondition.endOffset
+        doWhileLoop.condition = IrCompositeImpl(
+            loopConditionStartOffset, loopConditionEndOffset, loopCondition.type,
+            origin = null,
+            statements = listOf(
+                createNegatedConditionCheck(doWhileLoop.condition, doWhileLoop),
+                updateInductionVar,
+                IrConstImpl.boolean(loopConditionStartOffset, loopConditionEndOffset, context.irBuiltIns.booleanType, true)
+            )
+        )
+    }
+
     private fun buildJavaLikeDoWhileCounterLoop(
         oldLoop: IrLoop,
         newLoopCondition: IrExpression,
         newBody: IrExpression?
-    ): LoopReplacement? {
+    ): LoopReplacement {
         // Transform loop:
         //      while (<newLoopCondition>) {
         //          {
@@ -402,31 +457,19 @@ class ProgressionLoopHeader(
         //          val forLoopVariable = inductionVariable
         //          <originalLoopBody>
         //      } while ( { inductionVariable += step; true } )
-        val bodyBlock = newBody as? IrContainerExpression ?: return null
-        val forLoopNextBlock = bodyBlock.statements[0] as? IrContainerExpression ?: return null
-        if (forLoopNextBlock.origin != IrStatementOrigin.FOR_LOOP_NEXT) return null
-        val loopStep = forLoopNextBlock.statements.last() as? IrSetValue ?: return null
+        val bodyBlock = newBody as? IrContainerExpression
+            ?: throw AssertionError("newBody: ${newBody?.dump()}")
+        val forLoopNextBlock = bodyBlock.statements[0] as? IrContainerExpression
+            ?: throw AssertionError("bodyBlock[0]: ${bodyBlock.statements[0].dump()}")
+        if (forLoopNextBlock.origin != IrStatementOrigin.FOR_LOOP_NEXT)
+            throw AssertionError("FOR_LOOP_NEXT expected: ${forLoopNextBlock.dump()}")
+        val loopStep = forLoopNextBlock.statements.last() as? IrSetValue
+            ?: throw AssertionError("forLoopNextBlock.last: ${forLoopNextBlock.statements.last().dump()}")
 
-        val doWhileLoop = IrDoWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, oldLoop.origin)
+        val doWhileLoop = IrDoWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, context.doWhileCounterLoopOrigin)
         doWhileLoop.label = oldLoop.label
 
-        val conditionStartOffset = newLoopCondition.startOffset
-        val conditionEndOffset = newLoopCondition.endOffset
-        val negatedCondition =
-            IrCallImpl.fromSymbolOwner(conditionStartOffset, conditionEndOffset, booleanNot.symbol).apply {
-                dispatchReceiver = newLoopCondition
-            }
-
-        val negatedConditionCheck =
-            IrWhenImpl(
-                conditionStartOffset, conditionEndOffset, context.irBuiltIns.unitType, null,
-                listOf(
-                    IrBranchImpl(
-                        negatedCondition,
-                        IrBreakImpl(conditionStartOffset, conditionEndOffset, context.irBuiltIns.nothingType, doWhileLoop)
-                    )
-                )
-            )
+        val negatedConditionCheck = createNegatedConditionCheck(newLoopCondition, doWhileLoop)
 
         bodyBlock.statements[0] = negatedConditionCheck
         val loopVarAssignments =
@@ -455,23 +498,25 @@ class ProgressionLoopHeader(
         return LoopReplacement(doWhileLoop, doWhileLoop)
     }
 
-    private fun buildJavaLikeWhileCounterLoop(
-        oldLoop: IrLoop,
-        newLoopCondition: IrExpression,
-        newBody: IrExpression?
-    ): LoopReplacement {
-        //   while (inductionVar < last) {
-        //     val loopVar = inductionVar
-        //     inductionVar += step
-        //     // Loop body
-        //   }
-        val newLoop = IrWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, oldLoop.origin).apply {
-            label = oldLoop.label
-            condition = newLoopCondition
-            body = newBody
-        }
-        return LoopReplacement(newLoop, newLoop)
+    private fun createNegatedConditionCheck(newLoopCondition: IrExpression, doWhileLoop: IrDoWhileLoop): IrWhenImpl {
+        val conditionStartOffset = newLoopCondition.startOffset
+        val conditionEndOffset = newLoopCondition.endOffset
+        val negatedCondition =
+            IrCallImpl.fromSymbolOwner(conditionStartOffset, conditionEndOffset, booleanNot.symbol).apply {
+                dispatchReceiver = newLoopCondition
+            }
+
+        return IrWhenImpl(
+            conditionStartOffset, conditionEndOffset, context.irBuiltIns.unitType, null,
+            listOf(
+                IrBranchImpl(
+                    negatedCondition,
+                    IrBreakImpl(conditionStartOffset, conditionEndOffset, context.irBuiltIns.nothingType, doWhileLoop)
+                )
+            )
+        )
     }
+
 }
 
 private class InitializerCallReplacer(val replacementCall: IrCall) : IrElementTransformerVoid() {

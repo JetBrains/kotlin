@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -53,4 +55,13 @@ interface CommonBackendContext : BackendContext, LoggingContext {
 
     val preferJavaLikeCounterLoop: Boolean
         get() = false
+
+    val reuseLoopVariableAsInductionVariable: Boolean
+        get() = false
+
+    val doWhileCounterLoopOrigin: IrStatementOrigin?
+        get() = null
+
+    val inductionVariableOrigin: IrDeclarationOrigin
+        get() = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
 }

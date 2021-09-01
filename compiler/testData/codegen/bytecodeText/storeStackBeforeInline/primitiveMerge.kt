@@ -15,8 +15,16 @@ fun test() {
 
 // 2 ASTORE
 // 5 ALOAD
+// 0 InlineMarker
+
+// JVM_TEMPLATES
 // 1 MAXLOCALS = 3
 // 1 MAXLOCALS = 4
-// 0 InlineMarker
 // 14 ISTORE
 // 7 ILOAD
+
+// JVM_IR_TEMPLATES
+// 2 MAXLOCALS = 3
+// 1 MAXLOCALS = 4
+// 11 ISTORE
+// 4 ILOAD

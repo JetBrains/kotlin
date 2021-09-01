@@ -1,4 +1,14 @@
 // TARGET_BACKEND: JVM_IR
+
+// IMPORTANT!
+// Please, when your changes cause failures in bytecodeText tests for 'for' loops,
+// examine the resulting bytecode shape carefully.
+// Range and progression-based loops generated with Kotlin compiler should be
+// as close as possible to Java counter loops ('for (int i = a; i < b; ++i) { ... }').
+// Otherwise it may result in performance regression due to missing HotSpot optimizations.
+// Run Kotlin compiler benchmarks (https://github.com/Kotlin/kotlin-benchmarks)
+// with compiler built from your changes if you are not sure.
+
 fun box(): String {
     val intRange = 1..7
     for (i in intRange step 2) {
@@ -12,23 +22,6 @@ fun box(): String {
 // However, if the progression is of type *Range (e.g., IntRange) instead of *Progression (e.g., IntProgression), this
 // check is not needed since *Range always has step == 1.
 //
-// Expected lowered form of loop:
-//
-//   // Additional statements:
-//   val nestedFirst = intRange.first
-//   val nestedLast = intRange.last
-//
-//   // Standard form of loop over progression
-//   var inductionVar = nestedFirst
-//   val last = getProgressionLastElement(nestedFirst, nestedLast, 2)
-//   if (inductionVar <= last) {
-//     // Loop is not empty
-//     do {
-//       val i = inductionVar
-//       inductionVar += 2
-//       // Loop body
-//     } while (i != last)
-//   }
 
 // 0 iterator
 // 0 getStart
@@ -40,6 +33,11 @@ fun box(): String {
 // 0 NEW java/lang/IllegalArgumentException
 // 0 ATHROW
 // 1 IF_ICMPGT
-// 1 IF_ICMPNE
+// 1 IF_ICMPEQ
 // 2 IF
 // 0 INEG
+// 7 ILOAD
+// 4 ISTORE
+// 0 IADD
+// 0 ISUB
+// 1 IINC

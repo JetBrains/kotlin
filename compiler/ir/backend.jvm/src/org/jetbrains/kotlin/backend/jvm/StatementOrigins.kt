@@ -9,4 +9,5 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 
 interface JvmLoweredStatementOrigin {
     object DEFAULT_STUB_CALL_TO_IMPLEMENTATION : IrStatementOriginImpl("DEFAULT_STUB_CALL_TO_IMPLEMENTATION")
+    object DO_WHILE_COUNTER_LOOP: IrStatementOriginImpl("DO_WHILE_COUNTER_LOOP")
 }

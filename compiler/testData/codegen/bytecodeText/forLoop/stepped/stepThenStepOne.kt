@@ -1,4 +1,14 @@
 // TARGET_BACKEND: JVM_IR
+
+// IMPORTANT!
+// Please, when your changes cause failures in bytecodeText tests for 'for' loops,
+// examine the resulting bytecode shape carefully.
+// Range and progression-based loops generated with Kotlin compiler should be
+// as close as possible to Java counter loops ('for (int i = a; i < b; ++i) { ... }').
+// Otherwise it may result in performance regression due to missing HotSpot optimizations.
+// Run Kotlin compiler benchmarks (https://github.com/Kotlin/kotlin-benchmarks)
+// with compiler built from your changes if you are not sure.
+
 fun box(): String {
     for (i in 1..5 step 2 step 1) {
     }
@@ -11,22 +21,6 @@ fun box(): String {
 // If the step is non-constant, there is a check that it is > 0, and if not, an IllegalArgumentException is thrown. However, when the
 // step is constant and > 0, this check does not need to be added.
 //
-// Expected lowered form of loop:
-//
-//   // Additional variables:
-//   val innerNestedLast = getProgressionLastElement(1, 5, 2)
-//
-//   // Standard form of loop over progression
-//   var inductionVar = 1
-//   val last = innerNestedLast
-//   if (inductionVar <= last) {
-//     // Loop is not empty
-//     do {
-//       val i = inductionVar
-//       inductionVar += 1
-//       // Loop body
-//     } while (i != last)
-//   }
 
 // 0 iterator
 // 0 getStart
@@ -38,5 +32,10 @@ fun box(): String {
 // 0 NEW java/lang/IllegalArgumentException
 // 0 ATHROW
 // 1 IF_ICMPGT
-// 1 IF_ICMPNE
+// 1 IF_ICMPEQ
 // 2 IF
+// 4 ILOAD
+// 2 ISTORE
+// 0 IADD
+// 0 ISUB
+// 1 IINC

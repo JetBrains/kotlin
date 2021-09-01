@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -216,6 +217,12 @@ class JvmBackendContext(
 
     override val preferJavaLikeCounterLoop: Boolean
         get() = true
+
+    override val reuseLoopVariableAsInductionVariable: Boolean
+        get() = true
+
+    override val doWhileCounterLoopOrigin: IrStatementOrigin
+        get() = JvmLoweredStatementOrigin.DO_WHILE_COUNTER_LOOP
 
     inner class JvmIr(
         irModuleFragment: IrModuleFragment,

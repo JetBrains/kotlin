@@ -20,5 +20,5 @@ fun foo() : String {
 // JVM_IR_TEMPLATES
 // 4 ASTORE
 // 16 ALOAD
-// 1 MAXLOCALS = 7
+// 1 MAXLOCALS = 6
 // 0 InlineMarker
