@@ -41,3 +41,5 @@ public inline fun repeat(times: Int, action: (Int) -> Unit) {
         action(index)
     }
 }
+
+public inline fun error(message: Any): Nothing = throw IllegalStateException(message.toString())
