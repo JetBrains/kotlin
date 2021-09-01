@@ -49,7 +49,6 @@ internal class OverriddenFunctionInfo(
                 && function.bridgeDirectionsTo(overriddenFunction).allNotNeeded()
 
     fun getImplementation(context: Context): IrSimpleFunction? {
-
         val target = function.target
         val implementation = if (!needBridge)
             target
@@ -351,8 +350,11 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context, va
 
     val interfaceVTableEntries: List<IrSimpleFunction> by lazy {
         require(irClass.isInterface)
-        irClass.overridableOrOverridingMethods
-                .filter { f -> f.isReal || f.overriddenSymbols.any { f.needBridgeTo(it.owner) } }
+        irClass.simpleFunctions()
+                .filter { f ->
+                    f.isOverridable && f.bridgeTarget == null
+                            && (f.isReal || f.overriddenSymbols.any { f.needBridgeTo(it.owner) })
+                }
                 .sortedBy { it.uniqueName }
     }
 

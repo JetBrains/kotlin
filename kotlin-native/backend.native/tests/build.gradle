@@ -2956,6 +2956,10 @@ task interfaceCallsNCasts_functionNameClash(type: KonanLocalTest) {
     source = "codegen/interfaceCallsNCasts/functionNameClash.kt"
 }
 
+task interfaceCallsNCasts_finalMethod(type: KonanLocalTest) {
+    source = "codegen/interfaceCallsNCasts/finalMethod.kt"
+}
+
 task interfaceCallsNCasts_diamond(type: KonanLocalTest) {
     source = "codegen/interfaceCallsNCasts/diamond.kt"
 }
