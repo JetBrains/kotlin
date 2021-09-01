@@ -51,14 +51,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     private val statusResolver: FirStatusResolver = FirStatusResolver(session, scopeSession)
 
     private fun FirDeclaration.visibilityForApproximation(): Visibility {
-        if (this !is FirMemberDeclaration) return Visibilities.Local
         val container = context.containers.getOrNull(context.containers.size - 2)
-        val containerVisibility =
-            if (container == null) Visibilities.Public
-            else (container as? FirRegularClass)?.visibility ?: Visibilities.Local
-        if (containerVisibility == Visibilities.Local || visibility == Visibilities.Local) return Visibilities.Local
-        if (containerVisibility == Visibilities.Private) return Visibilities.Private
-        return visibility
+        return visibilityForApproximation(container)
     }
 
     private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T {

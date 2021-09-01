@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPE_ALIAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_WITHOUT_EXPECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_ACTUALS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_ANONYMOUS_TYPE_INFERRED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_EXPECTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_SUPER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST
@@ -1068,6 +1069,7 @@ class FirDefaultErrorMessages {
                 RENDER_CLASS_OR_OBJECT,
                 DECLARATION_NAME
             )
+            map.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has anonymous type. Please specify type explicitly", NOT_RENDERED)
             map.put(
                 MANY_IMPL_MEMBER_NOT_IMPLEMENTED,
                 "{0} must override {1} because it inherits many implementations of it",

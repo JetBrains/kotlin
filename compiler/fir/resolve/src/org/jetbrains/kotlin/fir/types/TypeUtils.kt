@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
-import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -334,38 +333,50 @@ private fun FirTypeRef.hideLocalTypeIfNeeded(
     containingCallableVisibility: Visibility?,
     isInlineFunction: Boolean = false
 ): FirTypeRef {
-    if (containingCallableVisibility == null) {
+    if (!shouldHideLocalType(containingCallableVisibility, isInlineFunction)) return this
+    val firClass =
+        (((this as? FirResolvedTypeRef)
+            ?.type as? ConeClassLikeType)
+            ?.lookupTag as? ConeClassLookupTagWithFixedSymbol)
+            ?.symbol?.fir
+    if (firClass !is FirAnonymousObject) {
+        // NB: local classes are acceptable here, but reported by EXPOSED_* checkers as errors
         return this
     }
-    // Approximate types for non-private (all but package private or private) members.
-    // Also private inline functions, as per KT-33917.
-    if (containingCallableVisibility == Visibilities.Public ||
-        containingCallableVisibility == Visibilities.Protected ||
-        containingCallableVisibility == Visibilities.Internal ||
-        (containingCallableVisibility == Visibilities.Private && isInlineFunction)
-    ) {
-        val firClass =
-            (((this as? FirResolvedTypeRef)
-                ?.type as? ConeClassLikeType)
-                ?.lookupTag as? ConeClassLookupTagWithFixedSymbol)
-                ?.symbol?.fir
-        if (firClass !is FirAnonymousObject) {
-            // NB: local classes are acceptable here, but reported by EXPOSED_* checkers as errors
-            return this
-        }
-        if (firClass.superTypeRefs.size > 1) {
-            return buildErrorTypeRef {
-                diagnostic = ConeSimpleDiagnostic("Cannot hide local type ${firClass.render()}")
-            }
-        }
-        val superType = firClass.superTypeRefs.single()
-        if (superType is FirResolvedTypeRef) {
-            val newKind = source?.kind
-            return if (newKind is FirFakeSourceElementKind) superType.copyWithNewSourceKind(newKind) else superType
-        }
+    if (firClass.superTypeRefs.size > 1) {
+        // NB: don't approximate so members can be resolved. The error is reported by FirAmbiguousAnonymousTypeChecker.
+        return this
+    }
+    val superType = firClass.superTypeRefs.single()
+    if (superType is FirResolvedTypeRef) {
+        val newKind = source?.kind
+        return if (newKind is FirFakeSourceElementKind) superType.copyWithNewSourceKind(newKind) else superType
     }
     return this
 }
+
+fun shouldHideLocalType(containingCallableVisibility: Visibility?, isInlineFunction: Boolean): Boolean {
+    if (containingCallableVisibility == null) {
+        return false
+    }
+    // Approximate types for non-private (all but package private or private) members.
+    // Also private inline functions, as per KT-33917.
+    return containingCallableVisibility == Visibilities.Public ||
+            containingCallableVisibility == Visibilities.Protected ||
+            containingCallableVisibility == Visibilities.Internal ||
+            (containingCallableVisibility == Visibilities.Private && isInlineFunction)
+}
+
+fun FirDeclaration.visibilityForApproximation(container: FirDeclaration?): Visibility {
+    if (this !is FirMemberDeclaration) return Visibilities.Local
+    val containerVisibility =
+        if (container == null || container is FirFile) Visibilities.Public
+        else (container as? FirRegularClass)?.visibility ?: Visibilities.Local
+    if (containerVisibility == Visibilities.Local || visibility == Visibilities.Local) return Visibilities.Local
+    if (containerVisibility == Visibilities.Private) return Visibilities.Private
+    return visibility
+}
+
 
 fun ConeTypeContext.captureFromArgumentsInternal(type: ConeKotlinType, status: CaptureStatus): ConeKotlinType? {
     val capturedArguments = captureArguments(type, status) ?: return null

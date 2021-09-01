@@ -1397,6 +1397,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val invisibleDeclaration: KtCallableSymbol
     }
 
+    abstract class AmbiguousAnonymousTypeInferred : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = AmbiguousAnonymousTypeInferred::class
+        abstract val superTypes: List<KtType>
+    }
+
     abstract class ManyImplMemberNotImplemented : KtFirDiagnostic<KtClassOrObject>() {
         override val diagnosticClass get() = ManyImplMemberNotImplemented::class
         abstract val classOrObject: KtClassLikeSymbol

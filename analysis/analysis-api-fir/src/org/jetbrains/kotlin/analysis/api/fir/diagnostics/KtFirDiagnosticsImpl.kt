@@ -2232,6 +2232,14 @@ internal class InvisibleAbstractMemberFromSuperWarningImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class AmbiguousAnonymousTypeInferredImpl(
+    override val superTypes: List<KtType>,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.AmbiguousAnonymousTypeInferred(), KtAbstractFirDiagnostic<KtDeclaration> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class ManyImplMemberNotImplementedImpl(
     override val classOrObject: KtClassLikeSymbol,
     override val missingDeclaration: KtCallableSymbol,
