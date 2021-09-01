@@ -369,8 +369,9 @@ object Generators : TemplateGroupBase() {
 
     private fun elementsConversionClause(elements: Family) =
             """
-            The [elements] ${elements.doc.collection} may be converted to a [HashSet] to speed up the operation, thus the elements are required to have
-            a correct and stable implementation of `hashCode()` that doesn't change between successive invocations.
+            Before Kotlin 1.6, the [elements] ${elements.doc.collection} may have been converted to a [HashSet] to speed up the operation, thus the elements were required to have
+            a correct and stable implementation of `hashCode()` that didn't change between successive invocations. 
+            On JVM, you can enable this behavior back with the system property `kotlin.collections.convert_arg_to_set_in_removeAll` set to `true`.
             """
 
     val f_minus_iterable = fn("minus(elements: Iterable<T>)") {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -124,4 +124,11 @@ internal actual inline fun checkCountOverflow(count: Int): Int {
 }
 
 
-internal actual fun brittleContainsOptimizationEnabled(): Boolean = System.getProperty("kotlin.collections.removing.legacymode").toBoolean()
+@Suppress("NOTHING_TO_INLINE")
+internal actual inline fun brittleContainsOptimizationEnabled(): Boolean = CollectionSystemProperties.brittleContainsOptimizationEnabled
+
+internal object CollectionSystemProperties {
+    @JvmField
+    internal val brittleContainsOptimizationEnabled: Boolean =
+        System.getProperty("kotlin.collections.convert_arg_to_set_in_removeAll")?.toBoolean() ?: false
+}

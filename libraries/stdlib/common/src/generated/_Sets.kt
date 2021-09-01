@@ -33,8 +33,9 @@ public operator fun <T> Set<T>.minus(element: T): Set<T> {
  * 
  * The returned set preserves the element iteration order of the original set.
  * 
- * The [elements] array may be converted to a [HashSet] to speed up the operation, thus the elements are required to have
- * a correct and stable implementation of `hashCode()` that doesn't change between successive invocations.
+ * Before Kotlin 1.6, the [elements] array may have been converted to a [HashSet] to speed up the operation, thus the elements were required to have
+ * a correct and stable implementation of `hashCode()` that didn't change between successive invocations.
+ * On JVM, you can enable this behavior back with the system property `kotlin.collections.convert_arg_to_set_in_removeAll` set to `true`.
  */
 public operator fun <T> Set<T>.minus(elements: Array<out T>): Set<T> {
     val result = LinkedHashSet<T>(this)
@@ -47,8 +48,9 @@ public operator fun <T> Set<T>.minus(elements: Array<out T>): Set<T> {
  * 
  * The returned set preserves the element iteration order of the original set.
  * 
- * The [elements] collection may be converted to a [HashSet] to speed up the operation, thus the elements are required to have
- * a correct and stable implementation of `hashCode()` that doesn't change between successive invocations.
+ * Before Kotlin 1.6, the [elements] collection may have been converted to a [HashSet] to speed up the operation, thus the elements were required to have
+ * a correct and stable implementation of `hashCode()` that didn't change between successive invocations.
+ * On JVM, you can enable this behavior back with the system property `kotlin.collections.convert_arg_to_set_in_removeAll` set to `true`.
  */
 public operator fun <T> Set<T>.minus(elements: Iterable<T>): Set<T> {
     val other = elements.convertToSetForSetOperationWith(this)
@@ -66,8 +68,9 @@ public operator fun <T> Set<T>.minus(elements: Iterable<T>): Set<T> {
  * 
  * The returned set preserves the element iteration order of the original set.
  * 
- * The [elements] sequence may be converted to a [HashSet] to speed up the operation, thus the elements are required to have
- * a correct and stable implementation of `hashCode()` that doesn't change between successive invocations.
+ * Before Kotlin 1.6, the [elements] sequence may have been converted to a [HashSet] to speed up the operation, thus the elements were required to have
+ * a correct and stable implementation of `hashCode()` that didn't change between successive invocations.
+ * On JVM, you can enable this behavior back with the system property `kotlin.collections.convert_arg_to_set_in_removeAll` set to `true`.
  */
 public operator fun <T> Set<T>.minus(elements: Sequence<T>): Set<T> {
     val result = LinkedHashSet<T>(this)
