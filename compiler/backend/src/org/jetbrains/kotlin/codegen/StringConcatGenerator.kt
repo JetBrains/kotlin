@@ -33,6 +33,12 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
             fun constant(value: String) = Item(JAVA_STRING_TYPE, ItemType.CONSTANT, value)
             fun parameter(type: Type) = Item(type, ItemType.PARAMETER, "\u0001")
         }
+
+        val encodedUTF8Size by lazy {
+            value.encodedUTF8Size()
+        }
+
+        fun fitEncodingLimit() = encodedUTF8Size <= STRING_UTF8_ENCODING_BYTE_LIMIT
     }
 
     private val items = arrayListOf<Item>()
@@ -183,28 +189,31 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
 
     private fun fitRestrictions(items: List<Item>): ArrayList<Item> {
         val result = arrayListOf<Item>()
+        //Split long CONSTANT and INLINED_CONSTANT into smaller strings and convert them into CONSTANT
         items.forEach { item ->
             when (item.itemType) {
-                //split INLINED_CONSTANT becomes split CONSTANT one
-                ItemType.CONSTANT, ItemType.INLINED_CONSTANT -> splitStringConstant(item.value).forEach { part ->
-                    result.add(
-                        Item(
-                            item.type,
-                            ItemType.CONSTANT,
-                            part
+                //split INLINED_CONSTANT becomes split CONSTANT
+                ItemType.CONSTANT, ItemType.INLINED_CONSTANT ->
+                    if (item.fitEncodingLimit()) result.add(item) else splitStringConstant(item.value).forEach { part ->
+                        result.add(
+                            Item(
+                                item.type,
+                                ItemType.CONSTANT,
+                                part
+                            )
                         )
-                    )
-                }
+                    }
                 else -> result.add(item)
             }
         }
 
-        var recipe = buildrecipe(result)
-        while (recipe.length >= MAX_CONST_STRING_PART_LIMIT) {
-            val item = items.filter { it.itemType == ItemType.INLINED_CONSTANT }.maxByOrNull { it.value.length } ?: break
-            //move longest INLINED_CONSTANT to CONSTANT
+        //Check restriction for recipe string
+        var recipe = buildRecipe(result)
+        while (recipe.toString().encodedUTF8Size() > STRING_UTF8_ENCODING_BYTE_LIMIT) {
+            val item = items.filter { it.itemType == ItemType.INLINED_CONSTANT }.maxByOrNull { it.encodedUTF8Size } ?: break
+            //move largest INLINED_CONSTANT to CONSTANT
             item.itemType = ItemType.CONSTANT
-            recipe = buildrecipe(result)
+            recipe = buildRecipe(result)
         }
 
         return result
