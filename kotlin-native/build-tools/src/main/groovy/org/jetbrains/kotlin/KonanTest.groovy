@@ -217,7 +217,8 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
 
     void parseLanguageFlags(String src) {
         def text = project.rootProject.file(src).text
-        def languageSettings = findLinesWithPrefixesRemoved(text, "// !LANGUAGE: ")
+        def languageSettings = findLinesWithPrefixesRemoved(text, "// !LANGUAGE: ") +
+                findLinesWithPrefixesRemoved(text, '// LANGUAGE: ')
         if (languageSettings.size() != 0) {
             languageSettings.forEach { line ->
                 line.split(" ").toList().forEach {
@@ -450,7 +451,8 @@ fun runTest() {
 
         if (excludeList.any { fileName.replace(File.separator, "/").contains(it) }) return false
 
-        def languageSettings = findLinesWithPrefixesRemoved(text, '// !LANGUAGE: ')
+        def languageSettings = findLinesWithPrefixesRemoved(text, '// !LANGUAGE: ') +
+                findLinesWithPrefixesRemoved(text, '// LANGUAGE: ')
         if (!languageSettings.empty) {
             def settings = languageSettings.first()
             if (settings.contains('-ProperIeee754Comparisons') ||  // K/N supports only proper IEEE754 comparisons
