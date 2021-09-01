@@ -352,7 +352,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context, va
     val interfaceVTableEntries: List<IrSimpleFunction> by lazy {
         require(irClass.isInterface)
         irClass.overridableOrOverridingMethods
-                .filter { f -> f.isReal || f.overriddenSymbols.any { f.needBridgeTo(it.owner) } }
+                .filter { f -> f.isReal || f.overriddenSymbols.any { OverriddenFunctionInfo(f, it.owner).needBridge } }
                 .sortedBy { it.uniqueName }
     }
 
