@@ -236,6 +236,23 @@ class ModuleStructureExtractorImpl(
                         }
                     }
                 }
+                ModuleStructureDirectives.JVM_TARGET -> {
+                    if (currentModuleTargetPlatform != null) {
+                        assertions.fail { "Target platform already specified twice for module $currentModuleName" }
+                    }
+                    currentModuleTargetPlatform = if (values.size != 1) {
+                        assertions.fail { "JVM target should be single" }
+                    } else {
+                        when (values.single()) {
+                            "1.6" -> JvmPlatforms.jvm16
+                            "1.8" -> JvmPlatforms.jvm18
+                            "9" -> JvmPlatforms.jvm9
+                            "15" -> JvmPlatforms.jvm15
+                            else -> assertions.fail { "Incorrect value for JVM target" }
+                        }
+                    }
+                    return false // Workaround for FE and FIR
+                }
                 else -> return false
             }
 

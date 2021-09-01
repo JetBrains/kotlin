@@ -56,4 +56,8 @@ object ModuleStructureDirectives : SimpleDirectivesContainer() {
     val TARGET_PLATFORM by enumDirective<TargetPlatformEnum>(
         "Declares target platform for current module"
     )
+
+    val JVM_TARGET by stringDirective(
+        "Declares JVM target platform for current module"
+    )
 }
