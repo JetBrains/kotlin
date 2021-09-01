@@ -21,9 +21,21 @@ import java.lang.StringBuilder
 
 class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapter) {
 
-    private val template = StringBuilder("")
-    private val specialSymbolsInTemplate = arrayListOf<String>()
-    private val paramTypes = arrayListOf<Type>()
+    enum class ItemType {
+        PARAMETER,
+        CONSTANT,
+        INLINED_CONSTANT
+    }
+
+    data class Item(val type: Type, var itemType: ItemType, val value: String) {
+        companion object {
+            fun inlinedConstant(value: String) = Item(JAVA_STRING_TYPE, ItemType.INLINED_CONSTANT, value)
+            fun constant(value: String) = Item(JAVA_STRING_TYPE, ItemType.CONSTANT, value)
+            fun parameter(type: Type) = Item(type, ItemType.PARAMETER, "\u0001")
+        }
+    }
+
+    private val items = arrayListOf<Item>()
     private var paramSlots = 0
     private var justFlushed = false
 
@@ -46,22 +58,20 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
                 is StackValue.Constant -> {
                     val value = stackValue.value
                     if (value is String && (value.contains("\u0001") || value.contains("\u0002"))) {
-                        template.append("\u0002") //reference to special symbols added on next line
-                        specialSymbolsInTemplate.add(value)
+                        items.add(Item.constant(value)) //strings with special symbols generated via bootstrap
                     } else if (value is Char && (value == 1.toChar() || value == 2.toChar())) {
-                        template.append("\u0002") //reference to special symbols added on next line
-                        specialSymbolsInTemplate.add(value.toString())
+                        items.add(Item.constant(value.toString())) //strings with special symbols generated via bootstrap
                     } else {
-                        template.append(value)
+                        items.add(Item.inlinedConstant(value.toString()))
                     }
                     return
                 }
                 TRUE -> {
-                    template.append(true)
+                    items.add(Item.inlinedConstant(true.toString()))
                     return
                 }
                 FALSE -> {
-                    template.append(false)
+                    items.add(Item.inlinedConstant(false.toString()))
                     return
                 }
             }
@@ -84,9 +94,8 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
             )
         } else {
             justFlushed = false
-            paramTypes.add(type)
+            items.add(Item.parameter(type))
             paramSlots += type.size
-            template.append("\u0001")
             if (paramSlots >= 199) {
                 // Concatenate current arguments into string
                 // because of `StringConcatFactory` limitation add use it as new argument for further processing:
@@ -112,11 +121,28 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
                     false
                 )
 
+                val templateBuilder = StringBuilder()
+                items.forEach {
+                    when (it.itemType) {
+                        ItemType.PARAMETER ->
+                            templateBuilder.append("\u0001")
+                        ItemType.CONSTANT ->
+                            templateBuilder.append("\u0002")
+                        ItemType.INLINED_CONSTANT ->
+                            templateBuilder.append(it.value)
+                    }
+                }
+
+                val specialSymbolsInTemplate = items.filter { it.itemType == ItemType.CONSTANT }.map { it.value }
+
                 mv.invokedynamic(
                     "makeConcatWithConstants",
-                    Type.getMethodDescriptor(JAVA_STRING_TYPE, *paramTypes.toTypedArray()),
+                    Type.getMethodDescriptor(
+                        JAVA_STRING_TYPE,
+                        *items.filter { it.itemType == ItemType.PARAMETER }.map { it.type }.toTypedArray()
+                    ),
                     bootstrap,
-                    arrayOf(template.toString()) + specialSymbolsInTemplate
+                    arrayOf(templateBuilder.toString()) + specialSymbolsInTemplate
                 )
             } else {
                 val bootstrap = Handle(
@@ -126,22 +152,24 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
                     "(Ljava/lang/invoke/MethodHandles\$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
                     false
                 )
+                assert(items.all { it.itemType == ItemType.PARAMETER }) {
+                    "All arguments in `indy` concatenation should be processed as parameters, but: ${
+                        items.filterNot { it.itemType == ItemType.PARAMETER }.joinToString()
+                    }"
+                }
 
                 mv.invokedynamic(
                     "makeConcat",
-                    Type.getMethodDescriptor(JAVA_STRING_TYPE, *paramTypes.toTypedArray()),
+                    Type.getMethodDescriptor(JAVA_STRING_TYPE, *items.map { it.type }.toTypedArray()),
                     bootstrap,
                     arrayOf()
                 )
             }
             //clear old template
-            template.clear()
-            specialSymbolsInTemplate.clear()
-            paramTypes.clear()
+            items.clear()
 
             //add just flushed string
-            paramTypes.add(JAVA_STRING_TYPE)
-            template.append("\u0001")
+            items.add(Item.parameter(JAVA_STRING_TYPE))
             paramSlots = JAVA_STRING_TYPE.size
         }
     }
