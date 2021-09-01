@@ -4678,7 +4678,7 @@ interopTest("interop_kt44283") {
 }
 
 dynamicTest("interop_kt43502") {
-    disabled = (project.target.name != project.hostName)
+    disabled = (project.testTarget == 'wasm32') // wasm doesn't support -produce dynamic
     interop = "kt43502"
     source = "interop/kt43502/main.kt"
     cSource = "$projectDir/interop/kt43502/main.c"
@@ -5038,7 +5038,7 @@ standaloneTest("interop_objc_illegal_sharing") {
 }
 
 dynamicTest("produce_dynamic") {
-    disabled = (project.target.name != project.hostName)
+    disabled = (project.testTarget == 'wasm32') // wasm doesn't support -produce dynamic
     source = "produce_dynamic/simple/hello.kt"
     cSource = "$projectDir/produce_dynamic/simple/main.c"
     goldValue = "Hello, dynamic!\n" +
@@ -5064,7 +5064,7 @@ dynamicTest("produce_dynamic") {
 }
 
 dynamicTest("kt36639") {
-    disabled = (project.target.name != project.hostName)
+    disabled = (project.testTarget == 'wasm32') // wasm doesn't support -produce dynamic
     source = "produce_dynamic/kt-36639/main.kt"
     cSource = "$projectDir/produce_dynamic/kt-36639/main.c"
     goldValue = """|CFoo1::extfoo
@@ -5079,7 +5079,7 @@ dynamicTest("kt36639") {
 for (i in 0..2) {
     dynamicTest("kt42796_$i") {
         clangTool = "clang++"
-        disabled = (project.target.name != project.hostName)
+        disabled = (project.testTarget == 'wasm32') // wasm doesn't support -produce dynamic
         source = "produce_dynamic/kt-42796/main-${i}.kt"
         cSource = "$projectDir/produce_dynamic/kt-42796/main.cpp"
         goldValue = ""
@@ -5098,7 +5098,7 @@ dynamicTest("produce_dynamic_unhandledException") {
 }
 
 dynamicTest("interop_concurrentRuntime") {
-    disabled = (project.target.name != project.hostName)
+    disabled = (project.testTarget == 'wasm32') // wasm doesn't support -produce dynamic
     disabled = true  // KT-43180
     source = "interop/concurrentTerminate/reverseInterop.kt"
     cSource = "$projectDir/interop/concurrentTerminate/main.cpp"
@@ -5109,14 +5109,14 @@ dynamicTest("interop_concurrentRuntime") {
 }
 
 dynamicTest("interop_kt42397") {
-    disabled = project.target.name != project.hostName
+    disabled = (project.testTarget == 'wasm32') // wasm doesn't support -produce dynamic
     source = "interop/kt42397/knlibrary.kt"
     cSource = "$projectDir/interop/kt42397/test.cpp"
     clangTool = "clang++"
 }
 
 dynamicTest("interop_cleaners_main_thread") {
-    disabled = (project.target.name != project.hostName) || isNoopGC
+    disabled = (project.testTarget == 'wasm32') || isNoopGC // wasm doesn't support -produce dynamic
     source = "interop/cleaners/cleaners.kt"
     cSource = "$projectDir/interop/cleaners/main_thread.cpp"
     clangTool = "clang++"
@@ -5125,7 +5125,7 @@ dynamicTest("interop_cleaners_main_thread") {
 }
 
 dynamicTest("interop_cleaners_second_thread") {
-    disabled = (project.target.name != project.hostName) || isNoopGC
+    disabled = (project.testTarget == 'wasm32') || isNoopGC // wasm doesn't support -produce dynamic
     source = "interop/cleaners/cleaners.kt"
     cSource = "$projectDir/interop/cleaners/second_thread.cpp"
     clangTool = "clang++"
@@ -5134,7 +5134,7 @@ dynamicTest("interop_cleaners_second_thread") {
 }
 
 dynamicTest("interop_cleaners_leak") {
-    disabled = (project.target.name != project.hostName)
+    disabled = (project.testTarget == 'wasm32') // wasm doesn't support -produce dynamic
     source = "interop/cleaners/cleaners.kt"
     cSource = "$projectDir/interop/cleaners/leak.cpp"
     clangTool = "clang++"
@@ -5143,7 +5143,7 @@ dynamicTest("interop_cleaners_leak") {
 }
 
 dynamicTest("interop_migrating_main_thread_legacy") {
-    disabled = (project.target.name != project.hostName) ||
+    disabled = (project.testTarget == 'wasm32') || // wasm doesn't support -produce dynamic
         isExperimentalMM  // Experimental MM will not support legacy destroy runtime mode.
     source = "interop/migrating_main_thread/lib.kt"
     flags = ['-Xdestroy-runtime-mode=legacy']
@@ -5153,7 +5153,7 @@ dynamicTest("interop_migrating_main_thread_legacy") {
 }
 
 dynamicTest("interop_migrating_main_thread") {
-    disabled = (project.target.name != project.hostName)
+    disabled = (project.testTarget == 'wasm32') // wasm doesn't support -produce dynamic
     source = "interop/migrating_main_thread/lib.kt"
     flags = ['-Xdestroy-runtime-mode=on-shutdown']
     if (isExperimentalMM) {
@@ -5164,7 +5164,7 @@ dynamicTest("interop_migrating_main_thread") {
 }
 
 dynamicTest("interop_memory_leaks") {
-    disabled = (project.target.name != project.hostName) ||
+    disabled = (project.testTarget == 'wasm32') || // wasm doesn't support -produce dynamic
         isExperimentalMM  // Experimental MM will not support legacy destroy runtime mode.
     source = "interop/memory_leaks/lib.kt"
     cSource = "$projectDir/interop/memory_leaks/main.cpp"
