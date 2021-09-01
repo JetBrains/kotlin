@@ -141,6 +141,8 @@ public fun kotlin.CharSequence.commonSuffixWith(other: kotlin.CharSequence, igno
 @kotlin.SinceKotlin(version = "1.2")
 public fun kotlin.String.compareTo(other: kotlin.String, ignoreCase: kotlin.Boolean = ...): kotlin.Int
 
+@kotlin.Deprecated(message = "Use String.plus() instead", replaceWith = kotlin.ReplaceWith(expression = "this + str", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.String.concat(str: kotlin.String): kotlin.String
 
@@ -476,12 +478,16 @@ public inline fun <R : kotlin.Any, C : kotlin.collections.MutableCollection<in R
 
 public inline fun <R, C : kotlin.collections.MutableCollection<in R>> kotlin.CharSequence.mapTo(destination: C, transform: (kotlin.Char) -> R): C
 
+@kotlin.Deprecated(message = "Use Regex.findAll() instead or invoke matches() on String dynamically: this.asDynamic().match(regex)")
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.String.match(regex: kotlin.String): kotlin.Array<kotlin.String>?
 
 @kotlin.internal.InlineOnly
 public inline infix fun kotlin.CharSequence.matches(regex: kotlin.text.Regex): kotlin.Boolean
 
+@kotlin.Deprecated(message = "Use Regex.matches() instead", replaceWith = kotlin.ReplaceWith(expression = "regex.toRegex().matches(this)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.6")
 public fun kotlin.String.matches(regex: kotlin.String): kotlin.Boolean
 
 @kotlin.Deprecated(message = "Use maxOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "this.maxOrNull()", imports = {}))
