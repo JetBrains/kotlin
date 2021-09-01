@@ -11,6 +11,8 @@ In particular:
 * `Worker.executeAfter` will no longer require `operation` to be frozen, and `Worker.execute` will no longer require
   `producer` to return an isolated object subgraph.
 
+Also, reference cycles containing `AtomicReference` and `FreezableAtomicReference` do not cause memory leaks anymore.
+
 A few caveats:
 * As with the previous MM, memory is not reclaimed eagerly: an object is reclaimed only when GC happens. This extends
   to Swift/ObjC objects that crossed interop boundary into Kotlin/Native.
@@ -71,6 +73,8 @@ kotlin.targets.withType(KotlinNativeTarget::class.java) {
     }
 }
 ```
+
+If `kotlin.native.isExperimentalMM()` returns `true`, you've successfully enabled the new memory model.
 
 ### Update the libraries
 
