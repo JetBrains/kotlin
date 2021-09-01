@@ -10527,8 +10527,6 @@ public open class HashMap<K, V> : kotlin.collections.AbstractMutableMap<K, V>, k
 
     public open override fun containsValue(value: V): kotlin.Boolean
 
-    protected open fun createEntrySet(): kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>>
-
     public open override operator fun get(key: K): V?
 
     public open override fun put(key: K, value: V): V?
@@ -10614,8 +10612,6 @@ public open class LinkedHashMap<K, V> : kotlin.collections.HashMap<K, V>, kotlin
     public open override fun containsKey(key: K): kotlin.Boolean
 
     public open override fun containsValue(value: V): kotlin.Boolean
-
-    protected open override fun createEntrySet(): kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>>
 
     public open override operator fun get(key: K): V?
 

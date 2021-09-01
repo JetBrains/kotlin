@@ -104,7 +104,7 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
             return _entries!!
         }
 
-    protected open fun createEntrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = EntrySet()
+    internal open fun createEntrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = EntrySet()
 
     actual override operator fun get(key: K): V? = internalMap.get(key)
 

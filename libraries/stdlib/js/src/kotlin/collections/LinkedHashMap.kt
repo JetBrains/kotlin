@@ -234,7 +234,7 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
     }
 
 
-    override fun createEntrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = EntrySet()
+    internal override fun createEntrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = EntrySet()
 
     actual override operator fun get(key: K): V? = map.get(key)?.value
 
