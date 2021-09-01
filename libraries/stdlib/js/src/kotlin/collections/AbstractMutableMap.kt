@@ -126,15 +126,6 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
 
                     override val size: Int get() = this@AbstractMutableMap.size
 
-                    // TODO: should we implement them this way? Currently it's unspecified in JVM
-                    override fun equals(other: Any?): Boolean {
-                        if (this === other) return true
-                        if (other !is Collection<*>) return false
-                        return AbstractList.orderedEquals(this, other)
-                    }
-
-                    override fun hashCode(): Int = AbstractList.orderedHashCode(this)
-
                     override fun checkIsMutable(): Unit = this@AbstractMutableMap.checkIsMutable()
                 }
             }
