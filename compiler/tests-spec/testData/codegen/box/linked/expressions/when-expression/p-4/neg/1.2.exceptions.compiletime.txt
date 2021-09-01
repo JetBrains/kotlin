@@ -1,1 +1,1 @@
-java.lang.IllegalStateException: NO_ELSE_IN_WHEN: 'when' expression must be exhaustive, add necessary 'true', 'false' branches or 'else' branch instead (15,17) in /1.2.kt
+java.lang.IllegalStateException: NO_ELSE_IN_WHEN: 'when' expression must be exhaustive, add necessary 'false' branch or 'else' branch instead (15,17) in /1.2.kt
