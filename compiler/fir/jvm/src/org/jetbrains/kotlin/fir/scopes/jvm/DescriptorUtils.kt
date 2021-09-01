@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
-import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
+import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -46,7 +46,7 @@ fun FirFunction.computeJvmDescriptor(
 
     append("(")
     for (parameter in valueParameters) {
-        typeConversion(parameter.returnTypeRef)?.let { appendConeType(it, typeConversion) }
+        appendConeType(typeConversion(parameter.returnTypeRef), typeConversion)
     }
     append(")")
 
@@ -54,9 +54,17 @@ fun FirFunction.computeJvmDescriptor(
         if (this@computeJvmDescriptor !is FirSimpleFunction || returnTypeRef.isVoid()) {
             append("V")
         } else {
-            typeConversion(returnTypeRef)?.let { appendConeType(it, typeConversion) }
+            appendConeType(typeConversion(returnTypeRef), typeConversion)
         }
     }
+}
+
+private fun StringBuilder.appendClassId(classId: ClassId) {
+    append("L")
+        .append(classId.packageFqName.asString().replace(".", "/"))
+        .append("/")
+        .append(classId.relativeClassName)
+        .append(";")
 }
 
 private fun StringBuilder.appendConeType(coneType: ConeKotlinType?, typeConversion: (FirTypeRef) -> ConeKotlinType?) {
@@ -82,28 +90,23 @@ private fun StringBuilder.appendConeReferenceType(
 ) {
     when (coneType) {
         null -> append("Ljava/lang/Object;")
-        is ConeClassErrorType -> Unit // TODO: just skipping it seems wrong
+        is ConeClassErrorType -> append('*')
         is ConeClassLikeType -> {
             val baseClassId = coneType.lookupTag.classId
             if (baseClassId == StandardClassIds.Array) {
-                append("[")
-                appendConeReferenceType(coneType.typeArguments.singleOrNull()?.type, typeConversion, visited)
+                // `Array<T>` -> `T[]`, where `T` is non-primitive, so e.g. `Array<Int>` is `Integer[]`.
+                append('[').appendConeReferenceType(coneType.typeArguments.singleOrNull()?.type, typeConversion, visited)
                 return
             } else if (baseClassId.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME) {
+                // For primitive `T`, it should be `IntArray`, etc.
                 PrimitiveType.getByShortArrayName(baseClassId.shortClassName.identifier)?.let {
-                    append("[")
-                    append(JvmPrimitiveType.get(it).desc)
+                    append('[').append(JvmPrimitiveType.get(it).desc)
                     return
                 }
             }
-            val classId = JavaToKotlinClassMap.mapKotlinToJava(baseClassId.asSingleFqName().toUnsafe()) ?: baseClassId
-            append("L")
-            append(classId.packageFqName.asString().replace(".", "/"))
-            append("/")
-            append(classId.relativeClassName)
-            append(";")
+            appendClassId(JavaToKotlinClassMap.mapKotlinToJava(baseClassId.asSingleFqName().toUnsafe()) ?: baseClassId)
         }
-        // `T extends A & B & ...` -> `A`
+        // `T extends A & B & ...` -> `A`; type parameters cannot have primitive upper bounds.
         is ConeTypeParameterType -> {
             val firstBound = coneType.lookupTag.typeParameterSymbol.takeIf { visited.add(it) }
                 ?.fir?.bounds?.firstOrNull()?.let { typeConversion(it) }
@@ -113,7 +116,7 @@ private fun StringBuilder.appendConeReferenceType(
         is ConeDefinitelyNotNullType -> appendConeReferenceType(coneType.original, typeConversion, visited)
         // `T..T?` is always a reference type; primitives are non-nullable.
         is ConeFlexibleType -> appendConeReferenceType(coneType.lowerBound, typeConversion, visited)
-        else -> Unit // TODO: throw an error? should check that Java type conversion/enhancement can only produce these cone types
+        else -> append('*') // TODO: throw an error? should check that Java type conversion/enhancement can only produce these cone types
     }
 }
 
