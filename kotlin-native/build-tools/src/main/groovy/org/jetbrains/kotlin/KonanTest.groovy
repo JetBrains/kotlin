@@ -466,6 +466,10 @@ fun runTest() {
                 return false
             }
         }
+        def diagnostics = findLinesWithPrefixesRemoved(text, '// !DIAGNOSTICS')
+        if (!diagnostics.empty) {
+            return false
+        }
 
         def version = findLinesWithPrefixesRemoved(text, '// LANGUAGE_VERSION: ')
         if (version.size() != 0 && (!version.contains("1.3") || !version.contains("1.4"))) {
