@@ -25,6 +25,8 @@ fun FirFunction.computeJvmSignature(typeConversion: (FirTypeRef) -> ConeKotlinTy
     return SignatureBuildingComponents.signature(containingClass.classId, computeJvmDescriptor(typeConversion = typeConversion))
 }
 
+// TODO: `typeConversion` is only used for converting Java types into cone types, but shouldn't it be trivial
+//   to construct a JVM descriptor from a Java type directly? The question is how to make the two paths consistent...
 fun FirFunction.computeJvmDescriptor(
     customName: String? = null,
     includeReturnType: Boolean = true,
@@ -42,7 +44,7 @@ fun FirFunction.computeJvmDescriptor(
 
     append("(")
     for (parameter in valueParameters) {
-        typeConversion(parameter.returnTypeRef)?.let(this::appendConeType)
+        typeConversion(parameter.returnTypeRef)?.let { appendConeType(it, typeConversion) }
     }
     append(")")
 
@@ -50,7 +52,7 @@ fun FirFunction.computeJvmDescriptor(
         if (this@computeJvmDescriptor !is FirSimpleFunction || returnTypeRef.isVoid()) {
             append("V")
         } else {
-            typeConversion(returnTypeRef)?.let(this::appendConeType)
+            typeConversion(returnTypeRef)?.let { appendConeType(it, typeConversion) }
         }
     }
 }
@@ -66,7 +68,7 @@ private val PRIMITIVE_TYPE_SIGNATURE: Map<String, String> = mapOf(
     "Double" to "D",
 )
 
-private fun StringBuilder.appendConeType(coneType: ConeKotlinType) {
+private fun StringBuilder.appendConeType(coneType: ConeKotlinType, typeConversion: (FirTypeRef) -> ConeKotlinType?) {
     (coneType as? ConeClassLikeType)?.let {
         val classId = it.lookupTag.classId
         if (classId.packageFqName.toString() == "kotlin") {
@@ -79,13 +81,14 @@ private fun StringBuilder.appendConeType(coneType: ConeKotlinType) {
 
     fun appendClassLikeType(type: ConeClassLikeType) {
         val baseClassId = type.lookupTag.classId
+        // TODO: what about primitive arrays?
         val classId = JavaToKotlinClassMap.mapKotlinToJava(baseClassId.asSingleFqName().toUnsafe()) ?: baseClassId
         if (classId == StandardClassIds.Array) {
             append("[")
             type.typeArguments.forEach { typeArg ->
                 when (typeArg) {
                     ConeStarProjection -> append("*")
-                    is ConeKotlinTypeProjection -> appendConeType(typeArg.type)
+                    is ConeKotlinTypeProjection -> appendConeType(typeArg.type, typeConversion)
                 }
             }
         } else {
@@ -97,28 +100,29 @@ private fun StringBuilder.appendConeType(coneType: ConeKotlinType) {
         }
     }
 
-    if (coneType is ConeClassErrorType) return
     when (coneType) {
+        is ConeClassErrorType -> Unit // TODO: just skipping it seems wrong
         is ConeClassLikeType -> {
             appendClassLikeType(coneType)
         }
         is ConeTypeParameterType -> {
-            val representative = coneType.lookupTag.typeParameterSymbol.fir.bounds.firstOrNull {
-                it.coneType is ConeClassLikeType
+            // TODO: 1. unannotated bounds are probably flexible, so this isn't right;
+            //       2. shouldn't this always take the first bound and recurse if it's also a type parameter?
+            coneType.lookupTag.typeParameterSymbol.fir.bounds.firstNotNullOfOrNull {
+                val converted = typeConversion(it)
+                if (converted is ConeClassLikeType) it to converted else null
+            }?.let { (firBound, coneBound) ->
+                // TODO: pretty sure Java type conversion does not produce either of these
+                if (firBound !is FirImplicitNullableAnyTypeRef && firBound !is FirImplicitAnyTypeRef) {
+                    appendClassLikeType(coneBound)
+                    return
+                }
             }
-            if (representative == null || representative is FirImplicitNullableAnyTypeRef || representative is FirImplicitAnyTypeRef) {
-                append("Ljava/lang/Object;")
-            } else {
-                appendClassLikeType(representative.coneTypeUnsafe())
-            }
+            append("Ljava/lang/Object;")
         }
-        is ConeDefinitelyNotNullType -> {
-            appendConeType(coneType.original)
-        }
-        is ConeFlexibleType -> {
-            appendConeType(coneType.lowerBound)
-        }
-        else -> {}
+        is ConeDefinitelyNotNullType -> appendConeType(coneType.original, typeConversion)
+        is ConeFlexibleType -> appendConeType(coneType.lowerBound, typeConversion)
+        else -> Unit // TODO: throw an error? should check that Java type conversion/enhancement can only produce these cone types
     }
 }
 
