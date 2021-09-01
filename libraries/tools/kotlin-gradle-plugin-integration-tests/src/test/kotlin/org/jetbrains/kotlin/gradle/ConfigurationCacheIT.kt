@@ -146,6 +146,21 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             )
         }
 
+    @Test
+    fun testJvmWithJavaConfigurationCache() =
+        with(Project("mppJvmWithJava", gradleVersionRequirement = GradleVersionRequired.AtLeast("7.1"))) {
+            setupWorkingDir()
+
+            build("jar", options = defaultBuildOptions().copy(configurationCache = true)) {
+                assertSuccessful()
+            }
+
+            build("jar", options = defaultBuildOptions().copy(configurationCache = true)) {
+                assertSuccessful()
+                assertContains("Reusing configuration cache.")
+            }
+        }
+
     // KT-48241
     @Test
     fun testConfigurationCacheJsWithTestDependencies() = with(transformProjectWithPluginsDsl("kotlin-js-project-with-test-dependencies")) {
