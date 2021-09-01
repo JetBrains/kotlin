@@ -54,7 +54,12 @@ public fun String.matches(regex: String): Boolean {
     return result != null && result.size != 0
 }
 
-public actual fun CharSequence.isBlank(): Boolean = length == 0 || (if (this is String) this else this.toString()).matches("^[\\s\\xA0]+$")
+/**
+ * Returns `true` if this string is empty or consists solely of whitespace characters.
+ *
+ * @sample samples.text.Strings.stringIsBlank
+ */
+public actual fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
 
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean =
