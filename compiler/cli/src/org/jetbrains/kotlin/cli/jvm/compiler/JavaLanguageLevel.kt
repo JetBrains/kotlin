@@ -10,5 +10,8 @@ import com.intellij.openapi.roots.LanguageLevelProjectExtension
 import com.intellij.pom.java.LanguageLevel
 
 fun Project.setupHighestLanguageLevel() {
-    LanguageLevelProjectExtension.getInstance(this).languageLevel = LanguageLevel.JDK_15_PREVIEW
+    LanguageLevelProjectExtension.getInstance(this).languageLevel =
+        LanguageLevel.values().firstOrNull { it.name == "JDK_17" }
+            ?: LanguageLevel.values().firstOrNull { it.name == "JDK_15_PREVIEW" }
+                    ?: LanguageLevel.JDK_X
 }
