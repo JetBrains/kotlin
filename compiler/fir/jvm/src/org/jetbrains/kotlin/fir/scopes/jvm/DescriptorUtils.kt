@@ -5,19 +5,21 @@
 
 package org.jetbrains.kotlin.fir.scopes.jvm
 
+import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
 fun FirFunction.computeJvmSignature(typeConversion: (FirTypeRef) -> ConeKotlinType? = FirTypeRef::coneTypeSafe): String? {
     val containingClass = containingClass() ?: return null
@@ -57,71 +59,60 @@ fun FirFunction.computeJvmDescriptor(
     }
 }
 
-private val PRIMITIVE_TYPE_SIGNATURE: Map<String, String> = mapOf(
-    "Boolean" to "Z",
-    "Byte" to "B",
-    "Char" to "C",
-    "Short" to "S",
-    "Int" to "I",
-    "Long" to "J",
-    "Float" to "F",
-    "Double" to "D",
-)
-
-private fun StringBuilder.appendConeType(coneType: ConeKotlinType, typeConversion: (FirTypeRef) -> ConeKotlinType?) {
-    (coneType as? ConeClassLikeType)?.let {
-        val classId = it.lookupTag.classId
-        if (classId.packageFqName.toString() == "kotlin") {
-            PRIMITIVE_TYPE_SIGNATURE[classId.shortClassName.identifier]?.let { signature ->
-                append(signature)
+private fun StringBuilder.appendConeType(coneType: ConeKotlinType?, typeConversion: (FirTypeRef) -> ConeKotlinType?) {
+    // `kotlin.Int` <-> `int`
+    // `kotlin.Int..kotlin.Int?` <-> `Integer`
+    // `@EnhancedNullability kotlin.Int` <-> `@NotNull Integer`
+    if (coneType is ConeClassLikeType && !coneType.isNullable && !coneType.hasEnhancedNullability) {
+        val classId = coneType.lookupTag.classId
+        if (classId.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME) {
+            PrimitiveType.getByShortName(classId.shortClassName.identifier)?.let {
+                append(JvmPrimitiveType.get(it).desc)
                 return
             }
         }
     }
+    appendConeReferenceType(coneType, typeConversion, mutableSetOf())
+}
 
-    fun appendClassLikeType(type: ConeClassLikeType) {
-        val baseClassId = type.lookupTag.classId
-        // TODO: what about primitive arrays?
-        val classId = JavaToKotlinClassMap.mapKotlinToJava(baseClassId.asSingleFqName().toUnsafe()) ?: baseClassId
-        if (classId == StandardClassIds.Array) {
-            append("[")
-            type.typeArguments.forEach { typeArg ->
-                when (typeArg) {
-                    ConeStarProjection -> append("*")
-                    is ConeKotlinTypeProjection -> appendConeType(typeArg.type, typeConversion)
+private fun StringBuilder.appendConeReferenceType(
+    coneType: ConeKotlinType?,
+    typeConversion: (FirTypeRef) -> ConeKotlinType?,
+    visited: MutableSet<FirTypeParameterSymbol>
+) {
+    when (coneType) {
+        null -> append("Ljava/lang/Object;")
+        is ConeClassErrorType -> Unit // TODO: just skipping it seems wrong
+        is ConeClassLikeType -> {
+            val baseClassId = coneType.lookupTag.classId
+            if (baseClassId == StandardClassIds.Array) {
+                append("[")
+                appendConeReferenceType(coneType.typeArguments.singleOrNull()?.type, typeConversion, visited)
+                return
+            } else if (baseClassId.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME) {
+                PrimitiveType.getByShortArrayName(baseClassId.shortClassName.identifier)?.let {
+                    append("[")
+                    append(JvmPrimitiveType.get(it).desc)
+                    return
                 }
             }
-        } else {
+            val classId = JavaToKotlinClassMap.mapKotlinToJava(baseClassId.asSingleFqName().toUnsafe()) ?: baseClassId
             append("L")
             append(classId.packageFqName.asString().replace(".", "/"))
             append("/")
             append(classId.relativeClassName)
             append(";")
         }
-    }
-
-    when (coneType) {
-        is ConeClassErrorType -> Unit // TODO: just skipping it seems wrong
-        is ConeClassLikeType -> {
-            appendClassLikeType(coneType)
-        }
+        // `T extends A & B & ...` -> `A`
         is ConeTypeParameterType -> {
-            // TODO: 1. unannotated bounds are probably flexible, so this isn't right;
-            //       2. shouldn't this always take the first bound and recurse if it's also a type parameter?
-            coneType.lookupTag.typeParameterSymbol.fir.bounds.firstNotNullOfOrNull {
-                val converted = typeConversion(it)
-                if (converted is ConeClassLikeType) it to converted else null
-            }?.let { (firBound, coneBound) ->
-                // TODO: pretty sure Java type conversion does not produce either of these
-                if (firBound !is FirImplicitNullableAnyTypeRef && firBound !is FirImplicitAnyTypeRef) {
-                    appendClassLikeType(coneBound)
-                    return
-                }
-            }
-            append("Ljava/lang/Object;")
+            val firstBound = coneType.lookupTag.typeParameterSymbol.takeIf { visited.add(it) }
+                ?.fir?.bounds?.firstOrNull()?.let { typeConversion(it) }
+            appendConeReferenceType(firstBound, typeConversion, visited)
         }
-        is ConeDefinitelyNotNullType -> appendConeType(coneType.original, typeConversion)
-        is ConeFlexibleType -> appendConeType(coneType.lowerBound, typeConversion)
+        // `T & Any` should only appear when `T` is a nullable-bounded type parameter.
+        is ConeDefinitelyNotNullType -> appendConeReferenceType(coneType.original, typeConversion, visited)
+        // `T..T?` is always a reference type; primitives are non-nullable.
+        is ConeFlexibleType -> appendConeReferenceType(coneType.lowerBound, typeConversion, visited)
         else -> Unit // TODO: throw an error? should check that Java type conversion/enhancement can only produce these cone types
     }
 }
