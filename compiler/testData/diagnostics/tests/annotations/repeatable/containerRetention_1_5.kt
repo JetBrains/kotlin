@@ -4,19 +4,19 @@
 import java.lang.annotation.Repeatable as R
 import kotlin.annotation.AnnotationRetention.*
 
-<!REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION!>@R(C1::class)<!>
+<!REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION_WARNING!>@R(C1::class)<!>
 @Retention(RUNTIME)
 annotation class A1
 @Retention(BINARY)
 annotation class C1(val value: Array<A1>)
 
-<!REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION!>@R(C2::class)<!>
+<!REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION_WARNING!>@R(C2::class)<!>
 @Retention(BINARY)
 annotation class A2
 @Retention(SOURCE)
 annotation class C2(val value: Array<A2>)
 
-<!REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION!>@R(C3::class)<!>
+<!REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION_WARNING!>@R(C3::class)<!>
 annotation class A3
 @Retention(SOURCE)
 annotation class C3(val value: Array<A3>)

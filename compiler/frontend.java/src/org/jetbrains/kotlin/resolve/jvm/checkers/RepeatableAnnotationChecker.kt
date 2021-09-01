@@ -103,10 +103,10 @@ class RepeatableAnnotationChecker(
             )
         if (nestedClassNamedContainer != null) {
             trace.report(
-                select(
-                    ErrorsJvm.REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER,
-                    ErrorsJvm.REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_ERROR
-                ).on(kotlinRepeatable.entry)
+                ErrorsJvm.REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER.on(
+                    languageVersionSettings,
+                    kotlinRepeatable.entry
+                )
             )
         }
     }
@@ -170,16 +170,14 @@ class RepeatableAnnotationChecker(
         if (value == null || !KotlinBuiltIns.isArray(value.type) ||
             value.type.arguments.single().type.constructor.declarationDescriptor != annotationClass
         ) {
-            return select(
-                ErrorsJvm.REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY, ErrorsJvm.REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY_ERROR
-            ).on(reportOn, containerClass.fqNameSafe, annotationClass.fqNameSafe)
+            return ErrorsJvm.REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY
+                .on(languageVersionSettings, reportOn, containerClass.fqNameSafe, annotationClass.fqNameSafe)
         }
 
         val otherNonDefault = containerCtor.valueParameters.find { it.name.asString() != "value" && !it.declaresDefaultValue() }
         if (otherNonDefault != null) {
-            return select(
-                ErrorsJvm.REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER, ErrorsJvm.REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER_ERROR
-            ).on(reportOn, containerClass.fqNameSafe, otherNonDefault)
+            return ErrorsJvm.REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER
+                .on(languageVersionSettings, reportOn, containerClass.fqNameSafe, otherNonDefault)
         }
 
         return null
@@ -193,9 +191,15 @@ class RepeatableAnnotationChecker(
         val annotationRetention = annotationClass.getAnnotationRetention() ?: KotlinRetention.RUNTIME
         val containerRetention = containerClass.getAnnotationRetention() ?: KotlinRetention.RUNTIME
         if (containerRetention > annotationRetention) {
-            return select(
-                ErrorsJvm.REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION, ErrorsJvm.REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION_ERROR
-            ).on(reportOn, containerClass.fqNameSafe, containerRetention.name, annotationClass.fqNameSafe, annotationRetention.name)
+            return ErrorsJvm.REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION
+                .on(
+                    languageVersionSettings,
+                    reportOn,
+                    containerClass.fqNameSafe,
+                    containerRetention.name,
+                    annotationClass.fqNameSafe,
+                    annotationRetention.name
+                )
         }
         return null
     }
@@ -224,20 +228,13 @@ class RepeatableAnnotationChecker(
                 else -> false
             }
             if (!ok) {
-                return select(
-                    ErrorsJvm.REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET, ErrorsJvm.REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET_ERROR
-                ).on(reportOn, containerClass.fqNameSafe, annotationClass.fqNameSafe)
+                return ErrorsJvm.REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET
+                    .on(languageVersionSettings, reportOn, containerClass.fqNameSafe, annotationClass.fqNameSafe)
             }
         }
 
         return null
     }
-
-    private fun <D> select(warning: D, error: D): D =
-        if (languageVersionSettings.supportsFeature(LanguageFeature.RepeatableAnnotationContainerConstraints))
-            error
-        else
-            warning
 
     private fun isRepeatableAnnotation(classDescriptor: ClassDescriptor): Boolean =
         classDescriptor.isAnnotatedWithKotlinRepeatable() || platformAnnotationFeaturesSupport.isRepeatableAnnotationClass(classDescriptor)

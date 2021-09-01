@@ -75,16 +75,11 @@ public interface ErrorsJvm {
     DiagnosticFactory0<KtAnnotationEntry> REPEATED_ANNOTATION_TARGET6 = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory2<KtAnnotationEntry, FqName, FqName> REPEATED_ANNOTATION_WITH_CONTAINER = DiagnosticFactory2.create(ERROR);
 
-    DiagnosticFactory2<KtAnnotationEntry, FqName, FqName> REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY = DiagnosticFactory2.create(WARNING);
-    DiagnosticFactory2<KtAnnotationEntry, FqName, FqName> REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY_ERROR = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory2<KtAnnotationEntry, FqName, Named> REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER = DiagnosticFactory2.create(WARNING);
-    DiagnosticFactory2<KtAnnotationEntry, FqName, Named> REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER_ERROR = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory4<KtAnnotationEntry, FqName, String, FqName, String> REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION = DiagnosticFactory4.create(WARNING);
-    DiagnosticFactory4<KtAnnotationEntry, FqName, String, FqName, String> REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION_ERROR = DiagnosticFactory4.create(ERROR);
-    DiagnosticFactory2<KtAnnotationEntry, FqName, FqName> REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET = DiagnosticFactory2.create(WARNING);
-    DiagnosticFactory2<KtAnnotationEntry, FqName, FqName> REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET_ERROR = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory0<KtAnnotationEntry> REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER = DiagnosticFactory0.create(WARNING);
-    DiagnosticFactory0<KtAnnotationEntry> REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_ERROR = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactoryForDeprecation2<KtAnnotationEntry, FqName, FqName> REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY = DiagnosticFactoryForDeprecation2.create(LanguageFeature.RepeatableAnnotationContainerConstraints);
+    DiagnosticFactoryForDeprecation2<KtAnnotationEntry, FqName, Named> REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER = DiagnosticFactoryForDeprecation2.create(LanguageFeature.RepeatableAnnotationContainerConstraints);
+    DiagnosticFactoryForDeprecation4<KtAnnotationEntry, FqName, String, FqName, String> REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION = DiagnosticFactoryForDeprecation4.create(LanguageFeature.RepeatableAnnotationContainerConstraints);
+    DiagnosticFactoryForDeprecation2<KtAnnotationEntry, FqName, FqName> REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET = DiagnosticFactoryForDeprecation2.create(LanguageFeature.RepeatableAnnotationContainerConstraints);
+    DiagnosticFactoryForDeprecation0<KtAnnotationEntry> REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER = DiagnosticFactoryForDeprecation0.create(LanguageFeature.RepeatableAnnotationContainerConstraints);
 
     DiagnosticFactory1<KtAnnotationEntry, FqName> ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES = DiagnosticFactory1.create(ERROR);
 

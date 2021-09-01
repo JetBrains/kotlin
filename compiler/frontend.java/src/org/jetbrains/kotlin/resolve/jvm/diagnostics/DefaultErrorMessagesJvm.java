@@ -76,15 +76,10 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES, "Annotation ''@{0}'' is not applicable to the multi-file classes", TO_STRING);
 
         MAP.put(REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY, "Container annotation ''{0}'' must have a property ''value'' of type ''Array<{1}>''. This code will be prohibited in Kotlin 1.6", TO_STRING, TO_STRING);
-        MAP.put(REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY_ERROR, "Container annotation ''{0}'' must have a property ''value'' of type ''Array<{1}>''", TO_STRING, TO_STRING);
         MAP.put(REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER, "Container annotation ''{0}'' does not have a default value for ''{1}''. This code will be prohibited in Kotlin 1.6", TO_STRING, NAME);
-        MAP.put(REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER_ERROR, "Container annotation ''{0}'' does not have a default value for ''{1}''", TO_STRING, NAME);
         MAP.put(REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION, "Container annotation ''{0}'' has shorter retention (''{1}'') than the repeatable annotation ''{2}'' (''{3}''). This code will be prohibited in Kotlin 1.6", TO_STRING, TO_STRING, TO_STRING, TO_STRING);
-        MAP.put(REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION_ERROR, "Container annotation ''{0}'' has shorter retention (''{1}'') than the repeatable annotation ''{2}'' (''{3}'')", TO_STRING, TO_STRING, TO_STRING, TO_STRING);
         MAP.put(REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET, "Target set of container annotation ''{0}'' must be a subset of the target set of contained annotation ''{1}''. This code will be prohibited in Kotlin 1.6", TO_STRING, TO_STRING);
-        MAP.put(REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET_ERROR, "Target set of container annotation ''{0}'' must be a subset of the target set of contained annotation ''{1}''", TO_STRING, TO_STRING);
         MAP.put(REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER, "Repeatable annotation cannot have a nested class named 'Container'. This name is reserved for auto-generated container class");
-        MAP.put(REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_ERROR, "Repeatable annotation cannot have a nested class named 'Container'. This name is reserved for auto-generated container class");
 
         MAP.put(JVM_PACKAGE_NAME_CANNOT_BE_EMPTY, "''@JvmPackageName'' annotation value cannot be empty");
         MAP.put(JVM_PACKAGE_NAME_MUST_BE_VALID_NAME, "''@JvmPackageName'' annotation value must be a valid dot-qualified name of a package");

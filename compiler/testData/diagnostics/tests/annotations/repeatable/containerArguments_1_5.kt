@@ -3,27 +3,27 @@
 
 import java.lang.annotation.Repeatable as R
 
-<!REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY!>@R(C1::class)<!>
+<!REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY_WARNING!>@R(C1::class)<!>
 annotation class A1
 annotation class C1
 
-<!REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY!>@R(C2::class)<!>
+<!REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY_WARNING!>@R(C2::class)<!>
 annotation class A2
 annotation class C2(val value: A2)
 
-<!REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY!>@R(C3::class)<!>
+<!REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY_WARNING!>@R(C3::class)<!>
 annotation class A3
 annotation class C3(val value: Array<String>)
 
-<!REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY!>@R(C4::class)<!>
+<!REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY_WARNING!>@R(C4::class)<!>
 annotation class A4
 annotation class C4(val notValue: Array<A4>)
 
-<!REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER!>@R(C5::class)<!>
+<!REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER_WARNING!>@R(C5::class)<!>
 annotation class A5
 annotation class C5(val value: Array<A5>, val irrelevant: String)
 
-<!REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER!>@R(C6::class)<!>
+<!REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER_WARNING!>@R(C6::class)<!>
 annotation class A6
 annotation class C6(val irrelevant: Double, val value: Array<A6> = [])
 
