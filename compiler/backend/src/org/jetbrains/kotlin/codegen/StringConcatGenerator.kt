@@ -38,7 +38,7 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
             value.encodedUTF8Size()
         }
 
-        fun fitEncodingLimit() = encodedUTF8Size <= STRING_UTF8_ENCODING_BYTE_LIMIT
+        fun fitEncodingLimit() = if (value.isDefinitelyFitEncodingLimit()) true else encodedUTF8Size <= STRING_UTF8_ENCODING_BYTE_LIMIT
     }
 
     private val items = arrayListOf<Item>()
