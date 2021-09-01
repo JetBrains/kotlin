@@ -209,7 +209,6 @@ enum class LanguageFeature(
     UnrestrictedBuilderInference(KOTLIN_1_6),
     ProperTypeInferenceConstraintsProcessing(KOTLIN_1_6, kind = BUG_FIX),
     ClassTypeParameterAnnotations(KOTLIN_1_6),
-    SafeCallsAreAlwaysNullable(KOTLIN_1_6),
     TypeInferenceOnCallsWithSelfTypes(KOTLIN_1_6),
     WarnAboutNonExhaustiveWhenOnAlgebraicTypes(KOTLIN_1_6, kind = BUG_FIX),
     InstantiationOfAnnotationClasses(KOTLIN_1_6),
@@ -229,6 +228,7 @@ enum class LanguageFeature(
     DefinitelyNotNullTypeParameters(KOTLIN_1_7),
     DefinitelyNonNullableTypes(KOTLIN_1_7),
     ProhibitSimplificationOfNonTrivialConstBooleanExpressions(KOTLIN_1_7),
+    SafeCallsAreAlwaysNullable(KOTLIN_1_7),
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),

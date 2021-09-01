@@ -3998,12 +3998,6 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             }
 
                             @Test
-                            @TestMetadata("2.10.kt")
-                            public void test2_10() throws Exception {
-                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.10.kt");
-                            }
-
-                            @Test
                             @TestMetadata("2.2.kt")
                             public void test2_2() throws Exception {
                                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.2.kt");
