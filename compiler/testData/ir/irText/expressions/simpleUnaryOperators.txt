@@ -28,5 +28,4 @@ FILE fqName:<root> fileName:/simpleUnaryOperators.kt
   FUN name:test6 visibility:public modality:FINAL <> () returnType:kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test6 (): kotlin.Boolean declared in <root>'
-        CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCL
-          $this: CONST Boolean type=kotlin.Boolean value=true
+        CONST Boolean type=kotlin.Boolean value=false
