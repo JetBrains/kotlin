@@ -182,7 +182,7 @@ internal class CallGraphBuilder(
                                 receiverType.vtable[call.calleeVtableIndex]
 
                             is DataFlowIR.Node.ItableCall ->
-                                receiverType.itable[call.interfaceId]!![call.calleeItableIndex]
+                                receiverType.itable[call.calleeHash]!!
 
                             else -> error("Unreachable")
                         }

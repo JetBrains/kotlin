@@ -2646,10 +2646,6 @@ task interfaceCallsNCasts_conservativeItable(type: KonanLocalTest) {
     source = "codegen/interfaceCallsNCasts/conservativeItable.kt"
 }
 
-task interfaceCallsNCasts_functionNameClash(type: KonanLocalTest) {
-    source = "codegen/interfaceCallsNCasts/functionNameClash.kt"
-}
-
 standaloneTest("multiargs") {
     arguments = ["AAA", "BB", "C"]
     multiRuns = true

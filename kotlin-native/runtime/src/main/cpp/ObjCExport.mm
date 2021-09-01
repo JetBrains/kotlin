@@ -52,6 +52,7 @@ struct ObjCToKotlinMethodAdapter {
 
 struct KotlinToObjCMethodAdapter {
   const char* selector;
+  MethodNameHash nameSignature;
   ClassId interfaceId;
   int itableSize;
   int itableIndex;
@@ -64,6 +65,9 @@ struct ObjCTypeAdapter {
 
   const void * const * kotlinVtable;
   int kotlinVtableSize;
+
+  const MethodTableRecord* kotlinMethodTable;
+  int kotlinMethodTableSize;
 
   const InterfaceTableRecord* kotlinItable;
   int kotlinItableSize;
@@ -678,6 +682,7 @@ static const TypeInfo* createTypeInfo(
   const TypeInfo* superType,
   const KStdVector<const TypeInfo*>& superInterfaces,
   const KStdVector<VTableElement>& vtable,
+  const KStdVector<MethodTableRecord>& methodTable,
   const KStdOrderedMap<ClassId, KStdVector<VTableElement>>& interfaceVTables,
   const InterfaceTableRecord* superItable,
   int superItableSize,
@@ -731,6 +736,12 @@ static const TypeInfo* createTypeInfo(
       buildITable(result, interfaceVTables);
     }
   }
+
+  MethodTableRecord* openMethods_ = konanAllocArray<MethodTableRecord>(methodTable.size());
+  for (size_t i = 0; i < methodTable.size(); ++i) openMethods_[i] = methodTable[i];
+
+  result->openMethods_ = openMethods_;
+  result->openMethodsCount_ = methodTable.size();
 
   result->packageName_ = nullptr;
   result->relativeName_ = nullptr; // TODO: add some info.
@@ -796,6 +807,22 @@ static int getVtableSize(const TypeInfo* typeInfo) {
   return -1;
 }
 
+static void insertOrReplace(KStdVector<MethodTableRecord>& methodTable, MethodNameHash nameSignature, void* entryPoint) {
+  MethodTableRecord record = {nameSignature, entryPoint};
+
+  for (int i = methodTable.size() - 1; i >= 0; --i) {
+    if (methodTable[i].nameSignature_ == nameSignature) {
+      methodTable[i].methodEntryPoint_ = entryPoint;
+      return;
+    } else if (methodTable[i].nameSignature_ < nameSignature) {
+      methodTable.insert(methodTable.begin() + (i + 1), record);
+      return;
+    }
+  }
+
+  methodTable.insert(methodTable.begin(), record);
+}
+
 static void throwIfCantBeOverridden(Class clazz, const KotlinToObjCMethodAdapter* adapter) {
   if (adapter->kotlinImpl == nullptr) {
     NSString* reason;
@@ -819,6 +846,9 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
   const void * const * superVtable = nullptr;
   int superVtableSize = getVtableSize(superType);
 
+  const MethodTableRecord* superMethodTable = nullptr;
+  int superMethodTableSize = 0;
+
   InterfaceTableRecord const* superITable = nullptr;
   int superITableSize = 0;
 
@@ -828,15 +858,25 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
     // And if it is abstract, then vtable and method table are not available from TypeInfo,
     // but present in type adapter instead:
     superVtable = superTypeAdapter->kotlinVtable;
+    superMethodTable = superTypeAdapter->kotlinMethodTable;
+    superMethodTableSize = superTypeAdapter->kotlinMethodTableSize;
     superITable = superTypeAdapter->kotlinItable;
     superITableSize = superTypeAdapter->kotlinItableSize;
   }
 
   if (superVtable == nullptr) superVtable = superType->vtable();
+  if (superMethodTable == nullptr) {
+    superMethodTable = superType->openMethods_;
+    superMethodTableSize = superType->openMethodsCount_;
+  }
 
   KStdVector<const void*> vtable(
         superVtable,
         superVtable + superVtableSize
+  );
+
+  KStdVector<MethodTableRecord> methodTable(
+        superMethodTable, superMethodTable + superMethodTableSize
   );
 
   if (superITable == nullptr) {
@@ -905,6 +945,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
       throwIfCantBeOverridden(clazz, adapter);
 
       itableEqualsSuper = false;
+      insertOrReplace(methodTable, adapter->nameSignature, const_cast<void*>(adapter->kotlinImpl));
       if (adapter->vtableIndex != -1) vtable[adapter->vtableIndex] = adapter->kotlinImpl;
 
       if (adapter->itableIndex != -1 && superITable != nullptr)
@@ -929,6 +970,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
       const KotlinToObjCMethodAdapter* adapter = &typeAdapter->reverseAdapters[i];
       throwIfCantBeOverridden(clazz, adapter);
 
+      insertOrReplace(methodTable, adapter->nameSignature, const_cast<void*>(adapter->kotlinImpl));
       RuntimeAssert(adapter->vtableIndex == -1, "");
 
       if (adapter->itableIndex != -1 && superITable != nullptr) {
@@ -942,8 +984,9 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
 
   // TODO: consider forbidding the class being abstract.
 
-  const TypeInfo* result = createTypeInfo(superType, addedInterfaces, vtable, interfaceVTables,
-                                          superITable, superITableSize, itableEqualsSuper, fieldsInfo);
+  const TypeInfo* result = createTypeInfo(superType, addedInterfaces, vtable, methodTable,
+                                          interfaceVTables, superITable, superITableSize, itableEqualsSuper,
+                                          fieldsInfo);
 
   // TODO: it will probably never be requested, since such a class can't be instantiated in Kotlin.
   result->writableInfo_->objCExport.objCClass = clazz;

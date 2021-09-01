@@ -458,12 +458,14 @@ internal class ObjCExportCodeGenerator(
 
     inner class KotlinToObjCMethodAdapter(
             selector: String,
+            nameSignature: Long,
             itablePlace: ClassLayoutBuilder.InterfaceTablePlace,
             vtableIndex: Int,
             kotlinImpl: ConstPointer
     ) : Struct(
             runtime.kotlinToObjCMethodAdapter,
             staticData.cStringLiteral(selector),
+            Int64(nameSignature),
             Int32(itablePlace.interfaceId),
             Int32(itablePlace.itableSize),
             Int32(itablePlace.methodIndex),
@@ -476,6 +478,7 @@ internal class ObjCExportCodeGenerator(
             typeInfo: ConstPointer?,
             vtable: ConstPointer?,
             vtableSize: Int,
+            methodTable: List<RTTIGenerator.MethodTableRecord>,
             itable: List<RTTIGenerator.InterfaceTableRecord>,
             itableSize: Int,
             val objCName: String,
@@ -489,6 +492,9 @@ internal class ObjCExportCodeGenerator(
 
             vtable,
             Int32(vtableSize),
+
+            staticData.placeGlobalConstArray("", runtime.methodTableRecordType, methodTable),
+            Int32(methodTable.size),
 
             staticData.placeGlobalConstArray("", runtime.interfaceTableRecordType, itable),
             Int32(itableSize),
@@ -1162,10 +1168,12 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 private fun ObjCExportCodeGenerator.createReverseAdapter(
         irFunction: IrFunction,
         baseMethod: ObjCMethodSpec.BaseMethod<IrSimpleFunctionSymbol>,
+        functionName: String,
         vtableIndex: Int?,
         itablePlace: ClassLayoutBuilder.InterfaceTablePlace?
 ): ObjCExportCodeGenerator.KotlinToObjCMethodAdapter {
 
+    val nameSignature = functionName.localHash.value
     val selector = baseMethod.selector
 
     val kotlinToObjC = generateKotlinToObjCBridge(
@@ -1173,7 +1181,7 @@ private fun ObjCExportCodeGenerator.createReverseAdapter(
             baseMethod
     ).bitcast(int8TypePtr)
 
-    return KotlinToObjCMethodAdapter(selector,
+    return KotlinToObjCMethodAdapter(selector, nameSignature,
             itablePlace ?: ClassLayoutBuilder.InterfaceTablePlace.INVALID,
             vtableIndex ?: -1,
             kotlinToObjC)
@@ -1243,9 +1251,8 @@ private fun ObjCExportCodeGenerator.vtableIndex(irFunction: IrSimpleFunction): I
 private fun ObjCExportCodeGenerator.itablePlace(irFunction: IrSimpleFunction): ClassLayoutBuilder.InterfaceTablePlace? {
     assert(irFunction.isOverridable)
     val irClass = irFunction.parentAsClass
-    return if (irClass.isInterface
-            && (irFunction.isReal || irFunction.resolveFakeOverrideMaybeAbstract().parent != context.irBuiltIns.anyClass.owner)
-    ) {
+    return if (irClass.isInterface && context.ghaEnabled()
+            && (irFunction.isReal || irFunction.resolveFakeOverrideMaybeAbstract().parent != context.irBuiltIns.anyClass.owner)) {
         context.getLayoutBuilder(irClass).itablePlace(irFunction)
     } else {
         null
@@ -1264,6 +1271,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapterForFileClass(
             typeInfo = null,
             vtable = null,
             vtableSize = -1,
+            methodTable = emptyList(),
             itable = emptyList(),
             itableSize = -1,
             objCName = name,
@@ -1346,9 +1354,15 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
         null
     }
 
+    val methodTable = if (!irClass.isInterface && irClass.isAbstract()) {
+        rttiGenerator.methodTableRecords(irClass)
+    } else {
+        emptyList()
+    }
+
     val (itable, itableSize) = when {
-        irClass.isInterface -> Pair(emptyList(), context.getLayoutBuilder(irClass).interfaceVTableEntries.size)
-        irClass.isAbstract() -> rttiGenerator.interfaceTableRecords(irClass)
+        irClass.isInterface -> Pair(emptyList(), context.getLayoutBuilder(irClass).interfaceTableEntries.size)
+        irClass.isAbstract() && context.ghaEnabled() -> rttiGenerator.interfaceTableRecords(irClass)
         else -> Pair(emptyList(), -1)
     }
 
@@ -1357,6 +1371,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
             typeInfo,
             vtable,
             vtableSize,
+            methodTable,
             itable,
             itableSize,
             objCName,
@@ -1451,7 +1466,7 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
                     presentVtableBridges += vtableIndex
                     presentMethodTableBridges += functionName
                     presentItableBridges += itablePlace
-                    result += createReverseAdapter(it, baseMethod, vtableIndex, itablePlace)
+                    result += createReverseAdapter(it, baseMethod, functionName, vtableIndex, itablePlace)
                     coveredMethods += it
                 }
             }
@@ -1472,6 +1487,7 @@ private fun ObjCExportCodeGenerator.nonOverridableAdapter(
         hasSelectorAmbiguity: Boolean
 ): ObjCExportCodeGenerator.KotlinToObjCMethodAdapter = KotlinToObjCMethodAdapter(
     selector,
+    -1,
     vtableIndex = if (hasSelectorAmbiguity) -2 else -1, // Describes the reason.
     kotlinImpl = NullPointer(int8Type),
     itablePlace = ClassLayoutBuilder.InterfaceTablePlace.INVALID

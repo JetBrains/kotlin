@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
+import org.jetbrains.kotlin.backend.konan.descriptors.isBuiltInOperator
 import org.jetbrains.kotlin.backend.common.ir.allParameters
-import org.jetbrains.kotlin.backend.konan.descriptors.*
-import org.jetbrains.kotlin.backend.konan.descriptors.OverriddenFunctionInfo
-import org.jetbrains.kotlin.backend.konan.descriptors.implementedInterfaces
 import org.jetbrains.kotlin.backend.konan.ir.isOverridableOrOverrides
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.computeSymbolName
@@ -65,7 +64,7 @@ internal object DataFlowIR {
             : Type(isFinal, isAbstract, primitiveBinaryType, name) {
             val superTypes = mutableListOf<Type>()
             val vtable = mutableListOf<FunctionSymbol>()
-            val itable = mutableMapOf<Int, List<FunctionSymbol>>()
+            val itable = mutableMapOf<Long, FunctionSymbol>()
         }
 
         class Public(val hash: Long, index: Int, isFinal: Boolean, isAbstract: Boolean, primitiveBinaryType: PrimitiveBinaryType?,
@@ -245,7 +244,7 @@ internal object DataFlowIR {
                          arguments: List<Edge>, returnType: Type, irCallSite: IrCall?)
             : VirtualCall(callee, arguments, receiverType, returnType, irCallSite)
 
-        class ItableCall(callee: FunctionSymbol, receiverType: Type, val interfaceId: Int, val calleeItableIndex: Int,
+        class ItableCall(callee: FunctionSymbol, receiverType: Type, val calleeHash: Long,
                          arguments: List<Edge>, returnType: Type, irCallSite: IrCall?)
             : VirtualCall(callee, arguments, receiverType, returnType, irCallSite)
 
@@ -343,7 +342,7 @@ internal object DataFlowIR {
                 is Node.ItableCall -> buildString {
                     appendLine("        INTERFACE CALL ${node.callee}. Return type = ${node.returnType}")
                     appendLine("            RECEIVER: ${node.receiverType}")
-                    append("            INTERFACE ID: ${node.interfaceId}. ITABLE INDEX: ${node.calleeItableIndex}")
+                    append("            METHOD HASH: ${node.calleeHash}")
                     appendList(node.arguments) {
                         append("            ARG #${ids[it.node]!!}")
                         appendCastTo(it.castToType)
@@ -506,13 +505,12 @@ internal object DataFlowIR {
                 type.vtable += layoutBuilder.vtableEntries.map {
                     mapFunction(it.getImplementation(context)!!)
                 }
-                val interfaces = irClass.implementedInterfaces.map { context.getLayoutBuilder(it) }
-                for (iface in interfaces) {
-                    type.itable[iface.classId] = iface.interfaceVTableEntries.map { mapFunction(layoutBuilder.overridingOf(it)!!) }
+                layoutBuilder.methodTableEntries.forEach {
+                    type.itable[it.overriddenFunction.computeFunctionName().localHash.value] = mapFunction(it.getImplementation(context)!!)
                 }
             } else if (irClass.isInterface) {
                 // Warmup interface table so it is computed before DCE.
-                context.getLayoutBuilder(irClass).interfaceVTableEntries
+                context.getLayoutBuilder(irClass).interfaceTableEntries
             }
             return type
         }
