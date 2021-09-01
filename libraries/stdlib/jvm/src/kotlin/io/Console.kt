@@ -141,6 +141,30 @@ public actual inline fun println() {
 }
 
 /**
+ * Reads a line of input from the standard input stream and returns it,
+ * or throws a [RuntimeException] if EOF has already been reached when [readln] is called.
+ *
+ * LF or CRLF is treated as the line terminator. Line terminator is not included in the returned string.
+ *
+ * The input is decoded using the system default Charset. A [CharacterCodingException] is thrown if input is malformed.
+ */
+@SinceKotlin("1.6")
+public fun readln(): String = readlnOrNull() ?: throw ReadAfterEOFException("EOF has already been reached")
+
+/**
+ * Reads a line of input from the standard input stream and returns it,
+ * or return `null` if EOF has already been reached when [readlnOrNull] is called.
+ *
+ * LF or CRLF is treated as the line terminator. Line terminator is not included in the returned string.
+ *
+ * The input is decoded using the system default Charset. A [CharacterCodingException] is thrown if input is malformed.
+ */
+@SinceKotlin("1.6")
+public fun readlnOrNull(): String? = readLine()
+
+private class ReadAfterEOFException(message: String?) : RuntimeException(message)
+
+/**
  * Reads a line of input from the standard input stream.
  *
  * @return the line read or `null` if the input stream is redirected to a file and the end of file has been reached.

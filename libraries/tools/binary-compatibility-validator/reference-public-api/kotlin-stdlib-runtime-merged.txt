@@ -3098,6 +3098,8 @@ public final class kotlin/io/CloseableKt {
 
 public final class kotlin/io/ConsoleKt {
 	public static final fun readLine ()Ljava/lang/String;
+	public static final fun readln ()Ljava/lang/String;
+	public static final fun readlnOrNull ()Ljava/lang/String;
 }
 
 public final class kotlin/io/ConstantsKt {
