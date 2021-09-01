@@ -865,7 +865,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         }
 
         when (kind) {
-            CXIdxEntity_Struct, CXIdxEntity_Union, CXIdxEntity_CXXClass -> {
+            CXIdxEntity_Struct, CXIdxEntity_Union -> {
                 if (entityName == null) {
                     // Skip anonymous struct.
                     // (It gets included anyway if used as a named field type).
