@@ -271,7 +271,6 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.ASSERTIONS_MODE, assertionsMode ?: JVMAssertionsMode.DEFAULT)
 
     put(JVMConfigurationKeys.USE_TYPE_TABLE, arguments.useTypeTable)
-    put(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK, arguments.skipRuntimeVersionCheck)
     put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, arguments.useOldClassFilesReading)
     put(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM, arguments.useFastJarFileSystem)
 

@@ -67,7 +67,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
-import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
 import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
@@ -266,17 +265,6 @@ class KotlinCoreEnvironment private constructor(
         val (initialRoots, javaModules) =
             classpathRootsResolver.convertClasspathRoots(configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
         this.initialRoots.addAll(initialRoots)
-
-        if (!configuration.getBoolean(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK) && messageCollector != null) {
-            /*
-            // Temporarily disable until compiler is bootstrapped to 1.6.
-            JvmRuntimeVersionsConsistencyChecker.checkCompilerClasspathConsistency(
-                messageCollector,
-                configuration,
-                initialRoots.mapNotNull { (file, type) -> if (type == JavaRoot.RootType.BINARY) file else null }
-            )
-            */
-        }
 
         val (roots, singleJavaFileRoots) =
             initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }

@@ -195,12 +195,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var useTypeTable: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xskip-runtime-version-check",
-        description = "Allow Kotlin runtime libraries of incompatible versions in the classpath"
-    )
-    var skipRuntimeVersionCheck: Boolean by FreezableVar(false)
-
-    @Argument(
         value = "-Xuse-old-class-files-reading",
         description = "Use old class files reading implementation. This may slow down the build and cause problems with Groovy interop.\n" +
                 "Should be used in case of problems with the new implementation"

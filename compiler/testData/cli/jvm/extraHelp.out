@@ -119,7 +119,6 @@ where advanced options include:
   -Xserialize-ir={none|inline|all}
                              Save IR to metadata (EXPERIMENTAL)
   -Xsingle-module            Combine modules for source files and binary dependencies into a single module
-  -Xskip-runtime-version-check Allow Kotlin runtime libraries of incompatible versions in the classpath
   -Xgenerate-strict-metadata-version
                              Generate metadata with strict version semantics (see kdoc on Metadata.extraInt)
   -Xstring-concat={indy-with-constants|indy|inline}
