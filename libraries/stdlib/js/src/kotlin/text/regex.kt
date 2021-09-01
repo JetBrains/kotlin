@@ -273,17 +273,6 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
     }
 }
 
-/** Creates a regular expression from the specified [pattern] string and the specified single [option].  */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-@JsName("Regex_sb3q2\$")
-public fun Regex_0(pattern: String, option: RegexOption): Regex = Regex(pattern, setOf(option))
-
-/** Creates a regular expression from the specified [pattern] string and the default options.  */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-@JsName("Regex_61zpoe\$")
-public fun Regex_1(pattern: String): Regex = Regex(pattern, emptySet())
-
-
 
 
 private fun RegExp.findNext(input: String, from: Int, nextPattern: RegExp): MatchResult? {

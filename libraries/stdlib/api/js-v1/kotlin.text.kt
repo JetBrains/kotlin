@@ -8,14 +8,6 @@ public val kotlin.CharSequence.indices: kotlin.ranges.IntRange { get; }
 
 public val kotlin.CharSequence.lastIndex: kotlin.Int { get; }
 
-@kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "Provided for binary compatibility")
-@kotlin.js.JsName(name = "Regex_sb3q2$")
-public fun Regex_0(pattern: kotlin.String, option: kotlin.text.RegexOption): kotlin.text.Regex
-
-@kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "Provided for binary compatibility")
-@kotlin.js.JsName(name = "Regex_61zpoe$")
-public fun Regex_1(pattern: kotlin.String): kotlin.text.Regex
-
 @kotlin.SinceKotlin(version = "1.2")
 @kotlin.Deprecated(message = "Use CharArray.concatToString() instead", replaceWith = kotlin.ReplaceWith(expression = "chars.concatToString()", imports = {}))
 @kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.4")
