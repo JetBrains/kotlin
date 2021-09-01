@@ -1827,6 +1827,7 @@ public actual fun IntArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun LongArray.sort(): Unit {
+    @Suppress("DEPRECATION")
     if (size > 1) sort { a: Long, b: Long -> a.compareTo(b) }
 }
 
@@ -1896,6 +1897,8 @@ public actual fun <T : Comparable<T>> Array<out T>.sort(): Unit {
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
+@Deprecated("Use sortWith instead", ReplaceWith("this.sortWith(Comparator(comparison))"))
+@DeprecatedSinceKotlin(warningSince = "1.6")
 public fun <T> Array<out T>.sort(comparison: (a: T, b: T) -> Int): Unit {
     if (size > 1) sortArrayWith(this, comparison)
 }
@@ -2055,6 +2058,8 @@ public actual fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit 
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
+@Deprecated("Use other sorting functions from the Standard Library")
+@DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.sort(noinline comparison: (a: Byte, b: Byte) -> Int): Unit {
     asDynamic().sort(comparison)
@@ -2063,6 +2068,8 @@ public inline fun ByteArray.sort(noinline comparison: (a: Byte, b: Byte) -> Int)
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
+@Deprecated("Use other sorting functions from the Standard Library")
+@DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.sort(noinline comparison: (a: Short, b: Short) -> Int): Unit {
     asDynamic().sort(comparison)
@@ -2071,6 +2078,8 @@ public inline fun ShortArray.sort(noinline comparison: (a: Short, b: Short) -> I
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
+@Deprecated("Use other sorting functions from the Standard Library")
+@DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun IntArray.sort(noinline comparison: (a: Int, b: Int) -> Int): Unit {
     asDynamic().sort(comparison)
@@ -2079,6 +2088,8 @@ public inline fun IntArray.sort(noinline comparison: (a: Int, b: Int) -> Int): U
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
+@Deprecated("Use other sorting functions from the Standard Library")
+@DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun LongArray.sort(noinline comparison: (a: Long, b: Long) -> Int): Unit {
     asDynamic().sort(comparison)
@@ -2087,6 +2098,8 @@ public inline fun LongArray.sort(noinline comparison: (a: Long, b: Long) -> Int)
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
+@Deprecated("Use other sorting functions from the Standard Library")
+@DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.sort(noinline comparison: (a: Float, b: Float) -> Int): Unit {
     asDynamic().sort(comparison)
@@ -2095,6 +2108,8 @@ public inline fun FloatArray.sort(noinline comparison: (a: Float, b: Float) -> I
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
+@Deprecated("Use other sorting functions from the Standard Library")
+@DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.sort(noinline comparison: (a: Double, b: Double) -> Int): Unit {
     asDynamic().sort(comparison)
@@ -2103,6 +2118,8 @@ public inline fun DoubleArray.sort(noinline comparison: (a: Double, b: Double) -
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
+@Deprecated("Use other sorting functions from the Standard Library")
+@DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun CharArray.sort(noinline comparison: (a: Char, b: Char) -> Int): Unit {
     asDynamic().sort(comparison)
