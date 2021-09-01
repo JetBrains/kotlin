@@ -14949,6 +14949,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/strings/kt3652.kt");
         }
 
+        @TestMetadata("kt47917.kt")
+        public void testKt47917() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/kt47917.kt");
+        }
+
         @TestMetadata("kt5956.kt")
         public void testKt5956() throws Exception {
             runTest("compiler/testData/codegen/box/strings/kt5956.kt");
@@ -14997,6 +15002,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         @TestMetadata("stringPlusOverride.kt")
         public void testStringPlusOverride() throws Exception {
             runTest("compiler/testData/codegen/box/strings/stringPlusOverride.kt");
+        }
+
+        @TestMetadata("surrogatePair.kt")
+        public void testSurrogatePair() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/surrogatePair.kt");
         }
     }
 

@@ -678,3 +678,26 @@ internal fun LabelNode.linkWithLabel(): LabelNode {
 }
 
 fun linkedLabel(): Label = LabelNode().linkWithLabel().label
+
+// Strings in constant pool contain at most 2^16-1 = 65535 bytes.
+// Non-BMP characters in UTF8 require at most 4 bytes.
+const val MAX_CONST_STRING_PART_LIMIT: Int = 65535 / 4
+
+fun splitStringConstant(value: String): List<String> {
+    val length = value.length
+
+    return if (length <= MAX_CONST_STRING_PART_LIMIT) {
+        listOf(value)
+    } else {
+        // Split strings into parts, each of which satisfies JVM class file constant pool constraints.
+        // Note that even if we split surrogate pairs between parts, they will be joined on concatenation.
+        var i = 0
+        val result = arrayListOf<String>()
+        while (i < length) {
+            val j = minOf(i + MAX_CONST_STRING_PART_LIMIT, length)
+            result.add(value.substring(i, j))
+            i += MAX_CONST_STRING_PART_LIMIT
+        }
+        result
+    }
+}
