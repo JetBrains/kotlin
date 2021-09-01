@@ -1426,7 +1426,7 @@ public final class Regex {
     @kotlin.ExperimentalStdlibApi
     public final fun matchesAt(input: kotlin.CharSequence, index: kotlin.Int): kotlin.Boolean
 
-    public final inline fun replace(input: kotlin.CharSequence, transform: (kotlin.text.MatchResult) -> kotlin.CharSequence): kotlin.String
+    public final fun replace(input: kotlin.CharSequence, transform: (kotlin.text.MatchResult) -> kotlin.CharSequence): kotlin.String
 
     public final fun replace(input: kotlin.CharSequence, replacement: kotlin.String): kotlin.String
 

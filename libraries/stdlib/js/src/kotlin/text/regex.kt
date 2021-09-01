@@ -153,7 +153,7 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
      * the given function [transform] that takes [MatchResult] and returns a string to be used as a
      * replacement for that match.
      */
-    public actual inline fun replace(input: CharSequence, transform: (MatchResult) -> CharSequence): String {
+    public actual fun replace(input: CharSequence, transform: (MatchResult) -> CharSequence): String {
         var match = find(input)
         if (match == null) return input.toString()
 
