@@ -121,25 +121,16 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
                     false
                 )
 
-                val templateBuilder = StringBuilder()
-                items.forEach {
-                    when (it.itemType) {
-                        ItemType.PARAMETER ->
-                            templateBuilder.append("\u0001")
-                        ItemType.CONSTANT ->
-                            templateBuilder.append("\u0002")
-                        ItemType.INLINED_CONSTANT ->
-                            templateBuilder.append(it.value)
-                    }
-                }
+                val itemForGeneration = fitRestrictions(items)
+                val templateBuilder = buildRecipe(itemForGeneration)
 
-                val specialSymbolsInTemplate = items.filter { it.itemType == ItemType.CONSTANT }.map { it.value }
+                val specialSymbolsInTemplate = itemForGeneration.filter { it.itemType == ItemType.CONSTANT }.map { it.value }
 
                 mv.invokedynamic(
                     "makeConcatWithConstants",
                     Type.getMethodDescriptor(
                         JAVA_STRING_TYPE,
-                        *items.filter { it.itemType == ItemType.PARAMETER }.map { it.type }.toTypedArray()
+                        *itemForGeneration.filter { it.itemType == ItemType.PARAMETER }.map { it.type }.toTypedArray()
                     ),
                     bootstrap,
                     arrayOf(templateBuilder.toString()) + specialSymbolsInTemplate
@@ -172,6 +163,51 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
             items.add(Item.parameter(JAVA_STRING_TYPE))
             paramSlots = JAVA_STRING_TYPE.size
         }
+
+    }
+
+    private fun buildRecipe(itemForGeneration: ArrayList<Item>): StringBuilder {
+        val templateBuilder = StringBuilder()
+        itemForGeneration.forEach {
+            when (it.itemType) {
+                ItemType.PARAMETER ->
+                    templateBuilder.append("\u0001")
+                ItemType.CONSTANT ->
+                    templateBuilder.append("\u0002")
+                ItemType.INLINED_CONSTANT ->
+                    templateBuilder.append(it.value)
+            }
+        }
+        return templateBuilder
+    }
+
+    private fun fitRestrictions(items: List<Item>): ArrayList<Item> {
+        val result = arrayListOf<Item>()
+        items.forEach { item ->
+            when (item.itemType) {
+                //split INLINED_CONSTANT becomes split CONSTANT one
+                ItemType.CONSTANT, ItemType.INLINED_CONSTANT -> splitStringConstant(item.value).forEach { part ->
+                    result.add(
+                        Item(
+                            item.type,
+                            ItemType.CONSTANT,
+                            part
+                        )
+                    )
+                }
+                else -> result.add(item)
+            }
+        }
+
+        var recipe = buildrecipe(result)
+        while (recipe.length >= MAX_CONST_STRING_PART_LIMIT) {
+            val item = items.filter { it.itemType == ItemType.INLINED_CONSTANT }.maxByOrNull { it.value.length } ?: break
+            //move longest INLINED_CONSTANT to CONSTANT
+            item.itemType = ItemType.CONSTANT
+            recipe = buildrecipe(result)
+        }
+
+        return result
     }
 
     companion object {
