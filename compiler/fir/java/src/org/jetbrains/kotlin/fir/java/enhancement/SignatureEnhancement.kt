@@ -187,10 +187,7 @@ class FirSignatureEnhancement(
         name: Name?
     ): FirFunctionSymbol<*> {
         val predefinedEnhancementInfo =
-            SignatureBuildingComponents.signature(
-                owner.symbol.classId,
-                firMethod.computeJvmDescriptor { it.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack) }
-            ).let { signature ->
+            SignatureBuildingComponents.signature(owner.symbol.classId, firMethod.computeJvmDescriptor()).let { signature ->
                 PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE[signature]
             }
 

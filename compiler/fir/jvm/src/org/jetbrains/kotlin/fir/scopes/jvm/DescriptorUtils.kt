@@ -21,41 +21,33 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
-fun FirFunction.computeJvmSignature(typeConversion: (FirTypeRef) -> ConeKotlinType? = FirTypeRef::coneTypeSafe): String? {
+fun FirFunction.computeJvmSignature(): String? {
     val containingClass = containingClass() ?: return null
-
-    return SignatureBuildingComponents.signature(containingClass.classId, computeJvmDescriptor(typeConversion = typeConversion))
+    return SignatureBuildingComponents.signature(containingClass.classId, computeJvmDescriptor())
 }
 
-// TODO: `typeConversion` is only used for converting Java types into cone types, but shouldn't it be trivial
-//   to construct a JVM descriptor from a Java type directly? The question is how to make the two paths consistent...
-fun FirFunction.computeJvmDescriptor(
-    customName: String? = null,
-    includeReturnType: Boolean = true,
-    typeConversion: (FirTypeRef) -> ConeKotlinType? = FirTypeRef::coneTypeSafe
-): String = buildString {
-    if (customName != null) {
-        append(customName)
-    } else {
-        if (this@computeJvmDescriptor is FirSimpleFunction) {
-            append(name.asString())
-        } else {
-            append("<init>")
-        }
-    }
-
+fun FirFunction.computeJvmDescriptor(customName: String? = null, includeReturnType: Boolean = true): String = buildString {
+    append(customName ?: if (this@computeJvmDescriptor is FirSimpleFunction) name.asString() else "<init>")
     append("(")
     for (parameter in valueParameters) {
-        appendConeType(typeConversion(parameter.returnTypeRef), typeConversion)
+        appendFirTypeRef(parameter.returnTypeRef)
     }
     append(")")
 
     if (includeReturnType) {
-        if (this@computeJvmDescriptor !is FirSimpleFunction || returnTypeRef.isVoid()) {
+        if (this@computeJvmDescriptor !is FirSimpleFunction || returnTypeRef.isUnit) {
             append("V")
         } else {
-            appendConeType(typeConversion(returnTypeRef), typeConversion)
+            appendFirTypeRef(returnTypeRef)
         }
+    }
+}
+
+private fun StringBuilder.appendFirTypeRef(firTypeRef: FirTypeRef) {
+    if (firTypeRef is FirJavaTypeRef) {
+        appendJavaType(firTypeRef.type, mutableSetOf())
+    } else {
+        appendConeType(firTypeRef.coneTypeSafe())
     }
 }
 
@@ -67,7 +59,23 @@ private fun StringBuilder.appendClassId(classId: ClassId) {
         .append(";")
 }
 
-private fun StringBuilder.appendConeType(coneType: ConeKotlinType?, typeConversion: (FirTypeRef) -> ConeKotlinType?) {
+private fun StringBuilder.appendJavaType(javaType: JavaType?, visited: MutableSet<JavaTypeParameter>) {
+    when (javaType) {
+        is JavaPrimitiveType -> append(javaType.type?.let { JvmPrimitiveType.get(it).desc } ?: "V")
+        is JavaWildcardType -> appendJavaType(javaType.bound.takeIf { javaType.isExtends }, visited)
+        is JavaArrayType -> append('[').appendJavaType(javaType.componentType, visited)
+        is JavaClassifierType -> {
+            when (val classifier = javaType.classifier) {
+                is JavaClass -> appendClassId(classifier.classId!!)
+                is JavaTypeParameter -> appendJavaType(classifier.takeIf { visited.add(it) }?.upperBounds?.firstOrNull(), visited)
+                else -> appendClassId(ClassId.topLevel(FqName(javaType.classifierQualifiedName)))
+            }
+        }
+        else -> append("Ljava/lang/Object;")
+    }
+}
+
+private fun StringBuilder.appendConeType(coneType: ConeKotlinType?) {
     // `kotlin.Int` <-> `int`
     // `kotlin.Int..kotlin.Int?` <-> `Integer`
     // `@EnhancedNullability kotlin.Int` <-> `@NotNull Integer`
@@ -80,14 +88,10 @@ private fun StringBuilder.appendConeType(coneType: ConeKotlinType?, typeConversi
             }
         }
     }
-    appendConeReferenceType(coneType, typeConversion, mutableSetOf())
+    appendConeReferenceType(coneType, mutableSetOf())
 }
 
-private fun StringBuilder.appendConeReferenceType(
-    coneType: ConeKotlinType?,
-    typeConversion: (FirTypeRef) -> ConeKotlinType?,
-    visited: MutableSet<FirTypeParameterSymbol>
-) {
+private fun StringBuilder.appendConeReferenceType(coneType: ConeKotlinType?, visited: MutableSet<FirTypeParameterSymbol>) {
     when (coneType) {
         null -> append("Ljava/lang/Object;")
         is ConeClassErrorType -> append('*')
@@ -95,7 +99,7 @@ private fun StringBuilder.appendConeReferenceType(
             val baseClassId = coneType.lookupTag.classId
             if (baseClassId == StandardClassIds.Array) {
                 // `Array<T>` -> `T[]`, where `T` is non-primitive, so e.g. `Array<Int>` is `Integer[]`.
-                append('[').appendConeReferenceType(coneType.typeArguments.singleOrNull()?.type, typeConversion, visited)
+                append('[').appendConeReferenceType(coneType.typeArguments.singleOrNull()?.type, visited)
                 return
             } else if (baseClassId.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME) {
                 // For primitive `T`, it should be `IntArray`, etc.
@@ -108,30 +112,17 @@ private fun StringBuilder.appendConeReferenceType(
         }
         // `T extends A & B & ...` -> `A`; type parameters cannot have primitive upper bounds.
         is ConeTypeParameterType -> {
-            val firstBound = coneType.lookupTag.typeParameterSymbol.takeIf { visited.add(it) }
-                ?.fir?.bounds?.firstOrNull()?.let { typeConversion(it) }
-            appendConeReferenceType(firstBound, typeConversion, visited)
+            val firstBound = coneType.lookupTag.typeParameterSymbol.takeIf { visited.add(it) }?.fir?.bounds?.firstOrNull()
+            if (firstBound is FirJavaTypeRef) {
+                appendJavaType(firstBound.type, mutableSetOf())
+            } else {
+                appendConeReferenceType(firstBound?.coneTypeSafe(), visited)
+            }
         }
         // `T & Any` should only appear when `T` is a nullable-bounded type parameter.
-        is ConeDefinitelyNotNullType -> appendConeReferenceType(coneType.original, typeConversion, visited)
+        is ConeDefinitelyNotNullType -> appendConeReferenceType(coneType.original, visited)
         // `T..T?` is always a reference type; primitives are non-nullable.
-        is ConeFlexibleType -> appendConeReferenceType(coneType.lowerBound, typeConversion, visited)
+        is ConeFlexibleType -> appendConeReferenceType(coneType.lowerBound, visited)
         else -> append('*') // TODO: throw an error? should check that Java type conversion/enhancement can only produce these cone types
-    }
-}
-
-private val unitClassId = ClassId.topLevel(FqName("kotlin.Unit"))
-
-private fun FirTypeRef.isVoid(): Boolean {
-    return when (this) {
-        is FirJavaTypeRef -> {
-            val type = type
-            type is JavaPrimitiveType && type.type == null
-        }
-        is FirResolvedTypeRef -> {
-            val type = type
-            type is ConeClassLikeType && type.lookupTag.classId == unitClassId
-        }
-        else -> false
     }
 }

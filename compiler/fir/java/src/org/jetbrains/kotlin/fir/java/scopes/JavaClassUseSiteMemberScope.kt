@@ -355,8 +355,9 @@ class JavaClassUseSiteMemberScope(
         overriddenBuiltin: FirNamedFunctionSymbol,
         scope: FirScope,
     ): FirNamedFunctionSymbol? {
+        val descriptor = overriddenBuiltin.fir.computeJvmDescriptor(includeReturnType = false)
         return scope.getFunctions(overriddenBuiltin.fir.name).firstOrNull { candidateOverride ->
-            candidateOverride.fir.computeJvmDescriptor() == overriddenBuiltin.fir.computeJvmDescriptor() &&
+            candidateOverride.fir.computeJvmDescriptor(includeReturnType = false) == descriptor &&
                     candidateOverride.hasErasedParameters()
         }?.let { override ->
             buildJavaMethodCopy(override.fir) {
@@ -401,24 +402,10 @@ class JavaClassUseSiteMemberScope(
                 getFunctionsFromSupertypes(builtinName).filter { it.getOverriddenBuiltinWithDifferentJvmName() != null }
             if (builtinSpecialFromSuperTypes.isEmpty()) return@any false
 
-            val currentJvmDescriptor = fir.computeJvmDescriptor(customName = builtinName.asString())
-
+            val currentJvmDescriptor = fir.computeJvmDescriptor(customName = builtinName.asString(), includeReturnType = false)
             builtinSpecialFromSuperTypes.any { builtinSpecial ->
-                builtinSpecial.fir.computeJvmDescriptor() == currentJvmDescriptor
+                builtinSpecial.fir.computeJvmDescriptor(includeReturnType = false) == currentJvmDescriptor
             }
-        }
-    }
-
-    private fun FirFunction.computeJvmSignature(): String? {
-        return computeJvmSignature { it.toConeKotlinTypeProbablyFlexible(session, typeParameterStack) }
-    }
-
-    private fun FirFunction.computeJvmDescriptor(customName: String? = null, includeReturnType: Boolean = false): String {
-        return computeJvmDescriptor(customName, includeReturnType) {
-            it.toConeKotlinTypeProbablyFlexible(
-                session,
-                typeParameterStack
-            )
         }
     }
 
@@ -459,10 +446,9 @@ class JavaClassUseSiteMemberScope(
                 it.getOverriddenBuiltinFunctionWithErasedValueParametersInJava()
             }
 
-        val jvmDescriptor = fir.computeJvmDescriptor()
-
+        val jvmDescriptor = fir.computeJvmDescriptor(includeReturnType = false)
         return candidatesToOverride.any { candidate ->
-            candidate.fir.computeJvmDescriptor() == jvmDescriptor && this.hasErasedParameters()
+            candidate.fir.computeJvmDescriptor(includeReturnType = false) == jvmDescriptor && this.hasErasedParameters()
         }
     }
 
