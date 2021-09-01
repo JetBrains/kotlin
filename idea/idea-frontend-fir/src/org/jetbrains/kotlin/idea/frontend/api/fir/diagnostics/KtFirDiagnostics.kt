@@ -281,6 +281,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val name: String
     }
 
+    abstract class InterfaceCantCallDefaultMethodViaSuper : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InterfaceCantCallDefaultMethodViaSuper::class
+    }
+
     abstract class NotASupertype : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = NotASupertype::class
     }
@@ -2654,6 +2658,22 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class JvmSyntheticOnDelegate : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = JvmSyntheticOnDelegate::class
+    }
+
+    abstract class DefaultMethodCallFromJava6TargetError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = DefaultMethodCallFromJava6TargetError::class
+    }
+
+    abstract class DefaultMethodCallFromJava6TargetWarning : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = DefaultMethodCallFromJava6TargetWarning::class
+    }
+
+    abstract class InterfaceStaticMethodCallFromJava6TargetError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InterfaceStaticMethodCallFromJava6TargetError::class
+    }
+
+    abstract class InterfaceStaticMethodCallFromJava6TargetWarning : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InterfaceStaticMethodCallFromJava6TargetWarning::class
     }
 
 }

@@ -13,10 +13,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirAnnotatedDeclar
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isJvm6
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
+import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -41,14 +45,14 @@ object FirRepeatableAnnotationChecker : FirAnnotatedDeclarationChecker() {
             val classId = annotation.classId ?: continue
             val annotationClassId = annotation.toAnnotationClassId() ?: continue
             if (annotationClassId.isLocal) continue
-            val annotationClass = session.symbolProvider.getClassLikeSymbolByFqName(annotationClassId) ?: continue
+            val annotationClass = session.symbolProvider.getClassLikeSymbolByClassId(annotationClassId) ?: continue
 
             // TODO: consider REPEATED_ANNOTATION ?
             if (fqName in annotationsSet &&
                 annotationClass.isRepeatableAnnotation(session) &&
                 annotationClass.getAnnotationRetention() != AnnotationRetention.SOURCE
             ) {
-                if (session.moduleData.platform.componentPlatforms.any { it.targetName == "1.6" }) {
+                if (context.isJvm6()) {
                     reporter.reportOn(annotation.source, FirJvmErrors.REPEATED_ANNOTATION_TARGET6, context)
                 } else if (session.languageVersionSettings.supportsFeature(LanguageFeature.RepeatableAnnotations)) {
                     // It's not allowed to have both a repeated annotation (applied more than once) and its container

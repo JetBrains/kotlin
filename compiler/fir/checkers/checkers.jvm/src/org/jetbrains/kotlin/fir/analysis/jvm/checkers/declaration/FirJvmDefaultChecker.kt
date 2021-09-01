@@ -14,39 +14,38 @@ import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isCompiledToJvmDefault
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isJvm6
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.java.jvmDefaultModeState
-import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassUseSiteMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_FQ_NAME
+import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME
 
 object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
-    private val JVM_DEFAULT_FQ_NAME = FqName("kotlin.jvm.JvmDefault")
-    private val JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithoutCompatibility")
-
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         val jvmDefaultMode = context.session.jvmDefaultModeState
         var defaultAnnotation: FirAnnotationCall? = null
         val containingDeclaration = context.findClosest<FirClassLikeDeclaration>()
 
         if (declaration is FirAnnotatedDeclaration) {
-            val isJvm16 = context.session.moduleData.platform.componentPlatforms.any { it.targetName == "1.6" }
-            defaultAnnotation = declaration.getAnnotationByFqName(JVM_DEFAULT_FQ_NAME)
+            val isJvm6 = context.isJvm6()
+            defaultAnnotation = declaration.getAnnotationByClassId(JVM_DEFAULT_CLASS_ID)
 
             if (defaultAnnotation != null) {
                 if (containingDeclaration !is FirClass || !containingDeclaration.isInterface) {
                     reporter.reportOn(defaultAnnotation.source, FirJvmErrors.JVM_DEFAULT_NOT_IN_INTERFACE, context)
                     return
-                } else if (isJvm16) {
+                } else if (isJvm6) {
                     reporter.reportOn(defaultAnnotation.source, FirJvmErrors.JVM_DEFAULT_IN_JVM6_TARGET, "JvmDefault", context)
                     return
                 } else if (!jvmDefaultMode.isEnabled) {
@@ -56,7 +55,7 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
             } else {
                 val annotation = declaration.getAnnotationByFqName(JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME)
                 if (annotation != null) {
-                    if (isJvm16) {
+                    if (isJvm6) {
                         reporter.reportOn(
                             annotation.source,
                             FirJvmErrors.JVM_DEFAULT_IN_JVM6_TARGET,
@@ -175,11 +174,5 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
     fun FirCallableSymbol<*>.isCompiledToJvmDefaultWithProperMode(jvmDefaultMode: JvmDefaultMode): Boolean {
         // TODO: Fix support for all cases
         return isCompiledToJvmDefault(jvmDefaultMode)
-    }
-
-    fun FirCallableSymbol<*>.isCompiledToJvmDefault(): Boolean {
-        // TODO: Fix support for all cases
-        if (getAnnotationByFqName(JVM_DEFAULT_FQ_NAME) != null) return true
-        return false
     }
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics.jvm
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature.DefaultMethodsCallFromJava6TargetError
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.SourceElementPositioningStrategies
@@ -59,6 +60,7 @@ object FirJvmErrors {
 
     // Super
     val SUPER_CALL_WITH_DEFAULT_PARAMETERS by error1<PsiElement, String>()
+    val INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
 
     // JVM Records
     val LOCAL_JVM_RECORD by error0<PsiElement>()
@@ -98,5 +100,7 @@ object FirJvmErrors {
     val INAPPLICABLE_JVM_FIELD by error1<KtAnnotationEntry, String>()
     val INAPPLICABLE_JVM_FIELD_WARNING by warning1<KtAnnotationEntry, String>()
     val JVM_SYNTHETIC_ON_DELEGATE by error0<KtAnnotationEntry>()
+    val DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET by deprecationError0<PsiElement>(DefaultMethodsCallFromJava6TargetError, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET by deprecationError0<PsiElement>(DefaultMethodsCallFromJava6TargetError, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
 
 }

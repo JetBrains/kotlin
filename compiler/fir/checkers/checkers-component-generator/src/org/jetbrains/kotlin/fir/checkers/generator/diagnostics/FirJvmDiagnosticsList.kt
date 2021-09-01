@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.Named
+import org.jetbrains.kotlin.config.LanguageFeature.*
 import org.jetbrains.kotlin.fir.PrivateForInline
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -57,7 +57,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val OVERLOADS_ABSTRACT by error<KtAnnotationEntry>()
         val OVERLOADS_INTERFACE by error<KtAnnotationEntry>()
         val OVERLOADS_LOCAL by error<KtAnnotationEntry>()
-        val OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR by deprecationError<KtAnnotationEntry>(LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses)
+        val OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR by deprecationError<KtAnnotationEntry>(
+            ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses
+        )
         val OVERLOADS_PRIVATE by warning<KtAnnotationEntry>()
         val DEPRECATED_JAVA_ANNOTATION by warning<KtAnnotationEntry>() {
             parameter<FqName>("kotlinName")
@@ -72,6 +74,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val SUPER_CALL_WITH_DEFAULT_PARAMETERS by error<PsiElement>() {
             parameter<String>("name")
         }
+        val INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED)
     }
 
     val RECORDS by object : DiagnosticGroup("JVM Records") {
@@ -129,5 +132,13 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<String>("message")
         }
         val JVM_SYNTHETIC_ON_DELEGATE by error<KtAnnotationEntry>()
+        val DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET by deprecationError<PsiElement>(
+            DefaultMethodsCallFromJava6TargetError,
+            PositioningStrategy.REFERENCE_BY_QUALIFIED
+        )
+        val INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET by deprecationError<PsiElement>(
+            DefaultMethodsCallFromJava6TargetError,
+            PositioningStrategy.REFERENCE_BY_QUALIFIED
+        )
     }
 }

@@ -361,6 +361,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER) { firDiagnostic ->
+        InterfaceCantCallDefaultMethodViaSuperImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.NOT_A_SUPERTYPE) { firDiagnostic ->
         NotASupertypeImpl(
             firDiagnostic as FirPsiDiagnostic,
@@ -3816,6 +3822,30 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirJvmErrors.JVM_SYNTHETIC_ON_DELEGATE) { firDiagnostic ->
         JvmSyntheticOnDelegateImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET.errorFactory) { firDiagnostic ->
+        DefaultMethodCallFromJava6TargetErrorImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET.warningFactory) { firDiagnostic ->
+        DefaultMethodCallFromJava6TargetWarningImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET.errorFactory) { firDiagnostic ->
+        InterfaceStaticMethodCallFromJava6TargetErrorImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET.warningFactory) { firDiagnostic ->
+        InterfaceStaticMethodCallFromJava6TargetWarningImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
