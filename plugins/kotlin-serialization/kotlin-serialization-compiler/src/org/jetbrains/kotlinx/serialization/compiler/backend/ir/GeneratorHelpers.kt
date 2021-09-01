@@ -1126,13 +1126,23 @@ interface IrBuilderExtension {
         val serializerProviderFunction = companionClass.declarations.singleOrNull {
             it is IrFunction && it.name == SerialEntityNames.SERIALIZER_PROVIDER_NAME && it.valueParameters.size == baseClass.typeParameters.size
         } ?: return null
+
+        val adjustedArgs: List<IrExpression> =
+            if (baseClass.descriptor.isSealed() || baseClass.descriptor.modality == Modality.ABSTRACT) {
+                val serializer = findStandardKotlinTypeSerializer(baseClass.module, context.irBuiltIns.unitType.toKotlinType())!!
+                // workaround for sealed and classes - the `serializer` function expects non-null serializers, but does not use them, so serializers of any type can be passed
+                List(baseClass.typeParameters.size) { irGetObject(serializer) }
+            } else {
+                args
+            }
+
         with(serializerProviderFunction as IrFunction) {
-            // Note that [args] and [typeArgs] may be unused if we short-cut to e.g. SealedClassSerializer
+            // Note that [typeArgs] may be unused if we short-cut to e.g. SealedClassSerializer
             return irInvoke(
                 irGetObject(companionClass),
                 symbol,
                 typeArgs.takeIf { it.size == typeParameters.size }.orEmpty(),
-                args.takeIf { it.size == valueParameters.size }.orEmpty()
+                adjustedArgs.takeIf { it.size == valueParameters.size }.orEmpty()
             )
         }
     }
