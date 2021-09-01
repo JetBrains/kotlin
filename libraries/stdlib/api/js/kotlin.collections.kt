@@ -10260,8 +10260,9 @@ public abstract class AbstractMutableCollection<E> : kotlin.collections.Abstract
 
     public open override fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "Provided so that subclasses inherit this function")
     @kotlin.js.JsName(name = "toJSON")
-    public open fun toJSON(): kotlin.Any
+    protected final fun toJSON(): kotlin.Any
 }
 
 public abstract class AbstractMutableList<E> : kotlin.collections.AbstractMutableCollection<E>, kotlin.collections.MutableList<E> {
