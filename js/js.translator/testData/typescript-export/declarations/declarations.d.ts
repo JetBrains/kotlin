@@ -55,5 +55,48 @@ declare namespace JS_TESTS {
                 readonly x: number;
             };
         }
+        class TestSealed {
+            protected constructor(name: string);
+            readonly name: string;
+        }
+        namespace TestSealed {
+            class AA extends foo.TestSealed {
+                constructor();
+                bar(): string;
+            }
+            class BB extends foo.TestSealed {
+                constructor();
+                baz(): string;
+            }
+        }
+        abstract class TestAbstract {
+            constructor(name: string);
+            readonly name: string;
+        }
+        namespace TestAbstract {
+            class AA extends foo.TestAbstract {
+                constructor();
+                bar(): string;
+            }
+            class BB extends foo.TestAbstract {
+                constructor();
+                baz(): string;
+            }
+        }
+        class TestDataClass {
+            constructor(name: string);
+            readonly name: string;
+            component1(): string;
+            copy(name: string): foo.TestDataClass;
+            toString(): string;
+            hashCode(): number;
+            equals(other: Nullable<any>): boolean;
+        }
+        namespace TestDataClass {
+            class Nested {
+                constructor();
+                readonly prop: string;
+            }
+        }
     }
 }
