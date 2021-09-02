@@ -22,12 +22,10 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.scopes.fakeOverrideStorage
 import org.jetbrains.kotlin.fir.scopes.impl.hasTypeOf
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -52,7 +50,7 @@ class FirSamResolverImpl(
     private val outerClassManager: FirOuterClassManager? = null,
 ) : FirSamResolver() {
     private val resolvedFunctionType: NullableMap<FirRegularClass, ConeLookupTagBasedType?> = NullableMap()
-    private val samConstructor: NullableMap<FirRegularClass, FirSimpleFunction?> = NullableMap()
+    private val samConstructorsCache = firSession.fakeOverrideStorage.samConstructorCache
 
     override fun getFunctionTypeForPossibleSamType(type: ConeKotlinType): ConeKotlinType? {
         return when (type) {
@@ -113,12 +111,11 @@ class FirSamResolverImpl(
     }
 
     override fun getSamConstructor(firRegularClass: FirRegularClass): FirSimpleFunction? {
-        return samConstructor.getOrPut(firRegularClass) {
-            buildSamConstructor(firRegularClass)
-        }
+        return samConstructorsCache.getValue(firRegularClass.symbol, this)?.fir
     }
 
-    private fun buildSamConstructor(firRegularClass: FirRegularClass): FirSimpleFunction? {
+    fun buildSamConstructor(classSymbol: FirRegularClassSymbol): FirNamedFunctionSymbol? {
+        val firRegularClass = classSymbol.fir
         val functionType = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
 
         val classId = firRegularClass.classId
@@ -218,7 +215,7 @@ class FirSamResolverImpl(
             resolvePhase = FirResolvePhase.BODY_RESOLVE
         }.apply {
             containingClassForStaticMemberAttr = outerClassManager?.outerClass(firRegularClass.symbol)?.toLookupTag()
-        }
+        }.symbol
     }
 
     private fun resolveFunctionTypeIfSamInterface(firRegularClass: FirRegularClass): ConeLookupTagBasedType? {

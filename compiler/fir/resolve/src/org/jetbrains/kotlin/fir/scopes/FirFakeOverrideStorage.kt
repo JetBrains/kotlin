@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.resolve.FirSamResolverImpl
 import org.jetbrains.kotlin.fir.resolve.ScopeSessionKey
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
@@ -56,6 +57,9 @@ class FirFakeOverrideStorage(val session: FirSession) : FirSessionComponent {
 
     val intersectionOverrideCacheByScope: FirCache<ConeKotlinType, IntersectionOverrideCache, Nothing?> =
         cachesFactory.createCache { _ -> IntersectionOverrideCache(cachesFactory) }
+
+    val samConstructorCache: FirCache<FirRegularClassSymbol, FirNamedFunctionSymbol?, FirSamResolverImpl> =
+        cachesFactory.createCache { classSymbol, samResolver -> samResolver.buildSamConstructor(classSymbol) }
 }
 
 val FirSession.fakeOverrideStorage: FirFakeOverrideStorage by FirSession.sessionComponentAccessor()
