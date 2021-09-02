@@ -152,24 +152,6 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     }
 
     @Test
-    @TestMetadata("jvmStaticExternal.kt")
-    public void testJvmStaticExternal() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/jvmStaticExternal.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmStaticWithDefaultParameters.kt")
-    public void testJvmStaticWithDefaultParameters() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/jvmStaticWithDefaultParameters.kt");
-    }
-
-    @Test
-    @TestMetadata("kt31389.kt")
-    public void testKt31389() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/kt31389.kt");
-    }
-
-    @Test
     @TestMetadata("kt42137.kt")
     public void testKt42137() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/kt42137.kt");
@@ -1856,6 +1838,40 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
                     runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/noDefaultImpl/interfaceProperty.kt");
                 }
             }
+        }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/jvmStatic")
+    @TestDataPath("$PROJECT_ROOT")
+    public class JvmStatic {
+        @Test
+        public void testAllFilesPresentInJvmStatic() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("jvmStaticExternal.kt")
+        public void testJvmStaticExternal() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/jvmStatic/jvmStaticExternal.kt");
+        }
+
+        @Test
+        @TestMetadata("jvmStaticPrivate.kt")
+        public void testJvmStaticPrivate() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/jvmStatic/jvmStaticPrivate.kt");
+        }
+
+        @Test
+        @TestMetadata("jvmStaticWithDefaultParameters.kt")
+        public void testJvmStaticWithDefaultParameters() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/jvmStatic/jvmStaticWithDefaultParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("kt31389.kt")
+        public void testKt31389() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/jvmStatic/kt31389.kt");
         }
     }
 
