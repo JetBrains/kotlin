@@ -197,10 +197,10 @@ java {
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.allWarningsAsErrors = true
     kotlinOptions.freeCompilerArgs += listOf(
-        "-Xopt-in=kotlin.RequiresOptIn",
+        "-opt-in=kotlin.RequiresOptIn",
         "-Xskip-runtime-version-check",
         "-Xsuppress-version-warnings",
-        "-Xopt-in=kotlin.ExperimentalStdlibApi"
+        "-opt-in=kotlin.ExperimentalStdlibApi"
     )
 }
 

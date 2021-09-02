@@ -59,8 +59,8 @@ tasks.withType<KotlinCompile> {
         freeCompilerArgs += listOf(
             "-Xallow-kotlin-package",
             "-Xmulti-platform",
-            "-Xopt-in=kotlin.RequiresOptIn",
-            "-Xopt-in=kotlin.contracts.ExperimentalContracts"
+            "-opt-in=kotlin.RequiresOptIn",
+            "-opt-in=kotlin.contracts.ExperimentalContracts"
         )
         moduleName = "kotlin-stdlib"
     }

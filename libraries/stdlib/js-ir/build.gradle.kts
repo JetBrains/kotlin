@@ -137,11 +137,11 @@ kotlin {
 tasks.withType<KotlinCompile<*>>().configureEach {
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xallow-kotlin-package",
-        "-Xopt-in=kotlin.ExperimentalMultiplatform",
-        "-Xopt-in=kotlin.contracts.ExperimentalContracts",
-        "-Xopt-in=kotlin.RequiresOptIn",
-        "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
-        "-Xopt-in=kotlin.ExperimentalStdlibApi"
+        "-opt-in=kotlin.ExperimentalMultiplatform",
+        "-opt-in=kotlin.contracts.ExperimentalContracts",
+        "-opt-in=kotlin.RequiresOptIn",
+        "-opt-in=kotlin.ExperimentalUnsignedTypes",
+        "-opt-in=kotlin.ExperimentalStdlibApi"
     )
 }
 

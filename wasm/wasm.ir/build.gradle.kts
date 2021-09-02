@@ -60,7 +60,7 @@ sourceSets {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     kotlinOptions.freeCompilerArgs += listOf(
-        "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
+        "-opt-in=kotlin.ExperimentalUnsignedTypes",
         "-Xskip-prerelease-check"
     )
 }

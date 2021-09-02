@@ -17,6 +17,6 @@ sourceSets {
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions {
-        freeCompilerArgs += "-Xopt-in=org.jetbrains.kotlin.fir.symbols.SymbolInternals"
+        freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.fir.symbols.SymbolInternals"
     }
 }
