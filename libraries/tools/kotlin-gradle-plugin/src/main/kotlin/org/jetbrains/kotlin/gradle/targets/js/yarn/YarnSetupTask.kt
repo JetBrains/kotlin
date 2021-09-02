@@ -105,7 +105,10 @@ open class YarnSetupTask : DefaultTask() {
         val tmpDir = temporaryDir
         extract(yarnDist, tmpDir) // parent because archive contains name already
 
-        if (upToDate && fileHasher.calculateDirHash(tmpDir.resolve(destination.name))!! == dirHash) return
+        if (upToDate && fileHasher.calculateDirHash(tmpDir.resolve(destination.name))!! == dirHash) {
+            tmpDir.deleteRecursively()
+            return
+        }
 
         if (destination.isDirectory) {
             destination.deleteRecursively()

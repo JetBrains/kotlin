@@ -95,7 +95,10 @@ abstract class NodeJsSetupTask : DefaultTask() {
         val tmpDir = temporaryDir
         unpackNodeArchive(nodeJsDist, tmpDir)
 
-        if (upToDate && fileHasher.calculateDirHash(tmpDir.resolve(destination.name))!! == dirHash) return
+        if (upToDate && fileHasher.calculateDirHash(tmpDir.resolve(destination.name))!! == dirHash) {
+            tmpDir.deleteRecursively()
+            return
+        }
 
         if (destination.isDirectory) {
             destination.deleteRecursively()
