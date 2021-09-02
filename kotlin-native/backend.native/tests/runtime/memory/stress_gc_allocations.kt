@@ -51,8 +51,8 @@ fun test() {
     val value: Byte = 42
     // Try to make sure each page is written
     val stride = 4096
-    // Limit memory usage at ~500MiB. This limit was exercised by -Xallocator=mimalloc and legacy MM.
-    val rssDiffLimit: Long = 500_000_000
+    // Limit memory usage at ~700MiB. This limit was exercised by -Xallocator=mimalloc and legacy MM.
+    val rssDiffLimit: Long = 700_000_000
     // Trigger GC after ~100MiB are allocated
     val retainLimit: Long = 100_000_000
     val progressReportsCount = 100
