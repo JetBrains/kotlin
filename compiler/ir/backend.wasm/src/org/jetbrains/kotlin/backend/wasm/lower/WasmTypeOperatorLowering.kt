@@ -38,7 +38,6 @@ class WasmTypeOperatorLowering(val context: WasmBackendContext) : FileLoweringPa
 class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrElementTransformerVoidWithContext() {
     private val symbols = context.wasmSymbols
     private val builtIns = context.irBuiltIns
-    private val unitGetInstance = context.findUnitGetInstanceFunction()
 
     private lateinit var builder: DeclarationIrBuilder
 
@@ -49,7 +48,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         return when (expression.operator) {
             IrTypeOperator.IMPLICIT_CAST -> lowerImplicitCast(expression)
             IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> error("Dynamic casts are not supported in Wasm backend")
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> builder.irComposite(resultType = builtIns.unitType) { +expression.argument }
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> expression
             IrTypeOperator.IMPLICIT_INTEGER_COERCION -> lowerIntegerCoercion(expression)
             IrTypeOperator.IMPLICIT_NOTNULL -> lowerImplicitCast(expression)
             IrTypeOperator.INSTANCEOF -> lowerInstanceOf(expression, inverted = false)

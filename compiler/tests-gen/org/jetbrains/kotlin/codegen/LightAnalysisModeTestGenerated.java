@@ -34412,6 +34412,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/unit/nullableUnitInWhen3.kt");
         }
 
+        @TestMetadata("sillyThings.kt")
+        public void testSillyThings() throws Exception {
+            runTest("compiler/testData/codegen/box/unit/sillyThings.kt");
+        }
+
         @TestMetadata("unitClassObject.kt")
         public void testUnitClassObject() throws Exception {
             runTest("compiler/testData/codegen/box/unit/unitClassObject.kt");

@@ -328,12 +328,6 @@ private val wasmNullSpecializationLowering = makeWasmModulePhase(
     description = "Specialize assigning Nothing? values to other types."
 )
 
-private val unitMaterializationPass = makeWasmModulePhase(
-    { context -> UnitMaterializationPass(context) },
-    name = "UnitLoweringPass",
-    description = "Materialize unit instances"
-)
-
 private val staticMembersLoweringPhase = makeWasmModulePhase(
     ::StaticMembersLowering,
     name = "StaticMembersLowering",
@@ -512,6 +506,5 @@ val wasmPhases = NamedCompilerPhase(
             wasmThrowDebugLoweringPhase then
             staticMembersLoweringPhase then
             wasmNullSpecializationLowering then
-            unitMaterializationPass then
             validateIrAfterLowering
 )

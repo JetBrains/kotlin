@@ -192,21 +192,6 @@ class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsag
     }
 }
 
-class UnitMaterializationPass(val context: JsCommonBackendContext) : AbstractValueUsageTransformer(context.irBuiltIns), BodyLoweringPass {
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transformChildrenVoid()
-    }
-
-    override fun IrExpression.useAsValue(value: IrValueDeclaration): IrExpression {
-        if (this.type == irBuiltIns.unitType && !this.isGetUnit(irBuiltIns)) {
-            val unitValue = JsIrBuilder.buildGetObjectValue(type, irBuiltIns.unitClass)
-            return JsIrBuilder.buildComposite(type, listOf(this, unitValue))
-        }
-        return this
-    }
-}
-
-
 private tailrec fun IrExpression.isGetUnit(irBuiltIns: IrBuiltIns): Boolean =
     when (this) {
         is IrContainerExpression ->

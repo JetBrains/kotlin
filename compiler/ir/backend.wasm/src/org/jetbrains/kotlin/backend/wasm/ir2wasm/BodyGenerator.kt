@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmSymbols
 import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -33,20 +33,24 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     private val wasmSymbols: WasmSymbols = backendContext.wasmSymbols
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
 
+    private val unitGetInstance by lazy { backendContext.findUnitGetInstanceFunction() }
+    fun WasmExpressionBuilder.buildGetUnit() {
+        buildCall(context.referenceFunction(unitGetInstance.symbol))
+    }
+
     override fun visitElement(element: IrElement) {
         error("Unexpected element of type ${element::class}")
     }
 
-    val unitGetInstance by lazy { backendContext.mapping.objectToGetInstanceFunction[irBuiltIns.unitClass.owner]!! }
-
-    override fun visitGetObjectValue(expression: IrGetObjectValue) {
-        require(expression.symbol == irBuiltIns.unitClass)
-        body.buildCall(context.referenceFunction(unitGetInstance.symbol))
-    }
-
     override fun visitTypeOperator(expression: IrTypeOperatorCall) {
-        require(expression.operator == IrTypeOperator.REINTERPRET_CAST) { "Other types of casts must be lowered" }
-        generateExpression(expression.argument)
+        when (expression.operator) {
+            IrTypeOperator.REINTERPRET_CAST -> generateExpression(expression.argument)
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
+                statementToWasmInstruction(expression.argument)
+                body.buildGetUnit()
+            }
+            else -> assert(false) { "Other types of casts must be lowered" }
+        }
     }
 
     override fun <T> visitConst(expression: IrConst<T>) {
@@ -120,6 +124,8 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             generateExpression(expression.value)
             body.buildSetGlobal(context.referenceGlobal(expression.symbol))
         }
+
+        body.buildGetUnit()
     }
 
     override fun visitGetValue(expression: IrGetValue) {
@@ -129,6 +135,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     override fun visitSetValue(expression: IrSetValue) {
         generateExpression(expression.value)
         body.buildSetLocal(context.referenceLocal(expression.symbol))
+        body.buildGetUnit()
     }
 
     override fun visitCall(expression: IrCall) {
@@ -176,6 +183,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
         // Don't delegate constructors of Any to Any.
         if (klass.defaultType.isAny()) {
+            body.buildGetUnit()
             return
         }
 
@@ -208,6 +216,8 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         val function: IrFunction = call.symbol.owner.realOverrideTarget
 
         if (tryToGenerateIntrinsicCall(call, function)) {
+            if (function.returnType == irBuiltIns.unitType)
+                body.buildGetUnit()
             return
         }
 
@@ -250,6 +260,10 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                 body.buildRefCast()
             }
         }
+
+        // Unit types don't cross function boundaries
+        if (function.returnType == irBuiltIns.unitType && function.symbol != unitGetInstance.symbol)
+            body.buildGetUnit()
     }
 
     private fun generateTypeRTT(type: IrType) {
@@ -327,28 +341,32 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
     override fun visitContainerExpression(expression: IrContainerExpression) {
         val statements = expression.statements
-        if (statements.isEmpty()) return
+        if (statements.isEmpty()) {
+            assert(expression.type == irBuiltIns.unitType) { "Empty block with non-unit return type" }
+            body.buildGetUnit()
+            return
+        }
 
         statements.dropLast(1).forEach {
             statementToWasmInstruction(it)
         }
 
-        generateExpression(statements.last() as IrExpression)
+        generateExpression(statements.last())
     }
 
     override fun visitBreak(jump: IrBreak) {
+        assert(jump.type == irBuiltIns.nothingType)
         body.buildBr(context.referenceLoopLevel(jump.loop, LoopLabelType.BREAK))
     }
 
     override fun visitContinue(jump: IrContinue) {
+        assert(jump.type == irBuiltIns.nothingType)
         body.buildBr(context.referenceLoopLevel(jump.loop, LoopLabelType.CONTINUE))
     }
 
     override fun visitReturn(expression: IrReturn) {
-        if (
-            expression.value.type == irBuiltIns.unitType &&
-            expression.returnTargetSymbol.owner.returnType(backendContext) == irBuiltIns.unitType
-        ) {
+        if (expression.returnTargetSymbol.owner.returnType(backendContext) == irBuiltIns.unitType &&
+            expression.returnTargetSymbol.owner != unitGetInstance) {
             statementToWasmInstruction(expression.value)
         } else {
             generateExpression(expression.value)
@@ -372,6 +390,8 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     override fun visitWhen(expression: IrWhen) {
         val resultType = context.transformBlockResultType(expression.type)
         var ifCount = 0
+        var seenElse = false
+
         for (branch in expression.branches) {
             if (!isElseBranch(branch)) {
                 generateExpression(branch.condition)
@@ -387,8 +407,16 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                 if (expression.type == irBuiltIns.nothingType) {
                     body.buildUnreachable()
                 }
+                seenElse = true
                 break
             }
+        }
+
+        // Always generate the last else to make verifier happy. If this when expression is exhaustive we will never reach the last else.
+        // If it's not exhaustive it must be used as a statement (per kotlin spec) and so the result value of the last else will never be used.
+        if (!seenElse && resultType != null) {
+            assert(expression.type != irBuiltIns.nothingType)
+            generateDefaultInitializerForType(resultType, body)
         }
 
         repeat(ifCount) { body.buildEnd() }
@@ -420,6 +448,8 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         body.buildBrIf(wasmLoop)
         body.buildEnd()
         body.buildEnd()
+
+        body.buildGetUnit()
     }
 
     override fun visitWhileLoop(loop: IrWhileLoop) {
@@ -449,68 +479,40 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         body.buildBr(wasmLoop)
         body.buildEnd()
         body.buildEnd()
+
+        body.buildGetUnit()
     }
 
-    fun generateExpression(expression: IrExpression) {
-        expression.acceptVoid(this)
+    // Generates code for the given IR element and *always* leaves something on the stack
+    fun generateExpression(elem: IrElement) {
+        assert(elem is IrExpression || elem is IrVariable) { "Unsupported statement kind" }
 
-        if (expression.type == irBuiltIns.nothingType) {
+        elem.acceptVoid(this)
+
+        if (elem is IrExpression && elem.type == irBuiltIns.nothingType) {
             body.buildUnreachable()
         }
     }
 
-    fun statementToWasmInstruction(statement: IrStatement) {
-        if (statement is IrVariable) {
-            context.defineLocal(statement.symbol)
-            val init = statement.initializer ?: return
-            generateExpression(init)
-            val varName = context.referenceLocal(statement.symbol)
-            body.buildSetLocal(varName)
+    // Generates code for the given IR element but *never* leaves anything on the stack
+    fun statementToWasmInstruction(statement: IrElement) {
+        assert(statement is IrExpression || statement is IrVariable) { "Unsupported statement kind" }
+
+        generateExpression(statement)
+        body.buildDrop()
+    }
+
+    override fun visitVariable(declaration: IrVariable) {
+        context.defineLocal(declaration.symbol)
+        if (declaration.initializer == null) {
+            body.buildGetUnit()
             return
         }
-
-        if (statement is IrContainerExpression) {
-            statement.statements.forEach { it ->
-                statementToWasmInstruction(it)
-            }
-        } else if (statement is IrWhen) {
-            var ifCount = 0
-            for (branch in statement.branches) {
-                if (!isElseBranch(branch)) {
-                    generateExpression(branch.condition)
-                    body.buildIf(label = null, resultType = null)
-                    statementToWasmInstruction(branch.result)
-                    body.buildElse()
-                    ifCount++
-                } else {
-                    statementToWasmInstruction(branch.result)
-                    break
-                }
-            }
-
-            repeat(ifCount) { body.buildEnd() }
-        } else {
-            generateExpression(statement as IrExpression)
-
-            var needDrop = true
-            if (statement.type == irBuiltIns.nothingType)
-                needDrop = false
-
-            if (statement is IrSetValue || statement is IrBreakContinue || statement is IrSetField || statement is IrLoop || statement is IrDelegatingConstructorCall) {
-                needDrop = false
-            }
-
-            if (statement is IrCall || statement is IrConstructorCall) {
-                val unitGetInstanceCall = statement is IrCall && statement.symbol.owner == unitGetInstance
-                if (statement.type == irBuiltIns.unitType && !unitGetInstanceCall) {
-                    needDrop = false
-                }
-            }
-
-            if (needDrop) {
-                body.buildInstr(WasmOp.DROP)
-            }
-        }
+        val init = declaration.initializer!!
+        generateExpression(init)
+        val varName = context.referenceLocal(declaration.symbol)
+        body.buildSetLocal(varName)
+        body.buildGetUnit()
     }
 
     // Return true if function is recognized as intrinsic.

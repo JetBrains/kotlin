@@ -42819,6 +42819,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("sillyThings.kt")
+        public void testSillyThings() throws Exception {
+            runTest("compiler/testData/codegen/box/unit/sillyThings.kt");
+        }
+
+        @Test
         @TestMetadata("unitClassObject.kt")
         public void testUnitClassObject() throws Exception {
             runTest("compiler/testData/codegen/box/unit/unitClassObject.kt");
