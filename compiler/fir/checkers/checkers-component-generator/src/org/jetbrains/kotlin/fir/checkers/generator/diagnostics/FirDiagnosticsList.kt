@@ -271,34 +271,34 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val REPEATED_ANNOTATION_WARNING by warning<KtAnnotationEntry>()
     }
 
-    val EXPERIMENTAL by object : DiagnosticGroup("OptIn-related") {
-        val EXPERIMENTAL_API_USAGE by warning<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+    val OPT_IN by object : DiagnosticGroup("OptIn") {
+        val OPT_IN_USAGE by warning<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<FqName>("optInMarkerFqName")
             parameter<String>("message")
         }
-        val EXPERIMENTAL_API_USAGE_ERROR by warning<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+        val OPT_IN_USAGE_ERROR by warning<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<FqName>("optInMarkerFqName")
             parameter<String>("message")
         }
-        val EXPERIMENTAL_OVERRIDE by warning<PsiElement> {
+        val OPT_IN_OVERRIDE by warning<PsiElement> {
             parameter<FqName>("optInMarkerFqName")
             parameter<String>("message")
         }
-        val EXPERIMENTAL_OVERRIDE_ERROR by error<PsiElement> {
+        val OPT_IN_OVERRIDE_ERROR by error<PsiElement> {
             parameter<FqName>("optInMarkerFqName")
             parameter<String>("message")
         }
-        val EXPERIMENTAL_IS_NOT_ENABLED by warning<KtAnnotationEntry>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
-        val EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION by error<PsiElement>()
-        val EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL by error<PsiElement>()
-        val USE_EXPERIMENTAL_WITHOUT_ARGUMENTS by warning<KtAnnotationEntry>()
-        val USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER by warning<KtAnnotationEntry> {
+        val OPT_IN_IS_NOT_ENABLED by warning<KtAnnotationEntry>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
+        val OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION by error<PsiElement>()
+        val OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN by error<PsiElement>()
+        val OPT_IN_WITHOUT_ARGUMENTS by warning<KtAnnotationEntry>()
+        val OPT_IN_ARGUMENT_IS_NOT_MARKER by warning<KtAnnotationEntry> {
             parameter<FqName>("notMarkerFqName")
         }
-        val EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET by error<KtAnnotationEntry> {
+        val OPT_IN_MARKER_WITH_WRONG_TARGET by error<KtAnnotationEntry> {
             parameter<String>("target")
         }
-        val EXPERIMENTAL_ANNOTATION_WITH_WRONG_RETENTION by error<KtAnnotationEntry>()
+        val OPT_IN_MARKER_WITH_WRONG_RETENTION by error<KtAnnotationEntry>()
     }
 
     val EXPOSED_VISIBILITY by object : DiagnosticGroup("Exposed visibility") {

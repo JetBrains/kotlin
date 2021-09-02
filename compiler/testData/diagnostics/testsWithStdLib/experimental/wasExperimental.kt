@@ -24,12 +24,12 @@ class NewClassExperimentalInThePast
 
 @SinceKotlin("1.4")
 @WasExperimental(Marker::class)
-typealias TypeAliasToNewClass = <!EXPERIMENTAL_API_USAGE_ERROR!>NewClassExperimentalInThePast<!>
+typealias TypeAliasToNewClass = <!OPT_IN_USAGE_ERROR!>NewClassExperimentalInThePast<!>
 
 
 fun use1(
-    c1: <!EXPERIMENTAL_API_USAGE_ERROR!>NewClassExperimentalInThePast<!>,
-    t1: <!EXPERIMENTAL_API_USAGE_ERROR!>TypeAliasToNewClass<!>
+    c1: <!OPT_IN_USAGE_ERROR!>NewClassExperimentalInThePast<!>,
+    t1: <!OPT_IN_USAGE_ERROR!>TypeAliasToNewClass<!>
 ) {
     <!UNRESOLVED_REFERENCE!>newPublishedFun<!>()
     <!UNRESOLVED_REFERENCE!>newFunExperimentalInThePast<!>()

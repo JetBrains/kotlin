@@ -626,58 +626,58 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RepeatedAnnotationWarning::class
     }
 
-    abstract class ExperimentalApiUsage : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = ExperimentalApiUsage::class
+    abstract class OptInUsage : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = OptInUsage::class
         abstract val optInMarkerFqName: FqName
         abstract val message: String
     }
 
-    abstract class ExperimentalApiUsageError : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = ExperimentalApiUsageError::class
+    abstract class OptInUsageError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = OptInUsageError::class
         abstract val optInMarkerFqName: FqName
         abstract val message: String
     }
 
-    abstract class ExperimentalOverride : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = ExperimentalOverride::class
+    abstract class OptInOverride : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = OptInOverride::class
         abstract val optInMarkerFqName: FqName
         abstract val message: String
     }
 
-    abstract class ExperimentalOverrideError : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = ExperimentalOverrideError::class
+    abstract class OptInOverrideError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = OptInOverrideError::class
         abstract val optInMarkerFqName: FqName
         abstract val message: String
     }
 
-    abstract class ExperimentalIsNotEnabled : KtFirDiagnostic<KtAnnotationEntry>() {
-        override val diagnosticClass get() = ExperimentalIsNotEnabled::class
+    abstract class OptInIsNotEnabled : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = OptInIsNotEnabled::class
     }
 
-    abstract class ExperimentalCanOnlyBeUsedAsAnnotation : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = ExperimentalCanOnlyBeUsedAsAnnotation::class
+    abstract class OptInCanOnlyBeUsedAsAnnotation : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = OptInCanOnlyBeUsedAsAnnotation::class
     }
 
-    abstract class ExperimentalMarkerCanOnlyBeUsedAsAnnotationOrArgumentInUseExperimental : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = ExperimentalMarkerCanOnlyBeUsedAsAnnotationOrArgumentInUseExperimental::class
+    abstract class OptInMarkerCanOnlyBeUsedAsAnnotationOrArgumentInOptIn : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = OptInMarkerCanOnlyBeUsedAsAnnotationOrArgumentInOptIn::class
     }
 
-    abstract class UseExperimentalWithoutArguments : KtFirDiagnostic<KtAnnotationEntry>() {
-        override val diagnosticClass get() = UseExperimentalWithoutArguments::class
+    abstract class OptInWithoutArguments : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = OptInWithoutArguments::class
     }
 
-    abstract class UseExperimentalArgumentIsNotMarker : KtFirDiagnostic<KtAnnotationEntry>() {
-        override val diagnosticClass get() = UseExperimentalArgumentIsNotMarker::class
+    abstract class OptInArgumentIsNotMarker : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = OptInArgumentIsNotMarker::class
         abstract val notMarkerFqName: FqName
     }
 
-    abstract class ExperimentalAnnotationWithWrongTarget : KtFirDiagnostic<KtAnnotationEntry>() {
-        override val diagnosticClass get() = ExperimentalAnnotationWithWrongTarget::class
+    abstract class OptInMarkerWithWrongTarget : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = OptInMarkerWithWrongTarget::class
         abstract val target: String
     }
 
-    abstract class ExperimentalAnnotationWithWrongRetention : KtFirDiagnostic<KtAnnotationEntry>() {
-        override val diagnosticClass get() = ExperimentalAnnotationWithWrongRetention::class
+    abstract class OptInMarkerWithWrongRetention : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = OptInMarkerWithWrongRetention::class
     }
 
     abstract class ExposedTypealiasExpandedType : KtFirDiagnostic<KtNamedDeclaration>() {

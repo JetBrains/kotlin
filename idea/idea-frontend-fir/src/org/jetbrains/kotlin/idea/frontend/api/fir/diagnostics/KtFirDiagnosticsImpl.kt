@@ -1005,90 +1005,90 @@ internal class RepeatedAnnotationWarningImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
-internal class ExperimentalApiUsageImpl(
+internal class OptInUsageImpl(
     override val optInMarkerFqName: FqName,
     override val message: String,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExperimentalApiUsage(), KtAbstractFirDiagnostic<PsiElement> {
+) : KtFirDiagnostic.OptInUsage(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
-internal class ExperimentalApiUsageErrorImpl(
+internal class OptInUsageErrorImpl(
     override val optInMarkerFqName: FqName,
     override val message: String,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExperimentalApiUsageError(), KtAbstractFirDiagnostic<PsiElement> {
+) : KtFirDiagnostic.OptInUsageError(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
-internal class ExperimentalOverrideImpl(
+internal class OptInOverrideImpl(
     override val optInMarkerFqName: FqName,
     override val message: String,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExperimentalOverride(), KtAbstractFirDiagnostic<PsiElement> {
+) : KtFirDiagnostic.OptInOverride(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
-internal class ExperimentalOverrideErrorImpl(
+internal class OptInOverrideErrorImpl(
     override val optInMarkerFqName: FqName,
     override val message: String,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExperimentalOverrideError(), KtAbstractFirDiagnostic<PsiElement> {
+) : KtFirDiagnostic.OptInOverrideError(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
-internal class ExperimentalIsNotEnabledImpl(
+internal class OptInIsNotEnabledImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExperimentalIsNotEnabled(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
+) : KtFirDiagnostic.OptInIsNotEnabled(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
-internal class ExperimentalCanOnlyBeUsedAsAnnotationImpl(
+internal class OptInCanOnlyBeUsedAsAnnotationImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExperimentalCanOnlyBeUsedAsAnnotation(), KtAbstractFirDiagnostic<PsiElement> {
+) : KtFirDiagnostic.OptInCanOnlyBeUsedAsAnnotation(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
-internal class ExperimentalMarkerCanOnlyBeUsedAsAnnotationOrArgumentInUseExperimentalImpl(
+internal class OptInMarkerCanOnlyBeUsedAsAnnotationOrArgumentInOptInImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExperimentalMarkerCanOnlyBeUsedAsAnnotationOrArgumentInUseExperimental(), KtAbstractFirDiagnostic<PsiElement> {
+) : KtFirDiagnostic.OptInMarkerCanOnlyBeUsedAsAnnotationOrArgumentInOptIn(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
-internal class UseExperimentalWithoutArgumentsImpl(
+internal class OptInWithoutArgumentsImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.UseExperimentalWithoutArguments(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
+) : KtFirDiagnostic.OptInWithoutArguments(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
-internal class UseExperimentalArgumentIsNotMarkerImpl(
+internal class OptInArgumentIsNotMarkerImpl(
     override val notMarkerFqName: FqName,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.UseExperimentalArgumentIsNotMarker(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
+) : KtFirDiagnostic.OptInArgumentIsNotMarker(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
-internal class ExperimentalAnnotationWithWrongTargetImpl(
+internal class OptInMarkerWithWrongTargetImpl(
     override val target: String,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExperimentalAnnotationWithWrongTarget(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
+) : KtFirDiagnostic.OptInMarkerWithWrongTarget(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
-internal class ExperimentalAnnotationWithWrongRetentionImpl(
+internal class OptInMarkerWithWrongRetentionImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExperimentalAnnotationWithWrongRetention(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
+) : KtFirDiagnostic.OptInMarkerWithWrongRetention(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 

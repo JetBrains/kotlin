@@ -3,8 +3,8 @@
 
 annotation class NotAMarker
 
-<!USE_EXPERIMENTAL_WITHOUT_ARGUMENTS!>@OptIn<!>
+<!OPT_IN_WITHOUT_ARGUMENTS!>@OptIn<!>
 fun f1() {}
 
-<!USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER!>@OptIn(NotAMarker::class)<!>
+<!OPT_IN_ARGUMENT_IS_NOT_MARKER!>@OptIn(NotAMarker::class)<!>
 fun f2() {}

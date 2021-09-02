@@ -13,21 +13,21 @@ import kotlin.annotation.AnnotationTarget.*
 annotation class E1
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-<!EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET!>@Target(FILE)<!>
+<!OPT_IN_MARKER_WITH_WRONG_TARGET!>@Target(FILE)<!>
 annotation class E2
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-<!EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET!>@Target(EXPRESSION)<!>
-<!EXPERIMENTAL_ANNOTATION_WITH_WRONG_RETENTION!>@Retention(AnnotationRetention.SOURCE)<!>
+<!OPT_IN_MARKER_WITH_WRONG_TARGET!>@Target(EXPRESSION)<!>
+<!OPT_IN_MARKER_WITH_WRONG_RETENTION!>@Retention(AnnotationRetention.SOURCE)<!>
 annotation class E3
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-<!EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET!>@Target(TYPE_PARAMETER)<!>
+<!OPT_IN_MARKER_WITH_WRONG_TARGET!>@Target(TYPE_PARAMETER)<!>
 @Retention(AnnotationRetention.BINARY)
 annotation class E3A
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-<!EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET!>@Target(TYPE)<!>
+<!OPT_IN_MARKER_WITH_WRONG_TARGET!>@Target(TYPE)<!>
 @Retention(AnnotationRetention.BINARY)
 annotation class E3B
 

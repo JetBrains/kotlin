@@ -19,9 +19,9 @@ package usage
 import api.*
 
 class Derived : Base() {
-    override fun <!EXPERIMENTAL_OVERRIDE_ERROR!>foo<!>() {}
+    override fun <!OPT_IN_OVERRIDE_ERROR!>foo<!>() {}
 }
 
 fun test(b: Base) {
-    b.<!EXPERIMENTAL_API_USAGE_ERROR!>foo<!>()
+    b.<!OPT_IN_USAGE_ERROR!>foo<!>()
 }

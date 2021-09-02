@@ -52,5 +52,5 @@ fun use2() {
 fun use3() {
     e1()
     e2()
-    <!EXPERIMENTAL_API_USAGE!>e3<!>()
+    <!OPT_IN_USAGE!>e3<!>()
 }

@@ -12,4 +12,4 @@ annotation class ExperimentalAPI
 @ExperimentalAPI
 class Foo
 
-typealias Bar = <!EXPERIMENTAL_API_USAGE_ERROR!>Foo<!>
+typealias Bar = <!OPT_IN_USAGE_ERROR!>Foo<!>

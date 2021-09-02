@@ -21,11 +21,11 @@ annotation class M
 
 // Usages as types should be errors
 
-fun f1(e: <!EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION!>RequiresOptIn<!>) {}
-fun f2(u: <!EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION!>OptIn?<!>) {}
+fun f1(e: <!OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION!>RequiresOptIn<!>) {}
+fun f2(u: <!OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION!>OptIn?<!>) {}
 
-typealias Experimental0 = <!EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION!>RequiresOptIn<!>
-typealias OptIn0 = <!EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION!>OptIn<!>
+typealias Experimental0 = <!OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION!>RequiresOptIn<!>
+typealias OptIn0 = <!OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION!>OptIn<!>
 fun f3(e: Experimental0 /* TODO */) {}
 fun f4(u: OptIn0 /* TODO */) {}
 
@@ -35,10 +35,10 @@ fun f4(u: OptIn0 /* TODO */) {}
 annotation class VarargKClasses(vararg val k: KClass<*>)
 
 @VarargKClasses(
-    <!EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION!>RequiresOptIn<!>::class,
-    <!EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION!>OptIn<!>::class,
-    <!EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION!>kotlin.RequiresOptIn<!>::class,
-    <!EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION!>kotlin.OptIn<!>::class
+    <!OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION!>RequiresOptIn<!>::class,
+    <!OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION!>OptIn<!>::class,
+    <!OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION!>kotlin.RequiresOptIn<!>::class,
+    <!OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION!>kotlin.OptIn<!>::class
 )
 fun f5() {}
 
@@ -54,11 +54,11 @@ annotation class Marker {
     }
 }
 
-fun f6(m: <!EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL!>Marker<!>) {}
-fun f7(): List<<!EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL!>Marker<!>>? = null
-fun f8(): <!EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL!>test.Marker?<!> = null
+fun f6(m: <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>Marker<!>) {}
+fun f7(): List<<!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>Marker<!>>? = null
+fun f8(): <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>test.Marker?<!> = null
 
-typealias Marker0 = <!EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL!>Marker<!>
+typealias Marker0 = <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>Marker<!>
 
 fun f9(m: Marker0) {}
 

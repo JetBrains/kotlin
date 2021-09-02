@@ -1,5 +1,5 @@
 // This test enshures that analysis ends up without compiler exceptions
-// !DIAGNOSTICS: -EXPERIMENTAL_API_USAGE
+// !DIAGNOSTICS: -OPT_IN_USAGE
 
 import kotlinx.serialization.*
 

@@ -29,12 +29,12 @@ import api.*
 
 fun use() {
     compilation()
-    <!EXPERIMENTAL_API_USAGE!>runtime<!>()
+    <!OPT_IN_USAGE!>runtime<!>()
 }
 
 class Use {
     fun use() {
         compilation()
-        <!EXPERIMENTAL_API_USAGE!>runtime<!>()
+        <!OPT_IN_USAGE!>runtime<!>()
     }
 }

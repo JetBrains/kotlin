@@ -31,7 +31,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
             if (isOptIn) {
                 val arguments = expression.arguments
                 if (arguments.isEmpty()) {
-                    reporter.reportOn(expression.source, FirErrors.USE_EXPERIMENTAL_WITHOUT_ARGUMENTS, context)
+                    reporter.reportOn(expression.source, FirErrors.OPT_IN_WITHOUT_ARGUMENTS, context)
                 } else {
                     val annotationClasses = expression.findArgumentByName(OptInNames.USE_EXPERIMENTAL_ANNOTATION_CLASS)
                     for (classSymbol in annotationClasses?.extractClassesFromArgument().orEmpty()) {
@@ -39,7 +39,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
                             if (classSymbol.loadExperimentalityForMarkerAnnotation() == null) {
                                 reporter.reportOn(
                                     expression.source,
-                                    FirErrors.USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER,
+                                    FirErrors.OPT_IN_ARGUMENT_IS_NOT_MARKER,
                                     classSymbol.classId.asSingleFqName(),
                                     context
                                 )
@@ -61,7 +61,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.OptInRelease) &&
             OptInNames.REQUIRES_OPT_IN_FQ_NAME.asString() !in useExperimentalFqNames
         ) {
-            reporter.reportOn(element, FirErrors.EXPERIMENTAL_IS_NOT_ENABLED, context)
+            reporter.reportOn(element, FirErrors.OPT_IN_IS_NOT_ENABLED, context)
         }
     }
 }

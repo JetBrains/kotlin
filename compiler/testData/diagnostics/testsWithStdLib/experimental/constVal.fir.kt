@@ -40,5 +40,5 @@ package usage3
 
 import api.*
 
-@Anno(<!EXPERIMENTAL_API_USAGE!>MEANING<!>)
+@Anno(<!OPT_IN_USAGE!>MEANING<!>)
 fun usage() {}

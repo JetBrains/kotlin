@@ -191,8 +191,8 @@ object FirOptInUsageBaseChecker {
         for ((annotationClassId, severity, message) in experimentalities) {
             if (!isExperimentalityAcceptableInContext(annotationClassId, context)) {
                 val diagnostic = when (severity) {
-                    Experimentality.Severity.WARNING -> FirErrors.EXPERIMENTAL_API_USAGE
-                    Experimentality.Severity.ERROR -> FirErrors.EXPERIMENTAL_API_USAGE_ERROR
+                    Experimentality.Severity.WARNING -> FirErrors.OPT_IN_USAGE
+                    Experimentality.Severity.ERROR -> FirErrors.OPT_IN_USAGE_ERROR
                 }
                 val reportedMessage = message ?: when (severity) {
                     Experimentality.Severity.WARNING -> "This declaration is experimental and its usage should be marked"

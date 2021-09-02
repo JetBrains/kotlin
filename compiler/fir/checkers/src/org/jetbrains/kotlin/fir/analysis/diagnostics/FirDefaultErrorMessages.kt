@@ -163,15 +163,15 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_LATEINIT_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_PRIVATE_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_PROPERTY_INITIALIZER
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_ANNOTATION_WITH_WRONG_RETENTION
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_API_USAGE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_API_USAGE_ERROR
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_IS_NOT_ENABLED
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_OVERRIDE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_OVERRIDE_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_MARKER_WITH_WRONG_RETENTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_MARKER_WITH_WRONG_TARGET
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_USAGE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_USAGE_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_IS_NOT_ENABLED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_OVERRIDE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_OVERRIDE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_DELEGATION_CALL_REQUIRED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_FUNCTION_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_PARAMETER_TYPE
@@ -456,8 +456,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_ELVIS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_ELVIS_RIGHT_IS_NULL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_IS_CHECK
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_VARARG_ON_PARAMETER
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USE_EXPERIMENTAL_WITHOUT_ARGUMENTS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_ARGUMENT_IS_NOT_MARKER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_WITHOUT_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VALUE_CLASS_CANNOT_BE_CLONEABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAL_OR_VAR_ON_CATCH_PARAMETER
@@ -699,31 +699,31 @@ class FirDefaultErrorMessages {
             map.put(REPEATED_ANNOTATION_WARNING, "This annotation is not repeatable")
 
             // OptIn
-            map.put(EXPERIMENTAL_API_USAGE, "{1}", TO_STRING, STRING)
-            map.put(EXPERIMENTAL_API_USAGE_ERROR, "{1}", TO_STRING, STRING)
+            map.put(OPT_IN_USAGE, "{1}", TO_STRING, STRING)
+            map.put(OPT_IN_USAGE_ERROR, "{1}", TO_STRING, STRING)
 
-            map.put(EXPERIMENTAL_OVERRIDE, "{1}", TO_STRING, STRING)
-            map.put(EXPERIMENTAL_OVERRIDE_ERROR, "{1}", TO_STRING, STRING)
+            map.put(OPT_IN_OVERRIDE, "{1}", TO_STRING, STRING)
+            map.put(OPT_IN_OVERRIDE_ERROR, "{1}", TO_STRING, STRING)
 
-            map.put(EXPERIMENTAL_IS_NOT_ENABLED, "This class can only be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'")
-            map.put(EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION, "This class can only be used as an annotation")
+            map.put(OPT_IN_IS_NOT_ENABLED, "This class can only be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'")
+            map.put(OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION, "This class can only be used as an annotation")
             map.put(
-                EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL,
+                OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN,
                 "This class can only be used as an annotation or as an argument to @OptIn"
             )
-            map.put(USE_EXPERIMENTAL_WITHOUT_ARGUMENTS, "@OptIn without any arguments has no effect")
+            map.put(OPT_IN_WITHOUT_ARGUMENTS, "@OptIn without any arguments has no effect")
             map.put(
-                USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER,
+                OPT_IN_ARGUMENT_IS_NOT_MARKER,
                 "Annotation ''{0}'' is not an opt-in requirement marker, therefore its usage in @OptIn is ignored",
                 TO_STRING
             )
             map.put(
-                EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET,
+                OPT_IN_MARKER_WITH_WRONG_TARGET,
                 "Opt-in requirement marker annotation cannot be used on the following code elements: {0}. Please remove these targets",
                 STRING
             )
             map.put(
-                EXPERIMENTAL_ANNOTATION_WITH_WRONG_RETENTION,
+                OPT_IN_MARKER_WITH_WRONG_RETENTION,
                 "Opt-in requirement marker annotation cannot be used with SOURCE retention. Please replace retention with BINARY"
             )
 

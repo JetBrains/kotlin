@@ -111,29 +111,29 @@ package usage3
 
 import api.*
 
-@<!EXPERIMENTAL_API_USAGE!>EAnno<!> fun function() {}
+@<!OPT_IN_USAGE!>EAnno<!> fun function() {}
 
-fun parameter(@<!EXPERIMENTAL_API_USAGE!>EAnno<!> p: String) {}
+fun parameter(@<!OPT_IN_USAGE!>EAnno<!> p: String) {}
 
-fun parameterType(p: <!WRONG_ANNOTATION_TARGET!>@<!EXPERIMENTAL_API_USAGE!>EAnno<!><!> String) {}
+fun parameterType(p: <!WRONG_ANNOTATION_TARGET!>@<!OPT_IN_USAGE!>EAnno<!><!> String) {}
 
-fun returnType(): <!WRONG_ANNOTATION_TARGET!>@<!EXPERIMENTAL_API_USAGE!>EAnno<!><!> Unit {}
+fun returnType(): <!WRONG_ANNOTATION_TARGET!>@<!OPT_IN_USAGE!>EAnno<!><!> Unit {}
 
-@<!EXPERIMENTAL_API_USAGE!>EAnno<!> val property = ""
+@<!OPT_IN_USAGE!>EAnno<!> val property = ""
 
-@<!EXPERIMENTAL_API_USAGE!>EAnno<!> typealias Typealias = Unit
+@<!OPT_IN_USAGE!>EAnno<!> typealias Typealias = Unit
 
-@<!EXPERIMENTAL_API_USAGE!>EAnno<!> class Klass
+@<!OPT_IN_USAGE!>EAnno<!> class Klass
 
-annotation class AnnotationArgument(val p: <!EXPERIMENTAL_API_USAGE!>EAnno<!>)
+annotation class AnnotationArgument(val p: <!OPT_IN_USAGE!>EAnno<!>)
 
 fun insideBody() {
-    @<!EXPERIMENTAL_API_USAGE!>EAnno<!> fun local() {}
+    @<!OPT_IN_USAGE!>EAnno<!> fun local() {}
 }
 
-fun inDefaultArgument(f: () -> Unit = @<!EXPERIMENTAL_API_USAGE!>EAnno<!> fun() {}) {}
+fun inDefaultArgument(f: () -> Unit = @<!OPT_IN_USAGE!>EAnno<!> fun() {}) {}
 
-val inProperty = @<!EXPERIMENTAL_API_USAGE!>EAnno<!> fun() {}
+val inProperty = @<!OPT_IN_USAGE!>EAnno<!> fun() {}
 
 val inPropertyAccessor: () -> Unit
-    get() = @<!EXPERIMENTAL_API_USAGE!>EAnno<!> fun() {}
+    get() = @<!OPT_IN_USAGE!>EAnno<!> fun() {}

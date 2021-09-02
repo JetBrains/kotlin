@@ -1,5 +1,5 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER -DEPRECATION -EXPERIMENTAL_IS_NOT_ENABLED -UNUSED_VARIABLE
+// !DIAGNOSTICS: -UNUSED_PARAMETER -DEPRECATION -OPT_IN_IS_NOT_ENABLED -UNUSED_VARIABLE
 // WITH_RUNTIME
 
 // FILE: Test.java
@@ -15,10 +15,10 @@ class Test {
 import kotlin.experimental.ExperimentalTypeInference
 
 @UseExperimental(ExperimentalTypeInference::class)
-fun <R> build(@<!EXPERIMENTAL_API_USAGE_ERROR!>BuilderInference<!> block: TestInterface<R>.() -> Unit): R = TODO()
+fun <R> build(@<!OPT_IN_USAGE_ERROR!>BuilderInference<!> block: TestInterface<R>.() -> Unit): R = TODO()
 
 @UseExperimental(ExperimentalTypeInference::class)
-fun <R> build2(@<!EXPERIMENTAL_API_USAGE_ERROR!>BuilderInference<!> block: TestInterface<R>.() -> Unit): R = TODO()
+fun <R> build2(@<!OPT_IN_USAGE_ERROR!>BuilderInference<!> block: TestInterface<R>.() -> Unit): R = TODO()
 
 class Inv<K>
 

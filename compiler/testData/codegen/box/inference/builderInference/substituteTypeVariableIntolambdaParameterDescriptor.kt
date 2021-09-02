@@ -11,7 +11,7 @@ interface FlowCollector<T> {
     fun emit(value: T)
 }
 
-@Suppress("EXPERIMENTAL_API_USAGE_ERROR")
+@Suppress("OPT_IN_USAGE_ERROR")
 fun <I> flow(@BuilderInference block: FlowCollector<I>.() -> Unit): I = null as I
 
 fun adapt(): Unit = flow {

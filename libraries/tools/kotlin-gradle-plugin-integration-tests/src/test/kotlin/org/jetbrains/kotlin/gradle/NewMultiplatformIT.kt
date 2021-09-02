@@ -1088,7 +1088,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     fun testOptionalExpectations() = with(transformNativeTestProject("new-mpp-lib-with-tests", gradleVersion)) {
         projectDir.resolve("src/commonMain/kotlin/Optional.kt").writeText(
             """
-            @file:Suppress("EXPERIMENTAL_API_USAGE_ERROR")
+            @file:Suppress("OPT_IN_USAGE_ERROR", "EXPERIMENTAL_API_USAGE_ERROR")
             @OptionalExpectation
             expect annotation class Optional(val value: String)
 

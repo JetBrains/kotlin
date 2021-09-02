@@ -871,78 +871,78 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPERIMENTAL_API_USAGE) { firDiagnostic ->
-        ExperimentalApiUsageImpl(
+    add(FirErrors.OPT_IN_USAGE) { firDiagnostic ->
+        OptInUsageImpl(
             firDiagnostic.a,
             firDiagnostic.b,
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.EXPERIMENTAL_API_USAGE_ERROR) { firDiagnostic ->
-        ExperimentalApiUsageErrorImpl(
+    add(FirErrors.OPT_IN_USAGE_ERROR) { firDiagnostic ->
+        OptInUsageErrorImpl(
             firDiagnostic.a,
             firDiagnostic.b,
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.EXPERIMENTAL_OVERRIDE) { firDiagnostic ->
-        ExperimentalOverrideImpl(
+    add(FirErrors.OPT_IN_OVERRIDE) { firDiagnostic ->
+        OptInOverrideImpl(
             firDiagnostic.a,
             firDiagnostic.b,
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.EXPERIMENTAL_OVERRIDE_ERROR) { firDiagnostic ->
-        ExperimentalOverrideErrorImpl(
+    add(FirErrors.OPT_IN_OVERRIDE_ERROR) { firDiagnostic ->
+        OptInOverrideErrorImpl(
             firDiagnostic.a,
             firDiagnostic.b,
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.EXPERIMENTAL_IS_NOT_ENABLED) { firDiagnostic ->
-        ExperimentalIsNotEnabledImpl(
+    add(FirErrors.OPT_IN_IS_NOT_ENABLED) { firDiagnostic ->
+        OptInIsNotEnabledImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION) { firDiagnostic ->
-        ExperimentalCanOnlyBeUsedAsAnnotationImpl(
+    add(FirErrors.OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION) { firDiagnostic ->
+        OptInCanOnlyBeUsedAsAnnotationImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL) { firDiagnostic ->
-        ExperimentalMarkerCanOnlyBeUsedAsAnnotationOrArgumentInUseExperimentalImpl(
+    add(FirErrors.OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN) { firDiagnostic ->
+        OptInMarkerCanOnlyBeUsedAsAnnotationOrArgumentInOptInImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.USE_EXPERIMENTAL_WITHOUT_ARGUMENTS) { firDiagnostic ->
-        UseExperimentalWithoutArgumentsImpl(
+    add(FirErrors.OPT_IN_WITHOUT_ARGUMENTS) { firDiagnostic ->
+        OptInWithoutArgumentsImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER) { firDiagnostic ->
-        UseExperimentalArgumentIsNotMarkerImpl(
+    add(FirErrors.OPT_IN_ARGUMENT_IS_NOT_MARKER) { firDiagnostic ->
+        OptInArgumentIsNotMarkerImpl(
             firDiagnostic.a,
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET) { firDiagnostic ->
-        ExperimentalAnnotationWithWrongTargetImpl(
+    add(FirErrors.OPT_IN_MARKER_WITH_WRONG_TARGET) { firDiagnostic ->
+        OptInMarkerWithWrongTargetImpl(
             firDiagnostic.a,
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.EXPERIMENTAL_ANNOTATION_WITH_WRONG_RETENTION) { firDiagnostic ->
-        ExperimentalAnnotationWithWrongRetentionImpl(
+    add(FirErrors.OPT_IN_MARKER_WITH_WRONG_RETENTION) { firDiagnostic ->
+        OptInMarkerWithWrongRetentionImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )

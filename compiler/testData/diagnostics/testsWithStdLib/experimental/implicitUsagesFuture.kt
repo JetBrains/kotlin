@@ -10,15 +10,15 @@ annotation class Marker
 interface Some
 
 abstract class User {
-    abstract fun createSome(): <!EXPERIMENTAL_API_USAGE_ERROR!>Some<!>
-    fun <!EXPERIMENTAL_API_USAGE_ERROR!>Some<!>?.onSome() {}
-    fun withSome(some: <!EXPERIMENTAL_API_USAGE_ERROR!>Some<!>? = null) {}
+    abstract fun createSome(): <!OPT_IN_USAGE_ERROR!>Some<!>
+    fun <!OPT_IN_USAGE_ERROR!>Some<!>?.onSome() {}
+    fun withSome(some: <!OPT_IN_USAGE_ERROR!>Some<!>? = null) {}
 
     fun use() {
-        val something = <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>createSome<!>()
-        val somethingOther: <!EXPERIMENTAL_API_USAGE_ERROR!>Some<!> = <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>createSome<!>()
-        null.<!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>onSome<!>()
-        <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>withSome<!>()
+        val something = <!OPT_IN_USAGE_FUTURE_ERROR!>createSome<!>()
+        val somethingOther: <!OPT_IN_USAGE_ERROR!>Some<!> = <!OPT_IN_USAGE_FUTURE_ERROR!>createSome<!>()
+        null.<!OPT_IN_USAGE_FUTURE_ERROR!>onSome<!>()
+        <!OPT_IN_USAGE_FUTURE_ERROR!>withSome<!>()
     }
 }
 
@@ -26,15 +26,15 @@ data class DataClass(@property:Marker val x: Int)
 
 fun useDataClass(d: DataClass) {
     // Should have error in both
-    d.<!EXPERIMENTAL_API_USAGE_ERROR!>x<!>
-    val (<!EXPERIMENTAL_API_USAGE_ERROR!>x<!>) = d
+    d.<!OPT_IN_USAGE_ERROR!>x<!>
+    val (<!OPT_IN_USAGE_ERROR!>x<!>) = d
 }
 
-typealias My = <!EXPERIMENTAL_API_USAGE_ERROR!>Some<!>
+typealias My = <!OPT_IN_USAGE_ERROR!>Some<!>
 
-fun my(my: <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>My<!>) {}
+fun my(my: <!OPT_IN_USAGE_FUTURE_ERROR!>My<!>) {}
 
-fun your(my: <!EXPERIMENTAL_API_USAGE_ERROR!>Some<!>) {}
+fun your(my: <!OPT_IN_USAGE_ERROR!>Some<!>) {}
 
 @Marker
 interface ExperimentalType {
@@ -68,10 +68,10 @@ typealias MyList = ArrayList<I>
 typealias YourList = ArrayList<String>
 
 fun main() {
-    val x = <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>listOf<!>(A(), B())
-    val y = <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>MyList<!>()
-    val z = <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>YourList<!>()
-    <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>YourList<!>().add("")
+    val x = <!OPT_IN_USAGE_FUTURE_ERROR!>listOf<!>(A(), B())
+    val y = <!OPT_IN_USAGE_FUTURE_ERROR!>MyList<!>()
+    val z = <!OPT_IN_USAGE_FUTURE_ERROR!>YourList<!>()
+    <!OPT_IN_USAGE_FUTURE_ERROR!>YourList<!>().add("")
 }
 
 @Marker
@@ -84,7 +84,7 @@ object O {
     operator fun provideDelegate(x: Any?, y: Any?): C = C()
 }
 
-val x: String by <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>O<!>
+val x: String by <!OPT_IN_USAGE_FUTURE_ERROR!>O<!>
 
 @Marker
 class OperatorContainer : Comparable<OperatorContainer> {
@@ -117,8 +117,8 @@ operator fun String.minus(s: String) = OperatorContainer()
 operator fun String.invoke() = OperatorContainer()
 
 fun operatorContainerUsage(s: String, a: AnotherContainer) {
-    val res1 = s <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>-<!> s
-    val res2 = <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>s<!>()
-    val res3 = <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>res1<!> <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>><!> <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>res2<!>
-    for (c in <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>a<!>) {}
+    val res1 = s <!OPT_IN_USAGE_FUTURE_ERROR!>-<!> s
+    val res2 = <!OPT_IN_USAGE_FUTURE_ERROR!>s<!>()
+    val res3 = <!OPT_IN_USAGE_FUTURE_ERROR!>res1<!> <!OPT_IN_USAGE_FUTURE_ERROR!>><!> <!OPT_IN_USAGE_FUTURE_ERROR!>res2<!>
+    for (c in <!OPT_IN_USAGE_FUTURE_ERROR!>a<!>) {}
 }

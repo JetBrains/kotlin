@@ -277,26 +277,26 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, FqName> ILLEGAL_KOTLIN_VERSION_STRING_VALUE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, String> NEWER_VERSION_IN_SINCE_KOTLIN = DiagnosticFactory1.create(WARNING);
 
-    DiagnosticFactory2<PsiElement, FqName, String> EXPERIMENTAL_API_USAGE = DiagnosticFactory2.create(WARNING);
-    DiagnosticFactory2<PsiElement, FqName, String> EXPERIMENTAL_API_USAGE_ERROR = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory2<PsiElement, FqName, String> EXPERIMENTAL_API_USAGE_FUTURE_ERROR = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, FqName, String> OPT_IN_USAGE = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, FqName, String> OPT_IN_USAGE_ERROR = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<PsiElement, FqName, String> OPT_IN_USAGE_FUTURE_ERROR = DiagnosticFactory2.create(WARNING);
 
-    DiagnosticFactory2<PsiElement, FqName, String> EXPERIMENTAL_OVERRIDE = DiagnosticFactory2.create(WARNING);
-    DiagnosticFactory2<PsiElement, FqName, String> EXPERIMENTAL_OVERRIDE_ERROR = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<PsiElement, FqName, String> OPT_IN_OVERRIDE = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, FqName, String> OPT_IN_OVERRIDE_ERROR = DiagnosticFactory2.create(ERROR);
 
-    DiagnosticFactory0<PsiElement> EXPERIMENTAL_IS_NOT_ENABLED = DiagnosticFactory0.create(WARNING);
-    DiagnosticFactory0<PsiElement> EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> OPT_IN_IS_NOT_ENABLED = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement>
-            EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL = DiagnosticFactory0.create(ERROR);
+            OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<KtAnnotationEntry> USE_EXPERIMENTAL_WITHOUT_ARGUMENTS = DiagnosticFactory0.create(WARNING);
-    DiagnosticFactory1<KtAnnotationEntry, FqName> USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER = DiagnosticFactory1.create(WARNING);
-    DiagnosticFactory1<KtAnnotationEntry, String> EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory0<PsiElement> EXPERIMENTAL_ANNOTATION_WITH_WRONG_RETENTION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtAnnotationEntry> OPT_IN_WITHOUT_ARGUMENTS = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory1<KtAnnotationEntry, FqName> OPT_IN_ARGUMENT_IS_NOT_MARKER = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<KtAnnotationEntry, String> OPT_IN_MARKER_WITH_WRONG_TARGET = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<PsiElement> OPT_IN_MARKER_WITH_WRONG_RETENTION = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory1<KtAnnotationEntry, String> EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory0<KtAnnotationEntry> EXPERIMENTAL_ANNOTATION_ON_OVERRIDE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtAnnotationEntry> EXPERIMENTAL_ANNOTATION_ON_OVERRIDE_WARNING = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory1<KtAnnotationEntry, String> OPT_IN_MARKER_ON_WRONG_TARGET = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<KtAnnotationEntry> OPT_IN_MARKER_ON_OVERRIDE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtAnnotationEntry> OPT_IN_MARKER_ON_OVERRIDE_WARNING = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory1<PsiElement, String> EXPERIMENTAL_UNSIGNED_LITERALS = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<PsiElement, String> EXPERIMENTAL_UNSIGNED_LITERALS_ERROR = DiagnosticFactory1.create(ERROR);

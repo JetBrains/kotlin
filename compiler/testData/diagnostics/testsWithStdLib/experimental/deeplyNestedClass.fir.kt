@@ -52,7 +52,7 @@ package usage3
 import api.*
 
 fun use1() {
-    C.D.<!EXPERIMENTAL_API_USAGE!>E<!>.<!EXPERIMENTAL_API_USAGE!>F<!>()
+    C.D.<!OPT_IN_USAGE!>E<!>.<!OPT_IN_USAGE!>F<!>()
 }
 
-fun use2(f: <!EXPERIMENTAL_API_USAGE!>C.D.E.F<!>) = <!EXPERIMENTAL_API_USAGE!>f<!>.hashCode()
+fun use2(f: <!OPT_IN_USAGE!>C.D.E.F<!>) = <!OPT_IN_USAGE!>f<!>.hashCode()

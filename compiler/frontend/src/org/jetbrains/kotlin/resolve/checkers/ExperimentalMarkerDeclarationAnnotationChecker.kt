@@ -65,22 +65,22 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
                 if (PROPERTY_GETTER in possibleTargets ||
                     annotationUseSiteTarget == AnnotationUseSiteTarget.PROPERTY_GETTER
                 ) {
-                    trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET.on(entry, "getter"))
+                    trace.report(Errors.OPT_IN_MARKER_ON_WRONG_TARGET.on(entry, "getter"))
                 }
                 if (VALUE_PARAMETER in possibleTargets && annotationUseSiteTarget == null ||
                     annotationUseSiteTarget == AnnotationUseSiteTarget.RECEIVER ||
                     annotationUseSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER ||
                     annotationUseSiteTarget == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
                 ) {
-                    trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET.on(entry, "parameter"))
+                    trace.report(Errors.OPT_IN_MARKER_ON_WRONG_TARGET.on(entry, "parameter"))
                 }
                 if (LOCAL_VARIABLE in possibleTargets) {
-                    trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET.on(entry, "variable"))
+                    trace.report(Errors.OPT_IN_MARKER_ON_WRONG_TARGET.on(entry, "variable"))
                 }
                 if (annotationUseSiteTarget == AnnotationUseSiteTarget.FIELD ||
                     annotationUseSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
                 ) {
-                    trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET.on(entry, "field"))
+                    trace.report(Errors.OPT_IN_MARKER_ON_WRONG_TARGET.on(entry, "field"))
                 }
                 if (annotated is KtCallableDeclaration &&
                     annotated !is KtPropertyAccessor &&
@@ -92,9 +92,9 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
                         !descriptor.hasExperimentalOverriddenDescriptors(annotationClass.fqNameSafe)
                     ) {
                         if (languageVersionSettings.supportsFeature(LanguageFeature.OptInOnOverrideForbidden)) {
-                            trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_OVERRIDE.on(entry))
+                            trace.report(Errors.OPT_IN_MARKER_ON_OVERRIDE.on(entry))
                         } else {
-                            trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_OVERRIDE_WARNING.on(entry))
+                            trace.report(Errors.OPT_IN_MARKER_ON_OVERRIDE_WARNING.on(entry))
                         }
                     }
                 }
@@ -126,7 +126,7 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
 
     private fun checkUseExperimentalUsage(annotationClasses: List<ConstantValue<*>>, trace: BindingTrace, entry: KtAnnotationEntry) {
         if (annotationClasses.isEmpty()) {
-            trace.report(Errors.USE_EXPERIMENTAL_WITHOUT_ARGUMENTS.on(entry))
+            trace.report(Errors.OPT_IN_WITHOUT_ARGUMENTS.on(entry))
             return
         }
 
@@ -138,7 +138,7 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
                 classDescriptor.loadExperimentalityForMarkerAnnotation()
             }
             if (experimentality == null) {
-                trace.report(Errors.USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER.on(entry, classDescriptor.fqNameSafe))
+                trace.report(Errors.OPT_IN_ARGUMENT_IS_NOT_MARKER.on(entry, classDescriptor.fqNameSafe))
             }
         }
     }
@@ -157,7 +157,7 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
             val wrongTargets = allowedTargets.intersect(Experimentality.WRONG_TARGETS_FOR_MARKER)
             if (wrongTargets.isNotEmpty()) {
                 trace.report(
-                    Errors.EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET.on(
+                    Errors.OPT_IN_MARKER_WITH_WRONG_TARGET.on(
                         entry,
                         wrongTargets.joinToString(transform = KotlinTarget::description)
                     )
@@ -170,7 +170,7 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
         if (retentionEntry != null) {
             val (entry, descriptor) = retentionEntry
             if (descriptor?.getAnnotationRetention() == KotlinRetention.SOURCE) {
-                trace.report(Errors.EXPERIMENTAL_ANNOTATION_WITH_WRONG_RETENTION.on(entry))
+                trace.report(Errors.OPT_IN_MARKER_WITH_WRONG_RETENTION.on(entry))
             }
         }
     }

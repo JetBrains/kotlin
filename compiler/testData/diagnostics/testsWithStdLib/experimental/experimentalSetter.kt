@@ -17,8 +17,8 @@ var z: Int = 44
     }
 
 fun user(): Int {
-    <!EXPERIMENTAL_API_USAGE_ERROR!>x<!> = 10
-    <!EXPERIMENTAL_API_USAGE_ERROR!>y<!> = 5
-    <!EXPERIMENTAL_API_USAGE_ERROR!>x<!> = 15
-    return x + <!EXPERIMENTAL_API_USAGE_ERROR!>y<!> + z
+    <!OPT_IN_USAGE_ERROR!>x<!> = 10
+    <!OPT_IN_USAGE_ERROR!>y<!> = 5
+    <!OPT_IN_USAGE_ERROR!>x<!> = 15
+    return x + <!OPT_IN_USAGE_ERROR!>y<!> + z
 }

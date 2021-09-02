@@ -19,8 +19,8 @@ fun use() {
     function()
 }
 
-<!EXPERIMENTAL_API_USAGE!>function<!>()
-<!EXPERIMENTAL_API_USAGE!>use<!>()
+<!OPT_IN_USAGE!>function<!>()
+<!OPT_IN_USAGE!>use<!>()
 
 // FILE: usage-use.kts
 
@@ -39,8 +39,8 @@ use()
 import api.*
 
 fun use() {
-    <!EXPERIMENTAL_API_USAGE!>function<!>()
+    <!OPT_IN_USAGE!>function<!>()
 }
 
-<!EXPERIMENTAL_API_USAGE!>function<!>()
+<!OPT_IN_USAGE!>function<!>()
 use()
