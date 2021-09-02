@@ -16,10 +16,10 @@ fun test() {
     val platformJ = J.staticJ
 
     platformNN[0]
-    <!UNSAFE_CALL!>platformN[0]<!>
+    platformN[0]
     platformJ[0]
 
     platformNN[0] = 1
-    <!UNSAFE_CALL!>platformN[0]<!>  = 1
+    platformN[0]  = 1
     platformJ[0]  = 1
 }

@@ -27,10 +27,10 @@ public class Derived extends Base {
 
 // FILE: main.kt
 fun main(a: Simple, x: Derived): Unit {
-    a.foo(x, null)<!UNSAFE_CALL!>.<!>foo()
-    a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, x)<!UNSAFE_CALL!>.<!>foo()
+    a.foo(x, null).foo()
+    a.foo(null, x).foo()
 
     a.bar().foo()
 
-    a.field<!UNSAFE_CALL!>.<!>foo()
+    a.field.foo()
 }

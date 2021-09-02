@@ -16,6 +16,6 @@ public class J {
 // FILE: k.kt
 fun test() {
     J.staticNN()
-    J.<!UNSAFE_IMPLICIT_INVOKE_CALL!>staticN<!>()
+    J.staticN()
     J.staticJ()
 }

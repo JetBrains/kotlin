@@ -16,11 +16,11 @@ fun test() {
     var platformJ = J.staticJ
 
     +platformNN
-    <!UNSAFE_CALL!>+<!>platformN
+    +platformN
     +platformJ
 
     ++platformNN
-    <!UNSAFE_CALL!>++<!>platformN
+    ++platformN
     ++platformJ
 
     platformNN++

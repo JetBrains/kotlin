@@ -24,7 +24,7 @@ fun test() {
     foo(a)
     val b = JJ.staticNN <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>
     foo(b)
-    val c = JJJ.staticNNN <!USELESS_ELVIS!>?: null<!>
+    val c = JJJ.staticNNN <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>
     foo(c)
 }
 

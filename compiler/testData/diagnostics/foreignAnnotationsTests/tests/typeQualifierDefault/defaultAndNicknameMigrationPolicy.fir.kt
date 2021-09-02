@@ -56,7 +56,7 @@ public class PolicyFromNickname {
 
 // FILE: main.kt
 fun main(default: PolicyFromDefault, nickname: PolicyFromNickname) {
-    default.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>).length
+    default.foo(null).length
     default.foo("hello").length
 
     nickname.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>).length

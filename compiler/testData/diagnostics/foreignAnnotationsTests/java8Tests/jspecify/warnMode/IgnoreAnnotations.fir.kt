@@ -29,15 +29,15 @@ public class Derived extends Base { }
 
 // FILE: main.kt
 fun main(a: IgnoreAnnotations, x: Derived): Unit {
-    a.foo(x, null)<!UNSAFE_CALL!>.<!>foo()
-    a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, x)<!UNSAFE_CALL!>.<!>foo()
+    a.foo(x, null).foo()
+    a.foo(null, x).foo()
 
-    a.field<!UNSAFE_CALL!>.<!>foo()
+    a.field.foo()
 
-    a.everythingNotNullable(<!NULL_FOR_NONNULL_TYPE!>null<!>).foo()
+    a.everythingNotNullable(null).foo()
     a.everythingNotNullable(x).foo()
 
-    a.everythingNullable(null)<!UNSAFE_CALL!>.<!>foo()
+    a.everythingNullable(null).foo()
 
     a.everythingUnknown(null).foo()
 }

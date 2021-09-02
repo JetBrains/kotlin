@@ -25,16 +25,16 @@ class X<T>(t: T?) {
 
     init {
         val a = A<T>()
-        a.foo(<!ARGUMENT_TYPE_MISMATCH!>t<!>)
+        a.foo(t)
 
-        val x: T = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>a.bam()<!>
-        val y: T = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>a.baz<T>()<!>
+        val x: T = a.bam()
+        val y: T = a.baz<T>()
     }
 }
 
 fun test() {
     val a = A<String?>()
-    a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    a.foo(null)
 
-    val b: String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>a.bar()<!>
+    val b: String = a.bar()
 }

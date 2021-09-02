@@ -35,12 +35,12 @@ fun main(a: A) {
     if (a.getBar() == "1" && a.hashCode() != 0) return
     if (a.getBar() != "2" && a.hashCode() != 0) return
 
-    if (<!SENSELESS_COMPARISON!>a.getBar() == null<!> && a.hashCode() != 0) return
-    if (<!SENSELESS_COMPARISON!>a.getBar() != null<!> && a.hashCode() != 0) return
+    if (a.getBar() == null && a.hashCode() != 0) return
+    if (a.getBar() != null && a.hashCode() != 0) return
 
     if (a.bar == "1" && a.hashCode() != 0) return
     if (a.bar != "2" && a.hashCode() != 0) return
 
-    if (<!SENSELESS_COMPARISON!>a.bar == null<!> && a.hashCode() != 0) return
-    if (<!SENSELESS_COMPARISON!>a.bar != null<!> && a.hashCode() != 0) return
+    if (a.bar == null && a.hashCode() != 0) return
+    if (a.bar != null && a.hashCode() != 0) return
 }

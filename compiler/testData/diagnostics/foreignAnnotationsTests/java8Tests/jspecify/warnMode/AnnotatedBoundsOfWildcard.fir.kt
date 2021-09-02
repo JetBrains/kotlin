@@ -43,8 +43,8 @@ fun main(
 
             b: AnnotatedBoundsOfWildcard
 ): Unit {
-    b.superAsIs(<!ARGUMENT_TYPE_MISMATCH!>aAnyNotNullNotNullNotNull<!>)
-    b.superAsIs(<!ARGUMENT_TYPE_MISMATCH!>aAnyNotNullNotNullNull<!>)
+    b.superAsIs(aAnyNotNullNotNullNotNull)
+    b.superAsIs(aAnyNotNullNotNullNull)
     b.superAsIs(aAnyNotNullNullNotNull)
     b.superAsIs(aAnyNotNullNullNull)
 
@@ -53,10 +53,10 @@ fun main(
     b.superNotNull(aAnyNotNullNullNotNull)
     b.superNotNull(aAnyNotNullNullNull)
 
-    b.superNullable(<!ARGUMENT_TYPE_MISMATCH!>aAnyNotNullNotNullNotNull<!>)
-    b.superNullable(<!ARGUMENT_TYPE_MISMATCH!>aAnyNotNullNotNullNull<!>)
-    b.superNullable(<!ARGUMENT_TYPE_MISMATCH!>aAnyNotNullNullNotNull<!>)
-    b.superNullable(<!ARGUMENT_TYPE_MISMATCH!>aAnyNotNullNullNull<!>)
+    b.superNullable(aAnyNotNullNotNullNotNull)
+    b.superNullable(aAnyNotNullNotNullNull)
+    b.superNullable(aAnyNotNullNullNotNull)
+    b.superNullable(aAnyNotNullNullNull)
 
     b.extendsAsIs(aNotNullNotNullNotNull)
     b.extendsAsIs(aNotNullNotNullNull)
@@ -64,9 +64,9 @@ fun main(
     b.extendsAsIs(aNotNullNullNull)
 
     b.extendsNotNull(aNotNullNotNullNotNull)
-    b.extendsNotNull(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNotNullNull<!>)
-    b.extendsNotNull(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNotNull<!>)
-    b.extendsNotNull(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
+    b.extendsNotNull(aNotNullNotNullNull)
+    b.extendsNotNull(aNotNullNullNotNull)
+    b.extendsNotNull(aNotNullNullNull)
 
     b.extendsNullable(aNotNullNotNullNotNull)
     b.extendsNullable(aNotNullNotNullNull)

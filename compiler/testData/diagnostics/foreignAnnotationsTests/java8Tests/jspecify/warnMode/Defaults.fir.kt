@@ -26,20 +26,20 @@ public class Foo {
 
 // FILE: main.kt
 fun main(a: Defaults, x: Foo): Unit {
-    a.everythingNotNullable(<!NULL_FOR_NONNULL_TYPE!>null<!>).foo()
+    a.everythingNotNullable(null).foo()
     a.everythingNotNullable(x).foo()
 
-    a.everythingNullable(null)<!UNSAFE_CALL!>.<!>foo()
+    a.everythingNullable(null).foo()
 
     a.everythingUnknown(null).foo()
 
-    a.mixed(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!UNSAFE_CALL!>.<!>foo()
-    a.mixed(x)<!UNSAFE_CALL!>.<!>foo()
+    a.mixed(null).foo()
+    a.mixed(x).foo()
 
     a.explicitlyNullnessUnspecified(x).foo()
     a.explicitlyNullnessUnspecified(null).foo()
 
     a.defaultField.foo()
 
-    a.field<!UNSAFE_CALL!>.<!>foo()
+    a.field.foo()
 }

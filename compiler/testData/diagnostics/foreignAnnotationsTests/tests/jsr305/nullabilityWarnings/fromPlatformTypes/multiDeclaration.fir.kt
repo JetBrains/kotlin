@@ -22,6 +22,6 @@ fun test() {
     val platformJ = J.staticJ
 
     val (a1, b1) = platformNN
-    val (a2, b2) = <!COMPONENT_FUNCTION_ON_NULLABLE, COMPONENT_FUNCTION_ON_NULLABLE!>platformN<!>
+    val (a2, b2) = platformN
     val (a3, b3) = platformJ
 }

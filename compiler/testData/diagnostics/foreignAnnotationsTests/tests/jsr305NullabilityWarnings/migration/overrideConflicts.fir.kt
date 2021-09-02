@@ -66,7 +66,7 @@ fun main(b: B, c: C) {
     b.foo2()?.length
     b.foo3()<!UNSAFE_CALL!>.<!>length
     b.foo3()?.length
-    b.foo4()<!UNSAFE_CALL!>.<!>length
+    b.foo4().length
     b.foo4()?.length
 
     b.bar(<!NULL_FOR_NONNULL_TYPE!>null<!>)
@@ -75,7 +75,7 @@ fun main(b: B, c: C) {
     b.bar2("")
     b.bar3(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     b.bar3("")
-    b.bar4(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    b.bar4(null)
     b.bar4("")
 
     c.foo4()<!UNSAFE_CALL!>.<!>length

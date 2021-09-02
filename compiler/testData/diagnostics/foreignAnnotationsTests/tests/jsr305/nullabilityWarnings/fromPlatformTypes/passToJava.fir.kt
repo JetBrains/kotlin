@@ -32,8 +32,8 @@ fun test(n: J?, nn: J) {
     // platform type with no annotation
     val platformJ = J.staticJ
 
-    J.staticNN = <!ASSIGNMENT_TYPE_MISMATCH!>n<!>
-    J.staticNN = <!ASSIGNMENT_TYPE_MISMATCH!>platformN<!>
+    J.staticNN = n
+    J.staticNN = platformN
     J.staticNN = nn
     J.staticNN = platformNN
     J.staticNN = platformJ
@@ -52,12 +52,12 @@ fun test(n: J?, nn: J) {
 
     J.staticSet(nn, nn, nn)
     J.staticSet(platformNN, platformNN, platformNN)
-    J.staticSet(<!ARGUMENT_TYPE_MISMATCH!>n<!>, n, n)
-    J.staticSet(<!ARGUMENT_TYPE_MISMATCH!>platformN<!>, platformN, platformN)
+    J.staticSet(n, n, n)
+    J.staticSet(platformN, platformN, platformN)
     J.staticSet(platformJ, platformJ, platformJ)
 
-    J().nn = <!ASSIGNMENT_TYPE_MISMATCH!>n<!>
-    J().nn = <!ASSIGNMENT_TYPE_MISMATCH!>platformN<!>
+    J().nn = n
+    J().nn = platformN
     J().nn = nn
     J().nn = platformNN
     J().nn = platformJ
@@ -76,13 +76,13 @@ fun test(n: J?, nn: J) {
 
     J().set(nn, nn, nn)
     J().set(platformNN, platformNN, platformNN)
-    J().set(<!ARGUMENT_TYPE_MISMATCH!>n<!>, n, n)
-    J().set(<!ARGUMENT_TYPE_MISMATCH!>platformN<!>, platformN, platformN)
+    J().set(n, n, n)
+    J().set(platformN, platformN, platformN)
     J().set(platformJ, platformJ, platformJ)
 
     J(nn, nn, nn)
     J(platformNN, platformNN, platformNN)
-    J(<!ARGUMENT_TYPE_MISMATCH!>n<!>, n, n)
-    J(<!ARGUMENT_TYPE_MISMATCH!>platformN<!>, platformN, platformN)
+    J(n, n, n)
+    J(platformN, platformN, platformN)
     J(platformJ, platformJ, platformJ)
 }

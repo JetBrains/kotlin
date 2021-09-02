@@ -28,7 +28,7 @@ fun main(a: A) {
     a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, "").length
 
     a.bar().length
-    a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
+    a.bar()!!.length
 
     a.field?.length
     a.field.length

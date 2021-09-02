@@ -69,7 +69,7 @@ val f = platformNullable?.string
 
 fun evlis() {
     // JSR
-    val r1 = a <!USELESS_ELVIS!>?: ""<!>
+    val r1 = a ?: ""
     val r2 = b ?: ""
 
     // JB
@@ -83,7 +83,7 @@ fun evlis() {
 
 fun ifChecksAndSmartCasts() {
     // JSR
-    val r1 = if (<!SENSELESS_COMPARISON!>a == null<!>) 42 else a.length
+    val r1 = if (a == null) 42 else a.length
     val r2 = if (b == null) 42 else b.length
 
     // JB

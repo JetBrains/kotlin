@@ -24,5 +24,5 @@ public class Test {
 import test.Test
 
 fun main(x: Test) {
-    x.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    x.foo(null)
 }
