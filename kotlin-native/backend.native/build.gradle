@@ -147,6 +147,9 @@ classes.dependsOn 'compilerClasses', 'cli_bcClasses'
 task stdlib(dependsOn: "${hostName}Stdlib")
 
 def commonSrc = project(":kotlin-stdlib-common").files("src/kotlin", "src/generated", "../unsigned/src", "../src").files
+def commonBuiltinsSrc = project(":core:builtins").files(
+        ["Progressions.kt", "ProgressionIterators.kt", "Range.kt", "Ranges.kt", "internal/progressionUtil.kt"]
+            .collect { "src/kotlin/$it" }).files
 
 def interopRuntimeCommonSrc = project(':kotlin-native:Interop:Runtime').file('src/main/kotlin')
 
@@ -191,6 +194,7 @@ targetList.each { target ->
                 '-opt-in=kotlin.native.internal.InternalForKotlinNative',
                 '-opt-in=kotlin.native.SymbolNameIsDeprecated',
                 *commonSrc.toList(),
+                *commonBuiltinsSrc.toList(),
                 *testAnnotationCommon.toList(),
                 *testCommon.toList(),
                 "-Xcommon-sources=${commonSrc.join(',')}",
