@@ -126,17 +126,17 @@ public class A {
 
 // FILE: main.kt
 fun main(a: A, b: A.B, c: A.C) {
-    a.foo("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
+    a.foo("", null)?.length
     a.foo("", null).length
-    a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, "").length
+    a.foo(null, "").length
 
-    a.foobar(null, "")<!UNSAFE_CALL!>.<!>length
+    a.foobar(null, "").length
     a.foobar("", <!NULL_FOR_NONNULL_TYPE!>null<!>)?.length
 
     a.bar().length
-    a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
+    a.bar()!!.length
 
-    a.field<!UNNECESSARY_SAFE_CALL!>?.<!>length
+    a.field?.length
     a.field.length
 
     a.baz()<!UNSAFE_CALL!>.<!>get(0)
@@ -145,35 +145,35 @@ fun main(a: A, b: A.B, c: A.C) {
 
     // b
     b.foo("", <!NULL_FOR_NONNULL_TYPE!>null<!>)?.length
-    b.foo("", <!NULL_FOR_NONNULL_TYPE!>null<!>)<!UNSAFE_CALL!>.<!>length
-    b.foo(null, "")<!UNSAFE_CALL!>.<!>length
+    b.foo("", <!NULL_FOR_NONNULL_TYPE!>null<!>).length
+    b.foo(null, "").length
 
-    b.foobar(<!NULL_FOR_NONNULL_TYPE!>null<!>, "").length
-    b.foobar("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
+    b.foobar(null, "").length
+    b.foobar("", null)?.length
 
-    b.bar()<!UNSAFE_CALL!>.<!>length
+    b.bar().length
     b.bar()!!.length
 
     b.field?.length
-    b.field<!UNSAFE_CALL!>.<!>length
+    b.field.length
 
     b.baz()<!UNSAFE_CALL!>.<!>get(0)
     b.baz()!!.get(0).get(0)
     b.baz()!!.get(0)?.get(0)
 
     // c
-    c.foo("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
+    c.foo("", null)?.length
     c.foo("", null).length
-    c.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, "").length
+    c.foo(null, "").length
 
-    c.foobar(null, "")<!UNSAFE_CALL!>.<!>length
+    c.foobar(null, "").length
     c.foobar("", null)?.length
 
     c.bar().length
-    c.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
+    c.bar()!!.length
 
     c.field?.length
-    c.field<!UNSAFE_CALL!>.<!>length
+    c.field.length
 
     c.baz()<!UNSAFE_CALL!>.<!>get(0)
     c.baz()!!.get(0).get(0)

@@ -34,6 +34,6 @@ public class Test {
 
 // FILE: main.kt
 fun main(x: test1.Test, y: test2.Test) {
-    x.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    x.foo(null)
     y.foo(null)
 }

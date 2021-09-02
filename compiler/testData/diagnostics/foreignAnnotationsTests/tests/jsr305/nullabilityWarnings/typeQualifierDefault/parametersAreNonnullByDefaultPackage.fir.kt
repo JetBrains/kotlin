@@ -48,7 +48,7 @@ import test2.A2
 fun main(a: A, a2: A2) {
     a.foo("", "", null)?.length
     a.foo("", "", null).length
-    a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, <!NULL_FOR_NONNULL_TYPE!>null<!>, "").length
+    a.foo(null, <!NULL_FOR_NONNULL_TYPE!>null<!>, "").length
 
     a.bar().length
     a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length

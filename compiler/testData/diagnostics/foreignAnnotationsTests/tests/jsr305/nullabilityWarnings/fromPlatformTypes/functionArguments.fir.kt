@@ -13,7 +13,7 @@ public class J {
 // FILE: k.kt
 fun test() {
     foo(J.staticNN)
-    foo(<!ARGUMENT_TYPE_MISMATCH!>J.staticN<!>)
+    foo(J.staticN)
     foo(J.staticJ)
 
     bar(J.staticNN)

@@ -17,26 +17,26 @@ fun test() {
     val platformJ = J.staticJ
 
     if (platformNN) {}
-    if (<!CONDITION_TYPE_MISMATCH!>platformN<!>) {}
+    if (platformN) {}
     if (platformJ) {}
 
     while (platformNN) {}
-    while (<!CONDITION_TYPE_MISMATCH!>platformN<!>) {}
+    while (platformN) {}
     while (platformJ) {}
 
     do {} while (platformNN)
-    do {} while (<!CONDITION_TYPE_MISMATCH!>platformN<!>)
+    do {} while (platformN)
     do {} while (platformJ)
 
     platformNN && false
-    <!CONDITION_TYPE_MISMATCH!>platformN<!> && false
+    platformN && false
     platformJ && false
 
     platformNN || false
-    <!CONDITION_TYPE_MISMATCH!>platformN<!> || false
+    platformN || false
     platformJ || false
 
     !platformNN
-    <!UNSAFE_CALL!>!<!>platformN
+    !platformN
     !platformJ
 }

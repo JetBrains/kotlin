@@ -60,26 +60,13 @@ val jbNullable: AnnotatedWithJB? = null
 val platform: PlainJava = PlainJava()
 val platformNullable: PlainJava? = null
 
-object Elvis {
-    fun fromJava() {
-        val a = jsr.string <!USELESS_ELVIS!>?: ""<!>
-        val b = jsrNullable?.string ?: ""
+fun safeCalls() {
+    val a = jsr.string?.length
+    val b = jsrNullable?.string?.length
 
-        val c = jb.string <!USELESS_ELVIS!>?: ""<!>
-        val d = jbNullable?.string ?: ""
+    val c = jb.string<!UNNECESSARY_SAFE_CALL!>?.<!>length
+    val d = jbNullable?.string?.length
 
-        val e = platform.string ?: ""
-        val f = platformNullable?.string ?: ""
-    }
-
-    fun toJava(nullableString: String?) {
-        val b = jsr.consumeString(nullableString ?: "")
-        val d = jsrNullable?.consumeString(nullableString ?: "")
-
-        val f = jb.consumeString(nullableString ?: "")
-        val h = jbNullable?.consumeString(nullableString ?: "")
-
-        val j = platform.consumeString(nullableString ?: "")
-        val l = platformNullable?.consumeString(nullableString ?: "")
-    }
+    val e = platform.string?.length
+    val f = platformNullable?.string?.length
 }

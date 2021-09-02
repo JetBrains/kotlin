@@ -45,10 +45,10 @@ fun main(a: A) {
 
     a.foo2("", null)?.length
     a.foo2("", null).length
-    a.foo2(<!NULL_FOR_NONNULL_TYPE!>null<!>, "").length
+    a.foo2(null, "").length
 
     a.bar2().length
-    a.bar2()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
+    a.bar2()!!.length
 
     a.field2?.length
     a.field2.length

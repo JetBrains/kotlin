@@ -72,11 +72,11 @@ fun main(a: A) {
     a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     a.foo2("")
-    a.foo2(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    a.foo2(null)
 
     a.foo3("")
     a.foo3(null)
 
     a.foo4("")
-    a.foo4(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    a.foo4(null)
 }

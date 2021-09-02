@@ -17,14 +17,14 @@ fun test() {
     val platformJ = J.staticJ
 
     platformNN.foo()
-    platformN<!UNSAFE_CALL!>.<!>foo()
+    platformN.foo()
     platformJ.foo()
 
     with(platformNN) {
         foo()
     }
     with(platformN) {
-        <!UNSAFE_CALL!>foo<!>()
+        foo()
     }
     with(platformJ) {
         foo()

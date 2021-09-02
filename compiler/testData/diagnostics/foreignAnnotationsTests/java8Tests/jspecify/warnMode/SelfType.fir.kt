@@ -40,15 +40,15 @@ public class CKN extends C<@Nullable CK> {}
 // FILE: main.kt
 fun main(ak: AK, akn: AKN, bk: BK, ck: CK, ckn: CKN): Unit {
     ak.foo(ak)
-    ak.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    ak.foo(null)
 
     akn.foo(null) // the corresponding warning/error is present on the Java side
 
     bk.foo(bk)
-    bk.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    bk.foo(null)
 
     ck.foo(ck)
-    ck.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    ck.foo(null)
 
     ckn.foo(null) // the corresponding warning/error is present on the Java side
 }

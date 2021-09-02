@@ -113,7 +113,9 @@ private fun ConeKotlinType.enhanceInflexibleType(
     val effectiveQualifiers = qualifiers(index)
     val enhancedTag = lookupTag.enhanceMutability(effectiveQualifiers, position)
 
-    val nullabilityFromQualifiers = effectiveQualifiers.nullability.takeIf { shouldEnhance }
+    // TODO: implement warnings
+    val nullabilityFromQualifiers = effectiveQualifiers.nullability
+        .takeIf { shouldEnhance && !effectiveQualifiers.isNullabilityQualifierForWarning }
     val enhancedNullability = when (nullabilityFromQualifiers) {
         NullabilityQualifier.NULLABLE -> true
         NullabilityQualifier.NOT_NULL -> false
@@ -138,7 +140,6 @@ private fun ConeKotlinType.enhanceInflexibleType(
         return null // absolutely no changes
     }
 
-    // TODO: val nullabilityForWarning = enhancedNullabilityAttribute != null && effectiveQualifiers.isNullabilityQualifierForWarning
     val mergedArguments = Array(typeArguments.size) { enhancedArguments[it] ?: typeArguments[it] }
     val mergedAttributes = if (shouldAddAttribute) attributes + CompilerConeAttributes.EnhancedNullability else attributes
     val enhancedType = enhancedTag.constructType(mergedArguments, enhancedNullability, mergedAttributes)
