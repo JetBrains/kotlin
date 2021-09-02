@@ -33,9 +33,6 @@ class WasmTypeTransformer(
 
     fun IrType.toWasmBlockResultType(): WasmType? =
         when (this) {
-            builtIns.unitType ->
-                null
-
             // TODO: Lower blocks with Nothing type?
             builtIns.nothingType ->
                 WasmUnreachableType

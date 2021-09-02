@@ -71,10 +71,12 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         val irParameters = declaration.getEffectiveValueParameters()
         // TODO: Exported types should be transformed in a separate lowering by creating shim functions for each export.
         val resultType =
-            if (declaration.isExported(context.backendContext))
-                context.transformExportedResultType(declaration.returnType)
-            else
-                context.transformResultType(declaration.returnType)
+            when {
+                declaration.isExported(context.backendContext) -> context.transformExportedResultType(declaration.returnType)
+                // Unit_getInstance returns true Unit reference instead of "void"
+                declaration == unitGetInstanceFunction -> context.transformType(declaration.returnType)
+                else -> context.transformResultType(declaration.returnType)
+            }
         val wasmFunctionType =
             WasmFunctionType(
                 name = watName,
@@ -88,17 +90,10 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
                 },
                 resultTypes = listOfNotNull(
                     run {
-                        val type = if (declaration == unitGetInstanceFunction) {
-                            // Unit_getInstance returns true Unit reference instead of "void"
-                            context.transformType(declaration.returnType)
-                        } else {
-                            resultType
-                        }
-
-                        if (importedName != null && type is WasmRefNullType)
+                        if (importedName != null && resultType is WasmRefNullType)
                             WasmEqRef
                         else
-                            type
+                            resultType
                     }
                 )
             )
@@ -147,9 +142,6 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
                 for (statement in body.statements) {
                     bodyBuilder.statementToWasmInstruction(statement)
                 }
-
-            is IrExpressionBody ->
-                bodyBuilder.generateExpression(body.expression)
 
             else -> error("Unexpected body $body")
         }
