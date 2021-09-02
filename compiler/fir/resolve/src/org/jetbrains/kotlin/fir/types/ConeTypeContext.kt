@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.resolve.correspondingSupertypesCache
-import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -434,24 +433,17 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
         return when (this) {
             is ConeFlexibleType -> this.upperBound.isNullableType()
-            is ConeTypeParameterType -> lookupTag.symbol.allBoundsAreNullable()
-            is ConeTypeVariableType -> {
-                val symbol = lookupTag.toSymbol(session) ?: return false
-                when (symbol) {
+            is ConeLookupTagBasedType ->
+                when (val symbol = lookupTag.toSymbol(session)) {
+                    null -> false
                     is FirClassSymbol -> false
                     is FirTypeAliasSymbol -> symbol.fir.expandedConeType?.isNullableType() ?: false
-                    is FirTypeParameterSymbol -> symbol.allBoundsAreNullable()
+                    is FirTypeParameterSymbol -> symbol.fir.bounds.all { it.coneType.isNullableType() }
                 }
-            }
             is ConeIntersectionType -> intersectedTypes.all { it.isNullableType() }
-            is ConeClassLikeType -> directExpansionType(session)?.isNullableType() ?: false
             is ConeCapturedType -> constructor.supertypes?.all { it.isNullableType() } ?: true
             else -> false
         }
-    }
-
-    private fun FirTypeParameterSymbol.allBoundsAreNullable(): Boolean {
-        return fir.bounds.all { it.coneType.isNullableType() }
     }
 
     private fun TypeConstructorMarker.toFirRegularClass(): FirRegularClass? {

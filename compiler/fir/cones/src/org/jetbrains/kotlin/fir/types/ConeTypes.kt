@@ -226,7 +226,7 @@ data class ConeCapturedType(
 
 data class ConeTypeVariableType(
     override val nullability: ConeNullability,
-    override val lookupTag: ConeClassifierLookupTag,
+    override val lookupTag: ConeTypeVariableTypeConstructor,
     override val attributes: ConeAttributes = ConeAttributes.Empty,
 ) : ConeLookupTagBasedType() {
     override val typeArguments: Array<out ConeTypeProjection> get() = emptyArray()
