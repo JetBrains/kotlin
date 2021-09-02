@@ -9,10 +9,19 @@ import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames
+import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 
 internal fun handleHierarchicalStructureFlagsMigration(project: Project) {
+    SingleActionPerProject.run(project.rootProject, "handleHierarchicalStructureFlagsMigration - rootProject") {
+        doHandleHierarchicalStructureFlagsMigration(project.rootProject)
+    }
+
+    doHandleHierarchicalStructureFlagsMigration(project)
+}
+
+private fun doHandleHierarchicalStructureFlagsMigration(project: Project) {
     with(PropertiesProvider(project)) {
         checkHmppFeatureFlagsForConsistency(project)
 

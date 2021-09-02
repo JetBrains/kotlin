@@ -8,11 +8,13 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
@@ -28,16 +30,15 @@ abstract class MultiplatformExtensionTest {
 
     @BeforeTest
     open fun setup() {
-        project.plugins.apply("kotlin-multiplatform")
-        kotlin = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
+        kotlin = project.applyMultiplatformPlugin()
     }
 
     protected fun enableGranularSourceSetsMetadata() {
-        project.extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.mpp.enableGranularSourceSetsMetadata", "true")
+        project.enableGranularSourceSetsMetadata()
     }
 
     protected fun enableCInteropCommonization() {
-        project.extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.mpp.enableCInteropCommonization", "true")
+        project.enableCInteropCommonization()
     }
 
     internal fun expectCInteropCommonizerDependent(compilation: KotlinSharedNativeCompilation): CInteropCommonizerDependent {
@@ -76,4 +77,24 @@ abstract class MultiplatformExtensionTest {
     internal fun KotlinCompilationData<*>.cinteropIdentifier(name: String): CInteropIdentifier {
         return CInteropIdentifier(CInteropIdentifier.Scope.create(this), name)
     }
+}
+
+fun Project.applyMultiplatformPlugin(): KotlinMultiplatformExtension {
+    plugins.apply("kotlin-multiplatform")
+    return extensions.getByName("kotlin") as KotlinMultiplatformExtension
+}
+
+val Project.propertiesExtension: ExtraPropertiesExtension
+    get() = extensions.getByType(ExtraPropertiesExtension::class.java)
+
+fun Project.enableGranularSourceSetsMetadata() {
+    propertiesExtension.set("kotlin.mpp.enableGranularSourceSetsMetadata", "true")
+}
+
+fun Project.enableCInteropCommonization() {
+    propertiesExtension.set("kotlin.mpp.enableCInteropCommonization", "true")
+}
+
+fun Project.enableHierarchicalStructureByDefault() {
+    propertiesExtension.set(KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT, "true")
 }
