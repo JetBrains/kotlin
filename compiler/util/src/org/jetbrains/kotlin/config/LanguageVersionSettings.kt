@@ -211,7 +211,6 @@ enum class LanguageFeature(
     TypeInferenceOnCallsWithSelfTypes(KOTLIN_1_6),
     WarnAboutNonExhaustiveWhenOnAlgebraicTypes(KOTLIN_1_6, kind = BUG_FIX),
     InstantiationOfAnnotationClasses(KOTLIN_1_6),
-    OptInOnOverrideForbidden(KOTLIN_1_6, kind = BUG_FIX),
     OptInContagiousSignatures(KOTLIN_1_6, kind = BUG_FIX),
     RepeatableAnnotations(KOTLIN_1_6),
     RepeatableAnnotationContainerConstraints(KOTLIN_1_6, kind = BUG_FIX),
@@ -234,6 +233,8 @@ enum class LanguageFeature(
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),
+    // Disabled for indefinite time. See KT-48535 and related discussion
+    OptInOnOverrideForbidden(sinceVersion = null, kind = BUG_FIX),
 
     // Experimental features
 
