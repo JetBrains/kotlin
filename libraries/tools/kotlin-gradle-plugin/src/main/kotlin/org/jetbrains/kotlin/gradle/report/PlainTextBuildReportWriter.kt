@@ -25,6 +25,12 @@ internal class PlainTextBuildReportWriter(
 
     override fun process(build: BuildExecutionData) {
         try {
+            outputFile.parentFile.mkdirs()
+            if (!(outputFile.parentFile.exists() && outputFile.parentFile.isDirectory)) {
+                log.error("Kotlin build report cannot be created: '$outputFile.parentFile' is a file or do not have permissions to create")
+                return
+            }
+
             outputFile.bufferedWriter().use { writer ->
                 p = Printer(writer)
                 printBuildReport(build)
