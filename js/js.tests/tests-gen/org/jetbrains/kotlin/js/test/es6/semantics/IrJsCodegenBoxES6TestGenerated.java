@@ -9184,6 +9184,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/defaultArguments/kt47073_nested.kt");
         }
 
+        @TestMetadata("kt48391.kt")
+        public void testKt48391() throws Exception {
+            runTest("compiler/testData/codegen/box/defaultArguments/kt48391.kt");
+        }
+
         @TestMetadata("kt6382.kt")
         public void testKt6382() throws Exception {
             runTest("compiler/testData/codegen/box/defaultArguments/kt6382.kt");

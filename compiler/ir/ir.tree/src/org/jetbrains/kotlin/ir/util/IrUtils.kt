@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -173,6 +170,11 @@ fun IrExpression.coerceToUnitIfNeeded(valueType: IrType, irBuiltIns: IrBuiltIns,
 
 fun IrFunctionAccessExpression.usesDefaultArguments(): Boolean =
     symbol.owner.valueParameters.any { this.getValueArgument(it.index) == null }
+
+fun IrValueParameter.createStubDefaultValue(): IrExpressionBody =
+    factory.createExpressionBody(
+        IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, "Stub expression for default value of $name")
+    )
 
 val IrClass.functions: Sequence<IrSimpleFunction>
     get() = declarations.asSequence().filterIsInstance<IrSimpleFunction>()

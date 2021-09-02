@@ -563,11 +563,15 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         substitutedType: IrType? = null
     ): IrValueParameter = copyTo(
         target, IrDeclarationOrigin.BRIDGE,
+        startOffset = target.startOffset,
+        endOffset = target.endOffset,
         type = (substitutedType?.eraseToScope(visibleTypeParameters) ?: type.eraseTypeParameters()),
         // Currently there are no special bridge methods with vararg parameters, so we don't track substituted vararg element types.
         varargElementType = varargElementType?.eraseToScope(visibleTypeParameters),
-        startOffset = target.startOffset,
-        endOffset = target.endOffset,
+        // If the parameter has a default value, replace it with a stub, as if this function is coming from an external dependency.
+        // Otherwise it can lead to all sorts of problems, for example this default value can reference private functions from another
+        // file, which would rightfully make SyntheticAccessorLowering fail.
+        defaultValue = if (defaultValue != null) createStubDefaultValue() else null,
     )
 
     private fun IrBuilderWithScope.delegatingCall(
