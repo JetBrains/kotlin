@@ -82,7 +82,12 @@ fun ConeSimpleKotlinType.makeDefinitelyNotNull(typeContext: ConeTypeContext): Co
 }
 
 fun ConeKotlinType.makeDefinitelyNotNull(typeContext: ConeTypeContext): ConeKotlinType = when (this) {
-    is ConeFlexibleType -> withNullability(ConeNullability.NOT_NULL, typeContext) // TODO: wrong
+    // `(A..B) & Any` -> `A & Any .. B & Any`; special case: `(X..X?) & Any` -> `X & Any`
+    is ConeFlexibleType -> coneFlexibleOrSimpleType(
+        typeContext,
+        lowerBound.makeDefinitelyNotNull(typeContext),
+        upperBound.makeDefinitelyNotNull(typeContext)
+    )
     is ConeSimpleKotlinType -> makeDefinitelyNotNull(typeContext)
 }
 
