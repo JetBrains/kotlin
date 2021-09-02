@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.daemon.common
 
 import org.jetbrains.kotlin.incremental.components.LookupInfo
+import org.jetbrains.kotlin.incremental.components.ConstantRef
 import org.jetbrains.kotlin.incremental.js.JsInlineFunctionHash
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
@@ -47,6 +48,9 @@ interface CompilerCallbackServicesFacade : Remote {
 
     @Throws(RemoteException::class)
     fun hasExpectActualTracker(): Boolean
+
+    @Throws(RemoteException::class)
+    fun hasInlineConstTracker(): Boolean
 
     @Throws(RemoteException::class)
     fun hasIncrementalResultsConsumer(): Boolean
@@ -100,6 +104,11 @@ interface CompilerCallbackServicesFacade : Remote {
     // ExpectActualTracker
     @Throws(RemoteException::class)
     fun expectActualTracker_report(expectedFilePath: String, actualFilePath: String)
+
+    // ---------------------------------------------------
+    // InlineConstTracker
+    @Throws(RemoteException::class)
+    fun inlineConstTracker_report(className: String, cRefs: Collection<ConstantRef>)
 
     // ---------------------------------------------------
     // IncrementalResultsConsumer (js)

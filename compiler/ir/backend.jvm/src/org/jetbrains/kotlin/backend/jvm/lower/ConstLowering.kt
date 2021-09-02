@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isStringClassType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
+import org.jetbrains.kotlin.incremental.components.ConstantRef
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 
 internal val constPhase1 = makeIrFilePhase(
     ::ConstLowering,
@@ -53,6 +56,13 @@ class ConstLowering(val context: JvmBackendContext) : IrElementTransformerVoid()
     private fun IrExpression.lowerConstRead(receiver: IrExpression?, field: IrField?): IrExpression? {
         val value = field?.constantValue() ?: return null
         transformChildrenVoid()
+        val inlineConstTracker = context.state.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER] ?: InlineConstTracker.DoNothing
+        inlineConstTracker.report("Usage",
+                                  listOf(ConstantRef("JavaClass", "CONST", "Ljava/lang/String;")))
+//        if(field.final) { //TODO add static? + report className
+//            inlineConstTracker.report(context.state.files.first(), listOf(ConstantRef("a", field.name, (field.initializer.expression.type as IrSimpleTypeImpl).classifier.signature)))
+//
+//        }
         val resultExpression = if (context.state.shouldInlineConstVals)
             value.copyWithOffsets(startOffset, endOffset)
         else
