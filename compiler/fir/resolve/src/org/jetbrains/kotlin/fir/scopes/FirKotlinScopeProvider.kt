@@ -153,11 +153,12 @@ private fun FirClass.scopeForClassImpl(
     val basicScope = unsubstitutedScope(useSiteSession, scopeSession, withForcedTypeCalculator = false)
     if (substitutor == ConeSubstitutor.Empty) return basicScope
 
+    val key = ConeSubstitutionScopeKey(classFirDispatchReceiver.symbol.toLookupTag(), isFromExpectClass, substitutor)
     return scopeSession.getOrBuild(
-        this, ConeSubstitutionScopeKey(classFirDispatchReceiver.symbol.toLookupTag(), isFromExpectClass, substitutor)
+        this, key
     ) {
         FirClassSubstitutionScope(
-            useSiteSession, basicScope, substitutor, classFirDispatchReceiver.defaultType(),
+            useSiteSession, basicScope, key, substitutor, classFirDispatchReceiver.defaultType(),
             skipPrivateMembers, makeExpect = isFromExpectClass
         )
     }

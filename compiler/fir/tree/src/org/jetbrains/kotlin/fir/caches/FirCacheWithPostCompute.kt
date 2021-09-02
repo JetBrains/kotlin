@@ -13,3 +13,7 @@ abstract class FirCache<in K : Any, out V, in CONTEXT> {
 @Suppress("NOTHING_TO_INLINE")
 inline fun <K : Any, V> FirCache<K, V, Nothing?>.getValue(key: K): V =
     getValue(key, null)
+
+operator fun <K : Any, V> FirCache<K, V, Nothing>.contains(key: K): Boolean {
+    return getValueIfComputed(key) != null
+}
