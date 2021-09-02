@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.fir.PrivateForInline
  */
 @OptIn(PrivateForInline::class)
 @JvmInline
-internal value class NullableMap<K, V>(private val map: MutableMap<K, Any> = HashMap()) {
+value class NullableMap<K, V>(
+    @property:PrivateForInline
+    val map: MutableMap<K, Any> = HashMap()
+) {
 
     /**
      * Get value if it is present in map
@@ -31,7 +34,15 @@ internal value class NullableMap<K, V>(private val map: MutableMap<K, Any> = Has
     inline operator fun set(key: K, value: V) {
         map[key] = value ?: NullValue
     }
+
+    @PrivateForInline
+    object NullValue
 }
 
-@PrivateForInline
-internal object NullValue
+inline fun <K, V> NullableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
+    return getOrElse(key) {
+        defaultValue().also {
+            set(key, it)
+        }
+    }
+}
