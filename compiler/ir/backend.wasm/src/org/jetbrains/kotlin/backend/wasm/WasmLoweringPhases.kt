@@ -291,17 +291,17 @@ private val excludeDeclarationsFromCodegenPhase = makeCustomWasmModulePhase(
     description = "Move excluded declarations to separate place"
 )
 
-private val returnableBlockLoweringPhase = makeWasmModulePhase(
-    ::ReturnableBlockLowering,
-    name = "ReturnableBlockLowering",
-    description = "Replace returnable block with do-while loop",
-    prerequisite = setOf(functionInliningPhase)
-)
-
 private val tryCatchCanonicalization = makeWasmModulePhase(
     ::TryCatchCanonicalization,
     name = "TryCatchCanonicalization",
     description = "Transforms try/catch statements into canonical form supported by the wasm codegen",
+    prerequisite = setOf(functionInliningPhase)
+)
+
+private val returnableBlockLoweringPhase = makeWasmModulePhase(
+    ::ReturnableBlockLowering,
+    name = "ReturnableBlockLowering",
+    description = "Replace returnable block with do-while loop",
     prerequisite = setOf(functionInliningPhase)
 )
 
@@ -467,8 +467,8 @@ val wasmPhases = NamedCompilerPhase(
 //            suspendFunctionsLoweringPhase then
 
             stringConstructorLowering then
-            returnableBlockLoweringPhase then
             tryCatchCanonicalization then
+            returnableBlockLoweringPhase then
 
             forLoopsLoweringPhase then
             propertyAccessorInlinerLoweringPhase then

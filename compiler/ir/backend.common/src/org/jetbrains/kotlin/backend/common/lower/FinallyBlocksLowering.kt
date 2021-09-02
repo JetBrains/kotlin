@@ -217,7 +217,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
             val syntheticTry = IrTryImpl(
                 startOffset = startOffset,
                 endOffset = endOffset,
-                type = context.irBuiltIns.unitType
+                type = context.irBuiltIns.nothingType
             ).apply {
                 this.catches += irCatch(
                     catchParameter,
@@ -241,7 +241,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
                     val transformedTry = IrTryImpl(
                         startOffset = startOffset,
                         endOffset = endOffset,
-                        type = context.irBuiltIns.unitType
+                        type = context.irBuiltIns.nothingType
                     )
                     transformedTry.tryResult = returnedResult
                     for (aCatch in aTry.catches) {

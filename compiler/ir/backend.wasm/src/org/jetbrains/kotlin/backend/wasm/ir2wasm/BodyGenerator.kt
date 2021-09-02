@@ -68,7 +68,6 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
     override fun visitTry(aTry: IrTry) {
         assert(aTry.isCanonical(irBuiltIns)) { "expected canonical try/catch" }
-        assert(aTry.type != irBuiltIns.nothingType) { "shouldn't happen" }
 
         val resultType = context.transformBlockResultType(aTry.type)
         body.buildTry(null, resultType)
