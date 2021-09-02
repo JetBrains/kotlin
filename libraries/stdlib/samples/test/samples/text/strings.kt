@@ -507,4 +507,29 @@ class Strings {
 
         assertPrints(mixedColor, "brown&blue")
     }
+
+    @Sample
+    fun all() {
+        val name = "fatima"
+        val containsWhiteSpace: Boolean = name.any{
+            it.isWhitespace()
+        }
+        assertFalse(containsWhiteSpace)
+
+        val isLowerCase: (Char) -> Boolean = Char::isLowerCase
+        val charSequence = "Ariya"
+        assertFalse(charSequence.all(isLowerCase))
+
+        val containsAllCharsOf: String.(String) -> Boolean = { bigger ->
+            bigger.all { this.contains(it) }
+        }
+        val sentence = "This is a short string."
+        val line = "This is a long string with lot's of characters."
+        assertTrue(line.containsAllCharsOf(sentence))
+
+        val allSentenceCharsInsideLine = sentence.all {
+            line.contains(it)
+        }
+        assertTrue(allSentenceCharsInsideLine)
+    }
 }

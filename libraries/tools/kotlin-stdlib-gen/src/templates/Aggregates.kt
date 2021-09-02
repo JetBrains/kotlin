@@ -31,14 +31,22 @@ object Aggregates : TemplateGroupBase() {
         include(Maps, CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
-        specialFor(ArraysOfUnsigned) { inlineOnly() }
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            sample("samples.collections.Collections.Aggregates.all")
+        }
+        specialFor(Maps) {
+            sample("samples.collections.Collections.Aggregates.all")
+        }
+        specialFor(CharSequences) {
+            sample("samples.text.strings.all")
+        }
 
         doc {
             """
             Returns `true` if all ${f.element.pluralize()} match the given [predicate].
             """
         }
-        sample("samples.collections.Collections.Aggregates.all")
         returns("Boolean")
         body {
             """
