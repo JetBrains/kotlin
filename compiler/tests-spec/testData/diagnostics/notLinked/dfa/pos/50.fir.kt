@@ -38,9 +38,9 @@ fun <T> T.case_3() {
 // TESTCASE NUMBER: 4
 fun <T> T?.case_4() {
     if (this is ClassWithSixTypeParameters<*, *, *, *, *, *>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T?!!")!>this<!>.test()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T?!!")!>this<!>.x
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T?!!")!>this<!>.y
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T!!")!>this<!>.test()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T!!")!>this<!>.x
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T!!")!>this<!>.y
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>y<!>
     }

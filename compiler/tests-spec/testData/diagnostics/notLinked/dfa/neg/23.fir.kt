@@ -40,8 +40,8 @@ inline fun <reified T, reified K> case_3() {
 // TESTCASE NUMBER: 4
 inline fun <reified T, reified K> case_4(x: T?) {
     if (x is K) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & K!! & T?!!")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & K!! & T?!!")!>x<!>.equals(x)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & K!! & T!!")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & K!! & T!!")!>x<!>.equals(x)
     }
 }
 

@@ -53,20 +53,20 @@ fun ConeSimpleKotlinType.makeDefinitelyNotNull(typeContext: ConeTypeContext): Co
     // For upper-bounded types, there can be three states: `T & Any` never includes null, `T` only does if the bound
     // permits it, and `T?` always includes null. We only need a wrapper if `T` and `T & Any` are different.
     is ConeTypeParameterType, is ConeTypeVariableType, is ConeCapturedType -> {
-        // TODO: should probably strip the question mark off `this` first.
+        val unmarked = withNullability(ConeNullability.NOT_NULL, typeContext)
         // Actually, `isSubtypeOfAny` branch should work for type parameters as well, but it breaks some cases.
         // See KT-40114. Basically, if we have `T : X..X?`, then `T <: Any` but we still have `T` != `T & Any`.
-        val maybeNullable = if (this is ConeTypeParameterType)
-            with(typeContext) { isNullableType() }
+        val maybeNullable = if (unmarked is ConeTypeParameterType)
+            with(typeContext) { unmarked.isNullableType() }
         else
             !AbstractNullabilityChecker.isSubtypeOfAny(
-                typeContext.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false), type
+                typeContext.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false), unmarked
             )
-        if (maybeNullable) ConeDefinitelyNotNullType(this) else null
+        if (maybeNullable) ConeDefinitelyNotNullType(unmarked) else unmarked
     }
     // For all other types `T & Any` is the same as `T` without a question mark.
-    else -> null
-} ?: withNullability(ConeNullability.NOT_NULL, typeContext)
+    else -> withNullability(ConeNullability.NOT_NULL, typeContext)
+}
 
 fun ConeKotlinType.makeDefinitelyNotNull(typeContext: ConeTypeContext): ConeKotlinType = when (this) {
     is ConeFlexibleType -> withNullability(ConeNullability.NOT_NULL, typeContext) // TODO: wrong

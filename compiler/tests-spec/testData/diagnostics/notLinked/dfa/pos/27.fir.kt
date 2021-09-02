@@ -61,9 +61,9 @@ inline fun <reified T : CharSequence>case_4(x: Any?) {
 inline fun <reified T : CharSequence>case_5(x: Any?) {
     if (x as? T != null) {
         if (<!USELESS_IS_CHECK!>x is T?<!>) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?!!")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?!!")!>x<!>.length
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?!!")!>x<!>.get(0)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>.length
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>.get(0)
         }
     }
 }

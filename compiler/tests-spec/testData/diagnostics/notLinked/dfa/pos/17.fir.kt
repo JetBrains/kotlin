@@ -287,16 +287,16 @@ fun <T> case_21(x: T) {
 // TESTCASE NUMBER: 22
 fun <T> case_22(x: T?) {
     if (x === null) throw Exception()
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.equals(null)
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propT
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propAny
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propNullableT
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propNullableAny
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funT()
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funAny()
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funNullableT()
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funNullableAny()
+    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T!!")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T!!")!>x<!>.equals(null)
+    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T!!")!>x<!>.propT
+    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T!!")!>x<!>.propAny
+    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T!!")!>x<!>.propNullableT
+    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T!!")!>x<!>.propNullableAny
+    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T!!")!>x<!>.funT()
+    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T!!")!>x<!>.funAny()
+    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T!!")!>x<!>.funNullableT()
+    <!DEBUG_INFO_EXPRESSION_TYPE("T? & T!!")!>x<!>.funNullableAny()
 }
 
 // TESTCASE NUMBER: 23
