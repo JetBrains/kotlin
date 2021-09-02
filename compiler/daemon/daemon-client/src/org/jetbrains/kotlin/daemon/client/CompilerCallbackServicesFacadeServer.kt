@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.daemon.client
 
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
+import org.jetbrains.kotlin.incremental.components.ConstantRef
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
@@ -36,6 +38,7 @@ open class CompilerCallbackServicesFacadeServer(
     val lookupTracker: LookupTracker? = null,
     val compilationCanceledStatus: CompilationCanceledStatus? = null,
     val expectActualTracker: ExpectActualTracker? = null,
+    val inlineConstTracker: InlineConstTracker? = null,
     val incrementalResultsConsumer: IncrementalResultsConsumer? = null,
     val incrementalDataProvider: IncrementalDataProvider? = null,
     port: Int = SOCKET_ANY_FREE_PORT
@@ -52,6 +55,8 @@ open class CompilerCallbackServicesFacadeServer(
     override fun hasCompilationCanceledStatus(): Boolean = compilationCanceledStatus != null
 
     override fun hasExpectActualTracker(): Boolean = expectActualTracker != null
+
+    override fun hasInlineConstTracker(): Boolean = inlineConstTracker != null
 
     override fun hasIncrementalResultsConsumer(): Boolean = incrementalResultsConsumer != null
 
@@ -114,6 +119,10 @@ open class CompilerCallbackServicesFacadeServer(
 
     override fun expectActualTracker_report(expectedFilePath: String, actualFilePath: String) {
         expectActualTracker!!.report(File(expectedFilePath), File(actualFilePath))
+    }
+
+    override fun inlineConstTracker_report(className: String, cRefs: Collection<ConstantRef>) {
+        inlineConstTracker!!.report(className, cRefs)
     }
 
     override fun incrementalResultsConsumer_processHeader(headerMetadata: ByteArray) {
