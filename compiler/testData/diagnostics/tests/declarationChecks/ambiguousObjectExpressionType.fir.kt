@@ -1,3 +1,9 @@
+interface Lazy<T> {
+    operator fun getValue(a1: Any, a2: Any): T
+}
+
+fun <T> lazy(f: () -> T): Lazy<T> = throw Exception()
+
 interface MyTrait {
     fun f1() {}
 }
@@ -7,13 +13,21 @@ open class MyClass {
 }
 
 
-class Foo {
+class Foo(val myTrait: MyTrait) {
 
     private val privateProperty = object : MyClass(), MyTrait {}
+    val publicPropertyWithSingleSuperType = object : MyClass() {
+        fun onlyFromAnonymousObject() {}
+    }
+    private val privatePropertyWithSingleSuperType = object : MyClass() {
+        fun onlyFromAnonymousObject() {}
+    }
 
     init {
         privateProperty.f1()
         privateProperty.f2()
+        publicPropertyWithSingleSuperType.<!UNRESOLVED_REFERENCE!>onlyFromAnonymousObject<!>() // unresolved due to approximation
+        privatePropertyWithSingleSuperType.onlyFromAnonymousObject() // resolvable since private
     }
 
     <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>protected val protectedProperty<!> = object : MyClass(), MyTrait {}
@@ -27,6 +41,46 @@ class Foo {
     <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>val propertyWithGetter<!>
     get() = object: MyClass(), MyTrait {}
 
+    private val privateDelegateProperty by lazy { object : MyClass(), MyTrait {} }
+    val publicDelegatePropertyWithSingleSuperType by lazy {
+        object : MyClass() {
+            fun onlyFromAnonymousObject() {}
+        }
+    }
+    private val privateDelegatePropertyWithSingleSuperType by lazy {
+        object : MyClass() {
+            fun onlyFromAnonymousObject() {}
+        }
+    }
+
+    init {
+        privateDelegateProperty.f1()
+        privateDelegateProperty.f2()
+        publicDelegatePropertyWithSingleSuperType.<!UNRESOLVED_REFERENCE!>onlyFromAnonymousObject<!>() // unresolved due to approximation
+        privateDelegatePropertyWithSingleSuperType.onlyFromAnonymousObject() // resolvable since private
+    }
+
+    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>protected val protectedDelegateProperty<!> by lazy { object : MyClass(), MyTrait {} }
+
+    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>val internalDelegateProperty<!> by lazy { object : MyClass(), MyTrait {} }
+
+    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal val internal2DelegateProperty<!> by lazy { object : MyClass(), MyTrait {} }
+
+    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>public val publicDelegateProperty<!> by lazy { object : MyClass(), MyTrait {} }
+
+    private val privateDelegate = object : MyTrait by myTrait {
+        fun f2() {}
+    }
+    val delegate = object : MyTrait by myTrait {
+        fun f2() {}
+    }
+
+    init {
+        privateDelegate.f1()
+        privateDelegate.f2()
+        delegate.f1()
+        delegate.<!UNRESOLVED_REFERENCE!>f2<!>()
+    }
 
     private fun privateFunction() = object : MyClass(), MyTrait {}
 

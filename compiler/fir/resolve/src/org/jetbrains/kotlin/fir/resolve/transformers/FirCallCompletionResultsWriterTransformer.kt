@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
@@ -68,7 +71,7 @@ class FirCallCompletionResultsWriterTransformer(
     private val mode: Mode = Mode.Normal
 ) : FirAbstractTreeTransformer<ExpectedArgumentType?>(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
 
-    private val declarationWriter by lazy { FirDeclarationCompletionResultsWriter(finalSubstitutor) }
+    private val declarationWriter by lazy { FirDeclarationCompletionResultsWriter(finalSubstitutor, typeApproximator, session.typeContext) }
 
     private val arrayOfCallTransformer = FirArrayOfCallTransformer()
     private var enableArrayOfCallTransformation = false
@@ -169,7 +172,10 @@ class FirCallCompletionResultsWriterTransformer(
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, qualifiedAccessExpression.source, null)
 
         if (mode == Mode.DelegatedPropertyCompletion) {
-            subCandidate.symbol.fir.transformSingle(declarationWriter, null)
+            subCandidate.symbol.fir.transformSingle(
+                declarationWriter,
+                FirDeclarationCompletionResultsWriter.ApproximationData.NoApproximation
+            )
             val typeUpdater = TypeUpdaterForDelegateArguments()
             result.transformExplicitReceiver(typeUpdater, null)
         }
@@ -235,7 +241,10 @@ class FirCallCompletionResultsWriterTransformer(
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, functionCall.source, null)
 
         if (mode == Mode.DelegatedPropertyCompletion) {
-            subCandidate.symbol.fir.transformSingle(declarationWriter, null)
+            subCandidate.symbol.fir.transformSingle(
+                declarationWriter,
+                FirDeclarationCompletionResultsWriter.ApproximationData.NoApproximation
+            )
             val typeUpdater = TypeUpdaterForDelegateArguments()
             result.argumentList.transformArguments(typeUpdater, null)
             result.transformExplicitReceiver(typeUpdater, null)
@@ -832,46 +841,62 @@ private fun ExpectedArgumentType.getExpectedType(argument: FirElement): ConeKotl
 
 fun ConeKotlinType.toExpectedType(): ExpectedArgumentType = ExpectedArgumentType.ExpectedType(this)
 
-class FirDeclarationCompletionResultsWriter(private val finalSubstitutor: ConeSubstitutor) : FirDefaultTransformer<Any?>() {
-    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+internal class FirDeclarationCompletionResultsWriter(
+    private val finalSubstitutor: ConeSubstitutor,
+    private val typeApproximator: ConeTypeApproximator,
+    private val typeContext: ConeInferenceContext
+) : FirDefaultTransformer<FirDeclarationCompletionResultsWriter.ApproximationData>() {
+    override fun <E : FirElement> transformElement(element: E, data: ApproximationData): E {
         return element
     }
 
-    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): FirStatement {
-        simpleFunction.transformReturnTypeRef(this, data)
-        simpleFunction.transformValueParameters(this, data)
-        simpleFunction.transformReceiverTypeRef(this, data)
+    override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: ApproximationData): FirStatement {
+        return super.transformAnonymousObject(anonymousObject, ApproximationData.NoApproximation)
+    }
+
+    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: ApproximationData): FirStatement {
+        val newData = if (simpleFunction.isLocal || data == ApproximationData.NoApproximation) ApproximationData.NoApproximation
+        else ApproximationData.ApproximateByStatus(simpleFunction.visibility, simpleFunction.isInline)
+        simpleFunction.transformReturnTypeRef(this, newData)
+        simpleFunction.transformValueParameters(this, ApproximationData.NoApproximation)
+        simpleFunction.transformReceiverTypeRef(this, newData)
         return simpleFunction
     }
 
-    override fun transformProperty(property: FirProperty, data: Any?): FirStatement {
-        property.transformGetter(this, data)
-        property.transformSetter(this, data)
-        property.transformReturnTypeRef(this, data)
-        property.transformReceiverTypeRef(this, data)
+    override fun transformProperty(property: FirProperty, data: ApproximationData): FirStatement {
+        val newData = if (property.isLocal || data == ApproximationData.NoApproximation) ApproximationData.NoApproximation
+        else ApproximationData.ApproximateByStatus(property.visibility, false)
+        property.transformGetter(this, newData)
+        property.transformSetter(this, newData)
+        property.transformReturnTypeRef(this, newData)
+        property.transformReceiverTypeRef(this, newData)
         return property
     }
 
-    override fun transformPropertyAccessor(
-        propertyAccessor: FirPropertyAccessor,
-        data: Any?
-    ): FirStatement {
+    override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: ApproximationData): FirStatement {
         propertyAccessor.transformReturnTypeRef(this, data)
-        propertyAccessor.transformValueParameters(this, data)
+        propertyAccessor.transformValueParameters(this, ApproximationData.NoApproximation)
         return propertyAccessor
     }
 
-    override fun transformValueParameter(
-        valueParameter: FirValueParameter,
-        data: Any?
-    ): FirStatement {
-        valueParameter.transformReturnTypeRef(this, data)
+    override fun transformValueParameter(valueParameter: FirValueParameter, data: ApproximationData): FirStatement {
+        valueParameter.transformReturnTypeRef(this, ApproximationData.NoApproximation)
         return valueParameter
     }
 
-    override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirTypeRef {
-        return finalSubstitutor.substituteOrNull(typeRef.coneType)?.let {
+    override fun transformTypeRef(typeRef: FirTypeRef, data: ApproximationData): FirTypeRef {
+        val result = finalSubstitutor.substituteOrNull(typeRef.coneType)?.let {
             typeRef.resolvedTypeFromPrototype(it)
         } ?: typeRef
+        if (data is ApproximationData.ApproximateByStatus) {
+            return result.approximatedIfNeededOrSelf(typeApproximator, data.visibility, typeContext, data.isInline)
+        }
+        return result
+    }
+
+    sealed class ApproximationData {
+        class ApproximateByStatus(val visibility: Visibility?, val isInline: Boolean) : ApproximationData()
+        object NoApproximation : ApproximationData()
+        object Default : ApproximationData()
     }
 }

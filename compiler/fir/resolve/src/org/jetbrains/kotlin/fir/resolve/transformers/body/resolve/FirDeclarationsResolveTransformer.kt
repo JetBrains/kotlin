@@ -264,8 +264,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             completedCalls.forEach {
                 it.transformSingle(callCompletionResultsWriter, null)
             }
-            val declarationCompletionResultsWriter = FirDeclarationCompletionResultsWriter(finalSubstitutor)
-            property.transformSingle(declarationCompletionResultsWriter, null)
+            val declarationCompletionResultsWriter =
+                FirDeclarationCompletionResultsWriter(finalSubstitutor, inferenceComponents.approximator, session.typeContext)
+            property.transformSingle(declarationCompletionResultsWriter, FirDeclarationCompletionResultsWriter.ApproximationData.Default)
         }
     }
 
