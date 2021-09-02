@@ -49,7 +49,7 @@ interface NotExperimentalExtension : ExperimentalType {
 
 fun use(arg: NotExperimentalExtension) {
     arg.foo()
-    arg.<!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>bar<!>()
+    arg.bar()
 }
 
 @Marker
@@ -84,7 +84,7 @@ object O {
     operator fun provideDelegate(x: Any?, y: Any?): C = C()
 }
 
-val x: String by <!EXPERIMENTAL_API_USAGE_ERROR, EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>O<!>
+val x: String by <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>O<!>
 
 @Marker
 class OperatorContainer : Comparable<OperatorContainer> {

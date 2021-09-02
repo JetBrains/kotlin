@@ -220,11 +220,6 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                 }
             }
 
-            val container = containingDeclaration
-            if (container is ClassDescriptor && this !is ConstructorDescriptor) {
-                result.addAll(container.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings, visited, useFutureError))
-            }
-
             for (moduleAnnotationClassId in moduleAnnotationsResolver.getAnnotationsOnContainingModule(this)) {
                 val annotationClass = module.findClassAcrossModuleDependencies(moduleAnnotationClassId)
                 result.addIfNotNull(annotationClass?.loadExperimentalityForMarkerAnnotation())

@@ -81,9 +81,9 @@ import api.*
 
 fun use() {
     val c: <!EXPERIMENTAL_API_USAGE!>C<!> = <!EXPERIMENTAL_API_USAGE!>C<!>()
-    <!EXPERIMENTAL_API_USAGE!>c<!>.function()
-    <!EXPERIMENTAL_API_USAGE!>c<!>.property
-    <!EXPERIMENTAL_API_USAGE!>C<!>.Nested()
-    <!EXPERIMENTAL_API_USAGE!>c<!>.Inner()
+    <!EXPERIMENTAL_API_USAGE!>c<!>.<!EXPERIMENTAL_API_USAGE!>function<!>()
+    <!EXPERIMENTAL_API_USAGE!>c<!>.<!EXPERIMENTAL_API_USAGE!>property<!>
+    <!EXPERIMENTAL_API_USAGE!>C<!>.<!EXPERIMENTAL_API_USAGE!>Nested<!>()
+    <!EXPERIMENTAL_API_USAGE!>c<!>.<!EXPERIMENTAL_API_USAGE!>Inner<!>()
     <!EXPERIMENTAL_API_USAGE!>c<!>.<!EXPERIMENTAL_API_USAGE!>extension<!>()
 }
