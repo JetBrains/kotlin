@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.config
 
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 
 object CommonConfigurationKeys {
@@ -38,6 +39,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val EXPECT_ACTUAL_TRACKER = CompilerConfigurationKey.create<ExpectActualTracker>("expect actual tracker")
+
+    @JvmField
+    val INLINE_CONST_TRACKER = CompilerConfigurationKey.create<InlineConstTracker>("inline constant tracker")
 
     @JvmField
     val METADATA_VERSION = CompilerConfigurationKey.create<BinaryVersion>("metadata version")

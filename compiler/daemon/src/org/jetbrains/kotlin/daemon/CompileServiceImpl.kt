@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.daemon.report.getBuildReporter
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryAndroid
@@ -872,6 +873,9 @@ class CompileServiceImpl(
         }
         if (facade.hasExpectActualTracker()) {
             builder.register(ExpectActualTracker::class.java, RemoteExpectActualTracker(facade, rpcProfiler))
+        }
+        if (facade.hasInlineConstTracker()) {
+            builder.register(InlineConstTracker::class.java, RemoteInlineConstTracker(facade, rpcProfiler))
         }
         if (facade.hasIncrementalResultsConsumer()) {
             builder.register(IncrementalResultsConsumer::class.java, RemoteIncrementalResultsConsumer(facade, eventManager, rpcProfiler))
