@@ -248,6 +248,6 @@ private fun ConeKotlinType.eraseAsUpperBound(session: FirSession, cache: Mutable
                 if (isNullable) it.withNullability(nullability, session.typeContext) else it
             }
         is ConeDefinitelyNotNullType ->
-            original.eraseAsUpperBound(session, cache).makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
+            original.eraseAsUpperBound(session, cache).makeDefinitelyNotNull(session.typeContext)
         else -> error("unexpected Java type parameter upper bound kind: $this")
     }

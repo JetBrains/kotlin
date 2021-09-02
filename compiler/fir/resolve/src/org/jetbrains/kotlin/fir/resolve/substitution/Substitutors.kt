@@ -46,7 +46,7 @@ abstract class AbstractConeSubstitutor(private val typeContext: ConeTypeContext)
     override fun substituteOrNull(type: ConeKotlinType): ConeKotlinType? {
         val newType = substituteType(type)
         if (newType != null && type is ConeDefinitelyNotNullType) {
-            return newType.makeConeTypeDefinitelyNotNullOrNotNull(typeContext)
+            return newType.makeDefinitelyNotNull(typeContext)
         }
         return (newType ?: type.substituteRecursive())
     }
@@ -85,10 +85,10 @@ abstract class AbstractConeSubstitutor(private val typeContext: ConeTypeContext)
 
     private fun ConeDefinitelyNotNullType.substituteOriginal(): ConeKotlinType? {
         val substituted = substituteOrNull(original)
-            ?.withNullability(ConeNullability.NOT_NULL, typeContext)
+            ?.withNullability(ConeNullability.NOT_NULL, typeContext) // TODO: this should be redundant
             ?.withAttributes(original.attributes, typeContext)
             ?: return null
-        return ConeDefinitelyNotNullType.create(substituted, typeContext) ?: substituted
+        return substituted.makeDefinitelyNotNull(typeContext)
     }
 
     private fun ConeFlexibleType.substituteBounds(): ConeFlexibleType? {

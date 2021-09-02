@@ -45,36 +45,32 @@ fun ConeInferenceContext.intersectTypesOrNull(types: List<ConeKotlinType>): Cone
 fun TypeCheckerProviderContext.equalTypes(a: ConeKotlinType, b: ConeKotlinType): Boolean =
     AbstractTypeChecker.equalTypes(this, a, b)
 
-private fun ConeTypeContext.makesSenseToBeDefinitelyNotNull(type: ConeKotlinType): Boolean = when (type) {
-    is ConeTypeParameterType -> type.isNullableType()
-    // Actually, this branch should work for type parameters as well, but it breaks some cases. See KT-40114.
-    // Basically, if we have `T : X..X?`, then `T <: Any` but we still have `T` != `T & Any`.
-    is ConeTypeVariableType, is ConeCapturedType ->
-        !AbstractNullabilityChecker.isSubtypeOfAny(
-            newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false), type
-        )
+fun ConeSimpleKotlinType.makeDefinitelyNotNull(typeContext: ConeTypeContext): ConeSimpleKotlinType = when (this) {
+    // `T & Any & Any` -> `T & Any`
+    is ConeDefinitelyNotNullType -> this
+    // `T & V & Any` -> `(T & Any) & (V & Any)`
+    is ConeIntersectionType -> ConeIntersectionType(intersectedTypes.map { it.makeDefinitelyNotNull(typeContext) })
+    // For upper-bounded types, there can be three states: `T & Any` never includes null, `T` only does if the bound
+    // permits it, and `T?` always includes null. We only need a wrapper if `T` and `T & Any` are different.
+    is ConeTypeParameterType, is ConeTypeVariableType, is ConeCapturedType -> {
+        // TODO: should probably strip the question mark off `this` first.
+        // Actually, `isSubtypeOfAny` branch should work for type parameters as well, but it breaks some cases.
+        // See KT-40114. Basically, if we have `T : X..X?`, then `T <: Any` but we still have `T` != `T & Any`.
+        val maybeNullable = if (this is ConeTypeParameterType)
+            with(typeContext) { isNullableType() }
+        else
+            !AbstractNullabilityChecker.isSubtypeOfAny(
+                typeContext.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false), type
+            )
+        if (maybeNullable) ConeDefinitelyNotNullType(this) else null
+    }
     // For all other types `T & Any` is the same as `T` without a question mark.
-    // TODO: not true for flexible types.
-    else -> false
-}
+    else -> null
+} ?: withNullability(ConeNullability.NOT_NULL, typeContext)
 
-// TODO: leave only one of `create` and `makeConeTypeDefinitelyNotNullOrNotNull`
-fun ConeDefinitelyNotNullType.Companion.create(
-    original: ConeKotlinType,
-    typeContext: ConeTypeContext
-): ConeDefinitelyNotNullType? {
-    return when {
-        original is ConeDefinitelyNotNullType -> original
-        typeContext.makesSenseToBeDefinitelyNotNull(original) -> ConeDefinitelyNotNullType(original)
-        else -> null
-    }
-}
-
-fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(typeContext: ConeTypeContext): ConeKotlinType {
-    if (this is ConeIntersectionType) {
-        return ConeIntersectionType(intersectedTypes.map { it.makeConeTypeDefinitelyNotNullOrNotNull(typeContext) })
-    }
-    return ConeDefinitelyNotNullType.create(this, typeContext) ?: this.withNullability(ConeNullability.NOT_NULL, typeContext)
+fun ConeKotlinType.makeDefinitelyNotNull(typeContext: ConeTypeContext): ConeKotlinType = when (this) {
+    is ConeFlexibleType -> withNullability(ConeNullability.NOT_NULL, typeContext) // TODO: wrong
+    is ConeSimpleKotlinType -> makeDefinitelyNotNull(typeContext)
 }
 
 fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection>, typeSystemContext: ConeTypeContext): T {
