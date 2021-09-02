@@ -68,18 +68,14 @@ private fun configurePlainTextReportWriter(
     log: Logger,
     reportingSettings: ReportingSettings
 ): BuildExecutionDataProcessor? {
-    val reportDir = reportingSettings.buildReportDir!!.apply { mkdirs() }
-    if (reportDir.isFile) {
-        log.error("Kotlin build report cannot be created: '$reportDir' is a file")
-        return null
-    }
-    reportDir.mkdirs()
-    val ts = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Calendar.getInstance().time)
-    val reportFile = reportDir.resolve("${rootProjectName}-build-$ts.txt")
+    return reportingSettings.buildReportDir?.let { reportDir ->
+        val ts = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Calendar.getInstance().time)
+        val reportFile = reportDir.resolve("$rootProjectName-build-$ts.txt")
 
-    return PlainTextBuildReportWriter(
-        outputFile = reportFile,
-        printMetrics = reportingSettings.includeMetricsInReport,
-        log = log
-    )
+        return PlainTextBuildReportWriter(
+            outputFile = reportFile,
+            printMetrics = reportingSettings.includeMetricsInReport,
+            log = log
+        )
+    }
 }
