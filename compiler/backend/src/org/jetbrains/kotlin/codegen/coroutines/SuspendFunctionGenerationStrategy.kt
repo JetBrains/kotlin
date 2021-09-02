@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.codegen.inline.addFakeContinuationConstructorCallMar
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.preprocessSuspendMarkers
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.KtFunction
@@ -37,9 +35,7 @@ class SuspendFunctionGenerationStrategy(
     private val containingClassInternalName: String,
     private val functionCodegen: FunctionCodegen
 ) : FunctionGenerationStrategy.CodegenBased(state) {
-
     private lateinit var codegen: ExpressionCodegen
-    private val languageVersionSettings: LanguageVersionSettings = state.configuration.languageVersionSettings
 
     private val classBuilderForCoroutineState by lazy {
         state.factory.newVisitor(
@@ -61,7 +57,9 @@ class SuspendFunctionGenerationStrategy(
         }
         val stateMachineBuilder = createStateMachineBuilder(mv, access, name, desc)
         if (originalSuspendDescriptor.isInline) {
-            return SuspendForInlineCopyingMethodVisitor(stateMachineBuilder, access, name, desc, functionCodegen::newMethod, keepAccess = false)
+            return SuspendForInlineCopyingMethodVisitor(
+                stateMachineBuilder, access, name, desc, functionCodegen::newMethod, keepAccess = false
+            )
         }
         if (state.bindingContext[CodegenBinding.CAPTURES_CROSSINLINE_LAMBDA, originalSuspendDescriptor] == true) {
             return AddConstructorCallForCoroutineRegeneration(
@@ -70,7 +68,6 @@ class SuspendFunctionGenerationStrategy(
                 containingClassInternalName,
                 originalSuspendDescriptor.dispatchReceiverParameter != null,
                 containingClassInternalNameOrNull(),
-                languageVersionSettings
             )
         }
         return stateMachineBuilder
@@ -136,7 +133,6 @@ class SuspendFunctionGenerationStrategy(
         private val containingClassInternalName: String,
         private val needDispatchReceiver: Boolean,
         private val internalNameForDispatchReceiver: String?,
-        private val languageVersionSettings: LanguageVersionSettings
     ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
         private val classBuilderForCoroutineState: ClassBuilder by lazy(obtainClassBuilderForCoroutineState)
         override fun performTransformations(methodNode: MethodNode) {

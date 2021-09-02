@@ -30,6 +30,7 @@ class CoroutineTransformer(
     private val superClassName: String
 ) {
     private val state = inliningContext.state
+
     // If we inline into inline function, we should generate both method with state-machine for Java interop and method without
     // state-machine for further transformation/inlining.
     private val generateForInline = inliningContext.callSiteInfo.isInlineOrInsideInline
@@ -152,7 +153,7 @@ class CoroutineTransformer(
         context.continuationBuilders[continuationClassName] = classBuilder
     }
 
-    fun unregisterClassBuilder(continuationClassName: String) =
+    private fun unregisterClassBuilder(continuationClassName: String): ClassBuilder? =
         (inliningContext as RegeneratedClassContext).continuationBuilders.remove(continuationClassName)
 
     // If tail-call optimization took place, we do not need continuation class anymore, unless it is used by $$forInline method

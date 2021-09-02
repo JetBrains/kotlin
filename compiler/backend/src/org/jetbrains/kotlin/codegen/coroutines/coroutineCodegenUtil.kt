@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.inline.addFakeContinuationMarker
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -146,9 +145,9 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
         ExpressionValueArgument(arguments)
     )
 
-    val newTypeArguments = newCandidateDescriptor.typeParameters.map {
-        Pair(it, typeArguments[candidateDescriptor.typeParameters[it.index]]!!.asTypeProjection())
-    }.toMap()
+    val newTypeArguments = newCandidateDescriptor.typeParameters.associateWith {
+        typeArguments[candidateDescriptor.typeParameters[it.index]]!!.asTypeProjection()
+    }
 
     newCall.setSubstitutor(
         TypeConstructorSubstitution.createByParametersMap(newTypeArguments).buildSubstitutor()
@@ -440,7 +439,9 @@ fun FunctionDescriptor.isSuspendLambdaOrLocalFunction() = this.isSuspend && when
     else -> false
 }
 
-fun FunctionDescriptor.isLocalSuspendFunctionNotSuspendLambda() = isSuspendLambdaOrLocalFunction() && this !is AnonymousFunctionDescriptor
+fun FunctionDescriptor.isLocalSuspendFunctionNotSuspendLambda(): Boolean =
+    isSuspendLambdaOrLocalFunction() && this !is AnonymousFunctionDescriptor
+
 @JvmField
 val CONTINUATION_ASM_TYPE = StandardNames.CONTINUATION_INTERFACE_FQ_NAME.topLevelClassAsmType()
 

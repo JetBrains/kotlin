@@ -1110,7 +1110,7 @@ inline fun withInstructionAdapter(block: InstructionAdapter.() -> Unit): InsnLis
     return tmpMethodNode.instructions
 }
 
-fun Type.normalize() =
+fun Type.normalize(): Type =
     when (sort) {
         Type.ARRAY, Type.OBJECT -> AsmTypes.OBJECT_TYPE
         else -> this
@@ -1156,7 +1156,7 @@ internal operator fun List<SuspensionPoint>.contains(insn: AbstractInsnNode): Bo
     any { insn in it }
 
 internal fun getLastParameterIndex(desc: String, access: Int) =
-    Type.getArgumentTypes(desc).dropLast(1).map { it.size }.sum() + (if (!isStatic(access)) 1 else 0)
+    Type.getArgumentTypes(desc).dropLast(1).sumOf { it.size } + (if (!isStatic(access)) 1 else 0)
 
 private fun getParameterTypesForCoroutineConstructor(desc: String, hasDispatchReceiver: Boolean, thisName: String) =
     listOfNotNull(if (!hasDispatchReceiver) null else Type.getObjectType(thisName)).toTypedArray() +
@@ -1192,6 +1192,7 @@ internal fun replaceFakeContinuationsWithRealOnes(methodNode: MethodNode, contin
     }
 }
 
+@Suppress("unused")
 private fun MethodNode.nodeTextWithLiveness(liveness: List<VariableLivenessFrame>): String =
     liveness.zip(this.instructions.asSequence().toList()).joinToString("\n") { (a, b) -> "$a|${b.insnText}" }
 

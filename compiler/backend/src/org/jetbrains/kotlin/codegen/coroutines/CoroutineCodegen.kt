@@ -64,39 +64,29 @@ abstract class AbstractCoroutineCodegen(
     protected val classDescriptor = closureContext.contextDescriptor
     protected val languageVersionSettings = outerExpressionCodegen.state.languageVersionSettings
 
-    protected val methodToImplement =
-        createImplMethod(
-            INVOKE_SUSPEND_METHOD_NAME,
-            SUSPEND_CALL_RESULT_NAME to classDescriptor.module.getResult(classDescriptor.builtIns.anyType)
-        )
-
-    private fun createImplMethod(name: String, vararg parameters: Pair<String, KotlinType>) =
+    protected val methodToImplement: FunctionDescriptor =
         SimpleFunctionDescriptorImpl.create(
-            classDescriptor, Annotations.EMPTY, Name.identifier(name), CallableMemberDescriptor.Kind.DECLARATION,
+            classDescriptor, Annotations.EMPTY, Name.identifier(INVOKE_SUSPEND_METHOD_NAME), CallableMemberDescriptor.Kind.DECLARATION,
             funDescriptor.source
         ).apply {
             initialize(
                 null,
                 classDescriptor.thisAsReceiverParameter,
                 emptyList(),
-                parameters.withIndex().map { (index, nameAndType) ->
-                    createValueParameterForDoResume(Name.identifier(nameAndType.first), nameAndType.second, index)
-                },
+                listOf(
+                    ValueParameterDescriptorImpl(
+                        this, null, 0, Annotations.EMPTY, Name.identifier(SUSPEND_CALL_RESULT_NAME),
+                        classDescriptor.module.getResult(classDescriptor.builtIns.anyType),
+                        declaresDefaultValue = false, isCrossinline = false, isNoinline = false, varargElementType = null,
+                        SourceElement.NO_SOURCE
+                    )
+                ),
                 builtIns.nullableAnyType,
                 Modality.FINAL,
                 DescriptorVisibilities.PUBLIC,
                 userDataForInvokeSuspend
             )
         }
-
-    private fun FunctionDescriptor.createValueParameterForDoResume(name: Name, type: KotlinType, index: Int) =
-        ValueParameterDescriptorImpl(
-            this, null, index, Annotations.EMPTY, name,
-            type,
-            declaresDefaultValue = false, isCrossinline = false,
-            isNoinline = false,
-            varargElementType = null, source = SourceElement.NO_SOURCE
-        )
 
     override fun generateConstructor(): Method {
         val args = calculateConstructorParameters(typeMapper, languageVersionSettings, closure, asmType)
@@ -119,7 +109,7 @@ abstract class AbstractCoroutineCodegen(
                 iv.iconst(funDescriptor.arity)
             }
 
-            iv.load(argTypes.map { it.size }.sum(), AsmTypes.OBJECT_TYPE)
+            iv.load(argTypes.sumOf { it.size }, AsmTypes.OBJECT_TYPE)
 
             val parameters =
                 if (passArityToSuperClass)
@@ -392,7 +382,7 @@ class CoroutineCodegenForLambda private constructor(
                 if (generateErasedCreate) {
                     load(allFunctionParameters().size + 1, AsmTypes.OBJECT_TYPE)
                 } else {
-                    load(allFunctionParameters().map { typeMapper.mapType(it.type).size }.sum() + 1, AsmTypes.OBJECT_TYPE)
+                    load(allFunctionParameters().sumOf { typeMapper.mapType(it.type).size } + 1, AsmTypes.OBJECT_TYPE)
                 }
             }
 
@@ -482,7 +472,9 @@ class CoroutineCodegenForLambda private constructor(
 
             val name =
                 if (parameter is ReceiverParameterDescriptor)
-                    DescriptorAsmUtil.getNameForReceiverParameter(originalSuspendFunctionDescriptor, bindingContext, languageVersionSettings)
+                    DescriptorAsmUtil.getNameForReceiverParameter(
+                        originalSuspendFunctionDescriptor, bindingContext, languageVersionSettings
+                    )
                 else
                     (getNameForDestructuredParameterOrNull(parameter as ValueParameterDescriptor) ?: parameter.name.asString())
             val label = Label()
@@ -703,38 +695,6 @@ class CoroutineCodegenForNamedFunction private constructor(
                 }
             }
         )
-    }
-
-    private fun generateGetLabelMethod() {
-        val mv = v.newMethod(
-            JvmDeclarationOrigin.NO_ORIGIN,
-            Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL or AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
-            "getLabel",
-            Type.getMethodDescriptor(Type.INT_TYPE),
-            null,
-            null
-        )
-
-        mv.visitCode()
-        labelFieldStackValue.put(Type.INT_TYPE, InstructionAdapter(mv))
-        mv.visitInsn(Opcodes.IRETURN)
-        mv.visitEnd()
-    }
-
-    private fun generateSetLabelMethod() {
-        val mv = v.newMethod(
-            JvmDeclarationOrigin.NO_ORIGIN,
-            Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL or AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
-            "setLabel",
-            Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE),
-            null,
-            null
-        )
-
-        mv.visitCode()
-        labelFieldStackValue.store(StackValue.local(1, Type.INT_TYPE), InstructionAdapter(mv))
-        mv.visitInsn(Opcodes.RETURN)
-        mv.visitEnd()
     }
 
     override fun generateKotlinMetadataAnnotation() {
