@@ -32,8 +32,9 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeResolverImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseCheckingPhaseManager
 import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClassIndex
-import org.jetbrains.kotlin.fir.scopes.FirFakeOverrideStorage
 import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
+import org.jetbrains.kotlin.fir.scopes.impl.FirIntersectionOverrideStorage
+import org.jetbrains.kotlin.fir.scopes.impl.FirSubstitutionOverrideStorage
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
@@ -54,7 +55,9 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirPredicateBasedProvider::class, FirPredicateBasedProvider.create(this))
     register(GeneratedClassIndex::class, GeneratedClassIndex.create())
 
-    register(FirFakeOverrideStorage::class, FirFakeOverrideStorage(this))
+    register(FirSubstitutionOverrideStorage::class, FirSubstitutionOverrideStorage(this))
+    register(FirIntersectionOverrideStorage::class, FirIntersectionOverrideStorage(this))
+    register(FirSamConstructorStorage::class, FirSamConstructorStorage(this))
 }
 
 @OptIn(SessionConfiguration::class)

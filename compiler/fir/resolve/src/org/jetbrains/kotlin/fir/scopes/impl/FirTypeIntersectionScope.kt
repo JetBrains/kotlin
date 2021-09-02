@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.caches.getValue
+import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -43,7 +43,7 @@ class FirTypeIntersectionScope private constructor(
     private val overriddenSymbols: MutableMap<FirCallableSymbol<*>, Collection<MemberWithBaseScope<FirCallableSymbol<*>>>> = mutableMapOf()
 
     private val intersectionOverrides =
-        session.fakeOverrideStorage.intersectionOverrideCacheByScope.getValue(dispatchReceiverType).intersectionOverrides
+        session.intersectionOverrideStorage.cacheByScope.getValue(dispatchReceiverType).intersectionOverrides
 
     private val callableNamesCached by lazy(LazyThreadSafetyMode.PUBLICATION) {
         scopes.flatMapTo(mutableSetOf()) { it.getCallableNames() }
@@ -113,7 +113,7 @@ class FirTypeIntersectionScope private constructor(
                 val (mostSpecific, scopeForMostSpecific) = selectMostSpecificMember(baseMembersForIntersection)
                 val intersectionOverride = intersectionOverrides.getValue(
                     mostSpecific,
-                    FirFakeOverrideStorage.ContextForIntersectionOverrideConstruction(this, extractedOverrides, scopeForMostSpecific)
+                    FirIntersectionOverrideStorage.ContextForIntersectionOverrideConstruction(this, extractedOverrides, scopeForMostSpecific)
                 )
                 overriddenSymbols[intersectionOverride.member] = extractedOverrides
                 @Suppress("UNCHECKED_CAST")
@@ -585,3 +585,26 @@ class MemberWithBaseScope<out D : FirCallableSymbol<*>>(val member: D, val baseS
 }
 
 private fun <D : FirCallableSymbol<*>> D.withScope(baseScope: FirTypeScope) = MemberWithBaseScope(this, baseScope)
+
+class FirIntersectionOverrideStorage(val session: FirSession) : FirSessionComponent {
+    private val cachesFactory = session.firCachesFactory
+
+    class CacheForScope(cachesFactory: FirCachesFactory) {
+        val intersectionOverrides: FirCache<FirCallableSymbol<*>, MemberWithBaseScope<FirCallableSymbol<*>>, ContextForIntersectionOverrideConstruction<*>> =
+            cachesFactory.createCache { mostSpecific, context ->
+                val (intersectionScope, extractedOverrides, scopeForMostSpecific) = context
+                intersectionScope.createIntersectionOverride(extractedOverrides, mostSpecific, scopeForMostSpecific)
+            }
+    }
+
+    data class ContextForIntersectionOverrideConstruction<D : FirCallableSymbol<*>>(
+        val intersectionScope: FirTypeIntersectionScope,
+        val extractedOverrides: List<MemberWithBaseScope<D>>,
+        val scopeForMostSpecific: FirTypeScope
+    )
+
+    val cacheByScope: FirCache<ConeKotlinType, CacheForScope, Nothing?> =
+        cachesFactory.createCache { _ -> CacheForScope(cachesFactory) }
+}
+
+private val FirSession.intersectionOverrideStorage: FirIntersectionOverrideStorage by FirSession.sessionComponentAccessor()

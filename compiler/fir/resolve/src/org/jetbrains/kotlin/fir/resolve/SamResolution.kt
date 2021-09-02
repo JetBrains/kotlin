@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.NullableMap
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getOrPut
-import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
@@ -19,14 +20,11 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
-import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.scopes.fakeOverrideStorage
 import org.jetbrains.kotlin.fir.scopes.impl.hasTypeOf
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -42,7 +40,7 @@ abstract class FirSamResolver {
     abstract fun getSamConstructor(firRegularClass: FirRegularClass): FirSimpleFunction?
 }
 
-val SAM_PARAMETER_NAME = Name.identifier("block")
+private val SAM_PARAMETER_NAME = Name.identifier("block")
 
 class FirSamResolverImpl(
     private val session: FirSession,
@@ -50,7 +48,7 @@ class FirSamResolverImpl(
     private val outerClassManager: FirOuterClassManager? = null,
 ) : FirSamResolver() {
     private val resolvedFunctionType: NullableMap<FirRegularClass, ConeLookupTagBasedType?> = NullableMap()
-    private val samConstructorsCache = session.fakeOverrideStorage.samConstructorCache
+    private val samConstructorsCache = session.samConstructorStorage.samConstructors
 
     override fun getFunctionTypeForPossibleSamType(type: ConeKotlinType): ConeKotlinType? {
         return when (type) {
@@ -361,3 +359,10 @@ private fun FirSimpleFunction.getFunctionTypeForAbstractMethod(): ConeLookupTagB
         isSuspend = this.isSuspend
     )
 }
+
+class FirSamConstructorStorage(session: FirSession) : FirSessionComponent {
+    val samConstructors: FirCache<FirRegularClassSymbol, FirNamedFunctionSymbol?, FirSamResolverImpl> =
+        session.firCachesFactory.createCache { classSymbol, samResolver -> samResolver.buildSamConstructor(classSymbol) }
+}
+
+private val FirSession.samConstructorStorage: FirSamConstructorStorage by FirSession.sessionComponentAccessor()

@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.caches.contains
+import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -45,7 +46,7 @@ class FirClassSubstitutionScope(
             }
     }
 
-    private val substitutionOverrideCache = session.fakeOverrideStorage.substitutionOverrideCacheByScope.getValue(key, null)
+    private val substitutionOverrideCache = session.substitutionOverrideStorage.substitutionOverrideCacheByScope.getValue(key, null)
     private val newOwnerClassId = dispatchReceiverTypeForSubstitutedMembers.lookupTag.classId
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
@@ -288,3 +289,28 @@ class FirClassSubstitutionScope(
         return useSiteMemberScope.getClassifierNames()
     }
 }
+
+class FirSubstitutionOverrideStorage(val session: FirSession) : FirSessionComponent {
+    private val cachesFactory = session.firCachesFactory
+
+    val substitutionOverrideCacheByScope: FirCache<ScopeSessionKey<*, *>, SubstitutionOverrideCache, Nothing?> =
+        cachesFactory.createCache { _ -> SubstitutionOverrideCache(session.firCachesFactory) }
+
+    class SubstitutionOverrideCache(cachesFactory: FirCachesFactory) {
+        val overridesForFunctions: FirCache<FirNamedFunctionSymbol, FirNamedFunctionSymbol, FirClassSubstitutionScope> =
+            cachesFactory.createCache { original, scope -> scope.createSubstitutionOverrideFunction(original) }
+        val overridesForConstructors: FirCache<FirConstructorSymbol, FirConstructorSymbol, FirClassSubstitutionScope> =
+            cachesFactory.createCache { original, scope -> scope.createSubstitutionOverrideConstructor(original) }
+        val overridesForVariables: FirCache<FirVariableSymbol<*>, FirVariableSymbol<*>, FirClassSubstitutionScope> =
+            cachesFactory.createCache { original, scope ->
+                when (original) {
+                    is FirPropertySymbol -> scope.createSubstitutionOverrideProperty(original)
+                    is FirFieldSymbol -> scope.createSubstitutionOverrideField(original)
+                    is FirAccessorSymbol -> scope.createSubstitutionOverrideAccessor(original)
+                    else -> error("symbol $original is not overridable")
+                }
+            }
+    }
+}
+
+private val FirSession.substitutionOverrideStorage: FirSubstitutionOverrideStorage by FirSession.sessionComponentAccessor()
