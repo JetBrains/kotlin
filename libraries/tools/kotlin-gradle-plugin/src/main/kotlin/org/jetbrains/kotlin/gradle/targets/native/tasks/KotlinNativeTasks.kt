@@ -986,6 +986,13 @@ internal class CacheBuilder(
             )
             if (debuggable)
                 args += "-g"
+            // It's a dirty workaround, but we need a Gradle Build Service for a proper solution,
+            // which is too big to put in 1.6.0, so let's use ad-hoc solution for now.
+            // TODO: https://youtrack.jetbrains.com/issue/KT-48553.
+            if (konanTarget == KonanTarget.IOS_ARM64) {
+                // See https://youtrack.jetbrains.com/issue/KT-48552
+                args += "-Xembed-bitcode-marker"
+            }
             args += externalDependenciesArgs
             args += "-Xadd-cache=${library.libraryFile.absolutePath}"
             args += "-Xcache-directory=${cacheDirectory.absolutePath}"
@@ -1040,6 +1047,13 @@ internal class CacheBuilder(
         )
         if (debuggable)
             args += "-g"
+        // It's a dirty workaround, but we need a Gradle Build Service for a proper solution,
+        // which is too big to put in 1.6.0, so let's use ad-hoc solution for now.
+        // TODO: https://youtrack.jetbrains.com/issue/KT-48553.
+        if (konanTarget == KonanTarget.IOS_ARM64) {
+            // See https://youtrack.jetbrains.com/issue/KT-48552
+            args += "-Xembed-bitcode-marker"
+        }
         args += "-Xadd-cache=${platformLib.absolutePath}"
         args += "-Xcache-directory=${rootCacheDirectory.absolutePath}"
         KotlinNativeCompilerRunner(project).run(args)
