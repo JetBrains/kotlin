@@ -59,7 +59,7 @@ class JavaSymbolProvider(
     private val searchScope: GlobalSearchScope,
 ) : FirSymbolProvider(session) {
     companion object {
-        internal val VALUE_METHOD_NAME = Name.identifier("value")
+        val VALUE_METHOD_NAME = Name.identifier("value")
     }
 
     private val classCache =

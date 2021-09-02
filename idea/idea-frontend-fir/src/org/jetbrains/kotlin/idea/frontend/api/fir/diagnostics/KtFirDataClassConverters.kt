@@ -2526,7 +2526,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             firDiagnostic.b,
             firDiagnostic.c.mapKeys { (incompatible, _) ->
                 incompatible
-            }.mapValues { (_, collection) ->
+            }.mapValues { (_, collection) -> 
                 collection.map { firBasedSymbol ->
                                     firSymbolBuilder.buildSymbol(firBasedSymbol.fir)
                                 }
@@ -2540,7 +2540,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             firSymbolBuilder.buildSymbol(firDiagnostic.a.fir),
             firDiagnostic.b.mapKeys { (incompatible, _) ->
                 incompatible
-            }.mapValues { (_, collection) ->
+            }.mapValues { (_, collection) -> 
                 collection.map { firBasedSymbol ->
                                     firSymbolBuilder.buildSymbol(firBasedSymbol.fir)
                                 }
@@ -2575,7 +2575,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             firDiagnostic.b.map { pair ->
                 firSymbolBuilder.buildSymbol(pair.first.fir) to pair.second.mapKeys { (incompatible, _) ->
                                     incompatible
-                                }.mapValues { (_, collection) ->
+                                }.mapValues { (_, collection) -> 
                                     collection.map { firBasedSymbol ->
                                                             firSymbolBuilder.buildSymbol(firBasedSymbol.fir)
                                                         }
@@ -3802,6 +3802,86 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
         RepeatedAnnotationWithContainerImpl(
             firDiagnostic.a,
             firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY.errorFactory) { firDiagnostic ->
+        RepeatableContainerMustHaveValueArrayErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY.warningFactory) { firDiagnostic ->
+        RepeatableContainerMustHaveValueArrayWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER.errorFactory) { firDiagnostic ->
+        RepeatableContainerHasNonDefaultParameterErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER.warningFactory) { firDiagnostic ->
+        RepeatableContainerHasNonDefaultParameterWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION.errorFactory) { firDiagnostic ->
+        RepeatableContainerHasShorterRetentionErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic.c,
+            firDiagnostic.d,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION.warningFactory) { firDiagnostic ->
+        RepeatableContainerHasShorterRetentionWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic.c,
+            firDiagnostic.d,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET.errorFactory) { firDiagnostic ->
+        RepeatableContainerTargetSetNotASubsetErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET.warningFactory) { firDiagnostic ->
+        RepeatableContainerTargetSetNotASubsetWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER.errorFactory) { firDiagnostic ->
+        RepeatableAnnotationHasNestedClassNamedContainerErrorImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER.warningFactory) { firDiagnostic ->
+        RepeatableAnnotationHasNestedClassNamedContainerWarningImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )

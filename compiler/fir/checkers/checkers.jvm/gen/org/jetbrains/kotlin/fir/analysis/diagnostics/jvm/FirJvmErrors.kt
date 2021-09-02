@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics.jvm
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature.DefaultMethodsCallFromJava6TargetError
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses
+import org.jetbrains.kotlin.config.LanguageFeature.RepeatableAnnotationContainerConstraints
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
@@ -95,6 +98,11 @@ object FirJvmErrors {
     val NON_SOURCE_REPEATED_ANNOTATION by error0<KtAnnotationEntry>()
     val REPEATED_ANNOTATION_TARGET6 by error0<KtAnnotationEntry>()
     val REPEATED_ANNOTATION_WITH_CONTAINER by error2<KtAnnotationEntry, FqName, FqName>()
+    val REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY by deprecationError2<KtAnnotationEntry, ClassId, ClassId>(RepeatableAnnotationContainerConstraints)
+    val REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER by deprecationError2<KtAnnotationEntry, ClassId, Name>(RepeatableAnnotationContainerConstraints)
+    val REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION by deprecationError4<KtAnnotationEntry, ClassId, String, ClassId, String>(RepeatableAnnotationContainerConstraints)
+    val REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET by deprecationError2<KtAnnotationEntry, ClassId, ClassId>(RepeatableAnnotationContainerConstraints)
+    val REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER by deprecationError0<KtAnnotationEntry>(RepeatableAnnotationContainerConstraints)
 
     // Misc
     val INAPPLICABLE_JVM_FIELD by error1<KtAnnotationEntry, String>()

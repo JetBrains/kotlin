@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -2644,6 +2645,66 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RepeatedAnnotationWithContainer::class
         abstract val name: FqName
         abstract val explicitContainerName: FqName
+    }
+
+    abstract class RepeatableContainerMustHaveValueArrayError : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = RepeatableContainerMustHaveValueArrayError::class
+        abstract val container: ClassId
+        abstract val annotation: ClassId
+    }
+
+    abstract class RepeatableContainerMustHaveValueArrayWarning : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = RepeatableContainerMustHaveValueArrayWarning::class
+        abstract val container: ClassId
+        abstract val annotation: ClassId
+    }
+
+    abstract class RepeatableContainerHasNonDefaultParameterError : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = RepeatableContainerHasNonDefaultParameterError::class
+        abstract val container: ClassId
+        abstract val nonDefault: Name
+    }
+
+    abstract class RepeatableContainerHasNonDefaultParameterWarning : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = RepeatableContainerHasNonDefaultParameterWarning::class
+        abstract val container: ClassId
+        abstract val nonDefault: Name
+    }
+
+    abstract class RepeatableContainerHasShorterRetentionError : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = RepeatableContainerHasShorterRetentionError::class
+        abstract val container: ClassId
+        abstract val retention: String
+        abstract val annotation: ClassId
+        abstract val annotationRetention: String
+    }
+
+    abstract class RepeatableContainerHasShorterRetentionWarning : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = RepeatableContainerHasShorterRetentionWarning::class
+        abstract val container: ClassId
+        abstract val retention: String
+        abstract val annotation: ClassId
+        abstract val annotationRetention: String
+    }
+
+    abstract class RepeatableContainerTargetSetNotASubsetError : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = RepeatableContainerTargetSetNotASubsetError::class
+        abstract val container: ClassId
+        abstract val annotation: ClassId
+    }
+
+    abstract class RepeatableContainerTargetSetNotASubsetWarning : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = RepeatableContainerTargetSetNotASubsetWarning::class
+        abstract val container: ClassId
+        abstract val annotation: ClassId
+    }
+
+    abstract class RepeatableAnnotationHasNestedClassNamedContainerError : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = RepeatableAnnotationHasNestedClassNamedContainerError::class
+    }
+
+    abstract class RepeatableAnnotationHasNestedClassNamedContainerWarning : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = RepeatableAnnotationHasNestedClassNamedContainerWarning::class
     }
 
     abstract class InapplicableJvmField : KtFirDiagnostic<KtAnnotationEntry>() {

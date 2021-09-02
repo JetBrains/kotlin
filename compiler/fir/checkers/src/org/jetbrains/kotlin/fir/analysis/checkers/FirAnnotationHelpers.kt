@@ -9,17 +9,13 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.findArgumentByName
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByFqName
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -30,19 +26,12 @@ import org.jetbrains.kotlin.name.Name
 private val RETENTION_PARAMETER_NAME = Name.identifier("value")
 private val TARGET_PARAMETER_NAME = Name.identifier("allowedTargets")
 
-@OptIn(SymbolInternals::class)
-fun FirAnnotationCall.getRetention(session: FirSession): AnnotationRetention {
-    val annotationClassSymbol =
-        (this.annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol
-            ?: return AnnotationRetention.RUNTIME
-    annotationClassSymbol.ensureResolved(FirResolvePhase.BODY_RESOLVE)
-    val annotationClass = annotationClassSymbol.fir
-    return annotationClass.getRetention()
+fun FirRegularClass.getRetention(): AnnotationRetention {
+    return getRetentionAnnotation()?.getRetention() ?: AnnotationRetention.RUNTIME
 }
 
-fun FirRegularClass.getRetention(): AnnotationRetention {
-    val retentionAnnotation = getRetentionAnnotation() ?: return AnnotationRetention.RUNTIME
-    val retentionArgument = retentionAnnotation.findArgumentByName(RETENTION_PARAMETER_NAME) as? FirQualifiedAccessExpression
+fun FirAnnotationCall.getRetention(): AnnotationRetention {
+    val retentionArgument = findArgumentByName(RETENTION_PARAMETER_NAME) as? FirQualifiedAccessExpression
         ?: return AnnotationRetention.RUNTIME
     val retentionName = (retentionArgument.calleeReference as? FirResolvedNamedReference)?.name?.asString()
         ?: return AnnotationRetention.RUNTIME
@@ -51,17 +40,19 @@ fun FirRegularClass.getRetention(): AnnotationRetention {
 
 private val defaultAnnotationTargets = KotlinTarget.DEFAULT_TARGET_SET
 
-@OptIn(SymbolInternals::class)
 fun FirAnnotationCall.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
     if (annotationTypeRef is FirErrorTypeRef) return KotlinTarget.values().toSet()
     val annotationClassSymbol = (this.annotationTypeRef.coneType as? ConeClassLikeType)
         ?.fullyExpandedType(session)?.lookupTag?.toSymbol(session) ?: return defaultAnnotationTargets
     annotationClassSymbol.ensureResolved(FirResolvePhase.BODY_RESOLVE)
-    val annotationClass = annotationClassSymbol.fir as? FirRegularClass
-    return annotationClass?.getAllowedAnnotationTargets() ?: defaultAnnotationTargets
+    return annotationClassSymbol.getAllowedAnnotationTargets()
 }
 
 fun FirRegularClass.getAllowedAnnotationTargets(): Set<KotlinTarget> {
+    return symbol.getAllowedAnnotationTargets()
+}
+
+fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(): Set<KotlinTarget> {
     val targetAnnotation = getTargetAnnotation() ?: return defaultAnnotationTargets
     if (targetAnnotation.argumentList.arguments.isEmpty()) return emptySet()
     val arguments = targetAnnotation.findArgumentByName(TARGET_PARAMETER_NAME)?.unfoldArrayOrVararg().orEmpty()
@@ -78,6 +69,10 @@ fun FirAnnotatedDeclaration.getRetentionAnnotation(): FirAnnotationCall? {
 }
 
 fun FirAnnotatedDeclaration.getTargetAnnotation(): FirAnnotationCall? {
+    return getAnnotationByFqName(StandardNames.FqNames.target)
+}
+
+fun FirClassLikeSymbol<*>.getTargetAnnotation(): FirAnnotationCall? {
     return getAnnotationByFqName(StandardNames.FqNames.target)
 }
 

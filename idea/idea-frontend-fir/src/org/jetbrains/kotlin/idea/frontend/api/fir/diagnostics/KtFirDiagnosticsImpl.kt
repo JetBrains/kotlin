@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -4300,6 +4301,96 @@ internal class RepeatedAnnotationWithContainerImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.RepeatedAnnotationWithContainer(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class RepeatableContainerMustHaveValueArrayErrorImpl(
+    override val container: ClassId,
+    override val annotation: ClassId,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RepeatableContainerMustHaveValueArrayError(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class RepeatableContainerMustHaveValueArrayWarningImpl(
+    override val container: ClassId,
+    override val annotation: ClassId,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RepeatableContainerMustHaveValueArrayWarning(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class RepeatableContainerHasNonDefaultParameterErrorImpl(
+    override val container: ClassId,
+    override val nonDefault: Name,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RepeatableContainerHasNonDefaultParameterError(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class RepeatableContainerHasNonDefaultParameterWarningImpl(
+    override val container: ClassId,
+    override val nonDefault: Name,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RepeatableContainerHasNonDefaultParameterWarning(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class RepeatableContainerHasShorterRetentionErrorImpl(
+    override val container: ClassId,
+    override val retention: String,
+    override val annotation: ClassId,
+    override val annotationRetention: String,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RepeatableContainerHasShorterRetentionError(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class RepeatableContainerHasShorterRetentionWarningImpl(
+    override val container: ClassId,
+    override val retention: String,
+    override val annotation: ClassId,
+    override val annotationRetention: String,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RepeatableContainerHasShorterRetentionWarning(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class RepeatableContainerTargetSetNotASubsetErrorImpl(
+    override val container: ClassId,
+    override val annotation: ClassId,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RepeatableContainerTargetSetNotASubsetError(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class RepeatableContainerTargetSetNotASubsetWarningImpl(
+    override val container: ClassId,
+    override val annotation: ClassId,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RepeatableContainerTargetSetNotASubsetWarning(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class RepeatableAnnotationHasNestedClassNamedContainerErrorImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RepeatableAnnotationHasNestedClassNamedContainerError(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class RepeatableAnnotationHasNestedClassNamedContainerWarningImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RepeatableAnnotationHasNestedClassNamedContainerWarning(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
