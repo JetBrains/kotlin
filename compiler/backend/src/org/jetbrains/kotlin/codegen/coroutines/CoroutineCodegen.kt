@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
@@ -526,7 +525,6 @@ class CoroutineCodegenForLambda private constructor(
                         reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(element, state, it) },
                         lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0,
                         sourceFile = element.containingKtFile.name,
-                        useOldSpilledVarTypeAnalysis = state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS),
                         initialVarsCountByType = varsCountByType
                     )
                     val maybeWithForInline = if (forInline)

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.codegen.inline.addFakeContinuationConstructorCallMar
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.preprocessSuspendMarkers
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -96,7 +95,6 @@ class SuspendFunctionGenerationStrategy(
             internalNameForDispatchReceiver = (originalSuspendDescriptor.containingDeclaration as? ClassDescriptor)?.let {
                 if (it.isInlineClass()) state.typeMapper.mapType(it).internalName else null
             } ?: containingClassInternalNameOrNull(),
-            useOldSpilledVarTypeAnalysis = state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS)
         )
     }
 

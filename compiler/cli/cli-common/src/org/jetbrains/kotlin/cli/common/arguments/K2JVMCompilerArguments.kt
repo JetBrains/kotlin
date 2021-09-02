@@ -166,9 +166,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var noParamAssertions: Boolean by FreezableVar(false)
 
-    @Argument(value = "-Xstrict-java-nullability-assertions", description = "Generate nullability assertions for non-null Java expressions")
-    var strictJavaNullabilityAssertions: Boolean by FreezableVar(false)
-
     @Argument(value = "-Xno-optimize", description = "Disable optimizations")
     var noOptimize: Boolean by FreezableVar(false)
 
@@ -310,12 +307,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
                 "Default value is 'warn'"
     )
     var jspecifyAnnotations: String? by FreezableVar(null)
-
-    @Argument(
-        value = "-Xno-exception-on-explicit-equals-for-boxed-null",
-        description = "Do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type"
-    )
-    var noExceptionOnExplicitEqualsForBoxedNull by FreezableVar(false)
 
     @Argument(
         value = "-Xjvm-default",
@@ -469,12 +460,6 @@ default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise""
     var repeatCompileModules: String? by NullableStringFreezableVar(null)
 
     @Argument(
-        value = "-Xuse-old-spilled-var-type-analysis",
-        description = "Use old, SourceInterpreter-based analysis for fields, used for spilled variables in coroutines"
-    )
-    var useOldSpilledVarTypeAnalysis: Boolean by FreezableVar(false)
-
-    @Argument(
         value = "-Xuse-14-inline-classes-mangling-scheme",
         description = "Use 1.4 inline classes mangling scheme instead of 1.4.30 one"
     )
@@ -544,9 +529,6 @@ default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise""
 
     override fun configureLanguageFeatures(collector: MessageCollector): MutableMap<LanguageFeature, LanguageFeature.State> {
         val result = super.configureLanguageFeatures(collector)
-        if (strictJavaNullabilityAssertions) {
-            result[LanguageFeature.StrictJavaNullabilityAssertions] = LanguageFeature.State.ENABLED
-        }
         if (typeEnhancementImprovementsInStrictMode) {
             result[LanguageFeature.TypeEnhancementImprovementsInStrictMode] = LanguageFeature.State.ENABLED
         }

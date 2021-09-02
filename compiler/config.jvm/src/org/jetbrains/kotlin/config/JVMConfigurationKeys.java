@@ -54,8 +54,6 @@ public class JVMConfigurationKeys {
             CompilerConfigurationKey.create("disable not-null parameter assertions");
     public static final CompilerConfigurationKey<JVMAssertionsMode> ASSERTIONS_MODE =
             CompilerConfigurationKey.create("assertions mode");
-    public static final CompilerConfigurationKey<Boolean> NO_EXCEPTION_ON_EXPLICIT_EQUALS_FOR_BOXED_NULL =
-            CompilerConfigurationKey.create("do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type");
     public static final CompilerConfigurationKey<Boolean> DISABLE_OPTIMIZATION =
             CompilerConfigurationKey.create("disable optimization");
     public static final CompilerConfigurationKey<Boolean> USE_TYPE_TABLE =
@@ -141,9 +139,6 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> NO_UNIFIED_NULL_CHECKS =
             CompilerConfigurationKey.create("Use pre-1.4 exception types in null checks instead of java.lang.NPE");
-
-    public static final CompilerConfigurationKey<Boolean> USE_OLD_SPILLED_VAR_TYPE_ANALYSIS =
-            CompilerConfigurationKey.create("Use old, SourceInterpreter-based analysis for fields, used for spilled variables in coroutines");
 
     public static final CompilerConfigurationKey<Boolean> USE_OLD_INLINE_CLASSES_MANGLING_SCHEME =
             CompilerConfigurationKey.create("Use old, 1.4 version of inline classes mangling scheme");

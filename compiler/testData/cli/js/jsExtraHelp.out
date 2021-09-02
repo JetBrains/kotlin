@@ -77,7 +77,6 @@ where advanced options include:
   -Xphases-to-validate-after Validate backend state after these phases
   -Xphases-to-validate-before Validate backend state before these phases
   -Xplugin=<path>            Load plugins from the given classpath
-  -Xpolymorphic-signature    Enable experimental support for @PolymorphicSignature (MethodHandle/VarHandle)
   -Xprofile-phases           Profile backend phases
   -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types
   -Xread-deserialized-contracts Enable reading of contracts from metadata

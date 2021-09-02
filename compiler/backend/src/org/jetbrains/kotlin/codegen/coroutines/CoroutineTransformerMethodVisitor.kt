@@ -59,8 +59,6 @@ class CoroutineTransformerMethodVisitor(
     private val internalNameForDispatchReceiver: String? = null,
     // JVM_IR backend generates $completion, while old backend does not
     private val putContinuationParameterToLvt: Boolean = true,
-    // New SourceInterpreter-less analyser can be somewhat unstable, disable it
-    private val useOldSpilledVarTypeAnalysis: Boolean = false,
     // Parameters of suspend lambda are put to the same fields as spilled variables
     private val initialVarsCountByType: Map<Type, Int> = emptyMap()
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
@@ -583,9 +581,7 @@ class CoroutineTransformerMethodVisitor(
 
     private fun spillVariables(suspensionPoints: List<SuspensionPoint>, methodNode: MethodNode): List<List<SpilledVariableAndField>> {
         val instructions = methodNode.instructions
-        val frames =
-            if (useOldSpilledVarTypeAnalysis) performRefinedTypeAnalysis(methodNode, containingClassInternalName)
-            else performSpilledVariableFieldTypesAnalysis(methodNode, containingClassInternalName)
+        val frames = performSpilledVariableFieldTypesAnalysis(methodNode, containingClassInternalName)
 
         fun AbstractInsnNode.index() = instructions.indexOf(this)
 
