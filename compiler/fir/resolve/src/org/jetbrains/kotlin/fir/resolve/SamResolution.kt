@@ -45,16 +45,16 @@ abstract class FirSamResolver {
 val SAM_PARAMETER_NAME = Name.identifier("block")
 
 class FirSamResolverImpl(
-    private val firSession: FirSession,
+    private val session: FirSession,
     private val scopeSession: ScopeSession,
     private val outerClassManager: FirOuterClassManager? = null,
 ) : FirSamResolver() {
     private val resolvedFunctionType: NullableMap<FirRegularClass, ConeLookupTagBasedType?> = NullableMap()
-    private val samConstructorsCache = firSession.fakeOverrideStorage.samConstructorCache
+    private val samConstructorsCache = session.fakeOverrideStorage.samConstructorCache
 
     override fun getFunctionTypeForPossibleSamType(type: ConeKotlinType): ConeKotlinType? {
         return when (type) {
-            is ConeClassLikeType -> getFunctionTypeForPossibleSamType(type.fullyExpandedType(firSession))
+            is ConeClassLikeType -> getFunctionTypeForPossibleSamType(type.fullyExpandedType(session))
             is ConeFlexibleType -> ConeFlexibleType(
                 getFunctionTypeForPossibleSamType(type.lowerBound) ?: return null,
                 getFunctionTypeForPossibleSamType(type.upperBound) ?: return null,
@@ -71,12 +71,12 @@ class FirSamResolverImpl(
     }
 
     private fun getFunctionTypeForPossibleSamType(type: ConeClassLikeType): ConeLookupTagBasedType? {
-        val firRegularClass = type.lookupTag.toFirRegularClass(firSession) ?: return null
+        val firRegularClass = type.lookupTag.toFirRegularClass(session) ?: return null
 
         val unsubstitutedFunctionType = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
 
         if (firRegularClass.typeParameters.isEmpty()) {
-            return unsubstitutedFunctionType.withNullability(ConeNullability.create(type.isMarkedNullable), firSession.typeContext)
+            return unsubstitutedFunctionType.withNullability(ConeNullability.create(type.isMarkedNullable), session.typeContext)
         }
 
         val substitutor =
@@ -90,18 +90,18 @@ class FirSamResolverImpl(
                             (projection as? ConeKotlinTypeProjection)?.type
                             // TODO: Consider using `parameterSymbol.fir.bounds.first().coneType` once sure that it won't fail with exception
                                 ?: parameterSymbol.fir.bounds.firstOrNull()?.coneTypeSafe()
-                                ?: firSession.builtinTypes.nullableAnyType.type
+                                ?: session.builtinTypes.nullableAnyType.type
 
                         Pair(parameterSymbol, typeArgument)
                     }
                     .toMap(),
-                firSession
+                session
             )
 
         val result =
             substitutor
                 .substituteOrSelf(unsubstitutedFunctionType)
-                .withNullability(ConeNullability.create(type.isMarkedNullable), firSession.typeContext)
+                .withNullability(ConeNullability.create(type.isMarkedNullable), session.typeContext)
 
         require(result is ConeLookupTagBasedType) {
             "Function type should always be ConeLookupTagBasedType, but ${result::class} was found"
@@ -131,7 +131,7 @@ class FirSamResolverImpl(
             val declaredTypeParameter = typeParameter.symbol.fir // TODO: or really declared?
             FirTypeParameterBuilder().apply {
                 source = declaredTypeParameter.source
-                moduleData = firSession.moduleData
+                moduleData = session.moduleData
                 origin = FirDeclarationOrigin.SamConstructor
                 resolvePhase = FirResolvePhase.DECLARATIONS
                 name = declaredTypeParameter.name
@@ -150,7 +150,7 @@ class FirSamResolverImpl(
             firRegularClass.typeParameters
                 .map { it.symbol }
                 .zip(newTypeParameterTypes).toMap(),
-            firSession
+            session
         )
 
         for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(firRegularClass.typeParameters)) {
@@ -164,7 +164,7 @@ class FirSamResolverImpl(
         }
 
         return buildSimpleFunction {
-            moduleData = firSession.moduleData
+            moduleData = session.moduleData
             source = firRegularClass.source
             name = classId.shortClassName
             origin = FirDeclarationOrigin.SamConstructor
@@ -199,7 +199,7 @@ class FirSamResolverImpl(
             }
 
             valueParameters += buildValueParameter {
-                moduleData = firSession.moduleData
+                moduleData = session.moduleData
                 origin = FirDeclarationOrigin.SamConstructor
                 returnTypeRef = buildResolvedTypeRef {
                     source = firRegularClass.source
@@ -221,7 +221,7 @@ class FirSamResolverImpl(
     private fun resolveFunctionTypeIfSamInterface(firRegularClass: FirRegularClass): ConeLookupTagBasedType? {
         return resolvedFunctionType.getOrPut(firRegularClass) {
             if (!firRegularClass.status.isFun) return@getOrPut null
-            val abstractMethod = firRegularClass.getSingleAbstractMethodOrNull(firSession, scopeSession) ?: return@getOrPut null
+            val abstractMethod = firRegularClass.getSingleAbstractMethodOrNull(session, scopeSession) ?: return@getOrPut null
             // TODO: val shouldConvertFirstParameterToDescriptor = samWithReceiverResolvers.any { it.shouldConvertFirstSamParameterToReceiver(abstractMethod) }
 
             abstractMethod.getFunctionTypeForAbstractMethod()
