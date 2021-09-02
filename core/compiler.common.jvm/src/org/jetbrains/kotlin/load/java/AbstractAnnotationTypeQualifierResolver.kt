@@ -13,25 +13,25 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifierWithMi
 import org.jetbrains.kotlin.name.FqName
 import java.util.concurrent.ConcurrentHashMap
 
-private typealias TypeQualifierWithApplicability<Annotation> = Pair<Annotation, Set<AnnotationQualifierApplicabilityType>>
+private typealias TypeQualifierWithApplicability<TAnnotation> = Pair<TAnnotation, Set<AnnotationQualifierApplicabilityType>>
 
-abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
+abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
     private val javaTypeEnhancementState: JavaTypeEnhancementState
 ) {
-    protected abstract val Annotation.annotations: Iterable<Annotation>
-    protected abstract val Annotation.key: Any // TODO: figure out if keying `resolvedNicknames` by `fqName` is safe
-    protected abstract val Annotation.fqName: FqName?
-    protected abstract fun Annotation.enumArguments(onlyValue: Boolean): Iterable<String>
+    protected abstract val TAnnotation.annotations: Iterable<TAnnotation>
+    protected abstract val TAnnotation.key: Any // TODO: figure out if keying `resolvedNicknames` by `fqName` is safe
+    protected abstract val TAnnotation.fqName: FqName?
+    protected abstract fun TAnnotation.enumArguments(onlyValue: Boolean): Iterable<String>
 
-    private fun Annotation.findAnnotation(fqName: FqName): Annotation? =
+    private fun TAnnotation.findAnnotation(fqName: FqName): TAnnotation? =
         annotations.find { it.fqName == fqName }
 
-    private fun Annotation.hasAnnotation(fqName: FqName): Boolean =
+    private fun TAnnotation.hasAnnotation(fqName: FqName): Boolean =
         annotations.any { it.fqName == fqName }
 
-    private val resolvedNicknames = ConcurrentHashMap<Any, Annotation>()
+    private val resolvedNicknames = ConcurrentHashMap<Any, TAnnotation>()
 
-    fun resolveTypeQualifierAnnotation(annotation: Annotation): Annotation? {
+    fun resolveTypeQualifierAnnotation(annotation: TAnnotation): TAnnotation? {
         if (javaTypeEnhancementState.jsr305.isDisabled) return null
         if (annotation.fqName in BUILT_IN_TYPE_QUALIFIER_FQ_NAMES || annotation.hasAnnotation(TYPE_QUALIFIER_FQNAME))
             return annotation
@@ -44,7 +44,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
         }
     }
 
-    private fun resolveQualifierBuiltInDefaultAnnotation(annotation: Annotation): JavaDefaultQualifiers? {
+    private fun resolveQualifierBuiltInDefaultAnnotation(annotation: TAnnotation): JavaDefaultQualifiers? {
         if (javaTypeEnhancementState.disabledDefaultAnnotations) {
             return null
         }
@@ -57,7 +57,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
         }
     }
 
-    private fun resolveDefaultAnnotationState(annotation: Annotation): ReportLevel {
+    private fun resolveDefaultAnnotationState(annotation: TAnnotation): ReportLevel {
         val annotationFqname = annotation.fqName
         if (annotationFqname != null && annotationFqname in JSPECIFY_DEFAULT_ANNOTATIONS) {
             return javaTypeEnhancementState.getReportLevelForAnnotation(annotationFqname)
@@ -73,7 +73,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
         else
             this
 
-    private fun resolveTypeQualifierDefaultAnnotation(annotation: Annotation): TypeQualifierWithApplicability<Annotation>? {
+    private fun resolveTypeQualifierDefaultAnnotation(annotation: TAnnotation): TypeQualifierWithApplicability<TAnnotation>? {
         if (javaTypeEnhancementState.jsr305.isDisabled) return null
         val typeQualifierDefault = annotation.findAnnotation(TYPE_QUALIFIER_DEFAULT_FQNAME) ?: return null
         val typeQualifier = annotation.annotations.firstOrNull { resolveTypeQualifierAnnotation(it) != null } ?: return null
@@ -82,18 +82,18 @@ abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
         return TypeQualifierWithApplicability(typeQualifier, applicability.allIfTypeUse())
     }
 
-    fun isTypeUseAnnotation(annotation: Annotation): Boolean {
+    fun isTypeUseAnnotation(annotation: TAnnotation): Boolean {
         // Expect that Java's Target was mapped to Kotlin's Target.
         val target = annotation.findAnnotation(StandardNames.FqNames.target) ?: return false
         return target.enumArguments(onlyValue = false).any { it == KotlinTarget.TYPE.name }
     }
 
-    private fun resolveJsr305AnnotationState(annotation: Annotation): ReportLevel {
+    private fun resolveJsr305AnnotationState(annotation: TAnnotation): ReportLevel {
         resolveJsr305CustomState(annotation)?.let { return it }
         return javaTypeEnhancementState.jsr305.globalLevel
     }
 
-    private fun resolveJsr305CustomState(annotation: Annotation): ReportLevel? {
+    private fun resolveJsr305CustomState(annotation: TAnnotation): ReportLevel? {
         javaTypeEnhancementState.jsr305.userDefinedLevelForSpecificAnnotation[annotation.fqName]?.let { return it }
         val enumValue = annotation.findAnnotation(MIGRATION_ANNOTATION_FQNAME)?.enumArguments(onlyValue = false)?.firstOrNull()
             ?: return null
@@ -106,7 +106,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
     }
 
     private fun extractNullability(
-        annotation: Annotation, forceWarning: Annotation.() -> Boolean
+        annotation: TAnnotation, forceWarning: TAnnotation.() -> Boolean
     ): NullabilityQualifierWithMigrationStatus? {
         knownNullability(annotation, annotation.forceWarning())?.let { return it }
 
@@ -119,11 +119,11 @@ abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
     }
 
     fun extractNullability(
-        annotations: Iterable<Annotation>, forceWarning: Annotation.() -> Boolean = { false }
+        annotations: Iterable<TAnnotation>, forceWarning: TAnnotation.() -> Boolean = { false }
     ): NullabilityQualifierWithMigrationStatus? =
         annotations.firstNotNullOfOrNull { extractNullability(it, forceWarning) }
 
-    fun extractMutability(annotations: Iterable<Annotation>): MutabilityQualifier? {
+    fun extractMutability(annotations: Iterable<TAnnotation>): MutabilityQualifier? {
         return annotations.fold(null as MutabilityQualifier?) { found, annotation ->
             when (annotation.fqName) {
                 in READ_ONLY_ANNOTATIONS -> MutabilityQualifier.READ_ONLY
@@ -133,7 +133,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
         }
     }
 
-    private fun extractDefaultQualifiers(annotation: Annotation): JavaDefaultQualifiers? {
+    private fun extractDefaultQualifiers(annotation: TAnnotation): JavaDefaultQualifiers? {
         resolveQualifierBuiltInDefaultAnnotation(annotation)?.let { return it }
 
         val (typeQualifier, applicability) = resolveTypeQualifierDefaultAnnotation(annotation)
@@ -147,7 +147,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
     }
 
     fun extractAndMergeDefaultQualifiers(
-        oldQualifiers: JavaTypeQualifiersByElementType?, annotations: Iterable<Annotation>
+        oldQualifiers: JavaTypeQualifiersByElementType?, annotations: Iterable<TAnnotation>
     ): JavaTypeQualifiersByElementType? {
         if (javaTypeEnhancementState.disabledDefaultAnnotations) return oldQualifiers
 
@@ -169,7 +169,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
         return if (!wasUpdate) oldQualifiers else JavaTypeQualifiersByElementType(defaultQualifiersByType)
     }
 
-    private fun knownNullability(annotation: Annotation, forceWarning: Boolean): NullabilityQualifierWithMigrationStatus? {
+    private fun knownNullability(annotation: TAnnotation, forceWarning: Boolean): NullabilityQualifierWithMigrationStatus? {
         val fqName = annotation.fqName ?: return null
         val reportLevel = javaTypeEnhancementState.getReportLevelForAnnotation(fqName)
         if (reportLevel.isIgnore) return null
