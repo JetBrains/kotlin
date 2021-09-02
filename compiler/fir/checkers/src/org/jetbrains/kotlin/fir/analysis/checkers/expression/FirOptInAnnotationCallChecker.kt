@@ -25,10 +25,10 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
     override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val lookupTag = expression.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return
         val classId = lookupTag.classId
-        val isMarker = classId == OptInNames.REQUIRES_OPT_IN_CLASS_ID
+        val isRequiresOptIn = classId == OptInNames.REQUIRES_OPT_IN_CLASS_ID
         val isOptIn = classId == OptInNames.OPT_IN_CLASS_ID
-        if (isMarker || isOptIn) {
-            checkUsageOfKotlinExperimentalOrUseExperimental(expression.source, context, reporter)
+        if (isRequiresOptIn || isOptIn) {
+            checkOptInIsEnabled(expression.source, context, reporter)
             if (isOptIn) {
                 val arguments = expression.arguments
                 if (arguments.isEmpty()) {
@@ -52,7 +52,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
         }
     }
 
-    private fun checkUsageOfKotlinExperimentalOrUseExperimental(
+    private fun checkOptInIsEnabled(
         element: FirSourceElement?,
         context: CheckerContext,
         reporter: DiagnosticReporter

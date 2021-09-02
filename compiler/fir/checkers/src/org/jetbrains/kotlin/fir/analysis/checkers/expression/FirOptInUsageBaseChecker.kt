@@ -221,10 +221,10 @@ object FirOptInUsageBaseChecker {
     }
 
     private fun FirAnnotationContainer.isExperimentalityAcceptable(annotationClassId: ClassId): Boolean {
-        return getAnnotationByClassId(annotationClassId) != null || isAnnotatedWithUseExperimentalOf(annotationClassId)
+        return getAnnotationByClassId(annotationClassId) != null || isAnnotatedWithOptIn(annotationClassId)
     }
 
-    private fun FirAnnotationContainer.isAnnotatedWithUseExperimentalOf(annotationClassId: ClassId): Boolean {
+    private fun FirAnnotationContainer.isAnnotatedWithOptIn(annotationClassId: ClassId): Boolean {
         for (annotation in annotations) {
             val coneType = annotation.annotationTypeRef.coneType as? ConeClassLikeType
             if (coneType?.lookupTag?.classId != OptInNames.OPT_IN_CLASS_ID) {
