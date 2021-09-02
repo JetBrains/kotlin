@@ -260,6 +260,8 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "GetCurrentProcess",
         "FlsFree",
         "K32GetProcessMemoryInfo",
+        "VirtualFree",
+        "madvise",
 };
 
 namespace {
