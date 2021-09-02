@@ -11,6 +11,7 @@ import com.intellij.util.containers.FileCollectionFactory
 import com.intellij.util.io.URLUtil
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.java.JavaBuilderUtil
+import org.jetbrains.jps.builders.java.dependencyView.Callbacks
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.build.KotlinCompileContext
@@ -76,9 +78,10 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         builder: Services.Builder,
         incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
         lookupTracker: LookupTracker,
-        exceptActualTracer: ExpectActualTracker
+        exceptActualTracer: ExpectActualTracker,
+        inlineConstTracker: InlineConstTracker
     ) {
-        super.makeServices(builder, incrementalCaches, lookupTracker, exceptActualTracer)
+        super.makeServices(builder, incrementalCaches, lookupTracker, exceptActualTracer, inlineConstTracker)
 
         with(builder) {
             register(
@@ -328,10 +331,12 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         chunk: ModuleChunk,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         outputItems: Map<ModuleBuildTarget, Iterable<GeneratedFile>>,
-        incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>
+        incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
+        environment: JpsCompilerEnvironment
     ) {
         val previousMappings = localContext.projectDescriptor.dataManager.mappings
         val callback = JavaBuilderUtil.getDependenciesRegistrar(localContext)
+        val inlineConstTracker = environment.services[InlineConstTracker::class.java] as InlineConstTrackerImpl
 
         val targetDirtyFiles: Map<ModuleBuildTarget, Set<File>> = chunk.targets.keysToMap {
             val files = HashSet<File>()
@@ -359,6 +364,28 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 sourceFiles.addAll(getOldSourceFiles(target, output))
                 sourceFiles.removeAll(targetDirtyFiles[target] ?: emptySet())
                 sourceFiles.addAll(output.sourceFiles)
+
+                // process inlineConstTracker
+                for (sourceFile: File in sourceFiles) {
+                    val cRefs = inlineConstTracker.inlineConstMap[sourceFile.path]?.map { cRef ->
+                        val descriptor = when (cRef.constType) {
+                            "Byte" -> "B"
+                            "Short" -> "S"
+                            "Int" -> "I"
+                            "Long" -> "J"
+                            "Float" -> "F"
+                            "Double" -> "D"
+                            "Boolean" -> "Z"
+                            "Char" -> "C"
+                            "String" -> "Ljava/lang/String;"
+                            else -> ""
+                        }
+                        Callbacks.createConstantReference(cRef.owner, cRef.name, descriptor)
+                    } ?: continue
+
+                    val className = output.outputClass.className.internalName
+                    callback.registerConstantReferences(className, cRefs)
+                }
 
                 callback.associate(
                     FileUtil.toSystemIndependentName(output.outputFile.canonicalPath),

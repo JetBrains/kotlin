@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.build.report.ICReporterBase
 import org.jetbrains.kotlin.jps.KotlinJpsBundle
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
 import org.jetbrains.kotlin.jps.incremental.JpsLookupStorageManager
 import org.jetbrains.kotlin.jps.model.kotlinKind
@@ -230,6 +231,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             incrementalCaches,
             LookupTracker.DO_NOTHING,
             ExpectActualTracker.DoNothing,
+            InlineConstTracker.DoNothing,
             chunk,
             messageCollector
         ) ?: return
@@ -398,12 +400,14 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val lookupTracker = getLookupTracker(project, representativeTarget)
         val exceptActualTracer = ExpectActualTrackerImpl()
         val incrementalCaches = kotlinChunk.loadCaches()
+        val inlineConstTracker = InlineConstTrackerImpl()
         val environment = createCompileEnvironment(
             context,
             representativeTarget,
             incrementalCaches,
             lookupTracker,
             exceptActualTracer,
+            inlineConstTracker,
             chunk,
             messageCollector
         ) ?: return ABORT
@@ -472,7 +476,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             chunk,
             kotlinDirtyFilesHolder,
             generatedFiles,
-            incrementalCaches
+            incrementalCaches,
+            environment
         )
 
         if (!representativeTarget.isIncrementalCompilationEnabled) {
@@ -566,11 +571,12 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
         lookupTracker: LookupTracker,
         exceptActualTracer: ExpectActualTracker,
+        inlineConstTracker: InlineConstTracker,
         chunk: ModuleChunk,
         messageCollector: MessageCollectorAdapter
     ): JpsCompilerEnvironment? {
         val compilerServices = with(Services.Builder()) {
-            kotlinModuleBuilderTarget.makeServices(this, incrementalCaches, lookupTracker, exceptActualTracer)
+            kotlinModuleBuilderTarget.makeServices(this, incrementalCaches, lookupTracker, exceptActualTracer, inlineConstTracker)
             build()
         }
 
