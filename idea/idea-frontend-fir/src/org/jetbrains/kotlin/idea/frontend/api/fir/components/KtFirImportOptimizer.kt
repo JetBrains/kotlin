@@ -113,9 +113,9 @@ internal class KtFirImportOptimizer(
                 super.visitTypeRef(resolvedTypeRef)
             }
 
-            override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference) {
-                processResolvedCallableReference(resolvedCallableReference)
-                super.visitResolvedCallableReference(resolvedCallableReference)
+            override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess) {
+                processCallableReferenceAccess(callableReferenceAccess)
+                super.visitCallableReferenceAccess(callableReferenceAccess)
             }
 
             override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
@@ -153,10 +153,12 @@ internal class KtFirImportOptimizer(
                 processTypeQualifier(wholeQualifier)
             }
 
-            private fun processResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference) {
-                val referencedCallableSymbol = resolvedCallableReference.resolvedSymbol as? FirCallableSymbol<*> ?: return
+            private fun processCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess) {
+                if (callableReferenceAccess.isFullyQualified) return
 
-                saveCallable(referencedCallableSymbol, resolvedCallableReference.name)
+                val resolvedSymbol = callableReferenceAccess.calleeReference.toResolvedCallableSymbol() ?: return
+
+                saveCallable(resolvedSymbol, resolvedSymbol.name)
             }
 
             private fun processResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
