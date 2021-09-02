@@ -38,6 +38,25 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         buildCall(context.referenceFunction(unitGetInstance.symbol))
     }
 
+    // Generates code for the given IR element and *always* leaves something on the stack
+    private fun generateExpression(elem: IrElement) {
+        assert(elem is IrExpression || elem is IrVariable) { "Unsupported statement kind" }
+
+        elem.acceptVoid(this)
+
+        if (elem is IrExpression && elem.type == irBuiltIns.nothingType) {
+            body.buildUnreachable()
+        }
+    }
+
+    // Generates code for the given IR element but *never* leaves anything on the stack
+    private fun generateStatement(statement: IrElement) {
+        assert(statement is IrExpression || statement is IrVariable) { "Unsupported statement kind" }
+
+        generateExpression(statement)
+        body.buildDrop()
+    }
+
     override fun visitElement(element: IrElement) {
         error("Unexpected element of type ${element::class}")
     }
@@ -46,7 +65,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         when (expression.operator) {
             IrTypeOperator.REINTERPRET_CAST -> generateExpression(expression.argument)
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
-                statementToWasmInstruction(expression.argument)
+                generateStatement(expression.argument)
                 body.buildGetUnit()
             }
             else -> assert(false) { "Other types of casts must be lowered" }
@@ -340,7 +359,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     }
 
     override fun visitBlockBody(body: IrBlockBody) {
-        body.statements.forEach(::statementToWasmInstruction)
+        body.statements.forEach(::generateStatement)
     }
 
     override fun visitContainerExpression(expression: IrContainerExpression) {
@@ -352,7 +371,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         }
 
         statements.dropLast(1).forEach {
-            statementToWasmInstruction(it)
+            generateStatement(it)
         }
 
         generateExpression(statements.last())
@@ -371,7 +390,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     override fun visitReturn(expression: IrReturn) {
         if (expression.returnTargetSymbol.owner.returnType(backendContext) == irBuiltIns.unitType &&
             expression.returnTargetSymbol.owner != unitGetInstance) {
-            statementToWasmInstruction(expression.value)
+            generateStatement(expression.value)
         } else {
             generateExpression(expression.value)
         }
@@ -446,7 +465,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         context.defineLoopLevel(loop, LoopLabelType.BREAK, wasmBreakBlock)
         context.defineLoopLevel(loop, LoopLabelType.CONTINUE, wasmContinueBlock)
 
-        loop.body?.let { statementToWasmInstruction(it) }
+        loop.body?.let { generateStatement(it) }
         body.buildEnd()
         generateExpression(loop.condition)
         body.buildBrIf(wasmLoop)
@@ -478,32 +497,13 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         body.buildInstr(WasmOp.I32_EQZ)
         body.buildBrIf(wasmBreakBlock)
         loop.body?.let {
-            statementToWasmInstruction(it)
+            generateStatement(it)
         }
         body.buildBr(wasmLoop)
         body.buildEnd()
         body.buildEnd()
 
         body.buildGetUnit()
-    }
-
-    // Generates code for the given IR element and *always* leaves something on the stack
-    fun generateExpression(elem: IrElement) {
-        assert(elem is IrExpression || elem is IrVariable) { "Unsupported statement kind" }
-
-        elem.acceptVoid(this)
-
-        if (elem is IrExpression && elem.type == irBuiltIns.nothingType) {
-            body.buildUnreachable()
-        }
-    }
-
-    // Generates code for the given IR element but *never* leaves anything on the stack
-    fun statementToWasmInstruction(statement: IrElement) {
-        assert(statement is IrExpression || statement is IrVariable) { "Unsupported statement kind" }
-
-        generateExpression(statement)
-        body.buildDrop()
     }
 
     override fun visitVariable(declaration: IrVariable) {
