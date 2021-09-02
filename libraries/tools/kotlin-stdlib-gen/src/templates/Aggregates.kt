@@ -39,7 +39,7 @@ object Aggregates : TemplateGroupBase() {
             sample("samples.collections.Collections.Aggregates.all")
         }
         specialFor(CharSequences) {
-            sample("samples.text.strings.all")
+            sample("samples.text.Strings.all")
         }
 
         doc {
