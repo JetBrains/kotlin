@@ -7,7 +7,6 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
 // DONT_RUN_GENERATED_CODE: JS
 // IGNORE_BACKEND: JS
-// IGNORE_FIR_DIAGNOSTICS_DIFF
 
 tailrec fun withWhen(counter : Int, d : Any) : Int =
         when (counter) {

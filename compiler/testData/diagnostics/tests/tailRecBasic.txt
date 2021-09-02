@@ -1,0 +1,16 @@
+package
+
+public tailrec fun foo1(): kotlin.Unit
+public tailrec fun foo10(): kotlin.Unit
+public tailrec fun foo11(): kotlin.String
+public tailrec fun foo2(): kotlin.Unit
+public tailrec fun foo3(): kotlin.Unit
+public tailrec fun foo4(): kotlin.Unit
+public tailrec fun foo5(): kotlin.Unit
+public tailrec fun foo6(/*0*/ b: kotlin.Boolean): kotlin.Unit
+public tailrec fun foo7_break(): kotlin.Unit
+public tailrec fun foo7_continue(): kotlin.Unit
+public tailrec fun foo7_return(): kotlin.Unit
+public tailrec fun foo8(): kotlin.Unit
+public tailrec fun foo9(): kotlin.Unit
+

@@ -1,0 +1,5 @@
+package
+
+public tailrec fun kotlin.String.foo1(): kotlin.Unit
+public tailrec fun kotlin.String.foo2(): kotlin.Unit
+public tailrec fun kotlin.String.foo3(): kotlin.Unit

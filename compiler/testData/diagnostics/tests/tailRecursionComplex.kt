@@ -1,5 +1,5 @@
 object O {
-    // This is correct, foo is the same
+    // foo is the same, but the compiler currently doesn't compile this as tail recursive. See KT-48602
     tailrec fun foo(i: Int): Int = if (i < 0) 0 else O.foo(i - 1)
 }
 

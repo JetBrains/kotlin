@@ -771,6 +771,24 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Test
+        @TestMetadata("tailRecBasic.kt")
+        public void testTailRecBasic() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/tailRecBasic.kt");
+        }
+
+        @Test
+        @TestMetadata("tailRecInNestedScopes.kt")
+        public void testTailRecInNestedScopes() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/tailRecInNestedScopes.kt");
+        }
+
+        @Test
+        @TestMetadata("tailRecInTry.kt")
+        public void testTailRecInTry() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/tailRecInTry.kt");
+        }
+
+        @Test
         @TestMetadata("tailRecOnVirtualMember.kt")
         public void testTailRecOnVirtualMember() throws Exception {
             runTest("compiler/testData/diagnostics/tests/tailRecOnVirtualMember.kt");
@@ -786,6 +804,24 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         @TestMetadata("tailRecOverridden.kt")
         public void testTailRecOverridden() throws Exception {
             runTest("compiler/testData/diagnostics/tests/tailRecOverridden.kt");
+        }
+
+        @Test
+        @TestMetadata("tailRecSingleton.kt")
+        public void testTailRecSingleton() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/tailRecSingleton.kt");
+        }
+
+        @Test
+        @TestMetadata("tailRecWithDispatchReceiver.kt")
+        public void testTailRecWithDispatchReceiver() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/tailRecWithDispatchReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("tailRecWithExtensionReceiver.kt")
+        public void testTailRecWithExtensionReceiver() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/tailRecWithExtensionReceiver.kt");
         }
 
         @Test

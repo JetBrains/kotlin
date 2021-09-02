@@ -43,6 +43,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirFunctionNameChecker,
             FirFunctionTypeParametersSyntaxChecker,
             FirOperatorModifierChecker,
+            FirTailrecFunctionChecker,
         )
 
     override val propertyCheckers: Set<FirPropertyChecker>

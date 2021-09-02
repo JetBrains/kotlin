@@ -1,0 +1,14 @@
+package
+
+public final class A {
+    public constructor A(/*0*/ a: A)
+    public final val a: A
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final tailrec fun foo1(): kotlin.Unit
+    public final tailrec fun foo2(): kotlin.Unit
+    public final tailrec fun foo3(): kotlin.Unit
+    public final tailrec fun foo4(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
