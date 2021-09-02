@@ -819,6 +819,22 @@ internal class OptInMarkerWithWrongRetentionImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.OptInMarkerWithWrongRetention(), KtAbstractFirDiagnostic<KtAnnotationEntry>
 
+internal class OptInMarkerOnWrongTargetImpl(
+    override val target: String,
+    override val firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.OptInMarkerOnWrongTarget(), KtAbstractFirDiagnostic<KtAnnotationEntry>
+
+internal class OptInMarkerOnOverrideImpl(
+    override val firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.OptInMarkerOnOverride(), KtAbstractFirDiagnostic<KtAnnotationEntry>
+
+internal class OptInMarkerOnOverrideWarningImpl(
+    override val firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.OptInMarkerOnOverrideWarning(), KtAbstractFirDiagnostic<KtAnnotationEntry>
+
 internal class ExposedTypealiasExpandedTypeImpl(
     override val elementVisibility: EffectiveVisibility,
     override val restrictingDeclaration: KtSymbol,

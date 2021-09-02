@@ -682,6 +682,19 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = OptInMarkerWithWrongRetention::class
     }
 
+    abstract class OptInMarkerOnWrongTarget : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = OptInMarkerOnWrongTarget::class
+        abstract val target: String
+    }
+
+    abstract class OptInMarkerOnOverride : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = OptInMarkerOnOverride::class
+    }
+
+    abstract class OptInMarkerOnOverrideWarning : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = OptInMarkerOnOverrideWarning::class
+    }
+
     abstract class ExposedTypealiasExpandedType : KtFirDiagnostic<KtNamedDeclaration>() {
         override val diagnosticClass get() = ExposedTypealiasExpandedType::class
         abstract val elementVisibility: EffectiveVisibility

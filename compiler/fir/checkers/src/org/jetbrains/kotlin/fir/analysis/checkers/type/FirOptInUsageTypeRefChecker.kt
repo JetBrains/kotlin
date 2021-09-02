@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationClassForOptInMarker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -29,7 +33,19 @@ object FirOptInUsageTypeRefChecker : FirTypeRefChecker() {
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = typeRef.source
         if (source?.kind !is FirRealSourceElementKind) return
+        // coneTypeSafe filters out all delegatedTypeRefs from here
         val coneType = typeRef.coneTypeSafe<ConeClassLikeType>() ?: return
+
+        for (annotation in typeRef.annotations) {
+            if (annotation.getAnnotationClassForOptInMarker(context.session) != null) {
+                if (annotation.useSiteTarget == AnnotationUseSiteTarget.RECEIVER) {
+                    withSuppressedDiagnostics(annotation, context) {
+                        reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "parameter", context)
+                    }
+                }
+            }
+        }
+
         val symbol = coneType.lookupTag.toSymbol(context.session) ?: return
         symbol.ensureResolved(FirResolvePhase.STATUS)
         val classId = symbol.classId

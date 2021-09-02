@@ -476,6 +476,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_ELVIS_RIG
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_IS_CHECK
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_VARARG_ON_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_ARGUMENT_IS_NOT_MARKER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_MARKER_ON_OVERRIDE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_MARKER_ON_OVERRIDE_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_WITHOUT_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VALUE_CLASS_CANNOT_BE_CLONEABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION
@@ -745,7 +748,15 @@ class FirDefaultErrorMessages {
                 OPT_IN_MARKER_WITH_WRONG_RETENTION,
                 "Opt-in requirement marker annotation cannot be used with SOURCE retention. Please replace retention with BINARY"
             )
-
+            map.put(OPT_IN_MARKER_ON_WRONG_TARGET, "Opt-in requirement marker annotation cannot be used on {0}", STRING)
+            map.put(
+                OPT_IN_MARKER_ON_OVERRIDE,
+                "Opt-in requirement marker annotation on override requires the same marker on base declaration"
+            )
+            map.put(
+                OPT_IN_MARKER_ON_OVERRIDE_WARNING,
+                "Opt-in requirement marker annotation on override makes no sense without the same marker on base declaration"
+            )
 
             // Exposed visibility group // #
             map.put(

@@ -251,6 +251,9 @@ object FirErrors {
     val OPT_IN_ARGUMENT_IS_NOT_MARKER by warning1<KtAnnotationEntry, FqName>()
     val OPT_IN_MARKER_WITH_WRONG_TARGET by error1<KtAnnotationEntry, String>()
     val OPT_IN_MARKER_WITH_WRONG_RETENTION by error0<KtAnnotationEntry>()
+    val OPT_IN_MARKER_ON_WRONG_TARGET by error1<KtAnnotationEntry, String>()
+    val OPT_IN_MARKER_ON_OVERRIDE by error0<KtAnnotationEntry>()
+    val OPT_IN_MARKER_ON_OVERRIDE_WARNING by warning0<KtAnnotationEntry>()
 
     // Exposed visibility
     val EXPOSED_TYPEALIAS_EXPANDED_TYPE by error3<KtNamedDeclaration, EffectiveVisibility, FirBasedSymbol<*>, EffectiveVisibility>(SourceElementPositioningStrategies.DECLARATION_NAME)

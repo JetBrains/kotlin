@@ -949,6 +949,25 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET) { firDiagnostic ->
+        OptInMarkerOnWrongTargetImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.OPT_IN_MARKER_ON_OVERRIDE) { firDiagnostic ->
+        OptInMarkerOnOverrideImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.OPT_IN_MARKER_ON_OVERRIDE_WARNING) { firDiagnostic ->
+        OptInMarkerOnOverrideWarningImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.EXPOSED_TYPEALIAS_EXPANDED_TYPE) { firDiagnostic ->
         ExposedTypealiasExpandedTypeImpl(
             firDiagnostic.a,

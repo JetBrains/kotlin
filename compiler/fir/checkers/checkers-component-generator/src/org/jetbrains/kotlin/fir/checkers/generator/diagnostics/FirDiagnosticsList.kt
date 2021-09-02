@@ -288,9 +288,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FqName>("optInMarkerFqName")
             parameter<String>("message")
         }
+
         val OPT_IN_IS_NOT_ENABLED by warning<KtAnnotationEntry>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
         val OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION by error<PsiElement>()
         val OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN by error<PsiElement>()
+
         val OPT_IN_WITHOUT_ARGUMENTS by warning<KtAnnotationEntry>()
         val OPT_IN_ARGUMENT_IS_NOT_MARKER by warning<KtAnnotationEntry> {
             parameter<FqName>("notMarkerFqName")
@@ -299,6 +301,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("target")
         }
         val OPT_IN_MARKER_WITH_WRONG_RETENTION by error<KtAnnotationEntry>()
+
+        val OPT_IN_MARKER_ON_WRONG_TARGET by error<KtAnnotationEntry> {
+            parameter<String>("target")
+        }
+        val OPT_IN_MARKER_ON_OVERRIDE by error<KtAnnotationEntry>()
+        val OPT_IN_MARKER_ON_OVERRIDE_WARNING by warning<KtAnnotationEntry>()
     }
 
     val EXPOSED_VISIBILITY by object : DiagnosticGroup("Exposed visibility") {
