@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// LANGUAGE: +ApproximateIntegerLiteralTypesInReceiverPosition
 val p1: Byte = <!TYPE_MISMATCH!>(1 + 2) * 2<!>
 val p2: Short = <!TYPE_MISMATCH!>(1 + 2) * 2<!>
 val p3: Int = (1 + 2) * 2

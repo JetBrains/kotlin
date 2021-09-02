@@ -201,7 +201,6 @@ enum class LanguageFeature(
     PrivateInFileEffectiveVisibility(KOTLIN_1_6, kind = BUG_FIX),
     ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_6, kind = BUG_FIX),
     ProhibitSelfCallsInNestedObjects(KOTLIN_1_6, kind = BUG_FIX),
-    ApproximateIntegerLiteralTypesInReceiverPosition(KOTLIN_1_6),
     ProperCheckAnnotationsTargetInTypeUsePositions(KOTLIN_1_6, kind = BUG_FIX),
     AbstractClassMemberNotImplementedWithIntermediateAbstractClass(KOTLIN_1_6, kind = BUG_FIX),
 
@@ -230,6 +229,7 @@ enum class LanguageFeature(
     DefinitelyNonNullableTypes(KOTLIN_1_7),
     ProhibitSimplificationOfNonTrivialConstBooleanExpressions(KOTLIN_1_7),
     SafeCallsAreAlwaysNullable(KOTLIN_1_7),
+    ApproximateIntegerLiteralTypesInReceiverPosition(KOTLIN_1_7),
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),
