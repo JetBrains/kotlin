@@ -50,9 +50,28 @@ fun ConeSimpleKotlinType.makeDefinitelyNotNull(typeContext: ConeTypeContext): Co
     is ConeDefinitelyNotNullType -> this
     // `T & V & Any` -> `(T & Any) & (V & Any)`
     is ConeIntersectionType -> ConeIntersectionType(intersectedTypes.map { it.makeDefinitelyNotNull(typeContext) })
+    // TODO: not entirely sure about this branch.
+    // CapturedType(*) & Any -> CapturedType(out Any)
+    // CapturedType(out X) & Any -> CapturedType(out X & Any)
+    // CapturedType(in X) & Any -> CapturedType(in X out Any) -- what?
+    is ConeCapturedType -> {
+        val newConstructor = with(constructor) {
+            // TODO: this may or may not only be necessary due to `AbstractTypeApproximator.approximateCapturedType`
+            //   being incorrect; if `isProjectionNotNull`, it should probably make the type definitely not null:
+            //     class A<T> {
+            //         inner class C<U : T>(var x: U)
+            //         fun <U : T> foo(x: C<U>): U & Any = x.x!!
+            //         fun bar(x: T & Any) {}
+            //         fun baz(x: C<*>) = bar(foo(x)) // CapturedType(*; supertypes=[T]) & Any -> T & Any
+            //     }
+            //   As it is, without changing `supertypes` we get just `T` without a question mark.
+            ConeCapturedTypeConstructor(projection, supertypes?.map { it.makeDefinitelyNotNull(typeContext) }, typeParameterMarker)
+        }
+        ConeCapturedType(captureStatus, lowerType, ConeNullability.NOT_NULL, newConstructor, attributes, isProjectionNotNull = true)
+    }
     // For upper-bounded types, there can be three states: `T & Any` never includes null, `T` only does if the bound
     // permits it, and `T?` always includes null. We only need a wrapper if `T` and `T & Any` are different.
-    is ConeTypeParameterType, is ConeTypeVariableType, is ConeCapturedType -> {
+    is ConeTypeParameterType, is ConeTypeVariableType -> {
         val unmarked = withNullability(ConeNullability.NOT_NULL, typeContext)
         // Actually, `isSubtypeOfAny` branch should work for type parameters as well, but it breaks some cases.
         // See KT-40114. Basically, if we have `T : X..X?`, then `T <: Any` but we still have `T` != `T & Any`.

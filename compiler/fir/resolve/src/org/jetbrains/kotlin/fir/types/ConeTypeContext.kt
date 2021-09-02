@@ -445,6 +445,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             }
             is ConeIntersectionType -> intersectedTypes.all { it.isNullableType() }
             is ConeClassLikeType -> directExpansionType(session)?.isNullableType() ?: false
+            is ConeCapturedType -> constructor.supertypes?.all { it.isNullableType() } ?: true
             else -> false
         }
     }
