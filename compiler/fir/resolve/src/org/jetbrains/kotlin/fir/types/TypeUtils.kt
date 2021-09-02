@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
-import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
-import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 
 fun ConeInferenceContext.commonSuperTypeOrNull(types: List<ConeKotlinType>): ConeKotlinType? {
@@ -47,20 +45,27 @@ fun ConeInferenceContext.intersectTypesOrNull(types: List<ConeKotlinType>): Cone
 fun TypeCheckerProviderContext.equalTypes(a: ConeKotlinType, b: ConeKotlinType): Boolean =
     AbstractTypeChecker.equalTypes(this, a, b)
 
+private fun ConeTypeContext.makesSenseToBeDefinitelyNotNull(type: ConeKotlinType): Boolean = when (type) {
+    is ConeTypeParameterType -> type.isNullableType()
+    // Actually, this branch should work for type parameters as well, but it breaks some cases. See KT-40114.
+    // Basically, if we have `T : X..X?`, then `T <: Any` but we still have `T` != `T & Any`.
+    is ConeTypeVariableType, is ConeCapturedType ->
+        !AbstractNullabilityChecker.isSubtypeOfAny(
+            newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false), type
+        )
+    // For all other types `T & Any` is the same as `T` without a question mark.
+    // TODO: not true for flexible types.
+    else -> false
+}
+
+// TODO: leave only one of `create` and `makeConeTypeDefinitelyNotNullOrNotNull`
 fun ConeDefinitelyNotNullType.Companion.create(
     original: ConeKotlinType,
-    typeContext: ConeTypeContext,
-    useCorrectedNullabilityForFlexibleTypeParameters: Boolean = false,
+    typeContext: ConeTypeContext
 ): ConeDefinitelyNotNullType? {
     return when {
         original is ConeDefinitelyNotNullType -> original
-        typeContext
-            .newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false)
-            .makesSenseToBeDefinitelyNotNull(original, useCorrectedNullabilityForFlexibleTypeParameters) ->
-
-            ConeDefinitelyNotNullType(
-                original.lowerBoundIfFlexible()
-            )
+        typeContext.makesSenseToBeDefinitelyNotNull(original) -> ConeDefinitelyNotNullType(original)
         else -> null
     }
 }
@@ -81,10 +86,7 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
     return when (this) {
         is ConeClassErrorType -> this
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, arguments, nullability.isNullable) as T
-        is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType.create(
-            original.withArguments(arguments, typeSystemContext),
-            typeSystemContext
-        )!! as T
+        is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.withArguments(arguments, typeSystemContext)) as T
         else -> error("Not supported: $this: ${this.render()}")
     }
 }
@@ -101,10 +103,7 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes, typeSystem
     return when (this) {
         is ConeClassErrorType -> this
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable, attributes)
-        is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType.create(
-            original.withAttributes(attributes, typeSystemContext),
-            typeSystemContext
-        )!!
+        is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.withAttributes(attributes, typeSystemContext))
         is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable, attributes)
         is ConeFlexibleType -> ConeFlexibleType(
             lowerBound.withAttributes(attributes, typeSystemContext),
