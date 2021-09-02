@@ -36,10 +36,14 @@ abstract class AbstractConeSubstitutor(private val typeContext: ConeTypeContext)
     }
 
     fun ConeKotlinType?.updateNullabilityIfNeeded(originalType: ConeKotlinType): ConeKotlinType? {
+        val withEnhancedNullability = if (originalType.hasEnhancedNullability)
+            this?.withAttributes(attributes + CompilerConeAttributes.EnhancedNullability)
+        else
+            this
         return when {
-            originalType is ConeDefinitelyNotNullType -> this?.withNullability(ConeNullability.NOT_NULL, typeContext)
+            originalType is ConeDefinitelyNotNullType -> withEnhancedNullability?.withNullability(ConeNullability.NOT_NULL, typeContext)
             originalType.isMarkedNullable -> this?.withNullability(ConeNullability.NULLABLE, typeContext)
-            else -> this
+            else -> withEnhancedNullability
         }
     }
 
@@ -80,10 +84,7 @@ abstract class AbstractConeSubstitutor(private val typeContext: ConeTypeContext)
     }
 
     private fun ConeDefinitelyNotNullType.substituteOriginal(): ConeKotlinType? {
-        // TODO: apparently `withAttributes` here is intended to copy `@EnhancedNullability` so that
-        //   `(@EnhancedNullability T) & Any` with `T = Int` becomes `@EnhancedNullability Int`.
-        //   However, this is very suspicious, as this should probably be done even without `& Any`.
-        return substituteOrNull(original)?.withAttributes(original.attributes)?.makeDefinitelyNotNull(typeContext)
+        return substituteOrNull(original)?.makeDefinitelyNotNull(typeContext)
     }
 
     private fun ConeFlexibleType.substituteBounds(): ConeFlexibleType? {
