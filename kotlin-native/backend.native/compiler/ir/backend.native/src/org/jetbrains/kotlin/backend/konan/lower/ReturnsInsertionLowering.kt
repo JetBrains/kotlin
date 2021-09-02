@@ -22,28 +22,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-internal class ExpressionBodyTransformer(val context: Context) : FileLoweringPass {
-    override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitFunction(declaration: IrFunction) {
-                declaration.acceptChildrenVoid(this)
-
-                context.createIrBuilder(declaration.symbol, declaration.endOffset, declaration.endOffset).run {
-                    val body = declaration.body
-                    if (body is IrExpressionBody)
-                        declaration.body = IrBlockBodyImpl(body.startOffset, body.endOffset) {
-                            statements += irReturn(body.expression)
-                        }
-                }
-            }
-        })
-    }
-}
-
 internal class ReturnsInsertionLowering(val context: Context) : FileLoweringPass {
     private val symbols = context.ir.symbols
 

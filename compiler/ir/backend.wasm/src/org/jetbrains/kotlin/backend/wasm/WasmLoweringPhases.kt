@@ -419,6 +419,12 @@ private val propertyAccessorInlinerLoweringPhase = makeWasmModulePhase(
     description = "[Optimization] Inline property accessors"
 )
 
+private val expressionBodyTransformer = makeWasmModulePhase(
+    ::ExpressionBodyTransformer,
+    name = "ExpressionBodyTransformer",
+    description = "Replace IrExpressionBody with IrBlockBody"
+)
+
 val wasmPhases = NamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
@@ -490,6 +496,7 @@ val wasmPhases = NamedCompilerPhase(
             objectDeclarationLoweringPhase then
             fieldInitializersLoweringPhase then
             genericReturnTypeLowering then
+            expressionBodyTransformer then
 
             // Replace builtins before autoboxing
             builtInsLoweringPhase0 then
