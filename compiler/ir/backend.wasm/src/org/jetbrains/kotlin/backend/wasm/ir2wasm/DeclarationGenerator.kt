@@ -137,14 +137,9 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         val exprGen = functionCodegenContext.bodyGen
         val bodyBuilder = BodyGenerator(functionCodegenContext)
 
-        when (val body = declaration.body) {
-            is IrBlockBody ->
-                for (statement in body.statements) {
-                    bodyBuilder.statementToWasmInstruction(statement)
-                }
-
-            else -> error("Unexpected body $body")
-        }
+        assert(declaration.body != null)
+        assert(declaration.body is IrBlockBody) { "Only IrBlockBody is supported" }
+        declaration.body?.acceptVoid(bodyBuilder)
 
         // Return implicit this from constructions to avoid extra tmp
         // variables on constructor call sites.
@@ -155,8 +150,8 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         }
 
         // Add unreachable if function returns something but not as a last instruction.
-        if (wasmFunctionType.resultTypes.isNotEmpty() && declaration.body is IrBlockBody) {
-            // TODO: Add unreachable only if needed
+        // We can do a separate lowering which adds explicit returns everywhere instead.
+        if (wasmFunctionType.resultTypes.isNotEmpty()) {
             exprGen.buildUnreachable()
         }
 

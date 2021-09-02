@@ -339,6 +339,10 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         return true
     }
 
+    override fun visitBlockBody(body: IrBlockBody) {
+        body.statements.forEach(::statementToWasmInstruction)
+    }
+
     override fun visitContainerExpression(expression: IrContainerExpression) {
         val statements = expression.statements
         if (statements.isEmpty()) {
