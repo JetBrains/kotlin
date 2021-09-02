@@ -40,11 +40,37 @@ import org.jetbrains.kotlin.name.Name
 //            is Bar -> ...exprs
 //        }
 //    }
-// TODO: Describe finally transformation
+// With finally we transform this:
+//    try {
+//        ...exprs
+//    } catch (e: Throwable) {
+//        ...exprs
+//    } finally {
+//        ...<finally exprs>
+//    }
+// Into something like this (tmp variable is used only if we return some result):
+//    val tmp = block { // this is where we return if we return from original try/catch with the result
+//      try {
+//        try {
+//            return@block ...exprs
+//        } catch (e: Throwable) {
+//            return@block ...exprs
+//        }
+//     }
+//     catch (e: Throwable) {
+//       ...<finally exprs>
+//       throw e // rethrow exception if it happened inside of the catch statement
+//     }
+//   }
+//   ...<finally exprs>
+//   tmp // result
+
 
 internal class TryCatchCanonicalization(private val ctx: WasmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(CatchMerger(ctx))
+
+        irFile.transformChildrenVoid(FinallyBlocksLowering(ctx, ctx.irBuiltIns.throwableType))
 
         irFile.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
@@ -58,7 +84,7 @@ internal class TryCatchCanonicalization(private val ctx: WasmBackendContext) : F
     }
 }
 
-internal class CatchMerger(private val ctx: WasmBackendContext): IrElementTransformerVoidWithContext() {
+internal class CatchMerger(private val ctx: WasmBackendContext) : IrElementTransformerVoidWithContext() {
     override fun visitTry(aTry: IrTry): IrExpression {
         // First, handle all nested constructs
         aTry.transformChildrenVoid(this)
