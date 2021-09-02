@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
 import org.jetbrains.kotlin.types.model.TypeVariance
 
-abstract class AbstractSignatureParts<Annotation : Any> {
+abstract class AbstractSignatureParts<TAnnotation : Any> {
     // TODO: some of this might be better off as parameters
-    abstract val annotationTypeQualifierResolver: AbstractAnnotationTypeQualifierResolver<Annotation>
+    abstract val annotationTypeQualifierResolver: AbstractAnnotationTypeQualifierResolver<TAnnotation>
     abstract val enableImprovementsInStrictMode: Boolean
-    abstract val containerAnnotations: Iterable<Annotation>
+    abstract val containerAnnotations: Iterable<TAnnotation>
     abstract val containerApplicabilityType: AnnotationQualifierApplicabilityType
     abstract val containerDefaultTypeQualifiers: JavaTypeQualifiersByElementType?
     abstract val containerIsVarargParameter: Boolean
@@ -30,9 +30,9 @@ abstract class AbstractSignatureParts<Annotation : Any> {
     open val forceOnlyHeadTypeConstructor: Boolean
         get() = false
 
-    abstract val Annotation.forceWarning: Boolean
+    abstract val TAnnotation.forceWarning: Boolean
 
-    abstract val KotlinTypeMarker.annotations: Iterable<Annotation>
+    abstract val KotlinTypeMarker.annotations: Iterable<TAnnotation>
     abstract val KotlinTypeMarker.enhancedForWarnings: KotlinTypeMarker?
     abstract val KotlinTypeMarker.fqNameUnsafe: FqNameUnsafe?
     abstract fun KotlinTypeMarker.isEqual(other: KotlinTypeMarker): Boolean
