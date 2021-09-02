@@ -1,4 +1,3 @@
-// !LANGUAGE: -NormalizeConstructorCalls
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FILE: test.kt
@@ -15,7 +14,7 @@ fun box(): String {
     )
 
     val result = log.toString()
-    if (result != "Foo.<clinit>;i;j;Foo.<init>;Local.<init>;") return "Fail: '$result'"
+    if (result != "i;j;Foo.<clinit>;Foo.<init>;Local.<init>;") return "Fail: '$result'"
 
     return "OK"
 }

@@ -26,11 +26,6 @@ private val patterns = buildList {
         JvmStringConcat.Companion::fromString
     )
     createPattern(
-        "CONSTRUCTOR_CALL_NORMALIZATION_MODE",
-        JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE,
-        JVMConstructorCallNormalizationMode.Companion::fromStringOrNull
-    )
-    createPattern(
         "SAM_CONVERSIONS",
         JVMConfigurationKeys.SAM_CONVERSIONS,
         JvmClosureGenerationScheme.Companion::fromString
@@ -162,5 +157,3 @@ private fun tryApplyBooleanFlag(
         assert(false) { "Expected [+|-][namespace.]configurationKey, got: $flag" }
     }
 }
-
-

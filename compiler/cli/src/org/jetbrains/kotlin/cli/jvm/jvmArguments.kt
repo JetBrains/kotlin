@@ -264,19 +264,6 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.VALIDATE_IR, arguments.validateIr)
     put(JVMConfigurationKeys.VALIDATE_BYTECODE, arguments.validateBytecode)
 
-    if (!JVMConstructorCallNormalizationMode.isSupportedValue(arguments.constructorCallNormalizationMode)) {
-        messageCollector.report(
-            ERROR,
-            "Unknown constructor call normalization mode: ${arguments.constructorCallNormalizationMode}, " +
-                    "supported modes: ${JVMConstructorCallNormalizationMode.values().map { it.description }}"
-        )
-    }
-
-    val constructorCallNormalizationMode = JVMConstructorCallNormalizationMode.fromStringOrNull(arguments.constructorCallNormalizationMode)
-    if (constructorCallNormalizationMode != null) {
-        put(JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE, constructorCallNormalizationMode)
-    }
-
     val assertionsMode =
         JVMAssertionsMode.fromStringOrNull(arguments.assertionsMode)
     if (assertionsMode == null) {

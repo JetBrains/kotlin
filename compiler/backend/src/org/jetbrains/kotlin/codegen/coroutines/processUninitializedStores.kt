@@ -72,10 +72,7 @@ import kotlin.math.max
  *   - generate NEW/DUP
  *   - restore constructor arguments
  */
-class UninitializedStoresProcessor(
-    private val methodNode: MethodNode,
-    private val shouldPreserveClassInitialization: Boolean
-) {
+class UninitializedStoresProcessor(private val methodNode: MethodNode) {
     // <init> method is "special", because it will invoke <init> from this class or from a base class for #0
     //
     // <clinit> method is "special", because <clinit> for singleton objects is generated as:
@@ -107,22 +104,7 @@ class UninitializedStoresProcessor(
 
             methodNode.instructions.run {
                 removeAll(removableUsages)
-
-                if (shouldPreserveClassInitialization) {
-                    // Replace 'NEW C' instruction with "manual" initialization of class 'C':
-                    //      LDC [typeName for C]
-                    //      INVOKESTATIC java/lang/Class.forName (Ljava/lang/String;)Ljava/lang/Class;
-                    //      POP
-                    val typeNameForClass = newInsn.desc.replace('/', '.')
-                    insertBefore(newInsn, LdcInsnNode(typeNameForClass))
-                    insertBefore(
-                        newInsn,
-                        MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Class", "forName", "(Ljava/lang/String;)Ljava/lang/Class;", false)
-                    )
-                    set(newInsn, InsnNode(Opcodes.POP))
-                } else {
-                    remove(newInsn)
-                }
+                remove(newInsn)
             }
 
             val indexOfConstructorArgumentFromTopOfStack = Type.getArgumentTypes((insn as MethodInsnNode).desc).size

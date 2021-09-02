@@ -87,7 +87,6 @@ class CoroutineTransformer(
                 containingClassInternalName = classBuilder.thisName,
                 obtainClassBuilderForCoroutineState = { classBuilder },
                 isForNamedFunction = false,
-                shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
                 disableTailCallOptimizationForFunctionReturningUnit = false,
                 reportSuspensionPointInsideMonitor = { sourceCompilerForInline.reportSuspensionPointInsideMonitor(it) },
                 // TODO: this linenumbers might not be correct and since they are used only for step-over, check them.
@@ -121,7 +120,6 @@ class CoroutineTransformer(
                 containingClassInternalName = classBuilder.thisName,
                 obtainClassBuilderForCoroutineState = { (inliningContext as RegeneratedClassContext).continuationBuilders[continuationClassName]!! },
                 isForNamedFunction = true,
-                shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
                 disableTailCallOptimizationForFunctionReturningUnit = disableTailCallOptimization,
                 reportSuspensionPointInsideMonitor = { sourceCompilerForInline.reportSuspensionPointInsideMonitor(it) },
                 lineNumber = inliningContext.callSiteInfo.lineNumber,

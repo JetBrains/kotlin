@@ -160,8 +160,6 @@ class CoroutineCodegenForLambda private constructor(
 ) {
     private val builtIns = funDescriptor.builtIns
 
-    private val constructorCallNormalizationMode = outerExpressionCodegen.state.constructorCallNormalizationMode
-
     private val erasedInvokeFunction by lazy {
         getErasedInvokeFunction(funDescriptor).createCustomCopy { setModality(Modality.FINAL) }
     }
@@ -524,7 +522,6 @@ class CoroutineCodegenForLambda private constructor(
                         containingClassInternalName = v.thisName,
                         obtainClassBuilderForCoroutineState = { v },
                         isForNamedFunction = false,
-                        shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
                         disableTailCallOptimizationForFunctionReturningUnit = false,
                         reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(element, state, it) },
                         lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0,

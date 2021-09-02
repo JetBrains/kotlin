@@ -23,7 +23,8 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         value = "-classpath",
         shortName = "-cp",
         valueDescription = "<path>",
-        description = "List of directories and JAR/ZIP archives to search for user class files")
+        description = "List of directories and JAR/ZIP archives to search for user class files"
+    )
     var classpath: String? by NullableStringFreezableVar(null)
 
     @DeprecatedOption(removeAfter = "1.5", level = DeprecationLevel.ERROR)
@@ -50,7 +51,10 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     @DeprecatedOption(removeAfter = "1.5", level = DeprecationLevel.ERROR)
     @GradleOption(DefaultValues.BooleanTrueDefault::class)
-    @Argument(value = "-no-stdlib", description = "Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection into the classpath")
+    @Argument(
+        value = "-no-stdlib",
+        description = "Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection into the classpath"
+    )
     var noStdlib: Boolean by FreezableVar(false)
 
     @DeprecatedOption(removeAfter = "1.5", level = DeprecationLevel.ERROR)
@@ -167,15 +171,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     @Argument(value = "-Xno-optimize", description = "Disable optimizations")
     var noOptimize: Boolean by FreezableVar(false)
-
-    @Argument(
-        value = "-Xnormalize-constructor-calls",
-        valueDescription = "{disable|enable}",
-        description = "Normalize constructor calls (disable: don't normalize; enable: normalize),\n" +
-                "default is 'disable' in language version 1.2 and below,\n" +
-                "'enable' since language version 1.3"
-    )
-    var constructorCallNormalizationMode: String? by NullableStringFreezableVar(null)
 
     @Argument(
         value = "-Xassertions", valueDescription = "{always-enable|always-disable|jvm|legacy}",

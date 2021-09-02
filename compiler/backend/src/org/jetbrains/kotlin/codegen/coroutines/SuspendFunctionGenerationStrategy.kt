@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.preprocessSuspendMarkers
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JVMConstructorCallNormalizationMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -37,7 +36,6 @@ class SuspendFunctionGenerationStrategy(
     private val originalSuspendDescriptor: FunctionDescriptor,
     private val declaration: KtFunction,
     private val containingClassInternalName: String,
-    private val constructorCallNormalizationMode: JVMConstructorCallNormalizationMode,
     private val functionCodegen: FunctionCodegen
 ) : FunctionGenerationStrategy.CodegenBased(state) {
 
@@ -88,7 +86,6 @@ class SuspendFunctionGenerationStrategy(
         return CoroutineTransformerMethodVisitor(
             mv, access, name, desc, null, null, containingClassInternalName, this::classBuilderForCoroutineState,
             isForNamedFunction = true,
-            shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
             disableTailCallOptimizationForFunctionReturningUnit = originalSuspendDescriptor.returnType?.isUnit() == true &&
                     originalSuspendDescriptor.overriddenDescriptors.isNotEmpty() &&
                     !originalSuspendDescriptor.allOverriddenFunctionsReturnUnit(),

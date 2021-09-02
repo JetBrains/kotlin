@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ALL_JAVA_AS_BINARY
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.COMPILE_JAVA_USING
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.CONSTRUCTOR_CALL_NORMALIZATION_MODE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.INCLUDE_JAVA_AS_BINARY
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JVM_TARGET
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.LAMBDAS
@@ -134,7 +133,6 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
     override fun DirectiveToConfigurationKeyExtractor.provideConfigurationKeys() {
         register(STRING_CONCAT, JVMConfigurationKeys.STRING_CONCAT)
         register(ASSERTIONS_MODE, JVMConfigurationKeys.ASSERTIONS_MODE)
-        register(CONSTRUCTOR_CALL_NORMALIZATION_MODE, JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE)
         register(SAM_CONVERSIONS, JVMConfigurationKeys.SAM_CONVERSIONS)
         register(LAMBDAS, JVMConfigurationKeys.LAMBDAS)
         register(USE_OLD_INLINE_CLASSES_MANGLING_SCHEME, JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME)

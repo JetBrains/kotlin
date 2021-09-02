@@ -54,8 +54,6 @@ public class JVMConfigurationKeys {
             CompilerConfigurationKey.create("disable not-null parameter assertions");
     public static final CompilerConfigurationKey<JVMAssertionsMode> ASSERTIONS_MODE =
             CompilerConfigurationKey.create("assertions mode");
-    public static final CompilerConfigurationKey<JVMConstructorCallNormalizationMode> CONSTRUCTOR_CALL_NORMALIZATION_MODE =
-            CompilerConfigurationKey.create("constructor call normalization mode");
     public static final CompilerConfigurationKey<Boolean> NO_EXCEPTION_ON_EXPLICIT_EQUALS_FOR_BOXED_NULL =
             CompilerConfigurationKey.create("do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type");
     public static final CompilerConfigurationKey<Boolean> DISABLE_OPTIMIZATION =

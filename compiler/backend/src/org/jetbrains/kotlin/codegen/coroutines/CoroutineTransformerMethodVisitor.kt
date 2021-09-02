@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransfor
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.utils.sure
-import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
@@ -43,7 +46,6 @@ class CoroutineTransformerMethodVisitor(
     private val containingClassInternalName: String,
     obtainClassBuilderForCoroutineState: () -> ClassBuilder,
     private val isForNamedFunction: Boolean,
-    private val shouldPreserveClassInitialization: Boolean,
     // Since tail-call optimization of functions with Unit return type relies on ability of call-site to recognize them,
     // in order to ignore return value and push Unit, when we cannot ensure this ability, for example, when the function overrides function,
     // returning Any, we need to disable tail-call optimization for these functions.
@@ -121,7 +123,7 @@ class CoroutineTransformerMethodVisitor(
         // Actual max stack might be increased during the previous phases
         methodNode.updateMaxStack()
 
-        UninitializedStoresProcessor(methodNode, shouldPreserveClassInitialization).run()
+        UninitializedStoresProcessor(methodNode).run()
 
         val spilledToVariableMapping = spillVariables(suspensionPoints, methodNode)
 

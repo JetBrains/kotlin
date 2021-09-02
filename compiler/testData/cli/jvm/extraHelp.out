@@ -18,10 +18,6 @@ where advanced options include:
                              default: legacy
   -Xbuild-file=<path>        Path to the .xml build file to compile
   -Xcompile-java             Reuse javac analysis and compile Java source files
-  -Xnormalize-constructor-calls={disable|enable}
-                             Normalize constructor calls (disable: don't normalize; enable: normalize),
-                             default is 'disable' in language version 1.2 and below,
-                             'enable' since language version 1.3
   -Xdump-declarations-to=<path> Path to JSON file to dump Java to Kotlin declaration mappings
   -Xdefault-script-extension=<script filename extension>
                              Compile expressions and unrecognized scripts passed with the -script argument as scripts with given filename extension

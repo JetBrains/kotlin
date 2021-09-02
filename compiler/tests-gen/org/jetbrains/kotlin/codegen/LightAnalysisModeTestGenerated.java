@@ -5737,24 +5737,14 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/constructorCall/earlyReturnInConstructorArguments.kt");
         }
 
+        @TestMetadata("inlineFunInConstructorCall.kt")
+        public void testInlineFunInConstructorCall() throws Exception {
+            runTest("compiler/testData/codegen/box/constructorCall/inlineFunInConstructorCall.kt");
+        }
+
         @TestMetadata("inlineFunInConstructorCallEvaluationOrder.kt")
         public void testInlineFunInConstructorCallEvaluationOrder() throws Exception {
             runTest("compiler/testData/codegen/box/constructorCall/inlineFunInConstructorCallEvaluationOrder.kt");
-        }
-
-        @TestMetadata("inlineFunInConstructorCallWithDisabledNormalization.kt")
-        public void testInlineFunInConstructorCallWithDisabledNormalization() throws Exception {
-            runTest("compiler/testData/codegen/box/constructorCall/inlineFunInConstructorCallWithDisabledNormalization.kt");
-        }
-
-        @TestMetadata("inlineFunInConstructorCallWithEnabledNormalization.kt")
-        public void testInlineFunInConstructorCallWithEnabledNormalization() throws Exception {
-            runTest("compiler/testData/codegen/box/constructorCall/inlineFunInConstructorCallWithEnabledNormalization.kt");
-        }
-
-        @TestMetadata("inlineFunInConstructorCallWithStrictNormalization.kt")
-        public void testInlineFunInConstructorCallWithStrictNormalization() throws Exception {
-            runTest("compiler/testData/codegen/box/constructorCall/inlineFunInConstructorCallWithStrictNormalization.kt");
         }
 
         @TestMetadata("inlineFunInInnerClassConstructorCall.kt")
@@ -5767,19 +5757,14 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/constructorCall/inlineFunInLocalClassConstructorCall.kt");
         }
 
-        @TestMetadata("loopInInlineFunInSuperConstructorCallWithEnabledNormalization.kt")
-        public void testLoopInInlineFunInSuperConstructorCallWithEnabledNormalization() throws Exception {
-            runTest("compiler/testData/codegen/box/constructorCall/loopInInlineFunInSuperConstructorCallWithEnabledNormalization.kt");
+        @TestMetadata("loopInInlineFun.kt")
+        public void testLoopInInlineFun() throws Exception {
+            runTest("compiler/testData/codegen/box/constructorCall/loopInInlineFun.kt");
         }
 
-        @TestMetadata("loopInInlineFunInSuperConstructorCallWithEnabledNormalizationSince13.kt")
-        public void testLoopInInlineFunInSuperConstructorCallWithEnabledNormalizationSince13() throws Exception {
-            runTest("compiler/testData/codegen/box/constructorCall/loopInInlineFunInSuperConstructorCallWithEnabledNormalizationSince13.kt");
-        }
-
-        @TestMetadata("loopInInlineFunWithEnabledNormalization.kt")
-        public void testLoopInInlineFunWithEnabledNormalization() throws Exception {
-            runTest("compiler/testData/codegen/box/constructorCall/loopInInlineFunWithEnabledNormalization.kt");
+        @TestMetadata("loopInInlineFunInSuperConstructorCall.kt")
+        public void testLoopInInlineFunInSuperConstructorCall() throws Exception {
+            runTest("compiler/testData/codegen/box/constructorCall/loopInInlineFunInSuperConstructorCall.kt");
         }
 
         @TestMetadata("nestedConstructorCallWithJumpOutInConstructorArguments.kt")

@@ -1,20 +1,19 @@
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
-// CONSTRUCTOR_CALL_NORMALIZATION_MODE: preserve-class-initialization
 // FILE: test.kt
 fun box(): String {
     Foo(
-            logged("i", 1.let { it }),
+            logged("i", listOf(1, 2, 3).map { it + 1 }.first()),
             logged("j",
                    Foo(
-                           logged("k", 2.let { it }),
+                           logged("k", listOf(1, 2, 3).map { it + 1 }.first()),
                            null
                    )
             )
     )
 
     val result = log.toString()
-    if (result != "<clinit>ik<init>j<init>") return "Fail: '$result'"
+    if (result != "ik<clinit><init>j<init>") return "Fail: '$result'"
 
     return "OK"
 }

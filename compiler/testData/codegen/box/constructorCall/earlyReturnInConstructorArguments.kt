@@ -1,4 +1,3 @@
-// !LANGUAGE: -NormalizeConstructorCalls
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 inline fun ok(): String {
@@ -10,7 +9,7 @@ fun box(): String {
     if (ok != "OK") return "Fail: $ok"
 
     val r = log.toString()
-    if (r != "<clinit>;bar;<init>;foo;") return "Fail: '$r'"
+    if (r != "bar;<clinit>;<init>;foo;") return "Fail: '$r'"
 
     return "OK"
 }

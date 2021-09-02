@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.optimization
 
 import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
+import org.jetbrains.kotlin.codegen.coroutines.UninitializedStoresProcessor
 import org.jetbrains.kotlin.codegen.inline.InplaceArgumentsMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.boxing.PopBackwardPropagationTransformer
 import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantBoxingMethodTransformer
@@ -38,9 +39,6 @@ class OptimizationMethodVisitor(
     signature: String?,
     exceptions: Array<String>?
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
-    private val constructorCallNormalizationTransformer =
-        UninitializedStoresMethodTransformer(generationState.constructorCallNormalizationMode)
-
     val normalizationMethodTransformer = CompositeMethodTransformer(
         InplaceArgumentsMethodTransformer(),
         FixStackWithLabelNormalizationMethodTransformer(),
@@ -65,7 +63,7 @@ class OptimizationMethodVisitor(
 
     override fun performTransformations(methodNode: MethodNode) {
         normalizationMethodTransformer.transform("fake", methodNode)
-        constructorCallNormalizationTransformer.transform("fake", methodNode)
+        UninitializedStoresProcessor(methodNode).run()
 
         if (canBeOptimized(methodNode) && !generationState.disableOptimization) {
             optimizationTransformer.transform("fake", methodNode)

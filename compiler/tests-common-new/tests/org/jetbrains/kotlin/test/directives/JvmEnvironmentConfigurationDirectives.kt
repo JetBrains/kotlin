@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.test.directives
 
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.JVMAssertionsMode
+import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
+import org.jetbrains.kotlin.config.JvmStringConcat
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.test.TestJavacVersion
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
@@ -67,12 +70,6 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     val ASSERTIONS_MODE by enumDirective<JVMAssertionsMode>(
         description = "Configure jvm assertions mode",
         additionalParser = JVMAssertionsMode.Companion::fromString
-    )
-
-    @Suppress("RemoveExplicitTypeArguments")
-    val CONSTRUCTOR_CALL_NORMALIZATION_MODE by enumDirective<JVMConstructorCallNormalizationMode>(
-        description = "Configure jvm constructor call normalization mode",
-        additionalParser = JVMConstructorCallNormalizationMode.Companion::fromStringOrNull
     )
 
     val SAM_CONVERSIONS by enumDirective(
