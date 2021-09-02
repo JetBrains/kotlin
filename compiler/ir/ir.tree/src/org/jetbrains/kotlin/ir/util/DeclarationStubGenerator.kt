@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -241,13 +240,7 @@ abstract class DeclarationStubGenerator(
             varargElementType?.toIrType(), isCrossinline, isNoinline, isHidden = false, isAssignable = false
         ).also { irValueParameter ->
             if (descriptor.declaresDefaultValue()) {
-                irValueParameter.defaultValue =
-                    irValueParameter.factory.createExpressionBody(
-                        IrErrorExpressionImpl(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, descriptor.type.toIrType(),
-                            "Stub expression for default value of ${descriptor.name}"
-                        )
-                    )
+                irValueParameter.defaultValue = irValueParameter.createStubDefaultValue()
             }
         }
     }
