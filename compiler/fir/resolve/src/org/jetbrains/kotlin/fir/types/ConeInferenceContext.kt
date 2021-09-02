@@ -272,17 +272,17 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun KotlinTypeMarker.removeAnnotations(): KotlinTypeMarker {
         require(this is ConeKotlinType)
-        return withAttributes(ConeAttributes.Empty, this@ConeInferenceContext)
+        return withAttributes(ConeAttributes.Empty)
     }
 
     override fun SimpleTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): SimpleTypeMarker {
         require(this is ConeKotlinType)
-        return this.withArguments(newArguments.cast<List<ConeTypeProjection>>().toTypedArray(), this@ConeInferenceContext)
+        return this.withArguments(newArguments.cast<List<ConeTypeProjection>>().toTypedArray())
     }
 
     override fun SimpleTypeMarker.replaceArguments(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): SimpleTypeMarker {
         require(this is ConeKotlinType)
-        return this.withArguments({ replacement(it).cast() }, this@ConeInferenceContext)
+        return this.withArguments { replacement(it).cast() }
     }
 
     override fun KotlinTypeMarker.hasExactAnnotation(): Boolean {
@@ -385,7 +385,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker {
         require(this is ConeKotlinType)
-        return withAttributes(attributes.remove(CompilerConeAttributes.Exact), this@ConeInferenceContext)
+        return withAttributes(attributes.remove(CompilerConeAttributes.Exact))
     }
 
     override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
