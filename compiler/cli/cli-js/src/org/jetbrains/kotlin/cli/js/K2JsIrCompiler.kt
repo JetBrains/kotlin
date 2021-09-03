@@ -38,6 +38,10 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.ic.actualizeCacheForModule
+import org.jetbrains.kotlin.ir.backend.js.ic.buildCache
+import org.jetbrains.kotlin.ir.backend.js.ic.checkCaches
+import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
@@ -314,10 +318,11 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 outputWatFile.writeText(res.wat)
 
                 val runner = """
-                    const wasmBinary = read(String.raw`${outputWasmFile.absoluteFile}`, 'binary');
-                    const wasmModule = new WebAssembly.Module(wasmBinary);
-                    wasmInstance = new WebAssembly.Instance(wasmModule, { runtime, js_code });
-                    wasmInstance.exports.main();
+                    const ${sanitizeName(moduleName)} = WebAssembly.instantiateStreaming(fetch('${outputWasmFile.name}'), { runtime, js_code }).then((it) => {
+                        wasmInstance = it.instance;
+                        wasmInstance.exports.main?.();
+                        return it.instance.exports;
+                    });
                 """.trimIndent()
 
                 outputFile.writeText(res.js + "\n" + runner)
