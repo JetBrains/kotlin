@@ -2451,9 +2451,6 @@ enum class BodyBuildingMode {
     }
 }
 
-@Deprecated("Please replace with BodyBuildingMode")
-typealias RawFirBuilderMode = BodyBuildingMode
-
 enum class PsiHandlingMode {
     /**
      * Do not build any stubs while handling PSI
