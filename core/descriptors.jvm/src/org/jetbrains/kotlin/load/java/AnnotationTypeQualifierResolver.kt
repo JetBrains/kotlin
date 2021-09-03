@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 class AnnotationTypeQualifierResolver(javaTypeEnhancementState: JavaTypeEnhancementState) :
     AbstractAnnotationTypeQualifierResolver<AnnotationDescriptor>(javaTypeEnhancementState) {
 
-    override val AnnotationDescriptor.annotations: Iterable<AnnotationDescriptor>
+    override val AnnotationDescriptor.metaAnnotations: Iterable<AnnotationDescriptor>
         get() = annotationClass?.annotations ?: emptyList()
 
     override val AnnotationDescriptor.key: Any
