@@ -21,7 +21,7 @@ internal class FirLightSetterParameterForSymbol(
 ) : FirLightParameterBaseForSymbol(parameterSymbol, containingMethod) {
 
     private val _annotations: List<PsiAnnotation> by lazyPub {
-        val annotationsFomSetter = parameterSymbol.computeAnnotations(
+        val annotationsFromSetter = parameterSymbol.computeAnnotations(
             parent = this,
             nullability = NullabilityType.Unknown,
             annotationUseSiteTarget = null,
@@ -34,7 +34,7 @@ internal class FirLightSetterParameterForSymbol(
             includeAnnotationsWithoutSite = false
         )
 
-        annotationsFomSetter + annotationsFromProperty
+        annotationsFromSetter + annotationsFromProperty
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

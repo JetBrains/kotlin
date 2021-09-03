@@ -86,6 +86,7 @@ internal class FirLightAccessorMethodForSymbol(
             parent = this,
             nullability = nullabilityType,
             annotationUseSiteTarget = accessorSite,
+            includeAnnotationsWithoutSite = false
         )
 
         val annotationsFromAccessor = propertyAccessorSymbol.computeAnnotations(

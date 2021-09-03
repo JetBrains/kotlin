@@ -11,3 +11,5 @@ class A {
     @Volatile
     var c: String = ""
 }
+
+// FIR_COMPARISON
