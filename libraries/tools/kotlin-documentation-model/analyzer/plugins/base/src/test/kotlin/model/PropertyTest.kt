@@ -121,6 +121,7 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
         ) {
             with((this / "property").cast<DPackage>()) {
                 with((this / "Foo" / "property").cast<DProperty>()) {
+                    dri.classNames equals "Foo"
                     name equals "property"
                     children counts 0
                     with(getter.assertNotNull("Getter")) {
@@ -128,6 +129,30 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
                     }
                 }
                 with((this / "Bar" / "property").cast<DProperty>()) {
+                    dri.classNames equals "Bar"
+                    name equals "property"
+                    children counts 0
+                    with(getter.assertNotNull("Getter")) {
+                        type.name equals "Int"
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun propertyInherited() {
+        inlineModelTest(
+            """
+            |open class Foo() {
+            |    open val property: Int get() = 0
+            |}
+            |class Bar(): Foo()
+            """
+        ) {
+            with((this / "property").cast<DPackage>()) {
+                with((this / "Bar" / "property").cast<DProperty>()) {
+                    dri.classNames equals "Foo"
                     name equals "property"
                     children counts 0
                     with(getter.assertNotNull("Getter")) {
