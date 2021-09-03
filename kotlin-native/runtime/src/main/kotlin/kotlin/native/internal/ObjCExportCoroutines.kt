@@ -61,9 +61,9 @@ internal fun getCoroutineSuspended(): Any = COROUTINE_SUSPENDED
 internal fun interceptedContinuation(continuation: Continuation<Any?>): Continuation<Any?> = continuation.intercepted()
 
 @FilterExceptions
-@SymbolName("Kotlin_ObjCExport_runCompletionSuccess")
+@GCUnsafeCall("Kotlin_ObjCExport_runCompletionSuccess")
 private external fun runCompletionSuccess(completionHolder: Any, result: Any?)
 
 @FilterExceptions
-@SymbolName("Kotlin_ObjCExport_runCompletionFailure")
+@GCUnsafeCall("Kotlin_ObjCExport_runCompletionFailure")
 private external fun runCompletionFailure(completionHolder: Any, exception: Throwable, exceptionTypes: NativePtr)

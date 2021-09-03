@@ -5,6 +5,7 @@
 package kotlinx.cinterop
 
 import kotlin.native.internal.ExportForCppRuntime
+import kotlin.native.internal.GCUnsafeCall
 
 public class ForeignException internal constructor(val nativeException: Any?): Exception() {
     override val message: String = nativeException?.let {
@@ -12,7 +13,7 @@ public class ForeignException internal constructor(val nativeException: Any?): E
     }?: ""
 
     // Current implementation expects NSException type only, which is ensured by CodeGenerator.
-    @SymbolName("Kotlin_ObjCExport_ExceptionDetails")
+    @GCUnsafeCall("Kotlin_ObjCExport_ExceptionDetails")
     private external fun kotlin_ObjCExport_ExceptionDetails(nativeException: Any): String?
 }
 

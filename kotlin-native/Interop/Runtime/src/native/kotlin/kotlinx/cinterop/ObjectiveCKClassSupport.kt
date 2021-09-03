@@ -6,6 +6,7 @@
 package kotlinx.cinterop
 
 import kotlin.native.internal.KClassImpl
+import kotlin.native.internal.GCUnsafeCall
 import kotlin.reflect.KClass
 
 /**
@@ -34,8 +35,8 @@ fun getOriginalKotlinClass(objCProtocol: ObjCProtocol): KClass<*>? {
     return KClassImpl<Any>(typeInfo)
 }
 
-@SymbolName("Kotlin_ObjCInterop_getTypeInfoForClass")
+@GCUnsafeCall("Kotlin_ObjCInterop_getTypeInfoForClass")
 private external fun getTypeInfoForClass(ptr: NativePtr): NativePtr
 
-@SymbolName("Kotlin_ObjCInterop_getTypeInfoForProtocol")
+@GCUnsafeCall("Kotlin_ObjCInterop_getTypeInfoForProtocol")
 private external fun getTypeInfoForProtocol(ptr: NativePtr): NativePtr

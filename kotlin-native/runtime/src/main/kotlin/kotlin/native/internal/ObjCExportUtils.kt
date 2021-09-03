@@ -20,10 +20,10 @@ internal class NSArrayAsKList : AbstractList<Any?>(), ObjCObjectWrapper {
 
     override val size: Int get() = getSize()
 
-    @SymbolName("Kotlin_NSArrayAsKList_getSize")
+    @GCUnsafeCall("Kotlin_NSArrayAsKList_getSize")
     private external fun getSize(): Int
 
-    @SymbolName("Kotlin_NSArrayAsKList_get")
+    @GCUnsafeCall("Kotlin_NSArrayAsKList_get")
     external override fun get(index: Int): Any?
 }
 
@@ -31,19 +31,19 @@ internal class NSMutableArrayAsKMutableList : AbstractMutableList<Any?>(), ObjCO
 
     override val size: Int get() = getSize()
 
-    @SymbolName("Kotlin_NSArrayAsKList_getSize")
+    @GCUnsafeCall("Kotlin_NSArrayAsKList_getSize")
     private external fun getSize(): Int
 
-    @SymbolName("Kotlin_NSArrayAsKList_get")
+    @GCUnsafeCall("Kotlin_NSArrayAsKList_get")
     external override fun get(index: Int): Any?
 
-    @SymbolName("Kotlin_NSMutableArrayAsKMutableList_add")
+    @GCUnsafeCall("Kotlin_NSMutableArrayAsKMutableList_add")
     external override fun add(index: Int, element: Any?): Unit
 
-    @SymbolName("Kotlin_NSMutableArrayAsKMutableList_removeAt")
+    @GCUnsafeCall("Kotlin_NSMutableArrayAsKMutableList_removeAt")
     external override fun removeAt(index: Int): Any?
 
-    @SymbolName("Kotlin_NSMutableArrayAsKMutableList_set")
+    @GCUnsafeCall("Kotlin_NSMutableArrayAsKMutableList_set")
     external override fun set(index: Int, element: Any?): Any?
 }
 
@@ -51,16 +51,16 @@ internal class NSSetAsKSet : AbstractSet<Any?>(), KonanSet<Any?>, ObjCObjectWrap
 
     override val size: Int get() = getSize()
 
-    @SymbolName("Kotlin_NSSetAsKSet_getSize")
+    @GCUnsafeCall("Kotlin_NSSetAsKSet_getSize")
     private external fun getSize(): Int
 
-    @SymbolName("Kotlin_NSSetAsKSet_contains")
+    @GCUnsafeCall("Kotlin_NSSetAsKSet_contains")
     external override fun contains(element: Any?): Boolean
 
-    @SymbolName("Kotlin_NSSetAsKSet_getElement")
+    @GCUnsafeCall("Kotlin_NSSetAsKSet_getElement")
     external override fun getElement(element: Any?): Any?
 
-    @SymbolName("Kotlin_NSSetAsKSet_iterator")
+    @GCUnsafeCall("Kotlin_NSSetAsKSet_iterator")
     external override fun iterator(): Iterator<Any?>
 }
 
@@ -88,24 +88,24 @@ internal class NSDictionaryAsKMap : Map<Any?, Any?>, ObjCObjectWrapper {
 
     override val size: Int get() = getSize()
 
-    @SymbolName("Kotlin_NSDictionaryAsKMap_getSize")
+    @GCUnsafeCall("Kotlin_NSDictionaryAsKMap_getSize")
     private external fun getSize(): Int
 
     override fun isEmpty(): Boolean = (size == 0)
 
-    @SymbolName("Kotlin_NSDictionaryAsKMap_containsKey")
+    @GCUnsafeCall("Kotlin_NSDictionaryAsKMap_containsKey")
     override external fun containsKey(key: Any?): Boolean
 
-    @SymbolName("Kotlin_NSDictionaryAsKMap_containsValue")
+    @GCUnsafeCall("Kotlin_NSDictionaryAsKMap_containsValue")
     override external fun containsValue(value: Any?): Boolean
 
-    @SymbolName("Kotlin_NSDictionaryAsKMap_get")
+    @GCUnsafeCall("Kotlin_NSDictionaryAsKMap_get")
     external override operator fun get(key: Any?): Any?
 
-    @SymbolName("Kotlin_NSDictionaryAsKMap_getOrThrowConcurrentModification")
+    @GCUnsafeCall("Kotlin_NSDictionaryAsKMap_getOrThrowConcurrentModification")
     private external fun getOrThrowConcurrentModification(key: Any?): Any?
 
-    @SymbolName("Kotlin_NSDictionaryAsKMap_containsEntry")
+    @GCUnsafeCall("Kotlin_NSDictionaryAsKMap_containsEntry")
     private external fun containsEntry(key: Any?, value: Any?): Boolean
 
     // Views
@@ -115,7 +115,7 @@ internal class NSDictionaryAsKMap : Map<Any?, Any?>, ObjCObjectWrapper {
 
     override val entries: Set<Map.Entry<Any?, Any?>> get() = this.Entries()
 
-    @SymbolName("Kotlin_NSDictionaryAsKMap_keyIterator")
+    @GCUnsafeCall("Kotlin_NSDictionaryAsKMap_keyIterator")
     private external fun keyIterator(): Iterator<Any?>
 
     private inner class Keys : AbstractSet<Any?>() {
@@ -127,7 +127,7 @@ internal class NSDictionaryAsKMap : Map<Any?, Any?>, ObjCObjectWrapper {
         override fun contains(element: Any?): Boolean = this@NSDictionaryAsKMap.containsKey(element)
     }
 
-    @SymbolName("Kotlin_NSDictionaryAsKMap_valueIterator")
+    @GCUnsafeCall("Kotlin_NSDictionaryAsKMap_valueIterator")
     private external fun valueIterator(): Iterator<Any?>
 
     private inner class Values : AbstractCollection<Any?>() {
@@ -179,7 +179,7 @@ internal class NSDictionaryAsKMap : Map<Any?, Any?>, ObjCObjectWrapper {
 
 internal class NSEnumeratorAsKIterator : AbstractIterator<Any?>() {
 
-    @SymbolName("Kotlin_NSEnumeratorAsKIterator_computeNext")
+    @GCUnsafeCall("Kotlin_NSEnumeratorAsKIterator_computeNext")
     override external fun computeNext()
 
     @ExportForCppRuntime
@@ -279,7 +279,7 @@ class ObjCErrorException(
 }
 
 @PublishedApi
-@SymbolName("Kotlin_ObjCExport_trapOnUndeclaredException")
+@GCUnsafeCall("Kotlin_ObjCExport_trapOnUndeclaredException")
 @ExportForCppRuntime
 internal external fun trapOnUndeclaredException(exception: Throwable)
 

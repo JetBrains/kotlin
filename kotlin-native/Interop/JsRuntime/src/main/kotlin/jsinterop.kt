@@ -17,7 +17,7 @@
 package kotlinx.wasm.jsinterop
 
 import kotlin.native.*
-import kotlin.native.internal.ExportForCppRuntime
+import kotlin.native.internal.*
 import kotlinx.cinterop.*
 
 typealias Arena = Int
@@ -28,15 +28,15 @@ typealias Pointer = Int
  * @Retain annotation is required to preserve functions from internalization and DCE.
  */
 @RetainForTarget("wasm32")
-@SymbolName("Konan_js_allocateArena")
+@GCUnsafeCall("Konan_js_allocateArena")
 external public fun allocateArena(): Arena
 
 @RetainForTarget("wasm32")
-@SymbolName("Konan_js_freeArena")
+@GCUnsafeCall("Konan_js_freeArena")
 external public fun freeArena(arena: Arena)
 
 @RetainForTarget("wasm32")
-@SymbolName("Konan_js_pushIntToArena")
+@GCUnsafeCall("Konan_js_pushIntToArena")
 external public fun pushIntToArena(arena: Arena, value: Int)
 
 const val upperWord = 0xffffffff.toLong() shl 32
@@ -50,15 +50,15 @@ fun doubleLower(value: Double): Int =
     (value.toBits() and 0x00000000ffffffff) .toInt()
 
 @RetainForTarget("wasm32")
-@SymbolName("ReturnSlot_getDouble")
+@GCUnsafeCall("ReturnSlot_getDouble")
 external public fun ReturnSlot_getDouble(): Double
 
 @RetainForTarget("wasm32")
-@SymbolName("Kotlin_String_utf16pointer")
+@GCUnsafeCall("Kotlin_String_utf16pointer")
 external public fun stringPointer(message: String): Pointer
 
 @RetainForTarget("wasm32")
-@SymbolName("Kotlin_String_utf16length")
+@GCUnsafeCall("Kotlin_String_utf16length")
 external public fun stringLengthBytes(message: String): Int
 
 typealias KtFunction <R> = ((ArrayList<JsValue>)->R)
@@ -105,19 +105,19 @@ open class JsArray(arena: Arena, index: Object): JsValue(arena, index) {
 }
 
 @RetainForTarget("wasm32")
-@SymbolName("Konan_js_getInt")
+@GCUnsafeCall("Konan_js_getInt")
 external public fun getInt(arena: Arena, obj: Object, propertyPtr: Pointer, propertyLen: Int): Int;
 
 @RetainForTarget("wasm32")
-@SymbolName("Konan_js_getProperty")
+@GCUnsafeCall("Konan_js_getProperty")
 external public fun Konan_js_getProperty(arena: Arena, obj: Object, propertyPtr: Pointer, propertyLen: Int): Int;
 
 @RetainForTarget("wasm32")
-@SymbolName("Konan_js_setFunction")
+@GCUnsafeCall("Konan_js_setFunction")
 external public fun setFunction(arena: Arena, obj: Object, propertyName: Pointer, propertyLength: Int , function: Int)
 
 @RetainForTarget("wasm32")
-@SymbolName("Konan_js_setString")
+@GCUnsafeCall("Konan_js_setString")
 external public fun setString(arena: Arena, obj: Object, propertyName: Pointer, propertyLength: Int, stringPtr: Pointer, stringLength: Int )
 
 fun setter(obj: JsValue, property: String, string: String) {
