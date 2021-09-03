@@ -92,7 +92,7 @@ class KotlinResolutionCandidate(
 
     fun getSystem(): NewConstraintSystem {
         if (newSystem == null) {
-            newSystem = NewConstraintSystemImpl(callComponents.constraintInjector, callComponents.builtIns)
+            newSystem = NewConstraintSystemImpl(callComponents.constraintInjector, callComponents.builtIns, callComponents.kotlinTypeRefiner)
             newSystem!!.addOtherSystem(baseSystem)
         }
         return newSystem!!
