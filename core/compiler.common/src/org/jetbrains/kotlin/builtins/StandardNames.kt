@@ -16,6 +16,10 @@ import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 
 @Suppress("Reformat")
 object StandardNames {
+    @JvmField val BACKING_FIELD = Name.identifier("field")
+
+    @JvmField val DEFAULT_VALUE_PARAMETER = Name.identifier("value")
+
     @JvmField val ENUM_VALUES = Name.identifier("values")
 
     @JvmField val ENUM_VALUE_OF = Name.identifier("valueOf")

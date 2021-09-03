@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
-import org.jetbrains.kotlin.fir.NAME_FOR_BACKING_FIELD
+import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -49,7 +49,7 @@ class FirLocalScope private constructor(
 
     fun storeBackingField(property: FirProperty): FirLocalScope {
         return FirLocalScope(
-            properties.put(NAME_FOR_BACKING_FIELD, property.backingFieldSymbol), functions, classes
+            properties.put(BACKING_FIELD, property.backingFieldSymbol), functions, classes
         )
     }
 

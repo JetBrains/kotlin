@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.name.Name
 
-val NAME_FOR_BACKING_FIELD = Name.identifier("field")
-val NAME_FOR_DEFAULT_VALUE_PARAMETER = Name.identifier("value")
-
 // Data class synthetic members
 val COPY_NAME = Name.identifier("copy")
 val HASHCODE_NAME = Name.identifier("hashCode")

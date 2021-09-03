@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
@@ -130,7 +130,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                             CallableMemberDescriptor.Kind.SYNTHESIZED, null, propertyDescriptor.source
                         ).apply {
                             val setterValueParameter = ValueParameterDescriptorImpl(
-                                this, null, 0, Annotations.EMPTY, Name.identifier("value"), propertyDescriptor.type,
+                                this, null, 0, Annotations.EMPTY, DEFAULT_VALUE_PARAMETER, propertyDescriptor.type,
                                 declaresDefaultValue = false, isCrossinline = false, isNoinline = false,
                                 varargElementType = null, source = SourceElement.NO_SOURCE
                             )

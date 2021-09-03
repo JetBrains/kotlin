@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.builder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -406,7 +407,7 @@ open class RawFirBuilder(
                                 moduleData = baseModuleData
                                 origin = FirDeclarationOrigin.Source
                                 returnTypeRef = propertyTypeRefToUse
-                                symbol = FirValueParameterSymbol(NAME_FOR_DEFAULT_VALUE_PARAMETER)
+                                symbol = FirValueParameterSymbol(DEFAULT_VALUE_PARAMETER)
                             }
                         }
                         symbol = FirPropertyAccessorSymbol()

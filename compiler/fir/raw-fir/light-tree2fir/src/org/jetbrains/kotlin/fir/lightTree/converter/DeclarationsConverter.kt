@@ -9,6 +9,7 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes.*
+import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -1261,7 +1262,7 @@ class DeclarationsConverter(
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
             returnTypeRef = propertyTypeRefToUse
-            symbol = FirValueParameterSymbol(NAME_FOR_DEFAULT_VALUE_PARAMETER)
+            symbol = FirValueParameterSymbol(DEFAULT_VALUE_PARAMETER)
         }
         var block: LighterASTNode? = null
         var expression: LighterASTNode? = null
