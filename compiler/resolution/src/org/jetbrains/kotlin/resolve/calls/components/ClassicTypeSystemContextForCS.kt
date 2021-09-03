@@ -16,13 +16,14 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImp
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.ClassicTypeSystemContext
-import org.jetbrains.kotlin.types.checker.NewCapturedType
-import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
+import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-class ClassicTypeSystemContextForCS(override val builtIns: KotlinBuiltIns) : TypeSystemInferenceExtensionContextDelegate,
+class ClassicTypeSystemContextForCS(
+    override val builtIns: KotlinBuiltIns,
+    val kotlinTypeRefiner: KotlinTypeRefiner
+) : TypeSystemInferenceExtensionContextDelegate,
     ClassicTypeSystemContext,
     BuiltInsProvider {
 
@@ -97,6 +98,15 @@ class ClassicTypeSystemContextForCS(override val builtIns: KotlinBuiltIns) : Typ
         require(this is TypeVariableTypeConstructor)
         return isContainedInInvariantOrContravariantPositions
     }
+
+    override fun newTypeCheckerState(errorTypesEqualToAnything: Boolean, stubTypesEqualToAnything: Boolean): TypeCheckerState {
+        return createClassicTypeCheckerState(
+            errorTypesEqualToAnything,
+            stubTypesEqualToAnything,
+            typeSystemContext = this,
+            kotlinTypeRefiner = kotlinTypeRefiner
+        )
+    }
 }
 
 
@@ -109,7 +119,8 @@ private inline fun Any?.errorMessage(): String {
 @Suppress("FunctionName")
 fun NewConstraintSystemImpl(
     constraintInjector: ConstraintInjector,
-    builtIns: KotlinBuiltIns
+    builtIns: KotlinBuiltIns,
+    kotlinTypeRefiner: KotlinTypeRefiner
 ): NewConstraintSystemImpl {
-    return NewConstraintSystemImpl(constraintInjector, ClassicTypeSystemContextForCS(builtIns))
+    return NewConstraintSystemImpl(constraintInjector, ClassicTypeSystemContextForCS(builtIns, kotlinTypeRefiner))
 }

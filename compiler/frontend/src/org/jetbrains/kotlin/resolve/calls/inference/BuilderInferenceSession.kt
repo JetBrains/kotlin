@@ -63,7 +63,7 @@ class BuilderInferenceSession(
     private var nestedBuilderInferenceSessions: MutableSet<BuilderInferenceSession> = mutableSetOf()
 
     private lateinit var lambda: ResolvedLambdaAtom
-    private val commonSystem = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns)
+    private val commonSystem = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns, callComponents.kotlinTypeRefiner)
 
     init {
         if (topLevelCallContext.inferenceSession is BuilderInferenceSession) {
