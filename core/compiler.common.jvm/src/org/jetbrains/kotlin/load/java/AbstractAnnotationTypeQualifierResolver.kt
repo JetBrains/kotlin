@@ -18,16 +18,16 @@ private typealias TypeQualifierWithApplicability<TAnnotation> = Pair<TAnnotation
 abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
     private val javaTypeEnhancementState: JavaTypeEnhancementState
 ) {
-    protected abstract val TAnnotation.annotations: Iterable<TAnnotation>
+    protected abstract val TAnnotation.metaAnnotations: Iterable<TAnnotation>
     protected abstract val TAnnotation.key: Any // TODO: figure out if keying `resolvedNicknames` by `fqName` is safe
     protected abstract val TAnnotation.fqName: FqName?
     protected abstract fun TAnnotation.enumArguments(onlyValue: Boolean): Iterable<String>
 
     private fun TAnnotation.findAnnotation(fqName: FqName): TAnnotation? =
-        annotations.find { it.fqName == fqName }
+        metaAnnotations.find { it.fqName == fqName }
 
     private fun TAnnotation.hasAnnotation(fqName: FqName): Boolean =
-        annotations.any { it.fqName == fqName }
+        metaAnnotations.any { it.fqName == fqName }
 
     private val resolvedNicknames = ConcurrentHashMap<Any, TAnnotation>()
 
@@ -40,7 +40,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
         return resolvedNicknames.getOrPut(annotation.key) {
             // This won't store nulls (ConcurrentHashMap does not permit that), but presumably unless the code
             // is broken a nickname should be resolvable.
-            annotation.annotations.firstNotNullOfOrNull(::resolveTypeQualifierAnnotation) ?: return null
+            annotation.metaAnnotations.firstNotNullOfOrNull(::resolveTypeQualifierAnnotation) ?: return null
         }
     }
 
@@ -76,7 +76,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
     private fun resolveTypeQualifierDefaultAnnotation(annotation: TAnnotation): TypeQualifierWithApplicability<TAnnotation>? {
         if (javaTypeEnhancementState.jsr305.isDisabled) return null
         val typeQualifierDefault = annotation.findAnnotation(TYPE_QUALIFIER_DEFAULT_FQNAME) ?: return null
-        val typeQualifier = annotation.annotations.firstOrNull { resolveTypeQualifierAnnotation(it) != null } ?: return null
+        val typeQualifier = annotation.metaAnnotations.firstOrNull { resolveTypeQualifierAnnotation(it) != null } ?: return null
         val applicability = typeQualifierDefault.enumArguments(onlyValue = true)
             .mapNotNullTo(mutableSetOf()) { JAVA_APPLICABILITY_TYPES[it] }
         return TypeQualifierWithApplicability(typeQualifier, applicability.allIfTypeUse())

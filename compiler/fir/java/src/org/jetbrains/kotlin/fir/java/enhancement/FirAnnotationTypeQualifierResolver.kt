@@ -21,14 +21,13 @@ import org.jetbrains.kotlin.load.java.JavaTypeQualifiersByElementType
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME
 import org.jetbrains.kotlin.name.FqName
 
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 class FirAnnotationTypeQualifierResolver(
     private val session: FirSession,
     javaTypeEnhancementState: JavaTypeEnhancementState,
     private val javaModuleAnnotationsProvider: JavaModuleAnnotationsProvider,
 ) : AbstractAnnotationTypeQualifierResolver<FirAnnotationCall>(javaTypeEnhancementState), FirSessionComponent {
 
-    override val FirAnnotationCall.annotations: Iterable<FirAnnotationCall>
+    override val FirAnnotationCall.metaAnnotations: Iterable<FirAnnotationCall>
         get() = coneClassLikeType?.lookupTag?.toSymbol(session)?.fir?.annotations.orEmpty()
 
     override val FirAnnotationCall.key: Any
