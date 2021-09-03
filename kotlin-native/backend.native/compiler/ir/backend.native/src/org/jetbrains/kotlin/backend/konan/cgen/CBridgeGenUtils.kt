@@ -130,8 +130,9 @@ private fun createKotlinBridge(
             isInfix = false
     )
     if (isExternal) {
+        // TODO this should be separate annotation
         bridge.annotations += buildSimpleAnnotation(stubs.irBuiltIns, startOffset, endOffset,
-                stubs.symbols.symbolName.owner, cBridgeName)
+                stubs.symbols.gcUnsafeCall.owner, cBridgeName)
         bridge.annotations += buildSimpleAnnotation(stubs.irBuiltIns, startOffset, endOffset,
                 stubs.symbols.filterExceptions.owner,
                 foreignExceptionMode.value)
