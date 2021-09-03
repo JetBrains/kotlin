@@ -25,9 +25,21 @@ public class HLImportOptimizerTestGenerated extends AbstractHLImportOptimizerTes
     }
 
     @Test
+    @TestMetadata("unusedAliasedTypeImport.kt")
+    public void testUnusedAliasedTypeImport() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/importOptimizer/unusedAliasedTypeImport.kt");
+    }
+
+    @Test
     @TestMetadata("unusedFunctionImports.kt")
     public void testUnusedFunctionImports() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/importOptimizer/unusedFunctionImports.kt");
+    }
+
+    @Test
+    @TestMetadata("usedAliasedTypeImport.kt")
+    public void testUsedAliasedTypeImport() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/importOptimizer/usedAliasedTypeImport.kt");
     }
 
     @Test

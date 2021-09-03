@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -171,12 +170,12 @@ internal class KtFirImportOptimizer(
                 val mostOuterTypeQualifier = generateSequence(qualifier) { it.outerTypeQualifier }.last()
                 if (mostOuterTypeQualifier.isQualified) return
 
-                saveType(mostOuterTypeQualifier.classId)
+                 saveType(mostOuterTypeQualifier)
             }
 
-            private fun saveType(classId: ClassId) {
-                val importableName = classId.asSingleFqName()
-                val referencedByName = classId.shortClassName
+            private fun saveType(qualifier: TypeQualifier) {
+                val importableName = qualifier.referencedClassId.asSingleFqName()
+                val referencedByName = qualifier.referencedByName
 
                 saveReferencedItem(importableName, referencedByName)
             }
@@ -230,7 +229,14 @@ private val FirFunctionCall.isInvokeOperatorImplicitCall: Boolean
  * to correctly reason about long qualifiers.
  */
 private sealed interface TypeQualifier {
-    val classId: ClassId
+    val referencedClassId: ClassId
+
+    /**
+     * Type can be imported with alias, and thus can be referenced by the name different from its actual name.
+     *
+     * We cannot use [ClassId.getShortClassName] for this, since it is not affected by the alias.
+     */
+    val referencedByName: Name
 
     /**
      * Must be `true` if the PSI qualifier is itself qualified with the package or some other type, and `false` otherwise.
@@ -246,39 +252,48 @@ private sealed interface TypeQualifier {
     val outerTypeQualifier: TypeQualifier?
 
     private class KtDotExpressionTypeQualifier(
-        override val classId: ClassId,
-        private val qualifier: KtElement,
+        override val referencedClassId: ClassId,
+        qualifier: KtElement,
     ) : TypeQualifier {
 
-        init {
-            require(qualifier is KtDotQualifiedExpression || qualifier is KtNameReferenceExpression) {
-                "Unexpected type of qualifier: ${qualifier::class}"
-            }
-        }
+        private val dotQualifier: KtDotQualifiedExpression? = qualifier as? KtDotQualifiedExpression
+
+        private val typeNameReference: KtNameReferenceExpression = when (qualifier) {
+            is KtDotQualifiedExpression -> qualifier.selectorExpression as? KtNameReferenceExpression
+            is KtNameReferenceExpression -> qualifier
+            else -> null
+        } ?: error("Cannot get referenced name from '${qualifier.text}'")
+
+        override val referencedByName: Name
+            get() = typeNameReference.getReferencedNameAsName()
 
         override val isQualified: Boolean
-            get() = qualifier is KtDotQualifiedExpression
+            get() = dotQualifier != null
 
         override val outerTypeQualifier: TypeQualifier?
             get() {
-                val outerClassId = classId.outerClassId ?: return null
-                val outerQualifier = (qualifier as? KtDotQualifiedExpression)?.receiverExpression ?: return null
+                val outerClassId = referencedClassId.outerClassId ?: return null
+                val outerQualifier = dotQualifier?.receiverExpression ?: return null
 
                 return KtDotExpressionTypeQualifier(outerClassId, outerQualifier)
             }
     }
 
     private class KtUserTypeQualifier(
-        override val classId: ClassId,
+        override val referencedClassId: ClassId,
         private val qualifier: KtUserType,
     ) : TypeQualifier {
+
+        override val referencedByName: Name
+            get() = qualifier.referenceExpression?.getReferencedNameAsName()
+                ?: error("Cannot get referenced name from '${qualifier.text}'")
 
         override val isQualified: Boolean
             get() = qualifier.qualifier != null
 
         override val outerTypeQualifier: TypeQualifier?
             get() {
-                val outerClassId = classId.outerClassId ?: return null
+                val outerClassId = referencedClassId.outerClassId ?: return null
                 val outerQualifier = qualifier.qualifier ?: return null
 
                 return KtUserTypeQualifier(outerClassId, outerQualifier)
