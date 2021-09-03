@@ -18,14 +18,13 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveP
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.TransformImplicitType
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
 import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @OptIn(AdapterForResolveProcessor::class)
 class FirImplicitTypeBodyResolveProcessor(
@@ -225,21 +224,22 @@ private class ReturnTypeCalculatorWithJump(
             return tryCalculateReturnType(declaration.getter.delegate)
         }
 
-        if (declaration.isIntersectionOverride) {
-            val result = tryCalculateReturnType(declaration.symbol.baseForIntersectionOverride!!.fir)
-            declaration.replaceReturnTypeRef(result)
-            session.lookupTracker?.recordTypeResolveAsLookup(result, declaration.source, null)
-            return result
-        }
-
-        runIf(declaration.isSubstitutionOverride) {
-            val overriddenDeclaration = declaration.originalForSubstitutionOverride ?: return@runIf
-            tryCalculateReturnType(overriddenDeclaration)
-            val result = FakeOverrideTypeCalculator.Forced.computeReturnType(declaration)
-            (declaration.returnTypeRef as? FirResolvedTypeRef)?.let {
-                session.lookupTracker?.recordTypeResolveAsLookup(it, declaration.source, null)
+        if (declaration.isSubstitutionOrIntersectionOverride) {
+            val fakeOverrideSubstitution = declaration.attributes.fakeOverrideSubstitution
+                ?: return declaration.returnTypeRef as FirResolvedTypeRef
+            synchronized(fakeOverrideSubstitution) {
+                (declaration.returnTypeRef as? FirResolvedTypeRef)?.let { return it }
+                declaration.attributes.fakeOverrideSubstitution = null
+                val (substitutor, baseSymbol) = fakeOverrideSubstitution
+                val baseDeclaration = baseSymbol.fir as FirTypedDeclaration
+                val baseReturnTypeRef = tryCalculateReturnType(baseDeclaration)
+                val baseReturnType = baseReturnTypeRef.type
+                session.lookupTracker?.recordTypeResolveAsLookup(baseReturnTypeRef, declaration.source, null)
+                val coneType = substitutor.substituteOrSelf(baseReturnType)
+                val returnType = declaration.returnTypeRef.resolvedTypeFromPrototype(coneType)
+                declaration.replaceReturnTypeRef(returnType)
+                return returnType
             }
-            return result
         }
 
         return when (val status = implicitBodyResolveComputationSession.getStatus(declaration.symbol)) {
