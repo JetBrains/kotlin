@@ -7,8 +7,8 @@ object Foo {
         this.foo2()
     }
 
-    <!NO_TAIL_CALLS_FOUND!>tailrec fun foo3()<!> {
-        Foo.<!NON_TAIL_RECURSIVE_CALL!>foo3<!>()
+    tailrec fun foo3() {
+        Foo.foo3()
     }
 }
 
@@ -22,12 +22,12 @@ class Bar {
             this.bar2()
         }
 
-        <!NO_TAIL_CALLS_FOUND!>tailrec fun bar3()<!> {
-            Bar.<!NON_TAIL_RECURSIVE_CALL!>bar3<!>()
+        tailrec fun bar3() {
+            Bar.bar3()
         }
 
-        <!NO_TAIL_CALLS_FOUND!>tailrec fun bar4()<!> {
-            Bar.Companion.<!NON_TAIL_RECURSIVE_CALL!>bar4<!>()
+        tailrec fun bar4() {
+            Bar.Companion.bar4()
         }
     }
 }

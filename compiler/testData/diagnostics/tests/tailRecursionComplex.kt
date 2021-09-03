@@ -1,5 +1,6 @@
+// FIR_IDENTICAL
 object O {
-    // foo is the same, but the compiler currently doesn't compile this as tail recursive. See KT-48602
+    // tailrec since `O` is a singleton
     tailrec fun foo(i: Int): Int = if (i < 0) 0 else O.foo(i - 1)
 }
 

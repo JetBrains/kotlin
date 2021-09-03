@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.toSymbol
 
 object FirTailrecFunctionChecker : FirSimpleFunctionChecker() {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -80,8 +82,8 @@ object FirTailrecFunctionChecker : FirSimpleFunctionChecker() {
                 }
                 val dispatchReceiver = functionCall.dispatchReceiver
                 // A tailrec call does not support changing dispatchers. Here we report changing dispatch receiver if the dispatch receiver
-                // is present and not a `this`. For the `this` check, we don't need to actually compare if the dispatch receiver `this`
-                // references the same `this` made available from `declaration`. This is because
+                // is present and not a `this` or a singleton. For the `this` check, we don't need to actually compare if the dispatch
+                // receiver `this` references the same `this` made available from `declaration`. This is because
                 // 1. if `this` is not labeled, then it references the innermost `this` receiver. If the innermost scope is not the
                 //    `declaration` body, then follow-up checks on following nodes would report there to be more instructions, which would
                 //    then make this call non-tailrec.
@@ -93,9 +95,10 @@ object FirTailrecFunctionChecker : FirSimpleFunctionChecker() {
                 //       is already bailed out earlier. So there is no need to report anything.
                 //    c. `declaration` is a member function of an inner class and the receiver is a labeled `this` pointing to the outer
                 //       class. The reasoning is the same with b.
-                // Also note that if the dispatch receiver is explicitly specify to be a singleton, the call is not compiled as a tailrec
-                // either. See KT-48602.
-                if (dispatchReceiver !is FirThisReceiverExpression && dispatchReceiver !is FirNoReceiverExpression) {
+                if (dispatchReceiver !is FirThisReceiverExpression &&
+                    dispatchReceiver !is FirNoReceiverExpression &&
+                    (declaration.dispatchReceiverType?.toSymbol(context.session) as? FirClassSymbol<*>)?.classKind?.isSingleton != true
+                ) {
                     reporter.reportOn(functionCall.source, FirErrors.NON_TAIL_RECURSIVE_CALL, context)
                     return
                 }
