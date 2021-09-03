@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
-import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeDeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -96,8 +95,10 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         session: FirSession,
     ): ConeKotlinType {
         return if (typeParameter.shouldBeFlexible(session.typeContext)) {
-            val notNullType = type.withNullability(ConeNullability.NOT_NULL, session.typeContext)
-            ConeFlexibleType(notNullType, notNullType.withNullability(ConeNullability.NULLABLE, session.typeContext))
+            ConeFlexibleType(
+                type.lowerBoundIfFlexible().withNullability(ConeNullability.NOT_NULL, session.typeContext),
+                type.upperBoundIfFlexible().withNullability(ConeNullability.NULLABLE, session.typeContext)
+            )
         } else {
             type
         }

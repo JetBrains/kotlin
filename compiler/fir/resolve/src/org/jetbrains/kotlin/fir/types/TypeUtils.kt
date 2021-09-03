@@ -181,15 +181,11 @@ fun coneFlexibleOrSimpleType(
     lowerBound: ConeKotlinType,
     upperBound: ConeKotlinType,
 ): ConeKotlinType {
-    if (lowerBound is ConeFlexibleType) {
-        return coneFlexibleOrSimpleType(typeContext, lowerBound.lowerBound, upperBound)
-    }
-    if (upperBound is ConeFlexibleType) {
-        return coneFlexibleOrSimpleType(typeContext, lowerBound, upperBound.upperBound)
-    }
+    val realLowerBound = lowerBound.lowerBoundIfFlexible()
+    val realUpperBound = upperBound.upperBoundIfFlexible()
     return when {
-        AbstractStrictEqualityTypeChecker.strictEqualTypes(typeContext, lowerBound, upperBound) -> lowerBound
-        else -> ConeFlexibleType(lowerBound, upperBound)
+        AbstractStrictEqualityTypeChecker.strictEqualTypes(typeContext, realLowerBound, realUpperBound) -> realLowerBound
+        else -> ConeFlexibleType(realLowerBound, realUpperBound)
     }
 }
 
@@ -472,9 +468,9 @@ fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType): ConeKot
 
     return if (type is ConeFlexibleType) {
         val lowerIntersectedType = intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type.lowerBound))
-            .withNullability(type.lowerBound.isMarkedNullable) as ConeKotlinType
+            .withNullability(type.lowerBound.isMarkedNullable) as ConeSimpleKotlinType
         val upperIntersectedType = intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type.upperBound))
-            .withNullability(type.upperBound.isMarkedNullable) as ConeKotlinType
+            .withNullability(type.upperBound.isMarkedNullable) as ConeSimpleKotlinType
 
         ConeFlexibleType(lowerIntersectedType, upperIntersectedType)
     } else {

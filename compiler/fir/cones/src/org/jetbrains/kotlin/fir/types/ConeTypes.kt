@@ -127,16 +127,9 @@ abstract class ConeClassLikeType : ConeLookupTagBasedType() {
 }
 
 open class ConeFlexibleType(
-    val lowerBound: ConeKotlinType,
-    val upperBound: ConeKotlinType
+    val lowerBound: ConeSimpleKotlinType,
+    val upperBound: ConeSimpleKotlinType
 ) : ConeKotlinType(), FlexibleTypeMarker {
-
-    init {
-        val message = { "Bounds violation: $lowerBound, $upperBound" }
-        require(lowerBound is SimpleTypeMarker, message)
-        require(upperBound is SimpleTypeMarker, message)
-    }
-
     override val typeArguments: Array<out ConeTypeProjection>
         get() = lowerBound.typeArguments
 
@@ -166,8 +159,15 @@ open class ConeFlexibleType(
 
 }
 
-fun ConeKotlinType.upperBoundIfFlexible() = (this as? ConeFlexibleType)?.upperBound ?: this
-fun ConeKotlinType.lowerBoundIfFlexible() = (this as? ConeFlexibleType)?.lowerBound ?: this
+fun ConeKotlinType.upperBoundIfFlexible(): ConeSimpleKotlinType = when (this) {
+    is ConeFlexibleType -> upperBound
+    is ConeSimpleKotlinType -> this
+}
+
+fun ConeKotlinType.lowerBoundIfFlexible(): ConeSimpleKotlinType = when (this) {
+    is ConeFlexibleType -> lowerBound
+    is ConeSimpleKotlinType -> this
+}
 
 class ConeCapturedTypeConstructor(
     val projection: ConeTypeProjection,
@@ -245,7 +245,8 @@ data class ConeDefinitelyNotNullType(val original: ConeKotlinType) : ConeSimpleK
     companion object
 }
 
-class ConeRawType(lowerBound: ConeKotlinType, upperBound: ConeKotlinType) : ConeFlexibleType(lowerBound, upperBound), RawTypeMarker
+class ConeRawType(lowerBound: ConeSimpleKotlinType, upperBound: ConeSimpleKotlinType) :
+    ConeFlexibleType(lowerBound, upperBound), RawTypeMarker
 
 /*
  * Contract of the intersection type: it is flat. It means that

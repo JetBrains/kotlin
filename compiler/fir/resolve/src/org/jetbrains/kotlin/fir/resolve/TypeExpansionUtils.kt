@@ -41,14 +41,13 @@ fun ConeClassLikeType.fullyExpandedType(
     return fullyExpandedTypeNoCache(useSiteSession, expandedConeType)
 }
 
-fun ConeKotlinType.fullyExpandedType(
-    useSiteSession: FirSession
-): ConeKotlinType = when (this) {
-    is ConeFlexibleType ->
-        ConeFlexibleType(lowerBound.fullyExpandedType(useSiteSession), upperBound.fullyExpandedType(useSiteSession))
-    is ConeClassLikeType -> fullyExpandedType(useSiteSession)
-    else -> this
+fun ConeKotlinType.fullyExpandedType(useSiteSession: FirSession): ConeKotlinType = when (this) {
+    is ConeFlexibleType -> ConeFlexibleType(lowerBound.fullyExpandedType(useSiteSession), upperBound.fullyExpandedType(useSiteSession))
+    is ConeSimpleKotlinType -> fullyExpandedType(useSiteSession)
 }
+
+fun ConeSimpleKotlinType.fullyExpandedType(useSiteSession: FirSession): ConeSimpleKotlinType =
+    if (this is ConeClassLikeType) fullyExpandedType(useSiteSession) else this
 
 private fun ConeClassLikeType.fullyExpandedTypeNoCache(
     useSiteSession: FirSession,

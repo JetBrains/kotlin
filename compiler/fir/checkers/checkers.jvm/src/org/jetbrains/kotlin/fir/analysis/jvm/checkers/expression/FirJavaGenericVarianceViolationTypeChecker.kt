@@ -127,8 +127,8 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
         }
     }
 
-    private fun ConeKotlinType.removeOutProjection(isCovariant: Boolean): ConeKotlinType {
-        return when (this) {
+    private fun <T : ConeKotlinType> T.removeOutProjection(isCovariant: Boolean): T {
+        val result = when (this) {
             is ConeFlexibleType -> ConeFlexibleType(
                 lowerBound.removeOutProjection(isCovariant),
                 upperBound.removeOutProjection(isCovariant)
@@ -160,6 +160,8 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
             )
             else -> this
         }
+        @Suppress("UNCHECKED_CAST")
+        return result as T
     }
 
     /**
