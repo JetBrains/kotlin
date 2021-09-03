@@ -313,10 +313,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 outputWatFile.writeText(res.wat)
 
                 val runner = """
-                    const wasmBinary = read(String.raw`${outputWasmFile.absoluteFile}`, 'binary');
-                    const wasmModule = new WebAssembly.Module(wasmBinary);
-                    wasmInstance = new WebAssembly.Instance(wasmModule, { runtime, js_code });
-                    wasmInstance.exports.main();
+                    WebAssembly.instantiateStreaming(fetch('${outputWasmFile.name}'), { runtime, js_code }).then((it) => {
+                        wasmInstance = it.instance;
+                        wasmInstance.exports.main();
+                    });
                 """.trimIndent()
 
                 outputFile.writeText(res.js + "\n" + runner)
