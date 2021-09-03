@@ -158,13 +158,13 @@ public class TestFiles {
             if (module != null) {
                 module.getDependencies().addAll(module.dependenciesSymbols.stream().map(name -> {
                     M dep = modules.get(name);
-                    assert dep != null : "Dependency not found:" + name + "for module " + module.name;
+                    assert dep != null : "Dependency not found: " + name + " for module " + module.name;
                     return dep;
                 }).collect(Collectors.toList()));
 
                 module.getFriends().addAll(module.friendsSymbols.stream().map(name -> {
                     M dep = modules.get(name);
-                    assert dep != null : "Dependency not found:" + name + "for module " + module.name;
+                    assert dep != null : "Dependency not found: " + name + " for module " + module.name;
                     return dep;
                 }).collect(Collectors.toList()));
             }
