@@ -223,8 +223,8 @@ TEST(ThreadStateDeathTest, StateSwitchForDetachedThread) {
     EXPECT_DEATH(SwitchThreadState(static_cast<MemoryState*>(nullptr), ThreadState::kNative), "thread must not be nullptr");
     EXPECT_DEATH(SwitchThreadState(static_cast<mm::ThreadData*>(nullptr), ThreadState::kNative), "threadData must not be nullptr");
 
-    EXPECT_DEATH(Kotlin_mm_switchThreadStateNative(), "threadData must not be nullptr");
-    EXPECT_DEATH(Kotlin_mm_switchThreadStateRunnable(), "threadData must not be nullptr" );
+    EXPECT_DEATH(Kotlin_mm_switchThreadStateNative(), "Thread is not attached to the runtime");
+    EXPECT_DEATH(Kotlin_mm_switchThreadStateRunnable(), "Thread is not attached to the runtime" );
 }
 
 TEST(ThreadStateDeathTest, ReentrantStateSwitch) {

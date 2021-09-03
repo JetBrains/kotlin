@@ -38,6 +38,7 @@ public:
     // Try not to use these methods very often, as (1) thread local access can be slow on some platforms,
     // (2) TLS gets deallocated before our thread destruction hooks run.
     // Using this after `Unregister` for the thread has been called is undefined behaviour.
+    // Using this by a thread which is not attached to the Kotlin runtime is undefiend behaviour.
     ALWAYS_INLINE ThreadData* CurrentThreadData() const noexcept;
     Node* CurrentThreadDataNode() const noexcept { return currentThreadDataNode_; }
 
