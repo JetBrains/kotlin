@@ -1728,6 +1728,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/simpleEmptyVararg.kt");
             }
 
+            @TestMetadata("suspendUnitConversion.kt")
+            public void testSuspendUnitConversion() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendUnitConversion.kt");
+            }
+
             @TestMetadata("unboundReferences.kt")
             public void testUnboundReferences() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/unboundReferences.kt");
