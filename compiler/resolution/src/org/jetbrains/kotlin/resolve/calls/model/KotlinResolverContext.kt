@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.isDynamic
 
@@ -49,7 +50,8 @@ class KotlinCallComponents(
     val samConversionOracle: SamConversionOracle,
     val samConversionResolver: SamConversionResolver,
     val kotlinTypeChecker: NewKotlinTypeChecker,
-    val lookupTracker: LookupTracker
+    val lookupTracker: LookupTracker,
+    val kotlinTypeRefiner: KotlinTypeRefiner,
 )
 
 class SimpleCandidateFactory(
@@ -64,7 +66,7 @@ class SimpleCandidateFactory(
     val baseSystem: ConstraintStorage
 
     init {
-        val baseSystem = NewConstraintSystemImpl(callComponents.constraintInjector, callComponents.builtIns)
+        val baseSystem = NewConstraintSystemImpl(callComponents.constraintInjector, callComponents.builtIns, callComponents.kotlinTypeRefiner)
         if (!inferenceSession.resolveReceiverIndependently()) {
             baseSystem.addSubsystemFromArgument(kotlinCall.explicitReceiver)
             baseSystem.addSubsystemFromArgument(kotlinCall.dispatchReceiverForInvokeExtension)
@@ -243,4 +245,3 @@ class GivenCandidate(
     val dispatchReceiver: ReceiverValueWithSmartCastInfo?,
     val knownTypeParametersResultingSubstitutor: TypeSubstitutor?
 )
-

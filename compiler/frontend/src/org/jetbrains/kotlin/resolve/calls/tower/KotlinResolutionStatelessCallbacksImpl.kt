@@ -40,12 +40,15 @@ import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeRefinerImpl
 import org.jetbrains.kotlin.types.TypeIntersector
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinResolutionStatelessCallbacksImpl(
     private val deprecationResolver: DeprecationResolver,
     private val languageVersionSettings: LanguageVersionSettings,
+    private val kotlinTypeRefiner: KotlinTypeRefiner
 ) : KotlinResolutionStatelessCallbacks {
     override fun isDescriptorFromSource(descriptor: CallableDescriptor) =
         DescriptorToSourceUtils.descriptorToDeclaration(descriptor) != null
@@ -107,10 +110,10 @@ class KotlinResolutionStatelessCallbacksImpl(
     }
 
     override fun createConstraintSystemForOverloadResolution(
-        constraintInjector: ConstraintInjector, builtIns: KotlinBuiltIns,
+        constraintInjector: ConstraintInjector, builtIns: KotlinBuiltIns
     ): SimpleConstraintSystem {
         return if (languageVersionSettings.getFlag(AnalysisFlags.constraintSystemForOverloadResolution).forNewInference())
-            SimpleConstraintSystemImpl(constraintInjector, builtIns)
+            SimpleConstraintSystemImpl(constraintInjector, builtIns, kotlinTypeRefiner)
         else
             ConstraintSystemBuilderImpl.forSpecificity()
     }

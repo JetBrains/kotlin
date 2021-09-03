@@ -20,11 +20,15 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.components.ClassicTypeSystemContextForCS
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 
 class TypeApproximator(
     builtIns: KotlinBuiltIns,
     languageVersionSettings: LanguageVersionSettings,
-) : AbstractTypeApproximator(ClassicTypeSystemContextForCS(builtIns), languageVersionSettings) {
+) : AbstractTypeApproximator(
+        ClassicTypeSystemContextForCS(builtIns, KotlinTypeRefiner.Default),
+        languageVersionSettings
+) {
     fun approximateDeclarationType(baseType: KotlinType, local: Boolean): UnwrappedType {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return baseType.unwrap()
 
@@ -42,4 +46,3 @@ class TypeApproximator(
     fun approximateToSubType(type: UnwrappedType, conf: TypeApproximatorConfiguration): UnwrappedType? =
         super.approximateToSubType(type, conf) as UnwrappedType?
 }
-
