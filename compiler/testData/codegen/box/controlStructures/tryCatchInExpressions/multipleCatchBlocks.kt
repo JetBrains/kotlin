@@ -1,5 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: EXCEPTIONS_NOT_IMPLEMENTED
+
 class Exception1(msg: String): Exception(msg)
 class Exception2(msg: String): Exception(msg)
 class Exception3(msg: String): Exception(msg)

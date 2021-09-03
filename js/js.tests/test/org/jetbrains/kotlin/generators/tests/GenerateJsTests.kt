@@ -103,9 +103,6 @@ fun main(args: Array<String>) {
                         // TODO: Support coroutines
                         "coroutines", "parametersMetadata",
 
-                        // TODO: Support exceptions
-                        "finally", "deadCodeElimination", "controlStructures/tryCatchInExpressions",
-
                         // TODO: Support delegated properties
                         "delegatedProperty",
 

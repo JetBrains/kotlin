@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-
 fun <T> id(t: T): T = t
 
 fun test(b: Boolean): String {

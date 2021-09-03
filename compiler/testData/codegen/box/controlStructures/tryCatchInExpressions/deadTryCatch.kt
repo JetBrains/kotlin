@@ -1,5 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: EXCEPTIONS_NOT_IMPLEMENTED
+
 inline fun catchAll(x: String, block: () -> Unit): String {
     try {
         block()

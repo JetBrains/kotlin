@@ -1,5 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: EXCEPTIONS_NOT_IMPLEMENTED
+
 // !LANGUAGE: +InlineClasses
 
 inline class A(val x: Any? = null)
