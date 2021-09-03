@@ -265,8 +265,15 @@
 -keep class org.jline.terminal.impl.jna.JnaSupportImpl  { *; }
 -keep class org.jline.terminal.impl.jansi.JansiSupportImpl  { *; }
 
+# Keep rules for serializable classes (see https://www.guardsquare.com/manual/configuration/examples#serializable)
 -keepclassmembers class * implements java.io.Serializable {
-    static final long serialVersionUID;
+        static final long serialVersionUID;
+        private static final java.io.ObjectStreamField[] serialPersistentFields;
+        !static !transient <fields>;
+        private void writeObject(java.io.ObjectOutputStream);
+        private void readObject(java.io.ObjectInputStream);
+        java.lang.Object writeReplace();
+        java.lang.Object readResolve();
 }
 
 -dontwarn org.jetbrains.kotlin.fir.**
