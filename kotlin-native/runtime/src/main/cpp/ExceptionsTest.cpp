@@ -337,10 +337,10 @@ void setupMocks(bool expectRegisteredThread = true) noexcept {
     ON_CALL(nativeHandlerMock, Call)
             .WillByDefault([expectRegisteredThread]() {
                 if (expectRegisteredThread) {
-                    loggingAssert(mm::GetMemoryState() != nullptr, "Expected registered thread in the native handler");
+                    loggingAssert(mm::IsCurrentThreadRegistered(), "Expected registered thread in the native handler");
                     loggingAssert(GetThreadState() == ThreadState::kNative, "Expected kNative thread state in the native handler");
                 } else {
-                    loggingAssert(mm::GetMemoryState() == nullptr, "Expected unregistered thread in the native handler");
+                    loggingAssert(!mm::IsCurrentThreadRegistered(), "Expected unregistered thread in the native handler");
                 }
                 log("Native handler");
             });
@@ -399,7 +399,7 @@ TEST(TerminationThreadStateDeathTest, TerminationInForeignThread) {
     auto testBlock = []() {
         setupMocks(/* expectRegisteredThread = */ false);
 
-        loggingAssert(mm::GetMemoryState() == nullptr, "Expected unregistered thread before std::terminate");
+        loggingAssert(!mm::IsCurrentThreadRegistered(), "Expected unregistered thread before std::terminate");
         std::terminate();
     };
 
@@ -458,7 +458,7 @@ TEST(TerminationThreadStateDeathTest, UnhandledKotlinExceptionInForeignThread) {
         // It is possible if a Kotlin exception thrown by a Kotlin callback is re-thrown in
         // another thread which is not attached to the Kotlin runtime at all.
         std::thread foreignThread([]() {
-            loggingAssert(mm::GetMemoryState() == nullptr, "Expected unregistered thread before throwing");
+            loggingAssert(!mm::IsCurrentThreadRegistered(), "Expected unregistered thread before throwing");
 
             auto future = std::async(std::launch::async, []() {
                 // Initial Kotlin exception throwing requires the runtime to be initialized.
@@ -500,7 +500,7 @@ TEST(TerminationThreadStateDeathTest, UnhandledForeignExceptionInForeignThread) 
         setupMocks(/* expectRegisteredThread = */ false);
 
         std::thread foreignThread([]() {
-            loggingAssert(mm::GetMemoryState() == nullptr, "Expected unregistered thread before throwing");
+            loggingAssert(!mm::IsCurrentThreadRegistered(), "Expected unregistered thread before throwing");
             throw std::runtime_error("Foreign exception");
         });
         foreignThread.join();
