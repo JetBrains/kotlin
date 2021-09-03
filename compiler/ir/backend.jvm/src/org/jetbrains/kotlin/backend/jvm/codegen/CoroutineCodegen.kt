@@ -145,8 +145,6 @@ private val BRIDGE_ORIGINS = setOf(
     JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE,
     IrDeclarationOrigin.BRIDGE,
     IrDeclarationOrigin.BRIDGE_SPECIAL,
-    IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
-    IrDeclarationOrigin.ADAPTER_FOR_SUSPEND_CONVERSION
 )
 
 // These functions contain a single `suspend` tail call, the value of which should be returned as is
