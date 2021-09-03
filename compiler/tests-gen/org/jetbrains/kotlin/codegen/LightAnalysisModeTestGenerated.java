@@ -2518,6 +2518,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/simpleEmptyVararg.kt");
             }
 
+            @TestMetadata("suspendUnitConversion.kt")
+            public void testSuspendUnitConversion() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendUnitConversion.kt");
+            }
+
             @TestMetadata("toStringNoReflect.kt")
             public void testToStringNoReflect() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/toStringNoReflect.kt");
