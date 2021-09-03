@@ -57,7 +57,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
         reporter: DiagnosticReporter
     ) {
         val languageVersionSettings = context.session.languageVersionSettings
-        val useExperimentalFqNames = languageVersionSettings.getFlag(AnalysisFlags.useExperimental)
+        val useExperimentalFqNames = languageVersionSettings.getFlag(AnalysisFlags.optIn)
         if (!languageVersionSettings.supportsFeature(LanguageFeature.OptInRelease) &&
             OptInNames.REQUIRES_OPT_IN_FQ_NAME.asString() !in useExperimentalFqNames
         ) {

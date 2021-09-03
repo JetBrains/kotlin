@@ -59,7 +59,7 @@ fun parseLanguageVersionSettings(directives: Directives): CompilerTestLanguageVe
     val languageFeaturesString = directives[LANGUAGE_DIRECTIVE]
 
     val analysisFlags = listOfNotNull(
-        analysisFlag(AnalysisFlags.useExperimental, directives[OPT_IN_DIRECTIVE]?.split(' ')),
+        analysisFlag(AnalysisFlags.optIn, directives[OPT_IN_DIRECTIVE]?.split(' ')),
         analysisFlag(JvmAnalysisFlags.jvmDefaultMode, directives[JVM_DEFAULT_MODE]?.let { JvmDefaultMode.fromStringOrNull(it) }),
         analysisFlag(AnalysisFlags.ignoreDataFlowInAssert, if (IGNORE_DATA_FLOW_IN_ASSERT_DIRECTIVE in directives) true else null),
         analysisFlag(AnalysisFlags.skipMetadataVersionCheck, if (SKIP_METADATA_VERSION_CHECK in directives) true else null),

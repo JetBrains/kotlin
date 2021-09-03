@@ -353,8 +353,8 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
 
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
             super.configureAnalysisFlags(collector, languageVersion).also {
-                val useExperimental = it[AnalysisFlags.useExperimental] as List<*>
-                it[AnalysisFlags.useExperimental] = useExperimental + listOf("kotlin.ExperimentalUnsignedTypes")
+                val optInList = it[AnalysisFlags.optIn] as List<*>
+                it[AnalysisFlags.optIn] = optInList + listOf("kotlin.ExperimentalUnsignedTypes")
                 if (printIr)
                     phasesToDumpAfter = arrayOf("ALL")
             }

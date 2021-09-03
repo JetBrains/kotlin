@@ -405,7 +405,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 //                    WARNING, "'-Xopt-in' is deprecated and will be removed in a future release, please use -opt-in instead"
 //                )
             }
-            put(AnalysisFlags.useExperimental, useExperimentalFqNames + optInDeprecatedFqNames + optIn?.toList().orEmpty())
+            put(AnalysisFlags.optIn, useExperimentalFqNames + optInDeprecatedFqNames + optIn?.toList().orEmpty())
             put(AnalysisFlags.expectActualLinker, expectActualLinker)
             put(AnalysisFlags.explicitApiVersion, apiVersion != null)
             put(AnalysisFlags.allowResultReturnType, allowResultReturnType)

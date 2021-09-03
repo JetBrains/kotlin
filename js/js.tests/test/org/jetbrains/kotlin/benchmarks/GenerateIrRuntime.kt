@@ -88,7 +88,7 @@ class GenerateIrRuntime {
                 LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED
             ),
             analysisFlags = mapOf(
-                AnalysisFlags.useExperimental to listOf(
+                AnalysisFlags.optIn to listOf(
                     "kotlin.contracts.ExperimentalContracts",
                     "kotlin.Experimental",
                     "kotlin.ExperimentalMultiplatform"

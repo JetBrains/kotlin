@@ -284,7 +284,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             languageVersionSettings: LanguageVersionSettings,
             bindingContext: BindingContext
         ): Boolean =
-            annotationFqName.asString() in languageVersionSettings.getFlag(AnalysisFlags.useExperimental) ||
+            annotationFqName.asString() in languageVersionSettings.getFlag(AnalysisFlags.optIn) ||
                     anyParentMatches { element ->
                         element.isDeclarationAnnotatedWith(annotationFqName, bindingContext) ||
                                 element.isElementAnnotatedWithUseExperimentalOf(annotationFqName, bindingContext)
@@ -358,7 +358,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                 return true
             }
 
-            languageVersionSettings.getFlag(AnalysisFlags.useExperimental).forEach { fqName ->
+            languageVersionSettings.getFlag(AnalysisFlags.optIn).forEach { fqName ->
                 if (fqName != REQUIRES_OPT_IN_FQ_NAME.asString() && fqName != OLD_EXPERIMENTAL_FQ_NAME.asString()) {
                     checkAnnotation(fqName)
                 }
@@ -411,7 +411,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         }
 
         private fun checkUsageOfKotlinExperimentalOrUseExperimental(element: PsiElement, context: CheckerContext) {
-            val useExperimentalFqNames = context.languageVersionSettings.getFlag(AnalysisFlags.useExperimental)
+            val useExperimentalFqNames = context.languageVersionSettings.getFlag(AnalysisFlags.optIn)
             if (!context.languageVersionSettings.supportsFeature(LanguageFeature.OptInRelease) &&
                 REQUIRES_OPT_IN_FQ_NAME.asString() !in useExperimentalFqNames &&
                 OLD_EXPERIMENTAL_FQ_NAME.asString() !in useExperimentalFqNames

@@ -209,7 +209,7 @@ object FirOptInUsageBaseChecker {
     ): Boolean {
         val languageVersionSettings = context.session.languageVersionSettings
         val fqNameAsString = annotationClassId.asFqNameString()
-        if (fqNameAsString in languageVersionSettings.getFlag(AnalysisFlags.useExperimental)) {
+        if (fqNameAsString in languageVersionSettings.getFlag(AnalysisFlags.optIn)) {
             return true
         }
         for (annotationContainer in context.annotationContainers) {

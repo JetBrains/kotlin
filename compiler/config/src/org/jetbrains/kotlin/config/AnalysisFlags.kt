@@ -19,7 +19,7 @@ object AnalysisFlags {
     val expectActualLinker by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val useExperimental by AnalysisFlag.Delegates.ListOfStrings
+    val optIn by AnalysisFlag.Delegates.ListOfStrings
 
     @JvmStatic
     val explicitApiVersion by AnalysisFlag.Delegates.Boolean
