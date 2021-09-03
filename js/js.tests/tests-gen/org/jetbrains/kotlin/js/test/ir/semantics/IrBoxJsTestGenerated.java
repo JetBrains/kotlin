@@ -6061,6 +6061,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/nameClashes/jsNameAndPrivate.kt");
         }
 
+        @TestMetadata("jsQualifier.kt")
+        public void testJsQualifier() throws Exception {
+            runTest("js/js.translator/testData/box/nameClashes/jsQualifier.kt");
+        }
+
         @TestMetadata("localFunctionInLambda.kt")
         public void testLocalFunctionInLambda() throws Exception {
             runTest("js/js.translator/testData/box/nameClashes/localFunctionInLambda.kt");
