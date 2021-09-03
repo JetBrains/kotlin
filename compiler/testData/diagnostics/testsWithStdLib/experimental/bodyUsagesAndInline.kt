@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // !DIAGNOSTICS: -NOTHING_TO_INLINE -UNUSED_PARAMETER
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// !OPT_IN: kotlin.RequiresOptIn
 // FILE: api.kt
 
 package api

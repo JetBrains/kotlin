@@ -1,4 +1,4 @@
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// !OPT_IN: kotlin.RequiresOptIn
 // !LANGUAGE: -OptInOnOverrideForbidden
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)

@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_API_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_EXPERIMENTAL
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.frontend.classic.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -104,7 +103,7 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
 
         forTestsMatching("compiler/testData/diagnostics/tests/unsignedTypes/*") {
             defaultDirectives {
-                USE_EXPERIMENTAL with "kotlin.ExperimentalUnsignedTypes"
+                OPT_IN with "kotlin.ExperimentalUnsignedTypes"
                 +WITH_STDLIB
             }
         }

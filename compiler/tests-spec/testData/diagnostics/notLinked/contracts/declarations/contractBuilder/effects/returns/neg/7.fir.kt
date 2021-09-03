@@ -1,5 +1,5 @@
 // !LANGUAGE: +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 
 import kotlin.contracts.*
 

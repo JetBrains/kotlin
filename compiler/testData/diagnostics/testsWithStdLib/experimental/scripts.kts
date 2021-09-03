@@ -1,4 +1,4 @@
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// !OPT_IN: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: api.kt
 

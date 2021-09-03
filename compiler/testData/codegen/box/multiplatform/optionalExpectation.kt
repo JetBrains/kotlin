@@ -1,6 +1,6 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // !LANGUAGE: +MultiPlatformProjects
-// !USE_EXPERIMENTAL: kotlin.ExperimentalMultiplatform
+// !OPT_IN: kotlin.ExperimentalMultiplatform
 // IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
 // MODULE: library

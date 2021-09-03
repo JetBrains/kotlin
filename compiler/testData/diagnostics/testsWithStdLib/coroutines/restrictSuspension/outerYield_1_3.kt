@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // !LANGUAGE: +ReleaseCoroutines +ExperimentalBuilderInference
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// !OPT_IN: kotlin.RequiresOptIn
 // SKIP_TXT
 
 @file:OptIn(ExperimentalTypeInference::class)

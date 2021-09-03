@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
-// !USE_EXPERIMENTAL: kotlin.experimental.ExperimentalTypeInference
+// !OPT_IN: kotlin.experimental.ExperimentalTypeInference
 
 import kotlin.experimental.ExperimentalTypeInference
 

@@ -1,7 +1,7 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND: JS, NATIVE
-// !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
+// !OPT_IN: kotlin.ExperimentalStdlibApi
 // WITH_REFLECT
 
 import kotlin.reflect.full.findAnnotation

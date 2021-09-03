@@ -1,6 +1,6 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // !LANGUAGE: +MultiPlatformProjects
-// !USE_EXPERIMENTAL: kotlin.ExperimentalMultiplatform
+// !OPT_IN: kotlin.ExperimentalMultiplatform
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB

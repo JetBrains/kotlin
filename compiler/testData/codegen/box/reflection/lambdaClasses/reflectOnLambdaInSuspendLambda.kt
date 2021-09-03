@@ -1,4 +1,4 @@
-// !USE_EXPERIMENTAL: kotlin.reflect.jvm.ExperimentalReflectionOnLambdas
+// !OPT_IN: kotlin.reflect.jvm.ExperimentalReflectionOnLambdas
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 // WITH_COROUTINES

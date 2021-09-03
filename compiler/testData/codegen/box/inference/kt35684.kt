@@ -1,7 +1,7 @@
 // DONT_TARGET_EXACT_BACKEND: WASM
 // WASM_MUTE_REASON: COROUTINES
 // !LANGUAGE: +NewInference
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// !OPT_IN: kotlin.RequiresOptIn
 // WITH_RUNTIME
 
 // ISSUE: KT-35684

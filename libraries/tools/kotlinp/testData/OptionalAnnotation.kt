@@ -1,5 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
-// !USE_EXPERIMENTAL: kotlin.ExperimentalMultiplatform
+// !OPT_IN: kotlin.ExperimentalMultiplatform
 // NO_READ_WRITE_COMPARE
 
 package test

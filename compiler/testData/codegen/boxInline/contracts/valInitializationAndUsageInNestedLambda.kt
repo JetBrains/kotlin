@@ -1,5 +1,5 @@
 // NO_CHECK_LAMBDA_INLINING
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 // IGNORE_BACKEND: NATIVE
 
 // FILE: 1.kt

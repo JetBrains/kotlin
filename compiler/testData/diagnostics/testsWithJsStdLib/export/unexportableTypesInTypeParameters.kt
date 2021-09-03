@@ -1,4 +1,4 @@
-// !USE_EXPERIMENTAL: kotlin.js.ExperimentalJsExport
+// !OPT_IN: kotlin.js.ExperimentalJsExport
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !RENDER_DIAGNOSTICS_MESSAGES
 

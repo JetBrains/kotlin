@@ -1,5 +1,5 @@
 // LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)

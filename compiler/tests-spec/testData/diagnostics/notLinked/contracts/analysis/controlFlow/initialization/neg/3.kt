@@ -1,6 +1,6 @@
 // FIR_IDE_IGNORE
 // LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
 
 /*

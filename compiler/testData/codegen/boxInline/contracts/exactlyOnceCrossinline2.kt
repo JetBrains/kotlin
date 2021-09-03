@@ -1,5 +1,5 @@
 // IGNORE_FIR_DIAGNOSTICS
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 // IGNORE_BACKEND: NATIVE
 // FILE: 1.kt
 package test

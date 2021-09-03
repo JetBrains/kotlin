@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// !OPT_IN: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 @file:OptIn(ExperimentalTypeInference::class)
