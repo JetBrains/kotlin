@@ -201,15 +201,18 @@ open class HostManager(
         fun host_arch(): String =
             hostArch()
 
-        fun hostArch(): String {
-            return when (val javaArch = System.getProperty("os.arch")) {
+        fun hostArch(): String =
+            hostArchOrNull()
+                ?: throw TargetSupportException("Unknown hardware platform: ${System.getProperty("os.arch")}")
+
+        fun hostArchOrNull(): String? =
+            when (System.getProperty("os.arch")) {
                 "x86_64" -> "x86_64"
                 "amd64" -> "x86_64"
                 "arm64" -> "aarch64"
                 "aarch64" -> "aarch64"
-                else -> throw TargetSupportException("Unknown hardware platform: $javaArch")
+                else -> null
             }
-        }
 
         private val hostMapping: Map<Pair<String, String>, KonanTarget> = mapOf(
             Pair("osx", "x86_64") to MACOS_X64,
@@ -218,8 +221,20 @@ open class HostManager(
             Pair("windows", "x86_64") to MINGW_X64
         )
 
-        val host: KonanTarget = hostMapping[hostOs() to hostArch()]
-            ?: throw TargetSupportException("Unknown host target: ${hostOs()} ${hostArch()}")
+        val host: KonanTarget = determineHost(hostOs(), hostArchOrNull())
+
+        private fun determineHost(os: String, arch: String?): KonanTarget {
+            hostMapping[os to arch]?.let {
+                return it
+            }
+            // https://youtrack.jetbrains.com/issue/KT-48566.
+            // Workaround for unsupported host architectures.
+            // It is obviously incorrect, but makes Gradle plugin work.
+            hostMapping.entries.firstOrNull { (host, _) -> host.first == os }?.let {
+                return it.value
+            }
+            throw TargetSupportException("Unknown host target: $os $arch")
+        }
 
         // Note Hotspot-specific VM option enforcing C1-only, critical for decent compilation speed.
         val defaultJvmArgs = listOf("-XX:TieredStopAtLevel=1", "-ea", "-Dfile.encoding=UTF-8")
