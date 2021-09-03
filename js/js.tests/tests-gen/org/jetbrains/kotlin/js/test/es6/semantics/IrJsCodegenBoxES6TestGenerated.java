@@ -11622,6 +11622,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/finally/objectInFinally.kt");
         }
 
+        @TestMetadata("someStuff.kt")
+        public void testSomeStuff() throws Exception {
+            runTest("compiler/testData/codegen/box/finally/someStuff.kt");
+        }
+
         @TestMetadata("tryFinally.kt")
         public void testTryFinally() throws Exception {
             runTest("compiler/testData/codegen/box/finally/tryFinally.kt");
