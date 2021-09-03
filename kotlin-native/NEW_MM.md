@@ -43,14 +43,14 @@ Update to Kotlin/Native 1.6.0-M1-139 and enable dev repositories:
 // build.gradle.kts
 
 repositories {
-    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/temporary")
 }
 
 // settings.gradle.kts
 
 pluginManagement {
     repositories {
-        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/temporary")
         gradlePluginPortal()
     }
 }
