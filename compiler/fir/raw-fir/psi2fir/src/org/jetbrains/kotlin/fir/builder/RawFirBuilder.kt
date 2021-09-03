@@ -474,7 +474,6 @@ open class RawFirBuilder(
                 mode == BodyBuildingMode.LAZY_BODIES -> buildLazyExpression {
                     source = this@toFirBackingField?.initializer?.toFirSourceElement()
                 }
-                mode == BodyBuildingMode.STUBS -> buildExpressionStub()
                 else -> this@toFirBackingField?.initializer.toFirExpression("Should have initializer")
             }
             val returnType = this?.returnTypeReference.toFirOrImplicitType()
@@ -1450,7 +1449,6 @@ open class RawFirBuilder(
                 mode == BodyBuildingMode.LAZY_BODIES -> buildLazyExpression {
                     source = initializer?.toFirSourceElement()
                 }
-                mode == BodyBuildingMode.STUBS -> buildExpressionStub()
                 else -> initializer.toFirExpression("Should have initializer")
 
             }
@@ -1538,7 +1536,6 @@ open class RawFirBuilder(
                         if (hasDelegate()) {
                             fun extractDelegateExpression() = when (mode) {
                                 BodyBuildingMode.NORMAL -> this@toFirProperty.delegate?.expression.toFirExpression("Should have delegate")
-                                BodyBuildingMode.STUBS -> buildExpressionStub()
                                 BodyBuildingMode.LAZY_BODIES -> this@toFirProperty.delegate?.expression?.let {
                                     buildLazyExpression { source = it.toFirSourceElement() }
                                 } ?: buildErrorExpression {
@@ -2441,11 +2438,6 @@ enum class BodyBuildingMode {
      * Build every expression and every body
      */
     NORMAL,
-
-    /**
-     * Build [org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub] for expressions
-     */
-    STUBS,
 
     /**
      * Build [org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock] for function bodies, constructors & getters/setters

@@ -32,7 +32,7 @@ import kotlin.system.measureNanoTime
 @RunWith(JUnit3RunnerWithInners::class)
 class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
 
-    private fun testTotalKotlinWithGivenMode(stubMode: Boolean) {
+    fun testTotalKotlinWithExpressionTrees() {
         val root = File(testDataPath)
         var counter = 0
         var time = 0L
@@ -63,7 +63,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 val ktFile = createKtFile(file.toRelativeString(root))
                 val firFile: FirFile
                 time += measureNanoTime {
-                    firFile = ktFile.toFirFile(BodyBuildingMode.stubs(stubMode))
+                    firFile = ktFile.toFirFile()
                 }
                 totalLength += StringBuilder().also { FirRenderer(it).visitFile(firFile) }.length
                 counter++
@@ -93,9 +93,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                         when (expression) {
                             is FirExpressionStub -> {
                                 expressionStubs++
-                                if (!stubMode) {
-                                    println(expression.psi?.text)
-                                }
+                                println(expression.psi?.text)
                             }
                             else -> normalExpressions++
                         }
@@ -160,20 +158,10 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         println("KT EXPRESSIONS: $ktExpressions")
         println("KT DECLARATIONS: $ktDeclarations")
         println("KT REFERENCES: $ktReferences")
-        if (!stubMode) {
-            assertEquals("# of expression stubs", 0, expressionStubs)
-        }
+        assertEquals("# of expression stubs", 0, expressionStubs)
         assertEquals("# of error expressions", 0, errorExpressions)
         assertEquals("# of error declarations", 0, errorDeclarations)
         assertEquals("# of error references", 0, errorReferences)
-    }
-
-    fun testTotalKotlinWithExpressionTrees() {
-        testTotalKotlinWithGivenMode(stubMode = false)
-    }
-
-    fun testTotalKotlinWithDeclarationsOnly() {
-        testTotalKotlinWithGivenMode(stubMode = true)
     }
 
     private fun testConsistency(checkConsistency: FirFile.() -> Unit) {

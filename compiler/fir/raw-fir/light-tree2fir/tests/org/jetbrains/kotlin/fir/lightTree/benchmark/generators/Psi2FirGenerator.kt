@@ -10,7 +10,6 @@ import com.intellij.psi.impl.DebugUtil
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
-import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.psi.KtFile
 import org.openjdk.jmh.annotations.Scope
 import org.openjdk.jmh.annotations.State
@@ -23,9 +22,9 @@ open class Psi2FirGenerator : TreeGenerator, AbstractRawFirBuilderTestCase() {
         DebugUtil.psiTreeToString(ktFile, false)
     }
 
-    override fun generateFir(text: String, file: File, stubMode: Boolean) {
+    override fun generateFir(text: String, file: File) {
         val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.path)), text) as KtFile
-        val firFile = ktFile.toFirFile(BodyBuildingMode.stubs(stubMode))
+        val firFile = ktFile.toFirFile()
         StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()
     }
 

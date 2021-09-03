@@ -137,7 +137,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
             createEmptySession(),
             DummyScopeProvider,
             psiMode = PsiHandlingMode.IDE,
-            bodyBuildingMode = BodyBuildingMode.STUBS
+            bodyBuildingMode = BodyBuildingMode.NORMAL
         ).buildTypeReference(this)
     }
 

@@ -26,7 +26,7 @@ open class LightTree2FirGenerator : TreeGenerator, AbstractRawFirBuilderTestCase
         DebugUtil.lightTreeToString(lightTree, false)
     }
 
-    override fun generateFir(text: String, file: File, stubMode: Boolean) {
+    override fun generateFir(text: String, file: File) {
         val lightTreeConverter = LightTree2Fir(
             session = FirSessionFactory.createEmptySession(),
             scopeProvider = StubFirScopeProvider

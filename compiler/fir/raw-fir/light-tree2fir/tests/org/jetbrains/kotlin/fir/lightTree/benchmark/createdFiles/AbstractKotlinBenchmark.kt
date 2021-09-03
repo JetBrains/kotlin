@@ -53,7 +53,7 @@ abstract class AbstractKotlinBenchmark : AbstractBenchmark() {
 
     @Benchmark
     fun testCreatedFiles() {
-        generator.generateFir(text, file, stubMode)
+        generator.generateFir(text, file)
     }
 }
 

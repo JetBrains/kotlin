@@ -29,7 +29,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         if (onlyPsi) {
             DebugUtil.psiTreeToString(ktFile, false)
         } else {
-            val firFile = ktFile.toFirFile(BodyBuildingMode.STUBS)
+            val firFile = ktFile.toFirFile()
             StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()
         }
     }
