@@ -28,23 +28,21 @@ sealed class TowerGroupKind(val index: Byte) : Comparable<TowerGroupKind> {
 
     object Start : TowerGroupKind(0b0)
 
-    object ClassifierPrioritized : TowerGroupKind(1)
+    object Qualifier : TowerGroupKind(1)
 
-    object Qualifier : TowerGroupKind(2)
+    object Classifier : TowerGroupKind(2)
 
-    object Classifier : TowerGroupKind(3)
+    class TopPrioritized(depth: Int) : WithDepth(3, depth)
 
-    class TopPrioritized(depth: Int) : WithDepth(4, depth)
+    object Member : TowerGroupKind(4)
 
-    object Member : TowerGroupKind(5)
+    class Local(depth: Int) : WithDepth(5, depth)
 
-    class Local(depth: Int) : WithDepth(6, depth)
+    class ImplicitOrNonLocal(depth: Int, val kindForDebugSake: String) : WithDepth(6, depth)
 
-    class ImplicitOrNonLocal(depth: Int, val kindForDebugSake: String) : WithDepth(7, depth)
+    object InvokeExtension : TowerGroupKind(7)
 
-    object InvokeExtension : TowerGroupKind(8)
-
-    object QualifierValue : TowerGroupKind(9)
+    object QualifierValue : TowerGroupKind(8)
 
     object Last : TowerGroupKind(0b1111)
 
@@ -150,8 +148,6 @@ private constructor(
         val EmptyRoot = TowerGroup(0, EMPTY_KIND_ARRAY)
 
         val Start = kindOf(TowerGroupKind.Start)
-
-        val ClassifierPrioritized = kindOf(TowerGroupKind.ClassifierPrioritized)
 
         val Qualifier = kindOf(TowerGroupKind.Qualifier)
 

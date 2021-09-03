@@ -162,16 +162,8 @@ internal open class FirTowerResolveTask(
     ) {
         val qualifierReceiver = createQualifierReceiver(resolvedQualifier, session, components.scopeSession)
 
-        when {
-            info.isPotentialQualifierPart -> {
-                processClassifierScope(info, qualifierReceiver, prioritized = true)
-                processQualifierScopes(info, qualifierReceiver)
-            }
-            else -> {
-                processQualifierScopes(info, qualifierReceiver)
-                processClassifierScope(info, qualifierReceiver, prioritized = false)
-            }
-        }
+        processQualifierScopes(info, qualifierReceiver)
+        processClassifierScope(info, qualifierReceiver)
 
         if (resolvedQualifier.symbol != null) {
             val typeRef = resolvedQualifier.typeRef
@@ -208,7 +200,7 @@ internal open class FirTowerResolveTask(
     }
 
     private suspend fun processClassifierScope(
-        info: CallInfo, qualifierReceiver: QualifierReceiver?, prioritized: Boolean
+        info: CallInfo, qualifierReceiver: QualifierReceiver?
     ) {
         if (qualifierReceiver == null) return
         if (info.callKind != CallKind.CallableReference &&
@@ -216,10 +208,9 @@ internal open class FirTowerResolveTask(
             qualifierReceiver.classSymbol != qualifierReceiver.originalSymbol
         ) return
         val scope = qualifierReceiver.classifierScope() ?: return
-        val group = if (prioritized) TowerGroup.ClassifierPrioritized else TowerGroup.Classifier
         processLevel(
             scope.toScopeTowerLevel(includeInnerConstructors = false), info,
-            group
+            TowerGroup.Classifier
         )
     }
 

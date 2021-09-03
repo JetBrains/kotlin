@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.inference.receiverType
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 
@@ -48,7 +47,6 @@ abstract class AbstractCandidateInfoProvider(
             typeArguments = typeArgumentList,
             containingDeclarations = emptyList(), // TODO - maybe we should pass declarations from context here (no visible differences atm)
             containingFile = firFile,
-            isPotentialQualifierPart = false,
             isImplicitInvoke = false,
             session = firSession,
         )
