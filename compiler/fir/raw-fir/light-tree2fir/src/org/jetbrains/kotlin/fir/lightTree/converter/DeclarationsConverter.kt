@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 class DeclarationsConverter(
     session: FirSession,
     private val baseScopeProvider: FirScopeProvider,
-    private val stubMode: Boolean,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     offset: Int = 0,
     context: Context<LighterASTNode> = Context()
@@ -74,7 +73,7 @@ class DeclarationsConverter(
         }
     }
 
-    private val expressionConverter = ExpressionsConverter(session, stubMode, tree, this, context)
+    private val expressionConverter = ExpressionsConverter(session, tree, this, context)
 
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]
@@ -362,7 +361,7 @@ class DeclarationsConverter(
                     ?.toFirSourceElement()
                 this.name = name
             }
-            extractArgumentsFrom(constructorCalleePair.second, stubMode)
+            extractArgumentsFrom(constructorCalleePair.second)
         }
     }
 
@@ -821,7 +820,7 @@ class DeclarationsConverter(
 
                 superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
             }
-            extractArgumentsFrom(classWrapper.superTypeCallEntry, stubMode)
+            extractArgumentsFrom(classWrapper.superTypeCallEntry)
         }
 
         val explicitVisibility = runIf(primaryConstructor != null) {
@@ -871,7 +870,7 @@ class DeclarationsConverter(
             source = anonymousInitializer.toFirSourceElement()
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
-            body = if (stubMode) buildEmptyExpressionBlock() else firBlock ?: buildEmptyExpressionBlock()
+            body = firBlock ?: buildEmptyExpressionBlock()
         }
     }
 
@@ -975,7 +974,7 @@ class DeclarationsConverter(
                     superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
                 }
             }
-            extractArgumentsFrom(firValueArguments, stubMode)
+            extractArgumentsFrom(firValueArguments)
         }
     }
 
@@ -1106,7 +1105,6 @@ class DeclarationsConverter(
                     classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
                     classWrapper?.classBuilder?.ownerRegularClassTypeParametersCount,
                     isExtension = false,
-                    stubMode = stubMode,
                     receiver = receiver
                 )
             } else {
@@ -1175,7 +1173,6 @@ class DeclarationsConverter(
                         classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
                         classWrapper?.classBuilder?.ownerRegularClassTypeParametersCount,
                         isExtension = receiverType != null,
-                        stubMode = stubMode,
                         receiver = receiver
                     )
                 }
@@ -1636,17 +1633,11 @@ class DeclarationsConverter(
                 expressionConverter.getAsFirExpression(block)
             )
         }
-        return if (!stubMode) {
-            val blockTree = LightTree2Fir.buildLightTreeBlockExpression(block.asText)
-            return DeclarationsConverter(
-                baseSession, baseScopeProvider, stubMode, blockTree, offset = offset + tree.getStartOffset(block), context
-            ).convertBlockExpression(blockTree.root)
-        } else {
-            val firExpression = buildExpressionStub()
-            FirSingleExpressionBlock(
-                firExpression.toReturn(baseSource = firExpression.source)
-            )
-        }
+
+        val blockTree = LightTree2Fir.buildLightTreeBlockExpression(block.asText)
+        return DeclarationsConverter(
+            baseSession, baseScopeProvider, blockTree, offset = offset + tree.getStartOffset(block), context
+        ).convertBlockExpression(blockTree.root)
     }
 
     /**

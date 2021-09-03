@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class ExpressionsConverter(
     session: FirSession,
-    private val stubMode: Boolean,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     private val declarationsConverter: DeclarationsConverter,
     context: Context<LighterASTNode> = Context()
@@ -65,56 +64,52 @@ class ExpressionsConverter(
 
     /*****    EXPRESSIONS    *****/
     fun convertExpression(expression: LighterASTNode, errorReason: String): FirElement {
-        if (!stubMode) {
-            return when (expression.tokenType) {
-                LAMBDA_EXPRESSION -> {
-                    val lambdaTree = LightTree2Fir.buildLightTreeLambdaExpression(expression.asText)
-                    declarationsConverter.withOffset(offset + expression.startOffset) {
-                        ExpressionsConverter(baseSession, stubMode, lambdaTree, declarationsConverter, context)
-                            .convertLambdaExpression(lambdaTree.root)
-                    }
+        return when (expression.tokenType) {
+            LAMBDA_EXPRESSION -> {
+                val lambdaTree = LightTree2Fir.buildLightTreeLambdaExpression(expression.asText)
+                declarationsConverter.withOffset(offset + expression.startOffset) {
+                    ExpressionsConverter(baseSession, lambdaTree, declarationsConverter, context)
+                        .convertLambdaExpression(lambdaTree.root)
                 }
-                BINARY_EXPRESSION -> convertBinaryExpression(expression)
-                BINARY_WITH_TYPE -> convertBinaryWithTypeRHSExpression(expression) {
-                    this.getOperationSymbol().toFirOperation()
-                }
-                IS_EXPRESSION -> convertBinaryWithTypeRHSExpression(expression) {
-                    if (this == "is") FirOperation.IS else FirOperation.NOT_IS
-                }
-                LABELED_EXPRESSION -> convertLabeledExpression(expression)
-                PREFIX_EXPRESSION, POSTFIX_EXPRESSION -> convertUnaryExpression(expression)
-                ANNOTATED_EXPRESSION -> convertAnnotatedExpression(expression)
-                CLASS_LITERAL_EXPRESSION -> convertClassLiteralExpression(expression)
-                CALLABLE_REFERENCE_EXPRESSION -> convertCallableReferenceExpression(expression)
-                in QUALIFIED_ACCESS -> convertQualifiedExpression(expression)
-                CALL_EXPRESSION -> convertCallExpression(expression)
-                WHEN -> convertWhenExpression(expression)
-                ARRAY_ACCESS_EXPRESSION -> convertArrayAccessExpression(expression)
-                COLLECTION_LITERAL_EXPRESSION -> convertCollectionLiteralExpression(expression)
-                STRING_TEMPLATE -> convertStringTemplate(expression)
-                is KtConstantExpressionElementType -> convertConstantExpression(expression)
-                REFERENCE_EXPRESSION -> convertSimpleNameExpression(expression)
-                DO_WHILE -> convertDoWhile(expression)
-                WHILE -> convertWhile(expression)
-                FOR -> convertFor(expression)
-                TRY -> convertTryExpression(expression)
-                IF -> convertIfExpression(expression)
-                BREAK, CONTINUE -> convertLoopJump(expression)
-                RETURN -> convertReturn(expression)
-                THROW -> convertThrow(expression)
-                PARENTHESIZED -> getAsFirExpression(expression.getExpressionInParentheses(), "Empty parentheses")
-                PROPERTY_DELEGATE, INDICES, CONDITION, LOOP_RANGE ->
-                    getAsFirExpression(expression.getExpressionInParentheses(), errorReason)
-                THIS_EXPRESSION -> convertThisExpression(expression)
-                SUPER_EXPRESSION -> convertSuperExpression(expression)
-
-                OBJECT_LITERAL -> declarationsConverter.convertObjectLiteral(expression)
-                FUN -> declarationsConverter.convertFunctionDeclaration(expression)
-                else -> buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
             }
-        }
+            BINARY_EXPRESSION -> convertBinaryExpression(expression)
+            BINARY_WITH_TYPE -> convertBinaryWithTypeRHSExpression(expression) {
+                this.getOperationSymbol().toFirOperation()
+            }
+            IS_EXPRESSION -> convertBinaryWithTypeRHSExpression(expression) {
+                if (this == "is") FirOperation.IS else FirOperation.NOT_IS
+            }
+            LABELED_EXPRESSION -> convertLabeledExpression(expression)
+            PREFIX_EXPRESSION, POSTFIX_EXPRESSION -> convertUnaryExpression(expression)
+            ANNOTATED_EXPRESSION -> convertAnnotatedExpression(expression)
+            CLASS_LITERAL_EXPRESSION -> convertClassLiteralExpression(expression)
+            CALLABLE_REFERENCE_EXPRESSION -> convertCallableReferenceExpression(expression)
+            in QUALIFIED_ACCESS -> convertQualifiedExpression(expression)
+            CALL_EXPRESSION -> convertCallExpression(expression)
+            WHEN -> convertWhenExpression(expression)
+            ARRAY_ACCESS_EXPRESSION -> convertArrayAccessExpression(expression)
+            COLLECTION_LITERAL_EXPRESSION -> convertCollectionLiteralExpression(expression)
+            STRING_TEMPLATE -> convertStringTemplate(expression)
+            is KtConstantExpressionElementType -> convertConstantExpression(expression)
+            REFERENCE_EXPRESSION -> convertSimpleNameExpression(expression)
+            DO_WHILE -> convertDoWhile(expression)
+            WHILE -> convertWhile(expression)
+            FOR -> convertFor(expression)
+            TRY -> convertTryExpression(expression)
+            IF -> convertIfExpression(expression)
+            BREAK, CONTINUE -> convertLoopJump(expression)
+            RETURN -> convertReturn(expression)
+            THROW -> convertThrow(expression)
+            PARENTHESIZED -> getAsFirExpression(expression.getExpressionInParentheses(), "Empty parentheses")
+            PROPERTY_DELEGATE, INDICES, CONDITION, LOOP_RANGE ->
+                getAsFirExpression(expression.getExpressionInParentheses(), errorReason)
+            THIS_EXPRESSION -> convertThisExpression(expression)
+            SUPER_EXPRESSION -> convertSuperExpression(expression)
 
-        return buildExpressionStub()
+            OBJECT_LITERAL -> declarationsConverter.convertObjectLiteral(expression)
+            FUN -> declarationsConverter.convertFunctionDeclaration(expression)
+            else -> buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
+        }
     }
 
     /**
@@ -641,7 +636,7 @@ class ExpressionsConverter(
                 this.calleeReference = calleeReference
 
                 context.calleeNamesForLambda += calleeReference.name
-                this.extractArgumentsFrom(valueArguments.flatMap { convertValueArguments(it) }, stubMode)
+                this.extractArgumentsFrom(valueArguments.flatMap { convertValueArguments(it) })
                 context.calleeNamesForLambda.removeLast()
             }
         } else {

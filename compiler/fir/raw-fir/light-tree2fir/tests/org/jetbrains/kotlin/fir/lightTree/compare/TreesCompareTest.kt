@@ -13,7 +13,6 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.Companion.DIAGNOSTIC_IN_TESTDATA_PATTERN
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
-import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.lightTree.walkTopDown
@@ -55,18 +54,17 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         TestCase.assertEquals(0, errorCounter)
     }
 
-    private fun compareAll(stubMode: Boolean) {
+    private fun compareAll() {
         val lightTreeConverter = LightTree2Fir(
             session = FirSessionFactory.createEmptySession(),
-            scopeProvider = StubFirScopeProvider,
-            stubMode = stubMode
+            scopeProvider = StubFirScopeProvider
         )
         compareBase(System.getProperty("user.dir"), withTestData = false) { file ->
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
 
             //psi
             val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.path)), text) as KtFile
-            val firFileFromPsi = ktFile.toFirFile(BodyBuildingMode.stubs(stubMode))
+            val firFileFromPsi = ktFile.toFirFile()
             val treeFromPsi = StringBuilder().also { FirRenderer(it).visitFile(firFileFromPsi) }.toString()
 
             //light tree
@@ -80,8 +78,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     fun testCompareDiagnostics() {
         val lightTreeConverter = LightTree2Fir(
             session = FirSessionFactory.createEmptySession(),
-            scopeProvider = StubFirScopeProvider,
-            stubMode = false
+            scopeProvider = StubFirScopeProvider
         )
         compareBase("compiler/testData/diagnostics/tests", withTestData = true) { file ->
             if (file.name.endsWith(".fir.kt")) {
@@ -109,11 +106,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         }
     }
 
-    fun testStubCompareAll() {
-        compareAll(stubMode = true)
-    }
-
     fun testCompareAll() {
-        compareAll(stubMode = false)
+        compareAll()
     }
 }

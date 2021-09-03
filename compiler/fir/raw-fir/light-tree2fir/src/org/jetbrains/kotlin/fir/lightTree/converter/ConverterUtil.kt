@@ -70,11 +70,9 @@ fun LighterASTNode.isExpression(): Boolean {
     }
 }
 
-fun <T : FirCallBuilder> T.extractArgumentsFrom(container: List<FirExpression>, stubMode: Boolean): T {
-    if (!stubMode || this is FirAnnotationCallBuilder) {
-        argumentList = buildArgumentList {
-            arguments += container
-        }
+fun <T : FirCallBuilder> T.extractArgumentsFrom(container: List<FirExpression>): T {
+    argumentList = buildArgumentList {
+        arguments += container
     }
     return this
 }

@@ -60,8 +60,6 @@ open class RawFirBuilder(
     constructor(session: FirSession, baseScopeProvider: FirScopeProvider, mode: BodyBuildingMode = BodyBuildingMode.NORMAL) :
             this(session, baseScopeProvider, psiMode = PsiHandlingMode.IDE, bodyBuildingMode = mode)
 
-    private val stubMode get() = mode == BodyBuildingMode.STUBS
-
     protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) = target.bind(function)
 
     var mode: BodyBuildingMode = bodyBuildingMode
@@ -200,8 +198,7 @@ open class RawFirBuilder(
 
         // Here we accept lambda as receiver to prevent expression calculation in stub mode
         private fun (() -> KtExpression?).toFirExpression(errorReason: String): FirExpression =
-            if (stubMode) buildExpressionStub()
-            else with(this()) {
+            with(this()) {
                 convertSafe() ?: buildErrorExpression(
                     this?.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
                 )
@@ -211,41 +208,37 @@ open class RawFirBuilder(
             errorReason: String,
             kind: DiagnosticKind = DiagnosticKind.ExpressionExpected
         ): FirExpression {
-            if (stubMode) {
-                return buildExpressionStub()
-            } else {
-                val result = this.convertSafe<FirExpression>()
+            val result = this.convertSafe<FirExpression>()
 
-                if (result != null) {
-                    if (this == null) {
-                        return result
-                    }
-
-                    val callExpressionCallee = (this as? KtCallExpression)?.calleeExpression?.unwrapParenthesesLabelsAndAnnotations()
-
-                    if (this is KtNameReferenceExpression ||
-                        this is KtConstantExpression ||
-                        (this is KtCallExpression && callExpressionCallee !is KtLambdaExpression) ||
-                        getQualifiedExpressionForSelector() == null
-                    ) {
-                        return result
-                    }
-
-                    return buildErrorExpression {
-                        source = callExpressionCallee?.toFirSourceElement() ?: toFirSourceElement()
-                        diagnostic =
-                            ConeSimpleDiagnostic(
-                                "The expression cannot be a selector (occur after a dot)",
-                                if (callExpressionCallee == null) DiagnosticKind.IllegalSelector else DiagnosticKind.NoReceiverAllowed
-                            )
-                        expression = result
-                    }
+            if (result != null) {
+                if (this == null) {
+                    return result
                 }
 
-                return buildErrorExpression(
-                    this?.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, kind),
-                )
+                val callExpressionCallee = (this as? KtCallExpression)?.calleeExpression?.unwrapParenthesesLabelsAndAnnotations()
+
+                if (this is KtNameReferenceExpression ||
+                    this is KtConstantExpression ||
+                    (this is KtCallExpression && callExpressionCallee !is KtLambdaExpression) ||
+                    getQualifiedExpressionForSelector() == null
+                ) {
+                    return result
+                }
+
+                return buildErrorExpression {
+                    source = callExpressionCallee?.toFirSourceElement() ?: toFirSourceElement()
+                    diagnostic =
+                        ConeSimpleDiagnostic(
+                            "The expression cannot be a selector (occur after a dot)",
+                            if (callExpressionCallee == null) DiagnosticKind.IllegalSelector else DiagnosticKind.NoReceiverAllowed
+                        )
+                    expression = result
+                }
             }
+
+            return buildErrorExpression(
+                this?.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, kind),
+            )
         }
 
         private inline fun KtExpression.toFirStatement(errorReasonLazy: () -> String): FirStatement =
@@ -314,15 +307,13 @@ open class RawFirBuilder(
                     }
                     block to null
                 }
-                hasBlockBody() -> if (!stubMode) {
+                hasBlockBody() -> {
                     val block = bodyBlockExpression?.accept(this@Visitor, Unit) as? FirBlock
                     if (hasContractEffectList()) {
                         block to null
                     } else {
                         block.extractContractDescriptionIfPossible()
                     }
-                } else {
-                    FirSingleExpressionBlock(buildExpressionStub { source = this@buildFirBody.toFirSourceElement() }.toReturn()) to null
                 }
                 else -> {
                     val result = { bodyExpression }.toFirExpression("Function has no body (but should)")
@@ -827,9 +818,7 @@ open class RawFirBuilder(
                         ?: this@buildDelegatedConstructorCall.source?.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
                     superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
                 }
-                if (!stubMode) {
-                    superTypeCallEntry?.extractArgumentsTo(this)
-                }
+                superTypeCallEntry?.extractArgumentsTo(this)
             }
 
             // See DescriptorUtils#getDefaultConstructorVisibility in core.descriptors
@@ -1445,9 +1434,7 @@ open class RawFirBuilder(
                         this.superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
                     }
                 }
-                if (!stubMode) {
-                    extractArgumentsTo(this)
-                }
+                extractArgumentsTo(this)
             }
         }
 
@@ -1510,8 +1497,6 @@ open class RawFirBuilder(
                             ownerRegularOrAnonymousObjectSymbol = null,
                             ownerRegularClassTypeParametersCount = null,
                             isExtension = false,
-                            stubMode = stubMode,
-                            //TODO This expression should be the same for wrapper and receiver
                             receiver = extractDelegateExpression()
                         )
                     }
@@ -1573,8 +1558,6 @@ open class RawFirBuilder(
                                 ownerRegularOrAnonymousObjectSymbol,
                                 ownerRegularClassTypeParametersCount,
                                 isExtension = receiverTypeReference != null,
-                                stubMode = stubMode,
-                                //TODO This expression should be the same for wrapper and receiver
                                 receiver = extractDelegateExpression()
                             )
                         }
@@ -1593,7 +1576,7 @@ open class RawFirBuilder(
                 source = initializer.toFirSourceElement()
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
-                body = if (stubMode) buildEmptyExpressionBlock() else initializer.body.toFirBlock()
+                body = initializer.body.toFirBlock()
             }
         }
 
@@ -2473,9 +2456,6 @@ enum class BodyBuildingMode {
     companion object {
         fun lazyBodies(lazyBodies: Boolean): BodyBuildingMode =
             if (lazyBodies) LAZY_BODIES else NORMAL
-
-        fun stubs(stubs: Boolean): BodyBuildingMode =
-            if (stubs) STUBS else NORMAL
     }
 }
 

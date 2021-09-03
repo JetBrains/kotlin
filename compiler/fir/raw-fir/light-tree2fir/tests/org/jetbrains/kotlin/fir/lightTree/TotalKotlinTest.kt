@@ -51,8 +51,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
 
         val lightTreeConverter = LightTree2Fir(
             session = FirSessionFactory.createEmptySession(),
-            scopeProvider = StubFirScopeProvider,
-            stubMode = true
+            scopeProvider = StubFirScopeProvider
         )
 
         if (onlyLightTree) println("LightTree generation") else println("Fir from LightTree converter")

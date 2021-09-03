@@ -143,7 +143,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         val firProvider = session.firProvider as FirProviderImpl
 
         val firFiles = if (USE_LIGHT_TREE) {
-            val lightTree2Fir = LightTree2Fir(session, firProvider.kotlinScopeProvider, stubMode = false)
+            val lightTree2Fir = LightTree2Fir(session, firProvider.kotlinScopeProvider)
 
             val allSourceFiles = moduleData.sources.flatMap {
                 if (it.isDirectory) {

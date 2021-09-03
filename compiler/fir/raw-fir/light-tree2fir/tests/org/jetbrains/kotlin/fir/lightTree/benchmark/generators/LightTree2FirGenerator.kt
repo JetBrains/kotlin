@@ -20,8 +20,7 @@ open class LightTree2FirGenerator : TreeGenerator, AbstractRawFirBuilderTestCase
     override fun generateBaseTree(text: String, file: File) {
         val lightTreeConverter = LightTree2Fir(
             session = FirSessionFactory.createEmptySession(),
-            scopeProvider = StubFirScopeProvider,
-            stubMode = false
+            scopeProvider = StubFirScopeProvider
         )
         val lightTree = lightTreeConverter.buildLightTree(text)
         DebugUtil.lightTreeToString(lightTree, false)
@@ -30,8 +29,7 @@ open class LightTree2FirGenerator : TreeGenerator, AbstractRawFirBuilderTestCase
     override fun generateFir(text: String, file: File, stubMode: Boolean) {
         val lightTreeConverter = LightTree2Fir(
             session = FirSessionFactory.createEmptySession(),
-            scopeProvider = StubFirScopeProvider,
-            stubMode = stubMode
+            scopeProvider = StubFirScopeProvider
         )
         val firFile = lightTreeConverter.buildFirFile(text, file.name)
         StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()

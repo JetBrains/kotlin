@@ -316,7 +316,6 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
     ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
     ownerRegularClassTypeParametersCount: Int?,
     isExtension: Boolean,
-    stubMode: Boolean,
     receiver: FirExpression?
 ) {
     if (delegateBuilder == null) return
@@ -399,7 +398,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
         }
     }
 
-    delegateBuilder.delegateProvider = if (stubMode) buildExpressionStub() else buildFunctionCall {
+    delegateBuilder.delegateProvider = buildFunctionCall {
         explicitReceiver = receiver
         calleeReference = buildSimpleNamedReference {
             source = fakeSource
@@ -409,7 +408,6 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
         origin = FirFunctionCallOrigin.Operator
     }
     delegate = delegateBuilder.build()
-    if (stubMode) return
     if (getter == null || getter is FirDefaultPropertyAccessor) {
         val annotations = getter?.annotations
         val returnTarget = FirFunctionTarget(null, isLambda = false)

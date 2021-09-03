@@ -22,25 +22,20 @@ import java.nio.file.Path
 
 class LightTree2Fir(
     val session: FirSession,
-    private val scopeProvider: FirScopeProvider,
-    private val stubMode: Boolean = false
+    private val scopeProvider: FirScopeProvider
 ) {
-    //private val ktDummyFile = KtFile(SingleRootFileViewProvider(PsiManager.getInstance(project), LightVirtualFile()), false)
-
     companion object {
         private val parserDefinition = KotlinParserDefinition()
         private fun makeLexer() = KotlinLexer()
 
         fun buildLightTreeBlockExpression(code: String): FlyweightCapableTreeStructure<LighterASTNode> {
             val builder = PsiBuilderFactoryImpl().createBuilder(parserDefinition, makeLexer(), code)
-            //KotlinParser.parseBlockExpression(builder)
             KotlinLightParser.parseBlockExpression(builder)
             return builder.lightTree
         }
 
         fun buildLightTreeLambdaExpression(code: String): FlyweightCapableTreeStructure<LighterASTNode> {
             val builder = PsiBuilderFactoryImpl().createBuilder(parserDefinition, makeLexer(), code)
-            //KotlinParser.parseLambdaExpression(builder)
             KotlinLightParser.parseLambdaExpression(builder)
             return builder.lightTree
         }
@@ -57,7 +52,6 @@ class LightTree2Fir(
 
     fun buildLightTree(code: String): FlyweightCapableTreeStructure<LighterASTNode> {
         val builder = PsiBuilderFactoryImpl().createBuilder(parserDefinition, makeLexer(), code)
-        //KotlinParser(project).parse(null, builder, ktDummyFile)
         KotlinLightParser.parse(builder)
         return builder.lightTree
     }
@@ -65,7 +59,7 @@ class LightTree2Fir(
     fun buildFirFile(code: String, fileName: String): FirFile {
         val lightTree = buildLightTree(code)
 
-        return DeclarationsConverter(session, scopeProvider, stubMode, lightTree)
+        return DeclarationsConverter(session, scopeProvider, lightTree)
             .convertFile(lightTree.root, fileName)
     }
 }
