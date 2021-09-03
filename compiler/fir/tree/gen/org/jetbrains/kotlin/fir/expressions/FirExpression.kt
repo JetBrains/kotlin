@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirExpression : FirPureAbstractElement(), FirStatement {
     abstract override val source: FirSourceElement?
     abstract val typeRef: FirTypeRef
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitExpression(this, data)
 

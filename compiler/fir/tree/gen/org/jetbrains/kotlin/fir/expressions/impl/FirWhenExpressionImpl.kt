@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirWhenExpressionImpl(
     override val source: FirSourceElement?,
     override var typeRef: FirTypeRef,
-    override val annotations: MutableList<FirAnnotationCall>,
+    override val annotations: MutableList<FirAnnotation>,
     override var calleeReference: FirReference,
     override var subject: FirExpression?,
     override var subjectVariable: FirVariable?,

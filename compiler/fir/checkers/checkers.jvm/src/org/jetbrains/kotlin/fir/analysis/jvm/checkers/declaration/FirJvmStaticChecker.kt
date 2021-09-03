@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -242,7 +242,7 @@ object FirJvmStaticChecker : FirAnnotatedDeclarationChecker() {
         return findAnnotation(classId) != null
     }
 
-    private fun FirAnnotatedDeclaration.findAnnotation(classId: ClassId): FirAnnotationCall? {
+    private fun FirAnnotatedDeclaration.findAnnotation(classId: ClassId): FirAnnotation? {
         return annotations.firstOrNull {
             it.calleeReference.safeAs<FirResolvedNamedReference>()?.name == classId.shortClassName
         }

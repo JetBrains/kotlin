@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirWhenExpression : FirExpression(), FirResolvable {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract override val calleeReference: FirReference
     abstract val subject: FirExpression?
     abstract val subjectVariable: FirVariable?

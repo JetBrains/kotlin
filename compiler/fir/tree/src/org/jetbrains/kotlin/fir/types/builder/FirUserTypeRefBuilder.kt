@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.types.builder
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirUserTypeRefImpl
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirUserTypeRefImpl
 @FirBuilderDsl
 open class FirUserTypeRefBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     open var isMarkedNullable: Boolean by kotlin.properties.Delegates.notNull()
     val qualifier: MutableList<FirQualifierPart> = mutableListOf()
 

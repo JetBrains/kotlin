@@ -421,7 +421,7 @@ class ExpressionsConverter(
      */
     private fun convertAnnotatedExpression(annotatedExpression: LighterASTNode): FirElement {
         var firExpression: FirElement? = null
-        val firAnnotationList = mutableListOf<FirAnnotationCall>()
+        val firAnnotationList = mutableListOf<FirAnnotation>()
         annotatedExpression.forEachChildren {
             when (it.tokenType) {
                 ANNOTATION -> firAnnotationList += declarationsConverter.convertAnnotation(it)
@@ -432,7 +432,7 @@ class ExpressionsConverter(
 
         val result = firExpression ?: buildErrorExpression(null, ConeNotAnnotationContainer(firExpression?.render() ?: "???"))
         require(result is FirAnnotationContainer)
-        (result.annotations as MutableList<FirAnnotationCall>) += firAnnotationList
+        (result.annotations as MutableList<FirAnnotation>) += firAnnotationList
         return result
     }
 

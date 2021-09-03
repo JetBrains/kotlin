@@ -9,7 +9,7 @@ import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 
 class FirTypeResolveProcessor(
     session: FirSession,
@@ -204,8 +203,8 @@ open class FirTypeResolveTransformer(
         return delegatedConstructorCall
     }
 
-    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): FirStatement {
-        annotationCall.transformAnnotationTypeRef(this, data)
-        return annotationCall
+    override fun transformAnnotation(annotation: FirAnnotation, data: Any?): FirStatement {
+        annotation.transformAnnotationTypeRef(this, data)
+        return annotation
     }
 }

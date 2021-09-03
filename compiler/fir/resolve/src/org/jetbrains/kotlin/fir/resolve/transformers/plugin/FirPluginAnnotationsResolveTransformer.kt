@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -102,11 +102,11 @@ private class FirAnnotationResolveTransformer(
         owners = state
     }
 
-    override fun transformAnnotationCall(
-        annotationCall: FirAnnotationCall,
+    override fun transformAnnotation(
+        annotation: FirAnnotation,
         data: Multimap<AnnotationFqn, FirRegularClass>
     ): FirStatement {
-        return annotationCall.transformAnnotationTypeRef(
+        return annotation.transformAnnotationTypeRef(
             typeResolverTransformer,
             ScopeClassDeclaration(scope, classDeclarationsStack.lastOrNull())
         )

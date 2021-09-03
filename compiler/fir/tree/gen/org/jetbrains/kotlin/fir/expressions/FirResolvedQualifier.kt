@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirResolvedQualifier : FirExpression() {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract val packageFqName: FqName
     abstract val relativeClassFqName: FqName?
     abstract val classId: ClassId?

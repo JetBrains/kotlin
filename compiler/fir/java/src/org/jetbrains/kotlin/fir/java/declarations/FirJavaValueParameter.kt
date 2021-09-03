@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -36,7 +36,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override var returnTypeRef: FirTypeRef,
     override val name: Name,
     override val symbol: FirValueParameterSymbol,
-    annotationBuilder: () -> List<FirAnnotationCall>,
+    annotationBuilder: () -> List<FirAnnotation>,
     override var defaultValue: FirExpression?,
     override val isVararg: Boolean,
 ) : FirValueParameter() {
@@ -56,7 +56,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val isVar: Boolean
         get() = false
 
-    override val annotations: List<FirAnnotationCall> by lazy { annotationBuilder() }
+    override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
 
     override val origin: FirDeclarationOrigin
         get() = FirDeclarationOrigin.Java
@@ -190,7 +190,7 @@ class FirJavaValueParameterBuilder {
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var returnTypeRef: FirTypeRef
     lateinit var name: Name
-    lateinit var annotationBuilder: () -> List<FirAnnotationCall>
+    lateinit var annotationBuilder: () -> List<FirAnnotation>
     var defaultValue: FirExpression? = null
     var isVararg: Boolean by kotlin.properties.Delegates.notNull()
 

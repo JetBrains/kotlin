@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -94,7 +94,7 @@ class Fir2IrTypeConverter(
 
     fun ConeKotlinType.toIrType(
         typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT,
-        annotations: List<FirAnnotationCall> = emptyList(),
+        annotations: List<FirAnnotation> = emptyList(),
         hasFlexibleNullability: Boolean = false
     ): IrType {
         return when (this) {

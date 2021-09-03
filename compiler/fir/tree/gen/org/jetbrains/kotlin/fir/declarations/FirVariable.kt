@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -45,7 +45,7 @@ sealed class FirVariable : FirCallableDeclaration(), FirStatement {
     abstract val getter: FirPropertyAccessor?
     abstract val setter: FirPropertyAccessor?
     abstract val backingField: FirBackingField?
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitVariable(this, data)
 

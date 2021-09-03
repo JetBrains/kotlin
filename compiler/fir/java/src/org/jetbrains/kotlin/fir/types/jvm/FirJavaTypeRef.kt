@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.types.jvm
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaType
 
 class FirJavaTypeRef(
     val type: JavaType,
-    annotationBuilder: () -> List<FirAnnotationCall>,
+    annotationBuilder: () -> List<FirAnnotation>,
     override val qualifier: MutableList<FirQualifierPart>
 ) : FirUserTypeRef() {
     override val customRenderer: Boolean
@@ -33,7 +33,7 @@ class FirJavaTypeRef(
     override val source: FirSourceElement?
         get() = null
 
-    override val annotations: List<FirAnnotationCall> by lazy { annotationBuilder() }
+    override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         for (part in qualifier) {
@@ -60,7 +60,7 @@ class FirJavaTypeRef(
 
 @FirBuilderDsl
 class FirJavaTypeRefBuilder {
-    lateinit var annotationBuilder: () -> List<FirAnnotationCall>
+    lateinit var annotationBuilder: () -> List<FirAnnotation>
     lateinit var type: JavaType
     val qualifier: MutableList<FirQualifierPart> = mutableListOf()
 

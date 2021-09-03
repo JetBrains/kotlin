@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirVarargArgumentsExpression : FirExpression() {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract val arguments: List<FirExpression>
     abstract val varargElementType: FirTypeRef
 

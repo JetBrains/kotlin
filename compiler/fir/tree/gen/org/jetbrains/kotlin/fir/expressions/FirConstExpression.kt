@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirConstExpression<T> : FirExpression() {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract val kind: ConstantValueKind<T>
     abstract val value: T
 

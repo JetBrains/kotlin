@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.getDeprecationInfos
 import org.jetbrains.kotlin.fir.deserialization.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.topLevelName
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -125,7 +125,7 @@ open class KotlinDeserializedJvmSymbolsProvider(
         kotlinClass: KotlinClassFinder.Result.KotlinClass,
         symbol: FirRegularClassSymbol
     ) {
-        val annotations = mutableListOf<FirAnnotationCall>()
+        val annotations = mutableListOf<FirAnnotation>()
         kotlinClass.kotlinJvmBinaryClass.loadClassAnnotations(
             object : KotlinJvmBinaryClass.AnnotationVisitor {
                 override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
@@ -137,7 +137,7 @@ open class KotlinDeserializedJvmSymbolsProvider(
             },
             kotlinClass.byteContent,
         )
-        (symbol.fir.annotations as MutableList<FirAnnotationCall>) += annotations
+        (symbol.fir.annotations as MutableList<FirAnnotation>) += annotations
         symbol.fir.replaceDeprecation(symbol.fir.getDeprecationInfos(session.languageVersionSettings.apiVersion))
     }
 

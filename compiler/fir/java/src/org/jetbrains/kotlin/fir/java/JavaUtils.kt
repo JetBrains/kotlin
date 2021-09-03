@@ -149,13 +149,13 @@ private fun buildArgumentMapping(
 
 internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
-): List<FirAnnotationCall> = map { it.toFirAnnotationCall(session, javaTypeParameterStack) }
+): List<FirAnnotation> = map { it.toFirAnnotationCall(session, javaTypeParameterStack) }
 
 internal fun JavaAnnotationOwner.convertAnnotationsToFir(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
-): List<FirAnnotationCall> = annotations.convertAnnotationsToFir(session, javaTypeParameterStack)
+): List<FirAnnotation> = annotations.convertAnnotationsToFir(session, javaTypeParameterStack)
 
-internal fun MutableList<FirAnnotationCall>.addFromJava(
+internal fun MutableList<FirAnnotation>.addFromJava(
     session: FirSession,
     javaAnnotationOwner: JavaAnnotationOwner,
     javaTypeParameterStack: JavaTypeParameterStack
@@ -165,8 +165,8 @@ internal fun MutableList<FirAnnotationCall>.addFromJava(
 
 private fun JavaAnnotation.toFirAnnotationCall(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
-): FirAnnotationCall {
-    return buildAnnotationCall {
+): FirAnnotation {
+    return buildAnnotation {
         val lookupTag = when (classId) {
             JAVA_TARGET_CLASS_ID -> ClassId.topLevel(StandardNames.FqNames.target)
             JAVA_RETENTION_CLASS_ID -> ClassId.topLevel(StandardNames.FqNames.retention)

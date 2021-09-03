@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.*
@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.psi.KtCallElement
 
 internal class KtFirAnnotationCall(
     private val containingDeclaration: FirRefWithValidityCheck<FirDeclaration>,
-    annotationCall: FirAnnotationCall
+    annotation: FirAnnotation
 ) : KtAnnotationCall() {
 
-    private val annotationCallRef by weakRef(annotationCall)
+    private val annotationCallRef by weakRef(annotation)
 
     override val token: ValidityToken get() = containingDeclaration.token
 

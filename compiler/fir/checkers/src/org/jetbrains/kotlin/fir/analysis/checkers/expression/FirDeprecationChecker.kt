@@ -32,7 +32,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
 
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!allowedSourceKinds.contains(expression.source?.kind)) return
-        if (expression is FirAnnotationCall || expression is FirDelegatedConstructorCall) return //checked by FirDeprecatedTypeChecker
+        if (expression is FirAnnotation || expression is FirDelegatedConstructorCall) return //checked by FirDeprecatedTypeChecker
         val resolvable = expression as? FirResolvable ?: return
         val reference = resolvable.calleeReference as? FirResolvedNamedReference ?: return
         val referencedSymbol = reference.resolvedSymbol

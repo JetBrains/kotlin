@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.types.isArrayType
 /**
  * A transformer that converts resolved arrayOf() call to [FirArrayOfCall].
  *
- * Note that arrayOf() calls only in [FirAnnotationCall] or the default value of annotation constructor are transformed.
+ * Note that arrayOf() calls only in [FirAnnotation] or the default value of annotation constructor are transformed.
  */
 internal class FirArrayOfCallTransformer {
     private val FirFunctionCall.isArrayOfCall: Boolean

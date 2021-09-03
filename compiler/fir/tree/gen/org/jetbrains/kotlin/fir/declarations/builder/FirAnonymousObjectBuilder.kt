@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.FirClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirDeclarationBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousObjectImpl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
@@ -45,7 +45,7 @@ class FirAnonymousObjectBuilder : FirDeclarationBuilder, FirClassBuilder, FirAnn
     override lateinit var classKind: ClassKind
     override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
     override val declarations: MutableList<FirDeclaration> = mutableListOf()
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var scopeProvider: FirScopeProvider
     lateinit var symbol: FirAnonymousObjectSymbol
 

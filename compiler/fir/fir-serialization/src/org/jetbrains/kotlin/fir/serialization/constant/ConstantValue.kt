@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.serialization.constant
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.types.*
@@ -30,7 +30,7 @@ internal sealed class ConstantValue<out T>(open val value: T) {
 internal abstract class IntegerValueConstant<out T> protected constructor(value: T) : ConstantValue<T>(value)
 internal abstract class UnsignedValueConstant<out T> protected constructor(value: T) : ConstantValue<T>(value)
 
-internal class AnnotationValue(value: FirAnnotationCall) : ConstantValue<FirAnnotationCall>(value) {
+internal class AnnotationValue(value: FirAnnotation) : ConstantValue<FirAnnotation>(value) {
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitAnnotationValue(this, data)
 }
 

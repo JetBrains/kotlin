@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 interface FirExpressionBuilder {
     abstract var source: FirSourceElement?
     abstract var typeRef: FirTypeRef
-    abstract val annotations: MutableList<FirAnnotationCall>
+    abstract val annotations: MutableList<FirAnnotation>
 
     fun build(): FirExpression
 }

@@ -9,7 +9,7 @@ import kotlin.contracts.*
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirDynamicTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirDynamicTypeRefBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     var isMarkedNullable: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 
     override fun build(): FirDynamicTypeRef {

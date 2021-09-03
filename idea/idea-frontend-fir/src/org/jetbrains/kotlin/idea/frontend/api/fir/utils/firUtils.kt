@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.primaryConstructor
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtConstantValue
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtUnsupportedConstantValue
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
-import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 
@@ -68,9 +67,9 @@ internal fun FirNamedReference.getReferencedElementType(resolveState: FirModuleR
     }
 }
 
-internal fun mapAnnotationParameters(annotationCall: FirAnnotationCall, session: FirSession): Map<String, FirExpression> {
+internal fun mapAnnotationParameters(annotation: FirAnnotation, session: FirSession): Map<String, FirExpression> {
 
-    val annotationCone = annotationCall.annotationTypeRef.coneType as? ConeClassLikeType ?: return emptyMap()
+    val annotationCone = annotation.annotationTypeRef.coneType as? ConeClassLikeType ?: return emptyMap()
 
     val annotationPrimaryCtor = (annotationCone.lookupTag.toSymbol(session)?.fir as? FirRegularClass)?.primaryConstructor
     val annotationCtorParameterNames = annotationPrimaryCtor?.valueParameters?.map { it.name }
@@ -79,11 +78,11 @@ internal fun mapAnnotationParameters(annotationCall: FirAnnotationCall, session:
 
     val namesSequence = annotationCtorParameterNames?.asSequence()?.iterator()
 
-    for (argument in annotationCall.argumentList.arguments.filterIsInstance<FirNamedArgumentExpression>()) {
+    for (argument in annotation.argumentList.arguments.filterIsInstance<FirNamedArgumentExpression>()) {
         resultSet[argument.name.asString()] = argument.expression
     }
 
-    for (argument in annotationCall.argumentList.arguments) {
+    for (argument in annotation.argumentList.arguments) {
         if (argument is FirNamedArgumentExpression) continue
 
         while (namesSequence != null && namesSequence.hasNext()) {

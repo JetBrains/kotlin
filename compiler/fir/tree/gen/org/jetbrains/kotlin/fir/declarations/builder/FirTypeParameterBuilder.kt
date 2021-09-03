@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -41,7 +41,7 @@ class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
     lateinit var variance: Variance
     var isReified: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     val bounds: MutableList<FirTypeRef> = mutableListOf()
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
 
     override fun build(): FirTypeParameter {
         return FirTypeParameterImpl(

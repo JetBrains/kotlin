@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolveStatus
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
@@ -30,9 +30,9 @@ object FirGeneratedElementsValidator : FirDefaultVisitor<Unit, Any?>() {
         element.acceptChildren(this, null)
     }
 
-    override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Any?) {
-        require(annotationCall.resolveStatus == FirAnnotationResolveStatus.Resolved)
-        annotationCall.acceptChildren(this, null)
+    override fun visitAnnotation(annotation: FirAnnotation, data: Any?) {
+        require(annotation.resolveStatus == FirAnnotationResolveStatus.Resolved)
+        annotation.acceptChildren(this, null)
     }
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: Any?) {

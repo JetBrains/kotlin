@@ -18,9 +18,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertySymbol
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOperatorAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
@@ -31,7 +28,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.fir.getCandidateSymbols
 import org.jetbrains.kotlin.idea.fir.isImplicitFunctionCall
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
@@ -179,7 +175,7 @@ internal object FirReferenceResolveHelper {
             is FirResolvedTypeRef -> getSymbolsForResolvedTypeRef(fir, expression, session, symbolBuilder)
             is FirResolvedQualifier ->
                 getSymbolsForResolvedQualifier(fir, expression, session, symbolBuilder)
-            is FirAnnotationCall -> getSymbolsForAnnotationCall(fir, session, symbolBuilder)
+            is FirAnnotation -> getSymbolsForAnnotationCall(fir, session, symbolBuilder)
             is FirResolvedImport -> getSymbolsByResolvedImport(expression, symbolBuilder, fir, session)
             is FirPackageDirective -> getSymbolsForPackageDirective(expression, symbolBuilder)
             is FirFile -> getSymbolsByFirFile(symbolBuilder, fir)
@@ -498,7 +494,7 @@ internal object FirReferenceResolveHelper {
     }
 
     private fun getSymbolsForAnnotationCall(
-        fir: FirAnnotationCall,
+        fir: FirAnnotation,
         session: FirSession,
         symbolBuilder: KtSymbolByFirBuilder
     ): Collection<KtSymbol> {

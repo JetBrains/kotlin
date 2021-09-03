@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.declarations.synthetic
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
@@ -67,7 +67,7 @@ class FirSyntheticProperty(
     override val isVal: Boolean
         get() = !isVar
 
-    override val annotations: List<FirAnnotationCall>
+    override val annotations: List<FirAnnotation>
         get() = emptyList()
 
     override val typeParameters: List<FirTypeParameter>

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirAssignmentOperatorStatement : FirPureAbstractElement(), FirStatement {
     abstract override val source: FirSourceElement?
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract val operation: FirOperation
     abstract val leftArgument: FirExpression
     abstract val rightArgument: FirExpression

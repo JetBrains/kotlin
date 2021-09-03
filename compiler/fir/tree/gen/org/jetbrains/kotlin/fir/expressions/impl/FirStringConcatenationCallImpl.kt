@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.fakeElement
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirStringConcatenationCallImpl(
     override val source: FirSourceElement?,
-    override val annotations: MutableList<FirAnnotationCall>,
+    override val annotations: MutableList<FirAnnotation>,
     override var argumentList: FirArgumentList,
 ) : FirStringConcatenationCall() {
     override var typeRef: FirTypeRef = FirImplicitStringTypeRef(source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef))

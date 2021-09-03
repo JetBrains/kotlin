@@ -17,21 +17,21 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirAnnotationCall : FirExpression(), FirCall, FirResolvable {
+abstract class FirAnnotation : FirExpression(), FirCall, FirResolvable {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirReference
     abstract val useSiteTarget: AnnotationUseSiteTarget?
     abstract val annotationTypeRef: FirTypeRef
     abstract val resolveStatus: FirAnnotationResolveStatus
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotationCall(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotation(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformAnnotationCall(this, data) as E
+        transformer.transformAnnotation(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
@@ -41,9 +41,9 @@ abstract class FirAnnotationCall : FirExpression(), FirCall, FirResolvable {
 
     abstract fun replaceResolveStatus(newResolveStatus: FirAnnotationResolveStatus)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationCall
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotation
 
-    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirAnnotationCall
+    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirAnnotation
 
-    abstract fun <D> transformAnnotationTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotationCall
+    abstract fun <D> transformAnnotationTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotation
 }

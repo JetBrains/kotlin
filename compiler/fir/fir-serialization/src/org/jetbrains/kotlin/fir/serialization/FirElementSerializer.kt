@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.CONTINUATION_INTERFACE_CLASS_ID
 import org.jetbrains.kotlin.fir.deserialization.projection
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.varargElementType
@@ -240,7 +240,7 @@ class FirElementSerializer private constructor(
         }
     }
 
-    private fun FirPropertyAccessor.nonSourceAnnotations(session: FirSession, property: FirProperty): List<FirAnnotationCall> =
+    private fun FirPropertyAccessor.nonSourceAnnotations(session: FirSession, property: FirProperty): List<FirAnnotation> =
         (this as FirAnnotationContainer).nonSourceAnnotations(session) + property.nonSourceAnnotations(session).filter {
             val useSiteTarget = it.useSiteTarget
             useSiteTarget == AnnotationUseSiteTarget.PROPERTY_GETTER && isGetter ||
@@ -529,7 +529,7 @@ class FirElementSerializer private constructor(
 
     private fun valueParameterProto(
         parameter: FirValueParameter,
-        additionalAnnotations: List<FirAnnotationCall> = emptyList()
+        additionalAnnotations: List<FirAnnotation> = emptyList()
     ): ProtoBuf.ValueParameter.Builder {
         val builder = ProtoBuf.ValueParameter.newBuilder()
 
@@ -708,13 +708,13 @@ class FirElementSerializer private constructor(
     }
 
     private fun serializeAnnotationFromAttribute(
-        existingAnnotations: List<FirAnnotationCall>?,
+        existingAnnotations: List<FirAnnotation>?,
         classId: ClassId,
         builder: ProtoBuf.Type.Builder
     ) {
         if (existingAnnotations?.any { it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId == classId } != true) {
             extension.serializeTypeAnnotation(
-                buildAnnotationCall {
+                buildAnnotation {
                     calleeReference = FirReferencePlaceholderForResolvedAnnotations
                     annotationTypeRef = buildResolvedTypeRef {
                         this.type = CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID.constructClassLikeType(
@@ -834,7 +834,7 @@ class FirElementSerializer private constructor(
     private fun MutableVersionRequirementTable.serializeVersionRequirements(container: FirAnnotationContainer): List<Int> =
         serializeVersionRequirements(container.annotations)
 
-    private fun MutableVersionRequirementTable.serializeVersionRequirements(annotations: List<FirAnnotationCall>): List<Int> =
+    private fun MutableVersionRequirementTable.serializeVersionRequirements(annotations: List<FirAnnotation>): List<Int> =
         annotations
             .filter {
                 it.toAnnotationClassId()?.asSingleFqName() == RequireKotlinConstants.FQ_NAME
@@ -849,7 +849,7 @@ class FirElementSerializer private constructor(
     private fun MutableVersionRequirementTable.writeVersionRequirementDependingOnCoroutinesVersion(): Int =
         writeVersionRequirement(LanguageFeature.ReleaseCoroutines)
 
-    private fun serializeVersionRequirementFromRequireKotlin(annotation: FirAnnotationCall): ProtoBuf.VersionRequirement.Builder? {
+    private fun serializeVersionRequirementFromRequireKotlin(annotation: FirAnnotation): ProtoBuf.VersionRequirement.Builder? {
         val args = annotation.argumentList
 
         val versionString = (args[RequireKotlinConstants.VERSION]?.toConstantValue() as? StringValue)?.value ?: return null

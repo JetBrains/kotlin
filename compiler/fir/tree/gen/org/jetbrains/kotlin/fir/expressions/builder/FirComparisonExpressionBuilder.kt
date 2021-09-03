@@ -9,7 +9,7 @@ import kotlin.contracts.*
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirComparisonExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirComparisonExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: FirSourceElement? = null
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var operation: FirOperation
     lateinit var compareToCall: FirFunctionCall
 

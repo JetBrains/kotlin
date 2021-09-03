@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.builder
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 interface FirAnnotationContainerBuilder {
     abstract var source: FirSourceElement?
-    abstract val annotations: MutableList<FirAnnotationCall>
+    abstract val annotations: MutableList<FirAnnotation>
 
     fun build(): FirAnnotationContainer
 }

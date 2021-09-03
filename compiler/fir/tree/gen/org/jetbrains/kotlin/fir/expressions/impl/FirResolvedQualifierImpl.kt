@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirResolvedQualifierImpl(
     override val source: FirSourceElement?,
     override var typeRef: FirTypeRef,
-    override val annotations: MutableList<FirAnnotationCall>,
+    override val annotations: MutableList<FirAnnotation>,
     override var packageFqName: FqName,
     override var relativeClassFqName: FqName?,
     override val symbol: FirClassLikeSymbol<*>?,

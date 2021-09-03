@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -45,7 +45,7 @@ internal class FirErrorPropertyImpl(
     override val dispatchReceiverType: ConeKotlinType?,
     override val name: Name,
     override var backingField: FirBackingField?,
-    override val annotations: MutableList<FirAnnotationCall>,
+    override val annotations: MutableList<FirAnnotation>,
     override val diagnostic: ConeDiagnostic,
     override val symbol: FirErrorPropertySymbol,
 ) : FirErrorProperty() {

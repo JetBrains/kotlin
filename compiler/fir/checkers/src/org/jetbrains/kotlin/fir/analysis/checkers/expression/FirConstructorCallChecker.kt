@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -31,7 +31,7 @@ object FirConstructorCallChecker : FirFunctionCallChecker() {
             }
             if (declarationClass.classKind == ClassKind.ANNOTATION_CLASS &&
                 context.qualifiedAccessOrAnnotationCalls.all { call ->
-                    call !is FirAnnotationCall
+                    call !is FirAnnotation
                 } &&
                 context.containingDeclarations.all { klass ->
                     klass !is FirRegularClass || klass.classKind != ClassKind.ANNOTATION_CLASS

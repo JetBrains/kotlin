@@ -892,25 +892,25 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         return constExpression
     }
 
-    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): FirStatement {
-        if (annotationCall.resolveStatus == FirAnnotationResolveStatus.Resolved) return annotationCall
-        return resolveAnnotationCall(annotationCall, FirAnnotationResolveStatus.Resolved)
+    override fun transformAnnotation(annotation: FirAnnotation, data: ResolutionMode): FirStatement {
+        if (annotation.resolveStatus == FirAnnotationResolveStatus.Resolved) return annotation
+        return resolveAnnotationCall(annotation, FirAnnotationResolveStatus.Resolved)
     }
 
     protected fun resolveAnnotationCall(
-        annotationCall: FirAnnotationCall,
+        annotation: FirAnnotation,
         status: FirAnnotationResolveStatus
-    ): FirAnnotationCall {
+    ): FirAnnotation {
         return withFirArrayOfCallTransformer {
-            annotationCall.transformAnnotationTypeRef(transformer, ResolutionMode.ContextIndependent)
-            if (status == FirAnnotationResolveStatus.PartiallyResolved) return annotationCall
-            dataFlowAnalyzer.enterAnnotationCall(annotationCall)
-            val result = callResolver.resolveAnnotationCall(annotationCall)
-            dataFlowAnalyzer.exitAnnotationCall(result ?: annotationCall)
-            if (result == null) return annotationCall
+            annotation.transformAnnotationTypeRef(transformer, ResolutionMode.ContextIndependent)
+            if (status == FirAnnotationResolveStatus.PartiallyResolved) return annotation
+            dataFlowAnalyzer.enterAnnotationCall(annotation)
+            val result = callResolver.resolveAnnotationCall(annotation)
+            dataFlowAnalyzer.exitAnnotationCall(result ?: annotation)
+            if (result == null) return annotation
             callCompleter.completeCall(result, noExpectedType)
             result.replaceResolveStatus(status)
-            annotationCall
+            annotation
         }
     }
 

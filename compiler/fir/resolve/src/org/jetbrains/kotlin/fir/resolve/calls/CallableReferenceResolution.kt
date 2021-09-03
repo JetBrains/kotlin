@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
@@ -365,7 +365,7 @@ class FirFakeArgumentForCallableReference(
     override val typeRef: FirTypeRef
         get() = error("should not be called")
 
-    override val annotations: List<FirAnnotationCall>
+    override val annotations: List<FirAnnotation>
         get() = error("should not be called")
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {

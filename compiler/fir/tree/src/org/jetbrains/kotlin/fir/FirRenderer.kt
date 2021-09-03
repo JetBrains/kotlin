@@ -200,10 +200,10 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         annotationContainer.annotations.renderAnnotations()
     }
 
-    private fun List<FirAnnotationCall>.renderAnnotations() {
+    private fun List<FirAnnotation>.renderAnnotations() {
         if (!mode.renderAnnotation) return
         for (annotation in this) {
-            visitAnnotationCall(annotation)
+            visitAnnotation(annotation)
         }
     }
 
@@ -938,15 +938,15 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         print(")")
     }
 
-    override fun visitAnnotationCall(annotationCall: FirAnnotationCall) {
+    override fun visitAnnotation(annotation: FirAnnotation) {
         print("@")
-        annotationCall.useSiteTarget?.let {
+        annotation.useSiteTarget?.let {
             print(it.name)
             print(":")
         }
-        annotationCall.annotationTypeRef.accept(this)
-        visitCall(annotationCall)
-        if (annotationCall.useSiteTarget == AnnotationUseSiteTarget.FILE) {
+        annotation.annotationTypeRef.accept(this)
+        visitCall(annotation)
+        if (annotation.useSiteTarget == AnnotationUseSiteTarget.FILE) {
             println()
         } else {
             print(" ")

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isJava
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -126,7 +126,7 @@ fun FirClassifierSymbol<*>.toSymbol(
     session: FirSession,
     classifierStorage: Fir2IrClassifierStorage,
     typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT,
-    handleAnnotations: ((List<FirAnnotationCall>) -> Unit)? = null
+    handleAnnotations: ((List<FirAnnotation>) -> Unit)? = null
 ): IrClassifierSymbol {
     return when (this) {
         is FirTypeParameterSymbol -> {

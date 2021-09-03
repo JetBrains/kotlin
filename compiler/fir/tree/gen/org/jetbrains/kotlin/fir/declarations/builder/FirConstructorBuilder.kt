@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.builder.FirAbstractConstructorBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirConstructorImpl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -50,7 +50,7 @@ open class FirConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotationC
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeKotlinType? = null
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var symbol: FirConstructorSymbol
     override var delegatedConstructor: FirDelegatedConstructorCall? = null
     override var body: FirBlock? = null

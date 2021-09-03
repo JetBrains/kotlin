@@ -107,7 +107,7 @@ internal class KtFirCallResolver(
     override fun resolveCall(call: KtCallElement): KtCall? = withValidityAssertion {
         return when (val fir = call.getOrBuildFir(firResolveState)) {
             is FirFunctionCall -> resolveCall(fir)
-            is FirAnnotationCall -> fir.asAnnotationCall()
+            is FirAnnotation -> fir.asAnnotationCall()
             is FirDelegatedConstructorCall -> fir.asDelegatedConstructorCall()
             is FirConstructor -> fir.asDelegatedConstructorCall()
             is FirSafeCallExpression -> fir.regularQualifiedAccess.safeAs<FirFunctionCall>()?.let { resolveCall(it) }
@@ -167,7 +167,7 @@ internal class KtFirCallResolver(
         return KtFunctionCall(createArgumentMapping(), target)
     }
 
-    private fun FirAnnotationCall.asAnnotationCall(): KtAnnotationCall? {
+    private fun FirAnnotation.asAnnotationCall(): KtAnnotationCall? {
         val target = calleeReference.createCallTarget() ?: return null
         return KtAnnotationCall(createArgumentMapping(), target)
     }

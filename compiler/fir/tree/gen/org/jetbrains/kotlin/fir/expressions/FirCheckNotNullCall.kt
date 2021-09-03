@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirCheckNotNullCall : FirExpression(), FirCall, FirResolvable {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirReference
 

@@ -467,7 +467,7 @@ fun FirStatement.processAllContainingCallCandidates(processBlocks: Boolean, proc
             rhs.processAllContainingCallCandidates(processBlocks, processor)
         }
 
-        is FirAnnotationCall -> {
+        is FirAnnotation -> {
             processCandidateIfApplicable(processor, processBlocks)
             arguments.forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
         }

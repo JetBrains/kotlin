@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
 fun FirFunctionCall.copy(
-    annotations: List<FirAnnotationCall> = this.annotations,
+    annotations: List<FirAnnotation> = this.annotations,
     argumentList: FirArgumentList = this.argumentList,
     calleeReference: FirNamedReference = this.calleeReference,
     explicitReceiver: FirExpression? = this.explicitReceiver,
@@ -85,7 +85,7 @@ fun FirAnonymousFunction.copy(
     returnTypeRef: FirTypeRef = this.returnTypeRef,
     valueParameters: List<FirValueParameter> = this.valueParameters,
     body: FirBlock? = this.body,
-    annotations: List<FirAnnotationCall> = this.annotations,
+    annotations: List<FirAnnotation> = this.annotations,
     typeRef: FirTypeRef = this.typeRef,
     label: FirLabel? = this.label,
     controlFlowGraphReference: FirControlFlowGraphReference? = this.controlFlowGraphReference,
@@ -137,7 +137,7 @@ fun FirTypeRef.errorTypeFromPrototype(
 
 fun FirTypeParameter.copy(
     bounds: List<FirTypeRef> = this.bounds,
-    annotations: List<FirAnnotationCall> = this.annotations
+    annotations: List<FirAnnotation> = this.annotations
 ): FirTypeParameter {
     return buildTypeParameter {
         source = this@copy.source
@@ -155,7 +155,7 @@ fun FirTypeParameter.copy(
 fun FirWhenExpression.copy(
     resultType: FirTypeRef = this.typeRef,
     calleeReference: FirReference = this.calleeReference,
-    annotations: List<FirAnnotationCall> = this.annotations
+    annotations: List<FirAnnotation> = this.annotations
 ): FirWhenExpression = buildWhenExpression {
     source = this@copy.source
     subject = this@copy.subject
@@ -171,7 +171,7 @@ fun FirWhenExpression.copy(
 fun FirTryExpression.copy(
     resultType: FirTypeRef = this.typeRef,
     calleeReference: FirReference = this.calleeReference,
-    annotations: List<FirAnnotationCall> = this.annotations
+    annotations: List<FirAnnotation> = this.annotations
 ): FirTryExpression = buildTryExpression {
     source = this@copy.source
     tryBlock = this@copy.tryBlock
@@ -185,7 +185,7 @@ fun FirTryExpression.copy(
 fun FirCheckNotNullCall.copy(
     resultType: FirTypeRef = this.typeRef,
     calleeReference: FirReference = this.calleeReference,
-    annotations: List<FirAnnotationCall> = this.annotations
+    annotations: List<FirAnnotation> = this.annotations
 ): FirCheckNotNullCall = buildCheckNotNullCall {
     source = this@copy.source
     this.calleeReference = calleeReference

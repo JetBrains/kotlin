@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -261,7 +261,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 effectiveVisibility
             )
         }.apply {
-            (annotations as MutableList<FirAnnotationCall>) +=
+            (annotations as MutableList<FirAnnotation>) +=
                 c.annotationDeserializer.loadPropertyGetterAnnotations(
                     c.containerSource, proto, local.nameResolver, local.typeTable, getterFlags
                 )
@@ -317,7 +317,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 effectiveVisibility
             )
         }.apply {
-            (annotations as MutableList<FirAnnotationCall>) +=
+            (annotations as MutableList<FirAnnotation>) +=
                 c.annotationDeserializer.loadPropertySetterAnnotations(
                     c.containerSource, proto, local.nameResolver, local.typeTable, setterFlags
                 )

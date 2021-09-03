@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirAnonymousObjectExpressionImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -23,7 +23,7 @@ class FirAnonymousObjectExpressionBuilder : FirAnnotationContainerBuilder, FirEx
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     lateinit var anonymousObject: FirAnonymousObject
 
-    override val annotations: MutableList<FirAnnotationCall>
+    override val annotations: MutableList<FirAnnotation>
         get() = error("Should not be called")
 
     override fun build(): FirAnonymousObjectExpression {

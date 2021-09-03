@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
     override var source: FirSourceElement?,
     override var typeRef: FirTypeRef,
-    override val annotations: MutableList<FirAnnotationCall>,
+    override val annotations: MutableList<FirAnnotation>,
     override var calleeReference: FirReference,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,

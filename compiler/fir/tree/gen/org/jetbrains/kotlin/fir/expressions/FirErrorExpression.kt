@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirErrorExpression : FirExpression(), FirDiagnosticHolder {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract override val diagnostic: ConeDiagnostic
     abstract val expression: FirExpression?
 

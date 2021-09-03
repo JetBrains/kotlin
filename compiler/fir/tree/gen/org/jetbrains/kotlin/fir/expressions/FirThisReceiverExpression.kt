@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 abstract class FirThisReceiverExpression : FirQualifiedAccessExpression() {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression

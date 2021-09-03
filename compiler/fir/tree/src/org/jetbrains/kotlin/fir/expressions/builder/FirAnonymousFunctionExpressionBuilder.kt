@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirAnonymousFunctionExpressionImpl
@@ -39,7 +39,7 @@ class FirAnonymousFunctionExpressionBuilder : FirAnnotationContainerBuilder, Fir
         }
 
     @Deprecated("Modification of 'annotations' has no impact for FirAnonymousFunctionExpressionBuilder", level = DeprecationLevel.HIDDEN)
-    override val annotations: MutableList<FirAnnotationCall>
+    override val annotations: MutableList<FirAnnotation>
         get() = throw IllegalStateException()
 }
 

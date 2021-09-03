@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 interface FirAbstractFunctionCallBuilder : FirQualifiedAccessBuilder, FirCallBuilder {
-    abstract override val annotations: MutableList<FirAnnotationCall>
+    abstract override val annotations: MutableList<FirAnnotation>
     abstract override val typeArguments: MutableList<FirTypeProjection>
     abstract override var explicitReceiver: FirExpression?
     abstract override var dispatchReceiver: FirExpression

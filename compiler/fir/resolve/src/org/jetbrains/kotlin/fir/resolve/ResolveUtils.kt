@@ -366,7 +366,7 @@ fun CallableId.isIteratorHasNext(): Boolean =
 fun CallableId.isIterator(): Boolean =
     callableName.asString() == "iterator" && packageName.asString() in arrayOf("kotlin.collections", "kotlin.ranges")
 
-fun FirAnnotationCall.fqName(session: FirSession): FqName? {
+fun FirAnnotation.fqName(session: FirSession): FqName? {
     val symbol = session.symbolProvider.getSymbolByTypeRef<FirRegularClassSymbol>(annotationTypeRef) ?: return null
     return symbol.classId.asSingleFqName()
 }
@@ -419,7 +419,7 @@ private fun FirQualifiedAccess.expressionTypeOrUnitForAssignment(): ConeKotlinTy
     return StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false)
 }
 
-fun FirAnnotationCall.getCorrespondingClassSymbolOrNull(session: FirSession): FirRegularClassSymbol? {
+fun FirAnnotation.getCorrespondingClassSymbolOrNull(session: FirSession): FirRegularClassSymbol? {
     return annotationTypeRef.coneType.fullyExpandedType(session).classId?.let {
         if (it.isLocal) {
             // TODO: How to retrieve local annotaiton's constructor?

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolveStatus
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -19,15 +19,15 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-internal class FirAnnotationCallImpl(
+internal class FirAnnotationImpl(
     override val source: FirSourceElement?,
-    override val annotations: MutableList<FirAnnotationCall>,
+    override val annotations: MutableList<FirAnnotation>,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirReference,
     override val useSiteTarget: AnnotationUseSiteTarget?,
     override var annotationTypeRef: FirTypeRef,
     override var resolveStatus: FirAnnotationResolveStatus,
-) : FirAnnotationCall() {
+) : FirAnnotation() {
     override val typeRef: FirTypeRef get() = annotationTypeRef
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -37,7 +37,7 @@ internal class FirAnnotationCallImpl(
         annotationTypeRef.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnnotationCallImpl {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnnotationImpl {
         transformAnnotations(transformer, data)
         argumentList = argumentList.transform(transformer, data)
         transformCalleeReference(transformer, data)
@@ -45,17 +45,17 @@ internal class FirAnnotationCallImpl(
         return this
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationCallImpl {
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationImpl {
         annotations.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirAnnotationCallImpl {
+    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirAnnotationImpl {
         calleeReference = calleeReference.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformAnnotationTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotationCallImpl {
+    override fun <D> transformAnnotationTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotationImpl {
         annotationTypeRef = annotationTypeRef.transform(transformer, data)
         return this
     }

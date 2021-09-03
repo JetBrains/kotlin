@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -46,7 +46,7 @@ internal class FirEnumEntryImpl(
     override val name: Name,
     override var initializer: FirExpression?,
     override var backingField: FirBackingField?,
-    override val annotations: MutableList<FirAnnotationCall>,
+    override val annotations: MutableList<FirAnnotation>,
     override val symbol: FirEnumEntrySymbol,
 ) : FirEnumEntry() {
     override val receiverTypeRef: FirTypeRef? get() = null

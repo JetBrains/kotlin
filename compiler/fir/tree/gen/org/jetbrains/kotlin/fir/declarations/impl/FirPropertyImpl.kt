@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirPropertyBodyResolveState
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
@@ -54,7 +54,7 @@ internal class FirPropertyImpl(
     override var getter: FirPropertyAccessor?,
     override var setter: FirPropertyAccessor?,
     override var backingField: FirBackingField?,
-    override val annotations: MutableList<FirAnnotationCall>,
+    override val annotations: MutableList<FirAnnotation>,
     override val symbol: FirPropertySymbol,
     override val delegateFieldSymbol: FirDelegateFieldSymbol?,
     override val isLocal: Boolean,

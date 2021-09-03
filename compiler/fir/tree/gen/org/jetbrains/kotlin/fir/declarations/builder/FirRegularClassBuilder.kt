@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.FirClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterRefsOwnerBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirRegularClassImpl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -46,7 +46,7 @@ open class FirRegularClassBuilder : FirClassBuilder, FirTypeParameterRefsOwnerBu
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     override lateinit var classKind: ClassKind
     override val declarations: MutableList<FirDeclaration> = mutableListOf()
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var scopeProvider: FirScopeProvider
     open lateinit var status: FirDeclarationStatus
     open lateinit var name: Name

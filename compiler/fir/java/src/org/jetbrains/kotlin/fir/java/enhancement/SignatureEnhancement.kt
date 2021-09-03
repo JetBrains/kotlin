@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
@@ -504,14 +504,14 @@ private class EnhancementSignatureParts(
     override val forceOnlyHeadTypeConstructor: Boolean,
     override val containerApplicabilityType: AnnotationQualifierApplicabilityType,
     override val containerDefaultTypeQualifiers: JavaTypeQualifiersByElementType?
-) : AbstractSignatureParts<FirAnnotationCall>() {
+) : AbstractSignatureParts<FirAnnotation>() {
     override val enableImprovementsInStrictMode: Boolean
         get() = true
 
     override val skipRawTypeArguments: Boolean
         get() = false
 
-    override val containerAnnotations: Iterable<FirAnnotationCall>
+    override val containerAnnotations: Iterable<FirAnnotation>
         get() = typeContainer?.annotations ?: emptyList()
 
     override val containerIsVarargParameter: Boolean
@@ -520,10 +520,10 @@ private class EnhancementSignatureParts(
     override val typeSystem: TypeSystemContext
         get() = session.typeContext
 
-    override val FirAnnotationCall.forceWarning: Boolean
+    override val FirAnnotation.forceWarning: Boolean
         get() = false // TODO: force warnings on IDEA external annotations
 
-    override val KotlinTypeMarker.annotations: Iterable<FirAnnotationCall>
+    override val KotlinTypeMarker.annotations: Iterable<FirAnnotation>
         get() = (this as ConeKotlinType).attributes.customAnnotations
 
     override val KotlinTypeMarker.fqNameUnsafe: FqNameUnsafe?

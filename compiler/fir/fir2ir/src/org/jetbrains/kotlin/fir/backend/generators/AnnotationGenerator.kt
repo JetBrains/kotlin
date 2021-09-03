@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.useSiteTargetsFromMetaAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.isSetter
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.util.isSetter
  */
 class AnnotationGenerator(private val components: Fir2IrComponents) : Fir2IrComponents by components {
 
-    fun List<FirAnnotationCall>.toIrAnnotations(): List<IrConstructorCall> =
+    fun List<FirAnnotation>.toIrAnnotations(): List<IrConstructorCall> =
         mapNotNull {
             callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
         }
@@ -36,7 +36,7 @@ class AnnotationGenerator(private val components: Fir2IrComponents) : Fir2IrComp
         irContainer.annotations = firContainer.annotations.toIrAnnotations()
     }
 
-    private fun FirAnnotationCall.target(applicable: List<AnnotationUseSiteTarget>): AnnotationUseSiteTarget? =
+    private fun FirAnnotation.target(applicable: List<AnnotationUseSiteTarget>): AnnotationUseSiteTarget? =
         useSiteTarget ?: applicable.firstOrNull(useSiteTargetsFromMetaAnnotation(session)::contains)
 
     companion object {

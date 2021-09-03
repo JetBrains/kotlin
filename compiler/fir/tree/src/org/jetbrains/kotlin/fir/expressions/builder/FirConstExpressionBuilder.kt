@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions.builder
 
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirConstExpressionImpl
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -16,7 +16,7 @@ fun <T> buildConstExpression(
     source: FirSourceElement?,
     kind: ConstantValueKind<T>,
     value: T,
-    annotations: MutableList<FirAnnotationCall> = mutableListOf(),
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
     setType: Boolean = false
 ): FirConstExpression<T> {
     return FirConstExpressionImpl(source, annotations, kind, value).also {

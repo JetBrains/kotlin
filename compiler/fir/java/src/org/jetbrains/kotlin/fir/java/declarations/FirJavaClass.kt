@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -36,7 +36,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     @Volatile
     override var resolvePhase: FirResolvePhase,
     override val name: Name,
-    override val annotations: MutableList<FirAnnotationCall>,
+    override val annotations: MutableList<FirAnnotation>,
     override var status: FirDeclarationStatus,
     override val classKind: ClassKind,
     override val declarations: MutableList<FirDeclaration>,
@@ -139,7 +139,7 @@ internal class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationCont
 
     override var source: FirSourceElement? = null
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     override val declarations: MutableList<FirDeclaration> = mutableListOf()
 

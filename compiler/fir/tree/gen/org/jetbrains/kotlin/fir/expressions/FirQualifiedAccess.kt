@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 
 interface FirQualifiedAccess : FirResolvable, FirStatement {
     override val calleeReference: FirReference
-    override val annotations: List<FirAnnotationCall>
+    override val annotations: List<FirAnnotation>
     val typeArguments: List<FirTypeProjection>
     val explicitReceiver: FirExpression?
     val dispatchReceiver: FirExpression

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtElement
@@ -19,7 +19,7 @@ internal fun buildFileFirAnnotation(
     baseScopeProvider: FirScopeProvider,
     fileAnnotation: KtAnnotationEntry,
     replacement: RawFirReplacement? = null
-): FirAnnotationCall {
+): FirAnnotation {
 
     val replacementApplier = replacement?.Applier()
 
@@ -30,7 +30,7 @@ internal fun buildFileFirAnnotation(
         }
     }
     builder.context.packageFqName = fileAnnotation.containingKtFile.packageFqName
-    val result = builder.VisitorWithReplacement().convertElement(fileAnnotation) as FirAnnotationCall
+    val result = builder.VisitorWithReplacement().convertElement(fileAnnotation) as FirAnnotation
     replacementApplier?.ensureApplied()
     return result
 }

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.*
@@ -23,7 +23,7 @@ object FirJvmPackageNameAnnotationsChecker : FirAnnotationCallChecker() {
     private val jvmPackageNameClassId = ClassId.topLevel(FqName("kotlin.jvm.JvmPackageName"))
     private val stringParameterName = Name.identifier("name")
 
-    override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(expression: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
         val lookupTag = expression.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return
         if (lookupTag.classId != jvmPackageNameClassId) return
 

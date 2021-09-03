@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.types.*
@@ -42,7 +42,7 @@ internal class FirIdeRenderer private constructor(
         }
     }
 
-    private fun renderType(type: ConeTypeProjection, annotations: List<FirAnnotationCall>? = null): String =
+    private fun renderType(type: ConeTypeProjection, annotations: List<FirAnnotation>? = null): String =
         typeIdeRenderer.renderType(type, annotations)
 
     private fun renderType(firRef: FirTypeRef, approximate: Boolean = false): String {

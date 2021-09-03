@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.tree.generator
 
-import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.annotationCall
+import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.annotation
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.block
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.controlFlowGraphReference
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.declaration
@@ -37,7 +37,7 @@ object FieldSets {
 
     val declarations by lazy { fieldList(declaration.withArgs("E" to "*")) }
 
-    val annotations by lazy { fieldList("annotations", annotationCall).withTransform(needTransformInOtherChildren = true) }
+    val annotations by lazy { fieldList("annotations", annotation).withTransform(needTransformInOtherChildren = true) }
 
     fun symbolWithPackage(packageName: String?, symbolClassName: String, argument: String? = null): Field {
         return field("symbol", type(packageName, symbolClassName), argument)

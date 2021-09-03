@@ -379,15 +379,15 @@ class CallAndReferenceGenerator(
         }
     }
 
-    fun convertToIrConstructorCall(annotationCall: FirAnnotationCall): IrExpression {
-        val coneType = annotationCall.annotationTypeRef.coneTypeSafe<ConeLookupTagBasedType>()
+    fun convertToIrConstructorCall(annotation: FirAnnotation): IrExpression {
+        val coneType = annotation.annotationTypeRef.coneTypeSafe<ConeLookupTagBasedType>()
         val type = coneType?.toIrType()
         val symbol = type?.classifierOrNull
-        return annotationCall.convertWithOffsets { startOffset, endOffset ->
+        return annotation.convertWithOffsets { startOffset, endOffset ->
             when (symbol) {
                 is IrClassSymbol -> {
                     val irClass = symbol.owner
-                    val irConstructor = (annotationCall.toResolvedCallableSymbol() as? FirConstructorSymbol)?.let {
+                    val irConstructor = (annotation.toResolvedCallableSymbol() as? FirConstructorSymbol)?.let {
                         this.declarationStorage.getIrConstructorSymbol(it)
                     } ?: run {
                         // Fallback for FirReferencePlaceholderForResolvedAnnotations from jar
@@ -419,11 +419,11 @@ class CallAndReferenceGenerator(
                         startOffset,
                         endOffset,
                         type ?: createErrorType(),
-                        "Unresolved reference: ${annotationCall.render()}"
+                        "Unresolved reference: ${annotation.render()}"
                     )
                 }
             }
-        }.applyCallArguments(annotationCall, annotationMode = true)
+        }.applyCallArguments(annotation, annotationMode = true)
     }
 
     internal fun convertToGetObject(qualifier: FirResolvedQualifier): IrExpression {
@@ -487,11 +487,11 @@ class CallAndReferenceGenerator(
                         val calleeReference = when (call) {
                             is FirFunctionCall -> call.calleeReference
                             is FirDelegatedConstructorCall -> call.calleeReference
-                            is FirAnnotationCall -> call.calleeReference
+                            is FirAnnotation -> call.calleeReference
                             else -> null
                         }
                         val function = if (calleeReference == FirReferencePlaceholderForResolvedAnnotations) {
-                            val coneClassLikeType = (call as FirAnnotationCall).annotationTypeRef.coneTypeSafe<ConeClassLikeType>()
+                            val coneClassLikeType = (call as FirAnnotation).annotationTypeRef.coneTypeSafe<ConeClassLikeType>()
                             val firClass = (coneClassLikeType?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol)?.fir
                             firClass?.declarations?.filterIsInstance<FirConstructor>()?.firstOrNull()
                         } else {

@@ -489,16 +489,16 @@ class FirCallResolver(
         }
     }
 
-    fun resolveAnnotationCall(annotationCall: FirAnnotationCall): FirAnnotationCall? {
-        val reference = annotationCall.calleeReference as? FirSimpleNamedReference ?: return null
-        annotationCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
+    fun resolveAnnotationCall(annotation: FirAnnotation): FirAnnotation? {
+        val reference = annotation.calleeReference as? FirSimpleNamedReference ?: return null
+        annotation.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
 
         val callInfo = CallInfo(
-            annotationCall,
+            annotation,
             CallKind.Function,
             name = reference.name,
             explicitReceiver = null,
-            annotationCall.argumentList,
+            annotation.argumentList,
             isPotentialQualifierPart = false,
             isImplicitInvoke = false,
             typeArguments = emptyList(),
@@ -507,7 +507,7 @@ class FirCallResolver(
             components.containingDeclarations
         )
 
-        val annotationClassSymbol = annotationCall.getCorrespondingClassSymbolOrNull(session)
+        val annotationClassSymbol = annotation.getCorrespondingClassSymbolOrNull(session)
         val resolvedReference = if (annotationClassSymbol != null && annotationClassSymbol.fir.classKind == ClassKind.ANNOTATION_CLASS) {
             val resolutionResult = createCandidateForAnnotationCall(annotationClassSymbol, callInfo)
                 ?: ResolutionResult(callInfo, CandidateApplicability.HIDDEN, emptyList())
@@ -529,7 +529,7 @@ class FirCallResolver(
             )
         }
 
-        return annotationCall.transformCalleeReference(StoreNameReference, resolvedReference)
+        return annotation.transformCalleeReference(StoreNameReference, resolvedReference)
     }
 
     private fun createCandidateForAnnotationCall(

@@ -108,7 +108,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             withCopy()
         }
 
-        builder(annotationCall) {
+        builder(annotation) {
             parents += callBuilder
             default("argumentList") {
                 value = "FirEmptyArgumentList"

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
@@ -22,7 +22,7 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
     protected val session: FirSession,
     protected val scopeSession: ScopeSession
 ) : FirDefaultTransformer<D>() {
-    abstract override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: D): FirStatement
+    abstract override fun transformAnnotation(annotation: FirAnnotation, data: D): FirStatement
 
     protected lateinit var scope: FirScope
 

@@ -594,9 +594,9 @@ open class RawFirBuilder(
             annotated.extractAnnotationsTo(this.annotations)
         }
 
-        private fun KtAnnotated.extractAnnotationsTo(container: MutableList<FirAnnotationCall>) {
+        private fun KtAnnotated.extractAnnotationsTo(container: MutableList<FirAnnotation>) {
             for (annotationEntry in annotationEntries) {
-                container += annotationEntry.convert<FirAnnotationCall>()
+                container += annotationEntry.convert<FirAnnotation>()
             }
         }
 
@@ -864,7 +864,7 @@ open class RawFirBuilder(
                     source = file.packageDirective?.toFirPsiSourceElement()
                 }
                 for (annotationEntry in file.annotationEntries) {
-                    annotations += annotationEntry.convert<FirAnnotationCall>()
+                    annotations += annotationEntry.convert<FirAnnotation>()
                 }
                 for (importDirective in file.importDirectives) {
                     imports += buildImport {
@@ -1682,14 +1682,14 @@ open class RawFirBuilder(
 
             for (modifierList in allModifierLists) {
                 for (annotationEntry in modifierList.annotationEntries) {
-                    firTypeBuilder.annotations += annotationEntry.convert<FirAnnotationCall>()
+                    firTypeBuilder.annotations += annotationEntry.convert<FirAnnotation>()
                 }
             }
             return firTypeBuilder.build()
         }
 
         override fun visitAnnotationEntry(annotationEntry: KtAnnotationEntry, data: Unit): FirElement {
-            return buildAnnotationCall {
+            return buildAnnotation {
                 source = annotationEntry.toFirSourceElement()
                 useSiteTarget = annotationEntry.useSiteTarget?.getAnnotationUseSiteTarget()
                 annotationTypeRef = annotationEntry.typeReference.toFirOrErrorType()
@@ -2354,7 +2354,7 @@ open class RawFirBuilder(
                     expression.toFirSourceElement(),
                     ConeNotAnnotationContainer(rawResult?.render() ?: "???")
                 )
-            expression.extractAnnotationsTo(result.annotations as MutableList<FirAnnotationCall>)
+            expression.extractAnnotationsTo(result.annotations as MutableList<FirAnnotation>)
             return result
         }
 
@@ -2418,7 +2418,7 @@ open class RawFirBuilder(
         }
     }
 
-    private val extensionFunctionAnnotation = buildAnnotationCall {
+    private val extensionFunctionAnnotation = buildAnnotation {
         annotationTypeRef = buildResolvedTypeRef {
             type = ConeClassLikeTypeImpl(
                 ConeClassLikeLookupTagImpl(EXTENSION_FUNCTION_ANNOTATION),

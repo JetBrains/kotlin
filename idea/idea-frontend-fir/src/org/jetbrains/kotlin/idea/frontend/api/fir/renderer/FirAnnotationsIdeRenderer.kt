@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.renderer
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.mapAnnotationParameters
 
 internal fun StringBuilder.renderAnnotations(
     coneTypeIdeRenderer: ConeTypeIdeRenderer,
-    annotations: List<FirAnnotationCall>,
+    annotations: List<FirAnnotation>,
     session: FirSession
 ) {
     for (annotation in annotations) {
@@ -27,11 +27,11 @@ internal fun StringBuilder.renderAnnotations(
     }
 }
 
-private fun FirAnnotationCall.isParameterName(): Boolean {
+private fun FirAnnotation.isParameterName(): Boolean {
     return toAnnotationClassId()?.asSingleFqName() == StandardNames.FqNames.parameterName
 }
 
-private fun renderAnnotation(annotation: FirAnnotationCall, coneTypeIdeRenderer: ConeTypeIdeRenderer, session: FirSession): String {
+private fun renderAnnotation(annotation: FirAnnotation, coneTypeIdeRenderer: ConeTypeIdeRenderer, session: FirSession): String {
     return buildString {
         append('@')
         val resolvedTypeRef = annotation.typeRef as? FirResolvedTypeRef
@@ -45,7 +45,7 @@ private fun renderAnnotation(annotation: FirAnnotationCall, coneTypeIdeRenderer:
     }
 }
 
-private fun renderAndSortAnnotationArguments(descriptor: FirAnnotationCall, session: FirSession): List<String> {
+private fun renderAndSortAnnotationArguments(descriptor: FirAnnotation, session: FirSession): List<String> {
     val argumentList = mapAnnotationParameters(descriptor, session).entries.map { (name, value) ->
         "$name = ${renderConstant(value)}"
     }

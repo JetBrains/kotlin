@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirResolvedReifiedParameterReference : FirExpression() {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract val symbol: FirTypeParameterSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedReifiedParameterReference(this, data)

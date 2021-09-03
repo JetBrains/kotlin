@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.fir.types.isArrayType
 
 object FirNamedVarargChecker : FirCallChecker() {
     override fun check(expression: FirCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (expression !is FirFunctionCall && expression !is FirAnnotationCall && expression !is FirDelegatedConstructorCall) return
-        val isAnnotation = expression is FirAnnotationCall
+        if (expression !is FirFunctionCall && expression !is FirAnnotation && expression !is FirDelegatedConstructorCall) return
+        val isAnnotation = expression is FirAnnotation
         val errorFactory =
             if (isAnnotation) FirErrors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION
             else FirErrors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION

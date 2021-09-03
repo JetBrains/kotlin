@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirDelegatedConstructorCall : FirPureAbstractElement(), FirResolvable, FirCall {
     abstract override val source: FirSourceElement?
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract override val argumentList: FirArgumentList
     abstract val constructedTypeRef: FirTypeRef
     abstract val dispatchReceiver: FirExpression

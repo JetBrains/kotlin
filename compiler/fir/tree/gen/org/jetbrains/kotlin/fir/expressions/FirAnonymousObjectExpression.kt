@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirAnonymousObjectExpression : FirExpression() {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract val anonymousObject: FirAnonymousObject
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousObjectExpression(this, data)

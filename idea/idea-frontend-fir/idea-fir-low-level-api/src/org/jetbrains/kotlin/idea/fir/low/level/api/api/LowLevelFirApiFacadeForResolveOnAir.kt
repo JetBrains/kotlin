@@ -9,7 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.providers.getModuleInfo
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -189,7 +189,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         replacement: RawFirReplacement,
         firFile: FirFile,
         collector: FirTowerDataContextCollector? = null,
-    ): FirAnnotationCall {
+    ): FirAnnotation {
         val annotationCall = buildFileFirAnnotation(
             session = firFile.moduleData.session,
             baseScopeProvider = firFile.moduleData.session.firIdeProvider.kotlinScopeProvider,

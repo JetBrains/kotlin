@@ -89,7 +89,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val typeProjectionWithVariance = element("TypeProjectionWithVariance", TypeRef, typeProjection)
     val argumentList = element("ArgumentList", Expression)
     val call = sealedElement("Call", Expression, statement) // TODO: may smth like `CallWithArguments` or `ElementWithArguments`?
-    val annotationCall = element("AnnotationCall", Expression, expression, call, resolvable)
+    val annotation = element("Annotation", Expression, expression, call, resolvable)
     val comparisonExpression = element("ComparisonExpression", Expression, expression)
     val typeOperatorCall = element("TypeOperatorCall", Expression, expression, call)
     val assignmentOperatorStatement = element("AssignmentOperatorStatement", Expression, statement)

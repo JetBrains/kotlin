@@ -85,7 +85,7 @@ class DeclarationsConverter(
             throw Exception()
         }
 
-        val fileAnnotationList = mutableListOf<FirAnnotationCall>()
+        val fileAnnotationList = mutableListOf<FirAnnotation>()
         val importList = mutableListOf<FirImport>()
         val firDeclarationList = mutableListOf<FirDeclaration>()
         context.packageFqName = FqName.ROOT
@@ -287,7 +287,7 @@ class DeclarationsConverter(
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFileAnnotationList]
      */
-    private fun convertFileAnnotationList(fileAnnotationList: LighterASTNode): List<FirAnnotationCall> {
+    private fun convertFileAnnotationList(fileAnnotationList: LighterASTNode): List<FirAnnotation> {
         return fileAnnotationList.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
                 ANNOTATION -> container += convertAnnotation(node)
@@ -299,7 +299,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseAnnotationOrList
      */
-    fun convertAnnotation(annotationNode: LighterASTNode): List<FirAnnotationCall> {
+    fun convertAnnotation(annotationNode: LighterASTNode): List<FirAnnotation> {
         var annotationTarget: AnnotationUseSiteTarget? = null
         return annotationNode.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
@@ -338,7 +338,7 @@ class DeclarationsConverter(
     fun convertAnnotationEntry(
         unescapedAnnotation: LighterASTNode,
         defaultAnnotationUseSiteTarget: AnnotationUseSiteTarget? = null
-    ): FirAnnotationCall {
+    ): FirAnnotation {
         var annotationUseSiteTarget: AnnotationUseSiteTarget? = null
         lateinit var constructorCalleePair: Pair<FirTypeRef, List<FirExpression>>
         unescapedAnnotation.forEachChildren {
@@ -348,7 +348,7 @@ class DeclarationsConverter(
             }
         }
         val name = (constructorCalleePair.first as? FirUserTypeRef)?.qualifier?.last()?.name ?: Name.special("<no-annotation-name>")
-        return buildAnnotationCall {
+        return buildAnnotation {
             source = unescapedAnnotation.toFirSourceElement()
             useSiteTarget = annotationUseSiteTarget ?: defaultAnnotationUseSiteTarget
             annotationTypeRef = constructorCalleePair.first
@@ -1775,7 +1775,7 @@ class DeclarationsConverter(
         lateinit var identifier: String
         lateinit var firType: FirTypeRef
         lateinit var referenceExpression: LighterASTNode
-        val annotations = mutableListOf<FirAnnotationCall>()
+        val annotations = mutableListOf<FirAnnotation>()
         typeConstraint.forEachChildren {
             when (it.tokenType) {
                 //annotations will be saved later, on mapping stage with type parameters
@@ -1890,7 +1890,7 @@ class DeclarationsConverter(
         }
 
         for (modifierList in allTypeModifiers) {
-            (calculatedFirType.annotations as MutableList<FirAnnotationCall>) += modifierList.annotations
+            (calculatedFirType.annotations as MutableList<FirAnnotation>) += modifierList.annotations
         }
         return calculatedFirType
     }
@@ -2116,7 +2116,7 @@ class DeclarationsConverter(
         return ValueParameter(isVal, isVar, modifiers, firValueParameter, destructuringDeclaration)
     }
 
-    private val extensionFunctionAnnotation = buildAnnotationCall {
+    private val extensionFunctionAnnotation = buildAnnotation {
         annotationTypeRef = buildResolvedTypeRef {
             type = ConeClassLikeTypeImpl(
                 ConeClassLikeLookupTagImpl(EXTENSION_FUNCTION_ANNOTATION),

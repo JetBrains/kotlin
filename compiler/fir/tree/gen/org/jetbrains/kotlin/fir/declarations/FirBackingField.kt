@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
@@ -45,7 +45,7 @@ abstract class FirBackingField : FirVariable(), FirTypeParametersOwner, FirState
     abstract override val symbol: FirBackingFieldSymbol
     abstract val propertySymbol: FirPropertySymbol
     abstract override val initializer: FirExpression?
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract override val typeParameters: List<FirTypeParameter>
     abstract override val status: FirDeclarationStatus
 

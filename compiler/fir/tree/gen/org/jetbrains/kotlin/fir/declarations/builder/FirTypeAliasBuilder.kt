@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.FirDeclarationBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParametersOwnerBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeAliasImpl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -44,7 +44,7 @@ class FirTypeAliasBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder
     lateinit var name: Name
     lateinit var symbol: FirTypeAliasSymbol
     lateinit var expandedTypeRef: FirTypeRef
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
 
     override fun build(): FirTypeAlias {
         return FirTypeAliasImpl(

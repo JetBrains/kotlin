@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirConstructorBuilder
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -35,7 +35,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override var returnTypeRef: FirTypeRef,
     override val valueParameters: MutableList<FirValueParameter>,
     override val typeParameters: MutableList<FirTypeParameterRef>,
-    annotationBuilder: () -> List<FirAnnotationCall>,
+    annotationBuilder: () -> List<FirAnnotation>,
     override var status: FirDeclarationStatus,
     @Volatile
     override var resolvePhase: FirResolvePhase,
@@ -61,7 +61,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
 
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
 
-    override val annotations: List<FirAnnotationCall> by lazy { annotationBuilder() }
+    override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
 
 
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
@@ -150,7 +150,7 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
     lateinit var visibility: Visibility
     var isInner: Boolean by Delegates.notNull()
     var isPrimary: Boolean by Delegates.notNull()
-    lateinit var annotationBuilder: () -> List<FirAnnotationCall>
+    lateinit var annotationBuilder: () -> List<FirAnnotation>
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaConstructor {

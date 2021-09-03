@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.types.impl
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -26,7 +26,7 @@ sealed class FirImplicitBuiltinTypeRef(
     typeArguments: Array<out ConeTypeProjection> = emptyArray(),
     isNullable: Boolean = false
 ) : FirResolvedTypeRef() {
-    override val annotations: List<FirAnnotationCall>
+    override val annotations: List<FirAnnotation>
         get() = emptyList()
 
     override val type: ConeClassLikeType = ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(id), typeArguments, isNullable)

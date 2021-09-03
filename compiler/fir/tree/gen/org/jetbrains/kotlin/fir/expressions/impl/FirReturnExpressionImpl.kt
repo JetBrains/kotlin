@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.FirTarget
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.fakeElement
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirReturnExpressionImpl(
     override val source: FirSourceElement?,
-    override val annotations: MutableList<FirAnnotationCall>,
+    override val annotations: MutableList<FirAnnotation>,
     override val target: FirTarget<FirFunction>,
     override var result: FirExpression,
 ) : FirReturnExpression() {

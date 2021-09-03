@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.FirDeclarationBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirFieldImpl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -53,7 +53,7 @@ open class FirFieldBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilde
     open var initializer: FirExpression? = null
     open var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     open var backingField: FirBackingField? = null
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     open lateinit var symbol: FirFieldSymbol
 
     @OptIn(FirImplementationDetail::class)

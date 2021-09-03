@@ -51,7 +51,7 @@ class ErrorNodeDiagnosticCollectorComponent(
             // Use the source of the enclosing FirQualifiedAccess if it is exactly the call to the erroneous callee.
             when (it) {
                 is FirQualifiedAccess -> it.calleeReference == errorNamedReference
-                is FirAnnotationCall -> it.calleeReference == errorNamedReference
+                is FirAnnotation -> it.calleeReference == errorNamedReference
                 else -> false
             }
         }

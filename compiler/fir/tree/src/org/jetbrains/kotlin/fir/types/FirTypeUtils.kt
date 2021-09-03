@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
@@ -82,8 +82,8 @@ val FirFunctionTypeRef.parametersCount: Int
 
 val EXTENSION_FUNCTION_ANNOTATION = ClassId.fromString("kotlin/ExtensionFunctionType")
 
-val FirAnnotationCall.isExtensionFunctionAnnotationCall: Boolean
-    get() = (this as? FirAnnotationCall)?.let { annotationCall ->
+val FirAnnotation.isExtensionFunctionAnnotationCall: Boolean
+    get() = (this as? FirAnnotation)?.let { annotationCall ->
         (annotationCall.annotationTypeRef as? FirResolvedTypeRef)?.let { typeRef ->
             (typeRef.type as? ConeClassLikeType)?.let {
                 it.lookupTag.classId == EXTENSION_FUNCTION_ANNOTATION
@@ -92,7 +92,7 @@ val FirAnnotationCall.isExtensionFunctionAnnotationCall: Boolean
     } == true
 
 
-fun List<FirAnnotationCall>.dropExtensionFunctionAnnotation(): List<FirAnnotationCall> {
+fun List<FirAnnotation>.dropExtensionFunctionAnnotation(): List<FirAnnotation> {
     return filterNot { it.isExtensionFunctionAnnotationCall }
 }
 
@@ -109,12 +109,12 @@ fun ConeClassLikeType.toConstKind(): ConstantValueKind<*>? = when (lookupTag.cla
     else -> null
 }
 
-fun List<FirAnnotationCall>.computeTypeAttributes(
+fun List<FirAnnotation>.computeTypeAttributes(
     additionalProcessor: MutableList<ConeAttribute<*>>.(ClassId) -> Unit = {}
 ): ConeAttributes {
     if (this.isEmpty()) return ConeAttributes.Empty
     val attributes = mutableListOf<ConeAttribute<*>>()
-    val customAnnotations = mutableListOf<FirAnnotationCall>()
+    val customAnnotations = mutableListOf<FirAnnotation>()
     for (annotation in this) {
         val type = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
         when (val classId = type.lookupTag.classId) {

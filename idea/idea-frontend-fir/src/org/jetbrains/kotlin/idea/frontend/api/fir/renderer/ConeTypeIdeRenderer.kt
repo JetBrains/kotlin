@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.containingClassForLocal
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.inference.*
@@ -42,7 +42,7 @@ internal class ConeTypeIdeRenderer(
 
     private var filterExtensionFunctionType: Boolean = false
 
-    private fun StringBuilder.renderAnnotationList(annotations: List<FirAnnotationCall>?) {
+    private fun StringBuilder.renderAnnotationList(annotations: List<FirAnnotation>?) {
         if (annotations != null) {
             val filteredExtensionIfNeeded = annotations.applyIf(filterExtensionFunctionType) {
                 annotations.filterNot { it.toAnnotationClassId() == StandardClassIds.extensionFunctionType }
@@ -51,7 +51,7 @@ internal class ConeTypeIdeRenderer(
         }
     }
 
-    fun renderType(type: ConeTypeProjection, annotations: List<FirAnnotationCall>? = null): String = buildString {
+    fun renderType(type: ConeTypeProjection, annotations: List<FirAnnotation>? = null): String = buildString {
 
         when (type) {
             is ConeKotlinErrorType -> {

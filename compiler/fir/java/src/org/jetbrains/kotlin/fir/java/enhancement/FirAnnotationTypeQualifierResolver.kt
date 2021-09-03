@@ -25,18 +25,18 @@ class FirAnnotationTypeQualifierResolver(
     private val session: FirSession,
     javaTypeEnhancementState: JavaTypeEnhancementState,
     private val javaModuleAnnotationsProvider: JavaModuleAnnotationsProvider,
-) : AbstractAnnotationTypeQualifierResolver<FirAnnotationCall>(javaTypeEnhancementState), FirSessionComponent {
+) : AbstractAnnotationTypeQualifierResolver<FirAnnotation>(javaTypeEnhancementState), FirSessionComponent {
 
-    override val FirAnnotationCall.metaAnnotations: Iterable<FirAnnotationCall>
+    override val FirAnnotation.metaAnnotations: Iterable<FirAnnotation>
         get() = coneClassLikeType?.lookupTag?.toSymbol(session)?.fir?.annotations.orEmpty()
 
-    override val FirAnnotationCall.key: Any
+    override val FirAnnotation.key: Any
         get() = coneClassLikeType!!.lookupTag
 
-    override val FirAnnotationCall.fqName: FqName?
+    override val FirAnnotation.fqName: FqName?
         get() = coneClassLikeType?.lookupTag?.classId?.asSingleFqName()
 
-    override fun FirAnnotationCall.enumArguments(onlyValue: Boolean): Iterable<String> =
+    override fun FirAnnotation.enumArguments(onlyValue: Boolean): Iterable<String> =
         arguments.flatMap { argument ->
             if (!onlyValue || argument !is FirNamedArgumentExpression || argument.name == DEFAULT_ANNOTATION_MEMBER_NAME)
                 argument.toEnumNames()

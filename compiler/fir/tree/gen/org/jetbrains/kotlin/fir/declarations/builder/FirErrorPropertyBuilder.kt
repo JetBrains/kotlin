@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirErrorPropertyImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -49,7 +49,7 @@ class FirErrorPropertyBuilder : FirAnnotationContainerBuilder {
     var dispatchReceiverType: ConeKotlinType? = null
     lateinit var name: Name
     var backingField: FirBackingField? = null
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var diagnostic: ConeDiagnostic
     lateinit var symbol: FirErrorPropertySymbol
 

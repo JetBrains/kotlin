@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.render
 import kotlin.reflect.KClass
 
-class CustomAnnotationTypeAttribute(val annotations: List<FirAnnotationCall>) : ConeAttribute<CustomAnnotationTypeAttribute>() {
+class CustomAnnotationTypeAttribute(val annotations: List<FirAnnotation>) : ConeAttribute<CustomAnnotationTypeAttribute>() {
     override fun union(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute? = null
 
     override fun intersect(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute? = null
@@ -24,4 +24,4 @@ class CustomAnnotationTypeAttribute(val annotations: List<FirAnnotationCall>) : 
 
 private val ConeAttributes.custom: CustomAnnotationTypeAttribute? by ConeAttributes.attributeAccessor<CustomAnnotationTypeAttribute>()
 
-val ConeAttributes.customAnnotations: List<FirAnnotationCall> get() = custom?.annotations.orEmpty()
+val ConeAttributes.customAnnotations: List<FirAnnotation> get() = custom?.annotations.orEmpty()

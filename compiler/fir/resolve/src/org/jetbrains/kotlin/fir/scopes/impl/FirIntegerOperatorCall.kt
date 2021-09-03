@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
@@ -28,7 +27,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 class FirIntegerOperatorCall @FirImplementationDetail constructor(
     source: FirSourceElement?,
     typeRef: FirTypeRef,
-    annotations: MutableList<FirAnnotationCall>,
+    annotations: MutableList<FirAnnotation>,
     typeArguments: MutableList<FirTypeProjection>,
     explicitReceiver: FirExpression?,
     dispatchReceiver: FirExpression,
@@ -52,7 +51,7 @@ class FirIntegerOperatorCall @FirImplementationDetail constructor(
 class FirIntegerOperatorCallBuilder : FirQualifiedAccessBuilder, FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: FirSourceElement? = null
     override var typeRef: FirTypeRef = buildImplicitTypeRef()
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression

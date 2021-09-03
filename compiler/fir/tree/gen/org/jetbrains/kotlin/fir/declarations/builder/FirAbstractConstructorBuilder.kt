@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -39,7 +39,7 @@ interface FirAbstractConstructorBuilder : FirFunctionBuilder {
     abstract override var resolvePhase: FirResolvePhase
     abstract override var origin: FirDeclarationOrigin
     abstract override var attributes: FirDeclarationAttributes
-    abstract override val annotations: MutableList<FirAnnotationCall>
+    abstract override val annotations: MutableList<FirAnnotation>
     abstract override var returnTypeRef: FirTypeRef
     abstract override var status: FirDeclarationStatus
     abstract override var deprecation: DeprecationsPerUseSite?

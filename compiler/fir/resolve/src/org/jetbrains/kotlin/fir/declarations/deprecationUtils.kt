@@ -77,7 +77,7 @@ fun getDeprecationsFromAccessors(
     return if (perUseSite.isEmpty()) EmptyDeprecationsPerUseSite else DeprecationsPerUseSite(null, perUseSite)
 }
 
-fun List<FirAnnotationCall>.getDeprecationInfosFromAnnotations(currentVersion: ApiVersion, fromJava: Boolean): DeprecationsPerUseSite {
+fun List<FirAnnotation>.getDeprecationInfosFromAnnotations(currentVersion: ApiVersion, fromJava: Boolean): DeprecationsPerUseSite {
     val deprecationByUseSite = extractDeprecationInfoPerUseSite(currentVersion, fromJava).toMap()
     return DeprecationsPerUseSite.fromMap(deprecationByUseSite)
 }
@@ -93,10 +93,10 @@ fun FirBasedSymbol<*>.getDeprecationForCallSite(
     return (deprecations ?: EmptyDeprecationsPerUseSite).forUseSite(*sites)
 }
 
-private fun FirAnnotationCall.getVersionFromArgument(name: Name): ApiVersion? =
+private fun FirAnnotation.getVersionFromArgument(name: Name): ApiVersion? =
     getStringArgument(name)?.let { ApiVersion.parse(it) }
 
-private fun FirAnnotationCall.getDeprecationLevel(): DeprecationLevelValue? {
+private fun FirAnnotation.getDeprecationLevel(): DeprecationLevelValue? {
     //take last because Annotation might be not resolved yet and arguments passed without explicit names
     val arg = findArgumentByName(LEVEL_NAME) ?: arguments.lastOrNull()
     return arg?.let { argument ->
@@ -106,7 +106,7 @@ private fun FirAnnotationCall.getDeprecationLevel(): DeprecationLevelValue? {
     }
 }
 
-private fun List<FirAnnotationCall>.extractDeprecationInfoPerUseSite(
+private fun List<FirAnnotation>.extractDeprecationInfoPerUseSite(
     currentVersion: ApiVersion,
     fromJava: Boolean
 ): List<Pair<AnnotationUseSiteTarget?, DeprecationInfo>> {

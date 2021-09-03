@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.coneClassLikeType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.classId
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.FirRefWithValidityCheck
 import org.jetbrains.kotlin.name.ClassId
 
 
-internal fun FirAnnotationCall.getClassId(session: FirSession): ClassId? =
+internal fun FirAnnotation.getClassId(session: FirSession): ClassId? =
     coneClassLikeType?.fullyExpandedType(session)?.classId
 
 internal fun FirRefWithValidityCheck<FirAnnotatedDeclaration>.toAnnotationsList() = withFir { fir ->

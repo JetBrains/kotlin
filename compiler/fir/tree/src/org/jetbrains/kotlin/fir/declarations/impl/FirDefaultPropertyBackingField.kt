@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.CallableId
 @OptIn(FirImplementationDetail::class)
 class FirDefaultPropertyBackingField(
     moduleData: FirModuleData,
-    annotations: MutableList<FirAnnotationCall>,
+    annotations: MutableList<FirAnnotation>,
     returnTypeRef: FirTypeRef,
     isVar: Boolean,
     propertySymbol: FirPropertySymbol,

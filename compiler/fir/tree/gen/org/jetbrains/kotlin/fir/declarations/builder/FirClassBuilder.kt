@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.FirDeclarationBuilder
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -35,7 +35,7 @@ interface FirClassBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilder
     abstract override var resolvePhase: FirResolvePhase
     abstract override var origin: FirDeclarationOrigin
     abstract override var attributes: FirDeclarationAttributes
-    abstract override val annotations: MutableList<FirAnnotationCall>
+    abstract override val annotations: MutableList<FirAnnotation>
     abstract var deprecation: DeprecationsPerUseSite?
     abstract val typeParameters: MutableList<FirTypeParameterRef>
     abstract var classKind: ClassKind

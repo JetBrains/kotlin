@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirDoWhileLoop : FirLoop() {
     abstract override val source: FirSourceElement?
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract override val block: FirBlock
     abstract override val condition: FirExpression
     abstract override val label: FirLabel?

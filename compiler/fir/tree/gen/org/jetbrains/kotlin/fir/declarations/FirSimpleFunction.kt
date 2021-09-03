@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -42,7 +42,7 @@ abstract class FirSimpleFunction : FirFunction(), FirContractDescriptionOwner, F
     abstract override val contractDescription: FirContractDescription
     abstract val name: Name
     abstract override val symbol: FirNamedFunctionSymbol
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract override val typeParameters: List<FirTypeParameter>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSimpleFunction(this, data)

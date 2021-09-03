@@ -106,7 +106,7 @@ object FirRepeatableAnnotationChecker : FirAnnotatedDeclarationChecker() {
         return repeatableAnnotation.resolveContainerAnnotation()
     }
 
-    private fun FirAnnotationCall.resolveContainerAnnotation(): ClassId? {
+    private fun FirAnnotation.resolveContainerAnnotation(): ClassId? {
         val value = findArgumentByName(REPEATABLE_PARAMETER_NAME) ?: return null
         val classCallArgument = (value as? FirGetClassCall)?.argument ?: return null
         if (classCallArgument is FirResolvedQualifier) {
@@ -119,7 +119,7 @@ object FirRepeatableAnnotationChecker : FirAnnotatedDeclarationChecker() {
     }
 
     private fun checkJavaRepeatableAnnotationDeclaration(
-        javaRepeatable: FirAnnotationCall,
+        javaRepeatable: FirAnnotation,
         annotationClass: FirRegularClass,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -131,7 +131,7 @@ object FirRepeatableAnnotationChecker : FirAnnotatedDeclarationChecker() {
     }
 
     private fun checkKotlinRepeatableAnnotationDeclaration(
-        kotlinRepeatable: FirAnnotationCall,
+        kotlinRepeatable: FirAnnotation,
         declaration: FirRegularClass,
         context: CheckerContext,
         reporter: DiagnosticReporter

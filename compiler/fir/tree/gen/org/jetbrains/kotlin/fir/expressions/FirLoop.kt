@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 sealed class FirLoop : FirPureAbstractElement(), FirStatement, FirTargetElement {
     abstract override val source: FirSourceElement?
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract val block: FirBlock
     abstract val condition: FirExpression
     abstract val label: FirLabel?

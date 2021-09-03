@@ -55,11 +55,11 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
         return ArrayValue(arrayOfCall.argumentList.arguments.mapNotNull { it.accept(this, null) })
     }
 
-    override fun visitAnnotationCall(
-        annotationCall: FirAnnotationCall,
+    override fun visitAnnotation(
+        annotation: FirAnnotation,
         data: Nothing?
     ): ConstantValue<*> {
-        return AnnotationValue(annotationCall)
+        return AnnotationValue(annotation)
     }
 
     override fun visitGetClassCall(

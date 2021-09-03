@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.jvmDefaultModeState
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID
 object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         val jvmDefaultMode = context.session.jvmDefaultModeState
-        var defaultAnnotation: FirAnnotationCall? = null
+        var defaultAnnotation: FirAnnotation? = null
         val containingDeclaration = context.findClosest<FirClassLikeDeclaration>()
 
         if (declaration is FirAnnotatedDeclaration) {
@@ -121,7 +121,7 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
     }
 
     private fun checkNonJvmDefaultOverridesJavaDefault(
-        defaultAnnotation: FirAnnotationCall?,
+        defaultAnnotation: FirAnnotation?,
         jvmDefaultMode: JvmDefaultMode,
         declaration: FirDeclaration,
         containingDeclaration: FirClassLikeDeclaration?,

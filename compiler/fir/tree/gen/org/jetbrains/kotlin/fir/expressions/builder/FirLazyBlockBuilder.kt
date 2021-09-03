@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
@@ -36,7 +36,7 @@ class FirLazyBlockBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder 
 
 
     @Deprecated("Modification of 'annotations' has no impact for FirLazyBlockBuilder", level = DeprecationLevel.HIDDEN)
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
 
     @Deprecated("Modification of 'typeRef' has no impact for FirLazyBlockBuilder", level = DeprecationLevel.HIDDEN)
     override var typeRef: FirTypeRef

@@ -734,7 +734,7 @@ class ElvisExitNode(owner: ControlFlowGraph, override val fir: FirElvisExpressio
 
 // ----------------------------------- Other -----------------------------------
 
-class AnnotationEnterNode(owner: ControlFlowGraph, override val fir: FirAnnotationCall, level: Int, id: Int) : CFGNode<FirAnnotationCall>(owner, level, id), EnterNodeMarker {
+class AnnotationEnterNode(owner: ControlFlowGraph, override val fir: FirAnnotation, level: Int, id: Int) : CFGNode<FirAnnotation>(owner, level, id), EnterNodeMarker {
     init {
         owner.enterNode = this
     }
@@ -743,7 +743,7 @@ class AnnotationEnterNode(owner: ControlFlowGraph, override val fir: FirAnnotati
         return visitor.visitAnnotationEnterNode(this, data)
     }
 }
-class AnnotationExitNode(owner: ControlFlowGraph, override val fir: FirAnnotationCall, level: Int, id: Int) : CFGNode<FirAnnotationCall>(owner, level, id), ExitNodeMarker {
+class AnnotationExitNode(owner: ControlFlowGraph, override val fir: FirAnnotation, level: Int, id: Int) : CFGNode<FirAnnotation>(owner, level, id), ExitNodeMarker {
     init {
         owner.exitNode = this
     }

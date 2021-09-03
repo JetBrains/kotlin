@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
@@ -39,7 +39,7 @@ internal class FirAnonymousObjectImpl(
     override val classKind: ClassKind,
     override val superTypeRefs: MutableList<FirTypeRef>,
     override val declarations: MutableList<FirDeclaration>,
-    override val annotations: MutableList<FirAnnotationCall>,
+    override val annotations: MutableList<FirAnnotation>,
     override val scopeProvider: FirScopeProvider,
     override val symbol: FirAnonymousObjectSymbol,
 ) : FirAnonymousObject() {

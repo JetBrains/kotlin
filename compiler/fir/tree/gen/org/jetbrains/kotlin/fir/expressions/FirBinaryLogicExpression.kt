@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirBinaryLogicExpression : FirExpression() {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract val leftOperand: FirExpression
     abstract val rightOperand: FirExpression
     abstract val kind: LogicOperationKind

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirStringConcatenationCall : FirCall, FirExpression() {
     abstract override val source: FirSourceElement?
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract override val argumentList: FirArgumentList
     abstract override val typeRef: FirTypeRef
 

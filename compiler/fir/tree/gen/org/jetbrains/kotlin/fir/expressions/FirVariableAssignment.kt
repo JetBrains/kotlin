@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 
 abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAccess {
     abstract override val calleeReference: FirReference
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression

@@ -34,7 +34,7 @@ object FirAnnotationArgumentChecker : FirAnnotationCallChecker() {
         sinceKotlinFqName,
     )
 
-    override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(expression: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
         val argumentMapping = expression.argumentMapping ?: return
         val fqName = expression.fqName(context.session)
         for ((arg, _) in argumentMapping) {
@@ -130,12 +130,12 @@ object FirAnnotationArgumentChecker : FirAnnotationCallChecker() {
 
     private fun checkAnnotationsWithVersion(
         fqName: FqName?,
-        annotationCall: FirAnnotationCall,
+        annotation: FirAnnotation,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
         if (!annotationFqNamesWithVersion.contains(fqName)) return
-        val versionExpression = annotationCall.findArgumentByName(versionArgumentName) ?: return
+        val versionExpression = annotation.findArgumentByName(versionArgumentName) ?: return
         val version = parseVersionExpressionOrReport(versionExpression, context, reporter) ?: return
         if (fqName == sinceKotlinFqName) {
             val specified = context.session.languageVersionSettings.apiVersion

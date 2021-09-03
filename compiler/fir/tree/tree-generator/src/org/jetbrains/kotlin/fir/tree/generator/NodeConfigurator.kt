@@ -444,7 +444,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("delegate", import)
         }
 
-        annotationCall.configure {
+        annotation.configure {
             +field("useSiteTarget", annotationUseSiteTargetType, nullable = true)
             +field("annotationTypeRef", typeRef).withTransform()
             +field("resolveStatus", annotationResolveStatusType, withReplace = true)

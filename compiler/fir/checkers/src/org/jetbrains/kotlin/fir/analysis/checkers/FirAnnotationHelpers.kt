@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -42,11 +43,21 @@ private val JAVA_REPEATABLE_ANNOTATION = FqName("java.lang.annotation.Repeatable
 private val JAVA_REPEATABLE_ANNOTATION_CLASS_ID = ClassId.topLevel(JAVA_REPEATABLE_ANNOTATION)
 private val JVM_REPEATABLE_ANNOTATION_CLASS_ID = ClassId.fromString("kotlin/jvm/JvmRepeatable")
 
+@OptIn(SymbolInternals::class)
+fun FirAnnotation.getRetention(session: FirSession): AnnotationRetention {
+    val annotationClassSymbol =
+        (this.annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol
+            ?: return AnnotationRetention.RUNTIME
+    annotationClassSymbol.ensureResolved(FirResolvePhase.BODY_RESOLVE)
+    val annotationClass = annotationClassSymbol.fir
+    return annotationClass.getRetention()
+}
+
 fun FirRegularClass.getRetention(): AnnotationRetention {
     return getRetentionAnnotation()?.getRetention() ?: AnnotationRetention.RUNTIME
 }
 
-fun FirAnnotationCall.getRetention(): AnnotationRetention {
+fun FirAnnotation.getRetention(): AnnotationRetention {
     val retentionArgument = findArgumentByName(RETENTION_PARAMETER_NAME) as? FirQualifiedAccessExpression
         ?: return AnnotationRetention.RUNTIME
     val retentionName = (retentionArgument.calleeReference as? FirResolvedNamedReference)?.name?.asString()
@@ -56,7 +67,7 @@ fun FirAnnotationCall.getRetention(): AnnotationRetention {
 
 private val defaultAnnotationTargets = KotlinTarget.DEFAULT_TARGET_SET
 
-fun FirAnnotationCall.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
+fun FirAnnotation.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
     if (annotationTypeRef is FirErrorTypeRef) return KotlinTarget.values().toSet()
     val annotationClassSymbol = (this.annotationTypeRef.coneType as? ConeClassLikeType)
         ?.fullyExpandedType(session)?.lookupTag?.toSymbol(session) ?: return defaultAnnotationTargets
@@ -80,15 +91,15 @@ fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(): Set<KotlinTarget> {
     }
 }
 
-fun FirAnnotatedDeclaration.getRetentionAnnotation(): FirAnnotationCall? {
+fun FirAnnotatedDeclaration.getRetentionAnnotation(): FirAnnotation? {
     return getAnnotationByClassId(StandardNames.FqNames.retentionClassId)
 }
 
-fun FirAnnotatedDeclaration.getTargetAnnotation(): FirAnnotationCall? {
+fun FirAnnotatedDeclaration.getTargetAnnotation(): FirAnnotation? {
     return getAnnotationByClassId(StandardNames.FqNames.targetClassId)
 }
 
-fun FirClassLikeSymbol<*>.getTargetAnnotation(): FirAnnotationCall? {
+fun FirClassLikeSymbol<*>.getTargetAnnotation(): FirAnnotation? {
     return getAnnotationByClassId(StandardNames.FqNames.targetClassId)
 }
 
@@ -103,7 +114,7 @@ fun FirExpression.extractClassesFromArgument(): List<FirRegularClassSymbol> {
 fun checkRepeatedAnnotation(
     useSiteTarget: AnnotationUseSiteTarget?,
     existingTargetsForAnnotation: MutableList<AnnotationUseSiteTarget?>,
-    annotation: FirAnnotationCall,
+    annotation: FirAnnotation,
     context: CheckerContext,
     reporter: DiagnosticReporter,
 ) {
@@ -114,7 +125,7 @@ fun checkRepeatedAnnotation(
     }
 }
 
-fun FirAnnotationCall.isRepeatable(session: FirSession): Boolean {
+fun FirAnnotation.isRepeatable(session: FirSession): Boolean {
     val annotationClassId = this.toAnnotationClassId() ?: return false
     if (annotationClassId.isLocal) return false
     val annotationClass = session.symbolProvider.getClassLikeSymbolByClassId(annotationClassId) ?: return false
@@ -138,7 +149,7 @@ fun FirClassLikeSymbol<*>.getAnnotationRetention(): AnnotationRetention {
 }
 
 fun FirAnnotationContainer.getDefaultUseSiteTarget(
-    annotation: FirAnnotationCall,
+    annotation: FirAnnotation,
     context: CheckerContext
 ): AnnotationUseSiteTarget? {
     return getImplicitUseSiteTargetList(context).firstOrNull {

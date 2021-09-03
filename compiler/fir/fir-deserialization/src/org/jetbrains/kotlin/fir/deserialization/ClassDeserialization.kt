@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.moduleName
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider.Companion.CLONE
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider.Companion.CLONEABLE_CLASS_ID
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -212,7 +212,7 @@ fun deserializeClassToSymbol(
             }
             it.setSealedClassInheritors(inheritors)
         }
-        (it.annotations as MutableList<FirAnnotationCall>) +=
+        (it.annotations as MutableList<FirAnnotation>) +=
             context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
 
         it.versionRequirementsTable = context.versionRequirementTable

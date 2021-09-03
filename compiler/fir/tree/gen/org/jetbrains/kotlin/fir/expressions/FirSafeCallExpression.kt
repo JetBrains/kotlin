@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirSafeCallExpression : FirExpression() {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
-    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val annotations: List<FirAnnotation>
     abstract val receiver: FirExpression
     abstract val checkedSubjectRef: FirExpressionRef<FirCheckedSafeCallSubject>
     abstract val regularQualifiedAccess: FirQualifiedAccess

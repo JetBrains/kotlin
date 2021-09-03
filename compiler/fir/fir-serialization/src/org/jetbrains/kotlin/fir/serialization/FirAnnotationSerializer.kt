@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.Name
 
 class FirAnnotationSerializer(private val session: FirSession, internal val stringTable: FirElementAwareStringTable) {
-    fun serializeAnnotation(annotation: FirAnnotationCall): ProtoBuf.Annotation = ProtoBuf.Annotation.newBuilder().apply {
+    fun serializeAnnotation(annotation: FirAnnotation): ProtoBuf.Annotation = ProtoBuf.Annotation.newBuilder().apply {
         val lookupTag = annotation.typeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag
             ?: error { "Annotation without proper lookup tag: ${annotation.annotationTypeRef.coneType}" }
 

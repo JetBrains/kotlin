@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -24,7 +24,7 @@ internal class FirErrorTypeRefImpl(
     override var delegatedTypeRef: FirTypeRef?,
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorTypeRef() {
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override val type: ConeKotlinType = ConeClassErrorType(diagnostic)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

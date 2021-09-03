@@ -39,7 +39,7 @@ fun main(args: Array<String>) {
         alias<FirBinaryLogicExpression>("LogicExpressionChecker")
         alias<FirReturnExpression>("ReturnExpressionChecker")
         alias<FirBlock>("BlockChecker")
-        alias<FirAnnotationCall>("AnnotationCallChecker")
+        alias<FirAnnotation>("AnnotationCallChecker")
         alias<FirCheckNotNullCall>("CheckNotNullCallChecker")
         alias<FirElvisExpression>("ElvisExpressionChecker")
         alias<FirGetClassCall>("GetClassCallChecker")

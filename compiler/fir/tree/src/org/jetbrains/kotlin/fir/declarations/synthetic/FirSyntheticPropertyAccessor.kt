@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyAccessorImpl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
@@ -56,7 +56,7 @@ class FirSyntheticPropertyAccessor(
     override val valueParameters: List<FirValueParameter>
         get() = delegate.valueParameters
 
-    override val annotations: List<FirAnnotationCall>
+    override val annotations: List<FirAnnotation>
         get() = delegate.annotations
 
     override val typeParameters: List<FirTypeParameter>

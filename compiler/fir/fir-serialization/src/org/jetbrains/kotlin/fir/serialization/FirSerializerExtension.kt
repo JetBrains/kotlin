@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -74,7 +74,7 @@ abstract class FirSerializerExtension {
     open fun serializeFlexibleType(type: ConeFlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {
     }
 
-    open fun serializeTypeAnnotation(annotation: FirAnnotationCall, proto: ProtoBuf.Type.Builder) {
+    open fun serializeTypeAnnotation(annotation: FirAnnotation, proto: ProtoBuf.Type.Builder) {
     }
 
     open fun serializeTypeParameter(typeParameter: FirTypeParameter, proto: ProtoBuf.TypeParameter.Builder) {

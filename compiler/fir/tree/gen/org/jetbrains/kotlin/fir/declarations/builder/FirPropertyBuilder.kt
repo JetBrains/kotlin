@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.FirDeclarationBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParametersOwnerBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyImpl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
@@ -60,7 +60,7 @@ class FirPropertyBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder,
     var getter: FirPropertyAccessor? = null
     var setter: FirPropertyAccessor? = null
     var backingField: FirBackingField? = null
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var symbol: FirPropertySymbol
     var delegateFieldSymbol: FirDelegateFieldSymbol? = null
     var isLocal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()

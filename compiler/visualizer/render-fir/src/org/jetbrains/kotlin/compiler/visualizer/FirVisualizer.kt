@@ -182,7 +182,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             renderVariableType(multiDeclarationEntry)
 
         override fun visitAnnotationEntry(annotationEntry: KtAnnotationEntry) {
-            annotationEntry.firstOfTypeWithRender<FirAnnotationCall>(annotationEntry.getChildOfType<KtConstructorCalleeExpression>())
+            annotationEntry.firstOfTypeWithRender<FirAnnotation>(annotationEntry.getChildOfType<KtConstructorCalleeExpression>())
             super.visitAnnotationEntry(annotationEntry)
         }
 
@@ -706,8 +706,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             }
         }
 
-        override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: StringBuilder) {
-            visitConstructor(annotationCall, data)
+        override fun visitAnnotation(annotation: FirAnnotation, data: StringBuilder) {
+            visitConstructor(annotation, data)
         }
 
         override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: StringBuilder) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.argumentMapping
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.packageFqName
@@ -35,24 +36,24 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        var deprecatedCall: FirAnnotationCall? = null
-        var deprecatedSinceKotlinCall: FirAnnotationCall? = null
+        var deprecated: FirAnnotation? = null
+        var deprecatedSinceKotlin: FirAnnotation? = null
 
         for (annotation in declaration.annotations) {
             val fqName = annotation.fqName(context.session) ?: continue
             if (fqName == deprecatedClassId) {
-                deprecatedCall = annotation
+                deprecated = annotation
             } else if (fqName == deprecatedSinceKotlinClassId) {
-                deprecatedSinceKotlinCall = annotation
+                deprecatedSinceKotlin = annotation
             }
 
             withSuppressedDiagnostics(annotation, context) {
                 checkAnnotationTarget(declaration, annotation, context, reporter)
             }
         }
-        if (deprecatedSinceKotlinCall != null) {
-            withSuppressedDiagnostics(deprecatedSinceKotlinCall, context) {
-                checkDeprecatedCalls(deprecatedSinceKotlinCall, deprecatedCall, context, reporter)
+        if (deprecatedSinceKotlin != null) {
+            withSuppressedDiagnostics(deprecatedSinceKotlin, context) {
+                checkDeprecatedCalls(deprecatedSinceKotlin, deprecated, context, reporter)
             }
         }
 
@@ -67,7 +68,7 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
 
     private fun checkAnnotationTarget(
         declaration: FirAnnotatedDeclaration,
-        annotation: FirAnnotationCall,
+        annotation: FirAnnotation,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
@@ -119,7 +120,7 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
 
     private fun checkAnnotationUseSiteTarget(
         annotated: FirAnnotatedDeclaration,
-        annotation: FirAnnotationCall,
+        annotation: FirAnnotation,
         target: AnnotationUseSiteTarget,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -176,28 +177,28 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
     }
 
     private fun checkDeprecatedCalls(
-        deprecatedSinceKotlinCall: FirAnnotationCall,
-        deprecatedCall: FirAnnotationCall?,
+        deprecatedSinceKotlin: FirAnnotation,
+        deprecated: FirAnnotation?,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
         val closestFirFile = context.findClosest<FirFile>()
         if (closestFirFile != null && !closestFirFile.packageFqName.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE.shortName())) {
             reporter.reportOn(
-                deprecatedSinceKotlinCall.source,
+                deprecatedSinceKotlin.source,
                 FirErrors.DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE,
                 context
             )
         }
 
-        if (deprecatedCall == null) {
-            reporter.reportOn(deprecatedSinceKotlinCall.source, FirErrors.DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED, context)
+        if (deprecated == null) {
+            reporter.reportOn(deprecatedSinceKotlin.source, FirErrors.DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED, context)
         } else {
-            val argumentMapping = deprecatedCall.argumentMapping ?: return
+            val argumentMapping = deprecated.argumentMapping ?: return
             for (value in argumentMapping.values) {
                 if (value.name.identifier == "level") {
                     reporter.reportOn(
-                        deprecatedSinceKotlinCall.source,
+                        deprecatedSinceKotlin.source,
                         FirErrors.DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL,
                         context
                     )

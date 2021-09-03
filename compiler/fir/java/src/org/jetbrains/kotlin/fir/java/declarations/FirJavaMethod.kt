@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParametersOwnerBuilder
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -59,7 +59,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     override val name: Name,
     override var status: FirDeclarationStatus,
     override val symbol: FirNamedFunctionSymbol,
-    annotationBuilder: () -> List<FirAnnotationCall>,
+    annotationBuilder: () -> List<FirAnnotation>,
     override val dispatchReceiverType: ConeKotlinType?,
 ) : FirSimpleFunction() {
     init {
@@ -83,7 +83,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
 
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
-    override val annotations: List<FirAnnotationCall> by lazy { annotationBuilder() }
+    override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
 
     //not used actually, because get 'enhanced' into regular FirSimpleFunction
     override var deprecation: DeprecationsPerUseSite? = null
@@ -196,11 +196,11 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
     override var dispatchReceiverType: ConeKotlinType? = null
     lateinit var name: Name
     lateinit var symbol: FirNamedFunctionSymbol
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     var isStatic: Boolean by Delegates.notNull()
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-    lateinit var annotationBuilder: () -> List<FirAnnotationCall>
+    lateinit var annotationBuilder: () -> List<FirAnnotation>
 
     @Deprecated("Modification of 'deprecation' has no impact for FirJavaFunctionBuilder", level = DeprecationLevel.HIDDEN)
     override var deprecation: DeprecationsPerUseSite?

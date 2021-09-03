@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationCallCh
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -29,7 +29,7 @@ object FirDeprecatedJavaAnnotationsChecker : FirAnnotationCallChecker() {
             ClassId.topLevel(JvmAnnotationNames.DOCUMENTED_ANNOTATION) to StandardNames.FqNames.mustBeDocumented
         )
 
-    override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(expression: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
         if (context.containingDeclarations.lastOrNull()?.source?.kind != FirRealSourceElementKind) return
 
         val lookupTag = expression.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return

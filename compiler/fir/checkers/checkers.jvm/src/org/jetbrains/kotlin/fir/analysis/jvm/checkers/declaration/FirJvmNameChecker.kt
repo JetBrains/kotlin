@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isOpen
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
@@ -60,7 +60,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun FirAnnotatedDeclaration.findJvmNameAnnotation(): FirAnnotationCall? {
+    private fun FirAnnotatedDeclaration.findJvmNameAnnotation(): FirAnnotation? {
         return annotations.firstOrNull {
             it.calleeReference.safeAs<FirResolvedNamedReference>()?.name == StandardClassIds.JvmName.shortClassName
         }

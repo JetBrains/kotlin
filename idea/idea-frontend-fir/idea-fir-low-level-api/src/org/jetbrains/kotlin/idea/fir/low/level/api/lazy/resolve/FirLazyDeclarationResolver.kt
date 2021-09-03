@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolveStatus
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -38,7 +38,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
      */
     fun resolveFileAnnotations(
         firFile: FirFile,
-        annotations: List<FirAnnotationCall>,
+        annotations: List<FirAnnotation>,
         moduleFileCache: ModuleFileCache,
         scopeSession: ScopeSession,
         checkPCE: Boolean,
@@ -61,7 +61,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
      */
     private fun resolveFileAnnotationsWithoutLock(
         firFile: FirFile,
-        annotations: List<FirAnnotationCall>,
+        annotations: List<FirAnnotation>,
         scopeSession: ScopeSession,
         collector: FirTowerDataContextCollector? = null,
     ) {

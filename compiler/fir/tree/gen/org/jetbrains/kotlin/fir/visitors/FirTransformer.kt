@@ -70,7 +70,7 @@ import org.jetbrains.kotlin.fir.types.FirStarProjection
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirCall
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirComparisonExpression
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirAssignmentOperatorStatement
@@ -401,8 +401,8 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElement(call, data)
     }
 
-    open fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: D): FirStatement {
-        return transformElement(annotationCall, data)
+    open fun transformAnnotation(annotation: FirAnnotation, data: D): FirStatement {
+        return transformElement(annotation, data)
     }
 
     open fun transformComparisonExpression(comparisonExpression: FirComparisonExpression, data: D): FirStatement {
@@ -921,8 +921,8 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformCall(call, data)
     }
 
-    final override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: D): FirStatement {
-        return transformAnnotationCall(annotationCall, data)
+    final override fun visitAnnotation(annotation: FirAnnotation, data: D): FirStatement {
+        return transformAnnotation(annotation, data)
     }
 
     final override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: D): FirStatement {

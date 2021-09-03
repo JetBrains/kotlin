@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
@@ -160,7 +160,7 @@ class FirJvmSerializerExtension(
         }
     }
 
-    override fun serializeTypeAnnotation(annotation: FirAnnotationCall, proto: ProtoBuf.Type.Builder) {
+    override fun serializeTypeAnnotation(annotation: FirAnnotation, proto: ProtoBuf.Type.Builder) {
         proto.addExtension(JvmProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(annotation))
     }
 

@@ -45,8 +45,8 @@ open class FirContractResolveTransformer(
 ) {
     override val declarationsTransformer: FirDeclarationsResolveTransformer = FirDeclarationsContractResolveTransformer(this)
 
-    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): FirStatement {
-        return annotationCall
+    override fun transformAnnotation(annotation: FirAnnotation, data: ResolutionMode): FirStatement {
+        return annotation
     }
 
     protected open class FirDeclarationsContractResolveTransformer(transformer: FirBodyResolveTransformer) : FirDeclarationsResolveTransformer(transformer) {

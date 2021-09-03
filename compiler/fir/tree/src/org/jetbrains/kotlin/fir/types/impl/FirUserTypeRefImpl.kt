@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
@@ -18,7 +18,7 @@ class FirUserTypeRefImpl(
     override var source: FirSourceElement?,
     override val isMarkedNullable: Boolean,
     override val qualifier: MutableList<FirQualifierPart>,
-    override val annotations: MutableList<FirAnnotationCall>
+    override val annotations: MutableList<FirAnnotation>
 ) : FirUserTypeRef() {
     override val customRenderer: Boolean
         get() = false

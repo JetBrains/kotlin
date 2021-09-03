@@ -73,7 +73,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             delegateFields(listOf("aliasName", "importedFqName", "isAllUnder", "source"), "delegate")
         }
 
-        impl(annotationCall) {
+        impl(annotation) {
             default("typeRef") {
                 value = "annotationTypeRef"
                 withGetter = true

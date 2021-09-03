@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirErrorResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirAbstractResolvedQualifierBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.FqName
 @FirBuilderDsl
 class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: FirSourceElement? = null
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var packageFqName: FqName
     override var relativeClassFqName: FqName? = null
     override var symbol: FirClassLikeSymbol<*>? = null

@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 
 internal class AnnotationsLoader(private val session: FirSession, private val kotlinClassFinder: KotlinClassFinder) {
     private fun loadAnnotation(
-        annotationClassId: ClassId, result: MutableList<FirAnnotationCall>,
+        annotationClassId: ClassId, result: MutableList<FirAnnotation>,
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
         val lookupTag = ConeClassLikeLookupTagImpl(annotationClassId)
 
@@ -111,7 +111,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                     }
 
                     override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-                        val list = mutableListOf<FirAnnotationCall>()
+                        val list = mutableListOf<FirAnnotation>()
                         val visitor = loadAnnotation(classId, list)
                         return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
                             override fun visitEnd() {
@@ -132,7 +132,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
             }
 
             override fun visitAnnotation(name: Name, classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
-                val list = mutableListOf<FirAnnotationCall>()
+                val list = mutableListOf<FirAnnotation>()
                 val visitor = loadAnnotation(classId, list)
                 return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
                     override fun visitEnd() {
@@ -148,7 +148,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                 // resolved, since that class is only generated in the backend, and is not visible to the frontend.
                 if (isRepeatableWithImplicitContainer(lookupTag, argumentMap)) return
 
-                result += buildAnnotationCall {
+                result += buildAnnotation {
                     annotationTypeRef = lookupTag.toDefaultResolvedTypeRef()
                     argumentList = buildArgumentList {
                         for ((name, expression) in argumentMap) {
@@ -185,7 +185,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
     }
 
     internal fun loadAnnotationIfNotSpecial(
-        annotationClassId: ClassId, result: MutableList<FirAnnotationCall>,
+        annotationClassId: ClassId, result: MutableList<FirAnnotation>,
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
         if (annotationClassId in SpecialJvmAnnotations.SPECIAL_ANNOTATIONS) return null
         return loadAnnotation(annotationClassId, result)

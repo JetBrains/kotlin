@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -53,7 +53,7 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     override val symbol: FirBackingFieldSymbol,
     override val propertySymbol: FirPropertySymbol,
     override var initializer: FirExpression?,
-    override val annotations: MutableList<FirAnnotationCall>,
+    override val annotations: MutableList<FirAnnotation>,
     override val typeParameters: MutableList<FirTypeParameter>,
     override var status: FirDeclarationStatus,
 ) : FirBackingField() {
