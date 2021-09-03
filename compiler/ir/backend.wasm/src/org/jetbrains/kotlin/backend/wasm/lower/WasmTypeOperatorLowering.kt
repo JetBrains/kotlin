@@ -168,6 +168,22 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             }
         }
 
+        // Workaround for the bug in frontend.
+        // In code like this:
+        //    val p: Int = try {
+        //        1
+        //    } catch (e: Exception) {
+        //        throw RuntimeException()
+        //    }
+        // Frontend will emit IMPLICIT_CAST from Unit into Int. Such code can't be correctly compiled to wasm as it is.
+        // This supposed to only happen in the unreachable code so we emit unreachable intrinsic.
+        if (fromType == builtIns.unitType && toType !in listOf(builtIns.unitType, builtIns.anyType, builtIns.anyNType)) {
+            return builder.irComposite(resultType = toType) {
+                +value
+                +builder.irCall(symbols.wasmUnreachable)
+            }
+        }
+
         // Handled by autoboxing transformer
         if (toType.isInlined() && !fromType.isInlined()) {
             return builder.irCall(

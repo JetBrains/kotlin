@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.*
@@ -66,7 +67,7 @@ import org.jetbrains.kotlin.name.Name
 //   tmp // result
 
 
-internal class TryCatchCanonicalization(private val ctx: WasmBackendContext) : FileLoweringPass {
+internal class TryCatchCanonicalization(private val ctx: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(CatchMerger(ctx))
 
@@ -84,7 +85,7 @@ internal class TryCatchCanonicalization(private val ctx: WasmBackendContext) : F
     }
 }
 
-internal class CatchMerger(private val ctx: WasmBackendContext) : IrElementTransformerVoidWithContext() {
+internal class CatchMerger(private val ctx: CommonBackendContext) : IrElementTransformerVoidWithContext() {
     override fun visitTry(aTry: IrTry): IrExpression {
         // First, handle all nested constructs
         aTry.transformChildrenVoid(this)
