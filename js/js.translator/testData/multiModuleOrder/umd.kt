@@ -1,14 +1,14 @@
 // MODULE: lib
-// FILE: lib.kt
 // MODULE_KIND: UMD
+// FILE: lib.kt
 package lib
 
 fun bar() = "OK"
 
 
 // MODULE: main(lib)
-// FILE: main.kt
 // MODULE_KIND: UMD
+// FILE: main.kt
 package foo
 
 import lib.bar

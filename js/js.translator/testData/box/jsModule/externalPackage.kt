@@ -1,6 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1290
-// FILE: a.kt
 // MODULE_KIND: AMD
+// FILE: a.kt
 @file:JsModule("lib")
 package foo
 
