@@ -277,51 +277,53 @@ open class KtLightNullabilityAnnotation<D : KtLightElement<*, PsiModifierListOwn
 
     override fun findAttributeValue(attributeName: String?): PsiAnnotationMemberValue? = null
 
-    override fun getQualifiedName(): String? {
+    private val _qualifiedName: String? by lazy {
         val annotatedElement = member.takeIf(::isFromSources)?.kotlinOrigin
             ?: // it is out of our hands
-            return getClsNullabilityAnnotation(member)?.qualifiedName
+            return@lazy getClsNullabilityAnnotation(member)?.qualifiedName
 
-        if (!fastCheckIsNullabilityApplied(member)) return null
+        if (!fastCheckIsNullabilityApplied(member)) return@lazy null
 
         // all data-class generated members are not-null
-        if (annotatedElement is KtClass && annotatedElement.isData()) return NotNull::class.java.name
+        if (annotatedElement is KtClass && annotatedElement.isData()) return@lazy NotNull::class.java.name
 
         // objects and companion objects have NotNull annotation (if annotated element is implicit ctor then skip annotation)
         if (annotatedElement is KtObjectDeclaration) {
-            if ((parent.parent as? PsiMethod)?.isConstructor == true) return null
-            return NotNull::class.java.name
+            if ((parent.parent as? PsiMethod)?.isConstructor == true) return@lazy null
+            return@lazy NotNull::class.java.name
         }
 
         // don't annotate property setters
-        if (annotatedElement is KtValVarKeywordOwner && member is KtLightMethod && member.returnType == PsiType.VOID) return null
+        if (annotatedElement is KtValVarKeywordOwner && member is KtLightMethod && member.returnType == PsiType.VOID) return@lazy null
 
         if (annotatedElement is KtNamedFunction && annotatedElement.modifierList?.hasSuspendModifier() == true) {
-            return Nullable::class.java.name
+            return@lazy Nullable::class.java.name
         }
 
-        val kotlinType = getTargetType(annotatedElement) ?: return null
+        val kotlinType = getTargetType(annotatedElement) ?: return@lazy null
 
         if (KotlinBuiltIns.isPrimitiveType(kotlinType) && (annotatedElement as? KtParameter)?.isVarArg != true) {
             // no need to annotate them explicitly except the case when overriding reference-type makes it non-primitive for Jvm
-            if (!(annotatedElement is KtCallableDeclaration && annotatedElement.hasModifier(KtTokens.OVERRIDE_KEYWORD))) return null
+            if (!(annotatedElement is KtCallableDeclaration && annotatedElement.hasModifier(KtTokens.OVERRIDE_KEYWORD))) return@lazy null
 
             val overriddenDescriptors =
                 (annotatedElement.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, annotatedElement] as? CallableMemberDescriptor)?.overriddenDescriptors
-            if (overriddenDescriptors?.all { it.returnType == kotlinType } == true) return null
+            if (overriddenDescriptors?.all { it.returnType == kotlinType } == true) return@lazy null
         }
-        if (kotlinType.isUnit() && (annotatedElement !is KtValVarKeywordOwner)) return null // not annotate unit-functions
+        if (kotlinType.isUnit() && (annotatedElement !is KtValVarKeywordOwner)) return@lazy null // not annotate unit-functions
         if (kotlinType.isTypeParameter()) {
-            if (!TypeUtils.hasNullableSuperType(kotlinType)) return NotNull::class.java.name
-            if (!kotlinType.isMarkedNullable) return null
+            if (!TypeUtils.hasNullableSuperType(kotlinType)) return@lazy NotNull::class.java.name
+            if (!kotlinType.isMarkedNullable) return@lazy null
         }
 
-        return when (kotlinType.nullability()) {
+        when (kotlinType.nullability()) {
             TypeNullability.NOT_NULL -> NotNull::class.java.name
             TypeNullability.NULLABLE -> Nullable::class.java.name
             TypeNullability.FLEXIBLE -> null
         }
     }
+
+    override fun getQualifiedName(): String? = _qualifiedName
 
     internal fun KtTypeReference.getType(): KotlinType? = analyze()[BindingContext.TYPE, this]
 
