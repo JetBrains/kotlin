@@ -194,9 +194,8 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
         return NullabilityQualifierWithMigrationStatus(nullability, reportLevel.isWarning || forceWarning)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private companion object {
-        val JAVA_APPLICABILITY_TYPES = buildMap<String, AnnotationQualifierApplicabilityType> {
+        val JAVA_APPLICABILITY_TYPES = mutableMapOf<String, AnnotationQualifierApplicabilityType>().apply {
             for (type in AnnotationQualifierApplicabilityType.values()) {
                 getOrPut(type.javaTarget) { type }
             }
