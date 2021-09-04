@@ -22,7 +22,7 @@ class TypeAliasCommonizer(
 
         val typeParameters = TypeParameterListCommonizer(classifiers).commonize(values.map { it.typeParameters }) ?: return null
 
-        val underlyingType = TypeCommonizer(classifiers, TypeCommonizer.Options.default.withAllowOptimisticNumberTypeCommonization())
+        val underlyingType = TypeCommonizer(classifiers, TypeCommonizer.Options.default.withOptimisticNumberTypeCommonizationEnabled())
             .asCommonizer().commonize(values.map { it.underlyingType }) as? CirClassOrTypeAliasType ?: return null
 
         val visibility = VisibilityCommonizer.lowering().commonize(values) ?: return null

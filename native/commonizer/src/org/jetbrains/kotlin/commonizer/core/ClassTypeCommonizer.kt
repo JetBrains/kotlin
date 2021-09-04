@@ -11,13 +11,16 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.commonizer.utils.isUnderKotlinNativeSyntheticPackages
 import org.jetbrains.kotlin.descriptors.Visibility
 
-internal class ClassTypeCommonizer(private val classifiers: CirKnownClassifiers) :
+internal class ClassTypeCommonizer(
+    private val classifiers: CirKnownClassifiers,
+    options: TypeCommonizer.Options = TypeCommonizer.Options.default
+) :
     AbstractStandardCommonizer<CirClassType, CirClassType>() {
     private lateinit var classId: CirEntityId
     private val outerType = OuterClassTypeCommonizer(classifiers)
     private lateinit var anyVisibility: Visibility
     private val arguments = TypeArgumentListCommonizer(classifiers)
-    private var isMarkedNullable = false
+    private val isMarkedNullable = TypeNullabilityCommonizer(options).asCommonizer()
 
     override fun commonizationResult() = CirClassType.createInterned(
         classId = classId,
@@ -28,17 +31,16 @@ internal class ClassTypeCommonizer(private val classifiers: CirKnownClassifiers)
         // to reach better interning rate.
         visibility = anyVisibility,
         arguments = arguments.result,
-        isMarkedNullable = isMarkedNullable
+        isMarkedNullable = isMarkedNullable.result
     )
 
     override fun initialize(first: CirClassType) {
         classId = first.classifierId
         anyVisibility = first.visibility
-        isMarkedNullable = first.isMarkedNullable
     }
 
     override fun doCommonizeWith(next: CirClassType) =
-        isMarkedNullable == next.isMarkedNullable
+        isMarkedNullable.commonizeWith(next.isMarkedNullable)
                 && classId == next.classifierId
                 && outerType.commonizeWith(next.outerType)
                 && isClassifierAvailableInCommon(classifiers, classId)

@@ -17,8 +17,8 @@ internal class ClassOrTypeAliasTypeCommonizer(
 
     override fun commonize(first: CirClassOrTypeAliasType, second: CirClassOrTypeAliasType): CirClassOrTypeAliasType? {
         if (first is CirClassType && second is CirClassType) {
-            return ClassTypeCommonizer(classifiers).commonize(listOf(first, second))
-                ?: if (options.allowOptimisticNumberTypeCommonization) OptimisticNumbersTypeCommonizer.commonize(first, second) else null
+            return ClassTypeCommonizer(classifiers, options).commonize(listOf(first, second))
+                ?: if (options.enableOptimisticNumberTypeCommonization) OptimisticNumbersTypeCommonizer.commonize(first, second) else null
         }
 
         if (first is CirTypeAliasType && second is CirTypeAliasType) {
@@ -26,9 +26,10 @@ internal class ClassOrTypeAliasTypeCommonizer(
             In case regular type-alias-type commonization fails, we try to expand all type-aliases and
             try our luck with commonizing those class types
              */
-            return TypeAliasTypeCommonizer(classifiers).commonize(listOf(first, second))
-                ?: ClassOrTypeAliasTypeCommonizer(classifiers, options.withAllowOptimisticNumberTypeCommonization())
-                    .commonize(first.expandedType(), second.expandedType())
+            return TypeAliasTypeCommonizer(classifiers, options).commonize(listOf(first, second))
+                ?: ClassOrTypeAliasTypeCommonizer(
+                    classifiers, options.withOptimisticNumberTypeCommonizationEnabled()
+                ).commonize(first.expandedType(), second.expandedType())
         }
 
         val classType = when {
@@ -47,7 +48,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
         TypeAliasCommonizer will be able to figure out if the typealias will be represented as expect class in common.
         If so, re-use this class type, otherwise: try to expand the typeAlias
          */
-        val typeAliasClassType = TypeAliasTypeCommonizer(classifiers).commonize(listOf(typeAliasType))?.expandedType()
+        val typeAliasClassType = TypeAliasTypeCommonizer(classifiers, options).commonize(listOf(typeAliasType))?.expandedType()
             ?: typeAliasType.expandedType()
 
         return commonize(classType, typeAliasClassType)
