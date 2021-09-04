@@ -10,13 +10,16 @@ import org.jetbrains.kotlin.commonizer.core.CommonizedTypeAliasAnswer.Companion.
 import org.jetbrains.kotlin.commonizer.core.CommonizedTypeAliasAnswer.Companion.SUCCESS_FROM_DEPENDENCY_LIBRARY
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 
-internal class TypeAliasTypeCommonizer(private val classifiers: CirKnownClassifiers) :
+internal class TypeAliasTypeCommonizer(
+    private val classifiers: CirKnownClassifiers,
+    options: TypeCommonizer.Options
+) :
     AbstractStandardCommonizer<CirTypeAliasType, CirClassOrTypeAliasType>() {
 
     private lateinit var typeAliasId: CirEntityId
     private val arguments = TypeArgumentListCommonizer(classifiers)
     private val underlyingTypeArguments = TypeArgumentListCommonizer(classifiers)
-    private var isMarkedNullable = false
+    private val isMarkedNullable = TypeNullabilityCommonizer(options).asCommonizer()
     private var commonizedTypeBuilder: CommonizedTypeAliasTypeBuilder? = null // null means not selected yet
 
     override fun commonizationResult() =
@@ -24,17 +27,16 @@ internal class TypeAliasTypeCommonizer(private val classifiers: CirKnownClassifi
             typeAliasId = typeAliasId,
             arguments = arguments.result,
             underlyingTypeArguments = underlyingTypeArguments.result,
-            isMarkedNullable = isMarkedNullable
+            isMarkedNullable = isMarkedNullable.result
         )
 
     override fun initialize(first: CirTypeAliasType) {
         typeAliasId = first.classifierId
-        isMarkedNullable = first.expandedType().isMarkedNullable
     }
 
     override fun doCommonizeWith(next: CirTypeAliasType): Boolean {
-        if (isMarkedNullable != next.expandedType().isMarkedNullable || typeAliasId != next.classifierId)
-            return false
+        if (typeAliasId != next.classifierId) return false
+        if (!isMarkedNullable.commonizeWith(next.expandedType().isMarkedNullable)) return false
 
         if (commonizedTypeBuilder == null) {
             val answer = commonizeTypeAlias(typeAliasId, classifiers)
