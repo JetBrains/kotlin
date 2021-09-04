@@ -122,3 +122,21 @@ inline fun <T> Array<T>.fastForEach(action: (T) -> Unit) {
         action(this[index])
     }
 }
+
+@Suppress("unchecked_cast")
+internal inline fun <T, reified R> List<T>.safeCastValues(): List<R>? {
+    fastForEach { if (it !is R) return null }
+    return this as List<R>
+}
+
+
+internal fun <T : Any> List<T>.singleDistinctValueOrNull(): T? = singleDistinctValueOrNull { it }
+
+internal inline fun <T : Any, R> List<T>.singleDistinctValueOrNull(selector: (T) -> R): R? {
+    if (isEmpty()) return null
+    val value = selector(this[0])
+    for (index in 1 until size) {
+        if (value != selector(this[index])) return null
+    }
+    return value
+}

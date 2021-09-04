@@ -13,7 +13,7 @@ class FunctionCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
     private val modifiers = FunctionModifiersCommonizer()
     private val valueParameters = CallableValueParametersCommonizer(classifiers)
 
-    override fun commonizationResult(): CirFunction {
+    override fun commonizationResult(): CirFunction? {
         val valueParameters = valueParameters.result
         valueParameters.patchCallables()
 
@@ -27,7 +27,7 @@ class FunctionCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
             valueParameters = valueParameters.valueParameters,
             hasStableParameterNames = valueParameters.hasStableParameterNames,
             extensionReceiver = extensionReceiver.result,
-            returnType = returnType.result,
+            returnType = returnType.result ?: return null,
             kind = kind,
             modifiers = modifiers.result
         )

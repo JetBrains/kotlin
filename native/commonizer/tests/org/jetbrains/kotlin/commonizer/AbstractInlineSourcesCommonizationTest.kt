@@ -96,6 +96,10 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
             }
         }
 
+        infix fun String.withSource(@Language("kotlin") sourceContent: String) {
+            simpleSingleSourceTarget(this, sourceContent)
+        }
+
         @InlineSourcesCommonizationTestDsl
         fun simpleSingleSourceTarget(target: String, @Language("kotlin") sourceCode: String) {
             simpleSingleSourceTarget(parseCommonizerTarget(target), sourceCode)
