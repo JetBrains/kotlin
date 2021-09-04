@@ -30,12 +30,18 @@ class TypeCommonizer(
     }
 
     data class Options(
-        val allowOptimisticNumberTypeCommonization: Boolean = false
+        val enableOptimisticNumberTypeCommonization: Boolean = false,
+        val enableCovariantNullabilityCommonization: Boolean = false
     ) {
 
-        fun withAllowOptimisticNumberTypeCommonization(): Options {
-            return if (allowOptimisticNumberTypeCommonization) this
-            else copy(allowOptimisticNumberTypeCommonization = true)
+        fun withOptimisticNumberTypeCommonizationEnabled(enabled: Boolean = true): Options {
+            return if (enableOptimisticNumberTypeCommonization == enabled) this
+            else copy(enableOptimisticNumberTypeCommonization = enabled)
+        }
+
+        fun withCovariantNullabilityCommonizationEnabled(enabled: Boolean = true): Options {
+            return if (enableCovariantNullabilityCommonization == enabled) this
+            else copy(enableCovariantNullabilityCommonization = enabled)
         }
 
         companion object {

@@ -92,7 +92,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
         result.assertCommonized(
             "(a, b)", """
                 expect class X
-                expect fun x(): X
+                expect fun x(): X?
             """.trimIndent()
         )
     }
@@ -124,7 +124,9 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
                 typealias Z = Any
                 expect class Y
                 expect class X
-                fun x(): X
+                
+                // Still cary nullability mark here to be extra safe
+                expect fun x(): X?
             """.trimIndent()
         )
     }
@@ -156,7 +158,8 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
                 typealias Z = Any
                 expect class Y
                 expect class X
-                expect val x: X
+                // Still cary nullability mark here to be more safe!
+                expect val x: X?
             """.trimIndent()
         )
     }
@@ -175,6 +178,12 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
         result.assertCommonized("(c, d)", "expect val x: Any")
         result.assertCommonized("(a, b, c, d)", "expect val x: Any?")
     }
+
+
+    /*
+    We expect *no* covariant nullability commonization on any member function/property because this might mess
+    with overrides of super classes/interfaces
+     */
 
     fun `test member - property - hierarchically`() {
         val result = commonize {
