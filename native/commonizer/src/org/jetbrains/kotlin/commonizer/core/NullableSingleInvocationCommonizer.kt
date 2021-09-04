@@ -20,3 +20,20 @@ fun <T : Any> NullableSingleInvocationCommonizer<T>.asCommonizer(): Commonizer<T
         return true
     }
 }
+
+
+interface NullableContextualSingleInvocationCommonizer<T : Any, R : Any> {
+    operator fun invoke(values: List<T>): R?
+}
+
+fun <T : Any, R: Any> NullableContextualSingleInvocationCommonizer<T, R>.asCommonizer(): Commonizer<T, R?> = object : Commonizer<T, R?> {
+    private val collectedValues = mutableListOf<T>()
+
+    override val result: R?
+        get() = this@asCommonizer.invoke(collectedValues)
+
+    override fun commonizeWith(next: T): Boolean {
+        collectedValues.add(next)
+        return true
+    }
+}

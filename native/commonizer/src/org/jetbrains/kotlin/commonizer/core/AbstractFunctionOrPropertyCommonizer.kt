@@ -5,21 +5,21 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.commonizer.cir.CirFunctionOrProperty
-import org.jetbrains.kotlin.commonizer.cir.CirName
+import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
+import org.jetbrains.kotlin.commonizer.utils.safeCastValues
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
 
 abstract class AbstractFunctionOrPropertyCommonizer<T : CirFunctionOrProperty>(
     classifiers: CirKnownClassifiers
-) : AbstractStandardCommonizer<T, T>() {
+) : AbstractStandardCommonizer<T, T?>() {
     protected lateinit var name: CirName
     protected val modality = ModalityCommonizer()
     protected val visibility = VisibilityCommonizer.lowering()
     protected val extensionReceiver = ExtensionReceiverCommonizer(classifiers)
-    protected val returnType = TypeCommonizer(classifiers).asCommonizer()
+    protected val returnType = ReturnTypeCommonizer(classifiers).asCommonizer()
     protected lateinit var kind: CallableMemberDescriptor.Kind
     protected val typeParameters = TypeParameterListCommonizer(classifiers)
 
@@ -35,6 +35,29 @@ abstract class AbstractFunctionOrPropertyCommonizer<T : CirFunctionOrProperty>(
                 && modality.commonizeWith(next.modality)
                 && visibility.commonizeWith(next)
                 && extensionReceiver.commonizeWith(next.extensionReceiver)
-                && returnType.commonizeWith(next.returnType)
+                && returnType.commonizeWith(next)
                 && typeParameters.commonizeWith(next.typeParameters)
 }
+
+private class ReturnTypeCommonizer(
+    private val classifiers: CirKnownClassifiers,
+) : NullableContextualSingleInvocationCommonizer<CirFunctionOrProperty, CirType> {
+    override fun invoke(values: List<CirFunctionOrProperty>): CirType? {
+        if (values.isEmpty()) return null
+        val isTopLevel = values.all { it.containingClass == null }
+        val returnTypes = if (isTopLevel) makeNullableIfNecessary(values.map { it.returnType }) else values.map { it.returnType }
+        return TypeCommonizer(classifiers).asCommonizer().commonize(returnTypes)
+    }
+
+    private fun makeNullableIfNecessary(types: List<CirType>): List<CirType> {
+        val simpleTypes = types.safeCastValues<CirType, CirSimpleType>() ?: return types
+
+        if (
+            simpleTypes.all { type -> type.isMarkedNullable } ||
+            simpleTypes.none { type -> type.isMarkedNullable }
+        ) return types
+
+        return simpleTypes.map { type -> type.makeNullable() }
+    }
+}
+
