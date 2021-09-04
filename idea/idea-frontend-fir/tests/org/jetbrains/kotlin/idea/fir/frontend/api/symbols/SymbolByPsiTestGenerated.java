@@ -173,4 +173,10 @@ public class SymbolByPsiTestGenerated extends AbstractSymbolByPsiTest {
     public void testTypeAnnotations() throws Exception {
         runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/typeAnnotations.kt");
     }
+
+    @Test
+    @TestMetadata("varargFunctions.kt")
+    public void testVarargFunctions() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/varargFunctions.kt");
+    }
 }

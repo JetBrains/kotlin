@@ -8,9 +8,13 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.renderWithType
+import org.jetbrains.kotlin.fir.types.arrayElementType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.KtFirAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.containsAnnotation
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.getAnnotationClassIds
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.toAnnotationsList
@@ -38,8 +42,18 @@ internal class KtFirValueParameterSymbol(
 
     override val name: Name get() = firRef.withFir { it.name }
     override val isVararg: Boolean get() = firRef.withFir { it.isVararg }
-    override val annotatedType: KtTypeAndAnnotations by cached {
-        firRef.returnTypeAndAnnotations(FirResolvePhase.TYPES, builder)
+    override val annotatedType: KtTypeAndAnnotations by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir ->
+        if (fir.isVararg) {
+            val annotations = fir.returnTypeRef.annotations.map { annotation ->
+                KtFirAnnotationCall(firRef, annotation)
+            }
+            // There SHOULD always be an array element type (even if it is an error type, e.g., unresolved).
+            val arrayElementType = fir.returnTypeRef.coneType.arrayElementType()
+                ?: error("No array element type for vararg value parameter: ${fir.renderWithType()}")
+            KtSimpleFirTypeAndAnnotations(arrayElementType, annotations, builder, firRef.token)
+        } else {
+            firRef.returnTypeAndAnnotations(FirResolvePhase.TYPES, builder)
+        }
     }
 
     override val hasDefaultValue: Boolean get() = firRef.withFir { it.defaultValue != null }

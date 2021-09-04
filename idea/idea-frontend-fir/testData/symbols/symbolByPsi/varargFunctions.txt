@@ -1,0 +1,163 @@
+KtFirValueParameterSymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: null
+  hasDefaultValue: false
+  isExtension: false
+  isVararg: true
+  name: a
+  origin: SOURCE
+  receiverType: null
+  symbolKind: LOCAL
+  deprecationStatus: null
+
+KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Unit
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: /primitive
+  dispatchType: null
+  hasStableParameterNames: true
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: primitive
+  origin: SOURCE
+  receiverType: null
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: [
+    KtFirValueParameterSymbol(a)
+  ]
+  visibility: Public
+  deprecationStatus: null
+
+KtFirValueParameterSymbol:
+  annotatedType: [] kotlin/Float?
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: null
+  hasDefaultValue: false
+  isExtension: false
+  isVararg: true
+  name: b
+  origin: SOURCE
+  receiverType: null
+  symbolKind: LOCAL
+  deprecationStatus: null
+
+KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Unit
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: /nullablePrimitive
+  dispatchType: null
+  hasStableParameterNames: true
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: nullablePrimitive
+  origin: SOURCE
+  receiverType: null
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: [
+    KtFirValueParameterSymbol(b)
+  ]
+  visibility: Public
+  deprecationStatus: null
+
+KtFirValueParameterSymbol:
+  annotatedType: [] kotlin/Any
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: null
+  hasDefaultValue: false
+  isExtension: false
+  isVararg: true
+  name: c
+  origin: SOURCE
+  receiverType: null
+  symbolKind: LOCAL
+  deprecationStatus: null
+
+KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Unit
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: /nonPrimitive
+  dispatchType: null
+  hasStableParameterNames: true
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: nonPrimitive
+  origin: SOURCE
+  receiverType: null
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: [
+    KtFirValueParameterSymbol(c)
+  ]
+  visibility: Public
+  deprecationStatus: null
+
+KtFirValueParameterSymbol:
+  annotatedType: [] ERROR CLASS: Symbol not found for Unresolved
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: null
+  hasDefaultValue: false
+  isExtension: false
+  isVararg: true
+  name: d
+  origin: SOURCE
+  receiverType: null
+  symbolKind: LOCAL
+  deprecationStatus: null
+
+KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Unit
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: /error
+  dispatchType: null
+  hasStableParameterNames: true
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: error
+  origin: SOURCE
+  receiverType: null
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: [
+    KtFirValueParameterSymbol(d)
+  ]
+  visibility: Public
+  deprecationStatus: null
