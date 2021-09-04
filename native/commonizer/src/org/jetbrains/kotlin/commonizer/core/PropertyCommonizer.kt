@@ -17,7 +17,7 @@ class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
     private var isExternal = true
     private lateinit var constCommonizationState: ConstCommonizationState
 
-    override fun commonizationResult(): CirProperty {
+    override fun commonizationResult(): CirProperty? {
         val modality = modality.result
 
         val setter = setter.result?.takeIf { setter ->
@@ -36,7 +36,7 @@ class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
             containingClass = null, // does not matter
             isExternal = isExternal,
             extensionReceiver = extensionReceiver.result,
-            returnType = returnType.result,
+            returnType = returnType.result ?: return null,
             kind = kind,
             isVar = setter != null,
             isLateInit = false,
