@@ -8,38 +8,38 @@ class R {
 
 context(C)
 fun R.f1(g: context(C) R.(Param) -> Unit) {
-    g(this@C, this@R, Param())
+    g(this<!UNRESOLVED_LABEL!>@C<!>, this<!UNRESOLVED_LABEL!>@R<!>, <!TOO_MANY_ARGUMENTS!>Param()<!>)
 }
 
 context(C)
 fun f2(g: context(C) (Param) -> Unit) {
-    g(this@C, Param())
+    g(this<!UNRESOLVED_LABEL!>@C<!>, Param())
 }
 
 context(C)
 fun R.f3(g: context(C) R.() -> Unit) {
-    g(this@C, this@R)
+    g(this<!UNRESOLVED_LABEL!>@C<!>, <!TOO_MANY_ARGUMENTS!>this<!UNRESOLVED_LABEL!>@R<!><!>)
 }
 
 context(C)
 fun f4(g: context(C) () -> Unit) {
-    g(this@C)
+    g(this<!UNRESOLVED_LABEL!>@C<!>)
 }
 
 fun test() {
     val lf1: context(C) R.(Param) -> Unit = { _ ->
         r
-        c
+        <!UNRESOLVED_REFERENCE!>c<!>
     }
     val lf2: context(C) (Param) -> Unit = { _ ->
-        c
+        <!UNRESOLVED_REFERENCE!>c<!>
     }
     val lf3: context(C) R.() -> Unit = {
         r
-        c
+        <!UNRESOLVED_REFERENCE!>c<!>
     }
     val lf4: context(C) () -> Unit = {
-        c
+        <!UNRESOLVED_REFERENCE!>c<!>
     }
 
     with(C()) {

@@ -13,7 +13,7 @@ class B : A() {
     inner class C {
         fun g() {
             super@B.f()
-            super@Context.<!UNRESOLVED_REFERENCE!>h<!>()
+            super<!UNRESOLVED_LABEL!>@Context<!>.h()
         }
     }
 }

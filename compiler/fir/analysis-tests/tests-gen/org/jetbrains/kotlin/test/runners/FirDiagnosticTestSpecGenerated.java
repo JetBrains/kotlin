@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpec {
     @Test
     public void testAllFilesPresentInDiagnostics() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "helpers", "linked/annotations", "linked/built-in-types-and-their-semantics", "linked/control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "linked/control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph", "linked/declarations/classifier-declaration/class-declaration/nested-and-inner-classifiers", "linked/declarations/classifier-declaration/classifier-initialization", "linked/declarations/classifier-declaration/data-class-declaration", "linked/declarations/function-declaration", "linked/declarations/property-declaration/property-initialization", "linked/declarations/type-alias", "linked/expressions/call-and-property-access-expressions", "linked/expressions/function-literals", "linked/inheritance", "linked/overload-resolution/c-level-partition", "linked/overload-resolution/determining-function-applicability-for-a-specific-call/rationale", "linked/overloadable-operators", "linked/statements/assignments/simple-assignments", "linked/type-inference/local-type-inference", "linked/type-inference/smart-casts/smart-cast-types", "linked/type-system/subtyping/subtyping-for-nullable-types", "linked/type-system/type-kinds/type-parameters");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "helpers", "linked\\annotations", "linked\\built-in-types-and-their-semantics", "linked\\control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "linked\\control--and-data-flow-analysis\\performing-analysis-on-the-control-flow-graph", "linked\\declarations\\classifier-declaration\\class-declaration\\nested-and-inner-classifiers", "linked\\declarations\\classifier-declaration\\classifier-initialization", "linked\\declarations\\classifier-declaration\\data-class-declaration", "linked\\declarations\\function-declaration", "linked\\declarations\\property-declaration\\property-initialization", "linked\\declarations\\type-alias", "linked\\expressions\\call-and-property-access-expressions", "linked\\expressions\\function-literals", "linked\\inheritance", "linked\\overload-resolution\\c-level-partition", "linked\\overload-resolution\\determining-function-applicability-for-a-specific-call\\rationale", "linked\\overloadable-operators", "linked\\statements\\assignments\\simple-assignments", "linked\\type-inference\\local-type-inference", "linked\\type-inference\\smart-casts\\smart-cast-types", "linked\\type-system\\subtyping\\subtyping-for-nullable-types", "linked\\type-system\\type-kinds\\type-parameters");
     }
 
     @Nested
@@ -30,7 +30,57 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
     public class Linked {
         @Test
         public void testAllFilesPresentInLinked() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "annotations", "built-in-types-and-their-semantics", "control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph", "declarations/classifier-declaration/class-declaration/nested-and-inner-classifiers", "declarations/classifier-declaration/classifier-initialization", "declarations/classifier-declaration/data-class-declaration", "declarations/function-declaration", "declarations/property-declaration/property-initialization", "declarations/type-alias", "expressions/call-and-property-access-expressions", "expressions/function-literals", "inheritance", "overload-resolution/c-level-partition", "overload-resolution/determining-function-applicability-for-a-specific-call/rationale", "overloadable-operators", "statements/assignments/simple-assignments", "type-inference/local-type-inference", "type-inference/smart-casts/smart-cast-types", "type-system/subtyping/subtyping-for-nullable-types", "type-system/type-kinds/type-parameters");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/annotations")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Annotations {
+            @Test
+            public void testAllFilesPresentInAnnotations() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/annotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/annotations/annotation-targets")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Annotation_targets {
+                @Test
+                public void testAllFilesPresentInAnnotation_targets() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/annotations/annotation-targets"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/built-in-types-and-their-semantics")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Built_in_types_and_their_semantics {
+            @Test
+            public void testAllFilesPresentInBuilt_in_types_and_their_semantics() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/built-in-types-and-their-semantics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/built-in-types-and-their-semantics/built-in-integer-types-1")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Built_in_integer_types_1 {
+                @Test
+                public void testAllFilesPresentInBuilt_in_integer_types_1() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/built-in-types-and-their-semantics/built-in-integer-types-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Nested
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/built-in-types-and-their-semantics/built-in-integer-types-1/integer-type-widening")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Integer_type_widening {
+                    @Test
+                    public void testAllFilesPresentInInteger_type_widening() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/built-in-types-and-their-semantics/built-in-integer-types-1/integer-type-widening"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+                }
+            }
         }
 
         @Nested
@@ -39,7 +89,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         public class Control__and_data_flow_analysis {
             @Test
             public void testAllFilesPresentInControl__and_data_flow_analysis() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "performing-analysis-on-the-control-flow-graph");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
             @Nested
@@ -149,6 +199,36 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     }
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Performing_analysis_on_the_control_flow_graph {
+                @Test
+                public void testAllFilesPresentInPerforming_analysis_on_the_control_flow_graph() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Nested
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph/variable-initialization-analysis")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Variable_initialization_analysis {
+                    @Test
+                    public void testAllFilesPresentInVariable_initialization_analysis() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph/variable-initialization-analysis"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+                }
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Control__and_data_flow_analysis_control_flow_graph_expressions_1_conditional_expressions {
+            @Test
+            public void testAllFilesPresentInControl__and_data_flow_analysis_control_flow_graph_expressions_1_conditional_expressions() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
         }
 
         @Nested
@@ -157,7 +237,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         public class Declarations {
             @Test
             public void testAllFilesPresentInDeclarations() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "classifier-declaration/class-declaration/nested-and-inner-classifiers", "classifier-declaration/classifier-initialization", "classifier-declaration/data-class-declaration", "function-declaration", "property-declaration/property-initialization", "type-alias");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
             @Nested
@@ -166,7 +246,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             public class Classifier_declaration {
                 @Test
                 public void testAllFilesPresentInClassifier_declaration() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "class-declaration/nested-and-inner-classifiers", "classifier-initialization", "data-class-declaration");
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
                 @Nested
@@ -175,7 +255,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 public class Class_declaration {
                     @Test
                     public void testAllFilesPresentInClass_declaration() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "nested-and-inner-classifiers");
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
 
                     @Nested
@@ -517,6 +597,46 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             }
                         }
                     }
+
+                    @Nested
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/nested-and-inner-classifiers")
+                    @TestDataPath("$PROJECT_ROOT")
+                    public class Nested_and_inner_classifiers {
+                        @Test
+                        public void testAllFilesPresentInNested_and_inner_classifiers() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/nested-and-inner-classifiers"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                        }
+                    }
+                }
+
+                @Nested
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/classifier-initialization")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Classifier_initialization {
+                    @Test
+                    public void testAllFilesPresentInClassifier_initialization() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/classifier-initialization"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+                }
+
+                @Nested
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Data_class_declaration {
+                    @Test
+                    public void testAllFilesPresentInData_class_declaration() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/function-declaration")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Function_declaration {
+                @Test
+                public void testAllFilesPresentInFunction_declaration() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/function-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
             }
 
@@ -526,7 +646,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             public class Property_declaration {
                 @Test
                 public void testAllFilesPresentInProperty_declaration() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "property-initialization");
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
                 @Nested
@@ -564,6 +684,26 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         }
                     }
                 }
+
+                @Nested
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/property-initialization")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Property_initialization {
+                    @Test
+                    public void testAllFilesPresentInProperty_initialization() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/property-initialization"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/type-alias")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Type_alias {
+                @Test
+                public void testAllFilesPresentInType_alias() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/type-alias"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
             }
         }
 
@@ -573,7 +713,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         public class Expressions {
             @Test
             public void testAllFilesPresentInExpressions() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "call-and-property-access-expressions", "function-literals");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
             @Nested
@@ -690,6 +830,36 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                             }
                         }
+                    }
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/call-and-property-access-expressions")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Call_and_property_access_expressions {
+                @Test
+                public void testAllFilesPresentInCall_and_property_access_expressions() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/call-and-property-access-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Nested
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/call-and-property-access-expressions/callable-references")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Callable_references {
+                    @Test
+                    public void testAllFilesPresentInCallable_references() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/call-and-property-access-expressions/callable-references"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+                }
+
+                @Nested
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/call-and-property-access-expressions/navigation-operators")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Navigation_operators {
+                    @Test
+                    public void testAllFilesPresentInNavigation_operators() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/call-and-property-access-expressions/navigation-operators"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
                 }
             }
@@ -1760,6 +1930,26 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                             }
                         }
+                    }
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/function-literals")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Function_literals {
+                @Test
+                public void testAllFilesPresentInFunction_literals() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/function-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Nested
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/function-literals/lambda-literals")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Lambda_literals {
+                    @Test
+                    public void testAllFilesPresentInLambda_literals() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/function-literals/lambda-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
                 }
             }
@@ -3174,12 +3364,32 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         }
 
         @Nested
+        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/inheritance")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Inheritance {
+            @Test
+            public void testAllFilesPresentInInheritance() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/inheritance"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Overriding {
+                @Test
+                public void testAllFilesPresentInOverriding() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution")
         @TestDataPath("$PROJECT_ROOT")
         public class Overload_resolution {
             @Test
             public void testAllFilesPresentInOverload_resolution() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "c-level-partition", "determining-function-applicability-for-a-specific-call/rationale");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
             @Nested
@@ -4175,6 +4385,16 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             }
 
             @Nested
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/c-level-partition")
+            @TestDataPath("$PROJECT_ROOT")
+            public class C_level_partition {
+                @Test
+                public void testAllFilesPresentInC_level_partition() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/c-level-partition"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention")
             @TestDataPath("$PROJECT_ROOT")
             public class Callables_and_invoke_convention {
@@ -4632,7 +4852,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             public class Determining_function_applicability_for_a_specific_call {
                 @Test
                 public void testAllFilesPresentInDetermining_function_applicability_for_a_specific_call() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "rationale");
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
                 @Nested
@@ -4668,6 +4888,16 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                             }
                         }
+                    }
+                }
+
+                @Nested
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/rationale")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Rationale {
+                    @Test
+                    public void testAllFilesPresentInRationale() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/rationale"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
                 }
             }
@@ -4942,12 +5172,22 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         }
 
         @Nested
+        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overloadable-operators")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Overloadable_operators {
+            @Test
+            public void testAllFilesPresentInOverloadable_operators() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overloadable-operators"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements")
         @TestDataPath("$PROJECT_ROOT")
         public class Statements {
             @Test
             public void testAllFilesPresentInStatements() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "assignments/simple-assignments");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
             @Nested
@@ -4956,7 +5196,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             public class Assignments {
                 @Test
                 public void testAllFilesPresentInAssignments() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "simple-assignments");
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
                 @Nested
@@ -5066,6 +5306,16 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         public void testAllFilesPresentInNeg() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                         }
+                    }
+                }
+
+                @Nested
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/simple-assignments")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Simple_assignments {
+                    @Test
+                    public void testAllFilesPresentInSimple_assignments() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/simple-assignments"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
                 }
             }
@@ -5211,7 +5461,17 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         public class Type_inference {
             @Test
             public void testAllFilesPresentInType_inference() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "local-type-inference", "smart-casts/smart-cast-types");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-inference/local-type-inference")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Local_type_inference {
+                @Test
+                public void testAllFilesPresentInLocal_type_inference() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/local-type-inference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
             }
 
             @Nested
@@ -5220,7 +5480,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             public class Smart_casts {
                 @Test
                 public void testAllFilesPresentInSmart_casts() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "smart-cast-types");
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
                 @Nested
@@ -5274,6 +5534,16 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         }
                     }
                 }
+
+                @Nested
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-types")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Smart_cast_types {
+                    @Test
+                    public void testAllFilesPresentInSmart_cast_types() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-types"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+                }
             }
         }
 
@@ -5283,7 +5553,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         public class Type_system {
             @Test
             public void testAllFilesPresentInType_system() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "subtyping/subtyping-for-nullable-types", "type-kinds/type-parameters");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
             @Nested
@@ -5372,7 +5642,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             public class Subtyping {
                 @Test
                 public void testAllFilesPresentInSubtyping() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "subtyping-for-nullable-types");
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
                 @Nested
@@ -5420,6 +5690,16 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                             }
                         }
+                    }
+                }
+
+                @Nested
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-nullable-types")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Subtyping_for_nullable_types {
+                    @Test
+                    public void testAllFilesPresentInSubtyping_for_nullable_types() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-nullable-types"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
                 }
 
@@ -5546,7 +5826,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             public class Type_kinds {
                 @Test
                 public void testAllFilesPresentInType_kinds() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "type-parameters");
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
                 @Nested
@@ -5656,6 +5936,16 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                                 }
                             }
                         }
+                    }
+                }
+
+                @Nested
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/type-parameters")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Type_parameters {
+                    @Test
+                    public void testAllFilesPresentInType_parameters() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/type-parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
                 }
             }
