@@ -49,6 +49,20 @@ class ConsoleTest {
     }
 
     @Test
+    fun shouldReadMultipleEmptyLines() {
+        testReadLine(
+            "first${linuxLineSeparator}second${linuxLineSeparator}${linuxLineSeparator}${linuxLineSeparator}",
+            listOf("first", "second", "", "")
+        )
+    }
+
+    @Test
+    fun shouldReadAloneCarriageReturn() {
+        val result = readLines("\r", Charsets.UTF_8)
+        assertEquals(listOf("\r"), result)
+    }
+
+    @Test
     fun shouldReadConsecutiveEmptyLines() {
         testReadLine("$linuxLineSeparator$linuxLineSeparator", listOf("", ""))
         testReadLine("$linuxLineSeparator$windowsLineSeparator", listOf("", ""))
