@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+
 class A
 class B
 class C
