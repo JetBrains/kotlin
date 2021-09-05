@@ -1,4 +1,4 @@
-import { ping, Something } from "./JS_TESTS/index.js"
+import { ping, Something } from "./main/index.js"
 
 export default function() {
     return {

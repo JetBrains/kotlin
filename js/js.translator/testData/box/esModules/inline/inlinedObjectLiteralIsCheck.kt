@@ -30,6 +30,6 @@ fun testOk(ok: Any): String {
 
 // FILE: entry.mjs
 // ENTRY_ES_MODULE
-import { convolutedOk, testOk } from "./JS_TESTS/index.js";
+import { convolutedOk, testOk } from "./main/index.js";
 
 console.assert(testOk(convolutedOk()) == "OK");

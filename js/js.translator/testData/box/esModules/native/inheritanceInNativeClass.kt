@@ -24,7 +24,7 @@ open class B {
 // FILE: entry.mjs
 // ENTRY_ES_MODULE
 
-import { A, B } from "./JS_TESTS/index.js";
+import { A, B } from "./main/index.js";
 
 function createA() {
     function ADerived() {

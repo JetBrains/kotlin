@@ -1,4 +1,4 @@
-import * as api from "./JS_TESTS/index.js";
+import * as api from "./main/index.js";
 
 export default function() {
     var ping = api.ping;

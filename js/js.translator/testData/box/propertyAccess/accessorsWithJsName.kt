@@ -16,7 +16,7 @@ class A {
 val A.z: Int
     @JsName("getZ_") get() = 42
 
-fun getPackage() = js("return JS_TESTS")
+fun getPackage() = js("return main")
 
 fun box(): String {
     val a = A()

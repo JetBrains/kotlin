@@ -1,4 +1,4 @@
-import { A, B } from "./JS_TESTS/index.js";
+import { A, B } from "./main/index.js";
 
 export default function() {
     return {

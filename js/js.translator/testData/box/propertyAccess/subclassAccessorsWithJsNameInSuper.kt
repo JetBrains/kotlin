@@ -28,7 +28,7 @@ class B : A(), C {
     override val z = 55
 }
 
-fun getPackage() = js("JS_TESTS")
+fun getPackage() = js("main")
 
 fun box(): String {
     val a = B()

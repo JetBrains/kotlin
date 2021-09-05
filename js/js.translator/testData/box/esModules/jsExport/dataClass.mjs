@@ -1,4 +1,4 @@
-import { Point } from "./JS_TESTS/index.js";
+import { Point } from "./main/index.js";
 
 export default function() {
     var p = new Point(3, 7);

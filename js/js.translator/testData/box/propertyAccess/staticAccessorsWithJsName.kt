@@ -14,7 +14,7 @@ var y: Int = 0
     }
 
 
-fun getPackage() = js("return JS_TESTS")
+fun getPackage() = js("return main")
 
 fun box(): String {
     assertEquals(23, x)

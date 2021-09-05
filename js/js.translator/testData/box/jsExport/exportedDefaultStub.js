@@ -1,7 +1,7 @@
 $kotlin_test_internal$.beginModule();
 
 module.exports = function() {
-    var api = require("JS_TESTS").api;
+    var api = require("main").api;
     var ping = api.ping;
     var pong = api.pong;
     var transform = api.transform;

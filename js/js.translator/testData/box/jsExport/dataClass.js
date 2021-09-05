@@ -1,7 +1,7 @@
 $kotlin_test_internal$.beginModule();
 
 module.exports = function() {
-    var Point = require("JS_TESTS").api.Point;
+    var Point = require("main").api.Point;
     var p = new Point(3, 7);
 
     return {
