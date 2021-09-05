@@ -754,6 +754,61 @@ standaloneTest("hello2") {
    source = "runtime/basic/hello2.kt"
 }
 
+standaloneTest("readlnOrNull_empty") {
+    useGoldenData = true
+    useTestData = true
+    source = "runtime/basic/readlnOrNull_empty.kt"
+}
+
+standaloneTest("readln_empty") {
+    useTestData = true
+    outputChecker = { s -> s.contains("ReadAfterEOFException") }
+    expectedExitStatusChecker = { it != 0 }
+    source = "runtime/basic/readln_empty.kt"
+}
+
+standaloneTest("readln_alone_CR") {
+    useGoldenData = true
+    useTestData = true
+    source = "runtime/basic/readln_alone_CR.kt"
+}
+
+standaloneTest("readln_empty_new_line") {
+    useGoldenData = true
+    useTestData = true
+    source = "runtime/basic/readln_empty_new_line.kt"
+}
+
+standaloneTest("readln_multiline") {
+    useGoldenData = true
+    useTestData = true
+    source = "runtime/basic/readln_multiline.kt"
+}
+
+standaloneTest("readln_CR_and_CRLF") {
+    useGoldenData = true
+    useTestData = true
+    source = "runtime/basic/readln_CR_and_CRLF.kt"
+}
+
+standaloneTest("readln_long_line") {
+    useGoldenData = true
+    useTestData = true
+    source = "runtime/basic/readln_long_line.kt"
+}
+
+standaloneTest("readln_cyrillic") {
+    useGoldenData = true
+    useTestData = true
+    source = "runtime/basic/readln_cyrillic.kt"
+}
+
+standaloneTest("readln_multiple_empty_new_lines") {
+    useGoldenData = true
+    useTestData = true
+    source = "runtime/basic/readln_multiple_empty_new_lines.kt"
+}
+
 task hello3(type: KonanLocalTest) {
     goldValue = "239\ntrue\n3.14159\nA\n"
     source = "runtime/basic/hello3.kt"
