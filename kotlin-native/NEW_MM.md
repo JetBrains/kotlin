@@ -16,14 +16,14 @@ In particular:
 A few precautions:
 * As with the previous MM, memory is not reclaimed eagerly: an object is reclaimed only when GC happens. This extends to Swift/ObjC objects that crossed interop boundary into Kotlin/Native.
 * `AtomicReference` from `kotlin.native.concurrent` still requires freezing the `value`. Instead, you can use `FreezableAtomicReference` or `AtomicRef` from `atomicfu`. _Note that `atomicfu` has not reached 1.x yet_.
-* `deinit` on Swift/ObjC objects (and the objects referred to by them) will be called on a different thread if these objects cross interop boundary into Kotlin/Native.
+* `deinit` on Swift/ObjC objects (and the objects they refer to) will be called on a different thread if these objects cross interop boundary into Kotlin/Native.
 * When calling Kotlin suspend functions from Swift, completion handlers might be called on threads other than the main.
 
 Together with the new MM, we're bringing in another set of changes:
 * Global properties are initialized lazily when the file they are defined in is first accessed. Previously global properties were initialized at the program startup. This is in line with Kotlin/JVM.
   As a workaround, properties that must be initialized at the program start can be marked with `@EagerInitialization`. Before using, consult the docs for `@EagerInitialization`.
 * `by lazy {}` properties support thread-safety modes and do not handle unbounded recursion. This is in line with Kotlin/JVM.
-* Exceptions that escape `operation` in `Worker.executeAfter` are processed like in other parts of the runtime: by trying to execute a user-defined unhandled exception hook or terminating the program if the hook was not found or failed with exception itself.
+* Exceptions that escape `operation` in `Worker.executeAfter` are processed like in other parts of the runtime: by trying to execute a user-defined unhandled exception hook or terminating the program if the hook was not found or failed with an exception itself.
 
 ## Enable the new MM
 
@@ -74,12 +74,12 @@ If `kotlin.native.isExperimentalMM()` returns `true`, you've successfully enable
 
 For you to take full advantage of the new MM, we released new versions of the following libraries:
 * `kotlinx.coroutines`: `1.5.1-new-mm-dev2` at https://maven.pkg.jetbrains.space/public/p/kotlinx-coroutines/maven
-    * No freezing. Every common primitive (Channels, Flows, coroutines) works through worker boundaries.
+    * No freezing. Every common primitive (Channels, Flows, coroutines) works through `Worker` boundaries.
     * Unlike the `native-mt` version, library objects are transparent for `freeze`. For example, if you freeze a channel, all of its internals will get frozen, so it won't work as expected. In particular, this can happen when freezing something that captures a channel.
-    * `Dispatchers.Default` is backed by a pool of workers on Linux and Windows and by a global queue on Apple targets.
-    * `newSingleThreadContext` to create a coroutine dispatcher backed by a worker.
-    * `newFixedThreadPoolContext` to create a coroutine dispatcher backed by a pool of `N` workers.
-    * `Dispatchers.Main` is backed by the main queue on Darwin and by a standalone worker on other platforms.
+    * `Dispatchers.Default` is backed by a pool of `Worker`s on Linux and Windows and by a global queue on Apple targets.
+    * `newSingleThreadContext` to create a coroutine dispatcher backed by a `Worker`.
+    * `newFixedThreadPoolContext` to create a coroutine dispatcher backed by a pool of `N` `Worker`s.
+    * `Dispatchers.Main` is backed by the main queue on Darwin and by a standalone `Worker` on other platforms.
       _Don't use `Dispatchers.Main` in unit-tests because nothing processes the main thread queue in unit-tests._
 * `ktor`: `1.6.2-native-mm-eap-196` at https://maven.pkg.jetbrains.space/public/p/ktor/eap
 
@@ -151,7 +151,7 @@ We measured performance regressions with a slowdown up to a factor of 5. If you 
 ### Unexpected object freezing
 Some libraries might not be ready for the new memory model and freeze-transparency of `kotlinx.coroutines`, so unexpected `InvalidMutabilityException` or `FreezingException` might appear.
 
-We added a `freezing` binary option that disables full (`disabled`) or partial (`explicitOnly`) freeze to workaround such cases.
+To workaround such cases, we added a `freezing` binary option that disables full (`disabled`) or partial (`explicitOnly`) freeze.
 The former disables the freezing mechanism at runtime (thus, making it a no-op), while the latter disables automatic freezing of
 [`@SharedImmutable`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/-shared-immutable/) globals, but keeps direct calls to [`freeze`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/freeze.html) fully functional.
 
