@@ -52,11 +52,15 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
         val argStartMarker: AbstractInsnNode,
         val argEndMarker: AbstractInsnNode,
         val calls: List<CallContext>,
-        val storeInsn: VarInsnNode
+        val storeInsn: VarInsnNode?
     ) {
-        val loadOpcode = storeInsn.opcode - Opcodes.ISTORE + Opcodes.ILOAD
+        val loadOpcode =
+            if (storeInsn != null)
+                storeInsn.opcode - Opcodes.ISTORE + Opcodes.ILOAD
+            else
+                -1
 
-        val varIndex = storeInsn.`var`
+        val varIndex = storeInsn?.`var` ?: -1
     }
 
     private fun parseMethodOrNull(methodNode: MethodNode): MethodContext? {
@@ -114,11 +118,19 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
                     calls.add(parseCall(methodNode, insn, iter))
                 insn.isInplaceArgumentEndMarker() -> {
                     val next = insn.next
-                    if (next is VarInsnNode && next.opcode in Opcodes.ISTORE..Opcodes.ASTORE) {
-                        iter.next()
-                        return ArgContext(start, insn, calls, next)
-                    } else {
-                        throw ParseErrorException()
+                    return when {
+                        next is VarInsnNode && next.opcode in Opcodes.ISTORE..Opcodes.ASTORE -> {
+                            iter.next()
+                            ArgContext(start, insn, calls, next)
+                        }
+                        insn.previous.isInplaceArgumentStartMarker() -> {
+                            // Empty argument - a remapped variable.
+                            // For such argument varIndex would be '-1', so it would not be associated with any LOAD instruction.
+                            ArgContext(start, insn, calls, null)
+                        }
+                        else -> {
+                            throw ParseErrorException()
+                        }
                     }
                 }
                 insn.isInplaceCallEndMarker() || insn.isInplaceArgumentStartMarker() ->

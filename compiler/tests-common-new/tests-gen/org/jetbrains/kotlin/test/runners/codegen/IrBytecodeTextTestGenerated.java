@@ -3429,6 +3429,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("kotlinMathMax.kt")
+        public void testKotlinMathMax() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineArgsInPlace/kotlinMathMax.kt");
+        }
+
+        @Test
         @TestMetadata("println.kt")
         public void testPrintln() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineArgsInPlace/println.kt");

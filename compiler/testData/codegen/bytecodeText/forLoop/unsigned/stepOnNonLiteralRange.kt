@@ -40,8 +40,8 @@ fun box(): String {
 // 0 INEG
 // 0 INVOKESTATIC kotlin/UInt.constructor-impl
 // 0 INVOKE\w+ kotlin/UInt.(un)?box-impl
-// 12 ILOAD
-// 9 ISTORE
+// 8 ILOAD
+// 5 ISTORE
 // 0 IADD
 // 0 ISUB
 // 1 IINC
