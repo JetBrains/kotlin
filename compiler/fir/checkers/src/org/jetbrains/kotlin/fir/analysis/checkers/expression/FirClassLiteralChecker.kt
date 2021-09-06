@@ -80,7 +80,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
             @OptIn(SymbolInternals::class)
             val typeParameters = (symbol?.fir as? FirTypeParameterRefsOwner)?.typeParameters
             // Among type parameter references, only count actual type parameter while discarding [FirOuterClassTypeParameterRef]
-            val expectedTypeArgumentSize = typeParameters?.filterIsInstance<FirTypeParameter>()?.size ?: 0
+            val expectedTypeArgumentSize = typeParameters?.count { it is FirTypeParameter } ?: 0
             if (expectedTypeArgumentSize != argument.typeArguments.size) {
                 // Will be reported as WRONG_NUMBER_OF_TYPE_ARGUMENTS
                 return

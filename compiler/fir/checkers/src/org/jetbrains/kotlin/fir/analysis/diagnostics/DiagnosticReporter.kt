@@ -144,28 +144,8 @@ fun <F : AbstractFirDiagnosticFactory> FirDiagnosticFactoryForDeprecation<F>.cho
     }
 }
 
-inline fun withSuppressedDiagnostics(
-    element: FirElement,
-    context: CheckerContext,
-    f: (CheckerContext) -> Unit
-) {
-    val arguments = (element as? FirAnnotationContainer)?.let { AbstractDiagnosticCollector.getDiagnosticsSuppressedForContainer(it) }
-    if (arguments != null) {
-        f(
-            context.addSuppressedDiagnostics(
-                arguments,
-                allInfosSuppressed = AbstractDiagnosticCollector.SUPPRESS_ALL_INFOS in arguments,
-                allWarningsSuppressed = AbstractDiagnosticCollector.SUPPRESS_ALL_WARNINGS in arguments,
-                allErrorsSuppressed = AbstractDiagnosticCollector.SUPPRESS_ALL_ERRORS in arguments
-            )
-        )
-        return
-    }
-    f(context)
-}
-
 fun DiagnosticReporter.reportOnWithSuppression(
-    element: FirElement,
+    element: FirAnnotationContainer,
     factory: FirDiagnosticFactory0,
     context: CheckerContext,
     positioningStrategy: SourceElementPositioningStrategy? = null
@@ -176,7 +156,7 @@ fun DiagnosticReporter.reportOnWithSuppression(
 }
 
 fun <A : Any> DiagnosticReporter.reportOnWithSuppression(
-    element: FirElement,
+    element: FirAnnotationContainer,
     factory: FirDiagnosticFactory1<A>,
     a: A,
     context: CheckerContext,
@@ -188,7 +168,7 @@ fun <A : Any> DiagnosticReporter.reportOnWithSuppression(
 }
 
 fun <A : Any, B : Any> DiagnosticReporter.reportOnWithSuppression(
-    element: FirElement,
+    element: FirAnnotationContainer,
     factory: FirDiagnosticFactory2<A, B>,
     a: A,
     b: B,
@@ -201,7 +181,7 @@ fun <A : Any, B : Any> DiagnosticReporter.reportOnWithSuppression(
 }
 
 fun <A : Any, B : Any, C : Any> DiagnosticReporter.reportOnWithSuppression(
-    element: FirElement,
+    element: FirAnnotationContainer,
     factory: FirDiagnosticFactory3<A, B, C>,
     a: A,
     b: B,
@@ -215,7 +195,7 @@ fun <A : Any, B : Any, C : Any> DiagnosticReporter.reportOnWithSuppression(
 }
 
 fun <A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOnWithSuppression(
-    element: FirElement,
+    element: FirAnnotationContainer,
     factory: FirDiagnosticFactory4<A, B, C, D>,
     a: A,
     b: B,
@@ -227,5 +207,25 @@ fun <A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOnWithSuppress
     withSuppressedDiagnostics(element, context) {
         reportOn(element.source, factory, a, b, c, d, it, positioningStrategy)
     }
+}
+
+inline fun withSuppressedDiagnostics(
+    annotationContainer: FirAnnotationContainer,
+    context: CheckerContext,
+    f: (CheckerContext) -> Unit
+) {
+    val arguments = AbstractDiagnosticCollector.getDiagnosticsSuppressedForContainer(annotationContainer)
+    if (arguments != null) {
+        f(
+            context.addSuppressedDiagnostics(
+                arguments,
+                allInfosSuppressed = AbstractDiagnosticCollector.SUPPRESS_ALL_INFOS in arguments,
+                allWarningsSuppressed = AbstractDiagnosticCollector.SUPPRESS_ALL_WARNINGS in arguments,
+                allErrorsSuppressed = AbstractDiagnosticCollector.SUPPRESS_ALL_ERRORS in arguments
+            )
+        )
+        return
+    }
+    f(context)
 }
 
