@@ -93,6 +93,12 @@ public class ForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated exte
         }
 
         @Test
+        @TestMetadata("kt48316_multiModuleAnnotationDefault.kt")
+        public void testKt48316_multiModuleAnnotationDefault() throws Exception {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt48316_multiModuleAnnotationDefault.kt");
+        }
+
+        @Test
         @TestMetadata("lombokSimple.kt")
         public void testLombokSimple() throws Exception {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/lombokSimple.kt");
