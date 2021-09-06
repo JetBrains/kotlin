@@ -55,11 +55,18 @@ open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationM
         }
     }
 
-
     // checks that multi-project ic is disabled when there is a task that outputs to javaDestination dir
     // that is not JavaCompile or KotlinCompile
     @Test
-    fun testCompileLibWithGroovy() {
+    open fun testCompileLibWithGroovy() {
+        testCompileLibWithGroovy_doTest {
+            assertCompiledKotlinFiles(
+                File(project.projectDir, "app").allKotlinFiles() + File(project.projectDir, "lib").getFileByName("A.kt")
+            )
+        }
+    }
+
+    protected fun testCompileLibWithGroovy_doTest(assertResults: CompiledProject.() -> Unit) {
         val project = defaultProject()
         project.setupWorkingDir()
         val lib = File(project.projectDir, "lib")
@@ -93,13 +100,8 @@ open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationM
         project.changeMethodBodyInLib()
         project.build("build") {
             assertSuccessful()
-            assertCompiledKotlinFiles(testCompileLibWithGroovy_expectedFiles(project))
+            assertResults()
         }
-    }
-
-    /** Expected files to be recompiled for [testCompileLibWithGroovy], which may be overridden in subclasses. */
-    open fun testCompileLibWithGroovy_expectedFiles(project: Project): Iterable<File> {
-        return File(project.projectDir, "app").allKotlinFiles() + File(project.projectDir, "lib").getFileByName("A.kt")
     }
 
     /** Regression test for KT-43489. Make sure build history mapping is not initialized too early. */
@@ -151,20 +153,72 @@ class IncrementalCompilationClasspathSnapshotJvmMultiProjectIT : IncrementalComp
 
     override fun defaultBuildOptions() = super.defaultBuildOptions().copy(useClasspathSnapshot = true)
 
-    override fun testAddDependencyInLib_expectedFiles(project: Project): Iterable<File> {
-        // With classpath snapshot, no files are recompiled
-        return emptyList()
+    @Test
+    override fun testNonAbiChangeInLib_changeMethodBody() {
+        doTest(
+            modifyProject = changeMethodBodyInLib,
+            assertResults = {
+                assertTasksExecuted(":lib:$compileKotlinTaskName")
+                assertTasksExecuted(":app:$compileKotlinTaskName") // TODO: App compilation should have 'compile avoidance'
+                assertCompiledKotlinFiles(File(project.projectDir, "lib").getFilesByNames("A.kt"))
+            }
+        )
     }
 
-    override fun testAbiChangeInLib_afterLibClean_expectedFiles(project: Project): Iterable<File> {
-        // With classpath snapshot, app compilation is incremental
-        return File(project.projectDir, "app").getFilesByNames("AA.kt", "AAA.kt", "BB.kt", "fooUseA.kt") +
-                File(project.projectDir, "lib").allKotlinFiles()
+    @Test
+    override fun testAddDependencyInLib() {
+        doTest(
+            modifyProject = { testAddDependencyInLib_modifyProject() },
+            assertResults = {
+                assertTasksExecuted(":lib:$compileKotlinTaskName")
+                assertTasksUpToDate(":app:$compileKotlinTaskName")
+                assertCompiledKotlinFiles(emptyList()) // Lib compilation is incremental (no files are recompiled)
+            }
+        )
     }
 
-    override fun testCompileLibWithGroovy_expectedFiles(project: Project): Iterable<File> {
-        // With classpath snapshot, no files in app are recompiled
-        return listOf(File(project.projectDir, "lib").getFileByName("A.kt"))
+    @Test
+    override fun testAbiChangeInLib_afterLibClean() {
+        doTest(
+            modifyProject = {
+                build(":lib:clean") { assertSuccessful() }
+                changeMethodSignatureInLib()
+            },
+            assertResults = {
+                assertCompiledKotlinFiles(
+                    // App compilation is incremental
+                    File(project.projectDir, "app").getFilesByNames("AA.kt", "AAA.kt", "BB.kt", "fooUseA.kt") +
+                            File(project.projectDir, "lib").allKotlinFiles()
+                )
+            }
+        )
+    }
+
+    @Test
+    override fun testCompileLibWithGroovy() {
+        testCompileLibWithGroovy_doTest {
+            assertTasksExecuted(":lib:$compileKotlinTaskName")
+            assertTasksExecuted(":app:$compileKotlinTaskName") // TODO: App compilation should have 'compile avoidance'
+            assertCompiledKotlinFiles(listOf(File(project.projectDir, "lib").getFileByName("A.kt")))
+        }
+    }
+
+    @Test
+    override fun testAbiChangeInLib_afterLibClean_withAbiSnapshot() {
+        doTest(
+            options = defaultBuildOptions().copy(abiSnapshot = true),
+            modifyProject = {
+                build(":lib:clean") { assertSuccessful() }
+                changeMethodSignatureInLib()
+            },
+            assertResults = {
+                assertCompiledKotlinFiles(
+                    // App compilation is incremental
+                    File(project.projectDir, "app").getFilesByNames("AA.kt", "AAA.kt", "BB.kt", "fooUseA.kt") +
+                            File(project.projectDir, "lib").allKotlinFiles()
+                )
+            }
+        )
     }
 }
 
@@ -213,54 +267,51 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
     }
 
     @Test
-    fun testNonAbiChangeInLib_changeMethodBody() {
+    open fun testNonAbiChangeInLib_changeMethodBody() {
         doTest(
             modifyProject = changeMethodBodyInLib,
-            expectedCompiledFileNames = listOf("A.kt") // In lib
-        )
-    }
-
-    @Test
-    fun testAddDependencyInLib() {
-        doTest(
-            modifyProject = {
-                File(projectDir, "lib/build.gradle").modify {
-                    """
-                    $it
-        
-                    dependencies {
-                        $additionalLibDependencies
-                    }
-                    """.trimIndent()
-                }
-            },
             assertResults = {
-                assertCompiledKotlinFiles(testAddDependencyInLib_expectedFiles(project))
+                assertCompiledKotlinFiles(File(project.projectDir, "lib").getFilesByNames("A.kt"))
             }
         )
     }
 
-    /** Expected files to be recompiled for [testAddDependencyInLib], which may be overridden in subclasses. */
-    open fun testAddDependencyInLib_expectedFiles(project: Project): Iterable<File> {
-        return File(project.projectDir, "lib").allKotlinFiles()
+    @Test
+    open fun testAddDependencyInLib() {
+        doTest(
+            modifyProject = { testAddDependencyInLib_modifyProject() },
+            assertResults = {
+                assertTasksExecuted(":lib:$compileKotlinTaskName")
+                assertTasksUpToDate(":app:$compileKotlinTaskName")
+                assertCompiledKotlinFiles(File(project.projectDir, "lib").allKotlinFiles())
+            }
+        )
+    }
+
+    protected fun Project.testAddDependencyInLib_modifyProject() {
+        File(projectDir, "lib/build.gradle").modify {
+            """
+            $it
+
+            dependencies {
+                $additionalLibDependencies
+            }
+            """.trimIndent()
+        }
     }
 
     @Test
-    fun testAbiChangeInLib_afterLibClean() { // To see if app compilation can be incremental after non-incremental lib compilation
+    open fun testAbiChangeInLib_afterLibClean() { // To see if app compilation can be incremental after non-incremental lib compilation
         doTest(
             modifyProject = {
                 build(":lib:clean") { assertSuccessful() }
                 changeMethodSignatureInLib()
             },
             assertResults = {
-                assertCompiledKotlinFiles(testAbiChangeInLib_afterLibClean_expectedFiles(project))
+                // App compilation is non-incremental
+                assertCompiledKotlinFiles(project.projectDir.allKotlinFiles())
             }
         )
-    }
-
-    /** Expected files for [testAbiChangeInLib_afterLibClean], which may be overridden in subclasses. */
-    open fun testAbiChangeInLib_afterLibClean_expectedFiles(project: Project): Iterable<File> {
-        return project.projectDir.allKotlinFiles()
     }
 
     @Test
@@ -410,7 +461,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
     }
 
     @Test
-    fun testAbiChangeInLib_afterLibClean_withAbiSnapshot() {
+    open fun testAbiChangeInLib_afterLibClean_withAbiSnapshot() {
         doTest(
             options = defaultBuildOptions().copy(abiSnapshot = true),
             modifyProject = {
@@ -419,7 +470,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             },
             assertResults = {
                 // TODO: With ABI snapshot, app compilation should be incremental, currently it is not.
-                assertCompiledKotlinFiles(testAbiChangeInLib_afterLibClean_expectedFiles(project))
+                assertCompiledKotlinFiles(project.projectDir.allKotlinFiles())
             }
         )
     }

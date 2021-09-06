@@ -5,17 +5,25 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.getFilesByNames
 import org.junit.Test
+import java.io.File
 
 open class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = null) {
     @Test
     override fun testAbiChangeInLib_changeMethodSignature_tracked() {
-        doTest(trackedJavaClass, changeSignature, expectedCompiledFileNames = listOf("TrackedJavaClassChild.kt", "useTrackedJavaClass.kt"))
+        doTest(
+            trackedJavaClassInLib, changeMethodSignature,
+            expectedCompiledFileNames = listOf("TrackedJavaClassChild.kt", "useTrackedJavaClass.kt") // In app
+        )
     }
 
     @Test
     override fun testNonAbiChangeInLib_changeMethodBody_tracked() {
-        doTest(trackedJavaClass, changeBody, expectedCompiledFileNames = listOf())
+        doTest(
+            trackedJavaClassInLib, changeMethodBody,
+            expectedCompiledFileNames = emptyList()
+        )
     }
 }
 
@@ -25,19 +33,26 @@ class IncrementalJavaChangeClasspathSnapshotIT : IncrementalJavaChangeDefaultIT(
 
     @Test
     override fun testAbiChangeInLib_changeMethodSignature() {
-        // With classpath snapshot, fewer Kotlin files are recompiled
         doTest(
-            javaClass, changeSignature,
-            expectedCompiledFileNames = listOf("JavaClassChild.kt", "useJavaClass.kt")
+            javaClassInLib, changeMethodSignature,
+            assertResults = {
+                // Fewer Kotlin files are recompiled
+                assertCompiledKotlinFiles(
+                    File(project.projectDir, "app").getFilesByNames("JavaClassChild.kt", "useJavaClass.kt")
+                )
+            }
         )
     }
 
     @Test
     override fun testNonAbiChangeInLib_changeMethodBody() {
-        // With classpath snapshot, no Kotlin files are recompiled
         doTest(
-            javaClass, changeBody,
-            expectedCompiledFileNames = emptyList()
+            javaClassInLib, changeMethodBody,
+            assertResults = {
+                assertTasksExecuted(":lib:compileKotlin")
+                assertTasksExecuted(":app:compileKotlin") // TODO: App compilation should have 'compile avoidance'
+                assertCompiledKotlinFiles(emptyList())
+            }
         )
     }
 }
@@ -45,12 +60,16 @@ class IncrementalJavaChangeClasspathSnapshotIT : IncrementalJavaChangeDefaultIT(
 class IncrementalJavaChangePreciseIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = true) {
     @Test
     override fun testAbiChangeInLib_changeMethodSignature_tracked() {
-        doTest(trackedJavaClass, changeSignature, expectedCompiledFileNames = listOf("TrackedJavaClassChild.kt", "useTrackedJavaClass.kt"))
+        doTest(
+            trackedJavaClassInLib,
+            changeMethodSignature,
+            expectedCompiledFileNames = listOf("TrackedJavaClassChild.kt", "useTrackedJavaClass.kt") // In app
+        )
     }
 
     @Test
     override fun testNonAbiChangeInLib_changeMethodBody_tracked() {
-        doTest(trackedJavaClass, changeBody, expectedCompiledFileNames = listOf())
+        doTest(trackedJavaClassInLib, changeMethodBody, expectedCompiledFileNames = emptyList())
     }
 }
 
@@ -58,10 +77,10 @@ open class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaCha
     @Test
     override fun testAbiChangeInLib_changeMethodSignature_tracked() {
         doTest(
-            trackedJavaClass, changeSignature,
+            trackedJavaClassInLib, changeMethodSignature,
             expectedCompiledFileNames = listOf(
-                "TrackedJavaClassChild.kt", "useTrackedJavaClass.kt", "useTrackedJavaClassFooMethodUsage.kt",
-                "useTrackedJavaClassSameModule.kt"
+                "TrackedJavaClassChild.kt", "useTrackedJavaClass.kt", "useTrackedJavaClassFooMethodUsage.kt", // In app
+                "useTrackedJavaClassSameModule.kt" // In lib
             )
         )
     }
@@ -69,10 +88,10 @@ open class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaCha
     @Test
     override fun testNonAbiChangeInLib_changeMethodBody_tracked() {
         doTest(
-            trackedJavaClass, changeBody,
+            trackedJavaClassInLib, changeMethodBody,
             expectedCompiledFileNames = listOf(
-                "TrackedJavaClassChild.kt", "useTrackedJavaClass.kt", "useTrackedJavaClassFooMethodUsage.kt",
-                "useTrackedJavaClassSameModule.kt"
+                "TrackedJavaClassChild.kt", "useTrackedJavaClass.kt", "useTrackedJavaClassFooMethodUsage.kt", // In app
+                "useTrackedJavaClassSameModule.kt" // In lib
             )
         )
     }
@@ -88,24 +107,24 @@ abstract class IncrementalCompilationJavaChangesBase(val usePreciseJavaTracking:
     override fun defaultProject() = Project("incrementalMultiproject")
     override fun defaultBuildOptions() = super.defaultBuildOptions().copy(usePreciseJavaTracking = usePreciseJavaTracking)
 
-    protected val trackedJavaClass = "TrackedJavaClass.java"
-    protected val javaClass = "JavaClass.java"
-    protected val changeBody: (String) -> String = { it.replace("Hello, World!", "Hello, World!!!!") }
-    protected val changeSignature: (String) -> String = { it.replace("String getString", "Object getString") }
+    protected val javaClassInLib = "JavaClass.java"
+    protected val trackedJavaClassInLib = "TrackedJavaClass.java"
+    protected val changeMethodSignature: (String) -> String = { it.replace("String getString", "Object getString") }
+    protected val changeMethodBody: (String) -> String = { it.replace("Hello, World!", "Hello, World!!!!") }
 
     @Test
     open fun testAbiChangeInLib_changeMethodSignature() {
         doTest(
-            javaClass, changeSignature,
-            expectedCompiledFileNames = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")
+            javaClassInLib, changeMethodSignature,
+            expectedCompiledFileNames = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt") // In app
         )
     }
 
     @Test
     open fun testNonAbiChangeInLib_changeMethodBody() {
         doTest(
-            javaClass, changeBody,
-            expectedCompiledFileNames = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")
+            javaClassInLib, changeMethodBody,
+            expectedCompiledFileNames = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt") // In app
         )
     }
 
