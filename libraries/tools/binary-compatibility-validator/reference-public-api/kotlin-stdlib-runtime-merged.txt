@@ -2383,6 +2383,7 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun zip (Ljava/lang/Iterable;Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 	public static final fun zip (Ljava/lang/Iterable;[Ljava/lang/Object;)Ljava/util/List;
 	public static final fun zip (Ljava/lang/Iterable;[Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun zipAll (Ljava/lang/Iterable;Ljava/lang/Iterable;Ljava/lang/Object;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 	public static final fun zipWithNext (Ljava/lang/Iterable;)Ljava/util/List;
 	public static final fun zipWithNext (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 }

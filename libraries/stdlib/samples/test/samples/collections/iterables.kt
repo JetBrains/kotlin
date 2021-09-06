@@ -73,6 +73,14 @@ class Iterables {
         }
 
         @Sample
+        fun zipAllIterableWithTransform() {
+            val listA = listOf("a", "b", "c")
+            val listB = listOf(1, 2, 3, 4)
+            val result = listA.zipAll(listB, "?", "0") { a, b -> "$a$b" }
+            assertPrints(result, "[a1, b2, c3, ?4]")
+        }
+
+        @Sample
         fun partition() {
             data class Person(val name: String, val age: Int) {
                 override fun toString(): String {
