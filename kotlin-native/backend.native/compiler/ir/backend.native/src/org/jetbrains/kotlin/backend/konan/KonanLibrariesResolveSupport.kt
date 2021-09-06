@@ -51,7 +51,7 @@ class KonanLibrariesResolveSupport(
 
     private val resolver = defaultResolver(
             repositories,
-            libraryNames.filter { it.contains(File.separator) },
+            libraryNames.filter { it.contains(File.separator) } + includedLibraryFiles.map { it.absolutePath },
             target,
             distribution,
             resolverLogger
