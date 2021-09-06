@@ -27857,6 +27857,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/suspendConversion/basicSuspendConversion.kt");
         }
 
+        @TestMetadata("basicSuspendConversionDefault.kt")
+        public void testBasicSuspendConversionDefault() throws Exception {
+            runTest("compiler/testData/codegen/box/suspendConversion/basicSuspendConversionDefault.kt");
+        }
+
         @TestMetadata("basicSuspendConversionForCallableReference.kt")
         public void testBasicSuspendConversionForCallableReference() throws Exception {
             runTest("compiler/testData/codegen/box/suspendConversion/basicSuspendConversionForCallableReference.kt");
