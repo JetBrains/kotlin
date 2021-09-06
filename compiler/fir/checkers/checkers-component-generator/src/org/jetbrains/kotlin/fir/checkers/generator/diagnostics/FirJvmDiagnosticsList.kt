@@ -163,5 +163,6 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             DefaultMethodsCallFromJava6TargetError,
             PositioningStrategy.REFERENCE_BY_QUALIFIED
         )
+        val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
     }
 }

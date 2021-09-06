@@ -5,5 +5,5 @@ abstract class A {
 }
 
 class B : A() {
-    val y: String = PROTECTED_CONST
+    val y: String = <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>PROTECTED_CONST<!>
 }

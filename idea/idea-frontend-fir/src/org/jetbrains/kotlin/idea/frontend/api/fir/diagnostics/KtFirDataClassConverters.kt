@@ -4028,4 +4028,10 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC) { firDiagnostic ->
+        SubclassCantCallCompanionProtectedNonStaticImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
 }

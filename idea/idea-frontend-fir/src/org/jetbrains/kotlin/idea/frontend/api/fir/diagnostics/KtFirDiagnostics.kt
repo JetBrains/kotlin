@@ -2803,4 +2803,8 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InterfaceStaticMethodCallFromJava6TargetWarning::class
     }
 
+    abstract class SubclassCantCallCompanionProtectedNonStatic : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = SubclassCantCallCompanionProtectedNonStatic::class
+    }
+
 }

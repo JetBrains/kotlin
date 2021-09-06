@@ -28,6 +28,6 @@ class B: A() {
         devNull(A.internal_val)
         devNull(A.public_val)
         devNull(A.<!INVISIBLE_REFERENCE!>private_val<!>)
-        devNull(A.protected_val)
+        devNull(A.<!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>protected_val<!>)
     }
 }
