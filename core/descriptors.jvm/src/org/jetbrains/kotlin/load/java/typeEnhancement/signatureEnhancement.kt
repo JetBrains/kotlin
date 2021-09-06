@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
 import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.load.java.DeprecationCausedByFunctionNInfo
 import org.jetbrains.kotlin.load.java.JavaTypeQualifiersByElementType
-import org.jetbrains.kotlin.load.java.descriptors.*
+import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.PossiblyExternalAnnotationDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.copyWithNewDefaultTypeQualifiers
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaAnnotationDescriptor
@@ -140,12 +143,7 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
             @Suppress("UNCHECKED_CAST")
             return this.enhance(
                 receiverTypeEnhancement ?: extensionReceiverParameter?.type,
-                valueParameterEnhancements.mapIndexed { index, enhanced ->
-                    ValueParameterData(
-                        enhanced ?: valueParameters[index].type,
-                        annotationOwnerForMember.valueParameters[index].declaresDefaultValue()
-                    )
-                },
+                valueParameterEnhancements.mapIndexed { index, enhanced -> enhanced ?: valueParameters[index].type },
                 returnTypeEnhancement ?: returnType!!,
                 additionalUserData
             ) as D

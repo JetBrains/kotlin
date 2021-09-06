@@ -153,12 +153,12 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
     @NotNull
     public JavaMethodDescriptor enhance(
             @Nullable KotlinType enhancedReceiverType,
-            @NotNull List<ValueParameterData> enhancedValueParametersData,
+            @NotNull List<KotlinType> enhancedValueParameterTypes,
             @NotNull KotlinType enhancedReturnType,
             @Nullable Pair<UserDataKey<?>, ?> additionalUserData
     ) {
         List<ValueParameterDescriptor> enhancedValueParameters =
-                UtilKt.copyValueParameters(enhancedValueParametersData, getValueParameters(), this);
+                UtilKt.copyValueParameters(enhancedValueParameterTypes, getValueParameters(), this);
 
         ReceiverParameterDescriptor enhancedReceiver =
                 enhancedReceiverType == null ? null : DescriptorFactory.createExtensionReceiverParameterForCallable(
@@ -174,7 +174,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
                         .setPreserveSourceElement()
                         .build();
 
-        assert enhancedMethod != null : "null after substitution while enhancing " + toString();
+        assert enhancedMethod != null : "null after substitution while enhancing " + this;
 
         if (additionalUserData != null) {
             enhancedMethod.putInUserDataMap(additionalUserData.getFirst(), additionalUserData.getSecond());

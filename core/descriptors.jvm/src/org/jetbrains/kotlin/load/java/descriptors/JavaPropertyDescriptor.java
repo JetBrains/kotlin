@@ -99,7 +99,7 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
     @Override
     public JavaCallableMemberDescriptor enhance(
             @Nullable KotlinType enhancedReceiverType,
-            @NotNull List<ValueParameterData> enhancedValueParametersData,
+            @NotNull List<KotlinType> enhancedValueParameterTypes,
             @NotNull KotlinType enhancedReturnType,
             @Nullable Pair<UserDataKey<?>, ?> additionalUserData
     ) {

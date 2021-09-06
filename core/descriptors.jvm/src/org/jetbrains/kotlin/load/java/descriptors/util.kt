@@ -28,29 +28,27 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.KotlinType
 
-class ValueParameterData(val type: KotlinType, val hasDefaultValue: Boolean)
-
 fun copyValueParameters(
-    newValueParametersTypes: Collection<ValueParameterData>,
+    newValueParameterTypes: Collection<KotlinType>,
     oldValueParameters: Collection<ValueParameterDescriptor>,
     newOwner: CallableDescriptor
 ): List<ValueParameterDescriptor> {
-    assert(newValueParametersTypes.size == oldValueParameters.size) {
-        "Different value parameters sizes: Enhanced = ${newValueParametersTypes.size}, Old = ${oldValueParameters.size}"
+    assert(newValueParameterTypes.size == oldValueParameters.size) {
+        "Different value parameters sizes: Enhanced = ${newValueParameterTypes.size}, Old = ${oldValueParameters.size}"
     }
 
-    return newValueParametersTypes.zip(oldValueParameters).map { (newParameter, oldParameter) ->
+    return newValueParameterTypes.zip(oldValueParameters).map { (newParameterType, oldParameter) ->
         ValueParameterDescriptorImpl(
             newOwner,
             null,
             oldParameter.index,
             oldParameter.annotations,
             oldParameter.name,
-            newParameter.type,
-            newParameter.hasDefaultValue,
+            newParameterType,
+            oldParameter.declaresDefaultValue(),
             oldParameter.isCrossinline,
             oldParameter.isNoinline,
-            if (oldParameter.varargElementType != null) newOwner.module.builtIns.getArrayElementType(newParameter.type) else null,
+            if (oldParameter.varargElementType != null) newOwner.module.builtIns.getArrayElementType(newParameterType) else null,
             oldParameter.source
         )
     }

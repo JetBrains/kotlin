@@ -52,9 +52,9 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.ifEmpty
@@ -475,7 +475,7 @@ class LazyJavaClassMemberScope(
             override.newCopyBuilder().apply {
                 setValueParameters(
                     copyValueParameters(
-                        overridden.valueParameters.map { ValueParameterData(it.type, it.declaresDefaultValue()) },
+                        overridden.valueParameters.map(ValueParameterDescriptor::getType),
                         override.valueParameters, overridden
                     )
                 )

@@ -119,7 +119,7 @@ public class JavaClassConstructorDescriptor extends ClassConstructorDescriptorIm
     @NotNull
     public JavaClassConstructorDescriptor enhance(
             @Nullable KotlinType enhancedReceiverType,
-            @NotNull List<ValueParameterData> enhancedValueParametersData,
+            @NotNull List<KotlinType> enhancedValueParameterTypes,
             @NotNull KotlinType enhancedReturnType,
             @Nullable Pair<UserDataKey<?>, ?> additionalUserData
     ) {
@@ -135,7 +135,7 @@ public class JavaClassConstructorDescriptor extends ClassConstructorDescriptorIm
                 enhancedReceiver,
                 getDispatchReceiverParameter(),
                 getTypeParameters(),
-                UtilKt.copyValueParameters(enhancedValueParametersData, getValueParameters(), enhanced),
+                UtilKt.copyValueParameters(enhancedValueParameterTypes, getValueParameters(), enhanced),
                 enhancedReturnType,
                 getModality(),
                 getVisibility()
