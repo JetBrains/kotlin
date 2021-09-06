@@ -9,14 +9,14 @@ interface NullableContextualSingleInvocationCommonizer<T : Any, R : Any> {
     operator fun invoke(values: List<T>): R?
 }
 
-fun <Context : Any, R : Any> NullableContextualSingleInvocationCommonizer<Context, R>.asCommonizer(): Commonizer<Context, R?> =
-    object : Commonizer<Context, R?> {
-        private val collectedValues = mutableListOf<Context>()
+fun <T : Any, R : Any> NullableContextualSingleInvocationCommonizer<T, R>.asCommonizer(): Commonizer<T, R?> =
+    object : Commonizer<T, R?> {
+        private val collectedValues = mutableListOf<T>()
 
         override val result: R?
             get() = this@asCommonizer.invoke(collectedValues)
 
-        override fun commonizeWith(next: Context): Boolean {
+        override fun commonizeWith(next: T): Boolean {
             collectedValues.add(next)
             return true
         }
