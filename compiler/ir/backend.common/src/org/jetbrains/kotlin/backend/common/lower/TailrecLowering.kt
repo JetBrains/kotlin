@@ -62,17 +62,20 @@ open class TailrecLowering(val context: BackendContext) : BodyLoweringPass {
     }
 
     private fun lowerTailRecursionCalls(function: IrFunction) =
-        lowerTailRecursionCalls(context, function, useProperComputationOrderOfTailrecDefaultParameters())
+        lowerTailRecursionCalls(context, function, useProperComputationOrderOfTailrecDefaultParameters(), ::followFunctionReference)
 
     open fun useProperComputationOrderOfTailrecDefaultParameters() = true
+
+    open fun followFunctionReference(reference: IrFunctionReference): Boolean = false
 }
 
 private fun lowerTailRecursionCalls(
     context: BackendContext,
     irFunction: IrFunction,
-    properComputationOrderOfTailrecDefaultParameters: Boolean
+    properComputationOrderOfTailrecDefaultParameters: Boolean,
+    followFunctionReference: (IrFunctionReference) -> Boolean
 ) {
-    val tailRecursionCalls = collectTailRecursionCalls(irFunction)
+    val tailRecursionCalls = collectTailRecursionCalls(irFunction, followFunctionReference)
     if (tailRecursionCalls.isEmpty()) {
         return
     }
@@ -104,7 +107,8 @@ private fun lowerTailRecursionCalls(
                 val transformer = BodyTransformer(
                     builder, irFunction, loop,
                     parameterToNew, parameterToVariable, tailRecursionCalls,
-                    properComputationOrderOfTailrecDefaultParameters
+                    properComputationOrderOfTailrecDefaultParameters,
+                    followFunctionReference
                 )
 
                 oldBodyStatements.forEach {
@@ -124,7 +128,8 @@ private class BodyTransformer(
     val parameterToNew: Map<IrValueParameter, IrValueDeclaration>,
     val parameterToVariable: Map<IrValueParameter, IrVariable>,
     val tailRecursionCalls: Set<IrCall>,
-    val properComputationOrderOfTailrecDefaultParameters: Boolean
+    val properComputationOrderOfTailrecDefaultParameters: Boolean,
+    val followFunctionReference: (IrFunctionReference) -> Boolean
 ) : VariableRemapper(parameterToNew) {
 
     val parameters = irFunction.explicitParameters
@@ -135,6 +140,13 @@ private class BodyTransformer(
             return expression
         }
         return builder.at(expression).genTailCall(expression)
+    }
+
+    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+        if (followFunctionReference(expression)) {
+            expression.symbol.owner.body?.transformChildrenVoid(this)
+        }
+        return super.visitFunctionReference(expression)
     }
 
     private fun IrBuilderWithScope.genTailCall(expression: IrCall) = this.irBlock(expression) {
