@@ -396,11 +396,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
         sourceRoots.log(this.name, logger)
         val args = prepareCompilerArguments()
         taskBuildDirectory.get().asFile.mkdirs()
-        callCompilerAsync(
-            args,
-            sourceRoots,
-            getChangedFiles(inputChanges, incrementalProps)
-        )
+        callCompilerAsync(args, sourceRoots, inputChanges)
     }
 
     protected fun getChangedFiles(
@@ -432,7 +428,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
      * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
      * @see [GradleKotlinCompilerWork]
      */
-    internal abstract fun callCompilerAsync(args: T, sourceRoots: SourceRoots, changedFiles: ChangedFiles)
+    internal abstract fun callCompilerAsync(args: T, sourceRoots: SourceRoots, inputChanges: InputChanges)
 
     @get:Input
     internal val multiPlatformEnabled: Property<Boolean> = objects.property(Boolean::class.java)
@@ -679,7 +675,7 @@ abstract class KotlinCompile @Inject constructor(
 
     override fun getSourceRoots(): SourceRoots.ForJvm = jvmSourceRoots
 
-    override fun callCompilerAsync(args: K2JVMCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
+    override fun callCompilerAsync(args: K2JVMCompilerArguments, sourceRoots: SourceRoots, inputChanges: InputChanges) {
         sourceRoots as SourceRoots.ForJvm
 
         validateKotlinAndJavaHasSameTargetCompatibility(args)
@@ -691,15 +687,12 @@ abstract class KotlinCompile @Inject constructor(
         val icEnv = if (isIncrementalCompilationEnabled()) {
             val classpathChanges = when {
                 !classpathSnapshotProperties.useClasspathSnapshot.get() -> ClasspathChanges.NotAvailable.ClasspathSnapshotIsDisabled
-                else -> when (changedFiles) {
-                    is ChangedFiles.Known -> getClasspathChanges(changedFiles)
-                    is ChangedFiles.Unknown -> ClasspathChanges.NotAvailable.ForNonIncrementalRun
-                    is ChangedFiles.Dependencies -> error("Unexpected type: ${changedFiles.javaClass.name}")
-                }
+                inputChanges.isIncremental -> getClasspathChanges(inputChanges)
+                else -> ClasspathChanges.NotAvailable.ForNonIncrementalRun
             }
             logger.info(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
             IncrementalCompilationEnvironment(
-                changedFiles = changedFiles,
+                changedFiles = getChangedFiles(inputChanges, incrementalProps),
                 classpathChanges = classpathChanges,
                 workingDir = taskBuildDirectory.get().asFile,
                 usePreciseJavaTracking = usePreciseJavaTracking,
@@ -797,29 +790,17 @@ abstract class KotlinCompile @Inject constructor(
         return super.source(*sources)
     }
 
-    private fun getClasspathChanges(knownChangedFiles: ChangedFiles.Known): ClasspathChanges {
-        // Find current snapshot files that have been changed (added or modified)
-        val currentSnapshotFiles = classpathSnapshotProperties.classpathSnapshot.files
-        val addedOrModifiedFiles = knownChangedFiles.modified.toSet()
-        val (changedCurrentSnapshotFiles, unchangedCurrentSnapshotFiles) = currentSnapshotFiles.partition { it in addedOrModifiedFiles }
-
-        // Find previous snapshot files that have been changed (modified or removed)
+    private fun getClasspathChanges(@Suppress("UNUSED_PARAMETER") inputChanges: InputChanges): ClasspathChanges {
+        val currentSnapshotFiles = classpathSnapshotProperties.classpathSnapshot.files.toList()
         val previousSnapshotFiles = getClasspathSnapshotFilesInDir(classpathSnapshotProperties.classpathSnapshotDir.get().asFile)
-        var unchangedSnapshotIndex = 0
-        var unchangedSnapshot: ByteArray? = unchangedCurrentSnapshotFiles.getOrNull(unchangedSnapshotIndex)?.readBytes()
-        val changedPreviousSnapshotFiles = previousSnapshotFiles.filter {
-            if (unchangedSnapshot != null && it.readBytes().contentEquals(unchangedSnapshot)) {
-                unchangedSnapshotIndex++
-                unchangedSnapshot = unchangedCurrentSnapshotFiles.getOrNull(unchangedSnapshotIndex)?.readBytes()
-                false
-            } else true
-        }
 
-        // Compute changes for the changed snapshot files only, ignoring unchanged ones
-        val changedCurrentSnapshot = ClasspathSnapshotSerializer.load(changedCurrentSnapshotFiles)
-        val changedPreviousSnapshot = ClasspathSnapshotSerializer.load(changedPreviousSnapshotFiles)
+        // TODO: Compute changes for the changed snapshot files only, ignoring unchanged ones.
+        // We'll need to be careful when the classpath contains duplicate classes, as we'll need to look at the entire classpath in order to
+        // detect them.
+        val currentSnapshot = ClasspathSnapshotSerializer.load(currentSnapshotFiles)
+        val previousSnapshot = ClasspathSnapshotSerializer.load(previousSnapshotFiles)
 
-        return ClasspathChangesComputer.compute(changedCurrentSnapshot, changedPreviousSnapshot)
+        return ClasspathChangesComputer.compute(currentSnapshot, previousSnapshot)
     }
 
     /**
@@ -1095,7 +1076,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
     override val incrementalProps: List<FileCollection>
         get() = super.incrementalProps + listOf(friendDependencies)
 
-    override fun callCompilerAsync(args: K2JSCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
+    override fun callCompilerAsync(args: K2JSCompilerArguments, sourceRoots: SourceRoots, inputChanges: InputChanges) {
         sourceRoots as SourceRoots.KotlinOnly
 
         logger.debug("Calling compiler")
@@ -1130,7 +1111,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         val icEnv = if (isIncrementalCompilationEnabled()) {
             logger.info(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
             IncrementalCompilationEnvironment(
-                changedFiles,
+                getChangedFiles(inputChanges, incrementalProps),
                 ClasspathChanges.NotAvailable.ForJSCompiler,
                 taskBuildDirectory.get().asFile,
                 multiModuleICSettings = multiModuleICSettings
