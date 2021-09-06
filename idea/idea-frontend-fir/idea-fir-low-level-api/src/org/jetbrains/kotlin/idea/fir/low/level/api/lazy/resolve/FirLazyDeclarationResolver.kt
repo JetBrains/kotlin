@@ -120,13 +120,15 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
         if (toPhase == FirResolvePhase.IMPORTS) return
         if (firFile.resolvePhase >= toPhase) return
         moduleFileCache.firFileLockProvider.runCustomResolveUnderLock(firFile, checkPCE) {
-            lazyResolveFileDeclarationWithoutLock(
-                firFile = firFile,
-                moduleFileCache = moduleFileCache,
-                toPhase = toPhase,
-                scopeSession = scopeSession,
-                checkPCE = checkPCE,
-            )
+            ResolveTreeBuilder.resolveEnsure(firFile, toPhase) {
+                lazyResolveFileDeclarationWithoutLock(
+                    firFile = firFile,
+                    moduleFileCache = moduleFileCache,
+                    toPhase = toPhase,
+                    scopeSession = scopeSession,
+                    checkPCE = checkPCE,
+                )
+            }
         }
     }
 
@@ -288,13 +290,16 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
         }
 
         moduleFileCache.firFileLockProvider.runCustomResolveUnderLock(designation.firFile, checkPCE) {
-            runLazyDesignatedResolveWithoutLock(
-                designation = designation,
-                moduleFileCache = moduleFileCache,
-                scopeSession = scopeSession,
-                toPhase = neededPhase,
-                checkPCE = checkPCE,
-            )
+            ResolveTreeBuilder.resolveEnsure(designation.declaration, neededPhase) {
+                runLazyDesignatedResolveWithoutLock(
+                    designation = designation,
+                    moduleFileCache = moduleFileCache,
+                    scopeSession = scopeSession,
+                    toPhase = neededPhase,
+                    checkPCE = checkPCE,
+                )
+                designation.declaration
+            }
         }
 
         if (!isLocalDeclarationResolveRequested) return firDeclarationToResolve

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FirElementsRec
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.KtToFirMapping
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirReplacement
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.buildFileFirAnnotation
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.buildFirUserTypeRef
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
@@ -267,13 +268,15 @@ object LowLevelFirApiFacadeForResolveOnAir {
                 declaration = copiedFirDeclaration,
                 firFile = originalFirFile
             )
-            state.firLazyDeclarationResolver.runLazyDesignatedOnAirResolveToBodyWithoutLock(
-                designation = onAirDesignation,
-                moduleFileCache = state.rootModuleSession.cache,
-                checkPCE = true,
-                onAirCreatedDeclaration = onAirCreatedDeclaration,
-                towerDataContextCollector = collector,
-            )
+            ResolveTreeBuilder.resolveEnsure(onAirDesignation.declaration, FirResolvePhase.BODY_RESOLVE) {
+                state.firLazyDeclarationResolver.runLazyDesignatedOnAirResolveToBodyWithoutLock(
+                    designation = onAirDesignation,
+                    moduleFileCache = state.rootModuleSession.cache,
+                    checkPCE = true,
+                    onAirCreatedDeclaration = onAirCreatedDeclaration,
+                    towerDataContextCollector = collector,
+                )
+            }
             copiedFirDeclaration
         }
 

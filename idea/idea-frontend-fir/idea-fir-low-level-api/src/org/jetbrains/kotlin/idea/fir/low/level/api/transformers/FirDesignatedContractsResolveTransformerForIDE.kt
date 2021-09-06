@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolv
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyBodiesCalculator
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
 
@@ -47,8 +48,10 @@ internal class FirDesignatedContractsResolveTransformerForIDE(
         designation.declaration.ensurePhase(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
 
         FirLazyBodiesCalculator.calculateLazyBodiesInside(designation)
-        phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.CONTRACTS) {
-            designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)
+        ResolveTreeBuilder.resolvePhase(designation.declaration, FirResolvePhase.CONTRACTS) {
+            phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.CONTRACTS) {
+                designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)
+            }
         }
 
         ideDeclarationTransformer.ensureDesignationPassed()

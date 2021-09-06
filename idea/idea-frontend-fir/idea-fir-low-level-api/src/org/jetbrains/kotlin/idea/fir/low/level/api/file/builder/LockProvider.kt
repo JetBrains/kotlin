@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.file.builder
 
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.lockWithPCECheck
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
@@ -16,15 +17,21 @@ import kotlin.concurrent.withLock
  * !!! We temporary remove its correct implementation to fix deadlocks problem. Do not use this until this comment is present
  */
 internal class LockProvider<KEY> {
-    val globalLock = ReentrantLock()
+    //We temporary disable multi-locks to fix deadlocks problem
+    private val globalLock = ReentrantLock()
 
     @OptIn(PrivateForInline::class)
-    inline fun <R> withWriteLock(@Suppress("UNUSED_PARAMETER") key: KEY, action: () -> R): R =
-        globalLock.withLock(action)
+    inline fun <R> withWriteLock(@Suppress("UNUSED_PARAMETER") key: KEY, action: () -> R): R {
+        val startTime = System.currentTimeMillis()
+        return globalLock.withLock { ResolveTreeBuilder.lockNode(startTime, action) }
+    }
+
 
     @OptIn(PrivateForInline::class)
-    inline fun <R> withWriteLockPCECheck(@Suppress("UNUSED_PARAMETER") key: KEY, lockingIntervalMs: Long, action: () -> R): R =
-        globalLock.lockWithPCECheck(lockingIntervalMs, action) //We temporary disable multi-locks to fix deadlocks problem
+    inline fun <R> withWriteLockPCECheck(@Suppress("UNUSED_PARAMETER") key: KEY, lockingIntervalMs: Long, action: () -> R): R {
+        val startTime = System.currentTimeMillis()
+        return globalLock.lockWithPCECheck(lockingIntervalMs) { ResolveTreeBuilder.lockNode(startTime, action) }
+    }
 }
 
 /**
@@ -36,7 +43,7 @@ internal inline fun <R> LockProvider<FirFile>.runCustomResolveUnderLock(
     body: () -> R
 ): R {
     return if (checkPCE) {
-        withWriteLockPCECheck(key = firFile, lockingIntervalMs = 50L, action = body)
+        withWriteLockPCECheck(key = firFile, lockingIntervalMs = 50L, body)
     } else {
         withWriteLock(key = firFile, action = body)
     }

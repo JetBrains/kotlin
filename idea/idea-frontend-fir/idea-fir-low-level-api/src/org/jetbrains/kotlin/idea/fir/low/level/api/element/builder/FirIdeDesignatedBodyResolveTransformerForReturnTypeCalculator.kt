@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyBodiesCalculator
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.ResolveTreeBuilder
 
 fun FirIdeDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator(
     designation: Iterator<FirElement>,
@@ -78,7 +79,14 @@ private class FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
         simpleFunction.processCallable {
             FirLazyBodiesCalculator.calculateLazyBodiesForFunction(it)
         }
-        return super.transformSimpleFunction(simpleFunction, data)
+
+        return if (simpleFunction.returnTypeRef is FirResolvedTypeRef) {
+            super.transformSimpleFunction(simpleFunction, data)
+        } else {
+            return ResolveTreeBuilder.resolveReturnTypeCalculation(simpleFunction) {
+                super.transformSimpleFunction(simpleFunction, data)
+            }
+        }
     }
 
     override fun transformProperty(
@@ -88,6 +96,12 @@ private class FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
         property.processCallable {
             FirLazyBodiesCalculator.calculateLazyBodyForProperty(it)
         }
-        return super.transformProperty(property, data)
+        return if (property.returnTypeRef is FirResolvedTypeRef) {
+            super.transformProperty(property, data)
+        } else {
+            return ResolveTreeBuilder.resolveReturnTypeCalculation(property) {
+                super.transformProperty(property, data)
+            }
+        }
     }
 }

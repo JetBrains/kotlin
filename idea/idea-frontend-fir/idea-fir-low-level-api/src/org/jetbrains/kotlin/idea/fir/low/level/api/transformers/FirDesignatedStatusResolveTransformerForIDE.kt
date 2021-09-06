@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StatusComputationSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
 
@@ -40,8 +41,10 @@ internal class FirDesignatedStatusResolveTransformerForIDE(
         designation.declaration.ensurePhase(FirResolvePhase.TYPES)
 
         val transformer = FirDesignatedStatusResolveTransformerForIDE()
-        phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.STATUS) {
-            designation.firFile.transform<FirElement, FirResolvedDeclarationStatus?>(transformer, null)
+        ResolveTreeBuilder.resolvePhase(designation.declaration, FirResolvePhase.STATUS) {
+            phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.STATUS) {
+                designation.firFile.transform<FirElement, FirResolvedDeclarationStatus?>(transformer, null)
+            }
         }
 
         transformer.designationTransformer.ensureDesignationPassed()

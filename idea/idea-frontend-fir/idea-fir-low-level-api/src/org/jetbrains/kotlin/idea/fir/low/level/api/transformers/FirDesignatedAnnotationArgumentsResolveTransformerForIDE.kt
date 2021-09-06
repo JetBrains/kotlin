@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumen
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
 
 internal class FirDesignatedAnnotationArgumentsResolveTransformerForIDE(
@@ -54,8 +55,10 @@ internal class FirDesignatedAnnotationArgumentsResolveTransformerForIDE(
 
         val designationIterator = designation.toSequenceWithFile(includeTarget = false).iterator()
 
-        phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) {
-            moveNextDeclaration(designationIterator)
+        ResolveTreeBuilder.resolvePhase(designation.declaration, FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) {
+            phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) {
+                moveNextDeclaration(designationIterator)
+            }
         }
 
         FirLazyTransformerForIDE.updatePhaseDeep(designation.declaration, FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)

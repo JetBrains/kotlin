@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyRe
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeEnsureBasedTransformerForReturnTypeCalculator
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
 
@@ -55,8 +55,10 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
         if (designation.declaration.resolvePhase >= FirResolvePhase.BODY_RESOLVE) return
         designation.declaration.ensurePhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
 
-        phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.BODY_RESOLVE) {
-            designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)
+        ResolveTreeBuilder.resolvePhase(designation.declaration, FirResolvePhase.BODY_RESOLVE) {
+            phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.BODY_RESOLVE) {
+                designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextIndependent)
+            }
         }
 
         ideDeclarationTransformer.ensureDesignationPassed()
