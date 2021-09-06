@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.types.impl
 
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
@@ -20,7 +19,7 @@ class FirUserTypeRefImpl(
     override val isMarkedNullable: Boolean,
     override val qualifier: MutableList<FirQualifierPart>,
     override val annotations: MutableList<FirAnnotationCall>
-) : FirUserTypeRef(), FirAnnotationContainer {
+) : FirUserTypeRef() {
     override val customRenderer: Boolean
         get() = false
 

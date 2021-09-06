@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.types.jvm
 
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -24,7 +23,7 @@ class FirJavaTypeRef(
     val type: JavaType,
     annotationBuilder: () -> List<FirAnnotationCall>,
     override val qualifier: MutableList<FirQualifierPart>
-) : FirUserTypeRef(), FirAnnotationContainer {
+) : FirUserTypeRef() {
     override val customRenderer: Boolean
         get() = true
 
