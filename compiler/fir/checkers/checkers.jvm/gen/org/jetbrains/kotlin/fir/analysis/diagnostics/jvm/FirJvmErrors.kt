@@ -60,6 +60,7 @@ object FirJvmErrors {
     val JVM_PACKAGE_NAME_CANNOT_BE_EMPTY by error0<KtAnnotationEntry>()
     val JVM_PACKAGE_NAME_MUST_BE_VALID_NAME by error0<KtAnnotationEntry>()
     val JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES by error0<KtAnnotationEntry>()
+    val POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION by error0<KtExpression>()
 
     // Super
     val SUPER_CALL_WITH_DEFAULT_PARAMETERS by error1<PsiElement, String>()

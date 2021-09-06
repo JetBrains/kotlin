@@ -11,7 +11,7 @@ public @interface Nls {
 import some.Nls.Capitalization.*
 import some.Nls
 
-@Nls(Title)
+@Nls(<!POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>Title<!>)
 fun f() {
 
 }

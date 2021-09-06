@@ -27,7 +27,7 @@ object JvmExpressionCheckers : ExpressionCheckers() {
 
     override val annotationCheckers: Set<FirAnnotationChecker>
         get() = setOf(
-            FirDeprecatedJavaAnnotationsChecker,
+            FirJavaAnnotationsChecker,
             FirJvmPackageNameAnnotationsChecker,
         )
 }

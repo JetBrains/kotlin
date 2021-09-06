@@ -25,5 +25,5 @@ public @interface A {
 @A fun test8() {}
 
 @<!INAPPLICABLE_CANDIDATE!>A<!>(x = Any::class, *arrayOf("5", "6"), "7", y = 3) fun test9() {}
-@<!INAPPLICABLE_CANDIDATE!>A<!>(x = Any::class, value = ["5", "6"], "7", y = 3) fun test10() {}
+@<!INAPPLICABLE_CANDIDATE!>A<!>(x = Any::class, value = ["5", "6"], <!POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>"7"<!>, y = 3) fun test10() {}
 @A(x = Any::class, value = ["5", "6", "7"], y = 3) fun test11() {}

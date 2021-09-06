@@ -4231,6 +4231,13 @@ internal class JvmPackageNameNotSupportedInFilesWithClassesImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class PositionedValueArgumentForJavaAnnotationImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.PositionedValueArgumentForJavaAnnotation(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class LocalJvmRecordImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
