@@ -13,19 +13,19 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.isKClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -183,18 +183,13 @@ open class AnnotationImplementationTransformer(val context: BackendContext, val 
     @Suppress("UNUSED_VARIABLE")
     fun implementEqualsAndHashCode(annotationClass: IrClass, implClass: IrClass, originalProps: List<IrProperty>, childProps: List<IrProperty>) {
         val creator = MethodsFromAnyGeneratorForLowerings(context, implClass, ANNOTATION_IMPLEMENTATION)
-        val generator =
-            creator.LoweringDataClassMemberGenerator(
-                nameForToString = "@" + annotationClass.fqNameWhenAvailable!!.asString(),
-                typeForEquals = annotationClass.defaultType
-            ) { type, a, b ->
-                generatedEquals(this, type, a, b)
-            }
+        val generator = AnnotationImplementationMemberGenerator(
+            context, implClass,
+            nameForToString = "@" + annotationClass.fqNameWhenAvailable!!.asString(),
+        ) { type, a, b ->
+            generatedEquals(this, type, a, b)
+        }
 
-        // Manual implementation of equals is required for two reasons:
-        // 1. `other` should be casted to interface instead of implementation
-        // 2. Properties should be retrieved using getters without accessing backing fields
-        //    (DataClassMembersGenerator typically tries to access fields)
         val eqFun = creator.createEqualsMethodDeclaration()
         generator.generateEqualsUsingGetters(eqFun, annotationClass.defaultType, originalProps)
 
@@ -208,3 +203,49 @@ open class AnnotationImplementationTransformer(val context: BackendContext, val 
     open fun implementPlatformSpecificParts(annotationClass: IrClass, implClass: IrClass) {}
 }
 
+class AnnotationImplementationMemberGenerator(
+    backendContext: BackendContext,
+    irClass: IrClass,
+    val nameForToString: String,
+    val selectEquals: IrBlockBodyBuilder.(IrType, IrExpression, IrExpression) -> IrExpression,
+) : LoweringDataClassMemberGenerator(backendContext, irClass, ANNOTATION_IMPLEMENTATION) {
+
+    override fun IrClass.classNameForToString(): String = nameForToString
+
+    // From https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Annotation.html#equals-java.lang.Object-
+    // ---
+    // The hash code of an annotation is the sum of the hash codes of its members (including those with default values), as defined below:
+    // The hash code of an annotation member is (127 times the hash code of the member-name as computed by String.hashCode()) XOR the hash code of the member-value
+    override fun IrBuilderWithScope.shiftResultOfHashCode(irResultVar: IrVariable): IrExpression = irGet(irResultVar) // no default (* 31)
+
+    override fun getHashCodeOf(builder: IrBuilderWithScope, property: IrProperty, irValue: IrExpression): IrExpression = with(builder) {
+        val propertyValueHashCode = getHashCodeOf(property.backingField!!.type, irValue)
+        val propertyNameHashCode = getHashCodeOf(backendContext.irBuiltIns.stringType, irString(property.name.toString()))
+        val multiplied = irCallOp(context.irBuiltIns.intTimesSymbol, context.irBuiltIns.intType, propertyNameHashCode, irInt(127))
+        return irCallOp(context.irBuiltIns.intXorSymbol, context.irBuiltIns.intType, multiplied, propertyValueHashCode)
+    }
+
+    // Manual implementation of equals is required for two reasons:
+    // 1. `other` should be casted to interface instead of implementation
+    // 2. Properties should be retrieved using getters without accessing backing fields
+    //    (DataClassMembersGenerator typically tries to access fields)
+    fun generateEqualsUsingGetters(equalsFun: IrSimpleFunction, typeForEquals: IrType, properties: List<IrProperty>) = equalsFun.apply {
+        body = backendContext.createIrBuilder(symbol).irBlockBody {
+            val irType = typeForEquals
+            fun irOther() = irGet(valueParameters[0])
+            fun irThis() = irGet(dispatchReceiverParameter!!)
+            fun IrProperty.get(receiver: IrExpression) = irCall(getter!!).apply {
+                dispatchReceiver = receiver
+            }
+
+            +irIfThenReturnFalse(irNotIs(irOther(), irType))
+            val otherWithCast = irTemporary(irAs(irOther(), irType), "other_with_cast")
+            for (property in properties) {
+                val arg1 = property.get(irThis())
+                val arg2 = property.get(irGet(irType, otherWithCast.symbol))
+                +irIfThenReturnFalse(irNot(selectEquals(property.getter?.returnType ?: property.backingField!!.type, arg1, arg2)))
+            }
+            +irReturnTrue()
+        }
+    }
+}

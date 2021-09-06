@@ -32,10 +32,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeBuilder
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.referenceClassifier
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -384,6 +381,11 @@ class IrBuiltInsOverDescriptors(
 
     override val intTimesSymbol: IrSimpleFunctionSymbol =
         builtIns.int.unsubstitutedMemberScope.findFirstFunction("times") {
+            KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, int)
+        }.let { symbolTable.referenceSimpleFunction(it) }
+
+    override val intXorSymbol: IrSimpleFunctionSymbol =
+        builtIns.int.unsubstitutedMemberScope.findFirstFunction("xor") {
             KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, int)
         }.let { symbolTable.referenceSimpleFunction(it) }
 

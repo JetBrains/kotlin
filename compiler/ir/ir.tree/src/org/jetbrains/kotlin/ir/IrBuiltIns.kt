@@ -139,6 +139,7 @@ abstract class IrBuiltIns {
 
     abstract val intPlusSymbol: IrSimpleFunctionSymbol
     abstract val intTimesSymbol: IrSimpleFunctionSymbol
+    abstract val intXorSymbol: IrSimpleFunctionSymbol
 
     abstract val extensionToString: IrSimpleFunctionSymbol
     abstract val stringPlus: IrSimpleFunctionSymbol
