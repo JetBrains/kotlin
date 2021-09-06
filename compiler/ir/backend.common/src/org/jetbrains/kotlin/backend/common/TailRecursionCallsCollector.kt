@@ -16,15 +16,15 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.IdSignatureValues
 import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.usesDefaultArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -42,8 +42,9 @@ fun collectTailRecursionCalls(irFunction: IrFunction): Set<IrCall> {
         return emptySet()
     }
 
-    val result = mutableSetOf<IrCall>()
+    val isUnitReturn = irFunction.returnType.isUnit()
 
+    val result = mutableSetOf<IrCall>()
     val visitor = object : IrElementVisitor<Unit, ElementKind> {
 
         override fun visitElement(element: IrElement, data: ElementKind) {
@@ -73,17 +74,38 @@ fun collectTailRecursionCalls(irFunction: IrFunction): Set<IrCall> {
             expression.value.accept(this, valueKind)
         }
 
-        override fun visitContainerExpression(expression: IrContainerExpression, data: ElementKind) {
+        override fun visitExpressionBody(body: IrExpressionBody, data: ElementKind) =
+            body.acceptChildren(this, data)
+
+        override fun visitBlockBody(body: IrBlockBody, data: ElementKind) =
+            visitStatementContainer(body, data)
+
+        override fun visitContainerExpression(expression: IrContainerExpression, data: ElementKind) =
+            visitStatementContainer(expression, data)
+
+        private fun visitStatementContainer(expression: IrStatementContainer, data: ElementKind) {
             expression.statements.forEachIndexed { index, irStatement ->
-                val statementKind = if (index == expression.statements.lastIndex) {
+                val statementKind = when {
                     // The last statement defines the result of the container expression, so it has the same kind.
-                    data
-                } else {
-                    ElementKind.NOT_SURE
+                    index == expression.statements.lastIndex -> data
+                    // In a Unit-returning function, any statement directly followed by a `return` is a tail statement.
+                    isUnitReturn && expression.statements[index + 1].let {
+                        it is IrReturn && it.returnTargetSymbol == irFunction.symbol && it.value.isUnitRead()
+                    } -> ElementKind.TAIL_STATEMENT
+                    else -> ElementKind.NOT_SURE
                 }
                 irStatement.accept(this, statementKind)
             }
         }
+
+        private fun IrExpression.isUnitRead(): Boolean =
+            when (this) {
+                is IrGetObjectValue -> symbol
+                // On the JVM, if SingletonReferencesLowering has already finished, a `Unit` reference
+                // is now an IrGetField to the INSTANCE field.
+                is IrGetField -> symbol.owner.parentClassOrNull?.symbol
+                else -> null
+            }?.signature == IdSignatureValues.unit
 
         override fun visitWhen(expression: IrWhen, data: ElementKind) {
             expression.branches.forEach {
@@ -131,25 +153,10 @@ fun collectTailRecursionCalls(irFunction: IrFunction): Set<IrCall> {
             }
 
             result.add(expression)
-
         }
-
     }
 
-    val body = irFunction.body
-    if (body !is IrBlockBody) {
-        return emptySet() // TODO: should an assert be here instead?
-    }
-
-    body.statements.forEachIndexed { index, irStatement ->
-        val kind = if (index == body.statements.lastIndex && irFunction.returnType.isUnit()) {
-            ElementKind.TAIL_STATEMENT
-        } else {
-            ElementKind.NOT_SURE
-        }
-        irStatement.accept(visitor, kind)
-    }
-
+    irFunction.body?.accept(visitor, ElementKind.TAIL_STATEMENT)
     return result
 }
 

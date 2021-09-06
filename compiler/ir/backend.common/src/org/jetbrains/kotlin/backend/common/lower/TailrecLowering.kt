@@ -52,18 +52,25 @@ open class TailrecLowering(val context: BackendContext) : BodyLoweringPass {
 
                 override fun visitFunction(declaration: IrFunction) {
                     declaration.acceptChildrenVoid(this)
-                    lowerTailRecursionCalls(context, declaration, useProperComputationOrderOfTailrecDefaultParameters())
+                    lowerTailRecursionCalls(declaration)
                 }
             })
 
-            lowerTailRecursionCalls(context, container, useProperComputationOrderOfTailrecDefaultParameters())
+            lowerTailRecursionCalls(container)
         }
     }
+
+    private fun lowerTailRecursionCalls(function: IrFunction) =
+        lowerTailRecursionCalls(context, function, useProperComputationOrderOfTailrecDefaultParameters())
 
     open fun useProperComputationOrderOfTailrecDefaultParameters() = true
 }
 
-private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunction, properComputationOrderOfTailrecDefaultParameters: Boolean) {
+private fun lowerTailRecursionCalls(
+    context: BackendContext,
+    irFunction: IrFunction,
+    properComputationOrderOfTailrecDefaultParameters: Boolean
+) {
     val tailRecursionCalls = collectTailRecursionCalls(irFunction)
     if (tailRecursionCalls.isEmpty()) {
         return
@@ -78,8 +85,8 @@ private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunct
     oldBody.statements.clear()
     oldBody.statements += builder.irBlockBody {
         // Define variables containing current values of parameters:
-        val parameterToVariable = parameters.associate {
-            it to createTmpVariable(irGet(it), nameHint = it.symbol.suggestVariableName(), isMutable = true)
+        val parameterToVariable = parameters.associateWith {
+            createTmpVariable(irGet(it), nameHint = it.symbol.suggestVariableName(), isMutable = true)
         }
         // (these variables are to be updated on any tail call).
 
@@ -89,9 +96,8 @@ private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunct
 
             body = irBlock(startOffset, endOffset, resultType = context.irBuiltIns.unitType) {
                 // Read variables containing current values of parameters:
-                val parameterToNew = parameters.associate {
-                    val variable = parameterToVariable[it]!!
-                    it to createTmpVariable(irGet(variable), nameHint = it.symbol.suggestVariableName())
+                val parameterToNew = parameters.associateWith {
+                    createTmpVariable(irGet(parameterToVariable[it]!!), nameHint = it.symbol.suggestVariableName())
                 }
 
                 val transformer = BodyTransformer(

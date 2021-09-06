@@ -7,14 +7,14 @@
 // IGNORE_BACKEND: JS
 
 tailrec fun test(x : Int) : Unit {
-    if (x == 1) {
+    if (x > 800000) {
         test(x - 1)
-    } else if (x == 2) {
+    } else if (x > 600000) {
         test(x - 1)
         return
-    } else if (x == 3) {
-        <!NON_TAIL_RECURSIVE_CALL!>test<!>(x - 1)
-        if (x == 3) {
+    } else if (x > 400000) {
+        <!NON_TAIL_RECURSIVE_CALL!>test<!>(1)
+        if (x > 200000) {
             test(x - 1)
         }
         return
