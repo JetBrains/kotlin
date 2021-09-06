@@ -20,6 +20,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.InputChanges
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.refinesClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
-import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.io.File
 import javax.inject.Inject
 
@@ -116,7 +116,7 @@ abstract class KotlinCompileCommon @Inject constructor(
     @get:Internal
     internal val expectActualLinker = objects.property(Boolean::class.java)
 
-    override fun callCompilerAsync(args: K2MetadataCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
+    override fun callCompilerAsync(args: K2MetadataCompilerArguments, sourceRoots: SourceRoots, inputChanges: InputChanges) {
         val messageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()

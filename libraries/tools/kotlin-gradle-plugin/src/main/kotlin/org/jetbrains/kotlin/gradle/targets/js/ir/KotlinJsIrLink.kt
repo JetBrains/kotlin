@@ -14,6 +14,7 @@ import org.gradle.api.file.FileTree
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
+import org.gradle.work.InputChanges
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.gradle.tasks.SourceRoots
 import org.jetbrains.kotlin.gradle.utils.getAllDependencies
 import org.jetbrains.kotlin.gradle.utils.getCacheDirectory
 import org.jetbrains.kotlin.gradle.utils.getDependenciesCacheDirectories
-import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.io.File
 import javax.inject.Inject
@@ -94,7 +94,7 @@ abstract class KotlinJsIrLink @Inject constructor(
         return !entryModule.get().asFile.exists()
     }
 
-    override fun callCompilerAsync(args: K2JSCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
+    override fun callCompilerAsync(args: K2JSCompilerArguments, sourceRoots: SourceRoots, inputChanges: InputChanges) {
         KotlinBuildStatsService.applyIfInitialised {
             it.report(BooleanMetrics.JS_IR_INCREMENTAL, incrementalJsIr)
         }
@@ -125,7 +125,7 @@ abstract class KotlinJsIrLink @Inject constructor(
                 it.normalize().absolutePath
             }
         }
-        super.callCompilerAsync(args, sourceRoots, changedFiles)
+        super.callCompilerAsync(args, sourceRoots, inputChanges)
     }
 
     private fun visitCompilation(
