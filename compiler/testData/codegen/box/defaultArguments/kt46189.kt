@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: WASM
-// IGNORE_BACKEND: JS_IR
-
 class C
 
 fun box(): String =

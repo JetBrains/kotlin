@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.IdSignatureValues
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.usesDefaultArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -99,13 +98,7 @@ fun collectTailRecursionCalls(irFunction: IrFunction): Set<IrCall> {
         }
 
         private fun IrExpression.isUnitRead(): Boolean =
-            when (this) {
-                is IrGetObjectValue -> symbol
-                // On the JVM, if SingletonReferencesLowering has already finished, a `Unit` reference
-                // is now an IrGetField to the INSTANCE field.
-                is IrGetField -> symbol.owner.parentClassOrNull?.symbol
-                else -> null
-            }?.signature == IdSignatureValues.unit
+            this is IrGetObjectValue && symbol.signature == IdSignatureValues.unit
 
         override fun visitWhen(expression: IrWhen, data: ElementKind) {
             expression.branches.forEach {

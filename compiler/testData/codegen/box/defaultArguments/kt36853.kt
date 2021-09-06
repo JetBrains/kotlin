@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS_IR, WASM
-
 interface IFoo {
     fun foo(): String
 }
