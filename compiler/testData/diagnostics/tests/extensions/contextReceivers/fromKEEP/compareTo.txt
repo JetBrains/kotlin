@@ -1,0 +1,17 @@
+package
+
+public val </*0*/ T> Pair<T, T>.max: T
+public fun test(): kotlin.Unit
+public infix operator fun </*0*/ T> T.compareTo(/*0*/ other: T): kotlin.Int
+
+public final data class Pair</*0*/ A, /*1*/ B> {
+    public constructor Pair</*0*/ A, /*1*/ B>(/*0*/ first: A, /*1*/ second: B)
+    public final val first: A
+    public final val second: B
+    public final operator /*synthesized*/ fun component1(): A
+    public final operator /*synthesized*/ fun component2(): B
+    public final /*synthesized*/ fun copy(/*0*/ first: A = ..., /*1*/ second: B = ...): Pair<A, B>
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}

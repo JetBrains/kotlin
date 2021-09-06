@@ -1,0 +1,35 @@
+package
+
+public fun test(): kotlin.Unit
+public fun withAutoClose(/*0*/ block: @kotlin.ContextFunctionTypeParams(count = 1) () -> kotlin.Unit): kotlin.Unit
+public fun File.open(): InputStream
+
+public interface AutoCloseScope {
+    public abstract fun close(): kotlin.Unit
+    public abstract fun defer(/*0*/ closeBlock: () -> kotlin.Unit): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class AutoCloseScopeImpl : AutoCloseScope {
+    public constructor AutoCloseScopeImpl()
+    public open override /*1*/ fun close(): kotlin.Nothing
+    public open override /*1*/ fun defer(/*0*/ closeBlock: () -> kotlin.Unit): kotlin.Nothing
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class File {
+    public constructor File(/*0*/ name: kotlin.String)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface InputStream {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

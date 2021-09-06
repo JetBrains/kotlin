@@ -16074,12 +16074,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
-            @TestMetadata("dp.kt")
-            public void testDp() throws Exception {
-                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/dp.kt");
-            }
-
-            @Test
             @TestMetadata("inferGenericPropertyType.kt")
             public void testInferGenericPropertyType() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/inferGenericPropertyType.kt");
@@ -16119,6 +16113,46 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("this.kt")
             public void testThis() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/this.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP")
+            @TestDataPath("$PROJECT_ROOT")
+            public class FromKEEP {
+                @Test
+                public void testAllFilesPresentInFromKEEP() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("canvas.kt")
+                public void testCanvas() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/canvas.kt");
+                }
+
+                @Test
+                @TestMetadata("compareTo.kt")
+                public void testCompareTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/compareTo.kt");
+                }
+
+                @Test
+                @TestMetadata("decimateEveryEvenThird.kt")
+                public void testDecimateEveryEvenThird() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/decimateEveryEvenThird.kt");
+                }
+
+                @Test
+                @TestMetadata("dp.kt")
+                public void testDp() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/dp.kt");
+                }
+
+                @Test
+                @TestMetadata("monoidSum.kt")
+                public void testMonoidSum() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/monoidSum.kt");
+                }
             }
         }
     }

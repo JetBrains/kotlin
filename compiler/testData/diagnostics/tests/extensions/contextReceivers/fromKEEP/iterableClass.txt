@@ -1,0 +1,6 @@
+package
+
+public fun </*0*/ T> listOf(/*0*/ vararg items: T /*kotlin.Array<out T>*/): kotlin.collections.List<T>
+public fun test(): kotlin.Unit
+public fun </*0*/ C, /*1*/ T> C.iterator(/*0*/ any: kotlin.Any?): kotlin.collections.Iterator<T>
+public typealias IterableClass</*0*/ C, /*1*/ T> = (C) -> kotlin.collections.Iterator<T>
