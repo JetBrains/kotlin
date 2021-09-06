@@ -106,6 +106,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/bothJvmIrAndOldBackend.args");
         }
 
+        @TestMetadata("builderInferenceByDefault.args")
+        public void testBuilderInferenceByDefault() throws Exception {
+            runTest("compiler/testData/cli/jvm/builderInferenceByDefault.args");
+        }
+
         @TestMetadata("classAndFileClassClash.args")
         public void testClassAndFileClassClash() throws Exception {
             runTest("compiler/testData/cli/jvm/classAndFileClassClash.args");
