@@ -24,12 +24,13 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.transformStatement
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -124,67 +125,51 @@ private class BodyTransformer(
     val parameterToVariable: Map<IrValueParameter, IrVariable>,
     val tailRecursionCalls: Set<IrCall>,
     val properComputationOrderOfTailrecDefaultParameters: Boolean
-) : IrElementTransformerVoid() {
+) : VariableRemapper(parameterToNew) {
 
     val parameters = irFunction.explicitParameters
-
-    override fun visitGetValue(expression: IrGetValue): IrExpression {
-        expression.transformChildrenVoid(this)
-        val value = parameterToNew[expression.symbol.owner] ?: return expression
-        return builder.at(expression).irGet(value)
-    }
 
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid(this)
         if (expression !in tailRecursionCalls) {
             return expression
         }
-
         return builder.at(expression).genTailCall(expression)
     }
 
     private fun IrBuilderWithScope.genTailCall(expression: IrCall) = this.irBlock(expression) {
         // Get all specified arguments:
-        val parameterToArgument = expression.getArgumentsWithIr().map { (parameter, argument) ->
-            parameter to argument
+        val parameterToArgument = expression.getArgumentsWithIr().associateTo(mutableMapOf()) { (parameter, argument) ->
+            // Note that we create `val`s for those parameters so that if some default value contains an object
+            // that captures another parameter, it won't capture it as a mutable ref.
+            parameter to irTemporary(argument)
         }
-
-        // For each specified argument set the corresponding variable to it in the correct order:
-        parameterToArgument.forEach { (parameter, argument) ->
-            at(argument)
-            // Note that argument can use values of parameters, so it is important that
-            // references to parameters are mapped using `parameterToNew`, not `parameterToVariable`.
-            +irSet(parameterToVariable[parameter]!!.symbol, argument)
-        }
-
-        val specifiedParameters = parameterToArgument.map { (parameter, _) -> parameter }.toSet()
 
         // For each unspecified argument set the corresponding variable to default:
         parameters
-            .filter { it !in specifiedParameters }
+            .filter { it !in parameterToArgument }
             .let { if (properComputationOrderOfTailrecDefaultParameters) it else it.asReversed() }
-            .forEach { parameter ->
-
+            .associateWithTo(parameterToArgument) { parameter ->
                 val originalDefaultValue = parameter.defaultValue?.expression ?: throw Error("no argument specified for $parameter")
-
                 // Copy default value, mapping parameters to variables containing freshly computed arguments:
                 val defaultValue = originalDefaultValue
-                    .deepCopyWithVariables()
-                    .transform(object : IrElementTransformerVoid() {
-
+                    .deepCopyWithVariables().patchDeclarationParents(parent)
+                    .transform(object : VariableRemapper(parameterToArgument) {
                         override fun visitGetValue(expression: IrGetValue): IrExpression {
-                            expression.transformChildrenVoid(this)
-
-                            val variable = parameterToVariable[expression.symbol.owner] ?: return expression
-                            return IrGetValueImpl(
-                                expression.startOffset, expression.endOffset, variable.type,
-                                variable.symbol, expression.origin
-                            )
+                            // If this parameter references a different parameter declared later, produce null:
+                            if (expression.symbol.owner.let { it is IrValueParameter && it.parent == irFunction && it !in parameterToArgument })
+                                return IrConstImpl.defaultValueForType(startOffset, endOffset, expression.type.makeNullable())
+                            return super.visitGetValue(expression)
                         }
-                    }, data = null)
-
-                +irSet(parameterToVariable[parameter]!!.symbol, defaultValue)
+                    }, null)
+                irTemporary(defaultValue)
             }
+
+        // Copy the new `val`s into the `var`s declared outside the loop:
+        parameterToArgument.forEach { (parameter, argument) ->
+            at(argument)
+            +irSet(parameterToVariable[parameter]!!.symbol, irGet(argument))
+        }
 
         // Jump to the entry:
         +irContinue(loop)

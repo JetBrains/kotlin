@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-
 tailrec fun tailrecDefault(fake: Int, fn: () -> String = { "OK" }): String {
     return if (fake == 0)
         tailrecDefault(1)

@@ -268,7 +268,6 @@ private val tailrecPhase = makeIrFilePhase(
     ::JvmTailrecLowering,
     name = "Tailrec",
     description = "Handle tailrec calls",
-    prerequisite = setOf(localDeclarationsPhase)
 )
 
 private val kotlinNothingValueExceptionPhase = makeIrFilePhase<CommonBackendContext>(
@@ -353,6 +352,7 @@ private val jvmFilePhases = listOf(
     forLoopsPhase,
     collectionStubMethodLowering,
     jvmInlineClassPhase,
+    tailrecPhase,
     makePatchParentsPhase(1),
 
     enumWhenPhase,
@@ -363,8 +363,6 @@ private val jvmFilePhases = listOf(
     returnableBlocksPhase,
     sharedVariablesPhase,
     localDeclarationsPhase,
-
-    tailrecPhase,
     makePatchParentsPhase(2),
 
     jvmLocalClassExtractionPhase,
