@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.*
@@ -60,14 +59,12 @@ class BuilderInferenceSession(
 ) : ManyCandidatesResolver<CallableDescriptor>(
     psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents, builtIns
 ) {
-    private var nestedBuilderInferenceSessions: MutableSet<BuilderInferenceSession> = mutableSetOf()
-
     private lateinit var lambda: ResolvedLambdaAtom
     private val commonSystem = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns, callComponents.kotlinTypeRefiner)
 
     init {
-        if (topLevelCallContext.inferenceSession is BuilderInferenceSession) {
-            topLevelCallContext.inferenceSession.nestedBuilderInferenceSessions.add(this)
+        if (topLevelCallContext.inferenceSession is ManyCandidatesResolver<*>) {
+            topLevelCallContext.inferenceSession.addNestedInferenceSession(this)
         }
         stubsForPostponedVariables.keys.forEach(commonSystem::registerVariable)
     }
@@ -266,6 +263,16 @@ class BuilderInferenceSession(
         return commonSystem.fixedTypeVariables.cast() // TODO: SUB
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun getNestedBuilderInferenceSessions() = buildList {
+        for (nestedSession in nestedInferenceSessions) {
+            when (nestedSession) {
+                is BuilderInferenceSession -> add(nestedSession)
+                is DelegatedPropertyInferenceSession -> addAll(nestedSession.getNestedBuilderInferenceSessions())
+            }
+        }
+    }
+
     /*
      * We update calls in top-down way:
      * - updating calls within top-level builder inference call
@@ -278,6 +285,8 @@ class BuilderInferenceSession(
             substitutor = substitutor,
             commonSystem.errors
         )
+
+        val nestedBuilderInferenceSessions = getNestedBuilderInferenceSessions()
 
         for (nestedSession in nestedBuilderInferenceSessions) {
             // TODO: exclude injected variables
