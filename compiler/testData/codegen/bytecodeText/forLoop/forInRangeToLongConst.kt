@@ -36,3 +36,10 @@ fun test(): Long {
 // 1 LCMP
 // 1 IFGE
 // 1 IF
+
+// JVM_IR_TEMPLATES
+// 0 ILOAD
+// 0 ISTORE
+// 0 IADD
+// 0 ISUB
+// 0 IINC

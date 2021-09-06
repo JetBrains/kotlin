@@ -36,3 +36,10 @@ fun testObjectArray(n: Int) =
 // 0 IF_ICMPGT
 // 0 IF_CMPEQ
 // 8 IF_ICMPGE
+
+// JVM_IR_TEMPLATES
+// 56 ILOAD
+// 24 ISTORE
+// 8 IADD
+// 0 ISUB
+// 0 IINC

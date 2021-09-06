@@ -25,3 +25,10 @@ fun <T : Sequence<*>> test(sequence: T): String {
 // 1 next
 // 0 component1
 // 0 component2
+
+// JVM_IR_TEMPLATES
+// 3 ILOAD
+// 3 ISTORE
+// 1 IADD
+// 0 ISUB
+// 0 IINC

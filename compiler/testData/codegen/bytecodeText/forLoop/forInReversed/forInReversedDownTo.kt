@@ -50,3 +50,10 @@ fun box(): String {
 // 1 IFLE
 // 4 IF
 // 2 LCMP
+
+// JVM_IR_TEMPLATES
+// 11 ILOAD
+// 9 ISTORE
+// 3 IADD
+// 1 ISUB
+// 1 IINC

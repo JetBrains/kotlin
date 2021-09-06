@@ -36,3 +36,10 @@ fun box(): String {
 // 1 IF_ICMPGT
 // 1 IF_ICMPLE
 // 2 IF
+
+// JVM_IR_TEMPLATES
+// 7 ILOAD
+// 4 ISTORE
+// 3 IADD
+// 1 ISUB
+// 1 IINC

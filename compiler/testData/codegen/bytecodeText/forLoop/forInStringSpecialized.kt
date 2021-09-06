@@ -20,3 +20,10 @@ fun test() {
 // 0 INVOKEINTERFACE
 // 1 charAt \(I\)C
 // 1 length \(\)I
+
+// JVM_IR_TEMPLATES
+// 4 ILOAD
+// 3 ISTORE
+// 0 IADD
+// 0 ISUB
+// 1 IINC

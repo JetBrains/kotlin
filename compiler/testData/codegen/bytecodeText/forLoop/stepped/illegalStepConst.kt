@@ -30,3 +30,10 @@ fun box(): String {
 // 1 ATHROW
 // 0 IF
 // 0 ARETURN
+
+// JVM_IR_TEMPLATES
+// 0 ILOAD
+// 0 ISTORE
+// 0 IADD
+// 0 ISUB
+// 0 IINC

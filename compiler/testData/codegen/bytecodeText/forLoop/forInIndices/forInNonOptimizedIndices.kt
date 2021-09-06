@@ -23,3 +23,10 @@ fun test(coll: Collection<*>?): Int {
 // 1 getIndices
 // 1 getFirst
 // 1 getLast
+
+// JVM_IR_TEMPLATES
+// 7 ILOAD
+// 4 ISTORE
+// 1 IADD
+// 0 ISUB
+// 1 IINC

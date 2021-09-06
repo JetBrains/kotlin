@@ -19,20 +19,6 @@ fun box(): String {
 // For "step" progressions in JVM IR, a call to getProgressionLastElement() is made to compute the "last" value.
 // If the step is non-constant, there is a check that it is > 0, and if not, an IllegalArgumentException is thrown. However, when the
 // step is constant and > 0, this check does not need to be added.
-//
-// Expected lowered form of loop:
-//
-//   // Standard form of loop over progression
-//   val last = 1
-//   var inductionVar = getProgressionLastElement(1, 8, 2)
-//   if (last <= inductionVar) {
-//     // Loop is not empty
-//     do {
-//       val i = inductionVar
-//       inductionVar += -2
-//       // Loop body
-//     } while (last <= inductionVar)
-//   }
 
 // 0 reversed
 // 0 iterator
@@ -47,3 +33,10 @@ fun box(): String {
 // 1 IF_ICMPGT
 // 1 IF_ICMPLE
 // 2 IF
+
+// JVM_IR_TEMPLATES
+// 3 ILOAD
+// 2 ISTORE
+// 0 IADD
+// 0 ISUB
+// 1 IINC

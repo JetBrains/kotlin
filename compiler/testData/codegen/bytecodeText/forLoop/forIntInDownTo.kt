@@ -22,3 +22,10 @@ fun test(): Int {
 // 0 getLast
 // 1 IF_ICMP
 // 1 IF
+
+// JVM_IR_TEMPLATES
+// 5 ILOAD
+// 4 ISTORE
+// 1 IADD
+// 0 ISUB
+// 1 IINC

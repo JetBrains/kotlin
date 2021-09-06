@@ -25,3 +25,10 @@ fun <T : Collection<*>> test(c: T) {
 // 0 IF_ICMPGT
 // 0 IF_ICMPLE
 // 1 IF
+
+// JVM_IR_TEMPLATES
+// 4 ILOAD
+// 4 ISTORE
+// 1 IADD
+// 0 ISUB
+// 1 IINC

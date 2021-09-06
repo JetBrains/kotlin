@@ -25,3 +25,10 @@ fun test(a: Char, b: Char): String {
 // 1 IF_ICMPGE
 // 0 IF_ICMPLT
 // 1 IF
+
+// JVM_IR_TEMPLATES
+// 5 ILOAD
+// 2 ISTORE
+// 1 IADD
+// 0 ISUB
+// 0 IINC

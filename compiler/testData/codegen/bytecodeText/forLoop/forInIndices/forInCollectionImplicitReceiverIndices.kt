@@ -25,3 +25,10 @@ fun Collection<Int>.sumIndices(): Int {
 // 0 IF_ICMPGT
 // 0 IF_ICMPLE
 // 1 IF
+
+// JVM_IR_TEMPLATES
+// 5 ILOAD
+// 4 ISTORE
+// 1 IADD
+// 0 ISUB
+// 1 IINC

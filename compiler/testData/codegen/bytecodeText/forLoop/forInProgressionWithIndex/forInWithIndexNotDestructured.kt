@@ -22,3 +22,10 @@ fun box(): String {
 // 1 next
 // 0 component1
 // 0 component2
+
+// JVM_IR_TEMPLATES
+// 0 ILOAD
+// 0 ISTORE
+// 0 IADD
+// 0 ISUB
+// 0 IINC

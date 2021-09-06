@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_FIR: JVM_IR
+
 // IMPORTANT!
 // Please, when your changes cause failures in bytecodeText tests for 'for' loops,
 // examine the resulting bytecode shape carefully.
@@ -29,3 +31,10 @@ fun f(a: Int): Int {
 
 // 1 IF_ICMPGE
 // 1 IF
+
+// JVM_IR_TEMPLATES
+// 3 ILOAD
+// 2 ISTORE
+// 0 IADD
+// 0 ISUB
+// 2 IINC

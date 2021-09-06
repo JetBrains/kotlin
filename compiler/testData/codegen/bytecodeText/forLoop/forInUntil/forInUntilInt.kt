@@ -24,3 +24,10 @@ fun test(a: Int, b: Int): Int {
 
 // 1 IF_ICMPGE
 // 1 IF
+
+// JVM_IR_TEMPLATES
+// 6 ILOAD
+// 3 ISTORE
+// 1 IADD
+// 0 ISUB
+// 1 IINC

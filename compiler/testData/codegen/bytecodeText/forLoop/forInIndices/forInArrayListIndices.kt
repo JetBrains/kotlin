@@ -19,3 +19,10 @@ fun box(): String {
 }
 
 // 0 iterator
+
+// JVM_IR_TEMPLATES
+// 3 ILOAD
+// 2 ISTORE
+// 0 IADD
+// 0 ISUB
+// 0 IINC

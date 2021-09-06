@@ -27,4 +27,6 @@ fun test(): Int {
 // 1 IF
 // 4 ILOAD
 // 3 ISTORE
+// 1 IADD
+// 0 ISUB
 // 1 IINC

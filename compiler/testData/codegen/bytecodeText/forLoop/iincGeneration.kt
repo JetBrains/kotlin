@@ -40,5 +40,8 @@ fun uShortRangeTo(a: UShort, b: UShort) { for (i in a .. b) {} }
 // 16 IINC
 
 // JVM_IR_TEMPLATES
+// 136 ILOAD
+// 56 ISTORE
 // 0 IADD
+// 0 ISUB
 // 20 IINC

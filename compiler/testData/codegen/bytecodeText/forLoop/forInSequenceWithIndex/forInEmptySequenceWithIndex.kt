@@ -28,3 +28,10 @@ fun box(): String {
 
 // - Initializing the index in the lowered for-loop.
 // 1 ICONST_0
+
+// JVM_IR_TEMPLATES
+// 2 ILOAD
+// 2 ISTORE
+// 1 IADD
+// 0 ISUB
+// 0 IINC

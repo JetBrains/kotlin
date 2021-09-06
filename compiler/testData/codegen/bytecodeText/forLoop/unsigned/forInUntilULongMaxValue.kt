@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 
 // IMPORTANT!
@@ -40,3 +41,10 @@ fun f(a: ULong): Int {
 // 1 INVOKESTATIC kotlin/UnsignedKt.ulongCompare
 // 1 IFGE
 // 1 IF
+
+// JVM_IR_TEMPLATES
+// 1 ILOAD
+// 1 ISTORE
+// 0 IADD
+// 0 ISUB
+// 1 IINC

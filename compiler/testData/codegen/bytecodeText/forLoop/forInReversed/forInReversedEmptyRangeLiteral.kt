@@ -27,3 +27,10 @@ fun box(): String {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
+
+// JVM_IR_TEMPLATES
+// 0 ILOAD
+// 2 ISTORE
+// 0 IADD
+// 0 ISUB
+// 0 IINC

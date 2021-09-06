@@ -50,3 +50,10 @@ fun box(): String {
 // 3 getFirst
 // 3 getLast
 // 3 getStep
+
+// JVM_IR_TEMPLATES
+// 24 ILOAD
+// 12 ISTORE
+// 4 IADD
+// 1 ISUB
+// 0 IINC

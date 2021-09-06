@@ -34,3 +34,10 @@ fun test(): Int {
 // JVM_IR_TEMPLATES
 // 1 IF_ICMPGE
 // 1 IF
+
+// JVM_IR_TEMPLATES
+// 4 ILOAD
+// 3 ISTORE
+// 1 IADD
+// 0 ISUB
+// 1 IINC

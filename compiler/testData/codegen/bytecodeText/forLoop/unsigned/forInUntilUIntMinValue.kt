@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 
 // IMPORTANT!
@@ -36,3 +37,10 @@ fun f(a: UInt): Int {
 
 // JVM_IR_TEMPLATES
 // 1 IF
+
+// JVM_IR_TEMPLATES
+// 7 ILOAD
+// 6 ISTORE
+// 0 IADD
+// 0 ISUB
+// 2 IINC

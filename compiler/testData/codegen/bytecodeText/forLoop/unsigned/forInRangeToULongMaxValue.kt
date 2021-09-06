@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 
 // IMPORTANT!
@@ -29,3 +30,10 @@ fun f(a: ULong): Int {
 // 2 IF
 // 0 INVOKESTATIC kotlin/ULong.constructor-impl
 // 0 INVOKE\w+ kotlin/ULong.(un)?box-impl
+
+// JVM_IR_TEMPLATES
+// 1 ILOAD
+// 1 ISTORE
+// 0 IADD
+// 0 ISUB
+// 1 IINC

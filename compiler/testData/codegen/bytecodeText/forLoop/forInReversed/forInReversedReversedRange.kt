@@ -41,3 +41,10 @@ fun box(): String {
 // 0 getEnd
 // 3 getFirst
 // 3 getLast
+
+// JVM_IR_TEMPLATES
+// 15 ILOAD
+// 9 ISTORE
+// 3 IADD
+// 1 ISUB
+// 1 IINC

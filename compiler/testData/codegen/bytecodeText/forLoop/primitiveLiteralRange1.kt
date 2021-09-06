@@ -27,3 +27,10 @@ fun f() {
 // JVM_IR_TEMPLATES
 // 1 IF_ICMPGE
 // 1 IF
+
+// JVM_IR_TEMPLATES
+// 1 ILOAD
+// 1 ISTORE
+// 0 IADD
+// 0 ISUB
+// 1 IINC

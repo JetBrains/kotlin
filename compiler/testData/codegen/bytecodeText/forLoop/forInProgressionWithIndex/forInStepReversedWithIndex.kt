@@ -39,3 +39,10 @@ fun box(): String {
 // 0 getStep
 // 0 reversed
 // 0 step
+
+// JVM_IR_TEMPLATES
+// 5 ILOAD
+// 5 ISTORE
+// 1 IADD
+// 0 ISUB
+// 1 IINC

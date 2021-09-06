@@ -2810,9 +2810,9 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             }
 
             @Test
-            @TestMetadata("ForInReversedReversedRange.kt")
+            @TestMetadata("forInReversedReversedRange.kt")
             public void testForInReversedReversedRange() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInReversed/ForInReversedReversedRange.kt");
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInReversed/forInReversedReversedRange.kt");
             }
 
             @Test
