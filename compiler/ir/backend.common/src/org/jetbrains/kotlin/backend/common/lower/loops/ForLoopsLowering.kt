@@ -8,18 +8,16 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.lower.AbstractVariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.*
@@ -190,101 +188,8 @@ private class RangeLoopTransformer(
         statements[0] = loweredHeader
         statements[1] = loopReplacementExpression
 
-        if (context.reuseLoopVariableAsInductionVariable && loopHeader.canReuseLoopVariableAsInductionVariable) {
-            reuseLoopVariableAsInductionVariable(expression)
-        }
-
         return super.visitBlock(expression)
     }
-
-    private fun reuseLoopVariableAsInductionVariable(irBlock: IrBlock) {
-        // Given a loop in the form:
-        //      {
-        //          var inductionVariable = <start>
-        //      }
-        //      do {
-        //          if (!(<whileLoopCondition>)) break
-        //          val loopVariable = inductionVariable
-        //          <originalLoopBody>
-        //      } while ( { inductionVariable += <step>; true } )
-        // replace it with:
-        //      {
-        //          var loopVariable' = <start>
-        //      }
-        //      do {
-        //          if (!(<whileLoopCondition'>)) break
-        //          <originalLoopBody'>
-        //      } while ( { loopVariable' += <step>; true } )
-        // where whenLoopCondition' and originalLoopBody' are corresponding statements
-        //  with inductionVariable and loopVariable remapped to loopVariable'.
-        //
-        // NB we can do so only with a do-while counter loop as described above,
-        //  otherwise it changes semantics of 'continue' inside the loop.
-
-        val header = irBlock.statements[0] as? IrStatementContainer ?: return
-
-        val inductionVariableIndex = header.statements.indexOfFirst { it.isInductionVariable(context) }
-        if (inductionVariableIndex < 0) return
-        val inductionVariable = header.statements[inductionVariableIndex] as IrVariable
-
-        val innerLoop = findInnerDoWhileLoop(irBlock.statements[1]) ?: return
-        if (innerLoop.origin != context.doWhileCounterLoopOrigin) return
-        val loopVariableContainerAndIndex = findLoopVariable(innerLoop) ?: return
-        val (loopVariableContainer, loopVariableIndex) = loopVariableContainerAndIndex
-        val loopVariable = loopVariableContainer.statements[loopVariableIndex] as IrVariable
-
-        val inductionVariableType = inductionVariable.type
-        val loopVariableType = loopVariable.type
-        if (loopVariableType.isNullable()) return
-        if (loopVariableType.classifierOrNull != inductionVariableType.classifierOrNull) return
-
-        val newLoopVariable = IrVariableImpl(
-            loopVariable.startOffset, loopVariable.endOffset, loopVariable.origin,
-            IrVariableSymbolImpl(),
-            loopVariable.name, loopVariableType,
-            isVar = true, // NB original loop variable is 'val'
-            isConst = false, isLateinit = false
-        )
-        newLoopVariable.initializer = inductionVariable.initializer
-
-        header.statements[inductionVariableIndex] = newLoopVariable
-        loopVariableContainer.statements.removeAt(loopVariableIndex)
-
-        val remapper = object : AbstractVariableRemapper() {
-            override fun remapVariable(value: IrValueDeclaration): IrValueDeclaration? =
-                if (value == inductionVariable || value == loopVariable) newLoopVariable else null
-        }
-        irBlock.statements[1].transformChildren(remapper, null)
-    }
-
-    private fun findInnerDoWhileLoop(statement: IrStatement): IrDoWhileLoop? {
-        if (statement is IrDoWhileLoop) {
-            return statement
-        }
-        if (statement is IrWhen) {
-            val branch0Result = statement.branches[0].result
-            if (branch0Result is IrDoWhileLoop)
-                return branch0Result
-        }
-        return null
-    }
-
-    private fun findLoopVariable(doWhileLoop: IrDoWhileLoop): Pair<IrContainerExpression, Int>? {
-        val loopBody = doWhileLoop.body as? IrContainerExpression ?: return null
-        for ((index, statement) in loopBody.statements.withIndex()) {
-            if (statement.isLoopVariable())
-                return Pair(loopBody, index)
-            else if (statement is IrContainerExpression && statement.origin == IrStatementOrigin.FOR_LOOP_NEXT) {
-                val loopVarIndex = statement.statements.indexOfFirst { it.isLoopVariable() }
-                if (loopVarIndex < 0) return null
-                return Pair(statement, loopVarIndex)
-            }
-        }
-        return null
-    }
-
-    private fun IrStatement.isLoopVariable() =
-        this is IrVariable && origin == IrDeclarationOrigin.FOR_LOOP_VARIABLE
 
     /**
      * Lowers the "header" statement that stores the iterator into the loop variable

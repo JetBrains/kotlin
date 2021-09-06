@@ -6,22 +6,27 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.AbstractVariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
+import org.jetbrains.kotlin.backend.common.lower.loops.isInductionVariable
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
+import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -410,10 +415,76 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                 expression.rewritePostfixIncrDecr()?.let { return it }
             }
 
+            if (expression.origin == IrStatementOrigin.FOR_LOOP) {
+                reuseLoopVariableAsInductionVariableIfPossible(expression)
+            }
+
             expression.transformChildren(this, data)
             removeUnnecessaryTemporaryVariables(expression.statements)
             return expression
         }
+
+        private fun reuseLoopVariableAsInductionVariableIfPossible(irForLoopBlock: IrContainerExpression) {
+            if (irForLoopBlock.statements.size != 2) return
+
+            val loopInitialization = irForLoopBlock.statements[0] as? IrComposite ?: return
+            val inductionVariableIndex = loopInitialization.statements.indexOfFirst { it.isInductionVariable(context) }
+            if (inductionVariableIndex < 0) return
+            val inductionVariable = loopInitialization.statements[inductionVariableIndex] as? IrVariable ?: return
+
+            val loopVariablePosition = findLoopVariablePosition(irForLoopBlock.statements[1]) ?: return
+            val (loopVariableContainer, loopVariableIndex) = loopVariablePosition
+            val loopVariable = loopVariableContainer.statements[loopVariableIndex] as? IrVariable ?: return
+
+            val inductionVariableType = inductionVariable.type
+            val loopVariableType = loopVariable.type
+            if (loopVariableType.isNullable()) return
+            if (loopVariableType.classifierOrNull != inductionVariableType.classifierOrNull) return
+
+            val newLoopVariable = IrVariableImpl(
+                loopVariable.startOffset, loopVariable.endOffset, loopVariable.origin,
+                IrVariableSymbolImpl(),
+                loopVariable.name, loopVariableType,
+                isVar = true, // NB original loop variable is 'val'
+                isConst = false, isLateinit = false
+            )
+            newLoopVariable.initializer = inductionVariable.initializer
+
+            loopInitialization.statements[inductionVariableIndex] = newLoopVariable
+            loopVariableContainer.statements.removeAt(loopVariableIndex)
+            val remapper = object : AbstractVariableRemapper() {
+                override fun remapVariable(value: IrValueDeclaration): IrValueDeclaration? =
+                    if (value == inductionVariable || value == loopVariable) newLoopVariable else null
+            }
+            irForLoopBlock.statements[1].transformChildren(remapper, null)
+        }
+
+        private fun findLoopVariablePosition(statement: IrStatement): Pair<IrContainerExpression, Int>? {
+            when (statement) {
+                is IrDoWhileLoop -> {
+                    // Expecting counter loop
+                    val doWhileLoop = statement as? IrDoWhileLoop ?: return null
+                    if (doWhileLoop.origin != JvmLoweredStatementOrigin.DO_WHILE_COUNTER_LOOP) return null
+                    val doWhileLoopBody = doWhileLoop.body as? IrComposite ?: return null
+                    if (doWhileLoopBody.origin != IrStatementOrigin.FOR_LOOP_INNER_WHILE) return null
+                    val iterationInitialization = doWhileLoopBody.statements[0] as? IrComposite ?: return null
+                    val loopVariableIndex = iterationInitialization.statements.indexOfFirst { it.isLoopVariable() }
+                    if (loopVariableIndex < 0) return null
+                    return iterationInitialization to loopVariableIndex
+                }
+                is IrWhen -> {
+                    // Expecting if-guarded counter loop
+                    val doWhileLoop = statement.branches[0].result as? IrDoWhileLoop ?: return null
+                    return findLoopVariablePosition(doWhileLoop)
+                }
+                else -> {
+                    return null
+                }
+            }
+        }
+        
+        private fun IrStatement.isLoopVariable() =
+            this is IrVariable && origin == IrDeclarationOrigin.FOR_LOOP_VARIABLE
 
         private fun IrContainerExpression.rewritePostfixIncrDecr(): IrCall? {
             return when (origin) {

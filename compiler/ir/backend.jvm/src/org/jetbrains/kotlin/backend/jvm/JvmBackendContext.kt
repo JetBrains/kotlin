@@ -218,9 +218,6 @@ class JvmBackendContext(
     override val preferJavaLikeCounterLoop: Boolean
         get() = true
 
-    override val reuseLoopVariableAsInductionVariable: Boolean
-        get() = true
-
     override val doWhileCounterLoopOrigin: IrStatementOrigin
         get() = JvmLoweredStatementOrigin.DO_WHILE_COUNTER_LOOP
 

@@ -12647,6 +12647,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "stepped/unsigned");
         }
 
+        @TestMetadata("capturedLoopVar.kt")
+        public void testCapturedLoopVar() throws Exception {
+            runTest("compiler/testData/codegen/box/ranges/capturedLoopVar.kt");
+        }
+
         @TestMetadata("forByteProgressionWithIntIncrement.kt")
         public void testForByteProgressionWithIntIncrement() throws Exception {
             runTest("compiler/testData/codegen/box/ranges/forByteProgressionWithIntIncrement.kt");
@@ -13069,6 +13074,21 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             @TestMetadata("forInCollectionTypeParameterIndices.kt")
             public void testForInCollectionTypeParameterIndices() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/forInIndices/forInCollectionTypeParameterIndices.kt");
+            }
+
+            @TestMetadata("forInListIndices.kt")
+            public void testForInListIndices() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/forInIndices/forInListIndices.kt");
+            }
+
+            @TestMetadata("forInListIndicesBreak.kt")
+            public void testForInListIndicesBreak() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/forInIndices/forInListIndicesBreak.kt");
+            }
+
+            @TestMetadata("forInListIndicesContinue.kt")
+            public void testForInListIndicesContinue() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/forInIndices/forInListIndicesContinue.kt");
             }
 
             @TestMetadata("forInNonOptimizedIndices.kt")

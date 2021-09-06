@@ -5362,9 +5362,19 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex/forInListWithIndex.kt");
             }
 
+            @TestMetadata("forInListWithIndexBreak.kt")
+            public void testForInListWithIndexBreak() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex/forInListWithIndexBreak.kt");
+            }
+
             @TestMetadata("forInListWithIndexBreakAndContinue.kt")
             public void testForInListWithIndexBreakAndContinue() throws Exception {
                 runTest("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex/forInListWithIndexBreakAndContinue.kt");
+            }
+
+            @TestMetadata("forInListWithIndexContinue.kt")
+            public void testForInListWithIndexContinue() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex/forInListWithIndexContinue.kt");
             }
 
             @TestMetadata("forInListWithIndexNoElementVar.kt")
@@ -19646,6 +19656,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
         }
 
+        @TestMetadata("capturedLoopVar.kt")
+        public void testCapturedLoopVar() throws Exception {
+            runTest("compiler/testData/codegen/box/ranges/capturedLoopVar.kt");
+        }
+
         @TestMetadata("forByteProgressionWithIntIncrement.kt")
         public void testForByteProgressionWithIntIncrement() throws Exception {
             runTest("compiler/testData/codegen/box/ranges/forByteProgressionWithIntIncrement.kt");
@@ -20578,6 +20593,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("forInCollectionTypeParameterIndices.kt")
             public void testForInCollectionTypeParameterIndices() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/forInIndices/forInCollectionTypeParameterIndices.kt");
+            }
+
+            @TestMetadata("forInListIndices.kt")
+            public void testForInListIndices() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/forInIndices/forInListIndices.kt");
+            }
+
+            @TestMetadata("forInListIndicesBreak.kt")
+            public void testForInListIndicesBreak() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/forInIndices/forInListIndicesBreak.kt");
+            }
+
+            @TestMetadata("forInListIndicesContinue.kt")
+            public void testForInListIndicesContinue() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/forInIndices/forInListIndicesContinue.kt");
             }
 
             @TestMetadata("forInNonOptimizedIndices.kt")

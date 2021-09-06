@@ -44,10 +44,6 @@ interface ForLoopHeader {
      */
     val consumesLoopVariableComponents: Boolean
 
-    /** `true` if it's possible to use loop variable as induction variable in this kind of loop */
-    val canReuseLoopVariableAsInductionVariable: Boolean
-        get() = false
-
     /** Statements used to initialize an iteration of the loop (e.g., assign loop variable). */
     fun initializeIteration(
         loopVariable: IrVariable?,
@@ -62,7 +58,7 @@ interface ForLoopHeader {
 
 internal const val inductionVariableName = "inductionVariable"
 
-internal fun IrStatement.isInductionVariable(context: CommonBackendContext) =
+fun IrStatement.isInductionVariable(context: CommonBackendContext) =
     this is IrVariable &&
             origin == context.inductionVariableOrigin &&
             name.asString() == inductionVariableName
@@ -74,8 +70,6 @@ abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
 ) : ForLoopHeader {
 
     override val consumesLoopVariableComponents = false
-
-    override val canReuseLoopVariableAsInductionVariable get() = true
 
     val inductionVariable: IrVariable
 
@@ -445,51 +439,56 @@ class ProgressionLoopHeader(
     ): LoopReplacement {
         // Transform loop:
         //      while (<newLoopCondition>) {
-        //          {
-        //              <loopVarAssignments>
-        //              inductionVariable += step
+        //          { // FOR_LOOP_NEXT
+        //              <initializeLoopIteration>
+        //              <inductionVariableUpdate>
         //          }
         //          <originalLoopBody>
         //      }
         // to:
         //      do {
-        //          if (!(<newLoopCondition>)) break
-        //          val forLoopVariable = inductionVariable
+        //          { // FOR_LOOP_NEXT
+        //              if (!(<newLoopCondition>)) break
+        //              <initializeLoopIteration>
+        //          }
         //          <originalLoopBody>
-        //      } while ( { inductionVariable += step; true } )
+        //      } while (
+        //          {
+        //              <inductionVariableUpdate>
+        //              true
+        //          }
+        //      )
         val bodyBlock = newBody as? IrContainerExpression
             ?: throw AssertionError("newBody: ${newBody?.dump()}")
         val forLoopNextBlock = bodyBlock.statements[0] as? IrContainerExpression
             ?: throw AssertionError("bodyBlock[0]: ${bodyBlock.statements[0].dump()}")
         if (forLoopNextBlock.origin != IrStatementOrigin.FOR_LOOP_NEXT)
             throw AssertionError("FOR_LOOP_NEXT expected: ${forLoopNextBlock.dump()}")
-        val loopStep = forLoopNextBlock.statements.last() as? IrSetValue
+        val inductionVariableUpdate = forLoopNextBlock.statements.last() as? IrSetValue
             ?: throw AssertionError("forLoopNextBlock.last: ${forLoopNextBlock.statements.last().dump()}")
 
         val doWhileLoop = IrDoWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, context.doWhileCounterLoopOrigin)
         doWhileLoop.label = oldLoop.label
 
-        val negatedConditionCheck = createNegatedConditionCheck(newLoopCondition, doWhileLoop)
+        bodyBlock.statements[0] = IrCompositeImpl(
+            forLoopNextBlock.startOffset, forLoopNextBlock.endOffset,
+            forLoopNextBlock.type,
+            forLoopNextBlock.origin,
+        ).apply {
+            statements.add(createNegatedConditionCheck(newLoopCondition, doWhileLoop))
+            if (forLoopNextBlock.statements.size >= 2)
+                statements.addAll(forLoopNextBlock.statements.subList(0, forLoopNextBlock.statements.lastIndex))
+        }
 
-        bodyBlock.statements[0] = negatedConditionCheck
-        val loopVarAssignments =
-            if (forLoopNextBlock.statements.size == 2)
-                forLoopNextBlock.statements[0]
-            else
-                IrCompositeImpl(
-                    forLoopNextBlock.startOffset, forLoopNextBlock.endOffset, forLoopNextBlock.type, null,
-                    forLoopNextBlock.statements.subList(0, forLoopNextBlock.statements.lastIndex)
-                )
-        bodyBlock.statements.add(1, loopVarAssignments)
         doWhileLoop.body = bodyBlock
 
-        val stepStartOffset = loopStep.startOffset
-        val stepEndOffset = loopStep.endOffset
+        val stepStartOffset = inductionVariableUpdate.startOffset
+        val stepEndOffset = inductionVariableUpdate.endOffset
         val doWhileCondition =
             IrCompositeImpl(
                 stepStartOffset, stepEndOffset, context.irBuiltIns.booleanType, null,
                 listOf(
-                    loopStep,
+                    inductionVariableUpdate,
                     IrConstImpl.boolean(stepStartOffset, stepEndOffset, context.irBuiltIns.booleanType, true)
                 )
             )

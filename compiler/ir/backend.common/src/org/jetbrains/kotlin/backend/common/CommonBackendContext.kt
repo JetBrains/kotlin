@@ -56,9 +56,6 @@ interface CommonBackendContext : BackendContext, LoggingContext {
     val preferJavaLikeCounterLoop: Boolean
         get() = false
 
-    val reuseLoopVariableAsInductionVariable: Boolean
-        get() = false
-
     val doWhileCounterLoopOrigin: IrStatementOrigin?
         get() = null
 
