@@ -34,7 +34,17 @@ open class Class {
 
     protected val protectedVal = 10
     protected fun protectedFun() = 10
-    protected class protectedClass
+    protected class protectedClass {}
+    protected object protectedNestedObject {}
+    protected companion object {
+        val companionObjectProp = 10
+    }
+
+    public class classWithProtectedConstructors protected constructor() {
+
+        @JsName("createWithString")
+        protected constructor(arg: String): this()
+    }
 
     public val publicVal = 10
     @JsName("publicFun")  // TODO: Should work without JsName

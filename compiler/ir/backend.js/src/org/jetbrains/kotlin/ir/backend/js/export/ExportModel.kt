@@ -31,11 +31,13 @@ class ExportedFunction(
     val isMember: Boolean = false,
     val isStatic: Boolean = false,
     val isAbstract: Boolean = false,
+    val isProtected: Boolean,
     val ir: IrSimpleFunction
 ) : ExportedDeclaration()
 
 class ExportedConstructor(
-    val parameters: List<ExportedParameter>
+    val parameters: List<ExportedParameter>,
+    val isProtected: Boolean
 ) : ExportedDeclaration()
 
 class ExportedProperty(
@@ -45,6 +47,7 @@ class ExportedProperty(
     val isMember: Boolean = false,
     val isStatic: Boolean = false,
     val isAbstract: Boolean,
+    val isProtected: Boolean,
     val irGetter: IrFunction?,
     val irSetter: IrFunction?,
 ) : ExportedDeclaration()

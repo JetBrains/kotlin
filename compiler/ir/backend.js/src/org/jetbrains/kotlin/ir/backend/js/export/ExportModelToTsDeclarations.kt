@@ -41,6 +41,8 @@ fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): Strin
         "${prefix}namespace $name {\n" + declarations.toTypeScript("$indent    ") + "$indent}"
 
     is ExportedFunction -> {
+        val visibility = if (isProtected) "protected " else ""
+
         val keyword: String = when {
             isMember -> when {
                 isStatic -> "static "
@@ -60,17 +62,21 @@ fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): Strin
 
         val renderedReturnType = returnType.toTypeScript(indent)
 
-        "${prefix}$keyword$name$renderedTypeParameters($renderedParameters): $renderedReturnType;"
+        "${prefix}$visibility$keyword$name$renderedTypeParameters($renderedParameters): $renderedReturnType;"
     }
-    is ExportedConstructor ->
-        "constructor(${parameters.joinToString(", ") { it.toTypeScript(indent) }});"
+    is ExportedConstructor -> {
+        val visibility = if (isProtected) "protected " else ""
+        val renderedParameters = parameters.joinToString(", ") { it.toTypeScript(indent) }
+        "${visibility}constructor($renderedParameters);"
+    }
 
     is ExportedProperty -> {
+        val visibility = if (isProtected) "protected " else ""
         val keyword = when {
             isMember -> (if (isAbstract) "abstract " else "") + (if (!mutable) "readonly " else "")
             else -> if (mutable) "let " else "const "
         }
-        prefix + keyword + name + ": " + type.toTypeScript(indent) + ";"
+        "$prefix$visibility$keyword$name: ${type.toTypeScript(indent)};"
     }
 
     is ExportedClass -> {

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.ES6_INIT_BOX_PARAMETER
@@ -75,6 +76,7 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
                     isMember = parent is IrClass,
                     isStatic = function.isStaticMethodOfClass,
                     isAbstract = parent is IrClass && !parent.isInterface && function.modality == Modality.ABSTRACT,
+                    isProtected = function.visibility == DescriptorVisibilities.PROTECTED,
                     ir = function
                 )
             }
@@ -84,7 +86,10 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
         if (!constructor.isPrimary) return null
         val allValueParameters = listOfNotNull(constructor.extensionReceiverParameter) +
                 constructor.valueParameters.filterNot { it.origin === ES6_RESULT_TYPE_PARAMETER || it.origin === ES6_INIT_BOX_PARAMETER }
-        return ExportedConstructor(allValueParameters.map { exportParameter(it) })
+        return ExportedConstructor(
+            parameters = allValueParameters.map { exportParameter(it) },
+            isProtected = constructor.visibility == DescriptorVisibilities.PROTECTED
+        )
     }
 
     private fun exportParameter(parameter: IrValueParameter): ExportedParameter {
@@ -115,6 +120,7 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
             isMember = parentClass != null,
             isStatic = false,
             isAbstract = parentClass?.isInterface == false && property.modality == Modality.ABSTRACT,
+            isProtected = property.visibility == DescriptorVisibilities.PROTECTED,
             irGetter = property.getter,
             irSetter = property.setter
         )
@@ -217,6 +223,7 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
                 isMember = klass.parent is IrClass,
                 isStatic = true,
                 isAbstract = false,
+                isProtected = klass.visibility == DescriptorVisibilities.PROTECTED,
                 irGetter = context.mapping.objectToGetInstanceFunction[klass]!!,
                 irSetter = null
             )
@@ -372,7 +379,7 @@ private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithNam
     // Only actual public declarations with name can be exported
     if (declaration !is IrDeclarationWithVisibility ||
         declaration !is IrDeclarationWithName ||
-        declaration.visibility != DescriptorVisibilities.PUBLIC ||
+        !declaration.visibility.isPublicAPI ||
         declaration.isExpect
     ) {
         return null

@@ -9,10 +9,24 @@ declare namespace JS_TESTS {
     }
     class Class {
         constructor();
+        protected readonly protectedVal: number;
+        protected protectedFun(): number;
+        protected readonly protectedNestedObject: {
+        };
+        protected readonly Companion: {
+            readonly companionObjectProp: number;
+        };
         readonly publicVal: number;
         publicFun(): number;
     }
     namespace Class {
+        class protectedClass {
+            constructor();
+        }
+        class classWithProtectedConstructors {
+            protected constructor();
+            protected static createWithString(arg: string): Class.classWithProtectedConstructors;
+        }
         class publicClass {
             constructor();
         }

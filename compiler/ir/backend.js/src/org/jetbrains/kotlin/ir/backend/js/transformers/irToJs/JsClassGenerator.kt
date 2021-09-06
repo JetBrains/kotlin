@@ -101,7 +101,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 if (property.getter?.extensionReceiverParameter != null || property.setter?.extensionReceiverParameter != null)
                     continue
 
-                if (property.visibility != DescriptorVisibilities.PUBLIC)
+                if (!property.visibility.isPublicAPI)
                     continue
 
                 if (property.isFakeOverride)

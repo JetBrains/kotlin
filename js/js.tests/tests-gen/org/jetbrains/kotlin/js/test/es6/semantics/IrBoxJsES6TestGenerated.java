@@ -1632,6 +1632,11 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
             runTest("js/js.translator/testData/box/export/exportNestedObject.kt");
         }
 
+        @TestMetadata("exportProtectedMembers.kt")
+        public void testExportProtectedMembers() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportProtectedMembers.kt");
+        }
+
         @TestMetadata("nonIndetifierModuleName.kt")
         public void testNonIndetifierModuleName() throws Exception {
             runTest("js/js.translator/testData/box/export/nonIndetifierModuleName.kt");
