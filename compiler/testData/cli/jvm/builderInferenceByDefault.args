@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/builderInferenceByDefault.kt
+-d
+$TEMP_DIR$
+-Xenable-builder-inference
