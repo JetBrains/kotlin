@@ -10583,12 +10583,6 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
-                @TestMetadata("dp.kt")
-                public void testDp() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/dp.kt");
-                }
-
-                @Test
                 @TestMetadata("functionalType.kt")
                 public void testFunctionalType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/functionalType.kt");
@@ -10736,15 +10730,81 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                     }
 
                     @Test
+                    @TestMetadata("autoCloseScope.kt")
+                    public void testAutoCloseScope() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP/autoCloseScope.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("canvas.kt")
+                    public void testCanvas() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP/canvas.kt");
+                    }
+
+                    @Test
                     @TestMetadata("clickHandler.kt")
                     public void testClickHandler() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP/clickHandler.kt");
                     }
 
                     @Test
+                    @TestMetadata("compareTo.kt")
+                    public void testCompareTo() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP/compareTo.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("decimateEveryEvenThird.kt")
+                    public void testDecimateEveryEvenThird() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP/decimateEveryEvenThird.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("dp.kt")
+                    public void testDp() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP/dp.kt");
+                    }
+
+                    @Test
                     @TestMetadata("functionalType.kt")
                     public void testFunctionalType() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP/functionalType.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("iterableClass.kt")
+                    public void testIterableClass() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP/iterableClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("json.kt")
+                    public void testJson() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP/json.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("loggingContext.kt")
+                    public void testLoggingContext() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP/loggingContext.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("monoidSum.kt")
+                    public void testMonoidSum() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP/monoidSum.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("transaction.kt")
+                    public void testTransaction() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP/transaction.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("userStorage.kt")
+                    public void testUserStorage() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP/userStorage.kt");
                     }
                 }
             }

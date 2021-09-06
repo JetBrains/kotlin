@@ -1,0 +1,15 @@
+package
+
+public fun json(/*0*/ build: JSONObject.() -> kotlin.Unit): JSONObject
+public fun test(): kotlin.Unit
+public infix fun kotlin.String.by(/*0*/ build: JSONObject.() -> kotlin.Unit): kotlin.Unit
+public infix fun kotlin.String.by(/*0*/ value: kotlin.Any): kotlin.Unit
+
+public final class JSONObject {
+    public constructor JSONObject()
+    public final fun build(): JSONObject
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun put(/*0*/ key: kotlin.String, /*1*/ any: kotlin.Any): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

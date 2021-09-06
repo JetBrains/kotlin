@@ -1,0 +1,20 @@
+package
+
+public fun now(): kotlin.Any?
+public fun updateUserSession(): kotlin.Unit
+
+public final class Session {
+    public constructor Session(/*0*/ lastAccess: kotlin.Any?)
+    public final var lastAccess: kotlin.Any?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Transaction {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun loadSession(): Session
+    public abstract fun storeSession(/*0*/ session: Session): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

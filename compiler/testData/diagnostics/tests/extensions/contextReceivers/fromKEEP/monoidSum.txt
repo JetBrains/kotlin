@@ -1,0 +1,39 @@
+package
+
+public fun </*0*/ T> listOf(/*0*/ vararg items: T /*kotlin.Array<out T>*/): kotlin.collections.List<T>
+public fun test(): kotlin.Unit
+public inline fun </*0*/ T, /*1*/ R> kotlin.collections.Iterable<T>.fold(/*0*/ initial: R, /*1*/ operation: (acc: R, T) -> R): R
+public fun </*0*/ T> kotlin.collections.List<T>.sum(): T
+
+public object IntMonoid : Monoid<kotlin.Int> {
+    private constructor IntMonoid()
+    public open override /*1*/ val unit: kotlin.Int = 0
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ fun kotlin.Int.combine(/*0*/ other: kotlin.Int): kotlin.Int
+}
+
+public interface Monoid</*0*/ T> : Semigroup<T> {
+    public abstract val unit: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public abstract override /*1*/ /*fake_override*/ fun T.combine(/*0*/ other: T): T
+}
+
+public interface Semigroup</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public abstract infix fun T.combine(/*0*/ other: T): T
+}
+
+public object StringMonoid : Monoid<kotlin.String> {
+    private constructor StringMonoid()
+    public open override /*1*/ val unit: kotlin.String = ""
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ fun kotlin.String.combine(/*0*/ other: kotlin.String): kotlin.String
+}

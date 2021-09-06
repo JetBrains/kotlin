@@ -273,6 +273,7 @@ class ResolvedAtomCompleter(
         val returnType =
             (if (resolvedAtom?.isCoercedToUnit == true) builtIns.unitType else resolvedAtom?.returnType) ?: descriptor.returnType
         val extensionReceiverType = resolvedAtom?.receiver ?: descriptor.extensionReceiverParameter?.type
+        val contextReceiversTypes = resolvedAtom?.contextReceivers ?: descriptor.contextReceiverParameters.map { it.type }
         val dispatchReceiverType = descriptor.dispatchReceiverParameter?.type
         val valueParameterTypes = resolvedAtom?.parameters ?: descriptor.valueParameters.map { it.type }
 
@@ -286,6 +287,14 @@ class ResolvedAtomCompleter(
         val substitutedReceiverType = extensionReceiverType?.substituteAndApproximate(substitutor)?.also {
             if (extensionReceiverFromDescriptor is ReceiverParameterDescriptorImpl && extensionReceiverFromDescriptor.type.shouldBeUpdated()) {
                 extensionReceiverFromDescriptor.setOutType(it.approximatedType)
+            }
+        }
+
+        val substitutedContextReceiversTypes = descriptor.contextReceiverParameters.mapIndexedNotNull { i, contextReceiver ->
+            contextReceiversTypes.getOrNull(i)?.substituteAndApproximate(substitutor)?.also {
+                if (contextReceiver is ReceiverParameterDescriptorImpl && contextReceiver.type.shouldBeUpdated()) {
+                    contextReceiver.setOutType(it.approximatedType)
+                }
             }
         }
 
@@ -304,7 +313,7 @@ class ResolvedAtomCompleter(
             }
         }
 
-        return FunctionLiteralTypes(substitutedReturnType, substitutedValueParameterTypes, substitutedReceiverType)
+        return FunctionLiteralTypes(substitutedReturnType, substitutedValueParameterTypes, substitutedReceiverType, substitutedContextReceiversTypes)
     }
 
     private fun completeLambda(resolvedAtom: ResolvedLambdaAtom) {
@@ -334,7 +343,7 @@ class ResolvedAtomCompleter(
             builtIns,
             existingLambdaType.annotations,
             substitutedLambdaTypes.receiverType?.substitutedType,
-            emptyList(),
+            substitutedLambdaTypes.contextReceiverTypes.map { it.substitutedType },
             substitutedLambdaTypes.parameterTypes.map { it.substitutedType },
             null, // parameter names transforms to special annotations, so they are already taken from parameter types
             substitutedLambdaTypes.returnType.substitutedType,
@@ -641,7 +650,8 @@ class ResolvedAtomCompleter(
 class FunctionLiteralTypes(
     val returnType: ProcessedType,
     val parameterTypes: List<ProcessedType>,
-    val receiverType: ProcessedType?
+    val receiverType: ProcessedType?,
+    val contextReceiverTypes: List<ProcessedType>
 ) {
     class ProcessedType(val substitutedType: KotlinType, val approximatedType: KotlinType)
 }
