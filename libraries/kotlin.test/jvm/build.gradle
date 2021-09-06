@@ -42,9 +42,9 @@ configureJavadocJar()
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [
         "-Xallow-kotlin-package",
-        "-Xopt-in=kotlin.contracts.ExperimentalContracts",
+        "-opt-in=kotlin.contracts.ExperimentalContracts",
         "-Xsuppress-deprecated-jvm-target-warning",
-        "-Xopt-in=kotlin.RequiresOptIn",
+        "-opt-in=kotlin.RequiresOptIn",
     ]
     kotlinOptions.moduleName = project.archivesBaseName
 }
@@ -53,7 +53,7 @@ compileTestKotlin {
     kotlinOptions.freeCompilerArgs = [
         "-Xallow-kotlin-package",
         "-Xsuppress-deprecated-jvm-target-warning",
-        "-Xopt-in=kotlin.RequiresOptIn",
+        "-opt-in=kotlin.RequiresOptIn",
     ]
 }
 

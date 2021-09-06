@@ -12,7 +12,7 @@ import findAssociatedObject
  *
  * Any usage of a declaration annotated with `@ExperimentalAssociatedObjects` must be accepted either by
  * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalAssociatedObjects::class)`,
- * or by using the compiler argument `-Xopt-in=kotlin.reflect.ExperimentalAssociatedObjects`.
+ * or by using the compiler argument `-opt-in=kotlin.reflect.ExperimentalAssociatedObjects`.
  */
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @Retention(value = AnnotationRetention.BINARY)

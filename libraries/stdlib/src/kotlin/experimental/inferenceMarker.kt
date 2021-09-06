@@ -10,7 +10,7 @@ package kotlin.experimental
  *
  * Any usage of a declaration annotated with `@ExperimentalTypeInference` must be accepted either by
  * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalTypeInference::class)`,
- * or by using the compiler argument `-Xopt-in=kotlin.experimental.ExperimentalTypeInference`.
+ * or by using the compiler argument `-opt-in=kotlin.experimental.ExperimentalTypeInference`.
  */
 @Suppress("DEPRECATION")
 @Experimental(level = Experimental.Level.ERROR)

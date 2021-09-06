@@ -14,7 +14,7 @@ import kotlin.internal.RequireKotlinVersionKind
  *
  * Any usage of a declaration annotated with `@ExperimentalMultiplatform` must be accepted either by
  * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalMultiplatform::class)`,
- * or by using the compiler argument `-Xopt-in=kotlin.ExperimentalMultiplatform`.
+ * or by using the compiler argument `-opt-in=kotlin.ExperimentalMultiplatform`.
  */
 @Suppress("DEPRECATION")
 @Experimental

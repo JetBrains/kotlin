@@ -36,7 +36,7 @@ sourceSets {
 compileCompilerKotlin {
     kotlinOptions.jvmTarget = "1.8"
     kotlinOptions.allWarningsAsErrors=true
-    kotlinOptions.freeCompilerArgs += ['-Xopt-in=kotlin.RequiresOptIn', '-Xopt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI', '-Xskip-prerelease-check']
+    kotlinOptions.freeCompilerArgs += ['-opt-in=kotlin.RequiresOptIn', '-opt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI', '-Xskip-prerelease-check']
 }
 
 compileCli_bcKotlin {
@@ -185,11 +185,11 @@ targetList.each { target ->
         args = [*konanArgs,
                 '-output', project(':kotlin-native:runtime').file("build/${target}Stdlib"),
                 '-produce', 'library', '-module-name', 'stdlib',
-                '-Xmulti-platform', '-Xopt-in=kotlin.RequiresOptIn',
-                '-Xopt-in=kotlin.contracts.ExperimentalContracts',
-                '-Xopt-in=kotlin.ExperimentalMultiplatform',
-                '-Xopt-in=kotlin.native.internal.InternalForKotlinNative',
-                '-Xopt-in=kotlin.native.SymbolNameIsDeprecated',
+                '-Xmulti-platform', '-opt-in=kotlin.RequiresOptIn',
+                '-opt-in=kotlin.contracts.ExperimentalContracts',
+                '-opt-in=kotlin.ExperimentalMultiplatform',
+                '-opt-in=kotlin.native.internal.InternalForKotlinNative',
+                '-opt-in=kotlin.native.SymbolNameIsDeprecated',
                 *commonSrc.toList(),
                 *testAnnotationCommon.toList(),
                 *testCommon.toList(),

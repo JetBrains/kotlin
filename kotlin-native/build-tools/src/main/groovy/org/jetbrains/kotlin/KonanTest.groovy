@@ -231,7 +231,7 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
         def experimentalSettings = findLinesWithPrefixesRemoved(text, "// !USE_EXPERIMENTAL: ")
         if (experimentalSettings.size() != 0) {
             experimentalSettings.forEach { line ->
-                line.split(" ").toList().forEach { flags.add("-Xopt-in=$it") }
+                line.split(" ").toList().forEach { flags.add("-opt-in=$it") }
             }
         }
         def expectActualLinker = findLinesWithPrefixesRemoved(text, "// EXPECT_ACTUAL_LINKER")

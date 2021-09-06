@@ -48,7 +48,7 @@ compileKotlin {
                 "-Xno-optimized-callable-references",
                 "-Xno-kotlin-nothing-value-exception",
                 "-Xsuppress-deprecated-jvm-target-warning",
-                "-Xopt-in=kotlin.RequiresOptIn",
+                "-opt-in=kotlin.RequiresOptIn",
         ]
         moduleName = "kotlin-reflection"
     }

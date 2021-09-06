@@ -17,14 +17,14 @@ configureSourcesJar()
 configureJavadocJar()
 
 tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile) {
-    kotlinOptions.freeCompilerArgs += ["-Xallow-kotlin-package", "-Xopt-in=kotlin.RequiresOptIn"]
+    kotlinOptions.freeCompilerArgs += ["-Xallow-kotlin-package", "-opt-in=kotlin.RequiresOptIn"]
 }
 
 compileKotlinCommon {
     kotlinOptions {
         freeCompilerArgs += [
                 "-module-name", project.name,
-                "-Xopt-in=kotlin.contracts.ExperimentalContracts",
+                "-opt-in=kotlin.contracts.ExperimentalContracts",
         ]
     }
 }

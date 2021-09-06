@@ -56,7 +56,7 @@ fun <R> Function<R>.reflect(): KFunction<R>? {
  *
  * Any usage of a declaration annotated with `@ExperimentalReflectionOnLambdas` should be accepted either by
  * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalReflectionOnLambdas::class)`,
- * or by using the compiler argument `-Xopt-in=kotlin.reflect.jvm.ExperimentalReflectionOnLambdas`.
+ * or by using the compiler argument `-opt-in=kotlin.reflect.jvm.ExperimentalReflectionOnLambdas`.
  */
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @Retention(AnnotationRetention.BINARY)

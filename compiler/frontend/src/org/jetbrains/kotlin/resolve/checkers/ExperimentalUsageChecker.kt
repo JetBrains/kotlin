@@ -327,7 +327,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             reportWarning: (String) -> Unit
         ) {
             // Ideally, we should run full resolution (with all classifier usage checkers) on classifiers used in
-            // "-Xopt-in" arguments. However, it's not easy to do this. This should be solved in the future with the support of
+            // "-opt-in" arguments. However, it's not easy to do this. This should be solved in the future with the support of
             // module annotations. For now, we only check deprecations because this is needed to correctly retire unneeded compiler arguments.
             val deprecationResolver = DeprecationResolver(
                 LockBasedStorageManager("ExperimentalUsageChecker"),

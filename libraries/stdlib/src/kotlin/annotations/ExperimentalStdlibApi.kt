@@ -12,7 +12,7 @@ import kotlin.annotation.AnnotationTarget.*
  *
  * Any usage of a declaration annotated with `@ExperimentalStdlibApi` must be accepted either by
  * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalStdlibApi::class)`,
- * or by using the compiler argument `-Xopt-in=kotlin.ExperimentalStdlibApi`.
+ * or by using the compiler argument `-opt-in=kotlin.ExperimentalStdlibApi`.
  */
 @Suppress("DEPRECATION")
 @Experimental(level = Experimental.Level.ERROR)

@@ -15,7 +15,7 @@ import kotlin.internal.RequireKotlinVersionKind
  *
  * Usages of such API will be reported as warnings unless an explicit opt-in with
  * the [OptIn] annotation, e.g. `@OptIn(ExperimentalUnsignedTypes::class)`,
- * or with the `-Xopt-in=kotlin.ExperimentalUnsignedTypes` compiler option is given.
+ * or with the `-opt-in=kotlin.ExperimentalUnsignedTypes` compiler option is given.
  *
  * It's recommended to propagate the experimental status to the API that depends on unsigned types by annotating it with this annotation.
  */
