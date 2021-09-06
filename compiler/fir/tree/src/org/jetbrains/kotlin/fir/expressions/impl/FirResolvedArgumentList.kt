@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAbstractArgumentList
@@ -14,25 +15,61 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
-class FirResolvedArgumentList internal constructor(
-    mapping: LinkedHashMap<FirExpression, FirValueParameter>,
-    override val source: FirSourceElement?
-) : FirAbstractArgumentList() {
-
-    var mapping: LinkedHashMap<FirExpression, FirValueParameter> = mapping
-        private set
+abstract class FirResolvedArgumentList : FirAbstractArgumentList() {
+    abstract override val source: FirSourceElement?
+    abstract val mapping: LinkedHashMap<FirExpression, FirValueParameter>
 
     override val arguments: List<FirExpression>
         get() = mapping.keys.toList()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        for (argument in mapping.keys) {
+        for (argument in arguments) {
             argument.accept(visitor, data)
         }
     }
 
+    abstract override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+        transformArguments(transformer, data)
+        return this
+    }
+}
+
+
+internal class FirResolvedArgumentListImpl(
+    override val source: FirSourceElement?,
+    mapping: LinkedHashMap<FirExpression, FirValueParameter>
+) : FirResolvedArgumentList() {
+
+    override var mapping: LinkedHashMap<FirExpression, FirValueParameter> = mapping
+        private set
+
     override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList {
         mapping = mapping.mapKeys { (k, _) -> k.transformSingle(transformer, data) } as LinkedHashMap<FirExpression, FirValueParameter>
+        return this
+    }
+}
+
+internal class FirResolvedArgumentListForErrorCall(
+    override var source: FirSourceElement?,
+    private var _mapping: LinkedHashMap<FirExpression, FirValueParameter?>
+) : FirResolvedArgumentList() {
+
+    override var mapping: LinkedHashMap<FirExpression, FirValueParameter> = computeMapping()
+        private set
+
+    private fun computeMapping(): LinkedHashMap<FirExpression, FirValueParameter> {
+        @Suppress("UNCHECKED_CAST")
+        return _mapping.filterValues { it != null } as LinkedHashMap<FirExpression, FirValueParameter>
+    }
+
+    override val arguments: List<FirExpression>
+        get() = _mapping.keys.toList()
+
+    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirResolvedArgumentListForErrorCall {
+        _mapping = _mapping.mapKeys { (k, _) -> k.transformSingle(transformer, data) } as LinkedHashMap<FirExpression, FirValueParameter?>
+        mapping = computeMapping()
         return this
     }
 }

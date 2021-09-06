@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorLoop
 import org.jetbrains.kotlin.fir.expressions.impl.FirBlockImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirPartiallyResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -53,7 +52,6 @@ inline val FirCall.resolvedArgumentMapping: Map<FirExpression, FirValueParameter
 inline val FirCall.argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>?
     get() = when (val argumentList = argumentList) {
         is FirResolvedArgumentList -> argumentList.mapping
-        is FirPartiallyResolvedArgumentList -> argumentList.mapping
         else -> null
     }
 

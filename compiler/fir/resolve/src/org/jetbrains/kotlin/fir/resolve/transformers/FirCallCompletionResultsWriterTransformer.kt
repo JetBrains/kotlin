@@ -205,7 +205,7 @@ class FirCallCompletionResultsWriterTransformer(
                 result.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
                 if (calleeReference.isError) {
                     subCandidate.argumentMapping?.let {
-                        result.replaceArgumentList(buildPartiallyResolvedArgumentList(result.argumentList, it))
+                        result.replaceArgumentList(buildArgumentListForErrorCall(result.argumentList, it))
                     }
                 } else {
                     subCandidate.handleVarargs()
@@ -282,7 +282,7 @@ class FirCallCompletionResultsWriterTransformer(
         }
         if (calleeReference.isError) {
             subCandidate.argumentMapping?.let {
-                annotationCall.replaceArgumentList(buildPartiallyResolvedArgumentList(annotationCall.argumentList, it))
+                annotationCall.replaceArgumentList(buildArgumentListForErrorCall(annotationCall.argumentList, it))
             }
         } else {
             subCandidate.handleVarargs()
@@ -465,7 +465,7 @@ class FirCallCompletionResultsWriterTransformer(
         delegatedConstructorCall.argumentList.transformArguments(this, argumentsMapping)
         if (calleeReference.isError) {
             subCandidate.argumentMapping?.let {
-                delegatedConstructorCall.replaceArgumentList(buildPartiallyResolvedArgumentList(delegatedConstructorCall.argumentList, it))
+                delegatedConstructorCall.replaceArgumentList(buildArgumentListForErrorCall(delegatedConstructorCall.argumentList, it))
             }
         } else {
             subCandidate.handleVarargs()
