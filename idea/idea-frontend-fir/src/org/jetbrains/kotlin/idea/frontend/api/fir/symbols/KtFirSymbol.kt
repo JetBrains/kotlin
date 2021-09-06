@@ -34,12 +34,14 @@ internal fun KtFirSymbol<*>.symbolHashCode(): Int = firRef.hashCode() * 31 + tok
 
 private tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (origin) {
     FirDeclarationOrigin.Source -> {
-        if (source?.kind == FirFakeSourceElementKind.DataClassGeneratedMembers
-            || source?.kind == FirFakeSourceElementKind.EnumGeneratedDeclaration
-            || source?.kind == FirFakeSourceElementKind.ItLambdaParameter
-        ) {
-            KtSymbolOrigin.SOURCE_MEMBER_GENERATED
-        } else KtSymbolOrigin.SOURCE
+        when (source?.kind) {
+            FirFakeSourceElementKind.ImplicitConstructor,
+            FirFakeSourceElementKind.DataClassGeneratedMembers,
+            FirFakeSourceElementKind.EnumGeneratedDeclaration,
+            FirFakeSourceElementKind.ItLambdaParameter -> KtSymbolOrigin.SOURCE_MEMBER_GENERATED
+
+            else -> KtSymbolOrigin.SOURCE
+        }
     }
     FirDeclarationOrigin.Library, FirDeclarationOrigin.BuiltIns -> KtSymbolOrigin.LIBRARY
     FirDeclarationOrigin.Java -> KtSymbolOrigin.JAVA

@@ -26,6 +26,13 @@ public class KtPsiBasedSymbolPointer<S : KtSymbol>(private val psiPointer: Smart
     public companion object {
         public fun <S : KtSymbol> createForSymbolFromSource(symbol: S): KtPsiBasedSymbolPointer<S>? {
             if (symbol.origin == KtSymbolOrigin.LIBRARY) return null
+
+            /**
+             * If symbol points to a generated member, we won't be able to recover it later on, because there is no corresponding
+             * psi by which it can be found
+             */
+            if (symbol.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED) return null
+
             val psi = when (val psi = symbol.psi) {
                 is KtDeclaration -> psi
                 is KtObjectLiteralExpression -> psi.objectDeclaration
