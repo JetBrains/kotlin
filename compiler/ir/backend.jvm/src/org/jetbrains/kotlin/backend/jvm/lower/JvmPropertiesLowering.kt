@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -118,7 +119,8 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
         val receiver = expression.dispatchReceiver
         if (receiver != null) {
             val propertyParent = irProperty.parent
-            if (propertyParent is IrClass && propertyParent.symbol != receiver.type.classifierOrNull &&
+            if (propertyParent is IrClass &&
+                receiver.type.classifierOrNull?.isSubtypeOfClass(propertyParent.symbol) != true &&
                 expression.superQualifierSymbol == null
             ) {
                 return irImplicitCast(receiver, propertyParent.defaultType)

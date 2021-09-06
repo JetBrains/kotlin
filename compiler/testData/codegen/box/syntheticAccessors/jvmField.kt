@@ -1,9 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 
-// IGNORE_BACKEND_FIR: JVM_IR
-//  - FIR2IR should generate call to fake override
-
 // FILE: A.kt
 package a
 import b.*
