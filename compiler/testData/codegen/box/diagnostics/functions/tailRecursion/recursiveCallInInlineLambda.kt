@@ -1,5 +1,5 @@
 // KT-16549
-// IGNORE_BACKEND: JVM
+// IGNORE_BACKEND: JVM, JS
 // IGNORE_FIR_DIAGNOSTICS_DIFF
 
 class TailInline {
@@ -7,7 +7,7 @@ class TailInline {
         return action()
     }
 
-    private var countDown = 10
+    private var countDown = 100000
 
     tailrec fun test(): Int {
         if (countDown < 5) return countDown

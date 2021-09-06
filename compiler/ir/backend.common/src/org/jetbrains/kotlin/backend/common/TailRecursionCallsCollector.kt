@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * It is also not guaranteed that each returned call is detected as tail recursion by the frontend.
  * However any returned call can be correctly optimized as tail recursion.
  */
-fun collectTailRecursionCalls(irFunction: IrFunction): Set<IrCall> {
+fun collectTailRecursionCalls(irFunction: IrFunction, followFunctionReference: (IrFunctionReference) -> Boolean): Set<IrCall> {
     if ((irFunction as? IrSimpleFunction)?.isTailrec != true) {
         return emptySet()
     }
@@ -146,6 +146,21 @@ fun collectTailRecursionCalls(irFunction: IrFunction): Set<IrCall> {
             }
 
             result.add(expression)
+        }
+
+        override fun visitFunctionReference(expression: IrFunctionReference, data: ElementKind) {
+            expression.acceptChildren(this, ElementKind.NOT_SURE)
+            // This should match inline lambdas:
+            //   tailrec fun foo() {
+            //     run { return foo() } // non-local return from `foo`, so this *is* a tail call
+            //   }
+            // Whether crossinline lambdas are matched is unimportant, as they can't contain any returns
+            // from `foo` anyway.
+            if (followFunctionReference(expression)) {
+                // If control reaches end of lambda, it will *not* end the current function by default,
+                // so the lambda's body itself is not a tail statement.
+                expression.symbol.owner.body?.accept(this, ElementKind.NOT_SURE)
+            }
         }
     }
 
