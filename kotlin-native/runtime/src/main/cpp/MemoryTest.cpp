@@ -11,8 +11,8 @@
 
 using namespace kotlin;
 
-TEST(MemoryStateTest, GetMemoryStateForUnregisteredThread) {
-    EXPECT_EQ(mm::GetMemoryState(), nullptr);
+TEST(MemoryStateTestDeathTest, GetMemoryStateForUnregisteredThread) {
+    EXPECT_DEATH(mm::GetMemoryState(), "Thread is not attached to the runtime");
 }
 
 TEST(MemoryStateTest, GetMemoryStateForRegisteredThread) {
@@ -20,5 +20,12 @@ TEST(MemoryStateTest, GetMemoryStateForRegisteredThread) {
         MemoryState* actualState = mm::GetMemoryState();
         EXPECT_NE(actualState, nullptr);
         EXPECT_EQ(actualState, expectedState);
+    });
+}
+
+TEST(MemoryStateTest, IsCurrentThreadRegistered) {
+    EXPECT_FALSE(mm::IsCurrentThreadRegistered());
+    RunInNewThread([]() {
+        EXPECT_TRUE(mm::IsCurrentThreadRegistered());
     });
 }

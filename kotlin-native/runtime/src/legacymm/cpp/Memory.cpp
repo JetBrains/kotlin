@@ -3739,7 +3739,12 @@ ALWAYS_INLINE void kotlin::AssertThreadState(MemoryState* thread, std::initializ
 }
 
 MemoryState* kotlin::mm::GetMemoryState() noexcept {
+    RuntimeAssert(memoryState != nullptr, "Thread is not attached to the runtime");
     return ::memoryState;
+}
+
+bool kotlin::mm::IsCurrentThreadRegistered() noexcept {
+    return ::memoryState != nullptr;
 }
 
 kotlin::ThreadState kotlin::GetThreadState(MemoryState* thread) noexcept {

@@ -41,7 +41,6 @@ std::unique_lock<mm::ThreadRegistry::Mutex> mm::ThreadRegistry::Lock() noexcept 
 }
 
 ALWAYS_INLINE mm::ThreadData* mm::ThreadRegistry::CurrentThreadData() const noexcept {
-    RuntimeAssert(CurrentThreadDataNode() != nullptr, "Thread is not attached to the runtime");
     return CurrentThreadDataNode()->Get();
 }
 
