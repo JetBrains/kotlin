@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.resolve.calls.components.*
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
@@ -37,6 +38,18 @@ class DelegatedPropertyInferenceSession(
 ) : ManyCandidatesResolver<FunctionDescriptor>(
     psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents, builtIns
 ) {
+    init {
+        if (parentSession is ManyCandidatesResolver<*>) {
+            parentSession.addNestedInferenceSession(this)
+        }
+    }
+
+    fun getNestedBuilderInferenceSessions(): List<BuilderInferenceSession> {
+        val builderInferenceSessions = nestedInferenceSessions.filterIsInstance<BuilderInferenceSession>()
+        val delegatedPropertyInferenceSessions = nestedInferenceSessions.filterIsInstance<DelegatedPropertyInferenceSession>()
+
+        return builderInferenceSessions + delegatedPropertyInferenceSessions.map { it.getNestedBuilderInferenceSessions() }.flatten()
+    }
 
     override fun prepareForCompletion(commonSystem: NewConstraintSystem, resolvedCallsInfo: List<PSIPartialCallInfo>) {
         val csBuilder = commonSystem.getBuilder()

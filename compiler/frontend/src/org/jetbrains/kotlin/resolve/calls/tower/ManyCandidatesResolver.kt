@@ -30,6 +30,11 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
     protected val partiallyResolvedCallsInfo = arrayListOf<PSIPartialCallInfo>()
     private val errorCallsInfo = arrayListOf<PSIErrorCallInfo<D>>()
     private val completedCalls = hashSetOf<ResolvedAtom>()
+    protected val nestedInferenceSessions = hashSetOf<ManyCandidatesResolver<*>>()
+
+    fun addNestedInferenceSession(inferenceSession: ManyCandidatesResolver<*>) {
+        nestedInferenceSessions.add(inferenceSession)
+    }
 
     open fun prepareForCompletion(commonSystem: NewConstraintSystem, resolvedCallsInfo: List<PSIPartialCallInfo>) {
         // do nothing
