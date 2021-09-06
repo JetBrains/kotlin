@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
@@ -74,13 +75,10 @@ open class LightTreeSourceNavigator : SourceNavigator {
     }
 
     override fun FirSourceElement.getRawIdentifier(): String? {
-        val tokenType = elementType
-        return if (tokenType is KtNameReferenceExpressionElementType || tokenType == KtTokens.IDENTIFIER) {
-            lighterASTNode.toString()
-        } else if (tokenType is KtTypeProjectionElementType) {
-            lighterASTNode.getChildren(treeStructure).last().toString()
-        } else {
-            null
+        return when (elementType) {
+            is KtNameReferenceExpressionElementType, KtTokens.IDENTIFIER -> lighterASTNode.toString()
+            is KtTypeProjectionElementType -> lighterASTNode.getChildren(treeStructure).last().toString()
+            else -> null
         }
     }
 
@@ -89,10 +87,14 @@ open class LightTreeSourceNavigator : SourceNavigator {
     }
 
     override fun FirValueParameterSymbol.isCatchElementParameter(): Boolean {
-        val localSource = source ?: return false
-        var parent = localSource.treeStructure.getParent(localSource.lighterASTNode)
-        parent?.let { parent = localSource.treeStructure.getParent(it) }
-        return parent?.tokenType == KtNodeTypes.CATCH
+        return source?.getParentOfParent()?.tokenType == KtNodeTypes.CATCH
+    }
+
+    private fun FirSourceElement?.getParentOfParent(): LighterASTNode? {
+        val source = this ?: return null
+        var parent = source.treeStructure.getParent(source.lighterASTNode)
+        parent?.let { parent = source.treeStructure.getParent(it) }
+        return parent
     }
 }
 

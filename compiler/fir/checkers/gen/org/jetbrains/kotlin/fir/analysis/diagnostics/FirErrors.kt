@@ -234,6 +234,8 @@ object FirErrors {
     val INAPPLICABLE_PARAM_TARGET by error0<KtAnnotationEntry>()
     val REDUNDANT_ANNOTATION_TARGET by warning1<KtAnnotationEntry, String>()
     val INAPPLICABLE_FILE_TARGET by error0<KtAnnotationEntry>(SourceElementPositioningStrategies.ANNOTATION_USE_SITE)
+    val REPEATED_ANNOTATION by error0<KtAnnotationEntry>()
+    val REPEATED_ANNOTATION_WARNING by warning0<KtAnnotationEntry>()
 
     // OptIn-related
     val EXPERIMENTAL_API_USAGE by warning2<PsiElement, FqName, String>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

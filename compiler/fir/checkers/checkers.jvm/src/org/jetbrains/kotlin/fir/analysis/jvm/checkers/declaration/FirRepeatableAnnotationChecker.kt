@@ -7,14 +7,12 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirAnnotatedDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
-import org.jetbrains.kotlin.fir.analysis.checkers.getRetention
-import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -44,7 +42,7 @@ object FirRepeatableAnnotationChecker : FirAnnotatedDeclarationChecker() {
     private val REPEATABLE_ANNOTATION_CONTAINER_NAME = Name.identifier(JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME)
 
     override fun check(declaration: FirAnnotatedDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        val annotationsSet = hashSetOf<FqName>()
+        val annotationsMap = hashMapOf<ConeKotlinType, MutableList<AnnotationUseSiteTarget?>>()
 
         val session = context.session
         val annotations = declaration.annotations
@@ -54,9 +52,13 @@ object FirRepeatableAnnotationChecker : FirAnnotatedDeclarationChecker() {
             if (annotationClassId.isLocal) continue
             val annotationClass = session.symbolProvider.getClassLikeSymbolByClassId(annotationClassId) ?: continue
 
-            // TODO: consider REPEATED_ANNOTATION ?
-            if (fqName in annotationsSet &&
-                annotationClass.isRepeatableAnnotation(session) &&
+            val useSiteTarget = annotation.useSiteTarget
+            val existingTargetsForAnnotation = annotationsMap.getOrPut(annotation.annotationTypeRef.coneType) { arrayListOf() }
+            val duplicateAnnotation = useSiteTarget in existingTargetsForAnnotation ||
+                    existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) }
+
+            if (duplicateAnnotation &&
+                annotationClass.containsRepeatableAnnotation(session) &&
                 annotationClass.getAnnotationRetention() != AnnotationRetention.SOURCE
             ) {
                 if (context.isJvm6()) {
@@ -80,20 +82,42 @@ object FirRepeatableAnnotationChecker : FirAnnotatedDeclarationChecker() {
                 }
             }
 
-            annotationsSet.add(fqName)
+            existingTargetsForAnnotation.add(useSiteTarget)
         }
 
         if (declaration is FirRegularClass) {
             val javaRepeatable = annotations.find { it.fqName(session) == JAVA_REPEATABLE_ANNOTATION }
             if (javaRepeatable != null) {
-                checkJavaRepeatableAnnotationDeclaration(javaRepeatable, declaration, context, reporter)
+                withSuppressedDiagnostics(javaRepeatable, context) {
+                    checkJavaRepeatableAnnotationDeclaration(javaRepeatable, declaration, context, reporter)
+                }
             } else {
                 val kotlinRepeatable = annotations.find { it.fqName(session) == StandardNames.FqNames.repeatable }
                 if (kotlinRepeatable != null) {
-                    checkKotlinRepeatableAnnotationDeclaration(kotlinRepeatable, declaration, context, reporter)
+                    withSuppressedDiagnostics(kotlinRepeatable, context) {
+                        checkKotlinRepeatableAnnotationDeclaration(kotlinRepeatable, declaration, context, reporter)
+                    }
                 }
             }
         }
+    }
+
+    private fun FirClassLikeSymbol<*>.resolveContainerAnnotation(): FqName? {
+        val repeatableAnnotation =
+            getAnnotationByFqName(StandardNames.FqNames.repeatable) ?: getAnnotationByFqName(JAVA_REPEATABLE_ANNOTATION) ?: return null
+        return repeatableAnnotation.resolveContainerAnnotation()?.asSingleFqName()
+    }
+
+    private fun FirAnnotationCall.resolveContainerAnnotation(): ClassId? {
+        val value = findArgumentByName(REPEATABLE_PARAMETER_NAME) ?: return null
+        val classCallArgument = (value as? FirGetClassCall)?.argument ?: return null
+        if (classCallArgument is FirResolvedQualifier) {
+            return classCallArgument.classId
+        } else if (classCallArgument is FirClassReferenceExpression) {
+            val type = classCallArgument.classTypeRef.coneType.lowerBoundIfFlexible() as? ConeClassLikeType ?: return null
+            return type.lookupTag.classId
+        }
+        return null
     }
 
     private fun checkJavaRepeatableAnnotationDeclaration(
@@ -230,35 +254,5 @@ object FirRepeatableAnnotationChecker : FirAnnotatedDeclarationChecker() {
                 return
             }
         }
-    }
-
-    private fun FirClassLikeSymbol<*>.isRepeatableAnnotation(session: FirSession): Boolean {
-        if (getAnnotationByFqName(StandardNames.FqNames.repeatable) != null) return true
-        if (getAnnotationByFqName(JAVA_REPEATABLE_ANNOTATION) == null) return false
-
-        return session.languageVersionSettings.supportsFeature(LanguageFeature.RepeatableAnnotations) ||
-                getAnnotationRetention() == AnnotationRetention.SOURCE
-    }
-
-    private fun FirClassLikeSymbol<*>.getAnnotationRetention(): AnnotationRetention {
-        return getAnnotationByFqName(StandardNames.FqNames.retention)?.getRetention() ?: AnnotationRetention.RUNTIME
-    }
-
-    private fun FirClassLikeSymbol<*>.resolveContainerAnnotation(): FqName? {
-        val repeatableAnnotation =
-            getAnnotationByFqName(StandardNames.FqNames.repeatable) ?: getAnnotationByFqName(JAVA_REPEATABLE_ANNOTATION) ?: return null
-        return repeatableAnnotation.resolveContainerAnnotation()?.asSingleFqName()
-    }
-
-    private fun FirAnnotationCall.resolveContainerAnnotation(): ClassId? {
-        val value = findArgumentByName(REPEATABLE_PARAMETER_NAME) ?: return null
-        val classCallArgument = (value as? FirGetClassCall)?.argument ?: return null
-        if (classCallArgument is FirResolvedQualifier) {
-            return classCallArgument.classId
-        } else if (classCallArgument is FirClassReferenceExpression) {
-            val type = classCallArgument.classTypeRef.coneType.lowerBoundIfFlexible() as? ConeClassLikeType ?: return null
-            return type.lookupTag.classId
-        }
-        return null
     }
 }

@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.analysis.checkers.checkRepeatedAnnotation
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
+import org.jetbrains.kotlin.fir.analysis.checkers.getDefaultUseSiteTarget
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -17,6 +20,8 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneType
 
 object FirExpressionAnnotationChecker : FirBasicExpressionChecker() {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -26,12 +31,22 @@ object FirExpressionAnnotationChecker : FirBasicExpressionChecker() {
             expression !is FirExpression ||
             expression is FirBlock && expression.source?.kind == FirFakeSourceElementKind.DesugaredForLoop
         ) return
+
+        val annotationsMap = hashMapOf<ConeKotlinType, MutableList<AnnotationUseSiteTarget?>>()
+
         for (annotation in expression.annotations) {
+            val useSiteTarget = annotation.useSiteTarget ?: expression.getDefaultUseSiteTarget(annotation, context)
+            val existingTargetsForAnnotation = annotationsMap.getOrPut(annotation.annotationTypeRef.coneType) { arrayListOf() }
+
             withSuppressedDiagnostics(annotation, context) {
                 if (KotlinTarget.EXPRESSION !in annotation.getAllowedAnnotationTargets(context.session)) {
                     reporter.reportOn(annotation.source, FirErrors.WRONG_ANNOTATION_TARGET, "expression", context)
                 }
+
+                checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, context, reporter)
             }
+
+            existingTargetsForAnnotation.add(useSiteTarget)
         }
     }
 }

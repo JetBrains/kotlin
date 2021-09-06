@@ -363,6 +363,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_FORB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_PARAMETER_IN_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_PARAMETER_NO_INLINE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_ANNOTATION_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESERVED_MEMBER_INSIDE_INLINE_CLASS
@@ -691,6 +693,8 @@ class FirDefaultErrorMessages {
                 TO_STRING,
                 TO_STRING
             )
+            map.put(REPEATED_ANNOTATION, "This annotation is not repeatable")
+            map.put(REPEATED_ANNOTATION_WARNING, "This annotation is not repeatable")
 
             // OptIn
             map.put(EXPERIMENTAL_API_USAGE, "{1}", TO_STRING, STRING)

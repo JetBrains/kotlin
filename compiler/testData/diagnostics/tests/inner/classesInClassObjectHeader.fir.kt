@@ -1,5 +1,5 @@
 class Test {
-    @`InnerAnnotation` @InnerAnnotation
+    @`InnerAnnotation` <!REPEATED_ANNOTATION!>@InnerAnnotation<!>
     companion object : StaticClass(), <!MANY_CLASSES_IN_SUPERTYPE_LIST, UNRESOLVED_REFERENCE!>InnerClass<!>() {
 
     }

@@ -859,6 +859,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.REPEATED_ANNOTATION) { firDiagnostic ->
+        RepeatedAnnotationImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.REPEATED_ANNOTATION_WARNING) { firDiagnostic ->
+        RepeatedAnnotationWarningImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.EXPERIMENTAL_API_USAGE) { firDiagnostic ->
         ExperimentalApiUsageImpl(
             firDiagnostic.a,

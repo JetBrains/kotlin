@@ -88,7 +88,6 @@ private val JAVA_TARGET_CLASS_ID = ClassId.topLevel(FqName(Target::class.java.ca
 private val JAVA_RETENTION_CLASS_ID = ClassId.topLevel(FqName(Retention::class.java.canonicalName))
 private val JAVA_DEPRECATED_CLASS_ID = ClassId.topLevel(FqName(Deprecated::class.java.canonicalName))
 private val JAVA_DOCUMENTED_CLASS_ID = ClassId.topLevel(FqName(Documented::class.java.canonicalName))
-private val JAVA_REPEATABLE_CLASS_ID = ClassId.topLevel(FqName("java.lang.annotation.Repeatable")) // since Java 8
 
 private val JAVA_TARGETS_TO_KOTLIN = mapOf(
     "TYPE" to EnumSet.of(AnnotationTarget.CLASS, AnnotationTarget.FILE),
@@ -171,7 +170,6 @@ private fun JavaAnnotation.toFirAnnotationCall(
         val lookupTag = when (classId) {
             JAVA_TARGET_CLASS_ID -> ClassId.topLevel(StandardNames.FqNames.target)
             JAVA_RETENTION_CLASS_ID -> ClassId.topLevel(StandardNames.FqNames.retention)
-            JAVA_REPEATABLE_CLASS_ID -> ClassId.topLevel(StandardNames.FqNames.repeatable)
             JAVA_DOCUMENTED_CLASS_ID -> ClassId.topLevel(StandardNames.FqNames.mustBeDocumented)
             JAVA_DEPRECATED_CLASS_ID -> ClassId.topLevel(StandardNames.FqNames.deprecated)
             else -> classId

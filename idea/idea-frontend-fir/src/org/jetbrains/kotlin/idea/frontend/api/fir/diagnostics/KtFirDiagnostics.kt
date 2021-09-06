@@ -618,6 +618,14 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InapplicableFileTarget::class
     }
 
+    abstract class RepeatedAnnotation : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = RepeatedAnnotation::class
+    }
+
+    abstract class RepeatedAnnotationWarning : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = RepeatedAnnotationWarning::class
+    }
+
     abstract class ExperimentalApiUsage : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = ExperimentalApiUsage::class
         abstract val optInMarkerFqName: FqName

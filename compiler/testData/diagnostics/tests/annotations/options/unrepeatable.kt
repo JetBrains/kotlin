@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 annotation class unrepann(val x: Int)
 
 annotation class ann(val y: Int)

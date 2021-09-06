@@ -9,7 +9,7 @@ public @interface Ann {
 // FILE: main.kt
 
 @Ann(x = 10, s = "")
-@Ann(<!ARGUMENT_TYPE_MISMATCH!>10<!>, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
-@Ann(x = 10, s = "", y = 10)
+<!REPEATED_ANNOTATION!>@Ann(<!ARGUMENT_TYPE_MISMATCH!>10<!>, <!ARGUMENT_TYPE_MISMATCH!>""<!>)<!>
+<!REPEATED_ANNOTATION!>@Ann(x = 10, s = "", y = 10)<!>
 class A
 
