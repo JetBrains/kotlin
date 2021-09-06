@@ -49,7 +49,12 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         if (declaration is IrConstructor && backendContext.inlineClassesUtils.isClassInlineLike(declaration.parentAsClass))
             return
 
-        val jsCode = declaration.getJsFunAnnotation()
+        val isIntrinsic = declaration.hasWasmNoOpCastAnnotation() || declaration.getWasmOpAnnotation() != null
+        if (isIntrinsic) {
+            return
+        }
+
+        val jsCode = declaration.getJsFunAnnotation() ?: if (declaration.isExternal) declaration.name.asString() else null
         val importedName = if (jsCode != null) {
             val jsCodeName = jsCodeName(declaration)
             context.addJsFun(jsCodeName, jsCode)
@@ -58,10 +63,6 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
             declaration.getWasmImportAnnotation()
         }
 
-        val isIntrinsic = declaration.hasWasmNoOpCastAnnotation() || declaration.getWasmOpAnnotation() != null
-        if (isIntrinsic) {
-            return
-        }
 
         if (declaration.isFakeOverride)
             return
