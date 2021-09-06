@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.cir.CirFunctionOrProperty
 import org.jetbrains.kotlin.commonizer.cir.CirName
+import org.jetbrains.kotlin.commonizer.cir.CirProperty
 import org.jetbrains.kotlin.commonizer.cir.CirType
 import org.jetbrains.kotlin.commonizer.core.TypeCommonizer.Options.Companion.default
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
@@ -47,7 +48,8 @@ private class ReturnTypeCommonizer(
     override fun invoke(values: List<CirFunctionOrProperty>): CirType? {
         if (values.isEmpty()) return null
         val isTopLevel = values.all { it.containingClass == null }
-        return TypeCommonizer(classifiers, default.withCovariantNullabilityCommonizationEnabled(isTopLevel))
+        val isCovariant = values.none { it is CirProperty && it.isVar }
+        return TypeCommonizer(classifiers, default.withCovariantNullabilityCommonizationEnabled(isTopLevel && isCovariant))
             .asCommonizer().commonize(values.map { it.returnType })
     }
 }

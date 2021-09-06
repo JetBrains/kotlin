@@ -63,14 +63,33 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
     fun `test nullable and non-nullable - property`() {
         val result = commonize {
             outputTarget("(a, b)")
-            simpleSingleSourceTarget("a", "val x: Any? = Unit?")
+            simpleSingleSourceTarget("a", "val x: Any? = null")
             simpleSingleSourceTarget("b", "val x: Any = Unit")
         }
 
         result.assertCommonized("(a, b)", "expect val x: Any?")
     }
 
+    fun `test nullable and non-nullable - var - val property`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            simpleSingleSourceTarget("a", "var x: Any? = null")
+            simpleSingleSourceTarget("b", "val x: Any = Unit")
+        }
 
+        result.assertCommonized("(a, b)", "")
+    }
+
+    fun `test nullable and non-nullable - var var property`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            simpleSingleSourceTarget("a", "var x: Any? = null")
+            simpleSingleSourceTarget("b", "var x: Any = Unit")
+        }
+
+        result.assertCommonized("(a, b)", "")
+    }
+    
     fun `test different nullability typealias  - function`() {
         val result = commonize {
             outputTarget("(a, b)")
