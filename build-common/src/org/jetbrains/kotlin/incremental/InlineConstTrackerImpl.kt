@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.ConstantRef
-import java.io.File
 
 class InlineConstTrackerImpl : InlineConstTracker {
     private val inlineConst = hashMapOf<String, MutableSet<ConstantRef>>()
@@ -15,7 +14,7 @@ class InlineConstTrackerImpl : InlineConstTracker {
     val inlineConstMap: Map<String, Collection<ConstantRef>>
         get() = inlineConst
 
-    override fun report(className: String, cRefs: Collection<ConstantRef>) {
-        inlineConst.getOrPut(className) { hashSetOf() }.addAll(cRefs)
+    override fun report(filePath: String, cRefs: Collection<ConstantRef>) {
+        inlineConst.getOrPut(filePath) { hashSetOf() }.addAll(cRefs)
     }
 }

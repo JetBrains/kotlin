@@ -64,21 +64,17 @@ class ConstLowering(val context: JvmBackendContext) : IrElementTransformerVoid()
                 context.state.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER] ?: InlineConstTracker.DoNothing
 
             for (file: KtFile in context.state.files) {
-                val className = file.virtualFilePath
-                var owner: String
-                try {
-                    owner =
-                        ((this as IrGetFieldImpl).symbol.signature as IdSignature.CompositeSignature).container.asPublic()?.firstNameSegment
-                            ?: continue
-                } catch (e: Exception) {
-                    continue
-                }
+                val fileName = file.virtualFilePath
+                val owner =
+                    ((this as? IrGetFieldImpl)?.symbol?.signature as? IdSignature.CompositeSignature)?.container?.asPublic()?.firstNameSegment
+                        ?: continue
+
                 val name = field.name.asString()
-                val descriptor = value.kind.toString()
+                val constType = value.kind.toString()
 
                 inlineConstTracker.report(
-                    className,
-                    listOf(ConstantRef(owner, name, descriptor))
+                    fileName,
+                    listOf(ConstantRef(owner, name, constType))
                 )
             }
         }
@@ -96,7 +92,7 @@ class ConstLowering(val context: JvmBackendContext) : IrElementTransformerVoid()
                 listOf(receiver, resultExpression)
             )
     }
-    
+
     private fun IrExpression.shouldDropConstReceiver() =
         this is IrConst<*> || this is IrGetValue ||
                 this is IrGetObjectValue
