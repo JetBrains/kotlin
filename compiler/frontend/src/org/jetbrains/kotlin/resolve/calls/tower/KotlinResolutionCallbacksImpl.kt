@@ -71,7 +71,7 @@ class KotlinResolutionCallbacksImpl(
     private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
     private val deprecationResolver: DeprecationResolver,
     private val moduleDescriptor: ModuleDescriptor,
-    private val topLevelCallContext: BasicCallResolutionContext?,
+    private val topLevelCallContext: BasicCallResolutionContext,
     private val missingSupertypesResolver: MissingSupertypesResolver
 ) : KotlinResolutionCallbacks {
     class LambdaInfo(val expectedType: UnwrappedType, val contextDependency: ContextDependency) {
@@ -160,8 +160,6 @@ class KotlinResolutionCallbacksImpl(
 
         val coroutineSession =
             if (stubsForPostponedVariables.isNotEmpty()) {
-                require(topLevelCallContext != null) { "Top level call context should not be null to analyze coroutine-lambda" }
-
                 BuilderInferenceSession(
                     psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter,
                     callComponents, builtIns, topLevelCallContext, stubsForPostponedVariables, trace,
@@ -303,8 +301,7 @@ class KotlinResolutionCallbacksImpl(
 
     override fun disableContractsIfNecessary(resolvedAtom: ResolvedCallAtom) {
         val atom = resolvedAtom.atom as? PSIKotlinCall ?: return
-        val context = topLevelCallContext ?: return
-        disableContractsInsideContractsBlock(atom.psiCall, resolvedAtom.candidateDescriptor, context.scope, trace)
+        disableContractsInsideContractsBlock(atom.psiCall, resolvedAtom.candidateDescriptor, topLevelCallContext.scope, trace)
     }
 
     override fun convertSignedConstantToUnsigned(argument: KotlinCallArgument): IntegerValueTypeConstant? {
