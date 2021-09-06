@@ -27,6 +27,17 @@ abstract class IncrementalCompilationBaseIT : BaseGradleIT() {
     }
 
     protected fun doTest(
+        fileToModify: String,
+        modifyFileContents: (originalContents: String) -> String,
+        assertResults: CompiledProject.() -> Unit,
+    ) {
+        doTest(
+            modifyProject = { projectDir.getFileByName(fileToModify).modify(modifyFileContents) },
+            assertResults = { assertResults() }
+        )
+    }
+
+    protected fun doTest(
         project: Project = defaultProject(),
         task: String = "build",
         options: BuildOptions = defaultBuildOptions(),
