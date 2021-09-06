@@ -69,13 +69,15 @@ interface SourceCompilerForInline {
 
 fun GenerationState.trackLookup(container: FqName, functionName: String, location: LocationInfo) {
     val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: return
-    lookupTracker.record(
-        location.filePath,
-        if (lookupTracker.requiresPosition) location.position else Position.NO_POSITION,
-        container.asString(),
-        ScopeKind.CLASSIFIER,
-        functionName
-    )
+    synchronized(lookupTracker) {
+        lookupTracker.record(
+            location.filePath,
+            if (lookupTracker.requiresPosition) location.position else Position.NO_POSITION,
+            container.asString(),
+            ScopeKind.CLASSIFIER,
+            functionName
+        )
+    }
 }
 
 fun loadCompiledInlineFunction(
