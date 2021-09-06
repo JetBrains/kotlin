@@ -106,7 +106,6 @@ inline fun Int.appendHashCode(array: Array<*>?): Int = 31 * this + hashCode(arra
  * Note: This implementation therefore is unsafe when mutating the collection at the same time!!!
  */
 inline fun <T> List<T>.fastForEach(action: (T) -> Unit) {
-    val size = this.size
     for (index in 0 until size) {
         action(this[index])
     }
@@ -117,7 +116,6 @@ inline fun <T> List<T>.fastForEach(action: (T) -> Unit) {
  * Note: This implementation therefore is unsafe when mutating the collection at the same time!!!
  */
 inline fun <T> Array<T>.fastForEach(action: (T) -> Unit) {
-    val size = this.size
     for (index in 0 until size) {
         action(this[index])
     }
