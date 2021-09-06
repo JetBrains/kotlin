@@ -1,3 +1,9 @@
+/*
+  This artifact is deprecated should be used only for compatibility reasons for existing IDE branches like kt-211-master, kt-203-master
+  kotlin-compiler-for-ide was split into multiple jars: kotlin-compiler-fe10-for-ide, kotlin-compiler-common-for-ide, kotlin-compiler-fir-for-ide, etc
+  For kt-212-master IDE branch and newer split compiler jars should be used:
+ */
+
 plugins {
     kotlin("jvm")
 }

@@ -169,43 +169,84 @@ extra["IntellijCoreDependencies"] =
         "trove4j"
     ).filterNotNull()
 
-
-extra["compilerModules"] = arrayOf(
-    ":compiler:util",
-    ":compiler:config",
-    ":compiler:config.jvm",
-    ":compiler:container",
-    ":compiler:resolution.common",
-    ":compiler:resolution.common.jvm",
-    ":compiler:resolution",
-    ":compiler:serialization",
-    ":compiler:psi",
-    ":compiler:frontend",
-    ":compiler:frontend.common",
-    ":compiler:frontend.common-psi",
-    ":compiler:frontend.java",
-    ":compiler:frontend:cfg",
-    ":compiler:cli-common",
+val irCompilerModules = arrayOf(
     ":compiler:ir.tree",
     ":compiler:ir.tree.impl",
     ":compiler:ir.tree.persistent",
-    ":compiler:ir.psi2ir",
+    ":compiler:ir.serialization.common",
+    ":compiler:ir.serialization.js",
+    ":compiler:ir.serialization.jvm",
     ":compiler:ir.backend.common",
+    ":compiler:ir.interpreter",
+    ":wasm:wasm.ir"
+).also { extra["irCompilerModules"] = it }
+
+val commonCompilerModules = arrayOf(
+    ":compiler:psi",
+    ":compiler:frontend.common-psi",
+    ":compiler:light-classes", // TODO split this module to base and FE1.0 implementation modules
+    ":compiler:frontend.common",
+    ":compiler:util",
+    ":compiler:config.jvm",
+    ":compiler:resolution.common",
+    ":compiler:resolution.common.jvm",
+    ":core:metadata",
+    ":core:metadata.jvm",
+    ":core:deserialization.common",
+    ":core:deserialization.common.jvm",
+    ":core:compiler.common",
+    ":core:compiler.common.jvm",
+    ":core:util.runtime",
+    ":compiler:frontend.java" // TODO this is fe10 module but some utils used in fir ide now
+).also { extra["commonCompilerModules"] = it }
+
+val firCompilerCoreModules = arrayOf(
+    ":compiler:fir:cones",
+    ":compiler:fir:resolve",
+    ":compiler:fir:fir-serialization",
+    ":compiler:fir:fir-deserialization",
+    ":compiler:fir:tree",
+    ":compiler:fir:java",
+    ":compiler:fir:raw-fir:raw-fir.common",
+    ":compiler:fir:raw-fir:psi2fir",
+    ":compiler:fir:checkers",
+    ":compiler:fir:checkers:checkers.jvm",
+    ":compiler:fir:entrypoint", // TODO should not be in core modules but FIR IDE uses DependencyListForCliModule from this module
+    ":compiler:fir:fir2ir:jvm-backend",  // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
+    ":compiler:fir:fir2ir" // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
+).also { extra["firCompilerCoreModules"] = it }
+
+val firAllCompilerModules = firCompilerCoreModules +
+    arrayOf(
+        ":compiler:fir:raw-fir:light-tree2fir",
+        ":compiler:fir:analysis-tests",
+        ":compiler:fir:analysis-tests:legacy-fir-tests"
+    )
+
+val fe10CompilerModules = arrayOf(
+    ":compiler",
+    ":core:descriptors.runtime",
+    ":core:descriptors",
+    ":core:descriptors.jvm",
+    ":compiler:resolution",
+    ":compiler:serialization",
+    ":compiler:frontend",
+    ":compiler:config",
+    ":compiler:container",
+    ":compiler:cli-common",
+    ":core:deserialization",
+    ":compiler:frontend:cfg",
+    ":compiler:ir.psi2ir",
     ":compiler:backend.jvm",
     ":compiler:backend.jvm:backend.jvm.entrypoint",
     ":compiler:backend.js",
     ":compiler:backend.wasm",
-    ":compiler:ir.serialization.common",
-    ":compiler:ir.serialization.js",
-    ":compiler:ir.serialization.jvm",
-    ":compiler:ir.interpreter",
     ":kotlin-util-io",
     ":kotlin-util-klib",
     ":kotlin-util-klib-metadata",
     ":compiler:backend-common",
     ":compiler:backend",
     ":compiler:plugin-api",
-    ":compiler:light-classes",
     ":compiler:javac-wrapper",
     ":compiler:cli",
     ":compiler:cli-js",
@@ -221,38 +262,16 @@ extra["compilerModules"] = arrayOf(
     ":js:js.dce",
     ":native:frontend.native",
     ":native:kotlin-native-utils",
-    ":compiler",
     ":kotlin-build-common",
-    ":core:metadata",
-    ":core:metadata.jvm",
-    ":core:deserialization.common",
-    ":core:deserialization.common.jvm",
-    ":core:compiler.common",
-    ":core:compiler.common.jvm",
-    ":compiler:backend.common.jvm",
-    ":core:descriptors",
-    ":core:descriptors.jvm",
-    ":core:descriptors.runtime",
-    ":core:deserialization",
-    ":core:util.runtime",
-    ":compiler:fir:cones",
-    ":compiler:fir:resolve",
-    ":compiler:fir:fir-serialization",
-    ":compiler:fir:fir-deserialization",
-    ":compiler:fir:tree",
-    ":compiler:fir:raw-fir:raw-fir.common",
-    ":compiler:fir:raw-fir:psi2fir",
-    ":compiler:fir:raw-fir:light-tree2fir",
-    ":compiler:fir:fir2ir",
-    ":compiler:fir:fir2ir:jvm-backend",
-    ":compiler:fir:java",
-    ":compiler:fir:checkers",
-    ":compiler:fir:checkers:checkers.jvm",
-    ":compiler:fir:entrypoint",
-    ":compiler:fir:analysis-tests",
-    ":compiler:fir:analysis-tests:legacy-fir-tests",
-    ":wasm:wasm.ir"
-)
+    ":compiler:backend.common.jvm"
+).also { extra["fe10CompilerModules"] = it }
+
+extra["compilerModules"] =
+    irCompilerModules +
+            fe10CompilerModules +
+            commonCompilerModules +
+            firAllCompilerModules
+
 
 extra["compilerModulesForJps"] = listOf(
     ":kotlin-build-common",
@@ -300,6 +319,10 @@ extra["compilerArtifactsForIde"] = listOf(
     ":prepare:ide-plugin-dependencies:high-level-api-fir-tests-for-ide",
     ":prepare:ide-plugin-dependencies:analysis-api-providers-for-ide",
     ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide",
+    ":prepare:ide-plugin-dependencies:kotlin-compiler-ir-for-ide",
+    ":prepare:ide-plugin-dependencies:kotlin-compiler-common-for-ide",
+    ":prepare:ide-plugin-dependencies:kotlin-compiler-fe10-for-ide",
+    ":prepare:ide-plugin-dependencies:kotlin-compiler-fir-for-ide",
     ":kotlin-script-runtime",
     ":kotlin-script-util",
     ":kotlin-scripting-common",
