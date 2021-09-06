@@ -1,0 +1,21 @@
+package
+
+@lib.A public fun test(): kotlin.Unit
+
+package lib {
+
+    public final annotation class A : kotlin.Annotation {
+        public constructor A(/*0*/ value: kotlin.reflect.KClass<(raw) kotlin.Any> = ...)
+        public final val value: kotlin.reflect.KClass<(raw) kotlin.Any>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.annotation.Target(allowedTargets = {}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @javax.annotation.Nonnull @javax.annotation.meta.TypeQualifierDefault(value = {ElementType.METHOD, ElementType.PARAMETER}) public final annotation class NonNullApi : kotlin.Annotation {
+        public constructor NonNullApi()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

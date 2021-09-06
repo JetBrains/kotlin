@@ -222,7 +222,12 @@ class SignatureEnhancement(
             @Suppress("UNCHECKED_CAST")
             return this.enhance(
                 receiverTypeEnhancement?.type,
-                valueParameterEnhancements.map { ValueParameterData(it.type, false) },
+                valueParameterEnhancements.mapIndexed { index, enhanced ->
+                    ValueParameterData(
+                        enhanced.type,
+                        annotationOwnerForMember.valueParameters[index].declaresDefaultValue()
+                    )
+                },
                 returnTypeEnhancement.type,
                 additionalUserData
             ) as D
