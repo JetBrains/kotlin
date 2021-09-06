@@ -65,9 +65,14 @@ class ConstLowering(val context: JvmBackendContext) : IrElementTransformerVoid()
 
             for (file: KtFile in context.state.files) {
                 val className = file.virtualFilePath
-                val owner =
-                    ((this as IrGetFieldImpl).symbol.signature as IdSignature.CompositeSignature).container.asPublic()?.firstNameSegment
-                        ?: continue
+                var owner: String
+                try {
+                    owner =
+                        ((this as IrGetFieldImpl).symbol.signature as IdSignature.CompositeSignature).container.asPublic()?.firstNameSegment
+                            ?: continue
+                } catch (e: Exception) {
+                    continue
+                }
                 val name = field.name.asString()
                 val descriptor = value.kind.toString()
 
