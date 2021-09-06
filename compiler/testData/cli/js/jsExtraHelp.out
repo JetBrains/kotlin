@@ -52,6 +52,8 @@ where advanced options include:
   -Xdump-fqname              FqName of declaration that should be dumped
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file
   -Xeffect-system            Enable experimental language feature: effect system
+  -Xenable-builder-inference Use the builder inference by default, for all calls with lambdas which can't be resolved without it.
+                             The corresponding calls' declarations may not be marked with @BuilderInference.
   -Xexpect-actual-linker     Enable experimental expect/actual linker
   -Xexplicit-api={strict|warning|disable}
                              Force compiler to report errors on all public API declarations without explicit visibility or return type.
