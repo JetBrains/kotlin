@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.inline.isInlineWithReified
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.*
@@ -111,6 +112,9 @@ object JsExportDeclarationChecker : DeclarationChecker {
                     ENUM_CLASS -> "enum class"
                     INTERFACE -> if (descriptor.isExternal) null else "interface"
                     ANNOTATION_CLASS -> "annotation class"
+                    CLASS -> if (descriptor.isInlineClass()) {
+                        "${if (descriptor.isInline) "inline " else ""}${if (descriptor.isValue) "value " else ""}class"
+                    } else null
                     else -> null
                 }
 
