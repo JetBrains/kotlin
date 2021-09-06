@@ -335,20 +335,18 @@ private class ElementsToShortenCollector(
     private fun findTypeToShorten(wholeClassifierId: ClassId, wholeTypeElement: KtUserType): ElementToShorten? {
         val positionScopes = shorteningContext.findScopesAtPosition(wholeTypeElement, namesToImport, towerContextProvider) ?: return null
         val allClassIds = wholeClassifierId.outerClassesWithSelf
-        val allTypeElements = wholeTypeElement.qualifiersWithSelf
+        val allQualifiedTypeElements = wholeTypeElement.qualifiersWithSelf.takeWhile { it.qualifier != null }
         return findClassifierElementsToShorten(
             positionScopes,
             allClassIds,
-            allTypeElements,
+            allQualifiedTypeElements,
             ::ShortenType,
             this::findFakePackageToShorten
-        ) {
-            it.qualifier != null
-        }
+        )
     }
 
     private fun findFakePackageToShorten(typeElement: KtUserType): ShortenType? {
-        val deepestTypeWithQualifier = typeElement.qualifiersWithSelf.last().parent as? KtUserType
+        val deepestTypeWithQualifier = typeElement.qualifiersWithSelf.takeWhile { it.qualifier != null }.lastOrNull()
             ?: error("Type element should have at least one qualifier, instead it was ${typeElement.text}")
 
         return if (deepestTypeWithQualifier.hasFakeRootPrefix()) ShortenType(deepestTypeWithQualifier) else null
@@ -387,14 +385,12 @@ private class ElementsToShortenCollector(
     private inline fun <E> findClassifierElementsToShorten(
         positionScopes: List<FirScope>,
         allClassIds: Sequence<ClassId>,
-        allElements: Sequence<E>,
+        allQualifiedElements: Sequence<E>,
         createElementToShorten: (E, nameToImport: FqName?, importAllInParent: Boolean) -> ElementToShorten,
         findFakePackageToShortenFn: (E) -> ElementToShorten?,
-        elementFilter: (E) -> Boolean = { true },
     ): ElementToShorten? {
 
-        for ((classId, element) in allClassIds.zip(allElements)) {
-            if (!elementFilter(element)) return null
+        for ((classId, element) in allClassIds.zip(allQualifiedElements)) {
             val option = classShortenOption(shorteningContext.toClassSymbol(classId) ?: return null)
             if (option == ShortenOption.DO_NOT_SHORTEN) continue
 
@@ -434,7 +430,7 @@ private class ElementsToShortenCollector(
                 }
             }
         }
-        return findFakePackageToShortenFn(allElements.last())
+        return findFakePackageToShortenFn(allQualifiedElements.last())
     }
 
     private fun processPropertyReference(resolvedNamedReference: FirResolvedNamedReference) {
