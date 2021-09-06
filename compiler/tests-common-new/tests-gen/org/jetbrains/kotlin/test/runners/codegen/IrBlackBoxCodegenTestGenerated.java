@@ -420,6 +420,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("annotationJvmHashCode.kt")
+            public void testAnnotationJvmHashCode() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/annotationJvmHashCode.kt");
+            }
+
+            @Test
             @TestMetadata("annotationToString.kt")
             public void testAnnotationToString() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationToString.kt");

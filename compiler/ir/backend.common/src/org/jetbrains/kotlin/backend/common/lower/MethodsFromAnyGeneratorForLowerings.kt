@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.isHashCode
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -38,71 +39,6 @@ class MethodsFromAnyGeneratorForLowerings(val context: BackendContext, val irCla
         addValueParameter("other", context.irBuiltIns.anyNType)
     }
 
-    inner class LoweringDataClassMemberGenerator(
-        val nameForToString: String,
-        val typeForEquals: IrType,
-        val selectEquals: IrBlockBodyBuilder.(IrType, IrExpression, IrExpression) -> IrExpression,
-    ) :
-        DataClassMembersGenerator(
-            IrGeneratorContextBase(context.irBuiltIns),
-            context.ir.symbols.externalSymbolTable,
-            irClass,
-            origin
-        ) {
-
-        override fun declareSimpleFunction(startOffset: Int, endOffset: Int, functionDescriptor: FunctionDescriptor): IrFunction {
-            error("Descriptor API shouldn't be used in lowerings")
-        }
-
-        override fun generateSyntheticFunctionParameterDeclarations(irFunction: IrFunction) {
-            // no-op — irFunction from lowering should already have necessary parameters
-        }
-
-        override fun getProperty(parameter: ValueParameterDescriptor?, irValueParameter: IrValueParameter?): IrProperty? {
-            error("Descriptor API shouldn't be used in lowerings")
-        }
-
-        override fun transform(typeParameterDescriptor: TypeParameterDescriptor): IrType {
-            error("Descriptor API shouldn't be used in lowerings")
-        }
-
-        override fun getHashCodeFunctionInfo(type: IrType): HashCodeFunctionInfo {
-            val symbol = if (type.isArray() || type.isPrimitiveArray()) {
-                context.irBuiltIns.dataClassArrayMemberHashCodeSymbol
-            } else {
-                type.classOrNull?.functions?.singleOrNull { it.owner.isHashCode() } ?:
-                    context.irBuiltIns.anyClass.functions.single { it.owner.name.asString() == "hashCode" }
-            }
-            return object : HashCodeFunctionInfo {
-                override val symbol: IrSimpleFunctionSymbol = symbol
-
-                override fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>) {}
-            }
-        }
-
-        override fun IrClass.classNameForToString(): String = nameForToString
-
-        fun generateEqualsUsingGetters(equalsFun: IrSimpleFunction, typeForEquals: IrType, properties: List<IrProperty>) = equalsFun.apply {
-            body = this@MethodsFromAnyGeneratorForLowerings.context.createIrBuilder(symbol).irBlockBody {
-                val irType = typeForEquals
-                fun irOther() = irGet(valueParameters[0])
-                fun irThis() = irGet(dispatchReceiverParameter!!)
-                fun IrProperty.get(receiver: IrExpression) = irCall(getter!!).apply {
-                    dispatchReceiver = receiver
-                }
-
-                +irIfThenReturnFalse(irNotIs(irOther(), irType))
-                val otherWithCast = irTemporary(irAs(irOther(), irType), "other_with_cast")
-                for (property in properties) {
-                    val arg1 = property.get(irThis())
-                    val arg2 = property.get(irGet(irType, otherWithCast.symbol))
-                    +irIfThenReturnFalse(irNot(selectEquals(property.getter?.returnType ?: property.backingField!!.type, arg1, arg2)))
-                }
-                +irReturnTrue()
-            }
-        }
-    }
-
     companion object {
         fun IrFunction.isToString(): Boolean =
             name.asString() == "toString" && extensionReceiverParameter == null && valueParameters.isEmpty()
@@ -118,6 +54,53 @@ class MethodsFromAnyGeneratorForLowerings(val context: BackendContext, val irCla
 
         fun IrClass.collectOverridenSymbols(predicate: (IrFunction) -> Boolean): List<IrSimpleFunctionSymbol> =
             superTypes.mapNotNull { it.getClass()?.functions?.singleOrNull(predicate)?.symbol }
-
     }
 }
+
+open class LoweringDataClassMemberGenerator(
+    val backendContext: BackendContext,
+    irClass: IrClass,
+    origin: IrDeclarationOrigin
+) :
+    DataClassMembersGenerator(
+        IrGeneratorContextBase(backendContext.irBuiltIns),
+        backendContext.ir.symbols.externalSymbolTable,
+        irClass,
+        origin
+    ) {
+
+    override fun declareSimpleFunction(startOffset: Int, endOffset: Int, functionDescriptor: FunctionDescriptor): IrFunction {
+        error("Descriptor API shouldn't be used in lowerings")
+    }
+
+    override fun generateSyntheticFunctionParameterDeclarations(irFunction: IrFunction) {
+        // no-op — irFunction from lowering should already have necessary parameters
+    }
+
+    override fun getProperty(parameter: ValueParameterDescriptor?, irValueParameter: IrValueParameter?): IrProperty? {
+        error("Descriptor API shouldn't be used in lowerings")
+    }
+
+    override fun transform(typeParameterDescriptor: TypeParameterDescriptor): IrType {
+        error("Descriptor API shouldn't be used in lowerings")
+    }
+
+    override fun getHashCodeFunctionInfo(type: IrType): HashCodeFunctionInfo {
+        val symbol = if (type.isArray() || type.isPrimitiveArray()) {
+            context.irBuiltIns.dataClassArrayMemberHashCodeSymbol
+        } else {
+            type.classOrNull?.functions?.singleOrNull { it.owner.isHashCode() }
+                ?: context.irBuiltIns.anyClass.functions.single { it.owner.name.asString() == "hashCode" }
+        }
+        return object : HashCodeFunctionInfo {
+            override val symbol: IrSimpleFunctionSymbol = symbol
+
+            override fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>) {}
+        }
+    }
+}
+
+
+
+
+

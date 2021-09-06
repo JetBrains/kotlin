@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.mapTypeParameters
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
@@ -160,7 +162,7 @@ abstract class DataClassMembersGenerator(
             +irResultVar
 
             for (property in properties.drop(1)) {
-                val shiftedResult = irCallOp(context.irBuiltIns.intTimesSymbol, irIntType, irGet(irResultVar), irInt(31))
+                val shiftedResult = shiftResultOfHashCode(irResultVar)
                 val irRhs = irCallOp(context.irBuiltIns.intPlusSymbol, irIntType, shiftedResult, getHashCodeOfProperty(property))
                 +irSet(irResultVar.symbol, irRhs)
             }
@@ -175,30 +177,10 @@ abstract class DataClassMembersGenerator(
                         context.irBuiltIns.intType,
                         irGetProperty(irThis(), property),
                         irInt(0),
-                        getHashCodeOf(property, irGetProperty(irThis(), property))
+                        getHashCodeOf(this, property, irGetProperty(irThis(), property))
                     )
                 else ->
-                    getHashCodeOf(property, irGetProperty(irThis(), property))
-            }
-        }
-
-        private fun getHashCodeOf(property: IrProperty, irValue: IrExpression): IrExpression {
-            val hashCodeFunctionInfo = getHashCodeFunctionInfo(property.backingField!!.type)
-            val hashCodeFunctionSymbol = hashCodeFunctionInfo.symbol
-
-            val hasDispatchReceiver = hashCodeFunctionSymbol.descriptor.dispatchReceiverParameter != null
-            return irCall(
-                hashCodeFunctionSymbol,
-                context.irBuiltIns.intType,
-                valueArgumentsCount = if (hasDispatchReceiver) 0 else 1,
-                typeArgumentsCount = 0
-            ).apply {
-                if (hasDispatchReceiver) {
-                    dispatchReceiver = irValue
-                } else {
-                    putValueArgument(0, irValue)
-                }
-                hashCodeFunctionInfo.commitSubstituted(this)
+                    getHashCodeOf(this, property, irGetProperty(irThis(), property))
             }
         }
 
@@ -229,6 +211,32 @@ abstract class DataClassMembersGenerator(
             +irReturn(irConcat)
         }
     }
+
+    protected open fun IrBuilderWithScope.shiftResultOfHashCode(irResultVar: IrVariable): IrExpression =
+        irCallOp(context.irBuiltIns.intTimesSymbol, context.irBuiltIns.intType, irGet(irResultVar), irInt(31))
+
+    protected open fun getHashCodeOf(builder: IrBuilderWithScope, property: IrProperty, irValue: IrExpression) =
+        builder.getHashCodeOf(property.backingField!!.type, irValue)
+
+    protected fun IrBuilderWithScope.getHashCodeOf(type: IrType, irValue: IrExpression): IrExpression {
+        val hashCodeFunctionInfo = getHashCodeFunctionInfo(type)
+        val hashCodeFunctionSymbol = hashCodeFunctionInfo.symbol
+        val hasDispatchReceiver = hashCodeFunctionSymbol.descriptor.dispatchReceiverParameter != null
+        return irCall(
+            hashCodeFunctionSymbol,
+            context.irBuiltIns.intType,
+            valueArgumentsCount = if (hasDispatchReceiver) 0 else 1,
+            typeArgumentsCount = 0
+        ).apply {
+            if (hasDispatchReceiver) {
+                dispatchReceiver = irValue
+            } else {
+                putValueArgument(0, irValue)
+            }
+            hashCodeFunctionInfo.commitSubstituted(this)
+        }
+    }
+
 
     fun getIrProperty(property: PropertyDescriptor): IrProperty =
         irPropertiesByDescriptor[property]
