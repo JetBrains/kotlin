@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.ConstantRef
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.ir.util.IdSignature
 
 internal val constPhase1 = makeIrFilePhase(
     ::ConstLowering,
@@ -56,13 +58,26 @@ class ConstLowering(val context: JvmBackendContext) : IrElementTransformerVoid()
     private fun IrExpression.lowerConstRead(receiver: IrExpression?, field: IrField?): IrExpression? {
         val value = field?.constantValue() ?: return null
         transformChildrenVoid()
-        val inlineConstTracker = context.state.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER] ?: InlineConstTracker.DoNothing
-        inlineConstTracker.report("Usage",
-                                  listOf(ConstantRef("JavaClass", "CONST", "Ljava/lang/String;")))
-//        if(field.final) { //TODO add static? + report className
-//            inlineConstTracker.report(context.state.files.first(), listOf(ConstantRef("a", field.name, (field.initializer.expression.type as IrSimpleTypeImpl).classifier.signature)))
-//
-//        }
+
+        if (field.isFinal && field.isStatic) {
+            val inlineConstTracker =
+                context.state.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER] ?: InlineConstTracker.DoNothing
+
+            for (file: KtFile in context.state.files) {
+                val className = file.virtualFilePath
+                val owner =
+                    ((this as IrGetFieldImpl).symbol.signature as IdSignature.CompositeSignature).container.asPublic()?.firstNameSegment
+                        ?: continue
+                val name = field.name.asString()
+                val descriptor = value.kind.toString()
+
+                inlineConstTracker.report(
+                    className,
+                    listOf(ConstantRef(owner, name, descriptor))
+                )
+            }
+        }
+
         val resultExpression = if (context.state.shouldInlineConstVals)
             value.copyWithOffsets(startOffset, endOffset)
         else

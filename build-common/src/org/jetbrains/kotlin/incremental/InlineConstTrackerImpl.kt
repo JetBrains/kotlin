@@ -16,9 +16,6 @@ class InlineConstTrackerImpl : InlineConstTracker {
         get() = inlineConst
 
     override fun report(className: String, cRefs: Collection<ConstantRef>) {
-        inlineConst.getOrPut(className) { hashSetOf() }.add(cRefs.first())
-//        for (cRef: ConstantRef in cRefs) {
-//            inlineConst.getOrPut(className) { hashSetOf() }.add(cRef)
-//        }
+        inlineConst.getOrPut(className) { hashSetOf() }.addAll(cRefs)
     }
 }
