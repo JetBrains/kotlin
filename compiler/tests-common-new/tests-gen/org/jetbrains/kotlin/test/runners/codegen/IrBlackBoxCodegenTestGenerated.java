@@ -41529,6 +41529,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("basicSuspendConversionDefault.kt")
+        public void testBasicSuspendConversionDefault() throws Exception {
+            runTest("compiler/testData/codegen/box/suspendConversion/basicSuspendConversionDefault.kt");
+        }
+
+        @Test
         @TestMetadata("basicSuspendConversionForCallableReference.kt")
         public void testBasicSuspendConversionForCallableReference() throws Exception {
             runTest("compiler/testData/codegen/box/suspendConversion/basicSuspendConversionForCallableReference.kt");

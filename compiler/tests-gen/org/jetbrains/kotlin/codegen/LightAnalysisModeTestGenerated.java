@@ -33259,6 +33259,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/suspendConversion/basicSuspendConversion.kt");
         }
 
+        @TestMetadata("basicSuspendConversionDefault.kt")
+        public void ignoreBasicSuspendConversionDefault() throws Exception {
+            runTest("compiler/testData/codegen/box/suspendConversion/basicSuspendConversionDefault.kt");
+        }
+
         @TestMetadata("basicSuspendConversionGenerics.kt")
         public void ignoreBasicSuspendConversionGenerics() throws Exception {
             runTest("compiler/testData/codegen/box/suspendConversion/basicSuspendConversionGenerics.kt");

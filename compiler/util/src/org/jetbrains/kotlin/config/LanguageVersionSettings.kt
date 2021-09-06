@@ -143,7 +143,6 @@ enum class LanguageFeature(
     SamConversionForKotlinFunctions(KOTLIN_1_4),
     SamConversionPerArgument(KOTLIN_1_4),
     FunctionReferenceWithDefaultValueAsOtherType(KOTLIN_1_4),
-    SuspendConversion(KOTLIN_1_4, defaultState = State.DISABLED),
     UnitConversion(KOTLIN_1_4, defaultState = State.DISABLED),
     OverloadResolutionByLambdaReturnType(KOTLIN_1_4),
     ContractsOnCallsWithImplicitReceiver(KOTLIN_1_4),
@@ -216,6 +215,7 @@ enum class LanguageFeature(
     RepeatableAnnotations(KOTLIN_1_6),
     RepeatableAnnotationContainerConstraints(KOTLIN_1_6, kind = BUG_FIX),
     UseBuilderInferenceOnlyIfNeeded(KOTLIN_1_6),
+    SuspendConversion(KOTLIN_1_6),
 
     // 1.7
 
