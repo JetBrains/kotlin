@@ -15,7 +15,7 @@ fun foo(arg: Any) {
     val argAsInt = try {
         arg as Int
     } catch (e: ClassCastException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         0
     }
     printInt(argAsInt)

@@ -33,7 +33,7 @@ fun testCast(x: Any?, expectSuccess: Boolean) {
     try {
         x as TestKlass
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         ensure(!expectSuccess)
         return
     }
@@ -45,7 +45,7 @@ fun testCastToNullable(x: Any?, expectSuccess: Boolean) {
     try {
         x as TestKlass?
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         ensure(!expectSuccess)
         return
     }
@@ -57,7 +57,7 @@ fun testCastNotNullableToNullable(x: Any, expectSuccess: Boolean) {
     try {
         x as TestKlass?
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         ensure(!expectSuccess)
         return
     }

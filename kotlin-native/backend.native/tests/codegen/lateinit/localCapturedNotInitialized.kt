@@ -18,7 +18,7 @@ import kotlin.test.*
         println(foo())
     }
     catch (e: RuntimeException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("OK")
         return
     }

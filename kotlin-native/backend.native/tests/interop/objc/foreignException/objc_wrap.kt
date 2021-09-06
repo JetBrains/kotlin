@@ -15,7 +15,7 @@ fun testInner(name: String, reason: String) {
     try {
         raiseExc(name, reason)
     } catch (e: RuntimeException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         catchBlockTest = "This shouldn't happen"
     } finally {
         finallyBlockTest = "PASSED"
@@ -35,7 +35,7 @@ typealias CallMe = (String, String) -> Unit
     try {
         raise(name, reason)
     } catch (e: ForeignException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         val ret = logExc(e.nativeException) // return NSException name
         assertEquals(name, ret)
         assertEquals("$name:: $reason", e.message)

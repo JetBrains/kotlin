@@ -33,7 +33,7 @@ class BasicAssertionsTest {
                assertFailsWith<IllegalStateException> { throw IllegalArgumentException() }
            }
            catch (e: AssertionError) {
-               assertTrue(runtimeCurrentFrameIsEqual(frame))
+               assertEquals(frame, runtimeGetCurrentFrame())
                return@run
            }
            throw AssertionError("Expected to fail")
@@ -44,7 +44,7 @@ class BasicAssertionsTest {
                assertFailsWith<IllegalStateException> {  }
            }
            catch (e: AssertionError) {
-               assertTrue(runtimeCurrentFrameIsEqual(frame))
+               assertEquals(frame, runtimeGetCurrentFrame())
                return@run
            }
            throw AssertionError("Expected to fail")

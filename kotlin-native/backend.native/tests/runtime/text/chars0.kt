@@ -43,7 +43,7 @@ fun testToChars() {
         Char.toChars(Int.MAX_VALUE)
         throw AssertionError()
     } catch (e: IllegalArgumentException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
 }
 
@@ -105,21 +105,21 @@ fun testCategory() {
         CharCategory.valueOf(-1)
         throw AssertionError()
     } catch (e: IllegalArgumentException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
 
     try {
         CharCategory.valueOf(31)
         throw AssertionError()
     } catch (e: IllegalArgumentException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
 
     try {
         CharCategory.valueOf(17)
         throw AssertionError()
     } catch (e: IllegalArgumentException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
 }
 

@@ -48,7 +48,7 @@ fun builder(c: suspend () -> Unit) {
         result = try {
             f1()
         } catch (t: Throwable) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
             f2()
         } finally {
             s1()

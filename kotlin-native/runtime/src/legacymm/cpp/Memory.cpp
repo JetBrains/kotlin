@@ -2563,20 +2563,10 @@ void setCurrentFrame(ObjHeader** start) {
     if (Strict) {
         currentFrame = frame;
     } else {
-        while (currentFrame != frame && currentFrame != nullptr) {
-            auto parameters = currentFrame->parameters;
-            auto count = currentFrame->count;
-            ObjHeader** current = reinterpret_cast<ObjHeader**>(currentFrame + 1)  + parameters + kFrameOverlaySlots;
-            count -= parameters;
-            while (count-- > kFrameOverlaySlots) {
-                ObjHeader* object = *current;
-                if (object != nullptr) {
-                    releaseHeapRef<false>(object);
-                }
-                current++;
-            }
-            currentFrame = currentFrame->previous;
-        }
+        konan::consoleErrorf(
+               "Relaxed memory model is deprecated and doesn't support exception handling proper way!\n");
+        konan::consoleFlush();
+        konan::abort();
     }
 }
 
@@ -3682,10 +3672,6 @@ RUNTIME_NOTHROW void GC_RegisterWorker(void* worker) {
 
 RUNTIME_NOTHROW FrameOverlay* getCurrentFrame() {
     return currentFrame;
-}
-
-RUNTIME_NOTHROW bool currentFrameIsEqual(FrameOverlay* frame) {
-    return currentFrame == frame;
 }
 
 RUNTIME_NOTHROW void GC_UnregisterWorker(void* worker) {

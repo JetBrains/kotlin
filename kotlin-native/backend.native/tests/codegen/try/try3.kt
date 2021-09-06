@@ -13,7 +13,7 @@ import kotlin.test.*
     val x = try {
         throw Error()
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         6
     }
 

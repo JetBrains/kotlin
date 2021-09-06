@@ -20,7 +20,7 @@ import kotlin.system.exitProcess
         raiseExc(name, reason)
         assertNotEquals("FAILED", catchBlockTest)  // shall not get here anyway
     } catch (e: ForeignException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         val ret = logExc(e.nativeException) // return NSException name
         assertEquals(name, ret)
         assertEquals("$name:: $reason", e.message)

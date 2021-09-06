@@ -15,21 +15,21 @@ import kotlin.test.*
         for (i in 0 .. 4 step -2) print(i); println()
         throw AssertionError()
     } catch (e: IllegalArgumentException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
 
     try {
         for (i in 0 until 4 step -2) print(i); println()
         throw AssertionError()
     } catch (e: IllegalArgumentException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
 
     try {
         for (i in 4 downTo 0 step -2) print(i); println()
         throw AssertionError()
     } catch (e: IllegalArgumentException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
 
     // Zero step.
@@ -37,21 +37,21 @@ import kotlin.test.*
         for (i in 0 .. 4 step 0) print(i); println()
         throw AssertionError()
     } catch (e: IllegalArgumentException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
 
     try {
         for (i in 0 until 4 step 0) print(i); println()
         throw AssertionError()
     } catch (e: IllegalArgumentException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
 
     try {
         for (i in 4 downTo 0 step 0) print(i); println()
         throw AssertionError()
     } catch (e: IllegalArgumentException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
 
     // Two steps, one is negative.
@@ -59,21 +59,21 @@ import kotlin.test.*
         for (i in 0 .. 4 step -2 step 3) print(i); println()
         throw AssertionError()
     } catch (e: IllegalArgumentException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
 
     try {
         for (i in 0 until 4 step -2 step 3) print(i); println()
         throw AssertionError()
     } catch (e: IllegalArgumentException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
 
     try {
         for (i in 4 downTo 0 step -2 step 3) print(i); println()
         throw AssertionError()
     } catch (e: IllegalArgumentException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
 
     println("OK")

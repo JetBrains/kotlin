@@ -120,7 +120,7 @@ abstract class ExecuteAfter : ExecuteMethod<AtomicReference<Any?>> {
                 block()
                 result.value = true
             } catch (e: Throwable) {
-                assertTrue(runtimeCurrentFrameIsEqual(frame))
+                assertEquals(frame, runtimeGetCurrentFrame())
                 result.value = e.freeze()
             }
         }.freeze())

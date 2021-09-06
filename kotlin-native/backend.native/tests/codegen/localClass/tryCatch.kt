@@ -15,7 +15,7 @@ private fun foo() {
                     val frame = runtimeGetCurrentFrame()
                     try {
                     } catch (t: Throwable) {
-                        assertTrue(runtimeCurrentFrameIsEqual(frame))
+                        assertEquals(frame, runtimeGetCurrentFrame())
                         println(t)
                     }
                 }

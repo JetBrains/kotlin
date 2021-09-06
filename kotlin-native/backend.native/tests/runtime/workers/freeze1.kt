@@ -43,7 +43,7 @@ fun makeDiamond(): Node2 {
     try {
         immutable.data = 42
     } catch (e: InvalidMutabilityException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("OK, cannot mutate frozen")
     }
 }

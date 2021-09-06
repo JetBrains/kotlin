@@ -24,7 +24,7 @@ fun foo(x: Int) {
         bar(x)
         baz1()
     } catch (t: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println(y)
     }
 }

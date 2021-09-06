@@ -14,14 +14,14 @@ import kotlin.test.*
         try {
             return
         } catch (e: Error) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
             println("Catch 1")
         } finally {
             println("Finally")
             throw Error()
         }
     } catch (e: Error) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("Catch 2")
     }
 

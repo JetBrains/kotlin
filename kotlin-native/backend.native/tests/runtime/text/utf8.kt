@@ -124,7 +124,7 @@ fun <T: Any> checkThrows(e: KClass<T>, string: String, action: () -> Unit) {
     try {
         action()
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         exception = e
     }
     assertNotNull(exception, "No exception was thrown for string: $string")

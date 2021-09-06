@@ -71,7 +71,7 @@ class MatchResultTest {
                 result.groups[-100]
                 fail("IndexOutBoundsException expected")
             } catch (e: IndexOutOfBoundsException) {
-                assertTrue(runtimeCurrentFrameIsEqual(frame))
+                assertEquals(frame, runtimeGetCurrentFrame())
             }
         }
 

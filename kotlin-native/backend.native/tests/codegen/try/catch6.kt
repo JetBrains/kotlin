@@ -15,10 +15,10 @@ import kotlin.test.*
         foo()
         println("After")
     } catch (e: Exception) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("Caught Exception")
     } catch (e: Error) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("Caught Error")
     }
 
@@ -30,7 +30,7 @@ fun foo() {
     try {
         throw Error("Error happens")
     } catch (e: Exception) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("Caught Exception")
     }
 }

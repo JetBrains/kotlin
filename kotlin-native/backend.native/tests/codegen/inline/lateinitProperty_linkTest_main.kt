@@ -13,7 +13,7 @@ fun main() {
         val res = foo(intArrayOf(1, 2, 3)) { x, y, z -> x + y - z }
         println(res)
     } catch (t: UninitializedPropertyAccessException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("OK")
     }
 }

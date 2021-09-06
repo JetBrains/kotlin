@@ -27,7 +27,7 @@ fun main() {
     try {
         println(NSJSONSerialization())
     } catch (e: Exception) { // ForeignException expected
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println(e)
     }
 }

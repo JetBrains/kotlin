@@ -12,12 +12,12 @@ inline fun foo() {
         try {
             throw Exception("XXX")
         } catch (e: Throwable) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
             println("Gotcha1: ${e.message}")
             throw Exception("YYY")
         }
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("Gotcha2: ${e.message}")
     }
 }

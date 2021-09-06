@@ -12,7 +12,7 @@ fun main() {
         exception()
     }
     catch (e:Exception) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         val stackTrace = e.getStackTrace()
         stackTrace.take(6).forEach(::checkFrame)
     }

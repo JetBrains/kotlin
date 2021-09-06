@@ -22,7 +22,7 @@ import kotlin.test.*
         println("After nested try")
 
     } catch (e: Error) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("Caught Error")
     }
 

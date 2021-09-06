@@ -38,9 +38,9 @@ fun assertException(body: () -> Unit) {
         body()
         throw AssertionError ("Test failed: no IndexOutOfBoundsException on wrong indices")
     } catch (e: IndexOutOfBoundsException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     } catch (e: IllegalArgumentException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
 }
 

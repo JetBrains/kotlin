@@ -42,28 +42,28 @@ class MatchResultTest2 {
             result.groups[3]
             fail("IndexOutOfBoundsException expected")
         } catch (e: IndexOutOfBoundsException) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
         }
 
         try {
             result.groupValues[3]
             fail("IndexOutOfBoundsException expected")
         } catch (e: IndexOutOfBoundsException) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
         }
 
         try {
             result.groups[-1]
             fail("IndexOutOfBoundsException expected")
         } catch (e: IndexOutOfBoundsException) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
         }
 
         try {
             result.groupValues[-1]
             fail("IndexOutOfBoundsException expected")
         } catch (e: IndexOutOfBoundsException) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
         }
 
         result = result.next()
@@ -81,28 +81,28 @@ class MatchResultTest2 {
             result.groups[3]
             fail("IndexOutOfBoundsException expected")
         } catch (e: IndexOutOfBoundsException) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
         }
 
         try {
             result.groupValues[3]
             fail("IndexOutOfBoundsException expected")
         } catch (e: IndexOutOfBoundsException) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
         }
 
         try {
             result.groups[-1]
             fail("IndexOutOfBoundsException expected")
         } catch (e: IndexOutOfBoundsException) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
         }
 
         try {
             result.groupValues[-1]
             fail("IndexOutOfBoundsException expected")
         } catch (e: IndexOutOfBoundsException) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
         }
 
         result = result.next()
@@ -122,7 +122,7 @@ class MatchResultTest2 {
             regex.replace(str, substitutionString)
             fail("IllegalArgumentException should be thrown")
         } catch (e: IllegalArgumentException) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
         }
     }
 

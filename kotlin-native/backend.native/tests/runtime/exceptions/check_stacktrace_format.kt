@@ -37,7 +37,7 @@ fun main(args : Array<String>) {
     try {
         functionB()
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         val stacktrace = e.getStackTrace()
 	    assertTrue(stacktrace.size >= depth)
 	    stacktrace.take(depth).forEach(::checkStringFormat)

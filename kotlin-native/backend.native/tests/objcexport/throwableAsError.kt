@@ -16,7 +16,7 @@ fun callAndCatchThrowableAsError(throwsThrowableAsError: ThrowsThrowableAsError)
     try {
         throwsThrowableAsError.throwError()
     } catch (e: ThrowableAsError) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         return e
     }
 

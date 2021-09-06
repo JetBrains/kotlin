@@ -26,13 +26,13 @@ fun main() {
     try {
         println(x)
     } catch(t: IllegalStateException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("caught")
     }
     try {
         println(y)
     } catch(t: kotlin.native.FileFailedToInitializeException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("caught2")
     }
 }

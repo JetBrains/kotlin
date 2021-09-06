@@ -15,7 +15,7 @@ fun runTest() {
         val x = cast<String>(Any())
         println(x.length)
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("Ok")
     }
 }

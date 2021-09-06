@@ -7,7 +7,7 @@ fun main() {
     try {
         foo()
     } catch (tw:Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         val stackTrace = tw.getStackTrace()
         stackTrace.take(6).forEach(::checkFrame)
     }

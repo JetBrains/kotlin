@@ -14,7 +14,7 @@ import kotlin.test.*
         throw Error()
         5
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         6
     }
 

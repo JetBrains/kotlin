@@ -32,11 +32,11 @@ fun callbackWithException() {
     try {
         runCallback(staticCFunction(::throwException))
     } catch (e: CustomException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         assertRunnableThreadState()
         return
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         assertRunnableThreadState()
         fail("Wrong exception type: ${e.message}")
     }
@@ -48,7 +48,7 @@ fun callbackWithFinally() {
     try {
         runCallback(staticCFunction(::throwException))
     } catch (e: CustomException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         assertRunnableThreadState()
         return
     } finally {
@@ -67,7 +67,7 @@ fun callbackWithFinallyNoCatch() {
         }
         assertRunnableThreadState()
     } catch (_: CustomException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
 }
 
@@ -79,11 +79,11 @@ fun nestedCallbackWithException() {
             runCallback(staticCFunction(::throwException))
         })
     } catch (e: CustomException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         assertRunnableThreadState()
         return
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         assertRunnableThreadState()
         fail("Wrong exception type: ${e.message}")
     }
@@ -98,7 +98,7 @@ fun nestedCallbackWithFinally() {
             runCallback(staticCFunction(::throwException))
         })
     } catch (e: CustomException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         assertRunnableThreadState()
         return
     } finally {

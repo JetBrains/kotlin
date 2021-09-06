@@ -43,7 +43,7 @@ val topSharedData = Data(43)
         try {
             topStringVar == "string"
         } catch (e: IncorrectDereferenceException) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
             false
         }
     }).consume {
@@ -55,7 +55,7 @@ val topSharedData = Data(43)
         try {
             topSharedStringWithGetter == "top"
         } catch (e: IncorrectDereferenceException) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
             false
         }
     }).consume {
@@ -67,7 +67,7 @@ val topSharedData = Data(43)
         try {
             topData.x == 42
         } catch (e: IncorrectDereferenceException) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
             false
         }
     }).consume {
@@ -79,7 +79,7 @@ val topSharedData = Data(43)
         try {
             topSharedData.x == 43
         } catch (e: Throwable) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
             false
         }
     }).consume {

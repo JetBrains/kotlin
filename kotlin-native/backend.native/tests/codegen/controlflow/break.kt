@@ -31,7 +31,7 @@ fun bar() {
       println("bar@l1")
       throw Exception()
     } catch (e: Exception) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
       l2@do {
         if ((i++ % 2) == 0) continue@l2
         println("bar@l2")

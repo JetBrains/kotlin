@@ -14,7 +14,7 @@ fun inline_todo() {
     try {
         TODO("OK")
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println(e.message)
     }
 }

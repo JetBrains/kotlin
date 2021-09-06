@@ -13,7 +13,7 @@ import kotlin.test.*
     try {
         foo()
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         val message = e.message
         if (message != null) {
             println(message)

@@ -20,7 +20,7 @@ fun foo(value: Any): Int? {
         try {
             return value.toString().toInt()
         } catch (e: NumberFormatException) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
             return null
         }
     }

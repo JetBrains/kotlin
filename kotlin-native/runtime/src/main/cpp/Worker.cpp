@@ -1051,22 +1051,23 @@ JobKind Worker::processQueueElement(bool blocking) {
     case JOB_EXECUTE_AFTER: {
       ObjHolder operationHolder, dummyHolder;
       KRef obj = DerefStablePointer(job.executeAfter.operation, operationHolder.slot());
-      try {
-#if KONAN_OBJC_INTEROP
-        konan::AutoreleasePool autoreleasePool;
-#endif
-        WorkerLaunchpad(obj, dummyHolder.slot());
-      } catch (ExceptionObjHolder& e) {
+      runWithCatchExceptionObjHolder([&]() {
+          #if KONAN_OBJC_INTEROP
+            konan::AutoreleasePool autoreleasePool;
+          #endif
+            WorkerLaunchpad(obj, dummyHolder.slot());
+      }, [&](ExceptionObjHolder& e) {
         switch (exceptionHandling()) {
-            case WorkerExceptionHandling::kIgnore: break;
-            case WorkerExceptionHandling::kDefault:
-                kotlin::ProcessUnhandledException(e.GetExceptionObject());
-                break;
-            case WorkerExceptionHandling::kLog:
-                ReportUnhandledException(e.GetExceptionObject());
-                break;
+          case WorkerExceptionHandling::kIgnore: break;
+          case WorkerExceptionHandling::kDefault:
+              kotlin::ProcessUnhandledException(e.GetExceptionObject());
+              break;
+          case WorkerExceptionHandling::kLog:
+              ReportUnhandledException(e.GetExceptionObject());
+              break;
         }
-      }
+      });
+
       DisposeStablePointer(job.executeAfter.operation);
       break;
     }
@@ -1076,15 +1077,15 @@ JobKind Worker::processQueueElement(bool blocking) {
       ObjHolder argumentHolder;
       ObjHolder resultHolder;
       KRef argument = AdoptStablePointer(job.regularJob.argument, argumentHolder.slot());
-      try {
-#if KONAN_OBJC_INTEROP
-        konan::AutoreleasePool autoreleasePool;
-#endif
-        job.regularJob.function(argument, resultHolder.slot());
-        argumentHolder.clear();
-        // Transfer the result.
-        result = transfer(&resultHolder, job.regularJob.transferMode);
-      } catch (ExceptionObjHolder& e) {
+      runWithCatchExceptionObjHolder([&]() {
+        #if KONAN_OBJC_INTEROP
+          konan::AutoreleasePool autoreleasePool;
+        #endif
+          job.regularJob.function(argument, resultHolder.slot());
+          argumentHolder.clear();
+          // Transfer the result.
+          result = transfer(&resultHolder, job.regularJob.transferMode);
+      }, [&](ExceptionObjHolder& e) {
         ok = false;
         switch (exceptionHandling()) {
             case WorkerExceptionHandling::kIgnore:
@@ -1094,6 +1095,10 @@ JobKind Worker::processQueueElement(bool blocking) {
                 ReportUnhandledException(e.GetExceptionObject());
                 break;
         }
+      });
+      try {
+      } catch (ExceptionObjHolder& e) {
+
       }
       // Notify the future.
       job.regularJob.future->storeResultUnlocked(result, ok);

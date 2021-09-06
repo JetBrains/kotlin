@@ -15,7 +15,7 @@ import kotlin.test.*
         foo()
         println("After")
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("Caught Throwable")
     }
 

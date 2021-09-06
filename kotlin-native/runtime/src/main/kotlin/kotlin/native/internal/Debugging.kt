@@ -28,10 +28,6 @@ public external fun Any.isLocal() : Boolean
 @InternalForKotlinNative
 public external fun runtimeGetCurrentFrame() : NativePtr
 
-@GCUnsafeCall("Kotlin_Debugging_currentFrameIsEqual")
-@InternalForKotlinNative
-public external fun runtimeCurrentFrameIsEqual(frame: NativePtr) : Boolean
-
 @GCUnsafeCall("Kotlin_Debugging_getForceCheckedShutdown")
 private external fun Debugging_getForceCheckedShutdown(): Boolean
 

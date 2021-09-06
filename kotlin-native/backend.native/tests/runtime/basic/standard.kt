@@ -20,7 +20,7 @@ fun <T> assertEquals(actual: T, expected: T) {
         TODO()
         throw AssertionError("TODO() doesn't throw an exception")
     } catch(e: NotImplementedError) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
 
     val foo = Foo(42)

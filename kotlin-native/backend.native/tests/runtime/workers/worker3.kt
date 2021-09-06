@@ -28,7 +28,7 @@ fun main(args: Array<String>) {
             input -> WorkerResult(input.intParam, input.dataParam.toString() + " result")
         }
     } catch (e: IllegalStateException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         null
     }
     if (future != null && Platform.memoryModel == MemoryModel.STRICT)

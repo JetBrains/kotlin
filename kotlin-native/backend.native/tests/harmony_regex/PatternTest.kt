@@ -243,7 +243,7 @@ class PatternTest {
             fail("Expected a IllegalArgumentException when compiling pattern: " + pattern)
         } catch (e: IllegalArgumentException) {
             // pass
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
         }
 
         pattern = "bcde)a"
@@ -252,7 +252,7 @@ class PatternTest {
             fail("Expected a IllegalArgumentException when compiling pattern: " + pattern)
         } catch (e: IllegalArgumentException) {
             // pass
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
         }
 
         pattern = "bbg())a"
@@ -261,7 +261,7 @@ class PatternTest {
             fail("Expected a IllegalArgumentException when compiling pattern: " + pattern)
         } catch (e: IllegalArgumentException) {
             // pass
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
         }
 
         pattern = "cdb(?i))a"
@@ -270,7 +270,7 @@ class PatternTest {
             fail("Expected a IllegalArgumentException when compiling pattern: " + pattern)
         } catch (e: IllegalArgumentException) {
             // pass
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
         }
 
         /*
@@ -295,7 +295,7 @@ class PatternTest {
                 Regex(element)
                 fail("IllegalArgumentException was expected, but compilation succeeds")
             } catch (pse: IllegalArgumentException) {
-                assertTrue(runtimeCurrentFrameIsEqual(frame))
+                assertEquals(frame, runtimeGetCurrentFrame())
                 continue
             }
 
@@ -361,7 +361,7 @@ class PatternTest {
                 Regex(element)
                 fail("IllegalArgumentException was expected: " + element)
             } catch (pse: IllegalArgumentException) {
-                assertTrue(runtimeCurrentFrameIsEqual(frame))
+                assertEquals(frame, runtimeGetCurrentFrame())
             }
 
         }
@@ -406,7 +406,7 @@ class PatternTest {
             Regex("+++++")
             fail("IllegalArgumentException expected")
         } catch (pse: IllegalArgumentException) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
         }
 
     }
@@ -417,7 +417,7 @@ class PatternTest {
             Regex("\\d+*")
             fail("IllegalArgumentException expected")
         } catch (pse: IllegalArgumentException) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
         }
 
     }
@@ -578,7 +578,7 @@ class PatternTest {
             Regex("\\y")
             fail("IllegalArgumentException expected")
         } catch (pse: IllegalArgumentException) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
         }
     }
 
@@ -760,7 +760,7 @@ class PatternTest {
             Regex("(?:)", setOf(RegexOption.CANON_EQ, RegexOption.COMMENTS, RegexOption.UNIX_LINES))
             isCompiled = true
         } catch (e: IllegalArgumentException) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
             println(e)
         }
         assertTrue(isCompiled)

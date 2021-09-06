@@ -15,7 +15,7 @@ class C : Exception("OK")
     try {
         throw C()
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println(e.message!!)
     }
 }

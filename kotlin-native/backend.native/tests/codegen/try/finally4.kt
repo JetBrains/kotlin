@@ -16,7 +16,7 @@ import kotlin.test.*
             throw Error("Error happens")
             println("After throw")
         } catch (e: Error) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
             println("Catch")
             throw Exception()
             println("After throw")
@@ -27,10 +27,10 @@ import kotlin.test.*
         println("After nested try")
 
     } catch (e: Error) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("Caught Error")
     } catch (e: Exception) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("Caught Exception")
     }
 

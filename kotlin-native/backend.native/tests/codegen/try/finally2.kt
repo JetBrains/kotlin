@@ -15,7 +15,7 @@ import kotlin.test.*
         throw Error("Error happens")
         println("After throw")
     } catch (e: Error) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("Caught Error")
     } finally {
         println("Finally")

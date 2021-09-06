@@ -15,7 +15,7 @@ fun runTest() {
         try {
             error("My error")
         } catch (e: Throwable) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
             error("My another error")
         }
     }

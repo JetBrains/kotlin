@@ -25,7 +25,7 @@ fun run() = withWorker {
             isObjectAliveShouldCrash()
         }.result
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         false
     }
     println("After $isAlive")

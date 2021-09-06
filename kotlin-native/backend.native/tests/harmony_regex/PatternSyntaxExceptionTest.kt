@@ -30,7 +30,7 @@ class PatternSyntaxExceptionTest {
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
             // TODO: Check the exception's properties.
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
         }
 
     }
@@ -42,7 +42,7 @@ class PatternSyntaxExceptionTest {
             Regex(regex)
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
         }
 
     }

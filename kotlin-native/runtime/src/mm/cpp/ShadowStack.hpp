@@ -55,7 +55,6 @@ public:
     void LeaveFrame(ObjHeader** start, int parameters, int count) noexcept;
     void SetCurrentFrame(ObjHeader** start) noexcept;
     FrameOverlay* getCurrentFrame() noexcept;
-    bool currentFrameIsEqual(FrameOverlay* frame) noexcept;
 
     Iterator begin() noexcept { return Iterator(currentFrame_); }
     Iterator end() noexcept { return Iterator(nullptr); }

@@ -45,16 +45,6 @@ void ThrowException(KRef exception) {
 #endif
 }
 
-void HandleCurrentExceptionForCInterop() {
-  try {
-      std::rethrow_exception(std::current_exception());
-  } catch (ExceptionObjHolder& e) {
-      std::terminate();  // Terminate when it's a kotlin exception.
-  } catch (...) {
-      throw;  // Just rethrow if it's unknown.
-  }
-}
-
 namespace {
 
 // This function accesses a TLS variable under the hood, so it must not be called from a thread destructor (see kotlin::mm::GetMemoryState).

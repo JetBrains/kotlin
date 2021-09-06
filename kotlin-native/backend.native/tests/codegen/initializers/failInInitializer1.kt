@@ -17,7 +17,7 @@ fun main() {
     try {
         println(x)
     } catch(t: IllegalStateException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("caught")
     }
 }

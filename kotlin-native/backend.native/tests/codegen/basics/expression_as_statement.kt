@@ -18,7 +18,7 @@ fun runTest() {
     try {
         foo()
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("Ok")
         return
     }

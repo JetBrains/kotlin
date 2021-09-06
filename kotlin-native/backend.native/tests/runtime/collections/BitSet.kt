@@ -164,31 +164,31 @@ fun testSet() {
         b.set(-1)
         fail()
     } catch(e: IndexOutOfBoundsException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
     try {
         b.clear(-1)
         fail()
     } catch(e: IndexOutOfBoundsException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
     try {
         b.clear(-1..0)
         fail()
     } catch(e: IndexOutOfBoundsException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
     try {
         b.set(-1..0)
         fail()
     } catch(e: IndexOutOfBoundsException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
     try {
         b[-1]
         fail()
     } catch(e: IndexOutOfBoundsException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
     }
 }
 

@@ -21,7 +21,7 @@ class A {
         println(a.foo())
     }
     catch (e: RuntimeException) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         println("OK")
         return
     }

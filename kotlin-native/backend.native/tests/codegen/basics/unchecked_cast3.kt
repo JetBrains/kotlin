@@ -30,7 +30,7 @@ fun <T : Any> testCast(x: Any?, expectSuccess: Boolean) {
     try {
         x as T
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         ensure(!expectSuccess)
         return
     }
@@ -42,7 +42,7 @@ fun <T : Any> testCastToNullable(x: Any?, expectSuccess: Boolean) {
     try {
         x as T?
     } catch (e: Throwable) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         ensure(!expectSuccess)
         return
     }

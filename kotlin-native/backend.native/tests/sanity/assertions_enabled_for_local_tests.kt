@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
         assert(false) // Should throw AssertionError.
         throw Error("Assertions are disabled. Please make sure the tests were compiled with '-ea' option.") // Normally unreachable line.
     } catch (e: AssertionError) {
-        assertTrue(runtimeCurrentFrameIsEqual(frame))
+        assertEquals(frame, runtimeGetCurrentFrame())
         // That's OK.
     }
 }

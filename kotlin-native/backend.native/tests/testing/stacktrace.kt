@@ -16,7 +16,7 @@ class Failed {
         try {
             baz()
         } catch(e: Exception) {
-            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            assertEquals(frame, runtimeGetCurrentFrame())
             throw Exception("Bar", e)
         }
     }
