@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirCallResolver(
     private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
-    private val qualifiedResolver: FirQualifiedNameResolver,
 ) {
     private val session = components.session
     private val overloadByLambdaReturnTypeResolver = FirOverloadByLambdaReturnTypeResolver(components)
@@ -72,7 +71,6 @@ class FirCallResolver(
 
     @OptIn(PrivateForInline::class)
     fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall): FirFunctionCall {
-        qualifiedResolver.reset()
         @Suppress("NAME_SHADOWING")
         val functionCall = if (needTransformArguments) {
             components.context.withIncrementedQualifierPartIndex { functionCall.transformExplicitReceiver() }
@@ -138,13 +136,22 @@ class FirCallResolver(
             explicitReceiver as? FirQualifiedAccessExpression
                 ?: return transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent) as Q
 
-        val callee =
-            explicitReceiver.calleeReference as? FirSuperReference
-                ?: return transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent) as Q
+        (explicitReceiver.calleeReference as? FirSuperReference)?.let {
+            transformer.transformSuperReceiver(it, explicitReceiver, this)
+            return this
+        }
 
-        transformer.transformSuperReceiver(callee, explicitReceiver, this)
+        if (explicitReceiver is FirPropertyAccessExpression) {
+            this.replaceExplicitReceiver(
+                transformer.transformQualifiedAccessExpression(
+                    explicitReceiver, ResolutionMode.ContextIndependent,
+                    isUsedAsReceiver = true
+                ) as FirExpression
+            )
+            return this
+        }
 
-        return this
+        return transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent) as Q
     }
 
     private data class ResolutionResult(
@@ -202,12 +209,15 @@ class FirCallResolver(
         return ResolutionResult(info, result.currentApplicability, reducedCandidates)
     }
 
-    fun <T : FirQualifiedAccess> resolveVariableAccessAndSelectCandidate(qualifiedAccess: T): FirStatement {
-        return resolveVariableAccessAndSelectCandidateImpl(qualifiedAccess) { true }
+    fun <T : FirQualifiedAccess> resolveVariableAccessAndSelectCandidate(qualifiedAccess: T, isUsedAsReceiver: Boolean): FirStatement {
+        return resolveVariableAccessAndSelectCandidateImpl(qualifiedAccess, isUsedAsReceiver) { true }
     }
 
-    fun resolveOnlyEnumOrQualifierAccessAndSelectCandidate(qualifiedAccess: FirQualifiedAccessExpression): FirStatement {
-        return resolveVariableAccessAndSelectCandidateImpl(qualifiedAccess) accept@{ candidates ->
+    fun resolveOnlyEnumOrQualifierAccessAndSelectCandidate(
+        qualifiedAccess: FirQualifiedAccessExpression,
+        isUsedAsReceiver: Boolean,
+    ): FirStatement {
+        return resolveVariableAccessAndSelectCandidateImpl(qualifiedAccess, isUsedAsReceiver) accept@{ candidates ->
             val symbol = candidates.singleOrNull()?.symbol ?: return@accept false
             symbol is FirEnumEntrySymbol || symbol is FirRegularClassSymbol
         }
@@ -215,30 +225,48 @@ class FirCallResolver(
 
     private fun <T : FirQualifiedAccess> resolveVariableAccessAndSelectCandidateImpl(
         qualifiedAccess: T,
+        isUsedAsReceiver: Boolean,
         acceptCandidates: (Collection<Candidate>) -> Boolean
     ): FirStatement {
         val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
 
         return components.context.withIncrementedQualifierPartIndex {
-            qualifiedResolver.initProcessingQualifiedAccess(callee, qualifiedAccess.typeArguments)
-
             @Suppress("NAME_SHADOWING")
             val qualifiedAccess = qualifiedAccess.transformExplicitReceiver<FirQualifiedAccess>()
-            qualifiedResolver.replacedQualifier(qualifiedAccess)?.let { resolvedQualifierPart ->
-                return@withIncrementedQualifierPartIndex resolvedQualifierPart
+            val nonFatalDiagnosticFromExpression = (qualifiedAccess as? FirPropertyAccessExpression)?.nonFatalDiagnostics
+
+            if (isUsedAsReceiver) {
+                (qualifiedAccess.explicitReceiver as? FirResolvedQualifier)
+                    ?.continueQualifier(
+                        callee,
+                        qualifiedAccess.source,
+                        qualifiedAccess.typeArguments,
+                        nonFatalDiagnosticFromExpression,
+                        components
+                    )
+                    ?.let { return it }
             }
 
             var result = collectCandidates(qualifiedAccess, callee.name)
 
             if (qualifiedAccess.explicitReceiver == null) {
-                if (!result.applicability.isSuccess) {
-                    // We should run QualifierResolver if no successful candidates are available
-                    // Otherwise expression (even ambiguous) beat qualifier
-                    qualifiedResolver.tryResolveAsQualifier(qualifiedAccess.source)?.let { resolvedQualifier ->
-                        return@withIncrementedQualifierPartIndex resolvedQualifier
-                    }
+                // Even if we successfully resolved to some companion/named object, we should re-try with qualifier resolution
+                // import D.*
+                // class A {
+                //     object B
+                // }
+                // class D {
+                //     object A
+                // }
+                // fun main() {
+                //     A // should resolved to D.A
+                //     A.B // should be resolved to A.B
+                // }
+                if (!result.applicability.isSuccess || (isUsedAsReceiver && result.candidates.all { it.symbol is FirRegularClassSymbol })) {
+                    components.resolveRootPartOfQualifier(
+                        callee, qualifiedAccess.source, qualifiedAccess.typeArguments, nonFatalDiagnosticFromExpression,
+                    )?.let { return it }
                 }
-                qualifiedResolver.reset()
             }
 
             var functionCallExpected = false
@@ -283,14 +311,14 @@ class FirCallResolver(
                 referencedSymbol is FirClassLikeSymbol<*> -> {
                     return@withIncrementedQualifierPartIndex components.buildResolvedQualifierForClass(
                         referencedSymbol,
-                        nameReference.source,
+                        qualifiedAccess.source,
                         qualifiedAccess.typeArguments,
                         diagnostic,
                         nonFatalDiagnostics = extractNonFatalDiagnostics(
                             nameReference.source,
                             qualifiedAccess.explicitReceiver,
                             referencedSymbol,
-                            (qualifiedAccess as? FirPropertyAccessExpression)?.nonFatalDiagnostics
+                            nonFatalDiagnosticFromExpression,
                         )
                     )
                 }
@@ -312,32 +340,6 @@ class FirCallResolver(
             if (resultExpression is FirExpression) transformer.storeTypeFromCallee(resultExpression)
             return@withIncrementedQualifierPartIndex resultExpression
         }
-    }
-
-    private fun extractNonFatalDiagnostics(
-        source: FirSourceElement?,
-        explicitReceiver: FirExpression?,
-        symbol: FirClassLikeSymbol<*>,
-        extraNotFatalDiagnostics: List<ConeDiagnostic>?
-    ): List<ConeDiagnostic> {
-        val prevDiagnostics = (explicitReceiver as? FirResolvedQualifier)?.nonFatalDiagnostics ?: emptyList()
-        var result: MutableList<ConeDiagnostic>? = null
-
-        val deprecation = symbol.fir.deprecation?.forUseSite()
-        if (deprecation != null) {
-            result = mutableListOf()
-            result.addAll(prevDiagnostics)
-            result.add(ConeDeprecated(source, symbol, deprecation))
-        }
-        if (extraNotFatalDiagnostics != null && extraNotFatalDiagnostics.isNotEmpty()) {
-            if (result == null) {
-                result = mutableListOf()
-                result.addAll(prevDiagnostics)
-            }
-            result.addAll(extraNotFatalDiagnostics)
-        }
-
-        return result?.toList() ?: prevDiagnostics
     }
 
     fun resolveCallableReference(

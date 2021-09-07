@@ -1,5 +1,5 @@
 KT element: KtDotQualifiedExpression
-FIR element: FirFunctionCallImpl
+FIR element: FirResolvedQualifierImpl
 
 FIR element rendered:
-Q|A.B|.R|/A.B.C.C|()
+Q|A.B|

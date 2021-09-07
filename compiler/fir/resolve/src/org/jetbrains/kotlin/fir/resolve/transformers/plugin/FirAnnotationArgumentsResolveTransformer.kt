@@ -156,8 +156,11 @@ private class FirExpressionsResolveTransformerForSpecificAnnotations(
         return calleeReference !is FirErrorNamedReference
     }
 
-    override fun resolveQualifiedAccessAndSelectCandidate(qualifiedAccessExpression: FirQualifiedAccessExpression): FirStatement {
-        return callResolver.resolveOnlyEnumOrQualifierAccessAndSelectCandidate(qualifiedAccessExpression)
+    override fun resolveQualifiedAccessAndSelectCandidate(
+        qualifiedAccessExpression: FirQualifiedAccessExpression,
+        isUsedAsReceiver: Boolean,
+    ): FirStatement {
+        return callResolver.resolveOnlyEnumOrQualifierAccessAndSelectCandidate(qualifiedAccessExpression, isUsedAsReceiver)
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement {

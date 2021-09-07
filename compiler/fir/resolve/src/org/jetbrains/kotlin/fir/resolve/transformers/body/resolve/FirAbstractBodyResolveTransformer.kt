@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.fir.FirCallResolver
-import org.jetbrains.kotlin.fir.FirQualifiedNameResolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -101,10 +100,8 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
 
         override val resolutionStageRunner: ResolutionStageRunner = ResolutionStageRunner()
 
-        private val qualifiedResolver: FirQualifiedNameResolver = FirQualifiedNameResolver(this)
         override val callResolver: FirCallResolver = FirCallResolver(
             this,
-            qualifiedResolver
         )
         val typeResolverTransformer = FirSpecificTypeResolverTransformer(
             session

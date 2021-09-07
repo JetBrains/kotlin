@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
@@ -77,6 +78,12 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     override fun transformQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: ResolutionMode,
+    ): FirStatement = transformQualifiedAccessExpression(qualifiedAccessExpression, data, isUsedAsReceiver = false)
+
+    fun transformQualifiedAccessExpression(
+        qualifiedAccessExpression: FirQualifiedAccessExpression,
+        data: ResolutionMode,
+        isUsedAsReceiver: Boolean,
     ): FirStatement {
         qualifiedAccessExpression.transformAnnotations(this, data)
         qualifiedAccessExpression.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
@@ -130,7 +137,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 qualifiedAccessExpression
             }
             else -> {
-                val transformedCallee = resolveQualifiedAccessAndSelectCandidate(qualifiedAccessExpression)
+                val transformedCallee = resolveQualifiedAccessAndSelectCandidate(qualifiedAccessExpression, isUsedAsReceiver)
                 // NB: here we can get raw expression because of dropped qualifiers (see transform callee),
                 // so candidate existence must be checked before calling completion
                 if (transformedCallee is FirQualifiedAccessExpression && transformedCallee.candidate() != null) {
@@ -163,8 +170,11 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         return transformQualifiedAccessExpression(propertyAccessExpression, data)
     }
 
-    protected open fun resolveQualifiedAccessAndSelectCandidate(qualifiedAccessExpression: FirQualifiedAccessExpression): FirStatement {
-        return callResolver.resolveVariableAccessAndSelectCandidate(qualifiedAccessExpression)
+    protected open fun resolveQualifiedAccessAndSelectCandidate(
+        qualifiedAccessExpression: FirQualifiedAccessExpression,
+        isUsedAsReceiver: Boolean,
+    ): FirStatement {
+        return callResolver.resolveVariableAccessAndSelectCandidate(qualifiedAccessExpression, isUsedAsReceiver)
     }
 
     fun transformSuperReceiver(
@@ -752,7 +762,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     ): FirStatement {
         // val resolvedAssignment = transformCallee(variableAssignment)
         variableAssignment.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
-        val resolvedAssignment = callResolver.resolveVariableAccessAndSelectCandidate(variableAssignment)
+        val resolvedAssignment = callResolver.resolveVariableAccessAndSelectCandidate(variableAssignment, isUsedAsReceiver = false)
         val result = if (resolvedAssignment is FirVariableAssignment) {
             val completeAssignment = callCompleter.completeCall(resolvedAssignment, noExpectedType).result // TODO: check
             completeAssignment.transformRValue(
@@ -778,7 +788,14 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         callableReferenceAccess.transformAnnotations(transformer, data)
         val explicitReceiver = callableReferenceAccess.explicitReceiver
         val transformedLHS = context.withIncrementedQualifierPartIndex {
-            explicitReceiver?.transformSingle(this, ResolutionMode.ContextIndependent)?.apply {
+
+            if (explicitReceiver is FirPropertyAccessExpression) {
+                transformQualifiedAccessExpression(
+                    explicitReceiver, ResolutionMode.ContextIndependent, isUsedAsReceiver = true
+                ) as FirExpression
+            } else {
+                explicitReceiver?.transformSingle(this, ResolutionMode.ContextIndependent)
+            }.apply {
                 if (this is FirResolvedQualifier && callableReferenceAccess.hasQuestionMarkAtLHS) {
                     replaceIsNullableLHSForCallableReference(true)
                 }
@@ -811,7 +828,19 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         }
 
         val transformedGetClassCall = context.withIncrementedQualifierPartIndex {
-            transformExpression(getClassCall, dataWithExpectedType) as FirGetClassCall
+            val argument = getClassCall.argument
+            val replacedArgument: FirExpression =
+                if (argument is FirPropertyAccessExpression)
+                    transformQualifiedAccessExpression(argument, dataWithExpectedType, isUsedAsReceiver = true) as FirExpression
+                else
+                    argument.transform(this, dataWithExpectedType)
+
+            getClassCall.argumentList.transformArguments(object : FirTransformer<Nothing?>() {
+                @Suppress("UNCHECKED_CAST")
+                override fun <E : FirElement> transformElement(element: E, data: Nothing?): E = replacedArgument as E
+            }, null)
+
+            getClassCall
         }
 
         val typeOfExpression = when (val lhs = transformedGetClassCall.argument) {

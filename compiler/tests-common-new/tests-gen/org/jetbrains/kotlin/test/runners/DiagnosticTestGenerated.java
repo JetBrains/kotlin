@@ -22648,6 +22648,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("variableVsImportedClassifier.kt")
+            public void testVariableVsImportedClassifier() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/qualifiedExpression/variableVsImportedClassifier.kt");
+            }
+
+            @Test
             @TestMetadata("visibleClassVsQualifiedClass.kt")
             public void testVisibleClassVsQualifiedClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/qualifiedExpression/visibleClassVsQualifiedClass.kt");

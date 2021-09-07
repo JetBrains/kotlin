@@ -75,7 +75,6 @@ class CandidateFactory private constructor(
                 result.addDiagnostic(Unsupported("References to variables aren't supported yet", callSite.calleeReference.source))
             }
         } else if (objectsByName &&
-            context.bodyResolveContext.qualifierPartIndexFromEnd == 0 &&
             symbol is FirRegularClassSymbol &&
             symbol.classKind != ClassKind.OBJECT &&
             symbol.companionObjectSymbol == null
