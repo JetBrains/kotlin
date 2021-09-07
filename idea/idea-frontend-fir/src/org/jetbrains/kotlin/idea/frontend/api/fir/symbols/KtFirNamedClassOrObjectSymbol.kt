@@ -53,7 +53,13 @@ internal class KtFirNamedClassOrObjectSymbol(
     override val modality: Modality
         get() = getModality(
             FirResolvePhase.RAW_FIR,
-            if (classKind == KtClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
+            when (classKind) { // default modality
+                KtClassKind.INTERFACE -> Modality.ABSTRACT
+                // Enum class should not be `final`, since its entries extend it.
+                // It could be either `abstract` w/o ctor, or empty modality w/ private ctor.
+                KtClassKind.ENUM_CLASS -> Modality.OPEN
+                else -> Modality.FINAL
+            }
         )
 
     /* FirRegularClass visibility are not modified by STATUS only for Unknown so it can be taken from RAW */
