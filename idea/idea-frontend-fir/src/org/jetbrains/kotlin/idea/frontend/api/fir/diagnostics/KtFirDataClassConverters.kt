@@ -2448,6 +2448,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.REDUNDANT_EXPLICIT_BACKING_FIELD) { firDiagnostic ->
+        RedundantExplicitBackingFieldImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS) { firDiagnostic ->
         AbstractPropertyInPrimaryConstructorParametersImpl(
             firDiagnostic as FirPsiDiagnostic,

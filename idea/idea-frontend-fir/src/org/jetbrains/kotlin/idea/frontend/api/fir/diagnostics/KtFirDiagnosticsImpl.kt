@@ -2825,6 +2825,13 @@ internal class ExplicitBackingFieldInExtensionImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class RedundantExplicitBackingFieldImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RedundantExplicitBackingField(), KtAbstractFirDiagnostic<KtBackingField> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class AbstractPropertyInPrimaryConstructorParametersImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
