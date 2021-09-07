@@ -43,6 +43,10 @@
 typedef bool KBoolean;
 typedef int8_t  KByte;
 typedef uint16_t KChar;
+/**
+ * Hack for KT-48591.
+ */
+typedef int16_t KCharSignExt;
 typedef int16_t KShort;
 typedef int32_t KInt;
 typedef int64_t KLong;
