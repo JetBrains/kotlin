@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
@@ -62,7 +62,7 @@ object FirOperatorModifierChecker : FirSimpleFunctionChecker() {
         if (!declaration.isOperator) return
         //we are not interested in implicit operators from override
         if (!declaration.hasModifier(KtTokens.OPERATOR_KEYWORD)) return
-        
+
         val checks = OperatorFunctionChecks.checksByName.getOrElse(declaration.name) {
             OperatorFunctionChecks.regexChecks.find { it.first.matches(declaration.name.asString()) }?.second
         }
@@ -185,8 +185,8 @@ private object OperatorFunctionChecks {
             EQUALS,
             member,
             Checks.full("must override ''equals()'' in Any") { ctx, function ->
-                val containingClass = function.containingClass()?.toFirRegularClass(ctx.session) ?: return@full true
-                function.overriddenFunctions(containingClass, ctx).any {
+                val containingClassSymbol = function.containingClass()?.toFirRegularClassSymbol(ctx.session) ?: return@full true
+                function.overriddenFunctions(containingClassSymbol, ctx).any {
                     it.containingClass()?.classId?.asSingleFqName() == StandardNames.FqNames.any.toSafe()
                 }
             }

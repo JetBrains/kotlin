@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.tryCollectDesignation
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeRendererOptions
@@ -183,6 +184,7 @@ internal class ConeTypeIdeRenderer(
         require(isLocal)
         var containingClassLookUp = containingClassForLocal()
         val designation = mutableListOf<FirClassLikeDeclaration>(this)
+        @OptIn(LookupTagInternals::class)
         while (containingClassLookUp != null && containingClassLookUp.classId.isLocal) {
             val currentClass = containingClassLookUp.toFirRegularClass(moduleData.session) ?: break
             designation.add(currentClass)
@@ -192,6 +194,7 @@ internal class ConeTypeIdeRenderer(
     }
 
     private fun collectDesignationPathForLocal(declaration: FirDeclaration): List<FirDeclaration>? {
+        @OptIn(LookupTagInternals::class)
         val containingClass = when (declaration) {
             is FirCallableDeclaration -> declaration.containingClass()?.toFirRegularClass(declaration.moduleData.session)
             is FirAnonymousObject -> return listOf(declaration)

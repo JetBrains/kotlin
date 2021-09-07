@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -844,7 +844,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             return when (val fir = this.fir) {
                 is FirConstructor -> fir.returnTypeRef.coneType.isLocal()
                 is FirCallableDeclaration -> {
-                    fir.dispatchReceiverClassOrNull()?.toFirRegularClass(session)?.isLocal ?: false
+                    fir.dispatchReceiverClassOrNull()?.toFirRegularClassSymbol(session)?.isLocal ?: false
                 }
                 else -> false
             }
@@ -852,7 +852,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         private fun ConeKotlinType.isLocal(): Boolean {
             if (this !is ConeClassLikeType) return false
-            return this.lookupTag.toFirRegularClass(session)?.isLocal == true
+            return this.lookupTag.toFirRegularClassSymbol(session)?.isLocal == true
         }
 
         // id == packageName + className

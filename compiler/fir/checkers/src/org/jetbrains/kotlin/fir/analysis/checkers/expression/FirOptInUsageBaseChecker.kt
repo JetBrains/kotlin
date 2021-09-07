@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenFunctions
@@ -132,7 +132,7 @@ object FirOptInUsageBaseChecker {
             val annotationType = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()
             if (annotation.useSiteTarget != AnnotationUseSiteTarget.PROPERTY_SETTER || fromSetter) {
                 result.addIfNotNull(
-                    annotationType?.lookupTag?.toFirRegularClass(
+                    annotationType?.lookupTag?.toFirRegularClassSymbol(
                         session
                     )?.loadExperimentalityForMarkerAnnotation()
                 )

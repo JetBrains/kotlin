@@ -21,11 +21,8 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
@@ -135,6 +132,21 @@ fun FirClassLikeSymbol<*>.outerClassSymbol(context: CheckerContext): FirClassLik
     return context.session.symbolProvider.getClassLikeSymbolByClassId(outerClassId)
 }
 
+@OptIn(SymbolInternals::class)
+fun FirClassSymbol<*>.getContainingDeclarationSymbol(session: FirSession): FirClassLikeSymbol<*>? {
+    if (isLocal) {
+        return (this as FirRegularClassSymbol).fir.containingClassForLocalAttr?.toFirRegularClassSymbol(session)
+    } else {
+        val parentId = classId.relativeClassName.parent()
+        if (!parentId.isRoot) {
+            val containingDeclarationId = ClassId(classId.packageFqName, parentId, false)
+            return session.symbolProvider.getClassLikeSymbolByClassId(containingDeclarationId)
+        }
+    }
+
+    return null
+}
+
 /**
  * Returns the FirClassLikeDeclaration that the
  * sequence of FirTypeAlias'es points to starting
@@ -171,7 +183,7 @@ fun CheckerContext.findClosestClassOrObject(): FirClass? {
  * Returns the list of functions that overridden by given
  */
 fun FirSimpleFunction.overriddenFunctions(
-    containingClass: FirClass,
+    containingClass: FirClassSymbol<*>,
     context: CheckerContext
 ): List<FirFunctionSymbol<*>> {
     val firTypeScope = containingClass.unsubstitutedScope(

@@ -95,8 +95,8 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
     }
 
     private fun findFunctionVisibility(function: FirSimpleFunction, context: CheckerContext): Visibility {
-        val currentClass = context.findClosestClassOrObject() ?: return Visibilities.Unknown
-        val overriddenFunctions = function.overriddenFunctions(currentClass, context)
+        val currentClassSymbol = context.findClosestClassOrObject()?.symbol ?: return Visibilities.Unknown
+        val overriddenFunctions = function.overriddenFunctions(currentClassSymbol, context)
         var visibility: Visibility = Visibilities.Private
         for (func in overriddenFunctions) {
             val currentVisibility = func.visibility

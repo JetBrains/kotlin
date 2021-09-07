@@ -13,9 +13,10 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -166,19 +167,19 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             // When converting type parameter bounds we should not attempt to load any classes, as this may trigger
             // enhancement of type parameter bounds on some other class that depends on this one. Also, in case of raw
             // types specifically there could be an infinite recursion on the type parameter itself.
-            val typeParameters = lookupTag.takeIf { mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND }
-                ?.toFirRegularClass(session)?.typeParameters
+            val typeParameterSymbols = lookupTag.takeIf { mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND }
+                ?.toFirRegularClassSymbol(session)?.typeParameterSymbols
             val mappedTypeArguments = when {
                 isRaw ->
                     // Given `C<T : X>`, `C` -> `C<X>..C<*>?`.
-                    typeParameters.takeIf { lowerBound == null }?.eraseToUpperBounds(session)
+                    typeParameterSymbols.takeIf { lowerBound == null }?.eraseToUpperBounds(session)
                         ?: Array(classifier.typeParameters.size) { ConeStarProjection }
                 lookupTag != lowerBound?.lookupTag ->
                     Array(typeArguments.size) { index ->
                         // TODO: check this
                         val newMode = if (mode == FirJavaTypeConversionMode.ANNOTATION_MEMBER) FirJavaTypeConversionMode.DEFAULT else mode
                         val argument = typeArguments[index]
-                        val variance = typeParameters?.getOrNull(index)?.symbol?.fir?.variance ?: Variance.INVARIANT
+                        val variance = typeParameterSymbols?.getOrNull(index)?.fir?.variance ?: Variance.INVARIANT
                         argument.toConeTypeProjection(session, javaTypeParameterStack, variance, newMode)
                     }
                 else -> lowerBound.typeArguments
@@ -211,15 +212,15 @@ private fun JavaClassifierType.argumentsMakeSenseOnlyForMutableContainer(
 
     if (!typeArguments.lastOrNull().isSuperWildcard()) return false
     val mutableLastParameterVariance =
-        mutableClassId.toLookupTag().toFirRegularClass(session)?.typeParameters?.lastOrNull()?.symbol?.fir?.variance
+        mutableClassId.toLookupTag().toFirRegularClassSymbol(session)?.typeParameterSymbols?.lastOrNull()?.variance
             ?: return false
 
     return mutableLastParameterVariance != Variance.OUT_VARIANCE
 }
 
-private fun List<FirTypeParameterRef>.eraseToUpperBounds(session: FirSession): Array<ConeTypeProjection> {
+private fun List<FirTypeParameterSymbol>.eraseToUpperBounds(session: FirSession): Array<ConeTypeProjection> {
     val cache = mutableMapOf<FirTypeParameter, ConeKotlinType>()
-    return Array(size) { index -> this[index].symbol.fir.eraseToUpperBound(session, cache) }
+    return Array(size) { index -> this[index].fir.eraseToUpperBound(session, cache) }
 }
 
 private fun FirTypeParameter.eraseToUpperBound(session: FirSession, cache: MutableMap<FirTypeParameter, ConeKotlinType>): ConeKotlinType {

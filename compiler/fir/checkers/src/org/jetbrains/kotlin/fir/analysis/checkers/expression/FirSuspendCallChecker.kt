@@ -15,13 +15,15 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
+import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -145,25 +147,25 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         context: CheckerContext
     ): Boolean {
         val session = context.session
-        val enclosingSuspendFunctionDispatchReceiverOwner =
-            (enclosingSuspendFunction.dispatchReceiverType as? ConeClassLikeType)?.lookupTag?.toFirRegularClass(session)
-        val enclosingSuspendFunctionExtensionReceiverOwner = enclosingSuspendFunction.takeIf { it.receiverTypeRef != null }
+        val enclosingSuspendFunctionDispatchReceiverOwnerSymbol =
+            (enclosingSuspendFunction.dispatchReceiverType as? ConeClassLikeType)?.lookupTag?.toFirRegularClassSymbol(session)
+        val enclosingSuspendFunctionExtensionReceiverOwnerSymbol = enclosingSuspendFunction.takeIf { it.receiverTypeRef != null }?.symbol
         val dispatchReceiverExpression = expression.dispatchReceiver.takeIf { it !is FirNoReceiverExpression }
         val extensionReceiverExpression = expression.extensionReceiver.takeIf { it !is FirNoReceiverExpression }
         for (receiverExpression in listOfNotNull(dispatchReceiverExpression, extensionReceiverExpression)) {
             if (!receiverExpression.typeRef.coneType.isRestrictSuspensionReceiver(session)) continue
-            if (sameInstanceOfReceiver(receiverExpression, enclosingSuspendFunctionDispatchReceiverOwner)) continue
-            if (sameInstanceOfReceiver(receiverExpression, enclosingSuspendFunctionExtensionReceiverOwner)) continue
+            if (sameInstanceOfReceiver(receiverExpression, enclosingSuspendFunctionDispatchReceiverOwnerSymbol)) continue
+            if (sameInstanceOfReceiver(receiverExpression, enclosingSuspendFunctionExtensionReceiverOwnerSymbol)) continue
 
             return false
         }
-        if (enclosingSuspendFunctionExtensionReceiverOwner?.receiverTypeRef?.coneType?.isRestrictSuspensionReceiver(session) != true) {
+        if (enclosingSuspendFunctionExtensionReceiverOwnerSymbol?.resolvedReceiverTypeRef?.coneType?.isRestrictSuspensionReceiver(session) != true) {
             return true
         }
-        if (sameInstanceOfReceiver(dispatchReceiverExpression, enclosingSuspendFunctionExtensionReceiverOwner)) {
+        if (sameInstanceOfReceiver(dispatchReceiverExpression, enclosingSuspendFunctionExtensionReceiverOwnerSymbol)) {
             return true
         }
-        if (sameInstanceOfReceiver(extensionReceiverExpression, enclosingSuspendFunctionExtensionReceiverOwner)) {
+        if (sameInstanceOfReceiver(extensionReceiverExpression, enclosingSuspendFunctionExtensionReceiverOwnerSymbol)) {
             if (calledDeclarationSymbol.resolvedReceiverTypeRef?.coneType?.isRestrictSuspensionReceiver(session) == true) {
                 return true
             }
@@ -174,11 +176,11 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
     private fun ConeKotlinType.isRestrictSuspensionReceiver(session: FirSession): Boolean {
         when (this) {
             is ConeClassLikeType -> {
-                val regularClass = fullyExpandedType(session).lookupTag.toFirRegularClass(session) ?: return false
-                if (regularClass.hasAnnotation(RESTRICTS_SUSPENSION_CLASS_ID)) {
+                val regularClassSymbol = fullyExpandedType(session).lookupTag.toFirRegularClassSymbol(session) ?: return false
+                if (regularClassSymbol.getAnnotationByClassId(RESTRICTS_SUSPENSION_CLASS_ID) != null) {
                     return true
                 }
-                return regularClass.superTypeRefs.any { it.coneType.isRestrictSuspensionReceiver(session) }
+                return regularClassSymbol.superConeTypes.any { it.isRestrictSuspensionReceiver(session) }
             }
             is ConeTypeParameterType -> {
                 return lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isRestrictSuspensionReceiver(session) }
@@ -187,10 +189,13 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         }
     }
 
-    private fun sameInstanceOfReceiver(useSiteReceiverExpression: FirExpression?, declarationSiteReceiverOwner: FirDeclaration?): Boolean {
-        if (declarationSiteReceiverOwner == null || useSiteReceiverExpression == null) return false
+    private fun sameInstanceOfReceiver(
+        useSiteReceiverExpression: FirExpression?,
+        declarationSiteReceiverOwnerSymbol: FirBasedSymbol<*>?
+    ): Boolean {
+        if (declarationSiteReceiverOwnerSymbol == null || useSiteReceiverExpression == null) return false
         if (useSiteReceiverExpression is FirThisReceiverExpression) {
-            return useSiteReceiverExpression.calleeReference.boundSymbol == declarationSiteReceiverOwner.symbol
+            return useSiteReceiverExpression.calleeReference.boundSymbol == declarationSiteReceiverOwnerSymbol
         }
         return false
     }

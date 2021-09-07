@@ -39,14 +39,18 @@ fun ConeClassLikeLookupTag.toSymbolOrError(useSiteSession: FirSession): FirClass
     toSymbol(useSiteSession)
         ?: error("Class symbol with classId $classId was not found")
 
-
-fun ConeClassLikeLookupTag.toFirRegularClass(session: FirSession): FirRegularClass? =
-    session.symbolProvider.getSymbolByLookupTag(this)?.fir as? FirRegularClass
+@OptIn(LookupTagInternals::class)
+fun ConeClassLikeLookupTag.toFirRegularClassSymbol(session: FirSession): FirRegularClassSymbol? =
+    session.symbolProvider.getSymbolByLookupTag(this) as? FirRegularClassSymbol
 
 @OptIn(LookupTagInternals::class)
 fun ConeClassLikeLookupTagImpl.bindSymbolToLookupTag(session: FirSession, symbol: FirClassLikeSymbol<*>?) {
     boundSymbol = WeakPair(session, symbol)
 }
+
+@LookupTagInternals
+fun ConeClassLikeLookupTag.toFirRegularClass(session: FirSession): FirRegularClass? =
+    session.symbolProvider.getSymbolByLookupTag(this)?.fir as? FirRegularClass
 
 fun FirSymbolProvider.getSymbolByLookupTag(lookupTag: ConeClassifierLookupTag): FirClassifierSymbol<*>? {
     return lookupTag.toSymbol(session)

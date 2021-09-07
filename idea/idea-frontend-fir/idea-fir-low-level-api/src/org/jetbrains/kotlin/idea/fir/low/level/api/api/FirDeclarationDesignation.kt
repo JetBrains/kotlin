@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.getContainingFile
 
 class FirDeclarationDesignationWithFile(
@@ -63,6 +64,7 @@ private fun collectDesignationPath(declaration: FirDeclaration): List<FirDeclara
                 is FirSimpleFunction, is FirProperty, is FirField, is FirConstructor -> {
                     val klass = declaration.containingClass() ?: return emptyList()
                     if (klass.classId.isLocal) return null
+                    @OptIn(LookupTagInternals::class)
                     klass.toFirRegularClass(declaration.moduleData.session)
                 }
                 else -> return null

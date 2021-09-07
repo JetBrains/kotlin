@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.dispatchReceiverTypeOrNull
 import org.jetbrains.kotlin.fir.originalOrSelf
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -77,9 +77,9 @@ object FirJvmOverridesBackwardCompatibilityHelper : FirOverridesBackwardCompatib
         if (JavaToKotlinClassMap.mapKotlinToJava(containingClassName) != null) {
             return true
         }
-        
+
         if (!originalMember.isAbstract) {
-            val containingClass = originalMember.containingClass()?.toFirRegularClass(context.session)
+            val containingClass = originalMember.containingClass()?.toFirRegularClassSymbol(context.session)
             if (containingClass?.isInterface == false) {
                 return false
             }

@@ -505,6 +505,7 @@ fun FirRegularClass.getActualTypeParametersCount(session: FirSession): Int {
 
 fun FirClassLikeDeclaration.getContainingDeclaration(session: FirSession): FirClassLikeDeclaration? {
     if (isLocal) {
+        @OptIn(LookupTagInternals::class)
         return (this as? FirRegularClass)?.containingClassForLocalAttr?.toFirRegularClass(session)
     } else {
         val classId = symbol.classId

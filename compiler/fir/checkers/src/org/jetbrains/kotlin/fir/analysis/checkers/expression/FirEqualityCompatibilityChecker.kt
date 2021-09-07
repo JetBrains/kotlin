@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+ import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 
@@ -106,8 +106,8 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         context: CheckerContext
     ): Boolean {
         if (isEnum) return true
-        val firRegularClass = (this as? ConeClassLikeType)?.lookupTag?.toFirRegularClass(context.session) ?: return false
-        return firRegularClass.isEnumClass
+        val firRegularClassSymbol = (this as? ConeClassLikeType)?.lookupTag?.toFirRegularClassSymbol(context.session) ?: return false
+        return firRegularClassSymbol.isEnumClass
     }
 
     private fun checkSensibleness(

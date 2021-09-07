@@ -14,15 +14,19 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingDeclarationSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.containingClass
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -31,22 +35,18 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.JvmFieldApplicabilityProblem.*
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_CLASS_ID
-import org.jetbrains.kotlin.JvmNames.JVM_MULTIFILE_CLASS_SHORT
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingDeclarationSymbol
-import org.jetbrains.kotlin.psi.stubs.elements.KtParameterElementType
 
 object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         val annotation = declaration.getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID) ?: return
         val session = context.session
-        val containingClass = declaration.containingClass()?.toFirRegularClass(session)
+        val containingClassSymbol = declaration.containingClass()?.toFirRegularClassSymbol(session)
 
         val problem = when {
             declaration.delegate != null -> DELEGATE
             !declaration.hasBackingField -> return
-            declaration.isOverridable(containingClass) -> NOT_FINAL
+            declaration.isOverridable(containingClassSymbol) -> NOT_FINAL
             Visibilities.isPrivate(declaration.visibility) -> PRIVATE
             declaration.hasCustomAccessor() -> CUSTOM_ACCESSOR
             declaration.isOverride -> OVERRIDES
@@ -63,7 +63,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
                     }
                 }
             }
-            containingClass == null && isInsideJvmMultifileClassFile(context) ->
+            containingClassSymbol == null && isInsideJvmMultifileClassFile(context) ->
                 TOP_LEVEL_PROPERTY_OF_MULTIFILE_FACADE
             declaration.returnTypeRef.isInlineClassThatRequiresMangling(session) -> RETURN_TYPE_IS_INLINE_CLASS
             else -> return
@@ -89,7 +89,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
         return this.classId.relativeClassName.asString() == StandardNames.RESULT_FQ_NAME.asString()
     }
 
-    private fun FirProperty.isOverridable(containingClass: FirRegularClass?): Boolean {
+    private fun FirProperty.isOverridable(containingClass: FirRegularClassSymbol?): Boolean {
         return visibility != Visibilities.Private && modality != Modality.FINAL &&
                 containingClass?.isFinal != true
     }
@@ -104,7 +104,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
             return false
         }
 
-        val outerClassKind = (getContainingDeclarationSymbol(session) as? FirRegularClass)?.classKind
+        val outerClassKind = getContainingDeclarationSymbol(session)?.classKind
         return outerClassKind == ClassKind.INTERFACE || outerClassKind == ClassKind.ANNOTATION_CLASS
     }
 
