@@ -104,7 +104,6 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
             else -> AnnotationQualifierApplicabilityType.TYPE_USE
         }
         val defaultTypeQualifier = defaultQualifiers?.get(applicabilityType)
-            ?.takeIf { (it.affectsTypeParameterBasedTypes || typeParameterUse == null) }
 
         val referencedParameterBoundsNullability = typeParameterUse?.boundsNullability
         // For type parameter uses, we have *three* options:
@@ -112,7 +111,7 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         //         happens if T is bounded by @NotNull (technically !! is redundant) or context says unannotated
         //         type parameters are non-null;
         //   T   - NOT_NULL, isNotNullTypeParameter = false
-        //         happens if T is bounded by @Nullable or context says unannotated types in general are non-null;
+        //         happens if T is bounded by @Nullable (should it?) or context says unannotated types in general are non-null;
         //   T?  - NULLABLE, isNotNullTypeParameter = false
         //         happens if context says unannotated types in general are nullable.
         // For other types, this is more straightforward (just take nullability from the context).
@@ -122,27 +121,22 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
                 ?: defaultTypeQualifier?.nullabilityQualifier
         val definitelyNotNull =
             referencedParameterBoundsNullability?.qualifier == NullabilityQualifier.NOT_NULL ||
-                    (typeParameterUse != null && defaultTypeQualifier?.nullabilityQualifier?.qualifier == NullabilityQualifier.NOT_NULL)
+                    (typeParameterUse != null && defaultTypeQualifier?.definitelyNotNull == true)
 
         // We should also enhance this type to satisfy the bound of the type parameter it is instantiating:
         // for C<T extends @NotNull V>, C<X!> becomes C<X!!> regardless of the above.
         val substitutedParameterBoundsNullability = typeParameterForArgument?.boundsNullability
-        val result = when {
-            substitutedParameterBoundsNullability == null -> defaultNullability
-            defaultNullability == null ->
-                if (substitutedParameterBoundsNullability.qualifier == NullabilityQualifier.NULLABLE)
-                    substitutedParameterBoundsNullability.copy(qualifier = NullabilityQualifier.FORCE_FLEXIBILITY)
-                else
-                    substitutedParameterBoundsNullability
-            else -> mostSpecific(substitutedParameterBoundsNullability, defaultNullability)
-        }
+            ?.let { if (it.qualifier == NullabilityQualifier.NULLABLE) it.copy(qualifier = NullabilityQualifier.FORCE_FLEXIBILITY) else it }
+        val result = mostSpecific(substitutedParameterBoundsNullability, defaultNullability)
         return JavaTypeQualifiers(result?.qualifier, annotationsMutability, definitelyNotNull, result?.isForWarningOnly == true)
     }
 
     private fun mostSpecific(
-        a: NullabilityQualifierWithMigrationStatus,
-        b: NullabilityQualifierWithMigrationStatus
-    ): NullabilityQualifierWithMigrationStatus {
+        a: NullabilityQualifierWithMigrationStatus?,
+        b: NullabilityQualifierWithMigrationStatus?
+    ): NullabilityQualifierWithMigrationStatus? {
+        if (a == null) return b
+        if (b == null) return a
         // TODO: this probably behaves really weirdly when some of those are warnings.
         if (a.qualifier == NullabilityQualifier.FORCE_FLEXIBILITY) return b
         if (b.qualifier == NullabilityQualifier.FORCE_FLEXIBILITY) return a

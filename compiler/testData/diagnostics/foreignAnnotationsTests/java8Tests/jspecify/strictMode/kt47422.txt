@@ -82,5 +82,6 @@ public open class UtilGenericNullnessUnspecifiedBound {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public open fun </*0*/ K : @org.jspecify.nullness.NullnessUnspecified kotlin.Any!> getFooOfK(): Foo<K!>
+    public open fun </*0*/ K : @org.jspecify.nullness.NullnessUnspecified kotlin.Any!> getFooOfK(): Foo<K>
 }
+
