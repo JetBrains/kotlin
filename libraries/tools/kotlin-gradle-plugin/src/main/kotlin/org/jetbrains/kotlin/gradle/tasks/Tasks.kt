@@ -547,6 +547,8 @@ abstract class KotlinCompile @Inject constructor(
                 val classpathSnapshotDir = getClasspathSnapshotDir(task)
                 task.classpathSnapshotProperties.classpathSnapshotDir.value(classpathSnapshotDir).disallowChanges()
                 task.classpathSnapshotProperties.classpathSnapshotDirFileCollection.from(classpathSnapshotDir)
+            } else {
+                task.classpathSnapshotProperties.classpath.from(task.project.provider { task.classpath })
             }
         }
     }
@@ -578,6 +580,11 @@ abstract class KotlinCompile @Inject constructor(
             logger.kotlinDebug { "Set $this.usePreciseJavaTracking=$value" }
         }
 
+    @Internal // To support compile avoidance (ClasspathSnapshotProperties.classpathSnapshot will be used as input instead)
+    override fun getClasspath(): FileCollection {
+        return super.getClasspath()
+    }
+
     @get:Nested
     abstract val classpathSnapshotProperties: ClasspathSnapshotProperties
 
@@ -590,6 +597,11 @@ abstract class KotlinCompile @Inject constructor(
         @get:Incremental
         @get:Optional // Set if useClasspathSnapshot == true
         abstract val classpathSnapshot: ConfigurableFileCollection
+
+        @get:Classpath
+        @get:Incremental
+        @get:Optional // Set if useClasspathSnapshot == false (to restore the existing classpath annotations when the feature is disabled)
+        abstract val classpath: ConfigurableFileCollection
 
         @get:OutputDirectory
         @get:Optional // Set if useClasspathSnapshot == true
@@ -663,7 +675,7 @@ abstract class KotlinCompile @Inject constructor(
     }
 
     override val incrementalProps: List<FileCollection>
-        get() = super.incrementalProps + listOf(classpathSnapshotProperties.classpathSnapshot)
+        get() = listOf(stableSources, commonSourceSet, classpathSnapshotProperties.classpath, classpathSnapshotProperties.classpathSnapshot)
 
     override fun getSourceRoots(): SourceRoots.ForJvm = jvmSourceRoots
 
