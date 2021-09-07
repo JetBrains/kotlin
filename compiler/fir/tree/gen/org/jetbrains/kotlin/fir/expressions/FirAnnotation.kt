@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.expressions
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -17,15 +16,13 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirAnnotation : FirExpression(), FirCall, FirResolvable {
+abstract class FirAnnotation : FirExpression() {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotation>
-    abstract override val argumentList: FirArgumentList
-    abstract override val calleeReference: FirReference
     abstract val useSiteTarget: AnnotationUseSiteTarget?
     abstract val annotationTypeRef: FirTypeRef
-    abstract val resolveStatus: FirAnnotationResolveStatus
+    abstract val argumentMapping: FirAnnotationArgumentMapping
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotation(this, data)
 
@@ -35,15 +32,9 @@ abstract class FirAnnotation : FirExpression(), FirCall, FirResolvable {
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
-
-    abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
-
-    abstract fun replaceResolveStatus(newResolveStatus: FirAnnotationResolveStatus)
+    abstract fun replaceArgumentMapping(newArgumentMapping: FirAnnotationArgumentMapping)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotation
-
-    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirAnnotation
 
     abstract fun <D> transformAnnotationTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotation
 }

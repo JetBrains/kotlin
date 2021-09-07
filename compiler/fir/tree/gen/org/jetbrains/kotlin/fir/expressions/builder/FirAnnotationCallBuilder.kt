@@ -12,9 +12,16 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirArgumentList
+import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
+import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
-import org.jetbrains.kotlin.fir.expressions.impl.FirAnnotationImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirAnnotationCallImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -23,37 +30,41 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 @FirBuilderDsl
-class FirAnnotationBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
+class FirAnnotationCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: FirSourceElement? = null
     var useSiteTarget: AnnotationUseSiteTarget? = null
-    lateinit var annotationTypeRef: FirTypeRef
-    lateinit var argumentMapping: FirAnnotationArgumentMapping
+    var annotationTypeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
+    override var argumentList: FirArgumentList = FirEmptyArgumentList
+    lateinit var calleeReference: FirReference
+    var argumentMapping: FirAnnotationArgumentMapping = FirEmptyAnnotationArgumentMapping
 
-    override fun build(): FirAnnotation {
-        return FirAnnotationImpl(
+    override fun build(): FirAnnotationCall {
+        return FirAnnotationCallImpl(
             source,
             useSiteTarget,
             annotationTypeRef,
+            argumentList,
+            calleeReference,
             argumentMapping,
         )
     }
 
 
-    @Deprecated("Modification of 'typeRef' has no impact for FirAnnotationBuilder", level = DeprecationLevel.HIDDEN)
+    @Deprecated("Modification of 'typeRef' has no impact for FirAnnotationCallBuilder", level = DeprecationLevel.HIDDEN)
     override var typeRef: FirTypeRef
         get() = throw IllegalStateException()
         set(_) {
             throw IllegalStateException()
         }
 
-    @Deprecated("Modification of 'annotations' has no impact for FirAnnotationBuilder", level = DeprecationLevel.HIDDEN)
+    @Deprecated("Modification of 'annotations' has no impact for FirAnnotationCallBuilder", level = DeprecationLevel.HIDDEN)
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildAnnotation(init: FirAnnotationBuilder.() -> Unit): FirAnnotation {
+inline fun buildAnnotationCall(init: FirAnnotationCallBuilder.() -> Unit): FirAnnotationCall {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
-    return FirAnnotationBuilder().apply(init).build()
+    return FirAnnotationCallBuilder().apply(init).build()
 }

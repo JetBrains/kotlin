@@ -73,10 +73,22 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             delegateFields(listOf("aliasName", "importedFqName", "isAllUnder", "source"), "delegate")
         }
 
-        impl(annotation) {
+        fun ImplementationContext.commonAnnotationConfig(): Unit {
+            defaultEmptyList("annotations")
             default("typeRef") {
                 value = "annotationTypeRef"
                 withGetter = true
+            }
+        }
+
+        impl(annotation) {
+            commonAnnotationConfig()
+        }
+
+        impl(annotationCall) {
+            commonAnnotationConfig()
+            default("argumentMapping") {
+                needAcceptAndTransform = false
             }
         }
 
@@ -501,6 +513,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         noImpl(argumentList)
+        noImpl(annotationArgumentMapping)
 
         val implementationsWithoutStatusAndTypeParameters = listOf(
             "FirAnonymousFunctionImpl",

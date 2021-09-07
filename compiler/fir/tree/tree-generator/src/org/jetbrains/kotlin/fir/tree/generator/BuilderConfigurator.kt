@@ -108,13 +108,14 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             withCopy()
         }
 
-        builder(annotation) {
+        builder(annotationCall) {
             parents += callBuilder
             default("argumentList") {
                 value = "FirEmptyArgumentList"
             }
-            default("resolveStatus", "FirAnnotationResolveStatus.Unresolved")
-            useTypes(emptyArgumentListType)
+            default("argumentMapping", "FirEmptyAnnotationArgumentMapping")
+            default("annotationTypeRef", "FirImplicitTypeRefImpl(null)")
+            useTypes(emptyArgumentListType, emptyAnnotationArgumentMappingType, implicitTypeRefType)
         }
 
         builder(arrayOfCall) {

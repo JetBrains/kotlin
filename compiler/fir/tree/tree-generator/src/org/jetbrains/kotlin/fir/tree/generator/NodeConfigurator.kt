@@ -447,7 +447,15 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         annotation.configure {
             +field("useSiteTarget", annotationUseSiteTargetType, nullable = true)
             +field("annotationTypeRef", typeRef).withTransform()
-            +field("resolveStatus", annotationResolveStatusType, withReplace = true)
+            +field("argumentMapping", annotationArgumentMapping, withReplace = true)
+        }
+
+        annotationCall.configure {
+            +field("argumentMapping", annotationArgumentMapping, withReplace = true)
+        }
+
+        annotationArgumentMapping.configure {
+            +field("mapping", type("Map") to listOf(nameType, expression))
         }
 
         augmentedArraySetCall.configure {
