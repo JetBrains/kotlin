@@ -22527,6 +22527,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 runTest("compiler/testData/diagnostics/tests/properties/lateinitOnTopLevel.kt");
             }
 
+            @Test
+            @TestMetadata("protectedGetterWithPublicSetter.kt")
+            public void testProtectedGetterWithPublicSetter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/properties/protectedGetterWithPublicSetter.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/properties/backingField")
             @TestDataPath("$PROJECT_ROOT")

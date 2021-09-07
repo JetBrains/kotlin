@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
@@ -18,9 +19,9 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -47,7 +48,8 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             useSiteFile: FirFile,
             containingDeclarations: List<FirDeclaration>,
             dispatchReceiver: ReceiverValue?,
-            session: FirSession
+            session: FirSession,
+            isCallToPropertySetter: Boolean,
         ): Boolean {
             return true
         }
@@ -90,7 +92,14 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             return true
         }
 
-        val visible = isVisible(declaration, session, useSiteFile, containingDeclarations, candidate.dispatchReceiverValue)
+        val visible = isVisible(
+            declaration,
+            session,
+            useSiteFile,
+            containingDeclarations,
+            candidate.dispatchReceiverValue,
+            candidate.callInfo.callSite is FirVariableAssignment
+        )
         val backingField = declaration.getBackingFieldIfApplicable()
 
         if (visible && backingField != null) {
@@ -100,6 +109,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                 useSiteFile,
                 containingDeclarations,
                 candidate.dispatchReceiverValue,
+                candidate.callInfo.callSite is FirVariableAssignment,
             )
         }
 
@@ -111,7 +121,8 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         session: FirSession,
         useSiteFile: FirFile,
         containingDeclarations: List<FirDeclaration>,
-        dispatchReceiver: ReceiverValue?
+        dispatchReceiver: ReceiverValue?,
+        isCallToPropertySetter: Boolean = false,
     ): Boolean {
         require(declaration is FirDeclaration)
         val provider = session.firProvider
@@ -166,7 +177,8 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                 useSiteFile,
                 containingDeclarations,
                 dispatchReceiver,
-                session
+                session,
+                isCallToPropertySetter,
             )
         }
     }
@@ -177,7 +189,8 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         useSiteFile: FirFile,
         containingDeclarations: List<FirDeclaration>,
         dispatchReceiver: ReceiverValue?,
-        session: FirSession
+        session: FirSession,
+        isCallToPropertySetter: Boolean,
     ): Boolean
 
     private fun canSeePrivateMemberOf(

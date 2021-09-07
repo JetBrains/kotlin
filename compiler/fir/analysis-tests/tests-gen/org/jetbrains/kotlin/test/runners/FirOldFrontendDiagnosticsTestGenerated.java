@@ -22527,6 +22527,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 runTest("compiler/testData/diagnostics/tests/properties/lateinitOnTopLevel.kt");
             }
 
+            @Test
+            @TestMetadata("protectedGetterWithPublicSetter.kt")
+            public void testProtectedGetterWithPublicSetter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/properties/protectedGetterWithPublicSetter.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/properties/backingField")
             @TestDataPath("$PROJECT_ROOT")
