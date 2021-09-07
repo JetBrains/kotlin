@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,7 +25,12 @@ abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, P
     protected val owner: T
 ) : KtLightElementBase(owner), PsiModifierList, KtLightElement<KtModifierList, PsiModifierList> {
     override val clsDelegate by lazyPub { owner.clsDelegate.modifierList!! }
-    private val _annotations by lazyPub { computeAnnotations() }
+    private val _annotations by lazyPub {
+        val annotations = computeAnnotations()
+        annotationsFilter?.let(annotations::filter) ?: annotations
+    }
+
+    protected open val annotationsFilter: ((KtLightAbstractAnnotation) -> Boolean)? = null
 
     override val kotlinOrigin: KtModifierList?
         get() = owner.kotlinOrigin?.modifierList
@@ -104,8 +109,10 @@ class KtUltraLightSimpleModifierList(
 
 abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
     owner: T,
-    private val support: KtUltraLightSupport
+    protected val support: KtUltraLightSupport
 ) : KtUltraLightModifierListBase<T>(owner) {
+
+    protected open fun PsiAnnotation.additionalConverter(): KtLightAbstractAnnotation? = null
 
     override fun nonSourceAnnotationsForAnnotationType(sourceAnnotations: List<PsiAnnotation>): List<KtLightAbstractAnnotation> {
 
@@ -114,12 +121,14 @@ abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwn
         return mutableListOf<KtLightAbstractAnnotation>().also { result ->
 
             sourceAnnotations.mapNotNullTo(result) { sourceAnnotation ->
-                sourceAnnotation.tryConvertAsTarget(support)
+                sourceAnnotation.additionalConverter()
+                    ?: sourceAnnotation.tryConvertAsTarget(support)
                     ?: sourceAnnotation.tryConvertAsRetention(support)
+                    ?: sourceAnnotation.tryConvertAsRepeatable(support, owner)
                     ?: sourceAnnotation.tryConvertAsMustBeDocumented(support)
             }
 
-            if (!result.any { it.qualifiedName == "java.lang.annotation.Retention" }) {
+            if (!result.any { it.qualifiedName == CommonClassNames.JAVA_LANG_ANNOTATION_RETENTION }) {
                 result.add(createRetentionRuntimeAnnotation(support, this))
             }
         }
