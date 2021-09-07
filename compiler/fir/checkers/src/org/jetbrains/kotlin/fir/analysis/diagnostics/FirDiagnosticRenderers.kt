@@ -49,6 +49,8 @@ object FirDiagnosticRenderers {
         element.toString()
     }
 
+    val EMPTY = Renderer { _: Any? -> "" }
+
     val VARIABLE_NAME = Renderer { symbol: FirVariableSymbol<*> ->
         symbol.name.asString()
     }

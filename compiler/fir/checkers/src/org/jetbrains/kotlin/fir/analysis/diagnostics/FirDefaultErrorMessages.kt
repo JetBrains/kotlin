@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderers.commaSeparated
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.AMBIGUOUS_CALLS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.COLLECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.EMPTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FIR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FQ_NAMES_IN_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FUNCTION_PARAMETERS
@@ -671,8 +672,8 @@ class FirDefaultErrorMessages {
             map.put(
                 OVERRIDE_DEPRECATION,
                 "This declaration overrides deprecated member but not marked as deprecated itself. Please add @Deprecated annotation or suppress",
-                TO_STRING,
-                TO_STRING
+                EMPTY,
+                EMPTY
             )
             map.put(ANNOTATION_ON_SUPERCLASS, "Annotations on superclass are meaningless")
             map.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING)
