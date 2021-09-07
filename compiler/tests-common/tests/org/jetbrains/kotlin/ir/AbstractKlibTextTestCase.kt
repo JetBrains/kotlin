@@ -218,7 +218,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
         val irBuiltIns = IrBuiltInsOverDescriptors(testDescriptor.builtIns, typeTranslator, symbolTable)
         val irLinker = JsIrLinker(null, IrMessageLogger.None, irBuiltIns, symbolTable, null, null)
         irLinker.deserializeIrModuleHeader(stdlibDescriptor, stdlib)
-        val testModule = irLinker.deserializeIrModuleHeader(testDescriptor, klib, DeserializationStrategy.ALL)
+        val testModule = irLinker.deserializeIrModuleHeader(testDescriptor, klib, { DeserializationStrategy.ALL })
         irLinker.init(null, emptyList())
         ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
         irLinker.postProcess()

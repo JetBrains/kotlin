@@ -49,17 +49,17 @@ class JvmIrLinker(
         moduleDescriptor.name.asString().startsWith("<dependencies of ")
 
     // TODO: implement special Java deserializer
-    override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: KotlinLibrary?, strategy: DeserializationStrategy): IrModuleDeserializer {
+    override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: KotlinLibrary?, strategyResolver: (String) -> DeserializationStrategy): IrModuleDeserializer {
         if (klib != null) {
             assert(moduleDescriptor.getCapability(KlibModuleOrigin.CAPABILITY) != null)
-            return JvmModuleDeserializer(moduleDescriptor, klib, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT, strategy)
+            return JvmModuleDeserializer(moduleDescriptor, klib, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT, strategyResolver)
         }
 
         return MetadataJVMModuleDeserializer(moduleDescriptor, emptyList())
     }
 
-    private inner class JvmModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, libraryAbiVersion: KotlinAbiVersion, strategy: DeserializationStrategy) :
-        BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategy, libraryAbiVersion)
+    private inner class JvmModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, libraryAbiVersion: KotlinAbiVersion, strategyResolver: (String) -> DeserializationStrategy) :
+        BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategyResolver, libraryAbiVersion)
 
     private fun DeclarationDescriptor.isJavaDescriptor(): Boolean {
         if (this is PackageFragmentDescriptor) {

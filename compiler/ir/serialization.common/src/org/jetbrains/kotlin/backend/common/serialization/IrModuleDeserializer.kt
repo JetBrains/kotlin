@@ -85,7 +85,7 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor, val 
 
     abstract val moduleDependencies: Collection<IrModuleDeserializer>
 
-    open val strategy: DeserializationStrategy = DeserializationStrategy.ONLY_DECLARATION_HEADERS
+    open val strategyResolver: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_DECLARATION_HEADERS }
 
     open val isCurrent = false
 
@@ -215,8 +215,8 @@ class IrModuleDeserializerWithBuiltIns(
     override val klib: IrLibrary
         get() = delegate.klib
 
-    override val strategy: DeserializationStrategy
-        get() = delegate.strategy
+    override val strategyResolver: (String) -> DeserializationStrategy
+        get() = delegate.strategyResolver
 
     override fun addModuleReachableTopLevel(idSig: IdSignature) {
         delegate.addModuleReachableTopLevel(idSig)

@@ -288,7 +288,7 @@ fun loadIr(
                 irLinker.deserializeIrModuleHeader(
                     depsDescriptors.getModuleDescriptor(klib),
                     klib,
-                    deserializationStrategy = DeserializationStrategy.EXPLICITLY_EXPORTED
+                    deserializationStrategy = { DeserializationStrategy.EXPLICITLY_EXPORTED }
                 ).also { moduleFragment ->
                     klib.manifestProperties.getProperty(KLIB_PROPERTY_JS_OUTPUT_NAME)?.let {
                         moduleFragmentToUniqueName[moduleFragment] = it
@@ -359,19 +359,21 @@ fun loadIr(
                 it.library.libraryFile.canonicalPath == mainPath
             }
 
-            val deserializedModuleFragments = sortDependencies(reachableDependencies.getFullResolvedList(), depsDescriptors.descriptors).map { klib ->
-                val strategy =
-                    if (klib == mainModuleLib)
-                        DeserializationStrategy.ALL
-                    else
-                        DeserializationStrategy.EXPLICITLY_EXPORTED
+            val deserializedModuleFragments =
+                sortDependencies(reachableDependencies.getFullResolvedList(), depsDescriptors.descriptors).map { klib ->
+                    val strategy =
+                        if (klib == mainModuleLib)
+                            DeserializationStrategy.ALL
+                        else
+                            DeserializationStrategy.EXPLICITLY_EXPORTED
 
-                irLinker.deserializeIrModuleHeader(depsDescriptors.getModuleDescriptor(klib), klib, strategy).also { moduleFragment ->
-                    klib.manifestProperties.getProperty(KLIB_PROPERTY_JS_OUTPUT_NAME)?.let {
-                        moduleFragmentToUniqueName[moduleFragment] = it
-                    }
+                    irLinker.deserializeIrModuleHeader(depsDescriptors.getModuleDescriptor(klib), klib, { strategy })
+                        .also { moduleFragment ->
+                            klib.manifestProperties.getProperty(KLIB_PROPERTY_JS_OUTPUT_NAME)?.let {
+                                moduleFragmentToUniqueName[moduleFragment] = it
+                            }
+                        }
                 }
-            }
 
             val moduleFragment = deserializedModuleFragments.last()
 

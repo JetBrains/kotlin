@@ -32,7 +32,7 @@ class IcModuleDeserializer(
     val icData: SerializedIcData,
     moduleDescriptor: ModuleDescriptor,
     override val klib: IrLibrary,
-    override val strategy: DeserializationStrategy,
+    override val strategyResolver: (String) -> DeserializationStrategy,
     private val containsErrorCode: Boolean = false,
 ) : IrModuleDeserializer(moduleDescriptor, (klib as KotlinLibrary).versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
 
@@ -129,17 +129,18 @@ class IcModuleDeserializer(
 
         val fileReader = IrLibraryFileFromKlib(moduleDeserializer.klib, fileIndex)
         val file = fileReader.createFile(moduleFragment, fileProto)
+        val fileStrategy = strategyResolver(file.fileEntry.name)
 
-        val icFileData = pathToIcFileData[file.path]!!
+        val icFileData = pathToIcFileData[file.path] ?: error("No IC cache found for file ${file.path}")
 
         val icDeserializer = IcFileDeserializer(
             linker,
             file,
             fileReader,
             fileProto,
-            strategy.needBodies,
+            fileStrategy.needBodies,
             allowErrorNodes,
-            strategy.inlineBodies,
+            fileStrategy.inlineBodies,
             moduleDeserializer,
             { fileDeserializer -> originalEnqueue(fileDeserializer) },
             icFileData,
@@ -169,10 +170,10 @@ class IcModuleDeserializer(
             }
         }
 
-        if (strategy.theWholeWorld) {
+        if (fileStrategy.theWholeWorld) {
             icDeserializer.allOriginalDeclarationSignatures().forEach { it.originalEnqueue(icDeserializer) }
         }
-        if (strategy.theWholeWorld || strategy.explicitlyExported) {
+        if (fileStrategy.theWholeWorld || fileStrategy.explicitlyExported) {
             linker.modulesWithReachableTopLevels.add(this)
         }
 

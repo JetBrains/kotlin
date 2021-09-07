@@ -75,7 +75,7 @@ abstract class KotlinIrLinker(
     protected abstract fun createModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
         klib: KotlinLibrary?,
-        strategy: DeserializationStrategy,
+        strategyResolver: (String) -> DeserializationStrategy,
     ): IrModuleDeserializer
 
     protected abstract fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean
@@ -281,7 +281,7 @@ abstract class KotlinIrLinker(
     fun deserializeIrModuleHeader(
         moduleDescriptor: ModuleDescriptor,
         kotlinLibrary: KotlinLibrary?,
-        deserializationStrategy: DeserializationStrategy = DeserializationStrategy.ONLY_REFERENCED,
+        deserializationStrategy: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_REFERENCED },
         _moduleName: String? = null
     ): IrModuleFragment {
         assert(kotlinLibrary != null || _moduleName != null) { "Either library or explicit name have to be provided $moduleDescriptor" }
@@ -306,27 +306,29 @@ abstract class KotlinIrLinker(
     fun deserializeIrModuleHeader(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary?, moduleName: String): IrModuleFragment {
         // TODO: consider skip deserializing explicitly exported declarations for libraries.
         // Now it's not valid because of all dependencies that must be computed.
-        val deserializationStrategy =
+        val deserializationStrategy: (String) -> DeserializationStrategy =
             if (exportedDependencies.contains(moduleDescriptor)) {
-                DeserializationStrategy.ALL
+                { DeserializationStrategy.ALL }
             } else {
-                DeserializationStrategy.EXPLICITLY_EXPORTED
+                { DeserializationStrategy.EXPLICITLY_EXPORTED }
             }
         return deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, deserializationStrategy, moduleName)
     }
 
     fun deserializeFullModule(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary): IrModuleFragment =
-        deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, DeserializationStrategy.ALL)
+        deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, { DeserializationStrategy.ALL })
 
     fun deserializeOnlyHeaderModule(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary?): IrModuleFragment =
-        deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, DeserializationStrategy.ONLY_DECLARATION_HEADERS)
+        deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, { DeserializationStrategy.ONLY_DECLARATION_HEADERS })
 
     fun deserializeHeadersWithInlineBodies(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary): IrModuleFragment =
-        deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, DeserializationStrategy.WITH_INLINE_BODIES)
+        deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, { DeserializationStrategy.WITH_INLINE_BODIES })
 
-    @Suppress("UNUSED_PARAMETER")
     fun deserializeDirtyFiles(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary, dirtyFiles: Collection<String>): IrModuleFragment {
-        return deserializeFullModule(moduleDescriptor, kotlinLibrary)
+        return deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, {
+            if (it in dirtyFiles) DeserializationStrategy.ALL
+            else DeserializationStrategy.WITH_INLINE_BODIES
+        })
     }
 }
 
