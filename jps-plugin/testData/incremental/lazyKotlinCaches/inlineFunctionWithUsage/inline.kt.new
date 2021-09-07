@@ -1,0 +1,5 @@
+package inline
+
+inline fun f() {
+    println("changed")
+}

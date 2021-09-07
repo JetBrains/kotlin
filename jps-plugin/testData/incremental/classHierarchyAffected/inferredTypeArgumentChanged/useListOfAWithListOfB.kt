@@ -1,0 +1,3 @@
+fun useListOfAWithListOfB() {
+    useListOfA(getListOfB())
+}

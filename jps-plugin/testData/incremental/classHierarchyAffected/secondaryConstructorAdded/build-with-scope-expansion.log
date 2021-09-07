@@ -1,0 +1,26 @@
+================ Step #1 =================
+
+Compiling files:
+  src/A.kt
+  src/AChild.kt
+  src/AConstructorFunction.kt
+  src/createAFromInt.kt
+  src/createAFromString.kt
+  src/useA.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Conflicting overloads: public constructor A(x: String) defined in A, public fun A(x: String): A defined in root package
+
+================ Step #2 =================
+
+Compiling files:
+  src/A.kt
+  src/AChild.kt
+  src/createAFromInt.kt
+  src/createAFromString.kt
+  src/useA.kt
+End of files
+Exit code: OK
+------------------------------------------

@@ -1,0 +1,3 @@
+fun callUseAWithC() {
+    useA(getC())
+}

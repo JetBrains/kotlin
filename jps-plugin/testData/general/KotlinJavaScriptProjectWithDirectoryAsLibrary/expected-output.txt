@@ -1,0 +1,18 @@
+kotlinProject/
+  kotlinProject/
+    root-package.kjsm
+  kotlinProject.js
+  kotlinProject.meta.js
+  lib/
+    META-INF-ex/
+      file2.js
+    dir/
+      file1.js
+    file0.js
+    jslib-example.js
+    jslib-example.meta.js
+    kotlin.js
+    kotlin.meta.js
+    res0.js
+    resdir/
+      res1.js

@@ -1,0 +1,4 @@
+package other
+
+fun other() {
+}

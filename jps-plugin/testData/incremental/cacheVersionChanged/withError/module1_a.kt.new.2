@@ -1,0 +1,6 @@
+package module1
+
+class A
+
+fun a() {
+}

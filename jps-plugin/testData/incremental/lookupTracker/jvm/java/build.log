@@ -1,0 +1,6 @@
+==== INITIAL BUILD ====
+Compiling files:
+  src/usages.kt
+Exit code: COMPILATION_ERROR
+  Unresolved reference: IS
+  Unresolved reference: IS
