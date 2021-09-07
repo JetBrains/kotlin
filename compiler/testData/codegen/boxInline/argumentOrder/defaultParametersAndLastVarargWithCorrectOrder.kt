@@ -1,8 +1,8 @@
 // WITH_RUNTIME
 // !LANGUAGE: +UseCorrectExecutionOrderForVarargArguments
 // NO_CHECK_LAMBDA_INLINING
-// FILE: 1.kt
 // KJS_WITH_FULL_RUNTIME
+// FILE: 1.kt
 
 package test
 

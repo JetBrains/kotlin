@@ -1,7 +1,7 @@
 // WITH_COROUTINES
 // WITH_RUNTIME
-// FILE: test.kt
 // SKIP_SOURCEMAP_REMAPPING
+// FILE: test.kt
 import kotlin.coroutines.*
 import helpers.*
 

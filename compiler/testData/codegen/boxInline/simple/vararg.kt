@@ -1,6 +1,6 @@
 // WITH_RUNTIME
-// FILE: 1.kt
 // KJS_WITH_FULL_RUNTIME
+// FILE: 1.kt
 package test
 
 inline fun doSmth(vararg a: String) : String {
