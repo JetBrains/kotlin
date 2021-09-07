@@ -19,7 +19,7 @@ object DeprecationInheritanceChecker : DeclarationChecker {
         val (deprecations, message) = if (context.languageVersionSettings.supportsFeature(StopPropagatingDeprecationThroughOverrides)) {
             deprecationResolver.getHiddenDeprecationsFromOverriden(descriptor) to ""
         } else {
-            deprecationResolver.getDeprecations(descriptor) to "This deprecation won't be inherited in kotlin 1.7. "
+            deprecationResolver.getDeprecations(descriptor) to "This deprecation won't be inherited in future releases. "
         }
         context.trace.report(Errors.OVERRIDE_DEPRECATION.on(declaration, message, descriptor, deprecations))
     }

@@ -394,7 +394,7 @@ public class DefaultErrorMessages {
                 (obj, renderingContext) -> obj.equals(VersionRequirement.Version.INFINITY) ? "" : " is only available since Kotlin " + obj.asString() + " and",
                 versionRequirementMessage);
 
-        MAP.put(OVERRIDE_DEPRECATION, "This declaration overrides deprecated member but not marked as deprecated itself. {0}Please add @Deprecated annotation or suppress", TO_STRING, TO_STRING, TO_STRING);
+        MAP.put(OVERRIDE_DEPRECATION, "This declaration overrides deprecated member but not marked as deprecated itself. {0}Please add @Deprecated annotation or suppress", TO_STRING, EMPTY, EMPTY);
 
         MAP.put(DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED, "DeprecatedSinceKotlin annotation can be used only together with Deprecated annotation");
         MAP.put(DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL, "DeprecatedSinceKotlin annotation can be used only with unspecified deprecation level of Deprecated annotation");
