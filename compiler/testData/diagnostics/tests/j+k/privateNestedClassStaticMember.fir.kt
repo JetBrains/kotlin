@@ -14,5 +14,5 @@ public class Foo {
 // FILE: 1.kt
 
 fun main() {
-    javaPackage.Foo.Bar.doSmth()
+    javaPackage.Foo.<!INVISIBLE_REFERENCE!>Bar<!>.doSmth()
 }

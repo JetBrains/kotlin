@@ -28,5 +28,5 @@ fun testAccess() {
     E1
     NestedEntry
     A1()
-    A2
+    <!INVISIBLE_REFERENCE!>A2<!>
 }
