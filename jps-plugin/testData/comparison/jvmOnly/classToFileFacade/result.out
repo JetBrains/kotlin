@@ -1,0 +1,3 @@
+REMOVED test/MainKt.Companion
+REMOVED test/TestPackage
+CHANGES in test/MainKt: CLASS_SIGNATURE

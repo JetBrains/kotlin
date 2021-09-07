@@ -1,0 +1,8 @@
+'internal open val member: Int defined in test.ClassBB1' has no access to 'internal abstract val member: Int defined in test.ClassB1', so it cannot override it at line 14, column 14
+'public' subclass exposes its 'internal' supertype InternalClass1 at line 8, column 36
+'public' subclass exposes its 'internal' supertype InternalClass2 at line 18, column 36
+Cannot access 'InternalClass1': it is internal in 'test' at line 5, column 13
+Cannot access 'InternalClass1': it is internal in 'test' at line 8, column 36
+Cannot access 'InternalClassAnnotation': it is internal in 'test' at line 10, column 2
+Cannot access 'InternalTestAnnotation': it is internal in 'test' at line 1, column 7
+Cannot access 'member': it is invisible (private in a supertype) in 'ClassAA1' at line 27, column 25

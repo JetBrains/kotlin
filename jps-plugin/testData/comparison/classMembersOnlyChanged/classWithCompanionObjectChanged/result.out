@@ -1,0 +1,15 @@
+REMOVED test/ClassWithChangedCompanionObject.FirstName
+REMOVED test/ClassWithRemovedCompanionObject.Companion
+ADDED test/ClassWithAddedCompanionObject.Companion
+ADDED test/ClassWithChangedCompanionObject.SecondName
+PROTO DIFFERENCE in test/ClassWithAddedCompanionObject: COMPANION_OBJECT_NAME, NESTED_CLASS_NAME_LIST
+CHANGES in test/ClassWithAddedCompanionObject: CLASS_SIGNATURE, MEMBERS
+    [Companion]
+PROTO DIFFERENCE in test/ClassWithChangedCompanionObject: COMPANION_OBJECT_NAME, NESTED_CLASS_NAME_LIST
+CHANGES in test/ClassWithChangedCompanionObject: CLASS_SIGNATURE, MEMBERS
+    [FirstName, SecondName]
+PROTO DIFFERENCE in test/ClassWithChangedVisibilityForCompanionObject.Companion: FLAGS
+CHANGES in test/ClassWithChangedVisibilityForCompanionObject.Companion: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/ClassWithRemovedCompanionObject: COMPANION_OBJECT_NAME, NESTED_CLASS_NAME_LIST
+CHANGES in test/ClassWithRemovedCompanionObject: CLASS_SIGNATURE, MEMBERS
+    [Companion]
