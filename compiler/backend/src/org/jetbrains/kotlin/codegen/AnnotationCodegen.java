@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil;
 import org.jetbrains.kotlin.types.FlexibleType;
 import org.jetbrains.kotlin.types.FlexibleTypesKt;

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
+import org.jetbrains.kotlin.JvmFieldApplicabilityProblem.*
+import org.jetbrains.kotlin.name.JvmNames.JVM_MULTIFILE_CLASS_SHORT
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
