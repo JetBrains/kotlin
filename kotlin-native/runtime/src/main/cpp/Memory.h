@@ -435,11 +435,13 @@ ALWAYS_INLINE inline void AssertThreadState(std::initializer_list<ThreadState> e
 }
 
 ALWAYS_INLINE inline void runWithCatchExceptionObjHolder(std::function<void()> process, std::function<void(ExceptionObjHolder&)> catchAction) {
+#if !KONAN_NO_EXCEPTIONS
     try {
         process();
     } catch (ExceptionObjHolder& e) {
         catchAction(e);
     }
+#endif
 }
 
 // Scopely sets the given thread state for the given thread.
