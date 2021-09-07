@@ -15,8 +15,6 @@
 using namespace kotlin;
 
 using ::testing::_;
-using ::kotlin::test_support::ScopedReportUnhandledExceptionMock;
-using ::kotlin::test_support::ScopedKotlin_runUnhandledExceptionHookMock;
 
 namespace {
 

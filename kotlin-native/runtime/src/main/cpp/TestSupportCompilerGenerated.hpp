@@ -12,43 +12,29 @@
 #include "Types.h"
 #include "Utils.hpp"
 
-namespace kotlin {
-namespace test_support {
-
-namespace internal {
-
-extern testing::MockFunction<KInt()>* createCleanerWorkerMock;
-extern testing::MockFunction<void(KInt, bool)>* shutdownCleanerWorkerMock;
-extern testing::MockFunction<void(KRef)>* reportUnhandledExceptionMock;
-extern testing::MockFunction<void(KRef)>* Kotlin_runUnhandledExceptionHookMock;
-
-} // namespace internal
-
-template <class F, bool Strict = true>
-class ScopedMockFunction : private kotlin::MoveOnly {
+template <class F>
+class ScopedStrictMockFunction : private kotlin::MoveOnly {
 public:
-    using Mock = typename std::conditional_t<Strict,
-                                             testing::StrictMock<testing::MockFunction<F>>,
-                                             testing::NiceMock<testing::MockFunction<F>>>;
+    using Mock = testing::StrictMock<testing::MockFunction<F>>;
 
-    explicit ScopedMockFunction(testing::MockFunction<F>** globalMockLocation) : globalMockLocation_(globalMockLocation) {
-        RuntimeCheck(globalMockLocation != nullptr, "ScopedMockFunction needs non-null global mock location");
-        RuntimeCheck(*globalMockLocation == nullptr, "ScopedMockFunction needs null global mock");
+    explicit ScopedStrictMockFunction(Mock** globalMockLocation) : globalMockLocation_(globalMockLocation) {
+        RuntimeCheck(globalMockLocation != nullptr, "ScopedStrictMockFunction needs non-null global mock location");
+        RuntimeCheck(*globalMockLocation == nullptr, "ScopedStrictMockFunction needs null global mock");
         mock_ = make_unique<Mock>();
         *globalMockLocation_ = mock_.get();
     }
 
-    ScopedMockFunction(ScopedMockFunction&& rhs) : globalMockLocation_(rhs.globalMockLocation_), mock_(std::move(rhs.mock_)) {
+    ScopedStrictMockFunction(ScopedStrictMockFunction&& rhs) : globalMockLocation_(rhs.globalMockLocation_), mock_(std::move(rhs.mock_)) {
         rhs.globalMockLocation_ = nullptr;
     }
 
-    ScopedMockFunction& operator=(ScopedMockFunction&& rhs) {
-        ScopedMockFunction tmp(std::move(rhs));
+    ScopedStrictMockFunction& operator=(ScopedStrictMockFunction&& rhs) {
+        ScopedStrictMockFunction tmp(std::move(rhs));
         swap(tmp);
         return *this;
     }
 
-    ~ScopedMockFunction() {
+    ~ScopedStrictMockFunction() {
         if (!globalMockLocation_) return;
 
         RuntimeCheck(*globalMockLocation_ == mock_.get(), "unexpected global mock location");
@@ -58,7 +44,7 @@ public:
         *globalMockLocation_ = nullptr;
     }
 
-    void swap(ScopedMockFunction& other) {
+    void swap(ScopedStrictMockFunction& other) {
         std::swap(globalMockLocation_, other.globalMockLocation_);
         std::swap(mock_, other.mock_);
     }
@@ -68,29 +54,11 @@ public:
 
 private:
     // Can be null if moved-out of.
-    testing::MockFunction<F>** globalMockLocation_;
+    Mock** globalMockLocation_;
     KStdUniquePtr<Mock> mock_;
 };
 
-template<bool Strict = true>
-ScopedMockFunction<KInt(), Strict> ScopedCreateCleanerWorkerMock() {
-    return ScopedMockFunction<KInt(), Strict>(&internal::createCleanerWorkerMock);
-}
-
-template<bool Strict = true>
-ScopedMockFunction<void(KInt, bool), Strict> ScopedShutdownCleanerWorkerMock() {
-    return ScopedMockFunction<void(KInt, bool), Strict>(&internal::shutdownCleanerWorkerMock);
-}
-
-template<bool Strict = true>
-ScopedMockFunction<void(KRef), Strict> ScopedReportUnhandledExceptionMock() {
-    return ScopedMockFunction<void(KRef), Strict>(&internal::reportUnhandledExceptionMock);
-}
-
-template<bool Strict = true>
-ScopedMockFunction<void(KRef), Strict> ScopedKotlin_runUnhandledExceptionHookMock() {
-    return ScopedMockFunction<void(KRef), Strict>(&internal::Kotlin_runUnhandledExceptionHookMock);
-}
-
-} // namespace test_support
-} // namespace kotlin
+ScopedStrictMockFunction<KInt()> ScopedCreateCleanerWorkerMock();
+ScopedStrictMockFunction<void(KInt, bool)> ScopedShutdownCleanerWorkerMock();
+ScopedStrictMockFunction<void(KRef)> ScopedReportUnhandledExceptionMock();
+ScopedStrictMockFunction<void(KRef)> ScopedKotlin_runUnhandledExceptionHookMock();
