@@ -292,7 +292,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
     }
 
     private fun guessMainPackage(): FqName {
-        val allPackages = (context.getIncludedLibraryDescriptors() + context.moduleDescriptor).flatMap {
+        val allPackages = (context.getIncludedLibraryDescriptors() + context.getExportedDependencies() + context.moduleDescriptor).flatMap {
             it.getPackageFragments() // Includes also all parent packages, e.g. the root one.
         }
 

@@ -99,7 +99,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
     val K2NativeCompilerArguments.isUsefulWithoutFreeArgs: Boolean
         get() = listTargets || listPhases || checkDependencies || !includes.isNullOrEmpty() ||
-                !librariesToCache.isNullOrEmpty() || libraryToAddToCache != null
+                !librariesToCache.isNullOrEmpty() || libraryToAddToCache != null || !exportedLibraries.isNullOrEmpty()
 
     fun Array<String>?.toNonNullList(): List<String> {
         return this?.asList<String>() ?: listOf<String>()
@@ -259,6 +259,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     CHECK_DEPENDENCIES,
                     configuration.kotlinSourceRoots.isNotEmpty()
                             || !arguments.includes.isNullOrEmpty()
+                            || !arguments.exportedLibraries.isNullOrEmpty()
                             || outputKind.isCache
                             || arguments.checkDependencies
                 )
