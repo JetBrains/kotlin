@@ -2,6 +2,9 @@
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_MINIFICATION
 // SKIP_NODE_JS
+// INFER_MAIN_MODULE
+// MODULE: JS_TESTS
+// FILE: declarations.kt
 
 package foo
 
