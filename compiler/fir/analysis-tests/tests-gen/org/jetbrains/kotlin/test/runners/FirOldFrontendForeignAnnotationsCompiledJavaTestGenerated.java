@@ -715,6 +715,12 @@ public class FirOldFrontendForeignAnnotationsCompiledJavaTestGenerated extends A
                 }
 
                 @Test
+                @TestMetadata("UnannotatedWildcard.kt")
+                public void testUnannotatedWildcard() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/UnannotatedWildcard.kt");
+                }
+
+                @Test
                 @TestMetadata("WildcardsWithDefault.kt")
                 public void testWildcardsWithDefault() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/WildcardsWithDefault.kt");
@@ -794,6 +800,12 @@ public class FirOldFrontendForeignAnnotationsCompiledJavaTestGenerated extends A
                 @TestMetadata("TypeParameterBounds.kt")
                 public void testTypeParameterBounds() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/TypeParameterBounds.kt");
+                }
+
+                @Test
+                @TestMetadata("UnannotatedWildcard.kt")
+                public void testUnannotatedWildcard() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/UnannotatedWildcard.kt");
                 }
 
                 @Test
