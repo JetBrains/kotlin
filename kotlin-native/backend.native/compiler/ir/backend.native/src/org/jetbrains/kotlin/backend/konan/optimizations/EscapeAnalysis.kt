@@ -133,6 +133,12 @@ internal object EscapeAnalysis {
         val PARAMETER = -2
     }
 
+    object DivergenceResolutionParams {
+        const val MaxAttempts = 3
+        const val NegligibleSize = 100
+        const val SwellingFactor = 25
+    }
+
     private class RoleInfoEntry(val node: DataFlowIR.Node? = null, val field: DataFlowIR.Field?)
 
     private open class RoleInfo {
@@ -553,7 +559,8 @@ internal object EscapeAnalysis {
                 }
             }
 
-            val pointsToGraphs = nodes.associateBy({ it }, { PointsToGraph(it) })
+            val nonTrivialComponent = nodes.size > 1
+            val pointsToGraphs = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, PointsToGraph>()
             val toAnalyze = mutableSetOf<DataFlowIR.FunctionSymbol.Declared>()
             toAnalyze.addAll(nodes)
             val numberOfRuns = nodes.associateWith { 0 }.toMutableMap()
@@ -566,14 +573,26 @@ internal object EscapeAnalysis {
                 val startResult = escapeAnalysisResults[function]!!
                 context.log { "Start escape analysis result:\n$startResult" }
 
-                analyze(callGraph, pointsToGraphs[function]!!, function)
+                val pointsToGraph = PointsToGraph(function)
+                pointsToGraphs[function] = pointsToGraph
+                analyze(callGraph, pointsToGraph, function)
                 val endResult = escapeAnalysisResults[function]!!
 
                 if (startResult == endResult) {
                     context.log { "Escape analysis is not changed" }
                 } else {
                     context.log { "Escape analysis was refined:\n$endResult" }
-                    if (numberOfRuns[function]!! > 2) {
+                    if (with(DivergenceResolutionParams) {
+                                // A heuristic: the majority of functions have their points-to graph size linear in number of IR (or DFG) nodes,
+                                // there are exceptions but it's a trade-off we have to make.
+                                // The trick with [NegligibleSize] handles functions that basically delegate their work to other functions.
+                                val numberOfNodes = intraproceduralAnalysisResults[function]!!.function.body.allScopes.sumOf { it.nodes.size }
+                                val maxAllowedGraphSize = NegligibleSize + numberOfNodes * SwellingFactor
+
+                                numberOfRuns[function]!! > MaxAttempts
+                                        || (nonTrivialComponent && pointsToGraph.allNodes.size > maxAllowedGraphSize)
+                            }
+                    ) {
                         // TODO: suboptimal. May be it is possible somehow handle the entire component at once?
                         context.log {
                             "WARNING: Escape analysis for $function seems not to be converging." +
