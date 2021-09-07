@@ -518,14 +518,24 @@ internal object EscapeAnalysis {
                 analyze(callGraph, multiNode)
 
             context.logMultiple {
-                +"Managed to alloc on stack: ${stackAllocsCount * 100.0 / (globalAllocsCount + stackAllocsCount)}%"
-                +"Total graph size: $totalGraphSize"
+                with(stats) {
+                    +"Managed to alloc on stack: ${stackAllocsCount * 100.0 / (globalAllocsCount + stackAllocsCount)}%"
+                    +"Total ea result size: $totalEAResultSize"
+                    +"Total points-to graph size: $totalPTGSize"
+                    +"Total data flow graph size: $totalDFGSize"
+                }
             }
         }
 
-        var globalAllocsCount = 0
-        var stackAllocsCount = 0
-        var totalGraphSize = 0
+        private class Stats {
+            var globalAllocsCount = 0
+            var stackAllocsCount = 0
+            var totalEAResultSize = 0
+            var totalPTGSize = 0
+            var totalDFGSize = 0
+        }
+
+        private val stats = Stats()
 
         private fun analyze(callGraph: CallGraph, multiNode: DirectedGraphMultiNode<DataFlowIR.FunctionSymbol.Declared>) {
             val nodes = multiNode.nodes.filter { intraproceduralAnalysisResults.containsKey(it) }.toMutableSet()
@@ -581,6 +591,12 @@ internal object EscapeAnalysis {
             }
 
             pointsToGraphs.forEach { (function, graph) ->
+                val eaResult = escapeAnalysisResults[function]!!
+                stats.totalEAResultSize += eaResult.numberOfDrains + eaResult.escapes.size + eaResult.pointsTo.edges.size
+
+                stats.totalPTGSize += graph.allNodes.size
+                stats.totalDFGSize += intraproceduralAnalysisResults[function]!!.function.body.allScopes.sumOf { it.nodes.size }
+
                 // TODO: suboptimal.
                 if (function !in nodes) return@forEach
                 for (node in graph.nodes.keys) {
@@ -589,9 +605,9 @@ internal object EscapeAnalysis {
 
                         if (node.isAlloc) {
                             if (lifetime == Lifetime.GLOBAL)
-                                ++globalAllocsCount
+                                ++stats.globalAllocsCount
                             if (lifetime == Lifetime.STACK)
-                                ++stackAllocsCount
+                                ++stats.stackAllocsCount
 
                             lifetimes[it] = lifetime
                         }
@@ -652,8 +668,6 @@ internal object EscapeAnalysis {
             pointsToGraph.logDigraph(true)
 
             escapeAnalysisResults[function] = eaResult
-
-            totalGraphSize += eaResult.numberOfDrains + eaResult.escapes.size + eaResult.pointsTo.edges.size
         }
 
         private fun DataFlowIR.FunctionSymbol.resolved(): DataFlowIR.FunctionSymbol {
