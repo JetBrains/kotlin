@@ -13,7 +13,9 @@ fun main() {
     callback()
     nestedCalls()
     directStaticCFunctionCall()
-    callbackOnSeparateThread()
+    // TODO: Support runtime initialization for callbacks
+    //       see: https://youtrack.jetbrains.com/issue/KT-44283
+    // callbackOnSeparateThread()
 }
 
 fun assertRunnableThreadState() {
