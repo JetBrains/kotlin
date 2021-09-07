@@ -32,7 +32,7 @@ object FirInterfaceDefaultMethodCallChecker : FirQualifiedAccessExpressionChecke
         val symbol = expression.calleeReference.toResolvedCallableSymbol()
         val classId = symbol?.callableId?.classId ?: return
         if (classId.isLocal) return
-        val typeSymbol = context.session.symbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol ?: return
+        val typeSymbol = context.session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return
 
         if (!supportsDefaults &&
             symbol.isStatic &&

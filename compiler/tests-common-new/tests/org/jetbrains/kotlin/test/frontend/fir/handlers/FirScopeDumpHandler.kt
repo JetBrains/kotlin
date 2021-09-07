@@ -50,7 +50,7 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
 
     private fun SmartPrinter.processClass(fqName: String, session: FirSession, scopeSession: ScopeSession, module: TestModule) {
         val classId = ClassId.topLevel(FqName.fromSegments(fqName.split(".")))
-        val symbol = session.symbolProvider.getClassLikeSymbolByFqName(classId) ?: assertions.fail {
+        val symbol = session.symbolProvider.getClassLikeSymbolByClassId(classId) ?: assertions.fail {
             "Class $fqName not found in module ${module.name}"
         }
         val firClass = symbol.fir as? FirRegularClass ?: assertions.fail { "$fqName is not a class but ${symbol.fir.render()}" }

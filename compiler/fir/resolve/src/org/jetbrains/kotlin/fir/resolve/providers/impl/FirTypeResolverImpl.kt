@@ -50,7 +50,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
     private fun resolveBuiltInQualified(id: ClassId, session: FirSession): FirClassLikeSymbol<*> {
         val nameInSession = ClassIdInSession(session, id)
         return implicitBuiltinTypeSymbols.getOrPut(nameInSession) {
-            symbolProvider.getClassLikeSymbolByFqName(id)!!
+            symbolProvider.getClassLikeSymbolByClassId(id)!!
         }
     }
 

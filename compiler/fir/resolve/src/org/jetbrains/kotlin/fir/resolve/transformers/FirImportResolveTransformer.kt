@@ -107,7 +107,7 @@ fun resolveToPackageOrClass(symbolProvider: FirSymbolProvider, fqName: FqName): 
         FqName.fromSegments((prefixSize until pathSegments.size).map { pathSegments[it].asString() })
 
     val classId = ClassId(currentPackage, relativeClassFqName, false)
-    val symbol = symbolProvider.getClassLikeSymbolByFqName(classId) ?: return null
+    val symbol = symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
 
     return PackageOrClass(currentPackage, relativeClassFqName, symbol)
 }

@@ -55,4 +55,4 @@ internal fun FirDeclaration.createSignature(): IdSignature {
 }
 
 internal fun KtFirAnalysisSession.getClassLikeSymbol(classId: ClassId) =
-    firResolveState.rootModuleSession.symbolProvider.getClassLikeSymbolByFqName(classId)?.fir
+    firResolveState.rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir

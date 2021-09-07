@@ -27,7 +27,7 @@ internal class KtFirTypeCreator(
     override fun buildClassType(builder: KtClassTypeBuilder): KtClassType = withValidityAssertion {
         val lookupTag = when (builder) {
             is KtClassTypeBuilder.ByClassId -> {
-                val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByFqName(builder.classId)
+                val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(builder.classId)
                     ?: return ConeClassErrorType(ConeUnresolvedSymbolError(builder.classId)).asKtType() as KtClassType
                 classSymbol.toLookupTag()
             }

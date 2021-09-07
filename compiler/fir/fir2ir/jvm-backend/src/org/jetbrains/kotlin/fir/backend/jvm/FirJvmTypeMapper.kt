@@ -108,7 +108,7 @@ class FirJvmTypeMapper(val session: FirSession) : TypeMappingContext<JvmSignatur
 
     private fun ConeClassLikeType.parentClassOrNull(): FirRegularClassSymbol? {
         val parentClassId = classId?.outerClassId ?: return null
-        return session.symbolProvider.getClassLikeSymbolByFqName(parentClassId) as? FirRegularClassSymbol?
+        return session.symbolProvider.getClassLikeSymbolByClassId(parentClassId) as? FirRegularClassSymbol?
     }
 
     private fun ConeClassLikeType.buildPossiblyInnerType(classifier: FirRegularClassSymbol?, index: Int): PossiblyInnerConeType? {
@@ -256,12 +256,12 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
     }
 
     override fun continuationTypeConstructor(): ConeClassLikeLookupTag {
-        return symbolProvider.getClassLikeSymbolByFqName(StandardClassIds.Continuation)?.toLookupTag()
+        return symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.Continuation)?.toLookupTag()
             ?: error("Continuation class not found")
     }
 
     override fun functionNTypeConstructor(n: Int): TypeConstructorMarker {
-        return symbolProvider.getClassLikeSymbolByFqName(StandardClassIds.FunctionN(n))?.toLookupTag()
+        return symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.FunctionN(n))?.toLookupTag()
             ?: error("Function$n class not found")
     }
 }

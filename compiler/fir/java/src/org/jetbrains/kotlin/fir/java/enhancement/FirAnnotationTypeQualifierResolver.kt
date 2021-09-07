@@ -54,7 +54,7 @@ class FirAnnotationTypeQualifierResolver(
         val classId = firClass.symbol.classId
         val outerClassId = classId.outerClassId
         val parentQualifiers = if (outerClassId != null) {
-            (session.symbolProvider.getClassLikeSymbolByFqName(outerClassId)?.fir as? FirRegularClass)
+            (session.symbolProvider.getClassLikeSymbolByClassId(outerClassId)?.fir as? FirRegularClass)
                 ?.let { extractDefaultQualifiers(it) }
         } else {
             val forModule = javaModuleAnnotationsProvider.getAnnotationsForModuleOwnerOfClass(classId)

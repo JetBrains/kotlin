@@ -29,7 +29,7 @@ class FirLazyNestedClassifierScope(
             return
         }
         val child = classId.createNestedClassId(name)
-        val symbol = symbolProvider.getClassLikeSymbolByFqName(child) ?: return
+        val symbol = symbolProvider.getClassLikeSymbolByClassId(child) ?: return
 
         processor(symbol, ConeSubstitutor.Empty)
     }

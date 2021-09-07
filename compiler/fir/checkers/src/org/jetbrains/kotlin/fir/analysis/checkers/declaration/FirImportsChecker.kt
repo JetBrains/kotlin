@@ -134,7 +134,7 @@ object FirImportsChecker : FirFileChecker() {
     }
 
     private fun ClassId.resolveToClass(context: CheckerContext): FirRegularClassSymbol? {
-        val classSymbol = context.session.symbolProvider.getClassLikeSymbolByFqName(this) ?: return null
+        val classSymbol = context.session.symbolProvider.getClassLikeSymbolByClassId(this) ?: return null
         return when (classSymbol) {
             is FirRegularClassSymbol -> classSymbol
             is FirTypeAliasSymbol -> classSymbol.fullyExpandedClass(context.session)

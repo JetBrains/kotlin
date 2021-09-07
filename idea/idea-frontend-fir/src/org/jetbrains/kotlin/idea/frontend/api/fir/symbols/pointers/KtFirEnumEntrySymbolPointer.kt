@@ -30,7 +30,7 @@ internal class KtFirEnumEntrySymbolPointer(
     }
 
     private fun getEnumClass(analysisSession: KtFirAnalysisSession, classId: ClassId): FirRegularClass? {
-        val enumClass = analysisSession.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass
+        val enumClass = analysisSession.firSymbolProvider.getClassLikeSymbolByClassId(classId)?.fir as? FirRegularClass
             ?: return null
         if (enumClass.classKind != ClassKind.ENUM_CLASS) return null
         return enumClass

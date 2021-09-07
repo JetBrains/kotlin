@@ -26,7 +26,7 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver()
             parts.drop(1).fold(prefix.relativeClassName) { result, suffix -> result.child(suffix.name) },
             false
         )
-        return symbolProvider.getClassLikeSymbolByFqName(fqName)
+        return symbolProvider.getClassLikeSymbolByClassId(fqName)
     }
 
     override fun resolveSymbol(parts: List<FirQualifierPart>): FirClassifierSymbol<*>? {
@@ -45,7 +45,7 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver()
                 firstPart.removeAt(firstPart.lastIndex)
 
                 val fqName = ClassId(firstPart.toFqName(), lastPart.toFqName(), false)
-                val foundSymbol = firProvider.getClassLikeSymbolByFqName(fqName)
+                val foundSymbol = firProvider.getClassLikeSymbolByClassId(fqName)
                 if (foundSymbol != null) {
                     return foundSymbol
                 }

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.Name
 annotation class FirSymbolProviderInternals
 
 abstract class FirSymbolProvider(val session: FirSession) : FirSessionComponent {
-    abstract fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>?
+    abstract fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>?
 
     @OptIn(ExperimentalStdlibApi::class, FirSymbolProviderInternals::class)
     open fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
@@ -58,7 +58,7 @@ abstract class FirSymbolProvider(val session: FirSession) : FirSessionComponent 
 abstract class FirDependenciesSymbolProvider(session: FirSession) : FirSymbolProvider(session)
 
 private fun FirSymbolProvider.getClassDeclaredMemberScope(classId: ClassId): FirScope? {
-    val classSymbol = getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol ?: return null
+    val classSymbol = getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return null
     return session.declaredMemberScope(classSymbol.fir)
 }
 

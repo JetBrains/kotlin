@@ -108,7 +108,7 @@ fun FirBlock.writeResultType(session: FirSession) {
 
 fun ConstantValueKind<*>.expectedConeType(session: FirSession): ConeKotlinType {
     fun constructLiteralType(classId: ClassId, isNullable: Boolean = false): ConeKotlinType {
-        val symbol = session.symbolProvider.getClassLikeSymbolByFqName(classId)
+        val symbol = session.symbolProvider.getClassLikeSymbolByClassId(classId)
             ?: return ConeClassErrorType(ConeSimpleDiagnostic("Missing stdlib class: $classId", DiagnosticKind.MissingStdlibClass))
         return symbol.toLookupTag().constructClassType(emptyArray(), isNullable)
     }

@@ -72,9 +72,9 @@ open class FirBuiltinSymbolProvider(
         return null
     }
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? {
+    override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
         return allPackageFragments[classId.packageFqName]?.firstNotNullOfOrNull {
-            it.getClassLikeSymbolByFqName(classId)
+            it.getClassLikeSymbolByClassId(classId)
         } ?: syntheticFunctionalInterfaceCache.tryGetSyntheticFunctionalInterface(classId)
     }
 
@@ -139,7 +139,7 @@ open class FirBuiltinSymbolProvider(
             )
         }
 
-        fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? =
+        fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
             findAndDeserializeClass(classId)
 
         private fun findAndDeserializeClass(

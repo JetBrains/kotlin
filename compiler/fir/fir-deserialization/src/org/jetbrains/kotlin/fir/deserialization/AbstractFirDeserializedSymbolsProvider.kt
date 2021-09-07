@@ -213,7 +213,7 @@ abstract class AbstractFirDeserializedSymbolsProvider(
         destination += propertyCache.getValue(CallableId(packageFqName, name))
     }
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
+    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         return getClass(classId) ?: getTypeAlias(classId)
     }
 

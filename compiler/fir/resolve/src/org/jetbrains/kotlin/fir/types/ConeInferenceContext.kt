@@ -490,7 +490,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         val classId = if (isSuspend)
             StandardNames.getSuspendFunctionClassId(parametersNumber)
         else StandardNames.getFunctionClassId(parametersNumber)
-        return session.symbolProvider.getClassLikeSymbolByFqName(classId)?.toLookupTag()
+        return session.symbolProvider.getClassLikeSymbolByClassId(classId)?.toLookupTag()
             ?: error("Can't find Function type")
     }
 
@@ -498,7 +498,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         val classId = if (isSuspend)
             StandardNames.getKSuspendFunctionClassId(parametersNumber)
         else StandardNames.getKFunctionClassId(parametersNumber)
-        return session.symbolProvider.getClassLikeSymbolByFqName(classId)?.toLookupTag()
+        return session.symbolProvider.getClassLikeSymbolByClassId(classId)?.toLookupTag()
             ?: error("Can't find KFunction type")
     }
 

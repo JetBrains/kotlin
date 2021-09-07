@@ -70,7 +70,7 @@ abstract class FirAbstractImportingScope(
         }
 
     fun getStaticsScope(classId: ClassId): FirScope? =
-        provider.getClassLikeSymbolByFqName(classId)?.fullyExpandedSymbol?.getStaticsScope()
+        provider.getClassLikeSymbolByClassId(classId)?.fullyExpandedSymbol?.getStaticsScope()
 
     protected fun findSingleClassifierSymbolByName(name: Name?, imports: List<FirResolvedImport>): FirClassLikeSymbol<*>? {
         var result: FirClassLikeSymbol<*>? = null
@@ -78,7 +78,7 @@ abstract class FirAbstractImportingScope(
             val importedName = name ?: import.importedName ?: continue
             val classId = import.resolvedClassId?.createNestedClassId(importedName)
                 ?: ClassId.topLevel(import.packageFqName.child(importedName))
-            val symbol = provider.getClassLikeSymbolByFqName(classId) ?: continue
+            val symbol = provider.getClassLikeSymbolByClassId(classId) ?: continue
             if (!filter.check(symbol, session)) continue
             result = when {
                 result == null || result == symbol -> symbol

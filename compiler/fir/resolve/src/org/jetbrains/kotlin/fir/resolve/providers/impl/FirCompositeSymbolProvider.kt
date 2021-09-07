@@ -46,7 +46,7 @@ class FirCompositeSymbolProvider(session: FirSession, val providers: List<FirSym
         return providers.firstNotNullOfOrNull { it.getPackage(fqName) }
     }
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
-        return providers.firstNotNullOfOrNull { it.getClassLikeSymbolByFqName(classId) }
+    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
+        return providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
     }
 }

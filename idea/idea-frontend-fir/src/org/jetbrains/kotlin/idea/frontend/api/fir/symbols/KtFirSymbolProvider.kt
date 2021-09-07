@@ -131,7 +131,7 @@ internal class KtFirSymbolProvider(
     }
 
     override fun getClassOrObjectSymbolByClassId(classId: ClassId): KtClassOrObjectSymbol? = withValidityAssertion {
-        val symbol = firSymbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol ?: return null
+        val symbol = firSymbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return null
         firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(symbol.fir)
     }
 

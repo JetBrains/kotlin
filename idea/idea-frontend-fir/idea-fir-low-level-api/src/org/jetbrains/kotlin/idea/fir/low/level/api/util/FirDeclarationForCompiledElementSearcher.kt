@@ -29,7 +29,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         val classId = declaration.getClassId()
             ?: error("Non-local class should have classId. The class is ${declaration.getElementTextInContext()}")
 
-        val classCandidate = symbolProvider.getClassLikeSymbolByFqName(classId)
+        val classCandidate = symbolProvider.getClassLikeSymbolByClassId(classId)
             ?: error("We should be able to find a symbol for $classId")
 
         return classCandidate.fir

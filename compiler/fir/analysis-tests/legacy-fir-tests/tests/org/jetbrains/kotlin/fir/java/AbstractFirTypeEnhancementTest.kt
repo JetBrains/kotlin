@@ -148,7 +148,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
             val processedJavaClasses = mutableSetOf<FirJavaClass>()
             fun processClassWithChildren(psiClass: PsiClass, parentFqName: FqName) {
                 val classId = psiClass.classId(parentFqName)
-                val javaClass = javaProvider.getClassLikeSymbolByFqName(classId)?.fir
+                val javaClass = javaProvider.getClassLikeSymbolByClassId(classId)?.fir
                     ?: throw AssertionError(classId.asString())
                 if (javaClass !is FirJavaClass || javaClass in processedJavaClasses) {
                     return

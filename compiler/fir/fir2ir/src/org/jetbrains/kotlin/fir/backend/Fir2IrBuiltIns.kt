@@ -38,7 +38,7 @@ class Fir2IrBuiltIns(
         flexibleNullabilityAnnotationSymbol?.toConstructorCall()
 
     private fun annotationSymbolById(id: ClassId): IrClassSymbol? =
-        provider?.getClassSymbolById(id) ?: session.symbolProvider.getClassLikeSymbolByFqName(id)?.toSymbol(
+        provider?.getClassSymbolById(id) ?: session.symbolProvider.getClassLikeSymbolByClassId(id)?.toSymbol(
             session, classifierStorage, ConversionTypeContext.DEFAULT
         ) as? IrClassSymbol
 

@@ -68,7 +68,7 @@ class FirCloneableSymbolProvider(
 
     }
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
+    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         return if (classId == CLONEABLE_CLASS_ID) klass.symbol else null
     }
 

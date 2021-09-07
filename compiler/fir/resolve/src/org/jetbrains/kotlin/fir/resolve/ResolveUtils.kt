@@ -393,7 +393,7 @@ fun FirAnnotationCall.getCorrespondingClassSymbolOrNull(session: FirSession): Fi
             // TODO: How to retrieve local annotaiton's constructor?
             null
         } else {
-            (session.symbolProvider.getClassLikeSymbolByFqName(it) as? FirRegularClassSymbol)
+            (session.symbolProvider.getClassLikeSymbolByClassId(it) as? FirRegularClassSymbol)
         }
     }
 }
@@ -511,7 +511,7 @@ fun FirClassLikeDeclaration.getContainingDeclaration(session: FirSession): FirCl
         val parentId = classId.relativeClassName.parent()
         if (!parentId.isRoot) {
             val containingDeclarationId = ClassId(classId.packageFqName, parentId, false)
-            return session.symbolProvider.getClassLikeSymbolByFqName(containingDeclarationId)?.fir
+            return session.symbolProvider.getClassLikeSymbolByClassId(containingDeclarationId)?.fir
         }
     }
 

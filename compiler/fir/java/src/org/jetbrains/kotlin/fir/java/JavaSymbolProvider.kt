@@ -131,7 +131,7 @@ class JavaSymbolProvider(
     private fun List<JavaTypeParameter>.convertTypeParameters(stack: JavaTypeParameterStack): List<FirTypeParameter> =
         map { it.toFirTypeParameter(stack) }
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? {
+    override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
         return try {
             if (!hasTopLevelClassOf(classId)) return null
             getFirJavaClass(classId)
@@ -167,7 +167,7 @@ class JavaSymbolProvider(
         val javaTypeParameterStack = JavaTypeParameterStack()
         val outerClassId = classId.outerClassId
         val parentClassSymbol = if (outerClassId != null) {
-            getClassLikeSymbolByFqName(outerClassId)
+            getClassLikeSymbolByClassId(outerClassId)
         } else null
 
 

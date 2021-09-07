@@ -19,7 +19,7 @@ class FirJvmBackendClassResolver(val components: Fir2IrComponents) : JvmBackendC
     override fun resolveToClassDescriptors(type: Type): List<ClassDescriptor> {
         if (type.sort != Type.OBJECT) return emptyList()
 
-        val symbol = components.session.symbolProvider.getClassLikeSymbolByFqName(type.classId) ?: return emptyList()
+        val symbol = components.session.symbolProvider.getClassLikeSymbolByClassId(type.classId) ?: return emptyList()
         require(symbol is FirClassSymbol<*>)
         return listOf(components.classifierStorage.getIrClassSymbol(symbol).descriptor)
     }

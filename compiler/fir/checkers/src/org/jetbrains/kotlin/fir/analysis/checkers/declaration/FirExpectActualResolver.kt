@@ -47,10 +47,10 @@ object FirExpectActualResolver {
                 var actualContainingClass: FirRegularClassSymbol? = null
                 val candidates = when {
                     classId != null -> {
-                        expectContainingClass = useSiteSession.dependenciesSymbolProvider.getClassLikeSymbolByFqName(classId)?.let {
+                        expectContainingClass = useSiteSession.dependenciesSymbolProvider.getClassLikeSymbolByClassId(classId)?.let {
                             it.fullyExpandedClass(it.moduleData.session)
                         }
-                        actualContainingClass = useSiteSession.symbolProvider.getClassLikeSymbolByFqName(classId)
+                        actualContainingClass = useSiteSession.symbolProvider.getClassLikeSymbolByClassId(classId)
                             ?.fullyExpandedClass(useSiteSession)
 
                         val expectTypeParameters = expectContainingClass?.typeParameterSymbols.orEmpty()
@@ -87,7 +87,7 @@ object FirExpectActualResolver {
             }
             is FirClassLikeSymbol<*> -> {
                 val expectClassSymbol = useSiteSession.dependenciesSymbolProvider
-                    .getClassLikeSymbolByFqName(actualSymbol.classId) as? FirRegularClassSymbol ?: return null
+                    .getClassLikeSymbolByClassId(actualSymbol.classId) as? FirRegularClassSymbol ?: return null
                 val compatibility = areCompatibleClassifiers(expectClassSymbol, actualSymbol, useSiteSession, scopeSession)
                 mapOf(compatibility to listOf(expectClassSymbol))
             }

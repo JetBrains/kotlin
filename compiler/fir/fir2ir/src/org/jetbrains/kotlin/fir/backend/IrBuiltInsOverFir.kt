@@ -675,7 +675,7 @@ class IrBuiltInsOverFir(
         referenceClassByClassId(ClassId(packageName, Name.identifier(identifier)))
 
     private fun referenceClassByClassId(classId: ClassId): IrClassSymbol? {
-        val firSymbol = components.session.symbolProvider.getClassLikeSymbolByFqName(classId) ?: return null
+        val firSymbol = components.session.symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
         val firClassSymbol = firSymbol as? FirClassSymbol ?: return null
         return components.classifierStorage.getIrClassSymbol(firClassSymbol)
     }

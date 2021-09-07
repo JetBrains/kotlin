@@ -129,7 +129,7 @@ internal class FirIdeProvider(
         override fun getPackage(fqName: FqName): FqName? =
             providerHelper.getPackage(fqName)
 
-        override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
+        override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
             return getFirClassifierByFqName(classId)?.symbol
         }
     }

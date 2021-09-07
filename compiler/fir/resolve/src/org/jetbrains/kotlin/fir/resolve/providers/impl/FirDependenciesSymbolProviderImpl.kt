@@ -54,7 +54,7 @@ open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirDependenc
         dependencyProviders.firstNotNullOfOrNull { provider -> provider.getPackage(it) }
 
     private fun computeClass(classId: ClassId): FirClassLikeSymbol<*>? =
-        dependencyProviders.firstNotNullOfOrNull { provider -> provider.getClassLikeSymbolByFqName(classId) }
+        dependencyProviders.firstNotNullOfOrNull { provider -> provider.getClassLikeSymbolByClassId(classId) }
 
 
     @FirSymbolProviderInternals
@@ -76,7 +76,7 @@ open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirDependenc
         return topLevelCallableCache.getValue(CallableId(packageFqName, name))
     }
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
+    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         return classCache.getValue(classId)
     }
 

@@ -39,7 +39,7 @@ object FirSealedSupertypeChecker : FirClassChecker() {
                 continue
             }
 
-            val superClass = context.session.symbolProvider.getClassLikeSymbolByFqName(superClassId) as? FirRegularClassSymbol ?: continue
+            val superClass = context.session.symbolProvider.getClassLikeSymbolByClassId(superClassId) as? FirRegularClassSymbol ?: continue
 
             if (!superClass.isSealed) continue
             if (superClass.origin == FirDeclarationOrigin.Java) {
@@ -65,7 +65,7 @@ object FirSealedSupertypeChecker : FirClassChecker() {
                 continue
             }
 
-            val classSymbol = context.session.symbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol ?: continue
+            val classSymbol = context.session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: continue
 
             if (classSymbol.modality == Modality.SEALED) {
                 reporter.reportOn(it.source, FirErrors.SEALED_SUPERTYPE_IN_LOCAL_CLASS, context)

@@ -36,7 +36,7 @@ class FirPackageMemberScope(
 
         val symbol = classifierCache.getOrPut(name) {
             val unambiguousFqName = ClassId(fqName, name)
-            symbolProvider.getClassLikeSymbolByFqName(unambiguousFqName)
+            symbolProvider.getClassLikeSymbolByClassId(unambiguousFqName)
         }
 
         if (symbol != null) {

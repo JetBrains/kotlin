@@ -31,7 +31,7 @@ fun wrapScopeWithJvmMapped(
     val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(kotlinUnsafeFqName)
         ?: return declaredMemberScope
     val symbolProvider = useSiteSession.symbolProvider
-    val javaClass = symbolProvider.getClassLikeSymbolByFqName(javaClassId)?.fir as? FirRegularClass
+    val javaClass = symbolProvider.getClassLikeSymbolByClassId(javaClassId)?.fir as? FirRegularClass
         ?: return declaredMemberScope
     val preparedSignatures = JvmMappedScope.prepareSignatures(javaClass, JavaToKotlinClassMap.isMutable(kotlinUnsafeFqName))
     return if (preparedSignatures.isNotEmpty()) {

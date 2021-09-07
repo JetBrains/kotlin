@@ -18,7 +18,7 @@ class FirLibrarySessionProvider(
     override val symbolProvider: FirSymbolProvider
 ) : FirProvider() {
     override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? =
-        symbolProvider.getClassLikeSymbolByFqName(classId)?.fir
+        symbolProvider.getClassLikeSymbolByClassId(classId)?.fir
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile = shouldNotBeCalled()
 

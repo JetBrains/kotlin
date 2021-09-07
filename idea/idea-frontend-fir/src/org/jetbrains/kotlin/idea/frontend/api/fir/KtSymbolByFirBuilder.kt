@@ -178,7 +178,7 @@ internal class KtSymbolByFirBuilder private constructor(
         }
 
         fun buildClassLikeSymbolByClassId(classId: ClassId): KtClassLikeSymbol? {
-            val firClassLikeSymbol = firProvider.getClassLikeSymbolByFqName(classId) ?: return null
+            val firClassLikeSymbol = firProvider.getClassLikeSymbolByClassId(classId) ?: return null
             return buildClassLikeSymbol(firClassLikeSymbol.fir)
         }
 

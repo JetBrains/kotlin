@@ -85,7 +85,7 @@ private fun FirAnnotatedDeclaration.getOwnSinceKotlinVersion(session: FirSession
     if (this is FirConstructor) {
         val classId = symbol.callableId.classId
         if (classId != null) {
-            val classSymbol = session.symbolProvider.getClassLikeSymbolByFqName(classId)
+            val classSymbol = session.symbolProvider.getClassLikeSymbolByClassId(classId)
             classSymbol?.consider()
         }
     }

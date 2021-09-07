@@ -249,7 +249,7 @@ private class FirShorteningContext(val firResolveState: FirModuleResolveState) {
     }
 
     fun toClassSymbol(classId: ClassId) =
-        firSession.symbolProvider.getClassLikeSymbolByFqName(classId)
+        firSession.symbolProvider.getClassLikeSymbolByClassId(classId)
 
     fun convertToImportableName(callableSymbol: FirCallableSymbol<*>): FqName? =
         callableSymbol.computeImportableName(firSession)

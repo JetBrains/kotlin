@@ -23,13 +23,13 @@ internal class FirModuleWithDependenciesSymbolProvider(
     val dependencyProvider: DependentModuleProviders
 ) : FirSymbolProvider(session) {
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? =
+    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
         getClassLikeSymbolByFqNameWithoutDependencies(classId)
-            ?: dependencyProvider.getClassLikeSymbolByFqName(classId)
+            ?: dependencyProvider.getClassLikeSymbolByClassId(classId)
 
 
     fun getClassLikeSymbolByFqNameWithoutDependencies(classId: ClassId): FirClassLikeSymbol<*>? =
-        providers.firstNotNullOfOrNull { it.getClassLikeSymbolByFqName(classId) }
+        providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
@@ -78,11 +78,11 @@ internal class FirModuleWithDependenciesSymbolProvider(
 }
 
 internal class DependentModuleProviders(session: FirSession, private val providers: List<FirSymbolProvider>) : FirDependenciesSymbolProvider(session) {
-    override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? =
+    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
         providers.firstNotNullOfOrNull { provider ->
             when (provider) {
                 is FirModuleWithDependenciesSymbolProvider -> provider.getClassLikeSymbolByFqNameWithoutDependencies(classId)
-                else -> provider.getClassLikeSymbolByFqName(classId)
+                else -> provider.getClassLikeSymbolByClassId(classId)
             }
         }
 

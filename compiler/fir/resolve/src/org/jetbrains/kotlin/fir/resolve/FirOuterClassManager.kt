@@ -24,7 +24,7 @@ class FirOuterClassManager(
         val classId = classSymbol.classId
         if (classId.isLocal) return outerLocalClassForNested[classSymbol]
         val outerClassId = classId.outerClassId ?: return null
-        return symbolProvider.getClassLikeSymbolByFqName(outerClassId)
+        return symbolProvider.getClassLikeSymbolByClassId(outerClassId)
     }
 
     fun outerType(classLikeType: ConeClassLikeType): ConeClassLikeType? {

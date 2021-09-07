@@ -511,7 +511,7 @@ class SupertypeComputationSession {
 
             val parentId = classLikeDecl.symbol.classId.relativeClassName.parent()
             if (!parentId.isRoot) {
-                val parentSymbol = session.symbolProvider.getClassLikeSymbolByFqName(ClassId.fromString(parentId.asString()))
+                val parentSymbol = session.symbolProvider.getClassLikeSymbolByClassId(ClassId.fromString(parentId.asString()))
                 if (parentSymbol is FirRegularClassSymbol) {
                     checkIsInLoop(parentSymbol.fir)
                 }
