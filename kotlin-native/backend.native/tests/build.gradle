@@ -755,57 +755,57 @@ standaloneTest("hello2") {
 }
 
 standaloneTest("readlnOrNull_empty") {
-    useGoldenData = true
-    useTestData = true
+    goldValue = "null/null/null"
+    testData = ""
     source = "runtime/basic/readlnOrNull_empty.kt"
 }
 
 standaloneTest("readln_empty") {
-    useTestData = true
+    testData = ""
     outputChecker = { s -> s.contains("ReadAfterEOFException") }
     expectedExitStatusChecker = { it != 0 }
     source = "runtime/basic/readln_empty.kt"
 }
 
 standaloneTest("readln_alone_CR") {
-    useGoldenData = true
-    useTestData = true
+    goldValue = "\r"
+    testData = "\r"
     source = "runtime/basic/readln_alone_CR.kt"
 }
 
 standaloneTest("readln_empty_new_line") {
-    useGoldenData = true
-    useTestData = true
+    goldValue = ""
+    testData = "\n"
     source = "runtime/basic/readln_empty_new_line.kt"
 }
 
 standaloneTest("readln_multiline") {
-    useGoldenData = true
-    useTestData = true
+    goldValue = "Hello World"
+    testData = "Hello World\nSecond line\nThird line"
     source = "runtime/basic/readln_multiline.kt"
 }
 
 standaloneTest("readln_CR_and_CRLF") {
-    useGoldenData = true
-    useTestData = true
+    goldValue = "aaaaaa\rbbb"
+    testData = "aaaaaa\rbbb\r\nc\n"
     source = "runtime/basic/readln_CR_and_CRLF.kt"
 }
 
 standaloneTest("readln_long_line") {
-    useGoldenData = true
-    useTestData = true
+    goldValue = "A very long line of input with length of more than initial buffer size"
+    testData = "A very long line of input with length of more than initial buffer size"
     source = "runtime/basic/readln_long_line.kt"
 }
 
 standaloneTest("readln_cyrillic") {
-    useGoldenData = true
-    useTestData = true
+    goldValue = "Привет!"
+    testData = "Привет!"
     source = "runtime/basic/readln_cyrillic.kt"
 }
 
 standaloneTest("readln_multiple_empty_new_lines") {
-    useGoldenData = true
-    useTestData = true
+    goldValue = "first/second///null"
+    testData = "first\nsecond\n\n\n"
     source = "runtime/basic/readln_multiple_empty_new_lines.kt"
 }
 
