@@ -537,7 +537,7 @@ extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnabl
     SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kRunnable);
 }
 
-MemoryState* kotlin::mm::GetMemoryState() noexcept {
+MemoryState* kotlin::mm::GetMemoryState() {
     return ToMemoryState(ThreadRegistry::Instance().CurrentThreadDataNode());
 }
 

@@ -41,8 +41,7 @@ std::unique_lock<mm::ThreadRegistry::Mutex> mm::ThreadRegistry::Lock() noexcept 
 }
 
 ALWAYS_INLINE mm::ThreadData* mm::ThreadRegistry::CurrentThreadData() const noexcept {
-    auto* threadDataNode = CurrentThreadDataNode();
-    return threadDataNode ? threadDataNode->Get() : nullptr;
+    return CurrentThreadDataNode()->Get();
 }
 
 mm::ThreadRegistry::ThreadRegistry() = default;

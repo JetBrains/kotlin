@@ -18,4 +18,3 @@ int32_t answer() {
 }
 
 void runInNewThread(void(*callback)(void));
-void runInForeignThread(void(*callback)(void));
