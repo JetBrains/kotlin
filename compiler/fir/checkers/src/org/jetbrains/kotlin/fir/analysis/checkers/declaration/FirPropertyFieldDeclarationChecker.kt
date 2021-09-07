@@ -38,12 +38,12 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker() {
             reporter.reportOn(backingField.source, FirErrors.PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER, context)
         }
 
-        if (backingField.isSubtypeOf(declaration, typeCheckerContext)) {
-            checkAsPropertyNotSubtype(declaration, context, reporter)
-        } else if (declaration.isSubtypeOf(backingField, typeCheckerContext)) {
+        if (!backingField.isSubtypeOf(declaration, typeCheckerContext)) {
             checkAsFieldNotSubtype(declaration, context, reporter)
-        } else {
-            checkAsIndependentTypes(declaration, context, reporter)
+        }
+
+        if (!declaration.isSubtypeOf(backingField, typeCheckerContext)) {
+            checkAsPropertyNotSubtype(declaration, context, reporter)
         }
     }
 
@@ -68,14 +68,5 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker() {
         if (property.getter.isNotExplicit) {
             reporter.reportOn(property.source, FirErrors.PROPERTY_MUST_HAVE_GETTER, context)
         }
-    }
-
-    private fun checkAsIndependentTypes(
-        property: FirProperty,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
-    ) {
-        checkAsPropertyNotSubtype(property, context, reporter)
-        checkAsFieldNotSubtype(property, context, reporter)
     }
 }
