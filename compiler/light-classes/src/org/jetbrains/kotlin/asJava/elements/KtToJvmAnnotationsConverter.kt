@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
@@ -145,9 +146,20 @@ internal fun PsiAnnotation.tryConvertAsRepeatable(
         JAVA_LANG_ANNOTATION_REPEATABLE,
         listOfNotNull(value),
         support,
-        parent
-    )
+        parent,
+    ) {
+        safeAs<KtLightAnnotationForSourceEntry>()?.kotlinOrigin?.safeAs<KtAnnotationEntry>()?.let {
+            KtLightPsiJavaCodeReferenceElement(
+                ktElement = it,
+                reference = { null },
+                clsDelegateProvider = { null },
+                customReferenceName = JAVA_LANG_ANNOTATION_REPEATABLE_SHORT_NAME,
+            )
+        }
+    }
 }
+
+internal val JAVA_LANG_ANNOTATION_REPEATABLE_SHORT_NAME: String get() = FqNames.repeatable.shortName().asString()
 
 internal fun PsiAnnotation.tryConvertAsRepeatableContainer(support: KtUltraLightSupport): KtLightAbstractAnnotation? = tryConvertAs(
     support,

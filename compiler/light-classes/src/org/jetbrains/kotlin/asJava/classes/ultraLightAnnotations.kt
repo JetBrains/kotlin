@@ -9,7 +9,6 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.light.LightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
-import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -45,9 +44,10 @@ class KtUltraLightSimpleAnnotation(
     private val annotationFqName: String?,
     private val argumentsList: List<Pair<String, ConstantValue<*>>>,
     private val ultraLightSupport: KtUltraLightSupport,
-    parent: PsiElement
+    parent: PsiElement,
+    private val nameReferenceElementProvider: (() -> PsiJavaCodeReferenceElement?)? = null,
 ) : KtLightAbstractAnnotation(parent, computeDelegate = null) {
-    override fun getNameReferenceElement(): PsiJavaCodeReferenceElement? = null
+    override fun getNameReferenceElement(): PsiJavaCodeReferenceElement? = nameReferenceElementProvider?.invoke()
 
     private val parameterList = ParameterListImpl()
 
