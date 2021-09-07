@@ -33,6 +33,7 @@ dependencies {
     testApiJUnit5()
     testCompile(project(":kotlin-reflect"))
 
+    testRuntimeOnly("org.jetbrains.intellij.deps:asm-all:9.1")
     testRuntimeOnly(intellijDep()) {
         includeJars(
             "jps-model",
@@ -43,7 +44,6 @@ dependencies {
             "idea",
             "guava",
             "trove4j",
-            "asm-all",
             "log4j",
             "jdom",
             "streamex",

@@ -32,6 +32,7 @@ dependencies {
     testRuntimeOnly(project(":compiler:fir:fir2ir:jvm-backend"))
 
     testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntimeOnly("org.jetbrains.intellij.deps:asm-all:9.1")
     testRuntimeOnly(intellijDep()) {
         includeJars(
             "jps-model",
@@ -42,7 +43,6 @@ dependencies {
             "idea",
             "guava",
             "trove4j",
-            "asm-all",
             "log4j",
             "jdom",
             "streamex",

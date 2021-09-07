@@ -18,7 +18,8 @@ dependencies {
     shadows(project(":plugins:uast-kotlin-base"))
 
     // BEWARE: UAST should not depend on IJ platform so that it can work in Android Lint CLI mode (where IDE is not available)
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
+    compileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
     compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
 
     implementation(project(":idea:idea-frontend-independent"))

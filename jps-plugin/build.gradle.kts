@@ -18,8 +18,9 @@ dependencies {
     compile(project(":js:js.frontend"))
     compile(projectRuntimeJar(":kotlin-preloader"))
     compile(project(":idea:idea-jps-common"))
+    compileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
     compileOnly(intellijDep()) {
-        includeJars("jdom", "trove4j", "jps-model", "platform-api", "util", "asm-all", rootProject = rootProject)
+        includeJars("jdom", "trove4j", "jps-model", "platform-api", "util", rootProject = rootProject)
     }
     compileOnly(jpsStandalone()) { includeJars("jps-builders", "jps-builders-6") }
     testCompileOnly(project(":kotlin-reflect-api"))

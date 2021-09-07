@@ -11,7 +11,8 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:serialization"))
     api(project(":compiler:backend.common.jvm"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", "guava", rootProject = rootProject) }
+    compileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
     compileOnly(intellijDep()) { includeJars("trove4j", rootProject = rootProject) }
 }
 

@@ -15,8 +15,9 @@ repositories {
 }
 
 dependencies {
+    testCompileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
     testCompileOnly(intellijDep()) {
-        includeJars("extensions", "idea_rt", "util", "asm-all", "platform-util-ex", "jna", rootProject = rootProject)
+        includeJars("extensions", "idea_rt", "util", "platform-util-ex", "jna", rootProject = rootProject)
     }
 
     testCompileOnly(intellijPluginDep("java")) { includeJars("java-api") }

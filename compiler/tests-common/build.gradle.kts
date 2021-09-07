@@ -70,6 +70,7 @@ dependencies {
     Platform[203].orHigher {
         testCompile(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-3") }
     }
+    testCompile("org.jetbrains.intellij.deps:asm-all:9.1")
     testCompile(intellijDep()) {
         includeJars(
             "jps-model",
@@ -81,7 +82,6 @@ dependencies {
             "idea_rt",
             "guava",
             "trove4j",
-            "asm-all",
             "log4j",
             "jdom",
             "streamex",

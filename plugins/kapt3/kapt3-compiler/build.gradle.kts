@@ -26,7 +26,7 @@ dependencies {
     compileOnly(project(":kotlin-annotation-processing-base"))
     compileOnly(project(":kotlin-annotation-processing-runtime"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
+    compileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
 
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(project(":kotlin-annotation-processing-base"))
