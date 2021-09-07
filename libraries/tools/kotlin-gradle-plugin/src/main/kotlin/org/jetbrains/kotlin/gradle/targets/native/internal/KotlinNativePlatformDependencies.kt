@@ -33,7 +33,14 @@ internal fun Project.setupKotlinNativePlatformDependencies() {
     kotlin.sourceSets.forEach { sourceSet ->
         val target = getCommonizerTarget(sourceSet) ?: return@forEach
         addDependencies(sourceSet, getNativeDistributionDependencies(target))
-        addDependencies(sourceSet, project.filesProvider { setOf(konanDistribution.stdlib) })
+        addDependencies(
+            sourceSet, project.filesProvider { setOf(konanDistribution.stdlib) },
+            /*
+            Shared Native compilations already implicitly add this dependency.
+            Adding it again will result in a warning
+            */
+            isCompilationDependency = false
+        )
     }
 }
 
@@ -53,11 +60,16 @@ private fun NativeDistributionCommonizerTask.getCommonizedPlatformLibrariesFor(t
     return project.filesProvider { targetOutputDirectory.listLibraryFiles() }.builtBy(this)
 }
 
-private fun Project.addDependencies(sourceSet: KotlinSourceSet, libraries: FileCollection) {
-    getMetadataCompilationForSourceSet(sourceSet)?.let { compilation ->
-        compilation.compileDependencyFiles += libraries
+private fun Project.addDependencies(
+    sourceSet: KotlinSourceSet, libraries: FileCollection, isCompilationDependency: Boolean = true, isIdeDependency: Boolean = true
+) {
+    if (isCompilationDependency) {
+        getMetadataCompilationForSourceSet(sourceSet)?.let { compilation ->
+            compilation.compileDependencyFiles += libraries
+        }
     }
-    if (sourceSet is DefaultKotlinSourceSet) {
+
+    if (isIdeDependency && sourceSet is DefaultKotlinSourceSet) {
         val metadataConfigurationName =
             if (project.isIntransitiveMetadataConfigurationEnabled) sourceSet.intransitiveMetadataConfigurationName
             else sourceSet.implementationMetadataConfigurationName
