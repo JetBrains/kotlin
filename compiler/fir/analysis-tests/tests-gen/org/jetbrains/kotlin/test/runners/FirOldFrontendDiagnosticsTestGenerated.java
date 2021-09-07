@@ -4943,6 +4943,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("kt34515.kt")
+            public void testKt34515() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/collectionLiterals/kt34515.kt");
+            }
+
+            @Test
             @TestMetadata("noCollectionLiterals.kt")
             public void testNoCollectionLiterals() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/collectionLiterals/noCollectionLiterals.kt");
