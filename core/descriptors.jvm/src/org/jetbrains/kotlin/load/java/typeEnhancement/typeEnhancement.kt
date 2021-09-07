@@ -119,6 +119,16 @@ class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings
             val enhanced = when {
                 !shouldEnhanceArguments -> Result(null, 0)
                 !arg.isStarProjection -> arg.type.unwrap().enhancePossiblyFlexible(qualifiers, globalArgIndex, isSuperTypesEnhancement)
+                qualifiers(globalArgIndex).nullability == FORCE_FLEXIBILITY ->
+                    arg.type.unwrap().let {
+                        // Given `C<T extends @Nullable V>`, unannotated `C<?>` is `C<out (V..V?)>`.
+                        Result(
+                            KotlinTypeFactory.flexibleType(
+                                it.lowerIfFlexible().makeNullableAsSpecified(false),
+                                it.upperIfFlexible().makeNullableAsSpecified(true)
+                            ), 1
+                        )
+                    }
                 else -> Result(null, 1)
             }
             globalArgIndex += enhanced.subtreeSize
