@@ -436,9 +436,11 @@ ALWAYS_INLINE inline void AssertThreadState(std::initializer_list<ThreadState> e
 
 ALWAYS_INLINE RUNTIME_NODEBUG inline void runWithCatchExceptionObjHolder(std::function<void()> process, std::function<void(ExceptionObjHolder&)> catchAction) {
 #if !KONAN_NO_EXCEPTIONS
+    FrameOverlay* currentFrame = getCurrentFrame();
     try {
         process();
     } catch (ExceptionObjHolder& e) {
+        SetCurrentFrame(reinterpret_cast<ObjHeader**>(currentFrame));
         catchAction(e);
     }
 #endif
