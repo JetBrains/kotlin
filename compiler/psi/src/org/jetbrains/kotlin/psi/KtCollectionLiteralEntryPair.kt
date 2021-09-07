@@ -35,7 +35,7 @@ class KtCollectionLiteralEntryPair(node: ASTNode) : KtCollectionLiteralEntry(nod
                 if (psi is KtExpression) {
                     return psi
                 }
-                node = node.treePrev
+                node = node.treeNext
             }
             return null
         }
