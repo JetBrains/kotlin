@@ -21,6 +21,7 @@ class CoroutineHelpersSourceFilesProvider(testServices: TestServices, testDataPa
     private val helpersPath = "$testDataPath/compiler/testData/diagnostics/helpers/coroutines"
 
     private val coroutineHelpersPath = "$helpersPath/CoroutineHelpers.kt"
+    private val coroutineUtilPath = "$helpersPath/CoroutineUtil.kt"
     private val stateMachineCheckerPath = "$helpersPath/StateMachineChecker.kt"
     private val tailCallOptimizationCheckerPath = "$helpersPath/TailCallOptimizationChecker.kt"
 
@@ -33,6 +34,7 @@ class CoroutineHelpersSourceFilesProvider(testServices: TestServices, testDataPa
         return buildList {
             add(File(coroutineHelpersPath).toTestFile())
             if (CHECK_STATE_MACHINE in module.directives) {
+                add(File(coroutineUtilPath).toTestFile())
                 add(File(stateMachineCheckerPath).toTestFile())
             }
             if (CHECK_TAIL_CALL_OPTIMIZATION in module.directives) {

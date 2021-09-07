@@ -1,6 +1,3 @@
-@file:JvmMultifileClass
-@file:JvmName("CoroutineUtilKt")
-
 package helpers
 
 import kotlin.coroutines.*

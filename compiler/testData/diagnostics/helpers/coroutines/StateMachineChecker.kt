@@ -1,11 +1,7 @@
-@file:JvmMultifileClass
-@file:JvmName("CoroutineUtilKt")
-
 package helpers
 
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
-import kotlin.coroutines.jvm.internal.*
 
 class StateMachineCheckerClass {
     private var counter = 0
@@ -34,22 +30,5 @@ class StateMachineCheckerClass {
         if (finished) error("Wrong state-machine generated: it is finished early")
         proceed()
         if (checkFinished && !finished) error("Wrong state-machine generated: it is not finished yet")
-    }
-}
-
-val StateMachineChecker = StateMachineCheckerClass()
-
-object CheckStateMachineContinuation: ContinuationAdapter<Unit>() {
-    override val context: CoroutineContext
-        get() = EmptyCoroutineContext
-
-    override fun resume(value: Unit) {
-        StateMachineChecker.proceed = {
-            StateMachineChecker.finished = true
-        }
-    }
-
-    override fun resumeWithException(exception: Throwable) {
-        throw exception
     }
 }
