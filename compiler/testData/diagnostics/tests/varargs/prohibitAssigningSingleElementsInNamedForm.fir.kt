@@ -12,6 +12,10 @@ fun f1() {}
 @Anno2(i = intArrayOf(1))
 fun f2() {}
 
+@Anno1(s = arrayOf(elements = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>"foo"<!>))
+@Anno2(i = intArrayOf(elements = *intArrayOf(1)))
+fun f3() {}
+
 fun foo(vararg ints: Int) {}
 
 fun test() {

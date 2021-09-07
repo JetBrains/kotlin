@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.fir.types.isArrayType
 
 object FirNamedVarargChecker : FirCallChecker() {
     override fun check(expression: FirCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (expression !is FirFunctionCall && expression !is FirAnnotation && expression !is FirDelegatedConstructorCall) return
+        if (expression !is FirFunctionCall &&
+            expression !is FirAnnotation &&
+            expression !is FirDelegatedConstructorCall &&
+            expression !is FirArrayOfCall) return
         val isAnnotation = expression is FirAnnotation
         val errorFactory =
             if (isAnnotation) FirErrors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION
@@ -44,13 +47,18 @@ object FirNamedVarargChecker : FirCallChecker() {
             reporter.reportOn(argument.expression.source, errorFactory, context)
         }
 
-        val argumentMap = expression.argumentMapping ?: return
-        for ((argument, parameter) in argumentMap) {
-            if (!parameter.isVararg) continue
-            if (argument is FirVarargArgumentsExpression) {
-                argument.arguments.forEach(::checkArgument)
-            } else {
-                checkArgument(argument)
+        if (expression is FirArrayOfCall) {
+            // FirArrayOfCall has the `vararg` argument expression pre-flattened and doesn't have an argument mapping.
+            expression.arguments.forEach(::checkArgument)
+        } else {
+            val argumentMap = expression.argumentMapping ?: return
+            for ((argument, parameter) in argumentMap) {
+                if (!parameter.isVararg) continue
+                if (argument is FirVarargArgumentsExpression) {
+                    argument.arguments.forEach(::checkArgument)
+                } else {
+                    checkArgument(argument)
+                }
             }
         }
     }
