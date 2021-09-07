@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.asJava.elements.KtUltraLightModifierList
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.kotlinType
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -52,10 +53,9 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     private class KtUltraLightClassModifierList(
         private val containingClass: KtLightClassForSourceDeclaration,
-        private val support: KtUltraLightSupport,
+        support: KtUltraLightSupport,
         private val computeModifiers: () -> Set<String>
-    ) :
-        KtUltraLightModifierList<KtLightClassForSourceDeclaration>(containingClass, support) {
+    ) : KtUltraLightModifierList<KtLightClassForSourceDeclaration>(containingClass, support) {
         private val modifiers by lazyPub { computeModifiers() }
 
         override fun hasModifierProperty(name: String): Boolean =
@@ -103,7 +103,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     override fun createImplementsList(): PsiReferenceList? = createInheritanceList(forExtendsList = false)
 
-    private fun createInheritanceList(forExtendsList: Boolean): PsiReferenceList? {
+    private fun createInheritanceList(forExtendsList: Boolean): PsiReferenceList {
 
         val role = if (forExtendsList) PsiReferenceList.Role.EXTENDS_LIST else PsiReferenceList.Role.IMPLEMENTS_LIST
 
@@ -513,4 +513,16 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         return super.getTextRange()
     }
+
+    override fun getOwnInnerClasses(): List<PsiClass> = super.getOwnInnerClasses().let { superOwnInnerClasses ->
+        if (shouldGenerateRepeatableAnnotationContainer) {
+            superOwnInnerClasses + KtUltraLightClassForRepeatableAnnotationContainer(classOrObject, support)
+        } else
+            superOwnInnerClasses
+    }
+
+    private val shouldGenerateRepeatableAnnotationContainer: Boolean
+        get() = isAnnotationType &&
+                classOrObject.hasAnnotation(StandardNames.FqNames.repeatable) &&
+                !classOrObject.hasAnnotation(JvmAnnotationNames.REPEATABLE_ANNOTATION)
 }
