@@ -135,18 +135,13 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         a: NullabilityQualifierWithMigrationStatus?,
         b: NullabilityQualifierWithMigrationStatus?
     ): NullabilityQualifierWithMigrationStatus? {
-        if (a == null) return b
+        if (a == null) return b // null < not null
         if (b == null) return a
-        // TODO: this probably behaves really weirdly when some of those are warnings.
-        if (a.qualifier == NullabilityQualifier.FORCE_FLEXIBILITY) return b
-        if (b.qualifier == NullabilityQualifier.FORCE_FLEXIBILITY) return a
-        if (a.qualifier == NullabilityQualifier.NULLABLE) return b
-        if (b.qualifier == NullabilityQualifier.NULLABLE) return a
-        assert(a.qualifier == b.qualifier && a.qualifier == NullabilityQualifier.NOT_NULL) {
-            "Expected everything is NOT_NULL, but $a and $b are found"
-        }
-
-        return NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
+        if (a.isForWarningOnly && !b.isForWarningOnly) return b // warnings < errors
+        if (!a.isForWarningOnly && b.isForWarningOnly) return a
+        if (a.qualifier < b.qualifier) return b // T! < T? < T
+        if (a.qualifier > b.qualifier) return a
+        return b // they are equal
     }
 
     private val TypeParameterMarker.boundsNullability: NullabilityQualifierWithMigrationStatus?

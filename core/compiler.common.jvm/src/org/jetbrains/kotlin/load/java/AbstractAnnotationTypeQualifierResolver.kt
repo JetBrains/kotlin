@@ -121,17 +121,25 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
     fun extractNullability(
         annotations: Iterable<TAnnotation>, forceWarning: TAnnotation.() -> Boolean = { false }
     ): NullabilityQualifierWithMigrationStatus? =
-        annotations.firstNotNullOfOrNull { extractNullability(it, forceWarning) }
+        annotations.fold(null as NullabilityQualifierWithMigrationStatus?) { found, annotation ->
+            val extracted = extractNullability(annotation, forceWarning)
+            when {
+                found == null -> extracted
+                extracted == null || extracted == found -> found
+                extracted.isForWarningOnly && !found.isForWarningOnly -> found
+                !extracted.isForWarningOnly && found.isForWarningOnly -> extracted
+                else -> return null // inconsistent
+            }
+        }
 
-    fun extractMutability(annotations: Iterable<TAnnotation>): MutabilityQualifier? {
-        return annotations.fold(null as MutabilityQualifier?) { found, annotation ->
+    fun extractMutability(annotations: Iterable<TAnnotation>): MutabilityQualifier? =
+        annotations.fold(null as MutabilityQualifier?) { found, annotation ->
             when (annotation.fqName) {
                 in READ_ONLY_ANNOTATIONS -> MutabilityQualifier.READ_ONLY
                 in MUTABLE_ANNOTATIONS -> MutabilityQualifier.MUTABLE
-                else -> found
+                else -> return@fold found
             }.also { if (found != null && found != it) return null /* inconsistent */ }
         }
-    }
 
     private fun extractDefaultQualifiers(annotation: TAnnotation): JavaDefaultQualifiers? {
         resolveQualifierBuiltInDefaultAnnotation(annotation)?.let { return it }

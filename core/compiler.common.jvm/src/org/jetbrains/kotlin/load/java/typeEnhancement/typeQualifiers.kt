@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.load.java.typeEnhancement
 
 enum class NullabilityQualifier {
+    FORCE_FLEXIBILITY,
     NULLABLE,
     NOT_NULL,
-    FORCE_FLEXIBILITY
 }
 
 enum class MutabilityQualifier {
