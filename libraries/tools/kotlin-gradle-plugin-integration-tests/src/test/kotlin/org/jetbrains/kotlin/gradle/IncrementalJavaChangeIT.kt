@@ -50,7 +50,7 @@ class IncrementalJavaChangeClasspathSnapshotIT : IncrementalJavaChangeDefaultIT(
             javaClassInLib, changeMethodBody,
             assertResults = {
                 assertTasksExecuted(":lib:compileKotlin")
-                assertTasksExecuted(":app:compileKotlin") // TODO: App compilation should have 'compile avoidance'
+                assertTasksUpToDate(":app:compileKotlin") // App compilation has 'compile avoidance'
                 assertCompiledKotlinFiles(emptyList())
             }
         )
