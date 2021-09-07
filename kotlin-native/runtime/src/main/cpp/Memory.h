@@ -434,7 +434,7 @@ ALWAYS_INLINE inline void AssertThreadState(std::initializer_list<ThreadState> e
     }
 }
 
-ALWAYS_INLINE inline void runWithCatchExceptionObjHolder(std::function<void()> process, std::function<void(ExceptionObjHolder&)> catchAction) {
+ALWAYS_INLINE RUNTIME_NODEBUG inline void runWithCatchExceptionObjHolder(std::function<void()> process, std::function<void(ExceptionObjHolder&)> catchAction) {
 #if !KONAN_NO_EXCEPTIONS
     try {
         process();

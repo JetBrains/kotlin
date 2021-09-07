@@ -160,7 +160,7 @@ class Worker {
 
   bool waitForQueueLocked(KLong timeoutMicroseconds, KLong* remaining);
 
-  JobKind processQueueElement(bool blocking);
+  RUNTIME_NODEBUG JobKind processQueueElement(bool blocking);
 
   bool park(KLong timeoutMicroseconds, bool process);
 
