@@ -87,7 +87,7 @@ object ExpectedActualResolver {
                 }
 
                 candidates.filter { declaration ->
-                    actual != declaration && declaration.isExpect
+                    actual != declaration && declaration.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE && declaration.isExpect
                 }.groupBy { declaration ->
                     // TODO: optimize by caching this per actual-expected class pair, do not create a new substitutor for each actual member
                     val substitutor =
