@@ -1,9 +1,10 @@
 import org.jetbrains.kotlin.build.benchmarks.dsl.*
 
-fun abiSnapshotBenchmarks() = kotlinBenchmarks(arrayOf("-Dkotlin.incremental.classpath.snapshot.enabled=true"))
-fun artifactTransformBenchmarks() = kotlinBenchmarks(arrayOf("-Dkotlin.incremental.useClasspathSnapshot=true"))
+fun abiSnapshotBenchmarks() = kotlinBenchmarks(prefix = "ABI_SNAPSHOT: ", arrayOf("-Dkotlin.incremental.classpath.snapshot.enabled=true"))
+fun artifactTransformBenchmarks() = kotlinBenchmarks(prefix = "TRANSFORMATION: ", arrayOf("-Dkotlin.incremental.useClasspathSnapshot=true"))
 
-fun kotlinBenchmarks(additionalDefaultProperties: Array<String> = emptyArray()) =
+//move prefix to suite
+fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<String> = emptyArray()) =
     suite {
         val coreUtilStrings = changeableFile("coreUtil/StringsKt")
         val coreUtilCoreLib = changeableFile("coreUtil/CoreLibKt")
@@ -35,7 +36,7 @@ fun kotlinBenchmarks(additionalDefaultProperties: Array<String> = emptyArray()) 
 
         defaultArguments(*defaultArguments)
 
-        scenario("clean build") {
+        scenario("${prefix}clean build") {
             arguments(*nonParallelBuild)
             expectSlowBuild("clean build")
             step {
@@ -45,21 +46,21 @@ fun kotlinBenchmarks(additionalDefaultProperties: Array<String> = emptyArray()) 
             step {}
         }
 
-        scenario("(buildSrc, Kotlin) add public fun") {
+        scenario("${prefix}(buildSrc, Kotlin) add public fun") {
             step {
                 changeFile(buildSrc, TypeOfChange.ADD_PUBLIC_FUNCTION)
                 runTasks(*noArgs)
             }
         }
 
-        scenario("(buildSrc, Kotlin) add private fun") {
+        scenario("${prefix}(buildSrc, Kotlin) add private fun") {
             step {
                 changeFile(buildSrc, TypeOfChange.ADD_PRIVATE_FUNCTION)
                 runTasks(*noArgs)
             }
         }
 
-        scenario("clean build parallel") {
+        scenario("${prefix}clean build parallel") {
             arguments(*parallelBuild)
             expectSlowBuild("clean build")
             step {
@@ -69,7 +70,7 @@ fun kotlinBenchmarks(additionalDefaultProperties: Array<String> = emptyArray()) 
             step {}
         }
 
-        scenario("Run gradle plugin tests") {
+        scenario("${prefix}Run gradle plugin tests") {
             arguments(*nonParallelBuild)
             step {
                 runTasks(Tasks.KOTLIN_GRADLE_PLUGIN_TEST)
@@ -81,7 +82,7 @@ fun kotlinBenchmarks(additionalDefaultProperties: Array<String> = emptyArray()) 
             repeat = 5U
         }
 
-        scenario("Run gradle plugin tests after changes") {
+        scenario("${prefix}Run gradle plugin tests after changes") {
             arguments(*nonParallelBuild)
             step {
                 changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PRIVATE_FUNCTION)
@@ -94,35 +95,35 @@ fun kotlinBenchmarks(additionalDefaultProperties: Array<String> = emptyArray()) 
             repeat = 5U
         }
 
-        scenario("(non-leaf, core) add private function") {
+        scenario("${prefix}(non-leaf, core) add private function") {
             arguments(*nonParallelBuild)
             step {
                 changeFile(coreUtilStrings, TypeOfChange.ADD_PRIVATE_FUNCTION)
             }
         }
 
-        scenario("(non-leaf, core) add public function") {
+        scenario("${prefix}(non-leaf, core) add public function") {
             arguments(*nonParallelBuild)
             step {
                 changeFile(coreUtilStrings, TypeOfChange.ADD_PUBLIC_FUNCTION)
             }
         }
 
-        scenario("(non-leaf, core) add private class") {
+        scenario("${prefix}(non-leaf, core) add private class") {
             arguments(*nonParallelBuild)
             step {
                 changeFile(coreUtilStrings, TypeOfChange.ADD_PRIVATE_CLASS)
             }
         }
 
-        scenario("(non-leaf, core) add public class") {
+        scenario("${prefix}(non-leaf, core) add public class") {
             arguments(*nonParallelBuild)
             step {
                 changeFile(coreUtilStrings, TypeOfChange.ADD_PUBLIC_CLASS)
             }
         }
 
-        scenario("(non-leaf, core) build after error") {
+        scenario("${prefix}(non-leaf, core) build after error") {
             arguments(*nonParallelBuild)
             step {
                 doNotMeasure()
@@ -134,28 +135,28 @@ fun kotlinBenchmarks(additionalDefaultProperties: Array<String> = emptyArray()) 
             }
         }
 
-        scenario("(non-leaf, core) change popular inline function") {
+        scenario("${prefix}(non-leaf, core) change popular inline function") {
             arguments(*nonParallelBuild)
             step {
                 changeFile(coreUtilCoreLib, TypeOfChange.CHANGE_INLINE_FUNCTION)
             }
         }
 
-        scenario("(non-leaf, compiler) add public function") {
+        scenario("${prefix}(non-leaf, compiler) add public function") {
             arguments(*nonParallelBuild)
             step {
                 changeFile(compilerCommonBackendContext, TypeOfChange.ADD_PUBLIC_FUNCTION)
             }
         }
 
-        scenario("(non-leaf, compiler) add private function") {
+        scenario("${prefix}(non-leaf, compiler) add private function") {
             arguments(*nonParallelBuild)
             step {
                 changeFile(compilerCommonBackendContext, TypeOfChange.ADD_PRIVATE_FUNCTION)
             }
         }
 
-        scenario("(leaf, kotlin gradle plugin) add private function") {
+        scenario("${prefix}(leaf, kotlin gradle plugin) add private function") {
             arguments(*nonParallelBuild)
             step {
                 changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PRIVATE_FUNCTION)
@@ -163,7 +164,7 @@ fun kotlinBenchmarks(additionalDefaultProperties: Array<String> = emptyArray()) 
             }
         }
 
-        scenario("(leaf, kotlin gradle plugin) add public function") {
+        scenario("${prefix}(leaf, kotlin gradle plugin) add public function") {
             arguments(*nonParallelBuild)
             step {
                 changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PUBLIC_FUNCTION)
