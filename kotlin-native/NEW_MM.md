@@ -21,7 +21,7 @@ A few precautions:
 
 The new MM also brings another set of changes:
 * Global properties are initialized lazily when the file they are defined in is first accessed. Previously global properties were initialized at the program startup. This is in line with Kotlin/JVM.
-  As a workaround, properties that must be initialized at the program start can be marked with `@EagerInitialization`. Before using, consult the [EagerInitialization](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native/-eager-initialization/) documentation.
+  As a workaround, properties that must be initialized at the program start can be marked with `@EagerInitialization`. Before using, consult the [`@EagerInitialization`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native/-eager-initialization/) documentation.
 * `by lazy {}` properties support thread-safety modes and do not handle unbounded recursion. This is in line with Kotlin/JVM.
 * Exceptions that escape `operation` in `Worker.executeAfter` are processed like in other parts of the runtime: by trying to execute a user-defined unhandled exception hook or terminating the program if the hook was not found or failed with an exception itself.
 
@@ -104,14 +104,7 @@ Known issues:
 For the first preview, we're using the simplest scheme for garbage collection: single-threaded stop-the-world
 mark-and-sweep algorithm, which is triggered after enough functions, loop iterations, and allocations were executed. This greatly hinders the performance, and one of our top priorities now is addressing these performance issues.
 
-We don't have nice instruments to monitor the GC performance yet. So far, diagnosing requires looking at GC logs. To enable the logs, add the compilation flag `-Xruntime-logs=gc=info` using one of the following options:
-
-* In `gradle.properties`:
-```properties
-kotlin.native.binary.gc=info
-```
-
-* In a Gradle build script:
+We don't have nice instruments to monitor the GC performance yet. So far, diagnosing requires looking at GC logs. To enable the logs, add the compilation flag `-Xruntime-logs=gc=info` in a Gradle build script:
 ```kotlin
 // build.gradle.kts
 
@@ -162,7 +155,7 @@ To workaround such cases, we added a `freezing` binary option that disables full
 The former disables the freezing mechanism at runtime (thus, making it a no-op), while the latter disables automatic freezing of
 [`@SharedImmutable`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/-shared-immutable/) globals, but keeps direct calls to [`freeze`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/freeze.html) fully functional.
 
-To enable this option, add the compilation flag `-Xbinary=freezing=disabled` using one of the following options:
+To enable this, add the compilation flag `-Xbinary=freezing=disabled` using one of the following options:
 
 * In `gradle.properties`:
 ```properties
