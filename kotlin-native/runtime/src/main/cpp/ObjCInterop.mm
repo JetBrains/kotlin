@@ -110,19 +110,19 @@ BOOL _tryRetainImp(id self, SEL _cmd) {
   // this is a regression for instances of Kotlin subclasses of Obj-C classes:
   // loading a reference to such an object from Obj-C weak reference now fails on "wrong" thread
   // unless the object is frozen.
-  __block BOOL result;
-  kotlin::runWithCatchExceptionObjHolder(^{ result = getBackRef(self)->tryAddRef<ErrorPolicy::kThrow>();}, ^(ExceptionObjHolder& e) {
-       // TODO: check for IncorrectDereferenceException and possible weak property access
-      // Cannot use SourceInfo here, because CoreSymbolication framework (CSSymbolOwnerGetSymbolWithAddress)
-      // fails at recursive retain lock. Similarly, cannot use objc exception here, because its unhandled
-      // exception handler might fail at recursive retain lock too.
-      // TODO: Refactor to be more explicit. Instead of relying on an unhandled exception termination
-      // (and effectively setting a global to alter its behavior), just call an appropriate termination
-      // function by hand.
-      kotlin::DisallowSourceInfo();
-      std::terminate();
-  });
-  return result;
+  try {
+    return getBackRef(self)->tryAddRef<ErrorPolicy::kThrow>();
+  } catch (ExceptionObjHolder& e) {
+    // TODO: check for IncorrectDereferenceException and possible weak property access
+    // Cannot use SourceInfo here, because CoreSymbolication framework (CSSymbolOwnerGetSymbolWithAddress)
+    // fails at recursive retain lock. Similarly, cannot use objc exception here, because its unhandled
+    // exception handler might fail at recursive retain lock too.
+    // TODO: Refactor to be more explicit. Instead of relying on an unhandled exception termination
+    // (and effectively setting a global to alter its behavior), just call an appropriate termination
+    // function by hand.
+    kotlin::DisallowSourceInfo();
+    std::terminate();
+  }
 }
 
 void releaseImp(id self, SEL _cmd) {
