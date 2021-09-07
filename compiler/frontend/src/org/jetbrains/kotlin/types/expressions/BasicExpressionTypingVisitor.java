@@ -833,7 +833,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(diagnosticFactory.on(operationSign));
             return baseTypeInfo != null ? baseTypeInfo : components.expressionTypingServices.getTypeInfo(baseExpression, context);
         }
-        assert baseTypeInfo != null : "Base expression was not processed: " + expression;
+        if (baseTypeInfo == null) {
+            return TypeInfoFactoryKt.noTypeInfo(context);
+        }
         KotlinType baseType = baseTypeInfo.getType();
         if (baseType == null) {
             return baseTypeInfo;
