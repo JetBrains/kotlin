@@ -65,6 +65,7 @@ class ConstLowering(val context: JvmBackendContext) : IrElementTransformerVoid()
 
             for (file: KtFile in context.state.files) {
                 val fileName = file.virtualFilePath
+                if (!fileName.endsWith(".java")) continue
                 val owner =
                     ((this as? IrGetFieldImpl)?.symbol?.signature as? IdSignature.CompositeSignature)?.container?.asPublic()?.firstNameSegment
                         ?: continue
