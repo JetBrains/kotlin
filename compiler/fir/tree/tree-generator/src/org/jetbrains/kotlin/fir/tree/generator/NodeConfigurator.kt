@@ -450,7 +450,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("resolveStatus", annotationResolveStatusType, withReplace = true)
         }
 
-        arraySetCall.configure {
+        augmentedArraySetCall.configure {
             +field("assignCall", functionCall)
             +field("setGetBlock", block)
             +field("operation", operationType)

@@ -121,7 +121,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             parents += callBuilder
         }
 
-        builder(arraySetCall) {
+        builder(augmentedArraySetCall) {
             default("calleeReference", "FirStubReference")
             useTypes(stubReferenceType)
         }

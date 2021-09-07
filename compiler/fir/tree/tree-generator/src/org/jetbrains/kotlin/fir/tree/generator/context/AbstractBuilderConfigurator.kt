@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.tree.generator.context
 
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.noReceiverExpressionType
-import org.jetbrains.kotlin.fir.tree.generator.printer.call
+import org.jetbrains.kotlin.fir.tree.generator.util.DummyDelegate
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -137,12 +137,6 @@ abstract class AbstractBuilderConfigurator<T : AbstractFirTreeBuilder>(val firTr
                 IntermediateBuilderConfigurationContext(this).block()
             }
             return DummyDelegate(builder)
-        }
-
-        private inner class DummyDelegate(val builder: IntermediateBuilder) : ReadOnlyProperty<Nothing?, IntermediateBuilder> {
-            override fun getValue(thisRef: Nothing?, property: KProperty<*>): IntermediateBuilder {
-                return builder
-            }
         }
     }
 
