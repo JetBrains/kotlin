@@ -28,8 +28,7 @@ import org.jetbrains.kotlin.load.java.lazy.JavaResolverSettings
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier.MUTABLE
 import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier.READ_ONLY
-import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier.NOT_NULL
-import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier.NULLABLE
+import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
@@ -105,64 +104,54 @@ class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings
         isSuperTypesEnhancement: Boolean = false
     ): SimpleResult {
         val shouldEnhance = position.shouldEnhance()
+        val shouldEnhanceArguments = !isSuperTypesEnhancement || !isBoundOfRawType
+        val shouldEnhanceStar = !isBoundOfRawType
         if (!shouldEnhance && arguments.isEmpty()) return SimpleResult(null, 1, false)
 
         val originalClass = constructor.declarationDescriptor
             ?: return SimpleResult(null, 1, false)
 
         val effectiveQualifiers = qualifiers(index)
-        val (enhancedClassifier, enhancedMutabilityAnnotations) = originalClass.enhanceMutability(effectiveQualifiers, position)
+        val enhancedClassifier = originalClass.enhanceMutability(effectiveQualifiers, position)
+        val enhancedNullability = getEnhancedNullability(effectiveQualifiers, position)
 
-        val typeConstructor = enhancedClassifier.typeConstructor
-
+        val typeConstructor = enhancedClassifier?.typeConstructor ?: constructor
         var globalArgIndex = index + 1
-        var wereChanges = enhancedMutabilityAnnotations != null
-        val enhancedArguments = if (!isSuperTypesEnhancement || !isBoundOfRawType) {
-            arguments.mapIndexed { localArgIndex, arg ->
-                if (arg.isStarProjection) {
-                    val qualifiersForStarProjection = qualifiers(globalArgIndex)
-                    globalArgIndex++
-
-                    if (qualifiersForStarProjection.nullability == NOT_NULL && !isBoundOfRawType) {
-                        val enhanced = arg.type.unwrap().makeNotNullable()
-                        createProjection(enhanced, arg.projectionKind, typeParameterDescriptor = typeConstructor.parameters[localArgIndex])
-                    } else {
-                        TypeUtils.makeStarProjection(enhancedClassifier.typeConstructor.parameters[localArgIndex])
-                    }
-                } else {
-                    val unwrapped = arg.type.unwrap()
-                val enhanced = unwrapped.enhancePossiblyFlexible(qualifiers, globalArgIndex, isSuperTypesEnhancement)
-                    globalArgIndex += enhanced.subtreeSize
-                    val type = enhanced.type?.also { wereChanges = true } ?: unwrapped
-                createProjection(type, arg.projectionKind, typeParameterDescriptor = typeConstructor.parameters[localArgIndex])
-                }
+        val enhancedArguments = arguments.zip(typeConstructor.parameters) { arg, parameter ->
+            val enhanced = when {
+                !shouldEnhanceArguments -> Result(null, 0)
+                !arg.isStarProjection -> arg.type.unwrap().enhancePossiblyFlexible(qualifiers, globalArgIndex, isSuperTypesEnhancement)
+                shouldEnhanceStar && qualifiers(globalArgIndex).nullability == NOT_NULL -> Result(arg.type.unwrap().makeNotNullable(), 1)
+                else -> Result(null, 1)
             }
-        } else {
-            globalArgIndex += arguments.size
-            arguments
+            globalArgIndex += enhanced.subtreeSize
+            when {
+                enhanced.type != null -> createProjection(enhanced.type, arg.projectionKind, parameter)
+                enhancedClassifier != null && !arg.isStarProjection -> createProjection(arg.type, arg.projectionKind, parameter)
+                enhancedClassifier != null -> TypeUtils.makeStarProjection(parameter)
+                else -> null
+            }
         }
 
-        val (enhancedNullability, enhancedNullabilityAnnotations) = this.getEnhancedNullability(effectiveQualifiers, position)
-        wereChanges = wereChanges || enhancedNullabilityAnnotations != null
-
         val subtreeSize = globalArgIndex - index
-        if (!wereChanges) return SimpleResult(null, subtreeSize, false)
+        if (enhancedClassifier == null && enhancedNullability == null && enhancedArguments.all { it == null })
+            return SimpleResult(null, subtreeSize, false)
 
         val newAnnotations = listOfNotNull(
             annotations,
-            enhancedMutabilityAnnotations,
-            enhancedNullabilityAnnotations
+            ENHANCED_MUTABILITY_ANNOTATIONS.takeIf { enhancedClassifier != null },
+            ENHANCED_NULLABILITY_ANNOTATIONS.takeIf { enhancedNullability != null }
         ).compositeAnnotationsOrSingle()
 
         val enhancedType = KotlinTypeFactory.simpleType(
             newAnnotations,
             typeConstructor,
-            enhancedArguments,
-            enhancedNullability
+            enhancedArguments.zip(arguments) { enhanced, original -> enhanced ?: original },
+            enhancedNullability ?: isMarkedNullable
         )
 
         val enhancement = if (effectiveQualifiers.isNotNullTypeParameter) notNullTypeParameter(enhancedType) else enhancedType
-        val nullabilityForWarning = enhancedNullabilityAnnotations != null && effectiveQualifiers.isNullabilityQualifierForWarning
+        val nullabilityForWarning = enhancedNullability != null && effectiveQualifiers.isNullabilityQualifierForWarning
         return SimpleResult(enhancement, subtreeSize, nullabilityForWarning)
     }
 
@@ -179,45 +168,28 @@ private fun List<Annotations>.compositeAnnotationsOrSingle() = when (size) {
     else -> CompositeAnnotations(this.toList())
 }
 
-private data class EnhancementResult<out T>(val result: T, val enhancementAnnotations: Annotations?)
-
-private fun <T> T.noChange() = EnhancementResult(this, null)
-private fun <T> T.enhancedNullability() = EnhancementResult(this, ENHANCED_NULLABILITY_ANNOTATIONS)
-private fun <T> T.enhancedMutability() = EnhancementResult(this, ENHANCED_MUTABILITY_ANNOTATIONS)
-
 private fun ClassifierDescriptor.enhanceMutability(
     qualifiers: JavaTypeQualifiers,
     position: TypeComponentPosition
-): EnhancementResult<ClassifierDescriptor> {
-    if (!position.shouldEnhance()) return this.noChange()
-    if (this !is ClassDescriptor) return this.noChange() // mutability is not applicable for type parameters
-
+): ClassifierDescriptor? {
     val mapper = JavaToKotlinClassMapper
-
-    when (qualifiers.mutability) {
-        READ_ONLY -> {
-            if (position == TypeComponentPosition.FLEXIBLE_LOWER && mapper.isMutable(this)) {
-                return mapper.convertMutableToReadOnly(this).enhancedMutability()
-            }
-        }
-        MUTABLE -> {
-            if (position == TypeComponentPosition.FLEXIBLE_UPPER && mapper.isReadOnly(this)) {
-                return mapper.convertReadOnlyToMutable(this).enhancedMutability()
-            }
-        }
-        null -> {}
+    return when {
+        !position.shouldEnhance() -> null
+        this !is ClassDescriptor -> null
+        qualifiers.mutability == READ_ONLY && position == TypeComponentPosition.FLEXIBLE_LOWER && mapper.isMutable(this) ->
+            mapper.convertMutableToReadOnly(this)
+        qualifiers.mutability == MUTABLE && position == TypeComponentPosition.FLEXIBLE_UPPER && mapper.isReadOnly(this) ->
+            mapper.convertReadOnlyToMutable(this)
+        else -> null
     }
-
-    return this.noChange()
 }
 
-private fun KotlinType.getEnhancedNullability(qualifiers: JavaTypeQualifiers, position: TypeComponentPosition): EnhancementResult<Boolean> {
-    if (!position.shouldEnhance()) return this.isMarkedNullable.noChange()
-
+private fun getEnhancedNullability(qualifiers: JavaTypeQualifiers, position: TypeComponentPosition): Boolean? {
+    if (!position.shouldEnhance()) return null
     return when (qualifiers.nullability) {
-        NULLABLE -> true.enhancedNullability()
-        NOT_NULL -> false.enhancedNullability()
-        else -> this.isMarkedNullable.noChange()
+        NULLABLE -> true
+        NOT_NULL -> false
+        else -> null
     }
 }
 
