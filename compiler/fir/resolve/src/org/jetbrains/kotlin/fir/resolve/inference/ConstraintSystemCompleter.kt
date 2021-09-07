@@ -15,8 +15,13 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.returnExpressions
-import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.resolve.calls.inference.components.*
+import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeVariable
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDependencyInformationProvider
+import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
@@ -467,7 +472,7 @@ fun FirStatement.processAllContainingCallCandidates(processBlocks: Boolean, proc
             rhs.processAllContainingCallCandidates(processBlocks, processor)
         }
 
-        is FirAnnotation -> {
+        is FirAnnotationCall -> {
             processCandidateIfApplicable(processor, processBlocks)
             arguments.forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
         }

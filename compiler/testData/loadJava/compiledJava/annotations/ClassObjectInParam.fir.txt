@@ -5,7 +5,7 @@ public open class ClassObjectInParam : R|kotlin/Any| {
         public constructor(value: R|kotlin/reflect/KClass<*>|): R|test/ClassObjectInParam.Anno|
 
     }
-    @R|test/ClassObjectInParam.Anno|(<getClass>(<getClass>(R|ft<test/ClassObjectInParam, test/ClassObjectInParam?>|))) public open class Nested : R|kotlin/Any| {
+    @R|test/ClassObjectInParam.Anno|(value = <getClass>(<getClass>(R|ft<test/ClassObjectInParam, test/ClassObjectInParam?>|))) public open class Nested : R|kotlin/Any| {
         public constructor(): R|test/ClassObjectInParam.Nested|
 
     }

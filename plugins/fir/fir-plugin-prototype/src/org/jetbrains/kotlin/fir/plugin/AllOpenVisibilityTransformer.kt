@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
@@ -59,7 +60,7 @@ class AllOpenVisibilityTransformer(session: FirSession) : FirStatusTransformerEx
     private fun FirAnnotatedDeclaration.visibilityFromAnnotation(): Visibility? {
         val annotation = annotations.firstOrNull {
             it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == AllPublicClassId
-        } ?: return null
+        } as? FirAnnotationCall ?: return null
         val argument = annotation.arguments.firstOrNull() as? FirQualifiedAccessExpression ?: return null
         val symbol = (argument.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirVariableSymbol<*> ?: return null
         val name = symbol.takeIf { it.containingClass()?.classId == VisibilityClassId }?.callableId?.callableName ?: return null

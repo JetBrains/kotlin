@@ -2,4 +2,4 @@ KT element: KtAnnotationEntry
 FIR element: FirAnnotationCallImpl
 
 FIR element rendered:
-@FILE:R|kotlin/Suppress|(vararg(String()))
+@FILE:R|kotlin/Suppress|(names = vararg(String()))

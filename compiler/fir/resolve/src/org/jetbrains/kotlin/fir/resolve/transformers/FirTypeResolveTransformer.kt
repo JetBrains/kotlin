@@ -9,10 +9,7 @@ import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -206,5 +203,9 @@ open class FirTypeResolveTransformer(
     override fun transformAnnotation(annotation: FirAnnotation, data: Any?): FirStatement {
         annotation.transformAnnotationTypeRef(this, data)
         return annotation
+    }
+
+    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): FirStatement {
+        return transformAnnotation(annotationCall, data)
     }
 }

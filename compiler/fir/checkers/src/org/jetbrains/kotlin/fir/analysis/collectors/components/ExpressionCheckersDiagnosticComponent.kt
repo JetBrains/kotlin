@@ -29,7 +29,11 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitAnnotation(annotation: FirAnnotation, data: CheckerContext) {
-        checkers.allAnnotationCallCheckers.check(annotation, data, reporter)
+        checkers.allAnnotationCheckers.check(annotation, data, reporter)
+    }
+
+    override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: CheckerContext) {
+        checkers.allAnnotationCallCheckers.check(annotationCall, data, reporter)
     }
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: CheckerContext) {

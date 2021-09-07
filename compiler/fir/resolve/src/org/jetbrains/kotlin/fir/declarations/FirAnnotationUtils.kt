@@ -9,12 +9,14 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.ClassId
@@ -25,6 +27,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 private val RETENTION_CLASS_ID = ClassId.fromString("kotlin/annotation/Retention")
 private val TARGET_CLASS_ID = ClassId.fromString("kotlin/annotation/Target")
 private val JVM_FIELD_CLASS_ID = ClassId.fromString("kotlin/jvm/JvmField")
+
+private val RETENTION_VALUE_NAME = Name.identifier("value")
+private val TARGET_ALLOWED_TARGET_NAME = Name.identifier("allowedTargets")
 
 private fun FirAnnotation.toAnnotationLookupTag(): ConeClassLikeLookupTag? =
     // this cast fails when we have generic-typed annotations @T
@@ -49,7 +54,7 @@ fun FirAnnotationContainer.nonSourceAnnotations(session: FirSession): List<FirAn
         val firAnnotationClass = annotation.toAnnotationClass(session)
         firAnnotationClass != null && firAnnotationClass.annotations.none { meta ->
             meta.toAnnotationClassId() == RETENTION_CLASS_ID &&
-                    meta.argumentList.arguments.singleOrNull()?.callableNameOfMetaAnnotationArgument == Name.identifier("SOURCE")
+                    meta.findArgumentByName(RETENTION_VALUE_NAME)?.callableNameOfMetaAnnotationArgument == Name.identifier("SOURCE")
         }
     }
 
@@ -59,9 +64,15 @@ inline val FirProperty.hasJvmFieldAnnotation: Boolean
 val FirAnnotation.isJvmFieldAnnotation: Boolean
     get() = toAnnotationClassId() == JVM_FIELD_CLASS_ID
 
-fun FirAnnotation.useSiteTargetsFromMetaAnnotation(session: FirSession): Set<AnnotationUseSiteTarget> =
-    toAnnotationClass(session)?.annotations?.find { it.toAnnotationClassId() == TARGET_CLASS_ID }?.argumentList?.arguments
-        ?.toAnnotationUseSiteTargets() ?: DEFAULT_USE_SITE_TARGETS
+fun FirAnnotation.useSiteTargetsFromMetaAnnotation(session: FirSession): Set<AnnotationUseSiteTarget> {
+    return toAnnotationClass(session)
+        ?.annotations
+        ?.find { it.toAnnotationClassId() == TARGET_CLASS_ID }
+        ?.findArgumentByName(TARGET_ALLOWED_TARGET_NAME)
+        ?.unwrapVarargValue()
+        ?.toAnnotationUseSiteTargets()
+        ?: DEFAULT_USE_SITE_TARGETS
+}
 
 private fun List<FirExpression>.toAnnotationUseSiteTargets(): Set<AnnotationUseSiteTarget> =
     flatMapTo(mutableSetOf()) { arg ->
@@ -122,11 +133,18 @@ fun List<FirAnnotation>.getAnnotationsByFqName(fqName: FqName): List<FirAnnotati
     }
 }
 
-fun FirAnnotation.findArgumentByName(name: Name): FirExpression? {
-    val argumentMapping = argumentMapping
-    if (argumentMapping != null) {
-        return argumentMapping.keys.find { argumentMapping[it]?.name == name }?.unwrapArgument()
+fun FirExpression.unwrapVarargValue(): List<FirExpression> {
+    return when (this) {
+        is FirVarargArgumentsExpression -> arguments
+        is FirArrayOfCall -> arguments
+        else -> listOf(this)
     }
+}
+
+fun FirAnnotation.findArgumentByName(name: Name): FirExpression? {
+    argumentMapping.mapping[name]?.let { return it }
+    if (this !is FirAnnotationCall) return null
+
     // NB: we have to consider both cases, because deserializer does not create argument mapping
     for (argument in arguments) {
         if (argument is FirNamedArgumentExpression && argument.name == name) {
@@ -152,3 +170,10 @@ fun FirAnnotationContainer.getJvmNameFromAnnotation(target: AnnotationUseSiteTar
         call.getStringArgument(name)?.takeIf { target == null || call.useSiteTarget == target }
     }
 }
+
+val FirAnnotation.resolved: Boolean
+    get() {
+        if (annotationTypeRef !is FirResolvedTypeRef) return false
+        if (this !is FirAnnotationCall) return true
+        return calleeReference is FirResolvedNamedReference || calleeReference is FirErrorNamedReference
+    }

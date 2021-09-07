@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
-import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
-import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.correspondingSupertypesCache
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -496,8 +493,9 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         val annotationCall = customAnnotations.firstOrNull {
             it.typeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)?.classId?.asSingleFqName() == fqName
         } ?: return null
-        val argument = when (val argument = annotationCall.arguments.firstOrNull() ?: return null) {
+        val argument = when (val argument = annotationCall.argumentMapping.mapping.values.firstOrNull() ?: return null) {
             is FirVarargArgumentsExpression -> argument.arguments.firstOrNull()
+            is FirArrayOfCall -> argument.arguments.firstOrNull()
             is FirNamedArgumentExpression -> argument.expression
             else -> argument
         } ?: return null

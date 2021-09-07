@@ -10,13 +10,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.findArgumentByName
+import org.jetbrains.kotlin.fir.declarations.unwrapVarargValue
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
-import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
 abstract class AbstractDiagnosticCollector(
@@ -37,6 +38,8 @@ abstract class AbstractDiagnosticCollector(
         const val SUPPRESS_ALL_WARNINGS = "warnings"
         const val SUPPRESS_ALL_ERRORS = "errors"
 
+        private val SUPPRESS_NAMES_NAME = Name.identifier("names")
+
         fun getDiagnosticsSuppressedForContainer(annotationContainer: FirAnnotationContainer): List<String>? {
             val annotations = annotationContainer.annotations.filter {
                 val type = it.annotationTypeRef.coneType as? ConeClassLikeType ?: return@filter false
@@ -44,9 +47,9 @@ abstract class AbstractDiagnosticCollector(
             }
             if (annotations.isEmpty()) return null
             return annotations.flatMap { annotationCall ->
-                annotationCall.arguments.filterIsInstance<FirVarargArgumentsExpression>().flatMap { varargArgument ->
-                    varargArgument.arguments.mapNotNull { (it as? FirConstExpression<*>)?.value as? String? }
-                }
+                annotationCall.findArgumentByName(SUPPRESS_NAMES_NAME)?.unwrapVarargValue()?.mapNotNull {
+                    (it as? FirConstExpression<*>)?.value as? String?
+                } ?: emptyList()
             }
         }
     }

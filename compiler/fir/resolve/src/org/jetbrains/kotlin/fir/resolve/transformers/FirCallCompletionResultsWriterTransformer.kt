@@ -257,40 +257,40 @@ class FirCallCompletionResultsWriterTransformer(
             return constructor.returnTypeRef.coneType.isArrayOrPrimitiveArray
         }
 
-    override fun transformAnnotation(
-        annotation: FirAnnotation,
+    override fun transformAnnotationCall(
+        annotationCall: FirAnnotationCall,
         data: ExpectedArgumentType?
     ): FirStatement {
-        val calleeReference = annotation.calleeReference as? FirNamedReferenceWithCandidate
-            ?: return annotation
-        annotation.transformCalleeReference(
+        val calleeReference = annotationCall.calleeReference as? FirNamedReferenceWithCandidate
+            ?: return annotationCall
+        annotationCall.transformCalleeReference(
             StoreCalleeReference,
             calleeReference.toResolvedReference(),
         )
         val subCandidate = calleeReference.candidate
         val expectedArgumentsTypeMapping = runIf(!calleeReference.isError) { subCandidate.createArgumentsMapping() }
         withFirArrayOfCallTransformer {
-            annotation.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
+            annotationCall.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
             var index = 0
             subCandidate.argumentMapping = subCandidate.argumentMapping?.let {
                 LinkedHashMap<FirExpression, FirValueParameter>(it.size).let { newMapping ->
                     subCandidate.argumentMapping?.mapKeysTo(newMapping) { (_, _) ->
-                        annotation.argumentList.arguments[index++]
+                        annotationCall.argumentList.arguments[index++]
                     }
                 }
             }
         }
         if (calleeReference.isError) {
             subCandidate.argumentMapping?.let {
-                annotation.replaceArgumentList(buildArgumentListForErrorCall(annotation.argumentList, it))
+                annotationCall.replaceArgumentList(buildArgumentListForErrorCall(annotationCall.argumentList, it))
             }
         } else {
             subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
-                annotation.replaceArgumentList(buildResolvedArgumentList(it, annotation.argumentList.source))
+                annotationCall.replaceArgumentList(buildResolvedArgumentList(it, annotationCall.argumentList.source))
             }
         }
-        return annotation
+        return annotationCall
     }
 
     private fun Candidate.handleVarargs() {

@@ -5,7 +5,7 @@ public abstract interface StringConstantInParam : R|kotlin/Any| {
         public constructor(value: R|kotlin/String|): R|test/StringConstantInParam.Anno|
 
     }
-    @R|test/StringConstantInParam.Anno|(String(hello)) public open class Class : R|kotlin/Any| {
+    @R|test/StringConstantInParam.Anno|(value = String(hello)) public open class Class : R|kotlin/Any| {
         public constructor(): R|test/StringConstantInParam.Class|
 
     }

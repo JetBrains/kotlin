@@ -1,5 +1,5 @@
 FILE: RedundantExplicitTypeChecker.kt
-    @R|kotlin/annotation/Target|(vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class A : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class A : R|kotlin/Annotation| {
         public constructor(): R|A| {
             super<R|kotlin/Any|>()
         }

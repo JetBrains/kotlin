@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
@@ -40,6 +40,8 @@ private data class FirSinceKotlinValue(
     val apiVersion: ApiVersion,
     val wasExperimentalMarkerClasses: List<FirRegularClassSymbol>
 )
+
+private val SINCE_KOTLIN_VERSION_NAME = Name.identifier("version")
 
 fun FirAnnotatedDeclaration.checkSinceKotlinVersionAccessibility(context: CheckerContext): FirSinceKotlinAccessibility {
     val value = getOwnSinceKotlinVersion(context.session)
@@ -65,7 +67,7 @@ private fun FirAnnotatedDeclaration.getOwnSinceKotlinVersion(session: FirSession
 
     // TODO: use-site targeted annotations
     fun FirAnnotatedDeclaration.consider() {
-        val sinceKotlinSingleArgument = getAnnotationByClassId(StandardClassIds.SinceKotlin)?.arguments?.singleOrNull()
+        val sinceKotlinSingleArgument = getAnnotationByClassId(StandardClassIds.SinceKotlin)?.findArgumentByName(SINCE_KOTLIN_VERSION_NAME)
         val apiVersion = ((sinceKotlinSingleArgument as? FirConstExpression<*>)?.value as? String)?.let(ApiVersion.Companion::parse)
         if (apiVersion != null) {
             // TODO: combine wasExperimentalMarkerClasses in case of several associated declarations with the same maximal API version

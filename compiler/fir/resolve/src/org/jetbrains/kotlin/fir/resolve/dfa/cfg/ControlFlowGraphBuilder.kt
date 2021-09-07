@@ -1177,7 +1177,7 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Annotations -----------------------------------
 
-    fun enterAnnotationCall(annotation: FirAnnotation): AnnotationEnterNode {
+    fun enterAnnotation(annotation: FirAnnotation): AnnotationEnterNode {
         val graph = ControlFlowGraph(null, "STUB_GRAPH_FOR_ANNOTATION_CALL", ControlFlowGraph.Kind.AnnotationCall)
         pushGraph(graph, Mode.Body)
         return createAnnotationEnterNode(annotation).also {
@@ -1185,7 +1185,7 @@ class ControlFlowGraphBuilder {
         }
     }
 
-    fun exitAnnotationCall(annotation: FirAnnotation): AnnotationExitNode {
+    fun exitAnnotation(annotation: FirAnnotation): AnnotationExitNode {
         val node = createAnnotationExitNode(annotation)
         popAndAddEdge(node)
         popGraph()

@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildVariableAssignment
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
+import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
@@ -893,24 +895,23 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     }
 
     override fun transformAnnotation(annotation: FirAnnotation, data: ResolutionMode): FirStatement {
-        if (annotation.resolveStatus == FirAnnotationResolveStatus.Resolved) return annotation
-        return resolveAnnotationCall(annotation, FirAnnotationResolveStatus.Resolved)
+        if (annotation.resolved) return annotation
+        annotation.transformAnnotationTypeRef(transformer, ResolutionMode.ContextIndependent)
+        return annotation
     }
 
-    protected fun resolveAnnotationCall(
-        annotation: FirAnnotation,
-        status: FirAnnotationResolveStatus
-    ): FirAnnotation {
+    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): FirStatement {
+        if (annotationCall.resolved) return annotationCall
+        annotationCall.transformAnnotationTypeRef(transformer, ResolutionMode.ContextIndependent)
         return withFirArrayOfCallTransformer {
-            annotation.transformAnnotationTypeRef(transformer, ResolutionMode.ContextIndependent)
-            if (status == FirAnnotationResolveStatus.PartiallyResolved) return annotation
-            dataFlowAnalyzer.enterAnnotationCall(annotation)
-            val result = callResolver.resolveAnnotationCall(annotation)
-            dataFlowAnalyzer.exitAnnotationCall(result ?: annotation)
-            if (result == null) return annotation
+            dataFlowAnalyzer.enterAnnotation(annotationCall)
+            val result = callResolver.resolveAnnotationCall(annotationCall)
+            dataFlowAnalyzer.exitAnnotation(result ?: annotationCall)
+            if (result == null) return annotationCall
             callCompleter.completeCall(result, noExpectedType)
-            result.replaceResolveStatus(status)
-            annotation
+            // TODO: FirBlackBoxCodegenTestGenerated.Annotations.testDelegatedPropertySetter, it fails with hard cast
+            (result.argumentList as? FirResolvedArgumentList)?.let { annotationCall.replaceArgumentMapping((it).toAnnotationArgumentMapping()) }
+            annotationCall
         }
     }
 

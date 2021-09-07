@@ -1,5 +1,5 @@
 KT element: KtValueArgumentList
-FIR element: FirResolvedArgumentList
+FIR element: FirResolvedArgumentListImpl
 
 FIR element rendered:
 String(y)

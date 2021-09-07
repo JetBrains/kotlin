@@ -30,6 +30,7 @@ abstract class ExpressionCheckers {
     open val logicExpressionCheckers: Set<FirLogicExpressionChecker> = emptySet()
     open val returnExpressionCheckers: Set<FirReturnExpressionChecker> = emptySet()
     open val blockCheckers: Set<FirBlockChecker> = emptySet()
+    open val annotationCheckers: Set<FirAnnotationChecker> = emptySet()
     open val annotationCallCheckers: Set<FirAnnotationCallChecker> = emptySet()
     open val checkNotNullCallCheckers: Set<FirCheckNotNullCallChecker> = emptySet()
     open val elvisExpressionCheckers: Set<FirElvisExpressionChecker> = emptySet()
@@ -60,7 +61,8 @@ abstract class ExpressionCheckers {
     @CheckersComponentInternal internal val allLogicExpressionCheckers: Set<FirLogicExpressionChecker> by lazy { logicExpressionCheckers + basicExpressionCheckers }
     @CheckersComponentInternal internal val allReturnExpressionCheckers: Set<FirReturnExpressionChecker> by lazy { returnExpressionCheckers + basicExpressionCheckers }
     @CheckersComponentInternal internal val allBlockCheckers: Set<FirBlockChecker> by lazy { blockCheckers + basicExpressionCheckers }
-    @CheckersComponentInternal internal val allAnnotationCallCheckers: Set<FirAnnotationCallChecker> by lazy { annotationCallCheckers + basicExpressionCheckers + callCheckers }
+    @CheckersComponentInternal internal val allAnnotationCheckers: Set<FirAnnotationChecker> by lazy { annotationCheckers + basicExpressionCheckers }
+    @CheckersComponentInternal internal val allAnnotationCallCheckers: Set<FirAnnotationCallChecker> by lazy { annotationCallCheckers + annotationCheckers + basicExpressionCheckers + callCheckers }
     @CheckersComponentInternal internal val allCheckNotNullCallCheckers: Set<FirCheckNotNullCallChecker> by lazy { checkNotNullCallCheckers + basicExpressionCheckers + callCheckers }
     @CheckersComponentInternal internal val allElvisExpressionCheckers: Set<FirElvisExpressionChecker> by lazy { elvisExpressionCheckers + basicExpressionCheckers }
     @CheckersComponentInternal internal val allGetClassCallCheckers: Set<FirGetClassCallChecker> by lazy { getClassCallCheckers + basicExpressionCheckers + callCheckers }

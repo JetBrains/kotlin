@@ -1,5 +1,5 @@
 FILE: annotationWithReturn.kt
-    @FILE:R|Some|(^ R|/x|)
+    @FILE:R|Some|(value = ^ R|/x|)
     public final const val x: R|kotlin/Int| = Int(42)
         public get(): R|kotlin/Int|
     public final annotation class Some : R|kotlin/Annotation| {

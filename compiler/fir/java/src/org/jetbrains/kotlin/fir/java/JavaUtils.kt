@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.lang.Deprecated
 import java.lang.annotation.Documented
 import java.lang.annotation.Retention
@@ -113,6 +114,14 @@ private fun List<JavaAnnotationArgument>.mapJavaTargetArguments(session: FirSess
         }
         val classId = ClassId.topLevel(StandardNames.FqNames.annotationTarget)
         resultSet.mapTo(arguments) { buildEnumCall(session, classId, Name.identifier(it.name)) }
+        varargElementType = buildResolvedTypeRef {
+            type = ConeClassLikeTypeImpl(
+                ConeClassLikeLookupTagImpl(classId),
+                emptyArray(),
+                isNullable = false,
+                ConeAttributes.Empty
+            ).createOutArrayType()
+        }
     }
 }
 
@@ -134,15 +143,15 @@ private fun fillAnnotationArgumentMapping(
     annotationArguments: Collection<JavaAnnotationArgument>,
     destination: MutableMap<Name, FirExpression>
 ) {
-    if (annotationArguments.none { it.name != null }) return
     val annotationClassSymbol = session.symbolProvider.getClassLikeSymbolByClassId(lookupTag.classId).also {
         lookupTag.bindSymbolToLookupTag(session, it)
-    } ?: return
-    val annotationConstructor =
-        (annotationClassSymbol.fir as FirRegularClass).declarations.filterIsInstance<FirConstructor>().first()
+    }
+    val annotationConstructor = (annotationClassSymbol?.fir as FirRegularClass?)
+        ?.declarations
+        ?.firstIsInstanceOrNull<FirConstructor>()
     annotationArguments.associateTo(destination) { argument ->
         val name = argument.name ?: JavaSymbolProvider.VALUE_METHOD_NAME
-        val parameter = annotationConstructor.valueParameters.find { it.name == name }
+        val parameter = annotationConstructor?.valueParameters?.find { it.name == name }
         name to argument.toFirExpression(session, javaTypeParameterStack, parameter?.returnTypeRef)
     }
 }
@@ -205,7 +214,6 @@ private fun JavaAnnotation.toFirAnnotationCall(
                         "Deprecated in Java"
                     ).setProperType(session)
                 }
-                null -> {}
                 else -> {
                     fillAnnotationArgumentMapping(session, javaTypeParameterStack, lookupTag!!, arguments, mapping)
                 }

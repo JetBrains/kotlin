@@ -194,9 +194,9 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
         if (deprecated == null) {
             reporter.reportOn(deprecatedSinceKotlin.source, FirErrors.DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED, context)
         } else {
-            val argumentMapping = deprecated.argumentMapping ?: return
-            for (value in argumentMapping.values) {
-                if (value.name.identifier == "level") {
+            val argumentMapping = deprecated.argumentMapping.mapping
+            for (name in argumentMapping.keys) {
+                if (name.identifier == "level") {
                     reporter.reportOn(
                         deprecatedSinceKotlin.source,
                         FirErrors.DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL,

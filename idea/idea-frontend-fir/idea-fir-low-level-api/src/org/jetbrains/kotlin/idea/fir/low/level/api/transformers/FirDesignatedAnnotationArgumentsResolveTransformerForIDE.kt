@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolveStatus
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsResolveTransformer
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
@@ -65,9 +65,9 @@ internal class FirDesignatedAnnotationArgumentsResolveTransformerForIDE(
 
     override fun ensureResolved(declaration: FirDeclaration) {
         if (declaration is FirAnnotatedDeclaration) {
-            val unresolvedAnnotation = declaration.annotations.firstOrNull { it.resolveStatus == FirAnnotationResolveStatus.Unresolved }
+            val unresolvedAnnotation = declaration.annotations.firstOrNull { it.annotationTypeRef !is FirResolvedTypeRef }
             check(unresolvedAnnotation == null) {
-                "Unexpected resolve status of annotation, expected Resolved but actual $unresolvedAnnotation"
+                "Unexpected annotationTypeRef annotation, expected resolvedType but actual ${unresolvedAnnotation?.annotationTypeRef}"
             }
         }
         when (declaration) {

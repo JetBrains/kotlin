@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -244,7 +246,7 @@ object FirJvmStaticChecker : FirAnnotatedDeclarationChecker() {
 
     private fun FirAnnotatedDeclaration.findAnnotation(classId: ClassId): FirAnnotation? {
         return annotations.firstOrNull {
-            it.calleeReference.safeAs<FirResolvedNamedReference>()?.name == classId.shortClassName
+            it.annotationTypeRef.coneType.classId == classId
         }
     }
 }

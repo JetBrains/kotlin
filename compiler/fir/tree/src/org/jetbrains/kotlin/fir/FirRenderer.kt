@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
@@ -938,6 +939,10 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         print(")")
     }
 
+    override fun visitAnnotationCall(annotationCall: FirAnnotationCall) {
+        visitAnnotation(annotationCall)
+    }
+
     override fun visitAnnotation(annotation: FirAnnotation) {
         print("@")
         annotation.useSiteTarget?.let {
@@ -945,11 +950,41 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
             print(":")
         }
         annotation.annotationTypeRef.accept(this)
-        visitCall(annotation)
+        when (annotation) {
+            is FirAnnotationCall -> if (annotation.calleeReference.let { it is FirResolvedNamedReference || it is FirErrorNamedReference }) {
+                annotation.renderArgumentMapping()
+            } else {
+                visitCall(annotation)
+            }
+            else -> annotation.renderArgumentMapping()
+        }
         if (annotation.useSiteTarget == AnnotationUseSiteTarget.FILE) {
             println()
         } else {
             print(" ")
+        }
+    }
+
+    private fun FirAnnotation.renderArgumentMapping() {
+        print("(")
+        if (mode.renderCallArguments) {
+            argumentMapping.mapping.renderSeparated()
+        } else {
+            if (argumentMapping.mapping.isNotEmpty()) {
+                print("...")
+            }
+        }
+        print(")")
+    }
+
+    private fun Map<Name, FirElement>.renderSeparated() {
+        for ((index, element) in this.entries.withIndex()) {
+            val (name, argument) = element
+            if (index > 0) {
+                print(", ")
+            }
+            print("$name = ")
+            argument.accept(this@FirRenderer)
         }
     }
 

@@ -12,7 +12,7 @@ public abstract interface CustomAnnotation : R|kotlin/Any| {
         }
 
     }
-    @R|test/CustomAnnotation.MyAnnotation|(R|test/CustomAnnotation.MyEnum.ONE|()) public open class MyTest : R|kotlin/Any| {
+    @R|test/CustomAnnotation.MyAnnotation|(value = R|test/CustomAnnotation.MyEnum.ONE|()) public open class MyTest : R|kotlin/Any| {
         public constructor(): R|test/CustomAnnotation.MyTest|
 
     }

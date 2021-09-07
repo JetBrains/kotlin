@@ -40,6 +40,8 @@ class Fir2IrImplicitCastInserter(
 
     override fun visitAnnotation(annotation: FirAnnotation, data: IrElement): IrElement = data
 
+    override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: IrElement): IrElement = data
+
     override fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression, data: IrElement): IrElement = data
 
     override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: IrElement): IrElement {

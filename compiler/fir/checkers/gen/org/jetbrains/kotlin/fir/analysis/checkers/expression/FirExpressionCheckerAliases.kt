@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
  */
 
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
 import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -53,7 +54,8 @@ typealias FirLoopJumpChecker = FirExpressionChecker<FirLoopJump>
 typealias FirLogicExpressionChecker = FirExpressionChecker<FirBinaryLogicExpression>
 typealias FirReturnExpressionChecker = FirExpressionChecker<FirReturnExpression>
 typealias FirBlockChecker = FirExpressionChecker<FirBlock>
-typealias FirAnnotationCallChecker = FirExpressionChecker<FirAnnotation>
+typealias FirAnnotationChecker = FirExpressionChecker<FirAnnotation>
+typealias FirAnnotationCallChecker = FirExpressionChecker<FirAnnotationCall>
 typealias FirCheckNotNullCallChecker = FirExpressionChecker<FirCheckNotNullCall>
 typealias FirElvisExpressionChecker = FirExpressionChecker<FirElvisExpression>
 typealias FirGetClassCallChecker = FirExpressionChecker<FirGetClassCall>

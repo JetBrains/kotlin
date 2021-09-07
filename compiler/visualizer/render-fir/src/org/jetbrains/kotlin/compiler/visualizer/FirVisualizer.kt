@@ -706,9 +706,11 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             }
         }
 
-        override fun visitAnnotation(annotation: FirAnnotation, data: StringBuilder) {
-            visitConstructor(annotation, data)
+        override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: StringBuilder) {
+            visitConstructor(annotationCall, data)
         }
+
+        override fun visitAnnotation(annotation: FirAnnotation, data: StringBuilder) {}
 
         override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: StringBuilder) {
             val coneClassType = delegatedConstructorCall.constructedTypeRef.coneTypeSafe<ConeClassLikeType>()

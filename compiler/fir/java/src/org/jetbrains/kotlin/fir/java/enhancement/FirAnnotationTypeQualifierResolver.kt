@@ -37,7 +37,7 @@ class FirAnnotationTypeQualifierResolver(
         get() = coneClassLikeType?.lookupTag?.classId?.asSingleFqName()
 
     override fun FirAnnotation.enumArguments(onlyValue: Boolean): Iterable<String> =
-        arguments.flatMap { argument ->
+        argumentMapping.mapping.values.flatMap { argument ->
             if (!onlyValue || argument !is FirNamedArgumentExpression || argument.name == DEFAULT_ANNOTATION_MEMBER_NAME)
                 argument.toEnumNames()
             else
@@ -47,6 +47,7 @@ class FirAnnotationTypeQualifierResolver(
     private fun FirExpression.toEnumNames(): List<String> =
         when (this) {
             is FirArrayOfCall -> arguments.flatMap { it.toEnumNames() }
+            is FirVarargArgumentsExpression -> arguments.flatMap { it.toEnumNames() }
             else -> listOfNotNull(toResolvedCallableSymbol()?.callableId?.callableName?.asString())
         }
 

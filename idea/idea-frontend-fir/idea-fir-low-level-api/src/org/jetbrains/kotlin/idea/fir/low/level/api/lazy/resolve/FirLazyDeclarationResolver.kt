@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolveStatus
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
@@ -44,7 +43,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
         checkPCE: Boolean,
         collector: FirTowerDataContextCollector? = null,
     ) {
-        if (firFile.resolvePhase >= FirResolvePhase.IMPORTS && annotations.all { it.resolveStatus == FirAnnotationResolveStatus.Resolved }) return
+        if (firFile.resolvePhase >= FirResolvePhase.IMPORTS && annotations.all { it.resolved }) return
         moduleFileCache.firFileLockProvider.runCustomResolveUnderLock(firFile, checkPCE) {
             resolveFileAnnotationsWithoutLock(
                 firFile = firFile,
@@ -69,7 +68,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
             resolveFileToImportsWithoutLock(firFile, false)
         }
 
-        if (!annotations.all { it.resolveStatus == FirAnnotationResolveStatus.Resolved }) {
+        if (!annotations.all { it.resolved }) {
             FirFileAnnotationsResolveTransformer(
                 firFile = firFile,
                 annotations = annotations,

@@ -81,7 +81,6 @@ fun FirRegularClass.getAllowedAnnotationTargets(): Set<KotlinTarget> {
 
 fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(): Set<KotlinTarget> {
     val targetAnnotation = getTargetAnnotation() ?: return defaultAnnotationTargets
-    if (targetAnnotation.argumentList.arguments.isEmpty()) return emptySet()
     val arguments = targetAnnotation.findArgumentByName(TARGET_PARAMETER_NAME)?.unfoldArrayOrVararg().orEmpty()
 
     return arguments.mapNotNullTo(mutableSetOf()) { argument ->

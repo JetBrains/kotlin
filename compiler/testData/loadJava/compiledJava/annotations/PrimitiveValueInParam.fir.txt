@@ -1,5 +1,5 @@
 public abstract interface PrimitiveValueInParam : R|kotlin/Any| {
-    @R|test/PrimitiveValueInParam.Ann|(Int(1), Long(1), Double(1.0), Float(1.0), Boolean(true), String(str)) public open class A : R|kotlin/Any| {
+    @R|test/PrimitiveValueInParam.Ann|(i = Int(1), l = Long(1), d = Double(1.0), f = Float(1.0), bool = Boolean(true), str = String(str)) public open class A : R|kotlin/Any| {
         public constructor(): R|test/PrimitiveValueInParam.A|
 
     }

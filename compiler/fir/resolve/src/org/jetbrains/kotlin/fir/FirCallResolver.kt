@@ -489,7 +489,7 @@ class FirCallResolver(
         }
     }
 
-    fun resolveAnnotationCall(annotation: FirAnnotation): FirAnnotation? {
+    fun resolveAnnotationCall(annotation: FirAnnotationCall): FirAnnotationCall? {
         val reference = annotation.calleeReference as? FirSimpleNamedReference ?: return null
         annotation.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
 

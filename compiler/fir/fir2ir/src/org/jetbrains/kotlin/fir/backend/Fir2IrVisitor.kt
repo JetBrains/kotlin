@@ -376,6 +376,10 @@ class Fir2IrVisitor(
         return callGenerator.convertToIrConstructorCall(annotation)
     }
 
+    override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): IrElement {
+        return callGenerator.convertToIrConstructorCall(annotationCall)
+    }
+
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Any?): IrElement {
         val explicitReceiverExpression = convertToIrReceiverExpression(
             qualifiedAccessExpression.explicitReceiver, qualifiedAccessExpression.calleeReference

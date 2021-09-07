@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.resolve.FirSamResolverImpl
 import org.jetbrains.kotlin.fir.resolve.calls.getExpectedTypeForSAMConversion
@@ -45,6 +47,7 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.psi2ir.generators.isUnchanging
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class CallAndReferenceGenerator(
     private val components: Fir2IrComponents,
@@ -423,7 +426,27 @@ class CallAndReferenceGenerator(
                     )
                 }
             }
-        }.applyCallArguments(annotation, annotationMode = true)
+        }.applyCallArguments(annotation.toAnnotationCall(), annotationMode = true)
+    }
+
+    private fun FirAnnotation.toAnnotationCall(): FirAnnotationCall? {
+        if (this is FirAnnotationCall) return this
+        return buildAnnotationCall {
+            useSiteTarget = this@toAnnotationCall.useSiteTarget
+            annotationTypeRef = this@toAnnotationCall.annotationTypeRef
+            val symbol = annotationTypeRef.coneType.toSymbol(session) as? FirRegularClassSymbol ?: return null
+            val constructorSymbol = symbol.declarationSymbols.firstIsInstanceOrNull<FirConstructorSymbol>() ?: return null
+            val argumentToParameterToMapping = constructorSymbol.valueParameterSymbols.mapNotNull {
+                val parameter = it.fir
+                val argument = this@toAnnotationCall.argumentMapping.mapping[parameter.name] ?: return@mapNotNull null
+                argument to parameter
+            }.toMap(LinkedHashMap())
+            argumentList = buildResolvedArgumentList(argumentToParameterToMapping)
+            calleeReference = buildResolvedNamedReference {
+                name = symbol.classId.shortClassName
+                resolvedSymbol = constructorSymbol
+            }
+        }
     }
 
     internal fun convertToGetObject(qualifier: FirResolvedQualifier): IrExpression {
@@ -487,7 +510,7 @@ class CallAndReferenceGenerator(
                         val calleeReference = when (call) {
                             is FirFunctionCall -> call.calleeReference
                             is FirDelegatedConstructorCall -> call.calleeReference
-                            is FirAnnotation -> call.calleeReference
+                            is FirAnnotationCall -> call.calleeReference
                             else -> null
                         }
                         val function = if (calleeReference == FirReferencePlaceholderForResolvedAnnotations) {

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationCallChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression.*
@@ -23,7 +23,7 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirSuperCallWithDefaultsChecker,
         )
 
-    override val annotationCallCheckers: Set<FirAnnotationCallChecker>
+    override val annotationCheckers: Set<FirAnnotationChecker>
         get() = setOf(
             FirDeprecatedJavaAnnotationsChecker,
             FirJvmPackageNameAnnotationsChecker,

@@ -34,8 +34,10 @@ import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.name.JvmNames.JVM_MULTIFILE_CLASS_ID
 
 object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -130,7 +132,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
 
     private fun isInsideJvmMultifileClassFile(context: CheckerContext): Boolean {
         return context.findClosest<FirFile>()?.annotations?.any {
-            (it.calleeReference as? FirResolvedNamedReference)?.name?.asString() == JVM_MULTIFILE_CLASS_SHORT
+            it.annotationTypeRef.coneType.classId == JVM_MULTIFILE_CLASS_ID
         } == true
     }
 }

@@ -1,9 +1,9 @@
 public/*package*/ open class AnnotatedTypeInFun : R|kotlin/Any| {
-    public/*package*/ open fun foo(@R|test/AnnotatedTypeInFun.Anno|(String(a)) a: R|ft<@R|test/AnnotatedTypeInFun.Anno|(String(a))  kotlin/String, @R|test/AnnotatedTypeInFun.Anno|(String(a))  kotlin/String?>|, @R|test/AnnotatedTypeInFun.Anno|(String(b)) b: R|ft<@R|test/AnnotatedTypeInFun.Anno|(String(b))  kotlin/String, @R|test/AnnotatedTypeInFun.Anno|(String(b))  kotlin/String?>|): R|kotlin/Unit|
+    public/*package*/ open fun foo(@R|test/AnnotatedTypeInFun.Anno|(value = String(a)) a: R|ft<@R|test/AnnotatedTypeInFun.Anno|(value = String(a))  kotlin/String, @R|test/AnnotatedTypeInFun.Anno|(value = String(a))  kotlin/String?>|, @R|test/AnnotatedTypeInFun.Anno|(value = String(b)) b: R|ft<@R|test/AnnotatedTypeInFun.Anno|(value = String(b))  kotlin/String, @R|test/AnnotatedTypeInFun.Anno|(value = String(b))  kotlin/String?>|): R|kotlin/Unit|
 
     public/*package*/ constructor(): R|test/AnnotatedTypeInFun|
 
-    @R|kotlin/annotation/Target|(<implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|())) public final annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|())) public final annotation class Anno : R|kotlin/Annotation| {
         public constructor(value: R|kotlin/String|): R|test/AnnotatedTypeInFun.Anno|
 
     }

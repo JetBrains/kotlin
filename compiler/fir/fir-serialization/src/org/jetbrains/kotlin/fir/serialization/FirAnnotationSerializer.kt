@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.serialization.constant.ConstantValue
 import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.Name
 
@@ -30,16 +32,8 @@ class FirAnnotationSerializer(private val session: FirSession, internal val stri
             addArgument(argument)
         }
 
-        val argumentList = annotation.argumentList
-        if (argumentList is FirResolvedArgumentList) {
-            for ((argumentExpression, parameter) in argumentList.mapping) {
-                addArgument(argumentExpression, parameter.name)
-            }
-        } else {
-            for (argumentExpression in argumentList.arguments) {
-                if (argumentExpression !is FirNamedArgumentExpression) continue
-                addArgument(argumentExpression, argumentExpression.name)
-            }
+        for ((name, argument) in annotation.argumentMapping.mapping) {
+            addArgument(argument, name)
         }
     }.build()
 

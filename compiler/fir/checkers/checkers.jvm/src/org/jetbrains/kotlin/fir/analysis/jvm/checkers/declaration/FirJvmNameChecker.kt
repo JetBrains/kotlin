@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isOpen
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -62,7 +62,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker() {
 
     private fun FirAnnotatedDeclaration.findJvmNameAnnotation(): FirAnnotation? {
         return annotations.firstOrNull {
-            it.calleeReference.safeAs<FirResolvedNamedReference>()?.name == StandardClassIds.JvmName.shortClassName
+            it.annotationTypeRef.coneType.classId == StandardClassIds.JvmName
         }
     }
 

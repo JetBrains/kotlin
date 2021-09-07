@@ -49,6 +49,10 @@ open class FirContractResolveTransformer(
         return annotation
     }
 
+    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): FirStatement {
+        return annotationCall
+    }
+
     protected open class FirDeclarationsContractResolveTransformer(transformer: FirBodyResolveTransformer) : FirDeclarationsResolveTransformer(transformer) {
         override fun transformSimpleFunction(
             simpleFunction: FirSimpleFunction,

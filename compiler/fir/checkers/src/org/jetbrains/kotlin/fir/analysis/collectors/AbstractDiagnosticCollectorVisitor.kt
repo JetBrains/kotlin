@@ -204,8 +204,8 @@ abstract class AbstractDiagnosticCollectorVisitor(
         visitWithQualifiedAccessOrAnnotationCall(propertyAccessExpression)
     }
 
-    override fun visitAnnotation(annotation: FirAnnotation, data: Nothing?) {
-        visitWithQualifiedAccessOrAnnotationCall(annotation)
+    override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?) {
+        visitWithQualifiedAccessOrAnnotationCall(annotationCall)
     }
 
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Nothing?) {

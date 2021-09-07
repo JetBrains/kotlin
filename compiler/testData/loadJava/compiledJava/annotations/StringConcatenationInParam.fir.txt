@@ -3,7 +3,7 @@ public abstract interface StringConcatenationInParam : R|kotlin/Any| {
         public constructor(value: R|kotlin/String|): R|test/StringConcatenationInParam.Anno|
 
     }
-    @R|test/StringConcatenationInParam.Anno|(String(hello)) public open class Class : R|kotlin/Any| {
+    @R|test/StringConcatenationInParam.Anno|(value = String(hello)) public open class Class : R|kotlin/Any| {
         public constructor(): R|test/StringConcatenationInParam.Class|
 
     }

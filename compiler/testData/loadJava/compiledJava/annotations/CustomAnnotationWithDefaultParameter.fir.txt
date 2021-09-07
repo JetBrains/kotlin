@@ -3,7 +3,7 @@ public abstract interface CustomAnnotationWithDefaultParameter : R|kotlin/Any| {
         public constructor(first: R|kotlin/String|, second: R|kotlin/String| = String(s)): R|test/CustomAnnotationWithDefaultParameter.MyAnnotation|
 
     }
-    @R|test/CustomAnnotationWithDefaultParameter.MyAnnotation|(String(f), String(s)) public open class MyTest : R|kotlin/Any| {
+    @R|test/CustomAnnotationWithDefaultParameter.MyAnnotation|(first = String(f), second = String(s)) public open class MyTest : R|kotlin/Any| {
         public constructor(): R|test/CustomAnnotationWithDefaultParameter.MyTest|
 
     }

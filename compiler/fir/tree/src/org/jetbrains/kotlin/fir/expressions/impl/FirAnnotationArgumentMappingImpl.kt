@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.unwrapArgument
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
@@ -35,4 +36,14 @@ object FirEmptyAnnotationArgumentMapping : FirAnnotationArgumentMapping() {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         return this
     }
+}
+
+fun FirResolvedArgumentList.toAnnotationArgumentMapping(): FirAnnotationArgumentMapping {
+    return FirAnnotationArgumentMappingImpl(
+        source = null,
+        mapping = mapping.entries.associateBy(
+            keySelector = { it.value.name },
+            valueTransform = { it.key.unwrapArgument() }
+        )
+    )
 }

@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
@@ -20,6 +18,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -98,12 +98,15 @@ private fun FirAnnotation.getVersionFromArgument(name: Name): ApiVersion? =
 
 private fun FirAnnotation.getDeprecationLevel(): DeprecationLevelValue? {
     //take last because Annotation might be not resolved yet and arguments passed without explicit names
-    val arg = findArgumentByName(LEVEL_NAME) ?: arguments.lastOrNull()
-    return arg?.let { argument ->
-        val targetExpression = argument as? FirQualifiedAccessExpression ?: return null
-        val targetName = (targetExpression.calleeReference as? FirNamedReference)?.name?.asString() ?: return null
-        DeprecationLevelValue.values().find { it.name == targetName }
-    }
+    val argument = if (resolved) {
+        argumentMapping.mapping[LEVEL_NAME]
+    } else {
+        val call = this as? FirAnnotationCall ?: return null
+        call.arguments.firstOrNull { it is FirNamedArgumentExpression && it.name == LEVEL_NAME }?.unwrapArgument() ?: arguments.lastOrNull()
+    } ?: return null
+    val targetExpression = argument as? FirQualifiedAccessExpression ?: return null
+    val targetName = (targetExpression.calleeReference as? FirNamedReference)?.name?.asString() ?: return null
+    return DeprecationLevelValue.values().find { it.name == targetName }
 }
 
 private fun List<FirAnnotation>.extractDeprecationInfoPerUseSite(

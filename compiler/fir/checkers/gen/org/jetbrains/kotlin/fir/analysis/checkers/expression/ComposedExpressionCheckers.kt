@@ -39,6 +39,8 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
         get() = _returnExpressionCheckers
     override val blockCheckers: Set<FirBlockChecker>
         get() = _blockCheckers
+    override val annotationCheckers: Set<FirAnnotationChecker>
+        get() = _annotationCheckers
     override val annotationCallCheckers: Set<FirAnnotationCallChecker>
         get() = _annotationCallCheckers
     override val checkNotNullCallCheckers: Set<FirCheckNotNullCallChecker>
@@ -85,6 +87,7 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
     private val _logicExpressionCheckers: MutableSet<FirLogicExpressionChecker> = mutableSetOf()
     private val _returnExpressionCheckers: MutableSet<FirReturnExpressionChecker> = mutableSetOf()
     private val _blockCheckers: MutableSet<FirBlockChecker> = mutableSetOf()
+    private val _annotationCheckers: MutableSet<FirAnnotationChecker> = mutableSetOf()
     private val _annotationCallCheckers: MutableSet<FirAnnotationCallChecker> = mutableSetOf()
     private val _checkNotNullCallCheckers: MutableSet<FirCheckNotNullCallChecker> = mutableSetOf()
     private val _elvisExpressionCheckers: MutableSet<FirElvisExpressionChecker> = mutableSetOf()
@@ -117,6 +120,7 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
         _logicExpressionCheckers += checkers.logicExpressionCheckers
         _returnExpressionCheckers += checkers.returnExpressionCheckers
         _blockCheckers += checkers.blockCheckers
+        _annotationCheckers += checkers.annotationCheckers
         _annotationCallCheckers += checkers.annotationCallCheckers
         _checkNotNullCallCheckers += checkers.checkNotNullCallCheckers
         _elvisExpressionCheckers += checkers.elvisExpressionCheckers

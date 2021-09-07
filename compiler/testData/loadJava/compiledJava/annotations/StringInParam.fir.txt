@@ -3,7 +3,7 @@ public abstract interface StringInParam : R|kotlin/Any| {
         public constructor(value: R|kotlin/String|): R|test/StringInParam.Anno|
 
     }
-    @R|test/StringInParam.Anno|(String(hello)) public open class Class : R|kotlin/Any| {
+    @R|test/StringInParam.Anno|(value = String(hello)) public open class Class : R|kotlin/Any| {
         public constructor(): R|test/StringInParam.Class|
 
     }
