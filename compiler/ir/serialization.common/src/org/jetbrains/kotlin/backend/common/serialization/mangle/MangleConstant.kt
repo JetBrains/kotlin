@@ -24,7 +24,7 @@ enum class MangleConstant(val prefix: Char, val separator: Char, val suffix: Cha
         const val TYPE_PARAMETER_MARKER_NAME = "<TP>"
         const val TYPE_PARAMETER_MARKER_NAME_SETTER = "<STP>"
         const val BACKING_FIELD_NAME = "<BF>"
-        const val ANON_INIT_NAME_PREFIX = "<ANI"
+        const val ANON_INIT_NAME_PREFIX = "<ANI>"
         const val ENUM_ENTRY_CLASS_NAME = "<EEC>"
 
         const val VARIANCE_SEPARATOR = '|'
