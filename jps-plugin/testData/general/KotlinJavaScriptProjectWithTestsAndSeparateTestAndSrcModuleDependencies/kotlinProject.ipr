@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <option name="DEFAULT_COMPILER" value="Javac" />
+  </component>
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/srcOnly/srcOnly.iml" filepath="$PROJECT_DIR$/srcOnly/srcOnly.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlinProject.iml" filepath="$PROJECT_DIR$/kotlinProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/testsOnly/testsOnly.iml" filepath="$PROJECT_DIR$/testsOnly/testsOnly.iml" />
+    </modules>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>
