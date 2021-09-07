@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.constructFunctionalTypeRef
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrInitializer
+import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.mode
@@ -724,41 +725,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             )
         }
         var lambda = anonymousFunction
-        val valueParameters = when (resolvedLambdaAtom) {
-            null -> lambda.valueParameters
-            else -> {
-                val singleParameterType = resolvedLambdaAtom.parameters.singleOrNull()
-                when {
-                    lambda.valueParameters.isEmpty() && singleParameterType != null -> {
-                        val name = Name.identifier("it")
-                        val itParam = buildValueParameter {
-                            source = lambda.source?.fakeElement(FirFakeSourceElementKind.ItLambdaParameter)
-                            moduleData = session.moduleData
-                            origin = FirDeclarationOrigin.Source
-                            returnTypeRef = singleParameterType.toFirResolvedTypeRef()
-                            this.name = name
-                            symbol = FirValueParameterSymbol(name)
-                            isCrossinline = false
-                            isNoinline = false
-                            isVararg = false
-                        }
-                        listOf(itParam)
-                    }
-
-                    else -> {
-                        lambda.valueParameters.mapIndexed { index, param ->
-                            if (param.returnTypeRef is FirResolvedTypeRef) {
-                                param
-                            } else {
-                                val resolvedType =
-                                    param.returnTypeRef.resolvedTypeFromPrototype(resolvedLambdaAtom.parameters[index])
-                                param.replaceReturnTypeRef(resolvedType)
-                                param
-                            }
-                        }
-                    }
-                }
-            }
+        val valueParameters = when {
+            resolvedLambdaAtom != null -> obtainValueParametersFromResolvedLambdaAtom(resolvedLambdaAtom, lambda)
+            else -> lambda.valueParameters
         }
         val returnTypeRefFromResolvedAtom =
             resolvedLambdaAtom?.returnType?.let { lambda.returnTypeRef.resolvedTypeFromPrototype(it) }
@@ -820,6 +789,43 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             }
         )
         return lambda.addReturn()
+    }
+
+    private fun obtainValueParametersFromResolvedLambdaAtom(
+        resolvedLambdaAtom: ResolvedLambdaAtom,
+        lambda: FirAnonymousFunction,
+    ): List<FirValueParameter> {
+        val singleParameterType = resolvedLambdaAtom.parameters.singleOrNull()
+        return when {
+            lambda.valueParameters.isEmpty() && singleParameterType != null -> {
+                val name = Name.identifier("it")
+                val itParam = buildValueParameter {
+                    source = lambda.source?.fakeElement(FirFakeSourceElementKind.ItLambdaParameter)
+                    moduleData = session.moduleData
+                    origin = FirDeclarationOrigin.Source
+                    returnTypeRef = singleParameterType.toFirResolvedTypeRef()
+                    this.name = name
+                    symbol = FirValueParameterSymbol(name)
+                    isCrossinline = false
+                    isNoinline = false
+                    isVararg = false
+                }
+                listOf(itParam)
+            }
+
+            else -> {
+                lambda.valueParameters.mapIndexed { index, param ->
+                    if (param.returnTypeRef is FirResolvedTypeRef) {
+                        param
+                    } else {
+                        val resolvedType =
+                            param.returnTypeRef.resolvedTypeFromPrototype(resolvedLambdaAtom.parameters[index])
+                        param.replaceReturnTypeRef(resolvedType)
+                        param
+                    }
+                }
+            }
+        }
     }
 
     private fun FirAnonymousFunction.addReturn(): FirAnonymousFunction {
