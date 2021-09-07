@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -1689,7 +1690,7 @@ open class RawFirBuilder(
         }
 
         override fun visitAnnotationEntry(annotationEntry: KtAnnotationEntry, data: Unit): FirElement {
-            return buildAnnotation {
+            return buildAnnotationCall {
                 source = annotationEntry.toFirSourceElement()
                 useSiteTarget = annotationEntry.useSiteTarget?.getAnnotationUseSiteTarget()
                 annotationTypeRef = annotationEntry.typeReference.toFirOrErrorType()
@@ -2426,10 +2427,7 @@ open class RawFirBuilder(
                 isNullable = false
             )
         }
-        // TODO: actually we know where to resolve, but we don't have any symbol providers at this point
-        calleeReference = buildSimpleNamedReference {
-            name = Name.identifier("ExtensionFunctionType")
-        }
+        argumentMapping = FirEmptyAnnotationArgumentMapping
     }
 }
 

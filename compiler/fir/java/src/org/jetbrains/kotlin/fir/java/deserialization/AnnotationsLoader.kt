@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.createConstantOrError
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -110,7 +109,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                         )
                     }
 
-                    override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                    override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
                         val list = mutableListOf<FirAnnotation>()
                         val visitor = loadAnnotation(classId, list)
                         return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
@@ -150,16 +149,9 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
 
                 result += buildAnnotation {
                     annotationTypeRef = lookupTag.toDefaultResolvedTypeRef()
-                    argumentList = buildArgumentList {
-                        for ((name, expression) in argumentMap) {
-                            arguments += buildNamedArgumentExpression {
-                                this.expression = expression
-                                this.name = name
-                                isSpread = false
-                            }
-                        }
+                    argumentMapping = buildAnnotationArgumentMapping {
+                        mapping.putAll(argumentMap)
                     }
-                    calleeReference = FirReferencePlaceholderForResolvedAnnotations
                 }
             }
 

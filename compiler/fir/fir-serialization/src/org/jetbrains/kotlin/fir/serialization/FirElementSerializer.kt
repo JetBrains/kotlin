@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
+import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.varargElementType
@@ -715,12 +716,12 @@ class FirElementSerializer private constructor(
         if (existingAnnotations?.any { it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId == classId } != true) {
             extension.serializeTypeAnnotation(
                 buildAnnotation {
-                    calleeReference = FirReferencePlaceholderForResolvedAnnotations
                     annotationTypeRef = buildResolvedTypeRef {
                         this.type = CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID.constructClassLikeType(
                             emptyArray(), isNullable = false
                         )
                     }
+                    argumentMapping = FirEmptyAnnotationArgumentMapping
                 }, builder
             )
         }

@@ -12,14 +12,10 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.collectEnumEntries
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -35,6 +31,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type.*
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
@@ -178,9 +175,24 @@ abstract class AbstractAnnotationDeserializer(
         useSiteTarget: AnnotationUseSiteTarget? = null
     ): FirAnnotation {
         val classId = nameResolver.getClassId(proto.id)
-        var arguments = emptyList<FirExpression>()
+        return buildAnnotation {
+            annotationTypeRef = buildResolvedTypeRef {
+                type = ConeClassLikeLookupTagImpl(classId).constructClassType(emptyArray(), isNullable = false)
+            }
+            this.argumentMapping = createArgumentMapping(proto, classId, nameResolver)
+            useSiteTarget?.let {
+                this.useSiteTarget = it
+            }
+        }
+    }
 
-        if (proto.argumentCount != 0) {
+    private fun createArgumentMapping(
+        proto: ProtoBuf.Annotation,
+        classId: ClassId,
+        nameResolver: NameResolver
+    ): FirAnnotationArgumentMapping {
+        return buildAnnotationArgumentMapping build@{
+            if (proto.argumentCount == 0) return@build
             // Used only for annotation parameters of array types
             // Avoid triggering it in other cases, since it's quite expensive
             val parameterByName: Map<Name, FirValueParameter>? by lazy(LazyThreadSafetyMode.NONE) {
@@ -188,8 +200,9 @@ abstract class AbstractAnnotationDeserializer(
                 val symbol = lookupTag.toSymbol(session)
                 val firAnnotationClass = (symbol as? FirRegularClassSymbol)?.fir ?: return@lazy null
 
-                val classScope = firAnnotationClass.defaultType().scope(session, ScopeSession(), FakeOverrideTypeCalculator.DoNothing)
-                    ?: error("Null scope for $classId")
+                val classScope =
+                    firAnnotationClass.defaultType().scope(session, ScopeSession(), FakeOverrideTypeCalculator.DoNothing)
+                        ?: error("Null scope for $classId")
 
                 val constructor =
                     classScope.getDeclaredConstructors().singleOrNull()?.fir ?: error("No single constructor found for $classId")
@@ -197,28 +210,11 @@ abstract class AbstractAnnotationDeserializer(
                 constructor.valueParameters.associateBy { it.name }
             }
 
-            arguments = proto.argumentList.mapNotNull {
+            proto.argumentList.mapNotNull {
                 val name = nameResolver.getName(it.nameId)
                 val value = resolveValue(it.value, nameResolver) { parameterByName?.get(name)?.returnTypeRef?.coneType }
-                buildNamedArgumentExpression {
-                    expression = value
-                    isSpread = false
-                    this.name = name
-                }
-            }
-        }
-
-        return buildAnnotation {
-            annotationTypeRef = buildResolvedTypeRef {
-                type = ConeClassLikeLookupTagImpl(classId).constructClassType(emptyArray(), isNullable = false)
-            }
-            argumentList = buildArgumentList {
-                this.arguments += arguments
-            }
-            useSiteTarget?.let {
-                this.useSiteTarget = it
-            }
-            calleeReference = FirReferencePlaceholderForResolvedAnnotations
+                name to value
+            }.toMap(mapping)
         }
     }
 

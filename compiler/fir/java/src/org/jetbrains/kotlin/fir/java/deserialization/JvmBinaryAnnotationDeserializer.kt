@@ -93,9 +93,8 @@ class JvmBinaryAnnotationDeserializer(
         ).map {
             buildAnnotation {
                 annotationTypeRef = it.annotationTypeRef
-                argumentList = it.argumentList
+                argumentMapping = it.argumentMapping
                 useSiteTarget = AnnotationUseSiteTarget.PROPERTY
-                calleeReference = it.calleeReference
             }
         }
     }
@@ -116,9 +115,8 @@ class JvmBinaryAnnotationDeserializer(
         return findJvmBinaryClassAndLoadMemberAnnotations(signature).map {
             buildAnnotation {
                 annotationTypeRef = it.annotationTypeRef
-                argumentList = it.argumentList
+                argumentMapping = it.argumentMapping
                 useSiteTarget = AnnotationUseSiteTarget.FIELD
-                calleeReference = it.calleeReference
             }
         }
     }
@@ -136,9 +134,8 @@ class JvmBinaryAnnotationDeserializer(
         return findJvmBinaryClassAndLoadMemberAnnotations(signature).map {
             buildAnnotation {
                 annotationTypeRef = it.annotationTypeRef
-                argumentList = it.argumentList
+                argumentMapping = it.argumentMapping
                 useSiteTarget = AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
-                calleeReference = it.calleeReference
             }
         }
     }

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.lightTree.fir.*
@@ -348,7 +349,7 @@ class DeclarationsConverter(
             }
         }
         val name = (constructorCalleePair.first as? FirUserTypeRef)?.qualifier?.last()?.name ?: Name.special("<no-annotation-name>")
-        return buildAnnotation {
+        return buildAnnotationCall {
             source = unescapedAnnotation.toFirSourceElement()
             useSiteTarget = annotationUseSiteTarget ?: defaultAnnotationUseSiteTarget
             annotationTypeRef = constructorCalleePair.first
@@ -2124,7 +2125,7 @@ class DeclarationsConverter(
                 false
             )
         }
-        calleeReference = FirReferencePlaceholderForResolvedAnnotations
+        argumentMapping = FirEmptyAnnotationArgumentMapping
     }
 
     private fun <T> fillDanglingConstraintsTo(
