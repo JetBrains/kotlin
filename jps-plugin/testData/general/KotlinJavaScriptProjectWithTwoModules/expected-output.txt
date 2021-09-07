@@ -1,0 +1,17 @@
+kotlinProject/
+  kotlinProject/
+    root-package.kjsm
+  kotlinProject.js
+  kotlinProject.meta.js
+  lib/
+    kotlin.js
+    kotlin.meta.js
+module2/
+  lib/
+    kotlin.js
+    kotlin.meta.js
+  module2/
+    module2/
+      module2.kjsm
+  module2.js
+  module2.meta.js

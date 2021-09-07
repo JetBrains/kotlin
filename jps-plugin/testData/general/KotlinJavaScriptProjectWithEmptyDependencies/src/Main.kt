@@ -1,0 +1,4 @@
+fun main() {
+    srcEmptyTestsSrc()
+    srcMissingTestsSrc()
+}
