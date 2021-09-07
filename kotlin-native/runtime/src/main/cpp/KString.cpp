@@ -300,11 +300,11 @@ KBoolean Kotlin_Char_isISOControl(KChar ch) {
   return (ch <= 0x1F) || (ch >= 0x7F && ch <= 0x9F);
 }
 
-KBoolean Kotlin_Char_isHighSurrogate(KChar ch) {
+KBoolean Kotlin_Char_isHighSurrogate(KCharSignExt ch) {
   return ((ch & 0xfc00) == 0xd800);
 }
 
-KBoolean Kotlin_Char_isLowSurrogate(KChar ch) {
+KBoolean Kotlin_Char_isLowSurrogate(KCharSignExt ch) {
   return ((ch & 0xfc00) == 0xdc00);
 }
 
