@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 fun KotlinType.hasEnhancedNullability(): Boolean =
     SimpleClassicTypeSystemContext.hasEnhancedNullability(this)
@@ -105,7 +104,6 @@ class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings
     ): SimpleResult {
         val shouldEnhance = position.shouldEnhance()
         val shouldEnhanceArguments = !isSuperTypesEnhancement || !isBoundOfRawType
-        val shouldEnhanceStar = !isBoundOfRawType
         if (!shouldEnhance && arguments.isEmpty()) return SimpleResult(null, 1, false)
 
         val originalClass = constructor.declarationDescriptor
@@ -121,7 +119,6 @@ class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings
             val enhanced = when {
                 !shouldEnhanceArguments -> Result(null, 0)
                 !arg.isStarProjection -> arg.type.unwrap().enhancePossiblyFlexible(qualifiers, globalArgIndex, isSuperTypesEnhancement)
-                shouldEnhanceStar && qualifiers(globalArgIndex).nullability == NOT_NULL -> Result(arg.type.unwrap().makeNotNullable(), 1)
                 else -> Result(null, 1)
             }
             globalArgIndex += enhanced.subtreeSize
@@ -150,7 +147,7 @@ class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings
             enhancedNullability ?: isMarkedNullable
         )
 
-        val enhancement = if (effectiveQualifiers.isNotNullTypeParameter) notNullTypeParameter(enhancedType) else enhancedType
+        val enhancement = if (effectiveQualifiers.definitelyNotNull) notNullTypeParameter(enhancedType) else enhancedType
         val nullabilityForWarning = enhancedNullability != null && effectiveQualifiers.isNullabilityQualifierForWarning
         return SimpleResult(enhancement, subtreeSize, nullabilityForWarning)
     }

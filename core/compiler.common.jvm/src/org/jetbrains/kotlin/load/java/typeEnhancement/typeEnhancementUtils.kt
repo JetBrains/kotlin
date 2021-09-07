@@ -48,8 +48,7 @@ fun JavaTypeQualifiers.computeQualifiersForOverride(
     val realNullability = newNullability?.takeUnless { isForVarargParameter && it == NullabilityQualifier.NULLABLE }
     return JavaTypeQualifiers(
         realNullability, newMutability,
-        realNullability == NullabilityQualifier.NOT_NULL &&
-                (isNotNullTypeParameter || superQualifiers.any { it.isNotNullTypeParameter }),
+        realNullability == NullabilityQualifier.NOT_NULL && (definitelyNotNull || superQualifiers.any { it.definitelyNotNull }),
         realNullability != null && newNullabilityForErrors != newNullability
     )
 }
