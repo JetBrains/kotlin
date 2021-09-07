@@ -10,7 +10,15 @@ import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatData
 import org.jetbrains.kotlin.gradle.plugin.stat.ReportStatistics
 import org.jetbrains.kotlin.konan.file.File
 
-class ReportStatisticsToBuildScan(private val buildScan: BuildScanExtension, private val buildUuid: String, private val kotlinVersion: String) : ReportStatistics {
+class ReportStatisticsToBuildScan(
+    private val buildScan: BuildScanExtension
+) : ReportStatistics {
+    companion object {
+        const val kbSize = 1024
+        const val mbSize = kbSize * kbSize
+        const val gbSize = kbSize * mbSize
+    }
+
     override fun report(data: CompileStatData) {
         buildScan.value(data.taskName, readableString(data))
         data.tags.forEach { buildScan.tag(it) }
@@ -26,10 +34,18 @@ class ReportStatisticsToBuildScan(private val buildScan: BuildScanExtension, pri
         }
         data.changes.joinTo(readableString, prefix = "Changes: [", postfix = "]; ") { it.substringAfterLast(File.separator) }
 
-        readableString.append("Performance: [")
-        data.timeData.forEach { (key, value) -> readableString.append(key.readableString).append(": ").append(value).append("ms, ") }
-        data.perfData.forEach { (key, value) -> readableString.append(key.readableString).append(": ").append(value).append("kb, ") }
-        readableString.append("]; ")
+        val timeData = data.timeData.map { (key, value) -> "${key.readableString}: ${value}ms"} //sometimes it is better to have separate variable to be able debug
+        val perfData = data.perfData.map { (key, value) -> "$key: ${readableFileLength(value)}"}
+        timeData.union(perfData).joinTo(readableString, ",", "Performance: [", "]")
         return readableString.toString()
     }
+
+
+    private fun readableFileLength(length: Long): String =
+        when {
+            length / gbSize > 0 -> "${length / gbSize} GB"
+            length / mbSize > 0 -> "${length / mbSize} MB"
+            length / kbSize > 0 -> "${length / kbSize} KB"
+            else -> "$length B"
+        }
 }

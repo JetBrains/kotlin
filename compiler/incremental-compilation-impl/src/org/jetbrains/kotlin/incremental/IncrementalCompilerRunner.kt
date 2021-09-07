@@ -174,6 +174,18 @@ abstract class IncrementalCompilerRunner<
             // Here we should analyze exit code of compiler. E.g. compiler failure should lead to caches rebuild,
             // but now JsKlib compiler reports invalid exit code.
             cachesMayBeCorrupted = false
+
+            reporter.measure(BuildTime.CALCULATE_OUTPUT_SIZE) {
+                reporter.addMetric(
+                    BuildPerformanceMetric.SNAPSHOT_SIZE,
+                    buildHistoryFile.length() + lastBuildInfoFile.length() + abiSnapshotFile.length()
+                )
+                if (cacheDirectory.exists() && cacheDirectory.isDirectory()) {
+                    cacheDirectory.walkTopDown().filter { it.isFile }.map { it.length() }.sum().let {
+                        reporter.addMetric(BuildPerformanceMetric.OUTPUT_SIZE, it)
+                    }
+                }
+            }
             return exitCode
         } catch (e: Exception) { // todo: catch only cache corruption
             // todo: warn?

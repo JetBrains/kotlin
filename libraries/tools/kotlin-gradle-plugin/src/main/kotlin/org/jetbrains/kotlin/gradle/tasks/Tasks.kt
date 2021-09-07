@@ -345,18 +345,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
             try {
                 executeImpl(inputChanges)
-                metrics.measure(BuildTime.CALCULATE_OUTPUT_SIZE) {
-                    metrics.addMetric(
-                        BuildPerformanceMetric.SNAPSHOT_SIZE,
-                        taskBuildDirectory.file("build-history.bin").get().asFile.length() +
-                                taskBuildDirectory.file("last-build.bin").get().asFile.length() +
-                                taskBuildDirectory.file("abi-snapshot.bin").get().asFile.length()
-                    )
-                    metrics.addMetric(BuildPerformanceMetric.OUTPUT_SIZE,
-                                      taskBuildDirectory.dir("caches-jvm").get().asFileTree.files.filter { it.isFile }.map { it.length() }
-                                          .sum()
-                    )
-                }
             } catch (t: Throwable) {
                 if (outputsBackup != null) {
                     metrics.measure(BuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
