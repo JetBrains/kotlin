@@ -11,7 +11,7 @@ In particular:
 * Objects passing through interop can be accessed and modified by any thread without freezing them.
 * `Worker.executeAfter` no longer requires `operation` to be frozen.
 * `Worker.execute` no longer requires `producer` to return an isolated object subgraph.
-* Reference cycles containing `AtomicReference` and `FreezableAtomicReference` do not cause memory leaks anymore.
+* Reference cycles containing `AtomicReference` and `FreezableAtomicReference` do not cause memory leaks.
 
 A few precautions:
 * As with the previous MM, memory is not reclaimed eagerly: an object is reclaimed only when GC happens. This extends to Swift/ObjC objects that crossed interop boundary into Kotlin/Native.
@@ -19,9 +19,9 @@ A few precautions:
 * `deinit` on Swift/ObjC objects (and the objects they refer to) will be called on a different thread if these objects cross interop boundary into Kotlin/Native.
 * When calling Kotlin suspend functions from Swift, completion handlers might be called on threads other than the main.
 
-Together with the new MM, we're bringing in another set of changes:
+The new MM also brings another set of changes:
 * Global properties are initialized lazily when the file they are defined in is first accessed. Previously global properties were initialized at the program startup. This is in line with Kotlin/JVM.
-  As a workaround, properties that must be initialized at the program start can be marked with `@EagerInitialization`. Before using, consult the docs for `@EagerInitialization`.
+  As a workaround, properties that must be initialized at the program start can be marked with `@EagerInitialization`. Before using, consult the [EagerInitialization](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native/-eager-initialization/) documentation.
 * `by lazy {}` properties support thread-safety modes and do not handle unbounded recursion. This is in line with Kotlin/JVM.
 * Exceptions that escape `operation` in `Worker.executeAfter` are processed like in other parts of the runtime: by trying to execute a user-defined unhandled exception hook or terminating the program if the hook was not found or failed with an exception itself.
 
@@ -48,7 +48,7 @@ pluginManagement {
 }
 ```
 
-### Switch to the new memory model
+### Switch to the new MM
 
 Add the compilation flag `-Xbinary=memoryModel=experimental` using one of the following options:
 
@@ -68,19 +68,19 @@ kotlin.targets.withType(KotlinNativeTarget::class.java) {
 }
 ```
 
-If `kotlin.native.isExperimentalMM()` returns `true`, you've successfully enabled the new memory model.
+If `kotlin.native.isExperimentalMM()` returns `true`, you've successfully enabled the new MM.
 
 ### Update the libraries
 
-For you to take full advantage of the new MM, we released new versions of the following libraries:
+To take full advantage of the new MM, we released new versions of the following libraries:
 * `kotlinx.coroutines`: `1.5.1-new-mm-dev2` at https://maven.pkg.jetbrains.space/public/p/kotlinx-coroutines/maven
     * No freezing. Every common primitive (Channels, Flows, coroutines) works through `Worker` boundaries.
     * Unlike the `native-mt` version, library objects are transparent for `freeze`. For example, if you freeze a channel, all of its internals will get frozen, so it won't work as expected. In particular, this can happen when freezing something that captures a channel.
     * `Dispatchers.Default` is backed by a pool of `Worker`s on Linux and Windows and by a global queue on Apple targets.
-    * `newSingleThreadContext` to create a coroutine dispatcher backed by a `Worker`.
+    * `newSingleThreadContext` to create a coroutine dispatcher that is backed by a `Worker`.
     * `newFixedThreadPoolContext` to create a coroutine dispatcher backed by a pool of `N` `Worker`s.
     * `Dispatchers.Main` is backed by the main queue on Darwin and by a standalone `Worker` on other platforms.
-      _Don't use `Dispatchers.Main` in unit-tests because nothing processes the main thread queue in unit-tests._
+      _Don't use `Dispatchers.Main` in unit tests because, in unit tests, nothing processes the main thread queue._
 * `ktor`: `1.6.2-native-mm-eap-196` at https://maven.pkg.jetbrains.space/public/p/ktor/eap
 
 ### Using previous versions of the libraries
@@ -104,8 +104,14 @@ Known issues:
 For the first preview, we're using the simplest scheme for garbage collection: single-threaded stop-the-world
 mark-and-sweep algorithm, which is triggered after enough functions, loop iterations, and allocations were executed. This greatly hinders the performance, and one of our top priorities now is addressing these performance issues.
 
-We don't have nice instruments to monitor the GC performance yet. So far, diagnosing requires looking at GC logs. To enable the logs, add the compilation flag `-Xruntime-logs=gc=info`. Or, in a Gradle build script:
+We don't have nice instruments to monitor the GC performance yet. So far, diagnosing requires looking at GC logs. To enable the logs, add the compilation flag `-Xruntime-logs=gc=info` using one of the following options:
 
+* In `gradle.properties`:
+```properties
+kotlin.native.binary.gc=info
+```
+
+* In a Gradle build script:
 ```kotlin
 // build.gradle.kts
 
@@ -123,14 +129,14 @@ The list of known performance issues:
 * Since the collector is single-threaded stop-the-world, the pause time of every thread linearly depends on the number of objects in the heap. The more objects that are kept alive, the longer the pauses are. Long pauses on the main thread can result in laggy UI event handling. Both the pause time and the number of objects in the heap are printed to the logs for each GC cycle.
 * Being stop-the-world also means that all threads with Kotlin/Native runtime active on them need to synchronize simultaneously for the collection to begin. This also affects the pause time.
 * There is a complicated relationship between Swift/ObjC objects and their Kotlin/Native counterparts, which causes Swift/ObjC objects to linger longer than necessary. It means that their Kotlin/Native counterparts are kept in the heap longer, contributing to the slower collection time. This typically doesn't happen, but in some corner cases, for example, when a long loop creates several temporary objects that cross the Swift/ObjC interop boundary on each iteration (for example, calling a Kotlin callback from a loop in Swift or vice versa).
-  In the logs, there are several stable refs in the root set. If this number keeps growing, it may indicate that the Swift/ObjC objects are not being freed when they should. Try putting `autoreleasepool` around loop bodies (both in Swift/ObjC and Kotlin) that do interop calls.
+  In the logs, there's a number of stable refs in the root set. If this number keeps growing, it may indicate that the Swift/ObjC objects are not being freed when they should. Try putting `autoreleasepool` around loop bodies (both in Swift/ObjC and Kotlin) that do interop calls.
 * Our GC triggers do not adapt to the workload: collections may be requested far more frequently than necessary, which means that GC time may dominate useful application run time and pause the threads more frequently than needed.
   This manifests in time between cycles being close (or even less) than the pause time. Both of these numbers are printed to the logs.
   Try increasing `kotlin.native.internal.GC.threshold` and `kotlin.native.internal.GC.thresholdAllocations` to force GC to happen less often. Note that the exact meaning of `threshold` and `thresholdAllocations` may change in the future.
 * Freezing is currently implemented suboptimally: internally, a separate memory allocation may occur for each frozen object (this recursively includes the object subgraph), which puts unnecessary pressure on the heap.
 * Unterminated `Worker`s and unconsumed `Future`s have objects pinned to the heap, contributing to the pause time. Like Swift/ObjC interop, this also manifests in a growing number of stable refs in the root set.
   To mitigate:
-    * Look for `Worker.execute` being called with the resulting `Future` and never consumed (via `Future.consume` or `Future.result`) and make sure to either consume the `Future` or replace calls with `Worker.executeAfter` instead.
+    * Look for `Worker.execute` that returns a `Future` being called but never consumed (via `Future.consume` or `Future.result`) and make sure to either consume the `Future` or replace calls with `Worker.executeAfter` instead.
     * Look for `Worker`s that were `Worker.start`ed, but never stopped via `Worker.requestTermination()` (also, note that this call also returns a `Future`).
     * Make sure that `execute` and `executeAfter` are only called on `Worker`s that were `Worker.start`ed or if the receiving `Worker` manually processes events with `Worker.processQueue`.
 
@@ -149,13 +155,14 @@ We measured performance regressions with a slowdown up to a factor of 5. If you 
 ## Workarounds
 
 ### Unexpected object freezing
-Some libraries might not be ready for the new memory model and freeze-transparency of `kotlinx.coroutines`, so unexpected `InvalidMutabilityException` or `FreezingException` might appear.
+
+Some libraries might not be ready for the new MM and freeze-transparency of `kotlinx.coroutines`, so unexpected `InvalidMutabilityException` or `FreezingException` might appear.
 
 To workaround such cases, we added a `freezing` binary option that disables full (`disabled`) or partial (`explicitOnly`) freeze.
 The former disables the freezing mechanism at runtime (thus, making it a no-op), while the latter disables automatic freezing of
 [`@SharedImmutable`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/-shared-immutable/) globals, but keeps direct calls to [`freeze`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/freeze.html) fully functional.
 
-Similar to the [new memory model](#switch-to-the-new-memory-model), there are several ways to enable this option:
+To enable this option, add the compilation flag `-Xbinary=freezing=disabled` using one of the following options:
 
 * In `gradle.properties`:
 ```properties
@@ -171,12 +178,8 @@ kotlin.targets.withType(KotlinNativeTarget::class.java) {
     }
 }
 ```
-* With a compilation flag:
-```
--Xbinary=freezing=disabled
-```
 
-> **NOTE**: this option works only with the new memory model.
+> **NOTE**: this option works only with the new MM.
 
 If you want not just workaround the problem, but track down the source of the exceptions, then [`ensureNeverFrozen`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/ensure-never-frozen.html) is your best friend.
 
@@ -184,4 +187,4 @@ If you want not just workaround the problem, but track down the source of the ex
 
 If you encounter performance regressions with a slowdown of more than a factor of 5, report to [this performance meta issue](https://youtrack.jetbrains.com/issue/KT-48526).
 
-You can report other issues with migration to the new memory model to [this meta issue](https://youtrack.jetbrains.com/issue/KT-48525).
+You can report other issues with migration to the new MM to [this meta issue](https://youtrack.jetbrains.com/issue/KT-48525).
