@@ -13,7 +13,8 @@ dependencies {
     compile(project(":compiler:light-classes"))
 
     // BEWARE: Uast should not depend on IDEA.
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
+    compileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
 
     testCompileOnly(intellijDep())
 

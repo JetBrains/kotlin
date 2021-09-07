@@ -13,7 +13,8 @@ dependencies {
 
     compileOnly(intellijDep()) { includeJars("platform-core-ui", "platform-util-ui") }
 
-    compileOnly(intellijDep()) { includeJars("asm-all", "trove4j", "guava", rootProject = rootProject) }
+    compileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
+    compileOnly(intellijDep()) { includeJars("trove4j", "guava", rootProject = rootProject) }
 }
 
 sourceSets {

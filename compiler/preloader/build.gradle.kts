@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
+    compileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
 }
 
 sourceSets {

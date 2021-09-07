@@ -25,6 +25,7 @@ dependencies {
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":js:js.frontend"))
     compileOnly(commonDep("net.rubygrapefruit", "native-platform"))
+    compileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 
     embedded(project(":daemon-common")) { isTransitive = false }

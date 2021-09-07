@@ -202,10 +202,6 @@ extra["intellijSeparateSdks"] = intellijSeparateSdks
 
 extra["IntellijCoreDependencies"] =
     listOf(
-        when {
-            Platform[202].orHigher() -> "asm-all-8.0.1"
-            else -> "asm-all-7.0.1"
-        },
         "guava",
         "jdom",
         "jna",

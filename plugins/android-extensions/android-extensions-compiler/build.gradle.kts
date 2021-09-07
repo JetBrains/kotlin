@@ -22,7 +22,7 @@ dependencies {
     compileOnly(project(":compiler:ir.tree.impl"))
     compileOnly(project(":kotlin-android-extensions-runtime"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
+    compileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
 
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:backend"))

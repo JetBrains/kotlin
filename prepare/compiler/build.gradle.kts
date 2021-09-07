@@ -214,6 +214,7 @@ dependencies {
 
     fatJarContents(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }
 
+    fatJarContents("org.jetbrains.intellij.deps:asm-all:9.1")
     fatJarContents(intellijDep()) {
         includeIntellijCoreJarDependencies(project) {
             !(it.startsWith("jdom") || it.startsWith("log4j") || it.startsWith("trove4j") || it.startsWith("streamex"))

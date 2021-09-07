@@ -9,12 +9,13 @@ plugins {
 }
 
 dependencies {
+    testCompileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
     Platform[193].orLower {
         testCompileOnly(intellijDep()) { includeJars("openapi", rootProject = rootProject) }
     }
 
     testCompileOnly(intellijDep()) {
-        includeJars("extensions", "idea_rt", "util", "asm-all", "platform-util-ex", rootProject = rootProject)
+        includeJars("extensions", "idea_rt", "util", "platform-util-ex", rootProject = rootProject)
     }
 
     testCompileOnly(intellijPluginDep("java")) { includeJars("java-api") }
