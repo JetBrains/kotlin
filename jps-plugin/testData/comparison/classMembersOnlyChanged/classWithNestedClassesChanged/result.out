@@ -1,0 +1,10 @@
+REMOVED test/ClassWithNestedClasses.NestedClassRemoved
+ADDED test/ClassWithNestedClasses.InnerClassAdded
+ADDED test/ClassWithNestedClasses.NestedClassAdded
+PROTO DIFFERENCE in test/ClassWithChangedVisibilityForNestedClasses.InnerClass: FLAGS
+CHANGES in test/ClassWithChangedVisibilityForNestedClasses.InnerClass: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/ClassWithChangedVisibilityForNestedClasses.NestedClass: FLAGS
+CHANGES in test/ClassWithChangedVisibilityForNestedClasses.NestedClass: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/ClassWithNestedClasses: NESTED_CLASS_NAME_LIST
+CHANGES in test/ClassWithNestedClasses: MEMBERS
+    [InnerClassAdded, NestedClassAdded, NestedClassRemoved]

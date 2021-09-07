@@ -1,0 +1,10 @@
+PROTO DIFFERENCE in test/ClassWithPrimaryConstructorChanged: CONSTRUCTOR_LIST
+CHANGES in test/ClassWithPrimaryConstructorChanged: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/ClassWithPrimaryConstructorVisibilityChanged: CONSTRUCTOR_LIST
+CHANGES in test/ClassWithPrimaryConstructorVisibilityChanged: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/ClassWithSecondaryConstructorVisibilityChanged: CONSTRUCTOR_LIST
+CHANGES in test/ClassWithSecondaryConstructorVisibilityChanged: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/ClassWithSecondaryConstructorsAdded: CONSTRUCTOR_LIST
+CHANGES in test/ClassWithSecondaryConstructorsAdded: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/ClassWithSecondaryConstructorsRemoved: CONSTRUCTOR_LIST
+CHANGES in test/ClassWithSecondaryConstructorsRemoved: CLASS_SIGNATURE
