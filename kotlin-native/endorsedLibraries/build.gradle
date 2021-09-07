@@ -83,7 +83,7 @@ targetList.each { target ->
 
 endorsedLibrariesList.each { library ->
     task("${library.taskName}CommonSources", type: Zip) {
-        destinationDirectory = file("${UtilsKt.getKotlinNativeDist(project)}/dist/sources")
+        destinationDirectory = file("${UtilsKt.getKotlinNativeDist(project)}/sources")
         archiveFileName = "${library.name}-common-sources.zip"
 
         includeEmptyDirs = false
@@ -92,7 +92,7 @@ endorsedLibrariesList.each { library ->
         from(library.project.file('src/main/kotlin'))
     }
     task("${library.taskName}NativeSources", type: Zip) {
-        destinationDirectory = file("${UtilsKt.getKotlinNativeDist(project)}/dist/sources")
+        destinationDirectory = file("${UtilsKt.getKotlinNativeDist(project)}/sources")
         archiveFileName = "${library.name}-native-sources.zip"
 
         includeEmptyDirs = false
