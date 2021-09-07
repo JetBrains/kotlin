@@ -143,7 +143,7 @@ private fun ConeKotlinType.enhanceInflexibleType(
     val mergedArguments = Array(typeArguments.size) { enhancedArguments[it] ?: typeArguments[it] }
     val mergedAttributes = if (shouldAddAttribute) attributes + CompilerConeAttributes.EnhancedNullability else attributes
     val enhancedType = enhancedTag.constructType(mergedArguments, enhancedNullability, mergedAttributes)
-    return if (effectiveQualifiers.isNotNullTypeParameter)
+    return if (effectiveQualifiers.definitelyNotNull)
         ConeDefinitelyNotNullType.create(enhancedType, session.typeContext) ?: enhancedType
     else
         enhancedType

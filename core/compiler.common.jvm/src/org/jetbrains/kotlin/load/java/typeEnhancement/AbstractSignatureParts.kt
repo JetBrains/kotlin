@@ -104,7 +104,7 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
             else -> AnnotationQualifierApplicabilityType.TYPE_USE
         }
         val defaultTypeQualifier = defaultQualifiers?.get(applicabilityType)
-            ?.takeIf { (it.affectsTypeParameterBasedTypes || typeParameterUse == null) && (it.affectsStarProjection || type != null) }
+            ?.takeIf { (it.affectsTypeParameterBasedTypes || typeParameterUse == null) }
 
         val referencedParameterBoundsNullability = typeParameterUse?.boundsNullability
         // For type parameter uses, we have *three* options:
@@ -120,7 +120,7 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         val defaultNullability =
             referencedParameterBoundsNullability?.copy(qualifier = NullabilityQualifier.NOT_NULL)
                 ?: defaultTypeQualifier?.nullabilityQualifier
-        val isNotNullTypeParameter =
+        val definitelyNotNull =
             referencedParameterBoundsNullability?.qualifier == NullabilityQualifier.NOT_NULL ||
                     (typeParameterUse != null && defaultTypeQualifier?.nullabilityQualifier?.qualifier == NullabilityQualifier.NOT_NULL)
 
@@ -134,10 +134,9 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
                     substitutedParameterBoundsNullability.copy(qualifier = NullabilityQualifier.FORCE_FLEXIBILITY)
                 else
                     substitutedParameterBoundsNullability
-            type == null -> substitutedParameterBoundsNullability
             else -> mostSpecific(substitutedParameterBoundsNullability, defaultNullability)
         }
-        return JavaTypeQualifiers(result?.qualifier, annotationsMutability, isNotNullTypeParameter, result?.isForWarningOnly == true)
+        return JavaTypeQualifiers(result?.qualifier, annotationsMutability, definitelyNotNull, result?.isForWarningOnly == true)
     }
 
     private fun mostSpecific(

@@ -16,10 +16,10 @@ enum class MutabilityQualifier {
     MUTABLE
 }
 
-class JavaTypeQualifiers(
+class JavaTypeQualifiers constructor(
     val nullability: NullabilityQualifier?,
     val mutability: MutabilityQualifier?,
-    val isNotNullTypeParameter: Boolean,
+    val definitelyNotNull: Boolean,
     val isNullabilityQualifierForWarning: Boolean = false
 ) {
     companion object {
