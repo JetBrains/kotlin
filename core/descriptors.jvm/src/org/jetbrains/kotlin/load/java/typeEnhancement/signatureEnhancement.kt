@@ -322,7 +322,7 @@ class SignatureEnhancement(
                     mapper.isMutable(upper) -> MutabilityQualifier.MUTABLE
                     else -> null
                 },
-                isNotNullTypeParameter = unwrap() is NotNullTypeParameter || unwrap() is DefinitelyNotNullType
+                definitelyNotNull = unwrap() is NotNullTypeParameter || unwrap() is DefinitelyNotNullType
             )
         }
 
@@ -370,7 +370,7 @@ class SignatureEnhancement(
                     containerContext.defaultTypeQualifiers?.get(containerApplicabilityType)
                 else
                     defaultQualifiersForType)?.takeIf {
-                    (it.affectsTypeParameterBasedTypes || !isTypeParameter()) && (it.affectsStarProjection || !isFromStarProjection)
+                    (it.affectsTypeParameterBasedTypes || !isTypeParameter())
                 }
 
             val (nullabilityFromBoundsForTypeBasedOnTypeParameter, isTypeParameterWithNotNullableBounds) =
@@ -402,7 +402,7 @@ class SignatureEnhancement(
                         MutabilityQualifier.MUTABLE
                     )
                 ),
-                isNotNullTypeParameter = isNotNullTypeParameter && isTypeParameter(),
+                definitelyNotNull = isNotNullTypeParameter && isTypeParameter(),
                 isNullabilityQualifierForWarning = nullabilityInfo?.isForWarningOnly == true
             )
         }
@@ -595,7 +595,7 @@ class SignatureEnhancement(
                     .select(MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, own.mutability, isCovariantPosition)
 
             val canChange = ownNullabilityForWarning != ownNullability || nullabilityFromSupertypesWithWarning != nullabilityFromSupertypes
-            val isAnyNonNullTypeParameter = own.isNotNullTypeParameter || superQualifiers.any { it.isNotNullTypeParameter }
+            val isAnyNonNullTypeParameter = own.definitelyNotNull || superQualifiers.any { it.definitelyNotNull }
             if (nullability == null && canChange) {
                 val nullabilityWithWarning =
                     nullabilityFromSupertypesWithWarning.select(ownNullabilityForWarning, isCovariantPosition)

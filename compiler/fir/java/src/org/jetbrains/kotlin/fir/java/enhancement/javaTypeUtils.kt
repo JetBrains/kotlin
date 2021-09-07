@@ -97,7 +97,7 @@ private fun ConeKotlinType.enhanceConeKotlinType(
                 lowerResult === lowerBound && upperResult === upperBound -> this
                 this is ConeRawType -> ConeRawType(lowerResult, upperResult)
                 else -> coneFlexibleOrSimpleType(
-                    session, lowerResult, upperResult, isNotNullTypeParameter = qualifiers(index).isNotNullTypeParameter
+                    session, lowerResult, upperResult, isNotNullTypeParameter = qualifiers(index).definitelyNotNull
                 )
             }
         }
