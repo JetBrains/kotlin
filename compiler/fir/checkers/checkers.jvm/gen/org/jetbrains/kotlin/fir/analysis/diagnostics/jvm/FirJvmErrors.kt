@@ -97,7 +97,7 @@ object FirJvmErrors {
     // Repeatable Annotations
     val NON_SOURCE_REPEATED_ANNOTATION by error0<KtAnnotationEntry>()
     val REPEATED_ANNOTATION_TARGET6 by error0<KtAnnotationEntry>()
-    val REPEATED_ANNOTATION_WITH_CONTAINER by error2<KtAnnotationEntry, FqName, FqName>()
+    val REPEATED_ANNOTATION_WITH_CONTAINER by error2<KtAnnotationEntry, ClassId, ClassId>()
     val REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY by deprecationError2<KtAnnotationEntry, ClassId, ClassId>(RepeatableAnnotationContainerConstraints)
     val REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER by deprecationError2<KtAnnotationEntry, ClassId, Name>(RepeatableAnnotationContainerConstraints)
     val REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION by deprecationError4<KtAnnotationEntry, ClassId, String, ClassId, String>(RepeatableAnnotationContainerConstraints)

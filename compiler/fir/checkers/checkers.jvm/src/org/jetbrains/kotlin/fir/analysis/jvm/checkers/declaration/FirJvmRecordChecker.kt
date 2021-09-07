@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirField
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByFqName
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -27,7 +24,7 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.JvmNames.JVM_RECORD_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmNames.JVM_RECORD_ANNOTATION_CLASS_ID
 
 object FirJvmRecordChecker : FirRegularClassChecker() {
     private val JAVA_RECORD_CLASS_ID = ClassId.fromString("java/lang/Record")
@@ -40,7 +37,7 @@ object FirJvmRecordChecker : FirRegularClassChecker() {
             }
         }
 
-        val annotationSource = declaration.getAnnotationByFqName(JVM_RECORD_ANNOTATION_FQ_NAME)?.source ?: return
+        val annotationSource = declaration.getAnnotationByClassId(JVM_RECORD_ANNOTATION_CLASS_ID)?.source ?: return
 
         val languageVersionSettings = context.session.languageVersionSettings
         if (!languageVersionSettings.supportsFeature(LanguageFeature.JvmRecordSupport)) {

@@ -16,23 +16,24 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 object FirDeprecatedJavaAnnotationsChecker : FirAnnotationCallChecker() {
 
-    private val javaToKotlinNameMap: Map<FqName, FqName> =
+    private val javaToKotlinNameMap: Map<ClassId, FqName> =
         mapOf(
-            JvmAnnotationNames.TARGET_ANNOTATION to StandardNames.FqNames.target,
-            JvmAnnotationNames.RETENTION_ANNOTATION to StandardNames.FqNames.retention,
-            JvmAnnotationNames.DEPRECATED_ANNOTATION to StandardNames.FqNames.deprecated,
-            JvmAnnotationNames.DOCUMENTED_ANNOTATION to StandardNames.FqNames.mustBeDocumented
+            ClassId.topLevel(JvmAnnotationNames.TARGET_ANNOTATION) to StandardNames.FqNames.target,
+            ClassId.topLevel(JvmAnnotationNames.RETENTION_ANNOTATION) to StandardNames.FqNames.retention,
+            ClassId.topLevel(JvmAnnotationNames.DEPRECATED_ANNOTATION) to StandardNames.FqNames.deprecated,
+            ClassId.topLevel(JvmAnnotationNames.DOCUMENTED_ANNOTATION) to StandardNames.FqNames.mustBeDocumented
         )
 
     override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
         if (context.containingDeclarations.lastOrNull()?.source?.kind != FirRealSourceElementKind) return
-        
+
         val lookupTag = expression.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return
-        javaToKotlinNameMap[lookupTag.classId.asSingleFqName()]?.let { betterName ->
+        javaToKotlinNameMap[lookupTag.classId]?.let { betterName ->
             reporter.reportOn(expression.source, FirJvmErrors.DEPRECATED_JAVA_ANNOTATION, betterName, context)
         }
     }

@@ -16,6 +16,8 @@ object JvmAbi {
 
     @JvmField
     val JVM_FIELD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmField")
+    @JvmField
+    val JVM_FIELD_ANNOTATION_CLASS_ID = ClassId.topLevel(JVM_FIELD_ANNOTATION_FQ_NAME)
 
     /**
      * Warning: use DEFAULT_IMPLS_CLASS_NAME and TypeMappingConfiguration.innerClassNameFactory when possible.

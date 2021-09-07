@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassUseSiteMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
-import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_FQ_NAME
-import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME
+import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_CLASS_ID
+import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID
 
 object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -53,7 +53,7 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
                     return
                 }
             } else {
-                val annotation = declaration.getAnnotationByFqName(JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME)
+                val annotation = declaration.getAnnotationByClassId(JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID)
                 if (annotation != null) {
                     if (isJvm6) {
                         reporter.reportOn(
@@ -140,7 +140,7 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
             unsubstitutedScope.processFunctionsByName(member.name) {}
             val overriddenFunctions = unsubstitutedScope.getDirectOverriddenFunctions(member.symbol)
 
-            if (overriddenFunctions.any { it.getAnnotationByFqName(JVM_DEFAULT_FQ_NAME) != null }) {
+            if (overriddenFunctions.any { it.getAnnotationByClassId(JVM_DEFAULT_CLASS_ID) != null }) {
                 reporter.reportOn(declaration.source, FirJvmErrors.JVM_DEFAULT_REQUIRED_FOR_OVERRIDE, context)
             } else if (jvmDefaultMode.isEnabled) {
                 for (overriddenFunction in overriddenFunctions) {

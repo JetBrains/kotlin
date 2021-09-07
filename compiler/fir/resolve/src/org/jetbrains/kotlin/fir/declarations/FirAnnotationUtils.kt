@@ -94,14 +94,24 @@ fun FirAnnotatedDeclaration.hasAnnotation(classId: ClassId): Boolean {
     return annotations.any { it.toAnnotationClassId() == classId }
 }
 
+fun <D> FirBasedSymbol<out D>.getAnnotationByFqName(fqName: FqName): FirAnnotationCall? where D : FirAnnotationContainer, D : FirDeclaration {
+    return fir.getAnnotationByFqName(fqName)
+}
+
+fun <D> FirBasedSymbol<out D>.getAnnotationByClassId(classId: ClassId): FirAnnotationCall? where D : FirAnnotationContainer, D : FirDeclaration {
+    return fir.getAnnotationByClassId(classId)
+}
+
 fun FirAnnotationContainer.getAnnotationByFqName(fqName: FqName): FirAnnotationCall? {
     return annotations.find {
         it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId?.asSingleFqName() == fqName
     }
 }
 
-fun <D> FirBasedSymbol<out D>.getAnnotationByFqName(fqName: FqName): FirAnnotationCall? where D : FirAnnotationContainer, D : FirDeclaration {
-    return fir.getAnnotationByFqName(fqName)
+fun FirAnnotationContainer.getAnnotationByClassId(classId: ClassId): FirAnnotationCall? {
+    return annotations.find {
+        it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == classId
+    }
 }
 
 fun FirAnnotationContainer.getAnnotationsByFqName(fqName: FqName): List<FirAnnotationCall> = annotations.getAnnotationsByFqName(fqName)

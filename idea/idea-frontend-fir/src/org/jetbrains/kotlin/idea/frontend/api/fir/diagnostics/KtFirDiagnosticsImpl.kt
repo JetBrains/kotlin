@@ -4310,8 +4310,8 @@ internal class RepeatedAnnotationTarget6Impl(
 }
 
 internal class RepeatedAnnotationWithContainerImpl(
-    override val name: FqName,
-    override val explicitContainerName: FqName,
+    override val name: ClassId,
+    override val explicitContainerName: ClassId,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.RepeatedAnnotationWithContainer(), KtAbstractFirDiagnostic<KtAnnotationEntry> {

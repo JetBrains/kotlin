@@ -2651,8 +2651,8 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class RepeatedAnnotationWithContainer : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = RepeatedAnnotationWithContainer::class
-        abstract val name: FqName
-        abstract val explicitContainerName: FqName
+        abstract val name: ClassId
+        abstract val explicitContainerName: ClassId
     }
 
     abstract class RepeatableContainerMustHaveValueArrayError : KtFirDiagnostic<KtAnnotationEntry>() {

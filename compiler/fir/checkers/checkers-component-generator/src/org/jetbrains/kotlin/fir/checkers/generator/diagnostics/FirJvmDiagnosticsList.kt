@@ -120,8 +120,8 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val NON_SOURCE_REPEATED_ANNOTATION by error<KtAnnotationEntry>()
         val REPEATED_ANNOTATION_TARGET6 by error<KtAnnotationEntry>()
         val REPEATED_ANNOTATION_WITH_CONTAINER by error<KtAnnotationEntry> {
-            parameter<FqName>("name")
-            parameter<FqName>("explicitContainerName")
+            parameter<ClassId>("name")
+            parameter<ClassId>("explicitContainerName")
         }
 
         val REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY by deprecationError<KtAnnotationEntry>(RepeatableAnnotationContainerConstraints) {

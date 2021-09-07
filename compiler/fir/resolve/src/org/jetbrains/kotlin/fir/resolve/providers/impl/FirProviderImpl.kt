@@ -99,7 +99,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         state.fileMap.merge(packageName, listOf(file)) { a, b -> a + b }
         file.acceptChildren(FirRecorder, FirRecorderData(state, file, session.nameConflictsTracker))
     }
-    
+
     private class FirRecorderData(
         val state: State,
         val file: FirFile,

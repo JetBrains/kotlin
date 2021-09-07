@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.containingClass
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByFqName
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -40,7 +37,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtParameterElementType
 
 object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        val annotation = declaration.getAnnotationByFqName(JVM_FIELD_ANNOTATION_FQ_NAME) ?: return
+        val annotation = declaration.getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID) ?: return
         val session = context.session
         val containingClass = declaration.containingClass()?.toFirRegularClass(session)
 
@@ -126,7 +123,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
     }
 
     private fun FirPropertySymbol.hasJvmFieldAnnotation(): Boolean {
-        return getAnnotationByFqName(JVM_FIELD_ANNOTATION_FQ_NAME) != null
+        return getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID) != null
     }
 
     private fun isInsideJvmMultifileClassFile(context: CheckerContext): Boolean {

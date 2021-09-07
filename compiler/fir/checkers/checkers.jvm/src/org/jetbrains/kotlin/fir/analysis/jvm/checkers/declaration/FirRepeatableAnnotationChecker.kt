@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 object FirRepeatableAnnotationChecker : FirAnnotatedDeclarationChecker() {
@@ -68,11 +66,11 @@ object FirRepeatableAnnotationChecker : FirAnnotatedDeclarationChecker() {
                     // on the same element.
                     // See https://docs.oracle.com/javase/specs/jls/se16/html/jls-9.html#jls-9.7.5.
                     val explicitContainer = annotationClass.resolveContainerAnnotation()
-                    if (explicitContainer != null && annotations.any { it.fqName(session) == explicitContainer }) {
+                    if (explicitContainer != null && annotations.any { it.classId == explicitContainer }) {
                         reporter.reportOn(
                             annotation.source,
                             FirJvmErrors.REPEATED_ANNOTATION_WITH_CONTAINER,
-                            fqName,
+                            classId,
                             explicitContainer,
                             context
                         )
@@ -86,13 +84,13 @@ object FirRepeatableAnnotationChecker : FirAnnotatedDeclarationChecker() {
         }
 
         if (declaration is FirRegularClass) {
-            val javaRepeatable = annotations.find { it.fqName(session) == JAVA_REPEATABLE_ANNOTATION }
+            val javaRepeatable = annotations.find { it.classId == JAVA_REPEATABLE_ANNOTATION }
             if (javaRepeatable != null) {
                 withSuppressedDiagnostics(javaRepeatable, context) {
                     checkJavaRepeatableAnnotationDeclaration(javaRepeatable, declaration, context, reporter)
                 }
             } else {
-                val kotlinRepeatable = annotations.find { it.fqName(session) == StandardNames.FqNames.repeatable }
+                val kotlinRepeatable = annotations.find { it.classId == StandardNames.FqNames.repeatableClassId }
                 if (kotlinRepeatable != null) {
                     withSuppressedDiagnostics(kotlinRepeatable, context) {
                         checkKotlinRepeatableAnnotationDeclaration(kotlinRepeatable, declaration, context, reporter)
@@ -102,10 +100,10 @@ object FirRepeatableAnnotationChecker : FirAnnotatedDeclarationChecker() {
         }
     }
 
-    private fun FirClassLikeSymbol<*>.resolveContainerAnnotation(): FqName? {
+    private fun FirClassLikeSymbol<*>.resolveContainerAnnotation(): ClassId? {
         val repeatableAnnotation =
-            getAnnotationByFqName(StandardNames.FqNames.repeatable) ?: getAnnotationByFqName(JAVA_REPEATABLE_ANNOTATION) ?: return null
-        return repeatableAnnotation.resolveContainerAnnotation()?.asSingleFqName()
+            getAnnotationByClassId(StandardNames.FqNames.repeatableClassId) ?: getAnnotationByClassId(JAVA_REPEATABLE_ANNOTATION) ?: return null
+        return repeatableAnnotation.resolveContainerAnnotation()
     }
 
     private fun FirAnnotationCall.resolveContainerAnnotation(): ClassId? {

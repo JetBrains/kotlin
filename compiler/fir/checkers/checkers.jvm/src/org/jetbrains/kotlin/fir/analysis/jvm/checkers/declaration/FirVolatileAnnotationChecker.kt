@@ -12,19 +12,19 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByFqName
-import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_CLASS_ID
 
 object FirVolatileAnnotationChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.source?.kind != FirRealSourceElementKind) return
 
-        val fieldAnnotation = declaration.backingFieldSymbol.getAnnotationByFqName(VOLATILE_ANNOTATION_FQ_NAME)
+        val fieldAnnotation = declaration.backingFieldSymbol.getAnnotationByClassId(VOLATILE_ANNOTATION_CLASS_ID)
         if (fieldAnnotation != null && !declaration.isVar) {
             reporter.reportOn(fieldAnnotation.source, FirJvmErrors.VOLATILE_ON_VALUE, context)
         }
 
-        val delegateAnnotation = declaration.delegateFieldSymbol?.getAnnotationByFqName(VOLATILE_ANNOTATION_FQ_NAME)
+        val delegateAnnotation = declaration.delegateFieldSymbol?.getAnnotationByClassId(VOLATILE_ANNOTATION_CLASS_ID)
         if (delegateAnnotation != null) {
             reporter.reportOn(delegateAnnotation.source, FirJvmErrors.VOLATILE_ON_DELEGATE, context)
         }
