@@ -159,7 +159,7 @@ class IncrementalCompilationClasspathSnapshotJvmMultiProjectIT : IncrementalComp
             modifyProject = changeMethodBodyInLib,
             assertResults = {
                 assertTasksExecuted(":lib:$compileKotlinTaskName")
-                assertTasksExecuted(":app:$compileKotlinTaskName") // TODO: App compilation should have 'compile avoidance'
+                assertTasksUpToDate(":app:$compileKotlinTaskName") // App compilation has 'compile avoidance'
                 assertCompiledKotlinFiles(File(project.projectDir, "lib").getFilesByNames("A.kt"))
             }
         )
@@ -198,7 +198,7 @@ class IncrementalCompilationClasspathSnapshotJvmMultiProjectIT : IncrementalComp
     override fun testCompileLibWithGroovy() {
         testCompileLibWithGroovy_doTest {
             assertTasksExecuted(":lib:$compileKotlinTaskName")
-            assertTasksExecuted(":app:$compileKotlinTaskName") // TODO: App compilation should have 'compile avoidance'
+            assertTasksUpToDate(":app:$compileKotlinTaskName") // App compilation has 'compile avoidance'
             assertCompiledKotlinFiles(listOf(File(project.projectDir, "lib").getFileByName("A.kt")))
         }
     }
