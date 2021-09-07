@@ -366,12 +366,10 @@ class SignatureEnhancement(
             fun <T : Any> uniqueNotNull(x: T?, y: T?) = if (x == null || y == null || x == y) x ?: y else null
 
             val defaultTypeQualifier =
-                (if (isHeadTypeConstructor)
+                if (isHeadTypeConstructor)
                     containerContext.defaultTypeQualifiers?.get(containerApplicabilityType)
                 else
-                    defaultQualifiersForType)?.takeIf {
-                    (it.affectsTypeParameterBasedTypes || !isTypeParameter())
-                }
+                    defaultQualifiersForType
 
             val (nullabilityFromBoundsForTypeBasedOnTypeParameter, isTypeParameterWithNotNullableBounds) =
                 nullabilityInfoBoundsForTypeParameterUsage()
@@ -390,7 +388,7 @@ class SignatureEnhancement(
                 if (annotationsNullability != null)
                     annotationsNullability.qualifier == NullabilityQualifier.NOT_NULL
                 else
-                    isTypeParameterWithNotNullableBounds || defaultTypeQualifier?.makesTypeParameterNotNull == true
+                    isTypeParameterWithNotNullableBounds || defaultTypeQualifier?.definitelyNotNull == true
 
             return JavaTypeQualifiers(
                 nullabilityInfo?.qualifier,
@@ -415,31 +413,20 @@ class SignatureEnhancement(
 
             val result =
                 nullabilityFromBoundsForTypeBasedOnTypeParameter
-                    ?: defaultTypeQualifier?.nullabilityQualifier?.let { nullabilityQualifierWithMigrationStatus ->
-                        NullabilityQualifierWithMigrationStatus(
-                            nullabilityQualifierWithMigrationStatus.qualifier,
-                            nullabilityQualifierWithMigrationStatus.isForWarningOnly
-                        )
-                    }
+                    ?: defaultTypeQualifier?.nullabilityQualifier
 
-            val boundsFromTypeParameterForArgument = typeParameterForArgument?.boundsNullability() ?: return result
-
-            if (defaultTypeQualifier == null && result == null && boundsFromTypeParameterForArgument.qualifier == NullabilityQualifier.NULLABLE) {
-                return NullabilityQualifierWithMigrationStatus(
-                    NullabilityQualifier.FORCE_FLEXIBILITY,
-                    boundsFromTypeParameterForArgument.isForWarningOnly
-                )
-            }
-
-            if (result == null) return boundsFromTypeParameterForArgument
+            val boundsFromTypeParameterForArgument = typeParameterForArgument?.boundsNullability()
+                ?.let { if (it.qualifier == NullabilityQualifier.NULLABLE) it.copy(qualifier = NullabilityQualifier.FORCE_FLEXIBILITY) else it }
 
             return mostSpecific(boundsFromTypeParameterForArgument, result)
         }
 
         private fun mostSpecific(
-            a: NullabilityQualifierWithMigrationStatus,
-            b: NullabilityQualifierWithMigrationStatus
-        ): NullabilityQualifierWithMigrationStatus {
+            a: NullabilityQualifierWithMigrationStatus?,
+            b: NullabilityQualifierWithMigrationStatus?
+        ): NullabilityQualifierWithMigrationStatus? {
+            if (a == null) return b
+            if (b == null) return a
             if (a.qualifier == NullabilityQualifier.FORCE_FLEXIBILITY) return b
             if (b.qualifier == NullabilityQualifier.FORCE_FLEXIBILITY) return a
             if (a.qualifier == NullabilityQualifier.NULLABLE) return b
