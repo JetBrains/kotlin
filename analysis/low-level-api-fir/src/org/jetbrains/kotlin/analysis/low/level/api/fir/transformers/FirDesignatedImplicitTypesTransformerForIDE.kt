@@ -77,6 +77,7 @@ internal class FirDesignatedImplicitTypesTransformerForIDE(
                 //Not resolved for some getters and setters #KT-46995
 //                check(declaration.getter?.returnTypeRef?.let { it is FirResolvedTypeRef } ?: true)
 //                check(declaration.setter?.returnTypeRef?.let { it is FirResolvedTypeRef } ?: true)
+//                check(declaration.setter?.valueParameters?.get(0)?.returnTypeRef?.let { it is FirResolvedTypeRef } ?: true)
             }
             else -> error("Unexpected type: ${declaration::class.simpleName}")
         }

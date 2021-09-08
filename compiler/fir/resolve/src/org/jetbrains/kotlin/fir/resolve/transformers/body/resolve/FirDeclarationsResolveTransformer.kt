@@ -170,6 +170,12 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                             if (mayResolveSetter) FirPropertyBodyResolveState.EVERYTHING_RESOLVED
                             else FirPropertyBodyResolveState.INITIALIZER_AND_GETTER_RESOLVED
                         )
+                    } else if (returnTypeRef is FirResolvedTypeRef) {
+                        // Even though we're not going to resolve accessors themselves (so as to avoid resolve cycle, like KT-48634),
+                        // we still need to resolve types in accessors (as per IMPLICIT_TYPES_BODY_RESOLVE contract).
+                        property.getter?.transformTypeWithPropertyType(returnTypeRef)
+                        property.setter?.transformTypeWithPropertyType(returnTypeRef)
+                        property.setter?.transformReturnTypeRef(transformer, withExpectedType(session.builtinTypes.unitType.type))
                     }
                 }
             }
@@ -343,15 +349,24 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             storeVariableReturnType(this)
             enhancedTypeRef = returnTypeRef
             // We need update type of getter for case when its type was approximated
-            getter?.replaceReturnTypeRef(enhancedTypeRef)
+            getter?.transformTypeWithPropertyType(enhancedTypeRef)
         }
-        if (mayResolveSetter) {
-            setter?.let {
-                if (it.valueParameters[0].returnTypeRef is FirImplicitTypeRef) {
-                    it.valueParameters[0].transformReturnTypeRef(StoreType, enhancedTypeRef)
-                }
+        setter?.let {
+            if (it.valueParameters[0].returnTypeRef is FirImplicitTypeRef) {
+                it.transformTypeWithPropertyType(enhancedTypeRef)
+            }
+            if (mayResolveSetter) {
                 transformAccessor(it, enhancedTypeRef, this)
             }
+        }
+    }
+
+    private fun FirPropertyAccessor.transformTypeWithPropertyType(propertyTypeRef: FirTypeRef) {
+        when {
+            isGetter ->
+                replaceReturnTypeRef(propertyTypeRef)
+            isSetter ->
+                valueParameters[0].transformReturnTypeRef(StoreType, propertyTypeRef)
         }
     }
 
