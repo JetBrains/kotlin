@@ -35,7 +35,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
     private val unitGetInstance by lazy { backendContext.findUnitGetInstanceFunction() }
     fun WasmExpressionBuilder.buildGetUnit() {
-        buildCall(context.referenceFunction(unitGetInstance.symbol))
+        buildInstr(WasmOp.GET_UNIT, WasmImmediate.FuncIdx(context.referenceFunction(unitGetInstance.symbol)))
     }
 
     // Generates code for the given IR element and *always* leaves something on the stack
@@ -250,6 +250,12 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             return
         }
 
+        // Get unit is a special case because it is the only function which returns the real unit instance.
+        if (call.symbol == unitGetInstance.symbol) {
+            body.buildGetUnit()
+            return
+        }
+
         call.dispatchReceiver?.let { generateExpression(it) }
         call.extensionReceiver?.let { generateExpression(it) }
         for (i in 0 until call.valueArgumentsCount) {
@@ -305,7 +311,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         }
 
         // Unit types don't cross function boundaries
-        if (function.returnType == irBuiltIns.unitType && function.symbol != unitGetInstance.symbol)
+        if (function.returnType == irBuiltIns.unitType)
             body.buildGetUnit()
     }
 
