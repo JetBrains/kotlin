@@ -212,21 +212,22 @@ private class ExportedElement(val kind: ElementKind,
                 val function = declaration as FunctionDescriptor
                 val irFunction = irSymbol.owner as IrFunction
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
-                val llvmFunction = owner.codegen.llvmFunction(irFunction)
+                val llvmCallable = owner.codegen.llvmFunction(irFunction)
                 // If function is virtual, we need to resolve receiver properly.
                 val bridge = if (!DescriptorUtils.isTopLevelDeclaration(function) &&
                         irFunction.isOverridable) {
-                    // We need LLVMGetElementType() as otherwise type is function pointer.
-                    generateFunction(owner.codegen, LLVMGetElementType(llvmFunction.type)!!, cname) {
+                    generateFunction(owner.codegen, llvmCallable.functionType, cname) {
                         val receiver = param(0)
-                        val numParams = LLVMCountParams(llvmFunction)
-                        val args = (0 .. numParams - 1).map { index -> param(index) }
+                        val numParams = LLVMCountParams(llvmCallable.llvmValue)
+                        val args = (0..numParams - 1).map { index -> param(index) }
                         val callee = lookupVirtualImpl(receiver, irFunction)
+                        callee.attributeProvider.addFunctionAttributes(this.function)
                         val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
                         ret(result)
                     }
                 } else {
-                    LLVMAddAlias(context.llvmModule, llvmFunction.type, llvmFunction, cname)!!
+                    val aliasType = pointerType(llvmCallable.functionType)
+                    LLVMAddAlias(context.llvmModule, aliasType, llvmCallable.llvmValue, cname)!!
                 }
                 LLVMSetLinkage(bridge, LLVMLinkage.LLVMExternalLinkage)
             }

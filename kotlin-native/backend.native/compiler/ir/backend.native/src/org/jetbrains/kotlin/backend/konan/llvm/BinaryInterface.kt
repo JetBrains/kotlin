@@ -129,19 +129,11 @@ private fun String.replaceSpecialSymbols() =
 fun IrDeclaration.isExported() = KonanBinaryInterface.isExported(this)
 
 // TODO: bring here dependencies of this method?
-internal fun RuntimeAware.getLlvmFunctionType(function: IrFunction): LLVMTypeRef {
-    val returnType = when {
-        function is IrConstructor -> voidType
-        function.isSuspend -> kObjHeaderPtr                // Suspend functions return Any?.
-        else -> getLLVMReturnType(function.returnType)
-    }
-    val paramTypes = ArrayList(function.allParameters.map { getLLVMType(it.type) })
-    if (function.isSuspend)
-        paramTypes.add(kObjHeaderPtr)                       // Suspend functions have implicit parameter of type Continuation<>.
-    if (isObjectType(returnType)) paramTypes.add(kObjHeaderPtrPtr)
-
-    return functionType(returnType, isVarArg = false, paramTypes = paramTypes.toTypedArray())
-}
+internal fun RuntimeAware.getLlvmFunctionType(function: IrFunction): LLVMTypeRef = functionType(
+        returnType = getLlvmFunctionReturnType(function).llvmType,
+        isVarArg = false,
+        paramTypes = getLlvmFunctionParameterTypes(function).map { it.llvmType }
+)
 
 internal val IrClass.typeInfoHasVtableAttached: Boolean
     get() = !this.isAbstract() && !this.isExternalObjCClass()

@@ -52,6 +52,12 @@ internal inline fun <R> KotlinType.unwrapToPrimitiveOrReference(
         ifReference: (type: KotlinType) -> R
 ): R = KotlinTypeInlineClassesSupport.unwrapToPrimitiveOrReference(this, eachInlinedClass, ifPrimitive, ifReference)
 
+internal inline fun <R> IrType.unwrapToPrimitiveOrReference(
+        eachInlinedClass: (inlinedClass: IrClass, nullable: Boolean) -> Unit,
+        ifPrimitive: (primitiveType: KonanPrimitiveType, nullable: Boolean) -> R,
+        ifReference: (type: IrType) -> R
+): R = IrTypeInlineClassesSupport.unwrapToPrimitiveOrReference(this, eachInlinedClass, ifPrimitive, ifReference)
+
 // TODO: consider renaming to `isReference`.
 fun KotlinType.binaryTypeIsReference(): Boolean = this.computePrimitiveBinaryTypeOrNull() == null
 fun IrType.binaryTypeIsReference(): Boolean = this.computePrimitiveBinaryTypeOrNull() == null
@@ -263,7 +269,7 @@ internal object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescr
     override fun isTopLevelClass(clazz: ClassDescriptor): Boolean = clazz.containingDeclaration is PackageFragmentDescriptor
 }
 
-private object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrType>() {
+internal object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrType>() {
 
     override fun isNullable(type: IrType): Boolean = type.containsNull()
 

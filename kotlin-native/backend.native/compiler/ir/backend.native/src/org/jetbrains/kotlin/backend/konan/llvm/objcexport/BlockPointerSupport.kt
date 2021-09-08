@@ -31,7 +31,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
     }
 
     val invokeImpl = functionGenerator(
-            codegen.getLlvmFunctionType(invokeMethod),
+            LlvmFunctionSignature(invokeMethod, codegen),
             "invokeFunction${bridge.nameSuffix}"
     ).generate {
         val args = (0 until bridge.numberOfParameters).map { index ->
@@ -69,9 +69,8 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
             bodyType,
             immutable = true
     )
-
     return functionGenerator(
-            functionType(codegen.kObjHeaderPtr, false, int8TypePtr, codegen.kObjHeaderPtrPtr),
+            LlvmFunctionSignature(LlvmRetType(codegen.kObjHeaderPtr), listOf(LlvmParamType(int8TypePtr), LlvmParamType(codegen.kObjHeaderPtrPtr))),
             "convertBlock${bridge.nameSuffix}"
     ).generate {
         val blockPtr = param(0)
@@ -108,7 +107,7 @@ private fun FunctionGenerationContext.loadBlockInvoke(
     val blockLiteralType = codegen.runtime.getStructType("Block_literal_1")
     val invokePtr = structGep(bitcast(pointerType(blockLiteralType), blockPtr), 3)
 
-    return bitcast(pointerType(bridge.blockType.blockInvokeLlvmType), load(invokePtr))
+    return bitcast(pointerType(bridge.blockType.blockInvokeLlvmType.llvmFunctionType), load(invokePtr))
 }
 
 private fun FunctionGenerationContext.allocInstanceWithAssociatedObject(
@@ -129,11 +128,10 @@ private val BlockPointerBridge.blockType: BlockType
  */
 internal data class BlockType(val numberOfParameters: Int, val returnsVoid: Boolean)
 
-private val BlockType.blockInvokeLlvmType: LLVMTypeRef
-    get() = functionType(
-            if (returnsVoid) voidType else int8TypePtr,
-            false,
-            (0..numberOfParameters).map { int8TypePtr }
+private val BlockType.blockInvokeLlvmType: LlvmFunctionSignature
+    get() = LlvmFunctionSignature(
+            LlvmRetType(if (returnsVoid) voidType else int8TypePtr),
+            (0..numberOfParameters).map { LlvmParamType(int8TypePtr) }
     )
 
 private val BlockPointerBridge.nameSuffix: String
@@ -268,11 +266,8 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
 
             val invokeMethod = context.ir.symbols.functionN(numberOfParameters).owner.simpleFunctions()
                     .single { it.name == OperatorNameConventions.INVOKE }
-
-            val callee = lookupVirtualImpl(kotlinFunction, invokeMethod)
-
-            val result = callFromBridge(callee, listOf(kotlinFunction) + kotlinArguments, Lifetime.ARGUMENT)
-
+            val llvmDeclarations = lookupVirtualImpl(kotlinFunction, invokeMethod)
+            val result = callFromBridge(llvmDeclarations, listOf(kotlinFunction) + kotlinArguments, Lifetime.ARGUMENT)
             if (bridge.returnsVoid) {
                 ret(null)
             } else {
@@ -293,7 +288,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
         )
 
         return functionGenerator(
-                functionType(int8TypePtr, false, codegen.kObjHeaderPtr),
+                LlvmFunctionSignature(LlvmRetType(int8TypePtr), listOf(LlvmParamType(codegen.kObjHeaderPtr))),
                 convertName
         ).generate {
             val kotlinRef = param(0)
@@ -335,8 +330,13 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
     }
 }
 
-private val ObjCExportCodeGeneratorBase.retainBlock get() = context.llvm.externalFunction(
-        "objc_retainBlock",
-        functionType(int8TypePtr, false, int8TypePtr),
-        CurrentKlibModuleOrigin
-)
+private val ObjCExportCodeGeneratorBase.retainBlock: LlvmCallable
+    get() {
+        val functionProto = LlvmFunctionProto(
+                "objc_retainBlock",
+                LlvmRetType(int8TypePtr),
+                listOf(LlvmParamType(int8TypePtr)),
+                origin = CurrentKlibModuleOrigin
+        )
+        return context.llvm.externalFunction(functionProto)
+    }

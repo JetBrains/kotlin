@@ -712,7 +712,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             val llvmFunction: LLVMValueRef) : InnerScopeImpl() {
 
         constructor(declaration: IrFunction, functionGenerationContext: FunctionGenerationContext) :
-                this(functionGenerationContext, declaration, codegen.llvmFunction(declaration))
+                this(functionGenerationContext, declaration, codegen.llvmFunction(declaration).llvmValue)
 
         constructor(llvmFunction: LLVMValueRef, functionGenerationContext: FunctionGenerationContext) :
                 this(functionGenerationContext, null, llvmFunction)
@@ -857,7 +857,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
 
         if (declaration.retainAnnotation(context.config.target)) {
-            context.llvm.usedFunctions.add(codegen.llvmFunction(declaration))
+            context.llvm.usedFunctions.add(codegen.llvmFunction(declaration).llvmValue)
         }
 
         if (context.shouldVerifyBitCode())
@@ -1645,12 +1645,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         } else {
             // e.g. ObjCObject, ObjCObjectBase etc.
             if (dstClass.isObjCMetaClass()) {
-                val isClass = context.llvm.externalFunction(
+                val isClassProto = LlvmFunctionProto(
                         "object_isClass",
-                        functionType(int8Type, false, int8TypePtr),
-                        context.standardLlvmSymbolsOrigin
+                        LlvmRetType(int8Type),
+                        listOf(LlvmParamType(int8TypePtr)),
+                        origin = context.standardLlvmSymbolsOrigin
                 )
-
+                val isClass = context.llvm.externalFunction(isClassProto)
                 call(isClass, listOf(objCObject)).let {
                     functionGenerationContext.icmpNe(it, Int8(0).llvm)
                 }
@@ -2180,15 +2181,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 if (codegen.isExternal(this) && !KonanBinaryInterface.isExported(this))
                     null
                 else
-                    codegen.llvmFunctionOrNull(this)
+                    codegen.llvmFunctionOrNull(this)?.llvmValue
         return if (!isReifiedInline && functionLlvmValue != null) {
             context.debugInfo.subprograms.getOrPut(functionLlvmValue) {
                 memScoped {
                     val subroutineType = subroutineType(context, codegen.llvmTargetData)
-                    val llvmFunnction = codegen.llvmFunction(this@scope)
-                    diFunctionScope(name.asString(), llvmFunnction.name!!, startLine, subroutineType).also {
+                    val llvmFunction = codegen.llvmFunction(this@scope).llvmValue
+                    diFunctionScope(name.asString(), llvmFunction.name!!, startLine, subroutineType).also {
                         if (!this@scope.isInline)
-                            DIFunctionAddSubprogram(llvmFunnction, it)
+                            DIFunctionAddSubprogram(llvmFunction, it)
                     }
                 }
             } as DIScopeOpaqueRef
@@ -2374,7 +2375,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun evaluateFileGlobalInitializerCall(fileInitializer: IrFunction) = with(functionGenerationContext) {
         val statePtr = getGlobalInitStateFor(fileInitializer.parent as IrFile)
-        val initializerPtr = with(codegen) { fileInitializer.llvmFunction }
+        val initializerPtr = with(codegen) { fileInitializer.llvmFunction.llvmValue }
 
         val bbInit = basicBlock("label_init", null)
         val bbExit = basicBlock("label_continue", null)
@@ -2396,7 +2397,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val globalStatePtr = getGlobalInitStateFor(fileInitializer.parent as IrFile)
         val localState = getThreadLocalInitStateFor(fileInitializer.parent as IrFile)
         val localStatePtr = localState.getAddress(functionGenerationContext)
-        val initializerPtr = with(codegen) { fileInitializer.llvmFunction }
+        val initializerPtr = with(codegen) { fileInitializer.llvmFunction.llvmValue }
 
         val bbInit = basicBlock("label_init", null)
         val bbCheckLocalState = basicBlock("label_check_local", null)
@@ -2422,7 +2423,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun evaluateFileStandaloneThreadLocalInitializerCall(fileInitializer: IrFunction) = with(functionGenerationContext) {
         val state = getThreadLocalInitStateFor(fileInitializer.parent as IrFile)
         val statePtr = state.getAddress(functionGenerationContext)
-        val initializerPtr = with(codegen) { fileInitializer.llvmFunction }
+        val initializerPtr = with(codegen) { fileInitializer.llvmFunction.llvmValue }
 
         val bbInit = basicBlock("label_init", null)
         val bbExit = basicBlock("label_continue", null)
@@ -2494,12 +2495,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         val annotation = irClass.annotations.findAnnotation(externalObjCClassFqName)!!
         val protocolGetterName = annotation.getAnnotationStringValue("protocolGetter")
-        val protocolGetter = context.llvm.externalFunction(
+        val protocolGetterProto = LlvmFunctionProto(
                 protocolGetterName,
-                functionType(int8TypePtr, false),
-                irClass.llvmSymbolOrigin,
+                LlvmRetType(int8TypePtr),
+                origin = irClass.llvmSymbolOrigin,
                 independent = true // Protocol is header-only declaration.
         )
+        val protocolGetter = context.llvm.externalFunction(protocolGetterProto)
 
         return call(protocolGetter, emptyList())
     }
@@ -2571,20 +2573,16 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    fun callDirect(function: IrFunction, args: List<LLVMValueRef>,
-                   resultLifetime: Lifetime): LLVMValueRef {
-        val llvmFunction = codegen.llvmFunction(function.target)
-        return call(function, llvmFunction, args, resultLifetime)
+    fun callDirect(function: IrFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime): LLVMValueRef {
+        val functionDeclarations = codegen.llvmFunction(function.target)
+        return call(function, functionDeclarations, args, resultLifetime)
     }
 
     //-------------------------------------------------------------------------//
 
-    fun callVirtual(function: IrFunction, args: List<LLVMValueRef>,
-                    resultLifetime: Lifetime): LLVMValueRef {
-
-        val llvmFunction = functionGenerationContext.lookupVirtualImpl(args.first(), function)
-
-        return call(function, llvmFunction, args, resultLifetime)                      // Invoke the method
+    fun callVirtual(function: IrFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime): LLVMValueRef {
+        val functionDeclarations = functionGenerationContext.lookupVirtualImpl(args.first(), function)
+        return call(function, functionDeclarations, args, resultLifetime)
     }
 
     //-------------------------------------------------------------------------//
@@ -2602,7 +2600,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             return result
         }
 
-    private fun call(function: IrFunction, llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
+    private fun call(function: IrFunction, llvmCallable: LlvmCallable, args: List<LLVMValueRef>,
                      resultLifetime: Lifetime): LLVMValueRef {
         check(!function.isTypedIntrinsic)
 
@@ -2620,7 +2618,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             functionGenerationContext.switchThreadState(ThreadState.Native)
         }
 
-        val result = call(llvmFunction, args, resultLifetime, exceptionHandler)
+        val result = call(llvmCallable, args, resultLifetime, exceptionHandler)
 
         when {
             !function.isSuspend && function.returnType.isNothing() ->
@@ -2629,16 +2627,18 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 functionGenerationContext.switchThreadState(ThreadState.Runnable)
         }
 
-        if (LLVMGetReturnType(getFunctionType(llvmFunction)) == voidType) {
+        if (llvmCallable.returnType == voidType) {
             return codegen.theUnitInstanceRef.llvm
         }
 
         return result
     }
 
-    private fun call(function: LLVMValueRef, args: List<LLVMValueRef>,
-                     resultLifetime: Lifetime = Lifetime.IRRELEVANT,
-                     exceptionHandler: ExceptionHandler = currentCodeContext.exceptionHandler): LLVMValueRef {
+    private fun call(
+            function: LlvmCallable, args: List<LLVMValueRef>,
+            resultLifetime: Lifetime = Lifetime.IRRELEVANT,
+            exceptionHandler: ExceptionHandler = currentCodeContext.exceptionHandler,
+    ): LLVMValueRef {
         return functionGenerationContext.call(function, args, resultLifetime, exceptionHandler)
     }
 

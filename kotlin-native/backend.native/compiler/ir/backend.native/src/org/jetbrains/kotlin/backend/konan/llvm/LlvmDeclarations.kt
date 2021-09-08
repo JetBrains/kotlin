@@ -34,8 +34,13 @@ enum class UniqueKind(val llvmName: String) {
 }
 
 internal class LlvmDeclarations(private val unique: Map<UniqueKind, UniqueLlvmDeclarations>) {
-    fun forFunction(function: IrFunction) = forFunctionOrNull(function) ?: with(function){error("$name in $file/${parent.fqNameForIrSerialization}")}
-    fun forFunctionOrNull(function: IrFunction) = (function.metadata as? CodegenFunctionMetadata)?.llvm
+    fun forFunction(function: IrFunction): LlvmCallable =
+            forFunctionOrNull(function) ?: with(function) {
+                error("$name in $file/${parent.fqNameForIrSerialization}")
+            }
+
+    fun forFunctionOrNull(function: IrFunction): LlvmCallable? =
+            (function.metadata as? CodegenFunctionMetadata)?.llvm
 
     fun forClass(irClass: IrClass) = (irClass.metadata as? CodegenClassMetadata)?.llvm ?:
             error(irClass.descriptor.toString())
@@ -67,8 +72,6 @@ internal class KotlinObjCClassLlvmDeclarations(
         val classInfoGlobal: StaticData.Global,
         val bodyOffsetGlobal: StaticData.Global
 )
-
-internal class FunctionLlvmDeclarations(val llvmFunction: LLVMValueRef)
 
 internal class FieldLlvmDeclarations(val index: Int, val classBodyType: LLVMTypeRef)
 
@@ -338,8 +341,6 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
 
         if (!declaration.isReal) return
 
-        val llvmFunctionType = getLlvmFunctionType(declaration)
-
         if ((declaration is IrConstructor && declaration.isObjCConstructor)) {
             return
         }
@@ -351,11 +352,8 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
                     || (declaration.isAccessor && declaration.isFromInteropLibrary())
                     || declaration.annotations.hasAnnotation(RuntimeNames.cCall)) return
 
-            context.llvm.externalFunction(declaration.computeSymbolName(), llvmFunctionType,
-                    // Assume that `external fun` is defined in native libs attached to this module:
-                    origin = declaration.llvmSymbolOrigin,
-                    independent = declaration.hasAnnotation(RuntimeNames.independent)
-            )
+            val proto = LlvmFunctionProto(declaration, declaration.computeSymbolName(), this)
+            context.llvm.externalFunction(proto)
         } else {
             val symbolName = if (declaration.isExported()) {
                 declaration.computeSymbolName().also {
@@ -369,21 +367,22 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             } else {
                 "kfun:" + qualifyInternalName(declaration)
             }
-
-            addLlvmFunctionWithDefaultAttributes(
+            val proto = LlvmFunctionProto(declaration, symbolName, this)
+            val llvmFunction = addLlvmFunctionWithDefaultAttributes(
                     context,
                     context.llvmModule!!,
                     symbolName,
-                    llvmFunctionType
+                    proto.llvmFunctionType
             ).also {
-                addLlvmAttributesForKotlinFunction(context, declaration, it)
+                proto.addFunctionAttributes(it)
             }
+            LlvmCallable(llvmFunction, proto)
         }
 
         declaration.metadata = CodegenFunctionMetadata(
                 declaration.metadata?.name,
                 declaration.konanLibrary,
-                FunctionLlvmDeclarations(llvmFunction)
+                llvmFunction
         )
     }
 }
@@ -400,7 +399,7 @@ internal class CodegenClassMetadata(irClass: IrClass)
 private class CodegenFunctionMetadata(
         name: Name?,
         konanLibrary: KotlinLibrary?,
-        val llvm: FunctionLlvmDeclarations
+        val llvm: LlvmCallable
 ) : KonanMetadata(name, konanLibrary), MetadataSource.Function
 
 private class CodegenInstanceFieldMetadata(
