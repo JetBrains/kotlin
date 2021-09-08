@@ -51,6 +51,8 @@ sealed class WasmHeapType {
         @Suppress("unused")
         object ExnH : Simple("exn", -0x18)
 
+        object Data : Simple("data", -0x19)
+
         override fun toString(): String {
             return "Simple:$name(${code.toString(16)})"
         }
