@@ -2628,4 +2628,14 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ExternalDeclarationCannotBeInlined::class
     }
 
+    abstract class InapplicableJvmField : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = InapplicableJvmField::class
+        abstract val message: String
+    }
+
+    abstract class InapplicableJvmFieldWarning : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = InapplicableJvmFieldWarning::class
+        abstract val message: String
+    }
+
 }

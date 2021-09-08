@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @file:kotlin.jvm.JvmMultifileClass
 @file:JvmName("SomeName")
 
