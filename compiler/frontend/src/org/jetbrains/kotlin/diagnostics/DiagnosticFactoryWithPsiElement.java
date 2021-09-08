@@ -31,7 +31,8 @@ public abstract class DiagnosticFactoryWithPsiElement<E extends PsiElement, D ex
     }
 
     protected List<TextRange> getTextRanges(ParametrizedDiagnostic<E> diagnostic) {
-        return positioningStrategy.markDiagnostic(diagnostic);
+        // TODO: it's strange that java requires cast here, because ParametrizedDiagnostic<E> inherits DiagnosticMarker
+        return positioningStrategy.markDiagnostic((DiagnosticMarker) diagnostic);
     }
 
     protected boolean isValid(ParametrizedDiagnostic<E> diagnostic) {

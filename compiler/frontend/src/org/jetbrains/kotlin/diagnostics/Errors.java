@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jetbrains.kotlin.diagnostics.ClassicPositioningStrategies.ACTUAL_DECLARATION_NAME;
+import static org.jetbrains.kotlin.diagnostics.ClassicPositioningStrategies.INCOMPATIBLE_DECLARATION;
 import static org.jetbrains.kotlin.diagnostics.PositioningStrategies.*;
 import static org.jetbrains.kotlin.diagnostics.Severity.*;
 
@@ -953,7 +955,7 @@ public interface Errors {
     // Control flow / Data flow
 
     DiagnosticFactory2<KtElement, Set<KtElement>, Set<KtElement>> UNREACHABLE_CODE = DiagnosticFactory2.create(
-            WARNING, PositioningStrategies.UNREACHABLE_CODE);
+            WARNING, ClassicPositioningStrategies.UNREACHABLE_CODE);
 
     DiagnosticFactory0<KtVariableDeclaration> VARIABLE_WITH_NO_TYPE_NO_INITIALIZER = DiagnosticFactory0.create(ERROR, DECLARATION_NAME);
 
