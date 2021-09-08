@@ -255,7 +255,7 @@ private class CirTreeSerializationVisitor(
 
             StatsKey(
                 id = propertyContext.currentPath.toString(),
-                extensionReceiver = propertyKey.extensionReceiverParameterType,
+                extensionReceiver = propertyKey.extensionReceiverParameterType?.toString(),
                 parameterNames = emptyList(),
                 parameterTypes = emptyList(),
                 declarationType = declarationType
@@ -274,9 +274,9 @@ private class CirTreeSerializationVisitor(
 
             StatsKey(
                 id = functionContext.currentPath.toString(),
-                extensionReceiver = functionKey.extensionReceiverParameterType,
+                extensionReceiver = functionKey.extensionReceiverParameterType?.toString(),
                 parameterNames = function.valueParameters.map { it.name },
-                parameterTypes = functionKey.valueParametersTypes.asList(),
+                parameterTypes = functionKey.valueParametersTypes.map { it.toString() },
                 declarationType = declarationType
             )
         }
@@ -290,7 +290,7 @@ private class CirTreeSerializationVisitor(
                 id = constructorContext.currentPath.toString(),
                 extensionReceiver = null,
                 parameterNames = constructor.valueParameters.map { it.name },
-                parameterTypes = constructorKey.valueParametersTypes.asList(),
+                parameterTypes = constructorKey.valueParametersTypes.map { it.toString() },
                 declarationType = DeclarationType.CLASS_CONSTRUCTOR
             )
         }

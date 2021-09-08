@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirNode.Companion.indexOfCommo
 import org.jetbrains.kotlin.commonizer.mergedtree.CirRootNode
 import org.jetbrains.kotlin.commonizer.metadata.CirTreeSerializer
 import org.jetbrains.kotlin.commonizer.transformer.AliasedTypeSubstitutor
-import org.jetbrains.kotlin.commonizer.transformer.UnderscoredTypeAliasTypeSubstitutor
 import org.jetbrains.kotlin.commonizer.transformer.InlineTypeAliasCirNodeTransformer
 import org.jetbrains.kotlin.commonizer.transformer.TypeSubstitutionCirNodeTransformer
+import org.jetbrains.kotlin.commonizer.transformer.UnderscoredTypeAliasTypeSubstitutor
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
 import org.jetbrains.kotlin.commonizer.tree.defaultCirTreeRootDeserializer
 import org.jetbrains.kotlin.commonizer.tree.mergeCirTree

@@ -89,10 +89,14 @@ class CirPackageName private constructor(val segments: Array<String>) {
  * New instances are created via [create] method which encapsulates interning to avoid duplicated instances.
  */
 class CirEntityId private constructor(val packageName: CirPackageName, val relativeNameSegments: Array<CirName>) {
-    override fun equals(other: Any?): Boolean = when {
-        other === this -> true
-        other is CirEntityId -> other.packageName == packageName && other.relativeNameSegments.contentEquals(relativeNameSegments)
-        else -> false
+
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is CirEntityId) return false
+        if (other.packageName != this.packageName) return false
+        if (!other.relativeNameSegments.contentEquals(relativeNameSegments)) return false
+        return true
     }
 
     private var _hashCode: Int = 0
@@ -134,14 +138,14 @@ class CirEntityId private constructor(val packageName: CirPackageName, val relat
                 }
             }
 
-            val packageName = CirPackageName.create(splitComplexNameToArray(rawPackageName, "/") { it })
+            val packageName = create(splitComplexNameToArray(rawPackageName, "/") { it })
             val relativeNameSegments = splitComplexNameToArray(rawRelativeName, ".", CirName::create)
 
             return create(packageName, relativeNameSegments)
         }
 
         fun create(classifierId: ClassId): CirEntityId {
-            val packageName = CirPackageName.create(classifierId.packageFqName)
+            val packageName = create(classifierId.packageFqName)
             val relativeNameSegments = splitComplexNameToArray(classifierId.relativeClassName.asString(), ".", CirName::create)
 
             return create(packageName, relativeNameSegments)

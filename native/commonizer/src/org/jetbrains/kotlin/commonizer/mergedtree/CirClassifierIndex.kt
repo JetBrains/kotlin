@@ -10,13 +10,13 @@
 
 package org.jetbrains.kotlin.commonizer.mergedtree
 
+import gnu.trove.THashMap
+import gnu.trove.THashSet
 import org.jetbrains.kotlin.commonizer.cir.CirClass
 import org.jetbrains.kotlin.commonizer.cir.CirClassifier
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirTypeAlias
 import org.jetbrains.kotlin.commonizer.tree.*
-import org.jetbrains.kotlin.commonizer.utils.compact
-import org.jetbrains.kotlin.commonizer.utils.compactMapValues
 
 fun CirClassifierIndex(tree: CirTreeRoot): CirClassifierIndex {
     return CirClassifierIndexBuilder().apply { invoke(tree) }.build()
@@ -81,9 +81,13 @@ private class CirClassifierIndexImpl(
 }
 
 private class CirClassifierIndexBuilder {
-    private val typeAliasesByUnderlyingType = mutableMapOf<CirEntityId, MutableList<CirTreeTypeAlias>>()
-    private val classifiersById = mutableMapOf<CirEntityId, CirClassifier>()
-    private val classifierIds = mutableSetOf<CirEntityId>()
+    companion object {
+        const val initialCapacity = 1000
+    }
+
+    private val typeAliasesByUnderlyingType = THashMap<CirEntityId, MutableList<CirTreeTypeAlias>>(initialCapacity)
+    private val classifiersById = THashMap<CirEntityId, CirClassifier>(initialCapacity)
+    private val classifierIds = THashSet<CirEntityId>(initialCapacity)
 
     operator fun invoke(tree: CirTreeRoot) {
         tree.modules.forEach { module -> this(module) }
@@ -112,9 +116,9 @@ private class CirClassifierIndexBuilder {
 
     fun build(): CirClassifierIndex {
         return CirClassifierIndexImpl(
-            allClassifierIds = classifierIds.toSet(),
-            classifiersById = classifiersById.compact(),
-            typeAliasesByUnderlyingType = typeAliasesByUnderlyingType.compactMapValues { (_, list) -> list.compact() }
+            allClassifierIds = classifierIds,
+            classifiersById = classifiersById,
+            typeAliasesByUnderlyingType = typeAliasesByUnderlyingType
         )
     }
 }

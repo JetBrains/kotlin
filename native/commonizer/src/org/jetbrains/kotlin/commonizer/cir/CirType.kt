@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.commonizer.utils.hashCode
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.types.Variance
 
-typealias CirTypeSignature = String
 
 /**
  * The hierarchy of [CirType]:
