@@ -168,12 +168,16 @@ fun main(args: Array<String>) {
     val renders by argParser.option(ArgType.Choice<RenderType>(), shortName = "r",
             description = "Renders for showing information").multiple().default(listOf(RenderType.TEXT))
     val user by argParser.option(ArgType.String, shortName = "u", description = "User access information for authorization")
+    val flatReport by argParser.option(ArgType.Boolean, "flat", "f", "Generate fflat report without splitting into stable and unstable becnhmarks")
+            .default(false)
 
     argParser.parse(args)
     // Get unstable benchmarks.
-    val unstableBenchmarks = DBServerConnector.getUnstableBenchmarks()
+    val unstableBenchmarks = if (!flatReport) DBServerConnector.getUnstableBenchmarks() else null
 
-    unstableBenchmarks ?: println("Failed to get access to server and get unstable benchmarks list!")
+    unstableBenchmarks ?:
+        if (!flatReport)
+            println("Failed to get access to server and get unstable benchmarks list!")
 
     // Read contents of file.
     val mainBenchsReport = mergeReportsWithDetailedFlags(getBenchmarkReport(mainReport, user))

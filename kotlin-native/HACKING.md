@@ -250,6 +250,10 @@ Other developer tools also can use generated compilation database, but then `cla
      
  Pay attention, user and password information(with flag `-u <username>:<password>`) should be provided to get data from TeamCity.
 
+ By default analyzing tool splits benchmarks into stable and unstable taking information from database. If you have no connection to inner network please use `-f` flag.
+
+    ./benchmarksAnalyzer.kexe -f <file1> <file2>
+
 ### Testing native
 
 For a quick check use:
