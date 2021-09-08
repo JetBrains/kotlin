@@ -4,7 +4,7 @@ mimalloc is a general purpose allocator with excellent performance characteristi
 Initially developed by Daan Leijen for the run-time systems of the Koka and Lean languages.
 
 Source code: https://github.com/microsoft/mimalloc
-Used version: 1.6.7 (https://github.com/microsoft/mimalloc/releases/tag/v1.6.7)
+Used version: 1.7.2 (https://github.com/microsoft/mimalloc/releases/tag/v1.7.2)
 
 The constant KONAN_MI_MALLOC is used to integrate mimalloc code in K/N runtime.
 All changes that are done should be under directives `#if defined(KONAN_MI_MALLOC)`
