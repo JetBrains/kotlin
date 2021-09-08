@@ -232,7 +232,13 @@ class FirCallResolver(
         val qualifiedAccess = qualifiedAccess.transformExplicitReceiver<FirQualifiedAccess>()
         val nonFatalDiagnosticFromExpression = (qualifiedAccess as? FirPropertyAccessExpression)?.nonFatalDiagnostics
 
-        if (isUsedAsReceiver) {
+        val basicResult by lazy(LazyThreadSafetyMode.NONE) {
+            collectCandidates(qualifiedAccess, callee.name)
+        }
+
+        // Even if it's not receiver, it makes sense to continue qualifier if resolution is unsuccessful
+        // just to try to resolve to package/class and then report meaningful error at FirStandaloneQualifierChecker
+        if (isUsedAsReceiver || !basicResult.applicability.isSuccess) {
             (qualifiedAccess.explicitReceiver as? FirResolvedQualifier)
                 ?.continueQualifier(
                     callee,
@@ -244,7 +250,7 @@ class FirCallResolver(
                 ?.let { return it }
         }
 
-        var result = collectCandidates(qualifiedAccess, callee.name)
+        var result = basicResult
 
         if (qualifiedAccess.explicitReceiver == null) {
             // Even if we successfully resolved to some companion/named object, we should re-try with qualifier resolution
