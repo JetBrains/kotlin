@@ -779,7 +779,7 @@ class FirCallCompletionResultsWriterTransformer(
                     ?: it
             } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.type
         arrayOfCall.resultType = arrayOfCall.typeRef.resolvedTypeFromPrototype(
-            arrayElementType.createArrayType(createPrimitiveArrayType = expectedArrayType?.isPrimitiveArray == true)
+            arrayElementType.createArrayType(createPrimitiveArrayTypeIfPossible = expectedArrayType?.isPrimitiveArray == true)
         )
         return arrayOfCall
     }

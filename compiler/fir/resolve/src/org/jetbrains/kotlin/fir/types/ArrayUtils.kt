@@ -14,8 +14,8 @@ fun ConeKotlinType.createOutArrayType(nullable: Boolean = false, createPrimitive
     return ConeKotlinTypeProjectionOut(this).createArrayType(nullable, createPrimitiveArrayType)
 }
 
-fun ConeTypeProjection.createArrayType(nullable: Boolean = false, createPrimitiveArrayType: Boolean = true): ConeClassLikeType {
-    if (this is ConeKotlinTypeProjection && createPrimitiveArrayType) {
+fun ConeTypeProjection.createArrayType(nullable: Boolean = false, createPrimitiveArrayTypeIfPossible: Boolean = true): ConeClassLikeType {
+    if (this is ConeKotlinTypeProjection && createPrimitiveArrayTypeIfPossible) {
         val type = type.lowerBoundIfFlexible()
         if (type is ConeClassLikeType && type.nullability != ConeNullability.NULLABLE) {
             val classId = type.lookupTag.classId
