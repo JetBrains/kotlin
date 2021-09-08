@@ -35,7 +35,7 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker() {
             reporter.reportOn(declaration.initializer?.source, FirErrors.PROPERTY_INITIALIZER_WITH_EXPLICIT_FIELD_DECLARATION, context)
         }
 
-        if (backingField.initializer is FirErrorExpression) {
+        if (backingField.initializer == null) {
             reporter.reportOn(backingField.source, FirErrors.PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER, context)
         }
 

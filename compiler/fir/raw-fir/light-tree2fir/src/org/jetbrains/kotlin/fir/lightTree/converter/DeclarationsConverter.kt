@@ -1351,18 +1351,16 @@ class DeclarationsConverter(
     ): FirBackingField {
         var modifiers = Modifier()
         var returnType: FirTypeRef = implicitType
-        var initializerExpression: LighterASTNode? = null
+        var backingFieldInitializer: FirExpression? = null
         this?.forEachChildren {
             when {
                 it.tokenType == MODIFIER_LIST -> modifiers = convertModifierList(it)
                 it.tokenType == TYPE_REFERENCE -> returnType = convertType(it)
-                it.isExpression() -> initializerExpression = it
+                it.isExpression() -> {
+                    backingFieldInitializer = expressionConverter.getAsFirExpression(it, "Should have initializer")
+                }
             }
         }
-        val backingFieldInitializer: FirExpression = expressionConverter.getAsFirExpression(
-            initializerExpression,
-            "Should have initializer"
-        )
         var componentVisibility = modifiers.getVisibility()
         if (componentVisibility == Visibilities.Unknown) {
             componentVisibility = Visibilities.Private
