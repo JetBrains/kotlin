@@ -198,7 +198,12 @@ val possibleTargetMap = mapOf(
     REIFIED_KEYWORD to EnumSet.of(KotlinTarget.TYPE_PARAMETER),
     VARARG_KEYWORD to EnumSet.of(KotlinTarget.VALUE_PARAMETER, KotlinTarget.PROPERTY_PARAMETER),
     COMPANION_KEYWORD to EnumSet.of(KotlinTarget.OBJECT),
-    LATEINIT_KEYWORD to EnumSet.of(KotlinTarget.MEMBER_PROPERTY, KotlinTarget.TOP_LEVEL_PROPERTY, KotlinTarget.LOCAL_VARIABLE),
+    LATEINIT_KEYWORD to EnumSet.of(
+        KotlinTarget.MEMBER_PROPERTY,
+        KotlinTarget.TOP_LEVEL_PROPERTY,
+        KotlinTarget.LOCAL_VARIABLE,
+        KotlinTarget.BACKING_FIELD
+    ),
     DATA_KEYWORD to EnumSet.of(KotlinTarget.CLASS_ONLY, KotlinTarget.LOCAL_CLASS),
     INLINE_KEYWORD to EnumSet.of(
         KotlinTarget.FUNCTION,

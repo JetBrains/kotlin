@@ -9,13 +9,17 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.typeContext
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
 
 object FirPropertyFieldTypeChecker : FirPropertyChecker() {
@@ -35,8 +39,18 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker() {
             reporter.reportOn(declaration.initializer?.source, FirErrors.PROPERTY_INITIALIZER_WITH_EXPLICIT_FIELD_DECLARATION, context)
         }
 
-        if (backingField.initializer == null) {
+        if (backingField.isLateInit && declaration.isVal) {
+            reporter.reportOn(backingField.source, FirErrors.LATEINIT_FIELD_IN_VAL_PROPERTY, context)
+        }
+
+        if (backingField.initializer == null && !backingField.isLateInit) {
             reporter.reportOn(backingField.source, FirErrors.PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER, context)
+        } else if (backingField.initializer != null && backingField.isLateInit) {
+            reporter.reportOn(backingField.source, FirErrors.LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER, context)
+        }
+
+        if (backingField.isLateInit && backingField.isNullable) {
+            reporter.reportOn(backingField.source, FirErrors.LATEINIT_NULLABLE_BACKING_FIELD, context)
         }
 
         if (backingField.returnTypeRef.coneType == declaration.returnTypeRef.coneType) {
@@ -52,6 +66,12 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker() {
             checkAsPropertyNotSubtype(declaration, context, reporter)
         }
     }
+
+    private val FirBackingField.isNullable
+        get() = when (val type = returnTypeRef.coneType) {
+            is ConeTypeParameterType -> type.isNullable || type.lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isNullable }
+            else -> type.isNullable
+        }
 
     private val FirPropertyAccessor?.isNotExplicit
         get() = this == null || this is FirDefaultPropertyAccessor

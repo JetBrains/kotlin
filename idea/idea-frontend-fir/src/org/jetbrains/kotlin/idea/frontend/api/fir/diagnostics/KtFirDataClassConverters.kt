@@ -2418,6 +2418,24 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER) { firDiagnostic ->
+        LateinitPropertyFieldDeclarationWithInitializerImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LATEINIT_FIELD_IN_VAL_PROPERTY) { firDiagnostic ->
+        LateinitFieldInValPropertyImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LATEINIT_NULLABLE_BACKING_FIELD) { firDiagnostic ->
+        LateinitNullableBackingFieldImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.PROPERTY_MUST_HAVE_GETTER) { firDiagnostic ->
         PropertyMustHaveGetterImpl(
             firDiagnostic as FirPsiDiagnostic,

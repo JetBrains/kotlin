@@ -1403,6 +1403,7 @@ class DeclarationsConverter(
         return FirDeclarationStatusImpl(componentVisibility, modifiers.getModality(isClassOrObject = false)).apply {
             isInline = propertyModifiers.hasInline() || modifiers.hasInline()
             isExternal = propertyModifiers.hasExternal() || modifiers.hasExternal()
+            isLateInit = modifiers.hasLateinit()
         }
     }
 

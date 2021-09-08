@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
+import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.types.*
 
@@ -43,6 +44,9 @@ object FirInapplicableLateinitChecker : FirPropertyChecker() {
             } else {
                 reporter.reportError(declaration.source, "is not allowed on properties of primitive types", context)
             }
+
+            declaration.hasExplicitBackingField ->
+                reporter.reportError(declaration.source, "must be moved to the field declaration", context)
 
             declaration.hasGetter() || declaration.hasSetter() ->
                 reporter.reportError(declaration.source, "is not allowed on properties with a custom getter or setter", context)

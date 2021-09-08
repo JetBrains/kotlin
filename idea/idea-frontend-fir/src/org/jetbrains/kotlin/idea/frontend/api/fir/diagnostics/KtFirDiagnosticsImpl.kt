@@ -2753,6 +2753,27 @@ internal class PropertyFieldDeclarationMissingInitializerImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class LateinitPropertyFieldDeclarationWithInitializerImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.LateinitPropertyFieldDeclarationWithInitializer(), KtAbstractFirDiagnostic<KtBackingField> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class LateinitFieldInValPropertyImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.LateinitFieldInValProperty(), KtAbstractFirDiagnostic<KtBackingField> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class LateinitNullableBackingFieldImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.LateinitNullableBackingField(), KtAbstractFirDiagnostic<KtBackingField> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class PropertyMustHaveGetterImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
@@ -2764,43 +2785,6 @@ internal class PropertyMustHaveSetterImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.PropertyMustHaveSetter(), KtAbstractFirDiagnostic<KtProperty> {
-    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
-}
-
-internal class AbstractPropertyInPrimaryConstructorParametersImpl(
-    firDiagnostic: FirPsiDiagnostic,
-    override val token: ValidityToken,
-) : KtFirDiagnostic.AbstractPropertyInPrimaryConstructorParameters(), KtAbstractFirDiagnostic<KtModifierListOwner> {
-    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
-}
-
-internal class LocalVariableWithTypeParametersWarningImpl(
-    firDiagnostic: FirPsiDiagnostic,
-    override val token: ValidityToken,
-) : KtFirDiagnostic.LocalVariableWithTypeParametersWarning(), KtAbstractFirDiagnostic<KtProperty> {
-    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
-}
-
-internal class LocalVariableWithTypeParametersImpl(
-    firDiagnostic: FirPsiDiagnostic,
-    override val token: ValidityToken,
-) : KtFirDiagnostic.LocalVariableWithTypeParameters(), KtAbstractFirDiagnostic<KtProperty> {
-    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
-}
-
-internal class InapplicableBackingFieldVisibilityImpl(
-    override val modifier: KtModifierKeywordToken,
-    firDiagnostic: FirPsiDiagnostic,
-    override val token: ValidityToken,
-) : KtFirDiagnostic.InapplicableBackingFieldVisibility(), KtAbstractFirDiagnostic<PsiElement> {
-    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
-}
-
-internal class InapplicableBackingFieldModifierImpl(
-    override val modifier: KtModifierKeywordToken,
-    firDiagnostic: FirPsiDiagnostic,
-    override val token: ValidityToken,
-) : KtFirDiagnostic.InapplicableBackingFieldModifier(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
@@ -2836,6 +2820,20 @@ internal class AbstractPropertyInPrimaryConstructorParametersImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.AbstractPropertyInPrimaryConstructorParameters(), KtAbstractFirDiagnostic<KtModifierListOwner> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class LocalVariableWithTypeParametersWarningImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.LocalVariableWithTypeParametersWarning(), KtAbstractFirDiagnostic<KtProperty> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class LocalVariableWithTypeParametersImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.LocalVariableWithTypeParameters(), KtAbstractFirDiagnostic<KtProperty> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
