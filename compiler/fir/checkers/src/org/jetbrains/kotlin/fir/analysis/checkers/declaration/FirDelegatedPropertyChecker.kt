@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirImplicitInvokeCall
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
@@ -53,6 +54,10 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
 
             override fun visitFunctionCall(functionCall: FirFunctionCall) {
                 checkFunctionCall(functionCall)
+            }
+
+            override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall) {
+                checkFunctionCall(implicitInvokeCall)
             }
 
             private fun checkFunctionCall(functionCall: FirFunctionCall) {

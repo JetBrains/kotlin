@@ -58,6 +58,25 @@ fun FirFunctionCall.copy(
     return (builder as FirCallBuilder).build() as FirFunctionCall
 }
 
+internal fun FirFunctionCall.copyAsImplicitInvokeCall(
+    setupCopy: FirImplicitInvokeCallBuilder.() -> Unit
+): FirImplicitInvokeCall {
+    val original = this
+
+    return buildImplicitInvokeCall {
+        source = original.source
+        annotations.addAll(original.annotations)
+        typeArguments.addAll(original.typeArguments)
+        explicitReceiver = original.explicitReceiver
+        dispatchReceiver = original.dispatchReceiver
+        extensionReceiver = original.extensionReceiver
+        argumentList = original.argumentList
+        calleeReference = original.calleeReference
+
+        setupCopy()
+    }
+}
+
 fun FirAnonymousFunction.copy(
     receiverTypeRef: FirTypeRef? = this.receiverTypeRef,
     source: FirSourceElement? = this.source,

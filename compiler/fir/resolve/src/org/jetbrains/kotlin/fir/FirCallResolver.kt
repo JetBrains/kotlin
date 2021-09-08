@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.Variance
-import java.lang.annotation.ElementType
 
 class FirCallResolver(
     private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
@@ -115,12 +114,12 @@ class FirCallResolver(
 
             // We need desugaring
             val resultFunctionCall = if (candidate != null && candidate.callInfo != result.info) {
-                functionCall.copy(
-                    explicitReceiver = candidate.callInfo.explicitReceiver,
-                    dispatchReceiver = candidate.dispatchReceiverExpression(),
-                    extensionReceiver = candidate.extensionReceiverExpression(),
-                    argumentList = candidate.callInfo.argumentList,
-                )
+                functionCall.copyAsImplicitInvokeCall {
+                    explicitReceiver = candidate.callInfo.explicitReceiver
+                    dispatchReceiver = candidate.dispatchReceiverExpression()
+                    extensionReceiver = candidate.extensionReceiverExpression()
+                    argumentList = candidate.callInfo.argumentList
+                }
             } else {
                 resultExpression
             }
