@@ -70,7 +70,6 @@ open class PodInstallTask : DefaultTask() {
     fun doPodInstall() {
         podfile.orNull?.parentFile?.also { podfileDir ->
             val podInstallCommand = listOf("pod", "install")
-
             runCommand(podInstallCommand,
                        project.logger,
                        errorHandler = { returnCode, output, _ ->
@@ -81,6 +80,7 @@ open class PodInstallTask : DefaultTask() {
                        },
                        processConfiguration = {
                            directory(podfileDir)
+                           //environment()["LC_ALL"] = "en_US.UTF-8"
                        })
 
             with(podsXcodeProjDirProvider) {
@@ -407,6 +407,7 @@ open class PodGenTask : DefaultTask() {
             },
             processConfiguration = {
                 directory(syntheticDir)
+                //environment()["LC_ALL"] = "en_US.UTF-8"
             })
 
         val podsXcprojFile = podsXcodeProjDir.get()

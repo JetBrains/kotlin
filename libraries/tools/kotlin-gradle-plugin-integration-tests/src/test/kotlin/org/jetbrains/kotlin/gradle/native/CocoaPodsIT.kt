@@ -1534,7 +1534,7 @@ class CocoaPodsIT : BaseGradleIT() {
             val gemPath = System.getenv("GEM_PATH")?.let {
                 cocoapodsInstallationRoot.absolutePath + File.pathSeparator + it
             } ?: cocoapodsInstallationRoot.absolutePath
-            return mapOf("PATH" to path, "GEM_PATH" to gemPath)
+            return mapOf("PATH" to path, "GEM_PATH" to gemPath, "LC_ALL" to "en_US.UTF-8")
         }
 
         private fun isCocoapodsInstalled(): Boolean {
