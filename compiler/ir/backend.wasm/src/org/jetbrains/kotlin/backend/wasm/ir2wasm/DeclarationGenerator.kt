@@ -71,30 +71,30 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         val watName = declaration.fqNameWhenAvailable.toString()
         val irParameters = declaration.getEffectiveValueParameters()
         // TODO: Exported types should be transformed in a separate lowering by creating shim functions for each export.
+        val isExported = declaration.isExported(context.backendContext)
         val resultType =
             when {
-                declaration.isExported(context.backendContext) -> context.transformExportedResultType(declaration.returnType)
+                isExported -> context.transformExportedResultType(declaration.returnType)
                 // Unit_getInstance returns true Unit reference instead of "void"
                 declaration == unitGetInstanceFunction -> context.transformType(declaration.returnType)
                 else -> context.transformResultType(declaration.returnType)
             }
+
+        val isExportedOrImported = isExported || importedName != null
         val wasmFunctionType =
             WasmFunctionType(
                 name = watName,
                 parameterTypes = irParameters.map {
                     val t = context.transformValueParameterType(it)
-                    if (importedName != null && t is WasmRefNullType) {
-                        WasmEqRef
+                    if (isExportedOrImported && t is WasmRefNullType) {
+                        WasmRefNullType(WasmHeapType.Simple.Data)
                     } else {
                         t
                     }
                 },
                 resultTypes = listOfNotNull(
-                    run {
-                        if (importedName != null && resultType is WasmRefNullType)
-                            WasmEqRef
-                        else
-                            resultType
+                    resultType.let {
+                        if (isExportedOrImported && it is WasmRefNullType) WasmRefNullType(WasmHeapType.Simple.Data) else it
                     }
                 )
             )
@@ -377,4 +377,4 @@ fun IrFunction.getEffectiveValueParameters(): List<IrValueParameter> {
 }
 
 fun IrFunction.isExported(context: WasmBackendContext): Boolean =
-    visibility == DescriptorVisibilities.PUBLIC && fqNameWhenAvailable in context.additionalExportedDeclarations
+    fqNameWhenAvailable in context.additionalExportedDeclarations || isJsExport()

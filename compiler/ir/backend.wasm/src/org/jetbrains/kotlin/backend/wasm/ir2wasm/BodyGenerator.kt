@@ -172,7 +172,21 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     }
 
     override fun visitGetValue(expression: IrGetValue) {
-        body.buildGetLocal(context.referenceLocal(expression.symbol))
+        val valueSymbol = expression.symbol
+        body.buildGetLocal(context.referenceLocal(valueSymbol))
+
+        val valueDeclaration = valueSymbol.owner
+        if (valueSymbol.owner is IrValueParameter) {
+            val parent = valueDeclaration.parent
+            if (parent is IrFunction && parent.isExported(backendContext)) {
+                val type = context.transformType(valueDeclaration.type)
+                if (type is WasmRefNullType) {
+                    // TODO: Add these casts as IR-2-IR lowering instead
+                    generateTypeRTT(valueDeclaration.type)
+                    body.buildRefCast()
+                }
+            }
+        }
     }
 
     override fun visitSetValue(expression: IrSetValue) {
@@ -296,7 +310,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
         // Return types of imported functions cannot have concrete struct/array references.
         // Non-primitive return types are represented as eqref which need to be casted back to expected type on call site.
-        if (function.getWasmImportAnnotation() != null || function.getJsFunAnnotation() != null || function.isExternal) {
+        if (function.getWasmImportAnnotation() != null || function.getJsFunAnnotation() != null || function.isExternal || function.isExported(backendContext)) {
             val resT = context.transformResultType(function.returnType)
             if (resT is WasmRefNullType) {
                 generateTypeRTT(function.returnType)
