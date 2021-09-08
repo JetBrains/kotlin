@@ -52,6 +52,8 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "_ZSt28_Rb_tree_rebalance_for_erasePSt18_Rb_tree_node_baseRS_", // std::_Rb_tree_rebalance_for_erase(std::_Rb_tree_node_base*, std::_Rb_tree_node_base&)
         "_ZN9__gnu_cxx27__verbose_terminate_handlerEv", // __gnu_cxx::__verbose_terminate_handler()
         "_Znwm", // new
+        "_Znwy",
+        "_ZdlPv", // delete
         "__mingw_vsnprintf",
         "__cxa_allocate_exception",
         "__cxa_begin_catch",
