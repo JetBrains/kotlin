@@ -2955,6 +2955,14 @@ standaloneTest("devirtualization_getter_looking_as_box_function") {
     source = "codegen/devirtualization/getter_looking_as_box_function.kt"
 }
 
+standaloneTest("devirtualization_inline_getter") {
+    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
+    useGoldenData = true
+    flags = ["-opt"]
+    source = "codegen/devirtualization/inline_getter.kt"
+}
+
+
 standaloneTest("devirtualization_anonymousObject") {
     disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     useGoldenData = true
