@@ -1,4 +1,4 @@
-// LANGUAGE_VERSION: 1.1
+// !LANGUAGE: -ProhibitOperatorMod
 // EXPECTED_REACHABLE_NODES: 1284
 package foo
 
