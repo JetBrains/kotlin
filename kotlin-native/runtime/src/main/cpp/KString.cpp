@@ -296,7 +296,7 @@ KBoolean Kotlin_Char_isIdentifierIgnorable(KChar ch) {
   return false;
 }
 
-KBoolean Kotlin_Char_isISOControl(KCharSignExt ch) {
+KBoolean Kotlin_Char_isISOControl(KChar ch) {
   return (ch <= 0x1F) || (ch >= 0x7F && ch <= 0x9F);
 }
 
