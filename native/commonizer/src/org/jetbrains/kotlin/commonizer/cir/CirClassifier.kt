@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.cir
 
-interface CirClassifier :
+sealed interface CirClassifier :
     CirDeclaration,
     CirHasAnnotations,
     CirHasName,
