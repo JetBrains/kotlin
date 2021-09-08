@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
 
 public abstract class KtSymbolContainingDeclarationProvider : KtAnalysisSessionComponent() {
-    public abstract fun getContainingDeclaration(symbol: KtSymbolWithKind): KtSymbolWithKind?
+    public abstract fun getContainingDeclaration(symbol: KtSymbol): KtSymbolWithKind?
 }
 
 public interface KtSymbolContainingDeclarationProviderMixIn : KtAnalysisSessionMixIn {
@@ -18,6 +19,6 @@ public interface KtSymbolContainingDeclarationProviderMixIn : KtAnalysisSessionM
      *   for class members returns containing class
      *   for local declaration returns declaration it was declared it
      */
-    public fun KtSymbolWithKind.getContainingSymbol(): KtSymbolWithKind? =
+    public fun KtSymbol.getContainingSymbol(): KtSymbolWithKind? =
         analysisSession.containingDeclarationProvider.getContainingDeclaration(this)
 }

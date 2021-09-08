@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
@@ -24,9 +25,9 @@ internal class KtFirSymbolContainingDeclarationProvider(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
 ) : KtSymbolContainingDeclarationProvider(), KtFirAnalysisSessionComponent {
-    override fun getContainingDeclaration(symbol: KtSymbolWithKind): KtSymbolWithKind? {
+    override fun getContainingDeclaration(symbol: KtSymbol): KtSymbolWithKind? {
         if (symbol is KtPackageSymbol) return null
-        if (symbol.symbolKind == KtSymbolKind.TOP_LEVEL) return null
+        if (symbol is KtSymbolWithKind && symbol.symbolKind == KtSymbolKind.TOP_LEVEL) return null
         if (symbol is KtCallableSymbol) {
             val classId = symbol.callableIdIfNonLocal?.classId
             if (classId != null) {
@@ -35,15 +36,25 @@ internal class KtFirSymbolContainingDeclarationProvider(
                 }
             }
         }
-        return when (symbol.origin) {
-            KtSymbolOrigin.SOURCE, KtSymbolOrigin.SOURCE_MEMBER_GENERATED ->
-                getContainingDeclarationForKotlinInSourceSymbol(symbol)
-            KtSymbolOrigin.LIBRARY, KtSymbolOrigin.JAVA, KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY ->
-                getContainingDeclarationForLibrarySymbol(symbol)
-            KtSymbolOrigin.PROPERTY_BACKING_FIELD -> getContainingDeclarationForBackingFieldSymbol(symbol)
-            KtSymbolOrigin.INTERSECTION_OVERRIDE -> TODO()
-            KtSymbolOrigin.SAM_CONSTRUCTOR -> null
-            KtSymbolOrigin.DELEGATED -> TODO()
+        return when (symbol) {
+            is KtFirTypeParameterSymbol -> {
+                symbol.firRef.withFir { fir ->
+                    fir.containingDeclarationSymbol?.fir?.let { containingDeclaration ->
+                        firSymbolBuilder.buildSymbol(containingDeclaration) as KtSymbolWithKind
+                    }
+                }
+            }
+            is KtSymbolWithKind -> when (symbol.origin) {
+                KtSymbolOrigin.SOURCE, KtSymbolOrigin.SOURCE_MEMBER_GENERATED ->
+                    getContainingDeclarationForKotlinInSourceSymbol(symbol)
+                KtSymbolOrigin.LIBRARY, KtSymbolOrigin.JAVA, KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY ->
+                    getContainingDeclarationForLibrarySymbol(symbol)
+                KtSymbolOrigin.PROPERTY_BACKING_FIELD -> getContainingDeclarationForBackingFieldSymbol(symbol)
+                KtSymbolOrigin.INTERSECTION_OVERRIDE -> TODO()
+                KtSymbolOrigin.SAM_CONSTRUCTOR -> null
+                KtSymbolOrigin.DELEGATED -> TODO()
+            }
+            else -> null
         }
     }
 
