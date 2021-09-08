@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys.Companion.BUNDLE_ID
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.getExportedDependencies
@@ -157,8 +158,9 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         }
 
         val file = directory.child("Info.plist")
-        val pkg = guessMainPackage() // TODO: consider showing warning if it is root.
-        val bundleId = pkg.child(Name.identifier(name)).asString()
+        // TODO: consider showing warning if the main package is root.
+        val bundleId = context.configuration[BUNDLE_ID]
+                ?: guessMainPackage().child(Name.identifier(name)).asString()
 
         val platform = properties.platformName()
         val minimumOsVersion = properties.osVersionMin

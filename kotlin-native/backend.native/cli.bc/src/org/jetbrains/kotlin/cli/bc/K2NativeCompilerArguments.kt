@@ -103,6 +103,13 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     // Keep the list lexically sorted.
 
     @Argument(
+            value = "-Xbundle-id",
+            valueDescription = "<id>",
+            description = "Bundle ID to be set in Info.plist of a produced framework"
+    )
+    var bundleId: String? = null
+
+    @Argument(
             value = "-Xcache-directory",
             valueDescription = "<path>",
             description = "Path to the directory containing caches",

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.UtilsKt
 
 import java.nio.file.Paths
+import java.util.regex.Pattern
 
 import static org.jetbrains.kotlin.konan.target.Architecture.*
 
@@ -5241,6 +5242,7 @@ if (isAppleTarget(project)) {
         final File lazyHeader = file("$dir/$target-lazy.h")
 
         doLast {
+            // Check lazy header.
             final String expectedLazyHeaderName = "expectedLazy.h"
             final String expectedLazyHeaderDir = file("objcexport/")
             final File expectedLazyHeader = new File(expectedLazyHeaderDir, expectedLazyHeaderName)
@@ -5260,6 +5262,16 @@ if (isAppleTarget(project)) {
                 throw new Error("$expectedLazyHeader file patched;\nre-run the test and don't forget to commit the patch")
             }
 
+            // Check bundle ID.
+            final String frameworkPath = "$dir/$target/${frameworkName}.framework"
+            final Pattern pattern = ~"<key>CFBundleIdentifier</key>\n\\s*<string>foo.bar</string>"
+            final String plistPath = (target.family == Family.OSX) ?
+                    "$frameworkPath/Resources/Info.plist" :
+                    "$frameworkPath/Info.plist"
+            final String plistContent = file(plistPath).text
+            if (!pattern.matcher(plistContent).find()) {
+                throw new Error("Unexpected Info.plist content:\n$plistContent")
+            }
         }
 
         def libraryName = frameworkName + "Library"
@@ -5278,7 +5290,7 @@ if (isAppleTarget(project)) {
         framework(frameworkName) {
             sources = ['objcexport']
             library = libraryName
-            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xexport-kdoc"]
+            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xexport-kdoc", "-Xbundle-id=foo.bar"]
         }
         swiftSources = ['objcexport']
         if (isNoopGC) {
