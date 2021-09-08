@@ -8,7 +8,7 @@ dependencies {
     compileOnly(project(":compiler:backend.common.jvm"))
     compileOnly(project(":compiler:fir:cones"))
     compileOnly(project(":compiler:fir:resolve"))
-    compileOnly(project(":compiler:fir:jvm"))
+    compileOnly(project(":compiler:fir:java"))
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:fir:fir2ir"))
     compileOnly(project(":compiler:fir:fir-serialization"))

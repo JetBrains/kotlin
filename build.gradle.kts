@@ -245,7 +245,6 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:fir2ir",
     ":compiler:fir:fir2ir:jvm-backend",
     ":compiler:fir:java",
-    ":compiler:fir:jvm",
     ":compiler:fir:checkers",
     ":compiler:fir:checkers:checkers.jvm",
     ":compiler:fir:entrypoint",

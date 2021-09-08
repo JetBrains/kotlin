@@ -12,7 +12,6 @@ dependencies {
     compile(project(":compiler:fir:checkers"))
     compile(project(":compiler:fir:checkers:checkers.jvm"))
     compile(project(":compiler:fir:java"))
-    compile(project(":compiler:fir:jvm"))
     compile(project(":compiler:backend.common.jvm"))
     testCompile(project(":idea-frontend-fir"))
     implementation(project(":compiler:ir.psi2ir"))
