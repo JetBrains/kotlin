@@ -7,6 +7,11 @@ plugins {
     id("jps-compatible")
 }
 
+sourceSets {
+    "main" { projectDefault() }
+    "test" { projectDefault() }
+}
+
 val shadows: Configuration by configurations.creating {
     isTransitive = false
 }
@@ -40,13 +45,11 @@ dependencies {
     testImplementation(projectTests(":compiler:incremental-compilation-impl"))
 }
 
-sourceSets {
-    "main" { projectDefault() }
-    "test" { projectDefault() }
-}
+publish()
 
 noDefaultJar()
-runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
+
+val shadowJar = runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
     callGroovy("manifestAttributes", manifest, project)
     manifest.attributes["Implementation-Version"] = archiveVersion
 
@@ -56,17 +59,14 @@ runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
     mergeServiceFiles() // This is needed to relocate the services files for kotlinx.metadata
 }
 
-val test by tasks
-test.dependsOn("shadowJar")
+sourcesJar()
+
+javadocJar()
 
 projectTest(parallel = true) {
     workingDir = rootDir
     dependsOn(":dist")
+    dependsOn(shadowJar)
 }
-
-publish()
-
-sourcesJar()
-javadocJar()
 
 testsJar()
