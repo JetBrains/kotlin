@@ -5470,6 +5470,36 @@ if (isAppleTarget(project)) {
         swiftSources = ['framework/stacktraceByLibbacktrace/']
     }
 
+    frameworkTest("testFrameworkBundleId") {
+        def currentTarget = project.target.name
+        enabled = currentTarget.startsWith("mac")
+
+        konanArtifacts {
+            library("frameworkBundleIdLib", targets: [target.name]) {
+                srcFiles("framework/bundle_id/lib.kt")
+                delegate.getByTarget(target.name).configure{
+                    UtilsKt.dependsOnDist(it)
+                }
+            }
+        }
+
+        framework("Foo") {
+            sources = ["framework/bundle_id/main.kt"]
+            library = "frameworkBundleIdLib"
+            def exportedLib = konanArtifacts[library].getArtifactByTarget(target.name)
+            opts = ["-Xexport-library=$exportedLib"]
+        }
+        swiftSources = []
+
+        doLast {
+            def frameworkPath = "$testOutputFramework/testFrameworkBundleId/$target/Foo.framework"
+            def pattern = ~"<key>CFBundleIdentifier</key>\n\\s*<string>Foo</string>"
+            def plistContent = file("$frameworkPath/Resources/Info.plist").text
+            if (!pattern.matcher(plistContent).find()) {
+                throw new Error("Unexpected Info.plist content:\n$plistContent")
+            }
+        }
+    }
 }
 
 /**
