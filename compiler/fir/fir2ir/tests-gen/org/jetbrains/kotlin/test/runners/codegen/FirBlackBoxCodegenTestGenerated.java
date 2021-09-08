@@ -28415,6 +28415,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("kt48659_identityEqualsWithCastToAny.kt")
+        public void testKt48659_identityEqualsWithCastToAny() throws Exception {
+            runTest("compiler/testData/codegen/box/primitiveTypes/kt48659_identityEqualsWithCastToAny.kt");
+        }
+
+        @Test
         @TestMetadata("kt518.kt")
         public void testKt518() throws Exception {
             runTest("compiler/testData/codegen/box/primitiveTypes/kt518.kt");
