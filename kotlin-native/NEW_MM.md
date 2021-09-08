@@ -129,7 +129,8 @@ The list of known performance issues:
 * Freezing is currently implemented suboptimally: internally, a separate memory allocation may occur for each frozen object (this recursively includes the object subgraph), which puts unnecessary pressure on the heap.
 * Unterminated `Worker`s and unconsumed `Future`s have objects pinned to the heap, contributing to the pause time. Like Swift/ObjC interop, this also manifests in a growing number of stable refs in the root set.
   To mitigate:
-    * Look for `Worker.execute` that returns a `Future` being called but never consumed (via `Future.consume` or `Future.result`) and make sure to either consume the `Future` or replace calls with `Worker.executeAfter` instead.
+    * Look for calls to `Worker.execute` with the resulting `Future` objects that are never consumed using `Future.consume` or `Future.result`.
+      Make sure to either consume all `Future` objects or replace these calls with `Worker.executeAfter` instead.
     * Look for `Worker`s that were `Worker.start`ed, but never stopped via `Worker.requestTermination()` (also, note that this call also returns a `Future`).
     * Make sure that `execute` and `executeAfter` are only called on `Worker`s that were `Worker.start`ed or if the receiving `Worker` manually processes events with `Worker.processQueue`.
 
@@ -142,7 +143,7 @@ We measured performance regressions with a slowdown up to a factor of 5. If you 
 * Documentation is not updated to reflect changes for the new MM.
 * There's no application state handling on iOS: the collector will not be throttled down if the application goes into the background.
   However, the collection is not forced upon going into the background, which leaves the application with a larger memory footprint than necessary, making it a more likely target to be terminated by the OS.
-* WASM (or any target that doesn't have threads) is not supported with the new MM.
+* WASM (or any target that doesn't have pthreads) is not supported with the new MM.
 
 
 ## Workarounds
