@@ -8,55 +8,73 @@
 package org.jetbrains.kotlin.commonizer.mergedtree
 
 import org.jetbrains.kotlin.commonizer.TargetDependent
-import org.jetbrains.kotlin.commonizer.cir.CirClass
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirTypeAlias
-import org.jetbrains.kotlin.commonizer.forEachWithTarget
-import org.jetbrains.kotlin.commonizer.mapValue
 
-internal class CirCommonClassifierIdResolver(private val classifierIndices: TargetDependent<CirClassifierIndex>) {
-    fun findCommonId(id: CirEntityId): CirCommonClassifierId? {
-        val results = mutableSetOf<CirEntityId>()
+internal fun CirCommonClassifierIdResolver(classifierIndices: TargetDependent<CirClassifierIndex>): CirCommonClassifierIdResolver {
+    return CirCommonClassifierIdResolverImpl(classifierIndices)
+}
+
+internal interface CirCommonClassifierIdResolver {
+    fun findCommonId(id: CirEntityId): CirCommonClassifierId?
+}
+
+private class CirCommonClassifierIdResolverImpl(
+    private val classifierIndices: TargetDependent<CirClassifierIndex>
+) : CirCommonClassifierIdResolver {
+
+    private val cachedResults = HashMap<CirEntityId, CirCommonClassifierId>()
+    private val cachedNullResults = HashSet<CirEntityId>()
+
+    override fun findCommonId(id: CirEntityId): CirCommonClassifierId? {
+        cachedResults[id]?.let { return it }
+        if (id in cachedNullResults) return null
+        return doFindCommonId(id)
+    }
+
+    private fun doFindCommonId(id: CirEntityId): CirCommonClassifierId? {
+        val results = LinkedHashSet<CirEntityId>()
 
         /* Set of every classifier id that once was enqueued already */
-        val enqueued = mutableSetOf<CirEntityId>()
+        val visited = mutableSetOf<CirEntityId>()
 
         /* Actual, current queue of classifiers to resolve */
         val queue = ArrayDeque<CirEntityId>()
 
-        enqueued.add(id)
+        visited.add(id)
         queue.add(id)
 
         while (queue.isNotEmpty()) {
             val nextClassifierId = queue.removeFirst()
-            val foundClassifiers = classifierIndices.mapValue { index -> index.findClassifier(nextClassifierId) }
+            val foundClassifiers = classifierIndices.associateWith { index -> index.findClassifier(nextClassifierId) }
 
             /* Classifier is available for all targets */
-            if (foundClassifiers.all { it != null }) {
+            if (foundClassifiers.all { (_, classifier) -> classifier != null }) {
                 results.add(nextClassifierId)
             }
 
-            foundClassifiers.forEachWithTarget forEach@{ target, classifier ->
+            foundClassifiers.forEach { (index, classifier) ->
                 if (classifier == null) return@forEach
 
-                val classifierExpansionId = when (classifier) {
-                    is CirClass -> nextClassifierId
-                    is CirTypeAlias -> classifier.expandedType.classifierId
-                }
-
-                if (enqueued.add(classifierExpansionId)) {
-                    queue.add(classifierExpansionId)
-                }
-
-                val aliases = classifierIndices[target].findAllTypeAliasesWithUnderlyingType(classifierExpansionId)
-                aliases.forEach { alias ->
-                    if (enqueued.add(alias.id)) {
+                // Propagate to the left (towards typealias)
+                index.findTypeAliasesWithUnderlyingType(nextClassifierId).forEach { alias ->
+                    if (visited.add(alias.id)) {
                         queue.add(alias.id)
+                    }
+                }
+
+                // Propagate to the right (towards expansion)
+                if (classifier is CirTypeAlias) {
+                    if (visited.add(classifier.underlyingType.classifierId)) {
+                        queue.add(classifier.underlyingType.classifierId)
                     }
                 }
             }
         }
 
-        return if(results.isNotEmpty()) CirCommonClassifierId(results) else null
+        val result = if (results.isNotEmpty()) CirCommonClassifierId(results) else null
+        if (result != null) visited.forEach { cachedResults[it] = result }
+        else visited.forEach { cachedNullResults.add(it) }
+        return result
     }
 }

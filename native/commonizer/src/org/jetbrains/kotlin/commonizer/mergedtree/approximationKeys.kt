@@ -15,6 +15,31 @@ import org.jetbrains.kotlin.commonizer.utils.hashCode
 import org.jetbrains.kotlin.commonizer.utils.isObjCInteropCallableAnnotation
 import org.jetbrains.kotlin.types.Variance
 
+class CirTypeSignature {
+    private val elements = ArrayList<Any>()
+
+    private var hashCode = 0
+
+    fun add(element: Any) {
+        elements.add(element)
+        hashCode = 31 * hashCode + element.hashCode()
+    }
+
+    override fun hashCode(): Int = hashCode
+
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        if (other !is CirTypeSignature) return false
+        if (other.hashCode != this.hashCode) return false
+        if (other.elements != this.elements) return false
+        return true
+    }
+
+    override fun toString(): String {
+        return elements.joinToString("")
+    }
+}
+
 
 typealias ObjCFunctionApproximation = Int
 
@@ -23,11 +48,16 @@ data class PropertyApproximationKey(
     val extensionReceiverParameterType: CirTypeSignature?
 ) {
     companion object {
-        internal fun create(context: CirMemberContext, property: CirProperty): PropertyApproximationKey {
+        internal fun create(
+            context: CirMemberContext,
+            commonClassifierIdResolver: CirCommonClassifierIdResolver,
+            property: CirProperty
+        ): PropertyApproximationKey {
             return PropertyApproximationKey(
                 name = property.name,
-                extensionReceiverParameterType = property.extensionReceiver
-                    ?.let { buildApproximationSignature(SignatureBuildingContext.create(context, property), it.type) }
+                extensionReceiverParameterType = property.extensionReceiver?.let {
+                    buildApproximationSignature(SignatureBuildingContext.create(context, commonClassifierIdResolver, property), it.type)
+                }
             )
         }
     }
@@ -41,12 +71,17 @@ data class FunctionApproximationKey(
 ) {
 
     companion object {
-        internal fun create(context: CirMemberContext, function: CirFunction): FunctionApproximationKey {
+        internal fun create(
+            context: CirMemberContext,
+            commonClassifierIdResolver: CirCommonClassifierIdResolver,
+            function: CirFunction
+        ): FunctionApproximationKey {
             return FunctionApproximationKey(
                 name = function.name,
-                valueParametersTypes = valueParameterTypes(context, function),
-                extensionReceiverParameterType = function.extensionReceiver
-                    ?.let { buildApproximationSignature(SignatureBuildingContext.create(context, function), it.type) },
+                valueParametersTypes = valueParameterTypes(context, commonClassifierIdResolver, function),
+                extensionReceiverParameterType = function.extensionReceiver?.let {
+                    buildApproximationSignature(SignatureBuildingContext.create(context, commonClassifierIdResolver, function), it.type)
+                },
                 objCFunctionApproximation = objCFunctionApproximation(function)
             )
         }
@@ -68,15 +103,19 @@ data class FunctionApproximationKey(
         .appendHashCode(objCFunctionApproximation)
 }
 
+private val typeSignatureInterner = Interner<CirTypeSignature>()
+
 data class ConstructorApproximationKey(
     val valueParametersTypes: Array<CirTypeSignature>,
     private val objCFunctionApproximation: ObjCFunctionApproximation
 ) {
 
     companion object {
-        internal fun create(context: CirMemberContext, constructor: CirClassConstructor): ConstructorApproximationKey {
+        internal fun create(
+            context: CirMemberContext, commonClassifierIdResolver: CirCommonClassifierIdResolver, constructor: CirClassConstructor
+        ): ConstructorApproximationKey {
             return ConstructorApproximationKey(
-                valueParametersTypes = valueParameterTypes(context, constructor),
+                valueParametersTypes = valueParameterTypes(context, commonClassifierIdResolver, constructor),
                 objCFunctionApproximation = objCFunctionApproximation(constructor)
             )
         }
@@ -101,24 +140,44 @@ private fun <T> objCFunctionApproximation(value: T): ObjCFunctionApproximation
     } else 0
 }
 
-private fun <T> valueParameterTypes(context: CirMemberContext, callable: T): Array<CirTypeSignature>
+private fun <T> valueParameterTypes(
+    context: CirMemberContext,
+    commonClassifierIdResolver: CirCommonClassifierIdResolver,
+    callable: T
+): Array<CirTypeSignature>
         where T : CirHasTypeParameters, T : CirCallableMemberWithParameters, T : CirMaybeCallableMemberOfClass {
     if (callable.valueParameters.isEmpty()) return emptyArray()
     return Array(callable.valueParameters.size) { index ->
         val parameter = callable.valueParameters[index]
-        buildApproximationSignature(SignatureBuildingContext.create(context, callable), parameter.returnType)
+        buildApproximationSignature(SignatureBuildingContext.create(context, commonClassifierIdResolver, callable), parameter.returnType)
     }
 }
 
-private val typeSignatureInterner = Interner<CirTypeSignature>()
+private enum class TypeSignatureElements(val stringRepresentation: String) {
+    ArgumentsStartToken("<"),
+    ArgumentsEndToken(">"),
+    ArgumentsSeparator(", "),
+    NullableToken("?"),
+    UpperBoundsStartToken(" : ["),
+    UpperBoundsEndToken("]"),
+    InVariance("in "),
+    OutVariance("out "),
+    StarProjection("*"),
+    FlexibleTypeSeparator("..");
 
-internal fun buildApproximationSignature(context: SignatureBuildingContext, type: CirType): CirTypeSignature {
-    val stringBuilder = StringBuilder()
-    stringBuilder.appendTypeApproximationSignature(context, type)
-    return typeSignatureInterner.intern(stringBuilder.toString())
+    override fun toString(): String {
+        return stringRepresentation
+    }
 }
 
-internal fun StringBuilder.appendTypeApproximationSignature(context: SignatureBuildingContext, type: CirType) {
+
+internal fun buildApproximationSignature(context: SignatureBuildingContext, type: CirType): CirTypeSignature {
+    val signature = CirTypeSignature()
+    signature.appendTypeApproximationSignature(context, type)
+    return typeSignatureInterner.intern(signature)
+}
+
+internal fun CirTypeSignature.appendTypeApproximationSignature(context: SignatureBuildingContext, type: CirType) {
     return when (type) {
         is CirFlexibleType -> appendFlexibleTypeApproximationSignature(context, type)
         is CirTypeParameterType -> appendTypeParameterTypeApproximationSignature(context.forTypeParameterTypes(), type)
@@ -126,77 +185,88 @@ internal fun StringBuilder.appendTypeApproximationSignature(context: SignatureBu
     }
 }
 
-internal fun StringBuilder.appendClassOrTypeAliasTypeApproximationSignature(
+internal fun CirTypeSignature.appendClassOrTypeAliasTypeApproximationSignature(
     context: SignatureBuildingContext, type: CirClassOrTypeAliasType
 ) {
-    append(type.classifierId.toString())
+    val classifierId = context.commonClassifierIdResolver.findCommonId(type.classifierId)?.aliases ?: type.classifierId
+    add(classifierId)
     if (type.arguments.isNotEmpty()) {
-        append("<")
+        add(TypeSignatureElements.ArgumentsStartToken)
         type.arguments.forEachIndexed { index, argument ->
             when (argument) {
                 is CirRegularTypeProjection -> {
                     when (argument.projectionKind) {
                         Variance.INVARIANT -> Unit
-                        Variance.IN_VARIANCE -> append("in ")
-                        Variance.OUT_VARIANCE -> append("out ")
+                        Variance.IN_VARIANCE -> add(TypeSignatureElements.InVariance)
+                        Variance.OUT_VARIANCE -> add(TypeSignatureElements.OutVariance)
                     }
                     appendTypeApproximationSignature(context, argument.type)
                 }
-                is CirStarTypeProjection -> append("*")
+                is CirStarTypeProjection -> add(TypeSignatureElements.StarProjection)
             }
             if (index != type.arguments.lastIndex) {
-                append(", ")
+                add(TypeSignatureElements.ArgumentsSeparator)
             }
         }
-        append(">")
+        add(TypeSignatureElements.ArgumentsEndToken)
     }
-    if (type.isMarkedNullable) append("?")
+    if (type.isMarkedNullable) add(TypeSignatureElements.NullableToken)
 }
 
-private fun StringBuilder.appendTypeParameterTypeApproximationSignature(
+private fun CirTypeSignature.appendTypeParameterTypeApproximationSignature(
     context: TypeParameterTypeSignatureBuildingContext, type: CirTypeParameterType
 ) {
     val typeParameter = context.resolveTypeParameter(type.index)
-    append(typeParameter.name)
+    add(typeParameter.name)
     if (context.isVisitedFirstTime(type.index)) {
-        append(" : [")
+        add(TypeSignatureElements.UpperBoundsStartToken)
         typeParameter.upperBounds.forEachIndexed { index, upperBound ->
             appendTypeApproximationSignature(context, upperBound)
-            if (index != typeParameter.upperBounds.lastIndex) append(", ")
+            if (index != typeParameter.upperBounds.lastIndex) add(TypeSignatureElements.ArgumentsSeparator)
         }
-        append("]")
+        add(TypeSignatureElements.UpperBoundsEndToken)
     }
-    if (type.isMarkedNullable) append("?")
+    if (type.isMarkedNullable) add(TypeSignatureElements.NullableToken)
 }
 
-private fun StringBuilder.appendFlexibleTypeApproximationSignature(
+private fun CirTypeSignature.appendFlexibleTypeApproximationSignature(
     context: SignatureBuildingContext, type: CirFlexibleType
 ) {
     appendTypeApproximationSignature(context, type.lowerBound)
-    append("..")
+    add(TypeSignatureElements.FlexibleTypeSeparator)
     appendTypeApproximationSignature(context, type.upperBound)
 }
 
 internal sealed interface SignatureBuildingContext {
+    val commonClassifierIdResolver: CirCommonClassifierIdResolver
+
     companion object {
-        fun create(memberContext: CirMemberContext, functionOrPropertyOrConstructor: CirHasTypeParameters): SignatureBuildingContext {
-            return DefaultSignatureBuildingContext(memberContext, functionOrPropertyOrConstructor)
+        fun create(
+            memberContext: CirMemberContext,
+            commonClassifierIdResolver: CirCommonClassifierIdResolver,
+            functionOrPropertyOrConstructor: CirHasTypeParameters
+        ): SignatureBuildingContext {
+            return DefaultSignatureBuildingContext(memberContext, commonClassifierIdResolver, functionOrPropertyOrConstructor)
         }
     }
 }
 
 private fun SignatureBuildingContext.forTypeParameterTypes(): TypeParameterTypeSignatureBuildingContext = when (this) {
-    is DefaultSignatureBuildingContext -> TypeParameterTypeSignatureBuildingContext(memberContext, functionOrPropertyOrConstructor)
+    is DefaultSignatureBuildingContext -> TypeParameterTypeSignatureBuildingContext(
+        memberContext, commonClassifierIdResolver, functionOrPropertyOrConstructor
+    )
     is TypeParameterTypeSignatureBuildingContext -> this
 }
 
 private class DefaultSignatureBuildingContext(
     val memberContext: CirMemberContext,
+    override val commonClassifierIdResolver: CirCommonClassifierIdResolver,
     val functionOrPropertyOrConstructor: CirHasTypeParameters
 ) : SignatureBuildingContext
 
 private class TypeParameterTypeSignatureBuildingContext(
     private val memberContext: CirMemberContext,
+    override val commonClassifierIdResolver: CirCommonClassifierIdResolver,
     private val functionOrPropertyOrConstructor: CirHasTypeParameters
 ) : SignatureBuildingContext {
 

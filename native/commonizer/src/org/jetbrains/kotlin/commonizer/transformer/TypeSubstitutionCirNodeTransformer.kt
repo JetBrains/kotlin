@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.storage.StorageManager
 internal class TypeSubstitutionCirNodeTransformer(
     private val storageManager: StorageManager,
     private val classifiers: CirKnownClassifiers,
-    private val typeSubstitutor: CirTypeSubstitutor
+    private val typeSubstitutor: CirTypeSubstitutor,
+    private val commonClassifierIdResolver: CirCommonClassifierIdResolver = CirCommonClassifierIdResolver(classifiers.classifierIndices)
 ) : CirNodeTransformer {
+
 
     override fun invoke(root: CirRootNode) {
         for (index in 0 until root.targetDeclarations.size) {
@@ -46,7 +48,7 @@ internal class TypeSubstitutionCirNodeTransformer(
         val newFunction = typeSubstitutor.substitute(index, originalFunction)
         if (originalFunction == newFunction) return
 
-        val approximationKey = FunctionApproximationKey.create(context, newFunction)
+        val approximationKey = FunctionApproximationKey.create(context, commonClassifierIdResolver, newFunction)
         val newNode = parent.functions.getOrPut(approximationKey) {
             buildFunctionNode(storageManager, parent.targetDeclarations.size, classifiers, ParentNode(parent))
         }
@@ -59,7 +61,7 @@ internal class TypeSubstitutionCirNodeTransformer(
         val newProperty = typeSubstitutor.substitute(index, originalProperty)
         if (originalProperty == newProperty) return
 
-        val approximationKey = PropertyApproximationKey.create(context, newProperty)
+        val approximationKey = PropertyApproximationKey.create(context, commonClassifierIdResolver, newProperty)
         val newNode = parent.properties.getOrPut(approximationKey) {
             buildPropertyNode(storageManager, parent.targetDeclarations.size, classifiers, ParentNode(parent))
         }

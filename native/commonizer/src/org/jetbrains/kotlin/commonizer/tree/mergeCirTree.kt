@@ -17,6 +17,7 @@ internal data class TargetBuildingContext(
     val storageManager: StorageManager,
     val classifiers: CirKnownClassifiers,
     val memberContext: CirMemberContext = CirMemberContext.empty,
+    val commonClassifierIdResolver: CirCommonClassifierIdResolver = CirCommonClassifierIdResolver(classifiers.classifierIndices),
     val targets: Int, val targetIndex: Int
 ) {
     fun withMemberContextOf(clazz: CirClass) = copy(memberContext = memberContext.withContextOf(clazz))
@@ -81,7 +82,9 @@ internal fun CirNodeWithMembers<*, *>.buildClass(
 internal fun CirNodeWithMembers<*, *>.buildFunction(
     context: TargetBuildingContext, function: CirFunction, parent: CirNode<*, *>? = null
 ) {
-    val functionNode = functions.getOrPut(FunctionApproximationKey.create(context.memberContext, function)) {
+    val functionNode = functions.getOrPut(
+        FunctionApproximationKey.create(context.memberContext, context.commonClassifierIdResolver, function)
+    ) {
         buildFunctionNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent))
     }
     functionNode.targetDeclarations[context.targetIndex] = function
@@ -90,7 +93,9 @@ internal fun CirNodeWithMembers<*, *>.buildFunction(
 internal fun CirNodeWithMembers<*, *>.buildProperty(
     context: TargetBuildingContext, property: CirProperty, parent: CirNode<*, *>? = null
 ) {
-    val propertyNode = properties.getOrPut(PropertyApproximationKey.create(context.memberContext, property)) {
+    val propertyNode = properties.getOrPut(
+        PropertyApproximationKey.create(context.memberContext, context.commonClassifierIdResolver, property)
+    ) {
         buildPropertyNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent))
     }
     propertyNode.targetDeclarations[context.targetIndex] = property
@@ -99,7 +104,9 @@ internal fun CirNodeWithMembers<*, *>.buildProperty(
 internal fun CirClassNode.buildConstructor(
     context: TargetBuildingContext, constructor: CirClassConstructor, parent: CirNode<*, *>
 ) {
-    val constructorNode = constructors.getOrPut(ConstructorApproximationKey.create(context.memberContext, constructor)) {
+    val constructorNode = constructors.getOrPut(
+        ConstructorApproximationKey.create(context.memberContext, context.commonClassifierIdResolver, constructor)
+    ) {
         buildClassConstructorNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent))
     }
     constructorNode.targetDeclarations[context.targetIndex] = constructor
