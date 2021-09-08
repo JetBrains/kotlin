@@ -143,6 +143,8 @@ private fun fillAnnotationArgumentMapping(
     annotationArguments: Collection<JavaAnnotationArgument>,
     destination: MutableMap<Name, FirExpression>
 ) {
+    if (annotationArguments.isEmpty()) return
+
     val annotationClassSymbol = session.symbolProvider.getClassLikeSymbolByClassId(lookupTag.classId).also {
         lookupTag.bindSymbolToLookupTag(session, it)
     }
