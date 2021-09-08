@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 
 // ------------------------------ diagnostics ------------------------------
 
-sealed class FirDiagnostic {
+sealed class FirDiagnostic : DiagnosticMarker {
     abstract val element: FirSourceElement
     abstract val severity: Severity
     abstract val factory: AbstractFirDiagnosticFactory
@@ -26,47 +26,50 @@ sealed class FirDiagnostic {
 
     val isValid: Boolean
         get() = positioningStrategy.isValid(element)
+
+    override val factoryName: String
+        get() = factory.name
 }
 
 sealed class FirSimpleDiagnostic : FirDiagnostic() {
     abstract override val factory: FirDiagnosticFactory0
 }
 
-sealed class FirDiagnosticWithParameters1<A> : FirDiagnostic() {
-    abstract val a: A
+sealed class FirDiagnosticWithParameters1<A> : FirDiagnostic(), DiagnosticWithParameters1Marker<A> {
+    abstract override val a: A
     abstract override val factory: FirDiagnosticFactory1<A>
 }
 
-sealed class FirDiagnosticWithParameters2<A, B> : FirDiagnostic() {
-    abstract val a: A
-    abstract val b: B
+sealed class FirDiagnosticWithParameters2<A, B> : FirDiagnostic(), DiagnosticWithParameters2Marker<A, B> {
+    abstract override val a: A
+    abstract override val b: B
     abstract override val factory: FirDiagnosticFactory2<A, B>
 }
 
-sealed class FirDiagnosticWithParameters3<A, B, C> : FirDiagnostic() {
-    abstract val a: A
-    abstract val b: B
-    abstract val c: C
+sealed class FirDiagnosticWithParameters3<A, B, C> : FirDiagnostic(), DiagnosticWithParameters3Marker<A, B, C> {
+    abstract override val a: A
+    abstract override val b: B
+    abstract override val c: C
     abstract override val factory: FirDiagnosticFactory3<A, B, C>
 }
 
-sealed class FirDiagnosticWithParameters4<A, B, C, D> : FirDiagnostic() {
-    abstract val a: A
-    abstract val b: B
-    abstract val c: C
-    abstract val d: D
+sealed class FirDiagnosticWithParameters4<A, B, C, D> : FirDiagnostic(), DiagnosticWithParameters4Marker<A, B, C, D> {
+    abstract override val a: A
+    abstract override val b: B
+    abstract override val c: C
+    abstract override val d: D
     abstract override val factory: FirDiagnosticFactory4<A, B, C, D>
 }
 
 // ------------------------------ psi diagnostics ------------------------------
 
-interface FirPsiDiagnostic {
+interface FirPsiDiagnostic : DiagnosticMarker {
     val factory: AbstractFirDiagnosticFactory
     val element: FirPsiSourceElement
     val textRanges: List<TextRange>
     val severity: Severity
 
-    val psiElement: PsiElement
+    override val psiElement: PsiElement
         get() = element.psi
 
     val psiFile: PsiFile
@@ -151,8 +154,12 @@ data class FirPsiDiagnosticWithParameters4<A, B, C, D>(
 
 // ------------------------------ light tree diagnostics ------------------------------
 
-interface FirLightDiagnostic {
+interface FirLightDiagnostic : DiagnosticMarker {
     val element: FirLightSourceElement
+
+    @Deprecated("Should not be called", level = DeprecationLevel.HIDDEN)
+    override val psiElement: PsiElement
+        get() = error("psiElement should not be called on FirLightDiagnostic")
 }
 
 data class FirLightSimpleDiagnostic(
