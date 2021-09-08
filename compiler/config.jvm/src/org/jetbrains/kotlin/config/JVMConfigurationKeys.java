@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.config;
 
-import org.jetbrains.kotlin.load.java.JavaClassesTracker;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.Module;
 
@@ -73,9 +72,6 @@ public class JVMConfigurationKeys {
     
     public static final CompilerConfigurationKey<IncrementalCompilationComponents> INCREMENTAL_COMPILATION_COMPONENTS =
             CompilerConfigurationKey.create("incremental cache provider");
-
-    public static final CompilerConfigurationKey<JavaClassesTracker> JAVA_CLASSES_TRACKER =
-            CompilerConfigurationKey.create("Java classes tracker");
 
     public static final CompilerConfigurationKey<File> MODULE_XML_FILE =
             CompilerConfigurationKey.create("path to module.xml");
