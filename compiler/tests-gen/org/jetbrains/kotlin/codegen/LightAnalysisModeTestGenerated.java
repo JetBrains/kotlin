@@ -24370,6 +24370,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/primitiveTypes/kt46864_long.kt");
         }
 
+        @TestMetadata("kt48659_identityEqualsWithCastToAny.kt")
+        public void testKt48659_identityEqualsWithCastToAny() throws Exception {
+            runTest("compiler/testData/codegen/box/primitiveTypes/kt48659_identityEqualsWithCastToAny.kt");
+        }
+
         @TestMetadata("kt518.kt")
         public void testKt518() throws Exception {
             runTest("compiler/testData/codegen/box/primitiveTypes/kt518.kt");
