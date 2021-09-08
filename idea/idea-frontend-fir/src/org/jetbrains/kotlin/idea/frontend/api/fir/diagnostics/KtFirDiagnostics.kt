@@ -2777,6 +2777,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RepeatableAnnotationHasNestedClassNamedContainerWarning::class
     }
 
+    abstract class SuspensionPointInsideCriticalSection : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = SuspensionPointInsideCriticalSection::class
+        abstract val function: KtCallableSymbol
+    }
+
     abstract class InapplicableJvmField : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = InapplicableJvmField::class
         abstract val message: String

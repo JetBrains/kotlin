@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJvmOverloadsOnConstru
 import org.jetbrains.kotlin.config.LanguageFeature.RepeatableAnnotationContainerConstraints
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -104,6 +105,9 @@ object FirJvmErrors {
     val REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION by deprecationError4<KtAnnotationEntry, ClassId, String, ClassId, String>(RepeatableAnnotationContainerConstraints)
     val REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET by deprecationError2<KtAnnotationEntry, ClassId, ClassId>(RepeatableAnnotationContainerConstraints)
     val REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER by deprecationError0<KtAnnotationEntry>(RepeatableAnnotationContainerConstraints)
+
+    // Suspension Point
+    val SUSPENSION_POINT_INSIDE_CRITICAL_SECTION by error1<PsiElement, FirCallableSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
 
     // Misc
     val INAPPLICABLE_JVM_FIELD by error1<KtAnnotationEntry, String>()

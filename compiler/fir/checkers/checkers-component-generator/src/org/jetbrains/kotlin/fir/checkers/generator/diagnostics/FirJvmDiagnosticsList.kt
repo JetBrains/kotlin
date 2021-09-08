@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageFeature.*
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -147,6 +148,12 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER by deprecationError<KtAnnotationEntry>(
             RepeatableAnnotationContainerConstraints
         )
+    }
+
+    val SUSPENSION_POINT by object : DiagnosticGroup("Suspension Point") {
+        val SUSPENSION_POINT_INSIDE_CRITICAL_SECTION by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<FirCallableSymbol<*>>("function")
+        }
     }
 
     val MISC by object : DiagnosticGroup("Misc") {

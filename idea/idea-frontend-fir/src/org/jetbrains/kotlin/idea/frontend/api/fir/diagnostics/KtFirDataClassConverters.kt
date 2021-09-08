@@ -3990,6 +3990,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.SUSPENSION_POINT_INSIDE_CRITICAL_SECTION) { firDiagnostic ->
+        SuspensionPointInsideCriticalSectionImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a.fir),
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.INAPPLICABLE_JVM_FIELD) { firDiagnostic ->
         InapplicableJvmFieldImpl(
             firDiagnostic.a,

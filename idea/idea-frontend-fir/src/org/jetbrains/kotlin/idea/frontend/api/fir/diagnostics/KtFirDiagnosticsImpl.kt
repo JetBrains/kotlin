@@ -4515,6 +4515,14 @@ internal class RepeatableAnnotationHasNestedClassNamedContainerWarningImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class SuspensionPointInsideCriticalSectionImpl(
+    override val function: KtCallableSymbol,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.SuspensionPointInsideCriticalSection(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class InapplicableJvmFieldImpl(
     override val message: String,
     firDiagnostic: FirPsiDiagnostic,
