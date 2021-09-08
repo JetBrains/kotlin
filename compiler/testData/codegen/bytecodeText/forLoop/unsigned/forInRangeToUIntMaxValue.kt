@@ -32,8 +32,8 @@ fun f(a: UInt): Int {
 // 0 INVOKE\w+ kotlin/UInt.(un)?box-impl
 
 // JVM_IR_TEMPLATES
-// 9 ILOAD
-// 6 ISTORE
+// 7 ILOAD
+// 4 ISTORE
 // 0 IADD
 // 0 ISUB
 // 2 IINC

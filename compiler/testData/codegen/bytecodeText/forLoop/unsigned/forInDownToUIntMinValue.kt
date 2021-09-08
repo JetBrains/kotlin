@@ -33,8 +33,8 @@ fun f(a: UInt): Int {
 
 
 // JVM_IR_TEMPLATES
-// 8 ILOAD
-// 6 ISTORE
+// 6 ILOAD
+// 4 ISTORE
 // 0 IADD
 // 0 ISUB
 // 2 IINC

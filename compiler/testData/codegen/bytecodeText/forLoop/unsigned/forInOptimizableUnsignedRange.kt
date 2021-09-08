@@ -70,8 +70,8 @@ fun testULongDownTo(a: ULong, b: ULong): Int {
 
 
 // JVM_IR_TEMPLATES
-// 40 ILOAD
-// 27 ISTORE
+// 34 ILOAD
+// 21 ISTORE
 // 6 IADD
 // 0 ISUB
 // 3 IINC
