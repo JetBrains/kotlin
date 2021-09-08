@@ -42,6 +42,16 @@ fun foldWasmInstructions(prev: WasmInstr?, next: WasmInstr): List<WasmInstr>? {
     if (next.operator == WasmOp.UNREACHABLE && prev.operator in listOf(WasmOp.UNREACHABLE, WasmOp.RETURN))
         return listOf(prev)
 
+    if (next.operator == WasmOp.DROP) {
+        // simple pure instruction + drop -> nothing
+        if (prev.operator == WasmOp.GET_UNIT || prev.operator == WasmOp.REF_NULL)
+            return listOf()
+
+        // return + drop -> return
+        if (prev.operator == WasmOp.RETURN)
+            return listOf(prev)
+    }
+
     return null
 }
 

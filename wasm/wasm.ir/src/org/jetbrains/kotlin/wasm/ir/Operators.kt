@@ -367,6 +367,9 @@ enum class WasmOp(
     REF_CAST("ref.cast", 0xFB_41),
 
     BR_ON_CAST("br_on_cast", 0xFB_42, listOf(LABEL_IDX)),
+
+    // Pseudo-instruction, just alias for a normal call. It's used to easily spot get_unit on the wasm level.
+    GET_UNIT("call", 0x10, FUNC_IDX)
     ;
 
     constructor(mnemonic: String, opcode: Int, vararg immediates: WasmImmediateKind) : this(mnemonic, opcode, immediates.toList())
