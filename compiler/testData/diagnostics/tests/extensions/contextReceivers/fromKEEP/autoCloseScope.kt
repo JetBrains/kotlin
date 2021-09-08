@@ -17,7 +17,7 @@ fun File.open(): InputStream = TODO()
 fun withAutoClose(block: context(AutoCloseScope) () -> Unit) {
     val scope = AutoCloseScopeImpl() // Not shown here
     try {
-        with(scope) { block() }
+        with(scope) { block(<!NO_VALUE_FOR_PARAMETER!>)<!> }
     } finally {
         scope.close()
     }

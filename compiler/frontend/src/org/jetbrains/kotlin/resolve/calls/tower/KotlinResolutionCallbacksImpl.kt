@@ -106,6 +106,7 @@ class KotlinResolutionCallbacksImpl(
         lambdaArgument: LambdaKotlinCallArgument,
         isSuspend: Boolean,
         receiverType: UnwrappedType?,
+        contextReceiversTypes: List<UnwrappedType>,
         parameters: List<UnwrappedType>,
         expectedReturnType: UnwrappedType?,
         annotations: Annotations,
@@ -170,10 +171,12 @@ class KotlinResolutionCallbacksImpl(
         val refinedReceiverType = receiverType?.let {
             @OptIn(TypeRefinement::class) callComponents.kotlinTypeChecker.kotlinTypeRefiner.refineType(it)
         }
+        val refinedContextReceiverTypes = contextReceiversTypes.map {
+            @OptIn(TypeRefinement::class) callComponents.kotlinTypeChecker.kotlinTypeRefiner.refineType(it)
+        }
 
-        // TODO: Context receivers?
         val expectedType = createFunctionType(
-            builtIns, annotations, refinedReceiverType, emptyList(), parameters, null,
+            builtIns, annotations, refinedReceiverType, refinedContextReceiverTypes, parameters, null,
             lambdaInfo.expectedType, isSuspend
         )
 

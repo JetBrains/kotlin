@@ -73,6 +73,8 @@ interface FunctionExpression : LambdaKotlinCallArgument {
     // null means that there function can not have receiver
     val receiverType: UnwrappedType?
 
+    val contextReceiversTypes: Array<UnwrappedType?>
+
     // null means that return type is not declared, for fun(){ ... } returnType == Unit
     val returnType: UnwrappedType?
 }
