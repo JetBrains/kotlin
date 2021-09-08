@@ -205,7 +205,6 @@ private class CirTreeSerializationVisitor(
                 val fullClassName = typeAliasContext.currentPath.toString()
                 cirClassifier.serializeClass(typeAliasContext, fullClassName, emptyList(), emptyList(), emptyList(), emptyList())
             }
-            else -> error("Unexpected CIR classifier: ${cirClassifier::class.java}, $cirClassifier")
         }
     }
 

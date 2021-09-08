@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.commonizer.utils
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.InlineSourcesCommonizationTestDsl
 import org.jetbrains.kotlin.commonizer.tree.CirTreeModule
+import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.SerializedMetadata
 
@@ -83,3 +84,13 @@ fun InlineSourceBuilder.createMetadata(builder: InlineSourceBuilder.ModuleBuilde
     return createMetadata(createModule(builder))
 }
 
+@InlineSourceBuilder.ModuleBuilderDsl
+fun InlineSourceBuilder.createCirTreeRoot(builder: InlineSourceBuilder.ModuleBuilder.() -> Unit): CirTreeRoot {
+    return CirTreeRoot(listOf(createCirTree(builder)))
+}
+
+
+@InlineSourceBuilder.ModuleBuilderDsl
+fun InlineSourceBuilder.createCirTreeRootFromSourceCode(@Language("kotlin") sourceCode: String): CirTreeRoot {
+    return CirTreeRoot(listOf(createCirTreeFromSourceCode(sourceCode)))
+}
