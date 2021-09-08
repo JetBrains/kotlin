@@ -13,6 +13,7 @@ dependencies {
     compile(project(":compiler:resolution"))
     compile(project(":compiler:psi"))
     compile(project(":compiler:frontend.common"))
+    compile(project(":compiler:frontend.common-psi"))
     compile(project(":kotlin-script-runtime"))
     compile(commonDep("io.javaslang","javaslang"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }

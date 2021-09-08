@@ -182,6 +182,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:psi",
     ":compiler:frontend",
     ":compiler:frontend.common",
+    ":compiler:frontend.common-psi",
     ":compiler:frontend.java",
     ":compiler:frontend:cfg",
     ":compiler:cli-common",
