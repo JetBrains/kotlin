@@ -6,19 +6,20 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
-import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.FirIdeResolveStateService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.annotations.InternalForInline
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtLambdaExpression
-import kotlin.reflect.KClass
 
 /**
  * Returns [FirModuleResolveState] which corresponds to containing module
@@ -48,7 +49,7 @@ inline fun <R> KtDeclaration.withFirDeclaration(
     phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
     action: (FirDeclaration) -> R
 ): R {
-    val firDeclaration = if (containingKtFile.isCompiled) {
+    val firDeclaration = if (getKtModule(project) !is KtSourceModule) {
         resolveState.findSourceFirCompiledDeclaration(this)
     } else {
         resolveState.findSourceFirDeclaration(this)

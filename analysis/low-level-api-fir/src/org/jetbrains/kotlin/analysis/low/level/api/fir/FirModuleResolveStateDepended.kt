@@ -91,5 +91,5 @@ internal class FirModuleResolveStateDepended(
 
     @OptIn(InternalForInline::class)
     override fun findSourceFirCompiledDeclaration(ktDeclaration: KtDeclaration) =
-        originalState.findSourceFirDeclaration(ktDeclaration)
+        originalState.findSourceFirCompiledDeclaration(ktDeclaration)
 }
