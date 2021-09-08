@@ -16,13 +16,8 @@ import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE
 
-interface FirDiagnosticPositioningStrategy<E : FirSourceElement> {
-    fun markFirDiagnostic(element: E, diagnostic: FirDiagnostic): List<TextRange>
-}
-
-open class LightTreePositioningStrategy : FirDiagnosticPositioningStrategy<FirSourceElement> {
-
-    override fun markFirDiagnostic(element: FirSourceElement, diagnostic: FirDiagnostic): List<TextRange> {
+open class LightTreePositioningStrategy {
+    open fun markFirDiagnostic(element: FirSourceElement, diagnostic: FirDiagnostic): List<TextRange> {
         return mark(element.lighterASTNode, element.startOffset, element.endOffset, element.treeStructure)
     }
 

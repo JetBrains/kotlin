@@ -284,7 +284,7 @@ object SourceElementPositioningStrategies {
 
     val ACTUAL_DECLARATION_NAME = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.ACTUAL_DECLARATION_NAME,
-        PositioningStrategies.DEFAULT // TODO
+        FirPsiPositioningStrategies.ACTUAL_DECLARATION_NAME
     )
 
     val LABEL = SourceElementPositioningStrategy(
