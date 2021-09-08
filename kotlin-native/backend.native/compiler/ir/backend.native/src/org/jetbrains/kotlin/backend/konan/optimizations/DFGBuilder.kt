@@ -5,18 +5,21 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
-import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.ir.allParameters
 import org.jetbrains.kotlin.backend.common.ir.ir2stringWhole
 import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
-import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
-import org.jetbrains.kotlin.backend.konan.llvm.localHash
+import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.getInlinedClassNative
+import org.jetbrains.kotlin.backend.konan.ir.actualCallee
+import org.jetbrains.kotlin.backend.konan.ir.isAny
+import org.jetbrains.kotlin.backend.konan.ir.isObjCObjectType
+import org.jetbrains.kotlin.backend.konan.ir.isVirtualCall
+import org.jetbrains.kotlin.backend.konan.isNonGeneratedAnnotation
+import org.jetbrains.kotlin.backend.konan.logMultiple
+import org.jetbrains.kotlin.backend.konan.lower.erasedUpperBound
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -28,9 +31,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.getArguments
-import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -566,27 +566,6 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             )
         }
 
-        private fun IrType.erasure(): IrType {
-            if (this !is IrSimpleType) return this
-
-            val classifier = this.classifier
-            return when (classifier) {
-                is IrClassSymbol -> this
-                is IrTypeParameterSymbol -> {
-                    val upperBound = classifier.owner.superTypes.singleOrNull() ?:
-                    TODO("${classifier.descriptor} : ${classifier.descriptor.upperBounds}")
-
-                    if (this.hasQuestionMark) {
-                        // `T?`
-                        upperBound.erasure().makeNullable()
-                    } else {
-                        upperBound.erasure()
-                    }
-                }
-                else -> TODO(classifier.toString())
-            }
-        }
-
         private fun expressionToEdge(expression: IrExpression) = expressionToScopedEdge(expression).value
 
         private fun expressionToScopedEdge(expression: IrExpression) =
@@ -595,7 +574,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                         Scoped(
                                 DataFlowIR.Edge(
                                         it.value,
-                                        symbolTable.mapClassReferenceType(expression.typeOperand.erasure().getClass()!!)
+                                        symbolTable.mapClassReferenceType(expression.typeOperand.erasedUpperBound)
                                 ), it.scope)
                     }
                 else {

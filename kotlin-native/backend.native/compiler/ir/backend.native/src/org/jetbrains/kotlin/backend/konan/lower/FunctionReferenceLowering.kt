@@ -111,7 +111,7 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                         return super.visitTypeOperator(expression)
                     }
                     reference.transformChildrenVoid()
-                    return transformFunctionReference(reference, expression.typeOperand)
+                    return transformFunctionReference(reference, expression.typeOperand.erasure())
                 }
                 return super.visitTypeOperator(expression)
             }
@@ -377,8 +377,7 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                 val adaptedParameter = adaptedParameters[index]
                 if (originalParameter.defaultValue != null) return false
                 if (originalParameter.isVararg) {
-                    if (originalParameter.varargElementType!!.erasureForTypeOperation()
-                            == adaptedParameter.type.erasureForTypeOperation())
+                    if (originalParameter.varargElementType!!.erasure() == adaptedParameter.type.erasure())
                         return true
                 }
                 ++index

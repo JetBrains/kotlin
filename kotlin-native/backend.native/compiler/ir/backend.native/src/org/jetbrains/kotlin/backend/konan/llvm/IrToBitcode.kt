@@ -1519,7 +1519,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun evaluateCast(value: IrTypeOperatorCall): LLVMValueRef {
         context.log{"evaluateCast                   : ${ir2string(value)}"}
-        val dstClass = value.typeOperand.getClass()!!
+        val dstClass = value.typeOperand.getClass()
+                ?: error("No class for ${value.typeOperand.render()} from \n${functionGenerationContext.irFunction?.render()}")
 
         val srcArg = evaluateExpression(value.argument)
         assert(srcArg.type == codegen.kObjHeaderPtr)

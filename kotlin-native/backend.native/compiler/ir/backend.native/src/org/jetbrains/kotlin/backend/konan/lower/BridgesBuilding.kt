@@ -211,7 +211,7 @@ private fun IrBlockBodyBuilder.buildTypeSafeBarrier(function: IrFunction,
         if (!typeSafeBarrierDescription.checkParameter(i))
             continue
 
-        val type = originalValueParameters[i].type.erasureForTypeOperation()
+        val type = originalValueParameters[i].type.erasure()
         // Note: erasing to single type is not entirely correct if type parameter has multiple upper bounds.
         // In this case the compiler could generate multiple type checks, one for each upper bound.
         // But let's keep it simple here for now; JVM backend doesn't do this anyway.

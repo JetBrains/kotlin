@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.ir.getSuperInterfaces
 import org.jetbrains.kotlin.backend.konan.llvm.isVoidAsReturnType
 import org.jetbrains.kotlin.backend.konan.llvm.longName
+import org.jetbrains.kotlin.backend.konan.lower.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
@@ -150,20 +150,13 @@ private fun IrFunction.bridgeDirectionToAt(overriddenFunction: IrFunction, index
     return if (otherKind == kind)
         BridgeDirection.NONE
     else when (kind) {
-        TypeKind.VOID, TypeKind.REFERENCE -> BridgeDirection(irClass?.erasure(), BridgeDirectionKind.UNBOX)
+        TypeKind.VOID, TypeKind.REFERENCE -> BridgeDirection(irClass?.erasedUpperBound, BridgeDirectionKind.UNBOX)
         TypeKind.VALUE_TYPE -> BridgeDirection(
-                irClass?.erasure().takeIf { otherKind == TypeKind.VOID } /* Otherwise erase to [Any?] */,
+                irClass?.erasedUpperBound.takeIf { otherKind == TypeKind.VOID } /* Otherwise erase to [Any?] */,
                 BridgeDirectionKind.BOX)
         TypeKind.ABSENT -> error("TypeKind.ABSENT should be on both sides")
     }
 }
-
-private tailrec fun IrType.erasure(): IrClass =
-        when (val classifier = classifierOrFail) {
-            is IrClassSymbol -> classifier.owner
-            is IrTypeParameterSymbol -> classifier.owner.superTypes.first().erasure()
-            else -> error(classifier)
-        }
 
 internal class BridgeDirections(private val array: Array<BridgeDirection>) {
     constructor(irFunction: IrSimpleFunction, overriddenFunction: IrSimpleFunction)
