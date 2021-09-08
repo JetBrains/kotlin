@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmNames.JVM_NAME_SHORT
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -140,7 +141,7 @@ open class KtLightClassForFacadeImpl constructor(
 
     override fun setName(name: String): PsiElement? {
         for (file in files) {
-            val jvmNameEntry = JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(file, JvmFileClassUtil.JVM_NAME_SHORT)
+            val jvmNameEntry = JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(file, JVM_NAME_SHORT)
 
             if (PackagePartClassUtils.getFilePartShortName(file.name) == name) {
                 jvmNameEntry?.delete()
@@ -156,7 +157,7 @@ open class KtLightClassForFacadeImpl constructor(
                 }
 
                 val psiFactory = KtPsiFactory(this)
-                val annotationText = "${JvmFileClassUtil.JVM_NAME_SHORT}(\"$name\")"
+                val annotationText = "${JVM_NAME_SHORT}(\"$name\")"
                 val newFileAnnotationList = psiFactory.createFileAnnotationListWithAnnotation(annotationText)
                 val annotationList = file.fileAnnotationList
                 if (annotationList != null) {

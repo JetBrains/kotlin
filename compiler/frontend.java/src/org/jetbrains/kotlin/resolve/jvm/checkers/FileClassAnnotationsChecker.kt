@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.name.JvmNames.JVM_MULTIFILE_CLASS
+import org.jetbrains.kotlin.name.JvmNames.JVM_NAME
+import org.jetbrains.kotlin.name.JvmNames.JVM_PACKAGE_NAME
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
@@ -35,7 +37,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 object FileClassAnnotationsChecker : AdditionalAnnotationChecker {
     // JvmName & JvmMultifileClass annotations are applicable to multi-file class parts regardless of their retention.
-    private val alwaysApplicable = hashSetOf(JvmFileClassUtil.JVM_NAME, JvmFileClassUtil.JVM_MULTIFILE_CLASS)
+    private val alwaysApplicable = hashSetOf(JVM_NAME, JVM_MULTIFILE_CLASS)
 
     override fun checkEntries(
         entries: List<KtAnnotationEntry>,
@@ -55,7 +57,7 @@ object FileClassAnnotationsChecker : AdditionalAnnotationChecker {
             fileAnnotationsToCheck.add(Pair(entry, classDescriptor))
         }
 
-        val isMultifileClass = fileAnnotationsToCheck.any { it.second.fqNameSafe == JvmFileClassUtil.JVM_MULTIFILE_CLASS }
+        val isMultifileClass = fileAnnotationsToCheck.any { it.second.fqNameSafe == JVM_MULTIFILE_CLASS }
 
         if (isMultifileClass) {
             for ((entry, classDescriptor) in fileAnnotationsToCheck) {
@@ -67,7 +69,7 @@ object FileClassAnnotationsChecker : AdditionalAnnotationChecker {
             }
         } else {
             for ((entry, classDescriptor) in fileAnnotationsToCheck) {
-                if (classDescriptor.fqNameSafe != JvmFileClassUtil.JVM_PACKAGE_NAME) continue
+                if (classDescriptor.fqNameSafe != JVM_PACKAGE_NAME) continue
 
                 val argumentExpression = entry.valueArguments.firstOrNull()?.getArgumentExpression() ?: continue
                 val stringTemplateEntries = (argumentExpression as? KtStringTemplateExpression)?.entries ?: continue

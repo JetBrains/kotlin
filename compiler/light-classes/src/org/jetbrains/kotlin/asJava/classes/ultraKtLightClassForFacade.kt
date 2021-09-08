@@ -12,12 +12,12 @@ import com.intellij.psi.util.CachedValue
 import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.elements.*
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.JVM_MULTIFILE_CLASS_SHORT
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.findAnnotationEntryOnFileNoResolve
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmNames.JVM_MULTIFILE_CLASS
+import org.jetbrains.kotlin.name.JvmNames.JVM_MULTIFILE_CLASS_SHORT
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
@@ -127,7 +127,7 @@ class KtUltraLightClassForFacade(
 
     private val multiFileClass: Boolean by lazyPub {
         filesWithSupports.any {
-            it.second.findAnnotation(it.first, JvmFileClassUtil.JVM_MULTIFILE_CLASS) != null
+            it.second.findAnnotation(it.first, JVM_MULTIFILE_CLASS) != null
         }
     }
 

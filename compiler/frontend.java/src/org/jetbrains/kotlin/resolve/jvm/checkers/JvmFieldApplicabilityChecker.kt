@@ -32,28 +32,13 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
-import org.jetbrains.kotlin.resolve.jvm.checkers.JvmFieldApplicabilityChecker.Problem.*
+import org.jetbrains.kotlin.jvm.JvmFieldApplicabilityProblem.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.isInlineClassThatRequiresMangling
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 class JvmFieldApplicabilityChecker : DeclarationChecker {
-
-    internal enum class Problem(val errorMessage: String) {
-        NOT_FINAL("JvmField can only be applied to final property"),
-        PRIVATE("JvmField has no effect on a private property"),
-        CUSTOM_ACCESSOR("JvmField cannot be applied to a property with a custom accessor"),
-        OVERRIDES("JvmField cannot be applied to a property that overrides some other property"),
-        LATEINIT("JvmField cannot be applied to lateinit property"),
-        CONST("JvmField cannot be applied to const property"),
-        INSIDE_COMPANION_OF_INTERFACE("JvmField cannot be applied to a property defined in companion object of interface"),
-        NOT_PUBLIC_VAL_WITH_JVMFIELD("JvmField could be applied only if all interface companion properties are 'public final val' with '@JvmField' annotation"),
-        TOP_LEVEL_PROPERTY_OF_MULTIFILE_FACADE("JvmField cannot be applied to top level property of a file annotated with ${JvmFileClassUtil.JVM_MULTIFILE_CLASS_SHORT}"),
-        DELEGATE("JvmField cannot be applied to delegated property"),
-        RETURN_TYPE_IS_INLINE_CLASS("JvmField cannot be applied to a property of an inline class type")
-    }
-
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is PropertyDescriptor || (declaration !is KtProperty && declaration !is KtParameter)) return
 
