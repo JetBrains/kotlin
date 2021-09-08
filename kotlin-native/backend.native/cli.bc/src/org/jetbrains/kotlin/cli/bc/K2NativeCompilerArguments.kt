@@ -289,7 +289,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     var clangOptions: Array<String>? = null
 
     @Argument(value="-Xallocator", valueDescription = "std | mimalloc", description = "Allocator used in runtime")
-    var allocator: String = "std"
+    var allocator: String? = null
 
     @Argument(value = "-Xmetadata-klib", description = "Produce a klib that only contains the declarations metadata")
     var metadataKlib: Boolean = false

@@ -205,7 +205,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 })
                 put(STATIC_FRAMEWORK, selectFrameworkType(configuration, arguments, outputKind))
                 put(OVERRIDE_CLANG_OPTIONS, arguments.clangOptions.toNonNullList())
-                put(ALLOCATION_MODE, arguments.allocator)
 
                 put(EXPORT_KDOC, arguments.exportKDoc)
 
@@ -338,6 +337,20 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     else -> {
                         configuration.report(ERROR, "Expected 'enable' or 'disable' for lazy property initialization")
                         false
+                    }
+                })
+                put(ALLOCATION_MODE, when (arguments.allocator) {
+                    null -> {
+                        when (memoryModel) {
+                            MemoryModel.EXPERIMENTAL -> "mimalloc"
+                            else -> "std"
+                        }
+                    }
+                    "std" -> arguments.allocator!!
+                    "mimalloc" -> arguments.allocator!!
+                    else -> {
+                        configuration.report(ERROR, "Expected 'std' or 'mimalloc' for allocator")
+                        "std"
                     }
                 })
                 put(WORKER_EXCEPTION_HANDLING, when (arguments.workerExceptionHandling) {
