@@ -10,7 +10,15 @@ class WasmIrExpressionBuilder(
 ) : WasmExpressionBuilder() {
 
     override fun buildInstr(op: WasmOp, vararg immediates: WasmImmediate) {
-        expression.add(WasmInstr(op, immediates.toList()))
+        val nextInstr = WasmInstr(op, immediates.toList())
+        val foldedInstrs = foldWasmInstructions(expression.lastOrNull(), nextInstr)
+
+        if (foldedInstrs == null) {
+            expression += nextInstr
+        } else {
+            expression.removeLastOrNull()
+            expression += foldedInstrs
+        }
     }
 
 
@@ -19,9 +27,6 @@ class WasmIrExpressionBuilder(
             assert(value >= 0) { "end without matching block" }
             field = value
         }
-
-    override val lastInstr: WasmOp?
-        get() = expression.lastOrNull()?.operator
 }
 
 inline fun buildWasmExpression(body: WasmExpressionBuilder.() -> Unit): MutableList<WasmInstr> {
