@@ -45,9 +45,26 @@ fun test() {
     with(C()) {
         with(R()) {
             f1(lf1)
+            f1 { _ ->
+                r
+                c
+            }
+
             f2(lf2)
+            f2 { _ ->
+                c
+            }
+
             f3(lf3)
+            f3 {
+                r
+                c
+            }
+
             f4(lf4)
+            f4 {
+                c
+            }
         }
     }
 }
