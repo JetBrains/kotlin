@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.idea.fir.isInvokeFunction
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirFile
 import org.jetbrains.kotlin.idea.frontend.api.assertIsValidAndAccessible
@@ -102,6 +100,11 @@ internal class KtFirImportOptimizer(
                 super.visitFunctionCall(functionCall)
             }
 
+            override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall) {
+                processImplicitFunctionCall(implicitInvokeCall)
+                super.visitImplicitInvokeCall(implicitInvokeCall)
+            }
+
             override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
                 processPropertyAccessExpression(propertyAccessExpression)
                 super.visitPropertyAccessExpression(propertyAccessExpression)
@@ -128,13 +131,13 @@ internal class KtFirImportOptimizer(
                 val functionReference = functionCall.toResolvedCallableReference() ?: return
                 val functionSymbol = functionReference.toResolvedCallableSymbol() ?: return
 
-                val referencedByName = if (functionCall.isInvokeOperatorImplicitCall) {
-                    OperatorNameConventions.INVOKE
-                } else {
-                    functionReference.name
-                }
+                saveCallable(functionSymbol, functionReference.name)
+            }
 
-                saveCallable(functionSymbol, referencedByName)
+            private fun processImplicitFunctionCall(implicitInvokeCall: FirImplicitInvokeCall) {
+                val functionSymbol = implicitInvokeCall.toResolvedCallableSymbol() ?: return
+
+                saveCallable(functionSymbol, OperatorNameConventions.INVOKE)
             }
 
             private fun processPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
@@ -170,7 +173,7 @@ internal class KtFirImportOptimizer(
                 val mostOuterTypeQualifier = generateSequence(qualifier) { it.outerTypeQualifier }.last()
                 if (mostOuterTypeQualifier.isQualified) return
 
-                 saveType(mostOuterTypeQualifier)
+                saveType(mostOuterTypeQualifier)
             }
 
             private fun saveType(qualifier: TypeQualifier) {
@@ -197,32 +200,6 @@ internal class KtFirImportOptimizer(
 
 private val FirQualifiedAccessExpression.isFullyQualified: Boolean
     get() = explicitReceiver is FirResolvedQualifier
-
-/**
- * A hacky way to distinguish `foo()` call from `foo.invoke()` call.
- *
- * Need to be removed when the compiler is fixed to use `FirImplicitInvokeCall` in all appropriate situations.
- */
-private val FirFunctionCall.isInvokeOperatorImplicitCall: Boolean
-    get() {
-        val functionSymbol = toResolvedCallableSymbol() ?: return false
-
-        if (!functionSymbol.isInvokeFunction()) return false
-        if (!functionSymbol.isOperator) return false
-
-        val receiver = explicitReceiver ?: return false
-
-        val callPsi = when (val psi = psi) {
-            is KtQualifiedExpression -> psi.selectorExpression as? KtCallExpression
-            is KtCallExpression -> psi
-            else -> null
-        } ?: return false
-
-        // with invoke operator, explicit receiver does not have a source for some reason
-        val receiverPsi = receiver.psi ?: return true
-
-        return callPsi.calleeExpression == receiverPsi
-    }
 
 /**
  * Helper abstraction to navigate through qualified FIR elements - we have to match [ClassId] and PSI qualifier pair

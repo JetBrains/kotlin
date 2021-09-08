@@ -24,7 +24,7 @@ fun FirFunctionCall.isImplicitFunctionCall(): Boolean {
     return calleeReference.getCandidateSymbols().any(FirBasedSymbol<*>::isInvokeFunction)
 }
 
-fun FirBasedSymbol<*>.isInvokeFunction() =
+private fun FirBasedSymbol<*>.isInvokeFunction() =
     (this as? FirNamedFunctionSymbol)?.fir?.name == OperatorNameConventions.INVOKE
 
 fun FirFunctionCall.getCalleeSymbol(): FirBasedSymbol<*>? =

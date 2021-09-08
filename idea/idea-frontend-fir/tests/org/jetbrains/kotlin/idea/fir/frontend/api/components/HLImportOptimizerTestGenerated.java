@@ -37,6 +37,12 @@ public class HLImportOptimizerTestGenerated extends AbstractHLImportOptimizerTes
     }
 
     @Test
+    @TestMetadata("unusedInvokeOperatorImport.kt")
+    public void testUnusedInvokeOperatorImport() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/importOptimizer/unusedInvokeOperatorImport.kt");
+    }
+
+    @Test
     @TestMetadata("usedAliasedTypeImport.kt")
     public void testUsedAliasedTypeImport() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/importOptimizer/usedAliasedTypeImport.kt");
@@ -46,5 +52,23 @@ public class HLImportOptimizerTestGenerated extends AbstractHLImportOptimizerTes
     @TestMetadata("usedFunctionImport.kt")
     public void testUsedFunctionImport() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/importOptimizer/usedFunctionImport.kt");
+    }
+
+    @Test
+    @TestMetadata("usedInvokeOperatorAliasedImport.kt")
+    public void testUsedInvokeOperatorAliasedImport() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/importOptimizer/usedInvokeOperatorAliasedImport.kt");
+    }
+
+    @Test
+    @TestMetadata("usedInvokeOperatorExplicitImport.kt")
+    public void testUsedInvokeOperatorExplicitImport() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/importOptimizer/usedInvokeOperatorExplicitImport.kt");
+    }
+
+    @Test
+    @TestMetadata("usedInvokeOperatorImport.kt")
+    public void testUsedInvokeOperatorImport() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/importOptimizer/usedInvokeOperatorImport.kt");
     }
 }
