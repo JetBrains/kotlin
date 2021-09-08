@@ -172,17 +172,6 @@ class BodyResolveContext(
         }
     }
 
-    var qualifierPartIndexFromEnd: Int = -1
-
-    inline fun <R> withIncrementedQualifierPartIndex(l: () -> R): R {
-        qualifierPartIndexFromEnd++
-        return try {
-            l()
-        } finally {
-            qualifierPartIndexFromEnd--
-        }
-    }
-
     @PrivateForInline
     fun replaceTowerDataContext(newContext: FirTowerDataContext) {
         towerDataContextsForClassParts.currentContext = newContext
