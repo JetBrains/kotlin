@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
@@ -173,6 +174,7 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
 
     override fun visitClass(declaration: IrClass) {
         if (declaration.isAnnotationClass) return
+        if (declaration.isExternal) return
         val symbol = declaration.symbol
 
 

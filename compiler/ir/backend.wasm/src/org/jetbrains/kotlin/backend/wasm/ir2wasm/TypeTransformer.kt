@@ -90,7 +90,7 @@ class WasmTypeTransformer(
                 val klass = this.getClass()
                 val ic = context.backendContext.inlineClassesUtils.getInlinedClass(this)
 
-                if (klass != null && klass.hasWasmForeignAnnotation()) {
+                if (klass != null && (klass.hasWasmForeignAnnotation() || klass.isExternal)) {
                     WasmExternRef
                 } else if (ic != null) {
                     context.backendContext.inlineClassesUtils.getInlineClassUnderlyingType(ic).toWasmValueType()
