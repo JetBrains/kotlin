@@ -25,6 +25,8 @@ private fun ByteArray.toHex(): String = joinToString(separator = "") { eachByte 
 
 private fun createFileCacheId(fileName: String): String = md5.digest(fileName.encodeToByteArray()).toHex()
 
+class ICCache(val dataProvider: PersistentCacheProvider, val dataConsumer: PersistentCacheConsumer, val serializedIcData: SerializedIcData)
+
 interface PersistentCacheProvider {
     fun fileFingerPrint(path: String): Hash
 
