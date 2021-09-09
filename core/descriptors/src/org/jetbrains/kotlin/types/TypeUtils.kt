@@ -368,13 +368,11 @@ fun FlexibleType.unCapture(): FlexibleType {
     val unCapturedLowerBound = when (val unCaptured = lowerBound.unCapture()) {
         is SimpleType -> unCaptured
         is FlexibleType -> unCaptured.lowerBound
-        else -> lowerBound
     }
 
     val unCapturedUpperBound = when (val unCaptured = upperBound.unCapture()) {
         is SimpleType -> unCaptured
         is FlexibleType -> unCaptured.upperBound
-        else -> upperBound
     }
 
     return FlexibleTypeImpl(unCapturedLowerBound, unCapturedUpperBound)
