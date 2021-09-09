@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
-import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProviderWrapper
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseCheckingPhaseManage
 import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.IdeFirPhaseManager
@@ -232,7 +230,7 @@ internal object FirIdeSessionFactory {
     /**
      * Workaround of SOE for loading classes that loads via parent.
      * It is not observable in compiler but it is in IDE
-     * Remove this when cyclic cache request will be fixed in the compiler provider
+     * TODO: this is probably already unnecessary
      */
     private class KotlinDeserializedJvmSymbolsProviderForIde(
         session: FirSession,
@@ -246,26 +244,7 @@ internal object FirIdeSessionFactory {
         session, moduleDataProvider, kotlinScopeProvider, packagePartProvider, kotlinClassFinder,
         javaClassFinder, javaSymbolProvider
     ) {
-        override fun getClass(
-            classId: ClassId,
-            parentContext: FirDeserializationContext?
-        ): FirRegularClassSymbol? {
-            if (parentContext !== null) {
-                return super.getClass(classId, parentContext)
-            }
-            val computedClass = classCache.getValueIfComputed(classId)
-            if (computedClass != null) {
-                return computedClass
-            }
-
-            var parentClassId = classId
-            while (true) {
-                parentClassId = parentClassId.outerClassId ?: break
-            }
-
-            classCache.getValue(parentClassId, parentContext)
-            return classCache.getValue(classId, parentContext)
-        }
+        override fun shouldLoadParentsFirst(classId: ClassId): Boolean = true
     }
 
     fun createBuiltinsAndCloneableSession(

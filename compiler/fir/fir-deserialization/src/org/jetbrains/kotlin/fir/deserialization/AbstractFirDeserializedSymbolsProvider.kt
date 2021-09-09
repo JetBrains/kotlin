@@ -185,11 +185,25 @@ abstract class AbstractFirDeserializedSymbolsProvider(
         return packagePartsCache.getValue(packageFqName)
     }
 
+    protected open fun shouldLoadParentsFirst(classId: ClassId): Boolean = false
+
     protected open fun getClass(
         classId: ClassId,
         parentContext: FirDeserializationContext? = null
     ): FirRegularClassSymbol? {
+        if (parentContext == null && shouldLoadParentsFirst(classId)) {
+            return getClassAfterLoadingParents(classId)
+        }
         return classCache.getValue(classId, parentContext)
+    }
+
+    private fun getClassAfterLoadingParents(classId: ClassId): FirRegularClassSymbol? {
+        classId.outerClassId?.let { parentClassId ->
+            val alreadyLoaded = classCache.getValueIfComputed(classId)
+            if (alreadyLoaded != null) return alreadyLoaded
+            getClassAfterLoadingParents(parentClassId)
+        }
+        return classCache.getValue(classId, null)
     }
 
     private fun getTypeAlias(
