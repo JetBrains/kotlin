@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.finder
@@ -175,13 +164,11 @@ class JavaElementFinder(
     override fun getPackageFiles(psiPackage: PsiPackage, scope: GlobalSearchScope): Array<PsiFile> =
         kotlinAsJavaSupport.findFilesForPackage(FqName(psiPackage.qualifiedName), scope).toTypedArray()
 
-    override fun getPackageFilesFilter(psiPackage: PsiPackage, scope: GlobalSearchScope): Condition<PsiFile>? {
-        return Condition { input ->
-            if (input !is KtFile) {
-                true
-            } else {
-                psiPackage.qualifiedName == input.packageFqName.asString()
-            }
+    override fun getPackageFilesFilter(psiPackage: PsiPackage, scope: GlobalSearchScope): Condition<PsiFile> = Condition { input ->
+        if (input !is KtFile) {
+            true
+        } else {
+            psiPackage.qualifiedName == input.packageFqName.asString()
         }
     }
 
@@ -190,16 +177,14 @@ class JavaElementFinder(
             EP.getPoint(project).extensions.firstIsInstanceOrNull()
                 ?: error(JavaElementFinder::class.java.simpleName + " is not found for project " + project)
 
-        fun byClasspathComparator(searchScope: GlobalSearchScope): Comparator<PsiElement> {
-            return Comparator { o1, o2 ->
-                val f1 = PsiUtilCore.getVirtualFile(o1)
-                val f2 = PsiUtilCore.getVirtualFile(o2)
-                when {
-                    f1 === f2 -> 0
-                    f1 == null -> -1
-                    f2 == null -> 1
-                    else -> searchScope.compare(f2, f1)
-                }
+        fun byClasspathComparator(searchScope: GlobalSearchScope): Comparator<PsiElement> = Comparator { o1, o2 ->
+            val f1 = PsiUtilCore.getVirtualFile(o1)
+            val f2 = PsiUtilCore.getVirtualFile(o2)
+            when {
+                f1 === f2 -> 0
+                f1 == null -> -1
+                f2 == null -> 1
+                else -> searchScope.compare(f2, f1)
             }
         }
     }
