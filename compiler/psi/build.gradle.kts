@@ -13,7 +13,7 @@ dependencies {
     val compile by configurations
     val compileOnly by configurations
 
-    compile(project(":core:descriptors"))
+    compile(project(":core:compiler.common"))
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend.common"))
     compile(project(":kotlin-script-runtime"))

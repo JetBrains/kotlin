@@ -9,7 +9,6 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.types.checker.findCorrespondingSupertype
 
 class KtContractEffect: KtElementImplStub<KotlinContractEffectStub> {
     constructor(node: ASTNode): super(node)

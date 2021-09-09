@@ -12,8 +12,6 @@ import com.intellij.psi.*
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -661,16 +659,6 @@ fun isTopLevelInFileOrScript(element: PsiElement): Boolean {
         is KtFile -> true
         is KtBlockExpression -> parent.parent is KtScript
         else -> false
-    }
-}
-
-fun KtModifierKeywordToken.toVisibility(): DescriptorVisibility {
-    return when (this) {
-        KtTokens.PUBLIC_KEYWORD -> DescriptorVisibilities.PUBLIC
-        KtTokens.PRIVATE_KEYWORD -> DescriptorVisibilities.PRIVATE
-        KtTokens.PROTECTED_KEYWORD -> DescriptorVisibilities.PROTECTED
-        KtTokens.INTERNAL_KEYWORD -> DescriptorVisibilities.INTERNAL
-        else -> throw IllegalArgumentException("Unknown visibility modifier:$this")
     }
 }
 
