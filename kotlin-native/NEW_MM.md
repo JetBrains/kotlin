@@ -50,7 +50,7 @@ pluginManagement {
 
 ### Switch to the new MM
 
-Add the compilation flag `-Xbinary=memoryModel=experimental` using one of the following options:
+Add the compilation flag `-Xbinary=memoryModel=experimental`. In Gradle, you can alternatively do one of the following:
 
 * In `gradle.properties`:
 ```properties
@@ -152,11 +152,11 @@ We measured performance regressions with a slowdown up to a factor of 5. If you 
 
 Some libraries might not be ready for the new MM and freeze-transparency of `kotlinx.coroutines`, so unexpected `InvalidMutabilityException` or `FreezingException` might appear.
 
-To workaround such cases, we added a `freezing` binary option that disables full (`disabled`) or partial (`explicitOnly`) freeze.
+To workaround such cases, we added a `freezing` binary option that disables freezing fully (`disabled`) or partially (`explicitOnly`).
 The former disables the freezing mechanism at runtime (thus, making it a no-op), while the latter disables automatic freezing of
 [`@SharedImmutable`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/-shared-immutable/) globals, but keeps direct calls to [`freeze`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/freeze.html) fully functional.
 
-To enable this, add the compilation flag `-Xbinary=freezing=disabled` using one of the following options:
+To enable this, add the compilation flag `-Xbinary=freezing=disabled`. In Gradle, you can alternatively do one of the following:
 
 * In `gradle.properties`:
 ```properties
