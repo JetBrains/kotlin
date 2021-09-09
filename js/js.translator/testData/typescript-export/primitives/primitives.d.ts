@@ -2,7 +2,6 @@ declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     namespace foo {
         const _any: any;
-        function _nothing(): never;
         const _throwable: Error;
         const _string: string;
         const _boolean: boolean;
@@ -45,5 +44,6 @@ declare namespace JS_TESTS {
         const _fun_n_boolean_n_int_n_string_n_intarray: (p0: Nullable<boolean>, p1: Nullable<number>, p2: Nullable<string>) => Nullable<Int32Array>;
         const _n_curried_fun: (p0: Nullable<number>) => (p0: Nullable<number>) => (p0: Nullable<number>) => Nullable<number>;
         const _n_higher_order_fun: (p0: (p0: Nullable<number>) => Nullable<string>, p1: (p0: Nullable<string>) => Nullable<number>) => (p0: Nullable<number>) => Nullable<number>;
+        function _nothing(): never;
     }
 }
