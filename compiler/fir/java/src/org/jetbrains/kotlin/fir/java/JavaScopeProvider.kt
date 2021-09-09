@@ -25,9 +25,7 @@ import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.DFS
 
-class JavaScopeProvider(
-    val symbolProvider: JavaSymbolProvider
-) : FirScopeProvider() {
+object JavaScopeProvider : FirScopeProvider() {
     override fun getUseSiteMemberScope(
         klass: FirClass,
         useSiteSession: FirSession,
@@ -74,7 +72,7 @@ class JavaScopeProvider(
         return if (regularClass is FirJavaClass) useSiteSession.declaredMemberScopeWithLazyNestedScope(
             regularClass,
             existingNames = regularClass.existingNestedClassifierNames,
-            symbolProvider = symbolProvider
+            symbolProvider = useSiteSession.symbolProvider
         ) else useSiteSession.declaredMemberScope(regularClass)
     }
 
