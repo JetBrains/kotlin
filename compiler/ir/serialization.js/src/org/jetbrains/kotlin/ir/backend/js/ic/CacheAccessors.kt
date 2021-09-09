@@ -35,6 +35,37 @@ interface PersistentCacheProvider {
     fun inlineHashes(path: String, sigResolver: (Int) -> IdSignature): Map<IdSignature, TransHash>
 
     fun allInlineHashes(sigResolver: (String, Int) -> IdSignature): Map<IdSignature, TransHash>
+
+    fun binaryAst(path: String): ByteArray
+
+    companion object {
+        val EMPTY = object : PersistentCacheProvider {
+            override fun fileFingerPrint(path: String): Hash {
+                return 0
+            }
+
+            override fun serializedParts(path: String): SerializedIcDataForFile {
+                TODO("..")
+            }
+
+            override fun inlineGraphForFile(path: String, sigResolver: (Int) -> IdSignature): Collection<Pair<IdSignature, TransHash>> {
+                return emptyList()
+            }
+
+            override fun inlineHashes(path: String, sigResolver: (Int) -> IdSignature): Map<IdSignature, TransHash> {
+                return emptyMap()
+            }
+
+            override fun allInlineHashes(sigResolver: (String, Int) -> IdSignature): Map<IdSignature, TransHash> {
+                return emptyMap()
+            }
+
+            override fun binaryAst(path: String): ByteArray {
+                return ByteArray(0)
+            }
+
+        }
+    }
 }
 
 
@@ -110,6 +141,10 @@ class PersistentCacheProviderImpl(private val cachePath: String) : PersistentCac
         return result
     }
 
+    override fun binaryAst(path: String): ByteArray {
+        TODO("Not yet implemented")
+    }
+
 }
 
 interface PersistentCacheConsumer {
@@ -117,7 +152,40 @@ interface PersistentCacheConsumer {
     fun commitFileFingerPrint(path: String, fingerprint: Hash)
     fun commitInlineGraph(path: String, hashes: Collection<Pair<IdSignature, TransHash>>, sigResolver: (IdSignature) -> Int)
     fun commitICCacheData(path: String, icData: SerializedIcDataForFile)
+    fun commitBinaryAst(path: String, astData: ByteArray)
     fun invalidateForFile(path: String)
+
+    companion object {
+        val EMPTY = object : PersistentCacheConsumer {
+            override fun commitInlineFunctions(
+                path: String,
+                hashes: Collection<Pair<IdSignature, TransHash>>,
+                sigResolver: (IdSignature) -> Int
+            ) {
+            }
+
+            override fun commitFileFingerPrint(path: String, fingerprint: Hash) {
+            }
+
+            override fun commitInlineGraph(
+                path: String,
+                hashes: Collection<Pair<IdSignature, TransHash>>,
+                sigResolver: (IdSignature) -> Int
+            ) {
+            }
+
+            override fun commitICCacheData(path: String, icData: SerializedIcDataForFile) {
+            }
+
+            override fun invalidateForFile(path: String) {
+            }
+
+            override fun commitBinaryAst(path: String, astData: ByteArray) {
+
+            }
+
+        }
+    }
 }
 
 
@@ -180,5 +248,9 @@ class PersistentCacheConsumerImpl(private val cachePath: String) : PersistentCac
         File(fileDir, fileInfoFile).delete()
         // TODO: once per-file invalidation is integrated into IC delete the whole directory including PIR parts
         //fileDir.deleteRecursively()
+    }
+
+    override fun commitBinaryAst(path: String, astData: ByteArray) {
+        TODO("Not yet implemented")
     }
 }
