@@ -147,6 +147,7 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
                 is ConflictingDeclarationError.ConflictingInheritedJvmDeclarations -> {
                     diagnostics.report(ErrorsJvm.CONFLICTING_INHERITED_JVM_DECLARATIONS.on(diagnostic.element, diagnostic.data))
                 }
+                null -> {}
             }
         }
     }

@@ -81,6 +81,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                                     functionTypes += type
                                 is WasmStructDeclaration ->
                                     gcTypes += type
+                                is WasmArrayDeclaration -> {}
                             }
                         }
                     }

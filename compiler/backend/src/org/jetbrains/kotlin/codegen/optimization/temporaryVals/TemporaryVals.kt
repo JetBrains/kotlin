@@ -107,6 +107,7 @@ class TemporaryValsAnalyzer {
                     valueAtStart.temporaryVal.isDirty = true
                 is StoredValue.DirtyStore ->
                     valueAtStart.temporaryVals.forEach { it.isDirty = true }
+                StoredValue.Unknown -> {}
             }
         }
 
