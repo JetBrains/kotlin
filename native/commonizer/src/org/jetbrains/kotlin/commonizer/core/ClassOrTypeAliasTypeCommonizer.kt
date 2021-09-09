@@ -8,13 +8,16 @@ package org.jetbrains.kotlin.commonizer.core
 import org.jetbrains.kotlin.commonizer.cir.CirClassOrTypeAliasType
 import org.jetbrains.kotlin.commonizer.cir.CirClassType
 import org.jetbrains.kotlin.commonizer.cir.CirTypeAliasType
-import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 
 internal class ClassOrTypeAliasTypeCommonizer(
-    private val classifiers: CirKnownClassifiers,
-    private val options: TypeCommonizer.Options
-) : AssociativeCommonizer<CirClassOrTypeAliasType> {
+    private val typeCommonizer: TypeCommonizer
+) : NullableSingleInvocationCommonizer<CirClassOrTypeAliasType> {
 
+    override fun invoke(values: List<CirClassOrTypeAliasType>): CirClassOrTypeAliasType? {
+        TODO()
+    }
+
+    /*
     override fun commonize(first: CirClassOrTypeAliasType, second: CirClassOrTypeAliasType): CirClassOrTypeAliasType? {
         if (first is CirClassType && second is CirClassType) {
             return ClassTypeCommonizer(classifiers, options).commonize(listOf(first, second))
@@ -53,6 +56,9 @@ internal class ClassOrTypeAliasTypeCommonizer(
 
         return commonize(classType, typeAliasClassType)
     }
+
+     */
+
 }
 
 internal tailrec fun CirClassOrTypeAliasType.expandedType(): CirClassType = when (this) {

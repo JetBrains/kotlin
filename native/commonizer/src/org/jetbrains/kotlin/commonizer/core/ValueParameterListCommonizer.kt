@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirValueParameter
-import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 
-class ValueParameterListCommonizer(classifiers: CirKnownClassifiers) : AbstractListCommonizer<CirValueParameter, CirValueParameter>(
-    singleElementCommonizerFactory = { ValueParameterCommonizer(classifiers) }
+class ValueParameterListCommonizer(typeCommonizer: TypeCommonizer) : AbstractListCommonizer<CirValueParameter, CirValueParameter>(
+    singleElementCommonizerFactory = { ValueParameterCommonizer(typeCommonizer) }
 ) {
     fun overwriteNames(names: List<CirName>) {
         forEachSingleElementCommonizer { index, singleElementCommonizer ->

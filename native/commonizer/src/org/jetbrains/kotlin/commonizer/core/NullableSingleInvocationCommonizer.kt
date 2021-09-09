@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-interface NullableSingleInvocationCommonizer<T : Any> {
+interface NullableSingleInvocationCommonizer<T> {
     operator fun invoke(values: List<T>): T?
 }
 

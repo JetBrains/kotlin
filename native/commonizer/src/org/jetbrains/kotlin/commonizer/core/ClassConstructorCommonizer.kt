@@ -7,26 +7,25 @@ package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.cir.CirClassConstructor
 import org.jetbrains.kotlin.commonizer.cir.CirContainingClass
-import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 
 class ClassConstructorCommonizer(
-    classifiers: CirKnownClassifiers
+    typeCommonizer: TypeCommonizer,
 ) : AbstractStandardCommonizer<CirClassConstructor, CirClassConstructor>() {
     private var isPrimary = false
     private val visibility = VisibilityCommonizer.equalizing()
-    private val typeParameters = TypeParameterListCommonizer(classifiers)
-    private val valueParameters = CallableValueParametersCommonizer(classifiers)
-    private val annotationsCommonizer = AnnotationsCommonizer()
+    private val typeParameterListCommonizer = TypeParameterListCommonizer(typeCommonizer)
+    private val valueParametersCommonizer = CallableValueParametersCommonizer(typeCommonizer)
+    private val annotationsCommonizer: AnnotationsCommonizer = AnnotationsCommonizer()
 
     override fun commonizationResult(): CirClassConstructor {
-        val valueParameters = valueParameters.result
+        val valueParameters = valueParametersCommonizer.result
         valueParameters.patchCallables()
 
         return CirClassConstructor.create(
             annotations = annotationsCommonizer.result,
-            typeParameters = typeParameters.result,
+            typeParameters = typeParameterListCommonizer.result,
             visibility = visibility.result,
             containingClass = CONTAINING_CLASS_DOES_NOT_MATTER, // does not matter
             valueParameters = valueParameters.valueParameters,
@@ -44,8 +43,8 @@ class ClassConstructorCommonizer(
                 && next.containingClass.modality != Modality.SEALED // don't commonize constructors for sealed classes (not not their subclasses)
                 && isPrimary == next.isPrimary
                 && visibility.commonizeWith(next)
-                && typeParameters.commonizeWith(next.typeParameters)
-                && valueParameters.commonizeWith(next)
+                && typeParameterListCommonizer.commonizeWith(next.typeParameters)
+                && valueParametersCommonizer.commonizeWith(next)
                 && annotationsCommonizer.commonizeWith(next.annotations)
     }
 

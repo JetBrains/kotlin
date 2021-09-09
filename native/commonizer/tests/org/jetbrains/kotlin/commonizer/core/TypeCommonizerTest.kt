@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.junit.Before
 import org.junit.Test
 
-class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
+class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType?>() {
 
     private lateinit var classifiers: CirKnownClassifiers
 

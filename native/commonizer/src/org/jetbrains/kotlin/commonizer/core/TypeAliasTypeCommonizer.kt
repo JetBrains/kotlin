@@ -11,15 +11,14 @@ import org.jetbrains.kotlin.commonizer.core.CommonizedTypeAliasAnswer.Companion.
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 
 internal class TypeAliasTypeCommonizer(
+    private val typeCommonizer: TypeCommonizer,
     private val classifiers: CirKnownClassifiers,
-    options: TypeCommonizer.Options
-) :
-    AbstractStandardCommonizer<CirTypeAliasType, CirClassOrTypeAliasType>() {
+) : AbstractStandardCommonizer<CirTypeAliasType, CirClassOrTypeAliasType>() {
 
     private lateinit var typeAliasId: CirEntityId
-    private val arguments = TypeArgumentListCommonizer(classifiers)
-    private val underlyingTypeArguments = TypeArgumentListCommonizer(classifiers)
-    private val isMarkedNullable = TypeNullabilityCommonizer(options).asCommonizer()
+    private val arguments = TypeArgumentListCommonizer(typeCommonizer)
+    private val underlyingTypeArguments = TypeArgumentListCommonizer(typeCommonizer)
+    private val isMarkedNullable = TypeNullabilityCommonizer(typeCommonizer.options).asCommonizer()
     private var commonizedTypeBuilder: CommonizedTypeAliasTypeBuilder? = null // null means not selected yet
 
     override fun commonizationResult() =
@@ -47,7 +46,7 @@ internal class TypeAliasTypeCommonizer(
                 is CirClass -> CommonizedTypeAliasTypeBuilder.forClass(commonClassifier)
                 is CirTypeAlias -> CommonizedTypeAliasTypeBuilder.forTypeAlias(commonClassifier)
                 null -> {
-                    val underlyingType = computeSuitableUnderlyingType(classifiers, next.underlyingType) ?: return false
+                    val underlyingType = computeSuitableUnderlyingType(classifiers, typeCommonizer, next.underlyingType) ?: return false
                     CommonizedTypeAliasTypeBuilder.forKnownUnderlyingType(underlyingType)
                 }
                 else -> error("Unexpected common classifier type: ${commonClassifier::class.java}, $commonClassifier")

@@ -5,51 +5,53 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.commonizer.cir.CirFunctionOrProperty
-import org.jetbrains.kotlin.commonizer.cir.CirName
-import org.jetbrains.kotlin.commonizer.cir.CirProperty
-import org.jetbrains.kotlin.commonizer.cir.CirType
-import org.jetbrains.kotlin.commonizer.core.TypeCommonizer.Options.Companion.default
-import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
+import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.utils.singleDistinctValueOrNull
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
 
-abstract class AbstractFunctionOrPropertyCommonizer<T : CirFunctionOrProperty>(
-    classifiers: CirKnownClassifiers
-) : AbstractStandardCommonizer<T, T?>() {
-    protected lateinit var name: CirName
-    protected val modality = ModalityCommonizer()
-    protected val visibility = VisibilityCommonizer.lowering()
-    protected val extensionReceiver = ExtensionReceiverCommonizer(classifiers)
-    protected val returnType = ReturnTypeCommonizer(classifiers).asCommonizer()
-    protected lateinit var kind: CallableMemberDescriptor.Kind
-    protected val typeParameters = TypeParameterListCommonizer(classifiers)
+class FunctionOrPropertyBaseCommonizer(
+    private val typeCommonizer: TypeCommonizer,
+    private val extensionReceiverCommonizer: ExtensionReceiverCommonizer = ExtensionReceiverCommonizer(typeCommonizer),
+    private val returnTypeCommonizer: ReturnTypeCommonizer = ReturnTypeCommonizer(typeCommonizer),
+) : NullableContextualSingleInvocationCommonizer<CirFunctionOrProperty, FunctionOrPropertyBaseCommonizer.FunctionOrProperty> {
 
-    override fun initialize(first: T) {
-        name = first.name
-        kind = first.kind
-    }
+    data class FunctionOrProperty(
+        val name: CirName,
+        val kind: CallableMemberDescriptor.Kind,
+        val modality: Modality,
+        val visibility: Visibility,
+        val extensionReceiver: CirExtensionReceiver?,
+        val returnType: CirType,
+        val typeParameters: List<CirTypeParameter>
+    )
 
-    override fun doCommonizeWith(next: T): Boolean =
-        next.kind != DELEGATION // delegated members should not be commonized
-                && (next.kind != SYNTHESIZED || next.containingClass?.isData != true) // synthesized members of data classes should not be commonized
-                && kind == next.kind
-                && modality.commonizeWith(next.modality)
-                && visibility.commonizeWith(next)
-                && extensionReceiver.commonizeWith(next.extensionReceiver)
-                && returnType.commonizeWith(next)
-                && typeParameters.commonizeWith(next.typeParameters)
-}
-
-private class ReturnTypeCommonizer(
-    private val classifiers: CirKnownClassifiers,
-) : NullableContextualSingleInvocationCommonizer<CirFunctionOrProperty, CirType> {
-    override fun invoke(values: List<CirFunctionOrProperty>): CirType? {
+    override fun invoke(values: List<CirFunctionOrProperty>): FunctionOrProperty? {
+        /* Preconditions */
         if (values.isEmpty()) return null
-        val isTopLevel = values.all { it.containingClass == null }
-        val isCovariant = values.none { it is CirProperty && it.isVar }
-        return TypeCommonizer(classifiers, default.withCovariantNullabilityCommonizationEnabled(isTopLevel && isCovariant))
-            .asCommonizer().commonize(values.map { it.returnType })
+
+        // delegated members should not be commonized
+        if (values.any { value -> value.kind == DELEGATION }) {
+            return null
+        }
+
+        // synthesized members of data classes should not be commonized
+        if (values.any { value -> value.kind == SYNTHESIZED && value.containingClass?.isData == true }) {
+            return null
+        }
+
+        return FunctionOrProperty(
+            name = values.first().name,
+            kind = values.singleDistinctValueOrNull { it.kind } ?: return null,
+            modality = ModalityCommonizer().commonize(values.map { it.modality }) ?: return null,
+            visibility = VisibilityCommonizer.lowering().commonize(values) ?: return null,
+            extensionReceiver = extensionReceiverCommonizer(values.map { it.extensionReceiver })?.receiver ?: return null,
+            returnType = returnTypeCommonizer(values) ?: return null,
+            typeParameters = TypeParameterListCommonizer(typeCommonizer).commonize(values.map { it.typeParameters }) ?: return null
+        )
     }
 }
+

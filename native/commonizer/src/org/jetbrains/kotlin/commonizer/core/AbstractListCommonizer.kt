@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.cir.CirType
-import org.jetbrains.kotlin.commonizer.utils.compactMap
 
 /**
  * Unlike [Commonizer] which commonizes only single elements, this [AbstractListCommonizer] commonizes lists of elements using
@@ -16,14 +15,14 @@ import org.jetbrains.kotlin.commonizer.utils.compactMap
  *   Input: N lists of [CirType]
  *   Output: list of [CirType]
  */
-abstract class AbstractListCommonizer<T, R>(
-    private val singleElementCommonizerFactory: (Int) -> Commonizer<T, R>
+abstract class AbstractListCommonizer<T, R: Any>(
+    private val singleElementCommonizerFactory: (Int) -> Commonizer<T, R?>
 ) : Commonizer<List<T>, List<R>> {
-    private var commonizers: Array<Commonizer<T, R>>? = null
+    private var commonizers: Array<Commonizer<T, R?>>? = null
     private var error = false
 
     final override val result: List<R>
-        get() = checkState(commonizers, error).compactMap { it.result }
+        get() = checkState(commonizers, error).mapNotNull { it.result }
 
     final override fun commonizeWith(next: List<T>): Boolean {
         if (error)
@@ -53,7 +52,7 @@ abstract class AbstractListCommonizer<T, R>(
         return !error
     }
 
-    protected fun forEachSingleElementCommonizer(action: (index: Int, Commonizer<T, R>) -> Unit) {
+    protected fun forEachSingleElementCommonizer(action: (index: Int, Commonizer<T, R?>) -> Unit) {
         val commonizers = commonizers ?: failInEmptyState()
         commonizers.forEachIndexed(action)
     }

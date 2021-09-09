@@ -9,19 +9,21 @@ import org.jetbrains.kotlin.commonizer.cir.CirConstantValue
 import org.jetbrains.kotlin.commonizer.cir.CirProperty
 import org.jetbrains.kotlin.commonizer.cir.CirPropertyGetter
 import org.jetbrains.kotlin.commonizer.core.PropertyCommonizer.ConstCommonizationState.*
-import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.descriptors.Modality
 
-class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrPropertyCommonizer<CirProperty>(classifiers) {
+class PropertyCommonizer(
+    functionOrPropertyBaseCommonizer: FunctionOrPropertyBaseCommonizer
+) : AbstractStandardCommonizer<CirProperty, CirProperty?>() {
     private val setter = PropertySetterCommonizer.asNullableCommonizer()
     private var isExternal = true
     private lateinit var constCommonizationState: ConstCommonizationState
+    private val functionOrPropertyBaseCommonizer = functionOrPropertyBaseCommonizer.asCommonizer()
 
     override fun commonizationResult(): CirProperty? {
-        val modality = modality.result
+        val functionOrPropertyBase = functionOrPropertyBaseCommonizer.result ?: return null
 
         val setter = setter.result?.takeIf { setter ->
-            setter !== PropertySetterCommonizer.privateFallbackSetter || modality == Modality.FINAL
+            setter !== PropertySetterCommonizer.privateFallbackSetter || functionOrPropertyBase.modality == Modality.FINAL
         }
 
         val constCommonizationState = constCommonizationState
@@ -29,15 +31,15 @@ class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
 
         return CirProperty(
             annotations = emptyList(),
-            name = name,
-            typeParameters = typeParameters.result,
-            visibility = visibility.result,
-            modality = modality,
+            name = functionOrPropertyBase.name,
+            typeParameters = functionOrPropertyBase.typeParameters,
+            visibility = functionOrPropertyBase.visibility,
+            modality = functionOrPropertyBase.modality,
             containingClass = null, // does not matter
             isExternal = isExternal,
-            extensionReceiver = extensionReceiver.result,
-            returnType = returnType.result ?: return null,
-            kind = kind,
+            extensionReceiver = functionOrPropertyBase.extensionReceiver,
+            returnType = functionOrPropertyBase.returnType,
+            kind = functionOrPropertyBase.kind,
             isVar = setter != null,
             isLateInit = false,
             isConst = constCompileTimeInitializer != null,
@@ -51,8 +53,6 @@ class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
     }
 
     override fun initialize(first: CirProperty) {
-        super.initialize(first)
-
         constCommonizationState = if (first.isConst) {
             first.compileTimeInitializer.takeIf { it != CirConstantValue.NullValue }?.let(::ConstSameValue) ?: NonConst
         } else {
@@ -89,7 +89,7 @@ class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
             this.constCommonizationState = NonConst
         }
 
-        val result = super.doCommonizeWith(next)
+        val result = functionOrPropertyBaseCommonizer.commonizeWith(next)
                 && setter.commonizeWith(next.setter)
 
         if (result) {

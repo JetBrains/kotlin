@@ -41,10 +41,9 @@ private typealias Supertypes = List<CirType>
  * ```
  */
 internal class ClassSuperTypeCommonizer(
-    private val classifiers: CirKnownClassifiers
+    private val classifiers: CirKnownClassifiers,
+    private val typeCommonizer: TypeCommonizer
 ) : SingleInvocationCommonizer<Supertypes> {
-
-    private val typeCommonizer = TypeCommonizer(classifiers)
 
     override fun invoke(values: List<Supertypes>): Supertypes {
         if (values.isEmpty()) return emptyList()
@@ -54,7 +53,7 @@ internal class ClassSuperTypeCommonizer(
         val supertypesGroups = buildSupertypesGroups(supertypesTrees)
 
         return supertypesGroups.mapNotNull { supertypesGroup ->
-            typeCommonizer.asCommonizer().commonize(supertypesGroup.types)
+            typeCommonizer(supertypesGroup.types)
         }
     }
 

@@ -7,27 +7,29 @@ package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.cir.CirClass
 import org.jetbrains.kotlin.commonizer.cir.CirName
-import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.descriptors.ClassKind
 
-class ClassCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirClass, CirClass>() {
+class ClassCommonizer internal constructor(
+    typeCommonizer: TypeCommonizer,
+    supertypesCommonizer: ClassSuperTypeCommonizer
+) : AbstractStandardCommonizer<CirClass, CirClass>() {
     private lateinit var name: CirName
     private lateinit var kind: ClassKind
-    private val typeParameters = TypeParameterListCommonizer(classifiers)
-    private val modality = ModalityCommonizer()
-    private val visibility = VisibilityCommonizer.equalizing()
     private var isInner = false
     private var isValue = false
     private var isCompanion = false
-    private val supertypes = ClassSuperTypeCommonizer(classifiers).asCommonizer()
+    private val supertypesCommonizer = supertypesCommonizer.asCommonizer()
+    private val typeParameterListCommonizer: TypeParameterListCommonizer = TypeParameterListCommonizer(typeCommonizer)
+    private val modalityCommonizer: ModalityCommonizer = ModalityCommonizer()
+    private val visibilityCommonizer: VisibilityCommonizer = VisibilityCommonizer.equalizing()
 
     override fun commonizationResult() = CirClass.create(
         annotations = emptyList(),
         name = name,
-        typeParameters = typeParameters.result,
-        supertypes = supertypes.result,
-        visibility = visibility.result,
-        modality = modality.result,
+        typeParameters = typeParameterListCommonizer.result,
+        supertypes = supertypesCommonizer.result,
+        visibility = visibilityCommonizer.result,
+        modality = modalityCommonizer.result,
         kind = kind,
         companion = null,
         isCompanion = isCompanion,
@@ -50,8 +52,8 @@ class ClassCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommon
                 && isInner == next.isInner
                 && isValue == next.isValue
                 && isCompanion == next.isCompanion
-                && modality.commonizeWith(next.modality)
-                && visibility.commonizeWith(next)
-                && typeParameters.commonizeWith(next.typeParameters)
-                && supertypes.commonizeWith(next.supertypes)
+                && modalityCommonizer.commonizeWith(next.modality)
+                && visibilityCommonizer.commonizeWith(next)
+                && typeParameterListCommonizer.commonizeWith(next.typeParameters)
+                && supertypesCommonizer.commonizeWith(next.supertypes)
 }

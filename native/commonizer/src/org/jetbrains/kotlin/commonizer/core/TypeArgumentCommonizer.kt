@@ -8,30 +8,22 @@ package org.jetbrains.kotlin.commonizer.core
 import org.jetbrains.kotlin.commonizer.cir.CirRegularTypeProjection
 import org.jetbrains.kotlin.commonizer.cir.CirStarTypeProjection
 import org.jetbrains.kotlin.commonizer.cir.CirTypeProjection
-import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.commonizer.utils.safeCastValues
+import org.jetbrains.kotlin.commonizer.utils.singleDistinctValueOrNull
 
 class TypeArgumentCommonizer(
-    classifiers: CirKnownClassifiers
-) : AbstractStandardCommonizer<CirTypeProjection, CirTypeProjection>() {
-    private var isStar = false
-    private lateinit var projectionKind: Variance
-    private val type = TypeCommonizer(classifiers).asCommonizer()
+    private val typeCommonizer: TypeCommonizer
+) : NullableSingleInvocationCommonizer<CirTypeProjection> {
+    override fun invoke(values: List<CirTypeProjection>): CirTypeProjection? {
+        /* All values are star projections */
+        values.safeCastValues<CirTypeProjection, CirStarTypeProjection>()?.let { return CirStarTypeProjection }
 
-    override fun commonizationResult() = if (isStar) CirStarTypeProjection else CirRegularTypeProjection(
-        projectionKind = projectionKind,
-        type = type.result
-    )
+        /* All values are regular type projections */
+        val projections = values.safeCastValues<CirTypeProjection, CirRegularTypeProjection>() ?: return null
 
-    override fun initialize(first: CirTypeProjection) {
-        when (first) {
-            is CirStarTypeProjection -> isStar = true
-            is CirRegularTypeProjection -> projectionKind = first.projectionKind
-        }
-    }
-
-    override fun doCommonizeWith(next: CirTypeProjection) = when (next) {
-        is CirStarTypeProjection -> isStar
-        is CirRegularTypeProjection -> !isStar && projectionKind == next.projectionKind && type.commonizeWith(next.type)
+        return CirRegularTypeProjection(
+            projectionKind = projections.singleDistinctValueOrNull { it.projectionKind } ?: return null,
+            type = typeCommonizer(projections.map { it.type }) ?: return null
+        )
     }
 }

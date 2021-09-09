@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.commonizer.utils.MOCK_CLASSIFIERS
 import org.jetbrains.kotlin.commonizer.utils.mockClassType
 import org.junit.Test
 
-class ExtensionReceiverCommonizerTest : AbstractCommonizerTest<CirExtensionReceiver?, CirExtensionReceiver?>() {
+class ExtensionReceiverCommonizerTest : AbstractCommonizerTest<CirExtensionReceiver?, ExtensionReceiverCommonizer.Commonized?>() {
 
     @Test
     fun nullReceiver() = doTestSuccess(
@@ -20,7 +20,7 @@ class ExtensionReceiverCommonizerTest : AbstractCommonizerTest<CirExtensionRecei
 
     @Test
     fun sameReceiver() = doTestSuccess(
-        expected = mockExtensionReceiver("kotlin/String"),
+        expected = ExtensionReceiverCommonizer.Commonized(mockExtensionReceiver("kotlin/String")),
         mockExtensionReceiver("kotlin/String"),
         mockExtensionReceiver("kotlin/String"),
         mockExtensionReceiver("kotlin/String")
@@ -47,7 +47,7 @@ class ExtensionReceiverCommonizerTest : AbstractCommonizerTest<CirExtensionRecei
         mockExtensionReceiver("kotlin/String")
     )
 
-    override fun createCommonizer() = ExtensionReceiverCommonizer(MOCK_CLASSIFIERS)
+    override fun createCommonizer() = ExtensionReceiverCommonizer(TypeCommonizer(MOCK_CLASSIFIERS)).asCommonizer()
 }
 
 private fun mockExtensionReceiver(receiverClassId: String) = CirExtensionReceiver(

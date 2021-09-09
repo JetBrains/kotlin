@@ -13,24 +13,25 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 
 internal tailrec fun computeSuitableUnderlyingType(
     classifiers: CirKnownClassifiers,
+    typeCommonizer: TypeCommonizer,
     underlyingType: CirClassOrTypeAliasType
 ): CirClassOrTypeAliasType? {
     return when (underlyingType) {
-        is CirClassType -> underlyingType.withCommonizedArguments(classifiers)
+        is CirClassType -> underlyingType.withCommonizedArguments(typeCommonizer)
         is CirTypeAliasType ->
             if (classifiers.commonDependencies.hasClassifier(underlyingType.classifierId) ||
                 classifiers.commonizedNodes.typeAliasNode(underlyingType.classifierId)?.commonDeclaration?.invoke() != null
-            ) underlyingType.withCommonizedArguments(classifiers)
-            else computeSuitableUnderlyingType(classifiers, underlyingType.underlyingType)
+            ) underlyingType.withCommonizedArguments(typeCommonizer)
+            else computeSuitableUnderlyingType(classifiers, typeCommonizer, underlyingType.underlyingType)
     }
 }
 
-private fun CirClassType.withCommonizedArguments(classifiers: CirKnownClassifiers): CirClassType? {
+private fun CirClassType.withCommonizedArguments(typeCommonizer: TypeCommonizer): CirClassType? {
     val existingArguments = arguments
-    val newArguments = existingArguments.toCommonizedArguments(classifiers) ?: return null
+    val newArguments = existingArguments.toCommonizedArguments(typeCommonizer) ?: return null
 
     val existingOuterType = outerType
-    val newOuterType = existingOuterType?.let { it.withCommonizedArguments(classifiers) ?: return null }
+    val newOuterType = existingOuterType?.let { it.withCommonizedArguments(typeCommonizer) ?: return null }
 
     return if (newArguments !== existingArguments || newOuterType !== existingOuterType)
         CirClassType.createInterned(
@@ -44,14 +45,14 @@ private fun CirClassType.withCommonizedArguments(classifiers: CirKnownClassifier
         this
 }
 
-private fun CirTypeAliasType.withCommonizedArguments(classifiers: CirKnownClassifiers): CirTypeAliasType? {
+private fun CirTypeAliasType.withCommonizedArguments(typeCommonizer: TypeCommonizer): CirTypeAliasType? {
     val existingArguments = arguments
-    val newArguments = existingArguments.toCommonizedArguments(classifiers) ?: return null
+    val newArguments = existingArguments.toCommonizedArguments(typeCommonizer) ?: return null
 
     val existingUnderlyingType = underlyingType
     val newUnderlyingType = when (existingUnderlyingType) {
-        is CirClassType -> existingUnderlyingType.withCommonizedArguments(classifiers)
-        is CirTypeAliasType -> existingUnderlyingType.withCommonizedArguments(classifiers)
+        is CirClassType -> existingUnderlyingType.withCommonizedArguments(typeCommonizer)
+        is CirTypeAliasType -> existingUnderlyingType.withCommonizedArguments(typeCommonizer)
     } ?: return null
 
     return if (newArguments !== existingArguments || newUnderlyingType !== existingUnderlyingType)
@@ -66,8 +67,6 @@ private fun CirTypeAliasType.withCommonizedArguments(classifiers: CirKnownClassi
 }
 
 @Suppress("NOTHING_TO_INLINE")
-private inline fun List<CirTypeProjection>.toCommonizedArguments(classifiers: CirKnownClassifiers): List<CirTypeProjection>? =
-    if (isEmpty())
-        this
-    else
-        TypeArgumentListCommonizer(classifiers).let { if (it.commonizeWith(this)) it.result else null }
+private inline fun List<CirTypeProjection>.toCommonizedArguments(typeCommonizer: TypeCommonizer): List<CirTypeProjection>? =
+    if (isEmpty()) this
+    else TypeArgumentListCommonizer(typeCommonizer).let { if (it.commonizeWith(this)) it.result else null }
