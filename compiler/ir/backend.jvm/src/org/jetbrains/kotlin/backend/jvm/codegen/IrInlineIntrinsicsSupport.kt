@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.backend.common.ir.allParametersCount
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.intrinsics.SignatureString
-import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering
+import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceOwnerKClassType
+import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceTopLevelFlag
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -92,11 +93,11 @@ class IrInlineIntrinsicsSupport(
         if (withArity) {
             v.iconst(function.allParametersCount)
         }
-        putClassInstance(v, FunctionReferenceLowering.getOwnerKClassType(declaration.parent, context))
+        putClassInstance(v, declaration.parent.getCallableReferenceOwnerKClassType(context))
         v.aconst(declaration.name.asString())
         // TODO: generate correct signature for functions and property accessors which have inline class types in the signature.
         SignatureString.generateSignatureString(v, function, context)
-        v.iconst(FunctionReferenceLowering.getCallableReferenceTopLevelFlag(declaration))
+        v.iconst(declaration.getCallableReferenceTopLevelFlag())
         val parameterTypes =
             (if (withArity) listOf(INT_TYPE) else emptyList()) +
                     listOf(JAVA_CLASS_TYPE, JAVA_STRING_TYPE, JAVA_STRING_TYPE, INT_TYPE)

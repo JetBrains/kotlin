@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.backend.jvm.ir
 
 import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.backend.common.lower.at
+import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.CachedFieldsForObjectInstances
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
+import org.jetbrains.kotlin.codegen.ASSERTIONS_DISABLED_FIELD_NAME
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -21,11 +24,17 @@ import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOT
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irExprBody
+import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -41,8 +50,10 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun IrDeclaration.getJvmNameFromAnnotation(): String? {
@@ -303,3 +314,84 @@ val IrDeclaration.inlineScopeVisibility: DescriptorVisibility?
 // True for declarations which are in the scope of an externally visible inline function.
 val IrDeclaration.isInPublicInlineScope: Boolean
     get() = inlineScopeVisibility?.let(DescriptorVisibilities::isPrivate) == false
+
+fun IrSimpleFunction.suspendFunctionOriginal(): IrSimpleFunction =
+    if (isSuspend &&
+        !isStaticInlineClassReplacement &&
+        !isOrOverridesDefaultParameterStub() &&
+        parentAsClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
+    )
+        attributeOwnerId as IrSimpleFunction
+    else this
+
+fun IrFunction.suspendFunctionOriginal(): IrFunction =
+    (this as? IrSimpleFunction)?.suspendFunctionOriginal() ?: this
+
+private fun IrSimpleFunction.isOrOverridesDefaultParameterStub(): Boolean =
+    // Cannot use resolveFakeOverride here because of KT-36188.
+    DFS.ifAny(
+        listOf(this),
+        { it.overriddenSymbols.map(IrSimpleFunctionSymbol::owner) },
+        { it.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER }
+    )
+
+fun IrClass.buildAssertionsDisabledField(backendContext: JvmBackendContext, topLevelClass: IrClass) =
+    factory.buildField {
+        name = Name.identifier(ASSERTIONS_DISABLED_FIELD_NAME)
+        origin = JvmLoweredDeclarationOrigin.GENERATED_ASSERTION_ENABLED_FIELD
+        visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+        type = backendContext.irBuiltIns.booleanType
+        isFinal = true
+        isStatic = true
+    }.also { field ->
+        field.parent = this
+        field.initializer = backendContext.createJvmIrBuilder(this.symbol).run {
+            at(field)
+            irExprBody(irNot(irCall(irSymbols.desiredAssertionStatus).apply {
+                dispatchReceiver = javaClassReference(topLevelClass.defaultType)
+            }))
+        }
+    }
+
+fun IrField.isAssertionsDisabledField(context: JvmBackendContext) =
+    name.asString() == ASSERTIONS_DISABLED_FIELD_NAME && type == context.irBuiltIns.booleanType && isStatic
+
+fun IrClass.hasAssertionsDisabledField(context: JvmBackendContext) =
+    fields.any { it.isAssertionsDisabledField(context) }
+
+fun IrField.constantValue(): IrConst<*>? {
+    val value = initializer?.expression as? IrConst<*> ?: return null
+
+    // JVM has a ConstantValue attribute which does two things:
+    //   1. allows the field to be inlined into other modules;
+    //   2. implicitly generates an initialization of that field in <clinit>
+    // It is only allowed on final fields of primitive/string types. Java applies it whenever possible; Kotlin only applies it to
+    // `const val`s to avoid making values part of the library's ABI unless explicitly requested by the author.
+    val implicitConst = isFinal && isStatic && origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+    return if (implicitConst || correspondingPropertySymbol?.owner?.isConst == true) value else null
+}
+
+fun IrBuilderWithScope.kClassReference(classType: IrType): IrClassReference =
+    IrClassReferenceImpl(
+        startOffset, endOffset, context.irBuiltIns.kClassClass.starProjectedType, context.irBuiltIns.kClassClass, classType
+    )
+
+fun JvmIrBuilder.kClassToJavaClass(kClassReference: IrExpression): IrCall =
+    irGet(irSymbols.javaLangClass.starProjectedType, null, irSymbols.kClassJava.owner.getter!!.symbol).apply {
+        extensionReceiver = kClassReference
+    }
+
+fun JvmIrBuilder.javaClassReference(classType: IrType): IrCall =
+    kClassToJavaClass(kClassReference(classType))
+
+fun IrDeclarationParent.getCallableReferenceOwnerKClassType(context: JvmBackendContext): IrType =
+    if (this is IrClass) defaultType
+    else {
+        // For built-in members (i.e. top level `toString`) we generate reference to an internal class for an owner.
+        // This allows kotlin-reflect to understand that this is a built-in intrinsic which has no real declaration,
+        // and construct a special KCallable object.
+        context.ir.symbols.intrinsicsKotlinClass.defaultType
+    }
+
+fun IrDeclaration.getCallableReferenceTopLevelFlag(): Int =
+    if (parent.let { it is IrClass && it.isFileClass }) 1 else 0

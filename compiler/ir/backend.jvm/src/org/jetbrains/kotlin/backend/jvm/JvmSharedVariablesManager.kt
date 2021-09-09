@@ -1,14 +1,12 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.jvm.descriptors
+package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
-import org.jetbrains.kotlin.backend.jvm.JvmSymbols
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
@@ -112,7 +110,7 @@ class JvmSharedVariablesManager(
             // The field is preinitialized to the default value, so an explicit set is not required.
             return sharedVariableDeclaration
         }
-        val initializationStatement = with (originalDeclaration) {
+        val initializationStatement = with(originalDeclaration) {
             IrSetValueImpl(startOffset, endOffset, irBuiltIns.unitType, symbol, initializer, null)
         }
         val sharedVariableInitialization = setSharedValue(sharedVariableDeclaration.symbol, initializationStatement)
