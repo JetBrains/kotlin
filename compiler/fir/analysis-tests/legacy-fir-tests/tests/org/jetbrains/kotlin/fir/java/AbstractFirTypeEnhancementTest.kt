@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.createSessionForTests
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.name.ClassId
@@ -142,13 +141,10 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
 
         val javaFirDump = StringBuilder().also { builder ->
             val renderer = FirRenderer(builder)
-            val symbolProvider = session.symbolProvider as FirCompositeSymbolProvider
-            val javaProvider = symbolProvider.providers.filterIsInstance<JavaSymbolProvider>().first()
-
             val processedJavaClasses = mutableSetOf<FirJavaClass>()
             fun processClassWithChildren(psiClass: PsiClass, parentFqName: FqName) {
                 val classId = psiClass.classId(parentFqName)
-                val javaClass = javaProvider.getClassLikeSymbolByClassId(classId)?.fir
+                val javaClass = session.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir
                     ?: throw AssertionError(classId.asString())
                 if (javaClass !is FirJavaClass || javaClass in processedJavaClasses) {
                     return

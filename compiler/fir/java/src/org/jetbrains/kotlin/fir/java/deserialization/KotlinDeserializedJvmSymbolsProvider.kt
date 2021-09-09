@@ -43,6 +43,7 @@ open class KotlinDeserializedJvmSymbolsProvider(
     private val packagePartProvider: PackagePartProvider,
     private val kotlinClassFinder: KotlinClassFinder,
     javaClassFinder: JavaClassFinder,
+    private val javaSymbolProvider: JavaSymbolProvider
 ) : AbstractFirDeserializedSymbolsProvider(session, moduleDataProvider, kotlinScopeProvider) {
     private val knownNameInPackageCache = KnownNameInPackageCache(session, javaClassFinder)
     private val annotationsLoader = AnnotationsLoader(session, kotlinClassFinder)
@@ -101,7 +102,12 @@ open class KotlinDeserializedJvmSymbolsProvider(
         }
         val kotlinClass = when (result) {
             is KotlinClassFinder.Result.KotlinClass -> result
-            is KotlinClassFinder.Result.ClassFileContent -> return null
+            is KotlinClassFinder.Result.ClassFileContent -> {
+                val javaClass = javaSymbolProvider.findClass(classId, result.content) ?: return null
+                return ClassMetadataFindResult.NoMetadata { symbol ->
+                    javaSymbolProvider.convertJavaClassToFir(symbol, classId.outerClassId?.let(::getClass), javaClass)
+                }
+            }
             null -> return ClassMetadataFindResult.ShouldDeserializeViaParent
         }
         if (kotlinClass.kotlinJvmBinaryClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
@@ -120,6 +126,9 @@ open class KotlinDeserializedJvmSymbolsProvider(
             classPostProcessor = { loadAnnotationsFromClassFile(kotlinClass, it) }
         )
     }
+
+    override fun getPackage(fqName: FqName): FqName? =
+        javaSymbolProvider.getPackage(fqName)
 
     private fun loadAnnotationsFromClassFile(
         kotlinClass: KotlinClassFinder.Result.KotlinClass,

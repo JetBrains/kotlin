@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
+import org.jetbrains.kotlin.fir.java.JavaSymbolProviderWrapper
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
@@ -150,7 +151,7 @@ internal object FirIdeSessionFactory {
                     this,
                     providers = listOf(
                         provider.symbolProvider,
-                        JavaSymbolProvider(this@session, moduleData, project, searchScope),
+                        JavaSymbolProviderWrapper(this@session, JavaSymbolProvider(this@session, moduleData, project, searchScope)),
                     ),
                     dependencyProvider
                 )
@@ -214,10 +215,10 @@ internal object FirIdeSessionFactory {
                             kotlinScopeProvider,
                             packagePartProvider,
                             kotlinClassFinder,
-                            javaClassFinder
+                            javaClassFinder,
+                            JavaSymbolProvider(this@session, mainModuleData, project, searchScope)
                         )
                     )
-                    add(JavaSymbolProvider(this@session, mainModuleData, project, searchScope))
                     addAll((builtinsAndCloneableSession.symbolProvider as FirCompositeSymbolProvider).providers)
                 }
             )
@@ -239,10 +240,11 @@ internal object FirIdeSessionFactory {
         kotlinScopeProvider: FirKotlinScopeProvider,
         packagePartProvider: PackagePartProvider,
         kotlinClassFinder: KotlinClassFinder,
-        javaClassFinder: JavaClassFinder
+        javaClassFinder: JavaClassFinder,
+        javaSymbolProvider: JavaSymbolProvider
     ) : KotlinDeserializedJvmSymbolsProvider(
         session, moduleDataProvider, kotlinScopeProvider, packagePartProvider, kotlinClassFinder,
-        javaClassFinder
+        javaClassFinder, javaSymbolProvider
     ) {
         override fun getClass(
             classId: ClassId,

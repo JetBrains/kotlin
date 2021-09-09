@@ -91,6 +91,10 @@ abstract class AbstractFirDeserializedSymbolsProvider(
     // ------------------------ Deserialization methods ------------------------
 
     sealed class ClassMetadataFindResult {
+        data class NoMetadata(
+            val classPostProcessor: DeserializedClassPostProcessor
+        ) : ClassMetadataFindResult()
+
         data class Metadata(
             val nameResolver: NameResolver,
             val classProto: ProtoBuf.Class,
@@ -125,6 +129,7 @@ abstract class AbstractFirDeserializedSymbolsProvider(
         parentContext: FirDeserializationContext? = null
     ): Pair<FirRegularClassSymbol?, DeserializedClassPostProcessor?> {
         return when (val result = extractClassMetadata(classId, parentContext)) {
+            is ClassMetadataFindResult.NoMetadata -> FirRegularClassSymbol(classId) to result.classPostProcessor
             is ClassMetadataFindResult.Metadata -> {
                 val (nameResolver, classProto, annotationDeserializer, containingLibrary, sourceElement, postProcessor) = result
                 val moduleData = moduleDataProvider.getModuleData(containingLibrary) ?: return null to null
