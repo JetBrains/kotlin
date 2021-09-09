@@ -3474,6 +3474,54 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.OVERRIDE_CANNOT_BE_STATIC) { firDiagnostic ->
+        OverrideCannotBeStaticImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION) { firDiagnostic ->
+        JvmStaticNotInObjectOrClassCompanionImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION) { firDiagnostic ->
+        JvmStaticNotInObjectOrCompanionImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.JVM_STATIC_ON_NON_PUBLIC_MEMBER) { firDiagnostic ->
+        JvmStaticOnNonPublicMemberImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.JVM_STATIC_ON_CONST_OR_JVM_FIELD) { firDiagnostic ->
+        JvmStaticOnConstOrJvmFieldImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.JVM_STATIC_ON_EXTERNAL_IN_INTERFACE) { firDiagnostic ->
+        JvmStaticOnExternalInInterfaceImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.INAPPLICABLE_JVM_NAME) { firDiagnostic ->
+        InapplicableJvmNameImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.ILLEGAL_JVM_NAME) { firDiagnostic ->
+        IllegalJvmNameImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.JAVA_TYPE_MISMATCH) { firDiagnostic ->
         JavaTypeMismatchImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
@@ -3660,54 +3708,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirJvmErrors.ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE) { firDiagnostic ->
         IllegalJavaLangRecordSupertypeImpl(
-            firDiagnostic as FirPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.OVERRIDE_CANNOT_BE_STATIC) { firDiagnostic ->
-        OverrideCannotBeStaticImpl(
-            firDiagnostic as FirPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION) { firDiagnostic ->
-        JvmStaticNotInObjectOrClassCompanionImpl(
-            firDiagnostic as FirPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION) { firDiagnostic ->
-        JvmStaticNotInObjectOrCompanionImpl(
-            firDiagnostic as FirPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.JVM_STATIC_ON_NON_PUBLIC_MEMBER) { firDiagnostic ->
-        JvmStaticOnNonPublicMemberImpl(
-            firDiagnostic as FirPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.JVM_STATIC_ON_CONST_OR_JVM_FIELD) { firDiagnostic ->
-        JvmStaticOnConstOrJvmFieldImpl(
-            firDiagnostic as FirPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.JVM_STATIC_ON_EXTERNAL_IN_INTERFACE) { firDiagnostic ->
-        JvmStaticOnExternalInInterfaceImpl(
-            firDiagnostic as FirPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.INAPPLICABLE_JVM_NAME) { firDiagnostic ->
-        InapplicableJvmNameImpl(
-            firDiagnostic as FirPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.ILLEGAL_JVM_NAME) { firDiagnostic ->
-        IllegalJvmNameImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )

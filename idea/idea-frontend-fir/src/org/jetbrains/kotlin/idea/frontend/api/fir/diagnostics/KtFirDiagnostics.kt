@@ -2422,6 +2422,38 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ConflictingJvmDeclarations::class
     }
 
+    abstract class OverrideCannotBeStatic : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = OverrideCannotBeStatic::class
+    }
+
+    abstract class JvmStaticNotInObjectOrClassCompanion : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = JvmStaticNotInObjectOrClassCompanion::class
+    }
+
+    abstract class JvmStaticNotInObjectOrCompanion : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = JvmStaticNotInObjectOrCompanion::class
+    }
+
+    abstract class JvmStaticOnNonPublicMember : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = JvmStaticOnNonPublicMember::class
+    }
+
+    abstract class JvmStaticOnConstOrJvmField : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = JvmStaticOnConstOrJvmField::class
+    }
+
+    abstract class JvmStaticOnExternalInInterface : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = JvmStaticOnExternalInInterface::class
+    }
+
+    abstract class InapplicableJvmName : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InapplicableJvmName::class
+    }
+
+    abstract class IllegalJvmName : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = IllegalJvmName::class
+    }
+
     abstract class JavaTypeMismatch : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = JavaTypeMismatch::class
         abstract val expectedType: KtType
@@ -2548,38 +2580,6 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class IllegalJavaLangRecordSupertype : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = IllegalJavaLangRecordSupertype::class
-    }
-
-    abstract class OverrideCannotBeStatic : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = OverrideCannotBeStatic::class
-    }
-
-    abstract class JvmStaticNotInObjectOrClassCompanion : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = JvmStaticNotInObjectOrClassCompanion::class
-    }
-
-    abstract class JvmStaticNotInObjectOrCompanion : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = JvmStaticNotInObjectOrCompanion::class
-    }
-
-    abstract class JvmStaticOnNonPublicMember : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = JvmStaticOnNonPublicMember::class
-    }
-
-    abstract class JvmStaticOnConstOrJvmField : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = JvmStaticOnConstOrJvmField::class
-    }
-
-    abstract class JvmStaticOnExternalInInterface : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = JvmStaticOnExternalInInterface::class
-    }
-
-    abstract class InapplicableJvmName : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = InapplicableJvmName::class
-    }
-
-    abstract class IllegalJvmName : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = IllegalJvmName::class
     }
 
 }
