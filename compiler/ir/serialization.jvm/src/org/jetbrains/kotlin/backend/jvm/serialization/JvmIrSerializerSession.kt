@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr
+import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -20,11 +21,16 @@ class JvmIrSerializerSession(
     messageLogger: IrMessageLogger,
     private val declarationTable: DeclarationTable,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
-    externallyVisibleOnly: Boolean = true,
+    mode: JvmSerializeIrMode,
     skipExpects: Boolean = false,
 ) : IrFileSerializer(
-    messageLogger, declarationTable, expectDescriptorToSymbol, CompatibilityMode.CURRENT, externallyVisibleOnly, skipExpects
+    messageLogger, declarationTable, expectDescriptorToSymbol, CompatibilityMode.CURRENT,
+    bodiesOnlyForInlines = mode == JvmSerializeIrMode.INLINE,
+    skipExpects
 ) {
+    init {
+        assert(mode != JvmSerializeIrMode.NONE)
+    }
 
     // Usage protocol: construct an instance, call only one of `serializeIrFile()` and `serializeTopLevelClass()` only once.
 

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.serialization.deserializeClassFromByteAr
 import org.jetbrains.kotlin.backend.jvm.serialization.deserializeIrFileFromByteArray
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
@@ -69,7 +70,7 @@ open class JvmGeneratorExtensionsImpl(
 ) : GeneratorExtensions(), JvmGeneratorExtensions {
     override val classNameOverride: MutableMap<IrClass, JvmClassName> = mutableMapOf()
 
-    override val irDeserializationEnabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.SERIALIZE_IR)
+    override val irDeserializationEnabled: Boolean = configuration.get(JVMConfigurationKeys.SERIALIZE_IR) != JvmSerializeIrMode.NONE
 
     override val cachedFields = CachedFieldsForObjectInstances(IrFactoryImpl, configuration.languageVersionSettings)
 

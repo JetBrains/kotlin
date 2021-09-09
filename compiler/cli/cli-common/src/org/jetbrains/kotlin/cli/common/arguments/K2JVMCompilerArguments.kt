@@ -488,9 +488,10 @@ default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise""
 
     @Argument(
         value = "-Xserialize-ir",
+        valueDescription = "{none|inline|all}",
         description = "Save IR to metadata (EXPERIMENTAL)"
     )
-    var serializeIr: Boolean by FreezableVar(false)
+    var serializeIr: String by FreezableVar("none")
 
     @Argument(
         value = "-Xvalidate-ir",

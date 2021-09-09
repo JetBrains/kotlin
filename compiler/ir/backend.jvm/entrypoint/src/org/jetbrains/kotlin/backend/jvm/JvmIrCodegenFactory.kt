@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
@@ -209,7 +210,9 @@ open class JvmIrCodegenFactory(
     override fun generateModule(state: GenerationState, input: CodegenFactory.BackendInput) {
         val (irModuleFragment, symbolTable, customPhaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart) =
             input as JvmIrBackendInput
-        val irSerializer = if (state.configuration.getBoolean(JVMConfigurationKeys.SERIALIZE_IR))
+        val irSerializer = if (
+            state.configuration.get(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE) != JvmSerializeIrMode.NONE
+        )
             JvmIrSerializerImpl(state.configuration)
         else null
         val phaseConfig = customPhaseConfig ?: PhaseConfig(jvmPhases)

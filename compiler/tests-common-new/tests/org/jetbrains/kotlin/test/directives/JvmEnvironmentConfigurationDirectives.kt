@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.test.directives
 
-import org.jetbrains.kotlin.config.JVMAssertionsMode
-import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
-import org.jetbrains.kotlin.config.JvmStringConcat
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.TestJavacVersion
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
@@ -86,7 +83,8 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Enable old mangling scheme for inline classes"
     )
 
-    val SERIALIZE_IR by directive(
-        description = "Enable serialization of JVM IR"
+    val SERIALIZE_IR by enumDirective(
+        description = "Enable serialization of JVM IR",
+        additionalParser = JvmSerializeIrMode.Companion::fromString
     )
 }
