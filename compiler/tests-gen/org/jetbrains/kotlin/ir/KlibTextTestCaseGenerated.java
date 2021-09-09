@@ -407,6 +407,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
+            @TestMetadata("annotationOnClassWithInitializer.kt")
+            public void testAnnotationOnClassWithInitializer() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/annotations/annotationOnClassWithInitializer.kt");
+            }
+
             @TestMetadata("annotationsInAnnotationArguments.kt")
             public void testAnnotationsInAnnotationArguments() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/annotations/annotationsInAnnotationArguments.kt");

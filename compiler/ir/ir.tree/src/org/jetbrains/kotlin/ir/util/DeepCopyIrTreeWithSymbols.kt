@@ -302,6 +302,7 @@ open class DeepCopyIrTreeWithSymbols(
             mapDeclarationOrigin(declaration.origin),
             IrAnonymousInitializerSymbolImpl(declaration.descriptor)
         ).apply {
+            transformAnnotations(declaration)
             body = declaration.body.transform()
         }
 
