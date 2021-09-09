@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.resolve.FirSamResolverImpl
-import org.jetbrains.kotlin.fir.resolve.calls.getExpectedTypeForSAMConversion
+import org.jetbrains.kotlin.fir.resolve.calls.getExpectedType
 import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
@@ -729,7 +729,7 @@ class CallAndReferenceGenerator(
             return false
         }
         // If the expected type is a built-in functional type, we don't need SAM conversion.
-        val expectedType = argument.getExpectedTypeForSAMConversion(parameter)
+        val expectedType = argument.getExpectedType(parameter)
         if (expectedType is ConeTypeParameterType || expectedType.isBuiltinFunctionalType(session)) {
             return false
         }

@@ -12,7 +12,7 @@ fun test() {
 
     bar(1, z = true, y = *arrayOf("my", "yours"))
 
-    bar(0, z = false, y = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>""<!>, <!ARGUMENT_PASSED_TWICE!>y<!> = "other")
+    bar(0, z = false, y = <!ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>""<!>, <!ARGUMENT_PASSED_TWICE!>y<!> = "other")
     bar(0, "", true<!NO_VALUE_FOR_PARAMETER!>)<!>
-    bar(0, z = false, y = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>""<!>, <!ARGUMENT_PASSED_TWICE!>y<!> = "other", <!ARGUMENT_PASSED_TWICE!>y<!> = "yet other")
+    bar(0, z = false, y = <!ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>""<!>, <!ARGUMENT_PASSED_TWICE!>y<!> = "other", <!ARGUMENT_PASSED_TWICE!>y<!> = "yet other")
 }

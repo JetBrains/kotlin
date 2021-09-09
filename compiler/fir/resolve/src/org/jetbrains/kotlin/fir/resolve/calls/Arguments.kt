@@ -463,7 +463,7 @@ private fun Candidate.prepareExpectedType(
     context: ResolutionContext
 ): ConeKotlinType? {
     if (parameter == null) return null
-    val basicExpectedType = argument.getExpectedTypeForSAMConversion(parameter/*, LanguageVersionSettings*/)
+    val basicExpectedType = argument.getExpectedType(parameter/*, LanguageVersionSettings*/)
 
     val expectedType =
         getExpectedTypeWithSAMConversion(session, scopeSession, argument, basicExpectedType, context)?.also {
@@ -570,16 +570,15 @@ fun FirExpression.isFunctional(
     }
 }
 
-fun FirExpression.getExpectedTypeForSAMConversion(
+fun FirExpression.getExpectedType(
     parameter: FirValueParameter/*, languageVersionSettings: LanguageVersionSettings*/
 ): ConeKotlinType {
     val shouldUnwrapVarargType = when (this) {
-        is FirSpreadArgumentExpression -> !isSpread
-        is FirNamedArgumentExpression -> expression is FirConstExpression<*>
-        else -> true
+        is FirSpreadArgumentExpression, is FirNamedArgumentExpression -> false
+        else -> parameter.isVararg
     }
 
-    return if (parameter.isVararg && shouldUnwrapVarargType) {
+    return if (shouldUnwrapVarargType) {
         parameter.returnTypeRef.coneType.varargElementType()
     } else {
         parameter.returnTypeRef.coneType
