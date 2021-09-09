@@ -864,21 +864,17 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
         appendingTo(lpBlock) {
             val landingpad = gxxLandingpad(2)
-            LLVMAddClause(landingpad, kotlinExceptionRtti.llvm)
-            if (wrapExceptionMode) {
+
+            var extractBlock = if (wrapExceptionMode) {
+                LLVMAddClause(landingpad, kotlinExceptionRtti.llvm)
                 LLVMAddClause(landingpad, objcNSExceptionRtti.llvm)
                 LLVMAddClause(landingpad, LLVMConstNull(kInt8Ptr))
-            } else {
-                LLVMSetCleanup(landingpad, 1)
-            }
 
-            if (switchThreadState) {
-                switchThreadState(Runnable)
-            }
+                if (switchThreadState) {
+                    switchThreadState(Runnable)
+                }
+                val extractKotlinExceptionBlock = basicBlock("extractKotlinException", position()?.start)
 
-            val extractKotlinExceptionBlock = basicBlock("extractKotlinException", position()?.start)
-
-            if (wrapExceptionMode) {
                 val typeId = extractValue(landingpad, 1)
                 val isKotlinException = icmpEq(
                         typeId,
@@ -900,13 +896,18 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                         outerHandler.genThrow(this, exception)
                     }
                 }
+                extractKotlinExceptionBlock
             } else {
-                br(extractKotlinExceptionBlock)
+                LLVMSetCleanup(landingpad, 1)
+                if (switchThreadState) {
+                    switchThreadState(Runnable)
+                }
+                lpBlock
             }
 
-            appendingTo(extractKotlinExceptionBlock) {
+            appendingTo(extractBlock) {
                 val exceptionRecord = extractValue(landingpad, 0, "er")
-                kotlinExceptions.add(extractKotlinExceptionBlock to exceptionRecord)
+                kotlinExceptions.add(extractBlock to exceptionRecord)
                 br(catchKotlinExceptionAndTerminateBb)
             }
         }
@@ -1410,6 +1411,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             if (severalExceptions) {
                 val exceptionPhi = phi(kotlinExceptions[0].second.type)
                 addPhiIncoming(exceptionPhi, *kotlinExceptions.toTypedArray())
+                handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
                 terminateAfterCatchedExcetion(exceptionPhi)
             }
         }
@@ -1430,8 +1432,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             }
         }
 
+        lateinit var slots: LLVMValueRef
+
         appendingTo(prologueBb) {
-            val slots = if (needSlotsPhi)
+            slots = if (needSlotsPhi)
                 LLVMBuildArrayAlloca(builder, kObjHeaderPtr, Int32(slotCount).llvm, "")!!
             else
                 kNullObjHeaderPtrPtr
@@ -1457,11 +1461,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 }
             }
             br(localsInitBb)
-
-            kotlinExceptionExtractInstructions.forEach {
-                positionBefore(it)
-                call(context.llvm.setCurrentFrameFunction, listOf(slots))
-            }
         }
 
 
@@ -1531,6 +1530,11 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             }
             LLVMDeleteBasicBlock(cleanupLandingpad)
             catchKotlinExceptionBlock(null)
+        }
+
+        kotlinExceptionExtractInstructions.forEach {
+            positionBefore(it)
+            call(context.llvm.setCurrentFrameFunction, listOf(slots))
         }
 
         if (forwardingForeignExceptionsTerminatedWith != null && forwardingException) {
