@@ -7,16 +7,12 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
+import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
+import org.jetbrains.kotlin.backend.jvm.ir.constantValue
 import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
-import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
-import org.jetbrains.kotlin.backend.jvm.lower.constantValue
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
-import org.jetbrains.kotlin.backend.jvm.lower.isMultifileBridge
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*

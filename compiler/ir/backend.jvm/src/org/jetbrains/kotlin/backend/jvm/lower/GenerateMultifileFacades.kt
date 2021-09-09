@@ -16,13 +16,16 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeCustomPhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.codegen.fileParent
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
+import org.jetbrains.kotlin.backend.jvm.isMultifileBridge
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
@@ -42,7 +45,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 internal val generateMultifileFacadesPhase = makeCustomPhase<JvmBackendContext, IrModuleFragment>(
@@ -67,26 +69,6 @@ internal val generateMultifileFacadesPhase = makeCustomPhase<JvmBackendContext, 
         functionDelegates.entries.associateTo(context.multifileFacadeMemberToPartMember) { (member, newMember) -> newMember to member }
     }
 )
-
-class MultifileFacadeFileEntry(
-    private val className: JvmClassName,
-    val partFiles: List<IrFile>
-) : IrFileEntry {
-    override val name: String
-        get() = "<multi-file facade $className>"
-
-    override val maxOffset: Int
-        get() = UNDEFINED_OFFSET
-
-    override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo =
-        error("Multifile facade doesn't support debug info: $className")
-
-    override fun getLineNumber(offset: Int): Int =
-        error("Multifile facade doesn't support debug info: $className")
-
-    override fun getColumnNumber(offset: Int): Int =
-        error("Multifile facade doesn't support debug info: $className")
-}
 
 private fun generateMultifileFacades(
     module: IrModuleFragment,
@@ -376,6 +358,3 @@ private class UpdateConstantFacadePropertyReferences(
         ) facadeClass else null
     }
 }
-
-internal fun IrFunction.isMultifileBridge(): Boolean =
-    (parent as? IrClass)?.origin == IrDeclarationOrigin.JVM_MULTIFILE_CLASS

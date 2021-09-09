@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.hasMangledReturnType
 import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
 import org.jetbrains.kotlin.backend.jvm.ir.needsAccessor
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledReturnType
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.requiresMangling
+import org.jetbrains.kotlin.backend.jvm.requiresMangling
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality

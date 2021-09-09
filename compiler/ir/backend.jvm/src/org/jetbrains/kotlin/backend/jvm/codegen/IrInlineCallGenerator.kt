@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.psi.PsiSourceManager
-import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
+import org.jetbrains.kotlin.backend.jvm.ir.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression

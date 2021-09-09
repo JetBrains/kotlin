@@ -641,7 +641,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         }
 
         private fun getFunctionReferenceFlags(callableReferenceTarget: IrFunction): Int {
-            val isTopLevelBit = getCallableReferenceTopLevelFlag(callableReferenceTarget)
+            val isTopLevelBit = callableReferenceTarget.getCallableReferenceTopLevelFlag()
             val adaptedCallableReferenceFlags = getAdaptedCallableReferenceFlags()
             return isTopLevelBit + (adaptedCallableReferenceFlags shl 1)
         }
@@ -804,19 +804,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     }
 
     companion object {
-        private fun IrBuilderWithScope.kClassReference(classType: IrType) =
-            IrClassReferenceImpl(
-                startOffset, endOffset, context.irBuiltIns.kClassClass.starProjectedType, context.irBuiltIns.kClassClass, classType
-            )
-
-        internal fun JvmIrBuilder.kClassToJavaClass(kClassReference: IrExpression) =
-            irGet(irSymbols.javaLangClass.starProjectedType, null, irSymbols.kClassJava.owner.getter!!.symbol).apply {
-                extensionReceiver = kClassReference
-            }
-
-        internal fun JvmIrBuilder.javaClassReference(classType: IrType) =
-            kClassToJavaClass(kClassReference(classType))
-
         internal fun JvmIrBuilder.calculateOwner(irContainer: IrDeclarationParent): IrExpression {
             val kClass = calculateOwnerKClass(irContainer)
 
@@ -833,21 +820,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         }
 
         internal fun JvmIrBuilder.calculateOwnerKClass(irContainer: IrDeclarationParent): IrExpression =
-            kClassReference(getOwnerKClassType(irContainer, backendContext))
-
-        internal fun getOwnerKClassType(irContainer: IrDeclarationParent, context: JvmBackendContext): IrType =
-            if (irContainer is IrClass) irContainer.defaultType
-            else {
-                // For built-in members (i.e. top level `toString`) we generate reference to an internal class for an owner.
-                // This allows kotlin-reflect to understand that this is a built-in intrinsic which has no real declaration,
-                // and construct a special KCallable object.
-                context.ir.symbols.intrinsicsKotlinClass.defaultType
-            }
-
-        internal fun getCallableReferenceTopLevelFlag(declaration: IrDeclaration): Int =
-            if (isCallableReferenceTopLevel(declaration)) 1 else 0
-
-        internal fun isCallableReferenceTopLevel(declaration: IrDeclaration): Boolean =
-            declaration.parent.let { it is IrClass && it.isFileClass }
+            kClassReference(irContainer.getCallableReferenceOwnerKClassType(backendContext))
     }
 }

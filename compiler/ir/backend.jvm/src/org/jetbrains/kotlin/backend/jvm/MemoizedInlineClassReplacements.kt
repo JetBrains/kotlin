@@ -1,22 +1,19 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.jvm.lower.inlineclasses
+package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParameters
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.classFileContainsMethod
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.codegen.parentClassId
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi.mangledNameFor
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -270,7 +267,7 @@ class MemoizedInlineClassReplacements(
         if (noFakeOverride) {
             isFakeOverride = false
         }
-        name = mangledNameFor(function, mangleReturnTypes, useOldManglingScheme)
+        name = InlineClassAbi.mangledNameFor(function, mangleReturnTypes, useOldManglingScheme)
         returnType = function.returnType
     }.apply {
         parent = function.parent

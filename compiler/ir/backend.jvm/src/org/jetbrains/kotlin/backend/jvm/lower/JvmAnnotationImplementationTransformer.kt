@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
-import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.Companion.javaClassReference
+import org.jetbrains.kotlin.backend.jvm.ir.javaClassReference
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.IrClass

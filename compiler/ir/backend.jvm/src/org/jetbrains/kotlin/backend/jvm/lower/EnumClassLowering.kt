@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
+import org.jetbrains.kotlin.backend.jvm.ir.javaClassReference
 import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -32,7 +33,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.isEnumClass
+import org.jetbrains.kotlin.ir.util.isEnumEntry
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -161,9 +165,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
 
                             IrSyntheticBodyKind.ENUM_VALUEOF ->
                                 irCall(backendContext.ir.symbols.enumValueOfFunction).apply {
-                                    putValueArgument(0, with(FunctionReferenceLowering) {
-                                        javaClassReference(irClass.defaultType)
-                                    })
+                                    putValueArgument(0, javaClassReference(irClass.defaultType))
                                     putValueArgument(1, irGet(declaration.valueParameters[0]))
                                 }
                         }

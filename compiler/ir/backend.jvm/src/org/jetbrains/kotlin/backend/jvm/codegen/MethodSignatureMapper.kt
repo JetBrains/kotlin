@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.parentsWithSelf
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
-import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
+import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
@@ -27,12 +26,12 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.*
