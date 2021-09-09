@@ -5,60 +5,105 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.commonizer.cir.CirClassOrTypeAliasType
-import org.jetbrains.kotlin.commonizer.cir.CirClassType
-import org.jetbrains.kotlin.commonizer.cir.CirTypeAliasType
+import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
+import org.jetbrains.kotlin.commonizer.mergedtree.CirProvided
+import org.jetbrains.kotlin.commonizer.utils.isUnderKotlinNativeSyntheticPackages
+import org.jetbrains.kotlin.commonizer.utils.safeCastValues
+import org.jetbrains.kotlin.commonizer.utils.singleDistinctValueOrNull
+import org.jetbrains.kotlin.descriptors.Visibilities
 
 internal class ClassOrTypeAliasTypeCommonizer(
-    private val typeCommonizer: TypeCommonizer
+    private val typeCommonizer: TypeCommonizer,
+    private val classifiers: CirKnownClassifiers
 ) : NullableSingleInvocationCommonizer<CirClassOrTypeAliasType> {
 
+    private val isMarkedNullableCommonizer = TypeNullabilityCommonizer(typeCommonizer.options)
+
     override fun invoke(values: List<CirClassOrTypeAliasType>): CirClassOrTypeAliasType? {
-        TODO()
+        if (values.isEmpty()) return null
+        val expansions = values.map { it.expandedType() }
+        val isMarkedNullable = isMarkedNullableCommonizer.commonize(expansions.map { it.isMarkedNullable }) ?: return null
+        val arguments = TypeArgumentListCommonizer(typeCommonizer).commonize(values.map { it.arguments }) ?: return null
+        val classifierId = selectClassifierId(values) ?: return null
+
+        val outerTypes = values.safeCastValues<CirClassOrTypeAliasType, CirClassType>()?.map { it.outerType }
+        val outerType = when {
+            outerTypes == null -> null
+            outerTypes.all { it == null } -> null
+            outerTypes.any { it == null } -> return null
+            else -> invoke(outerTypes.map { checkNotNull(it) }) as? CirClassType ?: return null
+        }
+
+        if (classifierId.packageName.isUnderKotlinNativeSyntheticPackages) {
+            return CirClassType.createInterned(
+                classId = classifierId,
+                outerType = outerType,
+                arguments = arguments,
+                visibility = Visibilities.Public,
+                isMarkedNullable = isMarkedNullable
+            )
+        }
+
+        when (val dependencyClassifier = classifiers.commonDependencies.classifier(classifierId)) {
+            is CirProvided.Class -> return CirClassType.createInterned(
+                classId = classifierId,
+                outerType = outerType,
+                arguments = arguments,
+                visibility = Visibilities.Public,
+                isMarkedNullable = isMarkedNullable
+            )
+
+            is CirProvided.TypeAlias -> return CirTypeAliasType.createInterned(
+                typeAliasId = classifierId,
+                arguments = arguments,
+                isMarkedNullable = isMarkedNullable,
+                underlyingType = classifiers.commonDependencies
+                    .toCirClassOrTypeAliasTypeOrNull(dependencyClassifier.underlyingType) ?: return null
+            )
+
+            else -> Unit
+        }
+
+        val commonizedClassifier = classifiers.commonizedNodes.classNode(classifierId)?.commonDeclaration?.invoke()
+            ?: classifiers.commonizedNodes.typeAliasNode(classifierId)?.commonDeclaration?.invoke()
+
+
+        when (commonizedClassifier) {
+            is CirClass -> return CirClassType.createInterned(
+                classId = classifierId,
+                outerType = outerType,
+                arguments = arguments,
+                visibility = Visibilities.Public,
+                isMarkedNullable = isMarkedNullable
+            )
+
+            is CirTypeAlias -> return CirTypeAliasType.createInterned(
+                typeAliasId = classifierId,
+                arguments = arguments,
+                isMarkedNullable = isMarkedNullable,
+                underlyingType = computeSuitableUnderlyingType(
+                    classifiers, typeCommonizer, commonizedClassifier.underlyingType
+                )?.makeNullableIfNecessary(isMarkedNullable) ?: return null
+            )
+
+            else -> Unit
+        }
+
+        return null
     }
 
-    /*
-    override fun commonize(first: CirClassOrTypeAliasType, second: CirClassOrTypeAliasType): CirClassOrTypeAliasType? {
-        if (first is CirClassType && second is CirClassType) {
-            return ClassTypeCommonizer(classifiers, options).commonize(listOf(first, second))
-                ?: if (options.enableOptimisticNumberTypeCommonization) OptimisticNumbersTypeCommonizer.commonize(first, second) else null
-        }
+    private fun selectClassifierId(types: List<CirClassOrTypeAliasType>): CirEntityId? {
+        types.singleDistinctValueOrNull { it.classifierId }?.let { return it }
 
-        if (first is CirTypeAliasType && second is CirTypeAliasType) {
-            /*
-            In case regular type-alias-type commonization fails, we try to expand all type-aliases and
-            try our luck with commonizing those class types
-             */
-            return TypeAliasTypeCommonizer(classifiers, options).commonize(listOf(first, second))
-                ?: ClassOrTypeAliasTypeCommonizer(
-                    classifiers, options.withOptimisticNumberTypeCommonizationEnabled()
-                ).commonize(first.expandedType(), second.expandedType())
-        }
+        if (typeCommonizer.options.enableTypeAliasSubstitution) {
+            val commonId = types.singleDistinctValueOrNull {
+                classifiers.commonClassifierIdResolver.findCommonId(it.classifierId)
+            } ?: return null
 
-        val classType = when {
-            first is CirClassType -> first
-            second is CirClassType -> second
-            else -> return null
-        }
-
-        val typeAliasType = when {
-            first is CirTypeAliasType -> first
-            second is CirTypeAliasType -> second
-            else -> return null
-        }
-
-        /*
-        TypeAliasCommonizer will be able to figure out if the typealias will be represented as expect class in common.
-        If so, re-use this class type, otherwise: try to expand the typeAlias
-         */
-        val typeAliasClassType = TypeAliasTypeCommonizer(classifiers, options).commonize(listOf(typeAliasType))?.expandedType()
-            ?: typeAliasType.expandedType()
-
-        return commonize(classType, typeAliasClassType)
+            return commonId.aliases.maxByOrNull { candidate -> types.count { it.classifierId == candidate } }!!
+        } else return null
     }
-
-     */
-
 }
 
 internal tailrec fun CirClassOrTypeAliasType.expandedType(): CirClassType = when (this) {

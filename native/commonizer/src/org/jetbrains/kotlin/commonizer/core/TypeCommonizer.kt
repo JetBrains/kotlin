@@ -14,7 +14,7 @@ class TypeCommonizer(
     val options: Options = Options.default
 ) : NullableSingleInvocationCommonizer<CirType> {
 
-    private val classOrTypeAliasTypeCommonizer = ClassOrTypeAliasTypeCommonizer(this)
+    private val classOrTypeAliasTypeCommonizer = ClassOrTypeAliasTypeCommonizer(this, classifiers)
     private val flexibleTypeCommonizer = FlexibleTypeAssociativeCommonizer(this)
 
     override fun invoke(values: List<CirType>): CirType? {
@@ -35,7 +35,8 @@ class TypeCommonizer(
 
     data class Options(
         val enableOptimisticNumberTypeCommonization: Boolean = false,
-        val enableCovariantNullabilityCommonization: Boolean = false
+        val enableCovariantNullabilityCommonization: Boolean = false,
+        val enableTypeAliasSubstitution: Boolean = true
     ) {
 
         fun withOptimisticNumberTypeCommonizationEnabled(enabled: Boolean = true): Options {
@@ -46,6 +47,11 @@ class TypeCommonizer(
         fun withCovariantNullabilityCommonizationEnabled(enabled: Boolean = true): Options {
             return if (enableCovariantNullabilityCommonization == enabled) this
             else copy(enableCovariantNullabilityCommonization = enabled)
+        }
+
+        fun withTypeAliasSubstitutionEnabled(enabled: Boolean = true): Options {
+            return if (enableTypeAliasSubstitution == enabled) this
+            else copy(enableTypeAliasSubstitution = enabled)
         }
 
         companion object {

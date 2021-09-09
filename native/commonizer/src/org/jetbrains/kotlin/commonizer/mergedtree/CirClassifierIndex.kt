@@ -28,29 +28,6 @@ interface CirClassifierIndex {
     fun findTypeAliasesWithUnderlyingType(underlyingClassifier: CirEntityId): List<CirTreeTypeAlias>
 }
 
-/**
- * Resolves all typealias that will either declare the given [underlyingClassifier] as their underlying type directly, *or transitively*.
- * The returned List will be ordered BFS:
- * Elements at the beginning of the returned List will have a 'shorter path' to the underlying classifier
- */
-internal fun CirClassifierIndex.findAllTypeAliasesWithUnderlyingType(underlyingClassifier: CirEntityId): List<CirTreeTypeAlias> {
-    /* Fast Path (no aliases) */
-    val firstAliases = findTypeAliasesWithUnderlyingType(underlyingClassifier)
-    if (firstAliases.isEmpty()) return emptyList()
-
-    val resolved = ArrayList<CirTreeTypeAlias>(firstAliases)
-    val enqueued = ArrayDeque<CirEntityId>(firstAliases.size * 2)
-    firstAliases.forEach { alias -> enqueued.add(alias.id) }
-
-    while (enqueued.isNotEmpty()) {
-        val next = enqueued.removeFirst()
-        val aliases = findTypeAliasesWithUnderlyingType(next)
-        resolved.addAll(aliases)
-        aliases.forEach { alias -> enqueued.add(alias.id) }
-    }
-
-    return resolved
-}
 
 internal fun CirClassifierIndex.findClass(id: CirEntityId): CirClass? = findClassifier(id) as? CirClass
 

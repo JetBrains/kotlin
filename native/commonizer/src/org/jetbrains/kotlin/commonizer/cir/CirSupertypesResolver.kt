@@ -64,7 +64,26 @@ internal class SimpleCirSupertypesResolver(
     }
 }
 
-private fun CirProvided.ClassType.toCirClassTypeOrNull(): CirClassType? {
+internal fun CirProvidedClassifiers.toCirClassOrTypeAliasTypeOrNull(type: CirProvided.Type): CirClassOrTypeAliasType? {
+    return when (type) {
+        is CirProvided.ClassType -> type.toCirClassTypeOrNull()
+        is CirProvided.TypeParameterType -> null
+        is CirProvided.TypeAliasType -> TODO()
+    }
+}
+
+internal fun CirProvidedClassifiers.toCirTypeAliasTypeOrNull(type: CirProvided.TypeAliasType): CirTypeAliasType? {
+    val typeAlias = this.classifier(type.typeAliasId) as? CirProvided.TypeAlias ?: return null
+    return CirTypeAliasType.createInterned(
+        typeAliasId = type.typeAliasId,
+        isMarkedNullable = type.isMarkedNullable,
+        arguments = type.arguments.map { it.toCirTypeProjection() ?: return null },
+        underlyingType = toCirClassOrTypeAliasTypeOrNull(typeAlias.underlyingType) ?: return null
+    )
+}
+
+// TODO NOW move
+internal fun CirProvided.ClassType.toCirClassTypeOrNull(): CirClassType? {
     return CirClassType.createInterned(
         classId = this.classId,
         outerType = this.outerType?.let { it.toCirClassTypeOrNull() ?: return null },
@@ -74,7 +93,7 @@ private fun CirProvided.ClassType.toCirClassTypeOrNull(): CirClassType? {
     )
 }
 
-private fun CirProvided.TypeProjection.toCirTypeProjection(): CirTypeProjection? {
+internal fun CirProvided.TypeProjection.toCirTypeProjection(): CirTypeProjection? {
     return when (this) {
         is CirProvided.StarTypeProjection -> CirStarTypeProjection
         is CirProvided.RegularTypeProjection -> CirRegularTypeProjection(

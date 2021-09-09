@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.commonizer.mergedtree
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 
 @JvmInline
-internal value class CirCommonClassifierId(val aliases: LinkedHashSet<CirEntityId>) {
+value class CirCommonClassifierId(val aliases: LinkedHashSet<CirEntityId>) {
     override fun toString(): String {
         return aliases.joinToString(prefix = "(", postfix = ")")
     }
