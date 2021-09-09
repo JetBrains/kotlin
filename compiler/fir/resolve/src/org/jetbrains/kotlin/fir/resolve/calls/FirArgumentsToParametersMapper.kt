@@ -331,7 +331,4 @@ private class FirCallArgumentsProcessor(
 
     private val parameters: List<FirValueParameter>
         get() = function.valueParameters
-
-    private val FirExpression.argumentName: Name?
-        get() = (this as? FirNamedArgumentExpression)?.name
 }
