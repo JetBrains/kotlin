@@ -52,11 +52,18 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
             override fun visitElement(element: FirElement) = element.acceptChildren(this)
 
             override fun visitFunctionCall(functionCall: FirFunctionCall) {
-                val hasReferenceError = hasFunctionReferenceErrors(functionCall)
+                checkFunctionCall(functionCall)
+            }
+
+            private fun checkFunctionCall(functionCall: FirFunctionCall) {
+                val hasReferenceError = checkFunctionReferenceErrors(functionCall)
                 if (isGet && !hasReferenceError) checkReturnType(functionCall)
             }
 
-            private fun hasFunctionReferenceErrors(functionCall: FirFunctionCall): Boolean {
+            /**
+             * @return true if any error was reported; false otherwise.
+             */
+            private fun checkFunctionReferenceErrors(functionCall: FirFunctionCall): Boolean {
                 val errorNamedReference = functionCall.calleeReference as? FirErrorNamedReference ?: return false
                 if (errorNamedReference.source?.kind != FirFakeSourceElementKind.DelegatedPropertyAccessor) return false
                 val expectedFunctionSignature =
