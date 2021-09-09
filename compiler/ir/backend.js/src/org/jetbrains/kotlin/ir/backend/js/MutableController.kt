@@ -35,6 +35,7 @@ open class MutableController(val context: JsIrBackendContext, val lowerings: Lis
                                     }
                                 }
                             }
+                            is ModuleLowering -> {}
                         }
                     }
                     declaration.loweredUpTo = i

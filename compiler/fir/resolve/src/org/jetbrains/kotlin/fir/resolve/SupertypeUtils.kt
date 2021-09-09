@@ -77,6 +77,7 @@ fun FirClass.isThereLoopInSupertypes(session: FirSession): Boolean {
             is FirTypeAlias -> {
                 fir.expandedConeType?.lookupTag?.toSymbol(session)?.let(::dfs)
             }
+            else -> {}
         }
 
         visitedSymbols.add(current)

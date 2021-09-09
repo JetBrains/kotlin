@@ -290,6 +290,7 @@ open class FirSupertypeResolverVisitor(
                     if (classLikeDeclaration is FirTypeAlias) DiagnosticKind.RecursiveTypealiasExpansion else DiagnosticKind.LoopInSupertype
                 )
             )
+            SupertypeComputationStatus.NotComputed -> {}
         }
 
         supertypeComputationSession.startComputingSupertypes(classLikeDeclaration)

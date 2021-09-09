@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.isUnit
 
 object FirStandaloneQualifierChecker : FirResolvedQualifierChecker() {
@@ -32,6 +34,7 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker() {
             null -> {
                 reporter.reportOn(expression.source, FirErrors.EXPRESSION_EXPECTED_PACKAGE_FOUND, context)
             }
+            else -> {}
         }
     }
 }

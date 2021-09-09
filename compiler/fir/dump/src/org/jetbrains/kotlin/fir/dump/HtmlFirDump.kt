@@ -1198,6 +1198,13 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                             keyword("var ")
                         describeVerbose(symbol, fir)
                     }
+                    is FirAnonymousFunction,
+                    is FirErrorFunction,
+                    is FirPropertyAccessor,
+                    is FirBackingField,
+                    is FirEnumEntry,
+                    is FirErrorProperty,
+                    is FirValueParameter -> {}
                 }
             }
             else -> +symbol.describe()
