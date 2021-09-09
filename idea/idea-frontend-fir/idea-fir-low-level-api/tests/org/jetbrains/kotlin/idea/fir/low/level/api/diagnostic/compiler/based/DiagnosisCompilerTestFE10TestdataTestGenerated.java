@@ -32112,6 +32112,18 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("kt48653_after.kt")
+            public void testKt48653_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/kt48653_after.kt");
+            }
+
+            @Test
+            @TestMetadata("kt48653_before.kt")
+            public void testKt48653_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/kt48653_before.kt");
+            }
+
+            @Test
             @TestMetadata("kt9929.kt")
             public void testKt9929() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/when/kt9929.kt");
