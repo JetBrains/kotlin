@@ -22,6 +22,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -34,9 +35,15 @@ import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
 import java.io.File
 import java.util.concurrent.Callable
+import javax.inject.Inject
 
 @CacheableTask
-abstract class KaptGenerateStubsTask : KotlinCompile(KotlinJvmOptionsImpl()) {
+abstract class KaptGenerateStubsTask @Inject constructor(
+    workerExecutor: WorkerExecutor
+): KotlinCompile(
+    KotlinJvmOptionsImpl(),
+    workerExecutor
+) {
 
     internal class Configurator(
         private val kotlinCompileTaskProvider: TaskProvider<KotlinCompile>,

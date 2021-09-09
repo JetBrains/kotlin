@@ -15,6 +15,7 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 import org.gradle.work.InputChanges
+import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
@@ -42,8 +43,13 @@ import javax.inject.Inject
 
 @CacheableTask
 abstract class KotlinJsIrLink @Inject constructor(
-    objectFactory: ObjectFactory
-) : Kotlin2JsCompile(KotlinJsOptionsImpl(), objectFactory) {
+    objectFactory: ObjectFactory,
+    workerExecutor: WorkerExecutor
+) : Kotlin2JsCompile(
+    KotlinJsOptionsImpl(),
+    objectFactory,
+    workerExecutor
+) {
 
     class Configurator(compilation: KotlinCompilationData<*>) : Kotlin2JsCompile.Configurator<KotlinJsIrLink>(compilation) {
 

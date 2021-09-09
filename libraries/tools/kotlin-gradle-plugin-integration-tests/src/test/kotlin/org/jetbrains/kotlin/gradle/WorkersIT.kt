@@ -55,11 +55,7 @@ class WorkersIT : BaseGradleIT() {
             build("assemble", traceLoading, options = options) {
                 assertSuccessful()
                 val tasks = arrayOf(":compileKotlinMetadata", ":compileKotlinJvm", ":compileKotlinJs")
-                if (isParallel) {
-                    assertTasksSubmittedWork(*tasks)
-                } else {
-                    assertTasksDidNotSubmitWork(*tasks)
-                }
+                assertTasksSubmittedWork(*tasks)
                 val expectedKotlinOutputFiles = listOf(
                     kotlinClassesDir(sourceSet = "metadata/main") + "common/A.kotlin_metadata",
                     kotlinClassesDir(sourceSet = "jvm/main") + "common/A.class",

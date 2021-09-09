@@ -467,7 +467,8 @@ internal inline val <reified T : Task> T.thisTaskProvider: TaskProvider<out T>
 
 @CacheableTask
 abstract class KotlinCompile @Inject constructor(
-    override val kotlinOptions: KotlinJvmOptions
+    override val kotlinOptions: KotlinJvmOptions,
+    workerExecutor: WorkerExecutor
 ) : AbstractKotlinCompile<K2JVMCompilerArguments>(),
     KotlinJvmCompile,
     UsesKotlinJavaToolchain {
@@ -635,10 +636,11 @@ abstract class KotlinCompile @Inject constructor(
         // From Gradle 6.6 better to replace flatMap with provider.zip()
         defaultKotlinJavaToolchain.flatMap { toolchain ->
             objects.property(gradleCompileTaskProvider.map {
-                GradleCompilerRunner(
+                GradleCompilerRunnerWithWorkers(
                     it,
                     toolchain.currentJvmJdkToolsJar.orNull,
-                    normalizedKotlinDaemonJvmArguments.orNull
+                    normalizedKotlinDaemonJvmArguments.orNull,
+                    workerExecutor
                 )
             })
         }
@@ -848,64 +850,10 @@ abstract class KotlinCompile @Inject constructor(
 }
 
 @CacheableTask
-internal abstract class KotlinCompileWithWorkers @Inject constructor(
-    kotlinOptions: KotlinJvmOptions,
-    workerExecutor: WorkerExecutor
-) : KotlinCompile(kotlinOptions) {
-    override val compilerRunner: Provider<GradleCompilerRunner> =
-        defaultKotlinJavaToolchain.flatMap { toolchain ->
-            objects.property(gradleCompileTaskProvider.map {
-                GradleCompilerRunnerWithWorkers(
-                    it,
-                    toolchain.currentJvmJdkToolsJar.orNull,
-                    normalizedKotlinDaemonJvmArguments.orNull,
-                    workerExecutor
-                ) as GradleCompilerRunner
-            })
-        }
-}
-
-@CacheableTask
-internal abstract class Kotlin2JsCompileWithWorkers @Inject constructor(
-    kotlinOptions: KotlinJsOptions,
-    objectFactory: ObjectFactory,
-    workerExecutor: WorkerExecutor
-) : Kotlin2JsCompile(kotlinOptions, objectFactory) {
-    override val compilerRunner: Provider<GradleCompilerRunner> =
-        objects.propertyWithConvention(
-            gradleCompileTaskProvider.map {
-                GradleCompilerRunnerWithWorkers(
-                    it,
-                    null,
-                    normalizedKotlinDaemonJvmArguments.orNull,
-                    workerExecutor
-                ) as GradleCompilerRunner
-            }
-        )
-}
-
-@CacheableTask
-internal abstract class KotlinCompileCommonWithWorkers @Inject constructor(
-    kotlinOptions: KotlinMultiplatformCommonOptions,
-    workerExecutor: WorkerExecutor
-) : KotlinCompileCommon(kotlinOptions) {
-    override val compilerRunner: Provider<GradleCompilerRunner> =
-        objects.propertyWithConvention(
-            gradleCompileTaskProvider.map {
-                GradleCompilerRunnerWithWorkers(
-                    it,
-                    null,
-                    normalizedKotlinDaemonJvmArguments.orNull,
-                    workerExecutor
-                ) as GradleCompilerRunner
-            }
-        )
-}
-
-@CacheableTask
 abstract class Kotlin2JsCompile @Inject constructor(
     override val kotlinOptions: KotlinJsOptions,
-    objectFactory: ObjectFactory
+    objectFactory: ObjectFactory,
+    workerExecutor: WorkerExecutor
 ) : AbstractKotlinCompile<K2JSCompilerArguments>(), KotlinJsCompile {
 
     init {
@@ -988,6 +936,18 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:OutputFile
     @get:Optional
     abstract val optionalOutputFile: RegularFileProperty
+
+    override val compilerRunner: Provider<GradleCompilerRunner> =
+        objects.propertyWithConvention(
+            gradleCompileTaskProvider.map {
+                GradleCompilerRunnerWithWorkers(
+                    it,
+                    null,
+                    normalizedKotlinDaemonJvmArguments.orNull,
+                    workerExecutor
+                )
+            }
+        )
 
     override fun createCompilerArgs(): K2JSCompilerArguments =
         K2JSCompilerArguments()
