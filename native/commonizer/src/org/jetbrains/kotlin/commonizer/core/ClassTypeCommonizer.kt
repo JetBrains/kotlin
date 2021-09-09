@@ -9,42 +9,42 @@ import org.jetbrains.kotlin.commonizer.cir.CirClassType
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.commonizer.utils.isUnderKotlinNativeSyntheticPackages
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.commonizer.utils.singleDistinctValueOrNull
 
-internal class ClassTypeCommonizer(
+class ClassTypeCommonizer internal constructor(
     private val classifiers: CirKnownClassifiers,
-    options: TypeCommonizer.Options = TypeCommonizer.Options.default
-) :
-    AbstractStandardCommonizer<CirClassType, CirClassType>() {
-    private lateinit var classId: CirEntityId
-    private val outerType = OuterClassTypeCommonizer(classifiers)
-    private lateinit var anyVisibility: Visibility
-    private val arguments = TypeArgumentListCommonizer(classifiers)
-    private val isMarkedNullable = TypeNullabilityCommonizer(options).asCommonizer()
+    private val typeCommonizer: TypeCommonizer,
+    private val isMarkedNullableCommonizer: TypeNullabilityCommonizer
+) : NullableSingleInvocationCommonizer<CirClassType> {
+    override fun invoke(values: List<CirClassType>): CirClassType? {
+        if (values.isEmpty()) return null
+        val classId = values.singleDistinctValueOrNull { it.classifierId } ?: return null
+        val isMarkedNullable = isMarkedNullableCommonizer.commonize(values.map { it.isMarkedNullable }) ?: return null
 
-    override fun commonizationResult() = CirClassType.createInterned(
-        classId = classId,
-        outerType = outerType.result,
-        // N.B. The 'visibility' field in class types is needed ONLY for TA commonization. The class type constructed here is
-        // intended to be used in "common" target. It could not participate in TA commonization. So, it does not matter which
-        // exactly visibility will be recorded for commonized class type. Passing the visibility of the first class type
-        // to reach better interning rate.
-        visibility = anyVisibility,
-        arguments = arguments.result,
-        isMarkedNullable = isMarkedNullable.result
-    )
+        if (values.any { !isClassifierAvailableInCommon(classifiers, it.classifierId) }) {
+            return null
+        }
 
-    override fun initialize(first: CirClassType) {
-        classId = first.classifierId
-        anyVisibility = first.visibility
+        val outerType = if (values.all { it.outerType == null }) null
+        else if (values.any { it.outerType == null }) return null
+        else invoke(values.map { checkNotNull(it.outerType) }) ?: return null
+
+        // Commonizer is stateful: Needs to be created per invocation!
+        val arguments = TypeArgumentListCommonizer(typeCommonizer).commonize(values.map { it.arguments }) ?: return null
+
+        return CirClassType.createInterned(
+            classId = classId,
+            outerType = outerType,
+
+            // N.B. The 'visibility' field in class types is needed ONLY for TA commonization. The class type constructed here is
+            // intended to be used in "common" target. It could not participate in TA commonization. So, it does not matter which
+            // exactly visibility will be recorded for commonized class type. Passing the visibility of the first class type
+            // to reach better interning rate.
+            visibility = values.first().visibility,
+            arguments = arguments,
+            isMarkedNullable = isMarkedNullable
+        )
     }
-
-    override fun doCommonizeWith(next: CirClassType) =
-        isMarkedNullable.commonizeWith(next.isMarkedNullable)
-                && classId == next.classifierId
-                && outerType.commonizeWith(next.outerType)
-                && isClassifierAvailableInCommon(classifiers, classId)
-                && arguments.commonizeWith(next.arguments)
 }
 
 private fun isClassifierAvailableInCommon(classifiers: CirKnownClassifiers, classId: CirEntityId): Boolean {
@@ -64,10 +64,3 @@ private fun isClassifierAvailableInCommon(classifiers: CirKnownClassifiers, clas
     return (classifiers.commonizedNodes.classNode(classId)?.commonDeclaration?.invoke()
         ?: classifiers.commonizedNodes.typeAliasNode(classId)?.commonDeclaration?.invoke()) != null
 }
-
-private class OuterClassTypeCommonizer(classifiers: CirKnownClassifiers) :
-    AbstractNullableCommonizer<CirClassType, CirClassType, CirClassType, CirClassType>(
-        wrappedCommonizerFactory = { ClassTypeCommonizer(classifiers) },
-        extractor = { it },
-        builder = { it }
-    )

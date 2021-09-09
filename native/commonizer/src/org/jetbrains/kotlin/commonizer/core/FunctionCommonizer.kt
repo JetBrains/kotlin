@@ -6,37 +6,28 @@
 package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.cir.CirFunction
-import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 
-class FunctionCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrPropertyCommonizer<CirFunction>(classifiers) {
-    private val annotations = AnnotationsCommonizer()
-    private val modifiers = FunctionModifiersCommonizer()
-    private val valueParameters = CallableValueParametersCommonizer(classifiers)
-
-    override fun commonizationResult(): CirFunction? {
-        val valueParameters = valueParameters.result
-        valueParameters.patchCallables()
-
+class FunctionCommonizer(
+    private val typeCommonizer: TypeCommonizer,
+    private val functionOrPropertyBaseCommonizer: FunctionOrPropertyBaseCommonizer,
+) : NullableSingleInvocationCommonizer<CirFunction> {
+    override fun invoke(values: List<CirFunction>): CirFunction? {
+        if (values.isEmpty()) return null
+        val functionOrProperty = functionOrPropertyBaseCommonizer(values) ?: return null
+        val valueParametersResult = CallableValueParametersCommonizer(typeCommonizer).commonize(values) ?: return null
         return CirFunction(
-            annotations = annotations.result,
-            name = name,
-            typeParameters = typeParameters.result,
-            visibility = visibility.result,
-            modality = modality.result,
+            annotations = AnnotationsCommonizer().commonize(values.map { it.annotations }) ?: return null,
+            name = values.first().name,
+            typeParameters = functionOrProperty.typeParameters,
+            visibility = functionOrProperty.visibility,
+            modality = functionOrProperty.modality,
             containingClass = null, // does not matter
-            valueParameters = valueParameters.valueParameters,
-            hasStableParameterNames = valueParameters.hasStableParameterNames,
-            extensionReceiver = extensionReceiver.result,
-            returnType = returnType.result ?: return null,
-            kind = kind,
-            modifiers = modifiers.result
+            valueParameters = valueParametersResult.valueParameters,
+            hasStableParameterNames = valueParametersResult.hasStableParameterNames,
+            extensionReceiver = functionOrProperty.extensionReceiver,
+            returnType = functionOrProperty.returnType,
+            kind = functionOrProperty.kind,
+            modifiers = FunctionModifiersCommonizer().commonize(values.map { it.modifiers }) ?: return null
         )
-    }
-
-    override fun doCommonizeWith(next: CirFunction): Boolean {
-        return super.doCommonizeWith(next)
-                && annotations.commonizeWith(next.annotations)
-                && modifiers.commonizeWith(next.modifiers)
-                && valueParameters.commonizeWith(next)
     }
 }

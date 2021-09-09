@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-interface NullableContextualSingleInvocationCommonizer<T : Any, R : Any> {
+interface NullableContextualSingleInvocationCommonizer<T, R : Any> {
     operator fun invoke(values: List<T>): R?
 }
 
-fun <T : Any, R : Any> NullableContextualSingleInvocationCommonizer<T, R>.asCommonizer(): Commonizer<T, R?> =
+fun <T, R : Any> NullableContextualSingleInvocationCommonizer<T, R>.asCommonizer(): Commonizer<T, R?> =
     object : Commonizer<T, R?> {
         private val collectedValues = mutableListOf<T>()
 

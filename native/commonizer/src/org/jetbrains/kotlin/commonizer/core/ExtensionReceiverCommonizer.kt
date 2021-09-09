@@ -6,17 +6,26 @@
 package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.cir.CirExtensionReceiver
-import org.jetbrains.kotlin.commonizer.cir.CirType
-import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 
-class ExtensionReceiverCommonizer(classifiers: CirKnownClassifiers) :
-    AbstractNullableCommonizer<CirExtensionReceiver, CirExtensionReceiver, CirType, CirType>(
-        wrappedCommonizerFactory = { TypeCommonizer(classifiers).asCommonizer() },
-        extractor = { it.type },
-        builder = { receiverType ->
+class ExtensionReceiverCommonizer(
+    private val typeCommonizer: TypeCommonizer
+) : NullableContextualSingleInvocationCommonizer<CirExtensionReceiver?, ExtensionReceiverCommonizer.Commonized> {
+
+    class Commonized(val receiver: CirExtensionReceiver?) {
+        companion object {
+            val NULL = Commonized(null)
+        }
+    }
+
+    override fun invoke(values: List<CirExtensionReceiver?>): Commonized? {
+        if (values.all { it == null }) return Commonized.NULL
+        if (values.any { it == null }) return null
+
+        return Commonized(
             CirExtensionReceiver(
                 annotations = emptyList(),
-                type = receiverType
+                type = typeCommonizer(values.map { checkNotNull(it).type }) ?: return null
             )
-        }
-    )
+        )
+    }
+}

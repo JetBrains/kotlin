@@ -8,14 +8,13 @@ package org.jetbrains.kotlin.commonizer.core
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirType
 import org.jetbrains.kotlin.commonizer.cir.CirTypeParameter
-import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.types.Variance
 
-class TypeParameterCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirTypeParameter, CirTypeParameter>() {
+class TypeParameterCommonizer(typeCommonizer: TypeCommonizer) : AbstractStandardCommonizer<CirTypeParameter, CirTypeParameter>() {
     private lateinit var name: CirName
     private var isReified = false
     private lateinit var variance: Variance
-    private val upperBounds = TypeParameterUpperBoundsCommonizer(classifiers)
+    private val upperBounds = TypeParameterUpperBoundsCommonizer(typeCommonizer)
 
     override fun commonizationResult() = CirTypeParameter(
         annotations = emptyList(),
@@ -38,6 +37,6 @@ class TypeParameterCommonizer(classifiers: CirKnownClassifiers) : AbstractStanda
                 && upperBounds.commonizeWith(next.upperBounds)
 }
 
-private class TypeParameterUpperBoundsCommonizer(classifiers: CirKnownClassifiers) : AbstractListCommonizer<CirType, CirType>(
-    singleElementCommonizerFactory = { TypeCommonizer(classifiers).asCommonizer() }
+private class TypeParameterUpperBoundsCommonizer(typeCommonizer: TypeCommonizer) : AbstractListCommonizer<CirType, CirType>(
+    singleElementCommonizerFactory = { typeCommonizer.asCommonizer() }
 )

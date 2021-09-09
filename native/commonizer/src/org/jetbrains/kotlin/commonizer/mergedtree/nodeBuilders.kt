@@ -57,7 +57,7 @@ internal fun buildPropertyNode(
     storageManager = storageManager,
     size = size,
     nodeRelationship = nodeRelationship,
-    commonizerProducer = { PropertyCommonizer(classifiers) },
+    commonizerProducer = { PropertyCommonizer(FunctionOrPropertyBaseCommonizer(TypeCommonizer(classifiers))) },
     nodeProducer = ::CirPropertyNode
 )
 
@@ -70,7 +70,10 @@ internal fun buildFunctionNode(
     storageManager = storageManager,
     size = size,
     nodeRelationship = nodeRelationship,
-    commonizerProducer = { FunctionCommonizer(classifiers) },
+    commonizerProducer = {
+        val typeCommonizer = TypeCommonizer(classifiers)
+        FunctionCommonizer(typeCommonizer, FunctionOrPropertyBaseCommonizer(typeCommonizer)).asCommonizer()
+    },
     nodeProducer = ::CirFunctionNode
 )
 
@@ -84,7 +87,10 @@ internal fun buildClassNode(
     storageManager = storageManager,
     size = size,
     nodeRelationship = nodeRelationship,
-    commonizerProducer = { ClassCommonizer(classifiers) },
+    commonizerProducer = {
+        val typeCommonizer = TypeCommonizer(classifiers)
+        ClassCommonizer(typeCommonizer, ClassSuperTypeCommonizer(classifiers, typeCommonizer))
+    },
     recursionMarker = CirClassRecursionMarker,
     nodeProducer = { targetDeclarations, commonDeclaration ->
         CirClassNode(classId, targetDeclarations, commonDeclaration).also {
@@ -103,7 +109,7 @@ internal fun buildClassConstructorNode(
     storageManager = storageManager,
     size = size,
     nodeRelationship = nodeRelationship,
-    commonizerProducer = { ClassConstructorCommonizer(classifiers) },
+    commonizerProducer = { ClassConstructorCommonizer(TypeCommonizer(classifiers)) },
     nodeProducer = ::CirClassConstructorNode
 )
 
@@ -116,7 +122,7 @@ internal fun buildTypeAliasNode(
     storageManager = storageManager,
     size = size,
     nodeRelationship = null,
-    commonizerProducer = { TypeAliasCommonizer(classifiers).asCommonizer() },
+    commonizerProducer = { TypeAliasCommonizer(TypeCommonizer(classifiers), classifiers).asCommonizer() },
     recursionMarker = CirTypeAliasRecursionMarker,
     nodeProducer = { targetDeclarations, commonDeclaration ->
         CirTypeAliasNode(typeAliasId, targetDeclarations, commonDeclaration).also {
@@ -145,12 +151,13 @@ private fun <T : CirDeclaration, R : CirDeclaration, N : CirNode<T, R>> buildNod
     return nodeProducer(targetDeclarations, commonLazyValue)
 }
 
+@Suppress("UNCHECKED_CAST")
 internal fun <T : Any, R> commonize(
     targetDeclarations: CommonizedGroup<T>,
     commonizer: Commonizer<T, R>
 ): R? {
     if (targetDeclarations.any { it == null }) return null
-    return commonizer.commonize(targetDeclarations.filterNotNull())
+    return commonizer.commonize(targetDeclarations as List<T>)
 }
 
 @Suppress("NOTHING_TO_INLINE")

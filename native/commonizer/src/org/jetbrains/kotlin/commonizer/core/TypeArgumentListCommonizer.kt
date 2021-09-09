@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.cir.CirTypeProjection
-import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 
-class TypeArgumentListCommonizer(classifiers: CirKnownClassifiers) : AbstractListCommonizer<CirTypeProjection, CirTypeProjection>(
-    singleElementCommonizerFactory = { TypeArgumentCommonizer(classifiers) }
+class TypeArgumentListCommonizer(typeCommonizer: TypeCommonizer) : AbstractListCommonizer<CirTypeProjection, CirTypeProjection>(
+    singleElementCommonizerFactory = { TypeArgumentCommonizer(typeCommonizer).asCommonizer() }
 )

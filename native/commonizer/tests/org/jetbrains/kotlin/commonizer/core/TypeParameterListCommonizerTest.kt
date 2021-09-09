@@ -108,7 +108,7 @@ class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParam
         )
     )
 
-    override fun createCommonizer() = TypeParameterListCommonizer(MOCK_CLASSIFIERS)
+    override fun createCommonizer() = TypeParameterListCommonizer(TypeCommonizer(MOCK_CLASSIFIERS))
 
     private companion object {
         fun mockTypeParams(vararg params: Pair<String, String>): List<CirTypeParameter> {

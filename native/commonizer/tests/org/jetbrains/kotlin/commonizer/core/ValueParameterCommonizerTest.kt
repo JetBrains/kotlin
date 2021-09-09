@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.commonizer.utils.MOCK_CLASSIFIERS
 import org.jetbrains.kotlin.commonizer.utils.mockClassType
 import org.junit.Test
 
-class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, CirValueParameter>() {
+class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, CirValueParameter?>() {
 
     @Test
     fun sameReturnType1() = doTestSuccess(
@@ -137,7 +137,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
         mockValueParam("kotlin/String", declaresDefaultValue = true)
     )
 
-    override fun createCommonizer() = ValueParameterCommonizer(MOCK_CLASSIFIERS)
+    override fun createCommonizer() = ValueParameterCommonizer(TypeCommonizer(MOCK_CLASSIFIERS))
 
     override fun areEqual(a: CirValueParameter?, b: CirValueParameter?) =
         (a === b) || (a != null && b != null && areEqual(MOCK_CLASSIFIERS, a, b))

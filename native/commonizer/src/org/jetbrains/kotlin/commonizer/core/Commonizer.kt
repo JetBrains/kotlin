@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-interface Commonizer<T, out R> {
+interface Commonizer<in T, out R> {
     val result: R
     fun commonizeWith(next: T): Boolean
 }

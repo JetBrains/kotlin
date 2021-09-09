@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.cir.CirTypeParameter
-import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 
-class TypeParameterListCommonizer(classifiers: CirKnownClassifiers) : AbstractListCommonizer<CirTypeParameter, CirTypeParameter>(
-    singleElementCommonizerFactory = { TypeParameterCommonizer(classifiers) }
+class TypeParameterListCommonizer(typeCommonizer: TypeCommonizer) : AbstractListCommonizer<CirTypeParameter, CirTypeParameter>(
+    singleElementCommonizerFactory = { TypeParameterCommonizer(typeCommonizer) }
 )

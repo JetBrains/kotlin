@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.commonizer.core
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 
 internal class CommonizationVisitor(
-    private val classifiers: CirKnownClassifiers,
     private val root: CirRootNode
 ) : CirNodeVisitor<Unit, Unit> {
     override fun visitRootNode(node: CirRootNode, data: Unit) {

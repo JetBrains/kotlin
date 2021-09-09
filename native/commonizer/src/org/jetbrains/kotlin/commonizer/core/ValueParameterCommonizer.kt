@@ -8,25 +8,27 @@ package org.jetbrains.kotlin.commonizer.core
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirType
 import org.jetbrains.kotlin.commonizer.cir.CirValueParameter
-import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.commonizer.utils.isNull
 
-class ValueParameterCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirValueParameter, CirValueParameter>() {
+class ValueParameterCommonizer(returnTypeCommonizer: TypeCommonizer) :
+    AbstractStandardCommonizer<CirValueParameter, CirValueParameter?>() {
     private lateinit var name: CirName
-    private val returnType = TypeCommonizer(classifiers).asCommonizer()
+    private val returnTypeCommonizer = returnTypeCommonizer.asCommonizer()
     private var varargElementType: CirType? = null
     private var isCrossinline = true
     private var isNoinline = true
 
-    override fun commonizationResult() = CirValueParameter.createInterned(
-        annotations = emptyList(),
-        name = name,
-        returnType = returnType.result,
-        varargElementType = varargElementType,
-        declaresDefaultValue = false,
-        isCrossinline = isCrossinline,
-        isNoinline = isNoinline
-    )
+    override fun commonizationResult(): CirValueParameter? {
+        return CirValueParameter.createInterned(
+            annotations = emptyList(),
+            name = name,
+            returnType = returnTypeCommonizer.result ?: return null,
+            varargElementType = varargElementType,
+            declaresDefaultValue = false,
+            isCrossinline = isCrossinline,
+            isNoinline = isNoinline
+        )
+    }
 
     override fun initialize(first: CirValueParameter) {
         name = first.name
@@ -38,7 +40,7 @@ class ValueParameterCommonizer(classifiers: CirKnownClassifiers) : AbstractStand
     override fun doCommonizeWith(next: CirValueParameter): Boolean {
         val result = !next.declaresDefaultValue
                 && varargElementType.isNull() == next.varargElementType.isNull()
-                && returnType.commonizeWith(next.returnType)
+                && returnTypeCommonizer.commonizeWith(next.returnType)
 
         if (result) {
             isCrossinline = isCrossinline && next.isCrossinline

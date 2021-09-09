@@ -9,6 +9,12 @@ interface AssociativeCommonizer<T> {
     fun commonize(first: T, second: T): T?
 }
 
+fun <T> AssociativeCommonizer<T>.commonize(values: List<T>): T? {
+    if (values.isEmpty()) return null
+    if (values.size == 1) return values.first()
+    return values.reduce { acc, next -> commonize(acc, next) ?: return null }
+}
+
 fun <T : Any> AssociativeCommonizer<T>.asCommonizer(): AssociativeCommonizerAdapter<T> = AssociativeCommonizerAdapter(this)
 
 open class AssociativeCommonizerAdapter<T : Any>(
