@@ -10,6 +10,7 @@ package kotlin.ranges
 
 import kotlin.internal.getProgressionLastElement
 import kotlin.internal.unsignedIncrementAndClamp
+import kotlin.internal.progressionUnsignedDivide
 
 /**
  * A progression of values of type `Char`.
@@ -20,7 +21,7 @@ public open class CharProgression
             start: Char,
             endInclusive: Char,
             step: Int
-    ) : Collection<Char> {
+    ) : Collection<Char>, kotlin.internal.ProgressionCollection {
     init {
         if (step == 0) throw kotlin.IllegalArgumentException("Step must be non-zero.")
         if (step == Int.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must be greater than Int.MIN_VALUE to avoid overflow on negation.")
@@ -98,7 +99,7 @@ public open class IntProgression
             start: Int,
             endInclusive: Int,
             step: Int
-    ) : Collection<Int> {
+    ) : Collection<Int>, kotlin.internal.ProgressionCollection {
     init {
         if (step == 0) throw kotlin.IllegalArgumentException("Step must be non-zero.")
         if (step == Int.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must be greater than Int.MIN_VALUE to avoid overflow on negation.")
@@ -142,10 +143,8 @@ public open class IntProgression
     override val size: Int
         get() = when {
             isEmpty() -> 0
-            step == 1 -> unsignedIncrementAndClamp(last - first)
-            step == -1 -> unsignedIncrementAndClamp(first - last)
-            step > 0 -> unsignedIncrementAndClamp(last - first, step)
-            step < 0 -> unsignedIncrementAndClamp(first - last, -step)
+            step > 0 -> unsignedIncrementAndClamp(progressionUnsignedDivide(last - first, step))
+            step < 0 -> unsignedIncrementAndClamp(progressionUnsignedDivide(first - last, -step))
             else -> error("Progression invariant is broken: step == 0")
         }
 
@@ -183,7 +182,7 @@ public open class LongProgression
             start: Long,
             endInclusive: Long,
             step: Long
-    ) : Collection<Long> {
+    ) : Collection<Long>, kotlin.internal.ProgressionCollection {
     init {
         if (step == 0L) throw kotlin.IllegalArgumentException("Step must be non-zero.")
         if (step == Long.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must be greater than Long.MIN_VALUE to avoid overflow on negation.")
@@ -227,10 +226,8 @@ public open class LongProgression
     override val size: Int
         get() = when {
             isEmpty() -> 0
-            step == 1L -> unsignedIncrementAndClamp(last - first)
-            step == -1L -> unsignedIncrementAndClamp(first - last)
-            step > 0 -> unsignedIncrementAndClamp(last - first, step)
-            step < 0 -> unsignedIncrementAndClamp(first - last, -step)
+            step > 0 -> unsignedIncrementAndClamp(progressionUnsignedDivide(last - first, step))
+            step < 0 -> unsignedIncrementAndClamp(progressionUnsignedDivide(first - last, -step))
             else -> error("Progression invariant is broken: step == 0")
         }
 

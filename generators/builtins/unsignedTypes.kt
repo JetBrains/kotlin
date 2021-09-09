@@ -631,7 +631,7 @@ internal constructor(
     start: $elementType,
     endInclusive: $elementType,
     step: $stepType
-) : Collection<$elementType> {
+) : Collection<$elementType>, kotlin.internal.ProgressionCollection {
     init {
         if (step == 0.to$stepType()) throw kotlin.IllegalArgumentException("Step must be non-zero.")
         if (step == $stepMinValue) throw kotlin.IllegalArgumentException("Step must be greater than $stepMinValue to avoid overflow on negation.")

@@ -19,10 +19,12 @@ object Elements : TemplateGroupBase() {
                 sinceAtLeast("1.3")
                 annotation("@ExperimentalUnsignedTypes")
             }
-            specialFor(RangesOfPrimitives) {
+            specialFor(RangesOfPrimitives, ProgressionsOfPrimitives) {
                 if (primitive in PrimitiveType.unsignedPrimitives) {
-                    sinceAtLeast("1.5")
-                    wasExperimental("ExperimentalUnsignedTypes")
+                    if (family == RangesOfPrimitives) {
+                        sinceAtLeast("1.5")
+                        wasExperimental("ExperimentalUnsignedTypes")
+                    }
                     sourceFile(SourceFile.URanges)
                 }
             }
@@ -923,7 +925,7 @@ object Elements : TemplateGroupBase() {
     }
 
     val f_random = fn("random()") {
-        include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
+        include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives, ProgressionsOfPrimitives)
     } builder {
         since("1.3")
         inlineOnly()
@@ -938,10 +940,13 @@ object Elements : TemplateGroupBase() {
         body {
             """return random(Random)"""
         }
+        specialFor(ProgressionsOfPrimitives) {
+            since("1.6")
+        }
     }
 
     val f_randomOrNull = fn("randomOrNull()") {
-        include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
+        include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives, ProgressionsOfPrimitives)
     } builder {
         since("1.4")
         wasExperimental("ExperimentalStdlibApi")
@@ -955,10 +960,36 @@ object Elements : TemplateGroupBase() {
         body {
             """return randomOrNull(Random)"""
         }
+        specialFor(ProgressionsOfPrimitives) {
+            since("1.6")
+        }
+    }
+
+
+    private fun progressionRandomBody(primitive: PrimitiveType): String {
+        return if (primitive == PrimitiveType.Char) {
+                """
+                val span = (last - first) / step
+                val min = if (step > 0) first.code else last.code
+                val index = random.nextInt(min, min + span + 1) - min
+                return (first.code + step * index).toChar()
+                """
+        } else {
+            val stepType = primitive.toString().removePrefix("U")
+            val stepToElement = if (primitive.isUnsigned()) ".to$primitive()" else ""
+            val elementToStep = if (primitive.isUnsigned()) ".to$stepType()" else ""
+                """
+                val span = if (step > 0) last - first else first - last
+                val min = if (step > 0) first else last
+                val scaledSpan = kotlin.internal.progressionUnsignedDivide(span$elementToStep, kotlin.math.abs(step))
+                val index = random.nextRange$primitive(min, min + scaledSpan$stepToElement) - min
+                return first + (step * index$elementToStep)$stepToElement
+                """
+        }
     }
 
     val f_random_random = fn("random(random: Random)") {
-        include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
+        include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives, ProgressionsOfPrimitives)
     } builder {
         since("1.3")
         returns("T")
@@ -973,6 +1004,14 @@ object Elements : TemplateGroupBase() {
             """
             if (isEmpty())
                 throw NoSuchElementException("${f.doc.collection.capitalize()} is empty.")
+            if (this is kotlin.internal.ProgressionCollection) {
+                @Suppress("UNCHECKED_CAST") 
+                when (this) {
+""" + PrimitiveType.rangePrimitives.joinToString("\n") {
+                "                    is ${it}Progression -> return (this as ${it}Progression).random(random) as T"
+} + """
+                }
+            }
             return elementAt(random.nextInt(size))
             """
         }
@@ -1000,10 +1039,20 @@ object Elements : TemplateGroupBase() {
                 """
             }
         }
+        specialFor(ProgressionsOfPrimitives) {
+            since("1.6")
+            body {
+                """
+                if (isEmpty())
+                    throw NoSuchElementException("${f.doc.collection.capitalize()} is empty.")
+${progressionRandomBody(primitive!!)}
+                """
+            }
+        }
     }
 
     val f_randomOrNull_random = fn("randomOrNull(random: Random)") {
-        include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
+        include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives, ProgressionsOfPrimitives)
     } builder {
         since("1.4")
         wasExperimental("ExperimentalStdlibApi")
@@ -1017,6 +1066,14 @@ object Elements : TemplateGroupBase() {
             """
             if (isEmpty())
                 return null
+            if (this is kotlin.internal.ProgressionCollection) {
+                @Suppress("UNCHECKED_CAST") 
+                when (this) {
+""" + PrimitiveType.rangePrimitives.joinToString("\n") {
+                "                    is ${it}Progression -> return (this as ${it}Progression).randomOrNull(random) as T?"
+} + """
+                }
+            }
             return elementAt(random.nextInt(size))
             """
         }
@@ -1040,6 +1097,16 @@ object Elements : TemplateGroupBase() {
                 if (isEmpty())
                     return null
                 return random.$expr
+                """
+            }
+        }
+        specialFor(ProgressionsOfPrimitives) {
+            since("1.6")
+            body {
+                """
+                if (isEmpty())
+                    return null
+${progressionRandomBody(primitive!!)}
                 """
             }
         }

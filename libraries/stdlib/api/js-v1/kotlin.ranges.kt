@@ -327,12 +327,26 @@ public infix fun kotlin.ULong.downTo(to: kotlin.ULong): kotlin.ranges.ULongProgr
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public infix fun kotlin.UShort.downTo(to: kotlin.UShort): kotlin.ranges.UIntProgression
 
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.ranges.CharProgression.random(): kotlin.Char
+
+@kotlin.SinceKotlin(version = "1.6")
+public fun kotlin.ranges.CharProgression.random(random: kotlin.random.Random): kotlin.Char
+
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ranges.CharRange.random(): kotlin.Char
 
 @kotlin.SinceKotlin(version = "1.3")
 public fun kotlin.ranges.CharRange.random(random: kotlin.random.Random): kotlin.Char
+
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.ranges.IntProgression.random(): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.6")
+public fun kotlin.ranges.IntProgression.random(random: kotlin.random.Random): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.internal.InlineOnly
@@ -341,12 +355,26 @@ public inline fun kotlin.ranges.IntRange.random(): kotlin.Int
 @kotlin.SinceKotlin(version = "1.3")
 public fun kotlin.ranges.IntRange.random(random: kotlin.random.Random): kotlin.Int
 
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.ranges.LongProgression.random(): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.6")
+public fun kotlin.ranges.LongProgression.random(random: kotlin.random.Random): kotlin.Long
+
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ranges.LongRange.random(): kotlin.Long
 
 @kotlin.SinceKotlin(version = "1.3")
 public fun kotlin.ranges.LongRange.random(random: kotlin.random.Random): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.ranges.UIntProgression.random(): kotlin.UInt
+
+@kotlin.SinceKotlin(version = "1.6")
+public fun kotlin.ranges.UIntProgression.random(random: kotlin.random.Random): kotlin.UInt
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
@@ -357,6 +385,13 @@ public inline fun kotlin.ranges.UIntRange.random(): kotlin.UInt
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.ranges.UIntRange.random(random: kotlin.random.Random): kotlin.UInt
 
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.ranges.ULongProgression.random(): kotlin.ULong
+
+@kotlin.SinceKotlin(version = "1.6")
+public fun kotlin.ranges.ULongProgression.random(random: kotlin.random.Random): kotlin.ULong
+
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
@@ -365,6 +400,15 @@ public inline fun kotlin.ranges.ULongRange.random(): kotlin.ULong
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.ranges.ULongRange.random(random: kotlin.random.Random): kotlin.ULong
+
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+@kotlin.internal.InlineOnly
+public inline fun kotlin.ranges.CharProgression.randomOrNull(): kotlin.Char?
+
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+public fun kotlin.ranges.CharProgression.randomOrNull(random: kotlin.random.Random): kotlin.Char?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
@@ -375,6 +419,15 @@ public inline fun kotlin.ranges.CharRange.randomOrNull(): kotlin.Char?
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.ranges.CharRange.randomOrNull(random: kotlin.random.Random): kotlin.Char?
 
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+@kotlin.internal.InlineOnly
+public inline fun kotlin.ranges.IntProgression.randomOrNull(): kotlin.Int?
+
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+public fun kotlin.ranges.IntProgression.randomOrNull(random: kotlin.random.Random): kotlin.Int?
+
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
@@ -383,6 +436,15 @@ public inline fun kotlin.ranges.IntRange.randomOrNull(): kotlin.Int?
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.ranges.IntRange.randomOrNull(random: kotlin.random.Random): kotlin.Int?
+
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+@kotlin.internal.InlineOnly
+public inline fun kotlin.ranges.LongProgression.randomOrNull(): kotlin.Long?
+
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+public fun kotlin.ranges.LongProgression.randomOrNull(random: kotlin.random.Random): kotlin.Long?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
@@ -393,6 +455,15 @@ public inline fun kotlin.ranges.LongRange.randomOrNull(): kotlin.Long?
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.ranges.LongRange.randomOrNull(random: kotlin.random.Random): kotlin.Long?
 
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+@kotlin.internal.InlineOnly
+public inline fun kotlin.ranges.UIntProgression.randomOrNull(): kotlin.UInt?
+
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+public fun kotlin.ranges.UIntProgression.randomOrNull(random: kotlin.random.Random): kotlin.UInt?
+
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class, kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
@@ -401,6 +472,15 @@ public inline fun kotlin.ranges.UIntRange.randomOrNull(): kotlin.UInt?
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class, kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.ranges.UIntRange.randomOrNull(random: kotlin.random.Random): kotlin.UInt?
+
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+@kotlin.internal.InlineOnly
+public inline fun kotlin.ranges.ULongProgression.randomOrNull(): kotlin.ULong?
+
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+public fun kotlin.ranges.ULongProgression.randomOrNull(random: kotlin.random.Random): kotlin.ULong?
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class, kotlin.ExperimentalUnsignedTypes::class})
@@ -497,37 +577,6 @@ public infix fun kotlin.ULong.until(to: kotlin.ULong): kotlin.ranges.ULongRange
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public infix fun kotlin.UShort.until(to: kotlin.UShort): kotlin.ranges.UIntRange
 
-public open class CharProgression : kotlin.collections.Collection<kotlin.Char> {
-    public final val first: kotlin.Char { get; }
-
-    public final val last: kotlin.Char { get; }
-
-    @kotlin.SinceKotlin(version = "1.6")
-    public open override val size: kotlin.Int { get; }
-
-    public final val step: kotlin.Int { get; }
-
-    @kotlin.SinceKotlin(version = "1.6")
-    public open override operator fun contains(value: kotlin.Char): kotlin.Boolean
-
-    @kotlin.SinceKotlin(version = "1.6")
-    public open override fun containsAll(elements: kotlin.collections.Collection<kotlin.Char>): kotlin.Boolean
-
-    public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
-
-    public open override fun hashCode(): kotlin.Int
-
-    public open override fun isEmpty(): kotlin.Boolean
-
-    public open override operator fun iterator(): kotlin.collections.CharIterator
-
-    public open override fun toString(): kotlin.String
-
-    public companion object of CharProgression {
-        public final fun fromClosedRange(rangeStart: kotlin.Char, rangeEnd: kotlin.Char, step: kotlin.Int): kotlin.ranges.CharProgression
-    }
-}
-
 /*∆*/ public open class CharProgression : kotlin.collections.Collection<kotlin.Char> {
 /*∆*/     public final val first: kotlin.Char { get; }
 /*∆*/ 
@@ -559,6 +608,37 @@ public open class CharProgression : kotlin.collections.Collection<kotlin.Char> {
 /*∆*/     }
 /*∆*/ }
 /*∆*/ 
+public open class CharProgression : kotlin.collections.Collection<kotlin.Char>, kotlin.internal.ProgressionCollection {
+    public final val first: kotlin.Char { get; }
+
+    public final val last: kotlin.Char { get; }
+
+    @kotlin.SinceKotlin(version = "1.6")
+    public open override val size: kotlin.Int { get; }
+
+    public final val step: kotlin.Int { get; }
+
+    @kotlin.SinceKotlin(version = "1.6")
+    public open override operator fun contains(value: kotlin.Char): kotlin.Boolean
+
+    @kotlin.SinceKotlin(version = "1.6")
+    public open override fun containsAll(elements: kotlin.collections.Collection<kotlin.Char>): kotlin.Boolean
+
+    public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+    public open override fun hashCode(): kotlin.Int
+
+    public open override fun isEmpty(): kotlin.Boolean
+
+    public open override operator fun iterator(): kotlin.collections.CharIterator
+
+    public open override fun toString(): kotlin.String
+
+    public companion object of CharProgression {
+        public final fun fromClosedRange(rangeStart: kotlin.Char, rangeEnd: kotlin.Char, step: kotlin.Int): kotlin.ranges.CharProgression
+    }
+}
+
 public final class CharRange : kotlin.ranges.CharProgression, kotlin.ranges.ClosedRange<kotlin.Char> {
     public constructor CharRange(start: kotlin.Char, endInclusive: kotlin.Char)
 
@@ -632,37 +712,6 @@ public interface ClosedRange<T : kotlin.Comparable<T>> {
 /*∆*/     public open fun isEmpty(): kotlin.Boolean
 /*∆*/ }
 /*∆*/ 
-public open class IntProgression : kotlin.collections.Collection<kotlin.Int> {
-    public final val first: kotlin.Int { get; }
-
-    public final val last: kotlin.Int { get; }
-
-    @kotlin.SinceKotlin(version = "1.6")
-    public open override val size: kotlin.Int { get; }
-
-    public final val step: kotlin.Int { get; }
-
-    @kotlin.SinceKotlin(version = "1.6")
-    public open override operator fun contains(value: kotlin.Int): kotlin.Boolean
-
-    @kotlin.SinceKotlin(version = "1.6")
-    public open override fun containsAll(elements: kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
-
-    public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
-
-    public open override fun hashCode(): kotlin.Int
-
-    public open override fun isEmpty(): kotlin.Boolean
-
-    public open override operator fun iterator(): kotlin.collections.IntIterator
-
-    public open override fun toString(): kotlin.String
-
-    public companion object of IntProgression {
-        public final fun fromClosedRange(rangeStart: kotlin.Int, rangeEnd: kotlin.Int, step: kotlin.Int): kotlin.ranges.IntProgression
-    }
-}
-
 /*∆*/ public open class IntProgression : kotlin.collections.Collection<kotlin.Int> {
 /*∆*/     public final val first: kotlin.Int { get; }
 /*∆*/ 
@@ -694,6 +743,37 @@ public open class IntProgression : kotlin.collections.Collection<kotlin.Int> {
 /*∆*/     }
 /*∆*/ }
 /*∆*/ 
+public open class IntProgression : kotlin.collections.Collection<kotlin.Int>, kotlin.internal.ProgressionCollection {
+    public final val first: kotlin.Int { get; }
+
+    public final val last: kotlin.Int { get; }
+
+    @kotlin.SinceKotlin(version = "1.6")
+    public open override val size: kotlin.Int { get; }
+
+    public final val step: kotlin.Int { get; }
+
+    @kotlin.SinceKotlin(version = "1.6")
+    public open override operator fun contains(value: kotlin.Int): kotlin.Boolean
+
+    @kotlin.SinceKotlin(version = "1.6")
+    public open override fun containsAll(elements: kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+
+    public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+    public open override fun hashCode(): kotlin.Int
+
+    public open override fun isEmpty(): kotlin.Boolean
+
+    public open override operator fun iterator(): kotlin.collections.IntIterator
+
+    public open override fun toString(): kotlin.String
+
+    public companion object of IntProgression {
+        public final fun fromClosedRange(rangeStart: kotlin.Int, rangeEnd: kotlin.Int, step: kotlin.Int): kotlin.ranges.IntProgression
+    }
+}
+
 public final class IntRange : kotlin.ranges.IntProgression, kotlin.ranges.ClosedRange<kotlin.Int> {
     public constructor IntRange(start: kotlin.Int, endInclusive: kotlin.Int)
 
@@ -738,37 +818,6 @@ public final class IntRange : kotlin.ranges.IntProgression, kotlin.ranges.Closed
 /*∆*/     }
 /*∆*/ }
 /*∆*/ 
-public open class LongProgression : kotlin.collections.Collection<kotlin.Long> {
-    public final val first: kotlin.Long { get; }
-
-    public final val last: kotlin.Long { get; }
-
-    @kotlin.SinceKotlin(version = "1.6")
-    public open override val size: kotlin.Int { get; }
-
-    public final val step: kotlin.Long { get; }
-
-    @kotlin.SinceKotlin(version = "1.6")
-    public open override operator fun contains(value: kotlin.Long): kotlin.Boolean
-
-    @kotlin.SinceKotlin(version = "1.6")
-    public open override fun containsAll(elements: kotlin.collections.Collection<kotlin.Long>): kotlin.Boolean
-
-    public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
-
-    public open override fun hashCode(): kotlin.Int
-
-    public open override fun isEmpty(): kotlin.Boolean
-
-    public open override operator fun iterator(): kotlin.collections.LongIterator
-
-    public open override fun toString(): kotlin.String
-
-    public companion object of LongProgression {
-        public final fun fromClosedRange(rangeStart: kotlin.Long, rangeEnd: kotlin.Long, step: kotlin.Long): kotlin.ranges.LongProgression
-    }
-}
-
 /*∆*/ public open class LongProgression : kotlin.collections.Collection<kotlin.Long> {
 /*∆*/     public final val first: kotlin.Long { get; }
 /*∆*/ 
@@ -800,6 +849,37 @@ public open class LongProgression : kotlin.collections.Collection<kotlin.Long> {
 /*∆*/     }
 /*∆*/ }
 /*∆*/ 
+public open class LongProgression : kotlin.collections.Collection<kotlin.Long>, kotlin.internal.ProgressionCollection {
+    public final val first: kotlin.Long { get; }
+
+    public final val last: kotlin.Long { get; }
+
+    @kotlin.SinceKotlin(version = "1.6")
+    public open override val size: kotlin.Int { get; }
+
+    public final val step: kotlin.Long { get; }
+
+    @kotlin.SinceKotlin(version = "1.6")
+    public open override operator fun contains(value: kotlin.Long): kotlin.Boolean
+
+    @kotlin.SinceKotlin(version = "1.6")
+    public open override fun containsAll(elements: kotlin.collections.Collection<kotlin.Long>): kotlin.Boolean
+
+    public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+    public open override fun hashCode(): kotlin.Int
+
+    public open override fun isEmpty(): kotlin.Boolean
+
+    public open override operator fun iterator(): kotlin.collections.LongIterator
+
+    public open override fun toString(): kotlin.String
+
+    public companion object of LongProgression {
+        public final fun fromClosedRange(rangeStart: kotlin.Long, rangeEnd: kotlin.Long, step: kotlin.Long): kotlin.ranges.LongProgression
+    }
+}
+
 public final class LongRange : kotlin.ranges.LongProgression, kotlin.ranges.ClosedRange<kotlin.Long> {
     public constructor LongRange(start: kotlin.Long, endInclusive: kotlin.Long)
 
@@ -846,7 +926,7 @@ public final class LongRange : kotlin.ranges.LongProgression, kotlin.ranges.Clos
 /*∆*/ 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
-public open class UIntProgression : kotlin.collections.Collection<kotlin.UInt> {
+public open class UIntProgression : kotlin.collections.Collection<kotlin.UInt>, kotlin.internal.ProgressionCollection {
     public final val first: kotlin.UInt { get; }
 
     public final val last: kotlin.UInt { get; }
@@ -903,7 +983,7 @@ public final class UIntRange : kotlin.ranges.UIntProgression, kotlin.ranges.Clos
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
-public open class ULongProgression : kotlin.collections.Collection<kotlin.ULong> {
+public open class ULongProgression : kotlin.collections.Collection<kotlin.ULong>, kotlin.internal.ProgressionCollection {
     public final val first: kotlin.ULong { get; }
 
     public final val last: kotlin.ULong { get; }

@@ -5,6 +5,7 @@
 
 package test.ranges
 
+import kotlin.random.Random
 import kotlin.test.*
 
 public class RangeTest {
@@ -398,5 +399,173 @@ public class RangeTest {
         assertNull(IntRange.EMPTY.randomOrNull())
         assertNull(LongRange.EMPTY.randomOrNull())
         assertNull(CharRange.EMPTY.randomOrNull())
+    }
+
+    @Test
+    fun randomInEmptyProgression() {
+        assertFailsWith<NoSuchElementException> { IntRange.EMPTY.step(Int.MAX_VALUE).random() }
+        assertFailsWith<NoSuchElementException> { LongRange.EMPTY.step(Long.MAX_VALUE).random() }
+        assertFailsWith<NoSuchElementException> { CharRange.EMPTY.step(Int.MAX_VALUE).random() }
+    }
+
+    @Test
+    fun randomOrNullInEmptyProgression() {
+        assertNull(IntRange.EMPTY.step(Int.MAX_VALUE).randomOrNull())
+        assertNull(LongRange.EMPTY.step(Long.MAX_VALUE).randomOrNull())
+        assertNull(CharRange.EMPTY.step(Int.MAX_VALUE).randomOrNull())
+    }
+
+
+    private fun <T : Any> compareGenerators(expected: (Random) -> T?, actual: (Random) -> T?, equals: (T, T) -> Boolean, count: Int = 10) {
+        val seed = Random.nextLong()
+        val rnd1 = Random(seed)
+        val rnd2 = Random(seed)
+        repeat(count) { iteration ->
+            val v1 = expected(rnd1)
+            val v2 = actual(rnd2)
+            if (!equals(v1!!, v2!!)) {
+                fail("seed: $seed, iteration: $iteration, value1: $v1, value2: $v2")
+            }
+        }
+    }
+
+    @Test
+    fun randomIntRangeProgression() {
+        @Suppress("USELESS_CAST")
+        fun compare(range: IntRange, progression: IntProgression, equals: (Int, Int) -> Boolean = Any::equals) {
+            compareGenerators(range::random, progression::random, equals)
+            compareGenerators(range::randomOrNull, progression::randomOrNull, equals)
+            compareGenerators(range::random, (progression as Collection<Int>)::random, equals)
+            compareGenerators(range::randomOrNull, (progression as Collection<Int>)::randomOrNull, equals)
+            compareGenerators(range::random, (range as Collection<Int>)::random, Any::equals)
+            compareGenerators(range::randomOrNull, (range as Collection<Int>)::randomOrNull, Any::equals)
+        }
+
+        val r0 = Int.MIN_VALUE..Int.MAX_VALUE
+        for (r in listOf(r0, r0.first..0, 0..r0.last)) {
+            val pf = r step 1
+            compare(r, pf)
+
+            val pr = r.reversed()
+            compare(r, pr) { v1, v2 -> v1 - r.first == r.last - v2 }
+        }
+
+        for (step in listOf(2, 3, Int.MAX_VALUE)) {
+            val r = 0..Int.MAX_VALUE / step
+            val p = 0..r.last * step step step
+            compare(r, p) { v1, v2 -> v2 == v1 * step }
+        }
+    }
+
+
+    @Test
+    fun randomLongRangeProgression() {
+        @Suppress("USELESS_CAST")
+        fun compare(range: LongRange, progression: LongProgression, equals: (Long, Long) -> Boolean = Any::equals) {
+            compareGenerators(range::random, progression::random, equals)
+            compareGenerators(range::randomOrNull, progression::randomOrNull, equals)
+            compareGenerators(range::random, (progression as Collection<Long>)::random, equals)
+            compareGenerators(range::randomOrNull, (progression as Collection<Long>)::randomOrNull, equals)
+            compareGenerators(range::random, (range as Collection<Long>)::random, Any::equals)
+            compareGenerators(range::randomOrNull, (range as Collection<Long>)::randomOrNull, Any::equals)
+        }
+
+        val r0 = Long.MIN_VALUE..Long.MAX_VALUE
+        for (r in listOf(r0, r0.first..0, 0..r0.last)) {
+            val pf = r step 1
+            compare(r, pf)
+
+            val pr = r.reversed()
+            compare(r, pr) { v1, v2 -> v1 - r.first == r.last - v2 }
+        }
+
+        for (step in listOf(2L, 3L, Long.MAX_VALUE)) {
+            val r = 0..Long.MAX_VALUE / step
+            val p = 0..r.last * step step step
+            compare(r, p) { v1, v2 -> v2 == v1 * step }
+        }
+    }
+
+    @Test
+    fun randomCharRangeProgression() {
+        @Suppress("USELESS_CAST")
+        fun compare(range: CharRange, progression: CharProgression, equals: (Char, Char) -> Boolean = Any::equals) {
+            compareGenerators(range::random, progression::random, equals)
+            compareGenerators(range::randomOrNull, progression::randomOrNull, equals)
+            compareGenerators(range::random, (progression as Collection<Char>)::random, equals)
+            compareGenerators(range::randomOrNull, (progression as Collection<Char>)::randomOrNull, equals)
+            compareGenerators(range::random, (range as Collection<Char>)::random, Any::equals)
+            compareGenerators(range::randomOrNull, (range as Collection<Char>)::randomOrNull, Any::equals)
+        }
+
+        val r0 = Char.MIN_VALUE..Char.MAX_VALUE
+        for (r in listOf(r0, r0.first..Char(0), Char(0)..r0.last)) {
+            val pf = r step 1
+            compare(r, pf)
+
+            val pr = r.reversed()
+            compare(r, pr) { v1, v2 -> v1 - r.first == r.last - v2 }
+        }
+
+        for (step in listOf(2, 3, Char.MAX_VALUE.code)) {
+            val r = Char(0)..(Char.MAX_VALUE.code / step).toChar()
+            val p = r.first..(r.last.code * step).toChar() step step
+            compare(r, p) { v1, v2 -> v2 == Char(v1.code * step) }
+        }
+    }
+
+    @Test
+    fun randomUIntRangeProgression() {
+        @Suppress("USELESS_CAST")
+        fun compare(range: UIntRange, progression: UIntProgression, equals: (UInt, UInt) -> Boolean = Any::equals) {
+            compareGenerators(range::random, progression::random, equals)
+            compareGenerators(range::randomOrNull, progression::randomOrNull, equals)
+            compareGenerators(range::random, (progression as Collection<UInt>)::random, equals)
+            compareGenerators(range::randomOrNull, (progression as Collection<UInt>)::randomOrNull, equals)
+            compareGenerators(range::random, (range as Collection<UInt>)::random, Any::equals)
+            compareGenerators(range::randomOrNull, (range as Collection<UInt>)::randomOrNull, Any::equals)
+        }
+
+        val r0 = UInt.MIN_VALUE..UInt.MAX_VALUE
+        for (r in listOf(r0, r0.first..0u, 0u..r0.last)) {
+            val pf = r step 1
+            compare(r, pf)
+
+            val pr = r.reversed()
+            compare(r, pr) { v1, v2 -> v1 - r.first == r.last - v2 }
+        }
+
+        for (step in listOf(2, 3, Int.MAX_VALUE)) {
+            val r = 0u..UInt.MAX_VALUE / step.toUInt()
+            val p = 0u..r.last * step.toUInt() step step
+            compare(r, p) { v1, v2 -> v2 == v1 * step.toUInt() }
+        }
+    }
+    @Test
+    fun randomULongRangeProgression() {
+        @Suppress("USELESS_CAST")
+        fun compare(range: ULongRange, progression: ULongProgression, equals: (ULong, ULong) -> Boolean = Any::equals) {
+            compareGenerators(range::random, progression::random, equals)
+            compareGenerators(range::randomOrNull, progression::randomOrNull, equals)
+            compareGenerators(range::random, (progression as Collection<ULong>)::random, equals)
+            compareGenerators(range::randomOrNull, (progression as Collection<ULong>)::randomOrNull, equals)
+            compareGenerators(range::random, (range as Collection<ULong>)::random, Any::equals)
+            compareGenerators(range::randomOrNull, (range as Collection<ULong>)::randomOrNull, Any::equals)
+        }
+
+        val r0 = ULong.MIN_VALUE..ULong.MAX_VALUE
+        for (r in listOf(r0, r0.first..0uL, 0uL..r0.last)) {
+            val pf = r step 1
+            compare(r, pf)
+
+            val pr = r.reversed()
+            compare(r, pr) { v1, v2 -> v1 - r.first == r.last - v2 }
+        }
+
+        for (step in listOf(2, 3, Long.MAX_VALUE)) {
+            val r = 0uL..ULong.MAX_VALUE / step.toULong()
+            val p = 0uL..r.last * step.toULong() step step
+            compare(r, p) { v1, v2 -> v2 == v1 * step.toULong() }
+        }
     }
 }

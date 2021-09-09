@@ -4287,7 +4287,7 @@ public final class kotlin/random/URandomKt {
 	public static final fun nextULong-jmpaW-c (Lkotlin/random/Random;JJ)J
 }
 
-public class kotlin/ranges/CharProgression : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+public class kotlin/ranges/CharProgression : java/util/Collection, kotlin/internal/ProgressionCollection, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/ranges/CharProgression$Companion;
 	public fun add (C)Z
 	public synthetic fun add (Ljava/lang/Object;)Z
@@ -4360,7 +4360,7 @@ public final class kotlin/ranges/ClosedRange$DefaultImpls {
 	public static fun isEmpty (Lkotlin/ranges/ClosedRange;)Z
 }
 
-public class kotlin/ranges/IntProgression : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+public class kotlin/ranges/IntProgression : java/util/Collection, kotlin/internal/ProgressionCollection, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/ranges/IntProgression$Companion;
 	public fun add (I)Z
 	public synthetic fun add (Ljava/lang/Object;)Z
@@ -4410,7 +4410,7 @@ public final class kotlin/ranges/IntRange$Companion {
 	public final fun getEMPTY ()Lkotlin/ranges/IntRange;
 }
 
-public class kotlin/ranges/LongProgression : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+public class kotlin/ranges/LongProgression : java/util/Collection, kotlin/internal/ProgressionCollection, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/ranges/LongProgression$Companion;
 	public fun add (J)Z
 	public synthetic fun add (Ljava/lang/Object;)Z
@@ -4528,11 +4528,17 @@ public final class kotlin/ranges/RangesKt {
 	public static final synthetic fun longRangeContains (Lkotlin/ranges/ClosedRange;F)Z
 	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;I)Z
 	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;S)Z
+	public static final fun random (Lkotlin/ranges/CharProgression;Lkotlin/random/Random;)C
 	public static final fun random (Lkotlin/ranges/CharRange;Lkotlin/random/Random;)C
+	public static final fun random (Lkotlin/ranges/IntProgression;Lkotlin/random/Random;)I
 	public static final fun random (Lkotlin/ranges/IntRange;Lkotlin/random/Random;)I
+	public static final fun random (Lkotlin/ranges/LongProgression;Lkotlin/random/Random;)J
 	public static final fun random (Lkotlin/ranges/LongRange;Lkotlin/random/Random;)J
+	public static final fun randomOrNull (Lkotlin/ranges/CharProgression;Lkotlin/random/Random;)Ljava/lang/Character;
 	public static final fun randomOrNull (Lkotlin/ranges/CharRange;Lkotlin/random/Random;)Ljava/lang/Character;
+	public static final fun randomOrNull (Lkotlin/ranges/IntProgression;Lkotlin/random/Random;)Ljava/lang/Integer;
 	public static final fun randomOrNull (Lkotlin/ranges/IntRange;Lkotlin/random/Random;)Ljava/lang/Integer;
+	public static final fun randomOrNull (Lkotlin/ranges/LongProgression;Lkotlin/random/Random;)Ljava/lang/Long;
 	public static final fun randomOrNull (Lkotlin/ranges/LongRange;Lkotlin/random/Random;)Ljava/lang/Long;
 	public static final fun rangeTo (DD)Lkotlin/ranges/ClosedFloatingPointRange;
 	public static final fun rangeTo (FF)Lkotlin/ranges/ClosedFloatingPointRange;
@@ -4567,7 +4573,7 @@ public final class kotlin/ranges/RangesKt {
 	public static final fun until (SS)Lkotlin/ranges/IntRange;
 }
 
-public class kotlin/ranges/UIntProgression : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+public class kotlin/ranges/UIntProgression : java/util/Collection, kotlin/internal/ProgressionCollection, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/ranges/UIntProgression$Companion;
 	public synthetic fun add (Ljava/lang/Object;)Z
 	public fun add-WZ4Q5Ns (I)Z
@@ -4616,7 +4622,7 @@ public final class kotlin/ranges/UIntRange$Companion {
 	public final fun getEMPTY ()Lkotlin/ranges/UIntRange;
 }
 
-public class kotlin/ranges/ULongProgression : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+public class kotlin/ranges/ULongProgression : java/util/Collection, kotlin/internal/ProgressionCollection, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/ranges/ULongProgression$Companion;
 	public synthetic fun add (Ljava/lang/Object;)Z
 	public fun add-VKZWuLQ (J)Z
@@ -4690,9 +4696,13 @@ public final class kotlin/ranges/URangesKt {
 	public static final fun downTo-J1ME1BU (II)Lkotlin/ranges/UIntProgression;
 	public static final fun downTo-Kr8caGY (BB)Lkotlin/ranges/UIntProgression;
 	public static final fun downTo-eb3DHEI (JJ)Lkotlin/ranges/ULongProgression;
+	public static final fun random (Lkotlin/ranges/UIntProgression;Lkotlin/random/Random;)I
 	public static final fun random (Lkotlin/ranges/UIntRange;Lkotlin/random/Random;)I
+	public static final fun random (Lkotlin/ranges/ULongProgression;Lkotlin/random/Random;)J
 	public static final fun random (Lkotlin/ranges/ULongRange;Lkotlin/random/Random;)J
+	public static final fun randomOrNull (Lkotlin/ranges/UIntProgression;Lkotlin/random/Random;)Lkotlin/UInt;
 	public static final fun randomOrNull (Lkotlin/ranges/UIntRange;Lkotlin/random/Random;)Lkotlin/UInt;
+	public static final fun randomOrNull (Lkotlin/ranges/ULongProgression;Lkotlin/random/Random;)Lkotlin/ULong;
 	public static final fun randomOrNull (Lkotlin/ranges/ULongRange;Lkotlin/random/Random;)Lkotlin/ULong;
 	public static final fun reversed (Lkotlin/ranges/UIntProgression;)Lkotlin/ranges/UIntProgression;
 	public static final fun reversed (Lkotlin/ranges/ULongProgression;)Lkotlin/ranges/ULongProgression;

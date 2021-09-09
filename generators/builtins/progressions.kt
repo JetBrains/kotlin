@@ -71,10 +71,8 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
                     else -> """
         when {
             isEmpty() -> 0
-            step == $one -> unsignedIncrementAndClamp(last - first)
-            step == -$one -> unsignedIncrementAndClamp(first - last)
-            step > 0 -> unsignedIncrementAndClamp(last - first, step)
-            step < 0 -> unsignedIncrementAndClamp(first - last, -step)
+            step > 0 -> unsignedIncrementAndClamp(progressionUnsignedDivide(last - first, step))
+            step < 0 -> unsignedIncrementAndClamp(progressionUnsignedDivide(first - last, -step))
             else -> error("Progression invariant is broken: step == 0")
         }""".trim()
                 }
@@ -89,7 +87,7 @@ public open class $progression
             start: $t,
             endInclusive: $t,
             step: $incrementType
-    ) : Collection<$t> {
+    ) : Collection<$t>, kotlin.internal.ProgressionCollection {
     init {
         $checkZero
         $checkMin
@@ -164,6 +162,7 @@ public open class $progression
     override fun generateBody() {
         out.println("import kotlin.internal.getProgressionLastElement")
         out.println("import kotlin.internal.unsignedIncrementAndClamp")
+        out.println("import kotlin.internal.progressionUnsignedDivide")
         out.println()
         for (kind in ProgressionKind.values()) {
             generateDiscreteBody(kind)

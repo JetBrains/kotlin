@@ -40,6 +40,28 @@ public inline fun ULongRange.random(): ULong {
 }
 
 /**
+ * Returns a random element from this progression.
+ * 
+ * @throws NoSuchElementException if this progression is empty.
+ */
+@SinceKotlin("1.6")
+@kotlin.internal.InlineOnly
+public inline fun UIntProgression.random(): UInt {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this progression.
+ * 
+ * @throws NoSuchElementException if this progression is empty.
+ */
+@SinceKotlin("1.6")
+@kotlin.internal.InlineOnly
+public inline fun ULongProgression.random(): ULong {
+    return random(Random)
+}
+
+/**
  * Returns a random element from this range using the specified source of randomness.
  * 
  * @throws IllegalArgumentException if this range is empty.
@@ -70,6 +92,38 @@ public fun ULongRange.random(random: Random): ULong {
 }
 
 /**
+ * Returns a random element from this progression using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this progression is empty.
+ */
+@SinceKotlin("1.6")
+public fun UIntProgression.random(random: Random): UInt {
+    if (isEmpty())
+        throw NoSuchElementException("Progression is empty.")
+    val span = if (step > 0) last - first else first - last
+    val min = if (step > 0) first else last
+    val scaledSpan = kotlin.internal.progressionUnsignedDivide(span.toInt(), kotlin.math.abs(step))
+    val index = random.nextRangeUInt(min, min + scaledSpan.toUInt()) - min
+    return first + (step * index.toInt()).toUInt()
+}
+
+/**
+ * Returns a random element from this progression using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this progression is empty.
+ */
+@SinceKotlin("1.6")
+public fun ULongProgression.random(random: Random): ULong {
+    if (isEmpty())
+        throw NoSuchElementException("Progression is empty.")
+    val span = if (step > 0) last - first else first - last
+    val min = if (step > 0) first else last
+    val scaledSpan = kotlin.internal.progressionUnsignedDivide(span.toLong(), kotlin.math.abs(step))
+    val index = random.nextRangeULong(min, min + scaledSpan.toULong()) - min
+    return first + (step * index.toLong()).toULong()
+}
+
+/**
  * Returns a random element from this range, or `null` if this range is empty.
  */
 @SinceKotlin("1.5")
@@ -86,6 +140,26 @@ public inline fun UIntRange.randomOrNull(): UInt? {
 @WasExperimental(ExperimentalStdlibApi::class, ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun ULongRange.randomOrNull(): ULong? {
+    return randomOrNull(Random)
+}
+
+/**
+ * Returns a random element from this progression, or `null` if this progression is empty.
+ */
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
+@kotlin.internal.InlineOnly
+public inline fun UIntProgression.randomOrNull(): UInt? {
+    return randomOrNull(Random)
+}
+
+/**
+ * Returns a random element from this progression, or `null` if this progression is empty.
+ */
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
+@kotlin.internal.InlineOnly
+public inline fun ULongProgression.randomOrNull(): ULong? {
     return randomOrNull(Random)
 }
 
@@ -109,6 +183,36 @@ public fun ULongRange.randomOrNull(random: Random): ULong? {
     if (isEmpty())
         return null
     return random.nextULong(this)
+}
+
+/**
+ * Returns a random element from this progression using the specified source of randomness, or `null` if this progression is empty.
+ */
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
+public fun UIntProgression.randomOrNull(random: Random): UInt? {
+    if (isEmpty())
+        return null
+    val span = if (step > 0) last - first else first - last
+    val min = if (step > 0) first else last
+    val scaledSpan = kotlin.internal.progressionUnsignedDivide(span.toInt(), kotlin.math.abs(step))
+    val index = random.nextRangeUInt(min, min + scaledSpan.toUInt()) - min
+    return first + (step * index.toInt()).toUInt()
+}
+
+/**
+ * Returns a random element from this progression using the specified source of randomness, or `null` if this progression is empty.
+ */
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
+public fun ULongProgression.randomOrNull(random: Random): ULong? {
+    if (isEmpty())
+        return null
+    val span = if (step > 0) last - first else first - last
+    val min = if (step > 0) first else last
+    val scaledSpan = kotlin.internal.progressionUnsignedDivide(span.toLong(), kotlin.math.abs(step))
+    val index = random.nextRangeULong(min, min + scaledSpan.toULong()) - min
+    return first + (step * index.toLong()).toULong()
 }
 
 /**

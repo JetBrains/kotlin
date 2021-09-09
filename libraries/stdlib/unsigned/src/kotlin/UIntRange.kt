@@ -56,7 +56,7 @@ internal constructor(
     start: UInt,
     endInclusive: UInt,
     step: Int
-) : Collection<UInt> {
+) : Collection<UInt>, kotlin.internal.ProgressionCollection {
     init {
         if (step == 0.toInt()) throw kotlin.IllegalArgumentException("Step must be non-zero.")
         if (step == Int.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must be greater than Int.MIN_VALUE to avoid overflow on negation.")

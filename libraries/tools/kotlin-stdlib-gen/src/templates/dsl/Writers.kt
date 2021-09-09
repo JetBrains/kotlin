@@ -103,6 +103,10 @@ fun List<MemberBuilder>.writeTo(file: File, targetedSource: TargetedSourceFile) 
         }
         if (target.platform == Platform.Common) {
             writer.appendLine("import kotlin.random.*")
+            if (sourceFile == SourceFile.Collections) {
+                writer.appendLine("import kotlin.ranges.random")
+                writer.appendLine("import kotlin.ranges.randomOrNull")
+            }
         }
         if (sourceFile.packageName == "kotlin.collections") {
             writer.appendLine("import kotlin.ranges.contains")

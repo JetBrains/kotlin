@@ -14,6 +14,8 @@ package kotlin.collections
 //
 
 import kotlin.random.*
+import kotlin.ranges.random
+import kotlin.ranges.randomOrNull
 import kotlin.ranges.contains
 import kotlin.ranges.reversed
 
@@ -556,6 +558,16 @@ public inline fun <T> Collection<T>.random(): T {
 public fun <T> Collection<T>.random(random: Random): T {
     if (isEmpty())
         throw NoSuchElementException("Collection is empty.")
+    if (this is kotlin.internal.ProgressionCollection) {
+        @Suppress("UNCHECKED_CAST") 
+        when (this) {
+            is IntProgression -> return (this as IntProgression).random(random) as T
+            is LongProgression -> return (this as LongProgression).random(random) as T
+            is CharProgression -> return (this as CharProgression).random(random) as T
+            is UIntProgression -> return (this as UIntProgression).random(random) as T
+            is ULongProgression -> return (this as ULongProgression).random(random) as T
+        }
+    }
     return elementAt(random.nextInt(size))
 }
 
@@ -577,6 +589,16 @@ public inline fun <T> Collection<T>.randomOrNull(): T? {
 public fun <T> Collection<T>.randomOrNull(random: Random): T? {
     if (isEmpty())
         return null
+    if (this is kotlin.internal.ProgressionCollection) {
+        @Suppress("UNCHECKED_CAST") 
+        when (this) {
+            is IntProgression -> return (this as IntProgression).randomOrNull(random) as T?
+            is LongProgression -> return (this as LongProgression).randomOrNull(random) as T?
+            is CharProgression -> return (this as CharProgression).randomOrNull(random) as T?
+            is UIntProgression -> return (this as UIntProgression).randomOrNull(random) as T?
+            is ULongProgression -> return (this as ULongProgression).randomOrNull(random) as T?
+        }
+    }
     return elementAt(random.nextInt(size))
 }
 
