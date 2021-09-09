@@ -81,7 +81,7 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
     ): LLVMValueRef {
 
         // TODO: it is required only for Kotlin-to-Objective-C bridges.
-        this.forwardingForeignExceptionsTerminatedWith = objcTerminate
+        this.isCallFromBridge = true
 
         val switchStateToNative = toNative && context.config.memoryModel == MemoryModel.EXPERIMENTAL
         val exceptionHandler: ExceptionHandler
