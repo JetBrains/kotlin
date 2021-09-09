@@ -430,7 +430,7 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
     }
 }
 
-private fun IrSimpleFunction.isOverriddenExported(context: JsIrBackendContext?): Boolean =
+fun IrSimpleFunction.isOverriddenExported(context: JsIrBackendContext?): Boolean =
     overriddenSymbols
         .any { shouldDeclarationBeExported(it.owner, context) }
 

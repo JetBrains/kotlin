@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenExported
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -107,6 +108,19 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 if (property.isFakeOverride)
                     continue
 
+                fun IrSimpleFunction.propertyAccessorForwarder(
+                    description: String,
+                    callActualAccessor: (JsNameRef) -> JsStatement
+                ): JsFunction? =
+                    when (visibility) {
+                        DescriptorVisibilities.PRIVATE -> null
+                        else -> JsFunction(
+                            emptyScope,
+                            JsBlock(callActualAccessor(JsNameRef(context.getNameForMemberFunction(this), JsThisRef()))),
+                            description
+                        )
+                    }
+
                 fun IrSimpleFunction.accessorRef(): JsNameRef? =
                     when (visibility) {
                         DescriptorVisibilities.PRIVATE -> null
@@ -116,18 +130,60 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                         )
                     }
 
-                if (irClass.isExported(context.staticContext.backendContext) ||
+                // Don't generate `defineProperty` if the property overrides a property from an exported class,
+                // because we've already generated `defineProperty` for the base class property.
+                // In other words, we only want to generate `defineProperty` once for each property.
+                if (irClass.isExported(context.staticContext.backendContext) &&
+                    property.getter?.isOverriddenExported(context.staticContext.backendContext) == false ||
                     property.getter?.overridesExternal() == true ||
                     property.getJsName() != null
                 ) {
-                    val getterRef = property.getter?.accessorRef()
-                    val setterRef = property.setter?.accessorRef()
+
+                    // Use "direct dispatch" for final properties, i. e. instead of this:
+                    //     Object.defineProperty(Foo.prototype, 'prop', {
+                    //         configurable: true,
+                    //         get: function() { return this._get_prop__0_k$(); },
+                    //         set: function(v) { this._set_prop__a4enbm_k$(v); }
+                    //     });
+                    // emit this:
+                    //     Object.defineProperty(Foo.prototype, 'prop', {
+                    //         configurable: true,
+                    //         get: Foo.prototype._get_prop__0_k$,
+                    //         set: Foo.prototype._set_prop__a4enbm_k$
+                    //     });
+
+                    val getterForwarder = if (property.getter?.modality == Modality.FINAL) property.getter?.accessorRef()
+                    else {
+                        property.getter?.propertyAccessorForwarder("getter forwarder") { getterRef ->
+                            JsReturn(
+                                JsInvocation(
+                                    getterRef
+                                )
+                            )
+                        }
+                    }
+
+                    val setterForwarder = if (property.setter?.modality == Modality.FINAL) property.setter?.accessorRef()
+                    else {
+                        property.setter?.let {
+                            val setterArgName = JsName("value")
+                            it.propertyAccessorForwarder("setter forwarder") { setterRef ->
+                                JsInvocation(
+                                    setterRef,
+                                    JsNameRef(setterArgName)
+                                ).makeStmt()
+                            }?.apply {
+                                parameters.add(JsParameter(setterArgName))
+                            }
+                        }
+                    }
+
                     classBlock.statements += JsExpressionStatement(
                         defineProperty(
                             classPrototypeRef,
                             context.getNameForProperty(property).ident,
-                            getter = getterRef,
-                            setter = setterRef
+                            getter = getterForwarder,
+                            setter = setterForwarder
                         )
                     )
                 }

@@ -6990,6 +6990,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/propertyOverride/checkSupertypeOrder.kt");
         }
 
+        @TestMetadata("exportedBaseClass.kt")
+        public void testExportedBaseClass() throws Exception {
+            runTest("js/js.translator/testData/box/propertyOverride/exportedBaseClass.kt");
+        }
+
         @TestMetadata("initOverrideInConstructor.kt")
         public void testInitOverrideInConstructor() throws Exception {
             runTest("js/js.translator/testData/box/propertyOverride/initOverrideInConstructor.kt");
