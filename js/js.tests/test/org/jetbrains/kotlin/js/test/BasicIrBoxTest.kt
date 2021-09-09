@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.js.test
 
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.backend.common.phaser.AnyNamedPhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.ic.SerializedIcData
-import org.jetbrains.kotlin.ir.backend.js.ic.prepareSingleLibraryIcCache
+import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
+import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
@@ -32,7 +33,7 @@ private val defaultRuntimeKlib = System.getProperty("kotlin.js.reduced.stdlib.pa
 private val kotlinTestKLib = System.getProperty("kotlin.js.kotlin.test.path")
 
 // TODO Cache on FS (requires bootstrap)
-private val predefinedKlibHasIcCache = mutableMapOf<String, SerializedIcData?>(
+private val predefinedKlibHasIcCache = mutableMapOf<String, ICCache?>(
     File(fullRuntimeKlib).absolutePath to null,
     File(kotlinTestKLib).absolutePath to null,
     File(defaultRuntimeKlib).absolutePath to null
@@ -75,7 +76,7 @@ abstract class BasicIrBoxTest(
     val perModule: Boolean = getBoolean("kotlin.js.ir.perModule")
 
     // TODO Design incremental compilation for IR and add test support
-    override val incrementalCompilationChecksEnabled = false
+    override val incrementalCompilationChecksEnabled = true
 
     private val compilationCache = mutableMapOf<String, String>()
 
@@ -111,9 +112,11 @@ abstract class BasicIrBoxTest(
         safeExternalBooleanDiagnostic: RuntimeDiagnostic?,
         skipMangleVerification: Boolean,
         abiVersion: KotlinAbiVersion,
-        icCache: MutableMap<String, SerializedIcData>
+        incrementalCompilation: Boolean,
+        recompile: Boolean,
+        icCache: MutableMap<String, ICCache>
     ) {
-        val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
+        val filesToCompile = units.mapNotNull { (it as? TranslationUnit.SourceFile)?.file }
 
         val runtimeKlibs = if (needsFullIrRuntime) listOf(fullRuntimeKlib, kotlinTestKLib) else listOf(defaultRuntimeKlib)
 
@@ -123,11 +126,17 @@ abstract class BasicIrBoxTest(
             compilationCache[it] ?: error("Can't find compiled module for dependency $it")
         }).map { File(it).absolutePath }.toMutableList()
 
-        val klibPath = outputFile.absolutePath.replace("_v5.js", "")
+        val klibPath = outputFile.canonicalPath.replace("_v5.js", "")
 
-        prepareRuntimePirCaches(config, icCache)
+        val actualOutputFile = outputFile.canonicalPath.let {
+            if (!isMainModule) klibPath else it
+        }
 
-        if (isMainModule && klibMainModule) {
+        if (incrementalCompilationChecksEnabled && incrementalCompilation) {
+            runtimeKlibs.forEach { createIcCache(it, runtimeKlibs, config, icCache) }
+        }
+
+        if (!recompile) { // In case of incremental recompilation we only rebuild caches, not klib itself
             val module = prepareAnalyzedSourceModule(
                 config.project,
                 filesToCompile,
@@ -143,13 +152,15 @@ abstract class BasicIrBoxTest(
                 nopack = true,
                 jsOutputName = null
             )
-
-            allKlibPaths += File(klibPath).absolutePath
         }
 
-        val actualOutputFile = outputFile.absolutePath.let {
-            if (!isMainModule) klibPath else it
+        val klibCannonPath = File(klibPath).canonicalPath
+
+        if (incrementalCompilation) {
+            icCache[klibCannonPath] = createIcCache(klibCannonPath, allKlibPaths + klibCannonPath, config, icCache)
         }
+
+        compilationCache[outputFile.name.replace(".js", ".meta.js")] = actualOutputFile
 
         if (isMainModule) {
             logger.logFile("Output JS", outputFile)
@@ -171,47 +182,27 @@ abstract class BasicIrBoxTest(
                 PhaseConfig(jsPhases)
             }
 
-            fun prepareModule(allowIc: Boolean): ModulesStructure {
-                val useIc = runIcMode && allowIc
-                @Suppress("NAME_SHADOWING")
-                val icCache = if (useIc) icCache else emptyMap()
-                return if (!klibMainModule) {
-                    prepareAnalyzedSourceModule(
-                        config.project,
-                        filesToCompile,
-                        config.configuration,
-                        allKlibPaths,
-                        emptyList(),
-                        AnalyzerWithCompilerReport(config.configuration),
-                        icUseGlobalSignatures = useIc,
-                        icUseStdlibCache = useIc,
-                        icCache = icCache
-                    )
-                } else {
-                    ModulesStructure(
-                        config.project,
-                        MainModule.Klib(klibPath),
-                        config.configuration,
-                        allKlibPaths,
-                        emptyList(),
-                        icUseGlobalSignatures = useIc,
-                        icUseStdlibCache = useIc,
-                        icCache = icCache
-                    )
-                }
-            }
+            val module = ModulesStructure(
+                config.project,
+                MainModule.Klib(klibPath),
+                config.configuration,
+                allKlibPaths + klibCannonPath,
+                emptyList(),
+                icUseGlobalSignatures = runIcMode,
+                icUseStdlibCache = runIcMode,
+                icCache = icCache
+            )
 
             if (!skipRegularMode) {
-                val module = prepareModule(true)
-                val irFactory = if (lowerPerModule) PersistentIrFactory() else IrFactoryImpl
                 val compiledModule = compile(
                     module,
                     phaseConfig = phaseConfig,
-                    irFactory = irFactory,
+                    irFactory = IrFactoryImpl,
                     mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
                     exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
                     generateFullJs = true,
                     generateDceJs = runIrDce,
+                    dceDriven = false,
                     es6mode = runEs6Mode,
                     multiModule = splitPerModule || perModule,
                     propertyLazyInitialization = propertyLazyInitialization,
@@ -221,7 +212,10 @@ abstract class BasicIrBoxTest(
                     verifySignatures = !skipMangleVerification,
                 )
 
-                compiledModule.outputs!!.writeTo(outputFile, config)
+                val jsOutputFile = if (recompile) File(outputFile.parentFile, outputFile.nameWithoutExtension + "-recompiled.js")
+                else outputFile
+
+                compiledModule.outputs!!.writeTo(jsOutputFile, config)
 
                 compiledModule.outputsAfterDce?.writeTo(dceOutputFile, config)
 
@@ -232,54 +226,127 @@ abstract class BasicIrBoxTest(
                 }
             }
 
-            if (runIrPir && !skipDceDriven) {
-                val module = prepareModule(false)
-                compile(
+            if (runIrPir) {
+                val compiledModule = compile(
                     module,
                     phaseConfig = phaseConfig,
                     irFactory = PersistentIrFactory(),
                     mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
                     exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
+                    generateFullJs = true,
+                    generateDceJs = runIrDce,
                     dceDriven = true,
                     es6mode = runEs6Mode,
                     multiModule = splitPerModule || perModule,
                     propertyLazyInitialization = propertyLazyInitialization,
+                    lowerPerModule = lowerPerModule,
                     safeExternalBoolean = safeExternalBoolean,
                     safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
-                    verifySignatures = !skipMangleVerification
-                ).outputs!!.writeTo(pirOutputFile, config)
+                    verifySignatures = !skipMangleVerification,
+                )
+                compiledModule.outputs!!.writeTo(pirOutputFile, config)
             }
-        } else {
-            val module = prepareAnalyzedSourceModule(
-                config.project,
-                filesToCompile,
-                config.configuration,
-                allKlibPaths,
-                emptyList(),
-                AnalyzerWithCompilerReport(config.configuration)
-            )
-            generateKLib(
-                module,
-                irFactory = IrFactoryImpl,
-                outputKlibPath = actualOutputFile,
-                nopack = true,
-                verifySignatures = !skipMangleVerification,
-                abiVersion = abiVersion,
-                null
-            )
-
-            if (runIcMode) {
-                icCache[actualOutputFile] = createPirCache(actualOutputFile, allKlibPaths + actualOutputFile, config, icCache)
-            }
-
-            logger.logFile("Output klib", File(actualOutputFile))
-
-            compilationCache[outputFile.name.replace(".js", ".meta.js")] = actualOutputFile
         }
     }
 
+    override fun checkIncrementalCompilation(
+        sourceDirs: List<String>,
+        module: TestModule,
+        kotlinFiles: List<TestFile>,
+        dependencies: List<String>,
+        allDependencies: List<String>,
+        friends: List<String>,
+        multiModule: Boolean,
+        tmpDir: File,
+        remap: Boolean,
+        outputFile: File,
+        outputPrefixFile: File?,
+        outputPostfixFile: File?,
+        mainCallParameters: MainCallParameters,
+        incrementalData: IncrementalData,
+        testPackage: String?,
+        testFunction: String,
+        needsFullIrRuntime: Boolean,
+        expectActualLinker: Boolean,
+        icCaches: MutableMap<String, ICCache>
+    ) {
+        val isMainModule = module.name == DEFAULT_MODULE || module.name == TEST_MODULE
+        val cacheKey = outputFile.canonicalPath.replace("_v5.js", "")
 
-    private fun createPirCache(path: String, allKlibPaths: Collection<String>, config: JsConfig, icCache: Map<String, SerializedIcData>): SerializedIcData {
+        val icCache = icCaches[cacheKey] ?: error("No IC data found for module ${module.name}")
+
+        val dirtyFiles = mutableListOf<String>()
+        val oldBinaryAsts = mutableMapOf<String, ByteArray>()
+
+        for (testFile in kotlinFiles) {
+            if (testFile.recompile) {
+                val fileName = testFile.fileName
+                oldBinaryAsts[fileName] = icCache.dataProvider.binaryAst(fileName)
+                icCache.dataConsumer.invalidateForFile(fileName)
+                dirtyFiles.add(fileName)
+            }
+        }
+
+        val recompiledOutputFile = File(outputFile.parentFile, outputFile.nameWithoutExtension + "-recompiled.js")
+        val recompiledMinOutputFile = File(recompiledOutputFile.parentFile, recompiledOutputFile.nameWithoutExtension + "-min.js")
+        val recompiledPirOutputFile = File(recompiledOutputFile.parentFile, recompiledOutputFile.nameWithoutExtension + "-pir.js")
+        val recompiledConfig = createConfig(
+            sourceDirs,
+            module,
+            dependencies,
+            allDependencies,
+            friends,
+            multiModule,
+            tmpDir,
+            null,
+            expectActualLinker,
+            ErrorTolerancePolicy.DEFAULT
+        )
+
+        translateFiles(
+            dirtyFiles.map { TranslationUnit.SourceFile(createPsiFile(it)) },
+            outputFile,
+            recompiledMinOutputFile,
+            recompiledPirOutputFile,
+            recompiledConfig,
+            outputPrefixFile,
+            outputPostfixFile,
+            mainCallParameters,
+            incrementalData,
+            remap,
+            testPackage,
+            testFunction,
+            needsFullIrRuntime,
+            isMainModule,
+            skipDceDriven = true,
+            splitPerModule = false, // TODO??
+            propertyLazyInitialization = false, // ??
+            safeExternalBoolean = false,
+            safeExternalBooleanDiagnostic = null,
+            skipMangleVerification = false,
+            KotlinAbiVersion.CURRENT,
+            incrementalCompilation = true,
+            recompile = true,
+            icCaches
+        )
+
+        val newBinaryAsts = dirtyFiles.associateWith { icCache.dataProvider.binaryAst(it) }
+
+        for (file in dirtyFiles) {
+            val oldBinaryAst = oldBinaryAsts[file]
+            val newBinaryAst = newBinaryAsts[file]
+
+            assert(oldBinaryAst.contentEquals(newBinaryAst)) { "Binary AST changed after recompilation for file $file" }
+        }
+
+        if (isMainModule) {
+            val originalOutput = FileUtil.loadFile(outputFile)
+            val recompiledOutput = FileUtil.loadFile(recompiledOutputFile)
+            assertEquals("Output file changed after recompilation", originalOutput, recompiledOutput)
+        }
+    }
+
+    private fun createPirCache(path: String, allKlibPaths: Collection<String>, config: JsConfig, icCache: Map<String, ICCache>): ICCache {
         val icData = predefinedKlibHasIcCache[path] ?: prepareSingleLibraryIcCache(
             project = project,
             configuration = config.configuration,
@@ -295,7 +362,23 @@ abstract class BasicIrBoxTest(
         return icData
     }
 
-    private fun prepareRuntimePirCaches(config: JsConfig, icCache: MutableMap<String, SerializedIcData>) {
+    @Suppress("UNUSED_PARAMETER")
+    private fun createIcCache(path: String, allKlibPaths: Collection<String>, config: JsConfig, icCache: Map<String, ICCache>): ICCache {
+
+        fun prepare(): ICCache {
+            return ICCache(PersistentCacheProvider.EMPTY, PersistentCacheConsumer.EMPTY, SerializedIcData(emptyList()))
+        }
+
+        val icData = predefinedKlibHasIcCache[path] ?: prepare()
+
+        if (path in predefinedKlibHasIcCache) {
+            predefinedKlibHasIcCache[path] = icData
+        }
+
+        return icData
+    }
+
+    private fun prepareRuntimePirCaches(config: JsConfig, icCache: MutableMap<String, ICCache>) {
         if (!runIcMode) return
 
         val defaultRuntimePath = File(defaultRuntimeKlib).canonicalPath

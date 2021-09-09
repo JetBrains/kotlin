@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.toByteArray
@@ -19,6 +18,10 @@ import kotlin.random.nextULong
 
 // TODO: Proper version of the compiler (should take changes to lowerings into account)
 private val compilerVersion = Random.nextULong()
+
+private fun IcCacheInfo.toICCacheMap(): Map<String, ICCache> {
+    return data.map { it.key to ICCache(PersistentCacheProvider.EMPTY, PersistentCacheConsumer.EMPTY, it.value) }.toMap()
+}
 
 // TODO more parameters for lowerings
 // Returns true if caches were built. False if caches were up-to-date.
@@ -50,9 +53,9 @@ fun buildCache(
     File(icDir, "info").delete()
     icDir.mkdirs()
 
-    val icData = prepareSingleLibraryIcCache(project, configuration, mainModule.libPath, dependencies, friendDependencies, exportedDeclarations, icCache.data)
+    val icData = prepareSingleLibraryIcCache(project, configuration, mainModule.libPath, dependencies, friendDependencies, exportedDeclarations, icCache.toICCacheMap())
 
-    icData.writeTo(File(cachePath))
+    icData.serializedIcData.writeTo(File(cachePath))
 
     CacheInfo(cachePath, mainModule.libPath, md5).save()
 

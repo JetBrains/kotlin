@@ -265,7 +265,8 @@ private fun createCacheConsumer(path: String): PersistentCacheConsumer {
 
 private fun loadCacheInfo(cachePaths: Collection<String>): MutableMap<ModulePath, String> {
     val caches = cachePaths.map { CacheInfo.load(it) ?: error("Cannot load IC cache from $it") }
-    return caches.associate { it.libPath.toCanonicalPath() to it.path } as MutableMap<ModulePath, String>
+    val result = mutableMapOf<ModulePath, String>()
+    return caches.associateTo(result) { it.libPath.toCanonicalPath() to it.path }
 }
 
 private fun loadLibraries(configuration: CompilerConfiguration, dependencies: Collection<String>): Map<ModulePath, KotlinLibrary> {
@@ -298,7 +299,7 @@ fun actualizeCacheForModule(
     val libraries: Map<ModulePath, KotlinLibrary> = loadLibraries(compilerConfiguration, dependencies)
 
     val persistentCacheProviders = icCacheMap.map { (lib, cache) ->
-        libraries[lib.toCanonicalPath()]!!.let { klib -> klib to createCacheProvider(cache) }
+        libraries[lib.toCanonicalPath()]!! to createCacheProvider(cache)
     }.toMap()
 
     val nameToKotlinLibrary: Map<ModuleName, KotlinLibrary> = libraries.values.associateBy { it.moduleName }

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
-import org.jetbrains.kotlin.cli.js.resolve
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
@@ -27,7 +26,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProviderImpl
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue
-import org.jetbrains.kotlin.ir.backend.js.ic.SerializedIcData
+import org.jetbrains.kotlin.ir.backend.js.ic.ICCache
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -36,7 +35,10 @@ import org.jetbrains.kotlin.js.dce.DeadCodeElimination
 import org.jetbrains.kotlin.js.dce.InputFile
 import org.jetbrains.kotlin.js.dce.InputResource
 import org.jetbrains.kotlin.js.engine.loadFiles
-import org.jetbrains.kotlin.js.facade.*
+import org.jetbrains.kotlin.js.facade.K2JSTranslator
+import org.jetbrains.kotlin.js.facade.MainCallParameters
+import org.jetbrains.kotlin.js.facade.TranslationResult
+import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.js.parser.parse
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapError
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapLocationRemapper
@@ -178,6 +180,8 @@ abstract class BasicBoxTest(
                 return dependenciesSymbols.toSet() + dependenciesSymbols.flatMap { modules[it]!!.allTransitiveDependencies() }
             }
 
+            val checkIC = modules.any { it.value.hasFilesToRecompile }
+
             val orderedModules = DFS.topologicalOrder(modules.values) { module -> module.dependenciesSymbols.mapNotNull { modules[it] } }
 
             val testPackage = if (runPlainBoxFunction) null else testFactory.testPackage
@@ -191,7 +195,7 @@ abstract class BasicBoxTest(
             }
             val testModuleName = if (runPlainBoxFunction) null else mainModuleName
             val mainModule = modules[mainModuleName] ?: error("No module with name \"$mainModuleName\"")
-            val icCache = mutableMapOf<String, SerializedIcData>()
+            val icCache = mutableMapOf<String, ICCache>()
 
             val generatedJsFiles = orderedModules.asReversed().mapNotNull { module ->
                 val dependencies = module.dependenciesSymbols.map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
@@ -233,6 +237,7 @@ abstract class BasicBoxTest(
                     safeExternalBooleanDiagnostic,
                     skipMangleVerification,
                     abiVersion,
+                    checkIC,
                     icCache
                 )
 
@@ -491,7 +496,8 @@ abstract class BasicBoxTest(
         safeExternalBooleanDiagnostic: RuntimeDiagnostic?,
         skipMangleVerification: Boolean,
         abiVersion: KotlinAbiVersion,
-        icCache: MutableMap<String, SerializedIcData>
+        checkIC: Boolean,
+        icCache: MutableMap<String, ICCache>
     ) {
         val kotlinFiles = module.files.filter { it.fileName.endsWith(".kt") }
         val testFiles = kotlinFiles.map { it.fileName }
@@ -546,6 +552,8 @@ abstract class BasicBoxTest(
             safeExternalBooleanDiagnostic,
             skipMangleVerification,
             abiVersion,
+            checkIC,
+            recompile = false,
             icCache
         )
 
@@ -568,12 +576,13 @@ abstract class BasicBoxTest(
                 testPackage,
                 testFunction,
                 needsFullIrRuntime,
-                expectActualLinker
+                expectActualLinker,
+                icCache
             )
         }
     }
 
-    private fun checkIncrementalCompilation(
+    protected open fun checkIncrementalCompilation(
         sourceDirs: List<String>,
         module: TestModule,
         kotlinFiles: List<TestFile>,
@@ -591,7 +600,8 @@ abstract class BasicBoxTest(
         testPackage: String?,
         testFunction: String,
         needsFullIrRuntime: Boolean,
-        expectActualLinker: Boolean
+        expectActualLinker: Boolean,
+        icCaches: MutableMap<String, ICCache>
     ) {
         val sourceToTranslationUnit = hashMapOf<File, TranslationUnit>()
         for (testFile in kotlinFiles) {
@@ -645,6 +655,8 @@ abstract class BasicBoxTest(
             safeExternalBooleanDiagnostic = null,
             skipMangleVerification = false,
             abiVersion = KotlinAbiVersion.CURRENT,
+            incrementalCompilation = true,
+            recompile = true,
             mutableMapOf()
         )
 
@@ -729,7 +741,9 @@ abstract class BasicBoxTest(
         safeExternalBooleanDiagnostic: RuntimeDiagnostic?,
         skipMangleVerification: Boolean,
         abiVersion: KotlinAbiVersion,
-        icCache: MutableMap<String, SerializedIcData>
+        incrementalCompilation: Boolean,
+        recompile: Boolean,
+        icCache: MutableMap<String, ICCache>
     ) {
         val translator = K2JSTranslator(config, false)
         val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)
@@ -866,7 +880,7 @@ abstract class BasicBoxTest(
 
     private fun createPsiFiles(fileNames: List<String>): List<KtFile> = fileNames.map(this::createPsiFile)
 
-    private fun createConfig(
+    protected fun createConfig(
         sourceDirs: List<String>,
         module: TestModule,
         dependencies: List<String>,
@@ -1069,13 +1083,13 @@ abstract class BasicBoxTest(
         }
     }
 
-    private class TestFile(val fileName: String, val module: TestModule, val recompile: Boolean, val packageName: String) {
+    protected class TestFile(val fileName: String, val module: TestModule, val recompile: Boolean, val packageName: String) {
         init {
             module.files += this
         }
     }
 
-    private class TestModule(
+    protected class TestModule(
         name: String,
         dependencies: List<String>,
         friends: List<String>,
@@ -1147,7 +1161,7 @@ abstract class BasicBoxTest(
         protected val runTestInNashorn = getBoolean("kotlin.js.useNashorn")
 
         const val TEST_MODULE = "JS_TESTS"
-        private const val DEFAULT_MODULE = "main"
+        const val DEFAULT_MODULE = "main"
         private const val TEST_FUNCTION = "box"
         private const val OLD_MODULE_SUFFIX = "-old"
 

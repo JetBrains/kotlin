@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.*
@@ -34,8 +33,8 @@ fun prepareSingleLibraryIcCache(
     dependencies: Collection<String>,
     friendDependencies: Collection<String> = emptyList(),
     exportedDeclarations: Set<FqName> = emptySet(),
-    icCache: Map<String, SerializedIcData> = emptyMap(),
-): SerializedIcData {
+    icCache: Map<String, ICCache> = emptyMap(),
+): ICCache {
     val irFactory = PersistentIrFactory()
     val controller = WholeWorldStageController()
     irFactory.stageController = controller
@@ -67,13 +66,17 @@ fun prepareSingleLibraryIcCache(
 
     lowerPreservingIcData(moduleFragment, context, controller)
 
-    return IcSerializer(
-        context.irBuiltIns,
-        context.mapping,
-        irFactory,
-        deserializer,
-        moduleFragment
-    ).serializeDeclarations(irFactory.allDeclarations)
+    return ICCache(
+        PersistentCacheProvider.EMPTY,
+        PersistentCacheConsumer.EMPTY,
+        IcSerializer(
+            context.irBuiltIns,
+            context.mapping,
+            irFactory,
+            deserializer,
+            moduleFragment
+        ).serializeDeclarations(irFactory.allDeclarations)
+    )
 }
 
 private fun KotlinResolvedLibrary.allDependencies(): List<KotlinResolvedLibrary> {

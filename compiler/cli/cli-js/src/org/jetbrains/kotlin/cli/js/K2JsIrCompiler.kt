@@ -38,9 +38,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.ic.actualizeCacheForModule
-import org.jetbrains.kotlin.ir.backend.js.ic.buildCache
-import org.jetbrains.kotlin.ir.backend.js.ic.checkCaches
+import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
@@ -75,6 +73,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
     @Suppress("UNUSED_PARAMETER")
     private fun usePerFileInvalidator(configuration: CompilerConfiguration): Boolean = false
+
+    private fun IcCacheInfo.toICCacheMap(): Map<String, ICCache> {
+        return data.map { it.key to ICCache(PersistentCacheProvider.EMPTY, PersistentCacheConsumer.EMPTY, it.value) }.toMap()
+    }
 
     override fun doExecute(
         arguments: K2JSCompilerArguments,
@@ -234,7 +236,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         // Run analysis if main module is sources
         lateinit var sourceModule: ModulesStructure
-        if (arguments.includes == null) {
+        val includes = arguments.includes
+        if (includes == null) {
             do {
                 sourceModule = prepareAnalyzedSourceModule(
                     projectJs,
@@ -245,7 +248,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     AnalyzerWithCompilerReport(config.configuration),
                     icUseGlobalSignatures = icCaches.isNotEmpty(),
                     icUseStdlibCache = icCaches.isNotEmpty(),
-                    icCache = if (icCaches.isNotEmpty()) checkCaches(libraries, icCaches, skipLib = arguments.includes).data else emptyMap()
+                    icCache = if (icCaches.isNotEmpty()) checkCaches(libraries, icCaches, skipLib = includes).toICCacheMap() else emptyMap()
                 )
                 val result = sourceModule.jsFrontEndResult.jsAnalysisResult
                 if (result is JsAnalysisResult.RetryWithAdditionalRoots) {
@@ -276,8 +279,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
             val phaseConfig = createPhaseConfig(jsPhases, arguments, messageCollector)
 
-            val includes = arguments.includes
-
             val module = if (includes != null) {
                 if (sourcesFiles.isNotEmpty()) {
                     messageCollector.report(ERROR, "Source files are not supported when -Xinclude is present")
@@ -294,7 +295,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     friendLibraries,
                     icUseGlobalSignatures = icCaches.isNotEmpty(),
                     icUseStdlibCache = icCaches.isNotEmpty(),
-                    icCache = if (icCaches.isNotEmpty()) checkCaches(libraries, icCaches, skipLib = includes).data else emptyMap()
+                    icCache = if (icCaches.isNotEmpty()) checkCaches(libraries, icCaches, skipLib = includes).toICCacheMap() else emptyMap()
                 )
             } else {
                 sourceModule
