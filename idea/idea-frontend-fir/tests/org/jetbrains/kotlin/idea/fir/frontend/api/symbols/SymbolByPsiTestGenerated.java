@@ -37,6 +37,12 @@ public class SymbolByPsiTestGenerated extends AbstractSymbolByPsiTest {
     }
 
     @Test
+    @TestMetadata("backingField.kt")
+    public void testBackingField() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/backingField.kt");
+    }
+
+    @Test
     @TestMetadata("class.kt")
     public void testClass() throws Exception {
         runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/class.kt");

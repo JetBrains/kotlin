@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 public sealed class KtVariableLikeSymbol : KtCallableSymbol(), KtNamedSymbol, KtSymbolWithKind {
@@ -42,7 +42,7 @@ public abstract class KtBackingFieldSymbol : KtVariableLikeSymbol() {
     abstract override fun createPointer(): KtSymbolPointer<KtVariableLikeSymbol>
 
     public companion object {
-        private val fieldName = Name.identifier("field")
+        private val fieldName = StandardNames.BACKING_FIELD
     }
 }
 
@@ -52,7 +52,6 @@ public abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithMe
     final override val isExtension: Boolean get() = false
     final override val receiverType: KtTypeAndAnnotations? get() = null
     public abstract val containingEnumClassIdIfNonLocal: ClassId?
-
 
     abstract override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol>
 }

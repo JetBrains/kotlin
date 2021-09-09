@@ -97,7 +97,8 @@ internal class KtFirKotlinPropertySymbol(
         property.setter?.let { builder.callableBuilder.buildPropertyAccessorSymbol(it) } as? KtPropertySetterSymbol
     }
 
-    override val hasBackingField: Boolean get() = firRef.withFir { it.hasBackingField }
+    // NB: `field` in accessors indicates the property should have a backing field. To see that, though, we need BODY_RESOLVE.
+    override val hasBackingField: Boolean get() = firRef.withFir(FirResolvePhase.BODY_RESOLVE) { it.hasBackingField }
 
     override val isLateInit: Boolean get() = firRef.withFir { it.isLateInit }
 

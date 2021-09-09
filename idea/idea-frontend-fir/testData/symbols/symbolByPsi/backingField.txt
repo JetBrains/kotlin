@@ -1,0 +1,87 @@
+KtFirPropertyGetterSymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: null
+  dispatchType: null
+  hasBody: true
+  hasStableParameterNames: true
+  isDefault: false
+  isExtension: false
+  isInline: false
+  isOverride: false
+  modality: FINAL
+  origin: SOURCE
+  receiverType: null
+  symbolKind: ACCESSOR
+  valueParameters: []
+  visibility: Public
+  deprecationStatus: null
+
+KtFirValueParameterSymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: null
+  hasDefaultValue: false
+  isExtension: false
+  isVararg: false
+  name: value
+  origin: SOURCE
+  receiverType: null
+  symbolKind: LOCAL
+  deprecationStatus: null
+
+KtFirPropertySetterSymbol:
+  annotatedType: [] kotlin/Unit
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: null
+  dispatchType: null
+  hasBody: true
+  hasStableParameterNames: true
+  isDefault: false
+  isExtension: false
+  isInline: false
+  isOverride: false
+  modality: FINAL
+  origin: SOURCE
+  parameter: KtFirValueParameterSymbol(value)
+  receiverType: null
+  symbolKind: ACCESSOR
+  valueParameters: [
+    KtFirValueParameterSymbol(value)
+  ]
+  visibility: Public
+  deprecationStatus: null
+
+KtFirKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: /p
+  dispatchType: null
+  getter: KtFirPropertyGetterSymbol(<getter>)
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: true
+  initializer: null
+  isConst: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: false
+  modality: FINAL
+  name: p
+  origin: SOURCE
+  receiverType: null
+  setter: KtFirPropertySetterSymbol(<setter>)
+  symbolKind: TOP_LEVEL
+  visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getP
+  javaSetterName: setP
+  setterDeprecationStatus: null
