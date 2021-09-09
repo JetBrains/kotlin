@@ -26,16 +26,17 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
+import org.jetbrains.kotlin.asJava.hasRepeatableAnnotationContainer
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.util.*
 
 class JavaElementFinder(
     private val project: Project,
@@ -64,9 +65,10 @@ class JavaElementFinder(
     }
 
     // Finds explicitly declared classes and objects, not package classes
-    // Also DefaultImpls classes of interfaces
+    // Also DefaultImpls classes of interfaces, Container classes of repeatable annotations
     private fun findClassesAndObjects(qualifiedName: FqName, scope: GlobalSearchScope, answer: MutableList<PsiClass>) {
         findInterfaceDefaultImpls(qualifiedName, scope, answer)
+        findRepeatableAnnotationContainer(qualifiedName, scope, answer)
 
         val classOrObjectDeclarations = kotlinAsJavaSupport.findClassOrObjectDeclarations(qualifiedName, scope)
 
@@ -80,17 +82,30 @@ class JavaElementFinder(
         }
     }
 
-    private fun findInterfaceDefaultImpls(qualifiedName: FqName, scope: GlobalSearchScope, answer: MutableList<PsiClass>) {
-        if (qualifiedName.isRoot) return
+    private fun findInterfaceDefaultImpls(qualifiedName: FqName, scope: GlobalSearchScope, answer: MutableList<PsiClass>) =
+        findSyntheticInnerClass(qualifiedName, JvmAbi.DEFAULT_IMPLS_CLASS_NAME, scope, answer) {
+            it is KtClass && it.isInterface()
+        }
 
-        if (qualifiedName.shortName().asString() != JvmAbi.DEFAULT_IMPLS_CLASS_NAME) return
+    private fun findRepeatableAnnotationContainer(qualifiedName: FqName, scope: GlobalSearchScope, answer: MutableList<PsiClass>) =
+        findSyntheticInnerClass(qualifiedName, JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME, scope, answer) {
+            it.hasRepeatableAnnotationContainer
+        }
+
+    private fun findSyntheticInnerClass(
+        qualifiedName: FqName,
+        syntheticName: String,
+        scope: GlobalSearchScope,
+        answer: MutableList<PsiClass>,
+        predicate: (KtClassOrObject) -> Boolean,
+    ) {
+        if (qualifiedName.isRoot || qualifiedName.shortName().asString() != syntheticName) return
 
         for (classOrObject in kotlinAsJavaSupport.findClassOrObjectDeclarations(qualifiedName.parent(), scope)) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            //NOTE: can't filter out more interfaces right away because decompiled declarations do not have member bodies
-            if (classOrObject is KtClass && classOrObject.isInterface()) {
+            if (predicate(classOrObject)) {
                 val interfaceClass = kotlinAsJavaSupport.getLightClass(classOrObject) ?: continue
-                val implsClass = interfaceClass.findInnerClassByName(JvmAbi.DEFAULT_IMPLS_CLASS_NAME, false) ?: continue
+                val implsClass = interfaceClass.findInnerClassByName(syntheticName, false) ?: continue
                 answer.add(implsClass)
             }
         }

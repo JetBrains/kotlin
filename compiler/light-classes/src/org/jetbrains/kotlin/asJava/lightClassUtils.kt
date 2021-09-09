@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.*
-import com.intellij.psi.impl.light.LightField
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.asJava.classes.*
-import org.jetbrains.kotlin.asJava.elements.PsiElementWithOrigin
+import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.runReadAction
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -157,6 +158,22 @@ val PsiElement.namedUnwrappedElement: PsiNamedElement?
 val KtClassOrObject.hasInterfaceDefaultImpls: Boolean
     get() = this is KtClass && isInterface() && hasNonAbstractMembers(this)
 
+val KtClassOrObject.hasRepeatableAnnotationContainer: Boolean
+    get() = this is KtClass &&
+            isAnnotation() &&
+            run {
+                var hasRepeatableAnnotation = false
+                for (annotation in annotationEntries) when (annotation.shortName?.asString()) {
+                    "JvmRepeatable" -> return false
+                    "Repeatable" -> {
+                        if (annotation.valueArgumentList != null) return false
+                        hasRepeatableAnnotation = true
+                    }
+                }
+
+                return hasRepeatableAnnotation
+            }
+
 private fun hasNonAbstractMembers(ktInterface: KtClass): Boolean {
     return ktInterface.declarations.any(::isNonAbstractMember)
 }
@@ -168,6 +185,9 @@ private fun isNonAbstractMember(member: KtDeclaration?): Boolean {
 
 private val DEFAULT_IMPLS_CLASS_NAME = Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)
 fun FqName.defaultImplsChild() = child(DEFAULT_IMPLS_CLASS_NAME)
+
+private val REPEATABLE_ANNOTATION_CONTAINER_NAME = Name.identifier(JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME)
+fun FqName.repeatableAnnotationContainerChild() = child(REPEATABLE_ANNOTATION_CONTAINER_NAME)
 
 @Suppress("unused")
 fun KtElement.toLightAnnotation(): PsiAnnotation? {
