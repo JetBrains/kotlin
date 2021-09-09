@@ -41,6 +41,10 @@ internal val IrFunction.isFileInitializer: Boolean
             || origin == DECLARATION_ORIGIN_FILE_THREAD_LOCAL_INITIALIZER
             || origin == DECLARATION_ORIGIN_FILE_STANDALONE_THREAD_LOCAL_INITIALIZER
 
+internal val IrFunction.isModuleInitializer: Boolean
+    get() = origin == DECLARATION_ORIGIN_MODULE_GLOBAL_INITIALIZER
+            || origin == DECLARATION_ORIGIN_MODULE_THREAD_LOCAL_INITIALIZER
+
 internal fun IrBuilderWithScope.irCallFileInitializer(initializer: IrFunctionSymbol) =
         irCall(initializer)
 
@@ -82,16 +86,18 @@ internal class FileInitializersLowering(val context: Context) : FileLoweringPass
                     )
                 else null
 
-        irFile.simpleFunctions().forEach {
-            val body = it.body ?: return@forEach
-            val statements = (body as IrBlockBody).statements
-            context.createIrBuilder(it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
-                // The order of calling initializers: first global, then thread-local.
-                // It is ok for a thread local top level property to reference a global, but not vice versa.
-                threadLocalInitFunction?.let { statements.add(0, irCallFileInitializer(it.symbol)) }
-                globalInitFunction?.let { statements.add(0, irCallFileInitializer(it.symbol)) }
-            }
-        }
+        irFile.simpleFunctions()
+                .filterNot { it.isModuleInitializer }
+                .forEach {
+                    val body = it.body ?: return@forEach
+                    val statements = (body as IrBlockBody).statements
+                    context.createIrBuilder(it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
+                        // The order of calling initializers: first global, then thread-local.
+                        // It is ok for a thread local top level property to reference a global, but not vice versa.
+                        threadLocalInitFunction?.let { statements.add(0, irCallFileInitializer(it.symbol)) }
+                        globalInitFunction?.let { statements.add(0, irCallFileInitializer(it.symbol)) }
+                    }
+                }
     }
 
     private fun buildInitFileFunction(irFile: IrFile, name: String, origin: IrDeclarationOrigin) = context.irFactory.buildFun {

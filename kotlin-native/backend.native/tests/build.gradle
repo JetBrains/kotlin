@@ -1523,6 +1523,12 @@ standaloneTest("initializers_eagerInitializationThreadLocal2") {
     source = "codegen/initializers/eagerInitializationThreadLocal2.kt"
 }
 
+standaloneTest("initializers_testInfrastructure") {
+    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization=enable') || isExperimentalMM
+    source = "codegen/initializers/testInfrastructure.kt"
+    flags = ["-tr"]
+}
+
 standaloneTest("initializers_workers1") {
     expectedFail = (project.testTarget == 'wasm32') // Workers are not supported
     source = "codegen/initializers/workers1.kt"
