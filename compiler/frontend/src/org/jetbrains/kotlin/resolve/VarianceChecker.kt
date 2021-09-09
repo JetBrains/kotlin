@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.resolve.typeBinding.TypeBinding
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBinding
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBindingForReturnType
+import org.jetbrains.kotlin.types.EnrichedProjectionKind
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.Variance.*
@@ -164,10 +165,10 @@ class VarianceCheckerCore(
 
             val projectionKind = TypeCheckingProcedure.getEffectiveProjectionKind(argument.typeParameter!!, argument.projection)!!
             val newPosition = when (projectionKind) {
-                TypeCheckingProcedure.EnrichedProjectionKind.OUT -> position
-                TypeCheckingProcedure.EnrichedProjectionKind.IN -> position.opposite()
-                TypeCheckingProcedure.EnrichedProjectionKind.INV -> Variance.INVARIANT
-                TypeCheckingProcedure.EnrichedProjectionKind.STAR -> null // CONFLICTING_PROJECTION error was reported
+                EnrichedProjectionKind.OUT -> position
+                EnrichedProjectionKind.IN -> position.opposite()
+                EnrichedProjectionKind.INV -> Variance.INVARIANT
+                EnrichedProjectionKind.STAR -> null // CONFLICTING_PROJECTION error was reported
             }
             if (newPosition != null) {
                 noError = noError and argument.binding.checkTypePosition(containingType, newPosition)

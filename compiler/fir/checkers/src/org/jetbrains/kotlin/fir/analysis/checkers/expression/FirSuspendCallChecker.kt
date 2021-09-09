@@ -33,15 +33,13 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.resolve.calls.checkers.COROUTINE_CONTEXT_FQ_NAME
-import org.jetbrains.kotlin.serialization.deserialization.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
     private val RESTRICTS_SUSPENSION_CLASS_ID =
         ClassId(StandardNames.COROUTINES_PACKAGE_FQ_NAME, Name.identifier("RestrictsSuspension"))
 
-    private val BUILTIN_SUSPEND_NAME = KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME.shortName()
+    private val BUILTIN_SUSPEND_NAME = StandardClassIds.suspend.callableName
 
     internal val KOTLIN_SUSPEND_BUILT_IN_FUNCTION_CALLABLE_ID = CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, BUILTIN_SUSPEND_NAME)
 
@@ -56,7 +54,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         if (reference is FirResolvedCallableReference) return
         when (symbol) {
             is FirNamedFunctionSymbol -> if (!symbol.isSuspend) return
-            is FirPropertySymbol -> if (symbol.callableId.asSingleFqName() != COROUTINE_CONTEXT_FQ_NAME) return
+            is FirPropertySymbol -> if (symbol.callableId != StandardClassIds.coroutineContext) return
             else -> return
         }
         val enclosingSuspendFunction = findEnclosingSuspendFunction(context)

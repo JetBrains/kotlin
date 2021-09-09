@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.resolve.SINCE_KOTLIN_FQ_NAME
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
 sealed class FirSinceKotlinAccessibility {
@@ -65,7 +65,7 @@ private fun FirAnnotatedDeclaration.getOwnSinceKotlinVersion(session: FirSession
 
     // TODO: use-site targeted annotations
     fun FirAnnotatedDeclaration.consider() {
-        val sinceKotlinSingleArgument = getAnnotationByFqName(SINCE_KOTLIN_FQ_NAME)?.arguments?.singleOrNull()
+        val sinceKotlinSingleArgument = getAnnotationByClassId(StandardClassIds.SinceKotlin)?.arguments?.singleOrNull()
         val apiVersion = ((sinceKotlinSingleArgument as? FirConstExpression<*>)?.value as? String)?.let(ApiVersion.Companion::parse)
         if (apiVersion != null) {
             // TODO: combine wasExperimentalMarkerClasses in case of several associated declarations with the same maximal API version

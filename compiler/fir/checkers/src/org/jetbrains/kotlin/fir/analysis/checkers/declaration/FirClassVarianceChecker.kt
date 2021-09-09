@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.types.EnrichedProjectionKind
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 
 object FirClassVarianceChecker : FirClassChecker() {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -148,11 +148,11 @@ object FirClassVarianceChecker : FirClassChecker() {
 
                     val typeArgumentType = typeArgument.type ?: continue
 
-                    val newVariance = when (TypeCheckingProcedure.getEffectiveProjectionKind(paramVariance, argVariance)!!) {
-                        TypeCheckingProcedure.EnrichedProjectionKind.OUT -> variance
-                        TypeCheckingProcedure.EnrichedProjectionKind.IN -> variance.opposite()
-                        TypeCheckingProcedure.EnrichedProjectionKind.INV -> Variance.INVARIANT
-                        TypeCheckingProcedure.EnrichedProjectionKind.STAR -> null // CONFLICTING_PROJECTION error was reported
+                    val newVariance = when (EnrichedProjectionKind.getEffectiveProjectionKind(paramVariance, argVariance)) {
+                        EnrichedProjectionKind.OUT -> variance
+                        EnrichedProjectionKind.IN -> variance.opposite()
+                        EnrichedProjectionKind.INV -> Variance.INVARIANT
+                        EnrichedProjectionKind.STAR -> null // CONFLICTING_PROJECTION error was reported
                     }
 
                     if (newVariance != null) {

@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import javaslang.Function2
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.Returns
@@ -83,12 +82,15 @@ object FirOperatorModifierChecker : FirSimpleFunctionChecker() {
 
 }
 
-interface Check : Function2<CheckerContext, FirSimpleFunction, String?> {
-    override fun apply(t1: CheckerContext, t2: FirSimpleFunction): String? = check(t1, t2)
+private interface Check : (CheckerContext, FirSimpleFunction) -> String? {
+    override fun invoke(p1: CheckerContext, p2: FirSimpleFunction): String? {
+        return check(p1, p2)
+    }
+
     fun check(context: CheckerContext, function: FirSimpleFunction): String?
 }
 
-object Checks {
+private object Checks {
     fun simple(message: String, predicate: (FirSimpleFunction) -> Boolean) = object : Check {
         override fun check(context: CheckerContext, function: FirSimpleFunction): String? = message.takeIf { !predicate(function) }
     }
@@ -156,10 +158,10 @@ object Checks {
 }
 
 @OptIn(ExperimentalStdlibApi::class)
-object OperatorFunctionChecks {
+private object OperatorFunctionChecks {
 
     //reimplementation of org.jetbrains.kotlin.util.OperatorChecks for FIR
-    val checksByName: Map<Name, List<Check>> = buildMap<Name, List<Check>> {
+    val checksByName: Map<Name, List<Check>> = buildMap {
         checkFor(GET, memberOrExtension, ValueParametersCount.atLeast(1))
         checkFor(
             SET,

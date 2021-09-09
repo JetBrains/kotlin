@@ -109,6 +109,11 @@ object StandardClassIds {
     val EnhancedNullability = ClassId(FqName("kotlin.jvm.internal"), Name.identifier("EnhancedNullability"))
 
     val PublishedApi = "PublishedApi".baseId()
+
+    val SinceKotlin = "SinceKotlin".baseId()
+
+    val coroutineContext = CallableId(StandardNames.COROUTINES_PACKAGE_FQ_NAME, Name.identifier("coroutineContext"))
+    val suspend = CallableId(BASE_KOTLIN_PACKAGE, Name.identifier("suspend"))
 }
 
 private fun <K, V> Map<K, V>.inverseMap() = entries.associate { (k, v) -> v to k }
