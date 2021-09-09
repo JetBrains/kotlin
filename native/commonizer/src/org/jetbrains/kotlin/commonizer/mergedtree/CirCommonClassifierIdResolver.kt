@@ -11,16 +11,20 @@ import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirTypeAlias
 
-internal fun CirCommonClassifierIdResolver(classifierIndices: TargetDependent<CirClassifierIndex>): CirCommonClassifierIdResolver {
-    return CirCommonClassifierIdResolverImpl(classifierIndices)
+internal fun CirCommonClassifierIdResolver(
+    classifierIndices: TargetDependent<CirClassifierIndex>,
+    dependencies: CirProvidedClassifiers = CirProvidedClassifiers.EMPTY
+): CirCommonClassifierIdResolver {
+    return CirCommonClassifierIdResolverImpl(classifierIndices, dependencies)
 }
 
-internal interface CirCommonClassifierIdResolver {
+interface CirCommonClassifierIdResolver {
     fun findCommonId(id: CirEntityId): CirCommonClassifierId?
 }
 
 private class CirCommonClassifierIdResolverImpl(
-    private val classifierIndices: TargetDependent<CirClassifierIndex>
+    private val classifierIndices: TargetDependent<CirClassifierIndex>,
+    private val dependencies: CirProvidedClassifiers
 ) : CirCommonClassifierIdResolver {
 
     private val cachedResults = HashMap<CirEntityId, CirCommonClassifierId>()
@@ -46,7 +50,9 @@ private class CirCommonClassifierIdResolverImpl(
 
         while (queue.isNotEmpty()) {
             val nextClassifierId = queue.removeFirst()
-            val foundClassifiers = classifierIndices.associateWith { index -> index.findClassifier(nextClassifierId) }
+            val foundClassifiers = classifierIndices.associateWith { index ->
+                index.findClassifier(nextClassifierId) ?: dependencies.classifier(nextClassifierId)
+            }
 
             /* Classifier is available for all targets */
             if (foundClassifiers.all { (_, classifier) -> classifier != null }) {
@@ -67,6 +73,17 @@ private class CirCommonClassifierIdResolverImpl(
                 if (classifier is CirTypeAlias) {
                     if (visited.add(classifier.underlyingType.classifierId)) {
                         queue.add(classifier.underlyingType.classifierId)
+                    }
+                }
+
+                if (classifier is CirProvided.TypeAlias) {
+                    val underlyingTypeId = when (val underlyingType = classifier.underlyingType) {
+                        is CirProvided.ClassType -> underlyingType.classId
+                        is CirProvided.TypeAliasType -> underlyingType.typeAliasId
+                        is CirProvided.TypeParameterType -> null
+                    }
+                    if (underlyingTypeId != null && visited.add(underlyingTypeId)) {
+                        queue.add(underlyingTypeId)
                     }
                 }
             }

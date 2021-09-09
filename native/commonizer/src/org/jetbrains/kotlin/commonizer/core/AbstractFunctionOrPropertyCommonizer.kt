@@ -48,7 +48,7 @@ class FunctionOrPropertyBaseCommonizer(
             kind = values.singleDistinctValueOrNull { it.kind } ?: return null,
             modality = ModalityCommonizer().commonize(values.map { it.modality }) ?: return null,
             visibility = VisibilityCommonizer.lowering().commonize(values) ?: return null,
-            extensionReceiver = extensionReceiverCommonizer(values.map { it.extensionReceiver })?.receiver ?: return null,
+            extensionReceiver = (extensionReceiverCommonizer(values.map { it.extensionReceiver }) ?: return null).receiver,
             returnType = returnTypeCommonizer(values) ?: return null,
             typeParameters = TypeParameterListCommonizer(typeCommonizer).commonize(values.map { it.typeParameters }) ?: return null
         )

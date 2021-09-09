@@ -17,7 +17,6 @@ internal data class TargetBuildingContext(
     val storageManager: StorageManager,
     val classifiers: CirKnownClassifiers,
     val memberContext: CirMemberContext = CirMemberContext.empty,
-    val commonClassifierIdResolver: CirCommonClassifierIdResolver = CirCommonClassifierIdResolver(classifiers.classifierIndices),
     val targets: Int, val targetIndex: Int
 ) {
     fun withMemberContextOf(clazz: CirClass) = copy(memberContext = memberContext.withContextOf(clazz))
@@ -83,7 +82,7 @@ internal fun CirNodeWithMembers<*, *>.buildFunction(
     context: TargetBuildingContext, function: CirFunction, parent: CirNode<*, *>? = null
 ) {
     val functionNode = functions.getOrPut(
-        FunctionApproximationKey.create(context.memberContext, context.commonClassifierIdResolver, function)
+        FunctionApproximationKey.create(context.memberContext, context.classifiers.commonClassifierIdResolver, function)
     ) {
         buildFunctionNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent))
     }
@@ -94,7 +93,7 @@ internal fun CirNodeWithMembers<*, *>.buildProperty(
     context: TargetBuildingContext, property: CirProperty, parent: CirNode<*, *>? = null
 ) {
     val propertyNode = properties.getOrPut(
-        PropertyApproximationKey.create(context.memberContext, context.commonClassifierIdResolver, property)
+        PropertyApproximationKey.create(context.memberContext, context.classifiers.commonClassifierIdResolver, property)
     ) {
         buildPropertyNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent))
     }
@@ -105,7 +104,7 @@ internal fun CirClassNode.buildConstructor(
     context: TargetBuildingContext, constructor: CirClassConstructor, parent: CirNode<*, *>
 ) {
     val constructorNode = constructors.getOrPut(
-        ConstructorApproximationKey.create(context.memberContext, context.commonClassifierIdResolver, constructor)
+        ConstructorApproximationKey.create(context.memberContext, context.classifiers.commonClassifierIdResolver, constructor)
     ) {
         buildClassConstructorNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent))
     }

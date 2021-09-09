@@ -14,9 +14,9 @@ internal class TypeSubstitutionCirNodeTransformer(
     private val storageManager: StorageManager,
     private val classifiers: CirKnownClassifiers,
     private val typeSubstitutor: CirTypeSubstitutor,
-    private val commonClassifierIdResolver: CirCommonClassifierIdResolver = CirCommonClassifierIdResolver(classifiers.classifierIndices)
 ) : CirNodeTransformer {
 
+    private val commonClassifierIdResolver = classifiers.commonClassifierIdResolver
 
     override fun invoke(root: CirRootNode) {
         for (index in 0 until root.targetDeclarations.size) {
