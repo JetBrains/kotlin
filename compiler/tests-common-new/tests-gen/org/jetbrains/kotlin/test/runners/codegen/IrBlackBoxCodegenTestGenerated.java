@@ -819,6 +819,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("constantArrayOfAny.kt")
+        public void testConstantArrayOfAny() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/constantArrayOfAny.kt");
+        }
+
+        @Test
         @TestMetadata("forEachBooleanArray.kt")
         public void testForEachBooleanArray() throws Exception {
             runTest("compiler/testData/codegen/box/arrays/forEachBooleanArray.kt");

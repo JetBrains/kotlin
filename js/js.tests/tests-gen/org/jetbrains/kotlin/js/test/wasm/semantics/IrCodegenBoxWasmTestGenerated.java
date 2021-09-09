@@ -288,6 +288,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/arrays/arrayPlusAssign.kt");
         }
 
+        @TestMetadata("constantArrayOfAny.kt")
+        public void testConstantArrayOfAny() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/constantArrayOfAny.kt");
+        }
+
         @TestMetadata("forEachBooleanArray.kt")
         public void testForEachBooleanArray() throws Exception {
             runTest("compiler/testData/codegen/box/arrays/forEachBooleanArray.kt");
