@@ -22815,6 +22815,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("javaOuterClassDependsOnInner.kt")
+        public void testJavaOuterClassDependsOnInner() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/javaOuterClassDependsOnInner.kt");
+        }
+
+        @Test
         @TestMetadata("kt43217.kt")
         public void testKt43217() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/kt43217.kt");

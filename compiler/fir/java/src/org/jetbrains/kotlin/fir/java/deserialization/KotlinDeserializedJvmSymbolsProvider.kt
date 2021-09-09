@@ -93,6 +93,9 @@ open class KotlinDeserializedJvmSymbolsProvider(
     private val KotlinJvmBinaryClass.isPreReleaseInvisible: Boolean
         get() = classHeader.isPreRelease
 
+    override fun shouldLoadParentsFirst(classId: ClassId): Boolean =
+        javaSymbolProvider.hasTopLevelClassOf(classId)
+
     override fun extractClassMetadata(classId: ClassId, parentContext: FirDeserializationContext?): ClassMetadataFindResult? {
         if (knownNameInPackageCache.hasNoTopLevelClassOf(classId)) return null
         val result = try {

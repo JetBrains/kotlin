@@ -19136,6 +19136,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/javaInterop/genericSamSmartcast.kt");
         }
 
+        @TestMetadata("javaOuterClassDependsOnInner.kt")
+        public void testJavaOuterClassDependsOnInner() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/javaOuterClassDependsOnInner.kt");
+        }
+
         @TestMetadata("kt43217.kt")
         public void testKt43217() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/kt43217.kt");
