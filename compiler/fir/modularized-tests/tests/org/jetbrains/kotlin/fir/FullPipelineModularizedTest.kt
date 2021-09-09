@@ -15,6 +15,7 @@ class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
         args.useFir = true
         args.useIR = true
         args.apiVersion = LANGUAGE_VERSION
+        args.jvmDefault = "compatibility"
     }
 
     fun testTotalKotlin() {
