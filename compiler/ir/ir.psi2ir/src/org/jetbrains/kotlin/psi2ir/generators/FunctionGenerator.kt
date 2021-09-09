@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
 import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
 import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
@@ -378,7 +379,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             descriptor, descriptor.type.toIrType(),
             (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType(),
             name
-            )
+        )
 
     private fun generateDefaultAnnotationParameterValue(
         valueExpression: KtExpression,
@@ -387,11 +388,9 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val constantDefaultValue =
             ConstantExpressionEvaluator.getConstant(valueExpression, context.bindingContext)?.toConstantValue(valueParameterDescriptor.type)
                 ?: error("Constant value expected for default parameter value in annotation, got $valueExpression")
-        return context.irFactory.createExpressionBody(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            context.constantValueGenerator.generateConstantValueAsExpression(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, constantDefaultValue, valueParameterDescriptor.varargElementType
-            )
-        )
+        val converted = context.constantValueGenerator.generateAnnotationValueAsExpression(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, constantDefaultValue, valueParameterDescriptor
+        ) ?: error("Could not convert annotation default ${valueExpression.getElementTextWithContext()}")
+        return context.irFactory.createExpressionBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, converted)
     }
 }
