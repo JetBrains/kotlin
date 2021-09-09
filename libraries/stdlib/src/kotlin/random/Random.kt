@@ -344,8 +344,14 @@ public fun Random(seed: Long): Random = XorWowRandom(seed.toInt(), seed.shr(32).
 @SinceKotlin("1.3")
 public fun Random.nextInt(range: IntRange): Int = when {
     range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
-    range.last < Int.MAX_VALUE -> nextInt(range.first, range.last + 1)
-    range.first > Int.MIN_VALUE -> nextInt(range.first - 1, range.last) + 1
+    else -> nextRangeInt(range.first, range.last)
+}
+
+
+@SinceKotlin("1.6")
+internal fun Random.nextRangeInt(first: Int, last: Int): Int = when {
+    last < Int.MAX_VALUE -> nextInt(first, last + 1)
+    first > Int.MIN_VALUE -> nextInt(first - 1, last) + 1
     else -> nextInt()
 }
 
@@ -360,8 +366,13 @@ public fun Random.nextInt(range: IntRange): Int = when {
 @SinceKotlin("1.3")
 public fun Random.nextLong(range: LongRange): Long = when {
     range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
-    range.last < Long.MAX_VALUE -> nextLong(range.first, range.last + 1)
-    range.first > Long.MIN_VALUE -> nextLong(range.first - 1, range.last) + 1
+    else -> nextRangeLong(range.first, range.last)
+}
+
+@SinceKotlin("1.6")
+internal fun Random.nextRangeLong(first: Long, last: Long): Long = when {
+    last < Long.MAX_VALUE -> nextLong(first, last + 1)
+    first > Long.MIN_VALUE -> nextLong(first - 1, last) + 1
     else -> nextLong()
 }
 

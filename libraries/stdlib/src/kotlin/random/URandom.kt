@@ -57,8 +57,13 @@ public fun Random.nextUInt(from: UInt, until: UInt): UInt {
 @WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Random.nextUInt(range: UIntRange): UInt = when {
     range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
-    range.last < UInt.MAX_VALUE -> nextUInt(range.first, range.last + 1u)
-    range.first > UInt.MIN_VALUE -> nextUInt(range.first - 1u, range.last) + 1u
+    else -> nextRangeUInt(range.first, range.last)
+}
+
+@SinceKotlin("1.6")
+internal fun Random.nextRangeUInt(first: UInt, last: UInt): UInt = when {
+    last < UInt.MAX_VALUE -> nextUInt(first, last + 1u)
+    first > UInt.MIN_VALUE -> nextUInt(first - 1u, last) + 1u
     else -> nextUInt()
 }
 
@@ -113,8 +118,13 @@ public fun Random.nextULong(from: ULong, until: ULong): ULong {
 @WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Random.nextULong(range: ULongRange): ULong = when {
     range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
-    range.last < ULong.MAX_VALUE -> nextULong(range.first, range.last + 1u)
-    range.first > ULong.MIN_VALUE -> nextULong(range.first - 1u, range.last) + 1u
+    else -> nextRangeULong(range.first, range.last)
+}
+
+@SinceKotlin("1.6")
+internal fun Random.nextRangeULong(first: ULong, last: ULong): ULong = when {
+    last < ULong.MAX_VALUE -> nextULong(first, last + 1u)
+    first > ULong.MIN_VALUE -> nextULong(first - 1u, last) + 1u
     else -> nextULong()
 }
 
