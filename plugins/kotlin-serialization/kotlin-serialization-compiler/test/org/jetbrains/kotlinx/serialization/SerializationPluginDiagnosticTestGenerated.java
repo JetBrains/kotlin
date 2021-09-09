@@ -59,6 +59,11 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/LocalAndAnonymous.kt");
     }
 
+    @TestMetadata("MetaSerializable.kt")
+    public void testMetaSerializable() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/MetaSerializable.kt");
+    }
+
     @TestMetadata("NoSuitableCtorInParent.kt")
     public void testNoSuitableCtorInParent() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/NoSuitableCtorInParent.kt");

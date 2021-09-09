@@ -26,7 +26,6 @@ open class SerializerCodegenImpl(
     metadataPlugin: SerializationDescriptorSerializerPlugin?
 ) : SerializerCodegen(codegen.descriptor, codegen.bindingContext, metadataPlugin) {
 
-
     private val serialDescField = "\$\$serialDesc"
 
     protected val serializerAsmType = codegen.typeMapper.mapClass(codegen.descriptor)

@@ -38,6 +38,9 @@ object SerializationAnnotations {
     internal val contextualOnPropertyFqName = FqName("kotlinx.serialization.Contextual")
     internal val polymorphicFqName = FqName("kotlinx.serialization.Polymorphic")
     internal val additionalSerializersFqName = FqName("kotlinx.serialization.UseSerializers")
+
+    internal val metaSerializableAnnotationFqName = FqName("kotlinx.serialization.MetaSerializable")
+    internal val metaSerializableSerializerAnnotationFqName = FqName("kotlinx.serialization.MetaSerializable.Serializer")
 }
 
 object SerialEntityNames {
@@ -51,6 +54,7 @@ object SerialEntityNames {
     const val CACHED_SERIALIZER_PROPERTY = "\$cachedSerializer"
 
     // classes
+    val KCLASS_NAME_FQ = FqName("kotlin.reflect.KClass")
     val KSERIALIZER_NAME = Name.identifier(KSERIALIZER_CLASS)
     val SERIAL_CTOR_MARKER_NAME = Name.identifier("SerializationConstructorMarker")
     val KSERIALIZER_NAME_FQ = SerializationPackages.packageFqName.child(KSERIALIZER_NAME)

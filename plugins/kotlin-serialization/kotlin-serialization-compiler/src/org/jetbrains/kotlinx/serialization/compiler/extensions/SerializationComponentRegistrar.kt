@@ -48,13 +48,11 @@ class SerializationComponentRegistrar : ComponentRegistrar {
             StorageComponentContainerContributor.registerExtension(project, SerializationPluginComponentContainerContributor())
         }
 
-
         private fun registerProtoExtensions() {
             SerializationPluginMetadataExtensions.registerAllExtensions(JvmProtoBufUtil.EXTENSION_REGISTRY)
             SerializationPluginMetadataExtensions.registerAllExtensions(JsSerializerProtocol.extensionRegistry)
             SerializationPluginMetadataExtensions.registerAllExtensions(KlibMetadataSerializerProtocol.extensionRegistry)
         }
-
     }
 }
 

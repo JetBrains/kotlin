@@ -44,7 +44,7 @@ fun AbstractSerialGenerator.findAddOnSerializer(propertyType: KotlinType, module
 }
 
 fun KotlinType.isGeneratedSerializableObject() =
-    toClassDescriptor?.run { kind == ClassKind.OBJECT && hasSerializableAnnotationWithoutArgs } == true
+    toClassDescriptor?.run { kind == ClassKind.OBJECT && hasSerializableOrMetaAnnotationWithoutArgs } == true
 
 @Suppress("FunctionName", "LocalVariableName")
 fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty): SerialTypeInfo {
@@ -125,7 +125,7 @@ fun AbstractSerialGenerator.findTypeSerializerOrContextUnchecked(
 ): ClassDescriptor? {
     val annotations = kType.annotations
     if (kType.isTypeParameter()) return null
-    annotations.serializableWith(module)?.let { return it.toClassDescriptor }
+    annotations.serializableOrMetaWith(module)?.let { return it.toClassDescriptor }
     additionalSerializersInScopeOfCurrentFile[kType.toClassDescriptor to kType.isMarkedNullable]?.let { return it }
     if (kType.isMarkedNullable) return findTypeSerializerOrContextUnchecked(module, kType.makeNotNullable())
     if (kType in contextualKClassListInCurrentFile) return module.getClassFromSerializationPackage(SpecialBuiltins.contextSerializer)

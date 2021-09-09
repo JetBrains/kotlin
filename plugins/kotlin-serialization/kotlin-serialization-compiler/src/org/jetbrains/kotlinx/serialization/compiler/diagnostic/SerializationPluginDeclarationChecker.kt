@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
@@ -32,7 +33,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertie
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContextUnchecked
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryConstructorPropertiesDescriptorsMap
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.serializableAnnotationFqName
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.metaSerializableAnnotationFqName
 
 internal val SERIALIZABLE_PROPERTIES: WritableSlice<ClassDescriptor, SerializableProperties> = Slices.createSimpleSlice()
 
@@ -40,8 +41,29 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
     final override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor) return
 
-        if (!canBeSerializedInternally(descriptor, declaration, context.trace)) return
         if (declaration !is KtPureClassOrObject) return
+
+        if (descriptor.annotations.hasAnnotation(metaSerializableAnnotationFqName)) {
+            checkMetaAnnotation(declaration, descriptor, context)
+            return
+        }
+
+        if (descriptor.hasSerializableAnnotation && descriptor.hasMetaSerializableAnnotation) {
+            context.trace.report(
+                SerializationErrors.SERIALIZABLE_AND_META_ANNOTATION.on(
+                    descriptor.findSerializableOrMetaAnnotationDeclaration() ?: declaration, descriptor.defaultType
+                )
+            )
+        }
+        if (descriptor.annotations.count { it.isMetaSerializableAnnotation } > 1) {
+            context.trace.report(
+                SerializationErrors.MULTIPLE_META_ANNOTATIONS.on(
+                    descriptor.findSerializableOrMetaAnnotationDeclaration() ?: declaration, descriptor.defaultType
+                )
+            )
+        }
+
+        if (!canBeSerializedInternally(descriptor, declaration, context.trace)) return
         if (!isIde) {
             // In IDE, BindingTrace is recreated each time code is modified, effectively resulting in JAR manifest read every time user types
             // something, which may be very slow. So we perform this check only during CLI/Gradle compilation.
@@ -55,6 +77,26 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         checkTransients(declaration, context.trace)
         analyzePropertiesSerializers(context.trace, descriptor, props.serializableProperties)
         checkInheritedAnnotations(descriptor, declaration, context.trace)
+    }
+
+    private fun checkMetaAnnotation(declaration: KtDeclaration, descriptor: ClassDescriptor, context: DeclarationCheckerContext) {
+        val serializers = descriptor.unsubstitutedMemberScope.getContributedDescriptors(DescriptorKindFilter.VARIABLES)
+            .filter { it.annotations.hasAnnotation(SerializationAnnotations.metaSerializableSerializerAnnotationFqName) }
+        if (serializers.size > 1) {
+            context.trace.report(
+                SerializationErrors.MULTIPLE_SERIALIZER_PARAMS
+                    .on(descriptor.findMetaSerializableAnnotationDeclaration() ?: declaration)
+            )
+        }
+        val serializerProperty = serializers.singleOrNull() as? PropertyDescriptor ?: return
+        val serializerPropertyElement = serializerProperty.source.getPsi() ?: declaration
+        val type = serializerProperty.returnType ?: return
+        if (!isKClassWithKSerializer(type)) {
+            context.trace.report(SerializationErrors.SERIALIZER_PARAM_WRONG_TYPE.on(serializerPropertyElement, type))
+        }
+        if (serializerProperty.declaresDefaultValue) {
+            context.trace.report(SerializationErrors.SERIALIZER_PARAM_DEFAULT_VALUE.on(serializerPropertyElement))
+        }
     }
 
     private fun checkInheritedAnnotations(descriptor: ClassDescriptor, declaration: KtDeclaration, trace: BindingTrace) {
@@ -75,7 +117,13 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
                     if (existing.allValueArguments != call.allValueArguments) {
                         if (reported.add(fqname)) {
                             val entry = (existing as? LazyAnnotationDescriptor)?.annotationEntry ?: declaration
-                            trace.report(SerializationErrors.INCONSISTENT_INHERITABLE_SERIALINFO.on(entry, existing.type, clazz.defaultType))
+                            trace.report(
+                                SerializationErrors.INCONSISTENT_INHERITABLE_SERIALINFO.on(
+                                    entry,
+                                    existing.type,
+                                    clazz.defaultType
+                                )
+                            )
                         }
                     }
                 }
@@ -89,7 +137,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         // For non-JAR distributions (klib, js) this method is not invoked, since getVersionsForCurrentModule
         // unable to read from them
         if (!versions.implementationVersionMatchSupported()) {
-            descriptor.onSerializableAnnotation {
+            descriptor.onSerializableOrMetaAnnotation {
                 trace.report(
                     SerializationErrors.PROVIDED_RUNTIME_TOO_LOW.on(
                         it,
@@ -104,7 +152,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
 
     private fun checkMinKotlin(versions: VersionReader.RuntimeVersions, descriptor: ClassDescriptor, trace: BindingTrace) {
         if (versions.currentCompilerMatchRequired()) return
-        descriptor.onSerializableAnnotation {
+        descriptor.onSerializableOrMetaAnnotation {
             trace.report(
                 SerializationErrors.REQUIRED_KOTLIN_TOO_HIGH.on(
                     it,
@@ -141,26 +189,25 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             return false
         }
 
-        if (!descriptor.annotations.hasAnnotation(serializableAnnotationFqName)) return false
+        if (!descriptor.hasSerializableOrMetaAnnotation) return false
 
         if (!serializationPluginEnabledOn(descriptor)) {
-            trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.PLUGIN_IS_NOT_ENABLED)
+            trace.reportOnSerializableOrMetaAnnotation(descriptor, SerializationErrors.PLUGIN_IS_NOT_ENABLED)
             return false
         }
 
-
         if (descriptor.isAnonymousObjectOrContained) {
-            trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.ANONYMOUS_OBJECTS_NOT_SUPPORTED)
+            trace.reportOnSerializableOrMetaAnnotation(descriptor, SerializationErrors.ANONYMOUS_OBJECTS_NOT_SUPPORTED)
             return false
         }
 
         if (descriptor.isInner) {
-            trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.INNER_CLASSES_NOT_SUPPORTED)
+            trace.reportOnSerializableOrMetaAnnotation(descriptor, SerializationErrors.INNER_CLASSES_NOT_SUPPORTED)
             return false
         }
 
         if (descriptor.isInlineClass() && !canSupportInlineClasses(descriptor.module, trace)) {
-            descriptor.onSerializableAnnotation {
+            descriptor.onSerializableOrMetaAnnotation {
                 trace.report(
                     SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED.on(
                         it,
@@ -171,14 +218,14 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             }
             return false
         }
-        if (!descriptor.hasSerializableAnnotationWithoutArgs) {
+        if (!descriptor.hasSerializableOrMetaAnnotationWithoutArgs) {
             // defined custom serializer
             checkClassWithCustomSerializer(descriptor, declaration, trace)
             return false
         }
 
         if (descriptor.serializableAnnotationIsUseless) {
-            trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.SERIALIZABLE_ANNOTATION_IGNORED)
+            trace.reportOnSerializableOrMetaAnnotation(descriptor, SerializationErrors.SERIALIZABLE_ANNOTATION_IGNORED)
             return false
         }
 
@@ -186,7 +233,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         if (!descriptor.isSerializableEnum()) { // enums are inherited from java.lang.Enum and can't be inherited from other classes
             val superClass = descriptor.getSuperClassOrAny()
             if (!superClass.isInternalSerializable && superClass.constructors.singleOrNull { it.valueParameters.size == 0 } == null) {
-                trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR)
+                trace.reportOnSerializableOrMetaAnnotation(descriptor, SerializationErrors.NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR)
                 return false
             }
         }
@@ -194,7 +241,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
     }
 
     private fun checkClassWithCustomSerializer(descriptor: ClassDescriptor, declaration: KtDeclaration, trace: BindingTrace) {
-        val annotationPsi = descriptor.findSerializableAnnotationDeclaration()
+        val annotationPsi = descriptor.findSerializableOrMetaAnnotationDeclaration()
         checkCustomSerializerMatch(descriptor.module, descriptor.defaultType, descriptor, annotationPsi, trace, declaration)
         checkCustomSerializerIsNotLocal(descriptor.module, descriptor, trace, declaration)
     }
@@ -213,7 +260,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
 
     private fun ClassDescriptor.isSerializableEnumWithMissingSerializer(): Boolean {
         if (kind != ClassKind.ENUM_CLASS) return false
-        if (annotations.hasAnnotation(serializableAnnotationFqName)) return false
+        if (hasSerializableOrMetaAnnotation) return false
         if (annotations.hasAnySerialAnnotation) return true
         return enumEntries().any { (it.annotations.hasAnySerialAnnotation) }
     }
@@ -226,12 +273,12 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
     }
 
     private fun buildSerializableProperties(descriptor: ClassDescriptor, trace: BindingTrace): SerializableProperties? {
-        if (!descriptor.annotations.hasAnnotation(serializableAnnotationFqName)) return null
+        if (!descriptor.hasSerializableOrMetaAnnotation) return null
         if (!descriptor.isInternalSerializable) return null
         if (descriptor.hasCompanionObjectAsSerializer) return null // customized by user
 
         val props = SerializableProperties(descriptor, trace.bindingContext)
-        if (!props.isExternallySerializable) trace.reportOnSerializableAnnotation(
+        if (!props.isExternallySerializable) trace.reportOnSerializableOrMetaAnnotation(
             descriptor,
             SerializationErrors.PRIMARY_CONSTRUCTOR_PARAMETER_IS_NOT_A_PROPERTY
         )
@@ -240,7 +287,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         val namesSet = mutableSetOf<String>()
         props.serializableProperties.forEach {
             if (!namesSet.add(it.name)) {
-                descriptor.onSerializableAnnotation { a ->
+                descriptor.onSerializableOrMetaAnnotation { a ->
                     trace.report(SerializationErrors.DUPLICATE_SERIAL_NAME.on(a, it.name))
                 }
             }
@@ -331,11 +378,13 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         if (type.genericIndex != null) return // type arguments always have serializer stored in class' field
         val element = ktType?.typeElement
         if (type.isUnsupportedInlineType() && !canSupportInlineClasses(module, trace)) {
-            trace.report(SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED.on(
-                element ?: fallbackElement,
-                VersionReader.minVersionForInlineClasses.toString(),
-                VersionReader.getVersionsForCurrentModuleFromTrace(module, trace)?.implementationVersion.toString()
-            ))
+            trace.report(
+                SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED.on(
+                    element ?: fallbackElement,
+                    VersionReader.minVersionForInlineClasses.toString(),
+                    VersionReader.getVersionsForCurrentModuleFromTrace(module, trace)?.implementationVersion.toString()
+                )
+            )
         }
         val serializer = findTypeSerializerOrContextUnchecked(module, type)
         if (serializer != null) {
@@ -356,7 +405,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         trace: BindingTrace,
         fallbackElement: PsiElement
     ) {
-        val serializerType = descriptor.annotations.serializableWith(module) ?: return
+        val serializerType = descriptor.annotations.serializableOrMetaWith(module) ?: return
         val serializerForType = serializerType.supertypes().find { isKSerializer(it) }?.arguments?.first()?.type ?: return
         // Compare constructors because we do not care about generic arguments and nullability
         if (classType.constructor != serializerForType.constructor)
@@ -376,11 +425,11 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         trace: BindingTrace,
         declarationElement: PsiElement
     ) {
-        val serializerType = declaration.annotations.serializableWith(module) ?: return
+        val serializerType = declaration.annotations.serializableOrMetaWith(module) ?: return
         val serializerDescriptor = serializerType.toClassDescriptor ?: return
 
         if (DescriptorUtils.isLocal(serializerDescriptor)) {
-            val element = declaration.findSerializableAnnotationDeclaration() ?: declarationElement
+            val element = declaration.findSerializableOrMetaAnnotationDeclaration() ?: declarationElement
 
             trace.report(
                 SerializationErrors.LOCAL_SERIALIZER_USAGE.on(
@@ -408,16 +457,19 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             )
     }
 
-    private inline fun ClassDescriptor.onSerializableAnnotation(report: (KtAnnotationEntry) -> Unit) {
-        findSerializableAnnotationDeclaration()?.let(report)
+    private inline fun ClassDescriptor.onSerializableOrMetaAnnotation(report: (KtAnnotationEntry) -> Unit) {
+        findSerializableOrMetaAnnotationDeclaration()?.let(report)
     }
 
-    private fun BindingTrace.reportOnSerializableAnnotation(descriptor: ClassDescriptor, error: DiagnosticFactory0<in KtAnnotationEntry>) {
-        descriptor.onSerializableAnnotation { e ->
+    private fun BindingTrace.reportOnSerializableOrMetaAnnotation(
+        descriptor: ClassDescriptor,
+        error: DiagnosticFactory0<in KtAnnotationEntry>
+    ) {
+        descriptor.onSerializableOrMetaAnnotation { e ->
             report(error.on(e))
         }
     }
 }
 
 internal val ClassDescriptor.serializableAnnotationIsUseless: Boolean
-    get() = hasSerializableAnnotationWithoutArgs && !isInternalSerializable && !hasCompanionObjectAsSerializer && !isSerializableEnum() && !isSealedSerializableInterface
+    get() = hasSerializableOrMetaAnnotationWithoutArgs && !isInternalSerializable && !hasCompanionObjectAsSerializer && !isSerializableEnum() && !isSealedSerializableInterface
