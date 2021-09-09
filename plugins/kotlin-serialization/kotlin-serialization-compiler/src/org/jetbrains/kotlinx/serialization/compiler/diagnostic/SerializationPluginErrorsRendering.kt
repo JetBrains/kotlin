@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.diagnostic
 
+import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
@@ -17,8 +18,8 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
         MAP.put(
             SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED,
             "Inline classes require runtime serialization library version at least {0}, while your classpath has {1}.",
-            Renderers.STRING,
-            Renderers.STRING,
+            CommonRenderers.STRING,
+            CommonRenderers.STRING,
         )
         MAP.put(
             SerializationErrors.PLUGIN_IS_NOT_ENABLED,
@@ -53,7 +54,7 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
         MAP.put(
             SerializationErrors.DUPLICATE_SERIAL_NAME,
             "Serializable class has duplicate serial name of property ''{0}'', either in the class itself or its supertypes",
-            Renderers.STRING
+            CommonRenderers.STRING
         )
         MAP.put(
             SerializationErrors.SERIALIZER_NOT_FOUND,
@@ -103,18 +104,18 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             SerializationErrors.REQUIRED_KOTLIN_TOO_HIGH,
             "Your current Kotlin version is {0}, while kotlinx.serialization core runtime {1} requires at least Kotlin {2}. " +
                     "Please update your Kotlin compiler and IDE plugin.",
-            Renderers.STRING,
-            Renderers.STRING,
-            Renderers.STRING
+            CommonRenderers.STRING,
+            CommonRenderers.STRING,
+            CommonRenderers.STRING
         )
 
         MAP.put(
             SerializationErrors.PROVIDED_RUNTIME_TOO_LOW,
             "Your current kotlinx.serialization core version is {0}, while current Kotlin compiler plugin {1} requires at least {2}. " +
                     "Please update your kotlinx.serialization runtime dependency.",
-            Renderers.STRING,
-            Renderers.STRING,
-            Renderers.STRING
+            CommonRenderers.STRING,
+            CommonRenderers.STRING,
+            CommonRenderers.STRING
         )
 
         MAP.put(

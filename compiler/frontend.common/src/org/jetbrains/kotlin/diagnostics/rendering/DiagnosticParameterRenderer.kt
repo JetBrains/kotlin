@@ -33,3 +33,6 @@ fun <O> Renderer(block: (O) -> String) = object : ContextIndependentParameterRen
 fun <O> ContextDependentRenderer(block: (O, RenderingContext) -> String) = object : DiagnosticParameterRenderer<O> {
     override fun render(obj: O, renderingContext: RenderingContext): String = block(obj, renderingContext)
 }
+
+fun <P> renderParameter(parameter: P, renderer: DiagnosticParameterRenderer<P>?, context: RenderingContext): Any? =
+    renderer?.render(parameter, context) ?: parameter

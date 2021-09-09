@@ -67,19 +67,6 @@ object Renderers {
     }
 
     @JvmField
-    val EMPTY = Renderer<Any> { "" }
-
-    @JvmField
-    val STRING = Renderer<String> { it }
-
-    @JvmField
-    val THROWABLE = Renderer<Throwable> {
-        val writer = StringWriter()
-        it.printStackTrace(PrintWriter(writer))
-        StringUtil.first(writer.toString(), 2048, true)
-    }
-
-    @JvmField
     val NAME = Renderer<Named> { it.name.asString() }
 
     @JvmField
@@ -181,15 +168,6 @@ object Renderers {
     }
 
     @JvmField
-    val RENDER_POSITION_VARIANCE = Renderer { variance: Variance ->
-        when (variance) {
-            Variance.INVARIANT -> "invariant"
-            Variance.IN_VARIANCE -> "in"
-            Variance.OUT_VARIANCE -> "out"
-        }
-    }
-
-    @JvmField
     val AMBIGUOUS_CALLS = Renderer { calls: Collection<ResolvedCall<*>> ->
         val descriptors = calls.map { it.resultingDescriptor }
         renderAmbiguousDescriptors(descriptors)
@@ -212,20 +190,6 @@ object Renderers {
             .joinToString(separator = "\n", prefix = "\n") {
                 FQ_NAMES_IN_TYPES.render(it, context)
             }
-    }
-
-    @JvmStatic
-    fun <T> commaSeparated(itemRenderer: DiagnosticParameterRenderer<T>) = ContextDependentRenderer<Collection<T>> { collection, context ->
-        buildString {
-            val iterator = collection.iterator()
-            while (iterator.hasNext()) {
-                val next = iterator.next()
-                append(itemRenderer.render(next, context))
-                if (iterator.hasNext()) {
-                    append(", ")
-                }
-            }
-        }
     }
 
     @JvmField

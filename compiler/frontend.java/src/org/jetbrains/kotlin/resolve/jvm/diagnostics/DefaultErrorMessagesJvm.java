@@ -15,6 +15,7 @@ import java.util.List;
 
 import static kotlin.collections.CollectionsKt.*;
 import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
+import static org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*;
 
 public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
