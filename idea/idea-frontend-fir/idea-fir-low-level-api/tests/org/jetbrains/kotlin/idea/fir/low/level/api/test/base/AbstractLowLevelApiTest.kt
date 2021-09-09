@@ -9,6 +9,8 @@ import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
+import com.intellij.testFramework.TestDataFile
+import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.analysis.providers.KotlinModuleInfoProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.ModuleRegistrarPreAnalysisHandler
@@ -74,7 +76,7 @@ abstract class AbstractLowLevelApiTest : TestWithDisposable() {
 
     open fun configureTest(builder: TestConfigurationBuilder) {}
 
-    protected fun runTest(path: String) {
+    protected fun runTest(@TestDataFile path: String) {
         testDataPath = Paths.get(path)
         val testConfiguration = testConfiguration(path, configure)
         Disposer.register(disposable, testConfiguration.rootDisposable)
