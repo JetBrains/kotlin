@@ -24,6 +24,7 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
             "./libraries/stdlib/jvm/runtime/kotlin/text/TypeAliases.kt",
             "./libraries/stdlib/jvm/src/kotlin/collections/TypeAliases.kt",
             "./libraries/stdlib/common/src/kotlin/TextH.kt",
+            "./libraries/stdlib/src/kotlin/internal/commonProgressionUtil.kt",
             "./libraries/stdlib/src/kotlin/text/regex/MatchResult.kt",
             "./libraries/stdlib/src/kotlin/collections/Sequence.kt",
         )
