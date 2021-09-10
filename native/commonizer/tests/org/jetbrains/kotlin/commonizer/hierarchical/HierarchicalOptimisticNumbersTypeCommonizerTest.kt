@@ -618,7 +618,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
                 @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
                 typealias B = A
                 @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
-                typealias X = Int
+                typealias X = A
             """.trimIndent()
         )
     }

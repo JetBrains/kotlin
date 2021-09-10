@@ -18,7 +18,7 @@ class TypeAliasCommonizer(
 ) : NullableSingleInvocationCommonizer<CirTypeAlias> {
 
     private val typeCommonizer = typeCommonizer.withOptions {
-        withTypeAliasSubstitutionEnabled(false).withOptimisticNumberTypeCommonizationEnabled(true)
+        withBackwardsTypeAliasSubstitutionEnabled(false).withOptimisticNumberTypeCommonizationEnabled(true)
     }
 
     override fun invoke(values: List<CirTypeAlias>): CirTypeAlias? {
