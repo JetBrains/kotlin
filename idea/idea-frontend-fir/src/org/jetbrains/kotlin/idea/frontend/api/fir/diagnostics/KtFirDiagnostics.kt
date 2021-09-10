@@ -2529,6 +2529,14 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = FunctionDelegateMemberNameClash::class
     }
 
+    abstract class ValueClassWithoutJvmInlineAnnotation : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ValueClassWithoutJvmInlineAnnotation::class
+    }
+
+    abstract class JvmInlineWithoutValueClass : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = JvmInlineWithoutValueClass::class
+    }
+
     abstract class JavaTypeMismatch : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = JavaTypeMismatch::class
         abstract val expectedType: KtType

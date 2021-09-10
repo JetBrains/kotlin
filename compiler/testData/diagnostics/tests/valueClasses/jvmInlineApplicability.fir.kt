@@ -11,14 +11,14 @@ inline class IC(val a: Any)
 @JvmInline
 value class VC(val a: Any)
 
-@JvmInline
+<!JVM_INLINE_WITHOUT_VALUE_CLASS!>@JvmInline<!>
 class C
 
-@JvmInline
+<!JVM_INLINE_WITHOUT_VALUE_CLASS!>@JvmInline<!>
 interface I
 
-@JvmInline
+<!JVM_INLINE_WITHOUT_VALUE_CLASS!>@JvmInline<!>
 object O
 
-@JvmInline
+<!JVM_INLINE_WITHOUT_VALUE_CLASS!>@JvmInline<!>
 data class DC(val a: Any)

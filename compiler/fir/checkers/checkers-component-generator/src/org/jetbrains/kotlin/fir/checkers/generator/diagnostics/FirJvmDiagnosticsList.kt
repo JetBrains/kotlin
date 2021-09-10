@@ -37,6 +37,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val ILLEGAL_JVM_NAME by error<PsiElement>()
 
         val FUNCTION_DELEGATE_MEMBER_NAME_CLASH by error<PsiElement>(PositioningStrategy.DECLARATION_NAME)
+
+        val VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION by error<PsiElement>()
+        val JVM_INLINE_WITHOUT_VALUE_CLASS by error<PsiElement>()
     }
 
     val TYPES by object : DiagnosticGroup("Types") {

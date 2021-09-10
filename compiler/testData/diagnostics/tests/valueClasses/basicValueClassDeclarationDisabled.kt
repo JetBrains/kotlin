@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !SKIP_JAVAC
 // !API_VERSION: 1.4
 // !LANGUAGE: -InlineClasses

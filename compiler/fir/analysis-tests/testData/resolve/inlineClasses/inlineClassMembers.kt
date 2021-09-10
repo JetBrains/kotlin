@@ -1,4 +1,4 @@
-value class BackingFields(val x: Int) {
+<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class BackingFields(val x: Int) {
     <!PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS!>val y<!> = 0
     var z: String
         get() = ""
@@ -27,6 +27,6 @@ inline class SecondaryConstructors(val x: Int) {
     }<!>
 }
 
-value class WithInner(val x: String) {
+<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class WithInner(val x: String) {
     <!INNER_CLASS_INSIDE_INLINE_CLASS!>inner<!> class Inner
 }
