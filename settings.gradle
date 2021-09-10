@@ -116,7 +116,7 @@ include ":benchmarks",
         ":compiler:backend.wasm",
         ":compiler:backend.jvm",
         ":compiler:backend.jvm.lower",
-        ":compiler:backend.jvm:backend.jvm.entrypoint",
+        ":compiler:backend.jvm.entrypoint",
         ":compiler:backend-common",
         ":compiler:backend",
         ":compiler:plugin-api",
@@ -536,7 +536,7 @@ project(':compiler:backend.js').projectDir = "$rootDir/compiler/ir/backend.js" a
 project(':compiler:backend.wasm').projectDir = "$rootDir/compiler/ir/backend.wasm" as File
 project(':compiler:backend.jvm').projectDir = "$rootDir/compiler/ir/backend.jvm" as File
 project(':compiler:backend.jvm.lower').projectDir = "$rootDir/compiler/ir/backend.jvm/lower" as File
-project(':compiler:backend.jvm:backend.jvm.entrypoint').projectDir = "$rootDir/compiler/ir/backend.jvm/entrypoint" as File
+project(':compiler:backend.jvm.entrypoint').projectDir = "$rootDir/compiler/ir/backend.jvm/entrypoint" as File
 project(':compiler:ir.serialization.common').projectDir = "$rootDir/compiler/ir/serialization.common" as File
 project(':compiler:ir.serialization.jvm').projectDir = "$rootDir/compiler/ir/serialization.jvm" as File
 project(':compiler:ir.serialization.js').projectDir = "$rootDir/compiler/ir/serialization.js" as File

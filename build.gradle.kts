@@ -192,7 +192,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:ir.backend.common",
     ":compiler:backend.jvm",
     ":compiler:backend.jvm.lower",
-    ":compiler:backend.jvm:backend.jvm.entrypoint",
+    ":compiler:backend.jvm.entrypoint",
     ":compiler:backend.js",
     ":compiler:backend.wasm",
     ":compiler:ir.serialization.common",
