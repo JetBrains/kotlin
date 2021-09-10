@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrLinker
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.KtFile
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
 open class JvmIrCodegenFactory(
     configuration: CompilerConfiguration,
-    private val phaseConfig: PhaseConfig,
+    private val phaseConfig: PhaseConfig?,
     private val externalMangler: JvmDescriptorMangler? = null,
     private val externalSymbolTable: SymbolTable? = null,
     private val jvmGeneratorExtensions: JvmGeneratorExtensionsImpl = JvmGeneratorExtensionsImpl(configuration),
@@ -48,7 +48,7 @@ open class JvmIrCodegenFactory(
         val state: GenerationState,
         val irModuleFragment: IrModuleFragment,
         val symbolTable: SymbolTable,
-        val phaseConfig: PhaseConfig,
+        val phaseConfig: PhaseConfig?,
         val irProviders: List<IrProvider>,
         val extensions: JvmGeneratorExtensionsImpl,
         val backendExtension: JvmBackendExtension,
@@ -142,7 +142,8 @@ open class JvmIrCodegenFactory(
         }
         val irProviders = listOf(irLinker)
 
-        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders, pluginExtensions, expectDescriptorToSymbol = null)
+        val irModuleFragment =
+            psi2ir.generateModuleFragment(psi2irContext, files, irProviders, pluginExtensions, expectDescriptorToSymbol = null)
         irLinker.postProcess()
 
         stubGenerator.unboundSymbolGeneration = true
@@ -177,10 +178,11 @@ open class JvmIrCodegenFactory(
     }
 
     fun doGenerateFilesInternal(input: JvmIrBackendInput) {
-        val (state, irModuleFragment, symbolTable, phaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart) = input
+        val (state, irModuleFragment, symbolTable, customPhaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart) = input
         val irSerializer = if (state.configuration.getBoolean(JVMConfigurationKeys.SERIALIZE_IR))
             JvmIrSerializerImpl(state.configuration)
         else null
+        val phaseConfig = customPhaseConfig ?: PhaseConfig(jvmPhases)
         val context = JvmBackendContext(
             state, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig, extensions, backendExtension, irSerializer,
             notifyCodegenStart

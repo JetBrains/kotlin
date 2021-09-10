@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.test.frontend.classic
 
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -36,7 +34,7 @@ class ClassicFrontend2IrConverter(
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val files = psiFiles.values.toList()
-        val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases)
+        val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
         val codegenFactory = JvmIrCodegenFactory(configuration, phaseConfig)
         val state = GenerationState.Builder(
             project, ClassBuilderFactories.TEST, analysisResult.moduleDescriptor, analysisResult.bindingContext,
