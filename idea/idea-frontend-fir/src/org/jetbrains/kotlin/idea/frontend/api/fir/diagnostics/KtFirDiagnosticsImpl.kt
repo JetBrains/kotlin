@@ -4095,6 +4095,13 @@ internal class IllegalJvmNameImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class FunctionDelegateMemberNameClashImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.FunctionDelegateMemberNameClash(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class JavaTypeMismatchImpl(
     override val expectedType: KtType,
     override val actualType: KtType,

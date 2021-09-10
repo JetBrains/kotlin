@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.EXTERNAL_D
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_HAVE_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.EXTERNAL_DECLARATION_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.FIELD_IN_JVM_RECORD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.FUNCTION_DELEGATE_MEMBER_NAME_CLASH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ILLEGAL_JVM_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICABLE_JVM_FIELD
@@ -159,6 +160,8 @@ object FirJvmDefaultErrorMessages {
 
             map.put(INAPPLICABLE_JVM_NAME, "'@JvmName' annotation is not applicable to this declaration")
             map.put(ILLEGAL_JVM_NAME, "Illegal JVM name")
+
+            map.put(FUNCTION_DELEGATE_MEMBER_NAME_CLASH, "Spread operator is prohibited for arguments to signature-polymorphic calls")
 
             map.put(JVM_DEFAULT_NOT_IN_INTERFACE, "'@JvmDefault' is only supported on interface members")
             map.put(

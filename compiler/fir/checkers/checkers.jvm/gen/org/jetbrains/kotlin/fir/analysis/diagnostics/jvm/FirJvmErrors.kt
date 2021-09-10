@@ -39,6 +39,7 @@ object FirJvmErrors {
     val JVM_STATIC_ON_EXTERNAL_IN_INTERFACE by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
     val INAPPLICABLE_JVM_NAME by error0<PsiElement>()
     val ILLEGAL_JVM_NAME by error0<PsiElement>()
+    val FUNCTION_DELEGATE_MEMBER_NAME_CLASH by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_NAME)
 
     // Types
     val JAVA_TYPE_MISMATCH by error2<KtExpression, ConeKotlinType, ConeKotlinType>()
