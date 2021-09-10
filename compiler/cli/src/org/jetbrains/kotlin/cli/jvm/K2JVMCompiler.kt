@@ -279,7 +279,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     override fun createPerformanceManager(arguments: K2JVMCompilerArguments, services: Services): CommonCompilerPerformanceManager {
         val externalManager = services[CommonCompilerPerformanceManager::class.java]
         if (externalManager != null) return externalManager
-        val argument = arguments.profileCompilerCommand ?: return K2JVMCompilerPerformanceManager()
+        val argument = arguments.profileCompilerCommand ?: return defaultPerformanceManager
         return ProfilingCompilerPerformanceManager.create(argument)
     }
 }

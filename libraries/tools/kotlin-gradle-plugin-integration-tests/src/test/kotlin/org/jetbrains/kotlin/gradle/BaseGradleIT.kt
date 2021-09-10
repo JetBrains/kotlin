@@ -18,6 +18,7 @@ import org.jdom.output.XMLOutputter
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.applyAndroidTestFixes
 import org.jetbrains.kotlin.gradle.testbase.enableCacheRedirector
 import org.jetbrains.kotlin.gradle.testbase.addPluginManagementToSettings
@@ -260,6 +261,7 @@ abstract class BaseGradleIT {
         val customEnvironmentVariables: Map<String, String> = mapOf(),
         val dryRun: Boolean = false,
         val abiSnapshot: Boolean = false,
+        val withReports: List<BuildReportType> = emptyList(),
     )
 
     enum class ConfigurationCacheProblems {
@@ -983,6 +985,9 @@ Finished executing task ':$taskName'|
             }
             if (options.abiSnapshot) {
                 add("-Dkotlin.incremental.classpath.snapshot.enabled=true")
+            }
+            if (options.withReports.isNotEmpty()) {
+                add("-Pkotlin.build.report.output=${options.withReports.joinToString { it.name }}")
             }
 
             add("-Dorg.gradle.unsafe.configuration-cache=${options.configurationCache}")

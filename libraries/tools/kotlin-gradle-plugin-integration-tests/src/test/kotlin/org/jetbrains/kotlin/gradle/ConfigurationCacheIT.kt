@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.native.transformNativeTestProject
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.util.createTempDir
 import org.jetbrains.kotlin.gradle.util.findFileByName
@@ -150,6 +151,21 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @Test
     fun testConfigurationCacheJsWithTestDependencies() = with(transformProjectWithPluginsDsl("kotlin-js-project-with-test-dependencies")) {
         testConfigurationCacheOf("assemble", executedTaskNames = listOf(":kotlinNpmInstall"))
+    }
+
+    @Test
+    fun testBuildReportSmokeTestForConfigurationCache() {
+        with(Project("simpleProject")) {
+            setupWorkingDir()
+            val buildOptions = defaultBuildOptions().copy(withReports = listOf(BuildReportType.FILE))
+            build("assemble", options = buildOptions) {
+                assertContains("Kotlin build report is written to")
+            }
+
+            build("assemble", options = buildOptions) {
+                assertContains("Kotlin build report is written to")
+            }
+        }
     }
 }
 

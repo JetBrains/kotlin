@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.report.data
 
-internal interface BuildExecutionDataProcessor {
-    fun process(build: BuildExecutionData)
+import org.gradle.api.logging.Logger
+
+interface BuildExecutionDataProcessor {
+    fun process(build: BuildExecutionData, log: Logger)
 }

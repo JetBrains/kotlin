@@ -9,10 +9,16 @@ import java.io.Serializable
 
 
 @Suppress("Reformat")
-enum class BuildPerformanceMetric(val parent: BuildPerformanceMetric? = null, val readableString: String) : Serializable {
-    OUTPUT_SIZE(readableString = "Total output size"),
-        LOOKUP_SIZE(OUTPUT_SIZE, "Lookups size"),
-        SNAPSHOT_SIZE(OUTPUT_SIZE, "ABI snapshot size"),
+enum class BuildPerformanceMetric(val parent: BuildPerformanceMetric? = null, val readableString: String, val type: BuildMetricType) : Serializable {
+    CACHE_DIRECTORY_SIZE(readableString = "Total size of the cache directory", type = BuildMetricType.FILE_SIZE),
+        LOOKUP_SIZE(CACHE_DIRECTORY_SIZE, "Lookups size", type = BuildMetricType.FILE_SIZE),
+        SNAPSHOT_SIZE(CACHE_DIRECTORY_SIZE, "ABI snapshot size", type = BuildMetricType.FILE_SIZE),
+
+    COMPILE_ITERATION(parent = null, "Total compiler iteration", type = BuildMetricType.NUMBER),
+
+    // Metrics for the `kotlin.incremental.useClasspathSnapshot` feature
+    ORIGINAL_CLASSPATH_SNAPSHOT_SIZE(parent = null, "Size of the original classpath snapshot (before shrinking)", type = BuildMetricType.FILE_SIZE),
+    SHRUNK_CLASSPATH_SNAPSHOT_SIZE(parent = null, "Size of the shrunk classpath snapshot", type = BuildMetricType.FILE_SIZE),
     ;
 
     companion object {
@@ -22,4 +28,10 @@ enum class BuildPerformanceMetric(val parent: BuildPerformanceMetric? = null, va
             values().filter { it.parent != null }.groupBy { it.parent }
         }
     }
+}
+
+enum class BuildMetricType {
+    TIME_IN_MS,
+    FILE_SIZE,
+    NUMBER
 }

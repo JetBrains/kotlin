@@ -21,6 +21,7 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
 import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
@@ -28,13 +29,12 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Test
 import java.io.File
+import java.io.ObjectInputStream
 import java.nio.file.FileSystemException
 import java.nio.file.Files
+import java.util.*
 import java.util.zip.ZipFile
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class KotlinGradleIT : BaseGradleIT() {
 
@@ -929,6 +929,48 @@ class KotlinGradleIT : BaseGradleIT() {
             assertContains("Kotlin build report is written to")
         }
     }
+
+    @Test
+    fun testBuildMetricsSmokeTest() = with(Project("simpleProject")) {
+        build("assemble", options = defaultBuildOptions().copy(withReports = listOf(BuildReportType.FILE))) {
+            assertSuccessful()
+            assertContains("Kotlin build report is written to")
+        }
+        val reportFolder = projectDir.resolve("build/reports/kotlin-build")
+        val reports = reportFolder.listFiles()
+        assertNotNull(reports)
+        assertEquals(1, reports.size)
+        val report = reports[0].readText()
+
+        //Should contains build metrics for all compile kotlin tasks
+        assertTrue { report.contains("Time metrics:") }
+        assertTrue { report.contains("Run compilation:") }
+        assertTrue { report.contains("Incremental compilation in daemon:") }
+        assertTrue { report.contains("Build performance metrics:") }
+        assertTrue { report.contains("Total size of the cache directory:") }
+        assertTrue { report.contains("Total compiler iteration:") }
+        assertTrue { report.contains("ABI snapshot size:") }
+        //for non-incremental builds
+        assertTrue { report.contains("Build attributes:") }
+        assertTrue { report.contains("REBUILD_REASON:") }
+    }
+
+    @Test
+    fun testCompilerBuildMetricsSmokeTest() = with(Project("simpleProject")) {
+        build("assemble", options = defaultBuildOptions().copy(withReports = listOf(BuildReportType.FILE))) {
+            assertSuccessful()
+            assertContains("Kotlin build report is written to")
+        }
+        val reportFolder = projectDir.resolve("build/reports/kotlin-build")
+        val reports = reportFolder.listFiles()
+        assertNotNull(reports)
+        assertEquals(1, reports.size)
+        val report = reports[0].readText()
+        assertTrue { report.contains("Compiler code analysis:") }
+        assertTrue { report.contains("Compiler code generation:") }
+        assertTrue { report.contains("Compiler initialization time:") }
+    }
+
 
     @Test
     fun testKt29971() = with(Project("kt-29971", GradleVersionRequired.FOR_MPP_SUPPORT)) {

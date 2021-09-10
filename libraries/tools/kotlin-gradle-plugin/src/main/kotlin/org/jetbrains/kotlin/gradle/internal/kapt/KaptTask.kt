@@ -176,8 +176,8 @@ abstract class KaptTask @Inject constructor(
     abstract val source: ConfigurableFileCollection
 
     @get:Internal
-    override val metrics: BuildMetricsReporter =
-        BuildMetricsReporterImpl()
+    override val metrics: Property<BuildMetricsReporter> = objectFactory
+        .property(BuildMetricsReporterImpl())
 
     @get:Input
     abstract val verbose: Property<Boolean>

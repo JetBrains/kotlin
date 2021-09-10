@@ -39,12 +39,6 @@ enum class CompilerSystemProperties(val property: String, val alwaysDirectAccess
     COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM("kotlin.incremental.useClasspathSnapshot"),
     KOTLIN_COLORS_ENABLED_PROPERTY("kotlin.colors.enabled"),
 
-    KOTLIN_STAT_ENABLED_PROPERTY("kotlin.plugin.stat.enabled"),
-    KOTLIN_STAT_ENDPOINT_PROPERTY("kotlin.plugin.stat.endpoint"),
-    KOTLIN_STAT_USER_PROPERTY("kotlin.plugin.stat.user"),
-    KOTLIN_STAT_PASSWORD_PROPERTY("kotlin.plugin.stat.password"),
-    KOTLIN_STAT_LABEl_PROPERTY("kotlin.plugin.stat.label"),
-
     OS_NAME("os.name", alwaysDirectAccess = true),
     TMP_DIR("java.io.tmpdir"),
     USER_HOME("user.home", alwaysDirectAccess = true),

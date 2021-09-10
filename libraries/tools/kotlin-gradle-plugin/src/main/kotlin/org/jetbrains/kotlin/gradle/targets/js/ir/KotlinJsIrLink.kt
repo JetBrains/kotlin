@@ -118,7 +118,7 @@ abstract class KotlinJsIrLink @Inject constructor(
                 { objects.fileCollection() },
                 defaultCompilerClasspath,
                 logger,
-                reportingSettings
+                reportingSettings()
             )
             val cacheArgs = visitCompilation(
                 compilation as KotlinCompilation<*>,

@@ -22,8 +22,6 @@ import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.build.event.BuildEventsListenerRegistry
-import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
@@ -53,6 +51,8 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
+import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.targets.js.ir.isProduceUnzippedKlib
 import org.jetbrains.kotlin.gradle.utils.*
@@ -94,8 +94,8 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>
     }
 
     @get:Internal
-    override val metrics: BuildMetricsReporter =
-        BuildMetricsReporterImpl()
+    override val metrics: Property<BuildMetricsReporter> = project.objects
+        .property(BuildMetricsReporterImpl())
 
     /**
      * By default, should be set by plugin from [COMPILER_CLASSPATH_CONFIGURATION_NAME] configuration.
@@ -267,7 +267,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
         incremental
 
     @get:Internal
-    internal var reportingSettings = ReportingSettings()
+    val startParameters = BuildMetricsReporterService.getStartParameters(project)
+
+    @get:Internal
+    internal abstract val buildMetricsReporterService: Property<BuildMetricsReporterService?>
+
+    internal fun reportingSettings() = buildMetricsReporterService.orNull?.parameters?.reportingSettings ?: ReportingSettings()
 
     @get:Input
     internal val useModuleDetection: Property<Boolean> = objects.property(Boolean::class.java).value(false)
@@ -353,7 +358,14 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
     @TaskAction
     fun execute(inputChanges: InputChanges) {
-        metrics.measure(BuildTime.GRADLE_TASK_ACTION) {
+        val buildMetrics = metrics.get()
+        buildMetrics.measure(BuildTime.GRADLE_TASK_ACTION) {
+            KotlinBuildStatsService.applyIfInitialised {
+                if (name.contains("Test"))
+                    it.report(BooleanMetrics.TESTS_EXECUTED, true)
+                else
+                    it.report(BooleanMetrics.COMPILATION_STARTED, true)
+            }
             daemonStatisticsService.orNull // trigger service instantiation if it was not instantiated yet
             systemPropertiesService.get().startIntercept()
             CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
@@ -363,7 +375,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
             // To prevent this, we backup outputs before incremental build and restore when exception is thrown
             val outputsBackup: TaskOutputsBackup? =
                 if (isIncrementalCompilationEnabled() && inputChanges.isIncremental)
-                    metrics.measure(BuildTime.BACKUP_OUTPUT) {
+                    buildMetrics.measure(BuildTime.BACKUP_OUTPUT) {
                         TaskOutputsBackup(
                             fileSystemOperations,
                             layout.buildDirectory,
@@ -382,18 +394,15 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
                 clearLocalState("Task cannot run incrementally")
             }
 
-            executeImpl(inputChanges, outputsBackup)
-            metrics.measure(BuildTime.CALCULATE_OUTPUT_SIZE) {
-                metrics.addMetric(
-                    BuildPerformanceMetric.SNAPSHOT_SIZE,
-                    taskBuildDirectory.file("build-history.bin").get().asFile.length() +
-                            taskBuildDirectory.file("last-build.bin").get().asFile.length() +
-                            taskBuildDirectory.file("abi-snapshot.bin").get().asFile.length()
-                )
-                metrics.addMetric(BuildPerformanceMetric.OUTPUT_SIZE,
-                                  taskBuildDirectory.dir("caches-jvm").get().asFileTree.files.filter { it.isFile }.map { it.length() }
-                                      .sum()
-                )
+            try {
+                executeImpl(inputChanges, outputsBackup)
+            } catch (t: Throwable) {
+                if (outputsBackup != null) {
+                    buildMetrics.measure(BuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
+                        outputsBackup.restoreOutputs()
+                    }
+                }
+                throw t
             }
         }
     }
@@ -488,6 +497,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
             args,
             compilerArgumentsConfigurationFlags(defaultsOnly, ignoreClasspathResolutionErrors)
         )
+        if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
+            args.reportPerf = true
+        }
     }
 }
 
@@ -707,6 +719,10 @@ abstract class KotlinCompile @Inject constructor(
         if (state.executing) {
             defaultKotlinJavaToolchain.get().updateJvmTarget(this, args)
         }
+
+        if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
+            args.reportPerf = true
+        }
     }
 
     @get:Internal
@@ -756,7 +772,7 @@ abstract class KotlinCompile @Inject constructor(
         val environment = GradleCompilerEnvironment(
             defaultCompilerClasspath, messageCollector, outputItemCollector,
             outputFiles = allOutputFiles(),
-            reportingSettings = reportingSettings,
+            reportingSettings = reportingSettings(),
             incrementalCompilationEnvironment = icEnv,
             kotlinScriptExtensions = sourceFilesExtensions.get().toTypedArray()
         )
@@ -1177,7 +1193,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         val environment = GradleCompilerEnvironment(
             defaultCompilerClasspath, messageCollector, outputItemCollector,
             outputFiles = allOutputFiles(),
-            reportingSettings = reportingSettings,
+            reportingSettings = reportingSettings(),
             incrementalCompilationEnvironment = icEnv
         )
         compilerRunner.runJsCompilerAsync(

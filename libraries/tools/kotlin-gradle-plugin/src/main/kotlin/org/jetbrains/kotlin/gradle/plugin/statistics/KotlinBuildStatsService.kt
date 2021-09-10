@@ -105,7 +105,6 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
                             )
                             instance = JMXKotlinBuildStatsService(mbs, beanName)
                         } else {
-                            project.provider { KotlinBuildStatListener(beanName) }
                             val newInstance = DefaultKotlinBuildStatsService(gradle, beanName)
 
                             instance = newInstance

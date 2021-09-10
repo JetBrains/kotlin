@@ -11,8 +11,7 @@ import javax.inject.Inject
 
 open class BuildEventsListenerRegistryHolder @Inject constructor(val listenerRegistry: BuildEventsListenerRegistry) {
     companion object {
-        fun getInstance(project: Project) = run {
-                project.objects.newInstance(BuildEventsListenerRegistryHolder::class.java)
-            }
-        }
+        fun getInstance(project: Project) =
+            project.objects.newInstance(BuildEventsListenerRegistryHolder::class.java)
     }
+}

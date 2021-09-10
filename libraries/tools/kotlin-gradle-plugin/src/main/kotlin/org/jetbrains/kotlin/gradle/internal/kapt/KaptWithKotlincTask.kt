@@ -43,7 +43,7 @@ abstract class KaptWithKotlincTask @Inject constructor(
                 task.project.provider { kotlinCompileTask.compilerArgumentsContributor }
             )
             task.javaPackagePrefix.set(task.project.provider { kotlinCompileTask.javaPackagePrefix })
-            task.reportingSettings.set(task.project.provider { kotlinCompileTask.reportingSettings })
+            task.reportingSettings.set(task.project.provider { kotlinCompileTask.reportingSettings() })
         }
     }
 

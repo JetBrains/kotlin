@@ -193,7 +193,6 @@ class IncrementalJsCompilerRunner(
             compiler.exec(messageCollector, services, args)
         } finally {
             args.freeArgs = freeArgsBackup
-//            reporter.report { compiler.defaultPerformanceManager.renderCompilerPerformance() }
             reportPerformanceData(compiler.defaultPerformanceManager)
         }
     }

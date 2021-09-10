@@ -29,24 +29,9 @@ internal fun addBuildEventsListenerRegistryMock(project: Project) {
         val enumClass = Class.forName(DefaultServiceRegistry::class.java.name + "\$State")
         stateValue.set(enumClass.enumConstants[0])
 
-        val ownServicesField = ProjectScopeServices::class.java.superclass.getDeclaredField("ownServices")
-        ownServicesField.isAccessible = true
-        val ownServices = ownServicesField.get(projectScopeServices)
-
-        val ownServicesClass = Class.forName(DefaultServiceRegistry::class.java.name + "\$OwnServices")
-        val analyserField = ownServicesClass.getDeclaredField("analyser")
-        analyserField.isAccessible = true
-
-        val providerAnalyserClass = Class.forName(DefaultServiceRegistry::class.java.name + "\$OwnServices\$ProviderAnalyser")
-
-        val constructor = providerAnalyserClass.declaredConstructors[1]
-        constructor.isAccessible = true
-        analyserField.set(ownServices, constructor.newInstance(ownServices))
-
         // add service and set state so that future mutations are not allowed
         projectScopeServices.add(BuildEventsListenerRegistry::class.java, BuildEventsListenerRegistryMock)
         stateValue.set(enumClass.enumConstants[1])
-        analyserField.set(ownServices, null)
     } catch (e: Throwable) {
         throw RuntimeException(e)
     }

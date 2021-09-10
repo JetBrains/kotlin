@@ -155,6 +155,7 @@ internal open class GradleCompilerRunner(
                         report(BooleanMetrics.JVM_COMPILER_IR_MODE, args.useIR)
                         report(StringMetrics.JVM_DEFAULTS, args.jvmDefault)
                         report(StringMetrics.USE_OLD_BACKEND, args.useOldBackend.toString())
+                        report(StringMetrics.USE_FIR, args.useFir.toString())
                     }
                 }
                 is K2JSCompilerArguments -> {

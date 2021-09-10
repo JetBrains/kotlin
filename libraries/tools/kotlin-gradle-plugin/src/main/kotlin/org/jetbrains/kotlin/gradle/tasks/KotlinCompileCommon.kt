@@ -127,7 +127,7 @@ abstract class KotlinCompileCommon @Inject constructor(
         val compilerRunner = compilerRunner.get()
         val environment = GradleCompilerEnvironment(
             defaultCompilerClasspath, messageCollector, outputItemCollector,
-            reportingSettings = reportingSettings,
+            reportingSettings = reportingSettings(),
             outputFiles = allOutputFiles()
         )
         compilerRunner.runMetadataCompilerAsync(sourceRoots.kotlinSourceFiles.files.toList(), args, environment)
