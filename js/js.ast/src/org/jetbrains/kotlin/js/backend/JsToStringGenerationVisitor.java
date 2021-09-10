@@ -783,7 +783,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     public void visitNameRef(@NotNull JsNameRef nameRef) {
         pushSourceInfo(nameRef.getSource());
 
+        JsName name = nameRef.getName();
         JsExpression qualifier = nameRef.getQualifier();
+        boolean shouldBeAMemberExpression = qualifier != null && name != null && name.containsAnyUnresolvedChar();
+
         if (qualifier != null) {
             boolean enclose;
             if (qualifier instanceof JsLiteral.JsValueLiteral) {
@@ -801,11 +804,23 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             if (enclose) {
                 rightParen();
             }
-            p.print('.');
+
+            if (shouldBeAMemberExpression) {
+                leftSquare();
+                p.print('"');
+            }
+            else {
+                p.print('.');
+            }
         }
 
         p.maybeIndent();
         p.print(nameRef.getIdent());
+
+        if (shouldBeAMemberExpression) {
+            p.print('"');
+            rightSquare();
+        }
 
         popSourceInfo();
     }
@@ -1230,16 +1245,17 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             }
             if (needSemi) {
                 /*
-                * Special treatment of function declarations: If they are the only item in a
-                * statement (i.e. not part of an assignment operation), just give them
-                * a newline instead of a semi.
-                */
+                 * Special treatment of function declarations: If they are the only item in a
+                 * statement (i.e. not part of an assignment operation), just give them
+                 * a newline instead of a semi.
+                 */
                 boolean functionStmt =
-                        statement instanceof JsExpressionStatement && ((JsExpressionStatement) statement).getExpression() instanceof JsFunction;
+                        statement instanceof JsExpressionStatement &&
+                        ((JsExpressionStatement) statement).getExpression() instanceof JsFunction;
                 /*
-                * Special treatment of the last statement in a block: only a few
-                * statements at the end of a block require semicolons.
-                */
+                 * Special treatment of the last statement in a block: only a few
+                 * statements at the end of a block require semicolons.
+                 */
                 boolean lastStatement = !iterator.hasNext() && needBraces && !JsRequiresSemiVisitor.exec(statement);
                 if (functionStmt) {
                     if (lastStatement) {
@@ -1431,9 +1447,9 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         if (arg instanceof JsBinaryOperation) {
             JsBinaryOperation binary = (JsBinaryOperation) arg;
             /*
-            * If the binary operation has a higher precedence than op, then it won't
-            * be parenthesized, so check the first argument of the binary operation.
-            */
+             * If the binary operation has a higher precedence than op, then it won't
+             * be parenthesized, so check the first argument of the binary operation.
+             */
             return binary.getOperator().getPrecedence() > op.getPrecedence() && spaceCalc(op, binary.getArg1());
         }
         if (arg instanceof JsPrefixOperation) {
