@@ -58,7 +58,7 @@ fun FirFunctionCall.copy(
     return (builder as FirCallBuilder).build() as FirFunctionCall
 }
 
-internal fun FirFunctionCall.copyAsImplicitInvokeCall(
+internal inline fun FirFunctionCall.copyAsImplicitInvokeCall(
     setupCopy: FirImplicitInvokeCallBuilder.() -> Unit
 ): FirImplicitInvokeCall {
     val original = this
