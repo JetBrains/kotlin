@@ -55,6 +55,9 @@ fun IrField.constantValue(context: JvmBackendContext? = null): IrConst<*>? {
 }
 
 class ConstLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+    val inlineConstTracker =
+        context.state.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER] ?: InlineConstTracker.DoNothing
+
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     private fun IrExpression.lowerConstRead(receiver: IrExpression?, field: IrField?): IrExpression? {
@@ -77,15 +80,13 @@ class ConstLowering(val context: JvmBackendContext) : IrElementTransformerVoid()
     }
 
     private fun reportInlineConst(irExpression: IrExpression, field: IrField?) {
+        if (inlineConstTracker == InlineConstTracker.DoNothing) return
         val value = field?.constantValue() ?: return
 
         if (!field.isFinal || !field.isStatic) return
 
         val sourceFile = field.toIrBasedDescriptor().containingDeclaration.toSourceElement.containingFile
-        if (!sourceFile.toString().endsWith(".java")) return
-
-        val inlineConstTracker =
-            context.state.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER] ?: InlineConstTracker.DoNothing
+        if (sourceFile.toString().lowercase().endsWith(".kt")) return
 
         for (file: KtFile in context.state.files) {
             val fileName = file.virtualFilePath

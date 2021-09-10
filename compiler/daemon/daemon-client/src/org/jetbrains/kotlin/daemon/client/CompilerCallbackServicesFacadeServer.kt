@@ -122,7 +122,7 @@ open class CompilerCallbackServicesFacadeServer(
     }
 
     override fun inlineConstTracker_report(className: String, cRefs: Collection<ConstantRef>) {
-        inlineConstTracker!!.report(className, cRefs)
+        inlineConstTracker?.report(className, cRefs) ?: throw NullPointerException("inlineConstTracker was not initialized")
     }
 
     override fun incrementalResultsConsumer_processHeader(headerMetadata: ByteArray) {
