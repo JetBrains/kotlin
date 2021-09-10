@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.commonizer.transformer
 
 import org.jetbrains.kotlin.commonizer.TargetDependent
-import org.jetbrains.kotlin.commonizer.cir.CirEntityId
-import org.jetbrains.kotlin.commonizer.cir.CirName
-import org.jetbrains.kotlin.commonizer.cir.CirType
-import org.jetbrains.kotlin.commonizer.cir.CirTypeAliasType
-import org.jetbrains.kotlin.commonizer.core.expandedType
+import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirClassifierIndex
 import org.jetbrains.kotlin.commonizer.mergedtree.CirTypeSubstitutor
 import org.jetbrains.kotlin.commonizer.mergedtree.findTypeAlias
