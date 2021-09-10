@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.incremental.components
 
 import org.jetbrains.kotlin.container.DefaultImplementation
+import java.io.Serializable
 
 @DefaultImplementation(InlineConstTracker.DoNothing::class)
 interface InlineConstTracker {
@@ -12,4 +13,4 @@ interface InlineConstTracker {
     }
 }
 
-data class ConstantRef(var owner: String, var name: String, var constType: String)
+data class ConstantRef(var owner: String, var name: String, var constType: String) : Serializable
