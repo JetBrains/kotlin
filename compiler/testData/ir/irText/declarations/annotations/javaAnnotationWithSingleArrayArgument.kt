@@ -1,6 +1,5 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 // FILE: A.java
 
 public class A {

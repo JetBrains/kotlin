@@ -1,8 +1,11 @@
 FILE fqName:<root> fileName:/C.kt
-  CLASS ANNOTATION_CLASS name:Anno modality:FINAL visibility:public superTypes:[kotlin.Annotation]
+  CLASS ANNOTATION_CLASS name:Anno modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Anno
     CONSTRUCTOR visibility:public <> (token:kotlin.String) returnType:<root>.Anno [primary]
       VALUE_PARAMETER name:token index:0 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Anno modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
     PROPERTY name:token visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:token type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
@@ -80,10 +83,13 @@ FILE fqName:<root> fileName:/C.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
-  CLASS ANNOTATION_CLASS name:Annos modality:FINAL visibility:public superTypes:[kotlin.Annotation]
+  CLASS ANNOTATION_CLASS name:Annos modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Annos
     CONSTRUCTOR visibility:public <> (value:kotlin.Array<<root>.Anno>) returnType:<root>.Annos [primary]
       VALUE_PARAMETER name:value index:0 type:kotlin.Array<<root>.Anno>
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Annos modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
     PROPERTY name:value visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Array<<root>.Anno> visibility:private [final]
         EXPRESSION_BODY
@@ -108,10 +114,13 @@ FILE fqName:<root> fileName:/C.kt
       overridden:
         public open fun toString (): kotlin.String [fake_override] declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS ANNOTATION_CLASS name:Strings modality:FINAL visibility:public superTypes:[kotlin.Annotation]
+  CLASS ANNOTATION_CLASS name:Strings modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Strings
     CONSTRUCTOR visibility:public <> (value:kotlin.Array<kotlin.String>) returnType:<root>.Strings [primary]
       VALUE_PARAMETER name:value index:0 type:kotlin.Array<kotlin.String>
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Strings modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
     PROPERTY name:value visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Array<kotlin.String> visibility:private [final]
         EXPRESSION_BODY
@@ -136,10 +145,13 @@ FILE fqName:<root> fileName:/C.kt
       overridden:
         public open fun toString (): kotlin.String [fake_override] declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS ANNOTATION_CLASS name:Ints modality:FINAL visibility:public superTypes:[kotlin.Annotation]
+  CLASS ANNOTATION_CLASS name:Ints modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Ints
     CONSTRUCTOR visibility:public <> (value:kotlin.IntArray) returnType:<root>.Ints [primary]
       VALUE_PARAMETER name:value index:0 type:kotlin.IntArray
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Ints modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
     PROPERTY name:value visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.IntArray visibility:private [final]
         EXPRESSION_BODY
@@ -164,10 +176,13 @@ FILE fqName:<root> fileName:/C.kt
       overridden:
         public open fun toString (): kotlin.String [fake_override] declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS ANNOTATION_CLASS name:Enums modality:FINAL visibility:public superTypes:[kotlin.Annotation]
+  CLASS ANNOTATION_CLASS name:Enums modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Enums
     CONSTRUCTOR visibility:public <> (value:kotlin.Array<<root>.E>) returnType:<root>.Enums [primary]
       VALUE_PARAMETER name:value index:0 type:kotlin.Array<<root>.E>
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Enums modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
     PROPERTY name:value visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Array<<root>.E> visibility:private [final]
         EXPRESSION_BODY
@@ -192,10 +207,13 @@ FILE fqName:<root> fileName:/C.kt
       overridden:
         public open fun toString (): kotlin.String [fake_override] declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS ANNOTATION_CLASS name:Classes modality:FINAL visibility:public superTypes:[kotlin.Annotation]
+  CLASS ANNOTATION_CLASS name:Classes modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Classes
     CONSTRUCTOR visibility:public <> (value:kotlin.Array<kotlin.reflect.KClass<*>>) returnType:<root>.Classes [primary]
       VALUE_PARAMETER name:value index:0 type:kotlin.Array<kotlin.reflect.KClass<*>>
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Classes modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
     PROPERTY name:value visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Array<kotlin.reflect.KClass<*>> visibility:private [final]
         EXPRESSION_BODY
@@ -228,11 +246,11 @@ FILE fqName:<root> fileName:/C.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.A]'
     FUN FAKE_OVERRIDE name:test visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.Unit [fake_override]
       annotations:
-        Annos(value = <null>)
-        Strings(value = <null>)
-        Ints(value = <null>)
-        Enums(value = <null>)
-        Classes(value = <null>)
+        Annos(value = Anno(token = 'OK'))
+        Strings(value = 'OK')
+        Ints(value = '42')
+        Enums(value = GET_ENUM 'ENUM_ENTRY name:EA' type=IrErrorType(null))
+        Classes(value = CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]' type=IrErrorType(null))
       overridden:
         public open fun test (): kotlin.Unit declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:<root>.A

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.checker.IrCompileTimeChecker
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 fun evaluateConstants(irModuleFragment: IrModuleFragment) {
@@ -98,8 +99,11 @@ class IrConstTransformer(private val interpreter: IrInterpreter, private val irF
     }
 
     private fun IrExpression.convertToConstIfPossible(type: IrType): IrExpression {
-        if (this !is IrConst<*> || type is IrErrorType) return this
-        if (type.isArray()) return this.convertToConstIfPossible((type as IrSimpleType).arguments.single().typeOrNull!!)
-        return this.value.toIrConst(type, this.startOffset, this.endOffset)
+        return when {
+            this !is IrConst<*> || type is IrErrorType -> this
+            type.isArray() -> this.convertToConstIfPossible((type as IrSimpleType).arguments.single().typeOrNull!!)
+            type.isPrimitiveArray() -> this.convertToConstIfPossible(this.type)
+            else -> this.value.toIrConst(type, this.startOffset, this.endOffset)
+        }
     }
 }
