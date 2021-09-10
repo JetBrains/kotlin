@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
@@ -279,7 +277,7 @@ object FirKotlinToJvmBytecodeCompiler {
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
         val codegenFactory = JvmIrCodegenFactory(
             moduleConfiguration,
-            moduleConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases),
+            moduleConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG),
             jvmGeneratorExtensions = extensions
         )
 

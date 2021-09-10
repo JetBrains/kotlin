@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmNameProvider
-import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
@@ -188,7 +186,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
         }
         val codegenFactory = JvmIrCodegenFactory(
             compilationState.environment.configuration,
-            compilationState.environment.configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases),
+            compilationState.environment.configuration.get(CLIConfigurationKeys.PHASE_CONFIG),
             compilationState.mangler, compilationState.symbolTable, generatorExtensions
         )
         val generationState = GenerationState.Builder(

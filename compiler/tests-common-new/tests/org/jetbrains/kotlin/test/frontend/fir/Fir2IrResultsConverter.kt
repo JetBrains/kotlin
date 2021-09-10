@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -47,7 +45,7 @@ class Fir2IrResultsConverter(
         val (irModuleFragment, symbolTable, components) = inputArtifact.firAnalyzerFacade.convertToIr(extensions)
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
-        val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases)
+        val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
         val codegenFactory = JvmIrCodegenFactory(configuration, phaseConfig, jvmGeneratorExtensions = extensions)
 
         // TODO: handle fir from light tree

@@ -13,10 +13,8 @@ import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.TestsCompiletimeError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
@@ -114,7 +112,7 @@ object GenerationUtils {
 
         val codegenFactory = JvmIrCodegenFactory(
             configuration,
-            configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases),
+            configuration.get(CLIConfigurationKeys.PHASE_CONFIG),
             jvmGeneratorExtensions = extensions
         )
 
@@ -188,10 +186,7 @@ object GenerationUtils {
             files, configuration
         ).codegenFactory(
             if (isIrBackend)
-                JvmIrCodegenFactory(
-                    configuration,
-                    configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases),
-                )
+                JvmIrCodegenFactory(configuration, configuration.get(CLIConfigurationKeys.PHASE_CONFIG))
             else DefaultCodegenFactory
         ).isIrBackend(isIrBackend).apply(configureGenerationState).build()
         if (analysisResult.shouldGenerateCode) {
