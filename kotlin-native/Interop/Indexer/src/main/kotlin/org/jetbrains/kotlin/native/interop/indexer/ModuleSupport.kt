@@ -59,12 +59,19 @@ private fun getModulesASTFiles(index: CXIndex, compilation: ModularCompilation, 
     )
 
     val result = linkedSetOf<String>()
+    val errors = mutableListOf<Diagnostic>()
 
     val translationUnit = compilationWithImports.parse(
             index,
-            options = CXTranslationUnit_DetailedPreprocessingRecord
+            options = CXTranslationUnit_DetailedPreprocessingRecord,
+            diagnosticHandler = { if (it.isError()) errors.add(it) }
     )
     try {
+        if (errors.isNotEmpty()) {
+            val errorMessage = errors.take(10).joinToString("\n") { it.format }
+            throw Error(errorMessage)
+        }
+
         translationUnit.ensureNoCompileErrors()
 
         indexTranslationUnit(index, translationUnit, 0, object : Indexer {

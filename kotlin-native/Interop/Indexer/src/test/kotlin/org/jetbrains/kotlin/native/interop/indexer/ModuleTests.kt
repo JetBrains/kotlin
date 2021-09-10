@@ -127,7 +127,7 @@ class ModuleTests : IndexerTests() {
             getModulesInfo(compilation, modules = listOf("Foo"))
         }
 
-        assertContains(error.message.orEmpty(), "fatal error: could not build module 'Foo'")
+        assertContains(error.message.orEmpty(), "error: header 'Foo.h' not found")
     }
 
     @Test
@@ -150,7 +150,7 @@ class ModuleTests : IndexerTests() {
             getModulesInfo(compilation, modules = listOf("Foo"))
         }
 
-        assertContains(error.message.orEmpty(), "fatal error: could not build module 'Foo'")
+        assertContains(error.message.orEmpty(), "testModuleWithBadCode/Foo.h:1:1: error: unknown type name 'bad'")
     }
 
     private fun List<String>.canonicalize(): List<String> = this.map { File(it).canonicalPath }

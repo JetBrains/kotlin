@@ -153,8 +153,85 @@ internal fun parseTranslationUnit(
     }
 }
 
-internal fun Compilation.parse(index: CXIndex, options: Int = 0): CXTranslationUnit =
-        parseTranslationUnit(index, this.createTempSource(), this.compilerArgs, options)
+internal fun Compilation.parse(
+        index: CXIndex,
+        options: Int = 0,
+        diagnosticHandler: DiagnosticHandler? = null
+): CXTranslationUnit {
+    val arguments = this.compilerArgs.toMutableList()
+    val serializedDiagnosticsFile: File?
+    if (diagnosticHandler != null) {
+        // Translation unit doesn't seem to contain diagnostics from imported modules.
+        // So if there is an imported module with compilation error, checking only translation unit's diagnostics
+        // will result in a vague 'fatal error: could not build module $name'.
+        // See https://youtrack.jetbrains.com/issue/KT-35059.
+        // So instead instruct Clang to serialize diagnostics to file and then deserialize them.
+        // This way it is possible to find diagnostics from imported modules as well.
+        serializedDiagnosticsFile = Files.createTempFile("cinterop", ".d").toFile()
+        serializedDiagnosticsFile.deleteOnExit()
+        arguments += listOf(
+                "-serialize-diagnostics", serializedDiagnosticsFile.absolutePath,
+                // Enabling -serialize-diagnostics for some reason makes libclang print
+                // 'X warnings and Y errors generated' to stderr.
+                // (see https://github.com/llvm/llvm-project/blob/b8debabb775b6d9eec5aa16f1b0c3428cc076bcb/clang/lib/Frontend/CompilerInstance.cpp#L984).
+                // Add -fno-caret-diagnostics to suppress this:
+                "-fno-caret-diagnostics",
+        )
+    } else {
+        serializedDiagnosticsFile = null
+    }
+
+    val result = parseTranslationUnit(index, this.createTempSource(), arguments, options)
+    try {
+        // Note: in some cases (like when imported module is not found) the file remains empty,
+        // and deserialization will fail. Handling this by checking the file is not empty:
+        if (diagnosticHandler != null && serializedDiagnosticsFile != null && serializedDiagnosticsFile.length() > 0) {
+            reportSerializedDiagnostics(serializedDiagnosticsFile, diagnosticHandler)
+        }
+    } catch (e: Throwable) {
+        clang_disposeTranslationUnit(result)
+        throw e
+    }
+
+    return result
+}
+
+private fun reportSerializedDiagnostics(
+        serializedDiagnosticsFile: File,
+        diagnosticHandler: DiagnosticHandler
+) {
+    val diagnosticSet = memScoped {
+        val errorVar = alloc<CXLoadDiag_Error.Var>()
+        val errorStringVar = alloc<CXString>()
+        clang_loadDiagnostics(serializedDiagnosticsFile.absolutePath, errorVar.ptr, errorStringVar.ptr)
+                ?: run {
+                    // Generally not fatal, so just log and continue.
+                    println("""
+                        Warning: unable to load diagnostics from $serializedDiagnosticsFile:
+                          ${errorVar.value}: ${errorStringVar.readValue().convertAndDispose()}
+                    """.trimIndent())
+                    return
+                }
+    }
+
+    try {
+        val numDiagnostics = clang_getNumDiagnosticsInSet(diagnosticSet)
+        for (index in 0 until numDiagnostics) {
+            val diagnostic = clang_getDiagnosticInSet(diagnosticSet, index) ?: continue
+            try {
+                diagnosticHandler.report(convertDiagnostic(diagnostic))
+            } finally {
+                clang_disposeDiagnostic(diagnostic)
+            }
+        }
+    } finally {
+        clang_disposeDiagnosticSet(diagnosticSet)
+    }
+}
+
+internal fun interface DiagnosticHandler {
+    fun report(diagnostic: Diagnostic)
+}
 
 internal data class Diagnostic(val severity: CXDiagnosticSeverity, val format: String,
                                val location: CValue<CXSourceLocation>)
@@ -162,27 +239,31 @@ internal data class Diagnostic(val severity: CXDiagnosticSeverity, val format: S
 internal fun CXTranslationUnit.getDiagnostics(): Sequence<Diagnostic> {
     val numDiagnostics = clang_getNumDiagnostics(this)
     return (0 until numDiagnostics).asSequence()
-            .map { index ->
-                val diagnostic = clang_getDiagnostic(this, index)
+            .mapNotNull { index ->
+                val diagnostic = clang_getDiagnostic(this, index) ?: return@mapNotNull null
                 try {
-                    val severity = clang_getDiagnosticSeverity(diagnostic)
-
-                    val format = clang_formatDiagnostic(diagnostic, clang_defaultDiagnosticDisplayOptions())
-                            .convertAndDispose()
-
-                    val location = clang_getDiagnosticLocation(diagnostic)
-
-                    Diagnostic(severity, format, location)
+                    convertDiagnostic(diagnostic)
                 } finally {
                     clang_disposeDiagnostic(diagnostic)
                 }
             }
 }
 
+internal fun convertDiagnostic(diagnostic: CXDiagnostic): Diagnostic {
+    val severity = clang_getDiagnosticSeverity(diagnostic)
+
+    val format = clang_formatDiagnostic(diagnostic, clang_defaultDiagnosticDisplayOptions())
+            .convertAndDispose()
+
+    val location = clang_getDiagnosticLocation(diagnostic)
+
+    return Diagnostic(severity, format, location)
+}
+
 internal fun CXTranslationUnit.getCompileErrors(): Sequence<String> =
         getDiagnostics().filter { it.isError() }.map { it.format }
 
-private fun Diagnostic.isError() = (severity == CXDiagnosticSeverity.CXDiagnostic_Error) ||
+internal fun Diagnostic.isError() = (severity == CXDiagnosticSeverity.CXDiagnostic_Error) ||
         (severity == CXDiagnosticSeverity.CXDiagnostic_Fatal)
 
 internal fun CXTranslationUnit.hasCompileErrors() = (this.getCompileErrors().firstOrNull() != null)
