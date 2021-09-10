@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -70,6 +71,10 @@ class WasmSymbols(
         get() = TODO()
 
     val wasmUnreachable = getInternalFunction("wasm_unreachable")
+
+    val consumeAnyIntoVoid = getInternalFunction("consumeAnyIntoVoid")
+    val voidClass = getIrClass(FqName("kotlin.wasm.internal.Void"))
+    val voidType by lazy { voidClass.defaultType }
 
     val equalityFunctions = mapOf(
         context.irBuiltIns.booleanType to getInternalFunction("wasm_i32_eq"),
