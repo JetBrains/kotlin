@@ -32,7 +32,14 @@ class KotlinBuildEsStatListener(val projectName: String, val reportStatistics: L
     OperationCompletionListener, AutoCloseable, TaskExecutionListener {
 
     val label by lazy { CompilerSystemProperties.KOTLIN_STAT_LABEl_PROPERTY.value }
-    val hostName by lazy { InetAddress.getLocalHost().hostName }
+    val hostName: String? by lazy {
+        try {
+            InetAddress.getLocalHost().hostName
+        } catch (_: Exception) {
+            //do nothing
+            null
+        }
+    }
 
     override fun onFinish(event: FinishEvent?) {
         if (event is TaskFinishEvent) {
