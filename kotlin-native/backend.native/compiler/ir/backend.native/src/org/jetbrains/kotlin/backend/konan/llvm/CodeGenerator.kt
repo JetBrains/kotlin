@@ -142,6 +142,7 @@ internal inline fun<R> generateFunction(codegen: CodeGenerator,
         // Enable initRuntimeIfNeeded for legacy MM too:
         functionGenerationContext.needsRuntimeInit = true
         // This fixes https://youtrack.jetbrains.com/issue/KT-44283.
+        functionGenerationContext.isCallFromCCallback = true
     }
 
     try {
@@ -438,6 +439,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
      * TODO: consider merging this with [ExceptionHandler].
      */
     var isCallFromBridge: Boolean = false
+    var isCallFromCCallback: Boolean = false
     private var forwardingException: Boolean = false
     private val kotlinExceptions: MutableList<Pair<LLVMBasicBlockRef, LLVMValueRef>> = mutableListOf()
 

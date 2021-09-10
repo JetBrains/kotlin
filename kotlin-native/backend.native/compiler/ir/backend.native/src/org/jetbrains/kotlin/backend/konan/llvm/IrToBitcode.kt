@@ -2505,7 +2505,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     foreignExceptionMode,
                     needsNativeThreadState
             )
-        } ?: currentCodeContext.exceptionHandler
+        } ?: if (functionGenerationContext.isCallFromCCallback)
+            functionGenerationContext.filteringExceptionHandler(
+                    currentCodeContext.exceptionHandler,
+                    ForeignExceptionMode.default,
+                    needsNativeThreadState)
+        else
+            currentCodeContext.exceptionHandler
 
         if (needsNativeThreadState) {
             functionGenerationContext.switchThreadState(ThreadState.Native)

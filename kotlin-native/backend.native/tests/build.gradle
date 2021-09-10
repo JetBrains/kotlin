@@ -4264,6 +4264,11 @@ createInterop("exceptions_throwThroughBridge") {
     it.extraOpts "-Xcompile-source", "$projectDir/interop/exceptions/throwThroughBridgeInterop.cpp"
 }
 
+createInterop("exceptions_cCallback") {
+    it.defFile "interop/exceptions/cCallback.def"
+    it.extraOpts "-Xcompile-source", "$projectDir/interop/exceptions/cCallback.cpp"
+}
+
 /**
  * Creates a task for the interop test. Configures runner and adds library and test build tasks.
  */
@@ -5076,6 +5081,14 @@ dynamicTest("interop_exceptions_throwThroughBridge") {
     expectedExitStatusChecker = { it != 0 }
     outputChecker = { s -> !s.contains("Should not happen") }
     interop = "exceptions_throwThroughBridge"
+}
+
+interopTest("interop_exceptions_cCallback") {
+    disabled = (project.testTarget == 'wasm32') // Uses exceptions
+    source = "interop/exceptions/cCallback.kt"
+    expectedExitStatusChecker = { it != 0 }
+    outputChecker = { s -> s.contains("Uncaught Kotlin exception") }
+    interop = "exceptions_cCallback"
 }
 
 tasks.register("library_mismatch", KonanDriverTest) {
