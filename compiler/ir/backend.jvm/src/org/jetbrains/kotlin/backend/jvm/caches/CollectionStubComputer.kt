@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.util.isFromJava
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import java.util.concurrent.ConcurrentHashMap
 
-internal class CollectionStubComputer(val context: JvmBackendContext) {
+class CollectionStubComputer(val context: JvmBackendContext) {
     private class LazyStubsForCollectionClass(
         override val readOnlyClass: IrClassSymbol,
         override val mutableClass: IrClassSymbol

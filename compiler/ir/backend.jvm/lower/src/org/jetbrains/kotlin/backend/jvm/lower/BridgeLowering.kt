@@ -275,7 +275,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
 
             // Deal with existing function that override special bridge methods.
             if (!irFunction.isFakeOverride && specialBridge.methodInfo != null) {
-                irFunction.rewriteSpecialMethodBody(targetMethod, specialBridge.signature, specialBridge.methodInfo)
+                irFunction.rewriteSpecialMethodBody(targetMethod, specialBridge.signature, specialBridge.methodInfo!!)
             }
 
             // For generic special bridge methods we need to generate bridges for generic overrides coming from Java or Kotlin interfaces.

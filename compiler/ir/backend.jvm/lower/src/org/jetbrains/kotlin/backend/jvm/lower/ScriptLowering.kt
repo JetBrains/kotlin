@@ -243,7 +243,7 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext) {
 
     private fun IrClass.addSimplePropertyFrom(
         from: IrValueDeclaration,
-        initializer: IrExpressionBodyImpl? = null
+        initializer: IrExpressionBody? = null
     ) {
         addProperty {
             updateFrom(from)

@@ -191,6 +191,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:ir.psi2ir",
     ":compiler:ir.backend.common",
     ":compiler:backend.jvm",
+    ":compiler:backend.jvm.lower",
     ":compiler:backend.jvm:backend.jvm.entrypoint",
     ":compiler:backend.js",
     ":compiler:backend.wasm",
