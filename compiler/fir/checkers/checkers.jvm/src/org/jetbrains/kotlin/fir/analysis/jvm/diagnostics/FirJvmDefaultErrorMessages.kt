@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.diagnostics
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDefaultErrorMessages
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
@@ -68,6 +69,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATED_ANNOTATION_TARGET6
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATED_ANNOTATION_WITH_CONTAINER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.STRICTFP_ON_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SUPER_CALL_WITH_DEFAULT_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SUSPENSION_POINT_INSIDE_CRITICAL_SECTION
@@ -269,6 +271,10 @@ object FirJvmDefaultErrorMessages {
                 "Method 'contains' from ConcurrentHashMap may have unexpected semantics: it calls 'containsValue' instead of 'containsKey'. " +
                         "Use explicit form of the call to 'containsKey'/'containsValue'/'contains' or cast the value to kotlin.collections.Map instead. " +
                         "See https://youtrack.jetbrains.com/issue/KT-18053 for more details"
+            )
+            map.put(
+                SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL,
+                "Spread operator is prohibited for arguments to signature-polymorphic calls"
             )
         }
     }

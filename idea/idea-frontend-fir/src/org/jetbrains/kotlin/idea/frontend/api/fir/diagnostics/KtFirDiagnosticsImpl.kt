@@ -4595,3 +4595,17 @@ internal class ConcurrentHashMapContainsOperatorWarningImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class SpreadOnSignaturePolymorphicCallErrorImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.SpreadOnSignaturePolymorphicCallError(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class SpreadOnSignaturePolymorphicCallWarningImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.SpreadOnSignaturePolymorphicCallWarning(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+

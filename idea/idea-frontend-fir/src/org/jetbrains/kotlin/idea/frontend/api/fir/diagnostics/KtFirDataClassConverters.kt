@@ -4059,4 +4059,16 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL.errorFactory) { firDiagnostic ->
+        SpreadOnSignaturePolymorphicCallErrorImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL.warningFactory) { firDiagnostic ->
+        SpreadOnSignaturePolymorphicCallWarningImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
 }

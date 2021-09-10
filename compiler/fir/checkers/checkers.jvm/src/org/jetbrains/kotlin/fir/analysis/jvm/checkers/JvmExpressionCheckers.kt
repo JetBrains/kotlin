@@ -24,7 +24,8 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirJavaGenericVarianceViolationTypeChecker,
             FirSuperCallWithDefaultsChecker,
             FirJvmSuspensionPointInsideMutexLockChecker,
-            FirJvmInconsistentOperatorFromJavaCallChecker
+            FirJvmInconsistentOperatorFromJavaCallChecker,
+            FirJvmPolymorphicSignatureCallChecker
         )
 
     override val annotationCheckers: Set<FirAnnotationChecker>

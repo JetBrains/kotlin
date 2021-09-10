@@ -174,5 +174,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         )
         val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
         val CONCURRENT_HASH_MAP_CONTAINS_OPERATOR by deprecationError<PsiElement>(ProhibitConcurrentHashMapContains)
+        val SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL by deprecationError<PsiElement>(
+            ProhibitSpreadOnSignaturePolymorphicCall,
+            PositioningStrategy.SPREAD_OPERATOR
+        )
     }
 }

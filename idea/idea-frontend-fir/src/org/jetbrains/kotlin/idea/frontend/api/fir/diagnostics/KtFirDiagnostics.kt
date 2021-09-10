@@ -2824,4 +2824,12 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ConcurrentHashMapContainsOperatorWarning::class
     }
 
+    abstract class SpreadOnSignaturePolymorphicCallError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = SpreadOnSignaturePolymorphicCallError::class
+    }
+
+    abstract class SpreadOnSignaturePolymorphicCallWarning : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = SpreadOnSignaturePolymorphicCallWarning::class
+    }
+
 }
