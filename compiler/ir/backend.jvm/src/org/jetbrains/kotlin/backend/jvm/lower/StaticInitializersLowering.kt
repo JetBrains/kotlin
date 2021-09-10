@@ -25,7 +25,7 @@ class StaticInitializersLowering(override val context: JvmBackendContext) : Init
         val staticInitializerStatements = extractInitializers(irClass) {
             // JVM implementations are required to generate initializers for all static fields with ConstantValue,
             // so don't add any to <clinit>.
-            (it is IrField && it.isStatic && it.constantValue(context) == null) || (it is IrAnonymousInitializer && it.isStatic)
+            (it is IrField && it.isStatic && it.constantValue() == null) || (it is IrAnonymousInitializer && it.isStatic)
         }.toMutableList()
         if (staticInitializerStatements.isNotEmpty()) {
             staticInitializerStatements.sortBy {

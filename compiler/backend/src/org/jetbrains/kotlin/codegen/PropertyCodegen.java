@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.codegen.context.MultifileClassFacadeContext;
 import org.jetbrains.kotlin.codegen.context.MultifileClassPartContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
-import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil;
@@ -344,7 +343,7 @@ public class PropertyCodegen {
             defaultValue = null;
         }
         else if (Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor))) {
-            if (shouldWriteFieldInitializer(descriptor)) {
+            if (descriptor.isConst()) {
                 ConstantValue<?> initializer = descriptor.getCompileTimeInitializer();
                 defaultValue = initializer == null ? null : initializer.getValue();
             }
@@ -486,20 +485,6 @@ public class PropertyCodegen {
             delegateType = ErrorUtils.createErrorType("Delegate type");
         }
         return delegateType;
-    }
-
-    private boolean shouldWriteFieldInitializer(@NotNull PropertyDescriptor descriptor) {
-        if (!descriptor.isConst() &&
-            state.getLanguageVersionSettings().supportsFeature(LanguageFeature.NoConstantValueAttributeForNonConstVals)) {
-            return false;
-        }
-
-        //final field of primitive or String type
-        if (!descriptor.isVar()) {
-            Type type = typeMapper.mapType(descriptor);
-            return AsmUtil.isPrimitive(type) || "java.lang.String".equals(type.getClassName());
-        }
-        return false;
     }
 
     private void generateGetter(@NotNull PropertyDescriptor descriptor, @Nullable KtPropertyAccessor getter) {

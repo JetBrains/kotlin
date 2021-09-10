@@ -299,13 +299,12 @@ class FirElementSerializer private constructor(
             }
         }
 
-        val hasConstant = property.isConst // TODO: this is only correct with LanguageFeature.NoConstantValueAttributeForNonConstVals
         val flags = Flags.getPropertyFlags(
             hasAnnotations,
             ProtoEnumFlags.visibility(normalizeVisibility(property)),
             ProtoEnumFlags.modality(modality),
             ProtoBuf.MemberKind.DECLARATION,
-            property.isVar, hasGetter, hasSetter, hasConstant, property.isConst, property.isLateInit,
+            property.isVar, hasGetter, hasSetter, property.isConst, property.isConst, property.isLateInit,
             property.isExternal, property.delegateFieldSymbol != null, property.isExpect
         )
         if (flags != builder.flags) {

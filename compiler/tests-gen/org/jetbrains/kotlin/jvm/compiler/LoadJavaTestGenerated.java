@@ -4212,11 +4212,6 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtVarl.kt");
             }
 
-            @TestMetadata("nonConstValWithConstantValueAttribute.kt")
-            public void testNonConstValWithConstantValueAttribute() throws Exception {
-                runTest("compiler/testData/loadJava/compiledKotlin/prop/nonConstValWithConstantValueAttribute.kt");
-            }
-
             @TestMetadata("NsVal.kt")
             public void testNsVal() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/prop/NsVal.kt");

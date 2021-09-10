@@ -230,7 +230,7 @@ private val initializersPhase = makeIrFilePhase(
 private val initializersCleanupPhase = makeIrFilePhase(
     { context ->
         InitializersCleanupLowering(context) {
-            it.constantValue(context) == null && (!it.isStatic || it.correspondingPropertySymbol?.owner?.isConst != true)
+            it.constantValue() == null && (!it.isStatic || it.correspondingPropertySymbol?.owner?.isConst != true)
         }
     },
     name = "InitializersCleanup",

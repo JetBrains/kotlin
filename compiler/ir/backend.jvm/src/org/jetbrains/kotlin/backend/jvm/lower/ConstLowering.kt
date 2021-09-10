@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -16,8 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.types.isPrimitiveType
-import org.jetbrains.kotlin.ir.types.isStringClassType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.ConstantRef
@@ -40,18 +37,15 @@ internal val constPhase2 = makeIrFilePhase(
     description = "Substitute calls to const properties with constant values"
 )
 
-fun IrField.constantValue(context: JvmBackendContext? = null): IrConst<*>? {
+fun IrField.constantValue(): IrConst<*>? {
     val value = initializer?.expression as? IrConst<*> ?: return null
+
     // JVM has a ConstantValue attribute which does two things:
     //   1. allows the field to be inlined into other modules;
     //   2. implicitly generates an initialization of that field in <clinit>
-    // It is only allowed on final fields of primitive/string types. Java and Kotlin < 1.4
-    // apply it whenever possible; Kotlin >= 1.4 only applies it to `const val`s to avoid making
-    // values part of the library's ABI unless explicitly requested by the author.
-    val allowImplicitConst =
-        context != null && !context.state.languageVersionSettings.supportsFeature(LanguageFeature.NoConstantValueAttributeForNonConstVals)
-    val implicitConst = isFinal && ((isStatic && origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) ||
-            (allowImplicitConst && (type.isPrimitiveType() || type.isStringClassType())))
+    // It is only allowed on final fields of primitive/string types. Java applies it whenever possible; Kotlin only applies it to
+    // `const val`s to avoid making values part of the library's ABI unless explicitly requested by the author.
+    val implicitConst = isFinal && isStatic && origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
     return if (implicitConst || correspondingPropertySymbol?.owner?.isConst == true) value else null
 }
 
