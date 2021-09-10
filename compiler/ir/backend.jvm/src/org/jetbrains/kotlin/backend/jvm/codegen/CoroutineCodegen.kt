@@ -108,7 +108,7 @@ internal fun IrFunction.continuationClass(): IrClass? =
     (body as? IrBlockBody)?.statements?.find { it is IrClass && it.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS }
             as IrClass?
 
-internal fun IrFunction.continuationParameter(): IrValueParameter? = when {
+fun IrFunction.continuationParameter(): IrValueParameter? = when {
     isInvokeSuspendOfLambda() || isInvokeSuspendForInlineOfLambda() -> dispatchReceiverParameter
     else -> valueParameters.singleOrNull { it.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS }
 }
@@ -120,7 +120,7 @@ private fun IrFunction.isInvokeSuspendForInlineOfLambda(): Boolean =
     origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
             && parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
 
-internal fun IrFunction.isInvokeSuspendOfContinuation(): Boolean =
+fun IrFunction.isInvokeSuspendOfContinuation(): Boolean =
     name.asString() == INVOKE_SUSPEND_METHOD_NAME && parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
 
 private fun IrFunction.isInvokeOfSuspendCallableReference(): Boolean =
@@ -155,7 +155,7 @@ private val BRIDGE_ORIGINS = setOf(
 internal fun IrFunction.isNonBoxingSuspendDelegation(): Boolean =
     origin in BRIDGE_ORIGINS || isMultifileBridge() || isBridgeToSuspendImplMethod()
 
-internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isNonBoxingSuspendDelegation() &&
+fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isNonBoxingSuspendDelegation() &&
         // These functions also contain a single `suspend` tail call, but if it returns an unboxed inline class value,
         // the return of it should be checked for a suspension and potentially boxed to satisfy an interface.
         origin != IrDeclarationOrigin.DELEGATED_MEMBER &&
@@ -163,7 +163,7 @@ internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isNonBoxingSus
         !isInvokeOfSuspendCallableReference() &&
         !isStaticInlineClassReplacementDelegatingCall()
 
-internal fun IrFunction.hasContinuation(): Boolean = isInvokeSuspendOfLambda() ||
+fun IrFunction.hasContinuation(): Boolean = isInvokeSuspendOfLambda() ||
         isSuspend && shouldContainSuspendMarkers() &&
         // These are templates for the inliner; the continuation is borrowed from the caller method.
         !isEffectivelyInlineOnly() &&
@@ -171,7 +171,7 @@ internal fun IrFunction.hasContinuation(): Boolean = isInvokeSuspendOfLambda() |
         origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE &&
         origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
 
-internal fun IrExpression?.isReadOfCrossinline(): Boolean = when (this) {
+fun IrExpression?.isReadOfCrossinline(): Boolean = when (this) {
     is IrGetValue -> (symbol.owner as? IrValueParameter)?.isCrossinline == true
     is IrGetField -> symbol.owner.origin == LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE
     else -> false

@@ -95,7 +95,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCon
     private val IrProperty.hasPublicVisibility: Boolean
         get() = !DescriptorVisibilities.isPrivate(visibility) && visibility != DescriptorVisibilities.PROTECTED
 
-    private fun makeAnonymousInitializerStatic(oldInitializer: IrAnonymousInitializer, newParent: IrClass) =
+    private fun makeAnonymousInitializerStatic(oldInitializer: IrAnonymousInitializer, newParent: IrClass): IrAnonymousInitializer =
         with(oldInitializer) {
             val oldParent = parentAsClass
             val newSymbol = IrAnonymousInitializerSymbolImpl(newParent.symbol)

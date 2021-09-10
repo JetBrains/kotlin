@@ -9,6 +9,7 @@ dependencies {
     testApi(project(":compiler:fir:entrypoint"))
     testApi(project(":compiler:cli"))
     testImplementation(project(":compiler:ir.tree.impl"))
+    testImplementation(project(":compiler:backend.jvm.lower"))
     testImplementation(project(":compiler:backend.jvm:backend.jvm.entrypoint"))
     testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
 

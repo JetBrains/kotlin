@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.util.concurrent.ConcurrentHashMap
 
-internal class BridgeLoweringCache(private val context: JvmBackendContext) {
+class BridgeLoweringCache(private val context: JvmBackendContext) {
     private val specialBridgeMethods = SpecialBridgeMethods(context)
 
     // TODO: consider moving this cache out to the backend context and using it everywhere throughout the codegen.

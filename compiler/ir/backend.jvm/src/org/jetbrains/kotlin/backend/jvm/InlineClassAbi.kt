@@ -37,7 +37,7 @@ object InlineClassAbi {
      * Unwraps inline class types to their underlying representation.
      * Returns null if the type cannot be unboxed.
      */
-    internal fun unboxType(type: IrType): IrType? {
+    fun unboxType(type: IrType): IrType? {
         val klass = type.classOrNull?.owner ?: return null
         val representation = klass.inlineClassRepresentation ?: return null
 
@@ -118,24 +118,24 @@ object InlineClassAbi {
         get() = (this as IrSimpleFunction).correspondingPropertySymbol!!.owner.name
 }
 
-internal val IrType.requiresMangling: Boolean
+val IrType.requiresMangling: Boolean
     get() {
         val irClass = erasedUpperBound
         return irClass.isInline && irClass.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME
     }
 
-internal val IrFunction.fullValueParameterList: List<IrValueParameter>
+val IrFunction.fullValueParameterList: List<IrValueParameter>
     get() = listOfNotNull(extensionReceiverParameter) + valueParameters
 
-internal val IrFunction.hasMangledParameters: Boolean
+val IrFunction.hasMangledParameters: Boolean
     get() = dispatchReceiverParameter != null && parentAsClass.isInline ||
             fullValueParameterList.any { it.type.requiresMangling } ||
             (this is IrConstructor && constructedClass.isInline)
 
-internal val IrFunction.hasMangledReturnType: Boolean
+val IrFunction.hasMangledReturnType: Boolean
     get() = returnType.isInlineClassType() && parentClassOrNull?.isFileClass != true
 
-internal val IrClass.inlineClassFieldName: Name
+val IrClass.inlineClassFieldName: Name
     get() = (inlineClassRepresentation ?: error("Not an inline class: ${render()}")).underlyingPropertyName
 
 val IrFunction.isInlineClassFieldGetter: Boolean

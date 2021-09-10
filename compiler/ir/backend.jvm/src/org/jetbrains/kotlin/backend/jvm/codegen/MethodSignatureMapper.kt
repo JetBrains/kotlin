@@ -308,7 +308,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
 
     // Boxing is only necessary for 'remove(E): Boolean' of a MutableCollection<Int> implementation.
     // Otherwise this method might clash with 'remove(I): E' defined in the java.util.List JDK interface (mapped to kotlin 'removeAt').
-    internal fun shouldBoxSingleValueParameterForSpecialCaseOfRemove(irFunction: IrFunction): Boolean {
+    fun shouldBoxSingleValueParameterForSpecialCaseOfRemove(irFunction: IrFunction): Boolean {
         if (irFunction !is IrSimpleFunction) return false
         if (irFunction.name.asString() != "remove" && !irFunction.name.asString().startsWith("remove-")) return false
         if (irFunction.isFromJava()) return false
@@ -425,7 +425,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         return null
     }
 
-    internal fun mapCalleeToAsmMethod(function: IrSimpleFunction, isSuperCall: Boolean = false): Method =
+    fun mapCalleeToAsmMethod(function: IrSimpleFunction, isSuperCall: Boolean = false): Method =
         mapAsmMethod(findSuperDeclaration(function, isSuperCall))
 
     // Copied from KotlinTypeMapper.findSuperDeclaration.

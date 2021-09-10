@@ -65,8 +65,8 @@ class JvmBackendContext(
     val typeMapper = IrTypeMapper(this)
     val methodSignatureMapper = MethodSignatureMapper(this)
 
-    internal val innerClassesSupport = JvmInnerClassesSupport(irFactory)
-    internal val cachedDeclarations = JvmCachedDeclarations(
+    val innerClassesSupport = JvmInnerClassesSupport(irFactory)
+    val cachedDeclarations = JvmCachedDeclarations(
         this, generatorExtensions.cachedFields
     )
 
@@ -82,27 +82,27 @@ class JvmBackendContext(
 
     private val localClassType = ConcurrentHashMap<IrAttributeContainer, Type>()
 
-    internal fun getLocalClassType(container: IrAttributeContainer): Type? =
+    fun getLocalClassType(container: IrAttributeContainer): Type? =
         localClassType[container.attributeOwnerId]
 
-    internal fun putLocalClassType(container: IrAttributeContainer, value: Type) {
+    fun putLocalClassType(container: IrAttributeContainer, value: Type) {
         localClassType[container.attributeOwnerId] = value
     }
 
-    internal val isEnclosedInConstructor = ConcurrentHashMap.newKeySet<IrAttributeContainer>()
+    val isEnclosedInConstructor = ConcurrentHashMap.newKeySet<IrAttributeContainer>()
 
     internal val classCodegens = ConcurrentHashMap<IrClass, ClassCodegen>()
 
     val localDelegatedProperties = ConcurrentHashMap<IrAttributeContainer, List<IrLocalDelegatedPropertySymbol>>()
 
-    internal val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
+    val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
     val multifileFacadeForPart = mutableMapOf<IrClass, JvmClassName>()
-    internal val multifileFacadeClassForPart = mutableMapOf<IrClass, IrClass>()
-    internal val multifileFacadeMemberToPartMember = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
+    val multifileFacadeClassForPart = mutableMapOf<IrClass, IrClass>()
+    val multifileFacadeMemberToPartMember = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
 
-    internal val hiddenConstructors = ConcurrentHashMap<IrConstructor, IrConstructor>()
+    val hiddenConstructors = ConcurrentHashMap<IrConstructor, IrConstructor>()
 
-    internal val collectionStubComputer = CollectionStubComputer(this)
+    val collectionStubComputer = CollectionStubComputer(this)
 
     private val overridesWithoutStubs = HashMap<IrSimpleFunction, List<IrSimpleFunctionSymbol>>()
 
@@ -113,8 +113,8 @@ class JvmBackendContext(
     fun getOverridesWithoutStubs(function: IrSimpleFunction): List<IrSimpleFunctionSymbol> =
         overridesWithoutStubs.getOrElse(function) { function.overriddenSymbols }
 
-    internal val bridgeLoweringCache = BridgeLoweringCache(this)
-    internal val functionsWithSpecialBridges: MutableSet<IrFunction> = ConcurrentHashMap.newKeySet()
+    val bridgeLoweringCache = BridgeLoweringCache(this)
+    val functionsWithSpecialBridges: MutableSet<IrFunction> = ConcurrentHashMap.newKeySet()
 
     override var inVerbosePhase: Boolean = false // TODO: needs parallelizing
 
@@ -130,7 +130,7 @@ class JvmBackendContext(
 
     val inlineClassReplacements = MemoizedInlineClassReplacements(state.functionsWithInlineClassReturnTypesMangled, irFactory, this)
 
-    internal val continuationClassesVarsCountByType: MutableMap<IrAttributeContainer, Map<Type, Int>> = hashMapOf()
+    val continuationClassesVarsCountByType: MutableMap<IrAttributeContainer, Map<Type, Int>> = hashMapOf()
 
     val inlineMethodGenerationLock = Any()
 
