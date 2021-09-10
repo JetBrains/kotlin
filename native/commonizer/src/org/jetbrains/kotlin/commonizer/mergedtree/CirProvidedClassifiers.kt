@@ -22,9 +22,13 @@ interface CirProvidedClassifiers {
     fun hasClassifier(classifierId: CirEntityId): Boolean
     fun classifier(classifierId: CirEntityId): CirProvided.Classifier?
 
+    // TODO NOW: Test
+    fun findTypeAliasesWithUnderlyingType(underlyingClassifier: CirEntityId): List<CirEntityId>
+
     object EMPTY : CirProvidedClassifiers {
         override fun hasClassifier(classifierId: CirEntityId) = false
         override fun classifier(classifierId: CirEntityId): CirProvided.Classifier? = null
+        override fun findTypeAliasesWithUnderlyingType(underlyingClassifier: CirEntityId) = emptyList<CirEntityId>()
     }
 
     private class CompositeClassifiers(val delegates: List<CirProvidedClassifiers>) : CirProvidedClassifiers {
@@ -38,6 +42,10 @@ interface CirProvidedClassifiers {
                 }
             }
             return fallbackReturn
+        }
+
+        override fun findTypeAliasesWithUnderlyingType(underlyingClassifier: CirEntityId): List<CirEntityId> {
+            return delegates.flatMap { it.findTypeAliasesWithUnderlyingType(underlyingClassifier) }
         }
     }
 
@@ -97,7 +105,7 @@ object CirProvided {
 
     data class TypeAlias(
         override val typeParameters: List<TypeParameter>,
-        val underlyingType: Type
+        val underlyingType: ClassOrTypeAliasType
     ) : Classifier
 
     /* Type parameter */
@@ -108,23 +116,28 @@ object CirProvided {
         val isMarkedNullable: Boolean
     }
 
+    sealed interface ClassOrTypeAliasType : Type {
+        val classifierId: CirEntityId
+        val arguments: List<TypeProjection>
+    }
+
     data class TypeParameterType(
         val index: Int,
         override val isMarkedNullable: Boolean
     ) : Type
 
     data class ClassType(
-        val classId: CirEntityId,
-        val outerType: ClassType?,
-        val arguments: List<TypeProjection>,
-        override val isMarkedNullable: Boolean
-    ) : Type
+        override val classifierId: CirEntityId,
+        override val arguments: List<TypeProjection>,
+        override val isMarkedNullable: Boolean,
+        val outerType: ClassType?
+    ) : ClassOrTypeAliasType
 
     data class TypeAliasType(
-        val typeAliasId: CirEntityId,
-        val arguments: List<TypeProjection>,
+        override val classifierId: CirEntityId,
+        override val arguments: List<TypeProjection>,
         override val isMarkedNullable: Boolean
-    ) : Type
+    ) : ClassOrTypeAliasType
 
     /* Type projections */
     sealed interface TypeProjection
@@ -139,7 +152,7 @@ object CirProvided {
 private object ArtificialSupertypes {
     private fun createType(classId: String): CirProvided.ClassType {
         return CirProvided.ClassType(
-            classId = CirEntityId.create(classId),
+            classifierId = CirEntityId.create(classId),
             outerType = null, arguments = emptyList(), isMarkedNullable = false
         )
     }

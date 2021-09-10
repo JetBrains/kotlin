@@ -94,15 +94,16 @@ class CirEntityId private constructor(val packageName: CirPackageName, val relat
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is CirEntityId) return false
+        if (other._hashCode != this._hashCode) return false
         if (other.packageName != this.packageName) return false
         if (!other.relativeNameSegments.contentEquals(relativeNameSegments)) return false
         return true
     }
 
-    private var _hashCode: Int = 0
+    private var _hashCode: Int = hashCode(packageName)
+        .appendHashCode(relativeNameSegments).also { hashCode -> _hashCode = hashCode }
 
-    override fun hashCode(): Int = if (_hashCode != 0) _hashCode else
-        hashCode(packageName).appendHashCode(relativeNameSegments).also { hashCode -> _hashCode = hashCode }
+    override fun hashCode(): Int = _hashCode
 
     override fun toString(): String = buildString {
         packageName.segments.joinTo(this, "/")

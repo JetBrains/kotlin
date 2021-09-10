@@ -7,8 +7,20 @@ package org.jetbrains.kotlin.commonizer.mergedtree
 
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 
-@JvmInline
-value class CirCommonClassifierId(val aliases: LinkedHashSet<CirEntityId>) {
+class CirCommonClassifierId(val aliases: List<CirEntityId>) {
+
+    private val _hashCode = aliases.hashCode()
+
+    override fun hashCode(): Int = _hashCode
+
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        if (other !is CirCommonClassifierId) return false
+        if (other._hashCode != this._hashCode) return false
+        if (other.aliases != this.aliases) return false
+        return true
+    }
+
     override fun toString(): String {
         return aliases.joinToString(prefix = "(", postfix = ")")
     }
