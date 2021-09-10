@@ -68,8 +68,8 @@ internal class ClassOrTypeAliasTypeCommonizer(
         val commonizedClassifier = classifiers.commonizedNodes.classNode(classifierId)?.commonDeclaration?.invoke()
             ?: classifiers.commonizedNodes.typeAliasNode(classifierId)?.commonDeclaration?.invoke()
 
-        when (commonizedClassifier) {
-            is CirClass -> return CirClassType.createInterned(
+        return when (commonizedClassifier) {
+            is CirClass -> CirClassType.createInterned(
                 classId = classifierId,
                 outerType = outerType,
                 arguments = arguments,
@@ -77,19 +77,15 @@ internal class ClassOrTypeAliasTypeCommonizer(
                 isMarkedNullable = isMarkedNullable
             )
 
-            is CirTypeAlias -> return CirTypeAliasType.createInterned(
+            is CirTypeAlias -> CirTypeAliasType.createInterned(
                 typeAliasId = classifierId,
                 arguments = arguments,
                 isMarkedNullable = isMarkedNullable,
-                underlyingType = computeSuitableUnderlyingType(
-                    classifiers, typeCommonizer, commonizedClassifier.underlyingType
-                )?.makeNullableIfNecessary(isMarkedNullable) ?: return null
+                underlyingType = commonizedClassifier.underlyingType.withParentArguments(arguments, isMarkedNullable)
             )
 
-            else -> Unit
+            else -> null
         }
-
-        return null
     }
 
     private fun selectClassifierId(types: List<CirClassOrTypeAliasType>): CirEntityId? {
@@ -102,6 +98,30 @@ internal class ClassOrTypeAliasTypeCommonizer(
 
             return commonId.aliases.maxByOrNull { candidate -> types.count { it.classifierId == candidate } }!!
         } else return null
+    }
+}
+
+private fun CirClassOrTypeAliasType.withParentArguments(
+    parentArguments: List<CirTypeProjection>, parentIsMarkedNullable: Boolean
+): CirClassOrTypeAliasType {
+    val newIsMarkedNullable = isMarkedNullable || parentIsMarkedNullable
+
+    val newArguments = arguments.map { oldArgument ->
+        if (oldArgument is CirRegularTypeProjection) {
+            val oldArgumentType = oldArgument.type
+            if (oldArgumentType is CirTypeParameterType) {
+                return@map parentArguments[oldArgumentType.index]
+            }
+        }
+        oldArgument
+    }
+
+    return when (val newUnderlyingType = makeNullableIfNecessary(newIsMarkedNullable).withArguments(newArguments)) {
+        this -> this
+        is CirClassType -> newUnderlyingType
+        is CirTypeAliasType -> newUnderlyingType.withUnderlyingType(
+            newUnderlyingType.underlyingType.withParentArguments(newArguments, newIsMarkedNullable)
+        )
     }
 }
 

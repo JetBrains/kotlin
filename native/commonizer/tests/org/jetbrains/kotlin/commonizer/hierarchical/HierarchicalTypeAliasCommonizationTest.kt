@@ -130,7 +130,7 @@ class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizatio
         )
     }
 
-    fun `KT-47574 - test long typealias chain`() {
+    fun `test long typealias chain`() {
         val result = commonize {
             outputTarget("(a, b)")
 

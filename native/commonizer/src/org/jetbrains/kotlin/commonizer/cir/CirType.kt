@@ -100,6 +100,7 @@ abstract class CirClassType : CirClassOrTypeAliasType(), CirHasVisibility {
     }
 
     override fun withArguments(arguments: List<CirTypeProjection>): CirClassOrTypeAliasType {
+        if (arguments == this.arguments) return this
         return createInterned(
             classId = classifierId,
             outerType = outerType,
@@ -162,12 +163,13 @@ abstract class CirTypeAliasType : CirClassOrTypeAliasType() {
     }
 
     override fun withArguments(arguments: List<CirTypeProjection>): CirClassOrTypeAliasType {
-        return createInterned(
-            typeAliasId = classifierId,
-            underlyingType = underlyingType,
-            arguments = arguments,
-            isMarkedNullable = isMarkedNullable
-        )
+        if (this.arguments == arguments) return this
+        return copyInterned(arguments = arguments)
+    }
+
+    fun withUnderlyingType(underlyingType: CirClassOrTypeAliasType): CirClassOrTypeAliasType {
+        if (this.underlyingType == underlyingType) return this
+        return copyInterned(underlyingType = underlyingType)
     }
 
     companion object {
