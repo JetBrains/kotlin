@@ -485,6 +485,7 @@ object FirErrors {
     val LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER by error0<KtBackingField>(SourceElementPositioningStrategies.LATEINIT_MODIFIER)
     val LATEINIT_FIELD_IN_VAL_PROPERTY by error0<KtBackingField>(SourceElementPositioningStrategies.LATEINIT_MODIFIER)
     val LATEINIT_NULLABLE_BACKING_FIELD by error0<KtBackingField>(SourceElementPositioningStrategies.LATEINIT_MODIFIER)
+    val BACKING_FIELD_FOR_DELEGATED_PROPERTY by error0<KtBackingField>(SourceElementPositioningStrategies.FIELD_KEYWORD)
     val PROPERTY_MUST_HAVE_GETTER by error0<KtProperty>()
     val PROPERTY_MUST_HAVE_SETTER by error0<KtProperty>()
     val EXPLICIT_BACKING_FIELD_IN_INTERFACE by error0<KtBackingField>(SourceElementPositioningStrategies.FIELD_KEYWORD)

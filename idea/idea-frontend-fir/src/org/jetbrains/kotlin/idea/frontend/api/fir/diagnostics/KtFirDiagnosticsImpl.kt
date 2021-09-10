@@ -2774,6 +2774,13 @@ internal class LateinitNullableBackingFieldImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class BackingFieldForDelegatedPropertyImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.BackingFieldForDelegatedProperty(), KtAbstractFirDiagnostic<KtBackingField> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class PropertyMustHaveGetterImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

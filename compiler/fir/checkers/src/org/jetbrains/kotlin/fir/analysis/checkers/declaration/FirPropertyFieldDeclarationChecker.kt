@@ -53,6 +53,10 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker() {
             reporter.reportOn(backingField.source, FirErrors.LATEINIT_NULLABLE_BACKING_FIELD, context)
         }
 
+        if (declaration.delegate != null) {
+            reporter.reportOn(backingField.source, FirErrors.BACKING_FIELD_FOR_DELEGATED_PROPERTY, context)
+        }
+
         if (backingField.returnTypeRef.coneType == declaration.returnTypeRef.coneType) {
             reporter.reportOn(backingField.source, FirErrors.REDUNDANT_EXPLICIT_BACKING_FIELD, context)
             return

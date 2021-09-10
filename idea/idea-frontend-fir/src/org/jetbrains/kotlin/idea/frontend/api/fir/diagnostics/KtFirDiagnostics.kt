@@ -1723,6 +1723,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = LateinitNullableBackingField::class
     }
 
+    abstract class BackingFieldForDelegatedProperty : KtFirDiagnostic<KtBackingField>() {
+        override val diagnosticClass get() = BackingFieldForDelegatedProperty::class
+    }
+
     abstract class PropertyMustHaveGetter : KtFirDiagnostic<KtProperty>() {
         override val diagnosticClass get() = PropertyMustHaveGetter::class
     }

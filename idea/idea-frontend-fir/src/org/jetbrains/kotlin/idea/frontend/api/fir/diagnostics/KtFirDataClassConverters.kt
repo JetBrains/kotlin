@@ -2436,6 +2436,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.BACKING_FIELD_FOR_DELEGATED_PROPERTY) { firDiagnostic ->
+        BackingFieldForDelegatedPropertyImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.PROPERTY_MUST_HAVE_GETTER) { firDiagnostic ->
         PropertyMustHaveGetterImpl(
             firDiagnostic as FirPsiDiagnostic,
