@@ -38,7 +38,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         buildInstr(WasmOp.GET_UNIT, WasmImmediate.FuncIdx(context.referenceFunction(unitGetInstance.symbol)))
     }
 
-    // Generates code for the given IR element and *always* leaves something on the stack
+    // Generates code for the given IR element. Leaves something on the stack unless expression was of the type Void.
     private fun generateExpression(elem: IrElement) {
         assert(elem is IrExpression || elem is IrVariable) { "Unsupported statement kind" }
 
@@ -49,12 +49,14 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         }
     }
 
-    // Generates code for the given IR element but *never* leaves anything on the stack
+    // Generates code for the given IR element but *never* leaves anything on the stack.
     private fun generateStatement(statement: IrElement) {
         assert(statement is IrExpression || statement is IrVariable) { "Unsupported statement kind" }
 
         generateExpression(statement)
-        body.buildDrop()
+        if (statement is IrExpression && statement.type != wasmSymbols.voidType) {
+            body.buildDrop()
+        }
     }
 
     override fun visitElement(element: IrElement) {
@@ -408,9 +410,10 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
     override fun visitContainerExpression(expression: IrContainerExpression) {
         val statements = expression.statements
+
         if (statements.isEmpty()) {
-            assert(expression.type == irBuiltIns.unitType) { "Empty block with non-unit return type" }
-            body.buildGetUnit()
+            if (expression.type == irBuiltIns.unitType)
+                body.buildGetUnit()
             return
         }
 
@@ -419,6 +422,12 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         }
 
         generateExpression(statements.last())
+
+        // This handles cases where the last statement of a block is declaration which doesn't produce any value,
+        // but the block itself marked with the unit type.
+        if (statements.last() !is IrExpression && expression.type != wasmSymbols.voidType) {
+            body.buildGetUnit()
+        }
     }
 
     override fun visitBreak(jump: IrBreak) {
@@ -553,14 +562,12 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     override fun visitVariable(declaration: IrVariable) {
         context.defineLocal(declaration.symbol)
         if (declaration.initializer == null) {
-            body.buildGetUnit()
             return
         }
         val init = declaration.initializer!!
         generateExpression(init)
         val varName = context.referenceLocal(declaration.symbol)
         body.buildSetLocal(varName)
-        body.buildGetUnit()
     }
 
     // Return true if function is recognized as intrinsic.

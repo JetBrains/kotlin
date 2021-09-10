@@ -420,6 +420,12 @@ private val expressionBodyTransformer = makeWasmModulePhase(
     description = "Replace IrExpressionBody with IrBlockBody"
 )
 
+private val unitToVoidLowering = makeWasmModulePhase(
+    ::UnitToVoidLowering,
+    name = "UnitToVoidLowering",
+    description = "Replace some Unit's with Void's"
+)
+
 val wasmPhases = NamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
@@ -493,6 +499,7 @@ val wasmPhases = NamedCompilerPhase(
             fieldInitializersLoweringPhase then
             genericReturnTypeLowering then
             expressionBodyTransformer then
+            unitToVoidLowering then
 
             // Replace builtins before autoboxing
             builtInsLoweringPhase0 then

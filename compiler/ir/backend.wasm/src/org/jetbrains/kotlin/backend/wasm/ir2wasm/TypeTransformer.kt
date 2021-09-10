@@ -21,6 +21,8 @@ class WasmTypeTransformer(
     val context: WasmBaseCodegenContext,
     val builtIns: IrBuiltIns
 ) {
+    val symbols = context.backendContext.wasmSymbols
+
     fun IrType.toWasmResultType(): WasmType? =
         when (this) {
             builtIns.unitType,
@@ -36,6 +38,9 @@ class WasmTypeTransformer(
             // TODO: Lower blocks with Nothing type?
             builtIns.nothingType ->
                 WasmUnreachableType
+
+            symbols.voidType ->
+                null
 
             else ->
                 toWasmValueType()
@@ -84,6 +89,9 @@ class WasmTypeTransformer(
             // Value will not be created. Just using a random Wasm type.
             builtIns.nothingType ->
                 WasmExternRef
+
+            symbols.voidType ->
+                error("Void type can't be used as a value")
 
             // this also handles builtIns.stringType
             else -> {

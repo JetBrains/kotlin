@@ -4,6 +4,9 @@
       <w>addr</w>
       <w>descr</w>
       <w>exprs</w>
+      <w>voidification</w>
+      <w>voidifier</w>
+      <w>voidify</w>
     </words>
   </dictionary>
 </component>

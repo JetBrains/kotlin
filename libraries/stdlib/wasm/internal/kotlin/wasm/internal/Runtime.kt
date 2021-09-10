@@ -67,3 +67,12 @@ internal fun <T, R> boxIntrinsic(x: T): R =
 @ExcludedFromCodegen
 internal fun <T, R> unboxIntrinsic(x: T): R =
     implementedAsIntrinsic
+
+// Represents absence of a value. Should never be used as a real object. See UnitToVoidLowering.kt for more info.
+@ExcludedFromCodegen
+internal class Void private constructor()
+
+// This is the only way to introduce Void type.
+@WasmOp(WasmOp.DROP)
+internal fun consumeAnyIntoVoid(a: Any?): Void =
+    implementedAsIntrinsic
