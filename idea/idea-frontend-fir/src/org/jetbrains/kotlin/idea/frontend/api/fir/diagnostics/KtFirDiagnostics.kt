@@ -2816,4 +2816,12 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = SubclassCantCallCompanionProtectedNonStatic::class
     }
 
+    abstract class ConcurrentHashMapContainsOperatorError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ConcurrentHashMapContainsOperatorError::class
+    }
+
+    abstract class ConcurrentHashMapContainsOperatorWarning : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ConcurrentHashMapContainsOperatorWarning::class
+    }
+
 }

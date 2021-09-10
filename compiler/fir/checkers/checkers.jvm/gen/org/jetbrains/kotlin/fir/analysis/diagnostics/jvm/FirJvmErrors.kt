@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics.jvm
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature.DefaultMethodsCallFromJava6TargetError
+import org.jetbrains.kotlin.config.LanguageFeature.ProhibitConcurrentHashMapContains
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses
 import org.jetbrains.kotlin.config.LanguageFeature.RepeatableAnnotationContainerConstraints
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
@@ -116,5 +117,6 @@ object FirJvmErrors {
     val DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET by deprecationError0<PsiElement>(DefaultMethodsCallFromJava6TargetError, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET by deprecationError0<PsiElement>(DefaultMethodsCallFromJava6TargetError, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val CONCURRENT_HASH_MAP_CONTAINS_OPERATOR by deprecationError0<PsiElement>(ProhibitConcurrentHashMapContains)
 
 }

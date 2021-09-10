@@ -186,6 +186,13 @@ fun FirSimpleFunction.overriddenFunctions(
     containingClass: FirClassSymbol<*>,
     context: CheckerContext
 ): List<FirFunctionSymbol<*>> {
+    return symbol.overriddenFunctions(containingClass, context)
+}
+
+fun FirNamedFunctionSymbol.overriddenFunctions(
+    containingClass: FirClassSymbol<*>,
+    context: CheckerContext
+): List<FirFunctionSymbol<*>> {
     val firTypeScope = containingClass.unsubstitutedScope(
         context.sessionHolder.session,
         context.sessionHolder.scopeSession,
@@ -193,8 +200,8 @@ fun FirSimpleFunction.overriddenFunctions(
     )
 
     val overriddenFunctions = mutableListOf<FirFunctionSymbol<*>>()
-    firTypeScope.processFunctionsByName(symbol.callableId.callableName) { }
-    firTypeScope.processOverriddenFunctions(symbol) {
+    firTypeScope.processFunctionsByName(callableId.callableName) { }
+    firTypeScope.processOverriddenFunctions(this) {
         overriddenFunctions.add(it)
         ProcessorAction.NEXT
     }

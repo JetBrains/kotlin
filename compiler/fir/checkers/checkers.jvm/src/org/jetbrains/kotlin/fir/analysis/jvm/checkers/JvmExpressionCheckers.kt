@@ -23,7 +23,8 @@ object JvmExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirJavaGenericVarianceViolationTypeChecker,
             FirSuperCallWithDefaultsChecker,
-            FirJvmSuspensionPointInsideMutexLockChecker
+            FirJvmSuspensionPointInsideMutexLockChecker,
+            FirJvmInconsistentOperatorFromJavaCallChecker
         )
 
     override val annotationCheckers: Set<FirAnnotationChecker>

@@ -18,10 +18,10 @@ class C : java.util.concurrent.ConcurrentHashMap<String, Int>() {
 
 fun main() {
     val hm = java.util.concurrent.ConcurrentHashMap<String, Int>()
-    "" in hm
-    "" !in hm
-    1 !in hm
-    2 in hm
+    "" <!CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR!>in<!> hm
+    "" <!CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR!>!in<!> hm
+    1 <!CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR!>!in<!> hm
+    2 <!CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR!>in<!> hm
 
     hm.contains("")
     hm.contains(1)
@@ -32,10 +32,10 @@ fun main() {
     1 !in (hm as Map<String, Int>)
 
     val a = A()
-    "" in a
-    "" !in a
-    1 !in a
-    2 in a
+    "" <!CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR!>in<!> a
+    "" <!CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR!>!in<!> a
+    1 <!CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR!>!in<!> a
+    2 <!CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR!>in<!> a
 
     ' ' in a
     ' ' !in a
@@ -48,10 +48,10 @@ fun main() {
     1 !in (a as Map<String, Int>)
 
     val b = B()
-    "" in b
-    "" !in b
-    1 !in b
-    2 in b
+    "" <!CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR!>in<!> b
+    "" <!CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR!>!in<!> b
+    1 <!CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR!>!in<!> b
+    2 <!CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR!>in<!> b
 
     b.contains("")
     b.contains(1)
@@ -63,10 +63,10 @@ fun main() {
 
     // Actually, we could've allow calls here because the owner explicitly declared as operator, but semantics is still weird
     val c = C()
-    "" in c
-    "" !in c
-    1 !in c
-    2 in c
+    "" <!CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR!>in<!> c
+    "" <!CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR!>!in<!> c
+    1 <!CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR!>!in<!> c
+    2 <!CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR!>in<!> c
 
     c.contains("")
     c.contains(1)
@@ -76,4 +76,3 @@ fun main() {
     1 in (c as Map<String, Int>)
     1 !in (c as Map<String, Int>)
 }
-
