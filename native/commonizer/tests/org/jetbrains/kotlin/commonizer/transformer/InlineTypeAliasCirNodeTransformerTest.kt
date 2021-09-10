@@ -84,7 +84,7 @@ class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase()
                         visibility = Visibilities.Public,
                         supertypes = listOf(
                             CirProvided.ClassType(
-                                classId = CirEntityId.create("dep/ClassA"),
+                                classifierId = CirEntityId.create("dep/ClassA"),
                                 outerType = null,
                                 arguments = emptyList(),
                                 isMarkedNullable = false
@@ -151,7 +151,7 @@ class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase()
                         visibility = Visibilities.Public,
                         supertypes = listOf(
                             CirProvided.ClassType(
-                                classId = CirEntityId.create("dep/ClassA"),
+                                classifierId = CirEntityId.create("dep/ClassA"),
                                 outerType = null,
                                 arguments = emptyList(),
                                 isMarkedNullable = false

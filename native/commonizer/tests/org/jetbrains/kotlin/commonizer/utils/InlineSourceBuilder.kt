@@ -7,10 +7,14 @@ package org.jetbrains.kotlin.commonizer.utils
 
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.InlineSourcesCommonizationTestDsl
+import org.jetbrains.kotlin.commonizer.ModulesProvider
+import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
+import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiersByModules
 import org.jetbrains.kotlin.commonizer.tree.CirTreeModule
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.SerializedMetadata
+import java.io.File
 
 interface InlineSourceBuilder {
     annotation class ModuleBuilderDsl
@@ -94,3 +98,19 @@ fun InlineSourceBuilder.createCirTreeRoot(builder: InlineSourceBuilder.ModuleBui
 fun InlineSourceBuilder.createCirTreeRootFromSourceCode(@Language("kotlin") sourceCode: String): CirTreeRoot {
     return CirTreeRoot(listOf(createCirTreeFromSourceCode(sourceCode)))
 }
+
+@InlineSourceBuilder.ModuleBuilderDsl
+fun InlineSourceBuilder.createCirProvidedClassifiers(module: InlineSourceBuilder.Module): CirProvidedClassifiers {
+    val modulesProvider = object : ModulesProvider {
+        override val moduleInfos: Collection<ModulesProvider.ModuleInfo> = listOf(
+            ModulesProvider.ModuleInfo(name = "CirProvidedForTest", originalLocation = File("."), cInteropAttributes = null)
+        )
+
+        override fun loadModuleMetadata(name: String): SerializedMetadata {
+            if (name == moduleInfos.single().name) return createMetadata(module)
+            else error("Unknown Module $name")
+        }
+    }
+    return CirProvidedClassifiersByModules.load(modulesProvider)
+}
+

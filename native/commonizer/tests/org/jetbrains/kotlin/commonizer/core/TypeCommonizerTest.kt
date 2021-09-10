@@ -32,6 +32,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType?>() {
             commonDependencies = object : CirProvidedClassifiers {
                 override fun hasClassifier(classifierId: CirEntityId) = classifierId.packageName.isUnderStandardKotlinPackages
                 override fun classifier(classifierId: CirEntityId) = error("This method should not be called")
+                override fun findTypeAliasesWithUnderlyingType(underlyingClassifier: CirEntityId): List<CirEntityId> = emptyList()
             }
         )
     }

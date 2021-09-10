@@ -68,7 +68,6 @@ internal class ClassOrTypeAliasTypeCommonizer(
         val commonizedClassifier = classifiers.commonizedNodes.classNode(classifierId)?.commonDeclaration?.invoke()
             ?: classifiers.commonizedNodes.typeAliasNode(classifierId)?.commonDeclaration?.invoke()
 
-
         when (commonizedClassifier) {
             is CirClass -> return CirClassType.createInterned(
                 classId = classifierId,

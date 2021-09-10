@@ -183,8 +183,7 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
             "(a, b)", """
                 expect class AB expect constructor()
                 typealias TA_AB = AB
-                // https://youtrack.jetbrains.com/issue/KT-47100
-                expect val x: AB
+                expect val x: TA_AB
         """.trimIndent()
         )
     }
@@ -214,8 +213,7 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
             "(a, b)", """
                 expect class AB expect constructor()
                 typealias TA_AB = AB
-                // https://youtrack.jetbrains.com/issue/KT-47100
-                expect val x: AB
+                expect val x: TA_AB
         """.trimIndent()
         )
     }

@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.commonizer
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.mergedtree.CirClassifierIndex
 import org.jetbrains.kotlin.commonizer.mergedtree.CirCommonClassifierIdResolver
+import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
+import org.jetbrains.kotlin.commonizer.utils.createCirProvidedClassifiers
+import org.jetbrains.kotlin.commonizer.utils.createCirTreeRoot
 import org.jetbrains.kotlin.commonizer.utils.createCirTreeRootFromSourceCode
 
 class CirCommonClassifierIdResolverTest : AbstractInlineSourcesCommonizationTest() {
@@ -64,11 +67,11 @@ class CirCommonClassifierIdResolverTest : AbstractInlineSourcesCommonizationTest
             )
         )
 
-        //assertEquals(setOf("C"), resolver.findCommonId("A"))
-        //assertEquals(setOf("C"), resolver.findCommonId("B"))
-        //assertEquals(setOf("C"), resolver.findCommonId("C"))
+        assertEquals(setOf("C"), resolver.findCommonId("A"))
+        assertEquals(setOf("C"), resolver.findCommonId("B"))
+        assertEquals(setOf("C"), resolver.findCommonId("C"))
         assertEquals(setOf("C"), resolver.findCommonId("D"))
-        //assertEquals(setOf("C"), resolver.findCommonId("E"))
+        assertEquals(setOf("C"), resolver.findCommonId("E"))
     }
 
     /*
@@ -223,12 +226,58 @@ class CirCommonClassifierIdResolverTest : AbstractInlineSourcesCommonizationTest
         assertEquals(setOf("A", "B", "C", "X", "Y", "Z"), resolver.findCommonId("Y"))
         assertEquals(setOf("A", "B", "C", "X", "Y", "Z"), resolver.findCommonId("Z"))
     }
+
+    fun `test sample 7 - with dependencies`() {
+        val dependenciesModule = createModule {
+            source(
+                """
+                class D_X
+                class D_TA = D_X
+                """.trimIndent()
+            )
+        }
+
+        val rootA = createCirTreeRoot {
+            dependency(dependenciesModule)
+            source(
+                """
+                typealias A = D_TA
+                typealias B = D_X
+                typealias C = B
+            """.trimIndent()
+            )
+        }
+
+        val rootB = createCirTreeRoot {
+            dependency(dependenciesModule)
+            source(
+                """
+                typealias A = D_TA
+                typealias C = D_TA
+                """.trimIndent()
+            )
+        }
+
+        val resolver = createCommonClassifierIdResolver(
+            rootA, rootB, dependencies = createCirProvidedClassifiers(dependenciesModule)
+        )
+
+        assertEquals(setOf("D_X", "D_TA", "A", "C"), resolver.findCommonId("D_X"))
+        assertEquals(setOf("D_X", "D_TA", "A", "C"), resolver.findCommonId("D_TA"))
+        assertEquals(setOf("D_X", "D_TA", "A", "C"), resolver.findCommonId("A"))
+        assertEquals(setOf("D_X", "D_TA", "A", "C"), resolver.findCommonId("B"))
+        assertEquals(setOf("D_X", "D_TA", "A", "C"), resolver.findCommonId("C"))
+    }
 }
 
-private fun createCommonClassifierIdResolver(vararg root: CirTreeRoot): CirCommonClassifierIdResolver {
+private fun createCommonClassifierIdResolver(
+    vararg root: CirTreeRoot,
+    dependencies: CirProvidedClassifiers = CirProvidedClassifiers.EMPTY
+): CirCommonClassifierIdResolver {
     return CirCommonClassifierIdResolver(
         TargetDependent(root.withIndex().associate { (index, root) -> LeafCommonizerTarget(index.toString()) to root })
-            .mapValue(::CirClassifierIndex)
+            .mapValue(::CirClassifierIndex),
+        dependencies = dependencies
     )
 }
 

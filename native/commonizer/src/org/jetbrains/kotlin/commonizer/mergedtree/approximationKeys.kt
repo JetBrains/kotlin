@@ -40,7 +40,6 @@ class CirTypeSignature {
     }
 }
 
-
 typealias ObjCFunctionApproximation = Int
 
 data class PropertyApproximationKey(
@@ -188,8 +187,7 @@ internal fun CirTypeSignature.appendTypeApproximationSignature(context: Signatur
 internal fun CirTypeSignature.appendClassOrTypeAliasTypeApproximationSignature(
     context: SignatureBuildingContext, type: CirClassOrTypeAliasType
 ) {
-    val classifierId = context.commonClassifierIdResolver.findCommonId(type.classifierId)?.aliases ?: type.classifierId
-    add(classifierId)
+    add(context.commonClassifierIdResolver.findCommonId(type.classifierId) ?: type.classifierId)
     if (type.arguments.isNotEmpty()) {
         add(TypeSignatureElements.ArgumentsStartToken)
         type.arguments.forEachIndexed { index, argument ->

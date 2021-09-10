@@ -30,6 +30,7 @@ object CirFictitiousFunctionClassifiers : CirProvidedClassifiers {
 
     override fun hasClassifier(classifierId: CirEntityId) = classifierId in classifiers
     override fun classifier(classifierId: CirEntityId): CirProvided.RegularClass? = classifiers[classifierId]
+    override fun findTypeAliasesWithUnderlyingType(underlyingClassifier: CirEntityId): List<CirEntityId> = emptyList()
 
     private inline fun buildFictitiousFunctionClass(prefix: String, arity: Int, consumer: (CirEntityId, CirProvided.RegularClass) -> Unit) {
         val typeParameters = List(arity + 1) { index ->

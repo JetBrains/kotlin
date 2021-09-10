@@ -25,12 +25,28 @@ internal class CirProvidedClassifiersByModules internal constructor(
     private val hasForwardDeclarations: Boolean,
     private val classifiers: Map<CirEntityId, CirProvided.Classifier>,
 ) : CirProvidedClassifiers {
+
+    private val typeAliasesByUnderlyingTypes = run {
+        THashMap<CirEntityId, MutableList<CirEntityId>>().also { map ->
+            classifiers.forEach { (id, classifier) ->
+                if (classifier is CirProvided.TypeAlias) {
+                    val set = map.computeIfAbsent(classifier.underlyingType.classifierId) { ArrayList() }
+                    set.add(id)
+                }
+            }
+        }
+    }
+
     override fun hasClassifier(classifierId: CirEntityId) =
         if (classifierId.packageName.isUnderKotlinNativeSyntheticPackages) {
             hasForwardDeclarations
         } else {
             classifierId in classifiers
         }
+
+    override fun findTypeAliasesWithUnderlyingType(underlyingClassifier: CirEntityId): List<CirEntityId> {
+        return typeAliasesByUnderlyingTypes[underlyingClassifier].orEmpty()
+    }
 
     override fun classifier(classifierId: CirEntityId) =
         classifiers[classifierId] ?: if (hasForwardDeclarations && classifierId.packageName.isUnderKotlinNativeSyntheticPackages)
@@ -167,7 +183,7 @@ private fun readClass(
 
     val supertypes = (classProto.supertypeList.map { readType(it, typeReadContext) } +
             classProto.supertypeIdList.map { readType(classProto.typeTable.getType(it), typeReadContext) })
-        .filterNot { type -> type is CirProvided.ClassType && type.classId == ANY_CLASS_ID }
+        .filterNot { type -> type is CirProvided.ClassType && type.classifierId == ANY_CLASS_ID }
 
 
     val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(classProto.flags))
@@ -198,7 +214,7 @@ private inline fun readTypeAlias(
     )
 
     val underlyingType = readType(typeAliasProto.underlyingType(types), TypeReadContext(strings, types, typeParameterNameToIndex))
-    val typeAlias = CirProvided.TypeAlias(typeParameters, underlyingType)
+    val typeAlias = CirProvided.TypeAlias(typeParameters, underlyingType as CirProvided.ClassOrTypeAliasType)
 
     consumer(typeAliasId, typeAlias)
 }
@@ -243,14 +259,14 @@ private fun readType(typeProto: ProtoBuf.Type, context: TypeReadContext): CirPro
                 }
 
                 CirProvided.ClassType(
-                    classId = classId,
+                    classifierId = classId,
                     outerType = outerType,
                     arguments = readTypeArguments(argumentList, context),
                     isMarkedNullable = nullable
                 )
             }
             hasTypeAliasName() -> CirProvided.TypeAliasType(
-                typeAliasId = CirEntityId.create(context.strings.getQualifiedClassName(typeAliasName)),
+                classifierId = CirEntityId.create(context.strings.getQualifiedClassName(typeAliasName)),
                 arguments = readTypeArguments(argumentList, context),
                 isMarkedNullable = nullable
             )

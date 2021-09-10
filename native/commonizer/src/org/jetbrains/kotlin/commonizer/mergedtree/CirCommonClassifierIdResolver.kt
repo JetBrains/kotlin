@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.commonizer.mergedtree
 
+import gnu.trove.THashMap
+import gnu.trove.THashSet
 import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirTypeAlias
@@ -27,8 +29,8 @@ private class CirCommonClassifierIdResolverImpl(
     private val dependencies: CirProvidedClassifiers
 ) : CirCommonClassifierIdResolver {
 
-    private val cachedResults = HashMap<CirEntityId, CirCommonClassifierId>()
-    private val cachedNullResults = HashSet<CirEntityId>()
+    private val cachedResults = THashMap<CirEntityId, CirCommonClassifierId>()
+    private val cachedNullResults = THashSet<CirEntityId>()
 
     override fun findCommonId(id: CirEntityId): CirCommonClassifierId? {
         cachedResults[id]?.let { return it }
@@ -37,10 +39,10 @@ private class CirCommonClassifierIdResolverImpl(
     }
 
     private fun doFindCommonId(id: CirEntityId): CirCommonClassifierId? {
-        val results = LinkedHashSet<CirEntityId>()
+        val results = ArrayList<CirEntityId>()
 
         /* Set of every classifier id that once was enqueued already */
-        val visited = mutableSetOf<CirEntityId>()
+        val visited = THashSet<CirEntityId>()
 
         /* Actual, current queue of classifiers to resolve */
         val queue = ArrayDeque<CirEntityId>()
@@ -50,6 +52,8 @@ private class CirCommonClassifierIdResolverImpl(
 
         while (queue.isNotEmpty()) {
             val nextClassifierId = queue.removeFirst()
+
+            /* Either CirClassifier or CirProvided.Classifier or null */
             val foundClassifiers = classifierIndices.associateWith { index ->
                 index.findClassifier(nextClassifierId) ?: dependencies.classifier(nextClassifierId)
             }
@@ -69,6 +73,12 @@ private class CirCommonClassifierIdResolverImpl(
                     }
                 }
 
+                dependencies.findTypeAliasesWithUnderlyingType(nextClassifierId).forEach { aliasId ->
+                    if (visited.add(aliasId)) {
+                        queue.add(aliasId)
+                    }
+                }
+
                 // Propagate to the right (towards expansion)
                 if (classifier is CirTypeAlias) {
                     if (visited.add(classifier.underlyingType.classifierId)) {
@@ -77,13 +87,8 @@ private class CirCommonClassifierIdResolverImpl(
                 }
 
                 if (classifier is CirProvided.TypeAlias) {
-                    val underlyingTypeId = when (val underlyingType = classifier.underlyingType) {
-                        is CirProvided.ClassType -> underlyingType.classId
-                        is CirProvided.TypeAliasType -> underlyingType.typeAliasId
-                        is CirProvided.TypeParameterType -> null
-                    }
-                    if (underlyingTypeId != null && visited.add(underlyingTypeId)) {
-                        queue.add(underlyingTypeId)
+                    if (visited.add(classifier.underlyingType.classifierId)) {
+                        queue.add(classifier.underlyingType.classifierId)
                     }
                 }
             }
