@@ -43,6 +43,12 @@ public class HLImportOptimizerTestGenerated extends AbstractHLImportOptimizerTes
     }
 
     @Test
+    @TestMetadata("usedAliasedFunctionReference.kt")
+    public void testUsedAliasedFunctionReference() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/importOptimizer/usedAliasedFunctionReference.kt");
+    }
+
+    @Test
     @TestMetadata("usedAliasedTypeImport.kt")
     public void testUsedAliasedTypeImport() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/importOptimizer/usedAliasedTypeImport.kt");
@@ -70,5 +76,51 @@ public class HLImportOptimizerTestGenerated extends AbstractHLImportOptimizerTes
     @TestMetadata("usedInvokeOperatorImport.kt")
     public void testUsedInvokeOperatorImport() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/importOptimizer/usedInvokeOperatorImport.kt");
+    }
+
+    @Nested
+    @TestMetadata("idea/idea-frontend-fir/testData/components/importOptimizer/referencesWithErrors")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ReferencesWithErrors {
+        @Test
+        public void testAllFilesPresentInReferencesWithErrors() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/testData/components/importOptimizer/referencesWithErrors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("usedConstructor_invalidArguments.kt")
+        public void testUsedConstructor_invalidArguments() throws Exception {
+            runTest("idea/idea-frontend-fir/testData/components/importOptimizer/referencesWithErrors/usedConstructor_invalidArguments.kt");
+        }
+
+        @Test
+        @TestMetadata("usedConstructor_missingCall.kt")
+        public void testUsedConstructor_missingCall() throws Exception {
+            runTest("idea/idea-frontend-fir/testData/components/importOptimizer/referencesWithErrors/usedConstructor_missingCall.kt");
+        }
+
+        @Test
+        @TestMetadata("usedExtensionFunction_invalidArguments.kt")
+        public void testUsedExtensionFunction_invalidArguments() throws Exception {
+            runTest("idea/idea-frontend-fir/testData/components/importOptimizer/referencesWithErrors/usedExtensionFunction_invalidArguments.kt");
+        }
+
+        @Test
+        @TestMetadata("usedExtensionProperty_invalidReceiver.kt")
+        public void testUsedExtensionProperty_invalidReceiver() throws Exception {
+            runTest("idea/idea-frontend-fir/testData/components/importOptimizer/referencesWithErrors/usedExtensionProperty_invalidReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("usedInvokeOperator_invalidArguments.kt")
+        public void testUsedInvokeOperator_invalidArguments() throws Exception {
+            runTest("idea/idea-frontend-fir/testData/components/importOptimizer/referencesWithErrors/usedInvokeOperator_invalidArguments.kt");
+        }
+
+        @Test
+        @TestMetadata("usedTypeImport_missingGeneric.kt")
+        public void testUsedTypeImport_missingGeneric() throws Exception {
+            runTest("idea/idea-frontend-fir/testData/components/importOptimizer/referencesWithErrors/usedTypeImport_missingGeneric.kt");
+        }
     }
 }
