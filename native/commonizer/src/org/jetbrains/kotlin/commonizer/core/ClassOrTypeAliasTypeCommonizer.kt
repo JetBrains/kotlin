@@ -113,7 +113,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
 
             /* Only forward substitutions allowed -> Only substitute with any underlying type */
             forwardSubstitutionAllowed -> commonId.aliases.filter { candidate ->
-                types.all { type -> type.isAnyUnderlyingClassifier(candidate) }
+                types.all { type -> candidate == type.classifierId || type.isAnyUnderlyingClassifier(candidate) }
             }
 
             /* Only backward substitutions allowed -> Only substitute with any typealias pointing to this types */

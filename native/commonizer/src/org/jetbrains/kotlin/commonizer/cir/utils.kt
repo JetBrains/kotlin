@@ -95,6 +95,10 @@ internal fun CirClassOrTypeAliasType.withParentArguments(
         if (oldArgument is CirRegularTypeProjection) {
             val oldArgumentType = oldArgument.type
             if (oldArgumentType is CirTypeParameterType) {
+                when (val parentArgument = parentArguments[oldArgumentType.index]) {
+                    is CirRegularTypeProjection -> if (parentArgument is CirClassOrTypeAliasType) return@map parentArgument
+                    is CirStarTypeProjection -> return@map parentArgument
+                }
                 return@map parentArguments[oldArgumentType.index]
             }
         }
@@ -105,7 +109,7 @@ internal fun CirClassOrTypeAliasType.withParentArguments(
         this -> this
         is CirClassType -> newUnderlyingType
         is CirTypeAliasType -> newUnderlyingType.withUnderlyingType(
-            newUnderlyingType.underlyingType.withParentArguments(newArguments, newIsMarkedNullable)
+            newUnderlyingType.underlyingType.withParentArguments(parentArguments, newIsMarkedNullable)
         )
     }
 }
