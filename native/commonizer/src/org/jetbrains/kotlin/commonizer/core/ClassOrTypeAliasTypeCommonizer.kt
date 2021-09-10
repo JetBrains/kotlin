@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.commonizer.utils.isUnderKotlinNativeSyntheticPackage
 import org.jetbrains.kotlin.commonizer.utils.safeCastValues
 import org.jetbrains.kotlin.commonizer.utils.singleDistinctValueOrNull
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal class ClassOrTypeAliasTypeCommonizer(
     private val typeCommonizer: TypeCommonizer,
@@ -25,7 +26,10 @@ internal class ClassOrTypeAliasTypeCommonizer(
         val expansions = values.map { it.expandedType() }
         val isMarkedNullable = isMarkedNullableCommonizer.commonize(expansions.map { it.isMarkedNullable }) ?: return null
         val arguments = TypeArgumentListCommonizer(typeCommonizer).commonize(values.map { it.arguments }) ?: return null
-        val classifierId = selectClassifierId(values) ?: return null
+        val classifierId = selectClassifierId(values)
+            ?: typeCommonizer.options.enableOptimisticNumberTypeCommonization.ifTrue {
+                return OptimisticNumbersTypeCommonizer.commonize(values.map { it.expandedType() })
+            } ?: return null
 
         val outerTypes = values.safeCastValues<CirClassOrTypeAliasType, CirClassType>()?.map { it.outerType }
         val outerType = when {
