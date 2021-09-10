@@ -9,11 +9,8 @@ import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.jvm.CachedFieldsForObjectInstances
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
-import org.jetbrains.kotlin.backend.jvm.codegen.representativeUpperBound
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -24,23 +21,17 @@ import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOT
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
-import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -53,97 +44,6 @@ import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-
-/**
- * Perform as much type erasure as is significant for JVM signature generation.
- * Class types are kept as is, while type parameters are replaced with their
- * erased upper bounds, keeping the nullability information.
- *
- * For example, a type parameter `T?` where `T : Any`, `T : Comparable<T>` is
- * erased to `Any?`.
- *
- * Type arguments to the erased upper bound are replaced by `*`, since
- * recursive erasure could loop. For example, a type parameter
- * `T : Comparable<T>` is replaced by `Comparable<*>`.
- */
-fun IrType.eraseTypeParameters() = when (this) {
-    is IrErrorType -> this
-    is IrSimpleType ->
-        when (val owner = classifier.owner) {
-            is IrScript -> {
-                assert(arguments.isEmpty()) { "Script can't be generic: " + owner.render() }
-                IrSimpleTypeImpl(classifier, hasQuestionMark, emptyList(), annotations)
-            }
-            is IrClass -> IrSimpleTypeImpl(classifier, hasQuestionMark, arguments.map { it.eraseTypeParameters() }, annotations)
-            is IrTypeParameter -> {
-                val upperBound = owner.erasedUpperBound
-                IrSimpleTypeImpl(
-                    upperBound.symbol,
-                    isNullable(),
-                    List(upperBound.typeParameters.size) { IrStarProjectionImpl },    // Should not affect JVM signature, but may result in an invalid type object
-                    owner.annotations
-                )
-            }
-            else -> error("Unknown IrSimpleType classifier kind: $owner")
-        }
-    else -> error("Unknown IrType kind: $this")
-}
-
-private fun IrTypeArgument.eraseTypeParameters(): IrTypeArgument = when (this) {
-    is IrStarProjection -> this
-    is IrTypeProjection -> makeTypeProjection(type.eraseTypeParameters(), variance)
-    else -> error("Unknown IrTypeArgument kind: $this")
-}
-
-/**
- * Computes the erased class for this type parameter according to the java erasure rules.
- */
-val IrTypeParameter.erasedUpperBound: IrClass
-    get() {
-        // Pick the (necessarily unique) non-interface upper bound if it exists
-        for (type in superTypes) {
-            val irClass = type.classOrNull?.owner ?: continue
-            if (!irClass.isJvmInterface) return irClass
-        }
-
-        // Otherwise, choose either the first IrClass supertype or recurse.
-        // In the first case, all supertypes are interface types and the choice was arbitrary.
-        // In the second case, there is only a single supertype.
-        return superTypes.first().erasedUpperBound
-    }
-
-val IrType.erasedUpperBound: IrClass
-    get() = when (val classifier = classifierOrNull) {
-        is IrClassSymbol -> classifier.owner
-        is IrTypeParameterSymbol -> classifier.owner.erasedUpperBound
-        is IrScriptSymbol -> classifier.owner.targetClass!!.owner
-        else -> error(render())
-    }
-
-/**
- * Get the default null/0 value for the type.
- *
- * This handles unboxing of non-nullable inline class types to their underlying types and produces
- * a null/0 default value for the resulting type. When such unboxing takes place it ensures that
- * the value is not reboxed and reunboxed by the codegen by using the unsafeCoerceIntrinsic.
- */
-fun IrType.defaultValue(startOffset: Int, endOffset: Int, context: JvmBackendContext): IrExpression {
-    val classifier = this.classifierOrNull
-    if (classifier is IrTypeParameterSymbol) {
-        return classifier.owner.representativeUpperBound.defaultValue(startOffset, endOffset, context)
-    }
-
-    if (this !is IrSimpleType || hasQuestionMark || classOrNull?.owner?.isInline != true)
-        return IrConstImpl.defaultValueForType(startOffset, endOffset, this)
-
-    val underlyingType = unboxInlineClass()
-    val defaultValueForUnderlyingType = IrConstImpl.defaultValueForType(startOffset, endOffset, underlyingType)
-    return IrCallImpl.fromSymbolOwner(startOffset, endOffset, this, context.ir.symbols.unsafeCoerceIntrinsic).also {
-        it.putTypeArgument(0, underlyingType) // from
-        it.putTypeArgument(1, this) // to
-        it.putValueArgument(0, defaultValueForUnderlyingType)
-    }
-}
 
 fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     // TODO lower @JvmName?
@@ -189,29 +89,6 @@ fun IrValueParameter.isInlineParameter() =
             // Note that the frontend has a diagnostic for nullable inline parameters, so actually
             // making this return `false` requires using `@Suppress`.
             (!type.isNullable() || defaultValue?.expression?.type?.isNullable() == false)
-
-// An IR builder with a reference to the JvmBackendContext
-class JvmIrBuilder(
-    val backendContext: JvmBackendContext,
-    val symbol: IrSymbol,
-    startOffset: Int = UNDEFINED_OFFSET,
-    endOffset: Int = UNDEFINED_OFFSET
-) : IrBuilderWithScope(
-    IrGeneratorContextBase(backendContext.irBuiltIns),
-    Scope(symbol),
-    startOffset,
-    endOffset
-) {
-    val irSymbols: JvmSymbols
-        get() = backendContext.ir.symbols
-}
-
-fun JvmBackendContext.createJvmIrBuilder(
-    symbol: IrSymbol,
-    startOffset: Int = UNDEFINED_OFFSET,
-    endOffset: Int = UNDEFINED_OFFSET
-) = JvmIrBuilder(this, symbol, startOffset, endOffset)
-
 
 fun IrDeclaration.isInCurrentModule(): Boolean =
     getPackageFragment() is IrFile
@@ -356,34 +233,6 @@ val IrDeclaration.isStaticInlineClassReplacement: Boolean
     get() = origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
             || origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR
 
-val IrType.upperBound: IrType
-    get() = erasedUpperBound.symbol.starProjectedType
-
-fun IrType.eraseToScope(scopeOwner: IrTypeParametersContainer): IrType = eraseToScope(collectVisibleTypeParameters(scopeOwner))
-
-fun IrType.eraseToScope(visibleTypeParameters: Set<IrTypeParameter>): IrType {
-    require(this is IrSimpleType) { error("Unexpected IrType kind: ${render()}") }
-    return when (classifier) {
-        is IrClassSymbol -> IrSimpleTypeImpl(classifier, hasQuestionMark, arguments.map { it.eraseToScope(visibleTypeParameters) }, annotations)
-        is IrTypeParameterSymbol -> if (classifier.owner in visibleTypeParameters) this else upperBound
-        else -> error("unknown IrType classifier kind: ${classifier.owner.render()}")
-    }
-}
-
-private fun IrTypeArgument.eraseToScope(visibleTypeParameters: Set<IrTypeParameter>): IrTypeArgument = when (this) {
-    is IrStarProjection -> this
-    is IrTypeProjection -> makeTypeProjection(type.eraseToScope(visibleTypeParameters), variance)
-    else -> error("unknown type projection kind: ${render()}")
-}
-
-fun collectVisibleTypeParameters(scopeOwner: IrTypeParametersContainer): Set<IrTypeParameter> =
-    generateSequence(scopeOwner) { current ->
-        val parent = current.parent as? IrTypeParametersContainer
-        parent.takeUnless { parent is IrClass && current is IrClass && !current.isInner && !current.isLocal }
-    }
-        .flatMap { it.typeParameters }
-        .toSet()
-
 // On the IR backend we represent raw types as star projected types with a special synthetic annotation.
 // See `TypeTranslator.translateTypeAnnotations`.
 private fun JvmBackendContext.makeRawTypeAnnotation() =
@@ -395,17 +244,11 @@ private fun JvmBackendContext.makeRawTypeAnnotation() =
 fun IrClass.rawType(context: JvmBackendContext): IrType =
     defaultType.addAnnotations(listOf(context.makeRawTypeAnnotation()))
 
-fun IrType.getSingleAbstractMethod(): IrSimpleFunction? =
-    getClass()?.getSingleAbstractMethod()
-
 fun IrClass.getSingleAbstractMethod(): IrSimpleFunction? =
     functions.singleOrNull { it.modality == Modality.ABSTRACT }
 
 fun IrFile.getKtFile(): KtFile? =
     (fileEntry as? PsiIrFileEntry)?.psiFile as KtFile?
-
-fun IrType.isInlineClassType(): Boolean =
-    erasedUpperBound.isInline
 
 inline fun IrElement.hasChild(crossinline block: (IrElement) -> Boolean): Boolean {
     var result = false

@@ -140,7 +140,7 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
         tmp: IrVariable,
         parent: IrDeclarationParent
     ): IrSimpleFunction {
-        val superMethod = superType.getSingleAbstractMethod()
+        val superMethod = superType.getClass()?.getSingleAbstractMethod()
             ?: throw AssertionError("SAM type expected: ${superType.render()}")
         val effectiveValueParametersCount = superMethod.valueParameters.size +
                 if (superMethod.extensionReceiverParameter == null) 0 else 1
