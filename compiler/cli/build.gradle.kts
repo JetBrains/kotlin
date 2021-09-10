@@ -13,7 +13,7 @@ dependencies {
     compile(project(":compiler:backend"))
     compile(project(":compiler:backend.jvm"))
     implementation(project(":compiler:backend.jvm.lower"))
-    implementation(project(":compiler:backend.jvm:backend.jvm.entrypoint"))
+    implementation(project(":compiler:backend.jvm.entrypoint"))
     compile(project(":compiler:ir.backend.common"))
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:serialization"))
