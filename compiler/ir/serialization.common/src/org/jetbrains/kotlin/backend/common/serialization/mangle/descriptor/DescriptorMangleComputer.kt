@@ -206,7 +206,7 @@ abstract class DescriptorMangleComputer(protected val builder: StringBuilder, pr
                     val lower = type.lowerBound
                     val lowerDescriptor = lower.constructor.declarationDescriptor as? ClassDescriptor
                         ?: error("No class descriptor for lower type $lower of $type")
-                    val intermediate = if (lowerDescriptor == upperDescriptor) {
+                    val intermediate = if (lowerDescriptor == upperDescriptor && type !is RawType) {
                         lower.replace(newArguments = upper.arguments)
                     } else lower
                     val mixed = intermediate.makeNullableAsSpecified(upper.isMarkedNullable)
