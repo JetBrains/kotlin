@@ -18,6 +18,12 @@ fun propertyNameBySetMethodName(methodName: Name, withIsPrefix: Boolean): Name? 
 fun propertyNamesBySetMethodName(methodName: Name): List<Name> =
     listOfNotNull(propertyNameBySetMethodName(methodName, false), propertyNameBySetMethodName(methodName, true))
 
+fun propertyNamesByAccessorName(name: Name): List<Name> = listOfNotNull(
+    propertyNameByGetMethodName(name),
+    propertyNameBySetMethodName(name, withIsPrefix = true),
+    propertyNameBySetMethodName(name, withIsPrefix = false)
+)
+
 private fun propertyNameFromAccessorMethodName(
     methodName: Name,
     prefix: String,

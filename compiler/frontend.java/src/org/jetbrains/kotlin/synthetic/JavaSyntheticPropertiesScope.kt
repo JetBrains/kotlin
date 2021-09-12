@@ -75,11 +75,8 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor, SyntheticPropert
                 .firstOrNull { originalGetterOrSetter == it.getMethod || originalGetterOrSetter == it.setMethod }
         }
 
-        fun propertyNamesByAccessorName(name: Name): List<Name> = listOfNotNull(
-            propertyNameByGetMethodName(name),
-            propertyNameBySetMethodName(name, withIsPrefix = true),
-            propertyNameBySetMethodName(name, withIsPrefix = false)
-        )
+        fun propertyNamesByAccessorName(name: Name): List<Name> =
+            org.jetbrains.kotlin.load.java.propertyNamesByAccessorName(name)
 
         fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, syntheticScope: SyntheticScope) =
             findByGetterOrSetter(getterOrSetter,

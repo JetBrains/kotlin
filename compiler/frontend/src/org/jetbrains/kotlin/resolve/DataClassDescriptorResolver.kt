@@ -28,25 +28,11 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 object DataClassDescriptorResolver {
     val COPY_METHOD_NAME = Name.identifier("copy")
 
-    private val COMPONENT_FUNCTION_NAME_PREFIX = "component"
+    fun createComponentName(index: Int): Name = DataClassResolver.createComponentName(index)
 
-    fun createComponentName(index: Int): Name = Name.identifier(COMPONENT_FUNCTION_NAME_PREFIX + index)
+    fun getComponentIndex(componentName: String): Int = DataClassResolver.getComponentIndex(componentName)
 
-    fun getComponentIndex(componentName: String): Int = componentName.substring(COMPONENT_FUNCTION_NAME_PREFIX.length).toInt()
-
-    fun isComponentLike(name: Name): Boolean = isComponentLike(name.asString())
-
-    private fun isComponentLike(name: String): Boolean {
-        if (!name.startsWith(COMPONENT_FUNCTION_NAME_PREFIX)) return false
-
-        try {
-            getComponentIndex(name)
-        } catch (e: NumberFormatException) {
-            return false
-        }
-
-        return true
-    }
+    fun isComponentLike(name: Name): Boolean = DataClassResolver.isComponentLike(name)
 
     fun createComponentFunctionDescriptor(
         parameterIndex: Int,
