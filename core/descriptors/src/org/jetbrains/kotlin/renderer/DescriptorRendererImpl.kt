@@ -36,7 +36,7 @@ internal class DescriptorRendererImpl(
 
     private val functionTypeAnnotationsRenderer: DescriptorRendererImpl by lazy {
         withOptions {
-            excludedTypeAnnotationClasses += listOf(StandardNames.FqNames.extensionFunctionType)
+            excludedTypeAnnotationClasses += listOf(StandardNames.FqNames.extensionFunctionType, StandardNames.FqNames.contextFunctionTypeParams)
         } as DescriptorRendererImpl
     }
 
@@ -317,15 +317,27 @@ internal class DescriptorRendererImpl(
 
     private fun StringBuilder.renderFunctionType(type: KotlinType) {
         val lengthBefore = length
-        // we need special renderer to skip @ExtensionFunctionType
+        // we need special renderer to skip @ExtensionFunctionType and @ContextFunctionTypeParams
         with(functionTypeAnnotationsRenderer) {
             renderAnnotations(type)
         }
         val hasAnnotations = length != lengthBefore
 
+        val receiverType = type.getReceiverTypeFromFunctionType()
+        val contextReceiversTypes = type.getContextReceiverTypesFromFunctionType()
+        if (contextReceiversTypes.isNotEmpty()) {
+            append("context(")
+            val withoutLast = contextReceiversTypes.subList(0, contextReceiversTypes.lastIndex)
+            for (contextReceiverType in withoutLast) {
+                renderNormalizedType(contextReceiverType)
+                append(", ")
+            }
+            renderNormalizedType(contextReceiversTypes.last())
+            append(") ")
+        }
+
         val isSuspend = type.isSuspendFunctionType
         val isNullable = type.isMarkedNullable
-        val receiverType = type.getReceiverTypeFromFunctionType()
 
         val needParenthesis = isNullable || (hasAnnotations && receiverType != null)
         if (needParenthesis) {

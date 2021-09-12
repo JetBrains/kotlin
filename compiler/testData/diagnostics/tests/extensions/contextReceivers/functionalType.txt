@@ -1,10 +1,10 @@
 package
 
-public fun f2(/*0*/ g: @kotlin.ContextFunctionTypeParams(count = 1) (Param) -> kotlin.Unit): kotlin.Unit
-public fun f4(/*0*/ g: @kotlin.ContextFunctionTypeParams(count = 1) () -> kotlin.Unit): kotlin.Unit
+public fun f2(/*0*/ g: context(C) (Param) -> kotlin.Unit): kotlin.Unit
+public fun f4(/*0*/ g: context(C) () -> kotlin.Unit): kotlin.Unit
 public fun test(): kotlin.Unit
-public fun R.f1(/*0*/ g: @kotlin.ContextFunctionTypeParams(count = 1) (R.(Param) -> kotlin.Unit)): kotlin.Unit
-public fun R.f3(/*0*/ g: @kotlin.ContextFunctionTypeParams(count = 1) (R.() -> kotlin.Unit)): kotlin.Unit
+public fun R.f1(/*0*/ g: context(C) R.(Param) -> kotlin.Unit): kotlin.Unit
+public fun R.f3(/*0*/ g: context(C) R.() -> kotlin.Unit): kotlin.Unit
 
 public final class C {
     public constructor C()
