@@ -54,6 +54,15 @@ fun <D> Pseudocode.traverse(
     }
 }
 
+fun Pseudocode.traverseIncludingDeadCode(analyzeInstruction: (Instruction) -> Unit) {
+    for (instruction in instructionsIncludingDeadCode) {
+        if (instruction is LocalFunctionDeclarationInstruction) {
+            instruction.body.traverseIncludingDeadCode(analyzeInstruction)
+        }
+        analyzeInstruction(instruction)
+    }
+}
+
 fun <I : ControlFlowInfo<*, *, *>> Pseudocode.collectData(
     traversalOrder: TraversalOrder,
     mergeEdges: (Instruction, Collection<I>) -> Edges<I>,

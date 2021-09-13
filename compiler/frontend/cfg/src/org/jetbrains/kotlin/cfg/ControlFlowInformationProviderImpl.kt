@@ -797,15 +797,17 @@ class ControlFlowInformationProviderImpl private constructor(
     ////////////////////////////////////////////////////////////////////////////////
     // Statements
 
-    private fun markStatements() = pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
-        val value = (instruction as? InstructionWithValue)?.outputValue
-        val pseudocode = instruction.owner
-        val usages = pseudocode.getUsages(value)
-        val isUsedAsExpression = usages.isNotEmpty()
-        val isUsedAsResultOfLambda = isUsedAsResultOfLambda(usages)
-        for (element in pseudocode.getValueElements(value)) {
-            trace.record(USED_AS_EXPRESSION, element, isUsedAsExpression)
-            trace.record(USED_AS_RESULT_OF_LAMBDA, element, isUsedAsResultOfLambda)
+    private fun markStatements() {
+        pseudocode.traverseIncludingDeadCode { instruction ->
+            val value = (instruction as? InstructionWithValue)?.outputValue
+            val pseudocode = instruction.owner
+            val usages = pseudocode.getUsages(value)
+            val isUsedAsExpression = usages.isNotEmpty()
+            val isUsedAsResultOfLambda = isUsedAsResultOfLambda(usages)
+            for (element in pseudocode.getValueElements(value)) {
+                trace.record(USED_AS_EXPRESSION, element, isUsedAsExpression)
+                trace.record(USED_AS_RESULT_OF_LAMBDA, element, isUsedAsResultOfLambda)
+            }
         }
     }
 
