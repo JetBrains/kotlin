@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.backend.common.ir.isPure
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -127,8 +128,14 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
 
         private fun isSimpleSetter(callee: IrSimpleFunction, backingField: IrField): Boolean {
             val body = callee.body?.let { it as IrBlockBody } ?: return false
-
-            val stmt = body.statements.singleOrNull() ?: return false
+            val statementsSizeCheck = when (body.statements.size) {
+                1 -> true
+                // In K/N backend this lowering should be called after devirtualization. At this point IrReturns are already added.
+                2 -> (body.statements[1] as? IrReturn)?.value?.type?.isUnit() == true
+                else -> false
+            }
+            if (!statementsSizeCheck) return false
+            val stmt = body.statements[0]
             val setFieldStmt = stmt as? IrSetField ?: return false
             if (setFieldStmt.symbol !== backingField.symbol) return false
 
