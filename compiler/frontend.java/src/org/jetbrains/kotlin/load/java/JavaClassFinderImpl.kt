@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.java
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.java.structure.impl.JavaPackageImpl
@@ -24,8 +25,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import javax.inject.Inject
 
-class JavaClassFinderImpl : AbstractJavaClassFinder() {
+fun Project.createJavaClassFinder(scope: GlobalSearchScope): JavaClassFinder =
+    JavaClassFinderImpl().apply {
+        setProjectInstance(this@createJavaClassFinder)
+        setScope(scope)
+    }
 
+class JavaClassFinderImpl : AbstractJavaClassFinder() {
     private lateinit var javaFacade: KotlinJavaPsiFacade
 
     @Inject

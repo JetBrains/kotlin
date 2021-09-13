@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
-import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
-import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProviderWrapper
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
@@ -46,12 +44,9 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeLibrariesSess
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
-import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
-import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
-import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
+import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
@@ -149,7 +144,7 @@ internal object FirIdeSessionFactory {
                     this,
                     providers = listOf(
                         provider.symbolProvider,
-                        JavaSymbolProviderWrapper(this@session, JavaSymbolProvider(this@session, moduleData, project, searchScope)),
+                        JavaSymbolProviderWrapper(this, moduleData, project.createJavaClassFinder(searchScope)),
                     ),
                     dependencyProvider
                 )
@@ -180,71 +175,29 @@ internal object FirIdeSessionFactory {
     ): FirIdeLibrariesSession = librariesCache.cached(mainModuleInfo) {
         checkCanceled()
         val searchScope = project.stateConfigurator.createScopeForModuleLibraries(mainModuleInfo)
-        val javaClassFinder = JavaClassFinderImpl().apply {
-            setProjectInstance(project)
-            setScope(searchScope)
-        }
-        val packagePartProvider = project.stateConfigurator.createPackagePartsProvider(mainModuleInfo, searchScope)
-
-        val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(searchScope)
         FirIdeLibrariesSession(project, searchScope, builtinTypes).apply session@{
-            val mainModuleData = FirModuleInfoBasedModuleData(mainModuleInfo).apply { bindSession(this@session) }
-
             registerIdeComponents(project)
             register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
             registerCommonComponents(languageVersionSettings)
             registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
             registerJavaSpecificResolveComponents()
 
-            val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
-
-            val moduleDataProvider = project.stateConfigurator.createModuleDataProvider(mainModuleInfo)
-
-            moduleDataProvider.allModuleData.forEach { it.bindSession(this@session) }
-
-            val symbolProvider = FirCompositeSymbolProvider(
-                this,
-                @OptIn(ExperimentalStdlibApi::class)
-                buildList {
-                    add(
-                        KotlinDeserializedJvmSymbolsProviderForIde(
-                            this@session,
-                            moduleDataProvider,
-                            kotlinScopeProvider,
-                            packagePartProvider,
-                            kotlinClassFinder,
-                            javaClassFinder,
-                            JavaSymbolProvider(this@session, mainModuleData, project, searchScope)
-                        )
-                    )
-                    addAll((builtinsAndCloneableSession.symbolProvider as FirCompositeSymbolProvider).providers)
-                }
+            val kotlinSymbolProvider = KotlinDeserializedJvmSymbolsProvider(
+                this@session,
+                moduleDataProvider = project.stateConfigurator.createModuleDataProvider(mainModuleInfo).apply {
+                    allModuleData.forEach { it.bindSession(this@session) }
+                },
+                kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped),
+                packagePartProvider = project.stateConfigurator.createPackagePartsProvider(mainModuleInfo, searchScope),
+                kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(searchScope),
+                javaClassFinder = project.createJavaClassFinder(searchScope)
             )
+            val symbolProvider = FirCompositeSymbolProvider(this, listOf(kotlinSymbolProvider, builtinsAndCloneableSession.symbolProvider))
             register(FirProvider::class, FirIdeLibrariesSessionProvider(symbolProvider))
             register(FirSymbolProvider::class, symbolProvider)
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
             configureSession?.invoke(this)
         }
-    }
-
-    /**
-     * Workaround of SOE for loading classes that loads via parent.
-     * It is not observable in compiler but it is in IDE
-     * TODO: this is probably already unnecessary
-     */
-    private class KotlinDeserializedJvmSymbolsProviderForIde(
-        session: FirSession,
-        moduleDataProvider: ModuleDataProvider,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        packagePartProvider: PackagePartProvider,
-        kotlinClassFinder: KotlinClassFinder,
-        javaClassFinder: JavaClassFinder,
-        javaSymbolProvider: JavaSymbolProvider
-    ) : KotlinDeserializedJvmSymbolsProvider(
-        session, moduleDataProvider, kotlinScopeProvider, packagePartProvider, kotlinClassFinder,
-        javaClassFinder, javaSymbolProvider
-    ) {
-        override fun shouldLoadParentsFirst(classId: ClassId): Boolean = true
     }
 
     fun createBuiltinsAndCloneableSession(
