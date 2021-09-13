@@ -15,14 +15,14 @@ import org.jetbrains.kotlin.commonizer.cir.CirType
  *   Input: N lists of [CirType]
  *   Output: list of [CirType]
  */
-abstract class AbstractListCommonizer<T, R: Any>(
+abstract class AbstractListCommonizer<T, R : Any>(
     private val singleElementCommonizerFactory: (Int) -> Commonizer<T, R?>
-) : Commonizer<List<T>, List<R>> {
+) : Commonizer<List<T>, List<R>?> {
     private var commonizers: Array<Commonizer<T, R?>>? = null
     private var error = false
 
-    final override val result: List<R>
-        get() = checkState(commonizers, error).mapNotNull { it.result }
+    final override val result: List<R>?
+        get() = checkState(commonizers, error).map { it.result ?: return null }
 
     final override fun commonizeWith(next: List<T>): Boolean {
         if (error)

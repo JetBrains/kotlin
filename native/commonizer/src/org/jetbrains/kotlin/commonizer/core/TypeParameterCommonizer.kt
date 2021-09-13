@@ -10,19 +10,21 @@ import org.jetbrains.kotlin.commonizer.cir.CirType
 import org.jetbrains.kotlin.commonizer.cir.CirTypeParameter
 import org.jetbrains.kotlin.types.Variance
 
-class TypeParameterCommonizer(typeCommonizer: TypeCommonizer) : AbstractStandardCommonizer<CirTypeParameter, CirTypeParameter>() {
+class TypeParameterCommonizer(typeCommonizer: TypeCommonizer) : AbstractStandardCommonizer<CirTypeParameter, CirTypeParameter?>() {
     private lateinit var name: CirName
     private var isReified = false
     private lateinit var variance: Variance
     private val upperBounds = TypeParameterUpperBoundsCommonizer(typeCommonizer)
 
-    override fun commonizationResult() = CirTypeParameter(
-        annotations = emptyList(),
-        name = name,
-        isReified = isReified,
-        variance = variance,
-        upperBounds = upperBounds.result
-    )
+    override fun commonizationResult(): CirTypeParameter? {
+        return CirTypeParameter(
+            annotations = emptyList(),
+            name = name,
+            isReified = isReified,
+            variance = variance,
+            upperBounds = upperBounds.result ?: return null
+        )
+    }
 
     override fun initialize(first: CirTypeParameter) {
         name = first.name
