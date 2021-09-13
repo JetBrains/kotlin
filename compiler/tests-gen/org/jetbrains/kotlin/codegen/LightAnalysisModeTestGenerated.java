@@ -33563,6 +33563,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/syntheticAccessors/kt9958Interface.kt");
         }
 
+        @TestMetadata("packagePrivateInPrivateInline.kt")
+        public void testPackagePrivateInPrivateInline() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/packagePrivateInPrivateInline.kt");
+        }
+
         @TestMetadata("protectedFromLambda.kt")
         public void testProtectedFromLambda() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticAccessors/protectedFromLambda.kt");

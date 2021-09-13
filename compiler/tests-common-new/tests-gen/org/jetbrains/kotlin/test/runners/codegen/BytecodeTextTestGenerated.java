@@ -356,6 +356,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     }
 
     @Test
+    @TestMetadata("noAccessorForProtectedInSamePackagePrivateInline.kt")
+    public void testNoAccessorForProtectedInSamePackagePrivateInline() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/noAccessorForProtectedInSamePackagePrivateInline.kt");
+    }
+
+    @Test
     @TestMetadata("noFlagAnnotations.kt")
     public void testNoFlagAnnotations() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/noFlagAnnotations.kt");
