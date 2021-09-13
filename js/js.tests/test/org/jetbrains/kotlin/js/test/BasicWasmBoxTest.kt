@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.loadKlib
 import org.jetbrains.kotlin.ir.backend.js.prepareAnalyzedSourceModule
+import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
@@ -65,11 +66,27 @@ abstract class BasicWasmBoxTest(
             val outputWatFile = outputFileBase + ".wat"
             val outputWasmFile = outputFileBase + ".wasm"
             val outputJsFile = outputFileBase + ".js"
-
             val languageVersionSettings = inputFiles.mapNotNull { it.languageVersionSettings }.firstOrNull()
 
-            val kotlinFiles = inputFiles.filter { it.fileName.endsWith(".kt") }
-            val psiFiles = createPsiFiles(kotlinFiles.map { File(it.fileName).canonicalPath }.sorted())
+            val kotlinFiles = mutableListOf<String>()
+            val jsFilesBefore = mutableListOf<String>()
+            val jsFilesAfter = mutableListOf<String>()
+
+            inputFiles.forEach {
+                val name = it.fileName
+                when {
+                    name.endsWith(".kt") ->
+                        kotlinFiles += name
+
+                    name.endsWith("__after.js") ->
+                        jsFilesAfter += name
+
+                    name.endsWith(".js") ->
+                        jsFilesBefore += name
+                }
+            }
+
+            val psiFiles = createPsiFiles(kotlinFiles.map { File(it).canonicalPath }.sorted())
             val config = createConfig(languageVersionSettings)
             translateFiles(
                 file,
@@ -87,7 +104,9 @@ abstract class BasicWasmBoxTest(
                     "--experimental-wasm-typed-funcref",
                     "--experimental-wasm-gc",
                     "--experimental-wasm-eh",
-                    outputJsFile
+                    *jsFilesBefore.toTypedArray(),
+                    outputJsFile,
+                    *jsFilesAfter.toTypedArray(),
                 )
         }
     }
@@ -162,6 +181,8 @@ abstract class BasicWasmBoxTest(
             const wasmBinary = read(String.raw`${outputWasmFile.absoluteFile}`, 'binary');
             const wasmModule = new WebAssembly.Module(wasmBinary);
             wasmInstance = new WebAssembly.Instance(wasmModule, { runtime, js_code });
+            
+            const ${sanitizeName(config.moduleId)} = wasmInstance.exports;
 
             const actualResult = importStringFromWasm(wasmInstance.exports.$testFunction());
             if (actualResult !== "OK")
@@ -215,7 +236,7 @@ abstract class BasicWasmBoxTest(
 
     companion object {
         const val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
-        const val TEST_MODULE = "WASM_TESTS"
+        const val TEST_MODULE = "main"
         private const val TEST_FUNCTION = "box"
     }
 }

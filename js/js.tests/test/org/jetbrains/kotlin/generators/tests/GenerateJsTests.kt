@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.js.test.es6.semantics.AbstractIrJsTypeScriptExportES
 import org.jetbrains.kotlin.js.test.ir.semantics.*
 import org.jetbrains.kotlin.js.test.semantics.*
 import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractIrCodegenBoxWasmTest
+import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractIrCodegenWasmJsInteropWasmTest
 import org.jetbrains.kotlin.test.TargetBackend
 
 fun main(args: Array<String>) {
@@ -109,6 +110,14 @@ fun main(args: Array<String>) {
                         "compileKotlinAgainstKotlin"
                     ) + jvmOnlyBoxTests
                 )
+            }
+
+            testClass<AbstractIrCodegenWasmJsInteropWasmTest> {
+                model("codegen/boxWasmJsInterop", targetBackend = TargetBackend.WASM)
+            }
+
+            testClass<AbstractIrCodegenWasmJsInteropJsTest> {
+                model("codegen/boxWasmJsInterop", targetBackend = TargetBackend.JS_IR)
             }
 
             testClass<AbstractIrJsCodegenBoxES6Test> {

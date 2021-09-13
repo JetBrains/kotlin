@@ -11,3 +11,8 @@ abstract class AbstractIrCodegenBoxWasmTest : BasicWasmBoxTest(
     "compiler/testData/codegen/box/",
     "codegen/wasmBox/"
 )
+
+abstract class AbstractIrCodegenWasmJsInteropWasmTest : BasicWasmBoxTest(
+    "compiler/testData/codegen/wasmJsInterop",
+    "codegen/wasmJsInteropJs"
+)

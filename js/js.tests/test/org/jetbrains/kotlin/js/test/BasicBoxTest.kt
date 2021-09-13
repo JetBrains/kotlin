@@ -257,14 +257,27 @@ abstract class BasicBoxTest(
             val additionalCommonFiles = additionalCommonFileDirectories.flatMap { baseDir ->
                 JsTestUtils.getFilesInDirectoryByExtension(baseDir + "/", JavaScript.EXTENSION)
             }
-            val inputJsFiles = inputFiles
-                .filter { it.fileName.endsWith(".js") }
-                .map { inputJsFile ->
-                    val sourceFile = File(inputJsFile.fileName)
-                    val targetFile = File(outputDir, inputJsFile.module.outputFileSimpleName() + "-js-" + sourceFile.name)
-                    FileUtil.copy(File(inputJsFile.fileName), targetFile)
-                    targetFile.absolutePath
+
+            val inputJsFilesBefore = mutableListOf<String>()
+            val inputJsFilesAfter = mutableListOf<String>()
+
+            fun copyInputJsFile(inputJsFile: TestFile): String {
+                val sourceFile = File(inputJsFile.fileName)
+                val targetFile = File(outputDir, inputJsFile.module.outputFileSimpleName() + "-js-" + sourceFile.name)
+                FileUtil.copy(File(inputJsFile.fileName), targetFile)
+                return targetFile.absolutePath
+            }
+
+            inputFiles.forEach {
+                val name = it.fileName
+                when {
+                    name.endsWith("__after.js") ->
+                        inputJsFilesAfter += copyInputJsFile(it)
+
+                    name.endsWith(".js") ->
+                        inputJsFilesBefore += copyInputJsFile(it)
                 }
+            }
 
             val additionalFiles = mutableListOf<String>()
 
@@ -288,23 +301,23 @@ abstract class BasicBoxTest(
                 additionalMainFiles += additionalMainJsFile
             }
 
-            val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles.map { it.first } + globalCommonFiles + localCommonFiles +
-                    additionalCommonFiles + additionalMainFiles
+            val allJsFiles = additionalFiles + inputJsFilesBefore + generatedJsFiles.map { it.first } + globalCommonFiles + localCommonFiles +
+                    additionalCommonFiles + additionalMainFiles + inputJsFilesAfter
 
-            val dceAllJsFiles = additionalFiles + inputJsFiles + generatedJsFiles.map {
+            val dceAllJsFiles = additionalFiles + inputJsFilesBefore + generatedJsFiles.map {
                 it.first.replace(
                     outputDir.absolutePath,
                     dceOutputDir.absolutePath
                 )
-            } + globalCommonFiles + localCommonFiles + additionalCommonFiles + additionalMainFiles
+            } + globalCommonFiles + localCommonFiles + additionalCommonFiles + additionalMainFiles + inputJsFilesAfter
 
-            val pirAllJsFiles = additionalFiles + inputJsFiles + generatedJsFiles.map {
+            val pirAllJsFiles = additionalFiles + inputJsFilesBefore + generatedJsFiles.map {
                 it.first.replace(
                     outputDir.absolutePath,
                     pirOutputDir.absolutePath
                 )
             } +
-                    globalCommonFiles + localCommonFiles + additionalCommonFiles + additionalMainFiles
+                    globalCommonFiles + localCommonFiles + additionalCommonFiles + additionalMainFiles + inputJsFilesAfter
 
 
             val dontRunGeneratedCode =
