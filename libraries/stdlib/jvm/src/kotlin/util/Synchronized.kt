@@ -14,7 +14,7 @@ import kotlin.jvm.internal.unsafe.*
  * Executes the given function [block] while holding the monitor of the given object [lock].
  */
 @kotlin.internal.InlineOnly
-public actual inline fun <R> synchronized(lock: Any, block: () -> R): R {
+public inline fun <R> synchronized(lock: Any, block: () -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
