@@ -35,7 +35,7 @@ internal class SimpleCirSupertypesResolver(
 
         dependencies.classifier(type.classifierId)?.let { classifier ->
             if (classifier is CirProvided.Class) {
-                return supertypesFromProvidedClass(type, classifier)
+                return dependencies.supertypesFromProvidedClass(type, classifier)
             }
         }
         return emptySet()
@@ -47,9 +47,9 @@ internal class SimpleCirSupertypesResolver(
             .toSet()
     }
 
-    private fun supertypesFromProvidedClass(type: CirClassType, classifier: CirProvided.Class): Set<CirClassType> {
+    private fun CirProvidedClassifiers.supertypesFromProvidedClass(type: CirClassType, classifier: CirProvided.Class): Set<CirClassType> {
         return classifier.supertypes.filterIsInstance<CirProvided.ClassType>()
-            .mapNotNull { superType -> superType.toCirClassTypeOrNull() }
+            .mapNotNull { superType -> toCirClassTypeOrNull(superType) }
             .mapNotNull { superType -> buildSupertypeFromClassifierSupertype(type, superType) }
             .toSet()
     }

@@ -28,7 +28,7 @@ class TypeAliasCommonizer(
 
         val typeParameters = TypeParameterListCommonizer(typeCommonizer).commonize(values.map { it.typeParameters }) ?: return null
 
-        val underlyingType = typeCommonizer(values.map { it.underlyingType }) as? CirClassOrTypeAliasType ?: return null
+        val underlyingType = typeCommonizer.invoke(values.map { it.underlyingType }) as? CirClassOrTypeAliasType ?: return null
 
         val visibility = VisibilityCommonizer.lowering().commonize(values) ?: return null
 
