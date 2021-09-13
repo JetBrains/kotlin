@@ -19,9 +19,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.Flags
-import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
@@ -91,9 +88,6 @@ class KotlinDeserializedJvmSymbolsProvider(
     private val KotlinJvmBinaryClass.isPreReleaseInvisible: Boolean
         get() = classHeader.isPreRelease
 
-    override fun shouldLoadParentsFirst(classId: ClassId): Boolean =
-        javaClassConverter.hasTopLevelClassOf(classId)
-
     override fun extractClassMetadata(classId: ClassId, parentContext: FirDeserializationContext?): ClassMetadataFindResult? {
         // Kotlin classes are annotated Java classes, so this check also looks for them.
         if (!javaClassConverter.hasTopLevelClassOf(classId)) return null
@@ -104,7 +98,7 @@ class KotlinDeserializedJvmSymbolsProvider(
             return null
         }
         val kotlinClass = when (result) {
-            is KotlinClassFinder.Result.KotlinClass -> result
+            is KotlinClassFinder.Result.KotlinClass -> result.kotlinJvmBinaryClass
             is KotlinClassFinder.Result.ClassFileContent -> {
                 val javaClass = try {
                     javaClassConverter.findClass(classId, result.content) ?: return null
@@ -115,22 +109,20 @@ class KotlinDeserializedJvmSymbolsProvider(
                     javaClassConverter.convertJavaClassToFir(symbol, classId.outerClassId?.let(::getClass), javaClass)
                 }
             }
-            null -> return ClassMetadataFindResult.ShouldDeserializeViaParent
+            null -> return null
         }
-        if (kotlinClass.kotlinJvmBinaryClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
-        val (nameResolver, classProto) = kotlinClass.extractMetadata() ?: return null
-
-        if (parentContext == null && Flags.CLASS_KIND.get(classProto.flags) == ProtoBuf.Class.Kind.COMPANION_OBJECT) {
-            return ClassMetadataFindResult.ShouldDeserializeViaParent
-        }
+        if (kotlinClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
+        val data = kotlinClass.classHeader.data ?: return null
+        val strings = kotlinClass.classHeader.strings ?: return null
+        val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
 
         return ClassMetadataFindResult.Metadata(
             nameResolver,
             classProto,
-            JvmBinaryAnnotationDeserializer(session, kotlinClass.kotlinJvmBinaryClass, kotlinClassFinder, kotlinClass.byteContent),
-            kotlinClass.kotlinJvmBinaryClass.containingLibrary.toPath(),
-            KotlinJvmBinarySourceElement(kotlinClass.kotlinJvmBinaryClass),
-            classPostProcessor = { loadAnnotationsFromClassFile(kotlinClass, it) }
+            JvmBinaryAnnotationDeserializer(session, kotlinClass, kotlinClassFinder, result.byteContent),
+            kotlinClass.containingLibrary.toPath(),
+            KotlinJvmBinarySourceElement(kotlinClass),
+            classPostProcessor = { loadAnnotationsFromClassFile(result, it) }
         )
     }
 
@@ -141,7 +133,7 @@ class KotlinDeserializedJvmSymbolsProvider(
         kotlinClass: KotlinClassFinder.Result.KotlinClass,
         symbol: FirRegularClassSymbol
     ) {
-        val annotations = mutableListOf<FirAnnotation>()
+        val annotations = symbol.fir.annotations as MutableList<FirAnnotation>
         kotlinClass.kotlinJvmBinaryClass.loadClassAnnotations(
             object : KotlinJvmBinaryClass.AnnotationVisitor {
                 override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
@@ -153,14 +145,7 @@ class KotlinDeserializedJvmSymbolsProvider(
             },
             kotlinClass.byteContent,
         )
-        (symbol.fir.annotations as MutableList<FirAnnotation>) += annotations
         symbol.fir.replaceDeprecation(symbol.fir.getDeprecationInfos(session.languageVersionSettings.apiVersion))
-    }
-
-    private fun KotlinClassFinder.Result.KotlinClass.extractMetadata(): Pair<NameResolver, ProtoBuf.Class>? {
-        val data = kotlinJvmBinaryClass.classHeader.data ?: return null
-        val strings = kotlinJvmBinaryClass.classHeader.strings ?: return null
-        return JvmProtoBufUtil.readClassDataFrom(data, strings)
     }
 
     private fun String?.toPath(): Path? {

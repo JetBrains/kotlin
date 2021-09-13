@@ -67,7 +67,7 @@ abstract class AbstractFirDeserializedSymbolsProvider(
 
     private val packagePartsCache = session.firCachesFactory.createCache(::tryComputePackagePartInfos)
     private val typeAliasCache = session.firCachesFactory.createCache(::findAndDeserializeTypeAlias)
-    protected val classCache: FirCache<ClassId, FirRegularClassSymbol?, FirDeserializationContext?> =
+    private val classCache: FirCache<ClassId, FirRegularClassSymbol?, FirDeserializationContext?> =
         session.firCachesFactory.createCacheWithPostCompute(
             createValue = { classId, context -> findAndDeserializeClass(classId, context) },
             postCompute = { _, symbol, postProcessor ->
@@ -103,8 +103,6 @@ abstract class AbstractFirDeserializedSymbolsProvider(
             val sourceElement: DeserializedContainerSource,
             val classPostProcessor: DeserializedClassPostProcessor
         ) : ClassMetadataFindResult()
-
-        object ShouldDeserializeViaParent : ClassMetadataFindResult()
     }
 
     private fun tryComputePackagePartInfos(packageFqName: FqName): List<PackagePartsCacheData> {
@@ -149,18 +147,8 @@ abstract class AbstractFirDeserializedSymbolsProvider(
                 )
                 symbol to postProcessor
             }
-            ClassMetadataFindResult.ShouldDeserializeViaParent -> findAndDeserializeClassViaParent(classId) to null
             null -> null to null
         }
-    }
-
-    private fun findAndDeserializeClassViaParent(classId: ClassId): FirRegularClassSymbol? {
-        val outerClassId = classId.outerClassId ?: return null
-        //This will cause cyclic cache request that is highly observable in IDE (but not in the compiler - but possible SOE bug also)
-        //To avoid it in IDE there is special implementation that forces load parent class before any nested class request:
-        //[org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSessionFactory.KotlinDeserializedJvmSymbolsProviderForIde]
-        getClass(outerClassId) ?: return null
-        return classCache.getValueIfComputed(classId)
     }
 
     private fun loadFunctionsByCallableId(callableId: CallableId): List<FirNamedFunctionSymbol> {
@@ -181,37 +169,26 @@ abstract class AbstractFirDeserializedSymbolsProvider(
         }
     }
 
-    private fun getPackageParts(packageFqName: FqName): Collection<PackagePartsCacheData> {
-        return packagePartsCache.getValue(packageFqName)
-    }
-
-    protected open fun shouldLoadParentsFirst(classId: ClassId): Boolean = false
+    private fun getPackageParts(packageFqName: FqName): Collection<PackagePartsCacheData> =
+        packagePartsCache.getValue(packageFqName)
 
     protected fun getClass(
         classId: ClassId,
         parentContext: FirDeserializationContext? = null
     ): FirRegularClassSymbol? {
-        if (parentContext == null && shouldLoadParentsFirst(classId)) {
-            return getClassAfterLoadingParents(classId)
+        val parentClassId = classId.outerClassId
+        if (parentContext == null && parentClassId != null) {
+            val alreadyLoaded = classCache.getValueIfComputed(classId)
+            if (alreadyLoaded != null) return alreadyLoaded
+            // Load parent first in case correct `parentContext` is needed to deserialize the metadata of this class.
+            getClass(parentClassId, null)
+            // If that's the case, `classCache` should contain a value for `classId`.
         }
         return classCache.getValue(classId, parentContext)
     }
 
-    private fun getClassAfterLoadingParents(classId: ClassId): FirRegularClassSymbol? {
-        classId.outerClassId?.let { parentClassId ->
-            val alreadyLoaded = classCache.getValueIfComputed(classId)
-            if (alreadyLoaded != null) return alreadyLoaded
-            getClassAfterLoadingParents(parentClassId)
-        }
-        return classCache.getValue(classId, null)
-    }
-
-    private fun getTypeAlias(
-        classId: ClassId,
-    ): FirTypeAliasSymbol? {
-        if (!classId.relativeClassName.isOneSegmentFQN()) return null
-        return typeAliasCache.getValue(classId)
-    }
+    private fun getTypeAlias(classId: ClassId): FirTypeAliasSymbol? =
+        if (classId.relativeClassName.isOneSegmentFQN()) typeAliasCache.getValue(classId) else null
 
     // ------------------------ SymbolProvider methods ------------------------
 
@@ -235,6 +212,4 @@ abstract class AbstractFirDeserializedSymbolsProvider(
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         return getClass(classId) ?: getTypeAlias(classId)
     }
-
-    override fun getPackage(fqName: FqName): FqName? = null
 }
