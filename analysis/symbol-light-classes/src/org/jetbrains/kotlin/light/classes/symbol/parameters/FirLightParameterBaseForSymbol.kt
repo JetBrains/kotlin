@@ -50,8 +50,8 @@ internal abstract class FirLightParameterBaseForSymbol(
             parameterSymbol.annotatedType.type.asPsiType(this@FirLightParameterBaseForSymbol)
                 ?: this@FirLightParameterBaseForSymbol.nonExistentType()
         }
-        if (convertedType is PsiArrayType && parameterSymbol.isVararg) {
-            PsiEllipsisType(convertedType.componentType, convertedType.annotationProvider)
+        if (parameterSymbol.isVararg) {
+            PsiEllipsisType(convertedType, convertedType.annotationProvider)
         } else convertedType
     }
 
