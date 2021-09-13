@@ -43,8 +43,8 @@ object Elements : TemplateGroupBase() {
         if (f == ArraysOfPrimitives && primitive!!.isFloatingPoint()) {
             val replacement = "any { it == element }"
             val message = floatingSearchDeprecationMessage(signature, replacement)
-            deprecate(Deprecation(message, replacement, warningSince = "1.4"))
-            annotation("""@Suppress("DEPRECATION")""")
+            deprecate(Deprecation(message, replacement, warningSince = "1.4", errorSince = "1.6"))
+            annotation("""@Suppress("DEPRECATION_ERROR")""")
         }
         returns("Boolean")
         body(Iterables) {
@@ -72,7 +72,7 @@ object Elements : TemplateGroupBase() {
         if (f == ArraysOfPrimitives && primitive!!.isFloatingPoint()) {
             val replacement = "indexOfFirst { it == element }"
             val message = floatingSearchDeprecationMessage(signature, replacement)
-            deprecate(Deprecation(message, replacement, warningSince = "1.4"))
+            deprecate(Deprecation(message, replacement, warningSince = "1.4", errorSince = "1.6"))
         }
         returns("Int")
         body {
@@ -137,7 +137,7 @@ object Elements : TemplateGroupBase() {
         if (f == ArraysOfPrimitives && primitive!!.isFloatingPoint()) {
             val replacement = "indexOfLast { it == element }"
             val message = floatingSearchDeprecationMessage(signature, replacement)
-            deprecate(Deprecation(message, replacement, warningSince = "1.4"))
+            deprecate(Deprecation(message, replacement, warningSince = "1.4", errorSince = "1.6"))
         }
         returns("Int")
         body {
