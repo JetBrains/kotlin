@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -169,11 +169,12 @@ abstract class KtLightClassForSourceDeclaration(
         val aClass = other as KtLightClassForSourceDeclaration
 
         if (classOrObject != aClass.classOrObject) return false
+        if (jvmDefaultMode != aClass.jvmDefaultMode) return false
 
         return true
     }
 
-    override fun hashCode(): Int = classOrObject.hashCode()
+    override fun hashCode(): Int = classOrObject.hashCode() * 31 + jvmDefaultMode.hashCode()
 
     override fun getContainingClass(): PsiClass? {
         if (classOrObject.parent === classOrObject.containingFile) return null
