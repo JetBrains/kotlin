@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 
 internal fun CirProvidedClassifiers.toCirClassOrTypeAliasTypeOrNull(type: CirProvided.ClassOrTypeAliasType): CirClassOrTypeAliasType? {
     return when (type) {
-        is CirProvided.ClassType -> type.toCirClassTypeOrNull()
+        is CirProvided.ClassType -> toCirClassTypeOrNull(type)
         is CirProvided.TypeAliasType -> toCirTypeAliasTypeOrNull(type)
     }
 }
@@ -21,27 +21,36 @@ internal fun CirProvidedClassifiers.toCirTypeAliasTypeOrNull(type: CirProvided.T
     return CirTypeAliasType.createInterned(
         typeAliasId = type.classifierId,
         isMarkedNullable = type.isMarkedNullable,
-        arguments = type.arguments.map { it.toCirTypeProjection() ?: return null },
+        arguments = type.arguments.map { toCirTypeProjection(it) ?: return null },
         underlyingType = toCirClassOrTypeAliasTypeOrNull(typeAlias.underlyingType) ?: return null
     )
 }
 
-internal fun CirProvided.ClassType.toCirClassTypeOrNull(): CirClassType? {
+internal fun CirProvidedClassifiers.toCirClassTypeOrNull(type: CirProvided.ClassType): CirClassType? {
     return CirClassType.createInterned(
-        classId = this.classifierId,
-        outerType = this.outerType?.let { it.toCirClassTypeOrNull() ?: return null },
-        isMarkedNullable = this.isMarkedNullable,
-        arguments = this.arguments.map { it.toCirTypeProjection() ?: return null },
+        classId = type.classifierId,
+        outerType = type.outerType?.let { toCirClassTypeOrNull(it) ?: return null },
+        isMarkedNullable = type.isMarkedNullable,
+        arguments = type.arguments.map { toCirTypeProjection(it) ?: return null },
         visibility = Visibilities.Public,
     )
 }
 
-internal fun CirProvided.TypeProjection.toCirTypeProjection(): CirTypeProjection? {
-    return when (this) {
+internal fun CirProvidedClassifiers.toCirTypeProjection(type: CirProvided.TypeProjection): CirTypeProjection? {
+    return when (type) {
         is CirProvided.StarTypeProjection -> CirStarTypeProjection
-        is CirProvided.RegularTypeProjection -> CirRegularTypeProjection(
-            projectionKind = variance,
-            type = (type as? CirProvided.ClassType)?.toCirClassTypeOrNull() ?: return null
-        )
+        is CirProvided.RegularTypeProjection -> toCirRegularTypeProjectionOrNull(type)
     }
+}
+
+internal fun CirProvidedClassifiers.toCirRegularTypeProjectionOrNull(
+    projection: CirProvided.RegularTypeProjection
+): CirRegularTypeProjection? {
+    return CirRegularTypeProjection(
+        projectionKind = projection.variance,
+        type = when (val type = projection.type) {
+            is CirProvided.ClassOrTypeAliasType -> toCirClassOrTypeAliasTypeOrNull(type) ?: return null
+            is CirProvided.TypeParameterType -> CirTypeParameterType.createInterned(type.index, type.isMarkedNullable)
+        }
+    )
 }

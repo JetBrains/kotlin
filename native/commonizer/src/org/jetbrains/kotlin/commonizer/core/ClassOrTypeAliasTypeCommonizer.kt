@@ -23,6 +23,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
 
     override fun invoke(values: List<CirClassOrTypeAliasType>): CirClassOrTypeAliasType? {
         if (values.isEmpty()) return null
+
         val expansions = values.map { it.expandedType() }
         val isMarkedNullable = isMarkedNullableCommonizer.commonize(expansions.map { it.isMarkedNullable }) ?: return null
         val arguments = TypeArgumentListCommonizer(typeCommonizer).commonize(values.map { it.arguments }) ?: return null
@@ -63,7 +64,8 @@ internal class ClassOrTypeAliasTypeCommonizer(
                 arguments = arguments,
                 isMarkedNullable = isMarkedNullable,
                 underlyingType = classifiers.commonDependencies
-                    .toCirClassOrTypeAliasTypeOrNull(dependencyClassifier.underlyingType) ?: return null
+                    .toCirClassOrTypeAliasTypeOrNull(dependencyClassifier.underlyingType)
+                    ?.withParentArguments(arguments, isMarkedNullable) ?: return null
             )
 
             else -> Unit
