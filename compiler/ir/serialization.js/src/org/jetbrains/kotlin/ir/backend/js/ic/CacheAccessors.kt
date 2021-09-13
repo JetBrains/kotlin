@@ -14,6 +14,7 @@ import java.security.MessageDigest
 private const val inlineGraphFile = "inline.graph"
 private const val inlineFunctionsFile = "inline.functions"
 private const val fileInfoFile = "file.info"
+private const val fileBinaryAst = "binary.ast"
 
 typealias Hash = Long // Any long hash
 typealias FlatHash = Hash // Hash of inline function without its underlying inline call tree
@@ -38,7 +39,7 @@ interface PersistentCacheProvider {
 
     fun allInlineHashes(sigResolver: (String, Int) -> IdSignature): Map<IdSignature, TransHash>
 
-    fun binaryAst(path: String): ByteArray
+    fun binaryAst(path: String): ByteArray?
 
     companion object {
         val EMPTY = object : PersistentCacheProvider {
@@ -143,8 +144,11 @@ class PersistentCacheProviderImpl(private val cachePath: String) : PersistentCac
         return result
     }
 
-    override fun binaryAst(path: String): ByteArray {
-        TODO("Not yet implemented")
+    override fun binaryAst(path: String): ByteArray? {
+        val cachePath = path.fileDir
+        val astFile = File(cachePath, fileBinaryAst)
+        if (astFile.exists()) return astFile.readBytes()
+        return null
     }
 
 }
@@ -248,11 +252,17 @@ class PersistentCacheConsumerImpl(private val cachePath: String) : PersistentCac
         File(fileDir, inlineFunctionsFile).delete()
         File(fileDir, inlineGraphFile).delete()
         File(fileDir, fileInfoFile).delete()
+        File(fileDir, fileBinaryAst).delete()
         // TODO: once per-file invalidation is integrated into IC delete the whole directory including PIR parts
         //fileDir.deleteRecursively()
     }
 
     override fun commitBinaryAst(path: String, astData: ByteArray) {
-        TODO("Not yet implemented")
+        val fileId = createFileCacheId(path)
+        val cacheDir = File(File(cachePath), fileId)
+        val astFile = File(cacheDir, fileBinaryAst)
+        if (astFile.exists()) astFile.delete()
+        astFile.createNewFile()
+        astFile.writeBytes(astData)
     }
 }
