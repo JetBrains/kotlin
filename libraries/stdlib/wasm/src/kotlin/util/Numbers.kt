@@ -54,8 +54,8 @@ public actual fun Int.takeLowestOneBit(): Int = TODO("Wasm stdlib: Numbers")
  * Rotating by a multiple of [Int.SIZE_BITS] (32) returns the same number, or more generally
  * `number.rotateLeft(n) == number.rotateLeft(n % 32)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.rotateLeft(bitCount: Int): Int = TODO("Wasm stdlib: Numbers")
 
 
@@ -69,8 +69,8 @@ public actual fun Int.rotateLeft(bitCount: Int): Int = TODO("Wasm stdlib: Number
  * Rotating by a multiple of [Int.SIZE_BITS] (32) returns the same number, or more generally
  * `number.rotateRight(n) == number.rotateRight(n % 32)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.rotateRight(bitCount: Int): Int = TODO("Wasm stdlib: Numbers")
 
 
@@ -121,8 +121,8 @@ public actual fun Long.takeLowestOneBit(): Long = TODO("Wasm stdlib: Numbers")
  * Rotating by a multiple of [Long.SIZE_BITS] (64) returns the same number, or more generally
  * `number.rotateLeft(n) == number.rotateLeft(n % 64)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.rotateLeft(bitCount: Int): Long = TODO("Wasm stdlib: Numbers")
 
 /**
@@ -135,6 +135,6 @@ public actual fun Long.rotateLeft(bitCount: Int): Long = TODO("Wasm stdlib: Numb
  * Rotating by a multiple of [Long.SIZE_BITS] (64) returns the same number, or more generally
  * `number.rotateRight(n) == number.rotateRight(n % 64)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.rotateRight(bitCount: Int): Long = TODO("Wasm stdlib: Numbers")

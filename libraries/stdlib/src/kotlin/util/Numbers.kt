@@ -54,8 +54,8 @@ public expect fun Int.takeLowestOneBit(): Int
  * Rotating by a multiple of [Int.SIZE_BITS] (32) returns the same number, or more generally
  * `number.rotateLeft(n) == number.rotateLeft(n % 32)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun Int.rotateLeft(bitCount: Int): Int
 
 
@@ -69,8 +69,8 @@ public expect fun Int.rotateLeft(bitCount: Int): Int
  * Rotating by a multiple of [Int.SIZE_BITS] (32) returns the same number, or more generally
  * `number.rotateRight(n) == number.rotateRight(n % 32)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun Int.rotateRight(bitCount: Int): Int
 
 
@@ -121,8 +121,8 @@ public expect fun Long.takeLowestOneBit(): Long
  * Rotating by a multiple of [Long.SIZE_BITS] (64) returns the same number, or more generally
  * `number.rotateLeft(n) == number.rotateLeft(n % 64)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun Long.rotateLeft(bitCount: Int): Long
 
 /**
@@ -135,8 +135,8 @@ public expect fun Long.rotateLeft(bitCount: Int): Long
  * Rotating by a multiple of [Long.SIZE_BITS] (64) returns the same number, or more generally
  * `number.rotateRight(n) == number.rotateRight(n % 64)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun Long.rotateRight(bitCount: Int): Long
 
 /**
@@ -192,8 +192,8 @@ public inline fun Byte.takeLowestOneBit(): Byte = toInt().takeLowestOneBit().toB
  * Rotating by a multiple of [Byte.SIZE_BITS] (8) returns the same number, or more generally
  * `number.rotateLeft(n) == number.rotateLeft(n % 8)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun Byte.rotateLeft(bitCount: Int): Byte =
     (toInt().shl(bitCount and 7) or (toInt() and 0xFF).ushr(8 - (bitCount and 7))).toByte()
 
@@ -207,8 +207,8 @@ public fun Byte.rotateLeft(bitCount: Int): Byte =
  * Rotating by a multiple of [Byte.SIZE_BITS] (8) returns the same number, or more generally
  * `number.rotateRight(n) == number.rotateRight(n % 8)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun Byte.rotateRight(bitCount: Int): Byte =
     (toInt().shl(8 - (bitCount and 7)) or (toInt() and 0xFF).ushr(bitCount and 7)).toByte()
 
@@ -266,8 +266,8 @@ public inline fun Short.takeLowestOneBit(): Short = toInt().takeLowestOneBit().t
  * Rotating by a multiple of [Short.SIZE_BITS] (16) returns the same number, or more generally
  * `number.rotateLeft(n) == number.rotateLeft(n % 16)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun Short.rotateLeft(bitCount: Int): Short =
     (toInt().shl(bitCount and 15) or (toInt() and 0xFFFF).ushr(16 - (bitCount and 15))).toShort()
 
@@ -281,7 +281,7 @@ public fun Short.rotateLeft(bitCount: Int): Short =
  * Rotating by a multiple of [Short.SIZE_BITS] (16) returns the same number, or more generally
  * `number.rotateRight(n) == number.rotateRight(n % 16)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun Short.rotateRight(bitCount: Int): Short =
     (toInt().shl(16 - (bitCount and 15)) or (toInt() and 0xFFFF).ushr(bitCount and 15)).toShort()

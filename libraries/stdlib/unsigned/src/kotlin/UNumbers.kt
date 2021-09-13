@@ -58,9 +58,8 @@ public inline fun UInt.takeLowestOneBit(): UInt = toInt().takeLowestOneBit().toU
  * Rotating by a multiple of [UInt.SIZE_BITS] (32) returns the same number, or more generally
  * `number.rotateLeft(n) == number.rotateLeft(n % 32)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-@WasExperimental(ExperimentalUnsignedTypes::class)
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class, ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun UInt.rotateLeft(bitCount: Int): UInt = toInt().rotateLeft(bitCount).toUInt()
 
@@ -75,9 +74,8 @@ public inline fun UInt.rotateLeft(bitCount: Int): UInt = toInt().rotateLeft(bitC
  * Rotating by a multiple of [UInt.SIZE_BITS] (32) returns the same number, or more generally
  * `number.rotateRight(n) == number.rotateRight(n % 32)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-@WasExperimental(ExperimentalUnsignedTypes::class)
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class, ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun UInt.rotateRight(bitCount: Int): UInt = toInt().rotateRight(bitCount).toUInt()
 
@@ -134,9 +132,8 @@ public inline fun ULong.takeLowestOneBit(): ULong = toLong().takeLowestOneBit().
  * Rotating by a multiple of [ULong.SIZE_BITS] (64) returns the same number, or more generally
  * `number.rotateLeft(n) == number.rotateLeft(n % 64)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-@WasExperimental(ExperimentalUnsignedTypes::class)
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class, ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun ULong.rotateLeft(bitCount: Int): ULong = toLong().rotateLeft(bitCount).toULong()
 
@@ -150,9 +147,8 @@ public inline fun ULong.rotateLeft(bitCount: Int): ULong = toLong().rotateLeft(b
  * Rotating by a multiple of [ULong.SIZE_BITS] (64) returns the same number, or more generally
  * `number.rotateRight(n) == number.rotateRight(n % 64)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-@WasExperimental(ExperimentalUnsignedTypes::class)
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class, ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun ULong.rotateRight(bitCount: Int): ULong = toLong().rotateRight(bitCount).toULong()
 
@@ -209,9 +205,8 @@ public inline fun UByte.takeLowestOneBit(): UByte = toInt().takeLowestOneBit().t
  * Rotating by a multiple of [UByte.SIZE_BITS] (8) returns the same number, or more generally
  * `number.rotateLeft(n) == number.rotateLeft(n % 8)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-@WasExperimental(ExperimentalUnsignedTypes::class)
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class, ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun UByte.rotateLeft(bitCount: Int): UByte = toByte().rotateLeft(bitCount).toUByte()
 
@@ -225,9 +220,8 @@ public inline fun UByte.rotateLeft(bitCount: Int): UByte = toByte().rotateLeft(b
  * Rotating by a multiple of [UByte.SIZE_BITS] (8) returns the same number, or more generally
  * `number.rotateRight(n) == number.rotateRight(n % 8)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-@WasExperimental(ExperimentalUnsignedTypes::class)
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class, ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun UByte.rotateRight(bitCount: Int): UByte = toByte().rotateRight(bitCount).toUByte()
 
@@ -284,9 +278,8 @@ public inline fun UShort.takeLowestOneBit(): UShort = toInt().takeLowestOneBit()
  * Rotating by a multiple of [UShort.SIZE_BITS] (16) returns the same number, or more generally
  * `number.rotateLeft(n) == number.rotateLeft(n % 16)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-@WasExperimental(ExperimentalUnsignedTypes::class)
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class, ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun UShort.rotateLeft(bitCount: Int): UShort = toShort().rotateLeft(bitCount).toUShort()
 
@@ -300,8 +293,7 @@ public inline fun UShort.rotateLeft(bitCount: Int): UShort = toShort().rotateLef
  * Rotating by a multiple of [UShort.SIZE_BITS] (16) returns the same number, or more generally
  * `number.rotateRight(n) == number.rotateRight(n % 16)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-@WasExperimental(ExperimentalUnsignedTypes::class)
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class, ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun UShort.rotateRight(bitCount: Int): UShort = toShort().rotateRight(bitCount).toUShort()
