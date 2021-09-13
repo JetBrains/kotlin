@@ -36,12 +36,12 @@ import java.io.InputStream
 object JavaClassDescriptorCreator {
 
     /**
-     * Creates [JavaClassDescriptor]s of the given Java classes.
+     * Creates [JavaClassDescriptor]s of the given Java classes, or returns `null` if it can't be created for some reason.
      *
      * Note that creating a [JavaClassDescriptor] for a nested class will require accessing the outer class (and possibly vice versa).
      * Therefore, outer classes and nested classes must be passed together in one invocation of this method.
      */
-    fun create(classIds: List<ClassId>, classesContents: List<ByteArray>): List<JavaClassDescriptor> {
+    fun create(classIds: List<ClassId>, classesContents: List<ByteArray>): List<JavaClassDescriptor?> {
         val binaryJavaClasses = classIds.mapIndexed { index, classId ->
             createBinaryJavaClass(classId, classesContents[index])
         }
@@ -56,7 +56,6 @@ object JavaClassDescriptorCreator {
 
         return classIds.map { classId ->
             moduleDescriptor.findClassAcrossModuleDependencies(classId) as? JavaClassDescriptor
-                ?: error("Failed to create JavaClassDescriptor for class '$classId'")
         }
     }
 }

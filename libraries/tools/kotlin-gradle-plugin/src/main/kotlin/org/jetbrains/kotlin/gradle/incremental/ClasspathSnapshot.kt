@@ -52,3 +52,10 @@ class RegularJavaClassSnapshot(val serializedJavaClass: SerializedJavaClass) : J
  * changes in a local class will not cause recompilation of other source files.
  */
 object EmptyJavaClassSnapshot : JavaClassSnapshot()
+
+/**
+ * [JavaClassSnapshot] of a Java class where a proper snapshot can't be created for some reason, so we use the hash of the class contents as
+ * the snapshot instead, so that at least it's still correct when used as an input of the `KotlinCompile` task (when the class contents have
+ * changed, this snapshot will also change).
+ */
+class ContentHashJavaClassSnapshot(val contentHash: ByteArray) : JavaClassSnapshot()

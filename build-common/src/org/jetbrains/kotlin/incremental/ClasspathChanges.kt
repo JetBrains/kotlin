@@ -50,6 +50,7 @@ sealed class ClasspathChanges : Serializable {
     }
 
     sealed class NotAvailable : ClasspathChanges() {
+        object UnableToCompute : NotAvailable()
         object ForNonIncrementalRun : NotAvailable()
         object ClasspathSnapshotIsDisabled : NotAvailable()
         object ReservedForTestsOnly : NotAvailable()

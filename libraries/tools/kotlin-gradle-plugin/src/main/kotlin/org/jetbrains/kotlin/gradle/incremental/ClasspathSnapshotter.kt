@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.gradle.incremental
 
 import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.utils.DFS
 import java.io.File
+import java.security.MessageDigest
 import java.util.zip.ZipInputStream
 
 /** Computes a [ClasspathEntrySnapshot] of a classpath entry (directory or jar). */
@@ -28,10 +31,37 @@ object ClasspathEntrySnapshotter {
                     ClassFileWithContents(ClassFile(classpathEntry, unixStyleRelativePath), contents)
                 }
 
+        if (isKnownProblematicClasspathEntry(classpathEntry)) {
+            return ClasspathEntrySnapshot(classes.associateTo(LinkedHashMap()) {
+                it.classFile.unixStyleRelativePath to ContentHashJavaClassSnapshot(it.contents.md5())
+            })
+        }
+
         val snapshots = ClassSnapshotter.snapshot(classes)
 
         val relativePathsToSnapshotsMap = classes.map { it.classFile.unixStyleRelativePath }.zipToMap(snapshots)
         return ClasspathEntrySnapshot(relativePathsToSnapshotsMap)
+    }
+
+    /** Returns `true` if it is known that the snapshot of the given classpath entry can't be created for some reason. */
+    private fun isKnownProblematicClasspathEntry(classpathEntry: File): Boolean {
+        if (classpathEntry.name.startsWith("tools-jar-api")) {
+            // [FAULTY JAR] kotlin/dependencies/tools-jar-api/build/libs/tools-jar-api-1.6.255-SNAPSHOT.jar contains class
+            // com/sun/tools/javac/comp/Infer$GraphStrategy$NodeNotFoundException, but doesn't contain its outer class
+            // com/sun/tools/javac/comp/Infer$GraphStrategy.
+            // This happens with a few other similar classes in this jar.
+            // Therefore, this is a faulty jar, and our snapshotting logic cannot process it.
+            return true
+        }
+        if (classpathEntry.name.startsWith("platform-impl")) {
+            // ~/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/203.8084.24/artifacts/lib/platform-impl.jar contains class
+            // com/intellij/application/options/codeStyle/OptionTableWithPreviewPanel.IntOption. When processing that class,
+            // BinaryJavaAnnotation$Companion.computeTargetType$resolution_common_jvm in Annotations.kt requires the targetType to be
+            // JavaClassifierType, but the actual type is PlainJavaPrimitiveType.
+            // TODO: It's likely that this requirement is incorrect, but let's fix it later.
+            return true
+        }
+        return false
     }
 }
 
@@ -95,8 +125,27 @@ object ClassSnapshotter {
         val regularClassIds: List<ClassId> = computeJavaClassIds(regularClasses)
         val regularClassesContents: List<ByteArray> = regularClasses.map { classNameToClassFile[it]!!.contents }
 
-        val snapshots: List<RegularJavaClassSnapshot> = JavaClassDescriptorCreator.create(regularClassIds, regularClassesContents).map {
-            RegularJavaClassSnapshot(it.toSerializedJavaClass())
+        val descriptors: List<JavaClassDescriptor?> = JavaClassDescriptorCreator.create(regularClassIds, regularClassesContents)
+        val snapshots: List<JavaClassSnapshot> = descriptors.mapIndexed { index, descriptor ->
+            val classFileWithContents = classNameToClassFile[regularClasses[index]]!!
+            if (descriptor != null) {
+                try {
+                    RegularJavaClassSnapshot(descriptor.toSerializedJavaClass())
+                } catch (e: Throwable) {
+                    if (isKnownExceptionWhenReadingDescriptor(e)) {
+                        ContentHashJavaClassSnapshot(classFileWithContents.contents.md5())
+                    } else throw e
+                }
+            } else {
+                if (isKnownProblematicClass(classFileWithContents.classFile)) {
+                    ContentHashJavaClassSnapshot(classFileWithContents.contents.md5())
+                } else {
+                    error(
+                        "Failed to create JavaClassDescriptor for class '${classFileWithContents.classFile.unixStyleRelativePath}'" +
+                                " in '${classFileWithContents.classFile.classRoot.path}'"
+                    )
+                }
+            }
         }
         val regularClassSnapshots: LinkedHashMap<JavaClassName, JavaClassSnapshot> = regularClasses.zipToMap(snapshots)
 
@@ -115,7 +164,9 @@ object ClassSnapshotter {
                 true
             } else when (this) {
                 is TopLevelClass -> false
-                is NestedNonLocalClass -> nameToClassName[outerName]?.isSpecial() ?: error("Class name not found: $outerName")
+                is NestedNonLocalClass -> {
+                    nameToClassName[outerName]?.isSpecial() ?: error("Can't find outer class '$outerName' of class '$name'")
+                }
                 is LocalClass -> true
             }.also {
                 specialClasses[this] = it
@@ -123,6 +174,57 @@ object ClassSnapshotter {
         }
 
         return classNames.filter { it.isSpecial() }
+    }
+
+    /** Returns `true` if it is known that the given exception can be thrown when calling [JavaClassDescriptor.toSerializedJavaClass]. */
+    private fun isKnownExceptionWhenReadingDescriptor(throwable: Throwable): Boolean {
+        // When building the Kotlin repo with `./gradlew publish -Pbootstrap.local=true
+        // -Pbootstrap.local.path=/path/to/kotlin/build/repo -Pkotlin.incremental.useClasspathSnapshot=true`, the build can fail with:
+        //   org.gradle.api.internal.artifacts.transform.TransformException: Execution failed for ClasspathEntrySnapshotTransform: ~/.gradle/wrapper/dists/gradle-6.9-bin/2ecsmyp3bolyybemj56vfn4mt/gradle-6.9/lib/kotlin-reflect-1.4.20.jar
+        //   Caused by: java.lang.IncompatibleClassChangeError: Expected static method 'java.lang.Object org.jetbrains.kotlin.utils.DFS.dfsFromNode(java.lang.Object, org.jetbrains.kotlin.utils.DFS$Neighbors, org.jetbrains.kotlin.utils.DFS$Visited, org.jetbrains.kotlin.utils.DFS$NodeHandler)'
+        //     at org.jetbrains.kotlin.builtins.FunctionTypesKt.isTypeOrSubtypeOf(functionTypes.kt:31)
+        //     (... at JavaClassDescriptor.toSerializedJavaClass)
+        // The reason is that:
+        //   - org/jetbrains/kotlin/builtins/FunctionTypesKt.class is located in ~/.gradle/caches/jars-8/66425fb82fd14126e9aa07dcd3100b42/kotlin-compiler-embeddable-1.6.255-20210909.213620-55.jar
+        //   - org/jetbrains/kotlin/utils/DFS.class is located in ~/.gradle/caches/jars-8/c716e2e2d26b16f6f1462e59ba44cf3b/buildSrc.jar
+        // And somehow the two classes are incompatible (probably similar to the NoSuchMethodError documented at JavaClassDescriptorCreatorKt.createBinaryJavaClass).
+        // This happens to a few other jars inside gradle-6.9/lib.
+        // However, outside the Kotlin repo build, we don't have this issue (org/jetbrains/kotlin/builtins/FunctionTypesKt.class and
+        // org/jetbrains/kotlin/utils/DFS.class will be located in the same kotlin-compiler-embeddable.jar).
+        // Therefore, we special-case the Kotlin repo build below.
+        // TODO: See how we can address this issue.
+        return (throwable is IncompatibleClassChangeError &&
+                DFS::class.java.classLoader.getResource(DFS::class.java.name.replace('.', '/') + ".class")
+                    ?.path?.contains("buildSrc.jar") == true
+                )
+    }
+
+    /** Returns `true` if it is known that the snapshot of the given class can't be created for some reason. */
+    private fun isKnownProblematicClass(classFile: ClassFile): Boolean {
+        if (classFile.classRoot.name.startsWith("groovy-all")
+            && classFile.unixStyleRelativePath.endsWith("\$CollectorHelper.class")
+        ) {
+            // [FAULTY JAR] In gradle-6.9/lib/groovy-all-1.3-2.5.12.jar, the bytecode of groovy/cli/OptionField\$CollectorHelper.class
+            // indicates that its outer class is groovy/cli/OptionField, but the bytecode of groovy/cli/OptionField.class does not list any
+            // nested classes.
+            // This happens with a few other CollectorHelper classes in this jar.
+            // Therefore, this is a faulty jar, and our snapshotting logic cannot process it.
+            return true
+        }
+        if (classFile.classRoot.name.startsWith("gradle-api")
+            && classFile.unixStyleRelativePath.startsWith("org/gradle/internal/impldep/META-INF/versions")
+        ) {
+            // [FAULTY JAR] gradle-api-6.9.jar has the following entries:
+            //   - org/gradle/internal/impldep/org/junit/platform/commons/util/ModuleUtils.class
+            //   - org/gradle/internal/impldep/META-INF/versions/9/org/junit/platform/commons/util/ModulesUtils.class
+            //   - org/gradle/internal/impldep/META-INF/versions/9/org/junit/platform/commons/util/ModuleUtils$ModuleReferenceScanner.class
+            // The META-INF directories are located not at the top level (which is not expected), and those directories escaped our filter
+            // which filters out top-level META-INF directories. We then failed to snapshot ModuleUtils$ModuleReferenceScanner.class as
+            // there are 2 versions of ModuleUtils.class, and the one outside the META-INF directory doesn't have any nested classes.
+            // Therefore, this is a faulty jar, and our snapshotting logic cannot process it.
+            return true
+        }
+        return false
     }
 }
 
@@ -198,3 +300,5 @@ private fun <K, V> List<K>.zipToMap(other: List<V>): LinkedHashMap<K, V> {
     }
     return map
 }
+
+private fun ByteArray.md5(): ByteArray = MessageDigest.getInstance("MD5").digest(this)

@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.incremental.util.BufferingMessageCollector
 import org.jetbrains.kotlin.incremental.util.Either
+import org.jetbrains.kotlin.incremental.ClasspathChanges.NotAvailable.UnableToCompute
 import org.jetbrains.kotlin.incremental.ClasspathChanges.NotAvailable.ForJSCompiler
 import org.jetbrains.kotlin.incremental.ClasspathChanges.NotAvailable.ReservedForTestsOnly
 import org.jetbrains.kotlin.incremental.ClasspathChanges.NotAvailable.ForNonIncrementalRun
@@ -218,9 +219,9 @@ class IncrementalJvmCompilerRunner(
             // Note: classpathChanges is deserialized, so they are no longer singleton objects and need to be compared using `is` (not `==`)
             is ClasspathChanges.Available -> ChangesEither.Known(classpathChanges.lookupSymbols, classpathChanges.fqNames)
             is ClasspathChanges.NotAvailable -> when (classpathChanges) {
-                is ClasspathSnapshotIsDisabled, is ReservedForTestsOnly -> {
+                is UnableToCompute, is ClasspathSnapshotIsDisabled, is ReservedForTestsOnly -> {
                     reporter.measure(BuildTime.IC_ANALYZE_CHANGES_IN_DEPENDENCIES) {
-                        val scopes = caches.lookupCache.lookupMap.keys.map { if (it.scope.isBlank()) it.name else it.scope }.distinct()
+                        val scopes = caches.lookupCache.lookupMap.keys.map { it.scope.ifBlank { it.name } }.distinct()
                         getClasspathChanges(
                             args.classpathAsList, changedFiles, lastBuildInfo, modulesApiHistory, reporter, abiSnapshots, withSnapshot,
                             caches.platformCache, scopes
