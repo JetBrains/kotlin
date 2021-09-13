@@ -814,77 +814,92 @@ internal external fun insertInt(array: CharArray, start: Int, value: Int): Int
 
 // Method parameters renamings
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@Deprecated("Use append(value: Boolean) instead", ReplaceWith("append(value = it)"), DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
+@Deprecated("Use append(value: Boolean) instead", ReplaceWith("append(value = it)"))
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.append(it: Boolean): StringBuilder = this.append(value = it)
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@Deprecated("Use append(value: Byte) instead", ReplaceWith("append(value = it)"), DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
+@Deprecated("Use append(value: Byte) instead", ReplaceWith("append(value = it)"))
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.append(it: Byte): StringBuilder = this.append(value = it)
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@Deprecated("Use append(value: Short) instead", ReplaceWith("append(value = it)"), DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
+@Deprecated("Use append(value: Short) instead", ReplaceWith("append(value = it)"))
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.append(it: Short): StringBuilder = this.append(value = it)
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@Deprecated("Use append(value: Int) instead", ReplaceWith("append(value = it)"), DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
+@Deprecated("Use append(value: Int) instead", ReplaceWith("append(value = it)"))
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.append(it: Int): StringBuilder = this.append(value = it)
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@Deprecated("Use append(value: Long) instead", ReplaceWith("append(value = it)"), DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
+@Deprecated("Use append(value: Long) instead", ReplaceWith("append(value = it)"))
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.append(it: Long): StringBuilder = this.append(value = it)
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@Deprecated("Use append(value: Float) instead", ReplaceWith("append(value = it)"), DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
+@Deprecated("Use append(value: Float) instead", ReplaceWith("append(value = it)"))
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.append(it: Float): StringBuilder = this.append(value = it)
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@Deprecated("Use append(value: Double) instead", ReplaceWith("append(value = it)"), DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
+@Deprecated("Use append(value: Double) instead", ReplaceWith("append(value = it)"))
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.append(it: Double): StringBuilder = this.append(value = it)
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@Deprecated("Use append(value: String) instead", ReplaceWith("append(value = it)"), DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
+@Deprecated("Use append(value: String) instead", ReplaceWith("append(value = it)"))
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.append(it: String): StringBuilder = this.append(value = it)
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@Deprecated("Use append(value: CharArray) instead", ReplaceWith("append(value = it)"), DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
+@Deprecated("Use append(value: CharArray) instead", ReplaceWith("append(value = it)"))
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.append(it: CharArray): StringBuilder = this.append(value = it)
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@Deprecated("Use ensureCapacity(minimumCapacity: Int) instead", ReplaceWith("ensureCapacity(minimumCapacity = capacity)"), DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
+@Deprecated("Use ensureCapacity(minimumCapacity: Int) instead", ReplaceWith("ensureCapacity(minimumCapacity = capacity)"))
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.ensureCapacity(capacity: Int): Unit = this.ensureCapacity(minimumCapacity = capacity)
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@Deprecated("Use insert(index: Int, value: Char) instead", ReplaceWith("insert(index, value = c)"), DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
+@Deprecated("Use insert(index: Int, value: Char) instead", ReplaceWith("insert(index, value = c)"))
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.insert(index: Int, c: Char): StringBuilder = this.insert(index, value = c)
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@Deprecated("Use insert(index: Int, value: CharArray) instead", ReplaceWith("insert(index, value = chars)"), DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
+@Deprecated("Use insert(index: Int, value: CharArray) instead", ReplaceWith("insert(index, value = chars)"))
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.insert(index: Int, chars: CharArray): StringBuilder = this.insert(index, value = chars)
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@Deprecated("Use insert(index: Int, value: CharSequence?) instead", ReplaceWith("insert(index, value = csq)"), DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
+@Deprecated("Use insert(index: Int, value: CharSequence?) instead", ReplaceWith("insert(index, value = csq)"))
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.insert(index: Int, csq: CharSequence?): StringBuilder = this.insert(index, value = csq)
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@Deprecated("Use insert(index: Int, value: String) instead", ReplaceWith("insert(index, value = string)"), DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
+@Deprecated("Use insert(index: Int, value: String) instead", ReplaceWith("insert(index, value = string)"))
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.insert(index: Int, string: String): StringBuilder = this.insert(index, value = string)
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@Deprecated("Use setLength(newLength: Int) instead", ReplaceWith("setLength(newLength = l)"), DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
+@Deprecated("Use setLength(newLength: Int) instead", ReplaceWith("setLength(newLength = l)"))
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.setLength(l: Int) = this.setLength(newLength = l)
 
@@ -903,16 +918,17 @@ public inline fun StringBuilder.setLength(l: Int) = this.setLength(newLength = l
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [start] or [end] is out of range of the [csq] character sequence indices or when `start > end`.
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
 @Deprecated(
         "Use insertRange(index: Int, csq: CharSequence, start: Int, end: Int) instead",
-        ReplaceWith("insertRange(index, csq ?: \"null\", start, end)"),
-        DeprecationLevel.WARNING
+        ReplaceWith("insertRange(index, csq ?: \"null\", start, end)")
 )
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.insert(index: Int, csq: CharSequence?, start: Int, end: Int): StringBuilder =
         this.insertRange(index, csq ?: "null", start, end)
 
-@Deprecated("Use set(index: Int, value: Char) instead", ReplaceWith("set(index, value)"), DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
+@Deprecated("Use set(index: Int, value: Char) instead", ReplaceWith("set(index, value)"))
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.setCharAt(index: Int, value: Char) = this.set(index, value)
 
@@ -925,6 +941,7 @@ public inline fun StringBuilder.setCharAt(index: Int, value: Char) = this.set(in
  *
  * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
  */
-@Deprecated("Use deleteAt(index: Int) instead", ReplaceWith("deleteAt(index)"), DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
+@Deprecated("Use deleteAt(index: Int) instead", ReplaceWith("deleteAt(index)"))
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.deleteCharAt(index: Int) = this.deleteAt(index)
