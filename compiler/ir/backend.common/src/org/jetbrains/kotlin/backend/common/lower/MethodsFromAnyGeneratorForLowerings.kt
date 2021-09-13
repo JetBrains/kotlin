@@ -22,22 +22,29 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.util.DataClassMembersGenerator
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 
 class MethodsFromAnyGeneratorForLowerings(val context: BackendContext, val irClass: IrClass, val origin: IrDeclarationOrigin) {
-    fun createToStringMethodDeclaration(): IrSimpleFunction = irClass.addFunction("toString", context.irBuiltIns.stringType).apply {
-        overriddenSymbols = irClass.collectOverridenSymbols { it.isToString() }
-    }
+    private fun IrClass.addSyntheticFunction(name: String, returnType: IrType) =
+        addFunction(name, returnType, startOffset = SYNTHETIC_OFFSET, endOffset = SYNTHETIC_OFFSET)
 
-    fun createHashCodeMethodDeclaration(): IrSimpleFunction = irClass.addFunction("hashCode", context.irBuiltIns.intType).apply {
-        overriddenSymbols = irClass.collectOverridenSymbols { it.isHashCode() }
-    }
+    fun createToStringMethodDeclaration(): IrSimpleFunction =
+        irClass.addSyntheticFunction("toString", context.irBuiltIns.stringType).apply {
+            overriddenSymbols = irClass.collectOverridenSymbols { it.isToString() }
+        }
 
-    fun createEqualsMethodDeclaration(): IrSimpleFunction = irClass.addFunction("equals", context.irBuiltIns.booleanType).apply {
-        overriddenSymbols = irClass.collectOverridenSymbols { it.isEquals(context) }
-        addValueParameter("other", context.irBuiltIns.anyNType)
-    }
+    fun createHashCodeMethodDeclaration(): IrSimpleFunction =
+        irClass.addSyntheticFunction("hashCode", context.irBuiltIns.intType).apply {
+            overriddenSymbols = irClass.collectOverridenSymbols { it.isHashCode() }
+        }
+
+    fun createEqualsMethodDeclaration(): IrSimpleFunction =
+        irClass.addSyntheticFunction("equals", context.irBuiltIns.booleanType).apply {
+            overriddenSymbols = irClass.collectOverridenSymbols { it.isEquals(context) }
+            addValueParameter("other", context.irBuiltIns.anyNType)
+        }
 
     companion object {
         fun IrFunction.isToString(): Boolean =
@@ -60,13 +67,15 @@ class MethodsFromAnyGeneratorForLowerings(val context: BackendContext, val irCla
 open class LoweringDataClassMemberGenerator(
     val backendContext: BackendContext,
     irClass: IrClass,
-    origin: IrDeclarationOrigin
+    origin: IrDeclarationOrigin,
+    forbidDirectFieldAccess: Boolean = false
 ) :
     DataClassMembersGenerator(
         IrGeneratorContextBase(backendContext.irBuiltIns),
         backendContext.ir.symbols.externalSymbolTable,
         irClass,
-        origin
+        origin,
+        forbidDirectFieldAccess
     ) {
 
     override fun declareSimpleFunction(startOffset: Int, endOffset: Int, functionDescriptor: FunctionDescriptor): IrFunction {
