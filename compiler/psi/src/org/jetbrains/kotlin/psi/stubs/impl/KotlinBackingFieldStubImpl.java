@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KotlinBackingFieldStubImpl extends KotlinStubBaseImpl<KtBackingField>
         implements KotlinBackingFieldStub {
-    public KotlinBackingFieldStubImpl(StubElement parent) {
-        super(parent, KtStubElementTypes.PROPERTY_ACCESSOR);
+    public KotlinBackingFieldStubImpl(StubElement<?> parent) {
+        super(parent, KtStubElementTypes.BACKING_FIELD);
     }
 }
