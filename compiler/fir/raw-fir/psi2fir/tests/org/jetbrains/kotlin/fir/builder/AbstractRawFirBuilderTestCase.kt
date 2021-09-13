@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
@@ -131,7 +132,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         val visitedChildren = visitChildren()
         children.removeAll(visitedChildren)
         if (children.isNotEmpty()) {
-            val element = children.first()
+            val element = children.firstOrNull { it !is FirAnnotationArgumentMapping } ?: return
             val elementDump = element.render()
             throw AssertionError("FirElement ${element.javaClass} is not visited: $elementDump")
         }
@@ -142,7 +143,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         val transformedChildren = transformChildren()
         children.removeAll(transformedChildren)
         if (children.isNotEmpty()) {
-            val element = children.first()
+            val element = children.firstOrNull { it !is FirAnnotationArgumentMapping } ?: return
             val elementDump = element.render()
             throw AssertionError("FirElement ${element.javaClass} is not transformed: $elementDump")
         }
