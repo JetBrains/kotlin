@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
@@ -46,49 +44,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance.INVARIANT
 import org.jetbrains.kotlin.util.OperatorNameConventions
-
-// This symbol provider only loads JVM classes *not* annotated with Kotlin `@Metadata` annotation.
-// Use it in application sessions for loading classes from Java files listed on the command line.
-// For library and incremental compilation sessions use `KotlinDeserializedJvmSymbolsProvider`
-// in order to load Kotlin classes as well.
-class JavaSymbolProviderWrapper(session: FirSession, baseModuleData: FirModuleData, facade: JavaClassFinder) : FirSymbolProvider(session) {
-    private val javaClassConverter = JavaClassConverter(session, baseModuleData, facade)
-
-    private val classCache =
-        session.firCachesFactory.createCacheWithPostCompute(
-            createValue = { classId: ClassId, parentClassSymbol: FirRegularClassSymbol? ->
-                javaClassConverter.findClass(classId)?.let { FirRegularClassSymbol(classId) to (it to parentClassSymbol) }
-                    ?: null to (null to null)
-            },
-            postCompute = { _, classSymbol, (javaClass, parentClassSymbol) ->
-                if (classSymbol != null && javaClass != null) {
-                    javaClassConverter.convertJavaClassToFir(classSymbol, parentClassSymbol, javaClass)
-                }
-            }
-        )
-
-    override fun getPackage(fqName: FqName): FqName? =
-        javaClassConverter.getPackage(fqName)
-
-    override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
-        try {
-            if (javaClassConverter.hasTopLevelClassOf(classId)) getFirJavaClass(classId) else null
-        } catch (e: ProcessCanceledException) {
-            null
-        }
-
-    private fun getFirJavaClass(classId: ClassId): FirRegularClassSymbol? =
-        classCache.getValue(classId, classId.outerClassId?.let { getFirJavaClass(it) })
-
-    @OptIn(FirSymbolProviderInternals::class)
-    override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {}
-
-    @OptIn(FirSymbolProviderInternals::class)
-    override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {}
-
-    @OptIn(FirSymbolProviderInternals::class)
-    override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {}
-}
 
 @ThreadSafeMutableState
 class JavaClassConverter(
