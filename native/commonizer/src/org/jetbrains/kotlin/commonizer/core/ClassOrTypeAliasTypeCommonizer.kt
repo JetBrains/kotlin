@@ -125,6 +125,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
         }
 
         if (candidates.isEmpty()) return null
+        if (candidates.size == 1) return candidates.first()
 
         return candidates.maxByOrNull { candidate -> types.count { it.classifierId == candidate } }!!
     }
