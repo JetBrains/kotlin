@@ -102,7 +102,6 @@ object LowLevelFirApiFacadeForResolveOnAir {
         place: KtElement,
     ): FirTowerContextProvider {
         require(state is FirModuleResolveStateImpl)
-        require(place.isPhysical)
 
         return if (place is KtFile) {
             FileTowerProvider(place, onAirGetTowerContextForFile(state, place))
@@ -328,13 +327,11 @@ object LowLevelFirApiFacadeForResolveOnAir {
 
     private class TowerProviderForElementForState(private val state: FirModuleResolveState) : FirTowerContextProvider {
         override fun getClosestAvailableParentContext(ktElement: KtElement): FirTowerDataContext? {
-            return if (ktElement.isPhysical) {
-                onAirGetTowerContextProvider(state, ktElement).getClosestAvailableParentContext(ktElement)
-            } else {
-                require(state is FirModuleResolveStateDepended) {
-                    "Invalid resolve state ${this::class.simpleName} but have to be ${FirModuleResolveStateDepended::class.simpleName}"
-                }
+            return if (state is FirModuleResolveStateDepended) {
                 state.towerProviderBuiltUponElement.getClosestAvailableParentContext(ktElement)
+                    ?: onAirGetTowerContextProvider(state.originalState, ktElement).getClosestAvailableParentContext(ktElement)
+            } else {
+                onAirGetTowerContextProvider(state, ktElement).getClosestAvailableParentContext(ktElement)
             }
         }
     }

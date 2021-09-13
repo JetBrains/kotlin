@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 
 internal class FirModuleResolveStateDepended(
-    private val originalState: FirModuleResolveStateImpl,
+    val originalState: FirModuleResolveStateImpl,
     val towerProviderBuiltUponElement: FirTowerContextProvider,
     private val ktToFirMapping: KtToFirMapping?,
 ) : FirModuleResolveState() {
