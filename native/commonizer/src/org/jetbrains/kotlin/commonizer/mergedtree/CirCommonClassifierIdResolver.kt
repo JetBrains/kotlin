@@ -15,9 +15,10 @@ import org.jetbrains.kotlin.commonizer.cir.CirTypeAlias
 
 internal fun CirCommonClassifierIdResolver(
     classifierIndices: TargetDependent<CirClassifierIndex>,
-    dependencies: CirProvidedClassifiers = CirProvidedClassifiers.EMPTY
+    targetDependencies: TargetDependent<CirProvidedClassifiers>,
+    commonDependencies: CirProvidedClassifiers = CirProvidedClassifiers.EMPTY
 ): CirCommonClassifierIdResolver {
-    return CirCommonClassifierIdResolverImpl(classifierIndices, dependencies)
+    return CirCommonClassifierIdResolverImpl(classifierIndices, targetDependencies, commonDependencies)
 }
 
 interface CirCommonClassifierIdResolver {
@@ -26,7 +27,8 @@ interface CirCommonClassifierIdResolver {
 
 private class CirCommonClassifierIdResolverImpl(
     private val classifierIndices: TargetDependent<CirClassifierIndex>,
-    private val dependencies: CirProvidedClassifiers
+    private val targetDependencies: TargetDependent<CirProvidedClassifiers>,
+    private val commonDependencies: CirProvidedClassifiers
 ) : CirCommonClassifierIdResolver {
 
     private val cachedResults = THashMap<CirEntityId, CirCommonClassifierId>()
@@ -54,8 +56,10 @@ private class CirCommonClassifierIdResolverImpl(
             val nextClassifierId = queue.removeFirst()
 
             /* Either CirClassifier or CirProvided.Classifier or null */
-            val foundClassifiers = classifierIndices.associateWith { index ->
-                index.findClassifier(nextClassifierId) ?: dependencies.classifier(nextClassifierId)
+            val foundClassifiers = classifierIndices.targets.associateWith { index ->
+                classifierIndices[index].findClassifier(nextClassifierId)
+                    ?: targetDependencies[index].classifier(nextClassifierId)
+                    ?: commonDependencies.classifier(nextClassifierId)
             }
 
             /* Classifier is available for all targets */
@@ -63,17 +67,23 @@ private class CirCommonClassifierIdResolverImpl(
                 results.add(nextClassifierId)
             }
 
-            foundClassifiers.forEach { (index, classifier) ->
+            foundClassifiers.forEach { (target, classifier) ->
                 if (classifier == null) return@forEach
 
                 // Propagate to the left (towards typealias)
-                index.findTypeAliasesWithUnderlyingType(nextClassifierId).forEach { alias ->
+                classifierIndices[target].findTypeAliasesWithUnderlyingType(nextClassifierId).forEach { alias ->
                     if (visited.add(alias.id)) {
                         queue.add(alias.id)
                     }
                 }
 
-                dependencies.findTypeAliasesWithUnderlyingType(nextClassifierId).forEach { aliasId ->
+                targetDependencies[target].findTypeAliasesWithUnderlyingType(nextClassifierId).forEach { aliasId ->
+                    if (visited.add(aliasId)) {
+                        queue.add(aliasId)
+                    }
+                }
+
+                commonDependencies.findTypeAliasesWithUnderlyingType(nextClassifierId).forEach { aliasId ->
                     if (visited.add(aliasId)) {
                         queue.add(aliasId)
                     }

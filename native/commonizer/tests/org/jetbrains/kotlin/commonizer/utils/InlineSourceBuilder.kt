@@ -114,3 +114,12 @@ fun InlineSourceBuilder.createCirProvidedClassifiers(module: InlineSourceBuilder
     return CirProvidedClassifiersByModules.load(modulesProvider)
 }
 
+@InlineSourceBuilder.ModuleBuilderDsl
+fun InlineSourceBuilder.createCirProvidedClassifiers(builder: InlineSourceBuilder.ModuleBuilder.() -> Unit): CirProvidedClassifiers {
+    return createCirProvidedClassifiers(createModule { builder() })
+}
+
+@InlineSourceBuilder.ModuleBuilderDsl
+fun InlineSourceBuilder.createCirProvidedClassifiersFromSourceCode(@Language("kotlin") sourceCode: String): CirProvidedClassifiers {
+    return createCirProvidedClassifiers(createModule { source(sourceCode) })
+}
