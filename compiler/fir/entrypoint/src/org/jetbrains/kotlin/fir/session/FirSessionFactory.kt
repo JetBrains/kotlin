@@ -153,8 +153,7 @@ object FirSessionFactory {
                     kotlinScopeProvider,
                     it.packagePartProvider,
                     projectEnvironment.getKotlinClassFinder(it.scope),
-                    projectEnvironment.getJavaClassFinder(it.scope),
-                    projectEnvironment.getJavaSymbolProvider(this, moduleData, it.scope)
+                    projectEnvironment.getJavaClassFinder(it.scope)
                 )
             }
 
@@ -166,7 +165,7 @@ object FirSessionFactory {
                     listOfNotNull(
                         firProvider.symbolProvider,
                         symbolProviderForBinariesFromIncrementalCompilation,
-                        JavaSymbolProviderWrapper(this, projectEnvironment.getJavaSymbolProvider(this, moduleData, scope)),
+                        JavaSymbolProviderWrapper(this, moduleData, projectEnvironment.getJavaClassFinder(scope)),
                         dependenciesSymbolProvider,
                     )
                 )
@@ -214,8 +213,7 @@ object FirSessionFactory {
                 kotlinScopeProvider,
                 packagePartProvider,
                 projectEnvironment.getKotlinClassFinder(scope),
-                projectEnvironment.getJavaClassFinder(scope),
-                projectEnvironment.getJavaSymbolProvider(this, moduleDataProvider.allModuleData.last(), scope)
+                projectEnvironment.getJavaClassFinder(scope)
             )
 
             val builtinsModuleData = createModuleDataForBuiltins(

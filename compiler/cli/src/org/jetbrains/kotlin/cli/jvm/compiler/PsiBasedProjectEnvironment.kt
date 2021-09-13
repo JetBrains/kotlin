@@ -14,14 +14,13 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
-import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
+import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
@@ -48,22 +47,11 @@ class PsiBasedProjectEnvironment(
     val localFileSystem: VirtualFileSystem,
     val getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider
 ) : AbstractProjectEnvironment {
-
     override fun getKotlinClassFinder(fileSearchScope: AbstractProjectFileSearchScope): KotlinClassFinder =
         VirtualFileFinderFactory.getInstance(project).create(fileSearchScope.asPsiSearchScope())
 
     override fun getJavaClassFinder(fileSearchScope: AbstractProjectFileSearchScope): JavaClassFinder =
-        JavaClassFinderImpl().apply {
-            this.setProjectInstance(project)
-            this.setScope(fileSearchScope.asPsiSearchScope())
-        }
-
-    override fun getJavaSymbolProvider(
-        firSession: FirSession,
-        baseModuleData: FirModuleData,
-        fileSearchScope: AbstractProjectFileSearchScope
-    ): JavaSymbolProvider =
-        JavaSymbolProvider(firSession, baseModuleData, project, fileSearchScope.asPsiSearchScope())
+        project.createJavaClassFinder(fileSearchScope.asPsiSearchScope())
 
     override fun getJavaModuleResolver(): JavaModuleResolver =
         JavaModuleResolver.getInstance(project)
