@@ -125,29 +125,26 @@ fun testInsert() {
 
     // Subsequence of CharSequence.
     // Insert in the beginning.
-    assertEquals(StringBuilder("abcd").insert(0, "1234", 0, 0), "abcd")                    // 0 symbols
-    assertEquals(StringBuilder("abcd").insert(0, "1234", 0, 1), "1abcd")                   // 1 symbol
-    assertEquals(StringBuilder("abcd").insert(0, "1234", 1, 3), "23abcd")                  // 2 symbols
-    assertEquals(StringBuilder("abcd").insert(0, null as CharSequence?, 1, 3), "ulabcd")   // 2 symbols of null
+    assertEquals(StringBuilder("abcd").insertRange(0, "1234", 0, 0), "abcd")                    // 0 symbols
+    assertEquals(StringBuilder("abcd").insertRange(0, "1234", 0, 1), "1abcd")                   // 1 symbol
+    assertEquals(StringBuilder("abcd").insertRange(0, "1234", 1, 3), "23abcd")                  // 2 symbols
 
     // Insert in the end.
-    assertEquals(StringBuilder("abcd").insert(4, "1234", 0, 0), "abcd")
-    assertEquals(StringBuilder("abcd").insert(4, "1234", 0, 1), "abcd1")
-    assertEquals(StringBuilder("abcd").insert(4, "1234", 1, 3), "abcd23")
-    assertEquals(StringBuilder("abcd").insert(4, null as CharSequence?, 1, 3), "abcdul")
+    assertEquals(StringBuilder("abcd").insertRange(4, "1234", 0, 0), "abcd")
+    assertEquals(StringBuilder("abcd").insertRange(4, "1234", 0, 1), "abcd1")
+    assertEquals(StringBuilder("abcd").insertRange(4, "1234", 1, 3), "abcd23")
 
     // Insert in the middle.
-    assertEquals(StringBuilder("abcd").insert(2, "1234", 0, 0), "abcd")
-    assertEquals(StringBuilder("abcd").insert(2, "1234", 0, 1), "ab1cd")
-    assertEquals(StringBuilder("abcd").insert(2, "1234", 1, 3), "ab23cd")
-    assertEquals(StringBuilder("abcd").insert(2, null as CharSequence?, 1, 3), "abulcd")
+    assertEquals(StringBuilder("abcd").insertRange(2, "1234", 0, 0), "abcd")
+    assertEquals(StringBuilder("abcd").insertRange(2, "1234", 0, 1), "ab1cd")
+    assertEquals(StringBuilder("abcd").insertRange(2, "1234", 1, 3), "ab23cd")
 
     // Incorrect indices.
-    assertException { StringBuilder("a").insert(-1, "1", 0, 0) }
-    assertException { StringBuilder("a").insert(2, "1", 0, 0) }
-    assertException { StringBuilder("a").insert(1, "1", -1, 0) }
-    assertException { StringBuilder("a").insert(1, "1", 0, 2) }
-    assertException { StringBuilder("a").insert(1, "123", 2, 0) }
+    assertException { StringBuilder("a").insertRange(-1, "1", 0, 0) }
+    assertException { StringBuilder("a").insertRange(2, "1", 0, 0) }
+    assertException { StringBuilder("a").insertRange(1, "1", -1, 0) }
+    assertException { StringBuilder("a").insertRange(1, "1", 0, 2) }
+    assertException { StringBuilder("a").insertRange(1, "123", 2, 0) }
 
     // Other types.
     testInsertSingle(true)
