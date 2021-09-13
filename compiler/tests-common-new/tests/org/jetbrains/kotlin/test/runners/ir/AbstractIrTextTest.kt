@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
@@ -112,6 +113,12 @@ open class AbstractFir2IrTextTest : AbstractIrTextTestBase<FirOutputArtifact>() 
                 ::FirIrDumpIdenticalChecker,
                 ::BlackBoxCodegenSuppressor
             )
+
+            forTestsMatching("compiler/fir/fir2ir/testData/ir/irText/properties/backingField/*") {
+                defaultDirectives {
+                    LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
+                }
+            }
         }
     }
 }

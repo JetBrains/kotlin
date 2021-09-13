@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_STDLIB
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
@@ -64,6 +65,15 @@ open class AbstractFirBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase<F
             )
 
             configureDumpHandlersForCodegenTest()
+
+            forTestsMatching(
+                "compiler/fir/fir2ir/testData/codegen/box/properties/backingField/*" or
+                        "compiler/fir/fir2ir/testData/codegen/boxWithStdLib/properties/backingField/*"
+            ) {
+                defaultDirectives {
+                    LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
+                }
+            }
         }
     }
 }

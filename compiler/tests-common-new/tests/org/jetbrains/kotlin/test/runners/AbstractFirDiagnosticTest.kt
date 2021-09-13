@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.WITH_EXTEND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_REFLECT
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_STDLIB
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -121,6 +122,12 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
             JDK_KIND with TestJdkKind.FULL_JDK_15
             +WITH_STDLIB
             +WITH_REFLECT
+        }
+    }
+
+    forTestsMatching("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/*") {
+        defaultDirectives {
+            LANGUAGE with "+ExplicitBackingFields"
         }
     }
 }
