@@ -656,6 +656,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/mixingArgfilesAndUsualArgs.args");
         }
 
+        @TestMetadata("modulesWithDependencyCycle.args")
+        public void testModulesWithDependencyCycle() throws Exception {
+            runTest("compiler/testData/cli/jvm/modulesWithDependencyCycle.args");
+        }
+
         @TestMetadata("multipleTextRangesInDiagnosticsOrder.args")
         public void testMultipleTextRangesInDiagnosticsOrder() throws Exception {
             runTest("compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.args");

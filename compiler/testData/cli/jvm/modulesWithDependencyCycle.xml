@@ -1,0 +1,8 @@
+<modules>
+  <module name="a" type="java-production" outputDir="$TEMP_DIR$/a">
+    <sources path="$TESTDATA_DIR$/modulesWithDependencyCycleA.kt"/>
+  </module>
+  <module name="b" type="java-production" outputDir="$TEMP_DIR$/b">
+    <sources path="$TESTDATA_DIR$/modulesWithDependencyCycleB.kt"/>
+  </module>
+</modules>

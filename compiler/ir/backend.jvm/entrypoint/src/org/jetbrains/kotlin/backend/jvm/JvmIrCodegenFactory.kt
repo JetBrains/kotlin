@@ -27,8 +27,10 @@ import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
@@ -166,6 +168,21 @@ open class JvmIrCodegenFactory(
         }
         collectImpl(this)
         return result.toList()
+    }
+
+    override fun getModuleChunkBackendInput(
+        wholeBackendInput: CodegenFactory.BackendInput,
+        sourceFiles: Collection<KtFile>,
+    ): CodegenFactory.BackendInput {
+        wholeBackendInput as JvmIrBackendInput
+
+        val moduleChunk = sourceFiles.toSet()
+        val wholeModule = wholeBackendInput.irModuleFragment
+        return wholeBackendInput.copy(
+            IrModuleFragmentImpl(wholeModule.descriptor, wholeModule.irBuiltins, wholeModule.files.filter { file ->
+                file.getKtFile() in moduleChunk
+            })
+        )
     }
 
     override fun generateModule(state: GenerationState, input: CodegenFactory.BackendInput) {

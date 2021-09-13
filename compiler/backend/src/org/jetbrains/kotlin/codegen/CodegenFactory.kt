@@ -31,6 +31,11 @@ import org.jetbrains.kotlin.resolve.BindingContext
 interface CodegenFactory {
     fun convertToIr(input: IrConversionInput): BackendInput
 
+    // Extracts a part of the BackendInput which corresponds only to the specified source files.
+    // This is needed to support cyclic module dependencies, which are allowed in JPS, where frontend and psi2ir is run on sources of all
+    // modules combined, and then backend is run on each individual module.
+    fun getModuleChunkBackendInput(wholeBackendInput: BackendInput, sourceFiles: Collection<KtFile>): BackendInput
+
     fun generateModule(state: GenerationState, input: BackendInput)
 
     class IrConversionInput(
@@ -67,6 +72,11 @@ object DefaultCodegenFactory : CodegenFactory {
     object DummyOldBackendInput : CodegenFactory.BackendInput
 
     override fun convertToIr(input: CodegenFactory.IrConversionInput): CodegenFactory.BackendInput = DummyOldBackendInput
+
+    override fun getModuleChunkBackendInput(
+        wholeBackendInput: CodegenFactory.BackendInput,
+        sourceFiles: Collection<KtFile>,
+    ): CodegenFactory.BackendInput = DummyOldBackendInput
 
     override fun generateModule(state: GenerationState, input: CodegenFactory.BackendInput) {
         val filesInPackages = MultiMap<FqName, KtFile>()
