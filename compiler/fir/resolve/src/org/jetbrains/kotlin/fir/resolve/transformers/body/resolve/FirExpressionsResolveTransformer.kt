@@ -877,7 +877,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 val integerLiteralType =
                     ConeIntegerLiteralTypeImpl(constExpression.value as Long, isUnsigned = kind == ConstantValueKind.UnsignedIntegerLiteral)
                 if (data.expectedType != null) {
-                    val approximatedType = integerLiteralType.getApproximatedType(data.expectedType?.coneTypeSafe())
+                    val coneType = data.expectedType?.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)
+                    val approximatedType = integerLiteralType.getApproximatedType(coneType)
                     val newConstKind = approximatedType.toConstKind()
                     @Suppress("UNCHECKED_CAST")
                     constExpression.replaceKind(newConstKind as ConstantValueKind<T>)

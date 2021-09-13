@@ -30670,6 +30670,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("intToLongApproximationThroughTypeAlias.kt")
+            public void testIntToLongApproximationThroughTypeAlias() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typealias/intToLongApproximationThroughTypeAlias.kt");
+            }
+
+            @Test
             @TestMetadata("isAsWithTypeAlias.kt")
             public void testIsAsWithTypeAlias() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typealias/isAsWithTypeAlias.kt");
