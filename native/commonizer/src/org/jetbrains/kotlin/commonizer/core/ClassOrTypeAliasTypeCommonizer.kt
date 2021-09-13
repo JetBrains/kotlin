@@ -28,7 +28,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
         val arguments = TypeArgumentListCommonizer(typeCommonizer).commonize(values.map { it.arguments }) ?: return null
         val classifierId = selectClassifierId(values)
             ?: typeCommonizer.options.enableOptimisticNumberTypeCommonization.ifTrue {
-                return OptimisticNumbersTypeCommonizer.commonize(values.map { it.expandedType() })
+                return OptimisticNumbersTypeCommonizer.commonize(expansions)
             } ?: return null
 
         val outerTypes = values.safeCastValues<CirClassOrTypeAliasType, CirClassType>()?.map { it.outerType }

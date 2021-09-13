@@ -14,7 +14,8 @@ class CirKnownClassifiers(
     val targetDependencies: TargetDependent<CirProvidedClassifiers>,
     val commonizedNodes: CirCommonizedClassifierNodes,
     val commonDependencies: CirProvidedClassifiers,
-    val commonClassifierIdResolver: CirCommonClassifierIdResolver = CirCommonClassifierIdResolver(classifierIndices, commonDependencies),
+    val commonClassifierIdResolver: CirCommonClassifierIdResolver =
+        CirCommonClassifierIdResolver(classifierIndices, targetDependencies, commonDependencies),
 )
 
 /** A set of all CIR nodes built for commonized classes and type aliases. */

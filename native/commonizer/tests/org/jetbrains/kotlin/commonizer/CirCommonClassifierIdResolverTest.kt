@@ -277,7 +277,9 @@ private fun createCommonClassifierIdResolver(
     return CirCommonClassifierIdResolver(
         TargetDependent(root.withIndex().associate { (index, root) -> LeafCommonizerTarget(index.toString()) to root })
             .mapValue(::CirClassifierIndex),
-        dependencies = dependencies
+        targetDependencies = root.withIndex()
+            .associate { (index, _) -> LeafCommonizerTarget(index.toString()) to CirProvidedClassifiers.EMPTY }.toTargetDependent(),
+        commonDependencies = dependencies
     )
 }
 
