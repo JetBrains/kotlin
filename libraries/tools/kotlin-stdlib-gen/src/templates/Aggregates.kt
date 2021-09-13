@@ -330,7 +330,7 @@ object Aggregates : TemplateGroupBase() {
                 val isFloat = primitive?.isFloatingPoint() == true
 
                 if (!nullable) {
-                    deprecate(Deprecation("Use ${op}OrNull instead.", "this.${op}OrNull()", warningSince = "1.4", errorSince = "1.5"))
+                    deprecate(Deprecation("Use ${op}OrNull instead.", "this.${op}OrNull()", warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6"))
 
                     val isGeneric = f in listOf(Iterables, Sequences, ArraysOfObjects)
                     if (isFloat && isGeneric) {
@@ -397,7 +397,7 @@ object Aggregates : TemplateGroupBase() {
                 returns("T?")
 
                 if (!nullable) {
-                    deprecate(Deprecation("Use ${op}OrNull instead.", "this.${op}OrNull(selector)", warningSince = "1.4", errorSince = "1.5"))
+                    deprecate(Deprecation("Use ${op}OrNull instead.", "this.${op}OrNull(selector)", warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6"))
                     body { "return ${op}OrNull(selector)" }
                     return@builder
                 }
@@ -464,7 +464,7 @@ object Aggregates : TemplateGroupBase() {
                 returns("T?")
 
                 if (!nullable) {
-                    deprecate(Deprecation("Use ${op}OrNull instead.", "this.${op}OrNull(comparator)", warningSince = "1.4", errorSince = "1.5"))
+                    deprecate(Deprecation("Use ${op}OrNull instead.", "this.${op}OrNull(comparator)", warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6"))
                     body { "return ${op}OrNull(comparator)" }
                     return@builder
                 }
