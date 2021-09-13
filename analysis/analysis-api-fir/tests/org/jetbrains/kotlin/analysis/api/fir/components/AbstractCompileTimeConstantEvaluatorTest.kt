@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,21 +15,17 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractExpectedExpressionTypeTest : AbstractHLApiSingleFileTest() {
+abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractHLApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypAtCaret(ktFile) as KtExpression
-
-        val actualExpectedTypeText: String? = executeOnPooledThreadInReadAction {
-            analyse(ktFile) {
-                expressionAtCaret.getExpectedType()?.asStringForDebugging()
-            }
+        val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile) as KtExpression
+        val constantValue = executeOnPooledThreadInReadAction {
+            analyse(expression) { expression.evaluate() }
         }
-
         val actual = buildString {
-            appendLine("expression: ${expressionAtCaret.text}")
-            appendLine("expected type: $actualExpectedTypeText")
+            appendLine("expression: ${expression.text}")
+            appendLine("constant_value: $constantValue")
+            appendLine("constant: ${constantValue?.toConst()}")
         }
-
         testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
     }
 }

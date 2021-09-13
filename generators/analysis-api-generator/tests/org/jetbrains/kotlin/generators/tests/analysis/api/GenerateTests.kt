@@ -57,6 +57,10 @@ fun main(args: Array<String>) {
                 model("symbols/symbolByReference")
             }
 
+            testClass<AbstractCompileTimeConstantEvaluatorTest> {
+                model("components/compileTimeConstantEvaluator")
+            }
+
             testClass<AbstractExpectedExpressionTypeTest> {
                 model("components/expectedExpressionType")
             }
