@@ -41885,6 +41885,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("packagePrivateInPrivateInline.kt")
+        public void testPackagePrivateInPrivateInline() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/packagePrivateInPrivateInline.kt");
+        }
+
+        @Test
         @TestMetadata("protectedFromLambda.kt")
         public void testProtectedFromLambda() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticAccessors/protectedFromLambda.kt");
