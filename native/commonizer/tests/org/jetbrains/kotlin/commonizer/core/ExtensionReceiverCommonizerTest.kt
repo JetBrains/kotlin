@@ -5,52 +5,61 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.commonizer.cir.CirExtensionReceiver
+import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
+import org.jetbrains.kotlin.commonizer.core.ExtensionReceiverCommonizer.Commonized
 import org.jetbrains.kotlin.commonizer.utils.MOCK_CLASSIFIERS
-import org.jetbrains.kotlin.commonizer.utils.mockClassType
-import org.junit.Test
+import org.jetbrains.kotlin.commonizer.utils.mockExtensionReceiver
 
-class ExtensionReceiverCommonizerTest : AbstractCommonizerTest<CirExtensionReceiver?, ExtensionReceiverCommonizer.Commonized?>() {
+class ExtensionReceiverCommonizerTest : AbstractInlineSourcesCommonizationTest() {
 
-    @Test
-    fun nullReceiver() = doTestSuccess(
-        expected = null,
-        null, null, null
-    )
+    private val commonizer = ExtensionReceiverCommonizer(TypeCommonizer(MOCK_CLASSIFIERS))
 
-    @Test
-    fun sameReceiver() = doTestSuccess(
-        expected = ExtensionReceiverCommonizer.Commonized(mockExtensionReceiver("kotlin/String")),
-        mockExtensionReceiver("kotlin/String"),
-        mockExtensionReceiver("kotlin/String"),
-        mockExtensionReceiver("kotlin/String")
-    )
+    fun `test null receiver`() {
+        assertEquals(
+            Commonized(null), commonizer(listOf(null, null, null)),
+        )
+    }
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun differentReceivers() = doTestFailure(
-        mockExtensionReceiver("kotlin/String"),
-        mockExtensionReceiver("kotlin/String"),
-        mockExtensionReceiver("kotlin/Int")
-    )
+    fun `test same receiver`() {
+        assertEquals(
+            Commonized(mockExtensionReceiver("kotlin/String")),
+            commonizer(
+                listOf(
+                    mockExtensionReceiver("kotlin/String"),
+                    mockExtensionReceiver("kotlin/String"),
+                    mockExtensionReceiver("kotlin/String")
+                )
+            )
+        )
+    }
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun nullAndNonNullReceivers1() = doTestFailure(
-        mockExtensionReceiver("kotlin/String"),
-        mockExtensionReceiver("kotlin/String"),
-        null
-    )
+    fun `test different receiver`() {
+        assertEquals(
+            null, commonizer(
+                listOf(
+                    mockExtensionReceiver("kotlin/String"),
+                    mockExtensionReceiver("kotlin/String"),
+                    mockExtensionReceiver("kotlin/Int")
+                )
+            )
+        )
+    }
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun nullAndNonNullReceivers2() = doTestFailure(
-        null,
-        null,
-        mockExtensionReceiver("kotlin/String")
-    )
+    fun `test null and non-null receivers - 1`() {
+        assertEquals(
+            null, commonizer(
+                listOf(
+                    mockExtensionReceiver("kotlin/String"),
+                    mockExtensionReceiver("kotlin/String"),
+                    null
+                )
+            )
+        )
+    }
 
-    override fun createCommonizer() = ExtensionReceiverCommonizer(TypeCommonizer(MOCK_CLASSIFIERS)).asCommonizer()
+    fun `test null and non-null receivers - 2`() {
+        assertEquals(
+            null, commonizer(listOf(null, null, mockExtensionReceiver("kotlin/String")))
+        )
+    }
 }
-
-private fun mockExtensionReceiver(receiverClassId: String) = CirExtensionReceiver(
-    annotations = emptyList(),
-    type = mockClassType(receiverClassId)
-)

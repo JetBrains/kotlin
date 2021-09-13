@@ -46,6 +46,11 @@ internal fun mockClassType(
     isMarkedNullable = nullable
 )
 
+internal fun mockExtensionReceiver(receiverClassId: String) = CirExtensionReceiver(
+    annotations = emptyList(),
+    type = mockClassType(receiverClassId)
+)
+
 private fun createValidClassifierId(classifierId: String): CirEntityId {
     check(classifierId.none { it == '\\' || it == '?' }) { "Malformed classifier ID: $classifierId" }
     return CirEntityId.create(classifierId)
