@@ -1381,8 +1381,8 @@ public inline fun CharSequence.split(regex: Regex, limit: Int = 0): List<String>
  * Zero by default means no limit is set.
  * @sample samples.text.Strings.splitToSequence
  */
-@SinceKotlin("1.5")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.splitToSequence(regex: Regex, limit: Int = 0): Sequence<String> = regex.splitToSequence(this, limit)
 
