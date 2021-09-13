@@ -232,8 +232,8 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
      * Zero by default means no limit is set.
      * @sample samples.text.Regexps.splitToSequence
      */
-    @SinceKotlin("1.5")
-    @ExperimentalStdlibApi
+    @SinceKotlin("1.6")
+    @WasExperimental(ExperimentalStdlibApi::class)
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun splitToSequence(input: CharSequence, limit: Int = 0): Sequence<String> {
         requireNonNegativeLimit(limit)

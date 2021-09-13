@@ -81,8 +81,8 @@ expect class Regex {
      * Zero by default means no limit is set.
      * @sample samples.text.Regexps.splitToSequence
      */
-    @SinceKotlin("1.5")
-    @ExperimentalStdlibApi
+    @SinceKotlin("1.6")
+    @WasExperimental(ExperimentalStdlibApi::class)
     public fun splitToSequence(input: CharSequence, limit: Int = 0): Sequence<String>
 
     companion object {

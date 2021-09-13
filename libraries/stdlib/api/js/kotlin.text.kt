@@ -832,8 +832,8 @@ public fun kotlin.CharSequence.splitToSequence(vararg delimiters: kotlin.String,
 
 public fun kotlin.CharSequence.splitToSequence(vararg delimiters: kotlin.Char, ignoreCase: kotlin.Boolean = ..., limit: kotlin.Int = ...): kotlin.sequences.Sequence<kotlin.String>
 
-@kotlin.SinceKotlin(version = "1.5")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.CharSequence.splitToSequence(regex: kotlin.text.Regex, limit: kotlin.Int = ...): kotlin.sequences.Sequence<kotlin.String>
 
@@ -1432,8 +1432,8 @@ public final class Regex {
 
     public final fun split(input: kotlin.CharSequence, limit: kotlin.Int = ...): kotlin.collections.List<kotlin.String>
 
-    @kotlin.SinceKotlin(version = "1.5")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.6")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final fun splitToSequence(input: kotlin.CharSequence, limit: kotlin.Int = ...): kotlin.sequences.Sequence<kotlin.String>
 
     public open override fun toString(): kotlin.String
