@@ -165,7 +165,7 @@ fun computeJavaClassIds(classNames: List<JavaClassName>): List<ClassId> {
                 // "OuterClassWith$Sign$NestedClassWith$Sign", but its ClassId.relativeClassName will be
                 // "OuterClassWith$Sign.NestedClassWith$Sign". To disambiguate '$' in the (outer) class name, we need to get the ClassId of
                 // the outer class first.
-                val outerClassId = nameToClassName[outerName]?.getClassId() ?: error("Class name not found: $outerName")
+                val outerClassId = nameToClassName[outerName]?.getClassId() ?: error("Can't find outer class '$outerName' of class '$name'")
                 val relativeClassName = FqName(outerClassId.relativeClassName.asString() + "." + simpleName)
                 // For ClassId, a nested non-local class of a local class is also considered local (see ClassId's kdoc).
                 val isLocal = outerClassId.isLocal

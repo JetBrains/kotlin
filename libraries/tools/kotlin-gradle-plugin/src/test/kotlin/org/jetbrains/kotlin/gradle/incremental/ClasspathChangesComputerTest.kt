@@ -49,7 +49,7 @@ abstract class ClasspathChangesComputerTest : ClasspathSnapshotTestCommon() {
         return when (this) {
             is KotlinClassSnapshot -> classInfo.classId
             is RegularJavaClassSnapshot -> serializedJavaClass.classId
-            is EmptyJavaClassSnapshot -> null
+            is EmptyJavaClassSnapshot, is ContentHashJavaClassSnapshot -> null
         }
     }
 

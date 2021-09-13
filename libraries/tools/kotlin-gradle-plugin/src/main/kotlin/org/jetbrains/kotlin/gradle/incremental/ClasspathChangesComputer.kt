@@ -18,6 +18,11 @@ object ClasspathChangesComputer {
         val currentClassSnapshots = currentClasspathSnapshot.getClassSnapshots()
         val previousClassSnapshots = previousClasspathSnapshot.getClassSnapshots()
 
+        if (currentClassSnapshots.any { it is ContentHashJavaClassSnapshot }
+            || previousClassSnapshots.any { it is ContentHashJavaClassSnapshot }) {
+            return ClasspathChanges.NotAvailable.UnableToCompute
+        }
+
         val workingDir =
             FileUtil.createTempDirectory(this::class.java.simpleName, "_WorkingDir_${UUID.randomUUID()}", /* deleteOnExit */ true)
         val incrementalJvmCache = IncrementalJvmCache(workingDir, /* targetOutputDir */ null, FileToCanonicalPathConverter)
@@ -38,6 +43,9 @@ object ClasspathChangesComputer {
                 )
                 is EmptyJavaClassSnapshot -> {
                     // Nothing to process
+                }
+                is ContentHashJavaClassSnapshot -> {
+                    error("Unexpected type (it should have been handled earlier): ${previousSnapshot.javaClass.name}")
                 }
             }
         }
@@ -61,6 +69,9 @@ object ClasspathChangesComputer {
                 )
                 is EmptyJavaClassSnapshot -> {
                     // Nothing to process
+                }
+                is ContentHashJavaClassSnapshot -> {
+                    error("Unexpected type (it should have been handled earlier): ${currentSnapshot.javaClass.name}")
                 }
             }
         }

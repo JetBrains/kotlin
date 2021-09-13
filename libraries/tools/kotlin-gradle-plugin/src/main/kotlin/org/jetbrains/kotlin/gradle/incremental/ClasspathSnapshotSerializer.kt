@@ -94,19 +94,20 @@ object KotlinClassInfoExternalizer : DataExternalizer<KotlinClassInfo> {
 object JavaClassSnapshotExternalizer : DataExternalizer<JavaClassSnapshot> {
 
     override fun save(output: DataOutput, snapshot: JavaClassSnapshot) {
-        output.writeBoolean(snapshot is RegularJavaClassSnapshot)
+        output.writeString(snapshot.javaClass.name)
         when (snapshot) {
             is RegularJavaClassSnapshot -> RegularJavaClassSnapshotExternalizer.save(output, snapshot)
             is EmptyJavaClassSnapshot -> EmptyJavaClassSnapshotExternalizer.save(output, snapshot)
+            is ContentHashJavaClassSnapshot -> ContentHashJavaClassSnapshotExternalizer.save(output, snapshot)
         }
     }
 
     override fun read(input: DataInput): JavaClassSnapshot {
-        val isPlainJavaClassSnapshot = input.readBoolean()
-        return if (isPlainJavaClassSnapshot) {
-            RegularJavaClassSnapshotExternalizer.read(input)
-        } else {
-            EmptyJavaClassSnapshotExternalizer.read(input)
+        return when (val className = input.readString()) {
+            RegularJavaClassSnapshot::class.java.name -> RegularJavaClassSnapshotExternalizer.read(input)
+            EmptyJavaClassSnapshot::class.java.name -> EmptyJavaClassSnapshotExternalizer.read(input)
+            ContentHashJavaClassSnapshot::class.java.name -> ContentHashJavaClassSnapshotExternalizer.read(input)
+            else -> error("Unrecognized class name: $className")
         }
     }
 }
@@ -130,6 +131,17 @@ object EmptyJavaClassSnapshotExternalizer : DataExternalizer<EmptyJavaClassSnaps
 
     override fun read(input: DataInput): EmptyJavaClassSnapshot {
         return EmptyJavaClassSnapshot
+    }
+}
+
+object ContentHashJavaClassSnapshotExternalizer : DataExternalizer<ContentHashJavaClassSnapshot> {
+
+    override fun save(output: DataOutput, snapshot: ContentHashJavaClassSnapshot) {
+        ByteArrayExternalizer.save(output, snapshot.contentHash)
+    }
+
+    override fun read(input: DataInput): ContentHashJavaClassSnapshot {
+        return ContentHashJavaClassSnapshot(contentHash = ByteArrayExternalizer.read(input))
     }
 }
 
