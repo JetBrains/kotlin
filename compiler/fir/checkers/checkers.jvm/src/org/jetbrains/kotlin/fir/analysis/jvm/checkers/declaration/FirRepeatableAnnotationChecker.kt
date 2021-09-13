@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isJvm6
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
+import org.jetbrains.kotlin.fir.java.JavaClassConverter
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
@@ -166,7 +166,7 @@ object FirRepeatableAnnotationChecker : FirAnnotatedDeclarationChecker() {
                 ?: return
 
         val valueParameterSymbols = containerCtor.valueParameterSymbols
-        val parameterName = JavaSymbolProvider.VALUE_METHOD_NAME
+        val parameterName = JavaClassConverter.VALUE_METHOD_NAME
         val value = valueParameterSymbols.find { it.name == parameterName }
         if (value == null || !value.resolvedReturnTypeRef.isArrayType ||
             value.resolvedReturnTypeRef.type.typeArguments.single().type != annotationClass.defaultType()

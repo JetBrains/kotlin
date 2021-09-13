@@ -187,7 +187,7 @@ abstract class AbstractFirDeserializedSymbolsProvider(
 
     protected open fun shouldLoadParentsFirst(classId: ClassId): Boolean = false
 
-    protected open fun getClass(
+    protected fun getClass(
         classId: ClassId,
         parentContext: FirDeserializationContext? = null
     ): FirRegularClassSymbol? {
