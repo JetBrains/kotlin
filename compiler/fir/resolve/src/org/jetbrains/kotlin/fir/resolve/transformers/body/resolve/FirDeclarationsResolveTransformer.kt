@@ -139,6 +139,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         val shouldResolveEverything = !implicitTypeOnly
         return withFullBodyResolve {
             val initializerIsAlreadyResolved = bodyResolveState >= FirPropertyBodyResolveState.INITIALIZER_RESOLVED
+            var backingFieldIsAlreadyResolved = false
             context.withProperty(property) {
                 context.forPropertyInitializer {
                     property.transformDelegate(transformer, ResolutionMode.ContextDependentDelegate)
@@ -149,7 +150,11 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     if (property.initializer != null) {
                         storeVariableReturnType(property)
                     }
-                    property.transformBackingField(transformer, withExpectedType(property.returnTypeRef))
+                    val canResolveBackingFieldEarly = property.hasExplicitBackingField || property.returnTypeRef is FirResolvedTypeRef
+                    if (!initializerIsAlreadyResolved && canResolveBackingFieldEarly) {
+                        property.transformBackingField(transformer, withExpectedType(property.returnTypeRef))
+                        backingFieldIsAlreadyResolved = true
+                    }
                 }
                 val delegate = property.delegate
                 if (delegate != null) {
@@ -162,7 +167,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     val hasNonDefaultAccessors = property.getter != null && property.getter !is FirDefaultPropertyAccessor ||
                             property.setter != null && property.setter !is FirDefaultPropertyAccessor
                     val mayResolveSetter = shouldResolveEverything || !hasNonDefaultAccessors
-                    val mayResolveGetter = mayResolveSetter || property.initializer == null
+                    val propertyTypeIsKnown = property.returnTypeRef is FirResolvedTypeRef || property.returnTypeRef is FirErrorTypeRef
+                    val mayResolveGetter = mayResolveSetter || !propertyTypeIsKnown
                     if (mayResolveGetter) {
                         property.transformAccessors(mayResolveSetter)
                         property.replaceBodyResolveState(
@@ -173,6 +179,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 }
             }
             if (!initializerIsAlreadyResolved) {
+                if (!backingFieldIsAlreadyResolved) {
+                    property.transformBackingField(transformer, withExpectedType(property.returnTypeRef))
+                }
                 dataFlowAnalyzer.exitProperty(property)?.let {
                     property.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(it))
                 }
@@ -866,7 +875,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             return backingField
         }
         val inferredType = if (backingField is FirDefaultPropertyBackingField) {
-            data.expectedType
+            propertyType
         } else {
             backingField.initializer?.unwrapSmartcastExpression()?.typeRef
         }
