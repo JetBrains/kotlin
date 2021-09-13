@@ -5627,6 +5627,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 public void testRedundantExplicitBackingField() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/redundantExplicitBackingField.kt");
                 }
+
+                @Test
+                @TestMetadata("untypedPropertyWithBackingFieldUsage.kt")
+                public void testUntypedPropertyWithBackingFieldUsage() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/untypedPropertyWithBackingFieldUsage.kt");
+                }
             }
         }
 
