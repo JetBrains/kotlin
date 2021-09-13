@@ -394,14 +394,15 @@ internal val bitcodePhase = NamedCompilerPhase(
         name = "Bitcode",
         description = "LLVM Bitcode generation",
         lower = contextLLVMSetupPhase then
-                propertyAccessorInlinePhase then // Have to run after link dependencies phase, because fields
-                                                 // from dependencies can be changed during lowerings.
                 returnsInsertionPhase then
                 buildDFGPhase then
                 devirtualizationAnalysisPhase then
                 dcePhase then
                 removeRedundantCallsToFileInitializersPhase then
                 devirtualizationPhase then
+                propertyAccessorInlinePhase then // Have to run after link dependencies phase, because fields
+                                                 // from dependencies can be changed during lowerings.
+                inlineClassPropertyAccessorsPhase then
                 redundantCoercionsCleaningPhase then
                 createLLVMDeclarationsPhase then
                 ghaPhase then
@@ -493,6 +494,7 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         // Inline accessors only in optimized builds due to separate compilation and possibility to get broken
         // debug information.
         disableUnless(propertyAccessorInlinePhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
+        disableUnless(inlineClassPropertyAccessorsPhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
         disableUnless(dcePhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
         disableUnless(removeRedundantCallsToFileInitializersPhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
         disableUnless(ghaPhase, getBoolean(KonanConfigKeys.OPTIMIZATION))

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.phaser.namedUnitPhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysis
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
+import org.jetbrains.kotlin.backend.konan.lower.InlineClassPropertyAccessorsLowering
 import org.jetbrains.kotlin.backend.konan.lower.RedundantCoercionsCleaner
 import org.jetbrains.kotlin.backend.konan.lower.ReturnsInsertionLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.*
@@ -121,6 +122,12 @@ internal val returnsInsertionPhase = makeKonanModuleOpPhase(
         op = { context, irModule -> irModule.files.forEach { ReturnsInsertionLowering(context).lower(it) } }
 )
 
+internal val inlineClassPropertyAccessorsPhase = makeKonanModuleOpPhase(
+        name = "InlineClassPropertyAccessorsLowering",
+        description = "Inline class property accessors",
+        op = { context, irModule -> irModule.files.forEach { InlineClassPropertyAccessorsLowering(context).lower(it) } }
+)
+
 internal val devirtualizationAnalysisPhase = makeKonanModuleOpPhase(
         name = "DevirtualizationAnalysis",
         description = "Devirtualization analysis",
@@ -200,11 +207,6 @@ internal val dcePhase = makeKonanModuleOpPhase(
                     super.visitConstructor(declaration)
                 }
             })
-
-            // TODO: Bridge function normally calls it's target, but it could be optimized out by Autoboxing and InlinePropertyAccessor
-            //       lowerings. But Devirtualization doesn't handle this correctly, and can replace bridge call with call of it's target.
-            //       So it's safer not to remove target if bridge is preserved, even if target itself is not called directly
-            referencedFunctions.addAll(referencedFunctions.mapNotNull { it.origin.safeAs<DECLARATION_ORIGIN_BRIDGE_METHOD>()?.bridgeTarget })
 
             context.irModule!!.transformChildrenVoid(object: IrElementTransformerVoid() {
                 override fun visitFile(declaration: IrFile): IrFile {
