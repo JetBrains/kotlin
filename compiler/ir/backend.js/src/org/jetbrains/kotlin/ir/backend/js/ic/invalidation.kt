@@ -150,6 +150,7 @@ private fun KotlinLibrary.filesAndSigReaders(): List<Pair<String, IdSignatureDes
 }
 
 private fun buildCacheForModule(
+    libraryPath: String,
     irModule: IrModuleFragment,
     dirtyFiles: Collection<String>,
     cleanInlineHashes: Map<IdSignature, Hash>,
@@ -195,6 +196,7 @@ private fun buildCacheForModule(
         // TODO: actual way of building a cache could change in future
         cacheConsumer.buildForFile(irFile)
     }
+    cacheConsumer.commitLibraryPath(libraryPath)
 }
 
 private fun loadModules(
@@ -407,6 +409,14 @@ private fun actualizeCacheForModule(
 
     val deserializers = dirtySet.associateWith { currentModuleDeserializer.signatureDeserializerForFile(it).signatureToIndexMapping() }
 
-    buildCacheForModule(currentIrModule, dirtySet, sigHashes, persistentCacheConsumer, deserializers, fileFingerPrints)
+    buildCacheForModule(
+        library.libraryFile.canonicalPath,
+        currentIrModule,
+        dirtySet,
+        sigHashes,
+        persistentCacheConsumer,
+        deserializers,
+        fileFingerPrints
+    )
     return false // invalidated and re-built
 }

@@ -132,12 +132,12 @@ class PersistentCacheProviderImpl(private val cachePath: String) : PersistentCac
     override fun allInlineHashes(sigResolver: (String, Int) -> IdSignature): Map<IdSignature, TransHash> {
         val result = mutableMapOf<IdSignature, TransHash>()
         val cachePath = File(cachePath)
-        cachePath.listFiles { file: File -> file.isDirectory }!!.forEach {
-            val fileInfo = File(it, fileInfoFile)
+        cachePath.listFiles { file: File -> file.isDirectory }!!.forEach { f ->
+            val fileInfo = File(f, fileInfoFile)
             if (fileInfo.exists()) {
                 val fileName = fileInfo.readLines()[0]
-                parseHashList(it, inlineFunctionsFile) { id -> sigResolver(fileName, id) }.forEach {
-                    result[it.first] = it.second
+                parseHashList(f, inlineFunctionsFile) { id -> sigResolver(fileName, id) }.forEach { (sig, hash) ->
+                    result[sig] = hash
                 }
             }
         }
@@ -160,6 +160,8 @@ interface PersistentCacheConsumer {
     fun commitICCacheData(path: String, icData: SerializedIcDataForFile)
     fun commitBinaryAst(path: String, astData: ByteArray)
     fun invalidateForFile(path: String)
+
+    fun commitLibraryPath(libraryPath: String)
 
     companion object {
         val EMPTY = object : PersistentCacheConsumer {
@@ -187,6 +189,10 @@ interface PersistentCacheConsumer {
             }
 
             override fun commitBinaryAst(path: String, astData: ByteArray) {
+
+            }
+
+            override fun commitLibraryPath(libraryPath: String) {
 
             }
 
@@ -264,5 +270,18 @@ class PersistentCacheConsumerImpl(private val cachePath: String) : PersistentCac
         if (astFile.exists()) astFile.delete()
         astFile.createNewFile()
         astFile.writeBytes(astData)
+    }
+
+    override fun commitLibraryPath(libraryPath: String) {
+        val infoFile = File(File(cachePath), "info")
+        if (infoFile.exists()) {
+            infoFile.delete()
+        }
+        infoFile.createNewFile()
+
+        PrintWriter(infoFile).use {
+            it.println(libraryPath)
+            it.println("0")
+        }
     }
 }
