@@ -33,7 +33,7 @@ import java.nio.file.Paths
 
 // This symbol provider loads JVM classes, reading extra info from Kotlin `@Metadata` annotations
 // if present. Use it for library and incremental compilation sessions. For source sessions use
-// `JavaSymbolProviderWrapper`, as Kotlin classes should be parsed first.
+// `JavaSymbolProvider`, as Kotlin classes should be parsed first.
 @ThreadSafeMutableState
 class KotlinDeserializedJvmSymbolsProvider(
     session: FirSession,

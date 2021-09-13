@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
-import org.jetbrains.kotlin.fir.java.JavaSymbolProviderWrapper
+import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeLibrariesSess
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
-import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.Name
@@ -144,7 +143,7 @@ internal object FirIdeSessionFactory {
                     this,
                     providers = listOf(
                         provider.symbolProvider,
-                        JavaSymbolProviderWrapper(this, moduleData, project.createJavaClassFinder(searchScope)),
+                        JavaSymbolProvider(this, moduleData, project.createJavaClassFinder(searchScope)),
                     ),
                     dependencyProvider
                 )
