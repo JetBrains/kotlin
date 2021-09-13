@@ -67,9 +67,9 @@ class GenerationState private constructor(
     private val onIndependentPartCompilationEnd: GenerationStateEventCallback,
     wantsDiagnostics: Boolean,
     val jvmBackendClassResolver: JvmBackendClassResolver,
-    val isIrBackend: Boolean
+    val isIrBackend: Boolean,
+    val ignoreErrors: Boolean,
 ) {
-
     class Builder(
         private val project: Project,
         private val builderFactory: ClassBuilderFactory,
@@ -118,12 +118,16 @@ class GenerationState private constructor(
         fun isIrBackend(v: Boolean) =
             apply { isIrBackend = v }
 
+        var ignoreErrors: Boolean = false
+        fun ignoreErrors(v: Boolean): Builder =
+            apply { ignoreErrors = v }
+
         fun build() =
             GenerationState(
                 project, builderFactory, module, bindingContext, files, configuration,
                 generateDeclaredClassFilter, codegenFactory, targetId,
                 moduleName, outDirectory, onIndependentPartCompilationEnd, wantsDiagnostics,
-                jvmBackendClassResolver, isIrBackend
+                jvmBackendClassResolver, isIrBackend, ignoreErrors
             )
     }
 

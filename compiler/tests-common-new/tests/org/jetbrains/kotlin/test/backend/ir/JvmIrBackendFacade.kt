@@ -22,10 +22,10 @@ class JvmIrBackendFacade(
         module: TestModule,
         inputArtifact: IrBackendInput
     ): BinaryArtifacts.Jvm? {
-        val state = inputArtifact.backendInput.state
+        val state = inputArtifact.state
         val codegenFactory = state.codegenFactory as JvmIrCodegenFactory
         try {
-            codegenFactory.doGenerateFilesInternal(inputArtifact.backendInput)
+            codegenFactory.generateModule(state, inputArtifact.backendInput)
         } catch (e: BackendException) {
             if (CodegenTestDirectives.IGNORE_ERRORS in module.directives) {
                 return null

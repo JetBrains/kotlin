@@ -16,15 +16,43 @@
 
 package org.jetbrains.kotlin.codegen
 
+import com.intellij.openapi.project.Project
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.BindingContext
 
 interface CodegenFactory {
-    fun generateModule(state: GenerationState, files: Collection<KtFile>)
+    fun convertToIr(input: IrConversionInput): BackendInput
+
+    fun generateModule(state: GenerationState, input: BackendInput)
+
+    class IrConversionInput(
+        val project: Project,
+        val files: Collection<KtFile>,
+        val configuration: CompilerConfiguration,
+        val module: ModuleDescriptor,
+        val bindingContext: BindingContext,
+        val languageVersionSettings: LanguageVersionSettings,
+        val ignoreErrors: Boolean,
+    ) {
+        companion object {
+            fun fromGenerationState(state: GenerationState): IrConversionInput =
+                with(state) {
+                    IrConversionInput(
+                        project, files, configuration, module, originalFrontendBindingContext, languageVersionSettings, ignoreErrors
+                    )
+                }
+        }
+    }
+
+    interface BackendInput
 
     companion object {
         fun doCheckCancelled(state: GenerationState) {
@@ -36,11 +64,15 @@ interface CodegenFactory {
 }
 
 object DefaultCodegenFactory : CodegenFactory {
-    override fun generateModule(state: GenerationState, files: Collection<KtFile>) {
+    object DummyOldBackendInput : CodegenFactory.BackendInput
+
+    override fun convertToIr(input: CodegenFactory.IrConversionInput): CodegenFactory.BackendInput = DummyOldBackendInput
+
+    override fun generateModule(state: GenerationState, input: CodegenFactory.BackendInput) {
         val filesInPackages = MultiMap<FqName, KtFile>()
         val filesInMultifileClasses = MultiMap<FqName, KtFile>()
 
-        for (file in files) {
+        for (file in state.files) {
             val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file)
 
             if (fileClassInfo.withJvmMultifileClass) {

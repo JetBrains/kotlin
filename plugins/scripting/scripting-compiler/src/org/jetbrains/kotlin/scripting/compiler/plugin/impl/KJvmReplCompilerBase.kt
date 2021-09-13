@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorBasedReporter
 import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -200,7 +201,10 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
             .codegenFactory(codegenFactory)
             .build()
 
-        generationState.codegenFactory.generateModule(generationState, generationState.files)
+        codegenFactory.generateModule(
+            generationState,
+            codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationState(generationState)),
+        )
 
         return generationState
     }

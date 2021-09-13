@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
@@ -45,7 +44,6 @@ open class JvmIrCodegenFactory(
     private val jvmGeneratorExtensions: JvmGeneratorExtensionsImpl = JvmGeneratorExtensionsImpl(configuration),
 ) : CodegenFactory {
     data class JvmIrBackendInput(
-        val state: GenerationState,
         val irModuleFragment: IrModuleFragment,
         val symbolTable: SymbolTable,
         val phaseConfig: PhaseConfig?,
@@ -53,26 +51,20 @@ open class JvmIrCodegenFactory(
         val extensions: JvmGeneratorExtensionsImpl,
         val backendExtension: JvmBackendExtension,
         val notifyCodegenStart: () -> Unit,
-    )
+    ) : CodegenFactory.BackendInput
 
-    override fun generateModule(state: GenerationState, files: Collection<KtFile>) {
-        val input = convertToIr(state, files)
-        doGenerateFilesInternal(input)
-    }
-
-    @JvmOverloads
-    fun convertToIr(state: GenerationState, files: Collection<KtFile>, ignoreErrors: Boolean = false): JvmIrBackendInput {
+    override fun convertToIr(input: CodegenFactory.IrConversionInput): JvmIrBackendInput {
         val (mangler, symbolTable) =
             if (externalSymbolTable != null) externalMangler!! to externalSymbolTable
             else {
-                val mangler = JvmDescriptorMangler(MainFunctionDetector(state.bindingContext, state.languageVersionSettings))
+                val mangler = JvmDescriptorMangler(MainFunctionDetector(input.bindingContext, input.languageVersionSettings))
                 val symbolTable = SymbolTable(JvmIdSignatureDescriptor(mangler), IrFactoryImpl, JvmNameProvider)
                 mangler to symbolTable
             }
-        val psi2ir = Psi2IrTranslator(state.languageVersionSettings, Psi2IrConfiguration(ignoreErrors))
-        val messageLogger = state.configuration[IrMessageLogger.IR_MESSAGE_LOGGER] ?: IrMessageLogger.None
-        val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, symbolTable, jvmGeneratorExtensions)
-        val pluginExtensions = IrGenerationExtension.getInstances(state.project)
+        val psi2ir = Psi2IrTranslator(input.languageVersionSettings, Psi2IrConfiguration(input.ignoreErrors))
+        val messageLogger = input.configuration[IrMessageLogger.IR_MESSAGE_LOGGER] ?: IrMessageLogger.None
+        val psi2irContext = psi2ir.createGeneratorContext(input.module, input.bindingContext, symbolTable, jvmGeneratorExtensions)
+        val pluginExtensions = IrGenerationExtension.getInstances(input.project)
 
         val stubGenerator =
             DeclarationStubGeneratorImpl(psi2irContext.moduleDescriptor, symbolTable, psi2irContext.irBuiltIns, jvmGeneratorExtensions)
@@ -111,7 +103,7 @@ open class JvmIrCodegenFactory(
             }
         }
 
-        SourceDeclarationsPreprocessor(psi2irContext).run(files)
+        SourceDeclarationsPreprocessor(psi2irContext).run(input.files)
 
         for (extension in pluginExtensions) {
             psi2ir.addPostprocessingStep { module ->
@@ -143,7 +135,7 @@ open class JvmIrCodegenFactory(
         val irProviders = listOf(irLinker)
 
         val irModuleFragment =
-            psi2ir.generateModuleFragment(psi2irContext, files, irProviders, pluginExtensions, expectDescriptorToSymbol = null)
+            psi2ir.generateModuleFragment(psi2irContext, input.files, irProviders, pluginExtensions, expectDescriptorToSymbol = null)
         irLinker.postProcess()
 
         stubGenerator.unboundSymbolGeneration = true
@@ -151,13 +143,12 @@ open class JvmIrCodegenFactory(
         // We need to compile all files we reference in Klibs
         irModuleFragment.files.addAll(dependencies.flatMap { it.files })
 
-        if (!state.configuration.getBoolean(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT)) {
-            val originalBindingContext = state.originalFrontendBindingContext as? CleanableBindingContext
-                ?: error("BindingContext should be cleanable in JVM IR to avoid leaking memory: ${state.originalFrontendBindingContext}")
+        if (!input.configuration.getBoolean(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT)) {
+            val originalBindingContext = input.bindingContext as? CleanableBindingContext
+                ?: error("BindingContext should be cleanable in JVM IR to avoid leaking memory: ${input.bindingContext}")
             originalBindingContext.clear()
         }
         return JvmIrBackendInput(
-            state,
             irModuleFragment,
             symbolTable,
             phaseConfig,
@@ -177,8 +168,9 @@ open class JvmIrCodegenFactory(
         return result.toList()
     }
 
-    fun doGenerateFilesInternal(input: JvmIrBackendInput) {
-        val (state, irModuleFragment, symbolTable, customPhaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart) = input
+    override fun generateModule(state: GenerationState, input: CodegenFactory.BackendInput) {
+        val (irModuleFragment, symbolTable, customPhaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart) =
+            input as JvmIrBackendInput
         val irSerializer = if (state.configuration.getBoolean(JVMConfigurationKeys.SERIALIZE_IR))
             JvmIrSerializerImpl(state.configuration)
         else null
@@ -208,9 +200,10 @@ open class JvmIrCodegenFactory(
         notifyCodegenStart: () -> Unit = {}
     ) {
         val irProviders = configureBuiltInsAndGenerateIrProvidersInFrontendIRMode(irModuleFragment, symbolTable, extensions)
-        doGenerateFilesInternal(
+        generateModule(
+            state,
             JvmIrBackendInput(
-                state, irModuleFragment, symbolTable, phaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart
+                irModuleFragment, symbolTable, phaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart
             )
         )
     }
