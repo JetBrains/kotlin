@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.commonizer.utils.isObjCInteropCallableAnnotation
 
 class CallableValueParametersCommonizer(
     typeCommonizer: TypeCommonizer,
-) : Commonizer<CirCallableMemberWithParameters, CallableValueParametersCommonizer.Result> {
+) : Commonizer<CirCallableMemberWithParameters, CallableValueParametersCommonizer.Result?> {
     class Result(
         val hasStableParameterNames: Boolean,
         val valueParameters: List<CirValueParameter>,
@@ -121,7 +121,7 @@ class CallableValueParametersCommonizer(
     private var valueParameterNames: ValueParameterNames? = null
     private var error = false
 
-    override val result: Result
+    override val result: Result?
         get() {
             // don't inline `patchCallables` property;
             // valueParameters.overwriteNames() should be called strongly before valueParameters.result
@@ -141,7 +141,7 @@ class CallableValueParametersCommonizer(
 
             return Result(
                 hasStableParameterNames = hasStableParameterNames,
-                valueParameters = valueParameters.result,
+                valueParameters = valueParameters.result ?: return null,
                 patchCallables = patchCallables
             )
         }

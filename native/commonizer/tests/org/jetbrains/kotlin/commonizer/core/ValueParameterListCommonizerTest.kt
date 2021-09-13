@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.commonizer.core
 import org.jetbrains.kotlin.commonizer.cir.CirValueParameter
 import org.jetbrains.kotlin.commonizer.utils.MOCK_CLASSIFIERS
 import org.junit.Test
+import kotlin.test.assertEquals
 
-class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValueParameter>, List<CirValueParameter>>() {
+class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValueParameter>, List<CirValueParameter>?>() {
 
     @Test
     fun emptyValueParameters() = doTestSuccess(
@@ -130,24 +131,30 @@ class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValuePar
         )
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun mismatchedParameterTypes() = doTestFailure(
-        mockValueParams(
-            "a" to "kotlin/String",
-            "b" to "kotlin/Int",
-            "c" to "org/sample/Foo"
-        ),
-        mockValueParams(
-            "a" to "kotlin/String",
-            "b" to "kotlin/Int",
-            "c" to "org/sample/Foo"
-        ),
-        mockValueParams(
-            "a" to "kotlin/Int",
-            "b" to "kotlin/String",
-            "c" to "org/sample/Bar"
+    @Test
+    fun mismatchedParameterTypes() {
+        assertEquals(
+            null, createCommonizer().commonize(
+                listOf(
+                    mockValueParams(
+                        "a" to "kotlin/String",
+                        "b" to "kotlin/Int",
+                        "c" to "org/sample/Foo"
+                    ),
+                    mockValueParams(
+                        "a" to "kotlin/String",
+                        "b" to "kotlin/Int",
+                        "c" to "org/sample/Foo"
+                    ),
+                    mockValueParams(
+                        "a" to "kotlin/Int",
+                        "b" to "kotlin/String",
+                        "c" to "org/sample/Bar"
+                    )
+                )
+            )
         )
-    )
+    }
 
     override fun createCommonizer() = ValueParameterListCommonizer(TypeCommonizer(MOCK_CLASSIFIERS))
 
