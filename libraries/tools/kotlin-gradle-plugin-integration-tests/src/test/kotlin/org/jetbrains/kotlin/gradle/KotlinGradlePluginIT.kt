@@ -258,16 +258,6 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
-    fun testKotlinInJavaRoot() {
-        Project("kotlinInJavaRoot").build("build") {
-            assertSuccessful()
-            assertReportExists()
-            assertTasksExecuted(":compileKotlin")
-            assertContains(":compileTestKotlin NO-SOURCE")
-        }
-    }
-
-    @Test
     fun testIncrementalPropertyFromLocalPropertiesFile() {
         val project = Project("kotlinProject")
         project.setupWorkingDir()

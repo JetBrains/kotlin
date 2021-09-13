@@ -18,6 +18,7 @@ import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import java.nio.file.Path
+import java.util.*
 import java.util.stream.Stream
 import kotlin.streams.asStream
 
@@ -41,6 +42,7 @@ abstract class KGPBaseTest {
         val projectIsolation: Boolean = false,
         val configurationCacheProblems: BaseGradleIT.ConfigurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
         val parallel: Boolean = true,
+        val incremental: Boolean? = null,
         val maxWorkers: Int = (Runtime.getRuntime().availableProcessors() / 4 - 1).coerceAtLeast(2),
         val fileSystemWatchEnabled: Boolean = false,
         val buildCacheEnabled: Boolean = false,
@@ -85,6 +87,10 @@ abstract class KGPBaseTest {
                 arguments.add("--max-workers=$maxWorkers")
             } else {
                 arguments.add("--no-parallel")
+            }
+
+            if (incremental != null) {
+                arguments.add("-Pkotlin.incremental=$incremental")
             }
 
             if (gradleVersion >= GradleVersion.version("6.5")) {
