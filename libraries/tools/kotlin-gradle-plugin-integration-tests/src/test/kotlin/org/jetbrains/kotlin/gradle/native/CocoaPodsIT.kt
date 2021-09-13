@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.DUMMY_FRAMEWORK_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_BUILD_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_DOWNLOAD_TASK_NAME
@@ -22,15 +21,12 @@ import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.junit.AfterClass
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import java.io.File
 import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -53,7 +49,7 @@ class CocoaPodsIT : BaseGradleIT() {
     private val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
 
     override fun defaultBuildOptions(): BuildOptions =
-        super.defaultBuildOptions().copy(customEnvironmentVariables = getPathEnvs())
+        super.defaultBuildOptions().copy(customEnvironmentVariables = getEnvs())
 
     val PODFILE_IMPORT_DIRECTIVE_PLACEHOLDER = "<import_mode_directive>"
 
@@ -773,7 +769,7 @@ class CocoaPodsIT : BaseGradleIT() {
             hooks.addHook {
                 // Check that an output framework is a dynamic framework
                 val framework = fileInWorkingDir("build/cocoapods/framework/cocoapods.framework/cocoapods")
-                with(runProcess(listOf("file", framework.absolutePath), projectDir, environmentVariables = getPathEnvs())) {
+                with(runProcess(listOf("file", framework.absolutePath), projectDir, environmentVariables = getEnvs())) {
                     assertTrue(isSuccessful)
                     assertTrue(output.contains("dynamically linked shared library"))
                 }
@@ -1322,7 +1318,7 @@ class CocoaPodsIT : BaseGradleIT() {
     ) {
         val process = ProcessBuilder(command, *args).apply {
             directory(workingDir)
-            environment().putAll(getPathEnvs())
+            environment().putAll(getEnvs())
             if (inheritIO) {
                 inheritIO()
             }
@@ -1539,12 +1535,17 @@ class CocoaPodsIT : BaseGradleIT() {
             if (hostIsArmMac) cocoapodsInstallationRoot.resolve("bin/wrapper") else cocoapodsInstallationRoot.resolve("bin")
         }
 
-        private fun getPathEnvs(): Map<String, String> {
+        private fun getEnvs(): Map<String, String> {
             val path = cocoapodsBinPath.absolutePath + File.pathSeparator + System.getenv("PATH")
             val gemPath = System.getenv("GEM_PATH")?.let {
                 cocoapodsInstallationRoot.absolutePath + File.pathSeparator + it
             } ?: cocoapodsInstallationRoot.absolutePath
-            return mapOf("PATH" to path, "GEM_PATH" to gemPath)
+            return mapOf(
+                "PATH" to path,
+                "GEM_PATH" to gemPath,
+                // CocoaPods 1.11 requires UTF-8 locale being set, more details: https://github.com/CocoaPods/CocoaPods/issues/10939
+                "LC_ALL" to "en_US.UTF-8"
+            )
         }
 
         private fun isCocoapodsInstalled(): Boolean {
@@ -1554,7 +1555,7 @@ class CocoaPodsIT : BaseGradleIT() {
                 val result = runProcess(
                     listOf("pod", "--version"),
                     File("."),
-                    environmentVariables = getPathEnvs()
+                    environmentVariables = getEnvs()
                 )
                 result.isSuccessful
             } catch (e: IOException) {
