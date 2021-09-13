@@ -83,7 +83,7 @@ internal object FirReferenceResolveHelper {
     fun FirReference.toTargetSymbol(session: FirSession, symbolBuilder: KtSymbolByFirBuilder): Collection<KtSymbol> {
         return when (this) {
             is FirBackingFieldReference -> {
-                listOfNotNull(symbolBuilder.variableLikeBuilder.buildBackingFieldSymbol(resolvedSymbol))
+                listOfNotNull(resolvedSymbol.fir.buildSymbol(symbolBuilder))
             }
             is FirResolvedNamedReference -> {
                 val fir = when (val symbol = resolvedSymbol) {

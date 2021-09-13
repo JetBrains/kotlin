@@ -54,7 +54,7 @@ internal class KtSymbolByFirBuilder private constructor(
     val withReadOnlyCaching: Boolean,
     private val symbolsCache: BuilderCache<FirDeclaration, KtSymbol>,
     private val filesCache: BuilderCache<FirFile, KtFileSymbol>,
-    private val backingFieldCache: BuilderCache<FirBackingFieldSymbol, KtBackingFieldSymbol>,
+    private val backingFieldCache: BuilderCache<FirBackingField, KtBackingFieldSymbol>,
     private val typesCache: BuilderCache<ConeKotlinType, KtType>,
 ) : ValidityTokenOwner {
     private val resolveState by weakRef(resolveState)
@@ -244,7 +244,9 @@ internal class KtSymbolByFirBuilder private constructor(
                 is FirValueParameter -> buildValueParameterSymbol(fir)
                 is FirField -> buildFieldSymbol(fir)
                 is FirEnumEntry -> buildEnumEntrySymbol(fir) // TODO enum entry should not be callable
-                else -> throwUnexpectedElementError(fir)
+                is FirBackingField -> buildBackingFieldSymbol(fir)
+
+                is FirErrorProperty -> throwUnexpectedElementError(fir)
             }
         }
 
@@ -289,14 +291,14 @@ internal class KtSymbolByFirBuilder private constructor(
             return symbolsCache.cache(fir) { KtFirJavaFieldSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
         }
 
-        fun buildBackingFieldSymbol(fir: FirBackingFieldSymbol): KtFirBackingFieldSymbol {
+        fun buildBackingFieldSymbol(fir: FirBackingField): KtFirBackingFieldSymbol {
             return backingFieldCache.cache(fir) {
-                KtFirBackingFieldSymbol(fir.fir.propertySymbol.fir, resolveState, token, this@KtSymbolByFirBuilder)
+                KtFirBackingFieldSymbol(fir.propertySymbol.fir, resolveState, token, this@KtSymbolByFirBuilder)
             }
         }
 
         fun buildBackingFieldSymbolByProperty(fir: FirProperty): KtFirBackingFieldSymbol {
-            val backingFieldSymbol = fir.backingField?.symbol
+            val backingFieldSymbol = fir.backingField
                 ?: error("FirProperty backingField is null")
             return buildBackingFieldSymbol(backingFieldSymbol)
         }
