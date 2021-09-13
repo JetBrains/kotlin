@@ -11,7 +11,7 @@ class ExtensionReceiverCommonizer(
     private val typeCommonizer: TypeCommonizer
 ) : NullableContextualSingleInvocationCommonizer<CirExtensionReceiver?, ExtensionReceiverCommonizer.Commonized> {
 
-    class Commonized(val receiver: CirExtensionReceiver?) {
+    data class Commonized(val receiver: CirExtensionReceiver?) {
         companion object {
             val NULL = Commonized(null)
         }
