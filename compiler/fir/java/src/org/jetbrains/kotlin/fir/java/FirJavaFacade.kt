@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.types.Variance.INVARIANT
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 @ThreadSafeMutableState
-class JavaClassConverter(
+class FirJavaFacade(
     private val session: FirSession,
     private val baseModuleData: FirModuleData,
     private val classFinder: JavaClassFinder

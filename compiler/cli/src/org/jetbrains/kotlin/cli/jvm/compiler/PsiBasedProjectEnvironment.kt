@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
-import org.jetbrains.kotlin.fir.java.JavaClassConverter
+import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.java.createJavaClassFinder
@@ -90,11 +90,11 @@ class PsiBasedProjectEnvironment(
     override fun getSearchScopeForProjectJavaSources(): AbstractProjectFileSearchScope =
         PsiBasedProjectFileSearchScope(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
 
-    override fun getJavaClassConverter(
+    override fun getFirJavaFacade(
         firSession: FirSession,
         baseModuleData: FirModuleData,
         fileSearchScope: AbstractProjectFileSearchScope
-    ) = JavaClassConverter(firSession, baseModuleData, project.createJavaClassFinder(fileSearchScope.asPsiSearchScope()))
+    ) = FirJavaFacade(firSession, baseModuleData, project.createJavaClassFinder(fileSearchScope.asPsiSearchScope()))
 }
 
 private fun AbstractProjectFileSearchScope.asPsiSearchScope() =

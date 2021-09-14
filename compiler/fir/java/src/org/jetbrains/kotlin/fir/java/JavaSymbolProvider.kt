@@ -24,28 +24,28 @@ import org.jetbrains.kotlin.name.Name
 // in order to load Kotlin classes as well.
 class JavaSymbolProvider(
     session: FirSession,
-    private val javaClassConverter: JavaClassConverter,
+    private val javaFacade: FirJavaFacade,
 ) : FirSymbolProvider(session) {
 
     private val classCache =
         session.firCachesFactory.createCacheWithPostCompute(
             createValue = { classId: ClassId, parentClassSymbol: FirRegularClassSymbol? ->
-                javaClassConverter.findClass(classId)?.let { FirRegularClassSymbol(classId) to (it to parentClassSymbol) }
+                javaFacade.findClass(classId)?.let { FirRegularClassSymbol(classId) to (it to parentClassSymbol) }
                     ?: null to (null to null)
             },
             postCompute = { _, classSymbol, (javaClass, parentClassSymbol) ->
                 if (classSymbol != null && javaClass != null) {
-                    javaClassConverter.convertJavaClassToFir(classSymbol, parentClassSymbol, javaClass)
+                    javaFacade.convertJavaClassToFir(classSymbol, parentClassSymbol, javaClass)
                 }
             }
         )
 
     override fun getPackage(fqName: FqName): FqName? =
-        javaClassConverter.getPackage(fqName)
+        javaFacade.getPackage(fqName)
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
         try {
-            if (javaClassConverter.hasTopLevelClassOf(classId)) getFirJavaClass(classId) else null
+            if (javaFacade.hasTopLevelClassOf(classId)) getFirJavaClass(classId) else null
         } catch (e: ProcessCanceledException) {
             null
         }
