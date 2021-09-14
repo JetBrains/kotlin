@@ -14,6 +14,11 @@ class CustomAnnotationTypeAttribute(val annotations: List<FirAnnotation>) : Cone
 
     override fun intersect(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute? = null
 
+    override fun add(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute {
+        if (other == null) return this
+        return CustomAnnotationTypeAttribute(annotations + other.annotations)
+    }
+
     override fun isSubtypeOf(other: CustomAnnotationTypeAttribute?): Boolean = true
 
     override fun toString(): String = annotations.joinToString(separator = " ") { it.render() }

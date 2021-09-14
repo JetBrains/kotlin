@@ -15,6 +15,17 @@ import kotlin.reflect.KClass
 abstract class ConeAttribute<T : ConeAttribute<T>> : AnnotationMarker {
     abstract fun union(other: @UnsafeVariance T?): T?
     abstract fun intersect(other: @UnsafeVariance T?): T?
+
+    /*
+     * This function is used to decide how multiple attributes should be united in presence of typealiases:
+     * typealias B = @SomeAttribute(1) A
+     * typealias C = @SomeAttribute(2) B
+     *
+     * For determining attribute value of expanded type of C we should add @SomeAttribute(2) to @SomeAttribute(1)
+     *
+     * This function must be symmetrical: a.add(b) == b.add(a)
+     */
+    abstract fun add(other: @UnsafeVariance T?): T
     abstract fun isSubtypeOf(other: @UnsafeVariance T?): Boolean
 
     abstract override fun toString(): String
@@ -63,6 +74,10 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
 
     fun intersect(other: ConeAttributes): ConeAttributes {
         return perform(other) { this.intersect(it) }
+    }
+
+    fun add(other: ConeAttributes): ConeAttributes {
+        return perform(other) { this.add(it) }
     }
 
     operator fun contains(attribute: ConeAttribute<*>): Boolean {
