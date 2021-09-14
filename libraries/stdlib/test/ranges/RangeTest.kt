@@ -406,6 +406,8 @@ public class RangeTest {
         assertFailsWith<NoSuchElementException> { IntRange.EMPTY.step(Int.MAX_VALUE).random() }
         assertFailsWith<NoSuchElementException> { LongRange.EMPTY.step(Long.MAX_VALUE).random() }
         assertFailsWith<NoSuchElementException> { CharRange.EMPTY.step(Int.MAX_VALUE).random() }
+        assertFailsWith<NoSuchElementException> { UIntRange.EMPTY.step(Int.MAX_VALUE).random() }
+        assertFailsWith<NoSuchElementException> { ULongRange.EMPTY.step(Long.MAX_VALUE).random() }
     }
 
     @Test
@@ -413,6 +415,8 @@ public class RangeTest {
         assertNull(IntRange.EMPTY.step(Int.MAX_VALUE).randomOrNull())
         assertNull(LongRange.EMPTY.step(Long.MAX_VALUE).randomOrNull())
         assertNull(CharRange.EMPTY.step(Int.MAX_VALUE).randomOrNull())
+        assertNull(UIntRange.EMPTY.step(Int.MAX_VALUE).randomOrNull())
+        assertNull(ULongRange.EMPTY.step(Long.MAX_VALUE).randomOrNull())
     }
 
 
