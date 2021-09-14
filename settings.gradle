@@ -445,8 +445,8 @@ if (attachedIntellijVersion == "212") { // Latest available platform in scope of
 
 include ":generators:frontend-api-generator",
         ":analysis:low-level-api-fir",
-        ":idea-frontend-fir:idea-frontend-fir-generator",
-        ":idea-frontend-fir",
+        ":analysis:analysis-api-fir:analysis-api-fir-generator",
+        ":analysis:analysis-api-fir",
         ":analysis:analysis-api",
         ":analysis:analysis-api-providers",
         ":analysis:symbol-light-classes"
@@ -628,9 +628,6 @@ project(':js:js.engines').projectDir = "$rootDir/js/js.engines" as File
 project(':kotlinx-serialization-compiler-plugin').projectDir = file("$rootDir/plugins/kotlin-serialization/kotlin-serialization-compiler")
 project(':kotlin-serialization').projectDir = file("$rootDir/libraries/tools/kotlin-serialization")
 project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")
-
-project(":idea-frontend-fir:idea-frontend-fir-generator").projectDir = "$rootDir/idea/idea-frontend-fir/idea-frontend-fir-generator" as File
-project(":idea-frontend-fir").projectDir = "$rootDir/idea/idea-frontend-fir" as File
 
 project(':kotlin-scripting-ide-services-unshaded').projectDir = "$rootDir/plugins/scripting/scripting-ide-services" as File
 project(':kotlin-scripting-ide-services-test').projectDir = "$rootDir/plugins/scripting/scripting-ide-services-test" as File

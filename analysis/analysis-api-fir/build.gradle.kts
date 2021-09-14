@@ -1,3 +1,4 @@
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -6,33 +7,27 @@ plugins {
 dependencies {
     compile(project(":compiler:psi"))
     compile(project(":compiler:fir:fir2ir"))
-    compile(project(":compiler:fir:fir2ir:jvm-backend"))
-    compile(project(":compiler:ir.serialization.common"))
+    compile(project(":compiler:ir.tree"))
     compile(project(":compiler:fir:resolve"))
     compile(project(":compiler:fir:checkers"))
     compile(project(":compiler:fir:checkers:checkers.jvm"))
     compile(project(":compiler:fir:java"))
-    compile(project(":compiler:backend.common.jvm"))
-    testCompile(project(":analysis:analysis-api-fir"))
-    implementation(project(":compiler:ir.psi2ir"))
-    implementation(project(":compiler:fir:entrypoint"))
+    compile(project(":analysis:low-level-api-fir"))
+    compile(project(":analysis:analysis-api"))
+    compile(project(":compiler:light-classes"))
+    compile(intellijCoreDep())
     implementation(project(":analysis:analysis-api-providers"))
 
-    compile(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
-
-
+    testCompile(projectTests(":analysis:low-level-api-fir"))
+    testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":compiler:test-infrastructure-utils"))
     testCompile(projectTests(":compiler:test-infrastructure"))
     testCompile(projectTests(":compiler:tests-common-new"))
-
-    testImplementation("org.opentest4j:opentest4j:1.2.0")
-    testCompile(toolsJar())
-    testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
+    testCompile(toolsJar())
     testApiJUnit5()
-    testCompile(project(":kotlin-reflect"))
-    testImplementation(project(":analysis:symbol-light-classes"))
+    testRuntime(project(":analysis:symbol-light-classes"))
 
     testRuntimeOnly(intellijDep()) {
         includeJars(
@@ -66,6 +61,8 @@ projectTest(jUnit5Enabled = true) {
     useJUnitPlatform()
 }
 
+testsJar()
+
 allprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
         kotlinOptions {
@@ -74,5 +71,29 @@ allprojects {
     }
 }
 
-testsJar()
+val generatorClasspath by configurations.creating
+
+dependencies {
+    generatorClasspath(project(":analysis:analysis-api-fir:analysis-api-fir-generator"))
+}
+
+val generateCode by tasks.registering(NoDebugJavaExec::class) {
+    val generatorRoot = "$projectDir/analysis/analysis-api-fir/analysis-api-fir-generator/src/"
+
+    val generatorConfigurationFiles = fileTree(generatorRoot) {
+        include("**/*.kt")
+    }
+
+    inputs.files(generatorConfigurationFiles)
+
+    workingDir = rootDir
+    classpath = generatorClasspath
+    main = "org.jetbrains.kotlin.analysis.api.fir.generator.MainKt"
+    systemProperties["line.separator"] = "\n"
+}
+
+val compileKotlin by tasks
+
+compileKotlin.dependsOn(generateCode)
+
 

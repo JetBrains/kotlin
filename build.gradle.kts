@@ -860,7 +860,7 @@ tasks {
         dependsOn("dist")
         dependsOn(
             ":idea:idea-fir:test",
-            ":idea:idea-frontend-fir:fir-low-level-api-ide-impl:test",
+            ":idea:analysis:analysis-api-fir:fir-low-level-api-ide-impl:test",
             ":plugins:uast-kotlin-fir:test",
             ":idea:idea-fir-fe10-binding:test"
         )
@@ -870,7 +870,7 @@ tasks {
         dependsOn("dist")
         dependsOn(
             ":analysis:analysis-api:test",
-            ":idea-frontend-fir:test",
+            ":analysis:analysis-api-fir:test",
             ":analysis:low-level-api-fir:test"
         )
     }
