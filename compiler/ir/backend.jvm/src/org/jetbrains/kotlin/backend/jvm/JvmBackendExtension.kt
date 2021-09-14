@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.codegen.DescriptorMetadataSerializer
-import org.jetbrains.kotlin.backend.jvm.codegen.MetadataSerializer
+import org.jetbrains.kotlin.backend.jvm.metadata.DescriptorMetadataSerializer
+import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.JvmAbiStability
 import org.jetbrains.kotlin.ir.declarations.IrClass

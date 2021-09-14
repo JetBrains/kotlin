@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineOnly
@@ -75,9 +74,6 @@ fun IrFrameMap.enter(irDeclaration: IrSymbolOwner, type: Type): Int {
 fun IrFrameMap.leave(irDeclaration: IrSymbolOwner): Int {
     return leave(irDeclaration.symbol)
 }
-
-internal val DeclarationDescriptorWithSource.psiElement: PsiElement?
-    get() = (source as? PsiSourceElement)?.psi
 
 fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
     val fileEntry = declaration.fileParent.fileEntry
@@ -330,25 +326,4 @@ private fun IrFunction.isAccessorForDeprecatedJvmStaticProperty(context: JvmBack
     val callee = irCall.symbol.owner
     val property = callee.correspondingPropertySymbol?.owner ?: return false
     return property.isDeprecatedCallable(context)
-}
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-val IrDeclaration.psiElement: PsiElement?
-    get() = (descriptor as? DeclarationDescriptorWithSource)?.psiElement
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-val IrMemberAccessExpression<*>.psiElement: PsiElement?
-    get() = (symbol.descriptor.original as? DeclarationDescriptorWithSource)?.psiElement
-
-fun IrSimpleType.isRawType(): Boolean =
-    hasAnnotation(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME)
-
-internal fun classFileContainsMethod(classId: ClassId, function: IrFunction, context: JvmBackendContext): Boolean? {
-    val originalSignature = context.methodSignatureMapper.mapAsmMethod(function)
-    val originalDescriptor = originalSignature.descriptor
-    val descriptor = if (function.isSuspend)
-        listOf(*Type.getArgumentTypes(originalDescriptor), Type.getObjectType("kotlin/coroutines/Continuation"))
-            .joinToString(prefix = "(", postfix = ")", separator = "") + AsmTypes.OBJECT_TYPE
-    else originalDescriptor
-    return classFileContainsMethod(classId, context.state, Method(originalSignature.name, descriptor))
 }

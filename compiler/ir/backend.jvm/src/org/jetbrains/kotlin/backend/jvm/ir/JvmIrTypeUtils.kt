@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.backend.jvm.ir
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.codegen.representativeUpperBound
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrScript
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
@@ -159,3 +159,13 @@ fun collectVisibleTypeParameters(scopeOwner: IrTypeParametersContainer): Set<IrT
 
 val IrType.isReifiedTypeParameter: Boolean
     get() = classifierOrNull?.safeAs<IrTypeParameterSymbol>()?.owner?.isReified == true
+
+val IrTypeParameter.representativeUpperBound: IrType
+    get() {
+        assert(superTypes.isNotEmpty()) { "Upper bounds should not be empty: ${render()}" }
+
+        return superTypes.firstOrNull {
+            val irClass = it.classOrNull?.owner ?: return@firstOrNull false
+            irClass.kind != ClassKind.INTERFACE && irClass.kind != ClassKind.ANNOTATION_CLASS
+        } ?: superTypes.first()
+    }

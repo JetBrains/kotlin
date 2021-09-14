@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
 import org.jetbrains.kotlin.backend.jvm.ir.receiverAndArgs
@@ -42,12 +43,12 @@ object CompareTo : IntrinsicMethod() {
         when (type) {
             Type.CHAR_TYPE, Type.BYTE_TYPE, Type.SHORT_TYPE, Type.INT_TYPE ->
                 v.invokestatic(
-                    IrIntrinsicMethods.INTRINSICS_CLASS_NAME,
+                    JvmSymbols.INTRINSICS_CLASS_NAME,
                     "compare",
                     "(II)I",
                     false
                 )
-            Type.LONG_TYPE -> v.invokestatic(IrIntrinsicMethods.INTRINSICS_CLASS_NAME, "compare", "(JJ)I", false)
+            Type.LONG_TYPE -> v.invokestatic(JvmSymbols.INTRINSICS_CLASS_NAME, "compare", "(JJ)I", false)
             Type.FLOAT_TYPE -> v.invokestatic("java/lang/Float", "compare", "(FF)I", false)
             Type.DOUBLE_TYPE -> v.invokestatic("java/lang/Double", "compare", "(DD)I", false)
             else -> throw UnsupportedOperationException()

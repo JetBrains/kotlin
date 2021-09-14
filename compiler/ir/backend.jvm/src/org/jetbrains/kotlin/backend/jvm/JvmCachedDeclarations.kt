@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.jvm.codegen.AnnotationCodegen.Companion.annotationClass
 import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
@@ -223,7 +222,7 @@ class JvmCachedDeclarations(
                 if (forCompatibilityMode && !interfaceFun.resolveFakeOverride()!!.origin.isSynthetic) {
                     context.createJvmIrBuilder(it.symbol).run {
                         it.annotations = it.annotations
-                            .filterNot { it.annotationClass.hasEqualFqName(DeprecationResolver.JAVA_DEPRECATED) }
+                            .filterNot { it.symbol.owner.constructedClass.hasEqualFqName(DeprecationResolver.JAVA_DEPRECATED) }
                             .plus(irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag))
                     }
                 }

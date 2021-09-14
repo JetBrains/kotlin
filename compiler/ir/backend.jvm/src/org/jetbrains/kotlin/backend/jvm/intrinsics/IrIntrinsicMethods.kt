@@ -201,8 +201,6 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     data class Key(val owner: FqName, val receiverParameterTypeName: FqName?, val name: String, val valueParameterTypeNames: List<FqName?>)
 
     companion object {
-
-        internal const val INTRINSICS_CLASS_NAME = "kotlin/jvm/internal/Intrinsics"
         private val INC = Increment(1)
 
         private val DEC = Increment(-1)
