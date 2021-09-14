@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal abstract class FirLightMethod(

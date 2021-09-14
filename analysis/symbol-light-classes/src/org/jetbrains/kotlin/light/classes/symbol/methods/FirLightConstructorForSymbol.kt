@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.light.classes.symbol
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.idea.frontend.api.isValid
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.isValid
+import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 
 internal class FirLightConstructorForSymbol(
     private val constructorSymbol: KtConstructorSymbol,

@@ -9,8 +9,8 @@ import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiParameterList
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.idea.frontend.api.isValid
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.isValid
+import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.light.classes.symbol.parameters.FirLightParameterList
 import org.jetbrains.kotlin.psi.KtDeclaration
 import java.util.*

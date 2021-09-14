@@ -9,10 +9,10 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.idea.frontend.api.isValid
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtKotlinPropertySymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
+import org.jetbrains.kotlin.analysis.api.isValid
+import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSimpleConstantValue
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 internal class FirLightFieldForPropertySymbol(

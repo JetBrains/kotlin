@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.asJava.classes
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiClassImplUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.idea.frontend.api.isValid
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.isValid
+import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.createConstructors
 import org.jetbrains.kotlin.light.classes.symbol.classes.createMethods

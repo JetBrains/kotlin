@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_GETTER
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_SETTER
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.idea.frontend.api.isValid
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertyAccessorSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertyGetterSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySetterSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.analysis.api.isValid
+import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyAccessorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyGetterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.light.classes.symbol.parameters.FirLightParameterList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.FirLightSetterParameterForSymbol
 import org.jetbrains.kotlin.load.java.JvmAbi.getterName

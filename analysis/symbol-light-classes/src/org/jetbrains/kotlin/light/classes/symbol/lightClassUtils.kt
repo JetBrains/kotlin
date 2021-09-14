@@ -9,12 +9,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
-import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
-import org.jetbrains.kotlin.idea.frontend.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
-import org.jetbrains.kotlin.idea.frontend.api.tokens.hackyAllowRunningOnEdt
+import org.jetbrains.kotlin.analysis.api.InvalidWayOfUsingAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
+import org.jetbrains.kotlin.analysis.api.tokens.hackyAllowRunningOnEdt
 
 @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
 internal inline fun <E> allowLightClassesOnEdt(action: () -> E): E = hackyAllowRunningOnEdt(action)

@@ -10,7 +10,7 @@ import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.scope.PsiScopeProcessor
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithTypeParameters
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
 import org.jetbrains.kotlin.light.classes.symbol.elements.FirLightTypeParameter
 
 

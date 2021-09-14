@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal abstract class FirLightParameterBaseForSymbol(

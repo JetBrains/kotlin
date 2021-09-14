@@ -9,9 +9,9 @@ import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.idea.frontend.api.isValid
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.isValid
+import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.light.classes.symbol.*
 
 internal class FirLightSetterParameterForSymbol(

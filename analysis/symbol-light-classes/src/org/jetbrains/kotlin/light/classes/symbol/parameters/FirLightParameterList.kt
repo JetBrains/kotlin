@@ -11,7 +11,7 @@ import com.intellij.psi.impl.light.LightParameterListBuilder
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.light.classes.symbol.FirLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.FirLightParameterForReceiver
 import org.jetbrains.kotlin.light.classes.symbol.FirLightParameterForSymbol
