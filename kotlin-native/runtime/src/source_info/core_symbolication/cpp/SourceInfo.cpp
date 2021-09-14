@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 #include "SourceInfo.h"
@@ -127,9 +116,9 @@ typedef struct {
   int end;
 } SymbolSourceInfoLimits;
 
-extern "C" int Kotlin_getSourceInfo(void* addr, SourceInfo *result_buffer, int result_size) {
+extern "C" int Kotlin_getSourceInfo_core_symbolication(void* addr, SourceInfo *result_buffer, int result_size) {
   if (result_size == 0) return 0;
-  __block SourceInfo result = { .fileName = nullptr, .lineNumber = -1, .column = -1 };
+  __block SourceInfo result;
   __block bool continueUpdateResult = true;
   __block SymbolSourceInfoLimits limits = {.start = -1, .end = -1};
 
@@ -168,7 +157,7 @@ extern "C" int Kotlin_getSourceInfo(void* addr, SourceInfo *result_buffer, int r
     });
 
     SYM_LOG("limits: {%s %d..%d}\n", limits.fileName, limits.start, limits.end);
-    result.fileName = limits.fileName;
+    result.setFilename(limits.fileName);
 
     CSSymbolForeachSourceInfo(symbol,
       ^(CSSourceInfoRef ref) {
@@ -208,11 +197,4 @@ extern "C" int Kotlin_getSourceInfo(void* addr, SourceInfo *result_buffer, int r
   result_buffer[0] = result;
   return 1;
 }
-
-#else // KONAN_CORE_SYMBOLICATION
-
-extern "C" int Kotlin_getSourceInfo(void* addr, SourceInfo *result, int result_size) {
-    return 0;
-}
-
 #endif // KONAN_CORE_SYMBOLICATION

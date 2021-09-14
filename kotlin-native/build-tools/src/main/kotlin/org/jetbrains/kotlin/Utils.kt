@@ -325,6 +325,10 @@ fun compileSwift(project: Project, target: KonanTarget, sources: List<String>, o
 fun targetSupportsMimallocAllocator(targetName: String) =
         HostManager().targetByName(targetName).supportsMimallocAllocator()
 
+fun targetSupportsLibBacktrace(targetName: String) =
+        HostManager().targetByName(targetName).supportsLibBacktrace()
+
+
 fun Project.mergeManifestsByTargets(source: File, destination: File) {
     logger.info("Merging manifests: $source -> $destination")
 

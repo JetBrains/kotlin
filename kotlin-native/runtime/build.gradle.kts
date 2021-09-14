@@ -35,7 +35,8 @@ bitcode {
             "${target}Libbacktrace",
             "${target}Launcher",
             "${target}Debug",
-            "${target}Release",
+            "${target}SourceInfoCoreSymbolication",
+            "${target}SourceInfoLibbacktrace",
             "${target}Strict",
             "${target}Relaxed",
             "${target}ProfileRuntime",
@@ -118,8 +119,13 @@ bitcode {
         includeRuntime()
     }
 
-    create("release") {
+    create("source_info_core_symbolication", file("src/source_info/core_symbolication")) {
         includeRuntime()
+    }
+    create("source_info_libbacktrace", file("src/source_info/libbacktrace")) {
+        includeRuntime()
+        headersDirs += files("src/libbacktrace/c/include")
+        onlyIf { targetSupportsLibBacktrace(target) }
     }
 
     create("strict") {
@@ -183,7 +189,6 @@ targetList.forEach { targetName ->
                 "${targetName}Runtime",
                 "${targetName}LegacyMemoryManager",
                 "${targetName}Strict",
-                "${targetName}Release",
                 "${targetName}StdAlloc",
                 "${targetName}Objc"
             )
@@ -199,7 +204,6 @@ targetList.forEach { targetName ->
                 "${targetName}Runtime",
                 "${targetName}LegacyMemoryManager",
                 "${targetName}Strict",
-                "${targetName}Release",
                 "${targetName}Mimalloc",
                 "${targetName}OptAlloc",
                 "${targetName}Objc"
@@ -217,7 +221,6 @@ targetList.forEach { targetName ->
                 "${targetName}ExperimentalMemoryManagerStms",
                 "${targetName}CommonGc",
                 "${targetName}SameThreadMsGc",
-                "${targetName}Release",
                 "${targetName}Mimalloc",
                 "${targetName}OptAlloc",
                 "${targetName}Objc"
@@ -236,7 +239,6 @@ targetList.forEach { targetName ->
                 "${targetName}ExperimentalMemoryManagerStms",
                 "${targetName}CommonGc",
                 "${targetName}SameThreadMsGc",
-                "${targetName}Release",
                 "${targetName}StdAlloc",
                 "${targetName}Objc"
             )
@@ -254,7 +256,6 @@ targetList.forEach { targetName ->
                 "${targetName}ExperimentalMemoryManagerNoop",
                 "${targetName}CommonGc",
                 "${targetName}NoopGc",
-                "${targetName}Release",
                 "${targetName}Mimalloc",
                 "${targetName}OptAlloc",
                 "${targetName}Objc"
@@ -273,7 +274,6 @@ targetList.forEach { targetName ->
                 "${targetName}ExperimentalMemoryManagerNoop",
                 "${targetName}CommonGc",
                 "${targetName}NoopGc",
-                "${targetName}Release",
                 "${targetName}StdAlloc",
                 "${targetName}Objc"
             )

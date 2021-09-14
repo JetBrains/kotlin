@@ -19,6 +19,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val freezing by option<Freezing>()
 
     val stripDebugInfoFromNativeLibs by booleanOption()
+
+    val sourceInfoType by option<SourceInfoType>()
 }
 
 open class BinaryOption<T : Any>(

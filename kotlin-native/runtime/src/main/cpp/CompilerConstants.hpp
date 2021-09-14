@@ -28,6 +28,9 @@ using string_view = std::experimental::string_view;
 extern "C" const int32_t KonanNeedDebugInfo;
 extern "C" const int32_t Kotlin_runtimeAssertsMode;
 extern "C" const char* const Kotlin_runtimeLogs;
+class SourceInfo;
+using Kotlin_getSourceInfo_FunctionType = int(*)(void * /*addr*/, SourceInfo* /*result*/, int /*result_size*/);
+extern "C" const Kotlin_getSourceInfo_FunctionType Kotlin_getSourceInfo_Function;
 
 namespace kotlin {
 namespace compiler {
@@ -70,6 +73,14 @@ ALWAYS_INLINE inline std::string_view runtimeLogs() noexcept {
 }
 
 bool freezingEnabled() noexcept;
+
+ALWAYS_INLINE inline int getSourceInfo(void* addr, SourceInfo *result, int result_size) {
+    if (Kotlin_getSourceInfo_Function == nullptr) {
+        return 0;
+    } else {
+        return Kotlin_getSourceInfo_Function(addr, result, result_size);
+    }
+}
 
 } // namespace compiler
 } // namespace kotlin

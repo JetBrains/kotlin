@@ -38,6 +38,11 @@ object PlatformInfo {
     }
 
     @JvmStatic
+    fun supportsLibBacktrace(project: Project): Boolean {
+        return getTarget(project).supportsLibBacktrace()
+    }
+
+    @JvmStatic
     fun checkXcodeVersion(project: Project) {
         val properties = PropertiesProvider(project)
         val requiredMajorVersion = properties.xcodeMajorVersion
