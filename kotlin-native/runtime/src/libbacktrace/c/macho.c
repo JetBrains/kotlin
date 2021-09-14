@@ -940,10 +940,24 @@ macho_add_dsym (struct backtrace_state *state, const char *filename,
   d = backtrace_open (dsym, error_callback, data, &does_not_exist);
   if (d < 0)
     {
+      p = strstr(dsym, ".framework/");
+      if (p != NULL)
+        {
+            ps = dsym + (p - dsym + strlen(".framework"));
+            memcpy (ps, dsymsuffixdir, dsymsuffixdirlen);
+            ps += dsymsuffixdirlen;
+            memcpy (ps, basename, basenamelen);
+            ps += basenamelen;
+            *ps = '\0';
+            d = backtrace_open (dsym, error_callback, data, &does_not_exist);
+        }
       /* The file does not exist, so we can't read the debug info.
 	 Just return success.  */
-      backtrace_free (state, dsym, dsymlen, error_callback, data);
-      return 1;
+	  if (d < 0)
+	    {
+          backtrace_free (state, dsym, dsymlen, error_callback, data);
+          return 1;
+        }
     }
 
   if (!macho_add (state, dsym, d, 0, uuid, base_address, 1,
