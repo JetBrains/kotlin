@@ -1,12 +1,15 @@
 FILE fqName:test fileName:/fileAnnotations.kt
   annotations:
     A(x = 'File annotation')
-  CLASS ANNOTATION_CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Annotation]
+  CLASS ANNOTATION_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
       Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:FILE' type=kotlin.annotation.AnnotationTarget])
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A
     CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:test.A [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]
         EXPRESSION_BODY

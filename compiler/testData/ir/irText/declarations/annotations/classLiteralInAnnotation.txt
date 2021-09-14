@@ -1,8 +1,11 @@
 FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
-  CLASS ANNOTATION_CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Annotation]
+  CLASS ANNOTATION_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     CONSTRUCTOR visibility:public <> (klass:kotlin.reflect.KClass<*>) returnType:<root>.A [primary]
       VALUE_PARAMETER name:klass index:0 type:kotlin.reflect.KClass<*>
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
     PROPERTY name:klass visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:klass type:kotlin.reflect.KClass<*> visibility:private [final]
         EXPRESSION_BODY

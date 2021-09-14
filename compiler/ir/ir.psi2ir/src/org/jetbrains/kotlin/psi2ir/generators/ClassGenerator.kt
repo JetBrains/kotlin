@@ -120,6 +120,8 @@ class ClassGenerator(
 
     private fun getEffectiveModality(ktClassOrObject: KtPureClassOrObject, classDescriptor: ClassDescriptor): Modality =
         when {
+            DescriptorUtils.isAnnotationClass(classDescriptor) ->
+                Modality.OPEN
             !DescriptorUtils.isEnumClass(classDescriptor) ->
                 classDescriptor.modality
             DescriptorUtils.hasAbstractMembers(classDescriptor) ->

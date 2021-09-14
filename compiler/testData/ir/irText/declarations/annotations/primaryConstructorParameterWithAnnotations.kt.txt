@@ -1,5 +1,9 @@
-annotation class Ann : Annotation {
-  constructor() /* primary */ 
+open annotation class Ann : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
@@ -15,4 +19,3 @@ class Test {
     get
 
 }
-

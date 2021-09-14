@@ -228,7 +228,6 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         declareConstructor(ktClassOrObject, ktClassOrObject.primaryConstructor ?: ktClassOrObject, primaryConstructorDescriptor) {
             if (
                 primaryConstructorDescriptor.isExpect ||
-                DescriptorUtils.isAnnotationClass(primaryConstructorDescriptor.constructedClass) ||
                 primaryConstructorDescriptor.constructedClass.isEffectivelyExternal()
             )
                 null

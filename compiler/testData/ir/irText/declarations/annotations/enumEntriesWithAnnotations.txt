@@ -1,8 +1,11 @@
 FILE fqName:<root> fileName:/enumEntriesWithAnnotations.kt
-  CLASS ANNOTATION_CLASS name:TestAnn modality:FINAL visibility:public superTypes:[kotlin.Annotation]
+  CLASS ANNOTATION_CLASS name:TestAnn modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestAnn
     CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:<root>.TestAnn [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:TestAnn modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]
         EXPRESSION_BODY

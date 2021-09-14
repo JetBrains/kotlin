@@ -1,6 +1,11 @@
 @Target(allowedTargets = [AnnotationTarget.TYPE])
-annotation class TypeAnn : Annotation {
-  constructor(name: String) /* primary */
+open annotation class TypeAnn : Annotation {
+  constructor(name: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
   val name: String
     field = name
     get
@@ -8,15 +13,23 @@ annotation class TypeAnn : Annotation {
 }
 
 @Target(allowedTargets = [AnnotationTarget.TYPE_PARAMETER])
-annotation class TypeParameterAnn : Annotation {
-  constructor() /* primary */
+open annotation class TypeParameterAnn : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
 @Target(allowedTargets = [AnnotationTarget.TYPE_PARAMETER])
 @Retention(value = AnnotationRetention.BINARY)
-annotation class TypeParameterAnnBinary : Annotation {
-  constructor() /* primary */
+open annotation class TypeParameterAnnBinary : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 

@@ -69,10 +69,13 @@ FILE fqName:<root> fileName:/enumsInAnnotationArguments.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.En
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
-  CLASS ANNOTATION_CLASS name:TestAnn modality:FINAL visibility:public superTypes:[kotlin.Annotation]
+  CLASS ANNOTATION_CLASS name:TestAnn modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestAnn
     CONSTRUCTOR visibility:public <> (x:<root>.En) returnType:<root>.TestAnn [primary]
       VALUE_PARAMETER name:x index:0 type:<root>.En
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:TestAnn modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:<root>.En visibility:private [final]
         EXPRESSION_BODY

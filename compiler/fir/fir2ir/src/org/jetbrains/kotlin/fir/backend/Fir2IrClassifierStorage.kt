@@ -236,6 +236,8 @@ class Fir2IrClassifierStorage(
         val visibility = regularClass.visibility
         val modality = if (regularClass.classKind == ClassKind.ENUM_CLASS) {
             regularClass.enumClassModality()
+        } else if (regularClass.classKind == ClassKind.ANNOTATION_CLASS) {
+            Modality.OPEN
         } else {
             regularClass.modality ?: Modality.FINAL
         }

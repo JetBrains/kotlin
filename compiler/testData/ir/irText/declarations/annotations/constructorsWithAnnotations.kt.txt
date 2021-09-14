@@ -1,5 +1,10 @@
-annotation class TestAnn : Annotation {
-  constructor(x: Int) /* primary */ 
+open annotation class TestAnn : Annotation {
+  constructor(x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
   val x: Int
     field = x
     get
@@ -20,4 +25,3 @@ class TestClass {
   }
 
 }
-

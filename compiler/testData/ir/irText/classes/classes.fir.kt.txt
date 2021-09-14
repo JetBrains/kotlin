@@ -20,8 +20,12 @@ object TestObject {
 
 }
 
-annotation class TestAnnotationClass : Annotation {
-  constructor() /* primary */
+open annotation class TestAnnotationClass : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 

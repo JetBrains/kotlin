@@ -1,5 +1,9 @@
-annotation class AnnParam : Annotation {
-  constructor() /* primary */ 
+open annotation class AnnParam : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
@@ -21,4 +25,3 @@ class C {
     set
 
 }
-

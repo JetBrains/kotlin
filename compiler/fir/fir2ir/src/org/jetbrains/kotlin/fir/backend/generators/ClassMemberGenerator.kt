@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.constructedClassType
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.isSetter
 import org.jetbrains.kotlin.ir.util.parentAsClass
 
@@ -100,7 +99,7 @@ internal class ClassMemberGenerator(
                 }
                 annotationGenerator.generate(irFunction, firFunction)
             }
-            if (firFunction is FirConstructor && irFunction is IrConstructor && !parentAsClass.isAnnotationClass && !firFunction.isExpect) {
+            if (firFunction is FirConstructor && irFunction is IrConstructor && !firFunction.isExpect) {
                 val body = factory.createBlockBody(startOffset, endOffset)
                 val delegatedConstructor = firFunction.delegatedConstructor
                 if (delegatedConstructor != null) {

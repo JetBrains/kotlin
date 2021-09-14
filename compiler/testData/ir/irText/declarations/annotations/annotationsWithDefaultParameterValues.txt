@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/annotationsWithDefaultParameterValues.kt
-  CLASS ANNOTATION_CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Annotation]
+  CLASS ANNOTATION_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     CONSTRUCTOR visibility:public <> (x:kotlin.String, y:kotlin.Int) returnType:<root>.A [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.String
@@ -8,6 +8,9 @@ FILE fqName:<root> fileName:/annotationsWithDefaultParameterValues.kt
       VALUE_PARAMETER name:y index:1 type:kotlin.Int
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]
         EXPRESSION_BODY

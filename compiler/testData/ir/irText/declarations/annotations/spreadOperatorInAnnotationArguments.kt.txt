@@ -1,5 +1,10 @@
-annotation class A : Annotation {
-  constructor(vararg xs: String) /* primary */ 
+open annotation class A : Annotation {
+  constructor(vararg xs: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
   val xs: Array<out String>
     field = xs
     get
@@ -9,4 +14,3 @@ annotation class A : Annotation {
 @A(xs = [["a"], ["b"]])
 fun test() {
 }
-

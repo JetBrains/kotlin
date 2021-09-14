@@ -1,8 +1,12 @@
 // FILE: signedToUnsignedConversions_annotation.kt
 package kotlin.internal
 
-annotation class ImplicitIntegerCoercion : Annotation {
-  constructor() /* primary */
+open annotation class ImplicitIntegerCoercion : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
@@ -65,4 +69,3 @@ fun test() {
   takeULong(u = <get-IMPLICIT_INT>().toULong())
   takeUBytes(u = [<get-IMPLICIT_INT>().toUByte(), <get-EXPLICIT_INT>().toUByte(), 42B])
 }
-

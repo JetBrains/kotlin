@@ -1,8 +1,11 @@
 FILE fqName:<root> fileName:/spreadOperatorInAnnotationArguments.kt
-  CLASS ANNOTATION_CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Annotation]
+  CLASS ANNOTATION_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     CONSTRUCTOR visibility:public <> (xs:kotlin.Array<out kotlin.String>) returnType:<root>.A [primary]
       VALUE_PARAMETER name:xs index:0 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String [vararg]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
     PROPERTY name:xs visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<out kotlin.String> visibility:private [final]
         EXPRESSION_BODY
