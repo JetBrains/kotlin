@@ -11,7 +11,9 @@ private const val TAGS_FILE_NAME = "_tags.txt"
 private val PROHIBITED_SYMBOLS = listOf(' ', ',', '(', ')', '&', '|', '!')
 
 fun extractTagsFromDirectory(dir: File): List<String> {
-    require(dir.isDirectory)
+    require(dir.isDirectory) {
+        "${dir.absolutePath} is not a directory"
+    }
     val tagsFile = dir.resolve(TAGS_FILE_NAME)
     if (!tagsFile.exists()) return emptyList()
     return tagsFile.readLines().filter { it.isNotBlank() }.onEach(::validateTag)

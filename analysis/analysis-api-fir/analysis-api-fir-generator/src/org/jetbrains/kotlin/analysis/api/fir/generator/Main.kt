@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JVM_DIAGNOSTICS_L
 import java.nio.file.Paths
 
 fun main() {
-    val rootPath = Paths.get("idea/idea-frontend-fir/src").toAbsolutePath()
+    val rootPath = Paths.get("analysis/analysis-api-fir/src").toAbsolutePath()
     val packageName = "org.jetbrains.kotlin.analysis.api.fir.diagnostics"
     DiagnosticClassGenerator.generate(rootPath, DIAGNOSTICS_LIST + JVM_DIAGNOSTICS_LIST, packageName)
 }
