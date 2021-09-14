@@ -1,4 +1,4 @@
 class A {
     val number: Number
-        field = 1
+        <!UNSUPPORTED_FEATURE!>field = 1<!>
 }

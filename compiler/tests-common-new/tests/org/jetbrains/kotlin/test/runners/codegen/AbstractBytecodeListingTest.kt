@@ -46,7 +46,7 @@ abstract class AbstractBytecodeListingTestBase<R : ResultingArtifact.FrontendOut
 
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
 
-        forTestsMatching("compiler/fir/fir2ir/testData/codegen/bytecodeListing/*") {
+        forTestsMatching("compiler/fir/fir2ir/testData/codegen/bytecodeListing/properties/backingField/*") {
             defaultDirectives {
                 LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
             }

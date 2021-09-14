@@ -5541,6 +5541,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
+            @Test
+            @TestMetadata("explicitBackingFieldUnsupported.kt")
+            public void testExplicitBackingFieldUnsupported() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/explicitBackingFieldUnsupported.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField")
             @TestDataPath("$PROJECT_ROOT")

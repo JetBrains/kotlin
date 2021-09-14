@@ -25,9 +25,29 @@ public class Fir2IrSpecificBytecodeListingTestGenerated extends AbstractFirBytec
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/codegen/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
-    @TestMetadata("explicitBackingFieldsInJava.kt")
-    public void testExplicitBackingFieldsInJava() throws Exception {
-        runTest("compiler/fir/fir2ir/testData/codegen/bytecodeListing/explicitBackingFieldsInJava.kt");
+    @Nested
+    @TestMetadata("compiler/fir/fir2ir/testData/codegen/bytecodeListing/properties")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Properties {
+        @Test
+        public void testAllFilesPresentInProperties() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/codegen/bytecodeListing/properties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/fir/fir2ir/testData/codegen/bytecodeListing/properties/backingField")
+        @TestDataPath("$PROJECT_ROOT")
+        public class BackingField {
+            @Test
+            public void testAllFilesPresentInBackingField() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/codegen/bytecodeListing/properties/backingField"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("explicitBackingFieldsInJava.kt")
+            public void testExplicitBackingFieldsInJava() throws Exception {
+                runTest("compiler/fir/fir2ir/testData/codegen/bytecodeListing/properties/backingField/explicitBackingFieldsInJava.kt");
+            }
+        }
     }
 }
