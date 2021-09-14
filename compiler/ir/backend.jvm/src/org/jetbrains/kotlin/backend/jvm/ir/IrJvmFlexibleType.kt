@@ -67,7 +67,7 @@ private class IrJvmFlexibleTypeImpl(
         }
 }
 
-internal fun IrType.isWithFlexibleNullability(): Boolean =
+fun IrType.isWithFlexibleNullability(): Boolean =
     hasAnnotation(JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME)
 
 internal fun IrType.isWithFlexibleMutability(): Boolean =

@@ -242,6 +242,7 @@ val fe10CompilerModules = arrayOf(
     ":compiler:ir.psi2ir",
     ":compiler:backend.jvm",
     ":compiler:backend.jvm.lower",
+    ":compiler:backend.jvm.codegen",
     ":compiler:backend.jvm.entrypoint",
     ":compiler:backend.js",
     ":compiler:backend.wasm",

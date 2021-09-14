@@ -4,12 +4,10 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:ir.psi2ir"))
+    api(project(":compiler:ir.tree"))
+    api(project(":compiler:ir.backend.common"))
     api(project(":compiler:backend.jvm"))
-    api(project(":compiler:ir.tree.impl"))
-    api(project(":compiler:ir.serialization.jvm"))
-    implementation(project(":compiler:backend.jvm.lower"))
-    implementation(project(":compiler:backend.jvm.codegen"))
+    implementation(project(":compiler:ir.tree.impl"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
 }
 
