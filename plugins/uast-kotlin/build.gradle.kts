@@ -16,6 +16,7 @@ dependencies {
     compileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
 
+    testCompileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
     testCompileOnly(intellijDep())
 
     if (Platform.P191.orLower()) {
@@ -51,6 +52,7 @@ dependencies {
     testRuntime(project(":plugins:kapt3-idea"))
     testRuntime(project(":kotlinx-serialization-ide-plugin"))
     testRuntime(project(":plugins:parcelize:parcelize-ide"))
+    testRuntime("org.jetbrains.intellij.deps:asm-all:9.1")
     testRuntime(intellijDep())
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("gradle"))

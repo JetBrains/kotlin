@@ -15,6 +15,7 @@ dependencies {
     compile(project(":idea:idea-maven"))
     excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) }
     compileOnly(intellijPluginDep("gradle"))
+    compileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
     compileOnly(intellijDep())
     compileOnly(project(":idea:kotlin-gradle-tooling"))
 }

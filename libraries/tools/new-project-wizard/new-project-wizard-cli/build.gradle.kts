@@ -14,6 +14,7 @@ dependencies {
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(project(":kotlin-reflect"))
     testImplementation(commonDep("junit:junit"))
+    testImplementation("org.jetbrains.intellij.deps:asm-all:9.1")
     testImplementation(intellijDep())
 }
 

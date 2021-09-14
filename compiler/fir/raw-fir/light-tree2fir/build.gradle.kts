@@ -23,6 +23,7 @@ dependencies {
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
+    testImplementation("org.jetbrains.intellij.deps:asm-all:9.1")
     testImplementation(intellijDep())
     testImplementation(commonDep("junit:junit"))
     testImplementation(projectTests(":compiler:tests-common"))
