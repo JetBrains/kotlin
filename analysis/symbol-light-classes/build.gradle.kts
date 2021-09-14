@@ -9,7 +9,7 @@ dependencies {
     implementation(project(":core:compiler.common"))
     implementation(project(":compiler:light-classes"))
     implementation(project(":analysis:analysis-api-providers"))
-    implementation(project(":idea-frontend-api"))
+    implementation(project(":analysis:analysis-api"))
     implementation(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
 }
 

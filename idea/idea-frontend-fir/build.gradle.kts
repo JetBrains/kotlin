@@ -13,7 +13,7 @@ dependencies {
     compile(project(":compiler:fir:checkers:checkers.jvm"))
     compile(project(":compiler:fir:java"))
     compile(project(":idea-frontend-fir:idea-fir-low-level-api"))
-    compile(project(":idea-frontend-api"))
+    compile(project(":analysis:analysis-api"))
     compile(project(":compiler:light-classes"))
     compile(intellijCoreDep())
     implementation(project(":analysis:analysis-api-providers"))
