@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.ir.backend.js.MainModule
-import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.loadKlib
 import org.jetbrains.kotlin.ir.backend.js.prepareAnalyzedSourceModule
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
@@ -171,7 +169,8 @@ abstract class BasicWasmBoxTest(
             sourceModule,
             phaseConfig = phaseConfig,
             irFactory = IrFactoryImpl,
-            exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
+            exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
+            emitNameSection = true,
         )
 
         outputWatFile.write(compilerResult.wat)

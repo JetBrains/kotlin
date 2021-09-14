@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.wasm.ir.*
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 
-class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule) {
+class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val moduleName: String, val emitNameSection: Boolean) {
     var b: ByteWriter = ByteWriter.OutputStream(outputStream)
 
     fun appendWasmModule() {
@@ -108,6 +108,38 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule) {
             appendSection(11u) {
                 appendVectorSize(data.size)
                 data.forEach { appendData(it) }
+            }
+
+            //text section (should be placed after data)
+            if (emitNameSection) {
+                appendTextSection(definedFunctions)
+            }
+        }
+    }
+
+    private fun appendTextSection(definedFunctions: List<WasmFunction.Defined>) {
+        appendSection(0u) {
+            b.writeString("name")
+            appendSection(0u) {
+                b.writeString(moduleName)
+            }
+            appendSection(1u) {
+                appendVectorSize(definedFunctions.size)
+                definedFunctions.forEach {
+                    appendModuleFieldReference(it)
+                    b.writeString(it.name)
+                }
+            }
+            appendSection(2u) {
+                appendVectorSize(definedFunctions.size)
+                definedFunctions.forEach {
+                    appendModuleFieldReference(it)
+                    appendVectorSize(it.locals.size)
+                    it.locals.forEach { local ->
+                        b.writeVarUInt32(local.id)
+                        b.writeString(local.name)
+                    }
+                }
             }
         }
     }

@@ -5,14 +5,10 @@
 
 package org.jetbrains.kotlin.backend.wasm
 
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.generateStringLiteralsSupport
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.loadIr
@@ -21,7 +17,6 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi2ir.generators.generateTypicalIrProviderList
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
 import java.io.ByteArrayOutputStream
@@ -32,7 +27,8 @@ fun compileWasm(
     depsDescriptors: ModulesStructure,
     phaseConfig: PhaseConfig,
     irFactory: IrFactory,
-    exportedDeclarations: Set<FqName> = emptySet()
+    exportedDeclarations: Set<FqName> = emptySet(),
+    emitNameSection: Boolean = false,
 ): WasmCompilerResult {
     val mainModule = depsDescriptors.mainModule
     val configuration = depsDescriptors.compilerConfiguration
@@ -76,7 +72,7 @@ fun compileWasm(
     val js = compiledWasmModule.generateJs()
 
     val os = ByteArrayOutputStream()
-    WasmIrToBinary(os, linkedModule).appendWasmModule()
+    WasmIrToBinary(os, linkedModule, moduleDescriptor.name.asString(), emitNameSection).appendWasmModule()
     val byteArray = os.toByteArray()
 
     return WasmCompilerResult(

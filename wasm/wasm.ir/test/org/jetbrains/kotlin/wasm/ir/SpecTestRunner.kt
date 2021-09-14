@@ -228,7 +228,7 @@ fun testWasmFile(wasmFile: File, dirName: String) {
 
 fun WasmModule.toBinaryFormat(): ByteArray {
     val os = ByteArrayOutputStream()
-    WasmIrToBinary(os, this).appendWasmModule()
+    WasmIrToBinary(os, this, "<WASM_TESTS>", emitNameSection = false).appendWasmModule()
     return os.toByteArray()
 }
 

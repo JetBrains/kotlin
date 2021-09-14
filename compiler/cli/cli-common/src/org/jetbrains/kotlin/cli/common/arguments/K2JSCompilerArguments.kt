@@ -232,6 +232,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xwasm", description = "Use experimental WebAssembly compiler backend")
     var wasm: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xwasm-debug-info", description = "Add debug info to WebAssembly compiled module")
+    var wasmDebug: Boolean by FreezableVar(false)
+
     override fun configureLanguageFeatures(collector: MessageCollector): MutableMap<LanguageFeature, LanguageFeature.State> {
         return super.configureLanguageFeatures(collector).apply {
             if (extensionFunctionsInExternals) {
