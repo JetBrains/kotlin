@@ -14,16 +14,21 @@ import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
+import org.jetbrains.kotlin.konan.properties.propertyList
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 import java.lang.Boolean.getBoolean
@@ -33,11 +38,105 @@ private val defaultRuntimeKlib = System.getProperty("kotlin.js.reduced.stdlib.pa
 private val kotlinTestKLib = System.getProperty("kotlin.js.kotlin.test.path")
 
 // TODO Cache on FS (requires bootstrap)
-private val predefinedKlibHasIcCache = mutableMapOf<String, ICCache?>(
+private val predefinedKlibHasIcCache = mutableMapOf<String, TestModuleCache?>(
     File(fullRuntimeKlib).absolutePath to null,
     File(kotlinTestKLib).absolutePath to null,
     File(defaultRuntimeKlib).absolutePath to null
 )
+
+class TestModuleCache(val moduleName: String, val files: MutableMap<String, FileCache>) {
+
+    constructor(moduleName: String) : this(moduleName, mutableMapOf())
+
+    fun cacheProvider(): PersistentCacheProvider {
+        return object : PersistentCacheProvider {
+            override fun fileFingerPrint(path: String): Hash {
+                return 0L
+            }
+
+            override fun serializedParts(path: String): SerializedIcDataForFile {
+                error("Is not supported")
+            }
+
+            override fun inlineGraphForFile(path: String, sigResolver: (Int) -> IdSignature): Collection<Pair<IdSignature, TransHash>> {
+                error("Is not supported")
+            }
+
+            override fun inlineHashes(path: String, sigResolver: (Int) -> IdSignature): Map<IdSignature, TransHash> {
+                error("Is not supported")
+            }
+
+            override fun allInlineHashes(sigResolver: (String, Int) -> IdSignature): Map<IdSignature, TransHash> {
+                error("Is not supported")
+            }
+
+            override fun binaryAst(path: String): ByteArray? {
+                return files[path]?.ast ?: ByteArray(0)
+            }
+
+            override fun dts(path: String): ByteArray? {
+                return files[path]?.dts
+            }
+
+            override fun sourceMap(path: String): ByteArray? {
+                return files[path]?.sourceMap
+            }
+        }
+    }
+
+    fun cacheConsumer(): PersistentCacheConsumer {
+        return object : PersistentCacheConsumer {
+            override fun commitInlineFunctions(
+                path: String,
+                hashes: Collection<Pair<IdSignature, TransHash>>,
+                sigResolver: (IdSignature) -> Int
+            ) {
+
+            }
+
+            override fun commitFileFingerPrint(path: String, fingerprint: Hash) {
+
+            }
+
+            override fun commitInlineGraph(
+                path: String,
+                hashes: Collection<Pair<IdSignature, TransHash>>,
+                sigResolver: (IdSignature) -> Int
+            ) {
+
+            }
+
+            override fun commitICCacheData(path: String, icData: SerializedIcDataForFile) {
+
+            }
+
+            override fun commitBinaryAst(path: String, astData: ByteArray) {
+                val storage = files.getOrPut(path) { FileCache(path, null, null, null) }
+                storage.ast = astData
+            }
+
+            override fun commitBinaryDts(path: String, dstData: ByteArray) {
+                val storage = files.getOrPut(path) { FileCache(path, null, null, null) }
+                storage.dts = dstData
+            }
+
+            override fun commitSourceMap(path: String, mapData: ByteArray) {
+                val storage = files.getOrPut(path) { FileCache(path, null, null, null) }
+                storage.sourceMap = mapData
+            }
+
+            override fun invalidateForFile(path: String) {
+                files.remove(path)
+            }
+
+            override fun commitLibraryPath(libraryPath: String) {
+
+            }
+        }
+    }
+
+    fun createModuleCache(): ModuleCache = ModuleCache(moduleName, files)
+}
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
@@ -114,7 +213,7 @@ abstract class BasicIrBoxTest(
         abiVersion: KotlinAbiVersion,
         incrementalCompilation: Boolean,
         recompile: Boolean,
-        icCache: MutableMap<String, ICCache>
+        icCache: MutableMap<String, TestModuleCache>
     ) {
         val filesToCompile = units.mapNotNull { (it as? TranslationUnit.SourceFile)?.file }
 
@@ -133,7 +232,7 @@ abstract class BasicIrBoxTest(
         }
 
         if (incrementalCompilationChecksEnabled && incrementalCompilation) {
-            runtimeKlibs.forEach { createIcCache(it, runtimeKlibs, config, icCache) }
+            runtimeKlibs.forEach { createIcCache(it, null, runtimeKlibs, config, icCache) }
         }
 
         if (!recompile) { // In case of incremental recompilation we only rebuild caches, not klib itself
@@ -157,7 +256,8 @@ abstract class BasicIrBoxTest(
         val klibCannonPath = File(klibPath).canonicalPath
 
         if (incrementalCompilation) {
-            icCache[klibCannonPath] = createIcCache(klibCannonPath, allKlibPaths + klibCannonPath, config, icCache)
+            icCache[klibCannonPath] =
+                createIcCache(klibCannonPath, filesToCompile.map { it.virtualFilePath }, allKlibPaths + klibCannonPath, config, icCache)
         }
 
         compilationCache[outputFile.name.replace(".js", ".meta.js")] = actualOutputFile
@@ -190,7 +290,7 @@ abstract class BasicIrBoxTest(
                 emptyList(),
                 icUseGlobalSignatures = runIcMode,
                 icUseStdlibCache = runIcMode,
-                icCache = icCache
+                icCache = emptyMap()
             )
 
             if (!skipRegularMode) {
@@ -211,6 +311,11 @@ abstract class BasicIrBoxTest(
                     safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
                     verifySignatures = !skipMangleVerification,
                 )
+
+//                if (incrementalCompilation) {
+//                    // TODO: enable once incremental js generation is done
+//                    generateJsFromAst(klibPath, icCache.map { it.key to it.value.createModuleCache() }.toMap())
+//                }
 
                 val jsOutputFile = if (recompile) File(outputFile.parentFile, outputFile.nameWithoutExtension + "-recompiled.js")
                 else outputFile
@@ -268,7 +373,7 @@ abstract class BasicIrBoxTest(
         testFunction: String,
         needsFullIrRuntime: Boolean,
         expectActualLinker: Boolean,
-        icCaches: MutableMap<String, ICCache>
+        icCaches: MutableMap<String, TestModuleCache>
     ) {
         val isMainModule = module.name == DEFAULT_MODULE || module.name == TEST_MODULE
         val cacheKey = outputFile.canonicalPath.replace("_v5.js", "")
@@ -278,11 +383,14 @@ abstract class BasicIrBoxTest(
         val dirtyFiles = mutableListOf<String>()
         val oldBinaryAsts = mutableMapOf<String, ByteArray>()
 
+        val dataProvider = icCache.cacheProvider()
+        val dataConsumer = icCache.cacheConsumer()
+
         for (testFile in kotlinFiles) {
             if (testFile.recompile) {
                 val fileName = testFile.fileName
-                oldBinaryAsts[fileName] = icCache.dataProvider.binaryAst(fileName)
-                icCache.dataConsumer.invalidateForFile(fileName)
+                oldBinaryAsts[fileName] = dataProvider.binaryAst(fileName) ?: error("No AST found for $fileName")
+                dataConsumer.invalidateForFile(fileName)
                 dirtyFiles.add(fileName)
             }
         }
@@ -330,7 +438,8 @@ abstract class BasicIrBoxTest(
             icCaches
         )
 
-        val newBinaryAsts = dirtyFiles.associateWith { icCache.dataProvider.binaryAst(it) }
+        val cacheProvider = icCache.cacheProvider()
+        val newBinaryAsts = dirtyFiles.associateWith { cacheProvider.binaryAst(it) }
 
         for (file in dirtyFiles) {
             val oldBinaryAst = oldBinaryAsts[file]
@@ -346,49 +455,44 @@ abstract class BasicIrBoxTest(
         }
     }
 
-    private fun createPirCache(path: String, allKlibPaths: Collection<String>, config: JsConfig, icCache: Map<String, ICCache>): ICCache {
-        val icData = predefinedKlibHasIcCache[path] ?: prepareSingleLibraryIcCache(
-            project = project,
-            configuration = config.configuration,
-            libPath = path,
-            dependencies = allKlibPaths,
-            icCache = icCache
-        )
+    private fun createIcCache(
+        path: String,
+        dirtyFiles: Collection<String>?,
+        allKlibPaths: Collection<String>,
+        config: JsConfig,
+        icCache: MutableMap<String, TestModuleCache>
+    ): TestModuleCache {
 
-        if (path in predefinedKlibHasIcCache) {
-            predefinedKlibHasIcCache[path] = icData
+        val cannonicalPath = File(path).canonicalPath
+        var moduleCache = predefinedKlibHasIcCache[cannonicalPath]
+
+        if (moduleCache == null) {
+            moduleCache = icCache[cannonicalPath] ?: TestModuleCache(cannonicalPath)
+
+            val allResolvedDependencies = jsResolveLibraries(allKlibPaths, emptyList(), DummyLogger)
+
+            val libs = allResolvedDependencies.getFullList().associateBy { File(it.libraryFile.path).canonicalPath }
+
+            val nameToKotlinLibrary: Map<ModuleName, KotlinLibrary> = libs.values.associateBy { it.moduleName }
+
+            val dependencyGraph = libs.values.associateWith {
+                it.manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).map { depName ->
+                    nameToKotlinLibrary[depName] ?: error("No Library found for $depName")
+                }
+            }
+
+            val currentLib = libs[File(cannonicalPath).canonicalPath] ?: error("Expected library at $cannonicalPath")
+
+            rebuildCacheForDirtyFiles(currentLib, config.configuration, dependencyGraph, dirtyFiles, moduleCache.cacheConsumer())
+
+            if (cannonicalPath in predefinedKlibHasIcCache) {
+                predefinedKlibHasIcCache[cannonicalPath] = moduleCache
+            }
         }
 
-        return icData
-    }
+        icCache[cannonicalPath] = moduleCache
 
-    @Suppress("UNUSED_PARAMETER")
-    private fun createIcCache(path: String, allKlibPaths: Collection<String>, config: JsConfig, icCache: Map<String, ICCache>): ICCache {
-
-        fun prepare(): ICCache {
-            return ICCache(PersistentCacheProvider.EMPTY, PersistentCacheConsumer.EMPTY, SerializedIcData(emptyList()))
-        }
-
-        val icData = predefinedKlibHasIcCache[path] ?: prepare()
-
-        if (path in predefinedKlibHasIcCache) {
-            predefinedKlibHasIcCache[path] = icData
-        }
-
-        return icData
-    }
-
-    private fun prepareRuntimePirCaches(config: JsConfig, icCache: MutableMap<String, ICCache>) {
-        if (!runIcMode) return
-
-        val defaultRuntimePath = File(defaultRuntimeKlib).canonicalPath
-        icCache[defaultRuntimePath] = createPirCache(defaultRuntimePath, listOf(defaultRuntimePath), config, icCache)
-
-        val fullRuntimePath = File(fullRuntimeKlib).canonicalPath
-        icCache[fullRuntimePath] = createPirCache(fullRuntimePath, listOf(fullRuntimePath), config, icCache)
-
-        val testKlibPath = File(kotlinTestKLib).canonicalPath
-        icCache[testKlibPath] = createPirCache(testKlibPath, listOf(fullRuntimePath, testKlibPath), config, icCache)
+        return moduleCache
     }
 
     private fun fromSysPropertyOrAll(key: String, all: Set<AnyNamedPhase>): Set<AnyNamedPhase> {

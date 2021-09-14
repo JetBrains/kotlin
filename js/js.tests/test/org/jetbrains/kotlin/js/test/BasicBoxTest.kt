@@ -195,7 +195,7 @@ abstract class BasicBoxTest(
             }
             val testModuleName = if (runPlainBoxFunction) null else mainModuleName
             val mainModule = modules[mainModuleName] ?: error("No module with name \"$mainModuleName\"")
-            val icCache = mutableMapOf<String, ICCache>()
+            val icCache = mutableMapOf<String, TestModuleCache>()
 
             val generatedJsFiles = orderedModules.asReversed().mapNotNull { module ->
                 val dependencies = module.dependenciesSymbols.map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
@@ -510,7 +510,7 @@ abstract class BasicBoxTest(
         skipMangleVerification: Boolean,
         abiVersion: KotlinAbiVersion,
         checkIC: Boolean,
-        icCache: MutableMap<String, ICCache>
+        icCache: MutableMap<String, TestModuleCache>
     ) {
         val kotlinFiles = module.files.filter { it.fileName.endsWith(".kt") }
         val testFiles = kotlinFiles.map { it.fileName }
@@ -614,7 +614,7 @@ abstract class BasicBoxTest(
         testFunction: String,
         needsFullIrRuntime: Boolean,
         expectActualLinker: Boolean,
-        icCaches: MutableMap<String, ICCache>
+        icCaches: MutableMap<String, TestModuleCache>
     ) {
         val sourceToTranslationUnit = hashMapOf<File, TranslationUnit>()
         for (testFile in kotlinFiles) {
@@ -756,7 +756,7 @@ abstract class BasicBoxTest(
         abiVersion: KotlinAbiVersion,
         incrementalCompilation: Boolean,
         recompile: Boolean,
-        icCache: MutableMap<String, ICCache>
+        icCache: MutableMap<String, TestModuleCache>
     ) {
         val translator = K2JSTranslator(config, false)
         val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)

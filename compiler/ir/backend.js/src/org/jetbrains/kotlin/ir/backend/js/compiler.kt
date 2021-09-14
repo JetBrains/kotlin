@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.ic.SerializedIcData
+import org.jetbrains.kotlin.ir.backend.js.ic.ModuleCache
 import org.jetbrains.kotlin.ir.backend.js.ic.icCompile
 import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
@@ -186,6 +183,14 @@ fun lowerPreservingIcData(module: IrModuleFragment, context: JsIrBackendContext,
     }
 
     controller.currentStage = pirLowerings.size + 1
+}
+
+@Suppress("UNUSED_PARAMETER")
+fun generateJsFromAst(
+    mainModule: String,
+    caches: Map<String, ModuleCache>
+): CompilerResult {
+    TODO(">> EP to generate Js from BinaryAST with root $mainModule")
 }
 
 fun generateJsCode(
