@@ -20,6 +20,7 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val user2 = readFromParcel<User>(parcel)
+    val creator = User::class.java.getDeclaredField("CREATOR").get(null) as Parcelable.Creator<User>
+    val user2 = creator.createFromParcel(parcel)
     assert(user == user2)
 }

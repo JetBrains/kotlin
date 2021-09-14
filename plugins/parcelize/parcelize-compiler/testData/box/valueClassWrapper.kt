@@ -29,9 +29,9 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val data2 = readFromParcel<Wrapper>(parcel)
+    val data2 = parcelableCreator<Wrapper>().createFromParcel(parcel)
     assert(data2 == data)
 
-    val none2 = readFromParcel<NullableWrapper>(parcel)
+    val none2 = parcelableCreator<NullableWrapper>().createFromParcel(parcel)
     assert(none2 == none)
 }

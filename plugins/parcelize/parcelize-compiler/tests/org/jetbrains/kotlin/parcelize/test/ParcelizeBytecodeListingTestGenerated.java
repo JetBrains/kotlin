@@ -100,6 +100,11 @@ public class ParcelizeBytecodeListingTestGenerated extends AbstractParcelizeByte
         runTest("plugins/parcelize/parcelize-compiler/testData/codegen/parcelable.kt");
     }
 
+    @TestMetadata("parcelableCreator.kt")
+    public void testParcelableCreator() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/codegen/parcelableCreator.kt");
+    }
+
     @TestMetadata("serializable.kt")
     public void testSerializable() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/codegen/serializable.kt");

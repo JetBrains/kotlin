@@ -59,8 +59,29 @@ class ParcelizeIrTransformer(private val context: IrPluginContext, private val a
         deferredOperations.forEach { it() }
 
         // Remap broken stubs, which psi2ir generates for the synthetic descriptors coming from the ParcelizeResolveExtension.
+        // Replace the `parcelableCreator` intrinsic with a direct field access.
         moduleFragment.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
+                // Handle the `parcelableCreator` intrinsic
+                val callee = expression.symbol.owner
+                if (
+                    callee.dispatchReceiverParameter == null
+                    && callee.extensionReceiverParameter == null
+                    && callee.valueParameters.isEmpty()
+                    && callee.isInline
+                    && callee.fqNameWhenAvailable?.asString() == "kotlinx.parcelize.ParcelableCreatorKt.parcelableCreator"
+                    && callee.typeParameters.singleOrNull()?.let {
+                        it.isReified && it.superTypes.singleOrNull()?.classFqName?.asString() == "android.os.Parcelable"
+                    } == true
+                ) {
+                    expression.getTypeArgument(0)?.getClass()?.let { parcelableClass ->
+                        androidSymbols.createBuilder(expression.symbol).apply {
+                            return getParcelableCreator(parcelableClass)
+                        }
+                    }
+                }
+
+                // Remap calls to `describeContents` and `writeToParcel`
                 val remappedSymbol = symbolMap[expression.symbol]
                     ?: return super.visitCall(expression)
                 return IrCallImpl(

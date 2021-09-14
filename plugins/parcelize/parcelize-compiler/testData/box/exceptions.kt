@@ -21,5 +21,5 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val test2 = readFromParcel<ExceptionContainer>(parcel)
+    val test2 = parcelableCreator<ExceptionContainer>().createFromParcel(parcel)
 }

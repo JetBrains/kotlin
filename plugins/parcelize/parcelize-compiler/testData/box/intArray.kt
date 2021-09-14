@@ -34,6 +34,6 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val film2 = readFromParcel<Film>(parcel)
+    val film2 = parcelableCreator<Film>().createFromParcel(parcel)
     assert(film == film2)
 }
