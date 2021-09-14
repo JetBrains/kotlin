@@ -3,13 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.frontend.api.fir.generator.rendererrs
+package org.jetbrains.kotlin.analysis.api.fir.generator.rendererrs
 
 import org.jetbrains.kotlin.fir.checkers.generator.inBracketsWithIndent
-import org.jetbrains.kotlin.idea.frontend.api.fir.generator.ConversionContext
-import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnostic
-import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticList
-import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticParameter
+import org.jetbrains.kotlin.analysis.api.fir.generator.ConversionContext
+import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnostic
+import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticList
+import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticParameter
 import org.jetbrains.kotlin.util.SmartPrinter
 import org.jetbrains.kotlin.util.withIndent
 

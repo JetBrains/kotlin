@@ -29,7 +29,7 @@ val writeCopyright by task<tasks.WriteCopyrightToFile> {
 }
 
 application {
-    mainClassName = "org.jetbrains.kotlin.idea.frontend.api.fir.generator.MainKt"
+    mainClassName = "org.jetbrains.kotlin.analysis.api.fir.generator.MainKt"
 }
 
 val processResources by tasks

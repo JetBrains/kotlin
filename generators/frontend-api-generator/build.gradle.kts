@@ -15,7 +15,7 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-spec"))
     testCompile(projectTests("::analysis:low-level-api-fir"))
-    testCompile(projectTests(":idea-frontend-fir"))
+    testCompile(projectTests(":analysis:analysis-api-fir"))
     testCompile(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
     testApiJUnit5()
 }

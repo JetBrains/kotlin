@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.frontend.api.fir.generator
+package org.jetbrains.kotlin.analysis.api.fir.generator
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.idea.frontend.api.symbols.*
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.ClassId
@@ -204,7 +204,7 @@ private object FirToKtConversionCreator {
             KtNamedClassOrObjectSymbol::class.createType(),
             importsToAdd = listOf(
                 "org.jetbrains.kotlin.fir.declarations.FirRegularClass",
-                "org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol"
+                "org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol"
             )
         ),
         FirExpression::class to HLFunctionCallConversion(

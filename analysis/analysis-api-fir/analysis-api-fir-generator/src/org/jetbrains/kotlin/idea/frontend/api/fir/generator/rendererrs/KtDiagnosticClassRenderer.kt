@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.frontend.api.fir.generator.rendererrs
+package org.jetbrains.kotlin.analysis.api.fir.generator.rendererrs
 
 import org.jetbrains.kotlin.fir.checkers.generator.collectClassNamesTo
 import org.jetbrains.kotlin.fir.checkers.generator.inBracketsWithIndent
-import org.jetbrains.kotlin.idea.frontend.api.fir.generator.*
-import org.jetbrains.kotlin.idea.frontend.api.fir.generator.printTypeWithShortNames
+import org.jetbrains.kotlin.analysis.api.fir.generator.*
+import org.jetbrains.kotlin.analysis.api.fir.generator.printTypeWithShortNames
 import org.jetbrains.kotlin.util.SmartPrinter
 
 object KtDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
@@ -52,7 +52,7 @@ object KtDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
     }
 
     override val defaultImports = listOf(
-        "org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi",
+        "org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi",
         "com.intellij.psi.PsiElement",
     )
 }

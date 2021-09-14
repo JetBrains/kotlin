@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.frontend.api.fir.generator
+package org.jetbrains.kotlin.analysis.api.fir.generator
 
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticData

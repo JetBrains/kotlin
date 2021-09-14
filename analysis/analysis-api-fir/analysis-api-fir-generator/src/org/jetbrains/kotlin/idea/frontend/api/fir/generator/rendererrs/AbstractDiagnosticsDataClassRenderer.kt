@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.frontend.api.fir.generator.rendererrs
+package org.jetbrains.kotlin.analysis.api.fir.generator.rendererrs
 
 import org.jetbrains.kotlin.fir.checkers.generator.collectClassNamesTo
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.fir.checkers.generator.printImports
 import org.jetbrains.kotlin.fir.tree.generator.printer.printCopyright
 import org.jetbrains.kotlin.fir.tree.generator.printer.printGeneratedMessage
 import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
-import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticConverter
-import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticList
-import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticParameter
-import org.jetbrains.kotlin.idea.frontend.api.fir.generator.simpleName
+import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticConverter
+import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticList
+import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticParameter
+import org.jetbrains.kotlin.analysis.api.fir.generator.simpleName
 import org.jetbrains.kotlin.util.SmartPrinter
 import java.io.File
 import kotlin.reflect.KType
