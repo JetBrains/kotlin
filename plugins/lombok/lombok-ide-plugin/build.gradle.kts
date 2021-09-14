@@ -14,6 +14,7 @@ dependencies {
     compileOnly(project(":idea:idea-jps-common"))
     compileOnly(project(":idea:idea-maven"))
     compileOnly(project(":idea:idea-gradle"))
+    compileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
     compileOnly(intellijDep())
     excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) }
     compileOnly(intellijPluginDep("gradle"))

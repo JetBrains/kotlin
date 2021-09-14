@@ -12,6 +12,7 @@ dependencies {
     compileOnly(project(":idea:kotlin-gradle-tooling"))
     compileOnly(project(":idea:idea-core"))
     compileOnly(project(":idea:idea-gradle"))
+    compileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
     compileOnly(intellijDep())
     compileOnly(intellijPluginDep("java"))
     compileOnly(intellijPluginDep("gradle"))

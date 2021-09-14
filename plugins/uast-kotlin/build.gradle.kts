@@ -28,6 +28,7 @@ dependencies {
     compileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
 
+    testCompileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
     testCompileOnly(intellijDep())
 
     compileOnly(intellijDep()) { includeJars("platform-impl") }
@@ -61,6 +62,7 @@ dependencies {
     testRuntime(project(":kotlinx-serialization-ide-plugin"))
     testRuntime(project(":plugins:parcelize:parcelize-ide"))
     testRuntime(project(":plugins:lombok:lombok-ide-plugin"))
+    testRuntime("org.jetbrains.intellij.deps:asm-all:9.1")
     testRuntime(intellijDep())
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("gradle"))

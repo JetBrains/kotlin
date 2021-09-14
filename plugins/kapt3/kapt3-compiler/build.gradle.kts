@@ -8,6 +8,7 @@ plugins {
 
 dependencies {
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntime("org.jetbrains.intellij.deps:asm-all:9.1")
     testRuntime(intellijDep())
     testCompileOnly(intellijDep()) { includeJars("idea", "idea_rt") }
     testCompileOnly(intellijDep()) { includeJars("platform-api", "platform-impl") }

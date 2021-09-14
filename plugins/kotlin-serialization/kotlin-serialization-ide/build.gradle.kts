@@ -14,6 +14,7 @@ dependencies {
     compile(project(":idea:idea-gradle"))
     compile(project(":idea:idea-maven"))
     compile(project(":plugins:annotation-based-compiler-plugins-ide-support"))
+    compileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
     compileOnly(intellijDep())
     compileOnly(intellijPluginDep("java"))
     excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) }
@@ -36,6 +37,7 @@ dependencies {
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":plugins:lombok:lombok-ide-plugin"))
+    testCompile("org.jetbrains.intellij.deps:asm-all:9.1")
     testCompile(intellijDep())
     testCompile(intellijPluginDep("java"))
 }

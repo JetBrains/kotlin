@@ -14,6 +14,7 @@ dependencies {
     compile(project(":plugins:uast-kotlin-base"))
     compile(project(":plugins:uast-kotlin-fir"))
     compile(project(":plugins:uast-kotlin-idea-base"))
+    compileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
     compileOnly(intellijDep())
     compileOnly(intellijPluginDep("java"))
 }

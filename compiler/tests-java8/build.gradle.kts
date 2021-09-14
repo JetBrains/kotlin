@@ -12,6 +12,7 @@ dependencies {
     testCompile(projectTests(":generators:test-generator"))
     testRuntime(project(":kotlin-reflect"))
     testRuntimeOnly(toolsJar())
+    testRuntime("org.jetbrains.intellij.deps:asm-all:9.1")
     testRuntime(intellijDep())
     testRuntimeOnly(intellijPluginDep("java"))
     if (isIdeaActive) testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))

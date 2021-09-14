@@ -19,6 +19,7 @@ dependencies {
     compile(project(":compiler:fir:jvm"))
     implementation(project(":compiler:ir.psi2ir"))
     implementation(project(":compiler:fir:entrypoint"))
+    compile("org.jetbrains.intellij.deps:asm-all:9.1")
     compile(intellijDep())
     compile(intellijCoreDep())
 

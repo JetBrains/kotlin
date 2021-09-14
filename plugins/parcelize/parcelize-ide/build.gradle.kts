@@ -16,6 +16,7 @@ dependencies {
     compile(project(":plugins:parcelize:parcelize-compiler"))
     compile(project(":plugins:parcelize:parcelize-runtime"))
 
+    compile("org.jetbrains.intellij.deps:asm-all:9.1")
     compile(intellijDep())
     compile(intellijPluginDep("gradle"))
     compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
