@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.backend.common.ir.isPure
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -33,23 +34,38 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
 
         private val unitType = context.irBuiltIns.unitType
 
-        override fun visitCall(expression: IrCall): IrExpression {
-            expression.transformChildrenVoid(this)
-
-            val callee = expression.symbol.owner
-            val property = callee.correspondingPropertySymbol?.owner ?: return expression
+        private fun canBeInlined(callee: IrSimpleFunction): Boolean {
+            val property = callee.correspondingPropertySymbol?.owner ?: return false
 
             // Some devirtualization required here
-            if (!property.isSafeToInline) return expression
+            if (!property.isSafeToInline) return false
 
             val parent = property.parent
             if (parent is IrClass) {
                 // TODO: temporary workarounds
-                if (parent.isExpect || property.isExpect) return expression
-                if (parent.parent is IrExternalPackageFragment) return expression
-                if (parent.isInline) return expression
+                if (parent.isExpect || property.isExpect) return false
+                if (parent.parent is IrExternalPackageFragment) return false
+                if (parent.isInline) return false
             }
-            if (property.isEffectivelyExternal()) return expression
+            if (property.isEffectivelyExternal()) return false
+            return true
+        }
+
+        override fun visitCall(expression: IrCall): IrExpression {
+            expression.transformChildrenVoid(this)
+
+            val callee = expression.symbol.owner
+
+            if (!canBeInlined(callee)) return expression
+
+            var analyzedCallee = callee
+            while (analyzedCallee.isFakeOverride) {
+                analyzedCallee = analyzedCallee.resolveFakeOverride() ?: return expression
+            }
+
+            if (!canBeInlined(analyzedCallee)) return expression
+
+            val property = analyzedCallee.correspondingPropertySymbol?.owner ?: return expression
 
             val backingField = property.backingField ?: return expression
 
@@ -59,8 +75,10 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
                 val constExpression = initializer.expression.deepCopyWithSymbols()
                 val receiver = expression.dispatchReceiver
                 if (receiver != null && !receiver.isPure(true)) {
-                    val builder = context.createIrBuilder(expression.symbol,
-                            expression.startOffset, expression.endOffset)
+                    val builder = context.createIrBuilder(
+                        expression.symbol,
+                        expression.startOffset, expression.endOffset
+                    )
                     return builder.irBlock(expression) {
                         +receiver
                         +constExpression
@@ -72,11 +90,11 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
 
 
             if (property.getter === callee) {
-                return tryInlineSimpleGetter(expression, callee, backingField) ?: expression
+                return tryInlineSimpleGetter(expression, analyzedCallee, backingField) ?: expression
             }
 
             if (property.setter === callee) {
-                return tryInlineSimpleSetter(expression, callee, backingField) ?: expression
+                return tryInlineSimpleSetter(expression, analyzedCallee, backingField) ?: expression
             }
 
             return expression
