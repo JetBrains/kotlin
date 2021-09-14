@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.jvm.*
-import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
+import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.*
@@ -455,11 +455,8 @@ class ExpressionCodegen(
         }
 
     override fun visitCall(expression: IrCall, data: BlockInfo): PromisedValue {
-        val intrinsic = classCodegen.context.irIntrinsics.getIntrinsic(expression.symbol)
-        if (intrinsic != null) {
-            intrinsic.invoke(expression, this, data)
-                ?.let { return it }
-        }
+        val intrinsic = classCodegen.context.getIntrinsic(expression.symbol) as IntrinsicMethod?
+        intrinsic?.invoke(expression, this, data)?.let { return it }
 
         val callee = expression.symbol.owner
         require(callee.parent is IrClass) { "Unhandled intrinsic in ExpressionCodegen: ${callee.render()}" }
@@ -598,8 +595,8 @@ class ExpressionCodegen(
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: BlockInfo): PromisedValue {
-        classCodegen.context.irIntrinsics.getIntrinsic(expression.symbol)
-            ?.invoke(expression, this, data)?.let { return it }
+        val intrinsic = classCodegen.context.getIntrinsic(expression.symbol) as IntrinsicMethod?
+        intrinsic?.invoke(expression, this, data)?.let { return it }
 
         val callee = expression.symbol.owner
         val owner = typeMapper.mapClass(callee.constructedClass)

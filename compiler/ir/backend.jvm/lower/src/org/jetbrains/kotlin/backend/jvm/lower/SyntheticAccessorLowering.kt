@@ -54,13 +54,14 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : FileL
             context: JvmBackendContext,
             currentScope: ScopeWithIr?,
             inlineScopeResolver: IrInlineScopeResolver,
-            withSuper: Boolean, thisObjReference: IrClassSymbol?): Boolean {
+            withSuper: Boolean, thisObjReference: IrClassSymbol?,
+        ): Boolean {
             /// We assume that IR code that reaches us has been checked for correctness at the frontend.
             /// This function needs to single out those cases where Java accessibility rules differ from Kotlin's.
             val declarationRaw = owner as IrDeclarationWithVisibility
 
             // If this expression won't actually result in a JVM instruction call, access modifiers don't matter.
-            if (declarationRaw is IrFunction && (declarationRaw.isInline || context.irIntrinsics.getIntrinsic(declarationRaw.symbol) != null))
+            if (declarationRaw is IrFunction && (declarationRaw.isInline || context.getIntrinsic(declarationRaw.symbol) != null))
                 return true
 
             // Enum entry constructors are generated as package-private and are accessed only from corresponding enum class

@@ -133,7 +133,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         }
 
         // Don't generate references to intrinsic functions as invokedynamic (no such method exists at run-time).
-        if (context.irIntrinsics.getIntrinsic(implFun.symbol) != null) {
+        if (context.getIntrinsic(implFun.symbol) != null) {
             functionHazard = true
         }
 

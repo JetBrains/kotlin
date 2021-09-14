@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.caches.BridgeLoweringCache
 import org.jetbrains.kotlin.backend.jvm.caches.CollectionStubComputer
-import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -75,7 +74,7 @@ class JvmBackendContext(
 
     override val sharedVariablesManager = JvmSharedVariablesManager(state.module, ir.symbols, irBuiltIns, irFactory)
 
-    val irIntrinsics by lazy { IrIntrinsicMethods(irBuiltIns, ir.symbols) }
+    lateinit var getIntrinsic: (IrFunctionSymbol) -> IntrinsicMarker?
 
     private val localClassType = ConcurrentHashMap<IrAttributeContainer, Type>()
 

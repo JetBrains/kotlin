@@ -503,7 +503,7 @@ internal class ReflectiveAccessLowering(
         val builder = context.createJvmIrBuilder(expression.symbol)
 
         // invokeSpecial(owner: String, name: String, descriptor: String, isInterface: Boolean): T
-        return builder.irCall(context.ir.symbols.jvmDebuggerInvokeSpecialIntrinsic).apply {
+        return builder.irCall(symbols.jvmDebuggerInvokeSpecialIntrinsic).apply {
             dispatchReceiver = expression.dispatchReceiver
             this.type = expression.symbol.owner.returnType
             putValueArgument(0, builder.irString("${owner.packageFqName}/${owner.name}"))
