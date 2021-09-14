@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.findKotlinClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 
 internal class AnnotationsLoader(private val session: FirSession, private val kotlinClassFinder: KotlinClassFinder) {
@@ -164,7 +165,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
     private fun isRepeatableWithImplicitContainer(lookupTag: ConeClassLikeLookupTag, argumentMap: Map<Name, FirExpression>): Boolean {
         if (lookupTag.classId != SpecialJvmAnnotations.JAVA_LANG_ANNOTATION_REPEATABLE) return false
 
-        val getClassCall = argumentMap[Name.identifier("value")] as? FirGetClassCall ?: return false
+        val getClassCall = argumentMap[StandardClassIds.Annotations.ParameterNames.value] as? FirGetClassCall ?: return false
         val classReference = getClassCall.argument as? FirClassReferenceExpression ?: return false
         val containerType = classReference.classTypeRef.coneType as? ConeClassLikeType ?: return false
         val classId = containerType.lookupTag.classId

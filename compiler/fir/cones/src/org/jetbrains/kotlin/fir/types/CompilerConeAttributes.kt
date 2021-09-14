@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import kotlin.reflect.KClass
 
 object CompilerConeAttributes {
@@ -37,7 +37,7 @@ object CompilerConeAttributes {
     }
 
     object EnhancedNullability : ConeAttribute<EnhancedNullability>() {
-        val ANNOTATION_CLASS_ID = StandardClassIds.EnhancedNullability
+        val ANNOTATION_CLASS_ID = StandardClassIds.Annotations.EnhancedNullability
 
         override fun union(other: EnhancedNullability?): EnhancedNullability? = other
         override fun intersect(other: EnhancedNullability?): EnhancedNullability = this

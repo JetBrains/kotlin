@@ -32,16 +32,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames
 import org.jetbrains.kotlin.resolve.UseSiteTargetsList
 
-private val RETENTION_PARAMETER_NAME = Name.identifier("value")
-private val TARGET_PARAMETER_NAME = Name.identifier("allowedTargets")
-private val JAVA_REPEATABLE_ANNOTATION = FqName("java.lang.annotation.Repeatable")
-private val JAVA_REPEATABLE_ANNOTATION_CLASS_ID = ClassId.topLevel(JAVA_REPEATABLE_ANNOTATION)
-private val JVM_REPEATABLE_ANNOTATION_CLASS_ID = ClassId.fromString("kotlin/jvm/JvmRepeatable")
 
 @OptIn(SymbolInternals::class)
 fun FirAnnotation.getRetention(session: FirSession): AnnotationRetention {
@@ -58,7 +52,7 @@ fun FirRegularClass.getRetention(): AnnotationRetention {
 }
 
 fun FirAnnotation.getRetention(): AnnotationRetention {
-    val retentionArgument = findArgumentByName(RETENTION_PARAMETER_NAME) as? FirQualifiedAccessExpression
+    val retentionArgument = findArgumentByName(ParameterNames.retentionValue) as? FirQualifiedAccessExpression
         ?: return AnnotationRetention.RUNTIME
     val retentionName = (retentionArgument.calleeReference as? FirResolvedNamedReference)?.name?.asString()
         ?: return AnnotationRetention.RUNTIME
@@ -81,7 +75,7 @@ fun FirRegularClass.getAllowedAnnotationTargets(): Set<KotlinTarget> {
 
 fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(): Set<KotlinTarget> {
     val targetAnnotation = getTargetAnnotation() ?: return defaultAnnotationTargets
-    val arguments = targetAnnotation.findArgumentByName(TARGET_PARAMETER_NAME)?.unfoldArrayOrVararg().orEmpty()
+    val arguments = targetAnnotation.findArgumentByName(ParameterNames.targetAllowedTargets)?.unfoldArrayOrVararg().orEmpty()
 
     return arguments.mapNotNullTo(mutableSetOf()) { argument ->
         val targetExpression = argument as? FirQualifiedAccessExpression
@@ -134,8 +128,8 @@ fun FirAnnotation.isRepeatable(session: FirSession): Boolean {
 
 fun FirClassLikeSymbol<*>.containsRepeatableAnnotation(session: FirSession): Boolean {
     if (getAnnotationByClassId(StandardNames.FqNames.repeatableClassId) != null) return true
-    if (getAnnotationByClassId(JAVA_REPEATABLE_ANNOTATION_CLASS_ID) != null ||
-        getAnnotationByClassId(JVM_REPEATABLE_ANNOTATION_CLASS_ID) != null
+    if (getAnnotationByClassId(StandardClassIds.Annotations.Java.Repeatable) != null ||
+        getAnnotationByClassId(StandardClassIds.Annotations.JvmRepeatable) != null
     ) {
         return session.languageVersionSettings.supportsFeature(LanguageFeature.RepeatableAnnotations) ||
                 getAnnotationRetention() == AnnotationRetention.SOURCE && origin == FirDeclarationOrigin.Java

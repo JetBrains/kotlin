@@ -32,15 +32,12 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.lang.Deprecated
-import java.lang.annotation.Documented
-import java.lang.annotation.Retention
-import java.lang.annotation.Target
-import java.util.EnumSet
+import java.util.*
 
 internal val JavaModifierListOwner.modality: Modality
     get() = when {
@@ -84,11 +81,6 @@ private fun buildEnumCall(session: FirSession, classId: ClassId?, entryName: Nam
             }
     }
 
-private val JAVA_TARGET_CLASS_ID = ClassId.topLevel(FqName(Target::class.java.canonicalName))
-private val JAVA_RETENTION_CLASS_ID = ClassId.topLevel(FqName(Retention::class.java.canonicalName))
-private val JAVA_DEPRECATED_CLASS_ID = ClassId.topLevel(FqName(Deprecated::class.java.canonicalName))
-private val JAVA_DOCUMENTED_CLASS_ID = ClassId.topLevel(FqName(Documented::class.java.canonicalName))
-
 private val JAVA_TARGETS_TO_KOTLIN = mapOf(
     "TYPE" to EnumSet.of(AnnotationTarget.CLASS, AnnotationTarget.FILE),
     "ANNOTATION_TYPE" to EnumSet.of(AnnotationTarget.ANNOTATION_CLASS),
@@ -100,10 +92,6 @@ private val JAVA_TARGETS_TO_KOTLIN = mapOf(
     "METHOD" to EnumSet.of(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER),
     "TYPE_USE" to EnumSet.of(AnnotationTarget.TYPE)
 )
-
-private val TARGET_ALLOWED_TARGETS_NAME = Name.identifier("allowedTargets")
-private val RETENTION_VALUE_NAME = Name.identifier("value")
-private val DEPRECATED_MESSAGE_NAME = Name.identifier("message")
 
 private fun List<JavaAnnotationArgument>.mapJavaTargetArguments(session: FirSession): FirExpression? {
     return buildVarargArgumentsExpression {
@@ -152,7 +140,7 @@ private fun fillAnnotationArgumentMapping(
         ?.declarations
         ?.firstIsInstanceOrNull<FirConstructor>()
     annotationArguments.associateTo(destination) { argument ->
-        val name = argument.name ?: JavaClassConverter.VALUE_METHOD_NAME
+        val name = argument.name ?: ParameterNames.value
         val parameter = annotationConstructor?.valueParameters?.find { it.name == name }
         name to argument.toFirExpression(session, javaTypeParameterStack, parameter?.returnTypeRef)
     }
@@ -179,10 +167,10 @@ private fun JavaAnnotation.toFirAnnotationCall(
 ): FirAnnotation {
     return buildAnnotation {
         val lookupTag = when (classId) {
-            JAVA_TARGET_CLASS_ID -> ClassId.topLevel(StandardNames.FqNames.target)
-            JAVA_RETENTION_CLASS_ID -> ClassId.topLevel(StandardNames.FqNames.retention)
-            JAVA_DOCUMENTED_CLASS_ID -> ClassId.topLevel(StandardNames.FqNames.mustBeDocumented)
-            JAVA_DEPRECATED_CLASS_ID -> ClassId.topLevel(StandardNames.FqNames.deprecated)
+            Annotations.Java.Target -> ClassId.topLevel(StandardNames.FqNames.target)
+            Annotations.Java.Retention -> ClassId.topLevel(StandardNames.FqNames.retention)
+            Annotations.Java.Documented -> ClassId.topLevel(StandardNames.FqNames.mustBeDocumented)
+            Annotations.Java.Deprecated -> ClassId.topLevel(StandardNames.FqNames.deprecated)
             else -> classId
         }?.let(::ConeClassLikeLookupTagImpl)
         annotationTypeRef = if (lookupTag != null) {
@@ -195,22 +183,22 @@ private fun JavaAnnotation.toFirAnnotationCall(
 
         argumentMapping = buildAnnotationArgumentMapping {
             when (classId) {
-                JAVA_TARGET_CLASS_ID -> {
+                Annotations.Java.Target -> {
                     when (val argument = arguments.firstOrNull()) {
                         is JavaArrayAnnotationArgument -> argument.getElements().mapJavaTargetArguments(session)
                         is JavaEnumValueAnnotationArgument -> listOf(argument).mapJavaTargetArguments(session)
                         else -> null
                     }?.let {
-                        mapping[TARGET_ALLOWED_TARGETS_NAME] = it
+                        mapping[ParameterNames.targetAllowedTargets] = it
                     }
                 }
-                JAVA_RETENTION_CLASS_ID -> {
+                Annotations.Java.Retention -> {
                     arguments.firstOrNull()?.mapJavaRetentionArgument(session)?.let {
-                        mapping[RETENTION_VALUE_NAME] = it
+                        mapping[ParameterNames.retentionValue] = it
                     }
                 }
-                JAVA_DEPRECATED_CLASS_ID -> {
-                    mapping[DEPRECATED_MESSAGE_NAME] = buildConstExpression(
+                Annotations.Java.Deprecated -> {
+                    mapping[ParameterNames.deprecatedMessage] = buildConstExpression(
                         source = null,
                         ConstantValueKind.String,
                         "Deprecated in Java"

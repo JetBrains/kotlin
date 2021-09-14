@@ -62,7 +62,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker() {
 
     private fun FirAnnotatedDeclaration.findJvmNameAnnotation(): FirAnnotation? {
         return annotations.firstOrNull {
-            it.annotationTypeRef.coneType.classId == StandardClassIds.JvmName
+            it.annotationTypeRef.coneType.classId == StandardClassIds.Annotations.JvmName
         }
     }
 

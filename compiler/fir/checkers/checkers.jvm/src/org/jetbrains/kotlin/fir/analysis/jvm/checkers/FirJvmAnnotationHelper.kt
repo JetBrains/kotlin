@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByFqName
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_FQ_NAME
+import org.jetbrains.kotlin.name.StandardClassIds
 
 fun <D> FirBasedSymbol<out D>.isCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boolean where D : FirAnnotationContainer, D : FirDeclaration {
     // TODO: Fix support for all cases
-    if (getAnnotationByFqName(JVM_DEFAULT_FQ_NAME) != null) return true
+    if (getAnnotationByClassId(StandardClassIds.Annotations.JvmDefault) != null) return true
 
     return jvmDefaultMode.forAllMethodsWithBody
 }

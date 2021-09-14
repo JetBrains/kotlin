@@ -43,7 +43,7 @@ abstract class AbstractDiagnosticCollector(
         fun getDiagnosticsSuppressedForContainer(annotationContainer: FirAnnotationContainer): List<String>? {
             val annotations = annotationContainer.annotations.filter {
                 val type = it.annotationTypeRef.coneType as? ConeClassLikeType ?: return@filter false
-                type.lookupTag.classId == StandardClassIds.Suppress
+                type.lookupTag.classId == StandardClassIds.Annotations.Suppress
             }
             if (annotations.isEmpty()) return null
             return annotations.flatMap { annotationCall ->

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -43,14 +42,14 @@ object FirJvmStaticChecker : FirAnnotatedDeclarationChecker() {
             return
         }
 
-        val declarationAnnotation = declaration.findAnnotation(StandardClassIds.JvmStatic)
+        val declarationAnnotation = declaration.findAnnotation(StandardClassIds.Annotations.JvmStatic)
 
         if (declarationAnnotation != null) {
             checkAnnotated(declaration, context, reporter, declaration.source)
         }
 
         fun checkIfAnnotated(it: FirAnnotatedDeclaration) {
-            if (!it.hasAnnotation(StandardClassIds.JvmStatic)) {
+            if (!it.hasAnnotation(StandardClassIds.Annotations.JvmStatic)) {
                 return
             }
             val targetSource = it.source ?: declaration.source
@@ -203,7 +202,7 @@ object FirJvmStaticChecker : FirAnnotatedDeclarationChecker() {
     ) {
         if (
             declaration is FirProperty && declaration.isConst ||
-            declaration.hasAnnotationNamedAs(StandardClassIds.JvmField)
+            declaration.hasAnnotationNamedAs(StandardClassIds.Annotations.JvmField)
         ) {
             reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_ON_CONST_OR_JVM_FIELD, context)
         }
