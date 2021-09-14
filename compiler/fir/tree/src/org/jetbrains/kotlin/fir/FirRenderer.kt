@@ -518,6 +518,12 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         if (!mode.renderPropertyAccessors) return
         println()
         pushIndent()
+
+        if (property.hasExplicitBackingField) {
+            property.backingField?.accept(this)
+            println()
+        }
+
         property.getter?.accept(this)
         if (property.getter?.body == null) {
             println()
@@ -529,6 +535,17 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
             }
         }
         popIndent()
+    }
+
+    override fun visitBackingField(backingField: FirBackingField) {
+        print(backingField.visibility.asString() + " ")
+        print("<explicit backing field>: ")
+        backingField.returnTypeRef.accept(this)
+
+        backingField.initializer?.let {
+            print(" = ")
+            it.accept(this)
+        }
     }
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
