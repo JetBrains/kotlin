@@ -41,8 +41,6 @@ private data class FirSinceKotlinValue(
     val wasExperimentalMarkerClasses: List<FirRegularClassSymbol>
 )
 
-private val SINCE_KOTLIN_VERSION_NAME = Name.identifier("version")
-
 fun FirAnnotatedDeclaration.checkSinceKotlinVersionAccessibility(context: CheckerContext): FirSinceKotlinAccessibility {
     val value = getOwnSinceKotlinVersion(context.session)
     val version = value?.apiVersion
@@ -67,7 +65,7 @@ private fun FirAnnotatedDeclaration.getOwnSinceKotlinVersion(session: FirSession
 
     // TODO: use-site targeted annotations
     fun FirAnnotatedDeclaration.consider() {
-        val sinceKotlinSingleArgument = getAnnotationByClassId(StandardClassIds.Annotations.SinceKotlin)?.findArgumentByName(SINCE_KOTLIN_VERSION_NAME)
+        val sinceKotlinSingleArgument = getAnnotationByClassId(StandardClassIds.Annotations.SinceKotlin)?.findArgumentByName(StandardClassIds.Annotations.ParameterNames.sinceKotlinVersion)
         val apiVersion = ((sinceKotlinSingleArgument as? FirConstExpression<*>)?.value as? String)?.let(ApiVersion.Companion::parse)
         if (apiVersion != null) {
             // TODO: combine wasExperimentalMarkerClasses in case of several associated declarations with the same maximal API version

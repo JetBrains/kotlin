@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isInlineOnly
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
-import org.jetbrains.kotlin.fir.analysis.checkers.util.checkChildrenWithCustomVisitor
+import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirInlineDeclarationChecker : FirFunctionChecker() {
@@ -502,5 +503,17 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         if (canBeInlined && overriddenSymbols.isNotEmpty()) {
             reporter.reportOn(declaration.source, FirErrors.OVERRIDE_BY_INLINE, context)
         }
+    }
+
+    private fun FirElement.checkChildrenWithCustomVisitor(
+        parentContext: CheckerContext,
+        visitorVoid: FirVisitor<Unit, CheckerContext>
+    ) {
+        val collectingVisitor = object : AbstractDiagnosticCollectorVisitor(parentContext) {
+            override fun checkElement(element: FirElement) {
+                element.accept(visitorVoid, context)
+            }
+        }
+        this.accept(collectingVisitor, null)
     }
 }

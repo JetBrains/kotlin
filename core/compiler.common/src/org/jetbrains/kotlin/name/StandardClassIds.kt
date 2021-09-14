@@ -173,6 +173,8 @@ object StandardClassIds {
             val targetAllowedTargets = Name.identifier("allowedTargets")
             val jvmNameName = Name.identifier("name")
 
+            val sinceKotlinVersion = Name.identifier("version")
+
             val deprecatedMessage = Name.identifier("message")
             val deprecatedLevel = Name.identifier("level")
 

@@ -209,23 +209,7 @@ fun FirNamedFunctionSymbol.overriddenFunctions(
     return overriddenFunctions
 }
 
-/**
- * Returns the visibility by given KtModifierList
- */
-fun KtModifierList?.getVisibility() = this?.visibilityModifierType()?.toVisibilityOrNull()
 
-/**
- * Returns Visibility by token or null
- */
-fun KtModifierKeywordToken.toVisibilityOrNull(): Visibility? {
-    return when (this) {
-        KtTokens.PUBLIC_KEYWORD -> Visibilities.Public
-        KtTokens.PRIVATE_KEYWORD -> Visibilities.Private
-        KtTokens.PROTECTED_KEYWORD -> Visibilities.Protected
-        KtTokens.INTERNAL_KEYWORD -> Visibilities.Internal
-        else -> null
-    }
-}
 
 /**
  * Returns the modality of the class

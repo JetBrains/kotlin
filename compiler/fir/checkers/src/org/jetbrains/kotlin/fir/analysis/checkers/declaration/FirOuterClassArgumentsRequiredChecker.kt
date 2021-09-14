@@ -26,41 +26,41 @@ object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker() {
             checkOuterClassArgumentsRequired(superTypeRef, declaration, context, reporter)
         }
     }
-}
 
-private fun checkOuterClassArgumentsRequired(
-    typeRef: FirTypeRef,
-    declaration: FirRegularClass?,
-    context: CheckerContext,
-    reporter: DiagnosticReporter
-) {
-    if (typeRef !is FirResolvedTypeRef || typeRef is FirErrorTypeRef) {
-        return
-    }
+    private fun checkOuterClassArgumentsRequired(
+        typeRef: FirTypeRef,
+        declaration: FirRegularClass?,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        if (typeRef !is FirResolvedTypeRef || typeRef is FirErrorTypeRef) {
+            return
+        }
 
-    val type: ConeKotlinType = typeRef.type
-    val delegatedTypeRef = typeRef.delegatedTypeRef
+        val type: ConeKotlinType = typeRef.type
+        val delegatedTypeRef = typeRef.delegatedTypeRef
 
-    if (delegatedTypeRef is FirUserTypeRef && type is ConeClassLikeType) {
-        val symbol = type.lookupTag.toSymbol(context.session)
+        if (delegatedTypeRef is FirUserTypeRef && type is ConeClassLikeType) {
+            val symbol = type.lookupTag.toSymbol(context.session)
 
-        if (symbol is FirRegularClassSymbol) {
-            val typeArguments = delegatedTypeRef.qualifier.toTypeProjections()
-            val typeParameters = symbol.typeParameterSymbols
+            if (symbol is FirRegularClassSymbol) {
+                val typeArguments = delegatedTypeRef.qualifier.toTypeProjections()
+                val typeParameters = symbol.typeParameterSymbols
 
-            for (index in typeArguments.size until typeParameters.size) {
-                val typeParameter = typeParameters[index]
-                if (!isValidTypeParameterFromOuterClass(typeParameter, declaration, context.session)) {
-                    val outerClass = typeParameter.containingDeclarationSymbol as? FirRegularClassSymbol ?: break
-                    reporter.reportOn(typeRef.source, FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED, outerClass, context)
-                    break
+                for (index in typeArguments.size until typeParameters.size) {
+                    val typeParameter = typeParameters[index]
+                    if (!isValidTypeParameterFromOuterClass(typeParameter, declaration, context.session)) {
+                        val outerClass = typeParameter.containingDeclarationSymbol as? FirRegularClassSymbol ?: break
+                        reporter.reportOn(typeRef.source, FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED, outerClass, context)
+                        break
+                    }
                 }
             }
         }
-    }
 
-    for (index in type.typeArguments.indices) {
-        val firTypeRefSource = extractArgumentTypeRefAndSource(typeRef, index) ?: continue
-        firTypeRefSource.typeRef?.let { checkOuterClassArgumentsRequired(it, declaration, context, reporter) }
+        for (index in type.typeArguments.indices) {
+            val firTypeRefSource = extractArgumentTypeRefAndSource(typeRef, index) ?: continue
+            firTypeRefSource.typeRef?.let { checkOuterClassArgumentsRequired(it, declaration, context, reporter) }
+        }
     }
 }
