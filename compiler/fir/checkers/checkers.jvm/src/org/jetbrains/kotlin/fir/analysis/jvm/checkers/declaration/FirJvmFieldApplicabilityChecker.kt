@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.JvmNames.JVM_MULTIFILE_CLASS_ID
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -88,7 +89,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
     }
 
     private fun FirRegularClassSymbol.isDontMangleClass(): Boolean {
-        return this.classId.relativeClassName.asString() == StandardNames.RESULT_FQ_NAME.asString()
+        return this.classId == StandardClassIds.Result
     }
 
     private fun FirProperty.isOverridable(containingClass: FirRegularClassSymbol?): Boolean {

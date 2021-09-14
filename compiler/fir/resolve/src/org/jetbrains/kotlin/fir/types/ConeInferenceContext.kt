@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.isPrimitiveNumberOrUnsignedNumberType
 import org.jetbrains.kotlin.fir.resolve.calls.NoSubstitutor
@@ -487,17 +486,21 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun getFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
-        val classId = if (isSuspend)
-            StandardNames.getSuspendFunctionClassId(parametersNumber)
-        else StandardNames.getFunctionClassId(parametersNumber)
+        val classId = if (isSuspend) {
+            StandardClassIds.SuspendFunctionN(parametersNumber)
+        } else {
+            StandardClassIds.FunctionN(parametersNumber)
+        }
         return session.symbolProvider.getClassLikeSymbolByClassId(classId)?.toLookupTag()
             ?: error("Can't find Function type")
     }
 
     override fun getKFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
-        val classId = if (isSuspend)
-            StandardNames.getKSuspendFunctionClassId(parametersNumber)
-        else StandardNames.getKFunctionClassId(parametersNumber)
+        val classId = if (isSuspend) {
+            StandardClassIds.KSuspendFunctionN(parametersNumber)
+        } else {
+            StandardClassIds.KFunctionN(parametersNumber)
+        }
         return session.symbolProvider.getClassLikeSymbolByClassId(classId)?.toLookupTag()
             ?: error("Can't find KFunction type")
     }

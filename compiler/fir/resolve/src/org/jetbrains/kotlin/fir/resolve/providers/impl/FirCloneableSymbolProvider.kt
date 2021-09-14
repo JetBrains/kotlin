@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.*
 
 @NoMutableState
 class FirCloneableSymbolProvider(
@@ -34,13 +31,6 @@ class FirCloneableSymbolProvider(
     moduleData: FirModuleData,
     scopeProvider: FirScopeProvider
 ) : FirSymbolProvider(session) {
-    companion object {
-        val CLONEABLE: Name = Name.identifier("Cloneable")
-        val CLONEABLE_CLASS_ID: ClassId = ClassId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, CLONEABLE)
-
-        val CLONE: Name = Name.identifier("clone")
-    }
-
     private val klass = buildRegularClass {
         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
         origin = FirDeclarationOrigin.Library
@@ -50,7 +40,7 @@ class FirCloneableSymbolProvider(
             Modality.ABSTRACT
         )
         classKind = ClassKind.INTERFACE
-        symbol = FirRegularClassSymbol(CLONEABLE_CLASS_ID)
+        symbol = FirRegularClassSymbol(StandardClassIds.Cloneable)
         declarations += buildSimpleFunction {
             this.moduleData = moduleData
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -59,17 +49,17 @@ class FirCloneableSymbolProvider(
                 type = session.builtinTypes.anyType.type
             }
             status = FirDeclarationStatusImpl(Visibilities.Protected, Modality.OPEN)
-            name = CLONE
-            symbol = FirNamedFunctionSymbol(CallableId(CLONEABLE_CLASS_ID, CLONE))
+            name = StandardClassIds.Callables.clone.callableName
+            symbol = FirNamedFunctionSymbol(StandardClassIds.Callables.clone)
             dispatchReceiverType = this@buildRegularClass.symbol.constructType(emptyArray(), isNullable = false)
         }
         this.scopeProvider = scopeProvider
-        name = CLONEABLE
+        name = StandardClassIds.Cloneable.shortClassName
 
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-        return if (classId == CLONEABLE_CLASS_ID) klass.symbol else null
+        return if (classId == StandardClassIds.Cloneable) klass.symbol else null
     }
 
     @FirSymbolProviderInternals

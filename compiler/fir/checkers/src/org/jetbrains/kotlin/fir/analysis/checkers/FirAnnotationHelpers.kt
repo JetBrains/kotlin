@@ -85,15 +85,15 @@ fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(): Set<KotlinTarget> {
 }
 
 fun FirAnnotatedDeclaration.getRetentionAnnotation(): FirAnnotation? {
-    return getAnnotationByClassId(StandardNames.FqNames.retentionClassId)
+    return getAnnotationByClassId(StandardClassIds.Annotations.Retention)
 }
 
 fun FirAnnotatedDeclaration.getTargetAnnotation(): FirAnnotation? {
-    return getAnnotationByClassId(StandardNames.FqNames.targetClassId)
+    return getAnnotationByClassId(StandardClassIds.Annotations.Target)
 }
 
 fun FirClassLikeSymbol<*>.getTargetAnnotation(): FirAnnotation? {
-    return getAnnotationByClassId(StandardNames.FqNames.targetClassId)
+    return getAnnotationByClassId(StandardClassIds.Annotations.Target)
 }
 
 fun FirExpression.extractClassesFromArgument(): List<FirRegularClassSymbol> {
@@ -127,7 +127,7 @@ fun FirAnnotation.isRepeatable(session: FirSession): Boolean {
 }
 
 fun FirClassLikeSymbol<*>.containsRepeatableAnnotation(session: FirSession): Boolean {
-    if (getAnnotationByClassId(StandardNames.FqNames.repeatableClassId) != null) return true
+    if (getAnnotationByClassId(StandardClassIds.Annotations.Repeatable) != null) return true
     if (getAnnotationByClassId(StandardClassIds.Annotations.Java.Repeatable) != null ||
         getAnnotationByClassId(StandardClassIds.Annotations.JvmRepeatable) != null
     ) {
@@ -138,7 +138,7 @@ fun FirClassLikeSymbol<*>.containsRepeatableAnnotation(session: FirSession): Boo
 }
 
 fun FirClassLikeSymbol<*>.getAnnotationRetention(): AnnotationRetention {
-    return getAnnotationByClassId(StandardNames.FqNames.retentionClassId)?.getRetention() ?: AnnotationRetention.RUNTIME
+    return getAnnotationByClassId(StandardClassIds.Annotations.Retention)?.getRetention() ?: AnnotationRetention.RUNTIME
 }
 
 fun FirAnnotationContainer.getDefaultUseSiteTarget(

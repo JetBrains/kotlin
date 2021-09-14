@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -530,14 +531,14 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return substitutedUnderlyingTypeForInlineClass(session, this@ConeTypeContext)
     }
 
-    override fun TypeConstructorMarker.getPrimitiveType() =
+    override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? =
         getClassFqNameUnsafe()?.let(StandardNames.FqNames.fqNameToPrimitiveType::get)
 
-    override fun TypeConstructorMarker.getPrimitiveArrayType() =
+    override fun TypeConstructorMarker.getPrimitiveArrayType(): PrimitiveType? =
         getClassFqNameUnsafe()?.let(StandardNames.FqNames.arrayClassFqNameToPrimitiveType::get)
 
-    override fun TypeConstructorMarker.isUnderKotlinPackage() =
-        getClassFqNameUnsafe()?.startsWith(Name.identifier("kotlin")) == true
+    override fun TypeConstructorMarker.isUnderKotlinPackage(): Boolean =
+        getClassFqNameUnsafe()?.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE.shortName()) == true
 
     override fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe? {
         if (this !is ConeClassLikeLookupTag) return null

@@ -6,14 +6,16 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.getChild
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.expressions.*
@@ -32,16 +34,11 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
-    private val RESTRICTS_SUSPENSION_CLASS_ID =
-        ClassId(StandardNames.COROUTINES_PACKAGE_FQ_NAME, Name.identifier("RestrictsSuspension"))
-
-    private val BUILTIN_SUSPEND_NAME = StandardClassIds.suspend.callableName
+    private val BUILTIN_SUSPEND_NAME = StandardClassIds.Callables.suspend.callableName
 
     internal val KOTLIN_SUSPEND_BUILT_IN_FUNCTION_CALLABLE_ID = CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, BUILTIN_SUSPEND_NAME)
 
@@ -56,7 +53,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         if (reference is FirResolvedCallableReference) return
         when (symbol) {
             is FirNamedFunctionSymbol -> if (!symbol.isSuspend) return
-            is FirPropertySymbol -> if (symbol.callableId != StandardClassIds.coroutineContext) return
+            is FirPropertySymbol -> if (symbol.callableId != StandardClassIds.Callables.coroutineContext) return
             else -> return
         }
         val enclosingSuspendFunction = findEnclosingSuspendFunction(context)
@@ -177,7 +174,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         when (this) {
             is ConeClassLikeType -> {
                 val regularClassSymbol = fullyExpandedType(session).lookupTag.toFirRegularClassSymbol(session) ?: return false
-                if (regularClassSymbol.getAnnotationByClassId(RESTRICTS_SUSPENSION_CLASS_ID) != null) {
+                if (regularClassSymbol.getAnnotationByClassId(StandardClassIds.Annotations.RestrictsSuspension) != null) {
                     return true
                 }
                 return regularClassSymbol.superConeTypes.any { it.isRestrictSuspensionReceiver(session) }

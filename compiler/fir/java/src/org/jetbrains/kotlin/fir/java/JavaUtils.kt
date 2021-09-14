@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.java
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -100,7 +100,7 @@ private fun List<JavaAnnotationArgument>.mapJavaTargetArguments(session: FirSess
             if (target !is JavaEnumValueAnnotationArgument) return null
             resultSet.addAll(JAVA_TARGETS_TO_KOTLIN[target.entryName?.asString()] ?: continue)
         }
-        val classId = ClassId.topLevel(StandardNames.FqNames.annotationTarget)
+        val classId = StandardClassIds.AnnotationTarget
         resultSet.mapTo(arguments) { buildEnumCall(session, classId, Name.identifier(it.name)) }
         varargElementType = buildResolvedTypeRef {
             type = ConeClassLikeTypeImpl(
@@ -121,7 +121,7 @@ private val JAVA_RETENTION_TO_KOTLIN = mapOf(
 
 private fun JavaAnnotationArgument.mapJavaRetentionArgument(session: FirSession): FirExpression? =
     JAVA_RETENTION_TO_KOTLIN[(this as? JavaEnumValueAnnotationArgument)?.entryName?.asString()]?.let {
-        buildEnumCall(session, ClassId.topLevel(StandardNames.FqNames.annotationRetention), Name.identifier(it.name))
+        buildEnumCall(session, StandardClassIds.AnnotationRetention, Name.identifier(it.name))
     }
 
 private fun fillAnnotationArgumentMapping(
@@ -167,10 +167,10 @@ private fun JavaAnnotation.toFirAnnotationCall(
 ): FirAnnotation {
     return buildAnnotation {
         val lookupTag = when (classId) {
-            Annotations.Java.Target -> ClassId.topLevel(StandardNames.FqNames.target)
-            Annotations.Java.Retention -> ClassId.topLevel(StandardNames.FqNames.retention)
-            Annotations.Java.Documented -> ClassId.topLevel(StandardNames.FqNames.mustBeDocumented)
-            Annotations.Java.Deprecated -> ClassId.topLevel(StandardNames.FqNames.deprecated)
+            Annotations.Java.Target -> Annotations.Target
+            Annotations.Java.Retention -> Annotations.Retention
+            Annotations.Java.Documented -> Annotations.MustBeDocumented
+            Annotations.Java.Deprecated -> Annotations.Deprecated
             else -> classId
         }?.let(::ConeClassLikeLookupTagImpl)
         annotationTypeRef = if (lookupTag != null) {

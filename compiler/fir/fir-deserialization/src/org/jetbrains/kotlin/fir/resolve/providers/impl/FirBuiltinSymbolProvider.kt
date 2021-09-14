@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -58,7 +57,7 @@ open class FirBuiltinSymbolProvider(
     private fun loadBuiltIns(): List<BuiltInsPackageFragment> {
         val classLoader = this::class.java.classLoader
         val streamProvider = { path: String -> classLoader?.getResourceAsStream(path) ?: ClassLoader.getSystemResourceAsStream(path) }
-        val packageFqNames = StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
+        val packageFqNames = StandardClassIds.builtInsPackages
 
         return packageFqNames.map { fqName ->
             val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(fqName)

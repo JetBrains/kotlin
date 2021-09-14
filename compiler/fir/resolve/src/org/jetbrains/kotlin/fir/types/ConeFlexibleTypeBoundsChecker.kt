@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object ConeFlexibleTypeBoundsChecker {
-    private val fqNames = StandardNames.FqNames
     private val baseTypesToMutableEquivalent = mapOf(
         StandardClassIds.Iterable to StandardClassIds.MutableIterable,
         StandardClassIds.Iterator to StandardClassIds.MutableIterator,

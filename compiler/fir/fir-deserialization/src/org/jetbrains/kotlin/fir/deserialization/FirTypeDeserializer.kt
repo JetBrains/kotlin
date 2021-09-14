@@ -171,7 +171,7 @@ class FirTypeDeserializer(
     ): ConeClassLikeType? {
         fun ConeClassLikeType.isContinuation(): Boolean {
             if (this.typeArguments.size != 1) return false
-            if (this.lookupTag.classId != CONTINUATION_INTERFACE_CLASS_ID) return false
+            if (this.lookupTag.classId != StandardClassIds.Continuation) return false
             return true
         }
 

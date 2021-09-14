@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 
 @ThreadSafeMutableState
 class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
@@ -320,9 +320,9 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     typeRef.valueParameters.map { it.returnTypeRef.coneType } +
                     listOf(typeRef.returnTypeRef.coneType)
         val classId = if (typeRef.isSuspend) {
-            StandardNames.getSuspendFunctionClassId(typeRef.parametersCount)
+            StandardClassIds.SuspendFunctionN(typeRef.parametersCount)
         } else {
-            StandardNames.getFunctionClassId(typeRef.parametersCount)
+            StandardClassIds.FunctionN(typeRef.parametersCount)
         }
         val attributes = typeRef.annotations.computeTypeAttributes()
         val symbol = resolveBuiltInQualified(classId, session)

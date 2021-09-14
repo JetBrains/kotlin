@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.Returns
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.ValueParametersCount
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGNMENT_OPERATIONS
 import org.jetbrains.kotlin.util.OperatorNameConventions.BINARY_OPERATION_NAMES
 import org.jetbrains.kotlin.util.OperatorNameConventions.COMPARE_TO
@@ -145,7 +145,7 @@ private object Checks {
     }
 
     private val kPropertyType = ConeClassLikeTypeImpl(
-        ConeClassLikeLookupTagImpl(StandardNames.FqNames.kProperty),
+        ConeClassLikeLookupTagImpl(StandardClassIds.KProperty),
         arrayOf(ConeStarProjection),
         isNullable = false
     )
@@ -187,7 +187,7 @@ private object OperatorFunctionChecks {
             Checks.full("must override ''equals()'' in Any") { ctx, function ->
                 val containingClassSymbol = function.containingClass()?.toFirRegularClassSymbol(ctx.session) ?: return@full true
                 function.overriddenFunctions(containingClassSymbol, ctx).any {
-                    it.containingClass()?.classId?.asSingleFqName() == StandardNames.FqNames.any.toSafe()
+                    it.containingClass()?.classId == StandardClassIds.Any
                 }
             }
         )

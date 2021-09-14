@@ -5,17 +5,27 @@
 
 package org.jetbrains.kotlin.name
 
-import org.jetbrains.kotlin.builtins.StandardNames
-
 object StandardClassIds {
     val BASE_KOTLIN_PACKAGE = FqName("kotlin")
     val BASE_REFLECT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("reflect"))
     val BASE_COLLECTIONS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("collections"))
+    val BASE_RANGES_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("ranges"))
     val BASE_JVM_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("jvm"))
     val BASE_JVM_INTERNAL_PACKAGE = BASE_JVM_PACKAGE.child(Name.identifier("internal"))
     val BASE_ANNOTATION_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("annotation"))
     val BASE_INTERNAL_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("internal"))
     val BASE_INTERNAL_IR_PACKAGE = BASE_INTERNAL_PACKAGE.child(Name.identifier("ir"))
+    val BASE_COROUTINES_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("coroutines"))
+
+    val builtInsPackages = setOf(
+        BASE_KOTLIN_PACKAGE,
+        BASE_COLLECTIONS_PACKAGE,
+        BASE_RANGES_PACKAGE,
+        BASE_ANNOTATION_PACKAGE,
+        BASE_REFLECT_PACKAGE,
+        BASE_INTERNAL_PACKAGE,
+        BASE_COROUTINES_PACKAGE,
+    )
 
     val Nothing = "Nothing".baseId()
     val Unit = "Unit".baseId()
@@ -40,6 +50,8 @@ object StandardClassIds {
 
     val String = "String".baseId()
     val Throwable = "Throwable".baseId()
+
+    val Cloneable = "Cloneable".baseId()
 
     val KProperty = "KProperty".reflectId()
     val KMutableProperty = "KMutableProperty".reflectId()
@@ -72,11 +84,26 @@ object StandardClassIds {
 
     val constantAllowedTypes = primitiveTypes + unsignedTypes + String
 
-    val Continuation = ClassId(StandardNames.COROUTINES_PACKAGE_FQ_NAME, StandardNames.CONTINUATION_INTERFACE_FQ_NAME.shortName())
+    val Continuation = "Continuation".coroutinesId()
 
     @Suppress("FunctionName")
     fun FunctionN(n: Int): ClassId {
         return "Function$n".baseId()
+    }
+
+    @Suppress("FunctionName")
+    fun SuspendFunctionN(n: Int): ClassId {
+        return "SuspendFunction$n".coroutinesId()
+    }
+
+    @Suppress("FunctionName")
+    fun KFunctionN(n: Int): ClassId {
+        return "KFunction$n".reflectId()
+    }
+
+    @Suppress("FunctionName")
+    fun KSuspendFunctionN(n: Int): ClassId {
+        return "KSuspendFunction$n".reflectId()
     }
 
     val Iterator = "Iterator".collectionsId()
@@ -98,10 +125,14 @@ object StandardClassIds {
     val MapEntry = Map.createNestedClassId(Name.identifier("Entry"))
     val MutableMapEntry = MutableMap.createNestedClassId(Name.identifier("MutableEntry"))
 
-    val coroutineContext = CallableId(StandardNames.COROUTINES_PACKAGE_FQ_NAME, Name.identifier("coroutineContext"))
-    val suspend = CallableId(BASE_KOTLIN_PACKAGE, Name.identifier("suspend"))
-
     val Result = "Result".baseId()
+
+    val IntRange = "IntRange".rangesId()
+    val LongRange = "LongRange".rangesId()
+    val CharRange = "CharRange".rangesId()
+
+    val AnnotationRetention = "AnnotationRetention".annotationId()
+    val AnnotationTarget = "AnnotationTarget".annotationId()
 
     object Annotations {
         val Suppress = "Suppress".baseId()
@@ -110,10 +141,11 @@ object StandardClassIds {
         val ExtensionFunctionType = "ExtensionFunctionType".baseId()
         val Deprecated = "Deprecated".baseId()
         val DeprecatedSinceKotlin = "DeprecatedSinceKotlin".baseId()
-        val Repeatable = "Repeatable".annotationId()
 
         val Retention = "Retention".annotationId()
         val Target = "Target".annotationId()
+        val Repeatable = "Repeatable".annotationId()
+        val MustBeDocumented = "MustBeDocumented".annotationId()
 
         val JvmStatic = "JvmStatic".jvmId()
         val JvmName = "JvmName".jvmId()
@@ -124,6 +156,7 @@ object StandardClassIds {
         val FlexibleNullability = "FlexibleNullability".internalIrId()
         val EnhancedNullability = "EnhancedNullability".jvmInternalId()
 
+        val RestrictsSuspension = "RestrictsSuspension".coroutinesId()
 
         object Java {
             val Deprecated = "Deprecated".javaLangId()
@@ -148,6 +181,13 @@ object StandardClassIds {
             val deprecatedSinceKotlinHiddenSince = Name.identifier("hiddenSince")
         }
     }
+
+    object Callables {
+        val suspend = "suspend".callableId(BASE_KOTLIN_PACKAGE)
+        val coroutineContext = "coroutineContext".callableId(BASE_COROUTINES_PACKAGE)
+
+        val clone = "clone".callableId(Cloneable)
+    }
 }
 
 private fun String.baseId() = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier(this))
@@ -155,11 +195,16 @@ private fun ClassId.unsignedId() = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE,
 private fun String.reflectId() = ClassId(StandardClassIds.BASE_REFLECT_PACKAGE, Name.identifier(this))
 private fun Name.primitiveArrayId() = ClassId(StandardClassIds.Array.packageFqName, Name.identifier(identifier + StandardClassIds.Array.shortClassName.identifier))
 private fun String.collectionsId() = ClassId(StandardClassIds.BASE_COLLECTIONS_PACKAGE, Name.identifier(this))
+private fun String.rangesId() = ClassId(StandardClassIds.BASE_RANGES_PACKAGE, Name.identifier(this))
 private fun String.annotationId() = ClassId(StandardClassIds.BASE_ANNOTATION_PACKAGE, Name.identifier(this))
 private fun String.jvmId() = ClassId(StandardClassIds.BASE_JVM_PACKAGE, Name.identifier(this))
 private fun String.jvmInternalId() = ClassId(StandardClassIds.BASE_JVM_INTERNAL_PACKAGE, Name.identifier(this))
 private fun String.internalId() = ClassId(StandardClassIds.BASE_INTERNAL_PACKAGE, Name.identifier(this))
 private fun String.internalIrId() = ClassId(StandardClassIds.BASE_INTERNAL_IR_PACKAGE, Name.identifier(this))
+private fun String.coroutinesId() = ClassId(StandardClassIds.BASE_COROUTINES_PACKAGE, Name.identifier(this))
+
+private fun String.callableId(packageName: FqName) = CallableId(packageName, Name.identifier(this))
+private fun String.callableId(classId: ClassId) = CallableId(classId, Name.identifier(this))
 
 private val JAVA_LANG_PACKAGE = FqName("java.lang")
 private val JAVA_LANG_ANNOTATION_PACKAGE = JAVA_LANG_PACKAGE.child(Name.identifier("annotation"))

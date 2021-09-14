@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.backend.common.ir.addFakeOverrides
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -38,10 +37,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.reflect.KProperty
@@ -55,10 +51,7 @@ class IrBuiltInsOverFir(
 
     override val irFactory: IrFactory = components.symbolTable.irFactory
 
-    private val kotlinPackage = StandardNames.BUILT_INS_PACKAGE_FQ_NAME
-    private val kotlinReflectPackage = StandardNames.KOTLIN_REFLECT_FQ_NAME
-
-    private val kotlinCollectionsPackage = StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
+    private val kotlinPackage = StandardClassIds.BASE_KOTLIN_PACKAGE
 
     override val operatorsPackageFragment = createPackage(KOTLIN_INTERNAL_IR_FQN)
     private val kotlinIrPackage = createPackage(kotlinPackage)
@@ -123,7 +116,7 @@ class IrBuiltInsOverFir(
         createMemberFunction(OperatorNameConventions.PLUS, charType, "other" to intType, isOperator = true)
         createMemberFunction(OperatorNameConventions.MINUS, charType, "other" to intType, isOperator = true)
         createMemberFunction(OperatorNameConventions.MINUS, intType, "other" to charType, isOperator = true)
-        val charRange = referenceClassByFqname(StandardNames.RANGES_PACKAGE_FQ_NAME, "CharRange")!!.owner.defaultType
+        val charRange = referenceClassByClassId(StandardClassIds.CharRange)!!.owner.defaultType
         createMemberFunction(OperatorNameConventions.RANGE_TO, charRange, "other" to charType)
         finalizeClassDefinition()
     }
@@ -198,75 +191,75 @@ class IrBuiltInsOverFir(
     }
     override val arrayClass: IrClassSymbol get() = array.klass
 
-    private val intRangeType by lazy { referenceClassByFqname(StandardNames.RANGES_PACKAGE_FQ_NAME, "IntRange")!!.owner.defaultType }
-    private val longRangeType by lazy { referenceClassByFqname(StandardNames.RANGES_PACKAGE_FQ_NAME, "LongRange")!!.owner.defaultType }
+    private val intRangeType by lazy { referenceClassByClassId(StandardClassIds.IntRange)!!.owner.defaultType }
+    private val longRangeType by lazy { referenceClassByClassId(StandardClassIds.LongRange)!!.owner.defaultType }
 
-    private val annotation by loadClass(kotlinPackage, "Annotation")
+    private val annotation by loadClass(StandardClassIds.Annotation)
     override val annotationClass: IrClassSymbol get() = annotation.klass
     override val annotationType: IrType get() = annotation.type
 
-    private val collection by loadClass(kotlinCollectionsPackage, "Collection")
+    private val collection by loadClass(StandardClassIds.Collection)
     override val collectionClass: IrClassSymbol get() = collection.klass
-    private val set by loadClass(kotlinCollectionsPackage, "Set")
+    private val set by loadClass(StandardClassIds.Set)
     override val setClass: IrClassSymbol get() = set.klass
-    private val list by loadClass(kotlinCollectionsPackage, "List")
+    private val list by loadClass(StandardClassIds.List)
     override val listClass: IrClassSymbol get() = list.klass
-    private val map by loadClass(kotlinCollectionsPackage, "Map")
+    private val map by loadClass(StandardClassIds.Map)
     override val mapClass: IrClassSymbol get() = map.klass
-    private val mapEntry by BuiltInsClass({ true to referenceNestedClass(mapClass, "Entry")!! })
+    private val mapEntry by BuiltInsClass({ true to referenceClassByClassId(StandardClassIds.MapEntry)!! })
     override val mapEntryClass: IrClassSymbol get() = mapEntry.klass
 
-    private val iterable by loadClass(StandardNames.FqNames.iterable)
+    private val iterable by loadClass(StandardClassIds.Iterable)
     override val iterableClass: IrClassSymbol get() = iterable.klass
-    private val iterator by loadClass(StandardNames.FqNames.iterator)
+    private val iterator by loadClass(StandardClassIds.Iterator)
     override val iteratorClass: IrClassSymbol get() = iterator.klass
-    private val listIterator by loadClass(StandardNames.FqNames.listIterator)
+    private val listIterator by loadClass(StandardClassIds.ListIterator)
     override val listIteratorClass: IrClassSymbol get() = listIterator.klass
-    private val mutableCollection by loadClass(StandardNames.FqNames.mutableCollection)
+    private val mutableCollection by loadClass(StandardClassIds.MutableCollection)
     override val mutableCollectionClass: IrClassSymbol get() = mutableCollection.klass
-    private val mutableSet by loadClass(StandardNames.FqNames.mutableSet)
+    private val mutableSet by loadClass(StandardClassIds.MutableSet)
     override val mutableSetClass: IrClassSymbol get() = mutableSet.klass
-    private val mutableList by loadClass(StandardNames.FqNames.mutableList)
+    private val mutableList by loadClass(StandardClassIds.MutableList)
     override val mutableListClass: IrClassSymbol get() = mutableList.klass
-    private val mutableMap by loadClass(StandardNames.FqNames.mutableMap)
+    private val mutableMap by loadClass(StandardClassIds.MutableMap)
     override val mutableMapClass: IrClassSymbol get() = mutableMap.klass
-    private val mutableMapEntry by BuiltInsClass({ true to referenceNestedClass(StandardNames.FqNames.mutableMapEntry)!! })
+    private val mutableMapEntry by BuiltInsClass({ true to referenceClassByClassId(StandardClassIds.MutableMapEntry)!! })
     override val mutableMapEntryClass: IrClassSymbol get() = mutableMapEntry.klass
 
-    private val mutableIterable by loadClass(StandardNames.FqNames.mutableIterable)
+    private val mutableIterable by loadClass(StandardClassIds.MutableIterable)
     override val mutableIterableClass: IrClassSymbol get() = mutableIterable.klass
-    private val mutableIterator by loadClass(StandardNames.FqNames.mutableIterator)
+    private val mutableIterator by loadClass(StandardClassIds.MutableIterator)
     override val mutableIteratorClass: IrClassSymbol get() = mutableIterator.klass
-    private val mutableListIterator by loadClass(StandardNames.FqNames.mutableListIterator)
+    private val mutableListIterator by loadClass(StandardClassIds.MutableListIterator)
     override val mutableListIteratorClass: IrClassSymbol get() = mutableListIterator.klass
-    private val comparable by loadClass(StandardNames.FqNames.comparable)
+    private val comparable by loadClass(StandardClassIds.Comparable)
     override val comparableClass: IrClassSymbol get() = comparable.klass
     override val throwableType: IrType by lazy { throwableClass.defaultType }
-    private val throwable by loadClass(StandardNames.FqNames.throwable)
+    private val throwable by loadClass(StandardClassIds.Throwable)
     override val throwableClass: IrClassSymbol get() = throwable.klass
 
-    private val kCallable by loadClass(StandardNames.FqNames.kCallable.toSafe())
+    private val kCallable by loadClass(StandardClassIds.KCallable)
     override val kCallableClass: IrClassSymbol get() = kCallable.klass
-    private val kProperty by loadClass(StandardNames.FqNames.kPropertyFqName.toSafe())
+    private val kProperty by loadClass(StandardClassIds.KProperty)
     override val kPropertyClass: IrClassSymbol get() = kProperty.klass
-    private val kClass by loadClass(StandardNames.FqNames.kClass.toSafe())
+    private val kClass by loadClass(StandardClassIds.KClass)
     override val kClassClass: IrClassSymbol get() = kClass.klass
-    private val kProperty0 by loadClass(StandardNames.FqNames.kProperty0.toSafe())
+    private val kProperty0 by loadClass(StandardClassIds.KProperty0)
     override val kProperty0Class: IrClassSymbol get() = kProperty0.klass
-    private val kProperty1 by loadClass(StandardNames.FqNames.kProperty1.toSafe())
+    private val kProperty1 by loadClass(StandardClassIds.KProperty1)
     override val kProperty1Class: IrClassSymbol get() = kProperty1.klass
-    private val kProperty2 by loadClass(StandardNames.FqNames.kProperty2.toSafe())
+    private val kProperty2 by loadClass(StandardClassIds.KProperty2)
     override val kProperty2Class: IrClassSymbol get() = kProperty2.klass
-    private val kMutableProperty0 by loadClass(StandardNames.FqNames.kMutableProperty0.toSafe())
+    private val kMutableProperty0 by loadClass(StandardClassIds.KMutableProperty0)
     override val kMutableProperty0Class: IrClassSymbol get() = kMutableProperty0.klass
-    private val kMutableProperty1 by loadClass(StandardNames.FqNames.kMutableProperty1.toSafe())
+    private val kMutableProperty1 by loadClass(StandardClassIds.KMutableProperty1)
     override val kMutableProperty1Class: IrClassSymbol get() = kMutableProperty1.klass
-    private val kMutableProperty2 by loadClass(StandardNames.FqNames.kMutableProperty2.toSafe())
+    private val kMutableProperty2 by loadClass(StandardClassIds.KMutableProperty2)
     override val kMutableProperty2Class: IrClassSymbol get() = kMutableProperty2.klass
 
-    private val function by loadClass(kotlinPackage, "Function")
+    private val function by loadClass(StandardClassIds.Function)
     override val functionClass: IrClassSymbol get() = function.klass
-    private val kFunction by loadClass(kotlinReflectPackage, "KFunction")
+    private val kFunction by loadClass(StandardClassIds.KFunction)
     override val kFunctionClass: IrClassSymbol get() = kFunction.klass
 
     override val primitiveTypeToIrType = mapOf(
@@ -442,7 +435,7 @@ class IrBuiltInsOverFir(
         else -> error("No KProperty for n=$n mutable=$mutable")
     }
 
-    private val enum by loadClass(kotlinPackage, "Enum")
+    private val enum by loadClass(StandardClassIds.Enum)
     override val enumClass: IrClassSymbol get() = enum.klass
 
     override val intPlusSymbol: IrSimpleFunctionSymbol
@@ -503,7 +496,7 @@ class IrBuiltInsOverFir(
 
     override val arrayOf: IrSimpleFunctionSymbol get() = kotlinBuiltinFunctions.arrayOf
 
-    private fun <T: Any> getFunctionsByKey(
+    private fun <T : Any> getFunctionsByKey(
         name: Name,
         vararg packageNameSegments: String,
         makeKey: (IrSimpleFunctionSymbol) -> T?
@@ -537,19 +530,19 @@ class IrBuiltInsOverFir(
     private val kSuspendFunctionNMap = mutableMapOf<Int, IrClass>()
 
     override fun functionN(arity: Int): IrClass = functionNMap.getOrPut(arity) {
-        referenceClassByClassId(StandardNames.getFunctionClassId(arity))!!.owner
+        referenceClassByClassId(StandardClassIds.FunctionN(arity))!!.owner
     }
 
     override fun kFunctionN(arity: Int): IrClass = kFunctionNMap.getOrPut(arity) {
-        referenceClassByClassId(StandardNames.getKFunctionClassId(arity))!!.owner
+        referenceClassByClassId(StandardClassIds.KFunctionN(arity))!!.owner
     }
 
     override fun suspendFunctionN(arity: Int): IrClass = suspendFunctionNMap.getOrPut(arity) {
-        referenceClassByClassId(StandardNames.getSuspendFunctionClassId(arity))!!.owner
+        referenceClassByClassId(StandardClassIds.SuspendFunctionN(arity))!!.owner
     }
 
     override fun kSuspendFunctionN(arity: Int): IrClass = kSuspendFunctionNMap.getOrPut(arity) {
-        referenceClassByClassId(StandardNames.getKSuspendFunctionClassId(arity))!!.owner
+        referenceClassByClassId(StandardClassIds.KSuspendFunctionN(arity))!!.owner
     }
 
     override fun findFunctions(name: Name, vararg packageNameSegments: String): Iterable<IrSimpleFunctionSymbol> =
@@ -563,6 +556,9 @@ class IrBuiltInsOverFir(
 
     override fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? =
         referenceClassByFqname(packageFqName, name)
+
+    private fun referenceClassByFqname(packageName: FqName, identifier: Name) =
+        referenceClassByClassId(ClassId(packageName, identifier))
 
     private val builtInClasses by lazy {
         setOf(anyClass)
@@ -630,8 +626,6 @@ class IrBuiltInsOverFir(
     }
 
     private fun loadClass(classId: ClassId) = BuiltInsClass({ true to referenceClassByClassId(classId)!! })
-    private fun loadClass(packageFqName: FqName, name: String) = loadClass(ClassId(packageFqName, Name.identifier(name)))
-    private fun loadClass(topLevelFqName: FqName) = loadClass(ClassId.topLevel(topLevelFqName))
 
     private fun createClass(
         parent: IrDeclarationParent,
@@ -668,23 +662,11 @@ class IrBuiltInsOverFir(
     private fun referenceClassByFqname(topLevelFqName: FqName) =
         referenceClassByClassId(ClassId.topLevel(topLevelFqName))
 
-    private fun referenceClassByFqname(packageName: FqName, identifier: Name) =
-        referenceClassByClassId(ClassId(packageName, identifier))
-
-    private fun referenceClassByFqname(packageName: FqName, identifier: String) =
-        referenceClassByClassId(ClassId(packageName, Name.identifier(identifier)))
-
     private fun referenceClassByClassId(classId: ClassId): IrClassSymbol? {
         val firSymbol = components.session.symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
         val firClassSymbol = firSymbol as? FirClassSymbol ?: return null
         return components.classifierStorage.getIrClassSymbol(firClassSymbol)
     }
-
-    private fun referenceNestedClass(klass: IrClassSymbol, identifier: String): IrClassSymbol? =
-        referenceClassByClassId(klass.owner.classId!!.createNestedClassId(Name.identifier(identifier)))
-
-    private fun referenceNestedClass(fqName: FqName): IrClassSymbol? =
-        referenceClassByClassId(ClassId(fqName.parent().parent(), fqName.parent().shortName()).createNestedClassId(fqName.shortName()))
 
     private fun IrType.getMaybeBuiltinClass(): IrClass? {
         val lhsClassFqName = classFqName!!
@@ -1066,7 +1048,7 @@ class IrBuiltInsOverFir(
     }
 
     private fun IrClass.createStandardNumericAndCharMembers(thisType: IrType) {
-        createCompanionObject() {
+        createCompanionObject {
             val constExprs = getNumericConstantsExpressions(thisType)
             createProperty("MIN_VALUE", thisType, isConst = true, withGetter = false, fieldInit = constExprs.min)
             createProperty("MAX_VALUE", thisType, isConst = true, withGetter = false, fieldInit = constExprs.max)
