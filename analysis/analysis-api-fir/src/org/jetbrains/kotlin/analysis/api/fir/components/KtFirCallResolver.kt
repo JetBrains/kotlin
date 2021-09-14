@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.isImplicitFunctionCall
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
@@ -32,6 +29,10 @@ import org.jetbrains.kotlin.analysis.api.components.KtCallResolver
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayOf
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayOfSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayTypeToArrayOfCall
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
@@ -106,6 +107,7 @@ internal class KtFirCallResolver(
 
     override fun resolveCall(call: KtCallElement): KtCall? = withValidityAssertion {
         return when (val fir = call.getOrBuildFir(firResolveState)) {
+            is FirArrayOfCall -> resolveArrayOfCall(fir)
             is FirFunctionCall -> resolveCall(fir)
             is FirAnnotationCall -> fir.asAnnotationCall()
             is FirDelegatedConstructorCall -> fir.asDelegatedConstructorCall()
@@ -120,6 +122,25 @@ internal class KtFirCallResolver(
             is FirFunctionCall -> resolveCall(fir)
             else -> null
         }
+    }
+
+    private fun resolveArrayOfCall(arrayOfCall: FirArrayOfCall): KtCall? {
+        val arrayOfSymbol = with(analysisSession) {
+            val type = arrayOfCall.typeRef.coneTypeSafe<ConeClassLikeType>()
+                ?: return run {
+                    val defaultArrayOfSymbol = arrayOfSymbol(arrayOf) ?: return null
+                    KtFunctionCall(
+                        arrayOfCall.createArgumentMapping(defaultArrayOfSymbol),
+                        KtErrorCallTarget(
+                            listOf(defaultArrayOfSymbol),
+                            KtNonBoundToPsiErrorDiagnostic(factoryName = null, "type of arrayOf call is not resolved", token)
+                        )
+                    )
+                }
+            val call = arrayTypeToArrayOfCall[type.lookupTag.classId] ?: arrayOf
+            arrayOfSymbol(call)
+        } ?: return null
+        return KtFunctionCall(arrayOfCall.createArgumentMapping(arrayOfSymbol), KtSuccessCallTarget(arrayOfSymbol))
     }
 
     private fun resolveCall(firCall: FirFunctionCall): KtCall? {
@@ -210,31 +231,52 @@ internal class KtFirCallResolver(
         }
     }
 
+    private fun FirExpression.findSourceKtExpressionForCallArgument(): KtExpression? {
+        // For spread, named, and lambda arguments, the source is the KtValueArgument.
+        // For other arguments (including array indices), the source is the KtExpression.
+        return when (this) {
+            is FirNamedArgumentExpression, is FirSpreadArgumentExpression, is FirLambdaArgumentExpression ->
+                realPsi.safeAs<KtValueArgument>()?.getArgumentExpression()
+            else -> realPsi as? KtExpression
+        }
+    }
+
+    private fun mapArgumentExpressionToParameter(
+        argumentExpression: FirExpression,
+        parameterSymbol: KtValueParameterSymbol,
+        argumentMapping: LinkedHashMap<KtExpression, KtValueParameterSymbol>
+    ) {
+        if (argumentExpression is FirVarargArgumentsExpression) {
+            for (varargArgument in argumentExpression.arguments) {
+                val valueArgument = varargArgument.findSourceKtExpressionForCallArgument() ?: return
+                argumentMapping[valueArgument] = parameterSymbol
+            }
+        } else {
+            val valueArgument = argumentExpression.findSourceKtExpressionForCallArgument() ?: return
+            argumentMapping[valueArgument] = parameterSymbol
+        }
+    }
+
     private fun FirCall.createArgumentMapping(): LinkedHashMap<KtExpression, KtValueParameterSymbol> {
         val ktArgumentMapping = LinkedHashMap<KtExpression, KtValueParameterSymbol>()
         argumentMapping?.let {
-            fun FirExpression.findKtExpression(): KtExpression? {
-                // For spread, named, and lambda arguments, the source is the KtValueArgument.
-                // For other arguments (including array indices), the source is the KtExpression.
-                return when (this) {
-                    is FirNamedArgumentExpression, is FirSpreadArgumentExpression, is FirLambdaArgumentExpression ->
-                        realPsi.safeAs<KtValueArgument>()?.getArgumentExpression()
-                    else -> realPsi as? KtExpression
-                }
-            }
-
             for ((firExpression, firValueParameter) in it.entries) {
                 val parameterSymbol = firValueParameter.buildSymbol(firSymbolBuilder) as KtValueParameterSymbol
-                if (firExpression is FirVarargArgumentsExpression) {
-                    for (varargArgument in firExpression.arguments) {
-                        val valueArgument = varargArgument.findKtExpression() ?: continue
-                        ktArgumentMapping[valueArgument] = parameterSymbol
-                    }
-                } else {
-                    val valueArgument = firExpression.findKtExpression() ?: continue
-                    ktArgumentMapping[valueArgument] = parameterSymbol
-                }
+                mapArgumentExpressionToParameter(firExpression, parameterSymbol, ktArgumentMapping)
             }
+        }
+        return ktArgumentMapping
+    }
+
+    private fun FirArrayOfCall.createArgumentMapping(
+        arrayOfCallSymbol: KtFirFunctionSymbol
+    ): LinkedHashMap<KtExpression, KtValueParameterSymbol> {
+        val ktArgumentMapping = LinkedHashMap<KtExpression, KtValueParameterSymbol>()
+        val parameterSymbol = arrayOfCallSymbol.firRef.withFir {
+            it.valueParameters.single().buildSymbol(firSymbolBuilder) as KtValueParameterSymbol
+        }
+        for (firExpression in argumentList.arguments) {
+            mapArgumentExpressionToParameter(firExpression, parameterSymbol, ktArgumentMapping)
         }
         return ktArgumentMapping
     }

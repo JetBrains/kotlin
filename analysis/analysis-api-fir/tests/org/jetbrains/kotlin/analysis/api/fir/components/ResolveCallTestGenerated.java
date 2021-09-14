@@ -25,6 +25,12 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     }
 
     @Test
+    @TestMetadata("arrayOfInAnnotation.kt")
+    public void testArrayOfInAnnotation() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/arrayOfInAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("delegatedConstructorCall_super.kt")
     public void testDelegatedConstructorCall_super() throws Exception {
         runTest("analysis/analysis-api/testData/analysisSession/resolveCall/delegatedConstructorCall_super.kt");
@@ -148,6 +154,12 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     @TestMetadata("indexedSetWithTooManyArgs.kt")
     public void testIndexedSetWithTooManyArgs() throws Exception {
         runTest("analysis/analysis-api/testData/analysisSession/resolveCall/indexedSetWithTooManyArgs.kt");
+    }
+
+    @Test
+    @TestMetadata("intArrayOfInAnnotation.kt")
+    public void testIntArrayOfInAnnotation() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/intArrayOfInAnnotation.kt");
     }
 
     @Test
