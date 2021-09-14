@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.jvm.mapping.IrCallableMethod
 import org.jetbrains.kotlin.codegen.inline.MethodBodyVisitor
 import org.jetbrains.kotlin.codegen.inline.SourceMapCopier
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter

@@ -512,3 +512,6 @@ fun IrFunction.extensionReceiverName(state: GenerationState): String {
     else
         AsmUtil.LABELED_THIS_PARAMETER + mangleNameIfNeeded(callableName.asString())
 }
+
+fun IrFunction.isBridge(): Boolean =
+    origin == IrDeclarationOrigin.BRIDGE || origin == IrDeclarationOrigin.BRIDGE_SPECIAL

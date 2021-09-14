@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.jvm.codegen
+package org.jetbrains.kotlin.backend.jvm.mapping
 
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
