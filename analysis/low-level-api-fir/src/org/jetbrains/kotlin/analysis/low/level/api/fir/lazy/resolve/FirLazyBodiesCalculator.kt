@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
@@ -92,6 +92,11 @@ internal object FirLazyBodiesCalculator {
             firProperty.replaceInitializer(newProperty.initializer)
         }
 
+        firProperty.getExplicitBackingField()?.takeIf { it.initializer is FirLazyExpression }?.let { backingField ->
+            val newInitializer = newProperty.getExplicitBackingField()?.initializer
+            backingField.replaceInitializer(newInitializer)
+        }
+
         val delegate = firProperty.delegate as? FirWrappedDelegateExpression
         val delegateExpression = delegate?.expression
         if (delegateExpression is FirLazyExpression) {
@@ -114,6 +119,7 @@ internal object FirLazyBodiesCalculator {
                 || firProperty.setter?.body is FirLazyBlock
                 || firProperty.initializer is FirLazyExpression
                 || (firProperty.delegate as? FirWrappedDelegateExpression)?.expression is FirLazyExpression
+                || firProperty.getExplicitBackingField()?.initializer is FirLazyExpression
 }
 
 private object FirLazyBodiesCalculatorTransformer : FirTransformer<MutableList<FirDeclaration>>() {
