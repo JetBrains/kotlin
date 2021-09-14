@@ -49,20 +49,20 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 class JavaClassConverter(
     private val session: FirSession,
     private val baseModuleData: FirModuleData,
-    private val facade: JavaClassFinder
+    private val classFinder: JavaClassFinder
 ) {
     companion object {
         val VALUE_METHOD_NAME = Name.identifier("value")
     }
 
-    private val packageCache = session.firCachesFactory.createCache(facade::findPackage)
-    private val knownClassNamesInPackage = session.firCachesFactory.createCache(facade::knownClassNamesInPackage)
+    private val packageCache = session.firCachesFactory.createCache(classFinder::findPackage)
+    private val knownClassNamesInPackage = session.firCachesFactory.createCache(classFinder::knownClassNamesInPackage)
 
     private val parentClassTypeParameterStackCache = mutableMapOf<FirRegularClassSymbol, JavaTypeParameterStack>()
     private val parentClassEffectiveVisibilityCache = mutableMapOf<FirRegularClassSymbol, EffectiveVisibility>()
 
     fun findClass(classId: ClassId, knownContent: ByteArray? = null): JavaClass? =
-        facade.findClass(JavaClassFinder.Request(classId, knownContent))
+        classFinder.findClass(JavaClassFinder.Request(classId, knownContent))
             ?.takeIf { it.classId == classId && !it.hasMetadataAnnotation() }
 
     fun getPackage(fqName: FqName): FqName? =
