@@ -444,7 +444,7 @@ if (attachedIntellijVersion == "212") { // Latest available platform in scope of
 }
 
 include ":generators:frontend-api-generator",
-        ":idea-frontend-fir:idea-fir-low-level-api",
+        ":analysis:low-level-api-fir",
         ":idea-frontend-fir:idea-frontend-fir-generator",
         ":idea-frontend-fir",
         ":analysis:analysis-api",
@@ -629,7 +629,6 @@ project(':kotlinx-serialization-compiler-plugin').projectDir = file("$rootDir/pl
 project(':kotlin-serialization').projectDir = file("$rootDir/libraries/tools/kotlin-serialization")
 project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")
 
-project(":idea-frontend-fir:idea-fir-low-level-api").projectDir = "$rootDir/idea/idea-frontend-fir/idea-fir-low-level-api" as File
 project(":idea-frontend-fir:idea-frontend-fir-generator").projectDir = "$rootDir/idea/idea-frontend-fir/idea-frontend-fir-generator" as File
 project(":idea-frontend-fir").projectDir = "$rootDir/idea/idea-frontend-fir" as File
 

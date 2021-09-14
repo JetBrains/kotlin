@@ -871,7 +871,7 @@ tasks {
         dependsOn(
             ":analysis:analysis-api:test",
             ":idea-frontend-fir:test",
-            ":idea-frontend-fir:idea-fir-low-level-api:test"
+            ":analysis:low-level-api-fir:test"
         )
     }
 
