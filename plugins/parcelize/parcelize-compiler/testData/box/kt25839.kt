@@ -24,6 +24,6 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    readFromParcel<User>(parcel)
-    readFromParcel<User2>(parcel)
+    parcelableCreator<User>().createFromParcel(parcel)
+    parcelableCreator<User2>().createFromParcel(parcel)
 }

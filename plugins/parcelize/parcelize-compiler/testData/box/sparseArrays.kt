@@ -27,7 +27,7 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val user2 = readFromParcel<User>(parcel)
+    val user2 = parcelableCreator<User>().createFromParcel(parcel)
 
     assert(compareSparseIntArrays(user.a, user2.a))
     assert(compareSparseLongArrays(user.b, user2.b))

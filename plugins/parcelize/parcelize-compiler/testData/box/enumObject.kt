@@ -27,8 +27,8 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val black2 = readFromParcel<Color>(parcel)
-    val obj2 = readFromParcel<Obj>(parcel)
+    val black2 = parcelableCreator<Color>().createFromParcel(parcel)
+    val obj2 = parcelableCreator<Obj>().createFromParcel(parcel)
 
     println(black2)
     println(obj2)

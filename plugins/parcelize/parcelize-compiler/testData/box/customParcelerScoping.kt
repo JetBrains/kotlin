@@ -36,7 +36,7 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val test2 = readFromParcel<Ints>(parcel)
+    val test2 = parcelableCreator<Ints>().createFromParcel(parcel)
 
     assert(test2.a == -test.a)
     assert(test2.b == -test.b)

@@ -36,7 +36,7 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val first2 = readFromParcel<BoxedTypes>(parcel)
+    val first2 = parcelableCreator<BoxedTypes>().createFromParcel(parcel)
 
     assert(first == first2)
 }

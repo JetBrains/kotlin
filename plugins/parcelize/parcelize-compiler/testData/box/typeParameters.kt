@@ -29,12 +29,12 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val covariant2 = readFromParcel<Covariant<String>>(parcel)
+    val covariant2 = parcelableCreator<Covariant<String>>().createFromParcel(parcel)
     assert(covariant2.block() == "OK")
 
-    val contravariant2 = readFromParcel<Contravariant<String>>(parcel)
+    val contravariant2 = parcelableCreator<Contravariant<String>>().createFromParcel(parcel)
     assert(contravariant2.block("OK"))
 
-    val invariant2 = readFromParcel<Invariant<String>>(parcel)
+    val invariant2 = parcelableCreator<Invariant<String>>().createFromParcel(parcel)
     assert(invariant2.s.toString() == "OK")
 }

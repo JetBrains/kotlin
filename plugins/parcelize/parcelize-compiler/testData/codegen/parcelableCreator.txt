@@ -1,0 +1,327 @@
+public final class A$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final A createFromParcel(android.os.Parcel in)
+
+    public java.lang.Object createFromParcel(android.os.Parcel p0)
+
+    public final A[] newArray(int size)
+
+    public java.lang.Object[] newArray(int p0)
+}
+
+public final class A : java/lang/Object, android/os/Parcelable {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    private final int value
+
+    static void <clinit>()
+
+    public void <init>(int value)
+
+    public int describeContents()
+
+    public final int getValue()
+
+    public void writeToParcel(android.os.Parcel parcel, int flags)
+}
+
+public final class B$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final B createFromParcel(android.os.Parcel in)
+
+    public java.lang.Object createFromParcel(android.os.Parcel p0)
+
+    public final B[] newArray(int size)
+
+    public java.lang.Object[] newArray(int p0)
+}
+
+public final class B : java/lang/Object, android/os/Parcelable {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    static void <clinit>()
+
+    public void <init>()
+
+    public int describeContents()
+
+    public void writeToParcel(android.os.Parcel parcel, int flags)
+}
+
+public final class C$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final C createFromParcel(android.os.Parcel in)
+
+    public java.lang.Object createFromParcel(android.os.Parcel p0)
+
+    public final C[] newArray(int size)
+
+    public java.lang.Object[] newArray(int p0)
+}
+
+public final class C : java/lang/Object, android/os/Parcelable {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    public final static C INSTANCE
+
+    static void <clinit>()
+
+    private void <init>()
+
+    public int describeContents()
+
+    public void writeToParcel(android.os.Parcel parcel, int flags)
+}
+
+public final class ParcelableCreatorKt : java/lang/Object {
+    public final static void test1() {
+        LABEL (L0)
+        LINENUMBER (17)
+          ICONST_0
+          ISTORE (0)
+        LABEL (L1)
+          LDC (LA;)
+        LABEL (L2)
+        LINENUMBER (30)
+          LDC (CREATOR)
+          INVOKEVIRTUAL (java/lang/Class, getDeclaredField, (Ljava/lang/String;)Ljava/lang/reflect/Field;)
+          ACONST_NULL
+          INVOKEVIRTUAL (java/lang/reflect/Field, get, (Ljava/lang/Object;)Ljava/lang/Object;)
+          ASTORE (1)
+          ALOAD (1)
+          INSTANCEOF
+          IFEQ (L3)
+          ALOAD (1)
+          CHECKCAST
+          GOTO (L4)
+        LABEL (L3)
+          ACONST_NULL
+        LABEL (L4)
+          ASTORE (2)
+          ALOAD (2)
+          IFNONNULL (L5)
+        LABEL (L6)
+        LINENUMBER (31)
+          NEW
+          DUP
+          LDC (Could not access CREATOR field in class )
+          LDC (LA;)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          INVOKEINTERFACE (kotlin/reflect/KClass, getSimpleName, ()Ljava/lang/String;)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, stringPlus, (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;)
+          INVOKESPECIAL (java/lang/IllegalArgumentException, <init>, (Ljava/lang/String;)V)
+          ATHROW
+        LABEL (L5)
+        LINENUMBER (30)
+          NOP
+        LABEL (L7)
+        LINENUMBER (31)
+          NOP
+        LABEL (L8)
+        LINENUMBER (18)
+          ICONST_0
+          ISTORE (0)
+        LABEL (L9)
+          LDC (LB;)
+        LABEL (L10)
+        LINENUMBER (32)
+          LDC (CREATOR)
+          INVOKEVIRTUAL (java/lang/Class, getDeclaredField, (Ljava/lang/String;)Ljava/lang/reflect/Field;)
+          ACONST_NULL
+          INVOKEVIRTUAL (java/lang/reflect/Field, get, (Ljava/lang/Object;)Ljava/lang/Object;)
+          ASTORE (1)
+          ALOAD (1)
+          INSTANCEOF
+          IFEQ (L11)
+          ALOAD (1)
+          CHECKCAST
+          GOTO (L12)
+        LABEL (L11)
+          ACONST_NULL
+        LABEL (L12)
+          ASTORE (2)
+          ALOAD (2)
+          IFNONNULL (L13)
+        LABEL (L14)
+        LINENUMBER (33)
+          NEW
+          DUP
+          LDC (Could not access CREATOR field in class )
+          LDC (LB;)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          INVOKEINTERFACE (kotlin/reflect/KClass, getSimpleName, ()Ljava/lang/String;)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, stringPlus, (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;)
+          INVOKESPECIAL (java/lang/IllegalArgumentException, <init>, (Ljava/lang/String;)V)
+          ATHROW
+        LABEL (L13)
+        LINENUMBER (32)
+          NOP
+        LABEL (L15)
+        LINENUMBER (33)
+          NOP
+        LABEL (L16)
+        LINENUMBER (19)
+          ICONST_0
+          ISTORE (0)
+        LABEL (L17)
+          LDC (LC;)
+        LABEL (L18)
+        LINENUMBER (34)
+          LDC (CREATOR)
+          INVOKEVIRTUAL (java/lang/Class, getDeclaredField, (Ljava/lang/String;)Ljava/lang/reflect/Field;)
+          ACONST_NULL
+          INVOKEVIRTUAL (java/lang/reflect/Field, get, (Ljava/lang/Object;)Ljava/lang/Object;)
+          ASTORE (1)
+          ALOAD (1)
+          INSTANCEOF
+          IFEQ (L19)
+          ALOAD (1)
+          CHECKCAST
+          GOTO (L20)
+        LABEL (L19)
+          ACONST_NULL
+        LABEL (L20)
+          ASTORE (2)
+          ALOAD (2)
+          IFNONNULL (L21)
+        LABEL (L22)
+        LINENUMBER (35)
+          NEW
+          DUP
+          LDC (Could not access CREATOR field in class )
+          LDC (LC;)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          INVOKEINTERFACE (kotlin/reflect/KClass, getSimpleName, ()Ljava/lang/String;)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, stringPlus, (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;)
+          INVOKESPECIAL (java/lang/IllegalArgumentException, <init>, (Ljava/lang/String;)V)
+          ATHROW
+        LABEL (L21)
+        LINENUMBER (34)
+          NOP
+        LABEL (L23)
+        LINENUMBER (35)
+          NOP
+        LABEL (L24)
+        LINENUMBER (20)
+          RETURN
+    }
+
+    public final static void test2() {
+          LDC (0)
+          ISTORE (0)
+        LABEL (L0)
+        LINENUMBER (23)
+          ICONST_0
+          ISTORE (1)
+        LABEL (L1)
+          ICONST_4
+          LDC (T)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, reifiedOperationMarker, (ILjava/lang/String;)V)
+          LDC (Landroid/os/Parcelable;)
+          CHECKCAST
+        LABEL (L2)
+        LINENUMBER (36)
+          LDC (CREATOR)
+          INVOKEVIRTUAL (java/lang/Class, getDeclaredField, (Ljava/lang/String;)Ljava/lang/reflect/Field;)
+          ACONST_NULL
+          INVOKEVIRTUAL (java/lang/reflect/Field, get, (Ljava/lang/Object;)Ljava/lang/Object;)
+          ASTORE (2)
+          ALOAD (2)
+          INSTANCEOF
+          IFEQ (L3)
+          ALOAD (2)
+          CHECKCAST
+          GOTO (L4)
+        LABEL (L3)
+          ACONST_NULL
+        LABEL (L4)
+          ASTORE (3)
+          ALOAD (3)
+          IFNONNULL (L5)
+        LABEL (L6)
+        LINENUMBER (37)
+          NEW
+          DUP
+          LDC (Could not access CREATOR field in class )
+          ICONST_4
+          LDC (T)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, reifiedOperationMarker, (ILjava/lang/String;)V)
+          LDC (Landroid/os/Parcelable;)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          INVOKEINTERFACE (kotlin/reflect/KClass, getSimpleName, ()Ljava/lang/String;)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, stringPlus, (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;)
+          INVOKESPECIAL (java/lang/IllegalArgumentException, <init>, (Ljava/lang/String;)V)
+          ATHROW
+        LABEL (L5)
+        LINENUMBER (36)
+          ALOAD (3)
+          CHECKCAST
+        LABEL (L7)
+        LINENUMBER (37)
+          NOP
+        LABEL (L8)
+          POP
+        LABEL (L9)
+        LINENUMBER (24)
+          RETURN
+        LABEL (L10)
+    }
+
+    public final static void test3() {
+        LABEL (L0)
+        LINENUMBER (27)
+          ICONST_0
+          ISTORE (0)
+        LABEL (L1)
+        LINENUMBER (38)
+          ICONST_0
+          ISTORE (1)
+        LABEL (L2)
+          LDC (LA;)
+        LABEL (L3)
+        LINENUMBER (39)
+          LDC (CREATOR)
+          INVOKEVIRTUAL (java/lang/Class, getDeclaredField, (Ljava/lang/String;)Ljava/lang/reflect/Field;)
+          ACONST_NULL
+          INVOKEVIRTUAL (java/lang/reflect/Field, get, (Ljava/lang/Object;)Ljava/lang/Object;)
+          ASTORE (2)
+          ALOAD (2)
+          INSTANCEOF
+          IFEQ (L4)
+          ALOAD (2)
+          CHECKCAST
+          GOTO (L5)
+        LABEL (L4)
+          ACONST_NULL
+        LABEL (L5)
+          ASTORE (3)
+          ALOAD (3)
+          IFNONNULL (L6)
+        LABEL (L7)
+        LINENUMBER (40)
+          NEW
+          DUP
+          LDC (Could not access CREATOR field in class )
+          LDC (LA;)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          INVOKEINTERFACE (kotlin/reflect/KClass, getSimpleName, ()Ljava/lang/String;)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, stringPlus, (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;)
+          INVOKESPECIAL (java/lang/IllegalArgumentException, <init>, (Ljava/lang/String;)V)
+          ATHROW
+        LABEL (L6)
+        LINENUMBER (39)
+          NOP
+        LABEL (L8)
+        LINENUMBER (40)
+          NOP
+        LABEL (L9)
+        LINENUMBER (41)
+          NOP
+        LABEL (L10)
+        LINENUMBER (28)
+          RETURN
+    }
+}

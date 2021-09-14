@@ -42,7 +42,7 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val test2 = readFromParcel<Test>(parcel)
+    val test2 = parcelableCreator<Test>().createFromParcel(parcel)
 
     assert(test.a == "Abc" && test.b == "Abc" && test.c == "Abc" && test.d == "Abc")
     assert(test2.a == "3" && test2.b == "3" && test2.c == "Abc" && test2.d == "ABC")

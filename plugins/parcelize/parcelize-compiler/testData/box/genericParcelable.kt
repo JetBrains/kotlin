@@ -20,7 +20,7 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val test2 = readFromParcel<Section<Bundle>>(parcel)
+    val test2 = parcelableCreator<Section<Bundle>>().createFromParcel(parcel)
 
     assert(test.title == test2.title)
     assert(test2.faTitle.size() == 0)
