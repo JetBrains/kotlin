@@ -2,4 +2,4 @@ plugins {
     kotlin("jvm")
 }
 
-publishTestJarsForIde(listOf(":idea-frontend-fir"))
+publishTestJarsForIde(listOf(":analysis:analysis-api-fir"))
