@@ -79,22 +79,12 @@ private fun ConeKotlinType.enhanceConeKotlinType(
     }
 }
 
-private val KOTLIN_COLLECTIONS = FqName("kotlin.collections")
-
-private val KOTLIN_COLLECTIONS_PREFIX_LENGTH = KOTLIN_COLLECTIONS.asString().length + 1
-
 internal fun ClassId.readOnlyToMutable(): ClassId? {
-    val mutableFqName = JavaToKotlinClassMap.readOnlyToMutable(asSingleFqName().toUnsafe())
-    return mutableFqName?.let {
-        ClassId(KOTLIN_COLLECTIONS, FqName(it.asString().substring(KOTLIN_COLLECTIONS_PREFIX_LENGTH)), false)
-    }
+    return JavaToKotlinClassMap.readOnlyToMutable(this)
 }
 
 private fun ClassId.mutableToReadOnly(): ClassId? {
-    val readOnlyFqName = JavaToKotlinClassMap.mutableToReadOnly(asSingleFqName().toUnsafe())
-    return readOnlyFqName?.let {
-        ClassId(KOTLIN_COLLECTIONS, FqName(it.asString().substring(KOTLIN_COLLECTIONS_PREFIX_LENGTH)), false)
-    }
+    return JavaToKotlinClassMap.mutableToReadOnly(this)
 }
 
 private fun ConeKotlinType.enhanceInflexibleType(
