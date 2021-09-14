@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.java
 
 import com.intellij.openapi.progress.ProcessCanceledException
-import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -24,8 +22,10 @@ import org.jetbrains.kotlin.name.Name
 // Use it in application sessions for loading classes from Java files listed on the command line.
 // For library and incremental compilation sessions use `KotlinDeserializedJvmSymbolsProvider`
 // in order to load Kotlin classes as well.
-class JavaSymbolProvider(session: FirSession, baseModuleData: FirModuleData, facade: JavaClassFinder) : FirSymbolProvider(session) {
-    private val javaClassConverter = JavaClassConverter(session, baseModuleData, facade)
+class JavaSymbolProvider(
+    session: FirSession,
+    private val javaClassConverter: JavaClassConverter,
+) : FirSymbolProvider(session) {
 
     private val classCache =
         session.firCachesFactory.createCacheWithPostCompute(

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
+import org.jetbrains.kotlin.fir.java.JavaClassConverter
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
@@ -138,7 +139,12 @@ internal object FirIdeSessionFactory {
                     this,
                     providers = listOf(
                         provider.symbolProvider,
-                        JavaSymbolProvider(this, moduleData, project.createJavaClassFinder(contentScope)),
+                        JavaSymbolProvider(
+                            this,
+                            JavaClassConverter(
+                                this, moduleData, project.createJavaClassFinder(contentScope)
+                            )
+                        ),
                     ),
                     dependencyProvider
                 )
@@ -176,13 +182,17 @@ internal object FirIdeSessionFactory {
             registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
             registerJavaSpecificResolveComponents()
 
+            val mainModuleData = KtModuleBasedModuleData(sourceModule).apply { bindSession(this@session) }
+
             val kotlinSymbolProvider = KotlinDeserializedJvmSymbolsProvider(
                 this@session,
                 moduleDataProvider = createModuleDataProvider(sourceModule, this),
                 kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped),
                 packagePartProvider = project.createPackagePartProviderForLibrary(searchScope),
                 kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(searchScope),
-                javaClassFinder = project.createJavaClassFinder(searchScope)
+                javaClassConverter = JavaClassConverter(
+                    this@session, mainModuleData, project.createJavaClassFinder(searchScope)
+                )
             )
             val symbolProvider = FirCompositeSymbolProvider(this, listOf(kotlinSymbolProvider, builtinsAndCloneableSession.symbolProvider))
             register(FirProvider::class, FirIdeLibrariesSessionProvider(symbolProvider))

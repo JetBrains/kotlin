@@ -38,9 +38,8 @@ class KotlinDeserializedJvmSymbolsProvider(
     kotlinScopeProvider: FirKotlinScopeProvider,
     private val packagePartProvider: PackagePartProvider,
     private val kotlinClassFinder: KotlinClassFinder,
-    javaClassFinder: JavaClassFinder
+    private val javaClassConverter: JavaClassConverter,
 ) : AbstractFirDeserializedSymbolsProvider(session, moduleDataProvider, kotlinScopeProvider) {
-    private val javaClassConverter = JavaClassConverter(session, moduleDataProvider.allModuleData.last(), javaClassFinder)
     private val annotationsLoader = AnnotationsLoader(session, kotlinClassFinder)
 
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {

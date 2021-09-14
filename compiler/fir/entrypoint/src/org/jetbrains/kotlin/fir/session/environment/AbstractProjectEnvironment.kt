@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.fir.session.environment
 
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.load.java.JavaClassFinder
+import org.jetbrains.kotlin.fir.java.JavaClassConverter
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
@@ -40,8 +41,6 @@ interface AbstractProjectFileSearchScope {
 interface AbstractProjectEnvironment {
     fun getKotlinClassFinder(fileSearchScope: AbstractProjectFileSearchScope): KotlinClassFinder
 
-    fun getJavaClassFinder(fileSearchScope: AbstractProjectFileSearchScope): JavaClassFinder
-
     fun getJavaModuleResolver(): JavaModuleResolver
 
     fun getPackagePartProvider(fileSearchScope: AbstractProjectFileSearchScope): PackagePartProvider
@@ -53,4 +52,10 @@ interface AbstractProjectEnvironment {
     fun getSearchScopeForProjectLibraries(): AbstractProjectFileSearchScope
 
     fun getSearchScopeForProjectJavaSources(): AbstractProjectFileSearchScope
+
+    fun getJavaClassConverter(
+        firSession: FirSession,
+        baseModuleData: FirModuleData,
+        fileSearchScope: AbstractProjectFileSearchScope
+    ): JavaClassConverter
 }
