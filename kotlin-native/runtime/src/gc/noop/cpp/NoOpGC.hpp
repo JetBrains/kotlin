@@ -8,6 +8,7 @@
 
 #include <cstddef>
 
+#include "GCScheduler.hpp"
 #include "Utils.hpp"
 #include "Types.h"
 
@@ -47,23 +48,10 @@ public:
     NoOpGC() noexcept {}
     ~NoOpGC() = default;
 
-    void SetThreshold(size_t value) noexcept { threshold_ = value; }
-    size_t GetThreshold() noexcept { return threshold_; }
-
-    void SetAllocationThresholdBytes(size_t value) noexcept { allocationThresholdBytes_ = value; }
-    size_t GetAllocationThresholdBytes() noexcept { return allocationThresholdBytes_; }
-
-    void SetCooldownThresholdUs(uint64_t value) noexcept { cooldownThresholdUs_ = value; }
-    uint64_t GetCooldownThresholdUs() noexcept { return cooldownThresholdUs_; }
-
-    void SetAutoTune(bool value) noexcept { autoTune_ = value; }
-    bool GetAutoTune() noexcept { return autoTune_; }
+    GCScheduler& scheduler() noexcept { return scheduler_; }
 
 private:
-    size_t threshold_ = 0;
-    size_t allocationThresholdBytes_ = 0;
-    uint64_t cooldownThresholdUs_ = 0;
-    bool autoTune_ = false;
+    GCScheduler scheduler_;
 };
 
 } // namespace gc

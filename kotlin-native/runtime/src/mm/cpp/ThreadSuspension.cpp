@@ -39,21 +39,15 @@ void yield() noexcept {
     std::this_thread::yield();
 }
 
-std::atomic<bool> gSuspensionRequested = false;
 THREAD_LOCAL_VARIABLE bool gSuspensionRequestedByCurrentThread = false;
 std::mutex gSuspensionMutex;
 std::condition_variable gSuspendsionCondVar;
 
 } // namespace
 
-NO_EXTERNAL_CALLS_CHECK bool kotlin::mm::ThreadSuspensionData::suspendIfRequested() noexcept {
-    if (IsThreadSuspensionRequested()) {
-        return suspendIfRequestedSlowPath();
-    }
-    return false;
-}
+std::atomic<bool> kotlin::mm::internal::gSuspensionRequested = false;
 
-NO_EXTERNAL_CALLS_CHECK bool kotlin::mm::ThreadSuspensionData::suspendIfRequestedSlowPath() noexcept {
+NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequestedSlowPath() noexcept {
     std::unique_lock lock(gSuspensionMutex);
     if (IsThreadSuspensionRequested()) {
         auto threadId = konan::currentThreadId();
@@ -61,14 +55,7 @@ NO_EXTERNAL_CALLS_CHECK bool kotlin::mm::ThreadSuspensionData::suspendIfRequeste
         AutoReset scopedAssign(&suspended_, true);
         gSuspendsionCondVar.wait(lock, []() { return !IsThreadSuspensionRequested(); });
         RuntimeLogDebug({kTagGC, kTagMM}, "Resuming thread %d", threadId);
-        return true;
     }
-    return false;
-}
-
-bool kotlin::mm::IsThreadSuspensionRequested() noexcept {
-    // TODO: Consider using a more relaxed memory order.
-    return gSuspensionRequested.load();
 }
 
 bool kotlin::mm::SuspendThreads() noexcept {
@@ -76,7 +63,7 @@ bool kotlin::mm::SuspendThreads() noexcept {
     {
         std::unique_lock lock(gSuspensionMutex);
         bool actual = false;
-        gSuspensionRequested.compare_exchange_strong(actual, true);
+        internal::gSuspensionRequested.compare_exchange_strong(actual, true);
         if (actual) {
             return false;
         }
@@ -98,7 +85,7 @@ void kotlin::mm::ResumeThreads() noexcept {
     // https://en.cppreference.com/w/cpp/thread/condition_variable
     {
         std::unique_lock lock(gSuspensionMutex);
-        gSuspensionRequested = false;
+        internal::gSuspensionRequested = false;
     }
     gSuspensionRequestedByCurrentThread = false;
     gSuspendsionCondVar.notify_all();

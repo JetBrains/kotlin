@@ -54,28 +54,24 @@ struct FinalizeTraits {
 } // namespace
 
 void gc::SameThreadMarkAndSweep::ThreadData::SafePointFunctionEpilogue() noexcept {
-    SafePointRegular(1);
+    SafePointRegular(GCScheduler::ThreadData::kFunctionEpilogueWeight);
 }
 
 void gc::SameThreadMarkAndSweep::ThreadData::SafePointLoopBody() noexcept {
-    SafePointRegular(1);
+    SafePointRegular(GCScheduler::ThreadData::kLoopBodyWeight);
 }
 
 void gc::SameThreadMarkAndSweep::ThreadData::SafePointExceptionUnwind() noexcept {
-    SafePointRegular(1);
+    SafePointRegular(GCScheduler::ThreadData::kExceptionUnwindWeight);
 }
 
 void gc::SameThreadMarkAndSweep::ThreadData::SafePointAllocation(size_t size) noexcept {
-    size_t allocationOverhead =
-            gc_.GetAllocationThresholdBytes() == 0 ? allocatedBytes_ : allocatedBytes_ % gc_.GetAllocationThresholdBytes();
-    if (threadData_.suspensionData().suspendIfRequested()) {
-        allocatedBytes_ = 0;
-    } else if (allocationOverhead + size >= gc_.GetAllocationThresholdBytes()) {
+    threadData_.suspensionData().suspendIfRequested();
+    auto& scheduler = threadData_.gcScheduler();
+    if (scheduler.OnSafePointAllocation(size)) {
         RuntimeLogDebug({kTagGC}, "Attempt to GC at SafePointAllocation size=%zu", size);
-        allocatedBytes_ = 0;
         PerformFullGC();
     }
-    allocatedBytes_ += size;
 }
 
 void gc::SameThreadMarkAndSweep::ThreadData::PerformFullGC() noexcept {
@@ -104,36 +100,16 @@ void gc::SameThreadMarkAndSweep::ThreadData::PerformFullGC() noexcept {
 }
 
 void gc::SameThreadMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
-    RuntimeLogDebug({kTagGC}, "Attempt to GC on OOM");
+    RuntimeLogDebug({kTagGC}, "Attempt to GC on OOM at size=%zu", size);
     PerformFullGC();
 }
 
-void gc::SameThreadMarkAndSweep::ThreadData::SafePointRegularSlowPath() noexcept {
-    safePointsCounter_ = 0;
-    if (konan::getTimeMicros() - timeOfLastGcUs_ >= gc_.GetCooldownThresholdUs()) {
-        RuntimeLogDebug({kTagGC}, "Attempt to GC at SafePointRegular");
-        timeOfLastGcUs_ = konan::getTimeMicros();
-        PerformFullGC();
-    }
-}
-
 void gc::SameThreadMarkAndSweep::ThreadData::SafePointRegular(size_t weight) noexcept {
-    if (threadData_.suspensionData().suspendIfRequested()) {
-        safePointsCounter_ = 0;
-    } else {
-        safePointsCounter_ += weight;
-        if (safePointsCounter_ >= gc_.GetThreshold()) {
-            SafePointRegularSlowPath();
-        }
-    }
-}
-
-gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep() noexcept {
-    if (compiler::gcAggressive()) {
-        // TODO: Make it even more aggressive and run on a subset of backend.native tests.
-        threshold_ = 1000;
-        allocationThresholdBytes_ = 10000;
-        cooldownThresholdUs_ = 0;
+    threadData_.suspensionData().suspendIfRequested();
+    auto& scheduler = threadData_.gcScheduler();
+    if (scheduler.OnSafePointRegular(weight)) {
+        RuntimeLogDebug({kTagGC}, "Attempt to GC at SafePointRegular weight=%zu", weight);
+        PerformFullGC();
     }
 }
 
@@ -150,11 +126,15 @@ mm::ObjectFactory<gc::SameThreadMarkAndSweep>::FinalizerQueue gc::SameThreadMark
     }
     RuntimeLogDebug({kTagGC}, "Suspended all threads in %" PRIu64 " microseconds", timeSuspendUs - timeStartUs);
 
+    auto& scheduler = mm::GlobalData::Instance().gcScheduler();
+    scheduler.gcData().OnPerformFullGC();
+
     RuntimeLogInfo({kTagGC}, "Started GC epoch %zu. Time since last GC %" PRIu64 " microseconds", epoch_, timeStartUs - lastGCTimestampUs_);
     KStdVector<ObjHeader*> graySet;
     for (auto& thread : mm::GlobalData::Instance().threadRegistry().LockForIter()) {
         // TODO: Maybe it's more efficient to do by the suspending thread?
         thread.Publish();
+        thread.gcScheduler().OnStoppedForGC();
         size_t stack = 0;
         size_t tls = 0;
         for (auto value : mm::ThreadRootSet(thread)) {

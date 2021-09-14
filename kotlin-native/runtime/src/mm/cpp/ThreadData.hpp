@@ -11,6 +11,7 @@
 #include "GlobalData.hpp"
 #include "GlobalsRegistry.hpp"
 #include "GC.hpp"
+#include "GCScheduler.hpp"
 #include "ObjectFactory.hpp"
 #include "ShadowStack.hpp"
 #include "StableRefRegistry.hpp"
@@ -32,6 +33,7 @@ public:
         threadId_(threadId),
         globalsThreadQueue_(GlobalsRegistry::Instance()),
         stableRefThreadQueue_(StableRefRegistry::Instance()),
+        gcScheduler_(GlobalData::Instance().gcScheduler().NewThreadData()),
         gc_(GlobalData::Instance().gc(), *this),
         objectFactoryThreadQueue_(GlobalData::Instance().objectFactory(), gc_),
         suspensionData_(ThreadState::kNative) {}
@@ -56,6 +58,8 @@ public:
 
     KStdVector<std::pair<ObjHeader**, ObjHeader*>>& initializingSingletons() noexcept { return initializingSingletons_; }
 
+    gc::GCScheduler::ThreadData& gcScheduler() noexcept { return gcScheduler_; }
+
     gc::GC::ThreadData& gc() noexcept { return gc_; }
 
     ThreadSuspensionData& suspensionData() { return suspensionData_; }
@@ -79,6 +83,7 @@ private:
     ThreadLocalStorage tls_;
     StableRefRegistry::ThreadQueue stableRefThreadQueue_;
     ShadowStack shadowStack_;
+    gc::GCScheduler::ThreadData gcScheduler_;
     gc::GC::ThreadData gc_;
     ObjectFactory<gc::GC>::ThreadQueue objectFactoryThreadQueue_;
     KStdVector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons_;
