@@ -201,6 +201,7 @@ run {
     // Add regular gradle test tasks
     dependsOn(tasksOf(Test))
     dependsOn(tasksOf(CoverageTest))
+    dependsOn(":kotlin-native:Interop:Indexer:check")
 }
 
 task sanity {
@@ -210,6 +211,7 @@ task sanity {
     // Add regular gradle test tasks
     dependsOn(tasksOf(Test))
     dependsOn(tasksOf(CoverageTest))
+    dependsOn(":kotlin-native:Interop:Indexer:check")
 }
 
 // Collect reports in one json.

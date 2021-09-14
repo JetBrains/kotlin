@@ -152,6 +152,8 @@ sourceSets {
 dependencies {
     compile(project(":kotlin-stdlib"))
     compile(project(":kotlin-native:Interop:Runtime"))
+
+    testImplementation(kotlin("test-junit"))
 }
 
 val nativelibs = project.tasks.create<Copy>("nativelibs") {
@@ -178,6 +180,25 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
         allWarningsAsErrors = true
         freeCompilerArgs = listOf("-Xskip-prerelease-check")
     }
+}
+
+tasks.withType<Test>().configureEach {
+    val projectsWithNativeLibs = listOf(
+            project, // Current one.
+            project(":kotlin-native:Interop:Runtime")
+    )
+    dependsOn(projectsWithNativeLibs.map { "${it.path}:nativelibs" })
+    systemProperty("java.library.path", projectsWithNativeLibs.joinToString(File.pathSeparator) {
+        File(it.buildDir, "nativelibs").absolutePath
+    })
+
+    systemProperty("kotlin.native.llvm.libclang", "$llvmDir/" + if (HostManager.hostIsMingw) {
+        "bin/libclang.dll"
+    } else {
+        "lib/${System.mapLibraryName("clang")}"
+    })
+
+    systemProperty("kotlin.native.interop.indexer.temp", File(buildDir, "testTemp"))
 }
 
 tasks.matching { it.name == "linkClangstubsSharedLibrary" }.all {
