@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
+import org.jetbrains.kotlin.fir.analysis.cfa.util.PathAwarePropertyInitializationInfo
+import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
+import org.jetbrains.kotlin.fir.analysis.cfa.util.TraverseDirection
+import org.jetbrains.kotlin.fir.analysis.cfa.util.traverse
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors

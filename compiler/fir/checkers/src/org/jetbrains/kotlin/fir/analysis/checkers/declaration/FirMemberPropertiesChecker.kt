@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationInfo
-import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationInfoCollector
+import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
+import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList

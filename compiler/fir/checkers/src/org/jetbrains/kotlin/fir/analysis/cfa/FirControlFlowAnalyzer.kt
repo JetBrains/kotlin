@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.cfa
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.cfa.util.LocalPropertyAndCapturedWriteCollector
+import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent

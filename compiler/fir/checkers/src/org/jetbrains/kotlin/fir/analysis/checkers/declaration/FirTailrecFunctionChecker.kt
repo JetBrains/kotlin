@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.analysis.cfa.TraverseDirection
-import org.jetbrains.kotlin.fir.analysis.cfa.traverse
+import org.jetbrains.kotlin.fir.analysis.cfa.util.TraverseDirection
+import org.jetbrains.kotlin.fir.analysis.cfa.util.traverse
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
