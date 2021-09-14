@@ -24,6 +24,12 @@ namespace gc {
 // Stop-the-world Mark-and-Sweep that runs on mutator threads. Can support targets that do not have threads.
 class SameThreadMarkAndSweep : private Pinned {
 public:
+    enum class SafepointFlag {
+        kNone,
+        kNeedsSuspend,
+        kNeedsGC,
+    };
+
     class ObjectData {
     public:
         enum class Color {
@@ -57,16 +63,18 @@ public:
 
     private:
         void SafePointRegular(size_t weight) noexcept;
+        void SafePointSlowPath(SafepointFlag flag) noexcept;
 
         SameThreadMarkAndSweep& gc_;
         mm::ThreadData& threadData_;
     };
 
-    SameThreadMarkAndSweep() noexcept = default;
+    SameThreadMarkAndSweep() noexcept;
     ~SameThreadMarkAndSweep() = default;
 
 private:
-    mm::ObjectFactory<SameThreadMarkAndSweep>::FinalizerQueue PerformFullGC() noexcept;
+    // Returns `true` if GC has happened, and `false` if not (because someone else has suspended the threads).
+    bool PerformFullGC() noexcept;
 
     size_t epoch_ = 0;
     uint64_t lastGCTimestampUs_ = 0;

@@ -53,7 +53,7 @@ private class CallsChecker(val context: Context, goodFunctions: List<String>) {
 
     private fun LLVMValueRef.getPossiblyExternalCalledFunction(): ExternalCallInfo? {
         fun isIndirectCallArgument(value: LLVMValueRef) = LLVMIsALoadInst(value) != null || LLVMIsAArgument(value) != null ||
-                LLVMIsAPHINode(value) != null || LLVMIsASelectInst(value) != null || LLVMIsACallInst(value) != null
+                LLVMIsAPHINode(value) != null || LLVMIsASelectInst(value) != null || LLVMIsACallInst(value) != null || LLVMIsAExtractElementInst(value) != null
 
         fun cleanCalledFunction(value: LLVMValueRef): ExternalCallInfo? {
             return when {

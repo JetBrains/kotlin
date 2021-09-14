@@ -54,13 +54,22 @@ private:
     void suspendIfRequestedSlowPath() noexcept;
 };
 
+bool RequestThreadsSuspension() noexcept;
+void WaitForThreadsSuspension() noexcept;
+
 /**
  * Suspends all threads registered in ThreadRegistry except threads that are in the Native state.
  * Blocks until all such threads are suspended. Threads that are in the Native state on the moment
  * of this call will be suspended on exit from the Native state.
  * Returns false if some other thread has suspended the threads.
  */
-bool SuspendThreads() noexcept;
+inline bool SuspendThreads() noexcept {
+    if (!RequestThreadsSuspension()) {
+        return false;
+    }
+    WaitForThreadsSuspension();
+    return true;
+}
 
 /**
  * Resumes all threads registered in ThreadRegistry that were suspended by the SuspendThreads call.

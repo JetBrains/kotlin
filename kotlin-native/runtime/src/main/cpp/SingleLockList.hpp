@@ -7,8 +7,10 @@
 #define RUNTIME_SINGLE_LOCK_LIST_H
 
 #include <cstddef>
+#include <iterator>
 #include <memory>
 #include <mutex>
+#include <type_traits>
 
 #include "Alloc.h"
 #include "Mutex.hpp"
@@ -52,6 +54,12 @@ public:
 
     class Iterator {
     public:
+        using difference_type = void;
+        using value_type = Value;
+        using pointer = Value*;
+        using reference = Value&;
+        using iterator_category = std::forward_iterator_tag;
+
         explicit Iterator(Node* node) noexcept : node_(node) {}
 
         Value& operator*() noexcept { return node_->value_; }

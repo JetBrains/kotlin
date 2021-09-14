@@ -11,6 +11,7 @@
 #include <mutex>
 
 #include "Logging.hpp"
+#include "StackTrace.hpp"
 
 namespace {
 
@@ -60,7 +61,7 @@ NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequeste
     }
 }
 
-bool kotlin::mm::SuspendThreads() noexcept {
+NO_EXTERNAL_CALLS_CHECK bool kotlin::mm::RequestThreadsSuspension() noexcept {
     RuntimeAssert(gSuspensionRequestedByCurrentThread == false, "Current thread already suspended threads.");
     {
         std::unique_lock lock(gSuspensionMutex);
@@ -72,12 +73,14 @@ bool kotlin::mm::SuspendThreads() noexcept {
     }
     gSuspensionRequestedByCurrentThread = true;
 
+    return true;
+}
+
+void kotlin::mm::WaitForThreadsSuspension() noexcept {
     // Spin wating for threads to suspend. Ignore Native threads.
     while(!allThreads(isSuspendedOrNative)) {
         yield();
     }
-
-    return true;
 }
 
 void kotlin::mm::ResumeThreads() noexcept {
