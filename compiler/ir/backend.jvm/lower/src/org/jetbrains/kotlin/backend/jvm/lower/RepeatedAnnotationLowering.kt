@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.codegen.AnnotationCodegen.Companion.annotationClass
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
@@ -22,10 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isAnnotation
-import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -69,12 +65,12 @@ class RepeatedAnnotationLowering(private val context: JvmBackendContext) : FileL
     private fun transformAnnotations(annotations: List<IrConstructorCall>): List<IrConstructorCall> {
         if (annotations.size < 2) return annotations
 
-        val annotationsByClass = annotations.groupByTo(mutableMapOf()) { it.annotationClass }
+        val annotationsByClass = annotations.groupByTo(mutableMapOf()) { it.symbol.owner.constructedClass }
         if (annotationsByClass.values.none { it.size > 1 }) return annotations
 
         val result = mutableListOf<IrConstructorCall>()
         for (annotation in annotations) {
-            val annotationClass = annotation.annotationClass
+            val annotationClass = annotation.symbol.owner.constructedClass
             val grouped = annotationsByClass.remove(annotationClass) ?: continue
             if (grouped.size < 2) {
                 result.add(grouped.single())

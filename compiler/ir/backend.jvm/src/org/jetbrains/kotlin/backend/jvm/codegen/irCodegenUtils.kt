@@ -12,6 +12,10 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
+import org.jetbrains.kotlin.backend.jvm.ir.fileParent
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineOnly
+import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.ir.isPrivateInlineSuspend
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.*
@@ -33,13 +37,10 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
-import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
-import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -74,16 +75,6 @@ fun IrFrameMap.enter(irDeclaration: IrSymbolOwner, type: Type): Int {
 fun IrFrameMap.leave(irDeclaration: IrSymbolOwner): Int {
     return leave(irDeclaration.symbol)
 }
-
-val IrClass.isJvmInterface get() = isAnnotationClass || isInterface
-
-val IrDeclaration.fileParent: IrFile
-    get() {
-        return when (val myParent = parent) {
-            is IrFile -> myParent
-            else -> (myParent as IrDeclaration).fileParent
-        }
-    }
 
 internal val DeclarationDescriptorWithSource.psiElement: PsiElement?
     get() = (source as? PsiSourceElement)?.psi
@@ -214,29 +205,14 @@ private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?):
     return null
 }
 
-/* Borrowed from InlineUtil. */
 private tailrec fun isInlineOrContainedInInline(declaration: IrDeclaration?): Boolean = when {
     declaration === null -> false
     declaration is IrFunction && declaration.isInline -> true
     else -> isInlineOrContainedInInline(declaration.parent as? IrDeclaration)
 }
 
-/* Borrowed from inlineOnly.kt */
-
-fun IrDeclarationWithVisibility.isEffectivelyInlineOnly(): Boolean =
-    this is IrFunction && (isReifiable() || isInlineOnly() || isPrivateInlineSuspend())
-
 private fun IrDeclarationWithVisibility.isInlineOnlyPrivateInBytecode(): Boolean =
     this is IrFunction && (isInlineOnly() || isPrivateInlineSuspend())
-
-private fun IrFunction.isPrivateInlineSuspend(): Boolean =
-    isSuspend && isInline && visibility == DescriptorVisibilities.PRIVATE
-
-fun IrFunction.isInlineOnly() =
-    (isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)) ||
-            (this is IrSimpleFunction && correspondingPropertySymbol?.owner?.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) == true)
-
-fun IrFunction.isReifiable() = typeParameters.any { it.isReified }
 
 internal fun IrFunction.isBridge() = origin == IrDeclarationOrigin.BRIDGE || origin == IrDeclarationOrigin.BRIDGE_SPECIAL
 
@@ -322,12 +298,6 @@ fun IrClass.getVisibilityAccessFlagForClass(): Int {
     } else AsmUtil.NO_FLAG_PACKAGE_PRIVATE
 }
 
-/* Borrowed and translated from ExpectedActualDeclarationChecker */
-// TODO: Descriptor-based code also checks for `descriptor.isExpect`; we don't represent expect/actual distinction in IR thus far.
-fun IrClass.isOptionalAnnotationClass(): Boolean =
-    isAnnotationClass &&
-            hasAnnotation(OptionalAnnotationUtil.OPTIONAL_EXPECTATION_FQ_NAME)
-
 val IrDeclaration.isAnnotatedWithDeprecated: Boolean
     get() = annotations.hasAnnotation(FqNames.deprecated)
 
@@ -382,18 +352,3 @@ internal fun classFileContainsMethod(classId: ClassId, function: IrFunction, con
     else originalDescriptor
     return classFileContainsMethod(classId, context.state, Method(originalSignature.name, descriptor))
 }
-
-val IrMemberWithContainerSource.parentClassId: ClassId?
-    get() = ((this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: this).let { directMember ->
-        (directMember.containerSource as? JvmPackagePartSource)?.classId ?: (directMember.parent as? IrClass)?.classId
-    }
-
-// Translated into IR-based terms from classifierDescriptor?.classId
-private val IrClass.classId: ClassId?
-    get() = when (val parent = parent) {
-        is IrExternalPackageFragment -> ClassId(parent.fqName, name)
-        // TODO: there's `context.classNameOverride`; theoretically it's only relevant for top-level members,
-        //       where `containerSource` is a `JvmPackagePartSource` anyway, but I'm not 100% sure.
-        is IrClass -> parent.classId?.createNestedClassId(name)
-        else -> null
-    }

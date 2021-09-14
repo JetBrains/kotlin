@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.codegen.*
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.backend.jvm.ir.getBooleanConstArgument
+import org.jetbrains.kotlin.backend.jvm.ir.getStringConstArgument
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.org.objectweb.asm.Type
 
 // This intrinsic enables IR lowerings to force the generation of a particular
@@ -29,17 +27,10 @@ import org.jetbrains.org.objectweb.asm.Type
 // lowerings in between.
 object JvmDebuggerInvokeSpecial : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
-        fun fail(message: String): Nothing =
-            throw AssertionError("$message; expression:\n${expression.dump()}")
-
-        val owner = expression.getValueArgument(0)?.getStringConst()
-            ?: fail("'owner' is expected to be a string const")
-        val name = expression.getValueArgument(1)?.getStringConst()
-            ?: fail("'name' is expected to be a string const")
-        val descriptor = expression.getValueArgument(2)?.getStringConst()
-            ?: fail("'descriptor' is expected to be a string const")
-        val isInterface = expression.getValueArgument(3)?.getBooleanConst()
-            ?: fail("'isInterface' is expected to be a boolean const")
+        val owner = expression.getStringConstArgument(0)
+        val name = expression.getStringConstArgument(1)
+        val descriptor = expression.getStringConstArgument(2)
+        val isInterface = expression.getBooleanConstArgument(3)
 
         expression.dispatchReceiver!!.accept(codegen, data).materialize()
         codegen.mv.invokespecial(owner, name, descriptor, isInterface)

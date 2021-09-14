@@ -22,16 +22,13 @@ import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
-import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.TypeAnnotationCollector
 import org.jetbrains.kotlin.codegen.TypePathInfo
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget.JVM_1_6
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -39,12 +36,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
@@ -198,9 +193,7 @@ abstract class AnnotationCodegen(
         // We do not generate annotations whose classes are optional (annotated with `@OptionalExpectation`) because if an annotation entry
         // is resolved to the expected declaration, this means that annotation has no actual class, and thus should not be generated.
         // (Otherwise we would've resolved the entry to the actual annotation class.)
-        if (annotationClass.isOptionalAnnotationClass) {
-            return null
-        }
+        if (annotationClass.isOptionalAnnotationClass) return null
 
         innerClassConsumer.addInnerClassInfoFromAnnotation(annotationClass)
 
@@ -450,22 +443,6 @@ private fun isBareTypeParameterWithNullableUpperBound(type: IrType): Boolean {
     return type.classifierOrNull?.owner is IrTypeParameter && !type.isMarkedNullable() && type.isNullable()
 }
 
-private val RETENTION_PARAMETER_NAME = Name.identifier("value")
-
-fun IrClass.getAnnotationRetention(): KotlinRetention? {
-    val retentionArgument =
-        getAnnotation(StandardNames.FqNames.retention)?.getValueArgument(RETENTION_PARAMETER_NAME)
-                as? IrGetEnumValue ?: return null
-    val retentionArgumentValue = retentionArgument.symbol.owner
-    return KotlinRetention.valueOf(retentionArgumentValue.name.asString())
-}
-
-// To be generalized to IrMemberAccessExpression as soon as properties get symbols.
-private fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
-    val index = symbol.owner.valueParameters.find { it.name == name }?.index ?: return null
-    return getValueArgument(index)
-}
-
 // Copied and modified from AnnotationChecker.kt
 
 private val TARGET_ALLOWED_TARGETS = Name.identifier("allowedTargets")
@@ -482,9 +459,3 @@ private fun loadAnnotationTargets(targetEntry: IrConstructorCall): Set<KotlinTar
         KotlinTarget.valueOrNull(it.symbol.owner.name.asString())
     }.toSet()
 }
-
-// From ExpectedActualDeclarationChecker
-private val IrClass.isOptionalAnnotationClass: Boolean
-    get() = kind == ClassKind.ANNOTATION_CLASS &&
-            isExpect &&
-            hasAnnotation(OptionalAnnotationUtil.OPTIONAL_EXPECTATION_FQ_NAME)

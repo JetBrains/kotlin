@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.*
-import org.jetbrains.kotlin.backend.jvm.ir.findSuperDeclaration
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -130,37 +130,6 @@ object JvmInvokeDynamic : IntrinsicMethod() {
 
 }
 
-fun IrCall.getIntConstArgument(i: Int) =
-    getValueArgument(i)?.getIntConst()
-        ?: throw AssertionError("Value argument #$i should be an Int const: ${dump()}")
-
-fun IrCall.getStringConstArgument(i: Int) =
-    getValueArgument(i)?.getStringConst()
-        ?: throw AssertionError("Value argument #$i should be a String const: ${dump()}")
-
-fun IrCall.getBooleanConstArgument(i: Int) =
-    getValueArgument(i)?.getBooleanConst()
-        ?: throw AssertionError("Value argument #$i should be a Boolean const: ${dump()}")
-
-
-internal fun IrExpression.getIntConst() =
-    if (this is IrConst<*> && kind == IrConstKind.Int)
-        this.value as Int
-    else
-        null
-
-internal fun IrExpression.getStringConst() =
-    if (this is IrConst<*> && kind == IrConstKind.String)
-        this.value as String
-    else
-        null
-
-internal fun IrExpression.getBooleanConst() =
-    if (this is IrConst<*> && kind == IrConstKind.Boolean)
-        this.value as Boolean
-    else
-        null
-
 internal fun generateMethodHandle(jvmBackendContext: JvmBackendContext, irRawFunctionReference: IrRawFunctionReference): Handle {
     return generateMethodHandle(jvmBackendContext, irRawFunctionReference.symbol.owner)
 }
@@ -198,5 +167,3 @@ internal fun getMethodKindTag(irFun: IrFunction) =
         else ->
             Opcodes.H_INVOKEVIRTUAL
     }
-
-
