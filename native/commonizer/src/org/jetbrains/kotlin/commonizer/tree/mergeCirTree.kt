@@ -87,7 +87,7 @@ internal fun CirNodeWithMembers<*, *>.buildFunction(
         buildFunctionNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent))
     }
     /* Multiple type substitutions could in result in the same commonization result */
-    functionNode.targetDeclarations.setIfAbsent(context.targetIndex, function)
+    functionNode.targetDeclarations.set(context.targetIndex, function)
 }
 
 internal fun CirNodeWithMembers<*, *>.buildProperty(
@@ -99,7 +99,7 @@ internal fun CirNodeWithMembers<*, *>.buildProperty(
         buildPropertyNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent))
     }
     /* Multiple type substitutions could in result in the same commonization result */
-    propertyNode.targetDeclarations.setIfAbsent(context.targetIndex, property)
+    propertyNode.targetDeclarations.set(context.targetIndex, property)
 }
 
 internal fun CirClassNode.buildConstructor(
@@ -111,7 +111,7 @@ internal fun CirClassNode.buildConstructor(
         buildClassConstructorNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent))
     }
     /* Multiple type substitutions could in result in the same commonization result */
-    constructorNode.targetDeclarations.setIfAbsent(context.targetIndex, constructor)
+    constructorNode.targetDeclarations.set(context.targetIndex, constructor)
 }
 
 internal fun CirPackageNode.buildTypeAlias(context: TargetBuildingContext, treeTypeAlias: CirTreeTypeAlias) {

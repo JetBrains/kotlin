@@ -68,7 +68,11 @@ internal class ReApproximationCirNodeTransformer(
             buildFunctionNode(storageManager, parent.targetDeclarations.size, classifiers, ParentNode(parent))
         }
 
-        newNode.targetDeclarations.setIfAbsent(index, functionAtIndex)
+        // Move declaration
+        if (newNode.targetDeclarations[index] == null) {
+            function.targetDeclarations[index] = null
+            newNode.targetDeclarations[index] = functionAtIndex
+        }
     }
 
     private operator fun invoke(parent: CirNodeWithMembers<*, *>, property: CirPropertyNode, index: Int, context: CirMemberContext) {
@@ -81,7 +85,11 @@ internal class ReApproximationCirNodeTransformer(
             buildPropertyNode(storageManager, parent.targetDeclarations.size, classifiers, ParentNode(parent))
         }
 
-        newNode.targetDeclarations.setIfAbsent(index, propertyAtIndex)
+        // Move declaration
+        if (newNode.targetDeclarations[index] == null) {
+            property.targetDeclarations[index] = null
+            newNode.targetDeclarations[index] = propertyAtIndex
+        }
     }
 
     private operator fun invoke(
@@ -98,6 +106,10 @@ internal class ReApproximationCirNodeTransformer(
             buildClassConstructorNode(storageManager, parent.targetDeclarations.size, classifiers, ParentNode(parent))
         }
 
-        newNode.targetDeclarations.setIfAbsent(index, constructorAtIndex)
+        // Move declaration
+        if (newNode.targetDeclarations[index] == null) {
+            constructor.targetDeclarations[index] = null
+            newNode.targetDeclarations[index] = constructorAtIndex
+        }
     }
 }

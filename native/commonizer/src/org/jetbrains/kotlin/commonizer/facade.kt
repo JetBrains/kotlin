@@ -65,13 +65,10 @@ internal fun commonizeTarget(
 
         InlineTypeAliasCirNodeTransformer(parameters.storageManager, classifiers).invoke(mergedTree)
 
-        /*
         ReApproximationCirNodeTransformer(
             parameters.storageManager, classifiers,
             SignatureBuildingContextProvider(classifiers, typeAliasInvariant = true, skipArguments = false)
         ).invoke(mergedTree)
-
-         */
 
         ReApproximationCirNodeTransformer(
             parameters.storageManager, classifiers,
