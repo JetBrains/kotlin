@@ -31,8 +31,4 @@ class CommonizedGroup<T : Any>(
 
         elements[index] = value
     }
-
-    fun setIfAbsent(index: Int, value: T?) {
-        if (this[index] == null) set(index, value)
-    }
 }
