@@ -3292,6 +3292,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DSL_SCOPE_VIOLATION) { firDiagnostic ->
+        DslScopeViolationImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a.fir),
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.TOPLEVEL_TYPEALIASES_ONLY) { firDiagnostic ->
         ToplevelTypealiasesOnlyImpl(
             firDiagnostic as FirPsiDiagnostic,

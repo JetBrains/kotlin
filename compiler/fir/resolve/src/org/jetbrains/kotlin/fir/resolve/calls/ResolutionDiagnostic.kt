@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
@@ -103,3 +104,5 @@ class OperatorCallOfNonOperatorFunction(val function: FirNamedFunctionSymbol) : 
 class Unsupported(val message: String, val source: FirSourceElement? = null) : ResolutionDiagnostic(UNSUPPORTED)
 
 object PropertyAsOperator : ResolutionDiagnostic(PROPERTY_AS_OPERATOR)
+
+class DslScopeViolation(val calleeSymbol: FirBasedSymbol<*>) : ResolutionDiagnostic(DSL_SCOPE_VIOLATION)

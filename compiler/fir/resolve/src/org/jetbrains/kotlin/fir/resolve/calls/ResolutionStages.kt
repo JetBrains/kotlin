@@ -5,19 +5,19 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirVisibilityChecker
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isInfix
-import org.jetbrains.kotlin.fir.declarations.utils.isOperator
-import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.resolve.directExpansionType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.isTypeMismatchDueToNullability
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -32,8 +32,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 abstract class ResolutionStage {
     abstract suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext)
@@ -104,6 +106,7 @@ object CheckExtensionReceiver : ResolutionStage() {
 }
 
 object CheckDispatchReceiver : ResolutionStage() {
+    @OptIn(SymbolInternals::class)
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val explicitReceiverExpression = callInfo.explicitReceiver
         if (explicitReceiverExpression.isSuperCall()) {
@@ -140,6 +143,152 @@ object CheckDispatchReceiver : ResolutionStage() {
             )
         } else if (isReceiverNullable) {
             sink.yieldDiagnostic(UnsafeCall(dispatchReceiverValueType))
+        }
+    }
+}
+
+/**
+ * See https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-dsl-marker/ for more details and
+ * /compiler/testData/diagnostics/tests/resolve/dslMarker for the test files.
+ */
+object CheckDslScopeViolation : ResolutionStage() {
+    private val dslMarkerClassId = ClassId.fromString("kotlin/DslMarker")
+
+    @OptIn(ExperimentalStdlibApi::class)
+    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+        fun checkReceiverValue(receiverValue: ReceiverValue?) {
+            if (receiverValue is ImplicitReceiverValue<*>) {
+                receiverValue.checkImpl(
+                    candidate,
+                    sink,
+                    context,
+                    { receiverValue.getDslMarkersOfImplicitReceiver(context) }
+                ) { a, b -> a == b }
+            }
+        }
+        checkReceiverValue(candidate.dispatchReceiverValue)
+        checkReceiverValue(candidate.extensionReceiverValue)
+
+        // For value of builtin functional type with implicit extension receiver, the receiver is passed as the first argument rather than
+        // an extension receiver of the `invoke` call. Hence, we need to specially handle this case.
+        // For example, consider the following
+        // ```
+        // @DslMarker
+        // annotation class MyDsl
+        //
+        // @MyDsl
+        // class X
+        // fun x(block: X.() -> Unit) {}
+        //
+        // @MyDsl
+        // class A
+        // fun a(block: A.() -> Unit) {}
+        //
+        // val useX: X.() -> Unit
+        //
+        // fun test() {
+        //   x {
+        //     a {
+        //       useX() // DSL_SCOPE_VIOLATION because `useX` needs "extension receiver" `X`.
+        //     }
+        //   }
+        // }
+        // ```
+        // `useX()` is a call to `invoke` with `useX` as the dispatch receiver. In the FIR tree, extension receiver is represented as an
+        // implicit `this` expression passed as the first argument.
+        if (candidate.dispatchReceiverValue?.type?.fullyExpandedType(context.session)?.isBuiltinFunctionalType(context.session) == true &&
+            (candidate.symbol as? FirNamedFunctionSymbol)?.name == OperatorNameConventions.INVOKE
+        ) {
+            val firstArg = candidate.argumentMapping?.keys?.firstOrNull() as? FirThisReceiverExpression ?: return
+            if (firstArg.source != null) return // Having no source means it's implicit.
+            firstArg.checkImpl(
+                candidate,
+                sink,
+                context,
+                { firstArg.getDslMarkersOfThisReceiverExpression(context) }
+            ) { receiver, thisExpression -> receiver.boundSymbol == thisExpression.calleeReference.boundSymbol }
+        }
+    }
+
+    /**
+     * Checks whether the implicit receiver (represented as an object of type `T`) violates DSL scope rules.
+     */
+    private fun <T> T.checkImpl(
+        candidate: Candidate,
+        sink: CheckerSink,
+        context: ResolutionContext,
+        dslMarkersProvider: () -> Set<ClassId>,
+        isImplicitReceiverMatching: (ImplicitReceiverValue<*>, T) -> Boolean,
+    ) {
+        val resolvedReceiverIndex = context.bodyResolveContext.implicitReceiverStack.indexOfFirst { isImplicitReceiverMatching(it, this) }
+        if (resolvedReceiverIndex == -1) return
+        val closerReceivers = context.bodyResolveContext.implicitReceiverStack.drop(resolvedReceiverIndex + 1)
+        if (closerReceivers.isEmpty()) return
+        val dslMarkers = dslMarkersProvider()
+        if (dslMarkers.isEmpty()) return
+        if (closerReceivers.any { receiver -> receiver.getDslMarkersOfImplicitReceiver(context).any { it in dslMarkers } }) {
+            sink.reportDiagnostic(DslScopeViolation(candidate.symbol))
+        }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun ImplicitReceiverValue<*>.getDslMarkersOfImplicitReceiver(context: ResolutionContext): Set<ClassId> {
+        return buildSet {
+            collectDslMarkerAnnotations(context, type)
+        }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun FirThisReceiverExpression.getDslMarkersOfThisReceiverExpression(context: ResolutionContext): Set<ClassId> {
+        return buildSet {
+            collectDslMarkerAnnotations(context, typeRef.coneType)
+        }
+    }
+
+    @OptIn(SymbolInternals::class)
+    private fun MutableSet<ClassId>.collectDslMarkerAnnotations(context: ResolutionContext, type: ConeKotlinType) {
+        collectDslMarkerAnnotations(context, type.attributes.customAnnotations)
+        when (type) {
+            is ConeFlexibleType -> {
+                collectDslMarkerAnnotations(context, type.lowerBound)
+                collectDslMarkerAnnotations(context, type.upperBound)
+            }
+            is ConeCapturedType -> {
+                if (type.constructor.projection.kind == ProjectionKind.OUT) {
+                    type.constructor.supertypes?.forEach { collectDslMarkerAnnotations(context, it) }
+                }
+            }
+            is ConeDefinitelyNotNullType -> collectDslMarkerAnnotations(context, type.original)
+            is ConeIntersectionType -> type.intersectedTypes.forEach { collectDslMarkerAnnotations(context, it) }
+            is ConeLookupTagBasedType -> {
+                val classDeclaration = type.toSymbol(context.session)?.fir as? FirClassLikeDeclaration ?: return
+                collectDslMarkerAnnotations(context, classDeclaration.annotations)
+                when {
+                    classDeclaration is FirClass -> {
+                        for (superType in classDeclaration.superConeTypes) {
+                            collectDslMarkerAnnotations(context, superType)
+                        }
+                    }
+                    type is ConeClassLikeType -> {
+                        type.directExpansionType(context.session)?.let {
+                            collectDslMarkerAnnotations(context, it)
+                        }
+                    }
+                }
+            }
+            else -> return
+        }
+    }
+
+    @OptIn(SymbolInternals::class)
+    private fun MutableSet<ClassId>.collectDslMarkerAnnotations(context: ResolutionContext, annotations: Collection<FirAnnotation>) {
+        for (annotation in annotations) {
+            val annotationClass =
+                annotation.annotationTypeRef.coneType.fullyExpandedType(context.session).toSymbol(context.session)?.fir as? FirClass
+                    ?: continue
+            if (annotationClass.hasAnnotation(dslMarkerClassId)) {
+                add(annotationClass.classId)
+            }
         }
     }
 }

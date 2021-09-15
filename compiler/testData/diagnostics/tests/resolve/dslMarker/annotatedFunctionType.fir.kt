@@ -29,7 +29,7 @@ fun main() {
     baz1 {
         baz2 {
             bar()
-            foo()
+            <!DSL_SCOPE_VIOLATION!>foo<!>()
         }
     }
 

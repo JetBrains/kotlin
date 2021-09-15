@@ -34,13 +34,13 @@ fun test() {
         a1++
 
         bar {
-            a + 1
-            a += a + 1
-            a++
+            <!DSL_SCOPE_VIOLATION!>a<!> + 1
+            <!DSL_SCOPE_VIOLATION, VARIABLE_EXPECTED!>a<!> += <!DSL_SCOPE_VIOLATION!>a<!> + 1
+            <!DSL_SCOPE_VIOLATION, DSL_SCOPE_VIOLATION!>a<!>++
 
-            a1 + 1
-            a1 += a1 + 1
-            a1++
+            <!DSL_SCOPE_VIOLATION!>a1<!> + 1
+            <!DSL_SCOPE_VIOLATION, VARIABLE_EXPECTED!>a1<!> += <!DSL_SCOPE_VIOLATION!>a1<!> + 1
+            <!DSL_SCOPE_VIOLATION, DSL_SCOPE_VIOLATION!>a1<!>++
 
             this@foo.a + 1
             this@foo.a += this@foo.a + 1

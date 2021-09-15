@@ -43,8 +43,8 @@ fun test() {
                 }
 
                 foo1 {
-                    x()
-                    y()
+                    <!DSL_SCOPE_VIOLATION!>x<!>()
+                    <!DSL_SCOPE_VIOLATION!>y<!>()
 
                     with(A()) {
                         x()
@@ -52,19 +52,19 @@ fun test() {
                     }
 
                     with(D()) {
-                        x()
+                        <!DSL_SCOPE_VIOLATION!>x<!>()
                     }
                     A().x()
                 }
 
                 foo2 {
                     x()
-                    y()
+                    <!DSL_SCOPE_VIOLATION!>y<!>()
                 }
 
                 foo3 {
-                    x()
-                    y()
+                    <!DSL_SCOPE_VIOLATION!>x<!>()
+                    <!DSL_SCOPE_VIOLATION!>y<!>()
                 }
             }
         }
@@ -74,7 +74,7 @@ fun test() {
         foo {
             baz {
                 bar {
-                    x()
+                    <!DSL_SCOPE_VIOLATION!>x<!>()
                     y()
                 }
             }
@@ -85,7 +85,7 @@ fun test() {
         foo {
             baz {
                 bar {
-                    x()
+                    <!DSL_SCOPE_VIOLATION!>x<!>()
                     y()
                 }
             }
@@ -96,7 +96,7 @@ fun test() {
         foo {
             baz {
                 bar {
-                    x()
+                    <!DSL_SCOPE_VIOLATION!>x<!>()
                     y()
                 }
             }

@@ -225,6 +225,7 @@ private fun mapInapplicableCandidateError(
                 rootCause.argument.smartcastStability.description,
                 rootCause.isCastToNotNull
             )
+            is DslScopeViolation -> FirErrors.DSL_SCOPE_VIOLATION.createOn(source, rootCause.calleeSymbol)
             else -> genericDiagnostic
         }
     }.distinct()

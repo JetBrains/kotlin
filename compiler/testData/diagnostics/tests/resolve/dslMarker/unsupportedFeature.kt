@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !LANGUAGE: -DslMarkersSupport
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 @DslMarker

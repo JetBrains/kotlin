@@ -2767,6 +2767,12 @@ internal class PropertyAsOperatorImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.PropertyAsOperator(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class DslScopeViolationImpl(
+    override val calleeSymbol: KtSymbol,
+    override val firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.DslScopeViolation(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class ToplevelTypealiasesOnlyImpl(
     override val firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

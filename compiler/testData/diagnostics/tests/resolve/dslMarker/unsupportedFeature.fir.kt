@@ -1,3 +1,4 @@
+// !LANGUAGE: -DslMarkersSupport
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 @DslMarker
 annotation class Ann
@@ -12,14 +13,14 @@ class B {
     fun b() = 2
 }
 
-fun <T> foo(x: T.() -> Unit) {}
-fun <E> bar(x: E.() -> Unit) {}
+fun foo(x: A.() -> Unit) {}
+fun bar(x: B.() -> Unit) {}
 
 fun test() {
-    foo<A> {
+    foo {
         a()
-        bar<B> {
-            a()
+        bar {
+            <!DSL_SCOPE_VIOLATION!>a<!>()
             this@foo.a()
             b()
         }

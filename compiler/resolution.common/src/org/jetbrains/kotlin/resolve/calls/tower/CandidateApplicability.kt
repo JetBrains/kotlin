@@ -20,6 +20,11 @@ enum class CandidateApplicability {
     UNSAFE_CALL, // receiver or argument nullability doesn't match
     UNSTABLE_SMARTCAST, // unstable smart cast
     CONVENTION_ERROR, // missing infix, operator etc
+
+    // Below has shouldStopResolve = true
+    DSL_SCOPE_VIOLATION, // Skip other levels for DSL_SCOPE_VIOLATION because if the candidate is marked DSL_SCOPE_VIOLATION with an inner receiver, one should not keep going to outer receivers.
+
+    // Below has isSuccess = true
     RESOLVED_LOW_PRIORITY,
     PROPERTY_AS_OPERATOR, // using property of functional type as an operator. From resolution perspective, this is considered successful.
     RESOLVED_NEED_PRESERVE_COMPATIBILITY, // call resolved successfully, but using new features that changes resolve
@@ -29,3 +34,6 @@ enum class CandidateApplicability {
 
 val CandidateApplicability.isSuccess: Boolean
     get() = this >= CandidateApplicability.RESOLVED_LOW_PRIORITY
+
+val CandidateApplicability.shouldStopResolve: Boolean
+    get() = this >= CandidateApplicability.DSL_SCOPE_VIOLATION

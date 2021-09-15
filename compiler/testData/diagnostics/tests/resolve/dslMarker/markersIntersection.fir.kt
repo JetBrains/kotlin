@@ -29,12 +29,12 @@ fun test() {
     foo12 {
         a()
         bar1 {
-            a()
+            <!DSL_SCOPE_VIOLATION!>a<!>()
             b()
         }
 
         bar2 {
-            a()
+            <!DSL_SCOPE_VIOLATION!>a<!>()
             b()
         }
     }
@@ -43,7 +43,7 @@ fun test() {
         b()
         foo12 {
             a()
-            b()
+            <!DSL_SCOPE_VIOLATION!>b<!>()
         }
     }
 
@@ -51,7 +51,7 @@ fun test() {
         b()
         foo12 {
             a()
-            b()
+            <!DSL_SCOPE_VIOLATION!>b<!>()
         }
     }
 
@@ -64,7 +64,7 @@ fun test() {
             }
 
             bar2 {
-                a()
+                <!DSL_SCOPE_VIOLATION!>a<!>()
                 b()
             }
         }
@@ -85,7 +85,7 @@ fun test() {
         foo2 {
             bar1t(this) {
                 a()
-                b()
+                <!DSL_SCOPE_VIOLATION!>b<!>()
             }
         }
     }

@@ -146,6 +146,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_TYPE_P
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATION_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESERIALIZATION_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_SCOPE_VIOLATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DUPLICATE_LABEL_IN_WHEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_RANGE
@@ -1609,6 +1610,12 @@ class FirDefaultErrorMessages {
             map.put(
                 PROPERTY_AS_OPERATOR,
                 "Property ''{0}'' cannot be used as an operator.",
+                SYMBOL
+            )
+            map.put(
+                DSL_SCOPE_VIOLATION,
+                "''{0}'' can''t be called in this context by implicit receiver. " +
+                        "Use the explicit one if necessary",
                 SYMBOL
             )
 
