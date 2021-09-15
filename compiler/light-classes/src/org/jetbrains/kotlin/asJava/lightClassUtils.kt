@@ -177,7 +177,7 @@ fun KtElement.toLightAnnotation(): PsiAnnotation? {
         if (lightElement !is PsiModifierListOwner) continue
         for (rootAnnotation in lightElement.modifierList?.annotations ?: continue) {
             for (annotation in rootAnnotation.withNestedAnnotations()) {
-                if (annotation is KtLightAnnotationForSourceEntry && annotation.kotlinOrigin == this)
+                if (annotation is KtLightElement<*, *> && annotation.kotlinOrigin == this)
                     return annotation
             }
         }
