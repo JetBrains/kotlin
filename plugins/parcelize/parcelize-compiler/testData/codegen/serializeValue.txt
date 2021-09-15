@@ -41,7 +41,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
           NEW
           DUP
           INVOKESPECIAL (Test$Creator, <init>, ()V)
-          PUTSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
+          PUTSTATIC (Test, CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
 
@@ -63,7 +63,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (1)
           ALOAD (0)
-          GETFIELD (value, LValue;)
+          GETFIELD (Test, value, LValue;)
           INVOKEVIRTUAL (android/os/Parcel, writeValue, (Ljava/lang/Object;)V)
           RETURN
         LABEL (L1)

@@ -29,7 +29,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
           LDC (out)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (0)
-          GETFIELD (names, Ljava/util/List;)
+          GETFIELD (Test, names, Ljava/util/List;)
           ASTORE (3)
           ALOAD (1)
           ALOAD (3)

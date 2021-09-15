@@ -53,13 +53,13 @@ public final class k/KotlinParcelable : java/lang/Object, android/os/Parcelable 
           DUP
           ACONST_NULL
           INVOKESPECIAL (k/KotlinParcelable$Companion, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
-          PUTSTATIC (Companion, Lk/KotlinParcelable$Companion;)
+          PUTSTATIC (k/KotlinParcelable, Companion, Lk/KotlinParcelable$Companion;)
         LABEL (L0)
         LINENUMBER (18)
           NEW
           DUP
           INVOKESPECIAL (k/KotlinParcelable$Creator, <init>, ()V)
-          PUTSTATIC (CREATOR, Lk/KotlinParcelable$Creator;)
+          PUTSTATIC (k/KotlinParcelable, CREATOR, Lk/KotlinParcelable$Creator;)
           RETURN
     }
 
@@ -92,7 +92,7 @@ public final class k/KotlinParcelable : java/lang/Object, android/os/Parcelable 
         LINENUMBER (13)
           ALOAD (1)
           ALOAD (0)
-          GETFIELD (data, I)
+          GETFIELD (k/KotlinParcelable, data, I)
           INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
         LABEL (L2)
         LINENUMBER (14)
@@ -144,7 +144,7 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
           NEW
           DUP
           INVOKESPECIAL (test/Foo$Creator, <init>, ()V)
-          PUTSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
+          PUTSTATIC (test/Foo, CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
 
@@ -161,7 +161,7 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (1)
           ALOAD (0)
-          GETFIELD (kp, Lk/KotlinParcelable;)
+          GETFIELD (test/Foo, kp, Lk/KotlinParcelable;)
           ILOAD (2)
           INVOKEVIRTUAL (android/os/Parcel, writeParcelable, (Landroid/os/Parcelable;I)V)
           RETURN

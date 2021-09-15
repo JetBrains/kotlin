@@ -7,13 +7,13 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
           NEW
           DUP
           INVOKESPECIAL (Container$$serializer, <init>, ()V)
-          PUTSTATIC (INSTANCE, LContainer$$serializer;)
+          PUTSTATIC (Container$$serializer, INSTANCE, LContainer$$serializer;)
         LABEL (L0)
         LINENUMBER (13)
           NEW
           DUP
           LDC (Container)
-          GETSTATIC (INSTANCE, LContainer$$serializer;)
+          GETSTATIC (Container$$serializer, INSTANCE, LContainer$$serializer;)
           CHECKCAST
           ICONST_1
           INVOKESPECIAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, <init>, (Ljava/lang/String;Lkotlinx/serialization/internal/GeneratedSerializer;I)V)
@@ -24,7 +24,7 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
           INVOKEVIRTUAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, addElement, (Ljava/lang/String;Z)V)
           ALOAD (0)
           CHECKCAST
-          PUTSTATIC (descriptor, Lkotlinx/serialization/descriptors/SerialDescriptor;)
+          PUTSTATIC (Container$$serializer, descriptor, Lkotlinx/serialization/descriptors/SerialDescriptor;)
         LABEL (L1)
         LINENUMBER (14)
           RETURN
@@ -47,7 +47,7 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
           ASTORE (1)
           ALOAD (1)
           ICONST_0
-          GETSTATIC (Companion, LResult$Companion;)
+          GETSTATIC (Result, Companion, LResult$Companion;)
           INVOKEVIRTUAL (Result$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
           AASTORE
           ALOAD (1)
@@ -81,7 +81,7 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
           ALOAD (7)
           ALOAD (2)
           ICONST_0
-          GETSTATIC (Companion, LResult$Companion;)
+          GETSTATIC (Result, Companion, LResult$Companion;)
           INVOKEVIRTUAL (Result$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
           CHECKCAST
           ALOAD (6)
@@ -109,7 +109,7 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
           ALOAD (7)
           ALOAD (2)
           ICONST_0
-          GETSTATIC (Companion, LResult$Companion;)
+          GETSTATIC (Result, Companion, LResult$Companion;)
           INVOKEVIRTUAL (Result$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
           CHECKCAST
           ALOAD (6)
@@ -181,7 +181,7 @@ public final class Container$Companion : java/lang/Object {
     public final kotlinx.serialization.KSerializer serializer() {
         LABEL (L0)
         LINENUMBER (13)
-          GETSTATIC (INSTANCE, LContainer$$serializer;)
+          GETSTATIC (Container$$serializer, INSTANCE, LContainer$$serializer;)
           CHECKCAST
           ARETURN
         LABEL (L1)
@@ -198,7 +198,7 @@ public final class Container : java/lang/Object {
           DUP
           ACONST_NULL
           INVOKESPECIAL (Container$Companion, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
-          PUTSTATIC (Companion, LContainer$Companion;)
+          PUTSTATIC (Container, Companion, LContainer$Companion;)
           RETURN
     }
 
@@ -215,7 +215,7 @@ public final class Container : java/lang/Object {
         LINENUMBER (14)
           ALOAD (0)
           ALOAD (1)
-          PUTFIELD (r, LResult;)
+          PUTFIELD (Container, r, LResult;)
           RETURN
         LABEL (L3)
     }
@@ -230,7 +230,7 @@ public final class Container : java/lang/Object {
           IF_ICMPEQ (L1)
           ILOAD (1)
           ICONST_1
-          GETSTATIC (INSTANCE, LContainer$$serializer;)
+          GETSTATIC (Container$$serializer, INSTANCE, LContainer$$serializer;)
           INVOKEVIRTUAL (Container$$serializer, getDescriptor, ()Lkotlinx/serialization/descriptors/SerialDescriptor;)
           INVOKESTATIC (kotlinx/serialization/internal/PluginExceptionsKt, throwMissingFieldException, (IILkotlinx/serialization/descriptors/SerialDescriptor;)V)
         LABEL (L1)
@@ -238,7 +238,7 @@ public final class Container : java/lang/Object {
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
           ALOAD (0)
           ALOAD (2)
-          PUTFIELD (r, LResult;)
+          PUTFIELD (Container, r, LResult;)
           RETURN
         LABEL (L2)
     }
@@ -261,11 +261,11 @@ public final class Container : java/lang/Object {
           ALOAD (1)
           ALOAD (2)
           ICONST_0
-          GETSTATIC (Companion, LResult$Companion;)
+          GETSTATIC (Result, Companion, LResult$Companion;)
           INVOKEVIRTUAL (Result$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
           CHECKCAST
           ALOAD (0)
-          GETFIELD (r, LResult;)
+          GETFIELD (Container, r, LResult;)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeEncoder, encodeSerializableElement, (Lkotlinx/serialization/descriptors/SerialDescriptor;ILkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)V)
           RETURN
         LABEL (L2)
@@ -279,7 +279,7 @@ final class Result$Companion$$cachedSerializer$delegate$1 : kotlin/jvm/internal/
           NEW
           DUP
           INVOKESPECIAL (Result$Companion$$cachedSerializer$delegate$1, <init>, ()V)
-          PUTSTATIC (INSTANCE, LResult$Companion$$cachedSerializer$delegate$1;)
+          PUTSTATIC (Result$Companion$$cachedSerializer$delegate$1, INSTANCE, LResult$Companion$$cachedSerializer$delegate$1;)
           RETURN
     }
 
@@ -319,7 +319,7 @@ final class Result$Companion$$cachedSerializer$delegate$1 : kotlin/jvm/internal/
           ASTORE (1)
           ALOAD (1)
           ICONST_0
-          GETSTATIC (INSTANCE, LResult$OK$$serializer;)
+          GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
           CHECKCAST
           AASTORE
           ALOAD (1)
@@ -327,7 +327,7 @@ final class Result$Companion$$cachedSerializer$delegate$1 : kotlin/jvm/internal/
           NEW
           DUP
           LDC (Result.Err)
-          GETSTATIC (INSTANCE, LResult$Err;)
+          GETSTATIC (Result$Err, INSTANCE, LResult$Err;)
           INVOKESPECIAL (kotlinx/serialization/internal/ObjectSerializer, <init>, (Ljava/lang/String;Ljava/lang/Object;)V)
           CHECKCAST
           AASTORE
@@ -387,7 +387,7 @@ final class Result$Err$$cachedSerializer$delegate$1 : kotlin/jvm/internal/Lambda
           NEW
           DUP
           INVOKESPECIAL (Result$Err$$cachedSerializer$delegate$1, <init>, ()V)
-          PUTSTATIC (INSTANCE, LResult$Err$$cachedSerializer$delegate$1;)
+          PUTSTATIC (Result$Err$$cachedSerializer$delegate$1, INSTANCE, LResult$Err$$cachedSerializer$delegate$1;)
           RETURN
     }
 
@@ -406,7 +406,7 @@ final class Result$Err$$cachedSerializer$delegate$1 : kotlin/jvm/internal/Lambda
           NEW
           DUP
           LDC (Result.Err)
-          GETSTATIC (INSTANCE, LResult$Err;)
+          GETSTATIC (Result$Err, INSTANCE, LResult$Err;)
           INVOKESPECIAL (kotlinx/serialization/internal/ObjectSerializer, <init>, (Ljava/lang/String;Ljava/lang/Object;)V)
           CHECKCAST
           ARETURN
@@ -432,14 +432,14 @@ public final class Result$Err : Result {
           NEW
           DUP
           INVOKESPECIAL (Result$Err, <init>, ()V)
-          PUTSTATIC (INSTANCE, LResult$Err;)
+          PUTSTATIC (Result$Err, INSTANCE, LResult$Err;)
         LABEL (L0)
         LINENUMBER (10)
-          GETSTATIC (PUBLICATION, Lkotlin/LazyThreadSafetyMode;)
-          GETSTATIC (INSTANCE, LResult$Err$$cachedSerializer$delegate$1;)
+          GETSTATIC (kotlin/LazyThreadSafetyMode, PUBLICATION, Lkotlin/LazyThreadSafetyMode;)
+          GETSTATIC (Result$Err$$cachedSerializer$delegate$1, INSTANCE, LResult$Err$$cachedSerializer$delegate$1;)
           CHECKCAST
           INVOKESTATIC (kotlin/LazyKt, lazy, (Lkotlin/LazyThreadSafetyMode;Lkotlin/jvm/functions/Function0;)Lkotlin/Lazy;)
-          PUTSTATIC ($cachedSerializer$delegate, Lkotlin/Lazy;)
+          PUTSTATIC (Result$Err, $cachedSerializer$delegate, Lkotlin/Lazy;)
           RETURN
     }
 
@@ -476,13 +476,13 @@ public final class Result$OK$$serializer : java/lang/Object, kotlinx/serializati
           NEW
           DUP
           INVOKESPECIAL (Result$OK$$serializer, <init>, ()V)
-          PUTSTATIC (INSTANCE, LResult$OK$$serializer;)
+          PUTSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
         LABEL (L0)
         LINENUMBER (9)
           NEW
           DUP
           LDC (Result.OK)
-          GETSTATIC (INSTANCE, LResult$OK$$serializer;)
+          GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
           CHECKCAST
           ICONST_1
           INVOKESPECIAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, <init>, (Ljava/lang/String;Lkotlinx/serialization/internal/GeneratedSerializer;I)V)
@@ -493,7 +493,7 @@ public final class Result$OK$$serializer : java/lang/Object, kotlinx/serializati
           INVOKEVIRTUAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, addElement, (Ljava/lang/String;Z)V)
           ALOAD (0)
           CHECKCAST
-          PUTSTATIC (descriptor, Lkotlinx/serialization/descriptors/SerialDescriptor;)
+          PUTSTATIC (Result$OK$$serializer, descriptor, Lkotlinx/serialization/descriptors/SerialDescriptor;)
           RETURN
     }
 
@@ -514,7 +514,7 @@ public final class Result$OK$$serializer : java/lang/Object, kotlinx/serializati
           ASTORE (1)
           ALOAD (1)
           ICONST_0
-          GETSTATIC (INSTANCE, Lkotlinx/serialization/internal/StringSerializer;)
+          GETSTATIC (kotlinx/serialization/internal/StringSerializer, INSTANCE, Lkotlinx/serialization/internal/StringSerializer;)
           CHECKCAST
           AASTORE
           ALOAD (1)
@@ -639,7 +639,7 @@ public final class Result$OK$Companion : java/lang/Object {
     public final kotlinx.serialization.KSerializer serializer() {
         LABEL (L0)
         LINENUMBER (9)
-          GETSTATIC (INSTANCE, LResult$OK$$serializer;)
+          GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
           CHECKCAST
           ARETURN
         LABEL (L1)
@@ -656,7 +656,7 @@ public final class Result$OK : Result {
           DUP
           ACONST_NULL
           INVOKESPECIAL (Result$OK$Companion, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
-          PUTSTATIC (Companion, LResult$OK$Companion;)
+          PUTSTATIC (Result$OK, Companion, LResult$OK$Companion;)
           RETURN
     }
 
@@ -672,7 +672,7 @@ public final class Result$OK : Result {
           INVOKESPECIAL (Result, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
           ALOAD (0)
           ALOAD (1)
-          PUTFIELD (s, Ljava/lang/String;)
+          PUTFIELD (Result$OK, s, Ljava/lang/String;)
           RETURN
         LABEL (L2)
     }
@@ -687,7 +687,7 @@ public final class Result$OK : Result {
           IF_ICMPEQ (L1)
           ILOAD (1)
           ICONST_1
-          GETSTATIC (INSTANCE, LResult$OK$$serializer;)
+          GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
           INVOKEVIRTUAL (Result$OK$$serializer, getDescriptor, ()Lkotlinx/serialization/descriptors/SerialDescriptor;)
           INVOKESTATIC (kotlinx/serialization/internal/PluginExceptionsKt, throwMissingFieldException, (IILkotlinx/serialization/descriptors/SerialDescriptor;)V)
         LABEL (L1)
@@ -697,7 +697,7 @@ public final class Result$OK : Result {
           INVOKESPECIAL (Result, <init>, (ILkotlinx/serialization/internal/SerializationConstructorMarker;)V)
           ALOAD (0)
           ALOAD (2)
-          PUTFIELD (s, Ljava/lang/String;)
+          PUTFIELD (Result$OK, s, Ljava/lang/String;)
           RETURN
         LABEL (L2)
     }
@@ -726,7 +726,7 @@ public final class Result$OK : Result {
           ALOAD (2)
           ICONST_0
           ALOAD (0)
-          GETFIELD (s, Ljava/lang/String;)
+          GETFIELD (Result$OK, s, Ljava/lang/String;)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeEncoder, encodeStringElement, (Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/String;)V)
           RETURN
         LABEL (L2)
@@ -743,14 +743,14 @@ public abstract class Result : java/lang/Object {
           DUP
           ACONST_NULL
           INVOKESPECIAL (Result$Companion, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
-          PUTSTATIC (Companion, LResult$Companion;)
+          PUTSTATIC (Result, Companion, LResult$Companion;)
         LABEL (L0)
         LINENUMBER (7)
-          GETSTATIC (PUBLICATION, Lkotlin/LazyThreadSafetyMode;)
-          GETSTATIC (INSTANCE, LResult$Companion$$cachedSerializer$delegate$1;)
+          GETSTATIC (kotlin/LazyThreadSafetyMode, PUBLICATION, Lkotlin/LazyThreadSafetyMode;)
+          GETSTATIC (Result$Companion$$cachedSerializer$delegate$1, INSTANCE, LResult$Companion$$cachedSerializer$delegate$1;)
           CHECKCAST
           INVOKESTATIC (kotlin/LazyKt, lazy, (Lkotlin/LazyThreadSafetyMode;Lkotlin/jvm/functions/Function0;)Lkotlin/Lazy;)
-          PUTSTATIC ($cachedSerializer$delegate, Lkotlin/Lazy;)
+          PUTSTATIC (Result, $cachedSerializer$delegate, Lkotlin/Lazy;)
           RETURN
     }
 

@@ -77,7 +77,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
           DUP
           INVOKESPECIAL (User$Creator, <init>, ()V)
           CHECKCAST
-          PUTSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
+          PUTSTATIC (User, CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
 
@@ -132,19 +132,19 @@ public final class User : java/lang/Object, android/os/Parcelable {
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (1)
           ALOAD (0)
-          GETFIELD (firstName, Ljava/lang/String;)
+          GETFIELD (User, firstName, Ljava/lang/String;)
           INVOKEVIRTUAL (android/os/Parcel, writeString, (Ljava/lang/String;)V)
           ALOAD (1)
           ALOAD (0)
-          GETFIELD (lastName, Ljava/lang/String;)
+          GETFIELD (User, lastName, Ljava/lang/String;)
           INVOKEVIRTUAL (android/os/Parcel, writeString, (Ljava/lang/String;)V)
           ALOAD (1)
           ALOAD (0)
-          GETFIELD (age, I)
+          GETFIELD (User, age, I)
           INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
           ALOAD (1)
           ALOAD (0)
-          GETFIELD (isProUser, Z)
+          GETFIELD (User, isProUser, Z)
           IFEQ (L1)
           ICONST_1
           GOTO (L2)
