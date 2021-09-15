@@ -3971,6 +3971,12 @@ linkTest("inline_inlineCtor_linkTest") {
     lib = "codegen/inline/inlineCtor_linkTest_lib.kt"
 }
 
+linkTest("inline_innerInlineFunCapturesOuter_linkTest") {
+    useGoldenData = true
+    source = "codegen/inline/innerInlineFunCapturesOuter_linkTest_main.kt"
+    lib = "codegen/inline/innerInlineFunCapturesOuter_linkTest_lib.kt"
+}
+
 def generateWithSpaceDefFile() {
     def mapOption = "--Map \"${buildDir}/cutom map.map\""
     if (isAppleTarget(project)) {

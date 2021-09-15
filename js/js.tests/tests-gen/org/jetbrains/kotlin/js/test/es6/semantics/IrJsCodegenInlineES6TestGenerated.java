@@ -2090,6 +2090,11 @@ public class IrJsCodegenInlineES6TestGenerated extends AbstractIrJsCodegenInline
         public void testFakeOverride() throws Exception {
             runTest("compiler/testData/codegen/boxInline/innerClasses/fakeOverride.kt");
         }
+
+        @TestMetadata("innerInlineFunCapturesOuter.kt")
+        public void testInnerInlineFunCapturesOuter() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/innerClasses/innerInlineFunCapturesOuter.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxInline/invokedynamic")
