@@ -22,7 +22,6 @@ interface CirProvidedClassifiers {
     fun hasClassifier(classifierId: CirEntityId): Boolean
     fun classifier(classifierId: CirEntityId): CirProvided.Classifier?
 
-    // TODO NOW: Test
     fun findTypeAliasesWithUnderlyingType(underlyingClassifier: CirEntityId): List<CirEntityId>
 
     object EMPTY : CirProvidedClassifiers {

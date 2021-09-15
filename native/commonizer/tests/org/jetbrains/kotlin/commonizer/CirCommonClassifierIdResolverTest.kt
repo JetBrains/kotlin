@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.commonizer
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.mergedtree.CirClassifierIndex
 import org.jetbrains.kotlin.commonizer.mergedtree.CirCommonClassifierIdResolver
+import org.jetbrains.kotlin.commonizer.mergedtree.CirCommonClassifierIdResolverCache
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
 import org.jetbrains.kotlin.commonizer.utils.createCirProvidedClassifiers
@@ -353,7 +354,8 @@ private fun createCommonClassifierIdResolver(
             .mapValue(::CirClassifierIndex),
         targetDependencies = root.withIndex()
             .associate { (index, _) -> LeafCommonizerTarget(index.toString()) to CirProvidedClassifiers.EMPTY }.toTargetDependent(),
-        commonDependencies = dependencies
+        commonDependencies = dependencies,
+        cache = CirCommonClassifierIdResolverCache.None
     )
 }
 
