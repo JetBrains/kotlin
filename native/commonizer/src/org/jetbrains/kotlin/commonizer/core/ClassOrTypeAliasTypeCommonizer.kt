@@ -232,8 +232,14 @@ private fun resolveTypeSubstitutionCandidates(
         if (typeDistances.any { it.isNotReachable }) return@mapCandidateId null
         TypeSubstitutionCandidate(
             id = candidateId,
-            // TODO NOW: Any negative should outperform any positive substitution!, so negative will be chosen here as 'worst'
-            typeDistance = checkNotNull(typeDistances.maxByOrNull { distance -> distance.absoluteValue })
+            typeDistance = checkNotNull(typeDistances.worstOrNull())
         )
     }
+}
+
+private fun List<CirTypeDistance>.worstOrNull(): CirTypeDistance? {
+    if (this.isEmpty()) return null
+    // Negative Type Distances are considered 'worse'
+    filter { it.isNegative }.minOrNull()?.let { return it }
+    return maxOrNull()
 }
