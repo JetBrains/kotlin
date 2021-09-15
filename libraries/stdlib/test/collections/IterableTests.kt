@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -578,13 +578,13 @@ fun <T> Iterator<T>.assertSorted(isInOrder: (T, T) -> Boolean) {
 }
 
 data class Sortable<K : Comparable<K>>(val key: K, val index: Int) : Comparable<Sortable<K>> {
-    override fun compareTo(other: Sortable<K>): Int = this.key.compareTo(other.key)
+    override fun compareTo(other: Sortable<K>): Int = this.key compareTo other.key
 }
 
 
 fun <K : Comparable<K>> Iterator<Sortable<K>>.assertStableSorted(descending: Boolean = false) {
     assertSorted { a, b ->
-        val relation = a.key.compareTo(b.key)
+        val relation = a.key compareTo b.key
         (if (descending) relation > 0 else relation < 0) || relation == 0 && a.index < b.index
     }
 }

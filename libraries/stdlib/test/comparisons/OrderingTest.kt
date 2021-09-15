@@ -28,6 +28,8 @@ class OrderingTest {
     fun compareByCompareTo() {
         val diff = v1.compareTo(v2)
         assertTrue(diff < 0)
+        val infixDiff = v1 compareTo v2
+        assertEquals(diff, infixDiff)
     }
 
     @Test
@@ -60,7 +62,7 @@ class OrderingTest {
 
     @Test
     fun sortComparatorThenComparator() {
-        val comparator = Comparator<Item> { a, b -> a.name.compareTo(b.name) }.thenComparator { a, b -> a.rating.compareTo(b.rating) }
+        val comparator = Comparator<Item> { a, b -> a.name compareTo b.name }.thenComparator { a, b -> a.rating compareTo b.rating }
 
         val diff = comparator.compare(v1, v2)
         assertTrue(diff > 0)
