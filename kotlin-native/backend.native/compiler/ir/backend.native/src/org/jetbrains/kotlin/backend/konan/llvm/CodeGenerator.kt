@@ -874,14 +874,14 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 val extractExceptionBlock = basicBlock("extractException", position()?.start)
 
                 val typeId = extractValue(landingpad, 1)
-                val isKotlinException = icmpEq(
-                        typeId,
-                        call(context.llvm.llvmEhTypeidFor, listOf(kotlinExceptionRtti.llvm))
-                )
 
                 val forwardNativeExceptionBlock = basicBlock("forwardNativeException", position()?.start)
 
-                condBr(isKotlinException, extractExceptionBlock, forwardNativeExceptionBlock)
+                val isObjCException = icmpEq(
+                        typeId,
+                        call(context.llvm.llvmEhTypeidFor, listOf(objcNSExceptionRtti.llvm))
+                )
+                condBr(isObjCException, forwardNativeExceptionBlock, extractExceptionBlock)
 
                 appendingTo(forwardNativeExceptionBlock) {
                     val exception = createForeignException(landingpad, outerHandler)
