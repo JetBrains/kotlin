@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.fir.deserialization
 
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.caches.*
+import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.createCache
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -58,7 +61,7 @@ abstract class LibraryPathFilter {
 
 typealias DeserializedClassPostProcessor = (FirRegularClassSymbol) -> Unit
 
-abstract class AbstractFirDeserializedSymbolsProvider(
+abstract class AbstractFirDeserializedSymbolProvider(
     session: FirSession,
     val moduleDataProvider: ModuleDataProvider,
     val kotlinScopeProvider: FirKotlinScopeProvider,
