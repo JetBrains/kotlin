@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -2129,7 +2129,7 @@ class ArraysTest {
     }
 
     private data class Text(val data: String) : Comparable<Text> {
-        override fun compareTo(other: Text): Int = data.compareTo(other.data)
+        override fun compareTo(other: Text): Int = data compareTo other.data
     }
 
     private fun testStableSort(stableSort: Array<Text>.() -> Unit, intSort: Array<Int>.() -> Unit) {

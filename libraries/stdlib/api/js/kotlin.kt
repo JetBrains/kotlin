@@ -156,6 +156,10 @@ public inline fun <T> T.also(block: (T) -> kotlin.Unit): T
 @kotlin.internal.InlineOnly
 public inline fun <T> T.apply(block: T.() -> kotlin.Unit): T
 
+@kotlin.internal.InlineOnly
+@kotlin.SinceKotlin(version = "1.6")
+public inline infix fun <T> kotlin.Comparable<T>.compareTo(other: T): kotlin.Int
+
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
