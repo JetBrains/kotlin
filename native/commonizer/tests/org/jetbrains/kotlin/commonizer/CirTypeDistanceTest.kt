@@ -299,21 +299,22 @@ class CirTypeDistanceTest : KtInlineSourceCommonizerTestCase() {
     }
 
     fun `test unreachable distance`() {
-        assertUnreachable(CirTypeDistance.unreachable() + CirTypeDistance.unreachable())
-        assertUnreachable(CirTypeDistance.unreachable() + 1)
-        assertUnreachable(CirTypeDistance.unreachable().inc())
-        assertUnreachable(CirTypeDistance.unreachable() + CirTypeDistance(1))
-        assertUnreachable(CirTypeDistance(1) + CirTypeDistance.unreachable())
-        assertUnreachable(CirTypeDistance.unreachable() - 1)
-        assertUnreachable(CirTypeDistance.unreachable().dec())
-        assertUnreachable(CirTypeDistance.unreachable() - CirTypeDistance(1))
-        assertUnreachable(CirTypeDistance(1) - CirTypeDistance.unreachable())
-        assertUnreachable(CirTypeDistance.unreachable().absoluteValue)
+        assertUnreachable(CirTypeDistance.unreachable + CirTypeDistance.unreachable)
+        assertUnreachable(CirTypeDistance.unreachable + 1)
+        assertUnreachable(CirTypeDistance.unreachable.inc())
+        assertUnreachable(CirTypeDistance.unreachable + CirTypeDistance(1))
+        assertUnreachable(CirTypeDistance(1) + CirTypeDistance.unreachable)
+        assertUnreachable(CirTypeDistance.unreachable - 1)
+        assertUnreachable(CirTypeDistance.unreachable.dec())
+        assertUnreachable(CirTypeDistance.unreachable - CirTypeDistance(1))
+        assertUnreachable(CirTypeDistance(1) - CirTypeDistance.unreachable)
+        assertUnreachable(CirTypeDistance.unreachable.absoluteValue)
+        assertEquals(CirTypeDistance(Int.MAX_VALUE), CirTypeDistance.unreachable)
     }
 }
 
 private fun assertUnreachable(typeDistance: CirTypeDistance) {
-    assertEquals(CirTypeDistance.unreachable(), typeDistance)
+    assertEquals(CirTypeDistance.unreachable, typeDistance)
     assertTrue(typeDistance.isNotReachable)
     assertFalse(typeDistance.isReachable)
     assertFalse(typeDistance.isPositive)

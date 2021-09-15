@@ -55,7 +55,7 @@ value class CirTypeDistance(private val value: Int) : Comparable<CirTypeDistance
     }
 
     companion object {
-        fun unreachable(): CirTypeDistance = CirTypeDistance(Int.MAX_VALUE)
+        val unreachable: CirTypeDistance = CirTypeDistance(Int.MAX_VALUE)
     }
 }
 
@@ -87,14 +87,14 @@ internal fun typeDistance(
 }
 
 private fun forwardTypeDistance(from: CirClassOrTypeAliasType, to: CirEntityId): CirTypeDistance {
-    if (from !is CirTypeAliasType) return unreachable()
+    if (from !is CirTypeAliasType) return unreachable
 
     var iteration = 0
     var underlyingType: CirClassOrTypeAliasType? = from.underlyingType
 
     while (true) {
         iteration++
-        val capturedUnderlyingType = underlyingType ?: return unreachable()
+        val capturedUnderlyingType = underlyingType ?: return unreachable
         if (capturedUnderlyingType.classifierId == to) return CirTypeDistance(iteration)
         underlyingType = (capturedUnderlyingType as? CirTypeAliasType)?.underlyingType
     }
@@ -109,14 +109,14 @@ private fun backwardsTypeDistance(
         return classifiers.backwardsTypeDistance(targetIndex, from, resolvedDependencyClassifier)
     }
 
-    val resolvedClassifier = classifiers.classifierIndices[targetIndex].findClassifier(to) ?: return unreachable()
+    val resolvedClassifier = classifiers.classifierIndices[targetIndex].findClassifier(to) ?: return unreachable
     return classifiers.backwardsTypeDistance(targetIndex, from, resolvedClassifier)
 }
 
 private fun CirKnownClassifiers.backwardsTypeDistance(
     targetIndex: Int, from: CirEntityId, to: CirProvided.Classifier
 ): CirTypeDistance {
-    if (to !is CirProvided.TypeAlias) return unreachable()
+    if (to !is CirProvided.TypeAlias) return unreachable
     if (to.underlyingType.classifierId == from) return CirTypeDistance(-1)
     return backwardsTypeDistance(this, targetIndex, from, to.underlyingType.classifierId) - 1
 }
@@ -124,7 +124,7 @@ private fun CirKnownClassifiers.backwardsTypeDistance(
 private fun CirKnownClassifiers.backwardsTypeDistance(
     targetIndex: Int, from: CirEntityId, to: CirClassifier
 ): CirTypeDistance {
-    if (to !is CirTypeAlias) return unreachable()
+    if (to !is CirTypeAlias) return unreachable
     if (to.underlyingType.classifierId == from) return CirTypeDistance(-1)
     return backwardsTypeDistance(this, targetIndex, from, to.underlyingType.classifierId) - 1
 }
