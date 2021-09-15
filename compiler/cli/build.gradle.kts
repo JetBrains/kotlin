@@ -12,7 +12,6 @@ dependencies {
     api(project(":compiler:backend-common"))
     api(project(":compiler:backend"))
     api(project(":compiler:backend.jvm"))
-    implementation(project(":compiler:backend.jvm.lower"))
     implementation(project(":compiler:backend.jvm.entrypoint"))
     api(project(":compiler:ir.backend.common"))
     api(project(":compiler:light-classes"))
