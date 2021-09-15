@@ -443,8 +443,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     private var forwardingException: Boolean = false
     private val kotlinExceptions: MutableList<Pair<LLVMBasicBlockRef, LLVMValueRef>> = mutableListOf()
 
-    private val kotlinExceptionExtractInstructions: MutableList<LLVMValueRef> = mutableListOf()
-
     // Whether the generating function needs to initialize Kotlin runtime before execution. Useful for interop bridges,
     // for example.
     var needsRuntimeInit = false
@@ -880,22 +878,16 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                         typeId,
                         call(context.llvm.llvmEhTypeidFor, listOf(kotlinExceptionRtti.llvm))
                 )
-                val foreignExceptionBlock = basicBlock("foreignException", position()?.start)
+
                 val forwardNativeExceptionBlock = basicBlock("forwardNativeException", position()?.start)
 
-                condBr(isKotlinException, extractExceptionBlock, foreignExceptionBlock)
-                appendingTo(foreignExceptionBlock) {
-                    val isObjCException = icmpEq(
-                            typeId,
-                            call(context.llvm.llvmEhTypeidFor, listOf(objcNSExceptionRtti.llvm))
-                    )
-                    condBr(isObjCException, forwardNativeExceptionBlock, extractExceptionBlock)
+                condBr(isKotlinException, extractExceptionBlock, forwardNativeExceptionBlock)
 
-                    appendingTo(forwardNativeExceptionBlock) {
-                        val exception = createForeignException(landingpad, outerHandler)
-                        outerHandler.genThrow(this, exception)
-                    }
+                appendingTo(forwardNativeExceptionBlock) {
+                    val exception = createForeignException(landingpad, outerHandler)
+                    outerHandler.genThrow(this, exception)
                 }
+
                 extractExceptionBlock
             } else {
                 LLVMSetCleanup(landingpad, 1)
@@ -953,9 +945,14 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         return extractKotlinException(landingpadResult)
     }
 
+    private fun setCurrentFrameOnCatch() {
+        call(context.llvm.setCurrentFrameFunction, listOf(slotsPhi!!))
+        handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
+    }
+
     private fun extractKotlinException(landingpadResult: LLVMValueRef): LLVMValueRef {
         val exceptionRecord = extractValue(landingpadResult, 0, "er")
-        kotlinExceptionExtractInstructions.add(exceptionRecord)
+        setCurrentFrameOnCatch()
 
         // __cxa_begin_catch returns pointer to C++ exception object.
         val beginCatch = context.llvm.cxaBeginCatchFunction
@@ -1355,12 +1352,12 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     }
 
     private fun terminateAfterCaughtException(exceptionValue: LLVMValueRef) {
-        val callInstruction = call(context.llvm.cxaBeginCatchFunction, listOf(exceptionValue))
-        kotlinExceptionExtractInstructions.add(callInstruction)
+        setCurrentFrameOnCatch()
+        call(context.llvm.cxaBeginCatchFunction, listOf(exceptionValue))
         terminate()
     }
 
-    private fun createforwardExceptionLandingpadBb() {
+    private fun createForwardExceptionLandingpadBb() {
         appendingTo(forwardExceptionLandingpadBb) {
             val forwardingLandingpad = gxxLandingpad(numClauses = 0)
             LLVMSetCleanup(forwardingLandingpad, 1)
@@ -1397,7 +1394,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             cleanStackLocals()
 
             if (isCallFromBridge && forwardingException) {
-                createforwardExceptionLandingpadBb()
+                createForwardExceptionLandingpadBb()
             }
 
             val severalExceptions = kotlinExceptions.isNotEmpty()
@@ -1540,12 +1537,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             }
             LLVMDeleteBasicBlock(cleanupLandingpad)
             createCatchKotlinExceptionsBlock()
-        }
-
-        kotlinExceptionExtractInstructions.forEach {
-            positionBefore(it)
-            call(context.llvm.setCurrentFrameFunction, listOf(slots))
-            handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
         }
 
         appendingTo(localsInitBb) {

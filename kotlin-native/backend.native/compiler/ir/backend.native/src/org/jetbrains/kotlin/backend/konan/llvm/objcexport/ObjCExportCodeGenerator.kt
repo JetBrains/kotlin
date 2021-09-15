@@ -95,7 +95,7 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
         if (switchStateToNative) {
             switchThreadState(ThreadState.Native)
             // Note: this is suboptimal. We should forbid Kotlin exceptions thrown from native code, and use simple fatal handler here.
-            exceptionHandler = filteringExceptionHandler(basicExceptionHandler, ForeignExceptionMode.default, switchThreadState = true)
+            exceptionHandler = filteringExceptionHandler(ExceptionHandler.Caller, ForeignExceptionMode.default, switchThreadState = true)
         } else {
             exceptionHandler = basicExceptionHandler
         }
