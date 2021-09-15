@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -146,21 +146,22 @@ internal class UltraLightMembersCreator(
 
     internal class KtUltraLightAnnotationMethod(
         private val psiMethod: KtLightMethod,
-        expression: KtExpression
-    ) : KtLightMethod by psiMethod,
-        PsiAnnotationMethod {
-
+        private val expression: KtExpression
+    ) : KtLightMethod by psiMethod, PsiAnnotationMethod {
         private val value by lazyPub {
             convertToLightAnnotationMemberValue(psiMethod, expression)
         }
 
-        override fun equals(other: Any?): Boolean = psiMethod == (other as? KtUltraLightAnnotationMethod)?.psiMethod
+        override fun equals(other: Any?): Boolean = other === this ||
+                other is KtUltraLightAnnotationMethod &&
+                other.psiMethod == psiMethod &&
+                other.expression == expression
 
-        override fun hashCode(): Int = psiMethod.hashCode()
+        override fun hashCode(): Int = psiMethod.hashCode() * 31 + expression.hashCode()
 
-        override fun toString(): String = psiMethod.toString()
+        override fun toString(): String = "KtUltraLightAnnotationMethod(method=$psiMethod, expression=$expression"
 
-        override fun getDefaultValue(): PsiAnnotationMemberValue? = value
+        override fun getDefaultValue(): PsiAnnotationMemberValue = value
 
         override fun getSourceElement(): PsiElement? = psiMethod.sourceElement
     }
