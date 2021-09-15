@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.moduleName
 import org.jetbrains.kotlin.ir.backend.js.toResolverLogger
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
@@ -39,12 +38,6 @@ import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.io.File
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
-
-@Suppress("UNUSED")
-private fun PersistentCacheConsumer.buildForFile(file: IrFile) {
-    // TODO: this is temporary stub, no real work done
-    println("Building IC cache for file ${file.fileEntry.name}")
-}
 
 private fun KotlinLibrary.fingerprint(fileIndex: Int): Hash {
     return ((((types(fileIndex).md5() * 31) + signatures(fileIndex).md5()) * 31 + strings(fileIndex).md5()) * 31 + declarations(fileIndex).md5()) * 31 + bodies(fileIndex).md5()
@@ -152,6 +145,7 @@ private fun KotlinLibrary.filesAndSigReaders(): List<Pair<String, IdSignatureDes
 private fun buildCacheForModule(
     libraryPath: String,
     irModule: IrModuleFragment,
+    dependencies: Collection<IrModuleFragment>,
     dirtyFiles: Collection<String>,
     cleanInlineHashes: Map<IdSignature, Hash>,
     cacheConsumer: PersistentCacheConsumer,
@@ -193,9 +187,11 @@ private fun buildCacheForModule(
         val fileInlineGraph = inlineGraph[irFile] ?: emptyList()
         cacheConsumer.commitInlineGraph(fileName, fileInlineGraph, indexResolver)
         cacheConsumer.commitFileFingerPrint(fileName, fileFingerPrints[fileName] ?: error("No fingerprint found for file $fileName"))
-        // TODO: actual way of building a cache could change in future
-        cacheConsumer.buildForFile(irFile)
     }
+
+    // TODO: actual way of building a cache could change in future
+    buildCacheForModuleFiles(irModule, dependencies, dirtyFiles, cacheConsumer)
+
     cacheConsumer.commitLibraryPath(libraryPath)
 }
 
@@ -412,6 +408,7 @@ private fun actualizeCacheForModule(
     buildCacheForModule(
         library.libraryFile.canonicalPath,
         currentIrModule,
+        irModules.map { it.first },
         dirtySet,
         sigHashes,
         persistentCacheConsumer,
@@ -419,4 +416,54 @@ private fun actualizeCacheForModule(
         fileFingerPrints
     )
     return false // invalidated and re-built
+}
+
+fun rebuildCacheForDirtyFiles(
+    library: KotlinLibrary,
+    configuration: CompilerConfiguration,
+    dependencyGraph: Map<KotlinLibrary, Collection<KotlinLibrary>>,
+    dirtyFiles: Collection<String>?,
+    cacheConsumer: PersistentCacheConsumer
+) {
+    val loadedModules = loadModules(configuration.languageVersionSettings, dependencyGraph)
+
+    val jsIrLinker = createLinker(configuration, loadedModules)
+
+    val irModules = ArrayList<Pair<IrModuleFragment, KotlinLibrary>>(loadedModules.size)
+
+    // TODO: modules deserialized here have to be reused for cache building further
+    for ((descriptor, loadedLibrary) in loadedModules) {
+        if (library == loadedLibrary) {
+            if (dirtyFiles != null) {
+                irModules.add(jsIrLinker.deserializeDirtyFiles(descriptor, loadedLibrary, dirtyFiles) to loadedLibrary)
+            } else {
+                irModules.add(jsIrLinker.deserializeFullModule(descriptor, loadedLibrary) to loadedLibrary)
+            }
+        } else {
+            irModules.add(jsIrLinker.deserializeHeadersWithInlineBodies(descriptor, loadedLibrary) to loadedLibrary)
+        }
+    }
+
+    jsIrLinker.init(null, emptyList())
+
+    ExternalDependenciesGenerator(jsIrLinker.symbolTable, listOf(jsIrLinker)).generateUnboundSymbolsAsDependencies()
+
+    jsIrLinker.postProcess()
+
+    val currentIrModule = irModules.find { it.second == library }?.first!!
+
+    buildCacheForModuleFiles(currentIrModule, irModules.map { it.first }, dirtyFiles, cacheConsumer)
+}
+
+@Suppress("UNUSED_PARAMETER")
+private fun buildCacheForModuleFiles(
+    currentModule: IrModuleFragment,
+    dependencies: Collection<IrModuleFragment>,
+    dirtyFiles: Collection<String>?, // if null consider the whole module dirty
+    cacheConsumer: PersistentCacheConsumer
+) {
+//    println("creating caches for module ${currentModule.name}")
+//    println("Store them into $cacheConsumer")
+//    val dirtyS = if (dirtyFiles == null) "[ALL]" else dirtyFiles.joinToString(",", "[", "]") { it }
+//    println("Dirty files -> $dirtyS")
 }
