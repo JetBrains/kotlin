@@ -167,22 +167,14 @@ class IrToJs(
             globalNameScope = nameGenerator.staticNames
         )
 
-        val rootContext = JsGenerationContext(
-            currentFunction = null,
-            currentFile = null,
-            staticContext = staticContext,
-            localNames = LocalNameGenerator(NameTable())
-        )
-
-
         val declarationStatements: List<JsStatement> = unit.packageFragments.flatMap {
             StaticMembersLowering(backendContext).lower(it as IrFile)
-            it.accept(IrFileToJsTransformer(), rootContext).statements
+            it.accept(IrFileToJsTransformer(), staticContext).statements
         }
 
         val preDeclarationBlock = JsGlobalBlock()
         val postDeclarationBlock = JsGlobalBlock()
-        processClassModels(rootContext.staticContext.classModels, preDeclarationBlock, postDeclarationBlock)
+        processClassModels(staticContext.classModels, preDeclarationBlock, postDeclarationBlock)
 
         val statements = mutableListOf<JsStatement>()
         statements += nameGenerator.internalImports.values
@@ -192,7 +184,7 @@ class IrToJs(
 
         // Generate module initialization
 
-        val initializerBlock = rootContext.staticContext.initializerBlock
+        val initializerBlock = staticContext.initializerBlock
         when (unit) {
             is WholeProgramUnit, is ModuleUnit -> {
                 // Run initialization during ES module initialization

@@ -143,20 +143,14 @@ class IrModuleToJsTransformer(
             irNamer = nameGenerator,
             globalNameScope = namer.globalNames
         )
-        val rootContext = JsGenerationContext(
-            currentFile = null,
-            currentFunction = null,
-            staticContext = staticContext,
-            localNames = LocalNameGenerator(NameTable())
-        )
 
         val (importStatements, importedJsModules) =
             generateImportStatements(
-                getNameForExternalDeclaration = { rootContext.getNameForStaticDeclaration(it) },
+                getNameForExternalDeclaration = { staticContext.getNameForStaticDeclaration(it) },
                 declareFreshGlobal = { JsName(sanitizeName(it)) } // TODO: Declare fresh name
             )
 
-        val moduleBody = generateModuleBody(modules, rootContext)
+        val moduleBody = generateModuleBody(modules, staticContext)
 
         val internalModuleName = JsName("_")
         val globalNames = NameTable<String>(namer.globalNames)
@@ -182,7 +176,7 @@ class IrModuleToJsTransformer(
                     statements += moduleBody
                     statements.addWithComment("block: exports", exportStatements + crossModuleExports)
                     if (generateMainCall) {
-                        statements += generateCallToMain(modules, rootContext)
+                        statements += generateCallToMain(modules, staticContext)
                     }
                     statements += JsReturn(internalModuleName.makeRef())
                 }
@@ -288,7 +282,7 @@ class IrModuleToJsTransformer(
         }
     }
 
-    private fun generateModuleBody(modules: Iterable<IrModuleFragment>, context: JsGenerationContext): List<JsStatement> {
+    private fun generateModuleBody(modules: Iterable<IrModuleFragment>, staticContext: JsStaticContext): List<JsStatement> {
         val statements = mutableListOf<JsStatement>().also {
             if (!generateScriptModule) it += JsStringLiteral("use strict").makeStmt()
         }
@@ -303,7 +297,7 @@ class IrModuleToJsTransformer(
 
         modules.forEach { module ->
             module.files.forEach {
-                val fileStatements = it.accept(IrFileToJsTransformer(), context).statements
+                val fileStatements = it.accept(IrFileToJsTransformer(), staticContext).statements
                 if (fileStatements.isNotEmpty()) {
                     var startComment = ""
 
@@ -332,15 +326,15 @@ class IrModuleToJsTransformer(
         }
 
         // sort member forwarding code
-        processClassModels(context.staticContext.classModels, preDeclarationBlock, postDeclarationBlock)
+        processClassModels(staticContext.classModels, preDeclarationBlock, postDeclarationBlock)
 
         statements.addWithComment("block: post-declaration", postDeclarationBlock.statements)
-        statements.addWithComment("block: init", context.staticContext.initializerBlock.statements)
+        statements.addWithComment("block: init", staticContext.initializerBlock.statements)
 
         modules.forEach {
             backendContext.testRoots[it]?.let { testContainer ->
                 statements.startRegion("block: tests")
-                statements += JsInvocation(context.getNameForStaticFunction(testContainer).makeRef()).makeStmt()
+                statements += JsInvocation(staticContext.getNameForStaticFunction(testContainer).makeRef()).makeStmt()
                 statements.endRegion()
             }
         }
@@ -351,7 +345,7 @@ class IrModuleToJsTransformer(
     private fun generateMainArguments(
         generateArgv: Boolean,
         generateContinuation: Boolean,
-        rootContext: JsGenerationContext
+        staticContext: JsStaticContext,
     ): List<JsExpression> {
         val mainArguments = this.mainArguments!!
         val mainArgumentsArray =
@@ -360,22 +354,22 @@ class IrModuleToJsTransformer(
         val continuation = if (generateContinuation) {
             backendContext.coroutineEmptyContinuation.owner
                 .let { it.getter!! }
-                .let { rootContext.getNameForStaticFunction(it) }
+                .let { staticContext.getNameForStaticFunction(it) }
                 .let { JsInvocation(it.makeRef()) }
         } else null
 
         return listOfNotNull(mainArgumentsArray, continuation)
     }
 
-    private fun generateCallToMain(modules: Iterable<IrModuleFragment>, rootContext: JsGenerationContext): List<JsStatement> {
+    private fun generateCallToMain(modules: Iterable<IrModuleFragment>, staticContext: JsStaticContext): List<JsStatement> {
         // TODO: Generate calls to main as IR->IR lowering
         if (mainArguments == null) return emptyList() // in case `NO_MAIN` and `main(..)` exists
         val mainFunction = JsMainFunctionDetector(backendContext).getMainFunctionOrNull(modules.last())
         return mainFunction?.let {
-            val jsName = rootContext.getNameForStaticFunction(it)
+            val jsName = staticContext.getNameForStaticFunction(it)
             val generateArgv = it.valueParameters.firstOrNull()?.isStringArrayParameter() ?: false
             val generateContinuation = it.isLoweredSuspendFunction(backendContext)
-            listOf(JsInvocation(jsName.makeRef(), generateMainArguments(generateArgv, generateContinuation, rootContext)).makeStmt())
+            listOf(JsInvocation(jsName.makeRef(), generateMainArguments(generateArgv, generateContinuation, staticContext)).makeStmt())
         } ?: emptyList()
     }
 

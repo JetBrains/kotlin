@@ -26,12 +26,12 @@ val emptyScope: JsScope
     }
 
 class JsGenerationContext(
-    val currentFile: IrFile?,
+    val currentFile: IrFile,
     val currentFunction: IrFunction?,
     val staticContext: JsStaticContext,
     val localNames: LocalNameGenerator? = null
 ): IrNamer by staticContext {
-    fun newFile(file: IrFile? = null, func: IrFunction? = null, localNames: LocalNameGenerator? = null): JsGenerationContext {
+    fun newFile(file: IrFile, func: IrFunction? = null, localNames: LocalNameGenerator? = null): JsGenerationContext {
         return JsGenerationContext(
             currentFile = file,
             currentFunction = func,
