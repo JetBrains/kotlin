@@ -371,7 +371,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
             }
         )
         assertEquals(
-            mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") }, commonizer(
+            mockClassType("kotlin/sequences/SequenceScope"), commonizer(
                 listOf(
                     mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") },
                     mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") },
