@@ -16,27 +16,55 @@ import org.jetbrains.kotlin.commonizer.cir.CirTypeAlias
 internal fun CirCommonClassifierIdResolver(
     classifierIndices: TargetDependent<CirClassifierIndex>,
     targetDependencies: TargetDependent<CirProvidedClassifiers>,
-    commonDependencies: CirProvidedClassifiers = CirProvidedClassifiers.EMPTY
+    commonDependencies: CirProvidedClassifiers = CirProvidedClassifiers.EMPTY,
+    cache: CirCommonClassifierIdResolverCache = CirCommonClassifierIdResolverCache.create()
 ): CirCommonClassifierIdResolver {
-    return CirCommonClassifierIdResolverImpl(classifierIndices, targetDependencies, commonDependencies)
+    return CirCommonClassifierIdResolverImpl(classifierIndices, targetDependencies, commonDependencies, cache)
 }
 
 interface CirCommonClassifierIdResolver {
     fun findCommonId(id: CirEntityId): CirCommonClassifierId?
 }
 
+internal interface CirCommonClassifierIdResolverCache {
+
+    operator fun set(id: CirEntityId, result: CirCommonClassifierId?)
+    operator fun get(id: CirEntityId): CirCommonClassifierId?
+
+    object None : CirCommonClassifierIdResolverCache {
+        override fun set(id: CirEntityId, result: CirCommonClassifierId?) = Unit
+        override fun get(id: CirEntityId): CirCommonClassifierId? = null
+    }
+
+    private class Default : CirCommonClassifierIdResolverCache {
+        private val cachedResults = THashMap<CirEntityId, CirCommonClassifierId>()
+        private val cachedNullResults = THashSet<CirEntityId>()
+
+        override fun set(id: CirEntityId, result: CirCommonClassifierId?) {
+            if (result == null) cachedNullResults.add(id)
+            else cachedResults[id] = result
+        }
+
+        override fun get(id: CirEntityId): CirCommonClassifierId? {
+            if (id in cachedNullResults) return null
+            return cachedResults[id]
+        }
+    }
+
+    companion object {
+        fun create(): CirCommonClassifierIdResolverCache = Default()
+    }
+}
+
 private class CirCommonClassifierIdResolverImpl(
     private val classifierIndices: TargetDependent<CirClassifierIndex>,
     private val targetDependencies: TargetDependent<CirProvidedClassifiers>,
-    private val commonDependencies: CirProvidedClassifiers
+    private val commonDependencies: CirProvidedClassifiers,
+    private val cache: CirCommonClassifierIdResolverCache
 ) : CirCommonClassifierIdResolver {
 
-    private val cachedResults = THashMap<CirEntityId, CirCommonClassifierId>()
-    private val cachedNullResults = THashSet<CirEntityId>()
-
     override fun findCommonId(id: CirEntityId): CirCommonClassifierId? {
-        cachedResults[id]?.let { return it }
-        if (id in cachedNullResults) return null
+        cache[id]?.let { return it }
         return doFindCommonId(id)
     }
 
@@ -105,8 +133,7 @@ private class CirCommonClassifierIdResolverImpl(
         }
 
         val result = if (results.isNotEmpty()) CirCommonClassifierId(results) else null
-        if (result != null) visited.forEach { cachedResults[it] = result }
-        else visited.forEach { cachedNullResults.add(it) }
+        visited.forEach { visitedId -> cache[visitedId] = result }
         return result
     }
 }
