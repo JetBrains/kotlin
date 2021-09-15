@@ -50,6 +50,11 @@ abstract class AbstractResolveCallTest : AbstractHLApiSingleModuleTest() {
         is KtArrayAccessExpression -> element.resolveCall()
         is KtSimpleNameExpression -> element.resolveAccessorCall()
         is KtValueArgument -> resolveCall(element.getArgumentExpression()!!)
+        is KtDeclarationModifierList -> {
+            val annotationEntry = element.annotationEntries.singleOrNull()
+                ?: error("Only single annotation entry is supported for now")
+            annotationEntry.resolveCall()
+        }
         else -> error("Selected element type (${element::class.simpleName}) is not supported for resolveCall()")
     }
 

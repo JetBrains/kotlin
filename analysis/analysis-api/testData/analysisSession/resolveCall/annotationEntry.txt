@@ -1,0 +1,3 @@
+KtAnnotationCall:
+argumentMapping = { Annotation("v1", "v2") -> (value: Annotation) }
+targetFunction = <constructor>(value: Annotation): AnnotationInner

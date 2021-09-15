@@ -25,6 +25,48 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     }
 
     @Test
+    @TestMetadata("annotationEntry.kt")
+    public void testAnnotationEntry() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationInAnnotation_arrayOf.kt")
+    public void testAnnotationInAnnotation_arrayOf() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationInAnnotation_arrayOf.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationInAnnotation_collectionLiteral.kt")
+    public void testAnnotationInAnnotation_collectionLiteral() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationInAnnotation_collectionLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationInAnnotation_multipleAnnotations_arrayOf.kt")
+    public void testAnnotationInAnnotation_multipleAnnotations_arrayOf() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationInAnnotation_multipleAnnotations_arrayOf.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationInAnnotation_multipleAnnotations_collectionLiteral.kt")
+    public void testAnnotationInAnnotation_multipleAnnotations_collectionLiteral() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationInAnnotation_multipleAnnotations_collectionLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationInAnnotation_noarg.kt")
+    public void testAnnotationInAnnotation_noarg() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationInAnnotation_noarg.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationInAnnotation_vararg.kt")
+    public void testAnnotationInAnnotation_vararg() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationInAnnotation_vararg.kt");
+    }
+
+    @Test
     @TestMetadata("arrayOfInAnnotation.kt")
     public void testArrayOfInAnnotation() throws Exception {
         runTest("analysis/analysis-api/testData/analysisSession/resolveCall/arrayOfInAnnotation.kt");
@@ -52,6 +94,12 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     @TestMetadata("delegatedConstructorCall_this_unresolved.kt")
     public void testDelegatedConstructorCall_this_unresolved() throws Exception {
         runTest("analysis/analysis-api/testData/analysisSession/resolveCall/delegatedConstructorCall_this_unresolved.kt");
+    }
+
+    @Test
+    @TestMetadata("enumAsAnnotationValue.kt")
+    public void testEnumAsAnnotationValue() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/enumAsAnnotationValue.kt");
     }
 
     @Test
