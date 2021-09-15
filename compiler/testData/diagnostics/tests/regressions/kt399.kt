@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-399 Type argument inference not implemented for CALL_EXPRESSION
 
 fun <T> getSameTypeChecker(obj: T) : Function1<Any,Boolean> {

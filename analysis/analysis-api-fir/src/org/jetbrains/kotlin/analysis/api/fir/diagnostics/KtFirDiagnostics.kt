@@ -2168,6 +2168,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = UselessElvisRightIsNull::class
     }
 
+    abstract class CannotCheckForErased : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = CannotCheckForErased::class
+        abstract val type: KtType
+    }
+
     abstract class UselessCast : KtFirDiagnostic<KtBinaryExpressionWithTypeRHS>() {
         override val diagnosticClass get() = UselessCast::class
     }

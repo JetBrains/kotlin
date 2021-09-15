@@ -9,13 +9,13 @@ class Case1<AT: CharSequence>(val x: AT) {
 
     inner class C() {
         fun case1a(x: Any) {
-            if (x is AT) {
+            if (x is <!CANNOT_CHECK_FOR_ERASED!>AT<!>) {
                 ""
             }
         }
 
         fun case1b(x: Any) = when (x) {
-                is AT -> println("at")
+                is <!CANNOT_CHECK_FOR_ERASED!>AT<!> -> println("at")
                 else -> ""
             }
 
@@ -28,14 +28,14 @@ class Case2<AT: CharSequence>(val x: AT) {
 
     inner class C() {
         fun case2a(x: CharSequence) {
-            if (x is AT) {
+            if (x is <!CANNOT_CHECK_FOR_ERASED!>AT<!>) {
                 ""
             }
         }
 
         fun case2b(x: CharSequence) {
             when (x) {
-                is AT -> ""
+                is <!CANNOT_CHECK_FOR_ERASED!>AT<!> -> ""
             }
         }
     }

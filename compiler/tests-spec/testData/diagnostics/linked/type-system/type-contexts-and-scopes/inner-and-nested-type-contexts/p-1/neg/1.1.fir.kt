@@ -9,14 +9,14 @@ class Case1<AT>(val x: AT) {
 
     inner class C() {
         fun case1a(x: Any) {
-            if (x is AT) {
+            if (x is <!CANNOT_CHECK_FOR_ERASED!>AT<!>) {
                 ""
             }
         }
 
         fun case1b(x: Any) {
             when (x) {
-                is AT -> println("at")
+                is <!CANNOT_CHECK_FOR_ERASED!>AT<!> -> println("at")
             }
         }
     }

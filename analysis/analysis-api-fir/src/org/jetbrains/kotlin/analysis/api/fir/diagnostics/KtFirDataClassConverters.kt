@@ -3097,6 +3097,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CANNOT_CHECK_FOR_ERASED) { firDiagnostic ->
+        CannotCheckForErasedImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.USELESS_CAST) { firDiagnostic ->
         UselessCastImpl(
             firDiagnostic as KtPsiDiagnostic,

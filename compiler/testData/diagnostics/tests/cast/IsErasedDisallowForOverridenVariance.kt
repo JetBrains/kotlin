@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class A
 open class B: A()
 

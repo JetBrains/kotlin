@@ -9,7 +9,7 @@ public class A {
 // FILE: main.kt
 
 fun main(a: A, ml: Any) {
-    if (ml is MutableList<String>) {
+    if (ml is <!CANNOT_CHECK_FOR_ERASED!>MutableList<String><!>) {
         a.foo(<!JAVA_TYPE_MISMATCH!>ml<!>)
         a.foo(ml as List<Any>)
     }
