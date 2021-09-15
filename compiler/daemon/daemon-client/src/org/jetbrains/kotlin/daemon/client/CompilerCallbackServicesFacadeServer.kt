@@ -121,8 +121,8 @@ open class CompilerCallbackServicesFacadeServer(
         expectActualTracker!!.report(File(expectedFilePath), File(actualFilePath))
     }
 
-    override fun inlineConstTracker_report(className: String, cRefs: Collection<ConstantRef>) {
-        inlineConstTracker?.report(className, cRefs) ?: throw NullPointerException("inlineConstTracker was not initialized")
+    override fun inlineConstTracker_report(filePath: String, cRefs: Collection<ConstantRef>) {
+        inlineConstTracker?.report(filePath, cRefs) ?: throw NullPointerException("inlineConstTracker was not initialized")
     }
 
     override fun incrementalResultsConsumer_processHeader(headerMetadata: ByteArray) {

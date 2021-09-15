@@ -108,7 +108,7 @@ interface CompilerCallbackServicesFacade : Remote {
     // ---------------------------------------------------
     // InlineConstTracker
     @Throws(RemoteException::class)
-    fun inlineConstTracker_report(className: String, cRefs: Collection<ConstantRef>)
+    fun inlineConstTracker_report(filePath: String, cRefs: Collection<ConstantRef>)
 
     // ---------------------------------------------------
     // IncrementalResultsConsumer (js)
