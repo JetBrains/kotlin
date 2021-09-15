@@ -76,8 +76,7 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
             function: LLVMValueRef,
             args: List<LLVMValueRef>,
             resultLifetime: Lifetime = Lifetime.IRRELEVANT,
-            toNative: Boolean = false,
-            forwardException: Boolean = false
+            toNative: Boolean = false
     ): LLVMValueRef {
 
         // TODO: it is required only for Kotlin-to-Objective-C bridges.
@@ -86,18 +85,12 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
         val switchStateToNative = toNative && context.config.memoryModel == MemoryModel.EXPERIMENTAL
         val exceptionHandler: ExceptionHandler
 
-        val basicExceptionHandler = if (!forwardException) {
-            ExceptionHandler.Caller
-        } else {
-            forwardExceptionHandler()
-        }
-
         if (switchStateToNative) {
             switchThreadState(ThreadState.Native)
             // Note: this is suboptimal. We should forbid Kotlin exceptions thrown from native code, and use simple fatal handler here.
             exceptionHandler = filteringExceptionHandler(ExceptionHandler.Caller, ForeignExceptionMode.default, switchThreadState = true)
         } else {
-            exceptionHandler = basicExceptionHandler
+            exceptionHandler = ExceptionHandler.Caller
         }
 
         val result = call(function, args, resultLifetime, exceptionHandler)
@@ -1083,7 +1076,13 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
         fun rethrow() {
             val error = load(errorOutPtr!!)
-            callFromBridge(context.llvm.Kotlin_ObjCExport_RethrowNSErrorAsException, listOf(error), forwardException = true)
+            val kotlinException = callFromBridge(context.llvm.Kotlin_ObjCExport_WrapNSErrorAsException, listOf(error))
+            call(
+                    context.llvm.throwExceptionFunction,
+                    listOf(kotlinException),
+                    Lifetime.IRRELEVANT,
+                    ExceptionHandler.None
+            )
             unreachable()
         }
 

@@ -440,7 +440,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
      */
     var isCallFromBridge: Boolean = false
     var isCallFromCCallback: Boolean = false
-    private var forwardingException: Boolean = false
+
     private val kotlinExceptions: MutableList<Pair<LLVMBasicBlockRef, LLVMValueRef>> = mutableListOf()
 
     // Whether the generating function needs to initialize Kotlin runtime before execution. Useful for interop bridges,
@@ -840,15 +840,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
     fun extractElement(vector: LLVMValueRef, index: LLVMValueRef, name: String = ""): LLVMValueRef {
         return LLVMBuildExtractElement(builder, vector, index, name)!!
-    }
-
-    internal fun forwardExceptionHandler(): ExceptionHandler {
-        forwardingException = true
-
-        return object : ExceptionHandler.Local() {
-            override val unwind: LLVMBasicBlockRef
-                get() = forwardExceptionLandingpadBb
-        }
     }
 
     fun filteringExceptionHandler(
@@ -1357,45 +1348,11 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         terminate()
     }
 
-    private fun createForwardExceptionLandingpadBb() {
-        appendingTo(forwardExceptionLandingpadBb) {
-            val forwardingLandingpad = gxxLandingpad(numClauses = 0)
-            LLVMSetCleanup(forwardingLandingpad, 1)
-
-            val clause = ConstArray(int8TypePtr, listOf(kotlinExceptionRtti))
-            LLVMAddClause(forwardingLandingpad, clause.llvm)
-
-            val selector = extractValue(forwardingLandingpad, 1)
-            val extractKotlinExceptionBb = basicBlock("extractKotlinException", position()?.start)
-            condBr(
-                    icmpLt(selector, Int32(0).llvm),
-                    extractKotlinExceptionBb,
-                    forwardExceptionBb
-            )
-
-            appendingTo(extractKotlinExceptionBb) {
-                val exceptionRecord = extractValue(forwardingLandingpad, 0)
-                kotlinExceptions.add(extractKotlinExceptionBb to exceptionRecord)
-                br(catchKotlinExceptionAndTerminateBb)
-            }
-
-            appendingTo(forwardExceptionBb) {
-                releaseVars()
-                handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
-                LLVMBuildResume(builder, forwardingLandingpad)
-            }
-        }
-    }
-
     private fun createCleanupLandingpadForBridges(landingpad: LLVMValueRef? = null) {
         if (!isCallFromBridge) return
 
         if (isCallFromBridge && landingpad != null) {
             cleanStackLocals()
-
-            if (isCallFromBridge && forwardingException) {
-                createForwardExceptionLandingpadBb()
-            }
 
             val severalExceptions = kotlinExceptions.isNotEmpty()
 
