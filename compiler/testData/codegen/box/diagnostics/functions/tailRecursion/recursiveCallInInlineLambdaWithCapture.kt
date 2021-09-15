@@ -1,7 +1,6 @@
 // KT-14961
 // IGNORE_BACKEND: JVM, JS_IR, WASM
 // WITH_RUNTIME
-// IGNORE_FIR_DIAGNOSTICS_DIFF
 
 fun listOfFactor(number: Int): List<Int> {
     tailrec fun listOfFactor(number: Int, acc: List<Int>): List<Int> {

@@ -1,6 +1,5 @@
 // KT-16549
 // IGNORE_BACKEND: JVM, JS
-// IGNORE_FIR_DIAGNOSTICS_DIFF
 
 class TailInline {
     private inline fun act(action: () -> Unit) {
