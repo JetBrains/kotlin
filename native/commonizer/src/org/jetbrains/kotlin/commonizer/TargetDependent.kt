@@ -66,6 +66,14 @@ internal fun <T, R> TargetDependent<T>.mapValue(mapper: (T) -> R): TargetDepende
     return TargetDependent(targets) { target -> this@mapValue.get(target).let(mapper) }
 }
 
+internal inline fun <T, R> TargetDependent<T>.mapValueEager(mapper: (T) -> R): TargetDependent<R> {
+    return EagerTargetDependent(targets) { target -> mapper(this[target]) }
+}
+
+internal inline fun <T, R> TargetDependent<T>.mapValueEagerWithTarget(mapper: (target: CommonizerTarget, T) -> R): TargetDependent<R> {
+    return EagerTargetDependent(targets) { target -> mapper(target, this[target]) }
+}
+
 internal fun <T, R> TargetDependent<T>.mapTargets(mapper: (CommonizerTarget) -> R): TargetDependent<R> {
     return TargetDependent(targets) { target -> mapper(target) }
 }
@@ -84,7 +92,9 @@ internal fun <T> TargetDependent(keys: Iterable<CommonizerTarget>, factory: (tar
 
 internal fun <T> TargetDependent(vararg pairs: Pair<CommonizerTarget, T>) = pairs.toMap().toTargetDependent()
 
-internal fun <T> EagerTargetDependent(keys: Iterable<CommonizerTarget>, factory: (target: CommonizerTarget) -> T): TargetDependent<T> {
+internal inline fun <T> EagerTargetDependent(
+    keys: Iterable<CommonizerTarget>, factory: (target: CommonizerTarget) -> T
+): TargetDependent<T> {
     return keys.associateWith(factory).toTargetDependent()
 }
 
