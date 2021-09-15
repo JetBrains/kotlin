@@ -217,10 +217,10 @@ class IrModuleToJsTransformer(
                     sourceMapContentEmbedding != SourceMapSourceEmbedding.NEVER
                 )
             } else {
-                null
+                NoOpSourceLocationConsumer
             }
 
-        program.accept(JsToStringGenerationVisitor(jsCode, sourceMapBuilderConsumer ?: NoOpSourceLocationConsumer))
+        program.accept(JsToStringGenerationVisitor(jsCode, sourceMapBuilderConsumer))
 
         return CompilationOutputs(
             jsCode.toString(),
@@ -283,6 +283,68 @@ class IrModuleToJsTransformer(
     }
 
     private fun generateModuleBody(modules: Iterable<IrModuleFragment>, staticContext: JsStaticContext): List<JsStatement> {
+        val fragments = modules.flatMap { it.files.map { generateProgramFragment(it, staticContext) } }
+
+        val statements = merge(fragments, staticContext).toMutableList()
+
+        // TODO: handle tests incrementally
+        modules.forEach {
+            backendContext.testRoots[it]?.let { testContainer ->
+                statements.startRegion("block: tests")
+                statements += JsInvocation(staticContext.getNameForStaticFunction(testContainer).makeRef()).makeStmt()
+                statements.endRegion()
+            }
+        }
+
+        return statements
+    }
+
+    private val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
+    private val pathPrefixMap = backendContext.configuration.getMap(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP)
+
+    private fun generateProgramFragment(file: IrFile, staticContext: JsStaticContext): JsIrProgramFragment {
+        require(staticContext.classModels.isEmpty())
+        require(staticContext.initializerBlock.statements.isEmpty())
+
+        val result = JsIrProgramFragment()
+        val statements = result.declarations.statements
+
+        val fileStatements = file.accept(IrFileToJsTransformer(), staticContext).statements
+        if (fileStatements.isNotEmpty()) {
+            var startComment = ""
+
+            if (generateRegionComments) {
+                startComment = "region "
+            }
+
+            if (generateRegionComments || generateFilePaths) {
+                val originalPath = file.path
+                val path = pathPrefixMap.entries
+                    .find { (k, _) -> originalPath.startsWith(k) }
+                    ?.let { (k, v) -> v + originalPath.substring(k.length) }
+                    ?: originalPath
+
+                startComment += "file: $path"
+            }
+
+            if (startComment.isNotEmpty()) {
+                statements.add(JsSingleLineComment(startComment))
+            }
+
+            statements.addAll(fileStatements)
+            statements.endRegion()
+        }
+
+        result.classes += staticContext.classModels
+        result.initializers.statements += staticContext.initializerBlock.statements
+
+        staticContext.classModels.clear()
+        staticContext.initializerBlock.statements.clear()
+
+        return result
+    }
+
+    private fun merge(fragments: Iterable<JsIrProgramFragment>, staticContext: JsStaticContext): List<JsStatement> {
         val statements = mutableListOf<JsStatement>().also {
             if (!generateScriptModule) it += JsStringLiteral("use strict").makeStmt()
         }
@@ -292,52 +354,19 @@ class IrModuleToJsTransformer(
 
         statements.addWithComment("block: pre-declaration", preDeclarationBlock)
 
-        val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
-        val pathPrefixMap = backendContext.configuration.getMap(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP)
-
-        modules.forEach { module ->
-            module.files.forEach {
-                val fileStatements = it.accept(IrFileToJsTransformer(), staticContext).statements
-                if (fileStatements.isNotEmpty()) {
-                    var startComment = ""
-
-                    if (generateRegionComments) {
-                        startComment = "region "
-                    }
-
-                    if (generateRegionComments || generateFilePaths) {
-                        val originalPath = it.path
-                        val path = pathPrefixMap.entries
-                            .find { (k, _) -> originalPath.startsWith(k) }
-                            ?.let { (k, v) -> v + originalPath.substring(k.length) }
-                            ?: originalPath
-
-                        startComment += "file: $path"
-                    }
-
-                    if (startComment.isNotEmpty()) {
-                        statements.add(JsSingleLineComment(startComment))
-                    }
-
-                    statements.addAll(fileStatements)
-                    statements.endRegion()
-                }
-            }
+        val classModels = mutableMapOf<IrClassSymbol, JsIrClassModel>()
+        val initializerBlock = JsGlobalBlock()
+        fragments.forEach {
+            statements += it.declarations.statements
+            classModels += it.classes
+            initializerBlock.statements += it.initializers.statements
         }
 
         // sort member forwarding code
-        processClassModels(staticContext.classModels, preDeclarationBlock, postDeclarationBlock)
+        processClassModels(classModels, preDeclarationBlock, postDeclarationBlock)
 
         statements.addWithComment("block: post-declaration", postDeclarationBlock.statements)
-        statements.addWithComment("block: init", staticContext.initializerBlock.statements)
-
-        modules.forEach {
-            backendContext.testRoots[it]?.let { testContainer ->
-                statements.startRegion("block: tests")
-                statements += JsInvocation(staticContext.getNameForStaticFunction(testContainer).makeRef()).makeStmt()
-                statements.endRegion()
-            }
-        }
+        statements.addWithComment("block: init", initializerBlock.statements)
 
         return statements
     }
