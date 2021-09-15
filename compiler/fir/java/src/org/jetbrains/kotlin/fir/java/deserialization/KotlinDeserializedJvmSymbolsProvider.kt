@@ -88,6 +88,17 @@ class KotlinDeserializedJvmSymbolsProvider(
     private val KotlinJvmBinaryClass.isPreReleaseInvisible: Boolean
         get() = classHeader.isPreRelease
 
+    private fun loadJavaClass(classId: ClassId, content: ByteArray?): ClassMetadataFindResult? {
+        val javaClass = try {
+            javaClassConverter.findClass(classId, content) ?: return null
+        } catch (e: ProcessCanceledException) {
+            return null
+        }
+        return ClassMetadataFindResult.NoMetadata { symbol ->
+            javaClassConverter.convertJavaClassToFir(symbol, classId.outerClassId?.let(::getClass), javaClass)
+        }
+    }
+
     override fun extractClassMetadata(classId: ClassId, parentContext: FirDeserializationContext?): ClassMetadataFindResult? {
         // Kotlin classes are annotated Java classes, so this check also looks for them.
         if (!javaClassConverter.hasTopLevelClassOf(classId)) return null
@@ -99,17 +110,8 @@ class KotlinDeserializedJvmSymbolsProvider(
         }
         val kotlinClass = when (result) {
             is KotlinClassFinder.Result.KotlinClass -> result.kotlinJvmBinaryClass
-            is KotlinClassFinder.Result.ClassFileContent -> {
-                val javaClass = try {
-                    javaClassConverter.findClass(classId, result.content) ?: return null
-                } catch (e: ProcessCanceledException) {
-                    return null
-                }
-                return ClassMetadataFindResult.NoMetadata { symbol ->
-                    javaClassConverter.convertJavaClassToFir(symbol, classId.outerClassId?.let(::getClass), javaClass)
-                }
-            }
-            null -> return null
+            is KotlinClassFinder.Result.ClassFileContent -> return loadJavaClass(classId, result.content)
+            null -> return loadJavaClass(classId, null)
         }
         if (kotlinClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
         val data = kotlinClass.classHeader.data ?: return null
