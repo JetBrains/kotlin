@@ -75,8 +75,6 @@ class FirCallResolver(
     fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall): FirFunctionCall {
         qualifiedResolver.reset()
 
-//        @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE") var hasCollectionLiteral = false
-
         @Suppress("NAME_SHADOWING")
         val functionCall = if (needTransformArguments) {
             functionCall.transformExplicitReceiver()
@@ -112,13 +110,6 @@ class FirCallResolver(
 
         val resultExpression = functionCall.transformCalleeReference(StoreNameReference, nameReference)
         val candidate = (nameReference as? FirNamedReferenceWithCandidate)?.candidate
-
-//        if (hasCollectionLiteral) {
-//            functionCall.argumentList.transformArguments(
-//                transformer,
-//                ResolutionMode.WithExpectedArgumentsType(candidate?.argumentMapping ?: emptyMap())
-//            )
-//        }
 
         val resolvedReceiver = functionCall.explicitReceiver
         if (candidate != null && resolvedReceiver is FirResolvedQualifier) {

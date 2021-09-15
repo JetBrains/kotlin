@@ -114,6 +114,7 @@ fun <T: C> foo(a: T) {
 
 }
 
+fun <T: A> a(): T = TODO()
 //fun foo(s: Set<Int>, i: String, l: List<Int>) {
 //}
 
@@ -135,7 +136,8 @@ fun main() {
 //    listOf(1, 2, 3)
 //    listOf(listOf(1, 2, 3), setOf(4, 5, 6))
 //    foo([1, 2, 3])
-    foo([1, 2, 3])
+//    foo([1, 2, 3])
+    foo(a())
 //    foo([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
 //    foo([listOf(), setOf()])
 //    foo([1, 2, 3], "str", [4.2, 5, 6])
