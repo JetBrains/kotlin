@@ -36,16 +36,8 @@ object FirTailrecFunctionChecker : FirSimpleFunctionChecker() {
         var catchScopeCount = 0
         var finallyScopeCount = 0
         var tailrecCount = 0
-        var lambdaScopeCount = 0
         graph.traverse(TraverseDirection.Forward, object : ControlFlowGraphVisitorVoid() {
             override fun visitNode(node: CFGNode<*>) {}
-            override fun visitPostponedLambdaEnterNode(node: PostponedLambdaEnterNode) {
-                lambdaScopeCount++
-            }
-
-            override fun visitPostponedLambdaExitNode(node: PostponedLambdaExitNode) {
-                lambdaScopeCount--
-            }
 
             override fun visitTryMainBlockEnterNode(node: TryMainBlockEnterNode) {
                 tryScopeCount++
@@ -81,30 +73,16 @@ object FirTailrecFunctionChecker : FirSimpleFunctionChecker() {
                     return
                 }
                 val dispatchReceiver = functionCall.dispatchReceiver
-                // A tailrec call does not support changing dispatchers. Here we report changing dispatch receiver if the dispatch receiver
-                // is present and not a `this` or a singleton. For the `this` check, we don't need to actually compare if the dispatch
-                // receiver `this` references the same `this` made available from `declaration`. This is because
-                // 1. if `this` is not labeled, then it references the innermost `this` receiver. If the innermost scope is not the
-                //    `declaration` body, then follow-up checks on following nodes would report there to be more instructions, which would
-                //    then make this call non-tailrec.
-                // 2. If `this` is labeled, then one of the following is possible.
-                //    a. the call is in some context that has additional implicit `this` declared. But this can only happen if the call is
-                //       placed inside some extension lambda, which would be covered by the later check on exiting node.
-                //    b. `declaration` is a member function in a local class and the receiver is a labeled `this` pointing to the outer
-                //       non-local class. In this case, the resolved symbol cannot be the same as the symbol of `declaration`, and this case
-                //       is already bailed out earlier. So there is no need to report anything.
-                //    c. `declaration` is a member function of an inner class and the receiver is a labeled `this` pointing to the outer
-                //       class. The reasoning is the same with b.
-                if (dispatchReceiver !is FirThisReceiverExpression &&
-                    dispatchReceiver !is FirNoReceiverExpression &&
-                    (declaration.dispatchReceiverType?.toSymbol(context.session) as? FirClassSymbol<*>)?.classKind?.isSingleton != true
-                ) {
+                val dispatchReceiverOwner = declaration.dispatchReceiverType?.toSymbol(context.session) as? FirClassSymbol<*>
+                val sameReceiver = dispatchReceiver is FirNoReceiverExpression ||
+                        (dispatchReceiver is FirThisReceiverExpression && dispatchReceiver.calleeReference.boundSymbol == dispatchReceiverOwner) ||
+                        dispatchReceiverOwner?.classKind?.isSingleton == true
+                if (!sameReceiver) {
+                    // A call on a different receiver might get dispatched to a different method, so it can't be optimized.
                     reporter.reportOn(functionCall.source, FirErrors.NON_TAIL_RECURSIVE_CALL, context)
-                    return
-                }
-                if (tryScopeCount > 0 || catchScopeCount > 0 || finallyScopeCount > 0) {
+                } else if (tryScopeCount > 0 || catchScopeCount > 0 || finallyScopeCount > 0) {
                     reporter.reportOn(functionCall.source, FirErrors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED, context)
-                } else if (lambdaScopeCount > 0 || node.hasMoreFollowingInstructions(declaration)) {
+                } else if (node.hasMoreFollowingInstructions(declaration)) {
                     reporter.reportOn(functionCall.source, FirErrors.NON_TAIL_RECURSIVE_CALL, context)
                 } else if (!node.isDead) {
                     tailrecCount++
