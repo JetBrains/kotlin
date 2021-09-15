@@ -106,25 +106,25 @@ private fun backwardsTypeDistance(
     val resolvedDependencyClassifier =
         classifiers.commonDependencies.classifier(to) ?: classifiers.targetDependencies[targetIndex].classifier(to)
     if (resolvedDependencyClassifier != null) {
-        return classifiers.backwardsTypeDistance(targetIndex, from, resolvedDependencyClassifier)
+        return backwardsTypeDistance(classifiers, targetIndex, from, resolvedDependencyClassifier)
     }
 
     val resolvedClassifier = classifiers.classifierIndices[targetIndex].findClassifier(to) ?: return unreachable
-    return classifiers.backwardsTypeDistance(targetIndex, from, resolvedClassifier)
+    return backwardsTypeDistance(classifiers, targetIndex, from, resolvedClassifier)
 }
 
-private fun CirKnownClassifiers.backwardsTypeDistance(
-    targetIndex: Int, from: CirEntityId, to: CirProvided.Classifier
+private fun backwardsTypeDistance(
+    classifiers: CirKnownClassifiers, targetIndex: Int, from: CirEntityId, to: CirProvided.Classifier
 ): CirTypeDistance {
     if (to !is CirProvided.TypeAlias) return unreachable
     if (to.underlyingType.classifierId == from) return CirTypeDistance(-1)
-    return backwardsTypeDistance(this, targetIndex, from, to.underlyingType.classifierId) - 1
+    return backwardsTypeDistance(classifiers, targetIndex, from, to.underlyingType.classifierId) - 1
 }
 
-private fun CirKnownClassifiers.backwardsTypeDistance(
-    targetIndex: Int, from: CirEntityId, to: CirClassifier
+private fun backwardsTypeDistance(
+    classifiers: CirKnownClassifiers, targetIndex: Int, from: CirEntityId, to: CirClassifier
 ): CirTypeDistance {
     if (to !is CirTypeAlias) return unreachable
     if (to.underlyingType.classifierId == from) return CirTypeDistance(-1)
-    return backwardsTypeDistance(this, targetIndex, from, to.underlyingType.classifierId) - 1
+    return backwardsTypeDistance(classifiers, targetIndex, from, to.underlyingType.classifierId) - 1
 }
