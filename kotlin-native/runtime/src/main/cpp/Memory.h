@@ -241,7 +241,7 @@ OBJ_GETTER(ReadHeapRefNoLock, ObjHeader* object, int32_t index);
 void EnterFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
 // Called on frame leave, if it has object slots.
 void LeaveFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
-// Set current frame in case if exception catched.
+// Set current frame in case if exception caught.
 void SetCurrentFrame(ObjHeader** start) RUNTIME_NOTHROW;
 FrameOverlay* getCurrentFrame() RUNTIME_NOTHROW;
 
@@ -443,6 +443,8 @@ ALWAYS_INLINE RUNTIME_NODEBUG inline void runWithCatchExceptionObjHolder(std::fu
         SetCurrentFrame(reinterpret_cast<ObjHeader**>(currentFrame));
         catchAction(e);
     }
+#else
+    RuntimeFail("Exceptions aren't supported!\n");
 #endif
 }
 

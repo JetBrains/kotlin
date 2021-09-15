@@ -21,9 +21,14 @@ import kotlin.math.sqrt
 
 const val benchmarkSize = 10000
 
+fun aaaaaaaaa() {
+    println("AAAAA")
+}
+
 actual fun structBenchmark() {
     memScoped {
         val containsFunction = staticCFunction<CPointer<ElementS>?, CPointer<ElementS>?, Int> { first, second ->
+            aaaaaaaaa()
             if (first == null || second == null) {
                 0
             } else if (first.pointed.string.toKString().contains(second.pointed.string.toKString())) {
@@ -47,6 +52,7 @@ actual fun structBenchmark() {
         val summary = elementsList.map { multiplyElementS(it.readValue(), (0..10).random()) }
                 .reduce { acc, it -> sumElementSPtr(acc.ptr, it.ptr)!!.pointed.readValue() }
         val intValue = summary.useContents { integer }
+        println(checkContains(elementsList.last().ptr, elementsList.first().ptr))
         elementsList.last().contains!!(elementsList.last().ptr, elementsList.first().ptr)
     }
 }

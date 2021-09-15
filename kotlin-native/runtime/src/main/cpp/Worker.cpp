@@ -1096,10 +1096,6 @@ JobKind Worker::processQueueElement(bool blocking) {
                 break;
         }
       });
-      try {
-      } catch (ExceptionObjHolder& e) {
-
-      }
       // Notify the future.
       job.regularJob.future->storeResultUnlocked(result, ok);
       break;

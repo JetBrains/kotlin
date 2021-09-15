@@ -2563,10 +2563,7 @@ void setCurrentFrame(ObjHeader** start) {
     if (Strict) {
         currentFrame = frame;
     } else {
-        konan::consoleErrorf(
-               "Relaxed memory model is deprecated and doesn't support exception handling proper way!\n");
-        konan::consoleFlush();
-        konan::abort();
+        RuntimeFail("Relaxed memory model is deprecated and doesn't support exception handling proper way!\n");
     }
 }
 
