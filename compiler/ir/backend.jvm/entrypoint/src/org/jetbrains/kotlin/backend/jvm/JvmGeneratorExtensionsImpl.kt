@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclaration
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.backend.jvm.lower.SingletonObjectJvmStaticTransformer
-import org.jetbrains.kotlin.backend.jvm.serialization.deserializeClassFromByteArray
-import org.jetbrains.kotlin.backend.jvm.serialization.deserializeIrFileFromByteArray
+import org.jetbrains.kotlin.backend.jvm.serialization.deserializeFromByteArray
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmSerializeIrMode
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
@@ -119,28 +117,18 @@ open class JvmGeneratorExtensionsImpl(
         }
     }
 
-    override fun deserializeLazyClass(
-        irClass: IrLazyClass,
-        stubGenerator: DeclarationStubGenerator,
-        parent: IrDeclarationParent,
-        allowErrorNodes: Boolean
-    ): Boolean {
-        val serializedIr = (irClass.source as? KotlinJvmBinarySourceElement)?.binaryClass?.classHeader?.serializedIr ?: return false
-        deserializeClassFromByteArray(
-            serializedIr, stubGenerator, irClass, JvmIrTypeSystemContext(stubGenerator.irBuiltIns), allowErrorNodes
-        )
-        irClass.transform(SingletonObjectJvmStaticTransformer(stubGenerator.irBuiltIns, cachedFields), null)
-        return true
-    }
-
-    override fun deserializeFacadeClass(
+    override fun deserializeClass(
         irClass: IrClass,
         stubGenerator: DeclarationStubGenerator,
         parent: IrDeclarationParent,
         allowErrorNodes: Boolean
     ): Boolean {
-        val serializedIr = (irClass.source as? JvmPackagePartSource)?.knownJvmBinaryClass?.classHeader?.serializedIr ?: return false
-        deserializeIrFileFromByteArray(
+        val serializedIr = when (val source = irClass.source) {
+            is KotlinJvmBinarySourceElement -> source.binaryClass.classHeader.serializedIr
+            is JvmPackagePartSource -> source.knownJvmBinaryClass?.classHeader?.serializedIr
+            else -> null
+        } ?: return false
+        deserializeFromByteArray(
             serializedIr, stubGenerator, irClass, JvmIrTypeSystemContext(stubGenerator.irBuiltIns), allowErrorNodes
         )
         irClass.transform(SingletonObjectJvmStaticTransformer(stubGenerator.irBuiltIns, cachedFields), null)

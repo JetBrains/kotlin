@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.lazy.LazyIrFactory
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -35,22 +36,22 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as P
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
 
-fun deserializeClassFromByteArray(
+fun deserializeFromByteArray(
     byteArray: ByteArray,
     stubGenerator: DeclarationStubGenerator,
-    irClass: IrClass,
+    toplevelParent: IrClass,
     typeSystemContext: IrTypeSystemContext,
     allowErrorNodes: Boolean,
 ) {
     val irBuiltIns = stubGenerator.irBuiltIns
     val symbolTable = stubGenerator.symbolTable
-    val irProto = JvmIr.JvmIrClass.parseFrom(byteArray.codedInputStream)
+    val irProto = JvmIr.ClassOrFile.parseFrom(byteArray.codedInputStream)
     val irLibraryFile = IrLibraryFileFromAnnotation(
-        irProto.auxTables.typeList,
-        irProto.auxTables.signatureList,
-        irProto.auxTables.stringList,
-        irProto.auxTables.bodyList,
-        irProto.auxTables.debugInfoList
+        irProto.typeList,
+        irProto.signatureList,
+        irProto.stringList,
+        irProto.bodyList,
+        irProto.debugInfoList
     )
     val descriptorFinder =
         DescriptorByIdSignatureFinder(
@@ -60,65 +61,7 @@ fun deserializeClassFromByteArray(
         )
 
     // Only needed for local signature computation.
-    val dummyIrFile = IrFileImpl(NaiveSourceBasedFileEntryImpl("<unknown>"), IrFileSymbolImpl(), irClass.packageFqName!!)
-
-    val symbolDeserializer = IrSymbolDeserializer(
-        symbolTable,
-        irLibraryFile,
-        fileSymbol = dummyIrFile.symbol,
-        /* TODO */ actuals = emptyList(),
-        enqueueLocalTopLevelDeclaration = {}, // just link to it in symbolTable
-        handleExpectActualMapping = { _, _ -> TODO() },
-        deserializePublicSymbol = { idSignature, symbolKind ->
-            referencePublicSymbol(symbolTable, descriptorFinder, idSignature, symbolKind)
-        }
-    )
-
-    val lazyIrFactory = LazyIrFactory(irBuiltIns.irFactory)
-
-    val deserializer = IrDeclarationDeserializer(
-        irBuiltIns, symbolTable, lazyIrFactory, irLibraryFile, irClass.parent,
-        allowErrorNodes = allowErrorNodes,
-        deserializeInlineFunctions = true,
-        deserializeBodies = true,
-        symbolDeserializer,
-        DefaultFakeOverrideClassFilter,
-        makeSimpleFakeOverrideBuilder(symbolTable, typeSystemContext, symbolDeserializer),
-        compatibilityMode = CompatibilityMode.CURRENT,
-    )
-
-    deserializer.deserializeIrClass(irProto.irClass)
-
-    ExternalDependenciesGenerator(stubGenerator.symbolTable, listOf(stubGenerator)).generateUnboundSymbolsAsDependencies()
-    buildFakeOverridesForLocalClasses(stubGenerator.symbolTable, typeSystemContext, symbolDeserializer, irClass)
-}
-
-fun deserializeIrFileFromByteArray(
-    byteArray: ByteArray,
-    stubGenerator: DeclarationStubGenerator,
-    facadeClass: IrClass,
-    typeSystemContext: IrTypeSystemContext,
-    allowErrorNodes: Boolean,
-) {
-    val irBuiltIns = stubGenerator.irBuiltIns
-    val symbolTable = stubGenerator.symbolTable
-    val irProto = JvmIr.JvmIrFile.parseFrom(byteArray.codedInputStream)
-    val irLibraryFile = IrLibraryFileFromAnnotation(
-        irProto.auxTables.typeList,
-        irProto.auxTables.signatureList,
-        irProto.auxTables.stringList,
-        irProto.auxTables.bodyList,
-        irProto.auxTables.debugInfoList
-    )
-    val descriptorFinder =
-        DescriptorByIdSignatureFinder(
-            stubGenerator.moduleDescriptor,
-            JvmDescriptorMangler(null),
-            DescriptorByIdSignatureFinder.LookupMode.MODULE_WITH_DEPENDENCIES
-        )
-
-    // Only needed for local signature computation.
-    val dummyIrFile = IrFileImpl(NaiveSourceBasedFileEntryImpl("<unknown>"), IrFileSymbolImpl(), facadeClass.packageFqName!!)
+    val dummyIrFile = IrFileImpl(NaiveSourceBasedFileEntryImpl("<unknown>"), IrFileSymbolImpl(), toplevelParent.packageFqName!!)
 
     val symbolDeserializer = IrSymbolDeserializer(
         symbolTable,
@@ -136,8 +79,10 @@ fun deserializeIrFileFromByteArray(
 
     val fakeOverrideBuilder = makeSimpleFakeOverrideBuilder(symbolTable, typeSystemContext, symbolDeserializer)
 
+    // We have to supply topLevelParent here, but this results in wrong values for parent fields in deeply embedded declarations.
+    // Patching will be needed.
     val deserializer = IrDeclarationDeserializer(
-        irBuiltIns, symbolTable, lazyIrFactory, irLibraryFile, facadeClass,
+        irBuiltIns, symbolTable, lazyIrFactory, irLibraryFile, toplevelParent,
         allowErrorNodes = allowErrorNodes,
         deserializeInlineFunctions = true,
         deserializeBodies = true,
@@ -147,11 +92,17 @@ fun deserializeIrFileFromByteArray(
         compatibilityMode = CompatibilityMode.CURRENT,
     )
     for (declarationProto in irProto.declarationList) {
-        deserializer.deserializeDeclaration(declarationProto)
+        val declaration = deserializer.deserializeDeclaration(declarationProto)
+        // Either declaration is lazy, supplied by LazyIrFactory,
+        // or, if it is newly created, there must have been no references to it from the current module.
+        // These newly created declarations will never be used, so it does not matter if we patch their parent or not.
+        if (declaration is IrLazyDeclarationBase) {
+            declaration.parent = declaration.lazyParent()
+        }
     }
 
     ExternalDependenciesGenerator(stubGenerator.symbolTable, listOf(stubGenerator)).generateUnboundSymbolsAsDependencies()
-    buildFakeOverridesForLocalClasses(stubGenerator.symbolTable, typeSystemContext, symbolDeserializer, facadeClass)
+    buildFakeOverridesForLocalClasses(stubGenerator.symbolTable, typeSystemContext, symbolDeserializer, toplevelParent)
 }
 
 private class IrLibraryFileFromAnnotation(
@@ -245,7 +196,8 @@ private fun buildFakeOverridesForLocalClasses(
     toplevel: IrClass
 ) {
     val builder = makeSimpleFakeOverrideBuilder(symbolTable, typeSystemContext, symbolDeserializer)
-    toplevel.acceptChildrenVoid(object : IrElementVisitorVoid {
+    toplevel.acceptChildrenVoid(
+        object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }

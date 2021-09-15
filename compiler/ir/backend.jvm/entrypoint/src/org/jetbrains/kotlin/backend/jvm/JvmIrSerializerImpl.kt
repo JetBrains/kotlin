@@ -19,13 +19,13 @@ class JvmIrSerializerImpl(private val configuration: CompilerConfiguration) : Jv
 
     private val declarationTable = DeclarationTable(JvmGlobalDeclarationTable())
 
-    override fun serializeIrFile(irFile: IrFile): ByteArray {
-        return makeSerializerSession().serializeJvmIrFile(irFile).toByteArray()
+    override fun serializeIrFile(irFile: IrFile): ByteArray? {
+        return makeSerializerSession().serializeJvmIrFile(irFile)?.toByteArray()
     }
 
-    override fun serializeTopLevelIrClass(irClass: IrClass): ByteArray {
+    override fun serializeTopLevelIrClass(irClass: IrClass): ByteArray? {
         assert(irClass.parent is IrFile)
-        return makeSerializerSession().serializeTopLevelClass(irClass).toByteArray()
+        return makeSerializerSession().serializeTopLevelClass(irClass)?.toByteArray()
     }
 
     private fun makeSerializerSession() =

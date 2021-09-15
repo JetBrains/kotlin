@@ -39,13 +39,15 @@ interface IrLazyDeclarationBase : IrDeclaration {
         descriptor.annotations.mapNotNull(typeTranslator.constantValueGenerator::generateAnnotationConstructorCall).toMutableList()
     }
 
-    fun createLazyParent(): ReadWriteProperty<Any?, IrDeclarationParent> = lazyVar(stubGenerator.lock) {
+    fun createLazyParent(): ReadWriteProperty<Any?, IrDeclarationParent> = lazyVar(stubGenerator.lock, ::lazyParent)
+
+    fun lazyParent(): IrDeclarationParent {
         val currentDescriptor = descriptor
 
         val containingDeclaration =
             ((currentDescriptor as? PropertyAccessorDescriptor)?.correspondingProperty ?: currentDescriptor).containingDeclaration
 
-        when (containingDeclaration) {
+        return when (containingDeclaration) {
             is PackageFragmentDescriptor -> run {
                 val parent = this.takeUnless { it is IrClass }?.let {
                     stubGenerator.generateOrGetFacadeClass(descriptor)

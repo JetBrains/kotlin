@@ -39,14 +39,7 @@ open class StubGeneratorExtensions {
 
     open fun isStaticFunction(descriptor: FunctionDescriptor): Boolean = false
 
-    open fun deserializeLazyClass(
-        irClass: IrLazyClass,
-        stubGenerator: DeclarationStubGenerator,
-        parent: IrDeclarationParent,
-        allowErrorNodes: Boolean,
-    ): Boolean = false
-
-    open fun deserializeFacadeClass(
+    open fun deserializeClass(
         irClass: IrClass,
         stubGenerator: DeclarationStubGenerator,
         parent: IrDeclarationParent,

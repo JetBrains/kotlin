@@ -9,6 +9,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 
 interface JvmIrSerializer {
-    fun serializeTopLevelIrClass(irClass: IrClass): ByteArray
-    fun serializeIrFile(irFile: IrFile): ByteArray
+    fun serializeTopLevelIrClass(irClass: IrClass): ByteArray?
+    fun serializeIrFile(irFile: IrFile): ByteArray?
 }

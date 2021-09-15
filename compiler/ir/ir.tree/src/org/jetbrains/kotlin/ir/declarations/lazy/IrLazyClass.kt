@@ -119,9 +119,7 @@ class IrLazyClass(
 
     override fun loadIr(): Boolean {
         assert(parent is IrPackageFragment)
-        irLoaded?.let { return it }
-        return stubGenerator.extensions.deserializeLazyClass(
-            this, stubGenerator, parent, allowErrorNodes = false
-        ).also { irLoaded = it }
+        return irLoaded ?:
+            stubGenerator.extensions.deserializeClass(this, stubGenerator, parent, allowErrorNodes = false).also { irLoaded = it }
     }
 }
