@@ -1,0 +1,119 @@
+group 'org.jetbrains.qa.combompp'
+version '1.0'
+
+apply plugin: 'kotlin-multiplatform'
+apply plugin: 'maven-publish'
+
+def complexLibAttribute = Attribute.of('org.jetbrains.qa.complexlib', String)
+
+kotlin {
+    jvm("jvmWithJava") {
+        withJava()
+        attributes { attribute(complexLibAttribute, 'jvmWithJava') }
+
+        compilations.all {
+            kotlinOptions.jvmTarget = "1.8"
+        }
+    }
+    jvm("jvm16") {
+        attributes { attribute(complexLibAttribute, 'jvm16') }
+
+        compilations.all {
+            kotlinOptions.jvmTarget = "1.6"
+        }
+    }
+    // This is for iPhone emulator
+    // Switch here to iosArm64 (or iosArm32) to build library for iPhone device
+    iosX64("iosSimLib") {
+        binaries {
+            // framework()
+            // Creating static library with a custom name.
+            staticLib('customNameForiosSimLib') {
+                outputDirectory = file("fooCustomNameForiosSimLib") // outputDir is a `val` property.
+                linkTask.destinationDir = file("fooCustomNameForiosSimLib")
+            }
+        }
+    }
+
+    // inline classes are enabled below
+    targets.all {
+        compilations.all {
+            kotlinOptions {
+                freeCompilerArgs += ["-Xprogressive", "-XXLanguage:+NewInference", "-XXLanguage:+SamConversionForKotlinFunctions", "-Xuse-experimental=kotlin.ExperimentalMultiplatform", "-Xskip-prerelease-check"]
+            }
+        }
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies { }
+        }
+        commonTest {
+            dependencies { }
+        }
+
+        // creating a diamond
+        jvmJavaJvm16Main {
+            dependsOn commonMain
+            dependencies {
+                api project(":api-jvm")
+            }
+        }
+
+        jvmJavaJvm16Test {
+            dependsOn commonTest
+        }
+
+        jvmWithJavaiOSMain {
+            dependsOn commonMain
+            dependencies {
+                api project(":top-mpp")
+            }
+        }
+
+        jvmWithJavaiOSTest {
+            dependsOn commonTest
+        }
+
+        // setting up the targets source sets
+        jvm16Main {
+            dependencies { }
+
+            // connecting to the diamond
+            dependsOn jvmJavaJvm16Main
+        }
+        jvm16Test {
+            dependencies { }
+
+            // connecting to the diamond
+            dependsOn jvmJavaJvm16Test
+        }
+        jvmWithJavaMain {
+            dependencies {  }
+
+            // connecting to the diamond
+            dependsOn jvmJavaJvm16Main
+            dependsOn jvmWithJavaiOSMain
+        }
+        jvmWithJavaTest {
+            dependencies { }
+
+            // connecting to the diamond
+            dependsOn jvmJavaJvm16Test
+            dependsOn jvmWithJavaiOSTest
+        }
+
+        iosSimLibMain {
+            dependencies {  }
+
+            // connecting to the diamond
+            dependsOn jvmWithJavaiOSMain
+        }
+        iosSimLibTest {
+            dependencies { }
+
+            // connecting to the diamond
+            dependsOn jvmWithJavaiOSTest
+        }
+    }
+}

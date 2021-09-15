@@ -1,0 +1,3 @@
+package transitiveStory.bottomActual.intermediateSrc
+
+actual class IntermediateMPPClassInBottomActual

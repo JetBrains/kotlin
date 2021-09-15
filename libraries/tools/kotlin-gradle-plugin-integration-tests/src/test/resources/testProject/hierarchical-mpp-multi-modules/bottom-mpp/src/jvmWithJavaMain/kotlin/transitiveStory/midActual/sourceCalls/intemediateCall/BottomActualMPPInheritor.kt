@@ -1,0 +1,5 @@
+package transitiveStory.midActual.sourceCalls.intemediateCall
+
+import transitiveStory.bottomActual.mppBeginning.BottomActualDeclarations
+
+actual class BottomActualMPPInheritor : BottomActualDeclarations()

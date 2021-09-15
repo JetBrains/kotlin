@@ -1,0 +1,80 @@
+group 'org.jetbrains.qa.combompp'
+version publishing_version
+
+apply plugin: 'kotlin-multiplatform'
+apply plugin: 'maven-publish'
+
+kotlin {
+    js() {
+        browser()
+        nodejs()
+    }
+    linuxX64("linux")
+    macosX64("macos")
+    ios()
+    jvm()
+
+    sourceSets {
+        commonMain {
+            dependencies { }
+        }
+        commonTest {
+            dependencies { }
+        }
+
+        // creating a diamond
+        jsLinuxMain {
+            dependsOn commonMain
+            dependencies {
+                api project(":top-mpp")
+            }
+        }
+
+        jvmMacosMain {
+            dependsOn commonMain
+        }
+
+        macosLinuxMain {
+            dependsOn commonMain
+        }
+
+        iosMacosMain {
+            dependsOn commonMain
+        }
+
+        iosX64Main {
+            dependsOn iosMacosMain
+        }
+        jsMain {
+            dependsOn jsLinuxMain
+            dependencies { }
+        }
+        jsTest {
+            dependencies { }
+        }
+        jvmMain {
+            dependsOn jvmMacosMain
+            dependencies { }
+        }
+        jvmTest {
+            dependencies { }
+        }
+        linuxMain {
+            dependsOn jsLinuxMain
+            dependsOn macosLinuxMain
+            dependencies {}
+        }
+        linuxTest {
+            dependencies { }
+        }
+        macosMain {
+            dependsOn jvmMacosMain
+            dependsOn macosLinuxMain
+            dependsOn iosMacosMain
+
+        }
+        macosTest {
+            dependencies { }
+        }
+    }
+}

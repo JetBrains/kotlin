@@ -1,0 +1,38 @@
+group 'org.jetbrains.qa.combompp'
+version publishing_version
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+//apply plugin: "application"
+apply plugin: 'maven-publish'
+
+
+
+dependencies {
+    api project(":bottom-mpp")
+}
+
+[compileKotlin, compileTestKotlin]*.configure {
+    kotlinOptions {
+        kotlinOptions.jvmTarget = "1.8"
+        freeCompilerArgs += ["-Xprogressive", "-XXLanguage:+NewInference", "-XXLanguage:+SamConversionForKotlinFunctions"]
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'org.jetbrains.qa.combompp'
+            artifactId 'plain-jvm'
+            version publishing_version
+            from components.java
+        }
+    }
+}
+
+
+def complexLibAttribute = Attribute.of('org.jetbrains.qa.complexlib', String)
+
+configurations.all {
+    attributes { attribute(complexLibAttribute, 'jvmWithJava') }
+}

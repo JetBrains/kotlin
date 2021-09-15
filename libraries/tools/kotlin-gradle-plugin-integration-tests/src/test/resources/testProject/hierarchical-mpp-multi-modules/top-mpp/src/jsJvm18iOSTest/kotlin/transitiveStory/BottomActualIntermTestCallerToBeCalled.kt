@@ -1,0 +1,4 @@
+package transitiveStory
+
+class BottomActualIntermTestCallerToBeCalled {
+}
