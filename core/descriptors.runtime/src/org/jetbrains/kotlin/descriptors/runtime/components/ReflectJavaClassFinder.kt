@@ -36,7 +36,7 @@ class ReflectJavaClassFinder(private val classLoader: ClassLoader) : JavaClassFi
         return if (klass != null) ReflectJavaClass(klass) else null
     }
 
-    override fun findPackage(fqName: FqName): JavaPackage? {
+    override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? {
         // We don't know which packages our class loader has and has not, so we behave as if it contains any package in the world
         return ReflectJavaPackage(fqName)
     }

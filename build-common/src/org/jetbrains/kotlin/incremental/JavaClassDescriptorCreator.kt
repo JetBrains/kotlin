@@ -117,7 +117,7 @@ private class BinaryJavaClassFinder(binaryJavaClasses: List<BinaryJavaClass>) : 
         return nameToJavaClass[request.classId.asSingleFqName()]
     }
 
-    override fun findPackage(fqName: FqName): JavaPackage {
+    override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage {
         return object : JavaPackage {
 
             override val fqName: FqName

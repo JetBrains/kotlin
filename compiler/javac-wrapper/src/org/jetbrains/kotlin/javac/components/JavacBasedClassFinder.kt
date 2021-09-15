@@ -42,7 +42,7 @@ class JavacBasedClassFinder : AbstractJavaClassFinder() {
         // TODO: reuse previouslyFoundClassFileContent if it's possible in javac
         javac.findClass(request.classId, javaSearchScope)
 
-    override fun findPackage(fqName: FqName) = javac.findPackage(fqName, javaSearchScope)
+    override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean) = javac.findPackage(fqName, javaSearchScope)
 
     override fun knownClassNamesInPackage(packageFqName: FqName) = javac.knownClassNamesInPackage(packageFqName)
 }

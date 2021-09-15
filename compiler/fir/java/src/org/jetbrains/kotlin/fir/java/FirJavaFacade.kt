@@ -53,9 +53,16 @@ class FirJavaFacade(
 ) {
     companion object {
         val VALUE_METHOD_NAME = Name.identifier("value")
+        private const val PACKAGE_INFO_CLASS_NAME = "package-info"
     }
 
-    private val packageCache = session.firCachesFactory.createCache(classFinder::findPackage)
+    private val packageCache = session.firCachesFactory.createCache { fqName: FqName ->
+        val knownClassNames: Set<String>? = knownClassNamesInPackage.getValue(fqName)
+        classFinder.findPackage(
+            fqName,
+            mayHaveAnnotations = if (knownClassNames != null) PACKAGE_INFO_CLASS_NAME in knownClassNames else true
+        )
+    }
     private val knownClassNamesInPackage = session.firCachesFactory.createCache(classFinder::knownClassNamesInPackage)
 
     private val parentClassTypeParameterStackCache = mutableMapOf<FirRegularClassSymbol, JavaTypeParameterStack>()
