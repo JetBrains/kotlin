@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.providers.getModuleInfo
-import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
@@ -37,11 +34,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSourcesSes
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInContext
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.psi.*
 
 internal class FirModuleResolveStateImpl(
     override val project: Project,
-    override val moduleInfo: ModuleInfo,
+    override val module: KtModule,
     private val sessionProvider: FirIdeSessionProvider,
     val firFileBuilder: FirFileBuilder,
     val firLazyDeclarationResolver: FirLazyDeclarationResolver,
@@ -58,8 +58,8 @@ internal class FirModuleResolveStateImpl(
     val elementBuilder = FirElementBuilder()
     private val diagnosticsCollector = DiagnosticsCollector(fileStructureCache, rootModuleSession.cache)
 
-    override fun getSessionFor(moduleInfo: ModuleInfo): FirSession =
-        sessionProvider.getSession(moduleInfo)!!
+    override fun getSessionFor(module: KtModule): FirSession =
+        sessionProvider.getSession(module)!!
 
     override fun getOrBuildFirFor(element: KtElement): FirElement? =
         elementBuilder.getOrBuildFirFor(
@@ -95,9 +95,9 @@ internal class FirModuleResolveStateImpl(
      * [ktDeclaration] should be either [KtDeclaration] or [KtLambdaExpression]
      */
     private fun findSourceFirDeclarationByExpression(ktDeclaration: KtExpression): FirDeclaration {
-        val moduleInfo = ktDeclaration.getModuleInfo() as? ModuleSourceInfoBase
-        require(moduleInfo != null) {
-            "Declaration should have ModuleSourceInfo, instead it had ${ktDeclaration.getModuleInfo()}"
+        val module = ktDeclaration.getKtModule(project)
+        require(module is KtSourceModule) {
+            "Declaration should have ModuleSourceInfo, instead it had ${module::class}"
         }
         val nonLocalNamedDeclaration = ktDeclaration.getNonLocalContainingOrThisDeclaration()
             ?: error("Declaration should have non-local container${ktDeclaration.getElementTextInContext()}")
@@ -106,7 +106,7 @@ internal class FirModuleResolveStateImpl(
             return nonLocalNamedDeclaration.findSourceNonLocalFirDeclaration(
                 firFileBuilder = firFileBuilder,
                 firSymbolProvider = rootModuleSession.firIdeProvider.symbolProvider,
-                moduleFileCache = sessionProvider.getModuleCache(moduleInfo)
+                moduleFileCache = sessionProvider.getModuleCache(module)
             )
         }
 

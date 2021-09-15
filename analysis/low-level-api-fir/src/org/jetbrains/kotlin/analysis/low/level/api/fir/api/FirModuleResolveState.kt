@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.annotations.InternalForInline
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -23,9 +23,9 @@ abstract class FirModuleResolveState {
 
     abstract val rootModuleSession: FirSession
 
-    abstract val moduleInfo: ModuleInfo
+    abstract val module: KtModule
 
-    internal abstract fun getSessionFor(moduleInfo: ModuleInfo): FirSession
+    internal abstract fun getSessionFor(module: KtModule): FirSession
 
     /**
      * Build fully resolved FIR node for requested element.

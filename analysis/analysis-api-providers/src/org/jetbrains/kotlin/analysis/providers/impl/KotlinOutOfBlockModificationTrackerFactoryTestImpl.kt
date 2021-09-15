@@ -8,21 +8,21 @@ package org.jetbrains.kotlin.analysis.providers.impl
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.SimpleModificationTracker
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
-import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
 
 public class KotlinStaticModificationTrackerFactory : KotlinModificationTrackerFactory() {
     private val projectWide = SimpleModificationTracker()
     private val library = SimpleModificationTracker()
-    private val forModule = mutableMapOf<ModuleSourceInfoBase, SimpleModificationTracker>()
+    private val forModule = mutableMapOf<KtSourceModule, SimpleModificationTracker>()
 
     override fun createProjectWideOutOfBlockModificationTracker(): ModificationTracker {
         return projectWide
     }
 
 
-    override fun createModuleWithoutDependenciesOutOfBlockModificationTracker(moduleInfo: ModuleSourceInfoBase): ModificationTracker {
-        return forModule.getOrPut(moduleInfo) { SimpleModificationTracker() }
+    override fun createModuleWithoutDependenciesOutOfBlockModificationTracker(module: KtSourceModule): ModificationTracker {
+        return forModule.getOrPut(module) { SimpleModificationTracker() }
     }
 
     override fun createLibrariesModificationTracker(): ModificationTracker {

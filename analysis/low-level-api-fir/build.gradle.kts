@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     compile(project(":compiler:psi"))
+    implementation(project(":analysis:project-structure"))
     compile(project(":compiler:fir:fir2ir"))
     compile(project(":compiler:fir:fir2ir:jvm-backend"))
     compile(project(":compiler:ir.serialization.common"))

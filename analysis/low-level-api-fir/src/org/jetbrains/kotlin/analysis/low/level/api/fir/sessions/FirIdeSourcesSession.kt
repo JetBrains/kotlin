@@ -7,17 +7,17 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
-import org.jetbrains.kotlin.fir.BuiltinTypes
-import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.firIdeProvider
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.fir.BuiltinTypes
+import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 
 @OptIn(PrivateSessionConstructor::class)
 internal class FirIdeSourcesSession @PrivateSessionConstructor constructor(
-    val dependencies: List<ModuleSourceInfoBase>,
+    override val module: KtSourceModule,
     override val project: Project,
-    override val scope: GlobalSearchScope,
     val firFileBuilder: FirFileBuilder,
     builtinTypes: BuiltinTypes,
 ) : FirIdeModuleSession(builtinTypes, Kind.Source) {

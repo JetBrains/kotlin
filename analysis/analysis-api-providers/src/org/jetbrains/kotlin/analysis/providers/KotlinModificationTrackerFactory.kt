@@ -9,11 +9,11 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 
 public abstract class KotlinModificationTrackerFactory {
     public abstract fun createProjectWideOutOfBlockModificationTracker(): ModificationTracker
-    public abstract fun createModuleWithoutDependenciesOutOfBlockModificationTracker(moduleInfo: ModuleSourceInfoBase): ModificationTracker
+    public abstract fun createModuleWithoutDependenciesOutOfBlockModificationTracker(module: KtSourceModule): ModificationTracker
     public abstract fun createLibrariesModificationTracker(): ModificationTracker
 
     @TestOnly
@@ -29,6 +29,6 @@ public fun Project.createLibrariesModificationTracker(): ModificationTracker =
         .createLibrariesModificationTracker()
 
 
-public fun ModuleSourceInfoBase.createModuleWithoutDependenciesOutOfBlockModificationTracker(project: Project): ModificationTracker =
+public fun KtSourceModule.createModuleWithoutDependenciesOutOfBlockModificationTracker(project: Project): ModificationTracker =
     ServiceManager.getService(project, KotlinModificationTrackerFactory::class.java)
         .createModuleWithoutDependenciesOutOfBlockModificationTracker(this)

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.analysis.providers.getModuleInfo
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInCont
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.parentOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.parentsOfType
+import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -127,7 +127,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         file: KtFile,
     ): FirTowerDataContext {
         require(file.isPhysical)
-        val session = state.getSessionFor(file.getModuleInfo()) as FirIdeSourcesSession
+        val session = state.getSessionFor(file.getKtModule(state.project)) as FirIdeSourcesSession
 
         val firFile = session.firFileBuilder.buildRawFirFileWithCaching(
             ktFile = file,

@@ -6,26 +6,26 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.annotations.Immutable
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.annotations.Immutable
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 
 @Immutable
 class FirIdeSessionProvider internal constructor(
     val project: Project,
     internal val rootModuleSession: FirIdeSourcesSession,
-    val sessions: Map<ModuleSourceInfoBase, FirIdeSession>
+    val sessions: Map<KtSourceModule, FirIdeSession>
 ) : FirSessionProvider() {
     override fun getSession(moduleData: FirModuleData): FirSession? =
-        sessions[moduleData.moduleSourceInfo]
+        sessions[moduleData.module]
 
-    fun getSession(moduleInfo: ModuleInfo): FirSession? =
-        sessions[moduleInfo]
+    fun getSession(module: KtModule): FirSession? =
+        sessions[module]
 
-    internal fun getModuleCache(moduleSourceInfo: ModuleSourceInfoBase): ModuleFileCache =
-        (sessions.getValue(moduleSourceInfo) as FirIdeSourcesSession).cache
+    internal fun getModuleCache(module: KtSourceModule): ModuleFileCache =
+        (sessions.getValue(module) as FirIdeSourcesSession).cache
 }

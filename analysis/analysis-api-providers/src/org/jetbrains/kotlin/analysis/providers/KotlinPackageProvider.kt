@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 public abstract class KotlinPackageProvider {
-    public abstract fun isPackageExists(packageFqName: FqName): Boolean
+    public abstract fun doKotlinPackageExists(packageFqName: FqName): Boolean
     public abstract fun getKotlinSubPackageFqNames(packageFqName: FqName): Set<Name>
 }
 

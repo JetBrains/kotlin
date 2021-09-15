@@ -86,5 +86,5 @@ internal class FirProviderHelper(
     }
 
     fun getPackage(fqName: FqName): FqName? =
-        fqName.takeIf(packageProvider::isPackageExists)
+        fqName.takeIf(packageProvider::doKotlinPackageExists)
 }

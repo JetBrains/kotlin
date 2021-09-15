@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.light.classes.symbol
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
+import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
+import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
+import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
-import org.jetbrains.kotlin.analysis.providers.getModuleInfo
-import org.jetbrains.kotlin.analyzer.LibraryModuleSourceInfoBase
-import org.jetbrains.kotlin.analyzer.NonSourceModuleInfoBase
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -68,15 +69,15 @@ class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupp
             project.createDeclarationProvider(searchScope).getClassesByClassId(it)
         }.filter {
             //TODO Do not return LC came from LibrarySources
-            when (it.getModuleInfo()) {
-                is LibraryModuleSourceInfoBase -> it.containingKtFile.isCompiled
-                is NonSourceModuleInfoBase -> false
+            when (it.getKtModule(project)) {
+                is KtLibrarySourceModule -> false
+                is KtNotUnderContentRootModule -> false
                 else -> true
             }
         }.toSet()
 
     override fun packageExists(fqName: FqName, scope: GlobalSearchScope): Boolean =
-        project.createPackageProvider(scope).isPackageExists(fqName)
+        project.createPackageProvider(scope).doKotlinPackageExists(fqName)
 
     override fun getSubPackages(fqn: FqName, scope: GlobalSearchScope): Collection<FqName> =
         project.createPackageProvider(scope)

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.providers.getModuleInfo
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSession
+import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.psi.KtElement
 
 internal fun Project.allModules() = ModuleManager.getInstance(this).modules.toList()
@@ -43,6 +43,7 @@ internal inline fun <R> resolveWithClearCaches(
     noinline configureSession: FirIdeSession.() -> Unit = {},
     action: (FirModuleResolveState) -> R,
 ): R {
-    val resolveState = createResolveStateForNoCaching(context.getModuleInfo(), context.project, configureSession)
+    val project = context.project
+    val resolveState = createResolveStateForNoCaching(context.getKtModule(project), project, configureSession)
     return action(resolveState)
 }

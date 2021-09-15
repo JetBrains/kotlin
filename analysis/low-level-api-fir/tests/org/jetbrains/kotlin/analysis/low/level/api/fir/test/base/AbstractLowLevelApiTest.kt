@@ -10,12 +10,10 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.TestDataFile
-import com.intellij.testFramework.TestDataPath
-import org.jetbrains.kotlin.analysis.providers.KotlinModuleInfoProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.ModuleRegistrarPreAnalysisHandler
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.TestModuleInfoProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.moduleInfoProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.TestKtModuleProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.projectModuleProvider
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
@@ -59,7 +57,7 @@ abstract class AbstractLowLevelApiTest : TestWithDisposable() {
 
         useSourcePreprocessor(::ExpressionMarkersSourceFilePreprocessor)
         useAdditionalService { ExpressionMarkerProvider() }
-        useAdditionalService(::TestModuleInfoProvider)
+        useAdditionalService(::TestKtModuleProvider)
         usePreAnalysisHandlers(::ModuleRegistrarPreAnalysisHandler.bind(disposable))
         configureTest(this)
 
@@ -94,9 +92,9 @@ abstract class AbstractLowLevelApiTest : TestWithDisposable() {
 
         val singleModule = moduleStructure.modules.single()
         val project = testServices.compilerConfigurationProvider.getProject(singleModule)
-        val moduleInfoProvider = testServices.moduleInfoProvider
+        val moduleInfoProvider = testServices.projectModuleProvider
 
-        val moduleInfo = moduleInfoProvider.getModuleInfo(singleModule.name)
+        val moduleInfo = moduleInfoProvider.getModule(singleModule.name)
 
         with(project as MockProject) {
             registerServicesForProject(this)

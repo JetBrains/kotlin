@@ -119,7 +119,7 @@ internal class KtSymbolByFirBuilder private constructor(
 
     fun createPackageSymbolIfOneExists(packageFqName: FqName): KtFirPackageSymbol? {
         val exists =
-            packageProvider.isPackageExists(packageFqName)
+            packageProvider.doKotlinPackageExists(packageFqName)
                     || JavaPsiFacade.getInstance(project).findPackage(packageFqName.asString()) != null
         if (!exists) {
             return null

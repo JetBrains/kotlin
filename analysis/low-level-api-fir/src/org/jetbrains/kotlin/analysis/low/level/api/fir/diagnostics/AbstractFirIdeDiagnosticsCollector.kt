@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.module
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
 import org.jetbrains.kotlin.fir.analysis.checkers.*
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.diagnostics.FirJvmDefaultErrorMessages
 import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.moduleSourceInfo
 import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 
@@ -41,8 +41,8 @@ private object CheckersFactory {
         reporter: DiagnosticReporter,
         useExtendedCheckers: Boolean
     ): List<AbstractDiagnosticCollectorComponent> {
-        val moduleInfo = session.moduleData.moduleSourceInfo
-        val platform = moduleInfo.platform.componentPlatforms.first()
+        val module = session.moduleData.module
+        val platform = module.platform.componentPlatforms.first()
         installPlatformSpecificErrorMessages(platform)
         val declarationCheckers = createDeclarationCheckers(useExtendedCheckers, platform)
         val expressionCheckers = createExpressionCheckers(useExtendedCheckers, platform)

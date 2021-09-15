@@ -30,7 +30,7 @@ public class KotlinStaticPackageProvider(
         packages
     }
 
-    override fun isPackageExists(packageFqName: FqName): Boolean {
+    override fun doKotlinPackageExists(packageFqName: FqName): Boolean {
         return packageFqName in packageToSubPackageNames
     }
 

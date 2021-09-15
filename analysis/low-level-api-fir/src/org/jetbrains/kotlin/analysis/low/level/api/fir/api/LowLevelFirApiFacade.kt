@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.providers.getModuleInfo
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.FirIdeResolveStateService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.annotations.InternalForInline
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -23,13 +23,15 @@ import kotlin.reflect.KClass
 /**
  * Returns [FirModuleResolveState] which corresponds to containing module
  */
-fun KtElement.getResolveState(): FirModuleResolveState =
-    getModuleInfo().getResolveState(project)
+fun KtElement.getResolveState(): FirModuleResolveState {
+    val project = project
+    return getKtModule(project).getResolveState(project)
+}
 
 /**
  * Returns [FirModuleResolveState] which corresponds to containing module
  */
-fun ModuleInfo.getResolveState(project: Project): FirModuleResolveState =
+fun KtModule.getResolveState(project: Project): FirModuleResolveState =
     FirIdeResolveStateService.getInstance(project).getResolveState(this)
 
 

@@ -12,7 +12,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.*
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.cfg.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -89,16 +88,6 @@ internal val FirDeclaration.containingKtFileIfAny: KtFile?
     get() = psi?.containingFile as? KtFile
 
 
-internal fun ModuleInfo.collectTransitiveDependenciesWithSelf(): List<ModuleInfo> {
-    val result = mutableSetOf<ModuleInfo>()
-    fun collect(module: ModuleInfo) {
-        if (module in result) return
-        result += module
-        module.dependencies().forEach(::collect)
-    }
-    collect(this)
-    return result.toList()
-}
 
 internal fun KtDeclaration.isNonAnonymousClassOrObject() =
     this is KtClassOrObject
