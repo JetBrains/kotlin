@@ -389,7 +389,8 @@ namespace kotlin {
 namespace mm {
 
 // Returns the MemoryState for the current thread.
-// The current thread must be attached to the runtime.
+// For the new MM, the current thread must be attached to the runtime.
+// For the legacy MM, returns nullptr if called on a thread that is not attached to the runtime.
 // Try not to use it very often, as (1) thread local access can be slow on some platforms,
 // (2) TLS gets deallocated before our thread destruction hooks run.
 MemoryState* GetMemoryState() noexcept;
