@@ -436,7 +436,7 @@ class DeclarationsConverter(
 
             typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints, classSymbol) }
 
-            withCapturedTypeParameters(status.isInner, firTypeParameters) {
+            withCapturedTypeParameters(status.isInner || isLocal, firTypeParameters) {
                 buildRegularClass {
                     source = classNode.toFirSourceElement()
                     moduleData = baseModuleData

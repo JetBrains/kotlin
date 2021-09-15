@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -24,29 +26,30 @@ import org.jetbrains.kotlin.name.Name
 class FirLocalScope private constructor(
     val properties: PersistentMap<Name, FirVariableSymbol<*>>,
     val functions: PersistentMultimap<Name, FirNamedFunctionSymbol>,
-    val classes: PersistentMap<Name, FirRegularClassSymbol>
+    val classes: PersistentMap<Name, FirRegularClassSymbol>,
+    val useSiteSession: FirSession
 ) : FirContainingNamesAwareScope() {
-    constructor() : this(persistentMapOf(), PersistentMultimap(), persistentMapOf())
+    constructor(session: FirSession) : this(persistentMapOf(), PersistentMultimap(), persistentMapOf(), session)
 
-    fun storeClass(klass: FirRegularClass): FirLocalScope {
+    fun storeClass(klass: FirRegularClass, session: FirSession): FirLocalScope {
         return FirLocalScope(
-            properties, functions, classes.put(klass.name, klass.symbol)
+            properties, functions, classes.put(klass.name, klass.symbol), session
         )
     }
 
-    fun storeFunction(function: FirSimpleFunction): FirLocalScope {
+    fun storeFunction(function: FirSimpleFunction, session: FirSession): FirLocalScope {
         return FirLocalScope(
-            properties, functions.put(function.name, function.symbol), classes
+            properties, functions.put(function.name, function.symbol), classes, session
         )
     }
 
-    fun storeVariable(variable: FirVariable): FirLocalScope {
+    fun storeVariable(variable: FirVariable, session: FirSession): FirLocalScope {
         return FirLocalScope(
-            properties.put(variable.name, variable.symbol), functions, classes
+            properties.put(variable.name, variable.symbol), functions, classes, session
         )
     }
 
-    fun storeBackingField(property: FirProperty): FirLocalScope {
+    fun storeBackingField(property: FirProperty, session: FirSession): FirLocalScope {
         val enhancedProperties = property.backingField?.symbol?.let {
             properties.put(BACKING_FIELD, it)
         }
@@ -54,7 +57,8 @@ class FirLocalScope private constructor(
         return FirLocalScope(
             enhancedProperties ?: properties,
             functions,
-            classes
+            classes,
+            session
         )
     }
 
@@ -74,7 +78,8 @@ class FirLocalScope private constructor(
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         val klass = classes[name]
         if (klass != null) {
-            processor(klass, ConeSubstitutor.Empty)
+            val substitution = klass.typeParameterSymbols.associateWith { it.toConeType() }
+            processor(klass, ConeSubstitutorByMap(substitution, useSiteSession))
         }
     }
 

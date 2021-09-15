@@ -384,7 +384,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     }
 
     override fun transformBlock(block: FirBlock, data: ResolutionMode): FirStatement {
-        context.forBlock {
+        context.forBlock(session) {
             transformBlockInCurrentScope(block, data)
         }
         return block

@@ -32,31 +32,38 @@ fun FirClassLikeDeclaration.getContainingDeclaration(session: FirSession): FirCl
     return null
 }
 
-fun isValidTypeParameterFromOuterClass(
+fun isValidTypeParameterFromOuterDeclaration(
     typeParameterSymbol: FirTypeParameterSymbol,
-    classDeclaration: FirRegularClass?,
+    declaration: FirDeclaration?,
     session: FirSession
 ): Boolean {
-    if (classDeclaration == null) {
+    if (declaration == null) {
         return true  // Extra check is required because of classDeclaration will be resolved later
     }
 
-    fun containsTypeParameter(currentClassDeclaration: FirRegularClass): Boolean {
-        if (currentClassDeclaration.typeParameters.any { it.symbol == typeParameterSymbol }) {
-            return true
-        }
-
-        for (superTypeRef in currentClassDeclaration.superTypeRefs) {
-            val superClassFir = superTypeRef.firClassLike(session)
-            if (superClassFir == null || superClassFir is FirRegularClass && containsTypeParameter(superClassFir)) {
+    fun containsTypeParameter(currentDeclaration: FirDeclaration?): Boolean {
+        if (currentDeclaration is FirTypeParameterRefsOwner) {
+            if (currentDeclaration.typeParameters.any { it.symbol == typeParameterSymbol }) {
                 return true
+            }
+
+            if (currentDeclaration is FirCallableDeclaration) {
+                val containingClassId = currentDeclaration.symbol.callableId.classId ?: return true
+                return containsTypeParameter(session.symbolProvider.getClassLikeSymbolByClassId(containingClassId)?.fir)
+            } else if (currentDeclaration is FirClass) {
+                for (superTypeRef in currentDeclaration.superTypeRefs) {
+                    val superClassFir = superTypeRef.firClassLike(session)
+                    if (superClassFir == null || superClassFir is FirRegularClass && containsTypeParameter(superClassFir)) {
+                        return true
+                    }
+                }
             }
         }
 
         return false
     }
 
-    return containsTypeParameter(classDeclaration)
+    return containsTypeParameter(declaration)
 }
 
 fun FirTypeRef.firClassLike(session: FirSession): FirClassLikeDeclaration? {

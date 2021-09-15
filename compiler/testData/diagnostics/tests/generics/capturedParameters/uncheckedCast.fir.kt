@@ -1,16 +1,16 @@
 fun <E> foo(x: Any, y: Any) : Any {
     class C
     // without E?
-    if(x is C) {
+    if(x is <!NO_TYPE_ARGUMENTS_ON_RHS!>C<!>) {
         return x
     }
 
     if (1 == 2) {
-        x as C
+        x as <!NO_TYPE_ARGUMENTS_ON_RHS!>C<!>
     }
 
     if (2 == 3) {
-        x as? C
+        x as? <!NO_TYPE_ARGUMENTS_ON_RHS, NO_TYPE_ARGUMENTS_ON_RHS!>C<!>
     }
 
     class Outer<F> {

@@ -22,7 +22,7 @@ fun <F : FirClassLikeDeclaration> F.runAllPhasesForLocalClass(
 ): F {
     if (status is FirResolvedDeclarationStatus) return this
     if (this is FirRegularClass) {
-        components.context.storeClassIfNotNested(this)
+        components.context.storeClassIfNotNested(this, components.session)
     }
     this.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
     val localClassesNavigationInfo = collectLocalClassesNavigationInfo()

@@ -466,20 +466,3 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(session: FirSession): Forbidd
 //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.functionProto
 //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.constructorProto
 fun FirFunction.getHasStableParameterNames(session: FirSession): Boolean = getAsForbiddenNamedArgumentsTarget(session) == null
-
-
-
-fun FirClassLikeDeclaration.getActualTypeParametersCount(session: FirSession): Int {
-    var result = (if (this is FirTypeAlias) this.typeParameters else (this as FirClass).typeParameters).size
-
-    if (this is FirRegularClass && !isInner) {
-        return result
-    }
-
-    val containingClass = getContainingDeclaration(session) as? FirRegularClass
-    if (containingClass != null) {
-        result -= containingClass.typeParameters.size
-    }
-
-    return result
-}

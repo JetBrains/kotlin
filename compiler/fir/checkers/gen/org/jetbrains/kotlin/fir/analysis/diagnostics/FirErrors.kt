@@ -590,6 +590,7 @@ object FirErrors {
     val USELESS_ELVIS_RIGHT_IS_NULL by warning0<KtBinaryExpression>(SourceElementPositioningStrategies.USELESS_ELVIS)
 
     // Casts and is-checks
+    val CANNOT_CHECK_FOR_ERASED by error1<PsiElement, ConeKotlinType>()
     val USELESS_CAST by warning0<KtBinaryExpressionWithTypeRHS>(SourceElementPositioningStrategies.AS_TYPE)
     val USELESS_IS_CHECK by warning1<KtElement, Boolean>()
     val IS_ENUM_ENTRY by error0<KtTypeReference>()

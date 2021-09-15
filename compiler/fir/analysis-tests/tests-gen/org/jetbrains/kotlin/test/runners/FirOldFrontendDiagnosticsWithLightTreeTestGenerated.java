@@ -11346,6 +11346,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("localClassWithTypeArgumentFromFunction.kt")
+            public void testLocalClassWithTypeArgumentFromFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/generics/localClassWithTypeArgumentFromFunction.kt");
+            }
+
+            @Test
             @TestMetadata("Projections.kt")
             public void testProjections() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/generics/Projections.kt");

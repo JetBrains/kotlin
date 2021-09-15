@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.scopes.FirScope
 
 data class ScopeClassDeclaration(
     val scopes: List<FirScope>,
-    val containingDeclarations: List<FirRegularClass>
+    val containingDeclarations: List<FirDeclaration>,
+    val topContainer: FirDeclaration? = null
 )

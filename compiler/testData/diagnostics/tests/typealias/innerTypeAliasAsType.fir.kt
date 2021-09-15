@@ -18,12 +18,12 @@ class Outer<T> {
     fun test5(x: <!UNRESOLVED_REFERENCE!>GenericInnerAlias<Int><!>) = x
     fun <T> test6(x: <!UNRESOLVED_REFERENCE!>GenericInnerAlias<T><!>) = x
 }
-fun test1(x: Outer<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>.NestedAlias) = x
-fun <T> test2(x: Outer<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><T><!>.NestedAlias) = x
+fun test1(x: Outer<Int>.NestedAlias) = x
+fun <T> test2(x: Outer<T>.NestedAlias) = x
 fun test3(x: Outer.NestedAlias) = x
-fun test4(x: Outer<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>.GenericNestedAlias<Int>) = x
-fun <T> test5(x: Outer<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><T><!>.GenericNestedAlias<Int>) = x
-fun <T> test6(x: Outer<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>.GenericNestedAlias<T>) = x
+fun test4(x: Outer<Int>.GenericNestedAlias<Int>) = x
+fun <T> test5(x: Outer<T>.GenericNestedAlias<Int>) = x
+fun <T> test6(x: Outer<Int>.GenericNestedAlias<T>) = x
 fun test7(x: Outer.GenericNestedAlias<Int>) = x
 fun <T> test8(x: Outer.GenericNestedAlias<T>) = x
 fun test9(x: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Outer<!>.InnerAlias) = x

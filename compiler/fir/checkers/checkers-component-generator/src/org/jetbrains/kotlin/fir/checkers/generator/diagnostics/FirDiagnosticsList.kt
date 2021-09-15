@@ -1102,6 +1102,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     }
 
     val CASTS_AND_IS_CHECKS by object : DiagnosticGroup("Casts and is-checks") {
+        val CANNOT_CHECK_FOR_ERASED by error<PsiElement> {
+            parameter<ConeKotlinType>("type")
+        }
         val USELESS_CAST by warning<KtBinaryExpressionWithTypeRHS>(PositioningStrategy.AS_TYPE)
         val USELESS_IS_CHECK by warning<KtElement> {
             parameter<Boolean>("compileTimeCheckResult")

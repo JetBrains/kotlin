@@ -34,9 +34,7 @@ internal class FirDesignatedAnnotationArgumentsResolveTransformerForIDE(
                 }
             }
             is FirRegularClass -> {
-                context.withContainingClass(nextElement) {
-                    moveNextDeclaration(designationIterator)
-                }
+                moveNextDeclaration(designationIterator)
             }
             is FirEnumEntry -> {
                 context.forEnumEntry {

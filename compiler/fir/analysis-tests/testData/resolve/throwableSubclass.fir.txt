@@ -39,8 +39,8 @@ FILE: throwableSubclass.kt
         }
 
         public final fun foo(): R|kotlin/Unit| {
-            local final class Test7 : R|kotlin/Throwable| {
-                public constructor(): R|Test5.Test7| {
+            local final class Test7<T, B> : R|kotlin/Throwable| {
+                public constructor(): R|Test5.Test7<T, B>| {
                     super<R|kotlin/Throwable|>()
                 }
 
@@ -50,8 +50,8 @@ FILE: throwableSubclass.kt
 
     }
     public final fun <Z> topLevelFun(): R|kotlin/Unit| {
-        local final class Test8 : R|kotlin/Error| {
-            public constructor(): R|Test8| {
+        local final class Test8<Z> : R|kotlin/Error| {
+            public constructor(): R|Test8<Z>| {
                 super<R|kotlin/Error|>()
             }
 
