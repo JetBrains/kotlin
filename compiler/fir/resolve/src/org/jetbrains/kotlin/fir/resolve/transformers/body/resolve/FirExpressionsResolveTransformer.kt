@@ -340,17 +340,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             return functionCall
         }
         if (calleeReference is FirNamedReferenceWithCandidate) return functionCall
-//        val collectionLiterals = functionCall.argumentList.arguments.mapIndexedNotNull { index: Int, firExpression: FirExpression ->
-//            if (firExpression is FirCollectionLiteral) {
-//                index to firExpression
-//            } else {
-//                null
-//            }
-//        }
-//        if (collectionLiterals.isNotEmpty()) {
-//            collectionLiterals.forEach { it.second.transformSingle(transformer, data) }
-//            return fixAndResolve(functionCall)
-//        }
+
         dataFlowAnalyzer.enterCall()
         functionCall.transformAnnotations(transformer, data)
         functionCall.transformSingle(InvocationKindTransformer, null)
@@ -359,7 +349,13 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val (completeInference, callCompleted) =
             try {
                 val initialExplicitReceiver = functionCall.explicitReceiver
-                val resultExpression = callResolver.resolveCallAndSelectCandidate(functionCall)
+                val resultExpression = callResolver.resolveCallAndSelectCandidate(functionCall).let {
+                    collectionLiteralResolver.replaceCollectionLiteral(it)
+                }
+//                if (resultExpression.arguments.any { it is FirCollectionLiteral }) {
+                    // так приходится делать из-за того, что после замены аргементов мы сломали все мапинги
+//                    return collectionLiteralResolver.replaceCollectionLiteral(resultExpression).transformSingle(transformer, data)
+//                }
                 val resultExplicitReceiver = resultExpression.explicitReceiver
                 if (initialExplicitReceiver !== resultExplicitReceiver && resultExplicitReceiver is FirQualifiedAccess) {
                     // name.invoke() case
@@ -384,62 +380,38 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     override fun transformCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: ResolutionMode): FirStatement {
         collectionLiteral.transformChildren(transformer, data)
 
-        val builders = callResolver.collectAvailableBuildersForCollectionLiteral(collectionLiteral)
-        if (builders.isEmpty()) {
-            return buildErrorExpression(
-                collectionLiteral.source,
-                ConeSimpleDiagnostic(
-                    "Collection literal has no builders in the current scope",
-                    DiagnosticKind.NoBuildersForCollectionLiteralFound
-                )
-            )
+        return when (collectionLiteral.kind) {
+            CollectionLiteralKind.SEQ_LITERAL -> collectionLiteralResolver.processSequenceLiteral(collectionLiteral)
+            CollectionLiteralKind.DICT_LITERAL -> TODO()
         }
-        val c = builders.first().system.asConstraintSystemCompleterContext()
-
-        val possibleTypes = builders
-            .map { components.initialTypeOfCandidate(it) }
-//            .toSet()
-
-//        val possibleTypes = builders.asSequence()
-//            .map { it.symbol.fir }
-//            .filterIsInstance<FirSimpleFunction>()
-//            .map { it.returnTypeRef.coneType }
-//            .filterIsInstance<ConeClassLikeType>()
-//            .toSet()
-//        val type = ConeCollectionLiteralTypeImpl(ConeNullability.NOT_NULL, possibleTypes.toSet())
-        val type = ConeTypeIntersector.intersectTypes(session.inferenceComponents.ctx, possibleTypes)
-        collectionLiteral.replaceArgumentType(getTypeOfCLArguments(type, c) ?: error("cant infer type of CL arguments"))
-
-        collectionLiteral.resultType = collectionLiteral.resultType.resolvedTypeFromPrototype(type)
-
-        return when {
-            data is ResolutionMode.WithExpectedType -> {
-                val expectedClassId = when (data.expectedTypeRef) {
-                    is FirImplicitTypeRef -> StandardClassIds.List
-                    is FirResolvedTypeRef -> data.expectedTypeRef.coneType.classId!!
-                    is FirTypeRefWithNullability -> TODO()
-                }
-
-                val receiverName = if (possibleTypes.map { it.classId }.contains(expectedClassId)) {
-                    expectedClassId.shortClassName
-                } else {
-                    // Some kind of diagnostic???
-                    TODO()
-                }
-                // TODO check for implicit
-                val buildCall = createFunctionCallForCollectionLiteral(
-                    collectionLiteral.kind,
-                    receiverName,
-                    collectionLiteral.expressions,
-                    collectionLiteral.argumentType!!.toFirResolvedTypeRef()
-                )
-                transformer.transformFunctionCall(buildCall, data)
-            }
-            possibleTypes.size == 1 -> {
-                TODO("build")
-            }
-            else -> collectionLiteral
-        }
+//        return when {
+//            data is ResolutionMode.WithExpectedType -> {
+//                val expectedClassId = when (data.expectedTypeRef) {
+//                    is FirImplicitTypeRef -> StandardClassIds.List
+//                    is FirResolvedTypeRef -> data.expectedTypeRef.coneType.classId!!
+//                    is FirTypeRefWithNullability -> TODO()
+//                }
+//
+//                val receiverName = if (possibleTypes.map { it.classId }.contains(expectedClassId)) {
+//                    expectedClassId.shortClassName
+//                } else {
+//                    // Some kind of diagnostic???
+//                    TODO()
+//                }
+//                // TODO check for implicit
+//                val buildCall = createFunctionCallForCollectionLiteral(
+//                    collectionLiteral.kind,
+//                    receiverName,
+//                    collectionLiteral.expressions,
+//                    collectionLiteral.argumentType!!.toFirResolvedTypeRef()
+//                )
+//                transformer.transformFunctionCall(buildCall, data)
+//            }
+//            possibleTypes.size == 1 -> {
+//                TODO("build")
+//            }
+//            else -> collectionLiteral
+//        }
     }
 
     private fun createFunctionCallForCollectionLiteral(
@@ -452,8 +424,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             buildFunctionCall {
                 calleeReference = buildSimpleNamedReference { name = Name.identifier("add") }
                 argumentList = when (kind) {
-                    CollectionLiteralKind.LIST_LITERAL -> buildUnaryArgumentList((it as FirCollectionLiteralEntrySingle).expression)
-                    CollectionLiteralKind.MAP_LITERAL -> (it as FirCollectionLiteralEntryPair).let { entry ->
+                    CollectionLiteralKind.SEQ_LITERAL -> buildUnaryArgumentList((it as FirCollectionLiteralEntrySingle).expression)
+                    CollectionLiteralKind.DICT_LITERAL -> (it as FirCollectionLiteralEntryPair).let { entry ->
                         buildBinaryArgumentList(entry.key, entry.value)
                     }
                 }
@@ -473,8 +445,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     isLambda = true
                     label = buildLabel {
                         name = when (kind) {
-                            CollectionLiteralKind.LIST_LITERAL -> OperatorNameConventions.BUILD_LIST_CL
-                            CollectionLiteralKind.MAP_LITERAL -> OperatorNameConventions.BUILD_MAP_CL
+                            CollectionLiteralKind.SEQ_LITERAL -> OperatorNameConventions.BUILD_LIST_CL
+                            CollectionLiteralKind.DICT_LITERAL -> OperatorNameConventions.BUILD_MAP_CL
                         }.identifier
                     }
 
@@ -491,8 +463,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             this.explicitReceiver = explicitReceiver
             calleeReference = buildSimpleNamedReference {
                 name = when (kind) {
-                    CollectionLiteralKind.LIST_LITERAL -> OperatorNameConventions.BUILD_LIST_CL
-                    CollectionLiteralKind.MAP_LITERAL -> OperatorNameConventions.BUILD_MAP_CL
+                    CollectionLiteralKind.SEQ_LITERAL -> OperatorNameConventions.BUILD_LIST_CL
+                    CollectionLiteralKind.DICT_LITERAL -> OperatorNameConventions.BUILD_MAP_CL
                 }
             }
             typeOfArguments?.let {

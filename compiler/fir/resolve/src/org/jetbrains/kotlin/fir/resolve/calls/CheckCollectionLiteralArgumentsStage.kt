@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
+import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
@@ -15,13 +17,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystem
 internal object CheckCollectionLiteralArgumentsStage : CheckerStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         require(callInfo.callKind is CallKind.CollectionLiteral)
-        val csBuilder = candidate.csBuilder
-        require(csBuilder.allTypeVariables.size == 1) // TODO replace require with return or smth else
-        val (_, typeVariable) = csBuilder.allTypeVariables.entries.first()
-        val expectedType = (typeVariable as? ConeTypeVariable)?.defaultType ?: return
-        for (argument in callInfo.arguments) {
-            val lowerType = argument.typeRef.coneTypeSafe<ConeKotlinType>() ?: TODO() // TODO
-            csBuilder.addSubtypeConstraintIfCompatible(lowerType, expectedType, SimpleConstraintSystemConstraintPosition)
-        }
+
     }
 }

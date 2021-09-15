@@ -63,10 +63,18 @@ package org.jetbrains.kotlin.runner
 //    }
 //}
 //
+fun <T> Int.Companion.buildSeq(size: Int, init: CollectionLiteralBuilder<Int, T>.() -> Unit = {}) : Int {
+    return TODO()
+}
+
+fun <T> Double.Companion.buildSeq(size: Int, init: CollectionLiteralBuilder<Double, T>.() -> Unit = {}) : Double {
+    return TODO()
+}
+
 //fun <T> Set.Companion.buildSeq(size: Int, init: CollectionLiteralBuilder<Set<T>, T>.() -> Unit = {}): Set<T> {
 //    return TODO()
 //}
-////
+//
 //fun <T> List.Companion.buildSeq(size: Int, init: CollectionLiteralBuilder<List<T>, T>.() -> Unit = {}): List<T> {
 //    return TODO()
 ////    return object : CollectionLiteralBuilder<List<T>, T> {
@@ -82,12 +90,38 @@ package org.jetbrains.kotlin.runner
 ////    }.apply(init).build()
 //}
 
+interface A
+class B : A {
+    companion object {
+
+    }
+}
+
+fun <T> B.Companion.buildSeq(size: Int, init: CollectionLiteralBuilder<B, T>.() -> Unit = {}): B {
+    TODO()
+}
+class C : A {
+    companion object {
+
+    }
+}
+
+fun <T> C.Companion.buildSeq(size: Int, init: CollectionLiteralBuilder<С, T>.() -> Unit = {}): C {
+    TODO()
+}
+
+fun <T: C> foo(a: T) {
+
+}
+
 //fun foo(s: Set<Int>, i: String, l: List<Int>) {
 //}
 
-fun foo(a: Set<Int>) {
+//fun foo(a: Set<Int>) { }
 
-}
+//fun <T: Int> foo(a: T) { }
+
+//fun <T> a(a: T): T = a
 
 fun main() {
 //    val a = A.build<Int>(1) {
@@ -96,8 +130,14 @@ fun main() {
 //        add(3)
 //    }
 //    val a: Set<Int> = [1, 2, 3]
-//    listOf(1, 2, 3.0)
+//    val a = [1, 2, 3]
+//    val a = [1, 2, 3.0]
+//    listOf(1, 2, 3)
+//    listOf(listOf(1, 2, 3), setOf(4, 5, 6))
+//    foo([1, 2, 3])
     foo([1, 2, 3])
+//    foo([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+//    foo([listOf(), setOf()])
 //    foo([1, 2, 3], "str", [4.2, 5, 6])
 //    println(a.toString())
 }

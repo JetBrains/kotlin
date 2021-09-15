@@ -2322,8 +2322,8 @@ open class RawFirBuilder(
 
         override fun visitCollectionLiteralExpression(expression: KtCollectionLiteralExpression, data: Unit): FirElement {
             val firKind = when (expression.literalKind) {
-                KtCollectionLiteralKind.LIST -> CollectionLiteralKind.LIST_LITERAL
-                KtCollectionLiteralKind.MAP -> CollectionLiteralKind.MAP_LITERAL
+                KtCollectionLiteralKind.LIST -> CollectionLiteralKind.SEQ_LITERAL
+                KtCollectionLiteralKind.MAP -> CollectionLiteralKind.DICT_LITERAL
             }
             val newExpressions = expression.getInnerEntries().map {
                 when (it) {
