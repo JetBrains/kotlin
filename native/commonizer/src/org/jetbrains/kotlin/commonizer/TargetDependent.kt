@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.commonizer
 
+import gnu.trove.THashMap
+
 sealed interface TargetDependent<T> : Iterable<T> {
     val size: Int get() = targets.size
     val targets: List<CommonizerTarget>
@@ -111,27 +113,24 @@ private class FactoryBasedTargetDependent<T>(
     private var factory: ((target: CommonizerTarget) -> T)?
 ) : TargetDependent<T> {
 
+    private object Null
     private object Uninitialized
 
-    private val values: Array<Any?> = Array(targets.size) { Uninitialized }
+    private val values = targets.associateWithTo(THashMap<CommonizerTarget, Any>(targets.size)) { Uninitialized }
 
     @Suppress("UNCHECKED_CAST")
     override fun get(target: CommonizerTarget): T {
-        val indexOfTarget = indexOf(target)
-        if (indexOfTarget < 0) throwMissingTarget(target)
-        val storedValue = values[indexOfTarget]
-        if (storedValue == Uninitialized) {
-            val producedValue = factory?.invoke(target)
-            values[indexOfTarget] = producedValue
-
-            /* All values initialized. Factory can be released */
-            if (values.none { it === Uninitialized }) {
+        val value = values[target] ?: throwMissingTarget(target)
+        if (value === Null) return null as T
+        if (value === Uninitialized) {
+            val initializedValue = checkNotNull(factory)(target)
+            values[target] = initializedValue ?: Null
+            if (values.none { it.value !== Uninitialized }) {
                 factory = null
             }
-            return producedValue as T
+            return initializedValue
         }
-
-        return storedValue as T
+        return value as T
     }
 }
 
