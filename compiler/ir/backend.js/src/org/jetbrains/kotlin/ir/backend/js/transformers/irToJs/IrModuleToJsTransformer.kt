@@ -150,7 +150,7 @@ class IrModuleToJsTransformer(
                 declareFreshGlobal = { JsName(sanitizeName(it)) } // TODO: Declare fresh name
             )
 
-        val moduleBody = generateModuleBody(modules, staticContext)
+        val (moduleBody, callToMain) = generateModuleBody(modules, staticContext)
 
         val internalModuleName = JsName("_")
         val globalNames = NameTable<String>(namer.globalNames)
@@ -175,8 +175,8 @@ class IrModuleToJsTransformer(
                     statements.addWithComment("block: imports", importStatements + crossModuleImports)
                     statements += moduleBody
                     statements.addWithComment("block: exports", exportStatements + crossModuleExports)
-                    if (generateMainCall) {
-                        statements += generateCallToMain(modules, staticContext)
+                    if (generateMainCall && callToMain != null) {
+                        statements += callToMain
                     }
                     statements += JsReturn(internalModuleName.makeRef())
                 }
@@ -282,10 +282,12 @@ class IrModuleToJsTransformer(
         }
     }
 
-    private fun generateModuleBody(modules: Iterable<IrModuleFragment>, staticContext: JsStaticContext): List<JsStatement> {
-        val fragments = modules.flatMap { it.files.map { generateProgramFragment(it, staticContext) } }
+    private data class ModuleBody(val statements: List<JsStatement>, val mainFunction: JsStatement?)
 
-        val statements = merge(fragments, staticContext).toMutableList()
+    private fun generateModuleBody(modules: Iterable<IrModuleFragment>, staticContext: JsStaticContext): ModuleBody {
+        val fragments = modules.map { it.files.map { generateProgramFragment(it, staticContext) } }
+
+        val statements = merge(fragments.flatMap { it }, staticContext).toMutableList()
 
         // TODO: handle tests incrementally
         modules.forEach {
@@ -296,7 +298,9 @@ class IrModuleToJsTransformer(
             }
         }
 
-        return statements
+        val callToMain = fragments.last().sortedBy { it.packageFqn }.firstNotNullOfOrNull { it.mainFunction }
+
+        return ModuleBody(statements, callToMain)
     }
 
     private val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
@@ -306,7 +310,7 @@ class IrModuleToJsTransformer(
         require(staticContext.classModels.isEmpty())
         require(staticContext.initializerBlock.statements.isEmpty())
 
-        val result = JsIrProgramFragment()
+        val result = JsIrProgramFragment(file.fqName.asString())
         val statements = result.declarations.statements
 
         val fileStatements = file.accept(IrFileToJsTransformer(), staticContext).statements
@@ -337,6 +341,15 @@ class IrModuleToJsTransformer(
 
         result.classes += staticContext.classModels
         result.initializers.statements += staticContext.initializerBlock.statements
+
+        if (mainArguments != null) {
+            JsMainFunctionDetector(backendContext).getMainFunctionOrNull(file)?.let {
+                val jsName = staticContext.getNameForStaticFunction(it)
+                val generateArgv = it.valueParameters.firstOrNull()?.isStringArrayParameter() ?: false
+                val generateContinuation = it.isLoweredSuspendFunction(backendContext)
+                result.mainFunction = JsInvocation(jsName.makeRef(), generateMainArguments(generateArgv, generateContinuation, staticContext)).makeStmt()
+            }
+        }
 
         staticContext.classModels.clear()
         staticContext.initializerBlock.statements.clear()
@@ -388,18 +401,6 @@ class IrModuleToJsTransformer(
         } else null
 
         return listOfNotNull(mainArgumentsArray, continuation)
-    }
-
-    private fun generateCallToMain(modules: Iterable<IrModuleFragment>, staticContext: JsStaticContext): List<JsStatement> {
-        // TODO: Generate calls to main as IR->IR lowering
-        if (mainArguments == null) return emptyList() // in case `NO_MAIN` and `main(..)` exists
-        val mainFunction = JsMainFunctionDetector(backendContext).getMainFunctionOrNull(modules.last())
-        return mainFunction?.let {
-            val jsName = staticContext.getNameForStaticFunction(it)
-            val generateArgv = it.valueParameters.firstOrNull()?.isStringArrayParameter() ?: false
-            val generateContinuation = it.isLoweredSuspendFunction(backendContext)
-            listOf(JsInvocation(jsName.makeRef(), generateMainArguments(generateArgv, generateContinuation, staticContext)).makeStmt())
-        } ?: emptyList()
     }
 
     private fun generateImportStatements(

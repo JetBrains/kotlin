@@ -46,14 +46,18 @@ class JsMainFunctionDetector(val context: JsCommonBackendContext) {
         }
     }
 
+    fun getMainFunctionOrNull(file: IrFile): IrSimpleFunction? {
+        // TODO: singleOrNull looks suspicious
+        return file.declarations.filterIsInstance<IrSimpleFunction>().singleOrNull { it.isMain(allowEmptyParameters = true) }
+    }
+
     fun getMainFunctionOrNull(module: IrModuleFragment): IrSimpleFunction? {
 
         var resultPair: Pair<String, IrSimpleFunction>? = null
 
         module.files.forEach { f ->
             val fqn = f.fqName.asString()
-
-            f.declarations.filterIsInstance<IrSimpleFunction>().singleOrNull { it.isMain(allowEmptyParameters = true) }?.let {
+            getMainFunctionOrNull(f)?.let {
                 val result = resultPair
                 if (result == null) {
                     resultPair = Pair(fqn, it)

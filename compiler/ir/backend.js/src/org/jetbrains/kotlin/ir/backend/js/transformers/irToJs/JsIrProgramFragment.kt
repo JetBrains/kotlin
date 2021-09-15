@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.js.backend.ast.JsGlobalBlock
+import org.jetbrains.kotlin.js.backend.ast.JsStatement
 
-class JsIrProgramFragment {
+class JsIrProgramFragment(val packageFqn: String) {
     val declarations = JsGlobalBlock()
     val classes = mutableMapOf<IrClassSymbol, JsIrClassModel>()
     val initializers = JsGlobalBlock()
+    var mainFunction: JsStatement? = null
 }
