@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.cir.*
-import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
-import org.jetbrains.kotlin.commonizer.mergedtree.CirProvided
+import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.utils.isUnderKotlinNativeSyntheticPackages
 import org.jetbrains.kotlin.commonizer.utils.safeCastValues
 import org.jetbrains.kotlin.commonizer.utils.singleDistinctValueOrNull
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class ClassOrTypeAliasTypeCommonizer(
     private val typeCommonizer: TypeCommonizer,
@@ -23,16 +23,18 @@ internal class ClassOrTypeAliasTypeCommonizer(
 
     override fun invoke(values: List<CirClassOrTypeAliasType>): CirClassOrTypeAliasType? {
         if (values.isEmpty()) return null
-
         val expansions = values.map { it.expandedType() }
         val isMarkedNullable = isMarkedNullableCommonizer.commonize(expansions.map { it.isMarkedNullable }) ?: return null
-        val arguments = TypeArgumentListCommonizer(typeCommonizer).commonize(values.map { it.arguments }) ?: return null
-        val classifierId = selectClassifierId(values)
-            ?: typeCommonizer.options.enableOptimisticNumberTypeCommonization.ifTrue {
-                return OptimisticNumbersTypeCommonizer.commonize(expansions)
-            } ?: return null
 
-        val outerTypes = values.safeCastValues<CirClassOrTypeAliasType, CirClassType>()?.map { it.outerType }
+        val types = substituteTypesIfNecessary(values) ?: typeCommonizer.options.enableOptimisticNumberTypeCommonization.ifTrue {
+            return OptimisticNumbersTypeCommonizer.commonize(expansions)
+        } ?: return null
+
+        val classifierId = types.singleDistinctValueOrNull { it.classifierId } ?: return null
+
+        val arguments = TypeArgumentListCommonizer(typeCommonizer).commonize(types.map { it.arguments }) ?: return null
+
+        val outerTypes = types.safeCastValues<CirClassOrTypeAliasType, CirClassType>()?.map { it.outerType }
         val outerType = when {
             outerTypes == null -> null
             outerTypes.all { it == null } -> null
@@ -94,10 +96,98 @@ internal class ClassOrTypeAliasTypeCommonizer(
         }
     }
 
-    @Suppress("KotlinConstantConditions") // Improved readability
-    private fun selectClassifierId(types: List<CirClassOrTypeAliasType>): CirEntityId? {
-        types.singleDistinctValueOrNull { it.classifierId }?.let { return it }
+    private fun substituteTypesIfNecessary(types: List<CirClassOrTypeAliasType>): List<CirClassOrTypeAliasType>? {
+        // Not necessary
+        if (types.singleDistinctValueOrNull { it.classifierId } != null) return types
+        val classifierId = selectSubstitutionClassifierId(types) ?: return null
+        return types.mapIndexed { targetIndex, type -> substituteIfNecessary(targetIndex, type, classifierId) ?: return null }
+    }
 
+    private fun substituteIfNecessary(
+        targetIndex: Int, sourceType: CirClassOrTypeAliasType, destinationClassifierId: CirEntityId
+    ): CirClassOrTypeAliasType? {
+        if (sourceType.classifierId == destinationClassifierId) {
+            return sourceType
+        }
+
+        if (sourceType is CirTypeAliasType) {
+            forwardSubstitute(sourceType, destinationClassifierId)?.let { return it }
+        }
+
+        val resolvedClassifierFromDependencies = classifiers.commonDependencies.classifier(destinationClassifierId)
+            ?: classifiers.targetDependencies[targetIndex].classifier(destinationClassifierId)
+
+        if (resolvedClassifierFromDependencies != null && resolvedClassifierFromDependencies is CirProvided.TypeAlias) {
+            return backwardsSubstitute(targetIndex, sourceType, destinationClassifierId, resolvedClassifierFromDependencies)
+        }
+
+        val resolvedClassifier = classifiers.classifierIndices[targetIndex].findClassifier(destinationClassifierId)
+        if (resolvedClassifier != null && resolvedClassifier is CirTypeAlias) {
+            return backwardsSubstitute(sourceType, destinationClassifierId, resolvedClassifier)
+        }
+
+        return null
+    }
+
+    private fun forwardSubstitute(
+        sourceType: CirTypeAliasType,
+        destinationClassifierId: CirEntityId,
+    ): CirClassOrTypeAliasType? {
+        return generateSequence(sourceType.underlyingType) { type -> type.safeAs<CirTypeAliasType>()?.underlyingType }
+            .firstOrNull { underlyingType -> underlyingType.classifierId == destinationClassifierId }
+            ?.withParentArguments(sourceType.arguments, sourceType.isMarkedNullable)
+    }
+
+    private fun backwardsSubstitute(
+        sourceType: CirClassOrTypeAliasType,
+        destinationTypeAliasId: CirEntityId,
+        destinationTypeAlias: CirTypeAlias
+    ): CirTypeAliasType? {
+        // Limitation: No backwards substitution with arguments
+        if (sourceType.arguments.isNotEmpty()) return null
+        if (destinationTypeAlias.typeParameters.isNotEmpty()) return null
+
+        // Check if any 'backward' type has arguments
+        generateSequence(destinationTypeAlias.underlyingType) { type -> type.safeAs<CirTypeAliasType>()?.underlyingType }
+            .takeWhile { type -> type.classifierId != sourceType.classifierId }
+            .forEach { type -> if (type.arguments.isNotEmpty()) return null } // limitation!
+
+        return CirTypeAliasType.createInterned(
+            destinationTypeAliasId,
+            underlyingType = destinationTypeAlias.underlyingType,
+            arguments = emptyList(),
+            isMarkedNullable = sourceType.isMarkedNullable
+        )
+    }
+
+    private fun backwardsSubstitute(
+        targetIndex: Int,
+        sourceType: CirClassOrTypeAliasType,
+        destinationTypeAliasId: CirEntityId,
+        destinationTypeAlias: CirProvided.TypeAlias
+    ): CirClassOrTypeAliasType? {
+        // Limitation: No backwards substitution with arguments
+        if (sourceType.arguments.isNotEmpty()) return null
+        if (destinationTypeAlias.typeParameters.isNotEmpty()) return null
+
+        val providedClassifiers = CirProvidedClassifiers.of(classifiers.commonDependencies, classifiers.targetDependencies[targetIndex])
+
+        generateSequence(destinationTypeAlias.underlyingType) next@{ type ->
+            val typeAliasType = type as? CirProvided.TypeAliasType ?: return@next null
+            val typeAlias = providedClassifiers.classifier(typeAliasType.classifierId) as? CirProvided.TypeAlias ?: return@next null
+            typeAlias.underlyingType
+        }.takeWhile { type -> type.classifierId != sourceType.classifierId }
+            .forEach { type -> if (type.arguments.isNotEmpty()) return null }
+
+        return CirTypeAliasType.createInterned(
+            destinationTypeAliasId,
+            underlyingType = providedClassifiers.toCirClassOrTypeAliasTypeOrNull(destinationTypeAlias.underlyingType) ?: return null,
+            arguments = emptyList(),
+            isMarkedNullable = sourceType.isMarkedNullable
+        )
+    }
+
+    private fun selectSubstitutionClassifierId(types: List<CirClassOrTypeAliasType>): CirEntityId? {
         val forwardSubstitutionAllowed = typeCommonizer.options.enableForwardTypeAliasSubstitution
         val backwardsSubstitutionAllowed = typeCommonizer.options.enableBackwardsTypeAliasSubstitution
 
@@ -110,36 +200,40 @@ internal class ClassOrTypeAliasTypeCommonizer(
             classifiers.commonClassifierIdResolver.findCommonId(it.classifierId)
         } ?: return null
 
-        val candidates = when {
-            forwardSubstitutionAllowed && backwardsSubstitutionAllowed -> commonId.aliases
-
-            /* Only forward substitutions allowed -> Only substitute with any underlying type */
-            forwardSubstitutionAllowed -> commonId.aliases.filter { candidate ->
-                types.all { type -> candidate == type.classifierId || type.isAnyUnderlyingClassifier(candidate) }
+        val typeSubstitutionCandidates = resolveTypeSubstitutionCandidates(classifiers, commonId, types)
+            .filter { typeSubstitutionCandidate ->
+                if (typeSubstitutionCandidate.typeDistance.isNotReachable) return@filter false
+                if (typeSubstitutionCandidate.typeDistance.isNegative && !backwardsSubstitutionAllowed) return@filter false
+                if (typeSubstitutionCandidate.typeDistance.isPositive && !forwardSubstitutionAllowed) return@filter false
+                true
             }
 
-            /* Only backward substitutions allowed -> Only substitute with any typealias pointing to this types */
-            backwardsSubstitutionAllowed -> commonId.aliases.filter { candidate ->
-                types.none { type -> type.isAnyUnderlyingClassifier(candidate) }
-            }
+        if (typeSubstitutionCandidates.isEmpty()) return null
+        if (typeSubstitutionCandidates.size == 1) return typeSubstitutionCandidates.first().id
 
-            else -> error("Failed to select classifierId: Unexpected when branch")
-        }
+        val forwardSubstitutionCandidates = typeSubstitutionCandidates.filter { it.typeDistance.isPositive }
+        val backwardsSubstitutionCandidates = typeSubstitutionCandidates.filter { it.typeDistance.isNegative }
 
-        if (candidates.isEmpty()) return null
-        if (candidates.size == 1) return candidates.first()
-
-        return candidates.maxByOrNull { candidate -> types.count { it.classifierId == candidate } }!!
+        return forwardSubstitutionCandidates.minByOrNull { it.typeDistance }?.id
+            ?: backwardsSubstitutionCandidates.maxByOrNull { it.typeDistance }?.id
     }
+}
 
-    private fun CirClassOrTypeAliasType.isAnyUnderlyingClassifier(classifierId: CirEntityId): Boolean {
-        return when (this) {
-            is CirClassType -> false
-            is CirTypeAliasType -> this.isAnyUnderlyingClassifier(classifierId)
-        }
-    }
+private class TypeSubstitutionCandidate(
+    val id: CirEntityId,
+    val typeDistance: CirTypeDistance
+)
 
-    private fun CirTypeAliasType.isAnyUnderlyingClassifier(classifierId: CirEntityId): Boolean {
-        return underlyingType.classifierId == classifierId || underlyingType.isAnyUnderlyingClassifier(classifierId)
+private fun resolveTypeSubstitutionCandidates(
+    classifiers: CirKnownClassifiers, commonId: CirCommonClassifierId, types: List<CirClassOrTypeAliasType>
+): List<TypeSubstitutionCandidate> {
+    return commonId.aliases.mapNotNull mapCandidateId@{ candidateId ->
+        val typeDistances = types.mapIndexed { targetIndex, type -> typeDistance(classifiers, targetIndex, type, candidateId) }
+        if (typeDistances.any { it.isNotReachable }) return@mapCandidateId null
+        TypeSubstitutionCandidate(
+            id = candidateId,
+            // TODO NOW: Any negative should outperform any positive substitution!, so negative will be chosen here as 'worst'
+            typeDistance = checkNotNull(typeDistances.maxByOrNull { distance -> distance.absoluteValue })
+        )
     }
 }

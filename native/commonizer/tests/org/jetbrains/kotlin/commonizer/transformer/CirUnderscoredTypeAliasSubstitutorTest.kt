@@ -62,7 +62,7 @@ class UnderscoredTypeAliasTypeSubstitutonTest : AbstractInlineSourcesCommonizati
                 typealias X = Int
                 typealias __X = X
                 /* No hard requirement. Picking X over __X seems equally fine here */
-                expect fun x(x: __X)
+                expect fun x(x: X)
             """.trimIndent()
         )
     }
