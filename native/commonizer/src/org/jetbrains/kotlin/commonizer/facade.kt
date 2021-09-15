@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirNode.Companion.indexOfCommo
 import org.jetbrains.kotlin.commonizer.mergedtree.CirRootNode
 import org.jetbrains.kotlin.commonizer.metadata.CirTreeSerializer
 import org.jetbrains.kotlin.commonizer.transformer.InlineTypeAliasCirNodeTransformer
+import org.jetbrains.kotlin.commonizer.transformer.ReApproximationCirNodeTransformer
+import org.jetbrains.kotlin.commonizer.transformer.ReApproximationCirNodeTransformer.SignatureBuildingContextProvider
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
 import org.jetbrains.kotlin.commonizer.tree.defaultCirTreeRootDeserializer
 import org.jetbrains.kotlin.commonizer.tree.mergeCirTree
@@ -62,6 +64,19 @@ internal fun commonizeTarget(
         val mergedTree = mergeCirTree(parameters.storageManager, classifiers, availableTrees)
 
         InlineTypeAliasCirNodeTransformer(parameters.storageManager, classifiers).invoke(mergedTree)
+
+        /*
+        ReApproximationCirNodeTransformer(
+            parameters.storageManager, classifiers,
+            SignatureBuildingContextProvider(classifiers, typeAliasInvariant = true, skipArguments = false)
+        ).invoke(mergedTree)
+
+         */
+
+        ReApproximationCirNodeTransformer(
+            parameters.storageManager, classifiers,
+            SignatureBuildingContextProvider(classifiers, typeAliasInvariant = true, skipArguments = true)
+        ).invoke(mergedTree)
 
         mergedTree.accept(CommonizationVisitor(mergedTree), Unit)
 

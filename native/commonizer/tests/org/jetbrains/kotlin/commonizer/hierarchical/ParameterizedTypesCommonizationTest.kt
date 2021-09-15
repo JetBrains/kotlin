@@ -110,11 +110,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                 typealias TA2<R> = TA1<String, R>
                 typealias TA3 = TA2<Int>
                 
-                /*
-                 Desirable solution below!
-                 Test ensures that no wrong commonization is emitted for now.
-                 */
-                //expect fun x1(x: TA1<String, Int>) 
+                expect fun x1(x: TA1<String, Int>) 
             """.trimIndent()
         )
     }
