@@ -224,13 +224,36 @@ class LookupTrackerImpl(private val delegate: LookupTracker) : LookupTracker {
     override val requiresPosition: Boolean
         get() = delegate.requiresPosition
 
-    override fun record(filePath: String, position: Position, scopeFqName: String, scopeKind: ScopeKind, name: String) {
-        val internedScopeFqName = interner.intern(scopeFqName)
-        val internedName = interner.intern(name)
-        val internedFilePath = pathInterner.intern(filePath)
+    var prevFilePath: String = ""
+    var prevPosition: Position? = null
+    var prevScopeFqName: String = ""
+    var prevScopeKind: ScopeKind? = null
+    var prevName: String = ""
 
-        lookups.putValue(LookupSymbol(internedName, internedScopeFqName), internedFilePath)
-        delegate.record(internedFilePath, position, internedScopeFqName, scopeKind, internedName)
+    // This method is very hot and sequential invocations usually have the same parameters. Thus we cache previous parameters
+    override fun record(filePath: String, position: Position, scopeFqName: String, scopeKind: ScopeKind, name: String) {
+        val nameChanged = if (name != prevName) {
+            prevName = interner.intern(name)
+            true
+        } else false
+        val fqNameChanged = if (scopeFqName != prevScopeFqName) {
+            prevScopeFqName = interner.intern(scopeFqName)
+            true
+        } else false
+        val filePathChanged = if (filePath != prevFilePath) {
+            prevFilePath = pathInterner.intern(filePath)
+            true
+        } else false
+
+        val lookupChanged = nameChanged || fqNameChanged || filePathChanged
+        if (lookupChanged) {
+            lookups.putValue(LookupSymbol(prevName, prevScopeFqName), prevFilePath)
+        }
+        if (lookupChanged || prevPosition != position || prevScopeKind != scopeKind) {
+            prevPosition = position
+            prevScopeKind = scopeKind
+            delegate.record(prevFilePath, position, prevScopeFqName, scopeKind, prevName)
+        }
     }
 }
 

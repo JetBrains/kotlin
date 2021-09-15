@@ -24,18 +24,20 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.doNotAnalyze
 
 class KotlinLookupLocation(val element: KtElement) : LookupLocation {
+    val cachedLocation : LocationInfo? by lazy {
+        val containingJetFile = element.containingKtFile
+
+        if (containingJetFile.doNotAnalyze != null)
+            null
+        else
+            object : LocationInfo {
+            override val filePath = containingJetFile.virtualFilePath
+
+            override val position: Position
+                get() = getLineAndColumnInPsiFile(containingJetFile, element.textRange).let { Position(it.line, it.column) }
+        }
+    }
 
     override val location: LocationInfo?
-        get() {
-            val containingJetFile = element.containingKtFile
-
-            if (containingJetFile.doNotAnalyze != null) return null
-
-            return object : LocationInfo {
-                override val filePath = containingJetFile.virtualFilePath
-
-                override val position: Position
-                    get() = getLineAndColumnInPsiFile(containingJetFile, element.textRange).let { Position(it.line, it.column) }
-            }
-        }
+        get() = cachedLocation
 }
