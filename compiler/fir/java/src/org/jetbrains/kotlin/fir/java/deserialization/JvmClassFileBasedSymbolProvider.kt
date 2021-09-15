@@ -31,7 +31,7 @@ import java.nio.file.Paths
 // if present. Use it for library and incremental compilation sessions. For source sessions use
 // `JavaSymbolProvider`, as Kotlin classes should be parsed first.
 @ThreadSafeMutableState
-class KotlinDeserializedJvmSymbolsProvider(
+class JvmClassFileBasedSymbolProvider(
     session: FirSession,
     moduleDataProvider: ModuleDataProvider,
     kotlinScopeProvider: FirKotlinScopeProvider,

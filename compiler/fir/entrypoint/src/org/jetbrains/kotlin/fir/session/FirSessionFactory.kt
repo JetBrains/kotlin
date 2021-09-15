@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import org.jetbrains.kotlin.fir.java.FirCliSession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
-import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
+import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -147,7 +147,7 @@ object FirSessionFactory {
             register(FirProvider::class, firProvider)
 
             val symbolProviderForBinariesFromIncrementalCompilation = providerAndScopeForIncrementalCompilation?.let {
-                KotlinDeserializedJvmSymbolsProvider(
+                JvmClassFileBasedSymbolProvider(
                     this@session,
                     SingleModuleDataProvider(moduleData),
                     kotlinScopeProvider,
@@ -207,7 +207,7 @@ object FirSessionFactory {
 
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 
-            val deserializedProviderForIncrementalCompilation = KotlinDeserializedJvmSymbolsProvider(
+            val classFileBasedSymbolProvider = JvmClassFileBasedSymbolProvider(
                 this,
                 moduleDataProvider,
                 kotlinScopeProvider,
@@ -225,7 +225,7 @@ object FirSessionFactory {
             val symbolProvider = FirCompositeSymbolProvider(
                 this,
                 listOf(
-                    deserializedProviderForIncrementalCompilation,
+                    classFileBasedSymbolProvider,
                     FirBuiltinSymbolProvider(this, builtinsModuleData, kotlinScopeProvider),
                     FirCloneableSymbolProvider(this, builtinsModuleData, kotlinScopeProvider),
                     FirDependenciesSymbolProviderImpl(this)
