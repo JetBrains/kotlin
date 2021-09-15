@@ -158,12 +158,91 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                  typealias T3<T, M> = Triple<T, String, M>
                  typealias T4<T, M> = Triple<T, String, M>
                  
-                 /* Note: No hard requirement whether T4 or T3 is chosen! */
-                 expect fun x1(x: T4<Int, Long>) 
-                 expect fun x2(x: T4<Int, Long>)
+                 expect fun x1(x: Triple<Int, String, Long>) 
+                 expect fun x2(x: Triple<Int, String, Long>)
             """.trimIndent()
         )
     }
+
+    fun `test parameterized type alias - 3`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    class Triple<T, R, M>
+                    typealias T1<T, R, M> = Triple<T, R, M>
+                    typealias T2<T, R, M> = Triple<T, R, M>
+                    typealias T3<T, M> = Triple<T, String, M>
+                    typealias T4<T, M> = Triple<T, String, M>
+
+                    fun x1(x: T4<Int, Long>)
+                    fun x2(x: T3<Int, Long>)
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class Triple<T, R, M>
+                    typealias T1<T, R, M> = Triple<T, R, M>
+                    typealias T2<T, R, M> = Triple<T, R, M>
+                    typealias T3<T, M> = Triple<T, String, M>
+                    typealias T4<T, M> = T3<T, M>
+
+                    fun x1(x: T3<Int, Long>) // NOTE: T3 & T4 flipped
+                    fun x2(x: T4<Int, Long>) // NOTE: T3 & T4 flipped
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                 expect class Triple<T, R, M>()
+                 typealias T1<T, R, M> = Triple<T, R, M>
+                 typealias T2<T, R, M> = Triple<T, R, M>
+                 typealias T3<T, M> = Triple<T, String, M>
+                 typealias T4<T, M> = Triple<T, String, M>
+                 
+                 expect fun x1(x: Triple<Int, String, Long>) 
+                 expect fun x2(x: T3<Int, Long>)
+            """.trimIndent()
+        )
+    }
+
+    fun `test parameterized type alias - 4`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    class Triple<T, R, M>
+                    typealias A1 = String
+                    typealias A2 = Long
+                    typealias A3<T, R> = Triple<T, String, R>
+                    
+                    fun x(x: A3<A1, A2>)
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class Triple<T, R, M>
+                    typealias B1 = String
+                    typealias B2 = Long
+                    
+                    fun x(x: Triple<B1, String, B2>)
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                 expect class Triple<T, R, M>()
+                 expect fun x(x: Triple<String, String, Long>)
+            """.trimIndent()
+        )
+    }
+
 
     fun `test type alias from dependencies parameterized with library source type`() {
         val result = commonize {

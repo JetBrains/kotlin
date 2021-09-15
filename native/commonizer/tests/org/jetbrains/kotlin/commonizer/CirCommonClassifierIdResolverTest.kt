@@ -154,8 +154,9 @@ class CirCommonClassifierIdResolverTest : AbstractInlineSourcesCommonizationTest
 
     /*
     Rather esoteric case!
-    Platform A:    A -> B -> C    D -> E
-    Platform B:    B -> C - D
+    Platform A:    A -> B -> C
+                   D -> E
+    Platform B:    B -> C -> D
 
     Expected:    B, C, D
      */
@@ -180,10 +181,10 @@ class CirCommonClassifierIdResolverTest : AbstractInlineSourcesCommonizationTest
         )
 
         val resolver = createCommonClassifierIdResolver(rootB, rootA)
+        assertEquals(setOf("B", "C", "D"), resolver.findCommonId("A"))
         assertEquals(setOf("B", "C", "D"), resolver.findCommonId("B"))
         assertEquals(setOf("B", "C", "D"), resolver.findCommonId("C"))
         assertEquals(setOf("B", "C", "D"), resolver.findCommonId("D"))
-        assertEquals(setOf("B", "C", "D"), resolver.findCommonId("A"))
         assertEquals(setOf("B", "C", "D"), resolver.findCommonId("E"))
     }
 
@@ -232,7 +233,7 @@ class CirCommonClassifierIdResolverTest : AbstractInlineSourcesCommonizationTest
             source(
                 """
                 class D_X
-                class D_TA = D_X
+                typealias D_TA = D_X
                 """.trimIndent()
             )
         }
@@ -267,6 +268,79 @@ class CirCommonClassifierIdResolverTest : AbstractInlineSourcesCommonizationTest
         assertEquals(setOf("D_X", "D_TA", "A", "C"), resolver.findCommonId("A"))
         assertEquals(setOf("D_X", "D_TA", "A", "C"), resolver.findCommonId("B"))
         assertEquals(setOf("D_X", "D_TA", "A", "C"), resolver.findCommonId("C"))
+    }
+
+    /*
+    Platform A:    A1 -> A -> B -> C
+    Platform B:    A2 -> A -> D -> E
+
+    Expected: A
+    */
+    fun `test sample 8`() {
+        val resolver = createCommonClassifierIdResolver(
+            createCirTreeRootFromSourceCode(
+                """
+                    class C
+                    typealias B = C
+                    typealias A = B
+                    typealias A1 = A
+                """.trimIndent()
+            ),
+            createCirTreeRootFromSourceCode(
+                """
+                    class E
+                    typealias D = E
+                    typealias A = D
+                    typealias A2 = A
+                """.trimIndent()
+            )
+        )
+
+        assertEquals(setOf("A"), resolver.findCommonId("A"))
+        assertEquals(setOf("A"), resolver.findCommonId("A1"))
+        assertEquals(setOf("A"), resolver.findCommonId("A2"))
+        assertEquals(setOf("A"), resolver.findCommonId("B"))
+        assertEquals(setOf("A"), resolver.findCommonId("C"))
+        assertEquals(setOf("A"), resolver.findCommonId("E"))
+        assertEquals(setOf("A"), resolver.findCommonId("D"))
+    }
+
+    /*
+    Platform A:    A -> B -> C
+    Platform B:    A -> D -> E
+                   F -> G -> C
+
+    Expected:  A, C
+    */
+    fun `test sample 9`() {
+        val resolver = createCommonClassifierIdResolver(
+            createCirTreeRootFromSourceCode(
+                """
+                    class C
+                    typealias B = C
+                    typealias A = B
+                """.trimIndent()
+            ),
+            createCirTreeRootFromSourceCode(
+                """
+                    class E
+                    typealias D = E
+                    typealias A = D
+            
+                    class C
+                    typealias G = C
+                    typealias F = G
+                """.trimIndent()
+            )
+        )
+
+        assertEquals(setOf("A", "C"), resolver.findCommonId("A"))
+        assertEquals(setOf("A", "C"), resolver.findCommonId("B"))
+        assertEquals(setOf("A", "C"), resolver.findCommonId("C"))
+        assertEquals(setOf("A", "C"), resolver.findCommonId("D"))
+        assertEquals(setOf("A", "C"), resolver.findCommonId("E"))
+        assertEquals(setOf("A", "C"), resolver.findCommonId("F"))
+        assertEquals(setOf("A", "C"), resolver.findCommonId("G"))
     }
 }
 
