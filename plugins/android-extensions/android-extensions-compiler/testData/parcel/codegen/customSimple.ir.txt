@@ -11,6 +11,7 @@ final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
         LABEL (L0)
         LINENUMBER (10)
           ALOAD (0)
+          CHECKCAST
           ILOAD (1)
           INVOKESTATIC (kotlinx/android/parcel/Parceler$DefaultImpls, newArray, (Lkotlinx/android/parcel/Parceler;I)[Ljava/lang/Object;)
           CHECKCAST
@@ -105,7 +106,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
           ALOAD (1)
           LDC (out)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          GETSTATIC (Companion, LUser$Companion;)
+          GETSTATIC (User, Companion, LUser$Companion;)
           ALOAD (0)
           ALOAD (1)
           ILOAD (2)

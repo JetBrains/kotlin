@@ -308,7 +308,7 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         append("  ").append(Printer.OPCODES[node.opcode] ?: error("Invalid opcode ${node.opcode}"))
 
         when (node) {
-            is FieldInsnNode -> append(" (" + node.name + ", " + node.desc + ")")
+            is FieldInsnNode -> append(" (" + node.owner + ", " + node.name + ", " + node.desc + ")")
             is JumpInsnNode -> append(" (L" + labelMappings[node.label.label] + ")")
             is IntInsnNode -> append(" (" + node.operand + ")")
             is MethodInsnNode -> append(" (" + node.owner + ", "+ node.name + ", " + node.desc + ")")

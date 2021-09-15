@@ -40,7 +40,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
           ALOAD (1)
           LDC (in)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          GETSTATIC (Companion, LUser$Companion;)
+          GETSTATIC (User, Companion, LUser$Companion;)
           ALOAD (1)
           INVOKEVIRTUAL (User$Companion, create, (Landroid/os/Parcel;)LUser;)
           ARETURN
@@ -102,7 +102,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
           ALOAD (1)
           LDC (parcel)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          GETSTATIC (Companion, LUser$Companion;)
+          GETSTATIC (User, Companion, LUser$Companion;)
           ALOAD (0)
           ALOAD (1)
           ILOAD (2)
