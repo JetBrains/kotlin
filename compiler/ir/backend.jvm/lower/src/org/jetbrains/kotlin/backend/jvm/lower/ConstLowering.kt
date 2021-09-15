@@ -9,21 +9,16 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.constantValue
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.incremental.components.InlineConstTracker
-import org.jetbrains.kotlin.incremental.components.ConstantRef
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.descriptors.SourceFile
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.load.kotlin.toSourceElement
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.classId
+import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 internal val constPhase1 = makeIrFilePhase(
     ::ConstLowering,
@@ -37,16 +32,22 @@ internal val constPhase2 = makeIrFilePhase(
     description = "Substitute calls to const properties with constant values"
 )
 
-class ConstLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+class ConstLowering(val context: JvmBackendContext) : FileLoweringPass {
     val inlineConstTracker =
-        context.state.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER] ?: InlineConstTracker.DoNothing
+        context.state.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER]
 
-    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
+    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(ConstTransformer(irFile, context, inlineConstTracker))
+}
 
+private class ConstTransformer(
+    val irFile: IrFile,
+    val context: JvmBackendContext,
+    val inlineConstTracker: InlineConstTracker?
+) : IrElementTransformerVoid() {
     private fun IrExpression.lowerConstRead(receiver: IrExpression?, field: IrField?): IrExpression? {
         val value = field?.constantValue() ?: return null
         transformChildrenVoid()
-        reportInlineConst(this@lowerConstRead, field)
+        reportInlineConst(field, value)
 
         val resultExpression = if (context.state.shouldInlineConstVals)
             value.copyWithOffsets(startOffset, endOffset)
@@ -62,28 +63,16 @@ class ConstLowering(val context: JvmBackendContext) : IrElementTransformerVoid()
             )
     }
 
-    private fun reportInlineConst(irExpression: IrExpression, field: IrField?) {
-        if (inlineConstTracker == InlineConstTracker.DoNothing) return
-        val value = field?.constantValue() ?: return
+    private fun reportInlineConst(field: IrField, value: IrConst<*>) {
+        if (inlineConstTracker == null) return
+        if (field.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return
 
-        if (!field.isFinal || !field.isStatic) return
+        val path = irFile.path
+        val owner = field.parentAsClass.classId?.asString()?.replace(".", "$")?.replace("/", ".") ?: return
+        val name = field.name.asString()
+        val constType = value.kind.asString
 
-        val sourceFile = field.toIrBasedDescriptor().containingDeclaration.toSourceElement.containingFile
-        if (sourceFile == SourceFile.NO_SOURCE_FILE || sourceFile.toString().lowercase().endsWith(".kt")) return
-
-        for (file: KtFile in context.state.files) {
-            val fileName = file.virtualFilePath
-            val owner =
-                ((irExpression as? IrGetFieldImpl)?.symbol?.signature as? IdSignature.CompositeSignature)?.container?.asPublic()?.firstNameSegment
-                    ?: continue
-            val name = field.name.asString()
-            val constType = value.kind.toString()
-
-            inlineConstTracker.report(
-                fileName,
-                listOf(ConstantRef(owner, name, constType))
-            )
-        }
+        inlineConstTracker.report(path, owner, name, constType)
     }
 
     private fun IrExpression.shouldDropConstReceiver() =
