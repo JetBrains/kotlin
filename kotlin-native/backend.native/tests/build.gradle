@@ -1416,6 +1416,24 @@ linkTest("innerClass_linkTest") {
     lib = "codegen/innerClass/linkTest_lib.kt"
 }
 
+linkTest("innerClass_inheritance_linkTest") {
+    useGoldenData = true
+    source = "codegen/innerClass/inheritance_linkTest_main.kt"
+    lib = "codegen/innerClass/inheritance_linkTest_lib.kt"
+}
+
+linkTest("innerClass_inheritance2_linkTest") {
+    useGoldenData = true
+    source = "codegen/innerClass/inheritance2_linkTest_main.kt"
+    lib = "codegen/innerClass/inheritance2_linkTest_lib.kt"
+}
+
+linkTest("innerClass_inheritance3_linkTest") {
+    useGoldenData = true
+    source = "codegen/innerClass/inheritance3_linkTest_main.kt"
+    lib = "codegen/innerClass/inheritance3_linkTest_lib.kt"
+}
+
 task localClass_localHierarchy(type: KonanLocalTest) {
     useGoldenData = true
     source = "codegen/localClass/localHierarchy.kt"

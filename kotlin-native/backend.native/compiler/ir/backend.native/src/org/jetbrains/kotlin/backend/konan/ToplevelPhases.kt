@@ -15,15 +15,16 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irGetObjectValue
-import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
+import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragment, context: Context) {
     if (!context.config.needVerifyIr) return
@@ -140,7 +142,8 @@ internal val buildAdditionalCacheInfoPhase = konanUnitPhase(
                         override fun visitClass(declaration: IrClass) {
                             declaration.acceptChildrenVoid(this)
 
-                            if (declaration.isExported && declaration.origin != DECLARATION_ORIGIN_FUNCTION_CLASS)
+                            if (!declaration.isInterface && declaration.visibility != DescriptorVisibilities.LOCAL
+                                    && declaration.isExported && declaration.origin != DECLARATION_ORIGIN_FUNCTION_CLASS)
                                 classFields.add(moduleDeserializer.buildClassFields(declaration, getLayoutBuilder(declaration).getDeclaredFields()))
                         }
 
@@ -164,11 +167,6 @@ internal val buildAdditionalCacheInfoPhase = konanUnitPhase(
         description = "Build additional cache info (inline functions bodies and fields of classes)",
         prerequisite = setOf(psiToIrPhase)
 )
-
-// Coupled with [psiToIrPhase] logic above.
-internal fun shouldLower(context: Context, declaration: IrDeclaration): Boolean {
-    return context.llvmModuleSpecification.containsDeclaration(declaration)
-}
 
 internal val destroySymbolTablePhase = konanUnitPhase(
         op = {
@@ -393,6 +391,28 @@ internal val exportInternalAbiPhase = makeKonanModuleOpPhase(
                         context.internalAbi.declare(function, declaration.module)
                     }
 
+                    if (declaration.isInner) {
+                        val function = context.irFactory.buildFun {
+                            name = InternalAbi.getInnerClassOuterThisAccessorName(declaration)
+                            origin = InternalAbi.INTERNAL_ABI_ORIGIN
+                            returnType = declaration.parentAsClass.defaultType
+                        }
+                        function.addValueParameter {
+                            name = Name.identifier("innerClass")
+                            origin = InternalAbi.INTERNAL_ABI_ORIGIN
+                            type = declaration.defaultType
+                        }
+
+                        context.createIrBuilder(function.symbol).apply {
+                            function.body = irBlockBody {
+                                +irReturn(irGetField(
+                                        irGet(function.valueParameters[0]),
+                                        context.specialDeclarationsFactory.getOuterThisField(declaration))
+                                )
+                            }
+                        }
+                        context.internalAbi.declare(function, declaration.module)
+                    }
                 }
             }
             module.acceptChildrenVoid(visitor)
@@ -404,7 +424,8 @@ internal val useInternalAbiPhase = makeKonanModuleOpPhase(
         description = "Use internal ABI functions to access private entities",
         prerequisite = emptySet(),
         op = { context, module ->
-            val accessors = mutableMapOf<IrClass, IrSimpleFunction>()
+            val companionObjectAccessors = mutableMapOf<IrClass, IrSimpleFunction>()
+            val outerThisAccessors = mutableMapOf<IrClass, IrSimpleFunction>()
             val transformer = object : IrElementTransformerVoid() {
                 override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
                     val irClass = expression.symbol.owner
@@ -416,7 +437,7 @@ internal val useInternalAbiPhase = makeKonanModuleOpPhase(
                         // Access to Obj-C metaclass is done via intrinsic.
                         return expression
                     }
-                    val accessor = accessors.getOrPut(irClass) {
+                    val accessor = companionObjectAccessors.getOrPut(irClass) {
                         context.irFactory.buildFun {
                             name = InternalAbi.getCompanionObjectAccessorName(irClass)
                             returnType = irClass.defaultType
@@ -427,6 +448,39 @@ internal val useInternalAbiPhase = makeKonanModuleOpPhase(
                         }
                     }
                     return IrCallImpl(expression.startOffset, expression.endOffset, expression.type, accessor.symbol, accessor.typeParameters.size, accessor.valueParameters.size)
+                }
+
+                override fun visitGetField(expression: IrGetField): IrExpression {
+                    val field = expression.symbol.owner
+                    val irClass = field.parentClassOrNull ?: return expression
+                    if (!irClass.isInner || context.llvmModuleSpecification.containsDeclaration(irClass)
+                            || context.specialDeclarationsFactory.getOuterThisField(irClass) != field
+                    ) {
+                        return expression
+                    }
+                    val accessor = outerThisAccessors.getOrPut(irClass) {
+                        context.irFactory.buildFun {
+                            name = InternalAbi.getInnerClassOuterThisAccessorName(irClass)
+                            returnType = irClass.parentAsClass.defaultType
+                            origin = InternalAbi.INTERNAL_ABI_ORIGIN
+                            isExternal = true
+                        }.also { function ->
+                            context.internalAbi.reference(function, irClass.module)
+
+                            function.addValueParameter {
+                                name = Name.identifier("innerClass")
+                                origin = InternalAbi.INTERNAL_ABI_ORIGIN
+                                type = irClass.defaultType
+                            }
+                        }
+                    }
+                    return IrCallImpl(
+                            expression.startOffset, expression.endOffset,
+                            expression.type, accessor.symbol,
+                            accessor.typeParameters.size, accessor.valueParameters.size
+                    ).apply {
+                        putValueArgument(0, expression.receiver)
+                    }
                 }
             }
             module.transformChildrenVoid(transformer)

@@ -40,6 +40,7 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyToWithoutSuperTypes
+import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
@@ -77,9 +78,9 @@ internal class SpecialDeclarationsFactory(val context: Context) {
     object DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS :
             IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
 
-    fun getOuterThisField(innerClass: IrClass): IrField =
-        if (!innerClass.isInner) throw AssertionError("Class is not inner: ${innerClass.descriptor}")
-        else outerThisFields.getOrPut(innerClass) {
+    fun getOuterThisField(innerClass: IrClass): IrField {
+        assert(innerClass.isInner) { "Class is not inner: ${innerClass.render()}" }
+        return outerThisFields.getOrPut(innerClass) {
             val outerClass = innerClass.parent as? IrClass
                     ?: throw AssertionError("No containing class for inner class ${innerClass.descriptor}")
 
@@ -112,6 +113,7 @@ internal class SpecialDeclarationsFactory(val context: Context) {
                 parent = innerClass
             }
         }
+    }
 
     fun getLoweredEnumOrNull(enumClass: IrClass): LoweredEnumAccess? {
         assert(enumClass.kind == ClassKind.ENUM_CLASS) { "Expected enum class but was: ${enumClass.descriptor}" }
@@ -291,12 +293,12 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     fun getLayoutBuilder(irClass: IrClass): ClassLayoutBuilder {
         if (irClass is IrLazyClass)
             return layoutBuilders.getOrPut(irClass) {
-                ClassLayoutBuilder(irClass, this, isLowered = shouldLower(this, irClass))
+                ClassLayoutBuilder(irClass, this)
             }
         val metadata = irClass.metadata as? CodegenClassMetadata
                 ?: CodegenClassMetadata(irClass).also { irClass.metadata = it }
         metadata.layoutBuilder?.let { return it }
-        val layoutBuilder = ClassLayoutBuilder(irClass, this, isLowered = shouldLower(this, irClass))
+        val layoutBuilder = ClassLayoutBuilder(irClass, this)
         metadata.layoutBuilder = layoutBuilder
         return layoutBuilder
     }

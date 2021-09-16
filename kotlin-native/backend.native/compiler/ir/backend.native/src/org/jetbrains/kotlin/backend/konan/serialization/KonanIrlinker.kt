@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
+import org.jetbrains.kotlin.backend.konan.descriptors.toFieldInfo
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
@@ -92,14 +93,14 @@ internal class ByteArrayStream(val buf: ByteArray) {
 
 class SerializedInlineFunctionReference(val file: Int, val functionSignature: Int, val body: Int,
                                         val startOffset: Int, val endOffset: Int,
-                                        val extensionReceiverSig: Int, val dispatchReceiverSig: Int,
+                                        val extensionReceiverSig: Int, val dispatchReceiverSig: Int, val outerReceiverSigs: IntArray,
                                         val valueParameterSigs: IntArray, val typeParameterSigs: IntArray,
                                         val defaultValues: IntArray)
 
 internal object InlineFunctionBodyReferenceSerializer {
     fun serialize(bodies: List<SerializedInlineFunctionReference>): ByteArray {
         val size = bodies.sumOf {
-            Int.SIZE_BYTES * (10 + it.valueParameterSigs.size + it.typeParameterSigs.size + it.defaultValues.size)
+            Int.SIZE_BYTES * (11 + it.outerReceiverSigs.size + it.valueParameterSigs.size + it.typeParameterSigs.size + it.defaultValues.size)
         }
         val stream = ByteArrayStream(ByteArray(size))
         bodies.forEach {
@@ -110,6 +111,8 @@ internal object InlineFunctionBodyReferenceSerializer {
             stream.writeInt(it.endOffset)
             stream.writeInt(it.extensionReceiverSig)
             stream.writeInt(it.dispatchReceiverSig)
+            stream.writeInt(it.outerReceiverSigs.size)
+            it.outerReceiverSigs.forEach { sig -> stream.writeInt(sig) }
             stream.writeInt(it.valueParameterSigs.size)
             it.valueParameterSigs.forEach { sig -> stream.writeInt(sig) }
             stream.writeInt(it.typeParameterSigs.size)
@@ -131,6 +134,8 @@ internal object InlineFunctionBodyReferenceSerializer {
             val endOffset = stream.readInt()
             val extensionReceiverSig = stream.readInt()
             val dispatchReceiverSig = stream.readInt()
+            val outerReceiverSigsCount = stream.readInt()
+            val outerReceiverSigs = IntArray(outerReceiverSigsCount) { stream.readInt() }
             val valueParameterSigsCount = stream.readInt()
             val valueParameterSigs = IntArray(valueParameterSigsCount) { stream.readInt() }
             val typeParameterSigsCount = stream.readInt()
@@ -138,7 +143,7 @@ internal object InlineFunctionBodyReferenceSerializer {
             val defaultValuesCount = stream.readInt()
             val defaultValues = IntArray(defaultValuesCount) { stream.readInt() }
             result.add(SerializedInlineFunctionReference(file, functionSignature, body, startOffset, endOffset,
-                    extensionReceiverSig, dispatchReceiverSig, valueParameterSigs, typeParameterSigs, defaultValues))
+                    extensionReceiverSig, dispatchReceiverSig, outerReceiverSigs, valueParameterSigs, typeParameterSigs, defaultValues))
         }
         return result
     }
@@ -153,18 +158,19 @@ class SerializedClassFieldInfo(val name: Int, val binaryType: Int, val type: Int
     }
 }
 
-class SerializedClassFields(val file: Int, val classSignature: Int,
-                            val typeParameterSigs: IntArray, val fields: Array<SerializedClassFieldInfo>)
+class SerializedClassFields(val file: Int, val classSignature: Int, val typeParameterSigs: IntArray,
+                            val outerThisIndex: Int, val fields: Array<SerializedClassFieldInfo>)
 
 internal object ClassFieldsSerializer {
     fun serialize(classFields: List<SerializedClassFields>): ByteArray {
-        val size = classFields.sumOf { Int.SIZE_BYTES * (4 + it.typeParameterSigs.size + it.fields.size * 4) }
+        val size = classFields.sumOf { Int.SIZE_BYTES * (5 + it.typeParameterSigs.size + it.fields.size * 4) }
         val stream = ByteArrayStream(ByteArray(size))
         classFields.forEach {
             stream.writeInt(it.file)
             stream.writeInt(it.classSignature)
             stream.writeInt(it.typeParameterSigs.size)
             it.typeParameterSigs.forEach { stream.writeInt(it) }
+            stream.writeInt(it.outerThisIndex)
             stream.writeInt(it.fields.size)
             it.fields.forEach { field ->
                 stream.writeInt(field.name)
@@ -184,6 +190,7 @@ internal object ClassFieldsSerializer {
             val classSignature = stream.readInt()
             val typeParameterSigsCount = stream.readInt()
             val typeParameterSigs = IntArray(typeParameterSigsCount) { stream.readInt() }
+            val outerThisIndex = stream.readInt()
             val fieldsCount = stream.readInt()
             val fields = Array(fieldsCount) {
                 val name = stream.readInt()
@@ -192,7 +199,7 @@ internal object ClassFieldsSerializer {
                 val flags = stream.readInt()
                 SerializedClassFieldInfo(name, binaryType, type, flags)
             }
-            result.add(SerializedClassFields(file, classSignature, typeParameterSigs, fields))
+            result.add(SerializedClassFields(file, classSignature, typeParameterSigs, outerThisIndex, fields))
         }
         return result
     }
@@ -412,6 +419,7 @@ internal class KonanIrLinker(
             }
 
             val typeParameterSigs = mutableListOf<Int>()
+            val outerReceiverSigs = mutableListOf<Int>()
             val protoFunction = if (outerClasses.isEmpty()) {
                 val irProperty = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
                 if (irProperty == null)
@@ -426,8 +434,11 @@ internal class KonanIrLinker(
                             BinarySymbolData.decode(protoClass.getTypeParameter(it).base.symbol).signatureId
                         }
                     }
-                    if (classIndex < outerClasses.size - 1)
+                    if (classIndex < outerClasses.size - 1) {
+                        if (classIndex >= firstNotInnerClassIndex)
+                            outerReceiverSigs.add(BinarySymbolData.decode(protoClass.thisReceiver.base.symbol).signatureId)
                         protoClass = protoClass.findClass(outerClasses[classIndex + 1], fileReader, symbolDeserializer)
+                    }
                 }
                 protoClass.findInlineFunction(irFunction, fileReader, symbolDeserializer)
             }
@@ -450,7 +461,7 @@ internal class KonanIrLinker(
             } ?: InvalidIndex
 
             return SerializedInlineFunctionReference(fileDeserializationState.fileIndex, functionSignature, protoFunction.base.body,
-                    irFunction.startOffset, irFunction.endOffset, extensionReceiverSig, dispatchReceiverSig,
+                    irFunction.startOffset, irFunction.endOffset, extensionReceiverSig, dispatchReceiverSig, outerReceiverSigs.toIntArray(),
                     valueParameterSigs.toIntArray(), typeParameterSigs.toIntArray(), defaultValues.toIntArray())
         }
 
@@ -472,6 +483,7 @@ internal class KonanIrLinker(
 
             val typeParameterSigs = mutableListOf<Int>()
             var protoClass = protoDeclaration.irClass
+            val protoClasses = mutableListOf(protoClass)
             val firstNotInnerClassIndex = outerClasses.indexOfLast { !it.isInner }
             for (classIndex in outerClasses.indices) {
                 if (classIndex >= firstNotInnerClassIndex /* owner's type parameters are always accessible */) {
@@ -479,8 +491,10 @@ internal class KonanIrLinker(
                         BinarySymbolData.decode(protoClass.getTypeParameter(it).base.symbol).signatureId
                     }
                 }
-                if (classIndex < outerClasses.size - 1)
+                if (classIndex < outerClasses.size - 1) {
                     protoClass = protoClass.findClass(outerClasses[classIndex + 1], fileReader, symbolDeserializer)
+                    protoClasses += protoClass
+                }
             }
 
             val protoFields = mutableListOf<ProtoField>()
@@ -504,31 +518,43 @@ internal class KonanIrLinker(
                 protoFieldsMap[name] = it
             }
 
+            val outerThisIndex = fields.indexOfFirst { it.irField?.origin == SpecialDeclarationsFactory.DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS }
             val compatibleMode = CompatibilityMode(libraryAbiVersion).oldSignatures
             return SerializedClassFields(
                     fileDeserializationState.fileIndex,
                     BinarySymbolData.decode(protoClass.base.symbol).signatureId,
                     typeParameterSigs.toIntArray(),
+                    outerThisIndex,
                     Array(fields.size) {
                         val field = fields[it]
                         val irField = field.irField ?: error("No IR for field ${field.name} of ${irClass.render()}")
-                        val protoField = protoFieldsMap[field.name] ?: error("No proto for ${irField.render()}")
-                        val nameAndType = BinaryNameAndType.decode(protoField.nameType)
-                        var flags = 0
-                        if (field.isConst)
-                            flags = flags or SerializedClassFieldInfo.FLAG_IS_CONST
-                        if (field.hasConstInitializer)
-                            flags = flags or SerializedClassFieldInfo.FLAG_CONST_INITIALIZER
-                        val classifier = irField.type.classifierOrNull ?: error("Fields of type ${irField.type.render()} are not supported")
-                        val primitiveBinaryType = irField.type.computePrimitiveBinaryTypeOrNull()
+                        if (it == outerThisIndex) {
+                            require(irClass.isInner) { "Expected an inner class: ${irClass.render()}" }
+                            require(protoClasses.size > 1) { "An inner class must have at least one outer class" }
+                            val outerProtoClass = protoClasses[protoClasses.size - 2]
+                            val nameAndType = BinaryNameAndType.decode(outerProtoClass.thisReceiver.nameType)
 
-                        SerializedClassFieldInfo(
-                                nameAndType.nameIndex,
-                                primitiveBinaryType?.ordinal ?: InvalidIndex,
-                                if (with(KonanManglerIr) { (classifier as? IrClassSymbol)?.owner?.isExported(compatibleMode) } == false)
-                                    InvalidIndex
-                                else nameAndType.typeIndex,
-                                flags)
+                            SerializedClassFieldInfo(name = InvalidIndex, binaryType = InvalidIndex, nameAndType.typeIndex, flags = 0)
+                        } else {
+                            val protoField = protoFieldsMap[field.name] ?: error("No proto for ${irField.render()}")
+                            val nameAndType = BinaryNameAndType.decode(protoField.nameType)
+                            var flags = 0
+                            if (field.isConst)
+                                flags = flags or SerializedClassFieldInfo.FLAG_IS_CONST
+                            if (field.hasConstInitializer)
+                                flags = flags or SerializedClassFieldInfo.FLAG_CONST_INITIALIZER
+                            val classifier = irField.type.classifierOrNull
+                                    ?: error("Fields of type ${irField.type.render()} are not supported")
+                            val primitiveBinaryType = irField.type.computePrimitiveBinaryTypeOrNull()
+
+                            SerializedClassFieldInfo(
+                                    nameAndType.nameIndex,
+                                    primitiveBinaryType?.ordinal ?: InvalidIndex,
+                                    if (with(KonanManglerIr) { (classifier as? IrClassSymbol)?.owner?.isExported(compatibleMode) } == false)
+                                        InvalidIndex
+                                    else nameAndType.typeIndex,
+                                    flags)
+                        }
                     })
         }
     }
@@ -732,6 +758,10 @@ internal class KonanIrLinker(
                 require(sigIndex != InvalidIndex) { "Expected a valid sig reference to the dispatch receiver for ${function.render()}" }
                 symbolDeserializer.referenceLocalIrSymbol(parameter.symbol, symbolDeserializer.deserializeIdSignature(sigIndex))
             }
+            for (index in 0 until outerClasses.size - 1) {
+                val sigIndex = inlineFunctionReference.outerReceiverSigs[index]
+                symbolDeserializer.referenceLocalIrSymbol(outerClasses[index].thisReceiver!!.symbol, symbolDeserializer.deserializeIdSignature(sigIndex))
+            }
 
             function.body = declarationDeserializer.deserializeStatementBody(inlineFunctionReference.body) as IrBody
 
@@ -759,7 +789,7 @@ internal class KonanIrLinker(
             }
         }
 
-        fun deserializeClassFields(irClass: IrClass): List<ClassLayoutBuilder.FieldInfo> {
+        fun deserializeClassFields(irClass: IrClass, outerThisField: IrField?): List<ClassLayoutBuilder.FieldInfo> {
             val signature = irClass.symbol.signature
                     ?: error("No signature for ${irClass.render()}")
             val serializedClassFields = classesFields[signature]
@@ -786,29 +816,35 @@ internal class KonanIrLinker(
                 return symbolDeserializer.deserializePublicSymbol(classIdSig, BinarySymbolData.SymbolKind.CLASS_SYMBOL) as IrClassSymbol
             }
 
-            return serializedClassFields.fields.map {
-                val name = fileDeserializationInfo.fileReader.string(it.name)
-                val type = when {
-                    it.type != InvalidIndex -> declarationDeserializer.deserializeIrType(it.type)
-                    it.binaryType == InvalidIndex -> builtIns.anyNType
-                    else -> when (PrimitiveBinaryType.values().getOrNull(it.binaryType)) {
-                        PrimitiveBinaryType.BOOLEAN -> builtIns.booleanType
-                        PrimitiveBinaryType.BYTE -> builtIns.byteType
-                        PrimitiveBinaryType.SHORT -> builtIns.shortType
-                        PrimitiveBinaryType.INT -> builtIns.intType
-                        PrimitiveBinaryType.LONG -> builtIns.longType
-                        PrimitiveBinaryType.FLOAT -> builtIns.floatType
-                        PrimitiveBinaryType.DOUBLE -> builtIns.doubleType
-                        PrimitiveBinaryType.POINTER -> getByClassId(KonanPrimitiveType.NON_NULL_NATIVE_PTR.classId).defaultType
-                        PrimitiveBinaryType.VECTOR128 -> getByClassId(KonanPrimitiveType.VECTOR128.classId).defaultType
-                        else -> error("Bad binary type of field $name of ${irClass.render()}")
+            return serializedClassFields.fields.mapIndexed { index, field ->
+                if (index == serializedClassFields.outerThisIndex) {
+                    require(irClass.isInner) { "Expected an inner class: ${irClass.render()}" }
+                    require(outerThisField != null) { "For an inner class ${irClass.render()} there should be <outer this> field" }
+                    outerThisField.toFieldInfo()
+                } else {
+                    val name = fileDeserializationInfo.fileReader.string(field.name)
+                    val type = when {
+                        field.type != InvalidIndex -> declarationDeserializer.deserializeIrType(field.type)
+                        field.binaryType == InvalidIndex -> builtIns.anyNType
+                        else -> when (PrimitiveBinaryType.values().getOrNull(field.binaryType)) {
+                            PrimitiveBinaryType.BOOLEAN -> builtIns.booleanType
+                            PrimitiveBinaryType.BYTE -> builtIns.byteType
+                            PrimitiveBinaryType.SHORT -> builtIns.shortType
+                            PrimitiveBinaryType.INT -> builtIns.intType
+                            PrimitiveBinaryType.LONG -> builtIns.longType
+                            PrimitiveBinaryType.FLOAT -> builtIns.floatType
+                            PrimitiveBinaryType.DOUBLE -> builtIns.doubleType
+                            PrimitiveBinaryType.POINTER -> getByClassId(KonanPrimitiveType.NON_NULL_NATIVE_PTR.classId).defaultType
+                            PrimitiveBinaryType.VECTOR128 -> getByClassId(KonanPrimitiveType.VECTOR128.classId).defaultType
+                            else -> error("Bad binary type of field $name of ${irClass.render()}")
+                        }
                     }
+                    ClassLayoutBuilder.FieldInfo(
+                            name, type,
+                            isConst = (field.flags and SerializedClassFieldInfo.FLAG_IS_CONST) != 0,
+                            hasConstInitializer = (field.flags and SerializedClassFieldInfo.FLAG_CONST_INITIALIZER) != 0,
+                            irField = null)
                 }
-                ClassLayoutBuilder.FieldInfo(
-                        name, type,
-                        isConst = (it.flags and SerializedClassFieldInfo.FLAG_IS_CONST) != 0,
-                        hasConstInitializer = (it.flags and SerializedClassFieldInfo.FLAG_CONST_INITIALIZER) != 0,
-                        irField = null)
             }
         }
     }
