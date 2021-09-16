@@ -308,8 +308,22 @@ class CirTypeDistanceTest : KtInlineSourceCommonizerTestCase() {
         assertUnreachable(CirTypeDistance.unreachable.dec())
         assertUnreachable(CirTypeDistance.unreachable - CirTypeDistance(1))
         assertUnreachable(CirTypeDistance(1) - CirTypeDistance.unreachable)
-        assertUnreachable(CirTypeDistance.unreachable.absoluteValue)
         assertEquals(CirTypeDistance(Int.MAX_VALUE), CirTypeDistance.unreachable)
+    }
+
+    fun `test penalty`() {
+        assertEquals(1, CirTypeDistance(-1).penalty)
+        assertEquals(2, CirTypeDistance(-2).penalty)
+        assertEquals(Int.MIN_VALUE, CirTypeDistance(0).penalty)
+        assertEquals(Int.MAX_VALUE, CirTypeDistance.unreachable.penalty)
+        assertEquals(Int.MIN_VALUE + 1, CirTypeDistance(1).penalty)
+        assertEquals(Int.MIN_VALUE + 2, CirTypeDistance(2).penalty)
+        assertTrue(CirTypeDistance(-1).penalty > CirTypeDistance(1).penalty)
+        assertTrue(CirTypeDistance(-1).penalty > CirTypeDistance(10).penalty)
+        assertTrue(CirTypeDistance(2).penalty > CirTypeDistance(1).penalty)
+        assertTrue(CirTypeDistance(-2).penalty > CirTypeDistance(-1).penalty)
+        assertTrue(CirTypeDistance(1).penalty > CirTypeDistance(0).penalty)
+        assertTrue(CirTypeDistance(-1).penalty > CirTypeDistance(0).penalty)
     }
 }
 
