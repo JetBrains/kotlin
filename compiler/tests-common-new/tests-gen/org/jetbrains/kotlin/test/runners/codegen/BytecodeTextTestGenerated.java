@@ -2255,6 +2255,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("constructorOnly.kt")
+        public void testConstructorOnly() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues/constructorOnly.kt");
+        }
+
+        @Test
         @TestMetadata("extensionLambdaExtensionReceiver.kt")
         public void testExtensionLambdaExtensionReceiver() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues/extensionLambdaExtensionReceiver.kt");

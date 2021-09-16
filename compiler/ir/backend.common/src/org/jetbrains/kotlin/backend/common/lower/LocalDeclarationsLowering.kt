@@ -168,10 +168,10 @@ class LocalDeclarationsLowering(
 
         // NOTE: This map is iterated over in `rewriteClassMembers` and we're relying on
         // the deterministic iteration order that `mutableMapOf` provides.
-        val capturedValueToField: MutableMap<IrValueDeclaration, IrField> = mutableMapOf()
+        val capturedValueToField: MutableMap<IrValueDeclaration, Lazy<IrField>> = mutableMapOf()
 
         override fun irGet(startOffset: Int, endOffset: Int, valueDeclaration: IrValueDeclaration): IrExpression? {
-            val field = capturedValueToField[valueDeclaration] ?: return null
+            val field = capturedValueToField[valueDeclaration]?.value ?: return null
 
             val receiver = declaration.thisReceiver!!
             return IrGetFieldImpl(
@@ -183,7 +183,7 @@ class LocalDeclarationsLowering(
 
     private class LocalClassMemberContext(val member: IrFunction, val classContext: LocalClassContext) : LocalContext() {
         override fun irGet(startOffset: Int, endOffset: Int, valueDeclaration: IrValueDeclaration): IrExpression? {
-            val field = classContext.capturedValueToField[valueDeclaration] ?: return null
+            val field = classContext.capturedValueToField[valueDeclaration]?.value ?: return null
 
             val receiver = member.dispatchReceiverParameter
                 ?: error("No dispatch receiver parameter for ${member.render()}")
@@ -192,7 +192,6 @@ class LocalDeclarationsLowering(
                 receiver = IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol)
             )
         }
-
     }
 
     private fun LocalContext.remapType(type: IrType): IrType {
@@ -284,15 +283,15 @@ class LocalDeclarationsLowering(
             override fun visitConstructor(declaration: IrConstructor): IrStatement {
                 // Body is transformed separately. See loop over constructors in rewriteDeclarations().
 
-                val constructorContext = localClassConstructors[declaration]
-                return constructorContext?.transformedDeclaration?.apply {
+                val constructorContext = localClassConstructors[declaration] ?: return super.visitConstructor(declaration)
+                return constructorContext.transformedDeclaration.apply {
                     this.body = declaration.body!!
 
                     declaration.valueParameters.filter { it.defaultValue != null }.forEach { argument ->
                         oldParameterToNew[argument]!!.defaultValue = argument.defaultValue
                     }
                     acceptChildren(SetDeclarationsParentVisitor, this)
-                } ?: super.visitConstructor(declaration)
+                }
             }
 
             override fun visitGetValue(expression: IrGetValue): IrExpression {
@@ -478,10 +477,11 @@ class LocalDeclarationsLowering(
 
             assert(constructorsCallingSuper.any()) { "Expected at least one constructor calling super; class: $irClass" }
 
-            irClass.declarations += localClassContext.capturedValueToField.values
+            val usedCaptureFields = localClassContext.capturedValueToField.values.mapNotNull { if (it.isInitialized()) it.value else null }
+            irClass.declarations += usedCaptureFields
 
             context.mapping.capturedFields[irClass] =
-                (context.mapping.capturedFields[irClass] ?: emptyList()) + localClassContext.capturedValueToField.values
+                (context.mapping.capturedFields[irClass] ?: emptyList()) + usedCaptureFields
 
             for (constructorContext in constructorsCallingSuper) {
                 val blockBody = constructorContext.declaration.body as? IrBlockBody
@@ -491,9 +491,10 @@ class LocalDeclarationsLowering(
                 // since `AnonymousObjectTransformer` relies on this ordering.
                 blockBody.statements.addAll(
                     0,
-                    localClassContext.capturedValueToField.map { (capturedValue, field) ->
+                    localClassContext.capturedValueToField.mapNotNull { (capturedValue, field) ->
+                        if (!field.isInitialized()) return@mapNotNull null
                         IrSetFieldImpl(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.symbol,
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.value.symbol,
                             IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irClass.thisReceiver!!.symbol),
                             constructorContext.irGet(UNDEFINED_OFFSET, UNDEFINED_OFFSET, capturedValue)!!,
                             context.irBuiltIns.unitType,
@@ -769,19 +770,18 @@ class LocalDeclarationsLowering(
             val classDeclaration = localClassContext.declaration
             val generatedNames = mutableSetOf<String>()
             localClassContext.closure.capturedValues.forEach { capturedValue ->
-
                 val owner = capturedValue.owner
-                val irField = createFieldForCapturedValue(
-                    classDeclaration.startOffset,
-                    classDeclaration.endOffset,
-                    suggestNameForCapturedValue(owner, generatedNames),
-                    visibilityPolicy.forCapturedField(capturedValue),
-                    classDeclaration,
-                    owner.type,
-                    owner is IrValueParameter && owner.isCrossinline
-                )
-
-                localClassContext.capturedValueToField[owner] = irField
+                localClassContext.capturedValueToField[owner] = lazy(LazyThreadSafetyMode.NONE) {
+                    createFieldForCapturedValue(
+                        classDeclaration.startOffset,
+                        classDeclaration.endOffset,
+                        suggestNameForCapturedValue(owner, generatedNames),
+                        visibilityPolicy.forCapturedField(capturedValue),
+                        classDeclaration,
+                        owner.type,
+                        owner is IrValueParameter && owner.isCrossinline
+                    )
+                }
             }
         }
 
