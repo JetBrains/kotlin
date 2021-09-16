@@ -5,11 +5,11 @@ fun foo(b: B<Int, Int>) {}
 fun test_1(b: B<String, Number>) {
     foo(b.myMap {
         it.k.length // implicits
-    } as B<Int, Int>)
+    } <!UNCHECKED_CAST!>as B<Int, Int><!>)
 }
 
 fun test_2(s: String) {
-    val func = { s.length } <!CAST_NEVER_SUCCEEDS!>as<!> B<Int, Int>
+    val func = { s.length } <!UNCHECKED_CAST!>as B<Int, Int><!>
 }
 
 class B<out K, V>(val k: K, val v: V)

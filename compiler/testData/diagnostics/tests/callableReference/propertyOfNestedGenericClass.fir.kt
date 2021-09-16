@@ -26,7 +26,7 @@ fun test() {
 
     c
 
-    val d = id(Scope.Nested<*>::keyT as Scope.Nested<Number>)
+    val d = id(Scope.Nested<*>::keyT <!UNCHECKED_CAST!>as Scope.Nested<Number><!>)
 
     d
 

@@ -39,7 +39,7 @@ fun main1() {
 // --- from Kotlin --- //
 
 public class Bar<T> {
-    var value: T = null as T
+    var value: T = null <!UNCHECKED_CAST!>as T<!>
 }
 
 fun takeStarBar(x: Bar<*>) {

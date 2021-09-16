@@ -4,5 +4,5 @@
 class IdUnavailableException() : Exception() {}
 
 fun <T : Any> T.getJavaClass() : Class<T> {
-    return ((this as Object).getClass()) as Class<T> // Some error here, because of Exception() used above. ?!!!
+    return ((this as Object).getClass()) <!UNCHECKED_CAST!>as Class<T><!> // Some error here, because of Exception() used above. ?!!!
 }

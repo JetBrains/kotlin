@@ -11,7 +11,7 @@ class B<T> {
 fun <Y> foo(c: A<Y>): Y = TODO()
 
 fun <E> main(a: A<E>) {
-    a as A<B<*>>
+    a <!UNCHECKED_CAST!>as A<B<*>><!>
 
     foo(a).b()
 }
@@ -21,7 +21,7 @@ class AOut<out X>
 fun <Y> foo(c: AOut<Y>): Y = TODO()
 
 fun <E> mainOut(a: AOut<E>) {
-    a as AOut<B<*>>
+    a <!UNCHECKED_CAST!>as AOut<B<*>><!>
 
     foo(a).b()
 }

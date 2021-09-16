@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // SKIP_TXT
 class StateMachine<Q> internal constructor() {
     fun getInputStub(): Q = null <!UNCHECKED_CAST!>as Q<!>

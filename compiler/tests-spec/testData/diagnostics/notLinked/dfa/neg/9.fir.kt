@@ -4,8 +4,8 @@
 
 // TESTCASE NUMBER: 1
 fun <T, K> case_1(x: T?, y: K?) {
-    x as T
-    y as K
+    x <!UNCHECKED_CAST!>as T<!>
+    y <!UNCHECKED_CAST!>as K<!>
     val z = <!DEBUG_INFO_EXPRESSION_TYPE("T? & T")!>x<!> ?: <!DEBUG_INFO_EXPRESSION_TYPE("K? & K")!>y<!>
 
     <!DEBUG_INFO_EXPRESSION_TYPE("T? & T")!>x<!><!UNSAFE_CALL!>.<!>equals(10)

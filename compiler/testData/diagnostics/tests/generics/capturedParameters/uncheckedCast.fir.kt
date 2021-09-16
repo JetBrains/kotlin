@@ -22,7 +22,7 @@ fun <E> foo(x: Any, y: Any) : Any {
         return y
     }
 
-    y as Outer<*>.Inner
+    y <!UNCHECKED_CAST!>as Outer<*>.Inner<!>
 
     return C()
 }

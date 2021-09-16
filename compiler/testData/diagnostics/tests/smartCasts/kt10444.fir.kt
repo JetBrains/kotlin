@@ -3,12 +3,12 @@
 
 class Qwe<T : Any>(val a: T?) {
     fun test1(obj: Any) {
-        obj as Qwe<T>
+        obj <!UNCHECKED_CAST!>as Qwe<T><!>
         check(obj.a)
     }
 
     fun test1(obj: Qwe<*>) {
-        obj as Qwe<T>
+        obj <!UNCHECKED_CAST!>as Qwe<T><!>
         check(obj.a)
     }
 

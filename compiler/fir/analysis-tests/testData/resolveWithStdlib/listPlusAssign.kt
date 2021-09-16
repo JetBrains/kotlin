@@ -6,7 +6,7 @@ fun List<String>.modify() {
 }
 
 fun Any.modify() {
-    (<!VARIABLE_EXPECTED!>this as List<Int><!>) += 42
+    (<!VARIABLE_EXPECTED!>this <!UNCHECKED_CAST!>as List<Int><!><!>) += 42
 }
 
 operator fun <T> Set<T>.plusAssign(x: T) {}
@@ -17,5 +17,5 @@ fun Set<String>.modify() {
 }
 
 fun Any.modifySet() {
-    (this as Set<Int>) += 42
+    (this <!UNCHECKED_CAST!>as Set<Int><!>) += 42
 }

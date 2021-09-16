@@ -77,11 +77,11 @@ import test.L
 
 fun main(a: test.A, l: L<Map<String, Int>, Int?>, l1: L<Map<String, Int>, Int>) {
     a.foo(l)
-    a.foo(<!ARGUMENT_TYPE_MISMATCH!>l as L<Map<String, Int>, Int><!>)
-    a.foo(l as L<Map<String, Int?>, Int?>)
+    a.foo(<!ARGUMENT_TYPE_MISMATCH!>l <!UNCHECKED_CAST!>as L<Map<String, Int>, Int><!><!>)
+    a.foo(l <!UNCHECKED_CAST!>as L<Map<String, Int?>, Int?><!>)
 
     a.bar(l1)
-    a.bar(l1 as L<Map<String, Int>, Int?>)
+    a.bar(l1 <!UNCHECKED_CAST!>as L<Map<String, Int>, Int?><!>)
 
     a.baz1().t().containsKey("")
     a.baz1().t().containsKey(null)
@@ -90,7 +90,7 @@ fun main(a: test.A, l: L<Map<String, Int>, Int?>, l1: L<Map<String, Int>, Int>) 
     a.baz1().s().hashCode()
 
     a.baz1().setT(l.t())
-    a.baz1().setT(<!ARGUMENT_TYPE_MISMATCH!>l.t() as L<Map<String, Int>, Int><!>)
+    a.baz1().setT(<!ARGUMENT_TYPE_MISMATCH!>l.t() <!UNCHECKED_CAST!>as L<Map<String, Int>, Int><!><!>)
     a.baz1().setT(null)
 
     a.baz2().t().containsKey("")

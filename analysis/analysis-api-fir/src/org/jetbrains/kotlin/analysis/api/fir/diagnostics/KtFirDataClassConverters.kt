@@ -1599,7 +1599,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS) { firDiagnostic ->
         WrongNumberOfTypeArgumentsImpl(
             firDiagnostic.a,
-            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b.fir),
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b.fir as FirClass),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -1614,7 +1614,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED) { firDiagnostic ->
         OuterClassArgumentsRequiredImpl(
-            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a.fir),
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a.fir as FirClass),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -2771,7 +2771,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             firDiagnostic.b,
             firDiagnostic.c.mapKeys { (incompatible, _) ->
                 incompatible
-            }.mapValues { (_, collection) ->
+            }.mapValues { (_, collection) -> 
                 collection.map { firBasedSymbol ->
                                     firSymbolBuilder.buildSymbol(firBasedSymbol.fir)
                                 }
@@ -2785,7 +2785,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             firSymbolBuilder.buildSymbol(firDiagnostic.a.fir),
             firDiagnostic.b.mapKeys { (incompatible, _) ->
                 incompatible
-            }.mapValues { (_, collection) ->
+            }.mapValues { (_, collection) -> 
                 collection.map { firBasedSymbol ->
                                     firSymbolBuilder.buildSymbol(firBasedSymbol.fir)
                                 }
@@ -2820,7 +2820,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             firDiagnostic.b.map { pair ->
                 firSymbolBuilder.buildSymbol(pair.first.fir) to pair.second.mapKeys { (incompatible, _) ->
                                     incompatible
-                                }.mapValues { (_, collection) ->
+                                }.mapValues { (_, collection) -> 
                                     collection.map { firBasedSymbol ->
                                                             firSymbolBuilder.buildSymbol(firBasedSymbol.fir)
                                                         }
@@ -3100,18 +3100,26 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.CANNOT_CHECK_FOR_ERASED) { firDiagnostic ->
         CannotCheckForErasedImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
-            firDiagnostic as FirPsiDiagnostic,
+            firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
     add(FirErrors.CAST_NEVER_SUCCEEDS) { firDiagnostic ->
         CastNeverSucceedsImpl(
-            firDiagnostic as FirPsiDiagnostic,
+            firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
     add(FirErrors.USELESS_CAST) { firDiagnostic ->
         UselessCastImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.UNCHECKED_CAST) { firDiagnostic ->
+        UncheckedCastImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

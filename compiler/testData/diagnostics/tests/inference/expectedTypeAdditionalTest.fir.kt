@@ -2,7 +2,7 @@
 
 fun foo() = 1
 
-fun <T> foo() = foo() as T
+fun <T> foo() = foo() <!UNCHECKED_CAST!>as T<!>
 
 fun <T> foo2(): T = TODO()
 

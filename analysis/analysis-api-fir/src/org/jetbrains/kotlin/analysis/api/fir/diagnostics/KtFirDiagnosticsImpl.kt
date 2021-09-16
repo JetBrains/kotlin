@@ -2612,23 +2612,26 @@ internal class UselessElvisRightIsNullImpl(
 
 internal class CannotCheckForErasedImpl(
     override val type: KtType,
-    firDiagnostic: FirPsiDiagnostic,
+    override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.CannotCheckForErased(), KtAbstractFirDiagnostic<PsiElement> {
-    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
-}
+) : KtFirDiagnostic.CannotCheckForErased(), KtAbstractFirDiagnostic<PsiElement>
 
 internal class CastNeverSucceedsImpl(
-    firDiagnostic: FirPsiDiagnostic,
+    override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.CastNeverSucceeds(), KtAbstractFirDiagnostic<KtBinaryExpressionWithTypeRHS> {
-    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
-}
+) : KtFirDiagnostic.CastNeverSucceeds(), KtAbstractFirDiagnostic<KtBinaryExpressionWithTypeRHS>
 
 internal class UselessCastImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.UselessCast(), KtAbstractFirDiagnostic<KtBinaryExpressionWithTypeRHS>
+
+internal class UncheckedCastImpl(
+    override val originalType: KtType,
+    override val targetType: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.UncheckedCast(), KtAbstractFirDiagnostic<KtBinaryExpressionWithTypeRHS>
 
 internal class UselessIsCheckImpl(
     override val compileTimeCheckResult: Boolean,

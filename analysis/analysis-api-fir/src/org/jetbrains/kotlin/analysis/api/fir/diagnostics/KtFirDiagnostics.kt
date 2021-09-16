@@ -2181,6 +2181,12 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = UselessCast::class
     }
 
+    abstract class UncheckedCast : KtFirDiagnostic<KtBinaryExpressionWithTypeRHS>() {
+        override val diagnosticClass get() = UncheckedCast::class
+        abstract val originalType: KtType
+        abstract val targetType: KtType
+    }
+
     abstract class UselessIsCheck : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = UselessIsCheck::class
         abstract val compileTimeCheckResult: Boolean

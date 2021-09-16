@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package h
 
 public class MyClass<S, T>(param: MyClass<S, T>) {

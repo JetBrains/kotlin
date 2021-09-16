@@ -30,7 +30,7 @@ fun uExpression(): UExpressionPattern.Capture<UExpression> = expressionCapture(U
 fun <T : UExpression> expressionCapture(clazz: Class<T>): UExpressionPattern.Capture<T> = UExpressionPattern.Capture(clazz)
 
 open class UElementPattern<T : UElement, Self : UElementPattern<T, Self>>(clazz: Class<T>) : ObjectPattern<T, Self>(clazz) {
-    fun filter(filter: (T) -> Boolean): Self = this as Self
+    fun filter(filter: (T) -> Boolean): Self = this <!UNCHECKED_CAST!>as Self<!>
 }
 
 open class UExpressionPattern<T : UExpression, Self : UExpressionPattern<T, Self>>(clazz: Class<T>) : UElementPattern<T, Self>(clazz) {
