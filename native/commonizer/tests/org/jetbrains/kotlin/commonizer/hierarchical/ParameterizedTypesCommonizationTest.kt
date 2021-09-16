@@ -287,4 +287,81 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
             """.trimIndent()
         )
     }
+
+    fun `test parameterized function - 0`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            simpleSingleSourceTarget(
+                "a", """
+                    typealias X<T> = Map<Int, T>
+                    fun <T: Any> x(x: X<T>)
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    fun <T: Any> x(x: Map<Int, T>)
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect fun <T: Any> x(x: Map<Int, T>)
+            """.trimIndent()
+        )
+    }
+
+    fun `test parameterized function - 1`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    typealias X<T> = Map<Int, T>
+                    fun <T: X<T>> x(x: X<T>)
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    fun <T: Map<Int, T>> x(x: Map<Int, T>)
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect fun <T: Map<Int, T>> x(x: Map<Int, T>)
+            """.trimIndent()
+        )
+    }
+
+    fun `test parameterized function - 2`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    typealias X<T> = Map<Int, T>
+                    fun <T: X<T>> x(x: X<T>)
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    typealias X<T> = Map<Int, T>
+                    typealias Y<T> = X<T>
+                    fun <T: Y<T>> x(x: Y<T>)
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect typealias X<T> = Map<Int, T>
+                expect fun <T: X<T>> x(x: X<T>)
+            """.trimIndent()
+        )
+    }
 }
