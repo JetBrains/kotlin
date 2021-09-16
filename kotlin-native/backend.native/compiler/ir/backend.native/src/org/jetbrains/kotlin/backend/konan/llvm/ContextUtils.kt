@@ -619,6 +619,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
         }
     }
 
+    val llvmInt1 = int1Type
     val llvmInt8 = int8Type
     val llvmInt16 = int16Type
     val llvmInt32 = int32Type

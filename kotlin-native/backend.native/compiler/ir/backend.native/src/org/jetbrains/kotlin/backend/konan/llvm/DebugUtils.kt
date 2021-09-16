@@ -223,6 +223,7 @@ internal fun IrType.alignment(context:Context) = context.debugInfo.llvmTypeAlign
 
 internal fun IrType.llvmType(context:Context): LLVMTypeRef = context.debugInfo.llvmTypes.getOrElse(this) {
     when(computePrimitiveBinaryTypeOrNull()) {
+        PrimitiveBinaryType.BOOLEAN -> context.llvm.llvmInt1
         PrimitiveBinaryType.BYTE -> context.llvm.llvmInt8
         PrimitiveBinaryType.SHORT -> context.llvm.llvmInt16
         PrimitiveBinaryType.INT -> context.llvm.llvmInt32
