@@ -114,7 +114,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
         }
 
         val resolvedClassifierFromDependencies = classifiers.commonDependencies.classifier(destinationClassifierId)
-            ?: classifiers.targetDependencies[targetIndex].classifier(destinationClassifierId)
+            ?: classifiers.targetDependencies[targetIndex].classifier(destinationClassifierId) // necessary?
 
         if (resolvedClassifierFromDependencies != null && resolvedClassifierFromDependencies is CirProvided.TypeAlias) {
             return backwardsSubstitute(targetIndex, sourceType, destinationClassifierId, resolvedClassifierFromDependencies)
@@ -201,20 +201,14 @@ internal class ClassOrTypeAliasTypeCommonizer(
 
         val typeSubstitutionCandidates = resolveTypeSubstitutionCandidates(classifiers, commonId, types)
             .filter { typeSubstitutionCandidate ->
+                assert(typeSubstitutionCandidate.typeDistance.isZero.not()) { "Expected no zero typeDistance" }
                 if (typeSubstitutionCandidate.typeDistance.isNotReachable) return@filter false
                 if (typeSubstitutionCandidate.typeDistance.isNegative && !backwardsSubstitutionAllowed) return@filter false
                 if (typeSubstitutionCandidate.typeDistance.isPositive && !forwardSubstitutionAllowed) return@filter false
                 true
             }
 
-        if (typeSubstitutionCandidates.isEmpty()) return null
-        if (typeSubstitutionCandidates.size == 1) return typeSubstitutionCandidates.first().id
-
-        val forwardSubstitutionCandidates = typeSubstitutionCandidates.filter { it.typeDistance.isPositive }
-        val backwardsSubstitutionCandidates = typeSubstitutionCandidates.filter { it.typeDistance.isNegative }
-
-        return forwardSubstitutionCandidates.minByOrNull { it.typeDistance }?.id
-            ?: backwardsSubstitutionCandidates.maxByOrNull { it.typeDistance }?.id
+        return typeSubstitutionCandidates.minByOrNull { it.typeDistance.penalty }?.id
     }
 }
 
@@ -231,14 +225,7 @@ private fun resolveTypeSubstitutionCandidates(
         if (typeDistances.any { it.isNotReachable }) return@mapCandidateId null
         TypeSubstitutionCandidate(
             id = candidateId,
-            typeDistance = checkNotNull(typeDistances.worstOrNull())
+            typeDistance = checkNotNull(typeDistances.maxByOrNull { it.penalty })
         )
     }
-}
-
-private fun List<CirTypeDistance>.worstOrNull(): CirTypeDistance? {
-    if (this.isEmpty()) return null
-    // Negative Type Distances are considered 'worse'
-    filter { it.isNegative }.minOrNull()?.let { return it }
-    return maxOrNull()
 }

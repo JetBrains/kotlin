@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.commonizer.mergedtree
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirTypeDistance.Companion.unreachable
-import kotlin.math.absoluteValue
 
 @JvmInline
 value class CirTypeDistance(private val value: Int) : Comparable<CirTypeDistance> {
@@ -23,7 +22,25 @@ value class CirTypeDistance(private val value: Int) : Comparable<CirTypeDistance
 
     val isZero: Boolean get() = value == 0
 
-    val absoluteValue get() = CirTypeDistance(value.absoluteValue)
+    /**
+     * Judges the type distance on 'how bad is it'.
+     * This judgement will always prefer positive distances over negative distances.
+     *
+     * The higher this number, the 'worse' the distance.
+     *
+     * Score for unreachable: MAX_VALUE
+     * Score for zero: MIN_VALUE
+     * Range for negative type distances: [1, MAX_VALUE[
+     * Range for positive type distances: ]MIN_VALUE, -1]
+     */
+    val penalty: Int
+        get() = when {
+            isNotReachable -> Int.MAX_VALUE
+            isNegative -> -value
+            isZero -> Int.MIN_VALUE
+            isPositive -> Int.MIN_VALUE + value
+            else -> throw IllegalStateException("Unable to calculate penalty for $this")
+        }
 
     operator fun plus(value: Int) = if (isReachable) CirTypeDistance(this.value + value) else this
 
