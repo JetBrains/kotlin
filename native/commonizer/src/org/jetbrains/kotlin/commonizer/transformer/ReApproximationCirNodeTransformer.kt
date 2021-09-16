@@ -28,7 +28,7 @@ internal class ReApproximationCirNodeTransformer(
                 memberContext = member, functionOrPropertyOrConstructor = functionOrPropertyOrConstructor,
                 classifierSignatureBuildingContext = if (typeAliasInvariant) TypeAliasInvariant(classifiers.commonClassifierIdResolver)
                 else ClassifierSignatureBuildingContext.Default,
-                argumentsSignatureBuildingContext = if (skipArguments) ArgumentsSignatureBuildingContext.Skip
+                argumentsSignatureBuildingContext = if (skipArguments) ArgumentsSignatureBuildingContext.SkipArguments
                 else ArgumentsSignatureBuildingContext.Default
             )
         }

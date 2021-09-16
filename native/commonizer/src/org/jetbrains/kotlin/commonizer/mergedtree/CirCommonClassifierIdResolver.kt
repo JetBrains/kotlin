@@ -23,7 +23,7 @@ internal fun CirCommonClassifierIdResolver(
 }
 
 interface CirCommonClassifierIdResolver {
-    fun findCommonId(id: CirEntityId): CirCommonClassifierId?
+    fun resolveId(id: CirEntityId): CirCommonClassifierId?
 }
 
 internal interface CirCommonClassifierIdResolverCache {
@@ -63,12 +63,9 @@ private class CirCommonClassifierIdResolverImpl(
     private val cache: CirCommonClassifierIdResolverCache
 ) : CirCommonClassifierIdResolver {
 
-    override fun findCommonId(id: CirEntityId): CirCommonClassifierId? {
+    override fun resolveId(id: CirEntityId): CirCommonClassifierId? {
         cache[id]?.let { return it }
-        return doFindCommonId(id)
-    }
 
-    private fun doFindCommonId(id: CirEntityId): CirCommonClassifierId? {
         val results = ArrayList<CirEntityId>()
 
         /* Set of every classifier id that once was enqueued already */

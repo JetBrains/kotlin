@@ -197,7 +197,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
         }
 
         val commonId = types.singleDistinctValueOrNull {
-            classifiers.commonClassifierIdResolver.findCommonId(it.classifierId)
+            classifiers.commonClassifierIdResolver.resolveId(it.classifierId)
         } ?: return null
 
         val typeSubstitutionCandidates = resolveTypeSubstitutionCandidates(classifiers, commonId, types)

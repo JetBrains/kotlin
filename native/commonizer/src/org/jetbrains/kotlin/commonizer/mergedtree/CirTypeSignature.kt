@@ -62,9 +62,9 @@ internal sealed interface ClassifierSignatureBuildingContext {
         override fun appendSignature(signature: CirTypeSignature, classifierId: CirEntityId) = signature.add(classifierId)
     }
 
-    class TypeAliasInvariant(private val commonIdResolver: CirCommonClassifierIdResolver) : ClassifierSignatureBuildingContext {
+    class TypeAliasInvariant(private val commonClassifierIdResolver: CirCommonClassifierIdResolver) : ClassifierSignatureBuildingContext {
         override fun appendSignature(signature: CirTypeSignature, classifierId: CirEntityId) {
-            return signature.add(commonIdResolver.findCommonId(classifierId) ?: classifierId)
+            return signature.add(commonClassifierIdResolver.resolveId(classifierId) ?: classifierId)
         }
     }
 }
@@ -99,7 +99,7 @@ internal sealed interface ArgumentsSignatureBuildingContext {
     /**
      * Won't render any type arguments
      */
-    object Skip : ArgumentsSignatureBuildingContext {
+    object SkipArguments : ArgumentsSignatureBuildingContext {
         override fun appendSignature(
             signature: CirTypeSignature, context: SignatureBuildingContext, arguments: List<CirTypeProjection>
         ) = Unit
@@ -123,7 +123,6 @@ private enum class TypeSignatureElements(val stringRepresentation: String) {
         return stringRepresentation
     }
 }
-
 
 internal fun buildApproximationSignature(context: SignatureBuildingContext, type: CirType): CirTypeSignature {
     val signature = CirTypeSignature()
