@@ -9,6 +9,11 @@ import kotlin.reflect.KClass
 
 @ExportForCompiler
 internal class KClassImpl<T : Any>(private val typeInfo: NativePtr) : KClass<T> {
+
+    @ExportForCompiler
+    @ConstantConstructorIntrinsic("KCLASS_IMPL")
+    constructor() : this(TODO("This is intrinsic constructor and it shouldn't be used directly"))
+
     // TODO: consider replacing '$' by another delimeter that can't be used in class name specified with backticks (``)
     override val simpleName: String?
         get() = getRelativeName(typeInfo, true)?.substringAfterLast('.')?.substringAfterLast('$')

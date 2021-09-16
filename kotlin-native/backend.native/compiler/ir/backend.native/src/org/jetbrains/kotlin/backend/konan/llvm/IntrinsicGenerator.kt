@@ -2,9 +2,11 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.cValuesOf
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.MemoryModel
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
+import org.jetbrains.kotlin.backend.konan.descriptors.isConstantConstructorIntrinsic
 import org.jetbrains.kotlin.backend.konan.descriptors.isTypedIntrinsic
 import org.jetbrains.kotlin.backend.konan.llvm.objc.genObjCSelector
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
@@ -12,6 +14,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.findAnnotation
@@ -93,6 +96,11 @@ internal enum class IntrinsicType {
     WORKER_EXECUTE
 }
 
+internal enum class ConstantConstructorIntrinsicType {
+    KCLASS_IMPL,
+    KTYPE_IMPL,
+}
+
 // Explicit and single interface between Intrinsic Generator and IrToBitcode.
 internal interface IntrinsicGeneratorEnvironment {
 
@@ -124,6 +132,16 @@ private fun getIntrinsicType(callSite: IrFunctionAccessExpression): IntrinsicTyp
     val value = annotation.getAnnotationStringValue()!!
     return IntrinsicType.valueOf(value)
 }
+
+internal fun tryGetConstantConstructorIntrinsicType(constructor: IrConstructorSymbol): ConstantConstructorIntrinsicType? =
+        if (constructor.owner.isConstantConstructorIntrinsic) getConstantConstructorIntrinsicType(constructor) else null
+
+private fun getConstantConstructorIntrinsicType(constructor: IrConstructorSymbol): ConstantConstructorIntrinsicType {
+    val annotation = constructor.owner.annotations.findAnnotation(KonanFqNames.constantConstructorIntrinsic)!!
+    val value = annotation.getAnnotationStringValue()!!
+    return ConstantConstructorIntrinsicType.valueOf(value)
+}
+
 
 internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnvironment) {
 
@@ -260,11 +278,28 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                     reportSpecialIntrinsic(intrinsicType)
             }
 
+    fun evaluateConstantConstructorFields(constant: IrConstantObject, args: List<ConstValue>) : List<ConstValue> {
+        return when (val intrinsicType = getConstantConstructorIntrinsicType(constant.constructor)) {
+            ConstantConstructorIntrinsicType.KCLASS_IMPL -> {
+                require(args.isEmpty())
+                val typeArgument = constant.typeArguments[0]
+                val typeArgumentClass = typeArgument.getClass()!!
+                val typeInfo = codegen.typeInfoValue(typeArgumentClass)
+                listOf(constPointer(typeInfo).bitcast(int8TypePtr))
+            }
+            ConstantConstructorIntrinsicType.KTYPE_IMPL ->
+                reportNonLoweredIntrinsic(intrinsicType)
+        }
+    }
+
     private fun reportSpecialIntrinsic(intrinsicType: IntrinsicType): Nothing =
             context.reportCompilationError("$intrinsicType should be handled by `tryEvaluateSpecialCall`")
 
     private fun reportNonLoweredIntrinsic(intrinsicType: IntrinsicType): Nothing =
-            context.reportCompilationError("Intrinsic of type $intrinsicType should be handled by previos lowering phase")
+            context.reportCompilationError("Intrinsic of type $intrinsicType should be handled by previous lowering phase")
+
+    private fun reportNonLoweredIntrinsic(intrinsicType: ConstantConstructorIntrinsicType): Nothing =
+            context.reportCompilationError("Constant constructor intrinsic of type $intrinsicType should be handled by previous lowering phase")
 
     private fun FunctionGenerationContext.emitGetContinuation(): LLVMValueRef =
             environment.continuation
