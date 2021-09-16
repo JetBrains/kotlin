@@ -65,8 +65,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
                 typeAliasId = classifierId,
                 arguments = arguments,
                 isMarkedNullable = isMarkedNullable,
-                underlyingType = classifiers.commonDependencies
-                    .toCirClassOrTypeAliasTypeOrNull(dependencyClassifier.underlyingType)
+                underlyingType = dependencyClassifier.underlyingType.toCirClassOrTypeAliasTypeOrNull(classifiers.commonDependencies)
                     ?.withParentArguments(arguments, isMarkedNullable) ?: return null
             )
 
@@ -181,7 +180,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
 
         return CirTypeAliasType.createInterned(
             destinationTypeAliasId,
-            underlyingType = providedClassifiers.toCirClassOrTypeAliasTypeOrNull(destinationTypeAlias.underlyingType) ?: return null,
+            underlyingType = destinationTypeAlias.underlyingType.toCirClassOrTypeAliasTypeOrNull(providedClassifiers) ?: return null,
             arguments = emptyList(),
             isMarkedNullable = sourceType.isMarkedNullable
         )

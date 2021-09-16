@@ -49,7 +49,7 @@ internal class SimpleCirSupertypesResolver(
 
     private fun CirProvidedClassifiers.supertypesFromProvidedClass(type: CirClassType, classifier: CirProvided.Class): Set<CirClassType> {
         return classifier.supertypes.filterIsInstance<CirProvided.ClassType>()
-            .mapNotNull { superType -> toCirClassTypeOrNull(superType) }
+            .mapNotNull { superType -> superType.toCirClassTypeOrNull(this) }
             .mapNotNull { superType -> buildSupertypeFromClassifierSupertype(type, superType) }
             .toSet()
     }
