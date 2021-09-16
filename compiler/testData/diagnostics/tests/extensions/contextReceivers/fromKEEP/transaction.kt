@@ -1,3 +1,5 @@
+// !LANGUAGE: +ContextReceivers
+
 class Session(var lastAccess: Any?)
 interface Transaction {
     fun loadSession(): Session

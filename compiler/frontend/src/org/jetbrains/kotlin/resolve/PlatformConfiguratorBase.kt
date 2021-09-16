@@ -47,6 +47,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     SealedInterfaceAllowedChecker,
     SuspendFunctionAsSupertypeChecker,
     EnumCompanionInEnumConstructorCallChecker,
+    ContextualDeclarationChecker,
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(

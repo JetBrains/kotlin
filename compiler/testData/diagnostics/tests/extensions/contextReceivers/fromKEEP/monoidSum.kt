@@ -1,3 +1,5 @@
+// !LANGUAGE: +ContextReceivers
+
 interface Semigroup<T> {
     infix fun T.combine(other: T): T
 }

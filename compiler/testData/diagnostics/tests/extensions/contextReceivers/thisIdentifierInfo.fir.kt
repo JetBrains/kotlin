@@ -1,3 +1,5 @@
+// !LANGUAGE: +ContextReceivers
+
 class A(val a: String?)
 
 context(A) fun f() {

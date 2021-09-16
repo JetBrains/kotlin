@@ -1,4 +1,6 @@
+// !LANGUAGE: +ContextReceivers
 // FIR_IDENTICAL
+
 class File(name: String)
 interface InputStream
 

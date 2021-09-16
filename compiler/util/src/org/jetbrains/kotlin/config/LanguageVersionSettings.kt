@@ -268,7 +268,8 @@ enum class LanguageFeature(
     ExplicitBackingFields(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
     FunctionalTypeWithExtensionAsSupertype(sinceVersion = KOTLIN_1_6, defaultState = State.DISABLED),
     JsAllowInvalidCharsIdentifiersEscaping(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
-    JsAllowValueClassesInExternals(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE)
+    JsAllowValueClassesInExternals(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
+    ContextReceivers(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
 
     ;
 

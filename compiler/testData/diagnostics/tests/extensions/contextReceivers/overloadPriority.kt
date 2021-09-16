@@ -1,3 +1,5 @@
+// !LANGUAGE: +ContextReceivers
+
 class Context
 
 context(Context)

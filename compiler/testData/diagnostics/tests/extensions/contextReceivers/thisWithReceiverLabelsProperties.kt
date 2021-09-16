@@ -1,3 +1,5 @@
+// !LANGUAGE: +ContextReceivers
+
 class A<T>(val a: T)
 class B(val b: Any)
 class C(val c: Any)

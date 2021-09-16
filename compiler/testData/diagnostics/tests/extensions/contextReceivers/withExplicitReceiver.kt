@@ -1,3 +1,5 @@
+// !LANGUAGE: +ContextReceivers
+
 open class A
 class B
 class C: A()
