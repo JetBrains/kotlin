@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
@@ -150,6 +151,25 @@ class BuildCacheIT : KGPBaseTest() {
         }
 
         checkKaptCachingIncrementalBuild(firstProject, secondProject)
+    }
+
+    @DisplayName("Debug log level should not break build cache")
+    @GradleTest
+    fun testDebugLogLevelCaching(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            enableLocalBuildCache(localBuildCacheDir)
+
+            build(
+                ":assemble",
+                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+            ) {
+                assertTasksPackedToCache(":compileKotlin")
+            }
+
+            build("clean", ":assemble") {
+                assertTasksFromCache(":compileKotlin")
+            }
+        }
     }
 
     private fun checkKotlinCompileCachingIncrementalBuild(

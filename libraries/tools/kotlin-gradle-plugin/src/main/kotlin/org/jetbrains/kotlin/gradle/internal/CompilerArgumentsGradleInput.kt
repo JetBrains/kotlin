@@ -46,7 +46,12 @@ internal object CompilerArgumentsGradleInput {
     // We ignore some file properties e.g. to instead include their values into the Gradle file property checks,
     // which, unlike String checks, run with specified path sensitivity;
     private val ignoredProperties = setOf<KProperty<*>>(
-        CommonCompilerArguments::verbose, // debug should not lead to rebuild
+        // debug should not lead to rebuild (should include all subclasses where this property is)
+        CommonToolArguments::verbose,
+        CommonCompilerArguments::verbose,
+        K2MetadataCompilerArguments::verbose,
+        K2JSCompilerArguments::verbose,
+        K2JVMCompilerArguments::verbose,
 
         K2JVMCompilerArguments::destination, // handled by destinationDir
         K2JVMCompilerArguments::classpath, // handled by classpath of the Gradle tasks
