@@ -16149,6 +16149,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 }
 
                 @Test
+                @TestMetadata("functionalType.kt")
+                public void testFunctionalType() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/functionalType.kt");
+                }
+
+                @Test
                 @TestMetadata("monoidSum.kt")
                 public void testMonoidSum() throws Exception {
                     runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/monoidSum.kt");
