@@ -32,7 +32,6 @@ object CirDeserializers {
         val type = CirClassType.createInterned(
             classId = classId,
             outerType = null, // annotation class can't be inner class
-            visibility = clazz.visibility,
             arguments = clazz.typeParameters.compactMap { typeParameter ->
                 CirRegularTypeProjection(
                     projectionKind = typeParameter.variance,
@@ -274,7 +273,6 @@ object CirDeserializers {
         name: CirName,
         annotations: List<KmAnnotation>,
         enumClassId: CirEntityId,
-        enumClass: KmClass,
         typeResolver: CirTypeResolver
     ): CirClass = CirClass.create(
         annotations = annotations.compactMap { annotation(it, typeResolver) },
@@ -284,7 +282,6 @@ object CirDeserializers {
             CirClassType.createInterned(
                 classId = enumClassId,
                 outerType = null,
-                visibility = visibility(enumClass.flags),
                 arguments = emptyList(),
                 isMarkedNullable = false
             )
@@ -357,7 +354,6 @@ object CirDeserializers {
                 CirClassType.createInterned(
                     classId = (clazz as? CirProvided.ExportedForwardDeclarationClass)?.syntheticClassId ?: classId,
                     outerType = outerType,
-                    visibility = clazz.visibility,
                     arguments = arguments(source.arguments, typeResolver),
                     isMarkedNullable = isMarkedNullable
                 )

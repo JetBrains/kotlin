@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.utils.isUnderKotlinNativeSyntheticPackages
 import org.jetbrains.kotlin.commonizer.utils.safeCastValues
 import org.jetbrains.kotlin.commonizer.utils.singleDistinctValueOrNull
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -47,7 +46,6 @@ internal class ClassOrTypeAliasTypeCommonizer(
                 classId = classifierId,
                 outerType = outerType,
                 arguments = arguments,
-                visibility = Visibilities.Public,
                 isMarkedNullable = isMarkedNullable
             )
         }
@@ -57,7 +55,6 @@ internal class ClassOrTypeAliasTypeCommonizer(
                 classId = classifierId,
                 outerType = outerType,
                 arguments = arguments,
-                visibility = Visibilities.Public,
                 isMarkedNullable = isMarkedNullable
             )
 
@@ -80,7 +77,6 @@ internal class ClassOrTypeAliasTypeCommonizer(
                 classId = classifierId,
                 outerType = outerType,
                 arguments = arguments,
-                visibility = Visibilities.Public,
                 isMarkedNullable = isMarkedNullable
             )
 

@@ -144,7 +144,6 @@ object CirTypeAliasExpander {
         return CirClassType.createInterned(
             classId = type.classifierId,
             outerType = type.outerType?.let { expandClassType(expansion, it) },
-            visibility = clazz.visibility,
             arguments = expandedArguments,
             isMarkedNullable = type.isMarkedNullable
         )
