@@ -86,14 +86,6 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     config: GradleKotlinCompilerWorkArguments
 ) : Runnable {
 
-    companion object {
-        init {
-            if (System.getProperty("org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.trace.loading") == "true") {
-                println("Loaded GradleKotlinCompilerWork")
-            }
-        }
-    }
-
     private val projectRootFile = config.projectFiles.projectRootFile
     private val clientIsAliveFlagFile = config.projectFiles.clientIsAliveFlagFile
     private val sessionFlagFile = config.projectFiles.sessionFlagFile
