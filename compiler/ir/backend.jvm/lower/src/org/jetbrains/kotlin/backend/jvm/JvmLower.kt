@@ -141,7 +141,8 @@ internal val localDeclarationsPhase = makeIrFilePhase(
 
                 private fun scopedVisibility(inInlineFunctionScope: Boolean): DescriptorVisibility =
                     if (inInlineFunctionScope) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
-            }
+            },
+            forceFieldsForInlineCaptures = true
         )
     },
     name = "JvmLocalDeclarations",
