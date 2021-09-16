@@ -36,32 +36,42 @@ public inline fun StringBuilder.appendLine(value: Float): StringBuilder = append
 public inline fun StringBuilder.appendLine(value: Double): StringBuilder = append(value).appendLine()
 
 
-@Deprecated("Use appendLine instead", ReplaceWith("appendLine(it)"), level = DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
+@Deprecated("Use appendLine instead", ReplaceWith("appendLine(it)"))
 public fun StringBuilder.appendln(it: String): StringBuilder = appendLine(it)
 
-@Deprecated("Use appendLine instead", ReplaceWith("appendLine(it)"), level = DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
+@Deprecated("Use appendLine instead", ReplaceWith("appendLine(it)"))
 public fun StringBuilder.appendln(it: Boolean): StringBuilder = appendLine(it)
 
-@Deprecated("Use appendLine instead", ReplaceWith("appendLine(it)"), level = DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
+@Deprecated("Use appendLine instead", ReplaceWith("appendLine(it)"))
 public fun StringBuilder.appendln(it: Byte): StringBuilder = appendLine(it)
 
-@Deprecated("Use appendLine instead", ReplaceWith("appendLine(it)"), level = DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
+@Deprecated("Use appendLine instead", ReplaceWith("appendLine(it)"))
 public fun StringBuilder.appendln(it: Short): StringBuilder = appendLine(it)
 
-@Deprecated("Use appendLine instead", ReplaceWith("appendLine(it)"), level = DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
+@Deprecated("Use appendLine instead", ReplaceWith("appendLine(it)"))
 public fun StringBuilder.appendln(it: Int): StringBuilder = appendLine(it)
 
-@Deprecated("Use appendLine instead", ReplaceWith("appendLine(it)"), level = DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
+@Deprecated("Use appendLine instead", ReplaceWith("appendLine(it)"))
 public fun StringBuilder.appendln(it: Long): StringBuilder = appendLine(it)
 
-@Deprecated("Use appendLine instead", ReplaceWith("appendLine(it)"), level = DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
+@Deprecated("Use appendLine instead", ReplaceWith("appendLine(it)"))
 public fun StringBuilder.appendln(it: Float): StringBuilder = appendLine(it)
 
-@Deprecated("Use appendLine instead", ReplaceWith("appendLine(it)"), level = DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
+@Deprecated("Use appendLine instead", ReplaceWith("appendLine(it)"))
 public fun StringBuilder.appendln(it: Double): StringBuilder = appendLine(it)
 
-@Deprecated("Use appendLine instead", ReplaceWith("appendLine(it)"), level = DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
+@Deprecated("Use appendLine instead", ReplaceWith("appendLine(it)"))
 public fun StringBuilder.appendln(it: Any?): StringBuilder = appendLine(it)
 
-@Deprecated("Use appendLine instead", ReplaceWith("appendLine()"), level = DeprecationLevel.WARNING)
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
+@Deprecated("Use appendLine instead", ReplaceWith("appendLine()"))
 public fun StringBuilder.appendln(): StringBuilder = appendLine()

@@ -9,6 +9,6 @@ import kotlin.test.*
 
 @Test fun runTest() {
     val a = StringBuilder()
-    a.append("Hello").appendln("Kotlin").appendln(42).appendln(0.1).appendln(true)
+    a.append("Hello").appendLine("Kotlin").appendLine(42).appendLine(0.1).appendLine(true)
     println(a.toString())	
 }
