@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.symbols.markers
 
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
+import org.jetbrains.kotlin.psi.KtCallElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 /**
@@ -23,23 +25,32 @@ import org.jetbrains.kotlin.types.ConstantValueKind
  *  [KtAnnotationConstantValue] represents annotation types (with annotation fq name and arguments); and
  *  [KtArrayConstantValue] abstracts an array of [KtConstantValue]s.
  */
-public sealed class KtConstantValue
+public sealed class KtConstantValue(
+    public open val kotlinOrigin: KtElement? = null
+)
 public object KtUnsupportedConstantValue : KtConstantValue()
 
 public class KtArrayConstantValue(
-    public val values: Collection<KtConstantValue>
+    public val values: Collection<KtConstantValue>,
+    override val kotlinOrigin: KtElement?,
 ) : KtConstantValue()
 
 public class KtAnnotationConstantValue(
     public val fqName: String?,
-    public val arguments: List<KtNamedConstantValue>
+    public val arguments: List<KtNamedConstantValue>,
+    override val kotlinOrigin: KtCallElement?,
 ) : KtConstantValue()
 
 public class KtEnumEntryValue(
-    public val enumEntrySymbol: KtEnumEntrySymbol
+    public val enumEntrySymbol: KtEnumEntrySymbol,
+    override val kotlinOrigin: KtElement?,
 ) : KtConstantValue()
 
-public data class KtSimpleConstantValue<T>(val constantValueKind: ConstantValueKind<T>, val value: T) : KtConstantValue() {
+public class KtSimpleConstantValue<T>(
+    public val constantValueKind: ConstantValueKind<T>,
+    public val value: T,
+    override val kotlinOrigin: KtElement?,
+) : KtConstantValue() {
     public fun toConst(): Any? {
         return (value as? Long)?.let {
             when (constantValueKind) {
@@ -56,5 +67,9 @@ public data class KtSimpleConstantValue<T>(val constantValueKind: ConstantValueK
                 else -> it
             }
         } ?: value
+    }
+
+    override fun toString(): String {
+        return "KtSimpleConstantValue(constantValueKind=${constantValueKind}, value=${value})"
     }
 }

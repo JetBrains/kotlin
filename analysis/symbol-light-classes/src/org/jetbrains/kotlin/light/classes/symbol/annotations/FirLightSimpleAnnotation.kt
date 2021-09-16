@@ -6,14 +6,19 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.PsiAnnotationMemberValue
+import com.intellij.psi.PsiAnnotationParameterList
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.PsiImplUtil
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedConstantValue
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtCallElement
 
 internal class FirLightSimpleAnnotation(
     private val fqName: String?,
-    parent: PsiElement
+    parent: PsiElement,
+    private val arguments: List<KtNamedConstantValue> = listOf(),
+    override val kotlinOrigin: KtCallElement? = null,
 ) : FirLightAbstractAnnotation(parent) {
-    override val kotlinOrigin: KtCallElement? = null
 
     override fun getQualifiedName(): String? = fqName
 
@@ -25,7 +30,16 @@ internal class FirLightSimpleAnnotation(
 
     override fun hashCode(): Int = fqName.hashCode()
 
-    override fun findAttributeValue(attributeName: String?): PsiAnnotationMemberValue? = null
+    override fun findAttributeValue(attributeName: String?): PsiAnnotationMemberValue? =
+        PsiImplUtil.findAttributeValue(this, attributeName)
 
-    override fun findDeclaredAttributeValue(attributeName: String?): PsiAnnotationMemberValue? = null
+    override fun findDeclaredAttributeValue(attributeName: String?) =
+        PsiImplUtil.findDeclaredAttributeValue(this, attributeName)
+
+    private val _parameterList: PsiAnnotationParameterList by lazyPub {
+        FirAnnotationParameterList(this@FirLightSimpleAnnotation, arguments)
+    }
+
+    override fun getParameterList(): PsiAnnotationParameterList = _parameterList
+
 }

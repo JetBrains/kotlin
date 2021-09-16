@@ -26,7 +26,7 @@ internal class FirLightAnnotationForAnnotationCall(
         PsiImplUtil.findDeclaredAttributeValue(this, attributeName)
 
     private val _parameterList: PsiAnnotationParameterList by lazyPub {
-        FirAnnotationParameterList(this@FirLightAnnotationForAnnotationCall, annotationCall)
+        FirAnnotationParameterList(this@FirLightAnnotationForAnnotationCall, annotationCall.arguments)
     }
 
     override fun getParameterList(): PsiAnnotationParameterList = _parameterList

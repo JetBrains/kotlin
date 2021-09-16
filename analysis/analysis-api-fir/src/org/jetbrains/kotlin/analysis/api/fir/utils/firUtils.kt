@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.FqName
@@ -108,7 +109,8 @@ internal fun Map<String, FirExpression>.toNamedConstantValue(
         )
     }
 
-internal fun <T> FirConstExpression<T>.convertConstantExpression(): KtSimpleConstantValue<T> = KtSimpleConstantValue(kind, value)
+internal fun <T> FirConstExpression<T>.convertConstantExpression(): KtSimpleConstantValue<T> =
+    KtSimpleConstantValue(kind, value, realPsi as? KtElement)
 
 private fun Collection<FirExpression>.convertConstantExpression(
     session: FirSession,
@@ -116,11 +118,11 @@ private fun Collection<FirExpression>.convertConstantExpression(
 ): Collection<KtConstantValue> =
     mapNotNull { it.convertConstantExpression(session, firSymbolBuilder) }
 
-private fun Collection<KtConstantValue>.toArrayConstantValueIfNecessary(): KtConstantValue {
+private fun Collection<KtConstantValue>.toArrayConstantValueIfNecessary(kotlinOrigin: KtElement?): KtConstantValue {
     return if (size == 1)
         single()
     else
-        KtArrayConstantValue(this)
+        KtArrayConstantValue(this, kotlinOrigin)
 }
 
 internal fun FirExpression.convertConstantExpression(
@@ -133,10 +135,12 @@ internal fun FirExpression.convertConstantExpression(
             expression.convertConstantExpression(session, firSymbolBuilder)
         }
         is FirVarargArgumentsExpression -> {
-            arguments.convertConstantExpression(session, firSymbolBuilder).toArrayConstantValueIfNecessary()
+            arguments.convertConstantExpression(session, firSymbolBuilder)
+                .toArrayConstantValueIfNecessary(realPsi as? KtElement)
         }
         is FirArrayOfCall -> {
-            argumentList.arguments.convertConstantExpression(session, firSymbolBuilder).toArrayConstantValueIfNecessary()
+            argumentList.arguments.convertConstantExpression(session, firSymbolBuilder)
+                .toArrayConstantValueIfNecessary(realPsi as? KtElement)
         }
         is FirFunctionCall -> {
             val reference = calleeReference as? FirResolvedNamedReference ?: return null
@@ -150,13 +154,15 @@ internal fun FirExpression.convertConstantExpression(
                         }
                         KtAnnotationConstantValue(
                             resolvedSymbol.callableId.className?.asString(),
-                            resultMap.toNamedConstantValue(session, firSymbolBuilder)
+                            resultMap.toNamedConstantValue(session, firSymbolBuilder),
+                            this.realPsi as? KtCallElement
                         )
                     } else null
                 }
                 is FirNamedFunctionSymbol -> {
                     if (resolvedSymbol.callableId.asSingleFqName() in ArrayFqNames.ARRAY_CALL_FQ_NAMES)
-                        argumentList.arguments.convertConstantExpression(session, firSymbolBuilder).toArrayConstantValueIfNecessary()
+                        argumentList.arguments.convertConstantExpression(session, firSymbolBuilder)
+                            .toArrayConstantValueIfNecessary(realPsi as? KtElement)
                     else null
                 }
                 else -> null
@@ -166,7 +172,7 @@ internal fun FirExpression.convertConstantExpression(
             val reference = calleeReference as? FirResolvedNamedReference ?: return null
             when (val resolvedSymbol = reference.resolvedSymbol) {
                 is FirEnumEntrySymbol -> {
-                    KtEnumEntryValue(resolvedSymbol.fir.buildSymbol(firSymbolBuilder) as KtEnumEntrySymbol)
+                    KtEnumEntryValue(resolvedSymbol.fir.buildSymbol(firSymbolBuilder) as KtEnumEntrySymbol, realPsi as? KtElement)
                 }
                 else -> null
             }

@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSimpleConstantValue
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
+import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.ClassId
@@ -182,16 +179,41 @@ private fun escapeString(str: String): String = buildString {
     }
 }
 
-private fun KtSimpleConstantValue<*>.asStringForPsiLiteral(): String =
-    when (val value = this.value) {
-        is String -> "\"${escapeString(value)}\""
-        is Long -> "${value}L"
-        is Float -> "${value}f"
-        else -> value?.toString() ?: "null"
+internal fun KtConstantValue.toAnnotationMemberValue(parent: PsiElement): PsiAnnotationMemberValue? {
+    return when (this) {
+        is KtArrayConstantValue ->
+            FirPsiArrayInitializerMemberValue(kotlinOrigin, parent) { arrayLiteralParent ->
+                values.mapNotNull { element -> element.toAnnotationMemberValue(arrayLiteralParent) }
+            }
+        is KtAnnotationConstantValue ->
+            FirLightSimpleAnnotation(fqName, parent, arguments, kotlinOrigin)
+        else ->
+            createPsiLiteral(parent)?.let {
+                when (it) {
+                    is PsiLiteral -> FirPsiLiteral(kotlinOrigin, parent, it)
+                    else -> FirPsiExpression(kotlinOrigin, parent, it)
+                }
+            }
+    }
+}
+
+private fun KtConstantValue.asStringForPsiLiteral(): String? =
+    when (this) {
+        is KtEnumEntryValue ->
+            "${enumEntrySymbol.containingEnumClassIdIfNonLocal?.asSingleFqName()?.asString() ?: ""}.${enumEntrySymbol.name}"
+        is KtSimpleConstantValue<*> -> {
+            when (val value = this.value) {
+                is String -> "\"${escapeString(value)}\""
+                is Long -> "${value}L"
+                is Float -> "${value}f"
+                else -> value?.toString() ?: "null"
+            }
+        }
+        else -> null
     }
 
-internal fun KtSimpleConstantValue<*>.createPsiLiteral(parent: PsiElement): PsiExpression? {
-    val asString = asStringForPsiLiteral()
+internal fun KtConstantValue.createPsiLiteral(parent: PsiElement): PsiExpression? {
+    val asString = asStringForPsiLiteral() ?: return null
     val instance = PsiElementFactory.getInstance(parent.project)
     return try {
         instance.createExpressionFromText(asString, parent)
@@ -199,6 +221,5 @@ internal fun KtSimpleConstantValue<*>.createPsiLiteral(parent: PsiElement): PsiE
         null
     }
 }
-
 
 internal fun BitSet.copy(): BitSet = clone() as BitSet
