@@ -138,9 +138,9 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_NSErrorAsException, id error) {
   RETURN_RESULT_OF(Kotlin_ObjCExport_NSErrorAsExceptionImpl, message, kotlinError);
 }
 
-extern "C" KRef Kotlin_ObjCExport_WrapNSErrorAsException(id error) {
+extern "C" OBJ_GETTER(Kotlin_ObjCExport_WrapNSErrorToException, id error) {
     ObjHolder holder;
-    return Kotlin_ObjCExport_NSErrorAsException(error, holder.slot());
+    RETURN_OBJ(Kotlin_ObjCExport_NSErrorAsException(error, holder.slot()));
 }
 
 @interface NSError (NSErrorKotlinException)

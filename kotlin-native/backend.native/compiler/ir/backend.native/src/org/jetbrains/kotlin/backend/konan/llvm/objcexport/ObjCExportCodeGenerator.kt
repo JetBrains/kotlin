@@ -1076,12 +1076,14 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
         fun rethrow() {
             val error = load(errorOutPtr!!)
-            val kotlinException = callFromBridge(context.llvm.Kotlin_ObjCExport_WrapNSErrorAsException, listOf(error))
+            val kotlinException = callFromBridge(context.llvm.Kotlin_ObjCExport_WrapNSErrorToException, listOf(error),
+                    resultLifetime = Lifetime.RETURN_VALUE)
             call(
                     context.llvm.throwExceptionFunction,
                     listOf(kotlinException),
                     Lifetime.IRRELEVANT,
-                    ExceptionHandler.None
+                    ExceptionHandler.None,
+                    forceCall = true
             )
             unreachable()
         }

@@ -527,7 +527,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val Kotlin_ObjCExport_AbstractMethodCalled by lazyRtFunction
     val Kotlin_ObjCExport_RethrowExceptionAsNSError by lazyRtFunction
     val Kotlin_ObjCExport_WrapExceptionToNSError by lazyRtFunction
-    val Kotlin_ObjCExport_WrapNSErrorAsException by lazyRtFunction
+    val Kotlin_ObjCExport_WrapNSErrorToException by lazyRtFunction
     val Kotlin_ObjCExport_AllocInstanceWithAssociatedObject by lazyRtFunction
     val Kotlin_ObjCExport_createContinuationArgument by lazyRtFunction
     val Kotlin_ObjCExport_resumeContinuation by lazyRtFunction

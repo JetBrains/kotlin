@@ -613,7 +613,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     fun call(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
              resultLifetime: Lifetime = Lifetime.IRRELEVANT,
              exceptionHandler: ExceptionHandler = ExceptionHandler.None,
-             verbatim: Boolean = false): LLVMValueRef {
+             verbatim: Boolean = false, forceCall: Boolean = false): LLVMValueRef {
         val callArgs = if (verbatim || !isObjectReturn(llvmFunction.type)) {
             args
         } else {
@@ -640,14 +640,14 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             }
             args + resultSlot
         }
-        return callRaw(llvmFunction, callArgs, exceptionHandler)
+        return callRaw(llvmFunction, callArgs, exceptionHandler, forceCall)
     }
 
     private fun callRaw(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
-                        exceptionHandler: ExceptionHandler): LLVMValueRef {
+                        exceptionHandler: ExceptionHandler, forceCall: Boolean = false): LLVMValueRef {
         val rargs = args.toCValues()
         if (LLVMIsAFunction(llvmFunction) != null /* the function declaration */ &&
-                isFunctionNoUnwind(llvmFunction)) {
+                isFunctionNoUnwind(llvmFunction) || forceCall) {
             return LLVMBuildCall(builder, llvmFunction, rargs, args.size, "")!!
         } else {
             val unwind = when (exceptionHandler) {
@@ -1521,13 +1521,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             }
         }
     }
-
-    private val kotlinExceptionRtti: ConstPointer
-        get() = constPointer(importGlobal(
-                "_ZTI18ExceptionObjHolder", // typeinfo for ObjHolder
-                int8TypePtr,
-                origin = context.stdlibModule.llvmSymbolOrigin
-        )).bitcast(int8TypePtr)
 
     private val objcNSExceptionRtti: ConstPointer by lazy {
         constPointer(importGlobal(
