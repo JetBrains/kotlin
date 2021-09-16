@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.mergedtree.CirClassifierIndex
-import org.jetbrains.kotlin.commonizer.mergedtree.CirCommonClassifierIdResolver
-import org.jetbrains.kotlin.commonizer.mergedtree.CirCommonClassifierIdResolverCache
+import org.jetbrains.kotlin.commonizer.mergedtree.AssociatedClassifierIdsResolver
+import org.jetbrains.kotlin.commonizer.mergedtree.AssociatedClassifierIdsResolverCache
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
 import org.jetbrains.kotlin.commonizer.utils.createCirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.utils.createCirTreeRoot
 import org.jetbrains.kotlin.commonizer.utils.createCirTreeRootFromSourceCode
 
-class CirCommonClassifierIdResolverTest : AbstractInlineSourcesCommonizationTest() {
+class AssociatedClassifierIdsResolverTest : AbstractInlineSourcesCommonizationTest() {
 
     /*
     Platform A:    X -> A
@@ -39,9 +39,9 @@ class CirCommonClassifierIdResolverTest : AbstractInlineSourcesCommonizationTest
             )
         )
 
-        assertEquals(setOf("X"), resolver.findCommonId("A"))
-        assertEquals(setOf("X"), resolver.findCommonId("B"))
-        assertEquals(setOf("X"), resolver.findCommonId("X"))
+        assertEquals(setOf("X"), resolver.resolveAssociatedIds("A"))
+        assertEquals(setOf("X"), resolver.resolveAssociatedIds("B"))
+        assertEquals(setOf("X"), resolver.resolveAssociatedIds("X"))
     }
 
     /*
@@ -68,11 +68,11 @@ class CirCommonClassifierIdResolverTest : AbstractInlineSourcesCommonizationTest
             )
         )
 
-        assertEquals(setOf("C"), resolver.findCommonId("A"))
-        assertEquals(setOf("C"), resolver.findCommonId("B"))
-        assertEquals(setOf("C"), resolver.findCommonId("C"))
-        assertEquals(setOf("C"), resolver.findCommonId("D"))
-        assertEquals(setOf("C"), resolver.findCommonId("E"))
+        assertEquals(setOf("C"), resolver.resolveAssociatedIds("A"))
+        assertEquals(setOf("C"), resolver.resolveAssociatedIds("B"))
+        assertEquals(setOf("C"), resolver.resolveAssociatedIds("C"))
+        assertEquals(setOf("C"), resolver.resolveAssociatedIds("D"))
+        assertEquals(setOf("C"), resolver.resolveAssociatedIds("E"))
     }
 
     /*
@@ -100,10 +100,10 @@ class CirCommonClassifierIdResolverTest : AbstractInlineSourcesCommonizationTest
             )
         )
 
-        assertEquals(setOf("A", "B", "C"), resolver.findCommonId("A"))
-        assertEquals(setOf("A", "B", "C"), resolver.findCommonId("B"))
-        assertEquals(setOf("A", "B", "C"), resolver.findCommonId("C"))
-        assertEquals(setOf("A", "B", "C"), resolver.findCommonId("X"))
+        assertEquals(setOf("A", "B", "C"), resolver.resolveAssociatedIds("A"))
+        assertEquals(setOf("A", "B", "C"), resolver.resolveAssociatedIds("B"))
+        assertEquals(setOf("A", "B", "C"), resolver.resolveAssociatedIds("C"))
+        assertEquals(setOf("A", "B", "C"), resolver.resolveAssociatedIds("X"))
     }
 
     fun `test sample 3`() {
@@ -112,8 +112,8 @@ class CirCommonClassifierIdResolverTest : AbstractInlineSourcesCommonizationTest
             createCirTreeRootFromSourceCode("class B")
         )
 
-        assertEquals(emptySet<String>(), resolver.findCommonId("A"))
-        assertEquals(emptySet<String>(), resolver.findCommonId("B"))
+        assertEquals(emptySet<String>(), resolver.resolveAssociatedIds("A"))
+        assertEquals(emptySet<String>(), resolver.resolveAssociatedIds("B"))
     }
 
 
@@ -148,9 +148,9 @@ class CirCommonClassifierIdResolverTest : AbstractInlineSourcesCommonizationTest
             )
         )
 
-        assertEquals(setOf("A", "B"), resolver.findCommonId("A"))
-        assertEquals(setOf("A", "B"), resolver.findCommonId("B"))
-        assertEquals(setOf("A", "B"), resolver.findCommonId("C"))
+        assertEquals(setOf("A", "B"), resolver.resolveAssociatedIds("A"))
+        assertEquals(setOf("A", "B"), resolver.resolveAssociatedIds("B"))
+        assertEquals(setOf("A", "B"), resolver.resolveAssociatedIds("C"))
     }
 
     /*
@@ -182,11 +182,11 @@ class CirCommonClassifierIdResolverTest : AbstractInlineSourcesCommonizationTest
         )
 
         val resolver = createCommonClassifierIdResolver(rootB, rootA)
-        assertEquals(setOf("B", "C", "D"), resolver.findCommonId("A"))
-        assertEquals(setOf("B", "C", "D"), resolver.findCommonId("B"))
-        assertEquals(setOf("B", "C", "D"), resolver.findCommonId("C"))
-        assertEquals(setOf("B", "C", "D"), resolver.findCommonId("D"))
-        assertEquals(setOf("B", "C", "D"), resolver.findCommonId("E"))
+        assertEquals(setOf("B", "C", "D"), resolver.resolveAssociatedIds("A"))
+        assertEquals(setOf("B", "C", "D"), resolver.resolveAssociatedIds("B"))
+        assertEquals(setOf("B", "C", "D"), resolver.resolveAssociatedIds("C"))
+        assertEquals(setOf("B", "C", "D"), resolver.resolveAssociatedIds("D"))
+        assertEquals(setOf("B", "C", "D"), resolver.resolveAssociatedIds("E"))
     }
 
     /*
@@ -221,12 +221,12 @@ class CirCommonClassifierIdResolverTest : AbstractInlineSourcesCommonizationTest
             )
         )
 
-        assertEquals(setOf("A", "B", "C", "X", "Y", "Z"), resolver.findCommonId("A"))
-        assertEquals(setOf("A", "B", "C", "X", "Y", "Z"), resolver.findCommonId("B"))
-        assertEquals(setOf("A", "B", "C", "X", "Y", "Z"), resolver.findCommonId("C"))
-        assertEquals(setOf("A", "B", "C", "X", "Y", "Z"), resolver.findCommonId("X"))
-        assertEquals(setOf("A", "B", "C", "X", "Y", "Z"), resolver.findCommonId("Y"))
-        assertEquals(setOf("A", "B", "C", "X", "Y", "Z"), resolver.findCommonId("Z"))
+        assertEquals(setOf("A", "B", "C", "X", "Y", "Z"), resolver.resolveAssociatedIds("A"))
+        assertEquals(setOf("A", "B", "C", "X", "Y", "Z"), resolver.resolveAssociatedIds("B"))
+        assertEquals(setOf("A", "B", "C", "X", "Y", "Z"), resolver.resolveAssociatedIds("C"))
+        assertEquals(setOf("A", "B", "C", "X", "Y", "Z"), resolver.resolveAssociatedIds("X"))
+        assertEquals(setOf("A", "B", "C", "X", "Y", "Z"), resolver.resolveAssociatedIds("Y"))
+        assertEquals(setOf("A", "B", "C", "X", "Y", "Z"), resolver.resolveAssociatedIds("Z"))
     }
 
     fun `test sample 7 - with dependencies`() {
@@ -264,11 +264,11 @@ class CirCommonClassifierIdResolverTest : AbstractInlineSourcesCommonizationTest
             rootA, rootB, dependencies = createCirProvidedClassifiers(dependenciesModule)
         )
 
-        assertEquals(setOf("D_X", "D_TA", "A", "C"), resolver.findCommonId("D_X"))
-        assertEquals(setOf("D_X", "D_TA", "A", "C"), resolver.findCommonId("D_TA"))
-        assertEquals(setOf("D_X", "D_TA", "A", "C"), resolver.findCommonId("A"))
-        assertEquals(setOf("D_X", "D_TA", "A", "C"), resolver.findCommonId("B"))
-        assertEquals(setOf("D_X", "D_TA", "A", "C"), resolver.findCommonId("C"))
+        assertEquals(setOf("D_X", "D_TA", "A", "C"), resolver.resolveAssociatedIds("D_X"))
+        assertEquals(setOf("D_X", "D_TA", "A", "C"), resolver.resolveAssociatedIds("D_TA"))
+        assertEquals(setOf("D_X", "D_TA", "A", "C"), resolver.resolveAssociatedIds("A"))
+        assertEquals(setOf("D_X", "D_TA", "A", "C"), resolver.resolveAssociatedIds("B"))
+        assertEquals(setOf("D_X", "D_TA", "A", "C"), resolver.resolveAssociatedIds("C"))
     }
 
     /*
@@ -297,13 +297,13 @@ class CirCommonClassifierIdResolverTest : AbstractInlineSourcesCommonizationTest
             )
         )
 
-        assertEquals(setOf("A"), resolver.findCommonId("A"))
-        assertEquals(setOf("A"), resolver.findCommonId("A1"))
-        assertEquals(setOf("A"), resolver.findCommonId("A2"))
-        assertEquals(setOf("A"), resolver.findCommonId("B"))
-        assertEquals(setOf("A"), resolver.findCommonId("C"))
-        assertEquals(setOf("A"), resolver.findCommonId("E"))
-        assertEquals(setOf("A"), resolver.findCommonId("D"))
+        assertEquals(setOf("A"), resolver.resolveAssociatedIds("A"))
+        assertEquals(setOf("A"), resolver.resolveAssociatedIds("A1"))
+        assertEquals(setOf("A"), resolver.resolveAssociatedIds("A2"))
+        assertEquals(setOf("A"), resolver.resolveAssociatedIds("B"))
+        assertEquals(setOf("A"), resolver.resolveAssociatedIds("C"))
+        assertEquals(setOf("A"), resolver.resolveAssociatedIds("E"))
+        assertEquals(setOf("A"), resolver.resolveAssociatedIds("D"))
     }
 
     /*
@@ -335,30 +335,30 @@ class CirCommonClassifierIdResolverTest : AbstractInlineSourcesCommonizationTest
             )
         )
 
-        assertEquals(setOf("A", "C"), resolver.findCommonId("A"))
-        assertEquals(setOf("A", "C"), resolver.findCommonId("B"))
-        assertEquals(setOf("A", "C"), resolver.findCommonId("C"))
-        assertEquals(setOf("A", "C"), resolver.findCommonId("D"))
-        assertEquals(setOf("A", "C"), resolver.findCommonId("E"))
-        assertEquals(setOf("A", "C"), resolver.findCommonId("F"))
-        assertEquals(setOf("A", "C"), resolver.findCommonId("G"))
+        assertEquals(setOf("A", "C"), resolver.resolveAssociatedIds("A"))
+        assertEquals(setOf("A", "C"), resolver.resolveAssociatedIds("B"))
+        assertEquals(setOf("A", "C"), resolver.resolveAssociatedIds("C"))
+        assertEquals(setOf("A", "C"), resolver.resolveAssociatedIds("D"))
+        assertEquals(setOf("A", "C"), resolver.resolveAssociatedIds("E"))
+        assertEquals(setOf("A", "C"), resolver.resolveAssociatedIds("F"))
+        assertEquals(setOf("A", "C"), resolver.resolveAssociatedIds("G"))
     }
 }
 
 private fun createCommonClassifierIdResolver(
     vararg root: CirTreeRoot,
     dependencies: CirProvidedClassifiers = CirProvidedClassifiers.EMPTY
-): CirCommonClassifierIdResolver {
-    return CirCommonClassifierIdResolver(
+): AssociatedClassifierIdsResolver {
+    return AssociatedClassifierIdsResolver(
         TargetDependent(root.withIndex().associate { (index, root) -> LeafCommonizerTarget(index.toString()) to root })
             .mapValue(::CirClassifierIndex),
         targetDependencies = root.withIndex()
             .associate { (index, _) -> LeafCommonizerTarget(index.toString()) to CirProvidedClassifiers.EMPTY }.toTargetDependent(),
         commonDependencies = dependencies,
-        cache = CirCommonClassifierIdResolverCache.None
+        cache = AssociatedClassifierIdsResolverCache.None
     )
 }
 
-private fun CirCommonClassifierIdResolver.findCommonId(id: String): Set<String> =
-    resolveId(CirEntityId.create(id))?.aliases.orEmpty().map { it.toQualifiedNameString() }.toSet()
+private fun AssociatedClassifierIdsResolver.resolveAssociatedIds(id: String): Set<String> =
+    resolveAssociatedIds(CirEntityId.create(id))?.ids.orEmpty().map { it.toQualifiedNameString() }.toSet()
 

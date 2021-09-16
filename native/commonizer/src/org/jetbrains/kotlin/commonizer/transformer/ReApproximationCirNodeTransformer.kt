@@ -26,7 +26,7 @@ internal class ReApproximationCirNodeTransformer(
         operator fun invoke(member: CirMemberContext, functionOrPropertyOrConstructor: CirHasTypeParameters): SignatureBuildingContext {
             return SignatureBuildingContext(
                 memberContext = member, functionOrPropertyOrConstructor = functionOrPropertyOrConstructor,
-                classifierSignatureBuildingContext = if (typeAliasInvariant) TypeAliasInvariant(classifiers.commonClassifierIdResolver)
+                classifierSignatureBuildingContext = if (typeAliasInvariant) TypeAliasInvariant(classifiers.associatedIdsResolver)
                 else ClassifierSignatureBuildingContext.Default,
                 argumentsSignatureBuildingContext = if (skipArguments) ArgumentsSignatureBuildingContext.SkipArguments
                 else ArgumentsSignatureBuildingContext.Default

@@ -62,9 +62,9 @@ internal sealed interface ClassifierSignatureBuildingContext {
         override fun appendSignature(signature: CirTypeSignature, classifierId: CirEntityId) = signature.add(classifierId)
     }
 
-    class TypeAliasInvariant(private val commonClassifierIdResolver: CirCommonClassifierIdResolver) : ClassifierSignatureBuildingContext {
+    class TypeAliasInvariant(private val associatedIdsResolver: AssociatedClassifierIdsResolver) : ClassifierSignatureBuildingContext {
         override fun appendSignature(signature: CirTypeSignature, classifierId: CirEntityId) {
-            return signature.add(commonClassifierIdResolver.resolveId(classifierId) ?: classifierId)
+            return signature.add(associatedIdsResolver.resolveAssociatedIds(classifierId) ?: classifierId)
         }
     }
 }
