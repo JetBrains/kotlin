@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 // WITH_RUNTIME
 
 fun build(): List<() -> Int> {
