@@ -121,7 +121,7 @@ internal open class KotlinJvmCompilerArgumentsContributor(
                     
                     Consider using JavaToolchain on Gradle 6.7+:
                     kotlin {
-                        toolchain {
+                        jvmToolchain {
                             languageVersion.set(JavaLanguageVersion.of(<MAJOR_JDK_VERSION>))
                         }
                     }
