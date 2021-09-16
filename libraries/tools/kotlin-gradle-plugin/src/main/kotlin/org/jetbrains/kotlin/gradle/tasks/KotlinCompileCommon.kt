@@ -89,6 +89,7 @@ abstract class KotlinCompileCommon @Inject constructor(
                     it,
                     null,
                     normalizedKotlinDaemonJvmArguments.orNull,
+                    metrics.get(),
                     workerExecutor
                 )
             }
@@ -133,7 +134,12 @@ abstract class KotlinCompileCommon @Inject constructor(
     @get:Internal
     internal val expectActualLinker = objects.property(Boolean::class.java)
 
-    override fun callCompilerAsync(args: K2MetadataCompilerArguments, sourceRoots: SourceRoots, inputChanges: InputChanges) {
+    override fun callCompilerAsync(
+        args: K2MetadataCompilerArguments,
+        sourceRoots: SourceRoots,
+        inputChanges: InputChanges,
+        taskOutputsBackup: TaskOutputsBackup?
+    ) {
         val messageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()

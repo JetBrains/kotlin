@@ -25,7 +25,7 @@ fun throwGradleExceptionIfError(exitCode: ExitCode) {
 
 internal fun TaskWithLocalState.clearLocalState(reason: String? = null) {
     val log = GradleKotlinLogger(logger)
-    clearLocalState(allOutputFiles(), log, metrics, reason)
+    clearLocalState(allOutputFiles(), log, metrics.get(), reason)
 }
 
 internal fun clearLocalState(

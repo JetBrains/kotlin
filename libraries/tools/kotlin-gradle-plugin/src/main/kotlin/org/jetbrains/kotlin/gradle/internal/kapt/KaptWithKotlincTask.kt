@@ -11,7 +11,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
-import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.work.InputChanges
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
@@ -122,7 +121,8 @@ abstract class KaptWithKotlincTask @Inject constructor(
         val compilerRunner = GradleCompilerRunner(
             taskProvider.get(),
             defaultKotlinJavaToolchain.get().currentJvmJdkToolsJar.orNull,
-            normalizedKotlinDaemonJvmArguments.orNull
+            normalizedKotlinDaemonJvmArguments.orNull,
+            metrics.get()
         )
         compilerRunner.runJvmCompilerAsync(
             sourcesToCompile = emptyList(),
@@ -131,7 +131,8 @@ abstract class KaptWithKotlincTask @Inject constructor(
             javaPackagePrefix = javaPackagePrefix.orNull,
             args = args,
             environment = environment,
-            jdkHome = defaultKotlinJavaToolchain.get().providedJvm.get().javaHome
+            jdkHome = defaultKotlinJavaToolchain.get().providedJvm.get().javaHome,
+            null
         )
     }
 }

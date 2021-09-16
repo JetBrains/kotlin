@@ -10,21 +10,20 @@ import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 import java.util.HashSet
 
-internal class TaskOutputsBackup(private val outputs: FileCollection) {
-    private val previousOutputs: Map<File, ByteArray>
-
-    init {
-        val outputFiles = HashSet<File>()
-        outputs.forEach {
+internal class TaskOutputsBackup(
+    val outputs: FileCollection,
+    val previousOutputs: Map<File, Array<Byte>> = outputs
+        .flatMap {
             if (it.isDirectory) {
-                it.walk().filterTo(outputFiles, File::isFile)
-            } else if (it.isFile) {
-                outputFiles.add(it)
+                it.walk().filter(File::isFile)
+            } else {
+                sequenceOf(it)
             }
         }
-
-        previousOutputs = outputFiles.keysToMap { it.readBytes() }
-    }
+        .filter { it.exists() }
+        .toSet()
+        .keysToMap { it.readBytes().toTypedArray() }
+) {
 
     fun restoreOutputs() {
         outputs.forEach {
@@ -42,7 +41,7 @@ internal class TaskOutputsBackup(private val outputs: FileCollection) {
             if (dirs.add(dir)) {
                 dir.mkdirs()
             }
-            file.writeBytes(bytes)
+            file.writeBytes(bytes.toByteArray())
         }
     }
 }

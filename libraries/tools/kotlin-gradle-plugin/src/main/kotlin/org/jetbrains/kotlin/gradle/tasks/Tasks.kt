@@ -92,8 +92,8 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>
     }
 
     @get:Internal
-    override val metrics: BuildMetricsReporter =
-        BuildMetricsReporterImpl()
+    override val metrics: Property<BuildMetricsReporter> = project.objects
+        .property(BuildMetricsReporterImpl())
 
     /**
      * By default, should be set by plugin from [COMPILER_CLASSPATH_CONFIGURATION_NAME] configuration.
@@ -315,7 +315,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
     internal open val compilerRunner: Provider<GradleCompilerRunner> =
         objects.propertyWithConvention(
             gradleCompileTaskProvider.map {
-                GradleCompilerRunner(it, null, normalizedKotlinDaemonJvmArguments.orNull)
+                GradleCompilerRunner(
+                    it,
+                    null,
+                    normalizedKotlinDaemonJvmArguments.orNull,
+                    metrics.get()
+                )
             }
         )
 
@@ -323,7 +328,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
     @TaskAction
     fun execute(inputChanges: InputChanges) {
-        metrics.measure(BuildTime.GRADLE_TASK_ACTION) {
+        val buildMetrics = metrics.get()
+        buildMetrics.measure(BuildTime.GRADLE_TASK_ACTION) {
             systemPropertiesService.get().startIntercept()
             CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
 
@@ -332,7 +338,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
             // To prevent this, we backup outputs before incremental build and restore when exception is thrown
             val outputsBackup: TaskOutputsBackup? =
                 if (isIncrementalCompilationEnabled() && inputChanges.isIncremental)
-                    metrics.measure(BuildTime.BACKUP_OUTPUT) {
+                    buildMetrics.measure(BuildTime.BACKUP_OUTPUT) {
                         TaskOutputsBackup(allOutputFiles())
                     }
                 else null
@@ -343,16 +349,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
                 clearLocalState("Task cannot run incrementally")
             }
 
-            try {
-                executeImpl(inputChanges)
-            } catch (t: Throwable) {
-                if (outputsBackup != null) {
-                    metrics.measure(BuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
-                        outputsBackup.restoreOutputs()
-                    }
-                }
-                throw t
-            }
+            executeImpl(inputChanges, outputsBackup)
         }
     }
 
@@ -369,7 +366,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
             commonSourceSet
         )
 
-    private fun executeImpl(inputChanges: InputChanges) {
+    private fun executeImpl(
+        inputChanges: InputChanges,
+        taskOutputsBackup: TaskOutputsBackup?
+    ) {
         val sourceRoots = getSourceRoots()
         val allKotlinSources = sourceRoots.kotlinSourceFiles
 
@@ -386,7 +386,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
         sourceRoots.log(this.name, logger)
         taskBuildDirectory.get().asFile.mkdirs()
-        callCompilerAsync(args, sourceRoots, inputChanges)
+        callCompilerAsync(
+            args,
+            sourceRoots,
+            inputChanges,
+            taskOutputsBackup
+        )
     }
 
     protected fun getChangedFiles(
@@ -420,7 +425,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
      * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
      * @see [GradleKotlinCompilerWork]
      */
-    internal abstract fun callCompilerAsync(args: T, sourceRoots: SourceRoots, inputChanges: InputChanges)
+    internal abstract fun callCompilerAsync(
+        args: T,
+        sourceRoots: SourceRoots,
+        inputChanges: InputChanges,
+        taskOutputsBackup: TaskOutputsBackup?
+    )
 
     @get:Input
     internal val multiPlatformEnabled: Property<Boolean> = objects.property(Boolean::class.java)
@@ -640,6 +650,7 @@ abstract class KotlinCompile @Inject constructor(
                     it,
                     toolchain.currentJvmJdkToolsJar.orNull,
                     normalizedKotlinDaemonJvmArguments.orNull,
+                    metrics.get(),
                     workerExecutor
                 )
             })
@@ -693,7 +704,12 @@ abstract class KotlinCompile @Inject constructor(
         validateKotlinAndJavaHasSameTargetCompatibility(args)
     }
 
-    override fun callCompilerAsync(args: K2JVMCompilerArguments, sourceRoots: SourceRoots, inputChanges: InputChanges) {
+    override fun callCompilerAsync(
+        args: K2JVMCompilerArguments,
+        sourceRoots: SourceRoots,
+        inputChanges: InputChanges,
+        taskOutputsBackup: TaskOutputsBackup?
+    ) {
         sourceRoots as SourceRoots.ForJvm
 
         val messageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
@@ -738,7 +754,8 @@ abstract class KotlinCompile @Inject constructor(
             javaPackagePrefix,
             args,
             environment,
-            defaultKotlinJavaToolchain.get().providedJvm.get().javaHome
+            defaultKotlinJavaToolchain.get().providedJvm.get().javaHome,
+            taskOutputsBackup
         )
     }
 
@@ -944,6 +961,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
                     it,
                     null,
                     normalizedKotlinDaemonJvmArguments.orNull,
+                    metrics.get(),
                     workerExecutor
                 )
             }
@@ -1052,7 +1070,12 @@ abstract class Kotlin2JsCompile @Inject constructor(
     override val incrementalProps: List<FileCollection>
         get() = super.incrementalProps + listOf(friendDependencies)
 
-    override fun callCompilerAsync(args: K2JSCompilerArguments, sourceRoots: SourceRoots, inputChanges: InputChanges) {
+    override fun callCompilerAsync(
+        args: K2JSCompilerArguments,
+        sourceRoots: SourceRoots,
+        inputChanges: InputChanges,
+        taskOutputsBackup: TaskOutputsBackup?
+    ) {
         sourceRoots as SourceRoots.KotlinOnly
 
         logger.debug("Calling compiler")
@@ -1104,7 +1127,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
             sourceRoots.kotlinSourceFiles.files.toList(),
             commonSourceSet.toList(),
             args,
-            environment
+            environment,
+            taskOutputsBackup
         )
     }
 }

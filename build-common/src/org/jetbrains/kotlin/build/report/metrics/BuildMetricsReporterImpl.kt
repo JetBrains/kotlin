@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.build.report.metrics
 
+import java.io.Serializable
 import java.util.*
 
-class BuildMetricsReporterImpl : BuildMetricsReporter {
+class BuildMetricsReporterImpl : BuildMetricsReporter, Serializable {
     private val myBuildTimeStartNs: EnumMap<BuildTime, Long> =
         EnumMap(
             BuildTime::class.java

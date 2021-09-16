@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.SourceRoots
+import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
 import org.jetbrains.kotlin.gradle.utils.getAllDependencies
 import org.jetbrains.kotlin.gradle.utils.getCacheDirectory
 import org.jetbrains.kotlin.gradle.utils.getDependenciesCacheDirectories
@@ -100,7 +101,12 @@ abstract class KotlinJsIrLink @Inject constructor(
         return !entryModule.get().asFile.exists()
     }
 
-    override fun callCompilerAsync(args: K2JSCompilerArguments, sourceRoots: SourceRoots, inputChanges: InputChanges) {
+    override fun callCompilerAsync(
+        args: K2JSCompilerArguments,
+        sourceRoots: SourceRoots,
+        inputChanges: InputChanges,
+        taskOutputsBackup: TaskOutputsBackup?
+    ) {
         KotlinBuildStatsService.applyIfInitialised {
             it.report(BooleanMetrics.JS_IR_INCREMENTAL, incrementalJsIr)
         }
@@ -131,7 +137,7 @@ abstract class KotlinJsIrLink @Inject constructor(
                 it.normalize().absolutePath
             }
         }
-        super.callCompilerAsync(args, sourceRoots, inputChanges)
+        super.callCompilerAsync(args, sourceRoots, inputChanges, taskOutputsBackup)
     }
 
     private fun visitCompilation(
@@ -347,7 +353,8 @@ internal class CacheBuilder(
                 emptyList(),
                 emptyList(),
                 compilerArgs,
-                environment
+                environment,
+                null
             )?.await()
     }
 

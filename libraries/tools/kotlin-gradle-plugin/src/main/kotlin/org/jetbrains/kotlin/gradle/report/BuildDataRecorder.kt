@@ -95,7 +95,7 @@ private class TaskRecord(
         }
 
         if (task is TaskWithLocalState) {
-            myBuildMetrics.addAll(task.metrics.getMetrics())
+            myBuildMetrics.addAll(task.metrics.get().getMetrics())
         }
     }
 }
