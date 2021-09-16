@@ -198,11 +198,11 @@ internal class ClassOrTypeAliasTypeCommonizer(
             return null
         }
 
-        val commonId = types.singleDistinctValueOrNull {
-            classifiers.commonClassifierIdResolver.resolveId(it.classifierId)
+        val associatedIds = types.singleDistinctValueOrNull {
+            classifiers.associatedIdsResolver.resolveAssociatedIds(it.classifierId)
         } ?: return null
 
-        val typeSubstitutionCandidates = resolveTypeSubstitutionCandidates(classifiers, commonId, types)
+        val typeSubstitutionCandidates = resolveTypeSubstitutionCandidates(classifiers, associatedIds, types)
             .filter { typeSubstitutionCandidate ->
                 assert(typeSubstitutionCandidate.typeDistance.isZero.not()) { "Expected no zero typeDistance" }
                 if (typeSubstitutionCandidate.typeDistance.isNotReachable) return@filter false
@@ -221,9 +221,9 @@ private class TypeSubstitutionCandidate(
 )
 
 private fun resolveTypeSubstitutionCandidates(
-    classifiers: CirKnownClassifiers, commonId: CirCommonClassifierId, types: List<CirClassOrTypeAliasType>
+    classifiers: CirKnownClassifiers, associatedIds: AssociatedClassifierIds, types: List<CirClassOrTypeAliasType>
 ): List<TypeSubstitutionCandidate> {
-    return commonId.aliases.mapNotNull mapCandidateId@{ candidateId ->
+    return associatedIds.ids.mapNotNull mapCandidateId@{ candidateId ->
         val typeDistances = types.mapIndexed { targetIndex, type -> typeDistance(classifiers, targetIndex, type, candidateId) }
         if (typeDistances.any { it.isNotReachable }) return@mapCandidateId null
         TypeSubstitutionCandidate(
