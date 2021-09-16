@@ -376,6 +376,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var selfUpperBoundInference: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xcontext-receivers",
+        description = "Enable experimental context receivers"
+    )
+    var contextReceivers: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
@@ -431,6 +437,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
                 put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
                 put(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.State.ENABLED)
+            }
+
+            if (contextReceivers) {
+                put(LanguageFeature.ContextReceivers, LanguageFeature.State.ENABLED)
             }
 
             if (inlineClasses) {

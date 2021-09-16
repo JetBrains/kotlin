@@ -1,3 +1,5 @@
+// !LANGUAGE: +ContextReceivers
+
 context(T) class A<T>
 
 context(Collection<P>) class B<P>

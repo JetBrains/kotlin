@@ -1,3 +1,5 @@
+// !LANGUAGE: +ContextReceivers
+
 class Storage<T> {
     inner class Info
 

@@ -155,6 +155,7 @@ where advanced options include:
                              Run sticky condition checks on subsequent phases as well. Implies -Xcheck-phase-conditions
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in the multi-platform mode.
                              Should be a subset of sources passed as free arguments
+  -Xcontext-receivers        Enable experimental context receivers
   -Xdisable-default-scripting-plugin
                              Do not enable scripting plugin by default
   -Xdisable-phases           Disable backend phases

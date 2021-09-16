@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses, +ContextReceivers
 
 class A
 

@@ -333,6 +333,15 @@ fun PsiElement.isExtensionDeclaration(): Boolean {
     return callable?.receiverTypeReference != null
 }
 
+fun KtElement.isContextualDeclaration(): Boolean {
+    val contextReceivers = when (this) {
+        is KtCallableDeclaration -> contextReceivers
+        is KtClassOrObject -> contextReceivers
+        else -> emptyList()
+    }
+    return contextReceivers.isNotEmpty()
+}
+
 fun KtClassOrObject.isObjectLiteral(): Boolean = this is KtObjectDeclaration && isObjectLiteral()
 
 //TODO: strange method, and not only Kotlin specific (also Java)

@@ -1,3 +1,5 @@
+// !LANGUAGE: +ContextReceivers
+
 class JSONObject {
     fun build(): JSONObject = TODO()
 

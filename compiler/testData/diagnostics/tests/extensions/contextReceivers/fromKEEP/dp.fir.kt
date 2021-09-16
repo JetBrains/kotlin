@@ -1,3 +1,5 @@
+// !LANGUAGE: +ContextReceivers
+
 class View
 
 context(View) val Int.dp get() = 42 * this

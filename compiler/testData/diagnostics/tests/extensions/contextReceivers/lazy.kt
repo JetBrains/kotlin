@@ -1,3 +1,5 @@
+// !LANGUAGE: +ContextReceivers
+
 interface Lazy<T>
 
 context(Lazy<Int>, Lazy<CharSequence>)

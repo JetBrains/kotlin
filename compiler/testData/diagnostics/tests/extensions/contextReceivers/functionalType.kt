@@ -1,3 +1,5 @@
+// !LANGUAGE: +ContextReceivers
+
 class Param
 class C {
     val c = 42

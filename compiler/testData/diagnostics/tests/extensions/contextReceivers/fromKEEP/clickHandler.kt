@@ -1,3 +1,4 @@
+// !LANGUAGE: +ContextReceivers
 // FIR_IDENTICAL
 
 class Button

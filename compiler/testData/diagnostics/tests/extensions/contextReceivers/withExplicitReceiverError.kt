@@ -1,3 +1,5 @@
+// !LANGUAGE: +ContextReceivers
+
 class A
 class B
 class C

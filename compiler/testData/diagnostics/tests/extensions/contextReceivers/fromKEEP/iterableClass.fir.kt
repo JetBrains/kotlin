@@ -1,3 +1,5 @@
+// !LANGUAGE: +ContextReceivers
+
 typealias IterableClass<C, T> = (C) -> Iterator<T>
 
 context(IterableClass<C, T>)

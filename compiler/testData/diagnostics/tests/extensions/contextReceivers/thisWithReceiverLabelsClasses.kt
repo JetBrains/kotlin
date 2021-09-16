@@ -1,3 +1,5 @@
+// !LANGUAGE: +ContextReceivers
+
 class A {
     val x = 1
 }

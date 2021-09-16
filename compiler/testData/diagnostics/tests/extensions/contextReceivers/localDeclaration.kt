@@ -1,3 +1,5 @@
+// !LANGUAGE: +ContextReceivers
+
 interface A {
     fun f() {}
 }

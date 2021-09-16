@@ -1,3 +1,5 @@
+// !LANGUAGE: +ContextReceivers
+
 interface Params
 interface Logger {
     fun info(message: String)

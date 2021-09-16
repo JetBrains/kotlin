@@ -1,3 +1,4 @@
+// !LANGUAGE: +ContextReceivers
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A
