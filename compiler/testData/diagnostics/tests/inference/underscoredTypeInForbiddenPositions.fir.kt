@@ -52,7 +52,7 @@ fun test() {
     if (<!USELESS_IS_CHECK!>x11 is Foo<<!UNRESOLVED_REFERENCE!>_<!>><!>) { }
 
     x10 as <!UNRESOLVED_REFERENCE!>_<!>
-    x10 as Foo<<!UNRESOLVED_REFERENCE!>_<!>>
+    x10 <!CAST_NEVER_SUCCEEDS!>as<!> Foo<<!UNRESOLVED_REFERENCE!>_<!>>
 
     val x12: Foo<@<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!> Int>? = null
     val x13: Foo<@<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>() Int>? = null

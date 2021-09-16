@@ -2,7 +2,7 @@
 
 class TypeInfo<T>
 
-fun <T> typeinfo() : TypeInfo<T> = null as TypeInfo<T>
+fun <T> typeinfo() : TypeInfo<T> = null <!CAST_NEVER_SUCCEEDS!>as<!> TypeInfo<T>
 
 fun <T> TypeInfo<T>.getJavaClass() : java.lang.Class<T> {
     val t : java.lang.Object = this as java.lang.Object

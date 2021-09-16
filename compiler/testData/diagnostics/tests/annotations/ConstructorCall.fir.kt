@@ -33,4 +33,4 @@ fun bar(a: Ann = <!ANNOTATION_CLASS_CONSTRUCTOR_CALL!>Ann()<!>) {
 operator fun String.invoke() {}
 
 // from stdlib
-fun <T> javaClass() : Class<T> = null as Class<T>
+fun <T> javaClass() : Class<T> = null <!CAST_NEVER_SUCCEEDS!>as<!> Class<T>

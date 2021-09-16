@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun <R> runCatching(block: () -> R) = null <!CAST_NEVER_SUCCEEDS!>as<!> Result<R>
 
 class Result<out T> {

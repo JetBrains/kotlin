@@ -3104,6 +3104,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CAST_NEVER_SUCCEEDS) { firDiagnostic ->
+        CastNeverSucceedsImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.USELESS_CAST) { firDiagnostic ->
         UselessCastImpl(
             firDiagnostic as KtPsiDiagnostic,

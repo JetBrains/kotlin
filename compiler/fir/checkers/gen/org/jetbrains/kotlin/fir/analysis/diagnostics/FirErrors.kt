@@ -591,6 +591,7 @@ object FirErrors {
 
     // Casts and is-checks
     val CANNOT_CHECK_FOR_ERASED by error1<PsiElement, ConeKotlinType>()
+    val CAST_NEVER_SUCCEEDS by warning0<KtBinaryExpressionWithTypeRHS>(SourceElementPositioningStrategies.OPERATOR)
     val USELESS_CAST by warning0<KtBinaryExpressionWithTypeRHS>(SourceElementPositioningStrategies.AS_TYPE)
     val USELESS_IS_CHECK by warning1<KtElement, Boolean>()
     val IS_ENUM_ENTRY by error0<KtTypeReference>()
