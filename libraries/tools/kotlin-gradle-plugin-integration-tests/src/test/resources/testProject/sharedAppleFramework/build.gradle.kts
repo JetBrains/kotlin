@@ -1,10 +1,9 @@
 buildscript {
     repositories {
+        mavenLocal()
         gradlePluginPortal()
-        jcenter()
         google()
         mavenCentral()
-        mavenLocal()
     }
     dependencies {
         classpath(kotlin("gradle-plugin:${property("kotlin_version")}"))
@@ -14,9 +13,8 @@ buildscript {
 
 allprojects {
     repositories {
-        google()
-        jcenter()
-        mavenCentral()
         mavenLocal()
+        google()
+        mavenCentral()
     }
 }

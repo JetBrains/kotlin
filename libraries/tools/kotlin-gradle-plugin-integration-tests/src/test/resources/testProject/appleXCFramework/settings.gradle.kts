@@ -1,8 +1,8 @@
 pluginManagement {
     repositories {
+        mavenLocal()
         gradlePluginPortal()
         mavenCentral()
-        mavenLocal()
     }
     val kotlin_version: String by settings
     plugins {
