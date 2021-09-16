@@ -360,5 +360,5 @@ private fun createCommonClassifierIdResolver(
 }
 
 private fun CirCommonClassifierIdResolver.findCommonId(id: String): Set<String> =
-    findCommonId(CirEntityId.create(id))?.aliases.orEmpty().map { it.toQualifiedNameString() }.toSet()
+    resolveId(CirEntityId.create(id))?.aliases.orEmpty().map { it.toQualifiedNameString() }.toSet()
 
