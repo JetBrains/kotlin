@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.BodyAndScriptBodyLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.lower.inline.isInlineParameter
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -79,6 +80,7 @@ class LocalDeclarationsLowering(
     val localNameProvider: LocalNameProvider = LocalNameProvider.DEFAULT,
     val visibilityPolicy: VisibilityPolicy = VisibilityPolicy.DEFAULT,
     val suggestUniqueNames: Boolean = true, // When `true` appends a `-#index` suffix to lifted declaration names
+    val forceFieldsForInlineCaptures: Boolean = false // See `LocalClassContext`
 ) :
     BodyAndScriptBodyLoweringPass {
 
@@ -163,7 +165,11 @@ class LocalDeclarationsLowering(
         override lateinit var transformedDeclaration: IrConstructor
     }
 
-    private class LocalClassContext(val declaration: IrClass, val inInlineFunctionScope: Boolean) : LocalContext() {
+    private inner class LocalClassContext(
+        val declaration: IrClass,
+        val inInlineFunctionScope: Boolean,
+        val constructorContext: LocalContext?
+    ) : LocalContext() {
         lateinit var closure: Closure
 
         // NOTE: This map is iterated over in `rewriteClassMembers` and we're relying on
@@ -171,6 +177,19 @@ class LocalDeclarationsLowering(
         val capturedValueToField: MutableMap<IrValueDeclaration, Lazy<IrField>> = mutableMapOf()
 
         override fun irGet(startOffset: Int, endOffset: Int, valueDeclaration: IrValueDeclaration): IrExpression? {
+            // On the JVM backend, `AnonymousObjectTransformer` in the bytecode inliner uses field assignment
+            // instructions to find captured parameters. Most of the time this is unimportant, as captured
+            // parameters are effectively indistinguishable from normal ones; the exception is ones that can
+            // take an inline lambda value, as the parameter needs to be replaced with the lambda's capture.
+            // Thus we cannot erase the field - the inliner won't handle the inline lambda without it.
+            // (Most of the time this is inconsequential - if the object really is instantiated with an inline
+            // lambda, the field will be erased completely regardless of whether it's used.)
+            if (!forceFieldsForInlineCaptures || !valueDeclaration.isInlineDeclaration()) {
+                // We're in the initializer scope, which will be moved to a primary constructor later.
+                // Thus we can directly use that constructor's context and read from a parameter instead of a field.
+                constructorContext?.irGet(startOffset, endOffset, valueDeclaration)?.let { return it }
+            }
+
             val field = capturedValueToField[valueDeclaration]?.value ?: return null
 
             val receiver = declaration.thisReceiver!!
@@ -179,13 +198,16 @@ class LocalDeclarationsLowering(
                 receiver = IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol)
             )
         }
+
+        private fun IrValueDeclaration.isInlineDeclaration() =
+            this is IrValueParameter && parent.let { it is IrFunction && it.isInline } && isInlineParameter()
     }
 
-    private class LocalClassMemberContext(val member: IrFunction, val classContext: LocalClassContext) : LocalContext() {
+    private class LocalClassMemberContext(val member: IrDeclaration, val classContext: LocalClassContext) : LocalContext() {
         override fun irGet(startOffset: Int, endOffset: Int, valueDeclaration: IrValueDeclaration): IrExpression? {
             val field = classContext.capturedValueToField[valueDeclaration]?.value ?: return null
-
-            val receiver = member.dispatchReceiverParameter
+            // This lowering does not process accesses to outer `this`.
+            val receiver = (if (member is IrFunction) member.dispatchReceiverParameter else classContext.declaration.thisReceiver)
                 ?: error("No dispatch receiver parameter for ${member.render()}")
             return IrGetFieldImpl(
                 startOffset, endOffset, field.symbol, field.type,
@@ -258,27 +280,26 @@ class LocalDeclarationsLowering(
                 // Both accessors extracted as closures.
                 declaration.delegate.transformStatement(this)
 
-            override fun visitClass(declaration: IrClass) = if (declaration in localClasses) {
-                localClasses[declaration]!!.declaration
-            } else {
-                super.visitClass(declaration)
-            }
+            override fun visitClass(declaration: IrClass) =
+                localClasses[declaration]?.declaration
+                    ?: visitMember(declaration)
+                    ?: super.visitClass(declaration)
 
-            override fun visitFunction(declaration: IrFunction): IrStatement {
-                return if (declaration in localFunctions) {
+            override fun visitFunction(declaration: IrFunction): IrStatement =
+                if (declaration in localFunctions) {
                     // Replace local function definition with an empty composite.
                     IrCompositeImpl(declaration.startOffset, declaration.endOffset, context.irBuiltIns.unitType)
                 } else {
-                    if (localContext is LocalClassContext && declaration.parent == localContext.declaration) {
-                        declaration.apply {
-                            val classMemberLocalContext = LocalClassMemberContext(declaration, localContext)
-                            transformChildrenVoid(FunctionBodiesRewriter(classMemberLocalContext))
-                        }
-                    } else {
-                        super.visitFunction(declaration)
-                    }
+                    visitMember(declaration) ?: super.visitFunction(declaration)
                 }
-            }
+
+            private fun visitMember(declaration: IrDeclaration): IrStatement? =
+                if (localContext is LocalClassContext && declaration.parent == localContext.declaration) {
+                    val classMemberLocalContext = LocalClassMemberContext(declaration, localContext)
+                    declaration.apply { transformChildrenVoid(FunctionBodiesRewriter(classMemberLocalContext)) }
+                } else {
+                    null
+                }
 
             override fun visitConstructor(declaration: IrConstructor): IrStatement {
                 // Body is transformed separately. See loop over constructors in rewriteDeclarations().
@@ -469,6 +490,8 @@ class LocalDeclarationsLowering(
 
             if (isScriptMode && constructors.isEmpty()) return
 
+            // NOTE: if running before InitializersLowering, we can instead look for constructors that have
+            //   IrInstanceInitializerCall. However, Native runs these two lowerings in opposite order.
             val constructorsCallingSuper = constructors
                 .asSequence()
                 .map { localClassConstructors[it]!! }
@@ -953,7 +976,18 @@ class LocalDeclarationsLowering(
                     // LDL doesn't work on the enums because local enums are not allowed, so skipping them in scripts too
                     if (isScriptMode && declaration.kind == ClassKind.ENUM_CLASS) return
 
-                    localClasses[declaration] = LocalClassContext(declaration, data.inInlineFunctionScope)
+                    // If there are many non-delegating constructors, each copy of the initializer requires different remapping:
+                    //   class C {
+                    //     constructor() {}
+                    //     constructor(x: Int) {}
+                    //     val x = y // which constructor's parameter?
+                    //   }
+                    // TODO: this should ideally run after initializers are added to constructors, but that'd place
+                    //   other restrictions on IR (e.g. after the initializers are moved you can no longer create fields
+                    //   with initializers) which makes that hard to implement.
+                    val constructorContext = declaration.constructors.mapNotNull { localClassConstructors[it] }
+                        .singleOrNull { it.declaration.callsSuper(context.irBuiltIns) }
+                    localClasses[declaration] = LocalClassContext(declaration, data.inInlineFunctionScope, constructorContext)
                 }
 
                 private val Data.inInlineFunctionScope: Boolean
