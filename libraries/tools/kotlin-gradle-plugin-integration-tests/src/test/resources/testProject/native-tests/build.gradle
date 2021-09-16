@@ -23,6 +23,7 @@ kotlin {
         fromPreset(presets.<SingleNativeTarget>, 'host')
 
         fromPreset(presets.iosX64, 'ios')
+        fromPreset(presets.iosSimulatorArm64, 'iosArm64')
 
         configure([host]) {
             compilations.create("anotherTest")
@@ -41,7 +42,7 @@ kotlin {
 }
 
 // Check that test events are correctly reported in CLI.
-configure([hostTest, iosTest]){
+configure([hostTest, iosTest, iosArm64Test]){
     trackEnvironment("ANDROID_HOME")
 
     testLogging {

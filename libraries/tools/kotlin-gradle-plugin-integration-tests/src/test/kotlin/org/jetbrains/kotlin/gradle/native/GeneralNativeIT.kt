@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.junit.Assume
 import org.junit.Ignore
@@ -50,7 +51,11 @@ internal object MPPNativeTargets {
     val supported = listOf("linux64", "macos64", "mingw64").filter { !unsupported.contains(it) }
 }
 
-internal fun BaseGradleIT.transformNativeTestProject(projectName: String, wrapperVersion: GradleVersionRequired = defaultGradleVersion, directoryPrefix: String? = null): BaseGradleIT.Project {
+internal fun BaseGradleIT.transformNativeTestProject(
+    projectName: String,
+    wrapperVersion: GradleVersionRequired = defaultGradleVersion,
+    directoryPrefix: String? = null
+): BaseGradleIT.Project {
     val project = Project(projectName, wrapperVersion, directoryPrefix = directoryPrefix)
     project.setupWorkingDir()
     project.configureSingleNativeTarget()
@@ -61,7 +66,11 @@ internal fun BaseGradleIT.transformNativeTestProject(projectName: String, wrappe
     return project
 }
 
-internal fun BaseGradleIT.transformNativeTestProjectWithPluginDsl(projectName: String, wrapperVersion: GradleVersionRequired = defaultGradleVersion, directoryPrefix: String? = null): BaseGradleIT.Project {
+internal fun BaseGradleIT.transformNativeTestProjectWithPluginDsl(
+    projectName: String,
+    wrapperVersion: GradleVersionRequired = defaultGradleVersion,
+    directoryPrefix: String? = null
+): BaseGradleIT.Project {
     val project = transformProjectWithPluginsDsl(projectName, wrapperVersion, directoryPrefix = directoryPrefix)
     project.configureSingleNativeTarget()
     project.gradleProperties().apply {
@@ -589,8 +598,6 @@ class GeneralNativeIT : BaseGradleIT() {
         val defaultOutputFile = "build/bin/host/debugTest/test.$suffix"
         val anotherOutputFile = "build/bin/host/anotherDebugTest/another.$suffix"
 
-        val hostIsMac = HostManager.hostIsMac
-
         build("tasks") {
             assertSuccessful()
             testTasks.forEach {
@@ -608,8 +615,10 @@ class GeneralNativeIT : BaseGradleIT() {
         }
 
         val testsToExecute = mutableListOf(":$hostTestTask")
-        if (hostIsMac) {
-            testsToExecute.add(":iosTest")
+        when (HostManager.host) {
+            KonanTarget.MACOS_X64 -> testsToExecute.add(":iosTest")
+            KonanTarget.MACOS_ARM64 -> testsToExecute.add(":iosArm64Test")
+            else -> { }
         }
         val testsToSkip = testTasks.map { ":$it" } - testsToExecute
 
@@ -851,7 +860,7 @@ class GeneralNativeIT : BaseGradleIT() {
         }
 
         // Check that changing K/N version lead to tasks rerun
-        build(*compileTasksArray, "-Porg.jetbrains.kotlin.native.version=1.4.20-dev-16314") {
+        build(*compileTasksArray, "-Porg.jetbrains.kotlin.native.version=1.5.30") {
             assertSuccessful()
             assertTasksExecuted(compileTasks)
         }
@@ -1016,7 +1025,7 @@ class GeneralNativeIT : BaseGradleIT() {
             check(settingsHeader != null && settingsPrefix in settingsHeader) {
                 "Cannot find setting '${settingsKind.title}' for task ${taskPath}"
             }
-            
+
             return if (settingsHeader.trimEnd().endsWith(']'))
                 emptySequence() // No parameters.
             else
@@ -1046,7 +1055,7 @@ class GeneralNativeIT : BaseGradleIT() {
             toolName: String = "konanc",
             check: (List<String>) -> Unit
         ) = taskPaths.forEach { taskPath -> check(extractNativeCompilerClasspath(taskPath, toolName)) }
-        
+
         fun CompiledProject.checkNativeCustomEnvironment(
             vararg taskPaths: String,
             toolName: String = "konanc",

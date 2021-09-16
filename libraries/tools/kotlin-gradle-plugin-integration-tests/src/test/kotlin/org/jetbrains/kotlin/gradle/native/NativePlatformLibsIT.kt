@@ -185,7 +185,8 @@ class NativePlatformLibsIT : BaseGradleIT() {
             }
         }
         when {
-            HostManager.hostIsMac -> buildPlatformLibrariesWithoutAndWithCaches(KonanTarget.IOS_X64)
+            HostManager.host == KonanTarget.MACOS_ARM64 -> buildPlatformLibrariesWithoutAndWithCaches(KonanTarget.IOS_ARM64)
+            HostManager.host == KonanTarget.MACOS_X64 -> buildPlatformLibrariesWithoutAndWithCaches(KonanTarget.IOS_X64)
             HostManager.hostIsLinux -> buildPlatformLibrariesWithoutAndWithCaches(KonanTarget.LINUX_X64)
         }
     }
