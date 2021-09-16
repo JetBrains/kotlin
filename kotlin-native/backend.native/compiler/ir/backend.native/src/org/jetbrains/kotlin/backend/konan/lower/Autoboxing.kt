@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstantPrimitiveImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
@@ -87,18 +88,6 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     override fun IrExpression.useAs(type: IrType): IrExpression {
-        if (this.isNullConst() && type.isNullablePointer()) {
-            // TODO: consider using IrConst with proper type.
-            return IrCallImpl.fromSymbolDescriptor(
-                    startOffset,
-                    endOffset,
-                    symbols.getNativeNullPtr.owner.returnType,
-                    symbols.getNativeNullPtr,
-                    symbols.getNativeNullPtr.owner.typeParameters.size,
-                    symbols.getNativeNullPtr.owner.valueParameters.size
-            ).uncheckedCast(type)
-        }
-
         val actualType = when (this) {
             is IrCall -> {
                 if (this.symbol.owner.isSuspend) irBuiltIns.anyNType
@@ -121,9 +110,6 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         }
         return this.adaptIfNecessary(actualType, type)
     }
-
-    private fun IrType.isNullablePointer(): Boolean =
-            this.containsNull() && this.computePrimitiveBinaryTypeOrNull() == PrimitiveBinaryType.POINTER
 
     private val IrFunctionAccessExpression.target: IrFunction get() = when (this) {
         is IrCall -> this.callTarget
@@ -158,6 +144,15 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         return if (conversion == null) {
             this
         } else {
+            when (this) {
+                is IrConst<*> -> IrConstantPrimitiveImpl(this.startOffset, this.endOffset, this)
+                is IrConstantPrimitive, is IrConstantObject -> this
+                is IrConstantValue -> TODO("Boxing/unboxing of ${this::class.qualifiedName} is not supported")
+                else -> null
+            }?.let {
+                it.type = expectedType
+                return it
+            }
             val parameter = conversion.owner.explicitParameters.single()
             val argument = this.uncheckedCast(parameter.type)
 
