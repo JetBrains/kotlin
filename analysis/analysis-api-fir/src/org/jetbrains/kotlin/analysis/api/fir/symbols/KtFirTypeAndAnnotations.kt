@@ -37,7 +37,7 @@ internal class KtFirTypeAndAnnotations<T : FirDeclaration>(
 
     override val annotations: List<KtAnnotationCall> by containingDeclaration.withFirAndCache { fir ->
         typeRef(fir).annotations.map {
-            KtFirAnnotationCall(containingDeclaration, it)
+            KtFirAnnotationCall(containingDeclaration, it, _builder)
         }
     }
 }
@@ -79,7 +79,7 @@ private fun List<FirTypeRef>.mapToTypeAndAnnotations(
     builder: KtSymbolByFirBuilder,
 ) = map { typeRef ->
     val annotations = typeRef.annotations.map { annotation ->
-        KtFirAnnotationCall(containingDeclaration, annotation)
+        KtFirAnnotationCall(containingDeclaration, annotation, builder)
     }
     KtSimpleFirTypeAndAnnotations(typeRef.coneType, annotations, builder, containingDeclaration.token)
 }

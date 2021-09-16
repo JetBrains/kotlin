@@ -40,7 +40,7 @@ internal class FirCompileTimeConstantEvaluator {
     //  This is no longer used during FIR2IR where an inner expression is recursively rewritten to ConstExpression if possible.
     //  Maybe rewrite this to a recursive version with caching either here or in provider.
     private fun evaluate(functionCall: FirFunctionCall): FirConstExpression<*>? {
-        val function = functionCall.getOriginalFunction()!! as FirSimpleFunction
+        val function = functionCall.getOriginalFunction()!! as? FirSimpleFunction ?: return null
 
         val opr1 = functionCall.explicitReceiver as? FirConstExpression<*> ?: return null
         opr1.evaluate(function)?.let {

@@ -59,12 +59,14 @@ internal class KtFirSyntheticJavaPropertySymbol(
         firRef.receiverTypeAndAnnotations(builder)
     }
     override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
-    override val initializer: KtConstantValue? by firRef.withFirAndCache(FirResolvePhase.BODY_RESOLVE) { fir -> fir.initializer?.convertConstantExpression() }
+    override val initializer: KtConstantValue? by firRef.withFirAndCache(FirResolvePhase.BODY_RESOLVE) { fir ->
+        fir.initializer?.convertConstantExpression(resolveState.rootModuleSession, _builder)
+    }
 
     override val modality: Modality get() = getModality()
     override val visibility: Visibility get() = getVisibility()
 
-    override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList() }
+    override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList(_builder) }
     override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)
     override val annotationClassIds: Collection<ClassId> by cached { firRef.getAnnotationClassIds() }
 

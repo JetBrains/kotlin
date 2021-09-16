@@ -296,7 +296,7 @@ KtFirKotlinPropertySymbol:
     kotlin/Deprecated
   ]
   annotations: [
-    kotlin/Deprecated(level = KtUnsupportedConstantValue, message = don't use j)
+    kotlin/Deprecated(level = KtEnumEntryValue(KtFirEnumEntrySymbol(kotlin/DeprecationLevel.ERROR)), message = don't use j)
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /j
@@ -332,7 +332,7 @@ KtFirKotlinPropertySymbol:
     kotlin/Deprecated
   ]
   annotations: [
-    kotlin/Deprecated(level = KtUnsupportedConstantValue, message = don't use j2)
+    kotlin/Deprecated(level = KtEnumEntryValue(KtFirEnumEntrySymbol(kotlin/DeprecationLevel.HIDDEN)), message = don't use j2)
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /j2
