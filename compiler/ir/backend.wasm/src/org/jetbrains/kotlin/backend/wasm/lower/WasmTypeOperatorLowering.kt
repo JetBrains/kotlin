@@ -212,24 +212,6 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             return value
         }
 
-
-        // Ref casts traps on null (https://github.com/WebAssembly/gc/issues/152)
-        // Handling null manually
-        if (toType.isNullable() && fromType.isNullable()) {
-            return builder.irComposite {
-                val cachedValue = cacheValue(value)
-                +builder.irIfNull(
-                    type = toType,
-                    subject = cachedValue(),
-                    thenPart = builder.irNull(toType),
-                    elsePart = builder.irCall(symbols.wasmRefCast, type = toType).apply {
-                        putTypeArgument(0, toType)
-                        putValueArgument(0, cachedValue())
-                    }
-                )
-            }
-        }
-
         return builder.irCall(symbols.wasmRefCast, type = toType).apply {
             putTypeArgument(0, toType)
             putValueArgument(0, value)
