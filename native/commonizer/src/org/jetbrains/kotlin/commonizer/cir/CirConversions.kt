@@ -20,7 +20,7 @@ internal fun CirProvided.TypeAliasType.toCirTypeAliasTypeOrNull(classifiers: Cir
     return CirTypeAliasType.createInterned(
         typeAliasId = classifierId,
         isMarkedNullable = isMarkedNullable,
-        arguments = arguments.map { it.toCirTypeProjection(classifiers) ?: return null },
+        arguments = arguments.map { it.toCirTypeProjectionOrNull(classifiers) ?: return null },
         underlyingType = typeAlias.underlyingType.toCirClassOrTypeAliasTypeOrNull(classifiers) ?: return null
     )
 }
@@ -30,11 +30,11 @@ internal fun CirProvided.ClassType.toCirClassTypeOrNull(classifiers: CirProvided
         classId = classifierId,
         outerType = outerType?.let { it.toCirClassTypeOrNull(classifiers) ?: return null },
         isMarkedNullable = isMarkedNullable,
-        arguments = arguments.map { it.toCirTypeProjection(classifiers) ?: return null },
+        arguments = arguments.map { it.toCirTypeProjectionOrNull(classifiers) ?: return null },
     )
 }
 
-internal fun CirProvided.TypeProjection.toCirTypeProjection(classifiers: CirProvidedClassifiers): CirTypeProjection? {
+internal fun CirProvided.TypeProjection.toCirTypeProjectionOrNull(classifiers: CirProvidedClassifiers): CirTypeProjection? {
     return when (this) {
         is CirProvided.StarTypeProjection -> CirStarTypeProjection
         is CirProvided.RegularTypeProjection -> this.toCirRegularTypeProjectionOrNull(classifiers)
