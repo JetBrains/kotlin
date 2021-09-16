@@ -92,7 +92,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
     }
 
     private fun substituteTypesIfNecessary(types: List<CirClassOrTypeAliasType>): List<CirClassOrTypeAliasType>? {
-        // Not necessary
+        /* No substitution is necessary if all types use the same classifierId */
         if (types.singleDistinctValueOrNull { it.classifierId } != null) return types
         val classifierId = selectSubstitutionClassifierId(types) ?: return null
         return types.mapIndexed { targetIndex, type -> substituteIfNecessary(targetIndex, type, classifierId) ?: return null }
@@ -138,11 +138,15 @@ internal class ClassOrTypeAliasTypeCommonizer(
         destinationTypeAliasId: CirEntityId,
         destinationTypeAlias: CirTypeAlias
     ): CirTypeAliasType? {
-        // Limitation: No backwards substitution with arguments
+        /*
+        Limitation: We do not support 'backwards' type substitution if either source or destination types are parameterized.
+        Selecting reasonable arguments for such types would be complicated and we do not know real life APIs that would indeed
+        benefit from support.
+         */
         if (sourceType.arguments.isNotEmpty()) return null
         if (destinationTypeAlias.typeParameters.isNotEmpty()) return null
 
-        // Check if any 'backward' type has arguments
+        /* Check if any type in the intermediate ta chain has arguments */
         generateSequence(destinationTypeAlias.underlyingType) { type -> type.safeAs<CirTypeAliasType>()?.underlyingType }
             .takeWhile { type -> type.classifierId != sourceType.classifierId }
             .forEach { type -> if (type.arguments.isNotEmpty()) return null } // limitation!
@@ -161,7 +165,10 @@ internal class ClassOrTypeAliasTypeCommonizer(
         destinationTypeAliasId: CirEntityId,
         destinationTypeAlias: CirProvided.TypeAlias
     ): CirClassOrTypeAliasType? {
-        // Limitation: No backwards substitution with arguments
+        /*
+        Limitation: We do not support 'backwards type substitution with arguments.
+        See 'backwardsSubstitute implementation for CirTypeAlias for more details.
+         */
         if (sourceType.arguments.isNotEmpty()) return null
         if (destinationTypeAlias.typeParameters.isNotEmpty()) return null
 
