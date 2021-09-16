@@ -25,6 +25,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.IncorrectOperationException
+import com.intellij.util.containers.ConcurrentFactoryMap
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult
@@ -53,7 +54,6 @@ import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import java.util.*
 import javax.swing.Icon
 
 private class KtLightClassModifierList(containingClass: KtLightClassForSourceDeclaration, computeModifiers: () -> Set<String>) :
@@ -340,12 +340,13 @@ abstract class KtLightClassForSourceDeclaration(
 
         fun create(classOrObject: KtClassOrObject, jvmDefaultMode: JvmDefaultMode): KtLightClassForSourceDeclaration? =
             CachedValuesManager.getCachedValue(classOrObject) {
-                CachedValueProvider.Result
-                    .create(
-                        createNoCache(classOrObject, jvmDefaultMode, KtUltraLightSupport.forceUsingOldLightClasses),
-                        KotlinModificationTrackerService.getInstance(classOrObject.project).outOfBlockModificationTracker
-                    )
-            }
+                CachedValueProvider.Result.create(
+                    ConcurrentFactoryMap.createMap { defaultMode: JvmDefaultMode ->
+                        createNoCache(classOrObject, defaultMode, KtUltraLightSupport.forceUsingOldLightClasses)
+                    },
+                    KotlinModificationTrackerService.getInstance(classOrObject.project).outOfBlockModificationTracker,
+                )
+            }[jvmDefaultMode]
 
         fun createNoCache(
             classOrObject: KtClassOrObject,
