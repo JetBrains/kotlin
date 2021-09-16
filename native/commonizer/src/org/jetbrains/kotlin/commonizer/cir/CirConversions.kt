@@ -9,47 +9,47 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirProvided
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.descriptors.Visibilities
 
-internal fun CirProvidedClassifiers.toCirClassOrTypeAliasTypeOrNull(type: CirProvided.ClassOrTypeAliasType): CirClassOrTypeAliasType? {
-    return when (type) {
-        is CirProvided.ClassType -> toCirClassTypeOrNull(type)
-        is CirProvided.TypeAliasType -> toCirTypeAliasTypeOrNull(type)
+internal fun CirProvided.ClassOrTypeAliasType.toCirClassOrTypeAliasTypeOrNull(classifiers: CirProvidedClassifiers): CirClassOrTypeAliasType? {
+    return when (this) {
+        is CirProvided.ClassType -> this.toCirClassTypeOrNull(classifiers)
+        is CirProvided.TypeAliasType -> this.toCirTypeAliasTypeOrNull(classifiers)
     }
 }
 
-internal fun CirProvidedClassifiers.toCirTypeAliasTypeOrNull(type: CirProvided.TypeAliasType): CirTypeAliasType? {
-    val typeAlias = this.classifier(type.classifierId) as? CirProvided.TypeAlias ?: return null
+internal fun CirProvided.TypeAliasType.toCirTypeAliasTypeOrNull(classifiers: CirProvidedClassifiers): CirTypeAliasType? {
+    val typeAlias = classifiers.classifier(classifierId) as? CirProvided.TypeAlias ?: return null
     return CirTypeAliasType.createInterned(
-        typeAliasId = type.classifierId,
-        isMarkedNullable = type.isMarkedNullable,
-        arguments = type.arguments.map { toCirTypeProjection(it) ?: return null },
-        underlyingType = toCirClassOrTypeAliasTypeOrNull(typeAlias.underlyingType) ?: return null
+        typeAliasId = classifierId,
+        isMarkedNullable = isMarkedNullable,
+        arguments = arguments.map { it.toCirTypeProjection(classifiers) ?: return null },
+        underlyingType = typeAlias.underlyingType.toCirClassOrTypeAliasTypeOrNull(classifiers) ?: return null
     )
 }
 
-internal fun CirProvidedClassifiers.toCirClassTypeOrNull(type: CirProvided.ClassType): CirClassType? {
+internal fun CirProvided.ClassType.toCirClassTypeOrNull(classifiers: CirProvidedClassifiers): CirClassType? {
     return CirClassType.createInterned(
-        classId = type.classifierId,
-        outerType = type.outerType?.let { toCirClassTypeOrNull(it) ?: return null },
-        isMarkedNullable = type.isMarkedNullable,
-        arguments = type.arguments.map { toCirTypeProjection(it) ?: return null },
+        classId = classifierId,
+        outerType = outerType?.let { it.toCirClassTypeOrNull(classifiers) ?: return null },
+        isMarkedNullable = isMarkedNullable,
+        arguments = arguments.map { it.toCirTypeProjection(classifiers) ?: return null },
         visibility = Visibilities.Public,
     )
 }
 
-internal fun CirProvidedClassifiers.toCirTypeProjection(type: CirProvided.TypeProjection): CirTypeProjection? {
-    return when (type) {
+internal fun CirProvided.TypeProjection.toCirTypeProjection(classifiers: CirProvidedClassifiers): CirTypeProjection? {
+    return when (this) {
         is CirProvided.StarTypeProjection -> CirStarTypeProjection
-        is CirProvided.RegularTypeProjection -> toCirRegularTypeProjectionOrNull(type)
+        is CirProvided.RegularTypeProjection -> this.toCirRegularTypeProjectionOrNull(classifiers)
     }
 }
 
-internal fun CirProvidedClassifiers.toCirRegularTypeProjectionOrNull(
-    projection: CirProvided.RegularTypeProjection
+internal fun CirProvided.RegularTypeProjection.toCirRegularTypeProjectionOrNull(
+    classifiers: CirProvidedClassifiers
 ): CirRegularTypeProjection? {
     return CirRegularTypeProjection(
-        projectionKind = projection.variance,
-        type = when (val type = projection.type) {
-            is CirProvided.ClassOrTypeAliasType -> toCirClassOrTypeAliasTypeOrNull(type) ?: return null
+        projectionKind = variance,
+        type = when (val type = type) {
+            is CirProvided.ClassOrTypeAliasType -> type.toCirClassOrTypeAliasTypeOrNull(classifiers) ?: return null
             is CirProvided.TypeParameterType -> CirTypeParameterType.createInterned(type.index, type.isMarkedNullable)
         }
     )
