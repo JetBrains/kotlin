@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.cir.CirConstantValue.*
 import org.jetbrains.kotlin.commonizer.core.AnnotationsCommonizer.Companion.FALLBACK_MESSAGE
 import org.jetbrains.kotlin.commonizer.utils.*
-import org.jetbrains.kotlin.descriptors.Visibilities
 import kotlin.DeprecationLevel.WARNING
 
 /**
@@ -74,7 +73,7 @@ object ObjCInteropCallableAnnotationCommonizer : AssociativeCommonizer<List<CirA
     private val objCCallableAnnotation = CirAnnotation.createInterned(
         CirClassType.createInterned(
             classId = COMMONIZER_OBJC_INTEROP_CALLABLE_ANNOTATION_ID,
-            outerType = null, visibility = Visibilities.Public, arguments = emptyList(), isMarkedNullable = false
+            outerType = null, arguments = emptyList(), isMarkedNullable = false
         ),
         constantValueArguments = emptyMap(),
         annotationValueArguments = emptyMap()
@@ -195,7 +194,6 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
         private fun buildAnnotationType(classId: CirEntityId) = CirClassType.createInterned(
             classId = classId,
             outerType = null,
-            visibility = Visibilities.Public,
             arguments = emptyList(),
             isMarkedNullable = false
         )

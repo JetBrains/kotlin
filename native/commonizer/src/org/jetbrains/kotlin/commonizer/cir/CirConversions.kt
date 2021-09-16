@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.commonizer.cir
 
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvided
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
-import org.jetbrains.kotlin.descriptors.Visibilities
 
 internal fun CirProvided.ClassOrTypeAliasType.toCirClassOrTypeAliasTypeOrNull(classifiers: CirProvidedClassifiers): CirClassOrTypeAliasType? {
     return when (this) {
@@ -32,7 +31,6 @@ internal fun CirProvided.ClassType.toCirClassTypeOrNull(classifiers: CirProvided
         outerType = outerType?.let { it.toCirClassTypeOrNull(classifiers) ?: return null },
         isMarkedNullable = isMarkedNullable,
         arguments = arguments.map { it.toCirTypeProjection(classifiers) ?: return null },
-        visibility = Visibilities.Public,
     )
 }
 

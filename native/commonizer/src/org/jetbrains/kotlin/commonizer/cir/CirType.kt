@@ -9,7 +9,6 @@ import kotlinx.metadata.KmType
 import org.jetbrains.kotlin.commonizer.utils.Interner
 import org.jetbrains.kotlin.commonizer.utils.appendHashCode
 import org.jetbrains.kotlin.commonizer.utils.hashCode
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.types.Variance
 
 
@@ -87,7 +86,7 @@ sealed class CirClassOrTypeAliasType : CirSimpleType() {
     abstract fun withArguments(arguments: List<CirTypeProjection>): CirClassOrTypeAliasType
 }
 
-abstract class CirClassType : CirClassOrTypeAliasType(), CirHasVisibility {
+abstract class CirClassType : CirClassOrTypeAliasType() {
     abstract val outerType: CirClassType?
 
     override fun appendDescriptionTo(builder: StringBuilder, shortNameOnly: Boolean) {
@@ -104,7 +103,6 @@ abstract class CirClassType : CirClassOrTypeAliasType(), CirHasVisibility {
         return createInterned(
             classId = classifierId,
             outerType = outerType,
-            visibility = visibility,
             arguments = arguments,
             isMarkedNullable = isMarkedNullable
         )
@@ -114,14 +112,12 @@ abstract class CirClassType : CirClassOrTypeAliasType(), CirHasVisibility {
         fun createInterned(
             classId: CirEntityId,
             outerType: CirClassType?,
-            visibility: Visibility,
             arguments: List<CirTypeProjection>,
             isMarkedNullable: Boolean
         ): CirClassType = interner.intern(
             CirClassTypeInternedImpl(
                 classifierId = classId,
                 outerType = outerType,
-                visibility = visibility,
                 arguments = arguments,
                 isMarkedNullable = isMarkedNullable
             )
@@ -130,14 +126,12 @@ abstract class CirClassType : CirClassOrTypeAliasType(), CirHasVisibility {
         fun CirClassType.copyInterned(
             classifierId: CirEntityId = this.classifierId,
             outerType: CirClassType? = this.outerType,
-            visibility: Visibility = this.visibility,
             arguments: List<CirTypeProjection> = this.arguments,
             isMarkedNullable: Boolean = this.isMarkedNullable
         ): CirClassType {
             return createInterned(
                 classId = classifierId,
                 outerType = outerType,
-                visibility = visibility,
                 arguments = arguments,
                 isMarkedNullable = isMarkedNullable
             )
@@ -227,33 +221,21 @@ private data class CirTypeParameterTypeInternedImpl(
 private class CirClassTypeInternedImpl(
     override val classifierId: CirEntityId,
     override val outerType: CirClassType?,
-    override val visibility: Visibility, // visibility of the class descriptor
     override val arguments: List<CirTypeProjection>,
     override val isMarkedNullable: Boolean,
 ) : CirClassType() {
-    // See also org.jetbrains.kotlin.types.KotlinType.cachedHashCode
-    private var cachedHashCode = 0
 
-    private fun computeHashCode() = hashCode(classifierId)
+    private val hashCode = hashCode(classifierId)
         .appendHashCode(outerType)
-        .appendHashCode(visibility)
         .appendHashCode(arguments)
         .appendHashCode(isMarkedNullable)
 
-    override fun hashCode(): Int {
-        var currentHashCode = cachedHashCode
-        if (currentHashCode != 0) return currentHashCode
-
-        currentHashCode = computeHashCode()
-        cachedHashCode = currentHashCode
-        return currentHashCode
-    }
+    override fun hashCode(): Int = hashCode
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
         other is CirClassType -> classifierId == other.classifierId
                 && isMarkedNullable == other.isMarkedNullable
-                && visibility == other.visibility
                 && arguments == other.arguments
                 && outerType == other.outerType
         else -> false

@@ -15,7 +15,6 @@ fun <T : CirSimpleType> T.makeNullable(): T {
         is CirClassType -> CirClassType.createInterned(
             classId = classifierId,
             outerType = outerType,
-            visibility = visibility,
             arguments = arguments,
             isMarkedNullable = true
         )
@@ -68,7 +67,6 @@ fun CirClassOrTypeAliasType.unabbreviate(): CirClassType = when (this) {
             CirClassType.createInterned(
                 classId = classifierId,
                 outerType = unabbreviatedOuterType,
-                visibility = visibility,
                 arguments = unabbreviatedArguments,
                 isMarkedNullable = isMarkedNullable
             )

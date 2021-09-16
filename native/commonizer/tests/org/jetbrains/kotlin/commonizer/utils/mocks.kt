@@ -41,7 +41,6 @@ internal fun mockClassType(
 ): CirClassType = CirClassType.createInterned(
     classId = createValidClassifierId(classId),
     outerType = null,
-    visibility = Visibilities.Public,
     arguments = emptyList(),
     isMarkedNullable = nullable
 )

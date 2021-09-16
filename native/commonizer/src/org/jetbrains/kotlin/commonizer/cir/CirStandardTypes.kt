@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.commonizer.cir
 
 import org.jetbrains.kotlin.commonizer.utils.ANY_CLASS_ID
-import org.jetbrains.kotlin.descriptors.Visibilities
 
 object CirStandardTypes {
     val ANY: CirClassType = CirClassType.createInterned(
         classId = ANY_CLASS_ID,
         outerType = null,
-        visibility = Visibilities.Public,
         arguments = emptyList(),
         isMarkedNullable = false
     )
