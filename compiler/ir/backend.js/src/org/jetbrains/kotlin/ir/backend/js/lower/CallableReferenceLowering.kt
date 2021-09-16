@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
@@ -186,7 +187,9 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                         }
                     }
                     boundReceiverParameter?.let {
-                        +irSetField(irGet(clazz.thisReceiver!!), boundReceiverField!!, irGet(it))
+                        +irSetField(irGet(clazz.thisReceiver!!), boundReceiverField!!, irGet(it),
+                                    LoweredStatementOrigins.STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
+                        )
                     }
                     +IrInstanceInitializerCallImpl(startOffset, endOffset, clazz.symbol, context.irBuiltIns.unitType)
                 }
