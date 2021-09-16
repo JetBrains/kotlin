@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrElementBase
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.Name
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -51,7 +52,7 @@ class PropertyLazyInitLowering(
         if (container !is IrField && container !is IrSimpleFunction && container !is IrProperty)
             return
 
-        if (!container.isCompatibleDeclaration()) return
+        if (!container.isCompatibleDeclaration(context)) return
 
         val file = container.parent as? IrFile
             ?: return
@@ -98,7 +99,8 @@ class PropertyLazyInitLowering(
         val declarations = file.declarations.toList()
 
         val fieldToInitializer = calculateFieldToExpression(
-            declarations
+            declarations,
+            context
         )
 
         if (fieldToInitializer.isEmpty()) return null
@@ -206,7 +208,7 @@ class RemoveInitializersForLazyProperties(
 
         if (declaration !is IrField) return null
 
-        if (!declaration.isCompatibleDeclaration()) return null
+        if (!declaration.isCompatibleDeclaration(context)) return null
 
         val file = declaration.parent as? IrFile ?: return null
 
@@ -232,7 +234,7 @@ class RemoveInitializersForLazyProperties(
 
     private fun calculateFileFieldsPureness(file: IrFile): Boolean {
         val declarations = file.declarations.toList()
-        val expressions = calculateFieldToExpression(declarations)
+        val expressions = calculateFieldToExpression(declarations, context)
             .values
 
         val allFieldsInFilePure = allFieldsInFilePure(expressions)
@@ -241,10 +243,10 @@ class RemoveInitializersForLazyProperties(
     }
 }
 
-private fun calculateFieldToExpression(declarations: Collection<IrDeclaration>): Map<IrField, IrExpression> =
+private fun calculateFieldToExpression(declarations: Collection<IrDeclaration>, context: JsIrBackendContext): Map<IrField, IrExpression> =
     declarations
         .asSequence()
-        .filter { it.isCompatibleDeclaration() }
+        .filter { it.isCompatibleDeclaration(context) }
         .map { it.correspondingProperty }
         .filterNotNull()
         .filter { it.isForLazyInit() }
@@ -274,12 +276,19 @@ private val IrDeclaration.correspondingProperty: IrProperty?
     }
 
 private fun IrDeclaration.propertyWithPersistentSafe(transform: IrDeclaration.() -> IrProperty?): IrProperty? =
+    withPersistentSafe(transform)
+
+private fun <T> IrDeclaration.withPersistentSafe(transform: IrDeclaration.() -> T?): T? =
     if (this !is PersistentIrElementBase<*> || this.createdOn <= this.factory.stageController.currentStage) {
         transform()
     } else null
 
-private fun IrDeclaration.isCompatibleDeclaration() =
-    origin in compatibleOrigins
+private fun IrDeclaration.isCompatibleDeclaration(context: JsIrBackendContext) =
+    (this as? IrField)
+        ?.correspondingProperty
+        ?.hasAnnotation(context.intrinsics.jsEagerInitializationAnnotationSymbol) != true &&
+            withPersistentSafe { origin in compatibleOrigins } == true
+
 
 private fun IrDeclaration.assertCompatibleDeclaration() {
     assert(this !is PersistentIrElementBase<*> || createdOn == 0)
