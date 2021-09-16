@@ -19,12 +19,18 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeChecker.findCorrespondingSupertypes
 import org.jetbrains.kotlin.types.model.typeConstructor
 
-fun isCastPossible(
+enum class CastingType {
+    Possible,
+    Impossible,
+    Always
+}
+
+fun checkCasting(
     lhsType: ConeKotlinType,
     rhsType: ConeKotlinType,
     isSafeCase: Boolean,
     context: CheckerContext
-): Boolean {
+): CastingType {
     val lhsLowerType = lhsType.lowerBoundIfFlexible()
     val rhsLowerType = rhsType.lowerBoundIfFlexible()
     val session = context.session
@@ -32,36 +38,38 @@ fun isCastPossible(
     if (lhsLowerType is ConeIntersectionType) {
         var result = false
         for (intersectedType in lhsLowerType.intersectedTypes) {
-            val isIntersectedCastPossible = isCastPossible(intersectedType, rhsLowerType, isSafeCase, context)
+            val isIntersectedCastPossible = checkCasting(intersectedType, rhsLowerType, isSafeCase, context)
             val intersectedTypeSymbol = intersectedType.toRegularClassSymbol(context.session)
-            if (intersectedTypeSymbol?.isInterface == false && !isIntersectedCastPossible) {
-                return false // Any class type in intersection type should be subtype of RHS
+            if (intersectedTypeSymbol?.isInterface == false && isIntersectedCastPossible == CastingType.Impossible) {
+                return CastingType.Impossible // Any class type in intersection type should be subtype of RHS
             }
-            result = result or isIntersectedCastPossible
+            result = result or (isIntersectedCastPossible != CastingType.Impossible)
         }
 
-        return result
+        return if (result) CastingType.Possible else CastingType.Impossible
     }
 
     val lhsNullable = lhsLowerType.canBeNull
     val rhsNullable = rhsLowerType.canBeNull
-    if (lhsLowerType.isNothing) return true
+    if (lhsLowerType.isNothing) return CastingType.Possible
     if (lhsLowerType.isNullableNothing && !rhsNullable) {
-        return isSafeCase
+        return if (isSafeCase) CastingType.Always else CastingType.Impossible
     }
-    if (rhsLowerType.isNothing) return false
-    if (rhsLowerType.isNullableNothing) return lhsNullable
-    if (lhsNullable && rhsNullable) return true
+    if (rhsLowerType.isNothing) return CastingType.Impossible
+    if (rhsLowerType.isNullableNothing) {
+        return if (lhsNullable) CastingType.Possible else CastingType.Impossible
+    }
+    if (lhsNullable && rhsNullable) return CastingType.Possible
     val lhsClassSymbol = lhsLowerType.toRegularClassSymbol(context.session)
     val rhsClassSymbol = rhsLowerType.toRegularClassSymbol(context.session)
-    if (isRelated(lhsLowerType, rhsLowerType, lhsClassSymbol, rhsClassSymbol, context)) return true
+    if (isRelated(lhsLowerType, rhsLowerType, lhsClassSymbol, rhsClassSymbol, context)) return CastingType.Possible
     // This is an oversimplification (which does not render the method incomplete):
     // we consider any type parameter capable of taking any value, which may be made more precise if we considered bounds
-    if (lhsLowerType is ConeTypeParameterType || rhsLowerType is ConeTypeParameterType) return true
+    if (lhsLowerType is ConeTypeParameterType || rhsLowerType is ConeTypeParameterType) return CastingType.Possible
 
-    if (isFinal(lhsLowerType, session) || isFinal(rhsLowerType, session)) return false
-    if (lhsClassSymbol?.isInterface == true || rhsClassSymbol?.isInterface == true) return true
-    return false
+    if (isFinal(lhsLowerType, session) || isFinal(rhsLowerType, session)) return CastingType.Impossible
+    if (lhsClassSymbol?.isInterface == true || rhsClassSymbol?.isInterface == true) return CastingType.Possible
+    return CastingType.Impossible
 }
 
 /**
