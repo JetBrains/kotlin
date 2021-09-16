@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirVisibilityChecker
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.matchingParameterFunctionType
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -20,10 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visibilityChecker
@@ -234,6 +232,24 @@ object CheckDslScopeViolation : ResolutionStage() {
     @OptIn(ExperimentalStdlibApi::class)
     private fun ImplicitReceiverValue<*>.getDslMarkersOfImplicitReceiver(context: ResolutionContext): Set<ClassId> {
         return buildSet {
+            (boundSymbol as? FirAnonymousFunctionSymbol)?.fir?.matchingParameterFunctionType?.let {
+                // collect annotations in the function type at declaration site. For example, the `@A` and `@B` in the following code.
+                // ```
+                // fun <T> body(block: @A ((@B T).() -> Unit)) { ... }
+                // ```
+
+                // Collect the annotation on the function type, or `@A` in the example above.
+                collectDslMarkerAnnotations(context, it.attributes.customAnnotations)
+
+                // Collect the annotation on the extension receiver, or `@B` in the example above.
+                if (CompilerConeAttributes.ExtensionFunctionType in it.attributes) {
+                    it.typeArguments.firstOrNull()?.type?.let { receiverType ->
+                        collectDslMarkerAnnotations(context, receiverType)
+                    }
+                }
+            }
+
+            // Collect annotations on the actual receiver type.
             collectDslMarkerAnnotations(context, type)
         }
     }

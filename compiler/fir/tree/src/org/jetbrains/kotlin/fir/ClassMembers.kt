@@ -103,4 +103,23 @@ var <D : FirCallableDeclaration>
         D.originalForIntersectionOverrideAttr: D? by FirDeclarationDataRegistry.data(IntersectionOverrideOriginalKey)
 
 private object InitialSignatureKey : FirDeclarationDataKey()
+
 var FirCallableDeclaration.initialSignatureAttr: FirCallableDeclaration? by FirDeclarationDataRegistry.data(InitialSignatureKey)
+
+private object MatchingParameterFunctionTypeKey : FirDeclarationDataKey()
+
+/**
+ * Consider the following
+ * ```
+ * fun <T> run(block: @Foo T.() -> Unit) {...}
+ *
+ * fun test() {
+ *   run<String> {
+ *     <caret>
+ *   }
+ * }
+ * ```
+ * The original function type `@Foo T.() -> Unit` can be accessed with this property on the FirAnonymousFunction at caret.
+ */
+var <D : FirAnonymousFunction>
+        D.matchingParameterFunctionType: ConeKotlinType? by FirDeclarationDataRegistry.data(MatchingParameterFunctionTypeKey)
