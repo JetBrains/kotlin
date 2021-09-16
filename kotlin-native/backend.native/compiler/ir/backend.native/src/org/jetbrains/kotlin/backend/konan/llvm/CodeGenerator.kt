@@ -1390,7 +1390,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
         val shouldHaveCleanupLandingpad = (needLeaveFrame && needSlots) ||
                 isCallFromBridge ||
-                !stackLocalsManager.isEmpty() ||
+                (!stackLocalsManager.isEmpty() && context.memoryModel != MemoryModel.EXPERIMENTAL) ||
                 (context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable)
 
         if (shouldHaveCleanupLandingpad) {
@@ -1659,7 +1659,9 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     }
 
     private fun cleanStackLocals() {
-        stackLocalsManager.clean(refsOnly = true) // Only bother about not leaving any dangling references.
+        if (!stackLocalsManager.isEmpty() && context.memoryModel != MemoryModel.EXPERIMENTAL) {
+            stackLocalsManager.clean(refsOnly = true) // Only bother about not leaving any dangling references.
+        }
     }
 }
 
