@@ -1386,7 +1386,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     }
 
     internal fun epilogue() {
-        val shouldHaveCleanupLandingpad = isCallFromBridge ||
+        val needLeaveFrame = irFunction?.annotations?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true
+
+        val shouldHaveCleanupLandingpad = (needLeaveFrame && needSlots) ||
+                isCallFromBridge ||
                 !stackLocalsManager.isEmpty() ||
                 (context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable)
 
@@ -1397,7 +1400,11 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 createCleanupLandingpadForBridges(landingpad)
                 createCatchKotlinExceptionsBlock()
                 if (!isCallFromBridge) {
-                    cleanStackLocals()
+                    if (needLeaveFrame) {
+                        releaseVars()
+                    } else {
+                        cleanStackLocals()
+                    }
                     handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
                     LLVMBuildResume(builder, landingpad)
                 }
