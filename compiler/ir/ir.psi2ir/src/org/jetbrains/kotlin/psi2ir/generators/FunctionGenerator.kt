@@ -327,17 +327,16 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
         val bodyGenerator = createBodyGenerator(irFunction.symbol)
 
-        val contextReceiversNumber = ktContextReceiverParameterElements.size
-        assert(functionDescriptor.contextReceiverParameters.size == contextReceiversNumber)
-        irFunction.contextReceiverParametersCount = contextReceiversNumber
+        val contextReceiverParametersCount = functionDescriptor.contextReceiverParameters.size
+        irFunction.contextReceiverParametersCount = contextReceiverParametersCount
         irFunction.valueParameters += functionDescriptor.contextReceiverParameters.mapIndexed { i, additionalReceiver ->
-            declareParameter(additionalReceiver, ktContextReceiverParameterElements[i], irFunction, null, i)
+            declareParameter(additionalReceiver, ktContextReceiverParameterElements.getOrNull(i) ?: ktParameterOwner, irFunction, null, i)
         }
 
         // Declare all the value parameters up first.
         irFunction.valueParameters += functionDescriptor.valueParameters.mapIndexed { i, valueParameterDescriptor ->
             val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
-            declareParameter(valueParameterDescriptor, ktParameter, irFunction, null, i + contextReceiversNumber)
+            declareParameter(valueParameterDescriptor, ktParameter, irFunction, null, i + contextReceiverParametersCount)
         }
         // Only after value parameters have been declared, generate default values. This ensures
         // that forward references to other parameters works in default value lambdas. For example:
@@ -345,7 +344,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         // fun f(f1: () -> String = { f2() },
         //       f2: () -> String) = f1()
         if (withDefaultValues) {
-            irFunction.valueParameters.drop(contextReceiversNumber).forEachIndexed { index, irValueParameter ->
+            irFunction.valueParameters.drop(contextReceiverParametersCount).forEachIndexed { index, irValueParameter ->
                 val valueParameterDescriptor = functionDescriptor.valueParameters[index]
                 val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
                 irValueParameter.defaultValue = ktParameter?.defaultValue?.let { defaultValue ->
