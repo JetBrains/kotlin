@@ -48,10 +48,10 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_FQ_NAME
+import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**

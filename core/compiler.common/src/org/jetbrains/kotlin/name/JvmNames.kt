@@ -15,5 +15,25 @@ object JvmNames {
     val JVM_PACKAGE_NAME: FqName = FqName("kotlin.jvm.JvmPackageName")
     val JVM_PACKAGE_NAME_SHORT = JVM_PACKAGE_NAME.shortName().asString()
 
+    val JVM_DEFAULT_FQ_NAME = FqName("kotlin.jvm.JvmDefault")
+    val JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithoutCompatibility")
+    val JVM_OVERLOADS_FQ_NAME = FqName("kotlin.jvm.JvmOverloads")
+
+    @JvmField
+    val JVM_SYNTHETIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSynthetic")
+    val JVM_RECORD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmRecord")
+
+    @JvmField
+    val SYNCHRONIZED_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Synchronized")
+
+    @JvmField
+    val STRICTFP_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Strictfp")
+
+    @JvmField
+    val VOLATILE_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Volatile")
+
+    @JvmField
+    val TRANSIENT_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Transient")
+
     const val MULTIFILE_PART_NAME_DELIMITER = "__"
 }

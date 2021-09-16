@@ -41,12 +41,12 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
+import org.jetbrains.kotlin.name.JvmNames.JVM_RECORD_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmNames.TRANSIENT_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
-import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_RECORD_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.annotations.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.checkers.JvmSimpleNameBacktickChecker
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
