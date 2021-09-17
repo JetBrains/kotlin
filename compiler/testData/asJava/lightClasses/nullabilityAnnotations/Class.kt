@@ -37,3 +37,5 @@ class Class {
 
     lateinit var lateInitVar: String
 }
+
+// FIR_COMPARISON
