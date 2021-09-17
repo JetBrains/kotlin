@@ -8,7 +8,7 @@ End of files
 Exit code: NOTHING_DONE
 ------------------------------------------
 Compiling files:
-  src/JavaClass.java
+  src/org/jetbrains/JavaClass.java
 End of files
 Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
