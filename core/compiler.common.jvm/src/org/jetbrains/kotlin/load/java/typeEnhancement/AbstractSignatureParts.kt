@@ -9,26 +9,31 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.load.java.AbstractAnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
 import org.jetbrains.kotlin.load.java.JavaTypeQualifiersByElementType
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeParameterMarker
-import org.jetbrains.kotlin.types.model.TypeSystemContext
-import org.jetbrains.kotlin.types.model.TypeVariance
+import org.jetbrains.kotlin.types.model.*
 
 abstract class AbstractSignatureParts<TAnnotation : Any> {
     // TODO: some of this might be better off as parameters
     abstract val annotationTypeQualifierResolver: AbstractAnnotationTypeQualifierResolver<TAnnotation>
-    abstract val enableImprovementsInStrictMode: Boolean
     abstract val containerAnnotations: Iterable<TAnnotation>
     abstract val containerApplicabilityType: AnnotationQualifierApplicabilityType
     abstract val containerDefaultTypeQualifiers: JavaTypeQualifiersByElementType?
     abstract val containerIsVarargParameter: Boolean
     abstract val isCovariant: Boolean
-    abstract val skipRawTypeArguments: Boolean
     abstract val typeSystem: TypeSystemContext
+    abstract val typeFactory: TypeSystemTypeFactoryContext
+
+    open val enableImprovementsInStrictMode: Boolean
+        get() = true
+
+    open val skipRawTypeArguments: Boolean
+        get() = false
 
     open val forceOnlyHeadTypeConstructor: Boolean
         get() = false
+
+    abstract fun createRawType(lowerBound: SimpleTypeMarker, upperBound: SimpleTypeMarker): RawTypeMarker
 
     abstract val TAnnotation.forceWarning: Boolean
 
@@ -36,11 +41,25 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
     abstract val KotlinTypeMarker.enhancedForWarnings: KotlinTypeMarker?
     abstract val KotlinTypeMarker.fqNameUnsafe: FqNameUnsafe?
     abstract fun KotlinTypeMarker.isEqual(other: KotlinTypeMarker): Boolean
+    abstract fun KotlinTypeMarker.withEnhancementForWarnings(enhancement: KotlinTypeMarker): KotlinTypeMarker?
+
+    abstract val TypeArgumentMarker.starProjectionType: KotlinTypeMarker?
 
     abstract val TypeParameterMarker.isFromJava: Boolean
 
+    abstract fun TypeConstructorMarker.replaceClassId(mapper: (ClassId) -> ClassId?): TypeConstructorMarker?
+
     open val KotlinTypeMarker.isNotNullTypeParameterCompat: Boolean
         get() = false
+
+    open fun SimpleTypeMarker.makeDefinitelyNotNull(): SimpleTypeMarker =
+        with(typeSystem) { makeSimpleTypeDefinitelyNotNullOrNotNull() }
+
+    abstract fun SimpleTypeMarker.replace(
+        constructor: TypeConstructorMarker?,
+        arguments: List<TypeArgumentMarker?>,
+        nullability: Boolean?
+    ): SimpleTypeMarker
 
     private val KotlinTypeMarker.nullabilityQualifier: NullabilityQualifier?
         get() = with(typeSystem) {
@@ -64,6 +83,12 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         val isNotNullTypeParameter = with(typeSystem) { isDefinitelyNotNullType() } || isNotNullTypeParameterCompat
         return JavaTypeQualifiers(forErrorsOrWarnings, mutability, isNotNullTypeParameter, forErrorsOrWarnings != forErrors)
     }
+
+    private class TypeAndDefaultQualifiers(
+        val type: KotlinTypeMarker?,
+        val defaultQualifiers: JavaTypeQualifiersByElementType?,
+        val typeParameterForArgument: TypeParameterMarker?
+    )
 
     private fun TypeAndDefaultQualifiers.extractQualifiersFromAnnotations(isHeadTypeConstructor: Boolean): JavaTypeQualifiers {
         if (type == null && with(typeSystem) { typeParameterForArgument?.getVariance() } == TypeVariance.IN) {
@@ -158,9 +183,7 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
             return NullabilityQualifierWithMigrationStatus(qualifier, isForWarningOnly = enhancedBounds !== bounds)
         }
 
-    fun KotlinTypeMarker.computeIndexedQualifiers(
-        overrides: Iterable<KotlinTypeMarker>, predefined: TypeEnhancementInfo?
-    ): IndexedJavaTypeQualifiers {
+    fun KotlinTypeMarker.enhance(overrides: List<KotlinTypeMarker>, predefined: TypeEnhancementInfo?): KotlinTypeMarker? {
         val indexedThisType = toIndexed()
         val indexedFromSupertypes = overrides.map { it.toIndexed() }
 
@@ -169,17 +192,16 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         // (outermost type), unless the type in the subclass is interchangeable with the all the types in superclasses:
         // e.g. we have (Mutable)List<String!>! in the subclass and { List<String!>, (Mutable)List<String>! } from superclasses
         // Note that `this` is flexible here, so it's equal to it's bounds
-        val onlyHeadTypeConstructor = forceOnlyHeadTypeConstructor ||
-                (isCovariant && overrides.any { !this@computeIndexedQualifiers.isEqual(it) })
+        val onlyHeadTypeConstructor = forceOnlyHeadTypeConstructor || (isCovariant && overrides.any { !this@enhance.isEqual(it) })
 
-        val treeSize = if (onlyHeadTypeConstructor) 1 else indexedThisType.size
-        val computedResult = Array(treeSize) { index ->
+        val computedResult = Array(if (onlyHeadTypeConstructor) 1 else indexedThisType.size) { index ->
             val qualifiers = indexedThisType[index].extractQualifiersFromAnnotations(index == 0)
             val superQualifiers = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type?.extractQualifiers() }
             qualifiers.computeQualifiersForOverride(superQualifiers, index == 0 && isCovariant, index == 0 && containerIsVarargParameter)
         }
         val nextSiblingMap = IntArray(indexedThisType.size).apply { this[0] = findNextSibling(this, 0) }
-        return IndexedJavaTypeQualifiers(predefined?.map, computedResult, nextSiblingMap)
+        val qualifiers = IndexedJavaTypeQualifiers(predefined?.map, computedResult, nextSiblingMap)
+        return enhance(qualifiers, 0)
     }
 
     private fun <T> T.flattenTree(result: MutableList<T>, children: (T) -> Iterable<T>?) {
@@ -228,12 +250,97 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         }
     }
 
+    private fun KotlinTypeMarker.enhance(qualifiers: IndexedJavaTypeQualifiers, index: Int): KotlinTypeMarker? =
+        with(typeSystem) {
+            if (isError()) return null
+            val enhanced = asFlexibleType()?.enhance(qualifiers, index)
+                ?: asSimpleType()?.enhance(qualifiers, index, TypeComponentPosition.INFLEXIBLE, isBoundOfRawType = false)
+                ?: return null
+            // TODO: if the enhancement is both for nullability warnings and mutability, then this type should be
+            //   something like `enhance(mutability only).wrapEnhancement(enhance(both nullability and mutability))`.
+            return if (qualifiers[index].isNullabilityQualifierForWarning) withEnhancementForWarnings(enhanced) else enhanced
+        }
 
-    private class TypeAndDefaultQualifiers(
-        val type: KotlinTypeMarker?,
-        val defaultQualifiers: JavaTypeQualifiersByElementType?,
-        val typeParameterForArgument: TypeParameterMarker?
-    )
+    private fun FlexibleTypeMarker.enhance(qualifiers: IndexedJavaTypeQualifiers, index: Int): KotlinTypeMarker? =
+        with(typeSystem) {
+            val isRawType = asRawType() != null
+            val lowerBound = lowerBound()
+            val upperBound = upperBound()
+            val lowerResult = lowerBound.enhance(qualifiers, index, TypeComponentPosition.FLEXIBLE_LOWER, isRawType)
+            val upperResult = upperBound.enhance(qualifiers, index, TypeComponentPosition.FLEXIBLE_UPPER, isRawType)
+            when {
+                lowerResult == null && upperResult == null -> null
+                isRawType -> createRawType(lowerResult ?: lowerBound, upperResult ?: upperBound)
+                else -> typeFactory.createFlexibleType(lowerResult ?: lowerBound, upperResult ?: upperBound)
+            }
+        }
+
+    private fun SimpleTypeMarker.enhance(
+        qualifiers: IndexedJavaTypeQualifiers,
+        index: Int,
+        position: TypeComponentPosition,
+        isBoundOfRawType: Boolean
+    ): SimpleTypeMarker? = with(typeSystem) {
+        val shouldEnhance = position.shouldEnhance()
+        val shouldEnhanceArguments = !isBoundOfRawType || !skipRawTypeArguments
+        if (!shouldEnhance && (!shouldEnhanceArguments || getArguments().isEmpty())) return null
+
+        val originalConstructor = typeConstructor()
+
+        val effectiveQualifiers = qualifiers[index]
+        val enhancedConstructor = originalConstructor.takeIf { shouldEnhance }?.let {
+            when {
+                effectiveQualifiers.mutability == MutabilityQualifier.READ_ONLY && position == TypeComponentPosition.FLEXIBLE_LOWER ->
+                    it.replaceClassId(JavaToKotlinClassMap::mutableToReadOnly)
+                effectiveQualifiers.mutability == MutabilityQualifier.MUTABLE && position == TypeComponentPosition.FLEXIBLE_UPPER ->
+                    it.replaceClassId(JavaToKotlinClassMap::readOnlyToMutable)
+                else -> null
+            }
+        }
+        val enhancedNullability = effectiveQualifiers.nullability.takeIf { shouldEnhance }?.let {
+            when (it) {
+                NullabilityQualifier.FORCE_FLEXIBILITY -> null
+                NullabilityQualifier.NULLABLE -> true
+                NullabilityQualifier.NOT_NULL -> false
+            }
+        }
+
+        val typeParameters = (enhancedConstructor ?: originalConstructor).getParameters()
+        var globalArgIndex = index + 1
+        val enhancedArguments = getArguments().mapIndexed { index, arg ->
+            val parameter = typeParameters.getOrNull(index)
+            val enhanced = when {
+                !shouldEnhanceArguments -> null
+                !arg.isStarProjection() -> arg.getType().enhance(qualifiers, globalArgIndex)
+                qualifiers[globalArgIndex].nullability == NullabilityQualifier.FORCE_FLEXIBILITY ->
+                    arg.starProjectionType?.let {
+                        // Given `C<T extends @Nullable V>`, unannotated `C<?>` is `C<out (V..V?)>`.
+                        typeFactory.createFlexibleType(
+                            it.lowerBoundIfFlexible().withNullability(false),
+                            it.upperBoundIfFlexible().withNullability(true)
+                        )
+                    }
+                else -> null
+            }
+            val variance = (if (arg.isStarProjection()) TypeVariance.OUT else arg.getVariance()).takeIf { it != parameter?.getVariance() }
+                ?: TypeVariance.INV
+            globalArgIndex = if (shouldEnhanceArguments) qualifiers.nextSibling(globalArgIndex) else globalArgIndex
+            when {
+                enhanced != null -> typeFactory.createTypeArgument(enhanced, variance)
+                enhancedConstructor != null && parameter != null ->
+                    if (arg.isStarProjection())
+                        typeFactory.createStarProjection(parameter)
+                    else
+                        typeFactory.createTypeArgument(arg.getType(), variance)
+                else -> null
+            }
+        }
+
+        if (enhancedConstructor == null && enhancedNullability == null && enhancedArguments.all { it == null })
+            return null
+        val enhancedType = replace(enhancedConstructor, enhancedArguments, enhancedNullability)
+        return if (effectiveQualifiers.definitelyNotNull) enhancedType.makeDefinitelyNotNull() else enhancedType
+    }
 }
 
 class IndexedJavaTypeQualifiers(

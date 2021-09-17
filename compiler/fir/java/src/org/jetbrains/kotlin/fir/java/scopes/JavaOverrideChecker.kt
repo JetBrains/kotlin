@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.fir.java.scopes
 
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
-import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractOverrideChecker
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 
 class JavaOverrideChecker internal constructor(
@@ -27,6 +28,9 @@ class JavaOverrideChecker internal constructor(
     private val javaTypeParameterStack: JavaTypeParameterStack
 ) : FirAbstractOverrideChecker() {
     private val context: ConeTypeContext = session.typeContext
+
+    private fun ClassId.readOnlyToMutable(): ClassId =
+        JavaToKotlinClassMap.readOnlyToMutable(this) ?: this
 
     private fun isEqualTypes(
         candidateType: ConeKotlinType,
@@ -36,8 +40,8 @@ class JavaOverrideChecker internal constructor(
         if (candidateType is ConeFlexibleType) return isEqualTypes(candidateType.lowerBound, baseType, substitutor)
         if (baseType is ConeFlexibleType) return isEqualTypes(candidateType, baseType.lowerBound, substitutor)
         if (candidateType is ConeClassLikeType && baseType is ConeClassLikeType) {
-            val candidateTypeClassId = candidateType.fullyExpandedType(session).lookupTag.classId.let { it.readOnlyToMutable() ?: it }
-            val baseTypeClassId = baseType.fullyExpandedType(session).lookupTag.classId.let { it.readOnlyToMutable() ?: it }
+            val candidateTypeClassId = candidateType.fullyExpandedType(session).lookupTag.classId.readOnlyToMutable()
+            val baseTypeClassId = baseType.fullyExpandedType(session).lookupTag.classId.readOnlyToMutable()
             if (candidateTypeClassId != baseTypeClassId) return false
             if (candidateTypeClassId == StandardClassIds.Array) {
                 assert(candidateType.typeArguments.size == 1) {

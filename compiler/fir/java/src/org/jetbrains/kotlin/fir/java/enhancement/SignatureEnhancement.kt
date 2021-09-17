@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -40,11 +41,10 @@ import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.load.java.JavaTypeQualifiersByElementType
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeParameterMarker
-import org.jetbrains.kotlin.types.model.TypeSystemContext
+import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirSignatureEnhancement(
@@ -485,9 +485,8 @@ class FirSignatureEnhancement(
     ): FirResolvedTypeRef {
         val typeWithoutEnhancement = typeRef.toConeKotlinType(mode)
         val typesFromOverridden = typeRefsFromOverridden.map { it.toConeKotlinType(mode) }
-        val qualifiers = typeWithoutEnhancement.computeIndexedQualifiers(typesFromOverridden, predefined)
         return buildResolvedTypeRef {
-            type = typeWithoutEnhancement.enhance(session, qualifiers) ?: typeWithoutEnhancement
+            type = typeWithoutEnhancement.enhance(typesFromOverridden, predefined) as ConeKotlinType? ?: typeWithoutEnhancement
             annotations += typeRef.annotations
         }
     }
@@ -505,20 +504,14 @@ private class EnhancementSignatureParts(
     override val containerApplicabilityType: AnnotationQualifierApplicabilityType,
     override val containerDefaultTypeQualifiers: JavaTypeQualifiersByElementType?
 ) : AbstractSignatureParts<FirAnnotation>() {
-    override val enableImprovementsInStrictMode: Boolean
-        get() = true
-
-    override val skipRawTypeArguments: Boolean
-        get() = false
+    override val typeSystem get() = session.typeContext
+    override val typeFactory get() = session.typeContext
 
     override val containerAnnotations: Iterable<FirAnnotation>
         get() = typeContainer?.annotations ?: emptyList()
 
     override val containerIsVarargParameter: Boolean
         get() = typeContainer is FirValueParameter && typeContainer.isVararg
-
-    override val typeSystem: TypeSystemContext
-        get() = session.typeContext
 
     override val FirAnnotation.forceWarning: Boolean
         get() = false // TODO: force warnings on IDEA external annotations
@@ -537,4 +530,29 @@ private class EnhancementSignatureParts(
 
     override val TypeParameterMarker.isFromJava: Boolean
         get() = (this as ConeTypeParameterLookupTag).symbol.fir.origin == FirDeclarationOrigin.Java
+
+    override val TypeArgumentMarker.starProjectionType: KotlinTypeMarker?
+        get() = null // TODO
+
+    override fun TypeConstructorMarker.replaceClassId(mapper: (ClassId) -> ClassId?): TypeConstructorMarker? =
+        (this as? ConeClassLikeLookupTag)?.classId?.let(mapper)?.let(::ConeClassLikeLookupTagImpl)
+
+    override fun createRawType(lowerBound: SimpleTypeMarker, upperBound: SimpleTypeMarker): RawTypeMarker =
+        ConeRawType(lowerBound as ConeSimpleKotlinType, upperBound as ConeSimpleKotlinType)
+
+    override fun SimpleTypeMarker.replace(
+        constructor: TypeConstructorMarker?,
+        arguments: List<TypeArgumentMarker?>,
+        nullability: Boolean?
+    ): SimpleTypeMarker {
+        if (this !is ConeLookupTagBasedType) return this
+        val shouldAddAttribute = nullability == false && !hasEnhancedNullability
+        val mergedConstructor = constructor as ConeClassifierLookupTag? ?: lookupTag
+        val mergedArguments = Array(typeArguments.size) { arguments[it] as ConeTypeProjection? ?: typeArguments[it] }
+        val mergedAttributes = if (shouldAddAttribute) attributes + CompilerConeAttributes.EnhancedNullability else attributes
+        return mergedConstructor.constructType(mergedArguments, nullability ?: isMarkedNullable, mergedAttributes)
+    }
+
+    override fun KotlinTypeMarker.withEnhancementForWarnings(enhancement: KotlinTypeMarker): KotlinTypeMarker? =
+        null // TODO
 }

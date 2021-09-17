@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
 import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.load.java.DeprecationCausedByFunctionNInfo
@@ -35,25 +36,23 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaAnnotationDescrip
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaTypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
+import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.load.kotlin.signature
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.deprecation.DEPRECATED_FUNCTION_KEY
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.RawType
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
-import org.jetbrains.kotlin.types.getEnhancement
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeParameterMarker
-import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
+import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
+class SignatureEnhancement {
     fun <D : CallableMemberDescriptor> enhanceSignatures(c: LazyJavaResolverContext, platformSignatures: Collection<D>): Collection<D> {
         return platformSignatures.map {
             it.enhanceSignature(c)
@@ -209,7 +208,7 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
     }
 
     private fun SignatureParts.enhance(type: KotlinType, overrides: List<KotlinType>, predefined: TypeEnhancementInfo? = null) =
-        with(typeEnhancement) { type.enhance(type.computeIndexedQualifiers(overrides, predefined), skipRawTypeArguments) }
+        type.enhance(overrides, predefined) as KotlinType?
 }
 
 private class SignatureParts(
@@ -219,6 +218,9 @@ private class SignatureParts(
     override val containerApplicabilityType: AnnotationQualifierApplicabilityType,
     override val skipRawTypeArguments: Boolean = false
 ) : AbstractSignatureParts<AnnotationDescriptor>() {
+    override val typeSystem get() = SimpleClassicTypeSystemContext
+    override val typeFactory get() = SimpleClassicTypeSystemContext
+
     override val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver
         get() = containerContext.components.annotationTypeQualifierResolver
 
@@ -233,9 +235,6 @@ private class SignatureParts(
 
     override val containerIsVarargParameter: Boolean
         get() = typeContainer is ValueParameterDescriptor && typeContainer.varargElementType != null
-
-    override val typeSystem: TypeSystemInferenceExtensionContext
-        get() = SimpleClassicTypeSystemContext
 
     override val AnnotationDescriptor.forceWarning: Boolean
         get() = (this is PossiblyExternalAnnotationDescriptor && isIdeExternalAnnotation) ||
@@ -260,4 +259,45 @@ private class SignatureParts(
 
     override val TypeParameterMarker.isFromJava: Boolean
         get() = this is LazyJavaTypeParameterDescriptor
+
+    override val TypeArgumentMarker.starProjectionType: KotlinTypeMarker
+        get() = (this as StarProjectionImpl).type
+
+    override fun TypeConstructorMarker.replaceClassId(mapper: (ClassId) -> ClassId?): TypeConstructorMarker? {
+        require(this is TypeConstructor)
+        val descriptor = declarationDescriptor ?: return null
+        val oppositeClassFqName = mapper(DescriptorUtils.getClassIdForNonLocalClass(descriptor)) ?: return null
+        return descriptor.builtIns.getBuiltInClassByFqName(oppositeClassFqName.asSingleFqName()).typeConstructor
+    }
+
+    override fun createRawType(lowerBound: SimpleTypeMarker, upperBound: SimpleTypeMarker): RawTypeMarker =
+        RawTypeImpl(lowerBound as SimpleType, upperBound as SimpleType)
+
+    override fun KotlinTypeMarker.withEnhancementForWarnings(enhancement: KotlinTypeMarker): KotlinTypeMarker =
+        (this as KotlinType).unwrap().wrapEnhancement(enhancement as KotlinType)
+
+    override fun SimpleTypeMarker.replace(
+        constructor: TypeConstructorMarker?,
+        arguments: List<TypeArgumentMarker?>,
+        nullability: Boolean?
+    ): SimpleTypeMarker {
+        require(this is SimpleType)
+        val newAnnotations = listOfNotNull(
+            annotations,
+            ENHANCED_MUTABILITY_ANNOTATIONS.takeIf { constructor != null },
+            ENHANCED_NULLABILITY_ANNOTATIONS.takeIf { nullability != null }
+        ).let { it.singleOrNull() ?: CompositeAnnotations(it) }
+        return KotlinTypeFactory.simpleType(
+            newAnnotations,
+            constructor as TypeConstructor? ?: this.constructor,
+            arguments.zip(this.arguments) { enhanced, original -> enhanced as TypeProjection? ?: original },
+            nullability ?: this.isMarkedNullable
+        )
+    }
+
+    override fun SimpleTypeMarker.makeDefinitelyNotNull(): SimpleTypeMarker =
+        if (containerContext.components.settings.correctNullabilityForNotNullTypeParameter)
+            (this as SimpleType).makeSimpleTypeDefinitelyNotNullOrNotNull(useCorrectedNullabilityForTypeParameters = true)
+        else
+            NotNullTypeParameter(this as SimpleType)
 }

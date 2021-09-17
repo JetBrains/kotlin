@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
@@ -160,7 +158,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             } ?: classifier.classId!!
 
             if (lowerBound == null || argumentsMakeSenseOnlyForMutableContainer(classId, session)) {
-                classId = classId.readOnlyToMutable() ?: classId
+                classId = JavaToKotlinClassMap.readOnlyToMutable(classId) ?: classId
             }
 
             val lookupTag = ConeClassLikeLookupTagImpl(classId)
@@ -207,8 +205,7 @@ private fun JavaClassifierType.argumentsMakeSenseOnlyForMutableContainer(
     classId: ClassId,
     session: FirSession,
 ): Boolean {
-    if (!JavaToKotlinClassMap.isReadOnly(classId.asSingleFqName().toUnsafe())) return false
-    val mutableClassId = classId.readOnlyToMutable() ?: return false
+    val mutableClassId = JavaToKotlinClassMap.readOnlyToMutable(classId) ?: return false
 
     if (!typeArguments.lastOrNull().isSuperWildcard()) return false
     val mutableLastParameterVariance =
