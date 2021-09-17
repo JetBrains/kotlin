@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir
+package org.jetbrains.kotlin
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.lang.TreeBackedLighterAST
@@ -398,9 +398,6 @@ val FirSourceElement?.text: CharSequence?
         is FirLightSourceElement -> treeStructure.toString(lighterASTNode)
         else -> null
     }
-
-val FirElement.psi: PsiElement? get() = (source as? FirPsiSourceElement)?.psi
-val FirElement.realPsi: PsiElement? get() = (source as? FirRealPsiSourceElement)?.psi
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun PsiElement.toFirPsiSourceElement(kind: FirSourceElementKind = FirRealSourceElementKind): FirPsiSourceElement = when (kind) {
