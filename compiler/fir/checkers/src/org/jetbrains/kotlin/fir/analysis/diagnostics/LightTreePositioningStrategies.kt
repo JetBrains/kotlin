@@ -11,9 +11,9 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.PositioningStrategies
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
@@ -968,21 +968,21 @@ object LightTreePositioningStrategies {
     }
 
     val UNREACHABLE_CODE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
-        override fun markFirDiagnostic(element: KtSourceElement, diagnostic: FirDiagnostic): List<TextRange> {
+        override fun markKtDiagnostic(element: KtSourceElement, diagnostic: KtDiagnostic): List<TextRange> {
             @Suppress("UNCHECKED_CAST")
-            val typed = diagnostic as FirDiagnosticWithParameters2<Set<KtSourceElement>, Set<KtSourceElement>>
+            val typed = diagnostic as KtDiagnosticWithParameters2<Set<KtSourceElement>, Set<KtSourceElement>>
             with(UnreachableCodeLightTreeHelper(element.treeStructure)) {
                 val reachable = typed.a.map { it.lighterASTNode }.toSet()
                 val unreachable = typed.b.map { it.lighterASTNode }.toSet()
                 if (!element.lighterASTNode.hasChildrenInSet(reachable)) {
-                    return super.markFirDiagnostic(element, diagnostic)
+                    return super.markKtDiagnostic(element, diagnostic)
                 }
 
                 val nodesToMark = element.lighterASTNode.getLeavesOrReachableChildren(reachable, unreachable)
                     .removeReachableElementsWithMeaninglessSiblings(reachable)
 
                 if (nodesToMark.isEmpty()) {
-                    return super.markFirDiagnostic(element, diagnostic)
+                    return super.markKtDiagnostic(element, diagnostic)
                 }
 
                 val ranges = nodesToMark.flatMap {

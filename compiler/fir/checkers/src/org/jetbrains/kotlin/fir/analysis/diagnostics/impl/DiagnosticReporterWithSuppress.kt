@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics.impl
 
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
+import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.KtDiagnostic
 
 class DiagnosticReporterWithSuppress : BaseDiagnosticReporter() {
-    private val _diagnostics: MutableList<FirDiagnostic> = mutableListOf()
-    override val diagnostics: List<FirDiagnostic>
+    private val _diagnostics: MutableList<KtDiagnostic> = mutableListOf()
+    override val diagnostics: List<KtDiagnostic>
         get() = _diagnostics
 
-    override fun report(diagnostic: FirDiagnostic?, context: CheckerContext) {
+    override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic == null) return
         if (!context.isDiagnosticSuppressed(diagnostic)) {
             _diagnostics += diagnostic

@@ -10,52 +10,52 @@ import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 import org.jetbrains.kotlin.diagnostics.rendering.renderParameter
 import java.text.MessageFormat
 
-sealed interface FirDiagnosticRenderer {
-    fun render(diagnostic: FirDiagnostic): String
-    fun renderParameters(diagnostic: FirDiagnostic): Array<out Any?>
+sealed interface KtDiagnosticRenderer {
+    fun render(diagnostic: KtDiagnostic): String
+    fun renderParameters(diagnostic: KtDiagnostic): Array<out Any?>
 }
 
-class SimpleFirDiagnosticRenderer(private val message: String) : FirDiagnosticRenderer {
-    override fun render(diagnostic: FirDiagnostic): String {
-        require(diagnostic is FirSimpleDiagnostic)
+class SimpleKtDiagnosticRenderer(private val message: String) : KtDiagnosticRenderer {
+    override fun render(diagnostic: KtDiagnostic): String {
+        require(diagnostic is KtSimpleDiagnostic)
         return message
     }
 
-    override fun renderParameters(diagnostic: FirDiagnostic): Array<out Any?> {
-        require(diagnostic is FirSimpleDiagnostic)
+    override fun renderParameters(diagnostic: KtDiagnostic): Array<out Any?> {
+        require(diagnostic is KtSimpleDiagnostic)
         return emptyArray()
     }
 }
 
-sealed class AbstractFirDiagnosticWithParametersRenderer(
+sealed class AbstractKtDiagnosticWithParametersRenderer(
     protected val message: String
-) : FirDiagnosticRenderer {
+) : KtDiagnosticRenderer {
     private val messageFormat = MessageFormat(message)
 
-    final override fun render(diagnostic: FirDiagnostic): String {
+    final override fun render(diagnostic: KtDiagnostic): String {
         return messageFormat.format(renderParameters(diagnostic))
     }
 }
 
-class FirDiagnosticWithParameters1Renderer<A>(
+class KtDiagnosticWithParameters1Renderer<A>(
     message: String,
     private val rendererForA: DiagnosticParameterRenderer<A>?,
-) : AbstractFirDiagnosticWithParametersRenderer(message) {
-    override fun renderParameters(diagnostic: FirDiagnostic): Array<out Any?> {
-        require(diagnostic is FirDiagnosticWithParameters1<*>)
+) : AbstractKtDiagnosticWithParametersRenderer(message) {
+    override fun renderParameters(diagnostic: KtDiagnostic): Array<out Any?> {
+        require(diagnostic is KtDiagnosticWithParameters1<*>)
         val context = RenderingContext.of(diagnostic.a)
         @Suppress("UNCHECKED_CAST")
         return arrayOf(renderParameter(diagnostic.a as A, rendererForA, context))
     }
 }
 
-class FirDiagnosticWithParameters2Renderer<A, B>(
+class KtDiagnosticWithParameters2Renderer<A, B>(
     message: String,
     private val rendererForA: DiagnosticParameterRenderer<A>?,
     private val rendererForB: DiagnosticParameterRenderer<B>?,
-) : AbstractFirDiagnosticWithParametersRenderer(message) {
-    override fun renderParameters(diagnostic: FirDiagnostic): Array<out Any?> {
-        require(diagnostic is FirDiagnosticWithParameters2<*, *>)
+) : AbstractKtDiagnosticWithParametersRenderer(message) {
+    override fun renderParameters(diagnostic: KtDiagnostic): Array<out Any?> {
+        require(diagnostic is KtDiagnosticWithParameters2<*, *>)
         val context = RenderingContext.of(diagnostic.a, diagnostic.b)
         @Suppress("UNCHECKED_CAST")
         return arrayOf(
@@ -65,14 +65,14 @@ class FirDiagnosticWithParameters2Renderer<A, B>(
     }
 }
 
-class FirDiagnosticWithParameters3Renderer<A, B, C>(
+class KtDiagnosticWithParameters3Renderer<A, B, C>(
     message: String,
     private val rendererForA: DiagnosticParameterRenderer<A>?,
     private val rendererForB: DiagnosticParameterRenderer<B>?,
     private val rendererForC: DiagnosticParameterRenderer<C>?,
-) : AbstractFirDiagnosticWithParametersRenderer(message) {
-    override fun renderParameters(diagnostic: FirDiagnostic): Array<out Any?> {
-        require(diagnostic is FirDiagnosticWithParameters3<*, *, *>)
+) : AbstractKtDiagnosticWithParametersRenderer(message) {
+    override fun renderParameters(diagnostic: KtDiagnostic): Array<out Any?> {
+        require(diagnostic is KtDiagnosticWithParameters3<*, *, *>)
         val context = RenderingContext.of(diagnostic.a, diagnostic.b, diagnostic.c)
         @Suppress("UNCHECKED_CAST")
         return arrayOf(
@@ -83,15 +83,15 @@ class FirDiagnosticWithParameters3Renderer<A, B, C>(
     }
 }
 
-class FirDiagnosticWithParameters4Renderer<A, B, C, D>(
+class KtDiagnosticWithParameters4Renderer<A, B, C, D>(
     message: String,
     private val rendererForA: DiagnosticParameterRenderer<A>?,
     private val rendererForB: DiagnosticParameterRenderer<B>?,
     private val rendererForC: DiagnosticParameterRenderer<C>?,
     private val rendererForD: DiagnosticParameterRenderer<D>?,
-) : AbstractFirDiagnosticWithParametersRenderer(message) {
-    override fun renderParameters(diagnostic: FirDiagnostic): Array<out Any?> {
-        require(diagnostic is FirDiagnosticWithParameters4<*, *, *, *>)
+) : AbstractKtDiagnosticWithParametersRenderer(message) {
+    override fun renderParameters(diagnostic: KtDiagnostic): Array<out Any?> {
+        require(diagnostic is KtDiagnosticWithParameters4<*, *, *, *>)
         val context = RenderingContext.of(diagnostic.a, diagnostic.b, diagnostic.c, diagnostic.d)
         @Suppress("UNCHECKED_CAST")
         return arrayOf(

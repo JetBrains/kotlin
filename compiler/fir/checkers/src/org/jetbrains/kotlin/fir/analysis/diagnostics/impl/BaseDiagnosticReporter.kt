@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics.impl
 
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
+import org.jetbrains.kotlin.fir.analysis.diagnostics.KtDiagnostic
 
 abstract class BaseDiagnosticReporter : DiagnosticReporter() {
-    abstract val diagnostics: List<FirDiagnostic>
+    abstract val diagnostics: List<KtDiagnostic>
 }

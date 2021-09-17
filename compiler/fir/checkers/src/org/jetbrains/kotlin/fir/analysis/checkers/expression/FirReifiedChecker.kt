@@ -52,7 +52,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker() {
             return
         }
 
-        var factory: FirDiagnosticFactory1<FirTypeParameterSymbol>? = null
+        var factory: KtDiagnosticFactory1<FirTypeParameterSymbol>? = null
 
         lateinit var symbol: FirTypeParameterSymbol
         if (typeArgument is ConeTypeParameterType) {

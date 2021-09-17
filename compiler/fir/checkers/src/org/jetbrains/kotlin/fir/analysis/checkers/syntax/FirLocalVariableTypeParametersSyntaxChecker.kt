@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -32,7 +33,7 @@ object FirLocalVariableTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker
     ) {
         if (psi is KtProperty && psi.typeParameterList != null) {
             val diagnostic =
-                if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitTypeParametersForLocalVariables))
+                if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitTypeParametersForLocalVariables))
                     FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS else FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING
             reporter.reportOn(source, diagnostic, context)
         }
@@ -46,7 +47,7 @@ object FirLocalVariableTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker
     ) {
         source.treeStructure.typeParametersList(source.lighterASTNode)?.let { _ ->
             val diagnostic =
-                if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitTypeParametersForLocalVariables))
+                if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitTypeParametersForLocalVariables))
                     FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS else FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING
             reporter.reportOn(source, diagnostic, context)
 

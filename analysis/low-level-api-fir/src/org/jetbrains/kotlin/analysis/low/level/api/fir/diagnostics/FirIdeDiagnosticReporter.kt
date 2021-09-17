@@ -6,67 +6,66 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
+import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 
 internal class FirIdeDiagnosticReporter : DiagnosticReporter() {
-    val diagnostics = mutableMapOf<PsiElement, MutableList<FirPsiDiagnostic>>()
+    val diagnostics = mutableMapOf<PsiElement, MutableList<KtPsiDiagnostic>>()
 
-    override fun report(diagnostic: FirDiagnostic?, context: CheckerContext) {
+    override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic == null) return
         if (context.isDiagnosticSuppressed(diagnostic)) return
 
         val psiDiagnostic = when (diagnostic) {
-            is FirPsiDiagnostic -> diagnostic
-            is FirLightDiagnostic -> diagnostic.toPsiDiagnostic()
+            is KtPsiDiagnostic -> diagnostic
+            is KtLightDiagnostic -> diagnostic.toPsiDiagnostic()
             else -> error("Unknown diagnostic type ${diagnostic::class.simpleName}")
         }
         diagnostics.addValueFor(psiDiagnostic.psiElement, psiDiagnostic)
     }
 }
 
-private fun FirLightDiagnostic.toPsiDiagnostic(): FirPsiDiagnostic {
+private fun KtLightDiagnostic.toPsiDiagnostic(): KtPsiDiagnostic {
     val psiSourceElement = element.unwrapToKtPsiSourceElement()
         ?: error("Diagnostic should be created from PSI in IDE")
     @Suppress("UNCHECKED_CAST")
     return when (this) {
-        is FirLightSimpleDiagnostic -> FirPsiSimpleDiagnostic(
+        is KtLightSimpleDiagnostic -> KtPsiSimpleDiagnostic(
             psiSourceElement,
             severity,
             factory,
             positioningStrategy
         )
 
-        is FirLightDiagnosticWithParameters1<*> -> FirPsiDiagnosticWithParameters1(
+        is KtLightDiagnosticWithParameters1<*> -> KtPsiDiagnosticWithParameters1(
             psiSourceElement,
             a,
             severity,
-            factory as FirDiagnosticFactory1<Any?>,
+            factory as KtDiagnosticFactory1<Any?>,
             positioningStrategy
         )
 
-        is FirLightDiagnosticWithParameters2<*, *> -> FirPsiDiagnosticWithParameters2(
+        is KtLightDiagnosticWithParameters2<*, *> -> KtPsiDiagnosticWithParameters2(
             psiSourceElement,
             a, b,
             severity,
-            factory as FirDiagnosticFactory2<Any?, Any?>,
+            factory as KtDiagnosticFactory2<Any?, Any?>,
             positioningStrategy
         )
 
-        is FirLightDiagnosticWithParameters3<*, *, *> -> FirPsiDiagnosticWithParameters3(
+        is KtLightDiagnosticWithParameters3<*, *, *> -> KtPsiDiagnosticWithParameters3(
             psiSourceElement,
             a, b, c,
             severity,
-            factory as FirDiagnosticFactory3<Any?, Any?, Any?>,
+            factory as KtDiagnosticFactory3<Any?, Any?, Any?>,
             positioningStrategy
         )
 
-        is FirLightDiagnosticWithParameters4<*, *, *, *> -> FirPsiDiagnosticWithParameters4(
+        is KtLightDiagnosticWithParameters4<*, *, *, *> -> KtPsiDiagnosticWithParameters4(
             psiSourceElement,
             a, b, c, d,
             severity,
-            factory as FirDiagnosticFactory4<Any?, Any?, Any?, Any?>,
+            factory as KtDiagnosticFactory4<Any?, Any?, Any?, Any?>,
             positioningStrategy
         )
         else -> error("Unknown diagnostic type ${this::class.simpleName}")

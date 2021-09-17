@@ -93,10 +93,10 @@ object FirForLoopChecker : FirBlockChecker() {
         reporter: DiagnosticReporter,
         reportSource: KtSourceElement?,
         context: CheckerContext,
-        ambiguityFactory: FirDiagnosticFactory1<Collection<FirBasedSymbol<*>>>,
-        missingFactory: FirDiagnosticFactory0,
-        noneApplicableFactory: FirDiagnosticFactory1<Collection<FirBasedSymbol<*>>>? = null,
-        unsafeCallFactory: FirDiagnosticFactory0? = null,
+        ambiguityFactory: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>>,
+        missingFactory: KtDiagnosticFactory0,
+        noneApplicableFactory: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>>? = null,
+        unsafeCallFactory: KtDiagnosticFactory0? = null,
     ): Boolean {
         when (val calleeReference = call.calleeReference) {
             is FirErrorNamedReference -> {

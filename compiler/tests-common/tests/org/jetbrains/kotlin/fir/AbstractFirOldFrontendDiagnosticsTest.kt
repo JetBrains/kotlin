@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.createAllCompilerResolvePro
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractFirDiagnosticsTest() {
+abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractKtDiagnosticsTest() {
     override fun createTestFileFromPath(filePath: String): File {
         val newPath = if (File(filePath).readText().contains("// FIR_IDENTICAL")) filePath else filePath.replace(".kt", ".fir.kt")
         return File(newPath).also {

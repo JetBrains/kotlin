@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
@@ -18,6 +14,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDecla
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.firIdeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.KtPsiDiagnostic
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.psi.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -70,7 +70,7 @@ internal class FileStructure private constructor(
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun getAllDiagnosticsForFile(diagnosticCheckerFilter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic> {
+    fun getAllDiagnosticsForFile(diagnosticCheckerFilter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> {
         val structureElements = getAllStructureElements()
 
         return buildList {
@@ -78,7 +78,7 @@ internal class FileStructure private constructor(
         }
     }
 
-    private fun MutableCollection<FirPsiDiagnostic>.collectDiagnosticsFromStructureElements(
+    private fun MutableCollection<KtPsiDiagnostic>.collectDiagnosticsFromStructureElements(
         structureElements: Collection<FileStructureElement>,
         diagnosticCheckerFilter: DiagnosticCheckerFilter
     ) {

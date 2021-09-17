@@ -16,10 +16,10 @@ class SourceElementPositioningStrategy(
     private val lightTreeStrategy: LightTreePositioningStrategy,
     private val psiStrategy: PositioningStrategy<*>
 ) {
-    fun markDiagnostic(diagnostic: FirDiagnostic): List<TextRange> {
+    fun markDiagnostic(diagnostic: KtDiagnostic): List<TextRange> {
         return when (val element = diagnostic.element) {
             is KtPsiSourceElement -> psiStrategy.markDiagnostic(diagnostic)
-            is KtLightSourceElement -> lightTreeStrategy.markFirDiagnostic(element, diagnostic)
+            is KtLightSourceElement -> lightTreeStrategy.markKtDiagnostic(element, diagnostic)
         }
     }
 

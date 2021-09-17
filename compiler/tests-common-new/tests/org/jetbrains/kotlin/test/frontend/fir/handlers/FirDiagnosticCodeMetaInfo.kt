@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.test.frontend.fir.handlers
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
 import org.jetbrains.kotlin.codeMetaInfo.renderConfigurations.AbstractCodeMetaInfoRenderConfiguration
-import org.jetbrains.kotlin.fir.analysis.diagnostics.AbstractFirDiagnosticWithParametersRenderer
+import org.jetbrains.kotlin.fir.analysis.diagnostics.AbstractKtDiagnosticWithParametersRenderer
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDefaultErrorMessages
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
+import org.jetbrains.kotlin.fir.analysis.diagnostics.KtDiagnostic
 
 object FirMetaInfoUtils {
     val renderDiagnosticNoArgs = FirDiagnosticCodeMetaRenderConfiguration().apply { renderParams = false }
@@ -18,7 +18,7 @@ object FirMetaInfoUtils {
 }
 
 class FirDiagnosticCodeMetaInfo(
-    val diagnostic: FirDiagnostic,
+    val diagnostic: KtDiagnostic,
     renderConfiguration: FirDiagnosticCodeMetaRenderConfiguration,
     private val range: TextRange
 ) : CodeMetaInfo {
@@ -64,7 +64,7 @@ class FirDiagnosticCodeMetaRenderConfiguration(
 
         @Suppress("UNCHECKED_CAST")
         val renderer = FirDefaultErrorMessages.getRendererForDiagnostic(diagnostic)
-        if (renderer is AbstractFirDiagnosticWithParametersRenderer) {
+        if (renderer is AbstractKtDiagnosticWithParametersRenderer) {
             renderer.renderParameters(diagnostic).mapTo(params, Any?::toString)
         }
 

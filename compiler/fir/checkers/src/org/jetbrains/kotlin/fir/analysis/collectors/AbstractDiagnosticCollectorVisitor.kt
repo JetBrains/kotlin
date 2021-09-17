@@ -341,6 +341,6 @@ abstract class AbstractDiagnosticCollectorVisitor(
             allInfosSuppressed = AbstractDiagnosticCollector.SUPPRESS_ALL_INFOS in arguments,
             allWarningsSuppressed = AbstractDiagnosticCollector.SUPPRESS_ALL_WARNINGS in arguments,
             allErrorsSuppressed = AbstractDiagnosticCollector.SUPPRESS_ALL_ERRORS in arguments
-        )
+        ) as CheckerContext
     }
 }

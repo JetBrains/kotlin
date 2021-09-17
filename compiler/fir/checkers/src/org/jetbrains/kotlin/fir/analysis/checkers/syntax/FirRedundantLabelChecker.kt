@@ -9,13 +9,17 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.util.diff.FlyweightCapableTreeStructure
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.findChildByType
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.unwrapParenthesesLabelsAndAnnotations
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.buildChildSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -26,14 +30,14 @@ import org.jetbrains.kotlin.psi.*
 object FirRedundantLabelChecker : FirDeclarationSyntaxChecker<FirDeclaration, PsiElement>() {
     override fun checkLightTree(
         element: FirDeclaration,
-        source: FirLightSourceElement,
+        source: KtLightSourceElement,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
         // Local declarations are already checked when the containing declaration is checked.
         if (!isRootLabelContainer(element)) return
 
-        val allTraversalRoots = mutableSetOf<FirSourceElement>()
+        val allTraversalRoots = mutableSetOf<KtSourceElement>()
 
         // First collect all labels in the declaration
         element.accept(object : FirVisitorVoid() {
@@ -68,22 +72,22 @@ object FirRedundantLabelChecker : FirDeclarationSyntaxChecker<FirDeclaration, Ps
 
             private fun markTraversalRoot(elem: FirElement) {
                 val elemSource = elem.source
-                if (elemSource?.kind is FirRealSourceElementKind) {
+                if (elemSource?.kind is KtRealSourceElementKind) {
                     allTraversalRoots.add(elemSource)
                 }
             }
         })
 
         for (root in allTraversalRoots) {
-            root.treeStructure.reportRedundantLabels(reporter, context, root as FirLightSourceElement, allTraversalRoots)
+            root.treeStructure.reportRedundantLabels(reporter, context, root as KtLightSourceElement, allTraversalRoots)
         }
     }
 
     private fun FlyweightCapableTreeStructure<LighterASTNode>.reportRedundantLabels(
         reporter: DiagnosticReporter,
         context: CheckerContext,
-        source: FirLightSourceElement,
-        allTraversalRoots: Set<FirSourceElement>,
+        source: KtLightSourceElement,
+        allTraversalRoots: Set<KtSourceElement>,
         isChildNode: Boolean = false,
     ) {
         if (isChildNode && source in allTraversalRoots) return // Prevent double traversal
@@ -113,7 +117,7 @@ object FirRedundantLabelChecker : FirDeclarationSyntaxChecker<FirDeclaration, Ps
 
     override fun checkPsi(
         element: FirDeclaration,
-        source: FirPsiSourceElement,
+        source: KtPsiSourceElement,
         psi: PsiElement,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -132,7 +136,7 @@ object FirRedundantLabelChecker : FirDeclarationSyntaxChecker<FirDeclaration, Ps
                         deparenthesizedBaseExpression !is KtLoopExpression &&
                         deparenthesizedBaseExpression !is KtNamedFunction
                     ) {
-                        reporter.reportOn(labelNameExpression.toFirPsiSourceElement(), FirErrors.REDUNDANT_LABEL_WARNING, context)
+                        reporter.reportOn(labelNameExpression.toKtPsiSourceElement(), FirErrors.REDUNDANT_LABEL_WARNING, context)
                     }
                 }
                 super.visitLabeledExpression(expression)
@@ -141,7 +145,7 @@ object FirRedundantLabelChecker : FirDeclarationSyntaxChecker<FirDeclaration, Ps
     }
 
     private fun isRootLabelContainer(element: FirDeclaration): Boolean {
-        if (element.source?.kind is FirFakeSourceElementKind) return false
+        if (element.source?.kind is KtFakeSourceElementKind) return false
         if (element is FirCallableDeclaration && element.effectiveVisibility == EffectiveVisibility.Local) return false
         return when (element) {
             is FirAnonymousFunction -> false

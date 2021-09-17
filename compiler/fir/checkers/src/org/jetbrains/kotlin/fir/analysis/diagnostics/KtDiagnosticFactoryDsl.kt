@@ -114,8 +114,8 @@ class DiagnosticFactory0DelegateProvider(
     private val positioningStrategy: SourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
-    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory0> {
-        return DummyDelegate(FirDiagnosticFactory0(prop.name, severity, positioningStrategy, psiType))
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory0> {
+        return DummyDelegate(KtDiagnosticFactory0(prop.name, severity, positioningStrategy, psiType))
     }
 }
 
@@ -124,8 +124,8 @@ class DiagnosticFactory1DelegateProvider<A>(
     private val positioningStrategy: SourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
-    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory1<A>> {
-        return DummyDelegate(FirDiagnosticFactory1(prop.name, severity, positioningStrategy, psiType))
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory1<A>> {
+        return DummyDelegate(KtDiagnosticFactory1(prop.name, severity, positioningStrategy, psiType))
     }
 }
 
@@ -134,8 +134,8 @@ class DiagnosticFactory2DelegateProvider<A, B>(
     private val positioningStrategy: SourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
-    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory2<A, B>> {
-        return DummyDelegate(FirDiagnosticFactory2(prop.name, severity, positioningStrategy, psiType))
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory2<A, B>> {
+        return DummyDelegate(KtDiagnosticFactory2(prop.name, severity, positioningStrategy, psiType))
     }
 }
 
@@ -144,8 +144,8 @@ class DiagnosticFactory3DelegateProvider<A, B, C>(
     private val positioningStrategy: SourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
-    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory3<A, B, C>> {
-        return DummyDelegate(FirDiagnosticFactory3(prop.name, severity, positioningStrategy, psiType))
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory3<A, B, C>> {
+        return DummyDelegate(KtDiagnosticFactory3(prop.name, severity, positioningStrategy, psiType))
     }
 }
 
@@ -154,8 +154,8 @@ class DiagnosticFactory4DelegateProvider<A, B, C, D>(
     private val positioningStrategy: SourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
-    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory4<A, B, C, D>> {
-        return DummyDelegate(FirDiagnosticFactory4(prop.name, severity, positioningStrategy, psiType))
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory4<A, B, C, D>> {
+        return DummyDelegate(KtDiagnosticFactory4(prop.name, severity, positioningStrategy, psiType))
     }
 }
 
@@ -167,10 +167,10 @@ class DeprecationDiagnosticFactory0DelegateProvider(
     private val positioningStrategy: SourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
-    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactoryForDeprecation0> {
-        val errorFactory = FirDiagnosticFactory0("${prop.name}$ERROR", Severity.ERROR, positioningStrategy, psiType)
-        val warningFactory = FirDiagnosticFactory0("${prop.name}$WARNING", Severity.WARNING, positioningStrategy, psiType)
-        return DummyDelegate(FirDiagnosticFactoryForDeprecation0(featureForError, warningFactory, errorFactory))
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation0> {
+        val errorFactory = KtDiagnosticFactory0("${prop.name}$ERROR", Severity.ERROR, positioningStrategy, psiType)
+        val warningFactory = KtDiagnosticFactory0("${prop.name}$WARNING", Severity.WARNING, positioningStrategy, psiType)
+        return DummyDelegate(KtDiagnosticFactoryForDeprecation0(featureForError, warningFactory, errorFactory))
     }
 }
 
@@ -179,10 +179,10 @@ class DeprecationDiagnosticFactory1DelegateProvider<A>(
     private val positioningStrategy: SourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
-    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactoryForDeprecation1<A>> {
-        val errorFactory = FirDiagnosticFactory1<A>("${prop.name}$ERROR", Severity.ERROR, positioningStrategy, psiType)
-        val warningFactory = FirDiagnosticFactory1<A>("${prop.name}$WARNING", Severity.WARNING, positioningStrategy, psiType)
-        return DummyDelegate(FirDiagnosticFactoryForDeprecation1(featureForError, warningFactory, errorFactory))
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation1<A>> {
+        val errorFactory = KtDiagnosticFactory1<A>("${prop.name}$ERROR", Severity.ERROR, positioningStrategy, psiType)
+        val warningFactory = KtDiagnosticFactory1<A>("${prop.name}$WARNING", Severity.WARNING, positioningStrategy, psiType)
+        return DummyDelegate(KtDiagnosticFactoryForDeprecation1(featureForError, warningFactory, errorFactory))
     }
 }
 
@@ -191,10 +191,10 @@ class DeprecationDiagnosticFactory2DelegateProvider<A, B>(
     private val positioningStrategy: SourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
-    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactoryForDeprecation2<A, B>> {
-        val errorFactory = FirDiagnosticFactory2<A, B>("${prop.name}$ERROR", Severity.ERROR, positioningStrategy, psiType)
-        val warningFactory = FirDiagnosticFactory2<A, B>("${prop.name}$WARNING", Severity.WARNING, positioningStrategy, psiType)
-        return DummyDelegate(FirDiagnosticFactoryForDeprecation2(featureForError, warningFactory, errorFactory))
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation2<A, B>> {
+        val errorFactory = KtDiagnosticFactory2<A, B>("${prop.name}$ERROR", Severity.ERROR, positioningStrategy, psiType)
+        val warningFactory = KtDiagnosticFactory2<A, B>("${prop.name}$WARNING", Severity.WARNING, positioningStrategy, psiType)
+        return DummyDelegate(KtDiagnosticFactoryForDeprecation2(featureForError, warningFactory, errorFactory))
     }
 }
 
@@ -203,10 +203,10 @@ class DeprecationDiagnosticFactory3DelegateProvider<A, B, C>(
     private val positioningStrategy: SourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
-    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactoryForDeprecation3<A, B, C>> {
-        val errorFactory = FirDiagnosticFactory3<A, B, C>("${prop.name}$ERROR", Severity.ERROR, positioningStrategy, psiType)
-        val warningFactory = FirDiagnosticFactory3<A, B, C>("${prop.name}$WARNING", Severity.WARNING, positioningStrategy, psiType)
-        return DummyDelegate(FirDiagnosticFactoryForDeprecation3(featureForError, warningFactory, errorFactory))
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation3<A, B, C>> {
+        val errorFactory = KtDiagnosticFactory3<A, B, C>("${prop.name}$ERROR", Severity.ERROR, positioningStrategy, psiType)
+        val warningFactory = KtDiagnosticFactory3<A, B, C>("${prop.name}$WARNING", Severity.WARNING, positioningStrategy, psiType)
+        return DummyDelegate(KtDiagnosticFactoryForDeprecation3(featureForError, warningFactory, errorFactory))
     }
 }
 
@@ -215,10 +215,10 @@ class DeprecationDiagnosticFactory4DelegateProvider<A, B, C, D>(
     private val positioningStrategy: SourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
-    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactoryForDeprecation4<A, B, C, D>> {
-        val errorFactory = FirDiagnosticFactory4<A, B, C, D>("${prop.name}$ERROR", Severity.ERROR, positioningStrategy, psiType)
-        val warningFactory = FirDiagnosticFactory4<A, B, C, D>("${prop.name}$WARNING", Severity.WARNING, positioningStrategy, psiType)
-        return DummyDelegate(FirDiagnosticFactoryForDeprecation4(featureForError, warningFactory, errorFactory))
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation4<A, B, C, D>> {
+        val errorFactory = KtDiagnosticFactory4<A, B, C, D>("${prop.name}$ERROR", Severity.ERROR, positioningStrategy, psiType)
+        val warningFactory = KtDiagnosticFactory4<A, B, C, D>("${prop.name}$WARNING", Severity.WARNING, positioningStrategy, psiType)
+        return DummyDelegate(KtDiagnosticFactoryForDeprecation4(featureForError, warningFactory, errorFactory))
     }
 }
 

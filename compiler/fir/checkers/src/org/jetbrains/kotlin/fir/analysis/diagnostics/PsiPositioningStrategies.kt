@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 
-object FirPsiPositioningStrategies {
+object PsiPositioningStrategies {
     val UNREACHABLE_CODE = object : PositioningStrategy<PsiElement>() {
         override fun markDiagnostic(diagnostic: DiagnosticMarker): List<TextRange> {
-            //todo it is better to implement arguments extraction in FirDiagnosticFactory, but kotlin struggle with checking types in it atm
+            //todo it is better to implement arguments extraction in KtDiagnosticFactory, but kotlin struggle with checking types in it atm
             @Suppress("UNCHECKED_CAST")
-            val typed = diagnostic as FirDiagnosticWithParameters2<Set<KtSourceElement>, Set<KtSourceElement>>
+            val typed = diagnostic as KtDiagnosticWithParameters2<Set<KtSourceElement>, Set<KtSourceElement>>
             val source = diagnostic.element as KtPsiSourceElement
             return UnreachableCode.getUnreachableTextRanges(
                 source.psi as KtElement,
@@ -34,7 +34,7 @@ object FirPsiPositioningStrategies {
 
     val ACTUAL_DECLARATION_NAME = object : PositioningStrategy<PsiElement>() {
         override fun markDiagnostic(diagnostic: DiagnosticMarker): List<TextRange> {
-            require(diagnostic is FirDiagnostic)
+            require(diagnostic is KtDiagnostic)
             val element = diagnostic.element.psi ?: return emptyList()
             (element as? KtNamedDeclaration)?.nameIdentifier?.let { nameIdentifier ->
                 return mark(nameIdentifier)

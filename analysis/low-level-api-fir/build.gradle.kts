@@ -18,6 +18,7 @@ dependencies {
     api(project(":compiler:backend.common.jvm"))
     api(project(":analysis:analysis-api-impl-barebone"))
     testApi(project(":analysis:analysis-api-fir"))
+    implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:ir.psi2ir"))
     implementation(project(":compiler:fir:entrypoint"))
     implementation(project(":analysis:analysis-api-providers"))

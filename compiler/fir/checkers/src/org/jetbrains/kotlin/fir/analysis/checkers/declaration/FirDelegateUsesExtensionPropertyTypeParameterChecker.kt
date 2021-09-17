@@ -6,16 +6,19 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory0
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.toSymbol
+import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker() {
@@ -31,7 +34,7 @@ object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker
         }
     }
 
-    private fun getProperDiagnostic(context: CheckerContext): FirDiagnosticFactory0 {
+    private fun getProperDiagnostic(context: CheckerContext): KtDiagnosticFactory0 {
         val reportAsError = context.session.languageVersionSettings.supportsFeature(
             LanguageFeature.ForbidUsingExtensionPropertyTypeParameterInDelegate
         )

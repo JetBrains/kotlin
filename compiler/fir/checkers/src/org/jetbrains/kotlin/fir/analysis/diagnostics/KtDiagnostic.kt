@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.diagnostics.*
 
 // ------------------------------ diagnostics ------------------------------
 
-sealed class FirDiagnostic : DiagnosticMarker {
+sealed class KtDiagnostic : DiagnosticMarker {
     abstract val element: KtSourceElement
     abstract val severity: Severity
-    abstract val factory: AbstractFirDiagnosticFactory
+    abstract val factory: AbstractKtDiagnosticFactory
     abstract val positioningStrategy: SourceElementPositioningStrategy
 
     val textRanges: List<TextRange>
@@ -31,40 +31,40 @@ sealed class FirDiagnostic : DiagnosticMarker {
         get() = factory.name
 }
 
-sealed class FirSimpleDiagnostic : FirDiagnostic() {
-    abstract override val factory: FirDiagnosticFactory0
+sealed class KtSimpleDiagnostic : KtDiagnostic() {
+    abstract override val factory: KtDiagnosticFactory0
 }
 
-sealed class FirDiagnosticWithParameters1<A> : FirDiagnostic(), DiagnosticWithParameters1Marker<A> {
+sealed class KtDiagnosticWithParameters1<A> : KtDiagnostic(), DiagnosticWithParameters1Marker<A> {
     abstract override val a: A
-    abstract override val factory: FirDiagnosticFactory1<A>
+    abstract override val factory: KtDiagnosticFactory1<A>
 }
 
-sealed class FirDiagnosticWithParameters2<A, B> : FirDiagnostic(), DiagnosticWithParameters2Marker<A, B> {
+sealed class KtDiagnosticWithParameters2<A, B> : KtDiagnostic(), DiagnosticWithParameters2Marker<A, B> {
     abstract override val a: A
     abstract override val b: B
-    abstract override val factory: FirDiagnosticFactory2<A, B>
+    abstract override val factory: KtDiagnosticFactory2<A, B>
 }
 
-sealed class FirDiagnosticWithParameters3<A, B, C> : FirDiagnostic(), DiagnosticWithParameters3Marker<A, B, C> {
+sealed class KtDiagnosticWithParameters3<A, B, C> : KtDiagnostic(), DiagnosticWithParameters3Marker<A, B, C> {
     abstract override val a: A
     abstract override val b: B
     abstract override val c: C
-    abstract override val factory: FirDiagnosticFactory3<A, B, C>
+    abstract override val factory: KtDiagnosticFactory3<A, B, C>
 }
 
-sealed class FirDiagnosticWithParameters4<A, B, C, D> : FirDiagnostic(), DiagnosticWithParameters4Marker<A, B, C, D> {
+sealed class KtDiagnosticWithParameters4<A, B, C, D> : KtDiagnostic(), DiagnosticWithParameters4Marker<A, B, C, D> {
     abstract override val a: A
     abstract override val b: B
     abstract override val c: C
     abstract override val d: D
-    abstract override val factory: FirDiagnosticFactory4<A, B, C, D>
+    abstract override val factory: KtDiagnosticFactory4<A, B, C, D>
 }
 
 // ------------------------------ psi diagnostics ------------------------------
 
-interface FirPsiDiagnostic : DiagnosticMarker {
-    val factory: AbstractFirDiagnosticFactory
+interface KtPsiDiagnostic : DiagnosticMarker {
+    val factory: AbstractKtDiagnosticFactory
     val element: KtPsiSourceElement
     val textRanges: List<TextRange>
     val severity: Severity
@@ -78,7 +78,7 @@ interface FirPsiDiagnostic : DiagnosticMarker {
 
 private const val CHECK_PSI_CONSISTENCY_IN_DIAGNOSTICS = true
 
-private fun FirPsiDiagnostic.checkPsiTypeConsistency() {
+private fun KtPsiDiagnostic.checkPsiTypeConsistency() {
     if (CHECK_PSI_CONSISTENCY_IN_DIAGNOSTICS) {
         require(factory.psiType.isInstance(element.psi)) {
             "${element.psi::class} is not a subtype of ${factory.psiType} for factory $factory"
@@ -86,67 +86,67 @@ private fun FirPsiDiagnostic.checkPsiTypeConsistency() {
     }
 }
 
-data class FirPsiSimpleDiagnostic(
+data class KtPsiSimpleDiagnostic(
     override val element: KtPsiSourceElement,
     override val severity: Severity,
-    override val factory: FirDiagnosticFactory0,
+    override val factory: KtDiagnosticFactory0,
     override val positioningStrategy: SourceElementPositioningStrategy
-) : FirSimpleDiagnostic(), FirPsiDiagnostic {
+) : KtSimpleDiagnostic(), KtPsiDiagnostic {
     init {
         checkPsiTypeConsistency()
     }
 }
 
-data class FirPsiDiagnosticWithParameters1<A>(
+data class KtPsiDiagnosticWithParameters1<A>(
     override val element: KtPsiSourceElement,
     override val a: A,
     override val severity: Severity,
-    override val factory: FirDiagnosticFactory1<A>,
+    override val factory: KtDiagnosticFactory1<A>,
     override val positioningStrategy: SourceElementPositioningStrategy
-) : FirDiagnosticWithParameters1<A>(), FirPsiDiagnostic {
+) : KtDiagnosticWithParameters1<A>(), KtPsiDiagnostic {
     init {
         checkPsiTypeConsistency()
     }
 }
 
 
-data class FirPsiDiagnosticWithParameters2<A, B>(
+data class KtPsiDiagnosticWithParameters2<A, B>(
     override val element: KtPsiSourceElement,
     override val a: A,
     override val b: B,
     override val severity: Severity,
-    override val factory: FirDiagnosticFactory2<A, B>,
+    override val factory: KtDiagnosticFactory2<A, B>,
     override val positioningStrategy: SourceElementPositioningStrategy
-) : FirDiagnosticWithParameters2<A, B>(), FirPsiDiagnostic {
+) : KtDiagnosticWithParameters2<A, B>(), KtPsiDiagnostic {
     init {
         checkPsiTypeConsistency()
     }
 }
 
-data class FirPsiDiagnosticWithParameters3<A, B, C>(
+data class KtPsiDiagnosticWithParameters3<A, B, C>(
     override val element: KtPsiSourceElement,
     override val a: A,
     override val b: B,
     override val c: C,
     override val severity: Severity,
-    override val factory: FirDiagnosticFactory3<A, B, C>,
+    override val factory: KtDiagnosticFactory3<A, B, C>,
     override val positioningStrategy: SourceElementPositioningStrategy
-) : FirDiagnosticWithParameters3<A, B, C>(), FirPsiDiagnostic {
+) : KtDiagnosticWithParameters3<A, B, C>(), KtPsiDiagnostic {
     init {
         checkPsiTypeConsistency()
     }
 }
 
-data class FirPsiDiagnosticWithParameters4<A, B, C, D>(
+data class KtPsiDiagnosticWithParameters4<A, B, C, D>(
     override val element: KtPsiSourceElement,
     override val a: A,
     override val b: B,
     override val c: C,
     override val d: D,
     override val severity: Severity,
-    override val factory: FirDiagnosticFactory4<A, B, C, D>,
+    override val factory: KtDiagnosticFactory4<A, B, C, D>,
     override val positioningStrategy: SourceElementPositioningStrategy
-) : FirDiagnosticWithParameters4<A, B, C, D>(), FirPsiDiagnostic {
+) : KtDiagnosticWithParameters4<A, B, C, D>(), KtPsiDiagnostic {
     init {
         checkPsiTypeConsistency()
     }
@@ -154,55 +154,55 @@ data class FirPsiDiagnosticWithParameters4<A, B, C, D>(
 
 // ------------------------------ light tree diagnostics ------------------------------
 
-interface FirLightDiagnostic : DiagnosticMarker {
+interface KtLightDiagnostic : DiagnosticMarker {
     val element: KtLightSourceElement
 
     @Deprecated("Should not be called", level = DeprecationLevel.HIDDEN)
     override val psiElement: PsiElement
-        get() = error("psiElement should not be called on FirLightDiagnostic")
+        get() = error("psiElement should not be called on KtLightDiagnostic")
 }
 
-data class FirLightSimpleDiagnostic(
+data class KtLightSimpleDiagnostic(
     override val element: KtLightSourceElement,
     override val severity: Severity,
-    override val factory: FirDiagnosticFactory0,
+    override val factory: KtDiagnosticFactory0,
     override val positioningStrategy: SourceElementPositioningStrategy
-) : FirSimpleDiagnostic(), FirLightDiagnostic
+) : KtSimpleDiagnostic(), KtLightDiagnostic
 
-data class FirLightDiagnosticWithParameters1<A>(
+data class KtLightDiagnosticWithParameters1<A>(
     override val element: KtLightSourceElement,
     override val a: A,
     override val severity: Severity,
-    override val factory: FirDiagnosticFactory1<A>,
+    override val factory: KtDiagnosticFactory1<A>,
     override val positioningStrategy: SourceElementPositioningStrategy
-) : FirDiagnosticWithParameters1<A>(), FirLightDiagnostic
+) : KtDiagnosticWithParameters1<A>(), KtLightDiagnostic
 
-data class FirLightDiagnosticWithParameters2<A, B>(
+data class KtLightDiagnosticWithParameters2<A, B>(
     override val element: KtLightSourceElement,
     override val a: A,
     override val b: B,
     override val severity: Severity,
-    override val factory: FirDiagnosticFactory2<A, B>,
+    override val factory: KtDiagnosticFactory2<A, B>,
     override val positioningStrategy: SourceElementPositioningStrategy
-) : FirDiagnosticWithParameters2<A, B>(), FirLightDiagnostic
+) : KtDiagnosticWithParameters2<A, B>(), KtLightDiagnostic
 
-data class FirLightDiagnosticWithParameters3<A, B, C>(
+data class KtLightDiagnosticWithParameters3<A, B, C>(
     override val element: KtLightSourceElement,
     override val a: A,
     override val b: B,
     override val c: C,
     override val severity: Severity,
-    override val factory: FirDiagnosticFactory3<A, B, C>,
+    override val factory: KtDiagnosticFactory3<A, B, C>,
     override val positioningStrategy: SourceElementPositioningStrategy
-) : FirDiagnosticWithParameters3<A, B, C>(), FirLightDiagnostic
+) : KtDiagnosticWithParameters3<A, B, C>(), KtLightDiagnostic
 
-data class FirLightDiagnosticWithParameters4<A, B, C, D>(
+data class KtLightDiagnosticWithParameters4<A, B, C, D>(
     override val element: KtLightSourceElement,
     override val a: A,
     override val b: B,
     override val c: C,
     override val d: D,
     override val severity: Severity,
-    override val factory: FirDiagnosticFactory4<A, B, C, D>,
+    override val factory: KtDiagnosticFactory4<A, B, C, D>,
     override val positioningStrategy: SourceElementPositioningStrategy
-) : FirDiagnosticWithParameters4<A, B, C, D>(), FirLightDiagnostic
+) : KtDiagnosticWithParameters4<A, B, C, D>(), KtLightDiagnostic

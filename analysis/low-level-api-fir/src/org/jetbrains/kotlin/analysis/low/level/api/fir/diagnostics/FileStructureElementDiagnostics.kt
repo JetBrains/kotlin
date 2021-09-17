@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LockProvider
+import org.jetbrains.kotlin.fir.analysis.diagnostics.KtPsiDiagnostic
+import org.jetbrains.kotlin.fir.declarations.FirFile
 
 internal class FileStructureElementDiagnostics(
     private val firFile: FirFile,
@@ -25,8 +25,8 @@ internal class FileStructureElementDiagnostics(
         retriever.retrieve(firFile, FileStructureElementDiagnosticsCollector.EXTENDED_COLLECTOR, lockProvider)
     }
 
-    fun diagnosticsFor(filter: DiagnosticCheckerFilter, element: PsiElement): List<FirPsiDiagnostic> =
-        SmartList<FirPsiDiagnostic>().apply {
+    fun diagnosticsFor(filter: DiagnosticCheckerFilter, element: PsiElement): List<KtPsiDiagnostic> =
+        SmartList<KtPsiDiagnostic>().apply {
             if (filter.runCommonCheckers) {
                 addAll(diagnosticByCommonCheckers.diagnosticsFor(element))
             }
@@ -36,7 +36,7 @@ internal class FileStructureElementDiagnostics(
         }
 
 
-    inline fun forEach(filter: DiagnosticCheckerFilter, action: (List<FirPsiDiagnostic>) -> Unit) {
+    inline fun forEach(filter: DiagnosticCheckerFilter, action: (List<KtPsiDiagnostic>) -> Unit) {
         if (filter.runCommonCheckers) {
             diagnosticByCommonCheckers.forEach(action)
         }

@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.rendering.ContextIndependentParameterRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
@@ -24,8 +22,6 @@ import org.jetbrains.kotlin.fir.types.render
 import org.jetbrains.kotlin.name.CallableId
 
 object FirDiagnosticRenderers {
-    val NULLABLE_STRING = Renderer<String?> { it ?: "null" }
-
     val SYMBOL = Renderer { symbol: FirBasedSymbol<*> ->
         when (symbol) {
             is FirClassLikeSymbol<*> -> symbol.classId.asString()
@@ -35,7 +31,7 @@ object FirDiagnosticRenderers {
         }
     }
 
-    val SYMBOLS = COLLECTION(SYMBOL)
+    val SYMBOLS = KtDiagnosticRenderers.COLLECTION(SYMBOL)
 
     val RENDER_COLLECTION_OF_TYPES = Renderer { types: Collection<ConeKotlinType> ->
         types.joinToString(separator = ", ") { type ->
@@ -43,22 +39,12 @@ object FirDiagnosticRenderers {
         }
     }
 
-    val TO_STRING = Renderer { element: Any? ->
-        element.toString()
-    }
-
-    val EMPTY = Renderer { _: Any? -> "" }
-
     val VARIABLE_NAME = Renderer { symbol: FirVariableSymbol<*> ->
         symbol.name.asString()
     }
 
     val FIR = Renderer { element: FirElement ->
         element.render()
-    }
-
-    val VISIBILITY = Renderer { visibility: Visibility ->
-        visibility.externalDisplayName
     }
 
     val DECLARATION_NAME = Renderer { symbol: FirBasedSymbol<*> ->
@@ -126,12 +112,6 @@ object FirDiagnosticRenderers {
             "$list $branches or 'else' branch instead"
         }
     }
-
-    val NOT_RENDERED = Renderer<Any?> {
-        ""
-    }
-
-    val FUNCTION_PARAMETERS = Renderer { hasValueParameters: Boolean -> if (hasValueParameters) "..." else "" }
 
     val MODULE_DATA = Renderer<FirModuleData> {
         "Module ${it.name}"

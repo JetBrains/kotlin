@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
+import org.jetbrains.kotlin.fir.analysis.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.fir.analysis.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -41,17 +41,17 @@ internal interface KtFirAnalysisSessionComponent {
 
     fun ConeKotlinType.asKtType() = analysisSession.firSymbolBuilder.typeBuilder.buildKtType(this)
 
-    fun FirPsiDiagnostic.asKtDiagnostic(): KtDiagnosticWithPsi<*> =
-        KT_DIAGNOSTIC_CONVERTER.convert(analysisSession, this as FirDiagnostic)
+    fun KtPsiDiagnostic.asKtDiagnostic(): KtDiagnosticWithPsi<*> =
+        KT_DIAGNOSTIC_CONVERTER.convert(analysisSession, this as KtDiagnostic)
 
     fun ConeDiagnostic.asKtDiagnostic(
         source: KtSourceElement,
         qualifiedAccessSource: KtSourceElement?,
-        diagnosticCache: MutableList<FirDiagnostic>
+        diagnosticCache: MutableList<KtDiagnostic>
     ): KtDiagnosticWithPsi<*>? {
         val firDiagnostic = toFirDiagnostics(analysisSession.rootModuleSession, source, qualifiedAccessSource).firstOrNull() ?: return null
         diagnosticCache += firDiagnostic
-        check(firDiagnostic is FirPsiDiagnostic)
+        check(firDiagnostic is KtPsiDiagnostic)
         return firDiagnostic.asKtDiagnostic()
     }
 

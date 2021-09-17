@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
+import org.jetbrains.kotlin.fir.analysis.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
@@ -244,16 +244,16 @@ object FirKotlinToJvmBytecodeCompiler {
         val commonRawFir = commonSession?.buildFirFromKtFiles(commonKtFiles)
         val rawFir = session.buildFirFromKtFiles(ktFiles)
 
-        val allFirDiagnostics = mutableListOf<FirDiagnostic>()
+        val allKtDiagnostics = mutableListOf<KtDiagnostic>()
         commonSession?.apply {
             val (commonScopeSession, commonFir) = runResolution(commonRawFir!!)
-            runCheckers(commonScopeSession, commonFir).values.flattenTo(allFirDiagnostics)
+            runCheckers(commonScopeSession, commonFir).values.flattenTo(allKtDiagnostics)
         }
 
         val (scopeSession, fir) = session.runResolution(rawFir)
-        session.runCheckers(scopeSession, fir).values.flattenTo(allFirDiagnostics)
+        session.runCheckers(scopeSession, fir).values.flattenTo(allKtDiagnostics)
 
-        val hasErrors = FirDiagnosticsCompilerResultsReporter.reportDiagnostics(allFirDiagnostics, messageCollector)
+        val hasErrors = FirDiagnosticsCompilerResultsReporter.reportDiagnostics(allKtDiagnostics, messageCollector)
 
         return if (syntaxErrors || hasErrors) null else FirResult(session, scopeSession, fir)
     }

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE
 
 open class LightTreePositioningStrategy {
-    open fun markFirDiagnostic(element: KtSourceElement, diagnostic: FirDiagnostic): List<TextRange> {
+    open fun markKtDiagnostic(element: KtSourceElement, diagnostic: KtDiagnostic): List<TextRange> {
         return mark(element.lighterASTNode, element.startOffset, element.endOffset, element.treeStructure)
     }
 

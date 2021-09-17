@@ -6,16 +6,16 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics.impl
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.AbstractFirDiagnosticFactory
+import org.jetbrains.kotlin.fir.analysis.diagnostics.AbstractKtDiagnosticFactory
+import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
+import org.jetbrains.kotlin.fir.analysis.diagnostics.KtDiagnostic
 
 class DeduplicatingDiagnosticReporter(private val inner: DiagnosticReporter) : DiagnosticReporter() {
 
-    private val reported = mutableSetOf<Pair<KtSourceElement, AbstractFirDiagnosticFactory>>()
+    private val reported = mutableSetOf<Pair<KtSourceElement, AbstractKtDiagnosticFactory>>()
 
-    override fun report(diagnostic: FirDiagnostic?, context: CheckerContext) {
+    override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic != null && reported.add(Pair(diagnostic.element, diagnostic.factory))) {
             inner.report(diagnostic, context)
         }

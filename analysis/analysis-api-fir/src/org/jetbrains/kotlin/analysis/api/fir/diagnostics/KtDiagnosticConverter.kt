@@ -5,33 +5,33 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
-import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 
 internal interface KtFirDiagnosticCreator
 
 internal fun interface KtFirDiagnostic0Creator : KtFirDiagnosticCreator {
-    fun KtFirAnalysisSession.create(diagnostic: FirSimpleDiagnostic): KtFirDiagnostic<*>
+    fun KtFirAnalysisSession.create(diagnostic: KtSimpleDiagnostic): KtFirDiagnostic<*>
 }
 
 internal fun interface KtFirDiagnostic1Creator<A> : KtFirDiagnosticCreator {
-    fun KtFirAnalysisSession.create(diagnostic: FirDiagnosticWithParameters1<A>): KtFirDiagnostic<*>
+    fun KtFirAnalysisSession.create(diagnostic: KtDiagnosticWithParameters1<A>): KtFirDiagnostic<*>
 }
 
 internal fun interface KtFirDiagnostic2Creator<A, B> : KtFirDiagnosticCreator {
-    fun KtFirAnalysisSession.create(diagnostic: FirDiagnosticWithParameters2<A, B>): KtFirDiagnostic<*>
+    fun KtFirAnalysisSession.create(diagnostic: KtDiagnosticWithParameters2<A, B>): KtFirDiagnostic<*>
 }
 
 internal fun interface KtFirDiagnostic3Creator<A, B, C> : KtFirDiagnosticCreator {
-    fun KtFirAnalysisSession.create(diagnostic: FirDiagnosticWithParameters3<A, B, C>): KtFirDiagnostic<*>
+    fun KtFirAnalysisSession.create(diagnostic: KtDiagnosticWithParameters3<A, B, C>): KtFirDiagnostic<*>
 }
 
 internal fun interface KtFirDiagnostic4Creator<A, B, C, D> : KtFirDiagnosticCreator {
-    fun KtFirAnalysisSession.create(diagnostic: FirDiagnosticWithParameters4<A, B, C, D>): KtFirDiagnostic<*>
+    fun KtFirAnalysisSession.create(diagnostic: KtDiagnosticWithParameters4<A, B, C, D>): KtFirDiagnostic<*>
 }
 
-internal class KtDiagnosticConverter(private val conversions: Map<AbstractFirDiagnosticFactory, KtFirDiagnosticCreator>) {
-    fun convert(analysisSession: KtFirAnalysisSession, diagnostic: FirDiagnostic): KtFirDiagnostic<*> {
+internal class KtDiagnosticConverter(private val conversions: Map<AbstractKtDiagnosticFactory, KtFirDiagnosticCreator>) {
+    fun convert(analysisSession: KtFirAnalysisSession, diagnostic: KtDiagnostic): KtFirDiagnostic<*> {
         val creator = conversions[diagnostic.factory]
             ?: error("No conversion was found for ${diagnostic.factory}")
 
@@ -39,19 +39,19 @@ internal class KtDiagnosticConverter(private val conversions: Map<AbstractFirDia
         return with(analysisSession) {
             when (creator) {
                 is KtFirDiagnostic0Creator -> with(creator) {
-                    create(diagnostic as FirSimpleDiagnostic)
+                    create(diagnostic as KtSimpleDiagnostic)
                 }
                 is KtFirDiagnostic1Creator<*> -> with(creator as KtFirDiagnostic1Creator<Any?>) {
-                    create(diagnostic as FirDiagnosticWithParameters1<Any?>)
+                    create(diagnostic as KtDiagnosticWithParameters1<Any?>)
                 }
                 is KtFirDiagnostic2Creator<*, *> -> with(creator as KtFirDiagnostic2Creator<Any?, Any?>) {
-                    create(diagnostic as FirDiagnosticWithParameters2<Any?, Any?>)
+                    create(diagnostic as KtDiagnosticWithParameters2<Any?, Any?>)
                 }
                 is KtFirDiagnostic3Creator<*, *, *> -> with(creator as KtFirDiagnostic3Creator<Any?, Any?, Any?>) {
-                    create(diagnostic as FirDiagnosticWithParameters3<Any?, Any?, Any?>)
+                    create(diagnostic as KtDiagnosticWithParameters3<Any?, Any?, Any?>)
                 }
                 is KtFirDiagnostic4Creator<*, *, *, *> -> with(creator as KtFirDiagnostic4Creator<Any?, Any?, Any?, Any?>) {
-                    create(diagnostic as FirDiagnosticWithParameters4<Any?, Any?, Any?, Any?>)
+                    create(diagnostic as KtDiagnosticWithParameters4<Any?, Any?, Any?, Any?>)
                 }
                 else -> error("Invalid KtFirDiagnosticCreator ${creator::class.simpleName}")
             }
@@ -60,25 +60,25 @@ internal class KtDiagnosticConverter(private val conversions: Map<AbstractFirDia
 }
 
 internal class KtDiagnosticConverterBuilder private constructor() {
-    private val conversions = mutableMapOf<AbstractFirDiagnosticFactory, KtFirDiagnosticCreator>()
+    private val conversions = mutableMapOf<AbstractKtDiagnosticFactory, KtFirDiagnosticCreator>()
 
-    fun add(diagnostic: FirDiagnosticFactory0, creator: KtFirDiagnostic0Creator) {
+    fun add(diagnostic: KtDiagnosticFactory0, creator: KtFirDiagnostic0Creator) {
         conversions[diagnostic] = creator
     }
 
-    fun <A> add(diagnostic: FirDiagnosticFactory1<A>, creator: KtFirDiagnostic1Creator<A>) {
+    fun <A> add(diagnostic: KtDiagnosticFactory1<A>, creator: KtFirDiagnostic1Creator<A>) {
         conversions[diagnostic] = creator
     }
 
-    fun <A, B> add(diagnostic: FirDiagnosticFactory2<A, B>, creator: KtFirDiagnostic2Creator<A, B>) {
+    fun <A, B> add(diagnostic: KtDiagnosticFactory2<A, B>, creator: KtFirDiagnostic2Creator<A, B>) {
         conversions[diagnostic] = creator
     }
 
-    fun <A, B, C> add(diagnostic: FirDiagnosticFactory3<A, B, C>, creator: KtFirDiagnostic3Creator<A, B, C>) {
+    fun <A, B, C> add(diagnostic: KtDiagnosticFactory3<A, B, C>, creator: KtFirDiagnostic3Creator<A, B, C>) {
         conversions[diagnostic] = creator
     }
 
-    fun <A, B, C, D> add(diagnostic: FirDiagnosticFactory4<A, B, C, D>, creator: KtFirDiagnostic4Creator<A, B, C, D>) {
+    fun <A, B, C, D> add(diagnostic: KtDiagnosticFactory4<A, B, C, D>, creator: KtFirDiagnostic4Creator<A, B, C, D>) {
         conversions[diagnostic] = creator
     }
 

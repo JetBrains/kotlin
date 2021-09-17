@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.ConstantArgumentKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkConstantArguments
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory0
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.expressions.*
@@ -58,9 +58,9 @@ object FirAnnotationArgumentChecker : FirAnnotationCallChecker() {
         session: FirSession,
         reporter: DiagnosticReporter,
         context: CheckerContext
-    ): FirDiagnosticFactory0? {
+    ): KtDiagnosticFactory0? {
 
-        fun checkArgumentList(args: FirArgumentList): FirDiagnosticFactory0? {
+        fun checkArgumentList(args: FirArgumentList): KtDiagnosticFactory0? {
             var usedNonConst = false
 
             for (arg in args.arguments) {

@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.getActualTargetList
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory2
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
@@ -174,7 +174,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ): Boolean {
-        fun checkModifier(factory: FirDiagnosticFactory2<KtModifierKeywordToken, String>): Boolean {
+        fun checkModifier(factory: KtDiagnosticFactory2<KtModifierKeywordToken, String>): Boolean {
             val map = when (factory) {
                 FirErrors.WRONG_MODIFIER_TARGET -> possibleTargetMap
                 FirErrors.DEPRECATED_MODIFIER_FOR_TARGET -> deprecatedTargetMap

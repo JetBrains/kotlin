@@ -102,7 +102,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         }
     }
 
-    private fun FirDiagnostic.toMetaInfos(
+    private fun KtDiagnostic.toMetaInfos(
         file: TestFile,
         lightTreeEnabled: Boolean,
         lightTreeComparingModeEnabled: Boolean,
@@ -151,7 +151,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         lightTreeEnabled: Boolean,
         lightTreeComparingModeEnabled: Boolean
     ) {
-        val result = mutableListOf<FirDiagnostic>()
+        val result = mutableListOf<KtDiagnostic>()
         val diagnosedRangesToDiagnosticNames = globalMetadataInfoHandler.getExistingMetaInfosForFile(testFile).groupBy(
             keySelector = { it.start..it.end },
             valueTransform = { it.tag }
@@ -201,7 +201,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     fun createExpressionTypeDiagnosticIfExpected(
         element: FirExpression,
         diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>
-    ): FirDiagnosticWithParameters1<String>? =
+    ): KtDiagnosticWithParameters1<String>? =
         DebugInfoDiagnosticFactory1.EXPRESSION_TYPE.createDebugInfoDiagnostic(element, diagnosedRangesToDiagnosticNames) {
             element.typeRef.renderAsString((element as? FirExpressionWithSmartcast)?.takeIf { it.isStable }?.originalType)
         }
@@ -218,7 +218,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         element: FirElement,
         reference: FirNamedReference,
         diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>
-    ): FirDiagnosticWithParameters1<String>? =
+    ): KtDiagnosticWithParameters1<String>? =
         DebugInfoDiagnosticFactory1.CALL.createDebugInfoDiagnostic(element, diagnosedRangesToDiagnosticNames) {
             val resolvedSymbol = (reference as? FirResolvedNamedReference)?.resolvedSymbol
             val fqName = resolvedSymbol?.fqNameUnsafe()
@@ -255,7 +255,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         element: FirElement,
         diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>,
         argument: () -> String,
-    ): FirDiagnosticWithParameters1<String>? {
+    ): KtDiagnosticWithParameters1<String>? {
         val sourceElement = element.source ?: return null
         if (sourceElement.kind !in allowedKindsForDebugInfo) return null
 
@@ -270,16 +270,16 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         }
 
         val argumentText = argument()
-        val factory = FirDiagnosticFactory1<String>(name, severity, SourceElementPositioningStrategy.DEFAULT, PsiElement::class)
+        val factory = KtDiagnosticFactory1<String>(name, severity, SourceElementPositioningStrategy.DEFAULT, PsiElement::class)
         return when (positionedElement) {
-            is KtPsiSourceElement -> FirPsiDiagnosticWithParameters1(
+            is KtPsiSourceElement -> KtPsiDiagnosticWithParameters1(
                 positionedElement,
                 argumentText,
                 severity,
                 factory,
                 factory.defaultPositioningStrategy
             )
-            is KtLightSourceElement -> FirLightDiagnosticWithParameters1(
+            is KtLightSourceElement -> KtLightDiagnosticWithParameters1(
                 positionedElement,
                 argumentText,
                 severity,

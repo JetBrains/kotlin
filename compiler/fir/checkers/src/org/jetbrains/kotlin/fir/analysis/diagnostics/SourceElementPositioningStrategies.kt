@@ -279,12 +279,12 @@ object SourceElementPositioningStrategies {
 
     val UNREACHABLE_CODE = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.UNREACHABLE_CODE,
-        FirPsiPositioningStrategies.UNREACHABLE_CODE
+        PsiPositioningStrategies.UNREACHABLE_CODE
     )
 
     val ACTUAL_DECLARATION_NAME = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.ACTUAL_DECLARATION_NAME,
-        FirPsiPositioningStrategies.ACTUAL_DECLARATION_NAME
+        PsiPositioningStrategies.ACTUAL_DECLARATION_NAME
     )
 
     val LABEL = SourceElementPositioningStrategy(
