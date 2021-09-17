@@ -2162,7 +2162,13 @@ open class RawFirBuilder(
             } else {
                 val firOperation = operationToken.toFirOperation()
                 if (firOperation in FirOperation.ASSIGNMENTS) {
-                    return expression.left.generateAssignment(source, expression.right, rightArgument, firOperation) {
+                    return expression.left.generateAssignment(
+                        source,
+                        expression.right,
+                        rightArgument,
+                        firOperation,
+                        leftArgument.annotations
+                    ) {
                         (this as KtExpression).toFirExpression("Incorrect expression in assignment: ${expression.text}")
                     }
                 } else {

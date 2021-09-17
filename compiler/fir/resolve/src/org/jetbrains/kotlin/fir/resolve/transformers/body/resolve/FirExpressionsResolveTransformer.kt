@@ -535,6 +535,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                         dispatchReceiver = it.dispatchReceiver
                         extensionReceiver = it.extensionReceiver
                     }
+                    annotations += assignmentOperatorStatement.annotations
                 }
             return assignment.transform(transformer, ResolutionMode.ContextIndependent)
         }
@@ -1038,6 +1039,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val operatorName = FirOperationNameConventions.ASSIGNMENTS.getValue(augmentedArraySetCall.operation)
 
         val firstCalls = with(augmentedArraySetCall.setGetBlock.statements.last() as FirFunctionCall) setCall@{
+            (annotations as MutableList<FirAnnotation>) += augmentedArraySetCall.annotations
             buildList {
                 add(this@setCall)
                 with(arguments.last() as FirFunctionCall) plusCall@{

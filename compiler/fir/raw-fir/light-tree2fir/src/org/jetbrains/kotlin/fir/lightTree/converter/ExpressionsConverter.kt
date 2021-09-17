@@ -293,7 +293,8 @@ class ExpressionsConverter(
                     binaryExpression.toFirSourceElement(),
                     rightArg,
                     rightArgAsFir,
-                    firOperation
+                    firOperation,
+                    leftArgAsFir.annotations
                 ) { getAsFirExpression(this) }
             } else {
                 buildEqualityOperatorCall {
