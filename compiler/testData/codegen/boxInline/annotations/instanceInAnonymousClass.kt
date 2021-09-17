@@ -9,9 +9,6 @@
 // WITH_RUNTIME
 // !LANGUAGE: +InstantiationOfAnnotationClasses
 
-// IGNORE_DEXING
-// TODO: D8 fails with AssertionError and does not print reason, need further investigation
-
 // FILE: 1.kt
 
 package a
