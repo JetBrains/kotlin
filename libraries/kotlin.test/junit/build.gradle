@@ -15,7 +15,7 @@ sourceSets {
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')
     api project(':kotlin-test:kotlin-test-jvm')
-    api('junit:junit:4.12')
+    api('junit:junit:4.13.2')
 }
 
 
