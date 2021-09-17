@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-
 fun use(fn: (Array<String>) -> Array<String>) =
     fn(arrayOf("OK"))
 

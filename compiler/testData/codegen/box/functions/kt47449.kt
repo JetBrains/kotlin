@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JS
-// IGNORE_BACKEND: WASM
 
 typealias EmptyFunctionResult<T> = () -> T
 

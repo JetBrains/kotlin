@@ -1,5 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: BINDING_RECEIVERS
+
 abstract class A {
     inner class InnerInA {
         fun returnOk() = "OK"

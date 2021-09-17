@@ -1,5 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: BINDING_RECEIVERS
+
 fun <T> id(x: T): T = x
 fun <T> String.extId(x: T): T = x
 

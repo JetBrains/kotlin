@@ -15,12 +15,8 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
@@ -40,7 +36,8 @@ val IrStatementOrigin?.isLambda: Boolean
     get() = this == IrStatementOrigin.LAMBDA || this == IrStatementOrigin.ANONYMOUS_FUNCTION
 
 // Originally copied from K/Native
-internal class WasmCallableReferenceLowering(private val context: WasmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
+internal class WasmCallableReferenceLowering(private val context: WasmBackendContext) : FileLoweringPass,
+    IrElementTransformerVoidWithContext() {
     // This pass ignores suspend function references and function references used in inline arguments to inline functions.
     private val ignoredFunctionReferences = mutableSetOf<IrFunctionReference>()
 
@@ -110,6 +107,7 @@ internal class WasmCallableReferenceLowering(private val context: WasmBackendCon
         // The type of the reference is KFunction<in A1, ..., in An, out R>
         private val parameterTypes = (irFunctionReference.type as IrSimpleType).arguments.map { (it as IrTypeProjection).type }
         private val argumentTypes = parameterTypes.dropLast(1)
+        private val referenceReturnType = parameterTypes.last()
 
         private val typeArgumentsMap = irFunctionReference.typeSubstitutionMap
 
@@ -147,6 +145,7 @@ internal class WasmCallableReferenceLowering(private val context: WasmBackendCon
             if (isLambda) {
                 this.metadata = irFunctionReference.symbol.owner.metadata
             }
+            addField("receiver", context.irBuiltIns.anyNType)
         }
 
 // WASM(TODO)
@@ -227,6 +226,13 @@ internal class WasmCallableReferenceLowering(private val context: WasmBackendCon
 //                        }
                     }
                     +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol, context.irBuiltIns.unitType)
+                    if (samSuperType == null && boundReceiver != null) {
+                        +irSetField(
+                            irGet(functionReferenceClass.thisReceiver!!),
+                            functionReferenceClass.fields.first(),
+                            irGet(valueParameters.first())
+                        )
+                    }
                 }
             }
 
@@ -260,11 +266,11 @@ internal class WasmCallableReferenceLowering(private val context: WasmBackendCon
                 }
             }
 
-            body = context.createIrBuilder(symbol).run {
+            body = context.createIrBuilder(symbol, startOffset, endOffset).run {
                 var unboundIndex = 0
-                irExprBody(irCall(callee).apply {
-                    for ((typeParameter, typeArgument) in typeArgumentsMap) {
-                        putTypeArgument(typeParameter.owner.index, typeArgument)
+                val call = irCall(callee.symbol, referenceReturnType).apply {
+                    for (typeParameter in irFunctionReference.symbol.owner.allTypeParameters) {
+                        putTypeArgument(typeParameter.index, typeArgumentsMap[typeParameter.symbol])
                     }
 
                     for (parameter in callee.explicitParameters) {
@@ -273,30 +279,16 @@ internal class WasmCallableReferenceLowering(private val context: WasmBackendCon
                                 // Bound receiver parameter. For function references, this is stored in a field of the superclass.
                                 // For sam references, we just capture the value in a local variable and LocalDeclarationsLowering
                                 // will put it into a field.
-//                                if (samSuperType == null)
-//                                    irImplicitCast(
-//                                        irGetField(irGet(dispatchReceiverParameter!!), fakeOverrideReceiverField),
-//                                        boundReceiver.second.type
-//                                    )
-//                                else
-                                    irGet(receiver ?: error("Binding receivers is not supported yet"))
-
-                            // If a vararg parameter corresponds to exactly one KFunction argument, which is an array, that array
-                            // is forwarded as is.
-                            //
-                            //     fun f(x: (Int, Array<String>) -> String) = x(0, arrayOf("OK", "FAIL"))
-                            //     fun h(i: Int, vararg xs: String) = xs[i]
-                            //     f(::h)
-                            //
-                            parameter.isVararg && unboundIndex < argumentTypes.size && parameter.type == valueParameters[unboundIndex].type ->
-                                irGet(valueParameters[unboundIndex++])
-                            // In all other cases, excess arguments are packed into a new array.
-                            //
-                            //     fun g(x: (Int, String, String) -> String) = x(0, "OK", "FAIL")
-                            //     f(::h) == g(::h)
-                            //
-                            parameter.isVararg && (unboundIndex < argumentTypes.size || !parameter.hasDefaultValue()) ->
-                                TODO()
+                                if (samSuperType == null)
+                                    irImplicitCast(
+                                        irGetField(
+                                            irGet(dispatchReceiverParameter!!),
+                                            functionReferenceClass.fields.first(),
+                                        ),
+                                        boundReceiver.second.type
+                                    )
+                                else
+                                    irGet(receiver!!)
 
                             unboundIndex >= argumentTypes.size ->
                                 // Default value argument (this pass doesn't handle suspend functions, otherwise
@@ -307,7 +299,9 @@ internal class WasmCallableReferenceLowering(private val context: WasmBackendCon
                                 irGet(valueParameters[unboundIndex++])
                         }?.let { putArgument(callee, parameter, it) }
                     }
-                })
+                }
+
+                irExprBody(call)
             }
         }
     }

@@ -1,5 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: BINDING_RECEIVERS
+
 interface I
 
 interface Foo<in L : I, in M>
