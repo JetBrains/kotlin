@@ -31,13 +31,13 @@ object ClasspathEntrySnapshotter {
                     ClassFileWithContents(ClassFile(classpathEntry, unixStyleRelativePath), contents)
                 }
 
-        if (isKnownProblematicClasspathEntry(classpathEntry)) {
-            return ClasspathEntrySnapshot(classes.associateTo(LinkedHashMap()) {
-                it.classFile.unixStyleRelativePath to ContentHashJavaClassSnapshot(it.contents.md5())
-            })
+        val snapshots = try {
+            ClassSnapshotter.snapshot(classes)
+        } catch (e: Throwable) {
+            if (isKnownProblematicClasspathEntry(classpathEntry)) {
+                classes.map { ContentHashJavaClassSnapshot(it.contents.md5()) }
+            } else throw e
         }
-
-        val snapshots = ClassSnapshotter.snapshot(classes)
 
         val relativePathsToSnapshotsMap = classes.map { it.classFile.unixStyleRelativePath }.zipToMap(snapshots)
         return ClasspathEntrySnapshot(relativePathsToSnapshotsMap)
@@ -201,14 +201,14 @@ object ClassSnapshotter {
 
     /** Returns `true` if it is known that the snapshot of the given class can't be created for some reason. */
     private fun isKnownProblematicClass(classFile: ClassFile): Boolean {
-        if (classFile.classRoot.name.startsWith("groovy-all")
+        if (classFile.classRoot.name.startsWith("groovy")
             && classFile.unixStyleRelativePath.endsWith("\$CollectorHelper.class")
         ) {
-            // [FAULTY JAR] In gradle-6.9/lib/groovy-all-1.3-2.5.12.jar, the bytecode of groovy/cli/OptionField\$CollectorHelper.class
-            // indicates that its outer class is groovy/cli/OptionField, but the bytecode of groovy/cli/OptionField.class does not list any
-            // nested classes.
-            // This happens with a few other CollectorHelper classes in this jar.
-            // Therefore, this is a faulty jar, and our snapshotting logic cannot process it.
+            // [FAULTY JAR] In groovy-all-1.3-2.5.12.jar and groovy-2.5.11.jar, the bytecode of
+            // groovy/cli/OptionField\$CollectorHelper.class indicates that its outer class is groovy/cli/OptionField, but the bytecode of
+            // groovy/cli/OptionField.class does not list any nested classes.
+            // This happens with a few other CollectorHelper classes in these jars.
+            // Therefore, these are faulty jars, and our snapshotting logic cannot process it.
             return true
         }
         if (classFile.classRoot.name.startsWith("gradle-api")
