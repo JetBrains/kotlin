@@ -65,14 +65,13 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         return JavaTypeQualifiers(forErrorsOrWarnings, mutability, isNotNullTypeParameter, forErrorsOrWarnings != forErrors)
     }
 
-    private fun TypeAndDefaultQualifiers.extractQualifiersFromAnnotations(): JavaTypeQualifiers {
+    private fun TypeAndDefaultQualifiers.extractQualifiersFromAnnotations(isHeadTypeConstructor: Boolean): JavaTypeQualifiers {
         if (type == null && with(typeSystem) { typeParameterForArgument?.getVariance() } == TypeVariance.IN) {
             // Star projections can only be enhanced in one way: `?` -> `? extends <something>`. Given a Kotlin type `C<in T>
             // (declaration-site variance), this is not a valid enhancement due to conflicting variances.
             return JavaTypeQualifiers.NONE
         }
 
-        val isHeadTypeConstructor = typeParameterForArgument == null
         val typeAnnotations = type?.annotations ?: emptyList()
         val typeParameterUse = with(typeSystem) { type?.typeConstructor()?.getTypeParameterClassifier() }
         val typeParameterBounds = containerApplicabilityType == AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS
@@ -175,7 +174,7 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
 
         val treeSize = if (onlyHeadTypeConstructor) 1 else indexedThisType.size
         val computedResult = Array(treeSize) { index ->
-            val qualifiers = indexedThisType[index].extractQualifiersFromAnnotations()
+            val qualifiers = indexedThisType[index].extractQualifiersFromAnnotations(index == 0)
             val superQualifiers = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type?.extractQualifiers() }
             qualifiers.computeQualifiersForOverride(superQualifiers, index == 0 && isCovariant, index == 0 && containerIsVarargParameter)
         }
@@ -196,9 +195,11 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
     private fun KotlinTypeMarker.toIndexed(): List<TypeAndDefaultQualifiers> = with(typeSystem) {
         TypeAndDefaultQualifiers(this@toIndexed, extractAndMergeDefaultQualifiers(containerDefaultTypeQualifiers), null).flattenTree {
             // Enhancement of raw type arguments may enter a loop in FE1.0.
-            if (skipRawTypeArguments && it.type?.asFlexibleType()?.asRawType() != null) return@flattenTree null
+            if (it.type == null || (skipRawTypeArguments && it.type.asFlexibleType()?.asRawType() != null)) return@flattenTree null
 
-            it.type?.typeConstructor()?.getParameters()?.zip(it.type.getArguments()) { parameter, arg ->
+            val parameters = it.type.typeConstructor().getParameters()
+            it.type.getArguments().mapIndexed { index, arg ->
+                val parameter = parameters.getOrNull(index)
                 if (arg.isStarProjection()) {
                     TypeAndDefaultQualifiers(null, it.defaultQualifiers, parameter)
                 } else {
