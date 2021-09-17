@@ -1,0 +1,53 @@
+import kotlin.reflect.KClass;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Anno {
+
+    public abstract java.lang.Class<?> klass();
+}
+
+////////////////////
+
+
+import kotlin.reflect.KClass;
+
+@kotlin.Metadata()
+@ABC()
+public final class ErrorMissingAnnotation {
+
+    public ErrorMissingAnnotation() {
+        super();
+    }
+}
+
+////////////////////
+
+
+import kotlin.reflect.KClass;
+
+@kotlin.Metadata()
+@CDE()
+@ABC()
+public final class ErrorMultipleMissingAnnotations {
+
+    public ErrorMultipleMissingAnnotations() {
+        super();
+    }
+}
+
+////////////////////
+
+
+import kotlin.reflect.KClass;
+
+@kotlin.Metadata()
+@ABC()
+@Anno(klass = ABC.class)
+@CDE()
+public final class ErrorSomeMissingAnnotations {
+
+    public ErrorSomeMissingAnnotations() {
+        super();
+    }
+}
