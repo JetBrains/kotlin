@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.daemon.common
 
 import org.jetbrains.kotlin.incremental.components.LookupInfo
-import org.jetbrains.kotlin.incremental.components.ConstantRef
 import org.jetbrains.kotlin.incremental.js.JsInlineFunctionHash
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
@@ -108,7 +107,7 @@ interface CompilerCallbackServicesFacade : Remote {
     // ---------------------------------------------------
     // InlineConstTracker
     @Throws(RemoteException::class)
-    fun inlineConstTracker_report(filePath: String, cRefs: Collection<ConstantRef>)
+    fun inlineConstTracker_report(filePath: String, owner: String, name: String, constType: String)
 
     // ---------------------------------------------------
     // IncrementalResultsConsumer (js)

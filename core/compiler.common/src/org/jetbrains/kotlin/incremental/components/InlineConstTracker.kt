@@ -5,15 +5,11 @@
 
 package org.jetbrains.kotlin.incremental.components
 
-import java.io.Serializable
-
 interface InlineConstTracker {
-    fun report(filePath: String, cRefs: Collection<ConstantRef>)
+    fun report(filePath: String, owner: String, name: String, constType: String)
 
     object DoNothing : InlineConstTracker {
-        override fun report(filePath: String, cRefs: Collection<ConstantRef>) {
+        override fun report(filePath: String, owner: String, name: String, constType: String) {
         }
     }
 }
-
-data class ConstantRef(var owner: String, var name: String, var constType: String) : Serializable

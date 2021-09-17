@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.daemon.client
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
-import org.jetbrains.kotlin.incremental.components.ConstantRef
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
@@ -121,8 +120,8 @@ open class CompilerCallbackServicesFacadeServer(
         expectActualTracker!!.report(File(expectedFilePath), File(actualFilePath))
     }
 
-    override fun inlineConstTracker_report(filePath: String, cRefs: Collection<ConstantRef>) {
-        inlineConstTracker?.report(filePath, cRefs) ?: throw NullPointerException("inlineConstTracker was not initialized")
+    override fun inlineConstTracker_report(filePath: String, owner: String, name: String, constType: String) {
+        inlineConstTracker?.report(filePath, owner, name, constType) ?: throw NullPointerException("inlineConstTracker was not initialized")
     }
 
     override fun incrementalResultsConsumer_processHeader(headerMetadata: ByteArray) {
