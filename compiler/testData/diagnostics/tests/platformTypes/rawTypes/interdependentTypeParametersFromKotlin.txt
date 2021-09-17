@@ -9,7 +9,7 @@ public open class Boo</*0*/ P2 : kotlin.Any!, /*1*/ P3 : kotlin.Any!, /*2*/ P4 :
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public/*package*/ open fun test1(): (Foo<(raw) Boo<Boo<*, Boo<*, *, Boo<*, *, *>>, Boo<*, *, *>>, Boo<*, *, Boo<*, *, *>>, Boo<*, *, *>>, (raw) Boo<*, Boo<*, *, Boo<*, *, *>>, Boo<*, *, *>>, (raw) Boo<*, *, Boo<*, *, *>>, (raw) Boo<*, *, *>>..Foo<out Boo<out Boo<*, out Boo<*, *, out Boo<*, *, *>>, out Boo<*, *, *>>, out Boo<*, *, out Boo<*, *, *>>, out Boo<*, *, *>>, out Boo<*, out Boo<*, *, out Boo<*, *, *>>, out Boo<*, *, *>>, out Boo<*, *, out Boo<*, *, *>>, out Boo<*, *, *>>?)
+    public/*package*/ open fun test1(): Foo<(raw) Boo<Boo<*, Boo<*, *, Boo<*, *, *>>, Boo<*, *, *>>, Boo<*, *, Boo<*, *, *>>, Boo<*, *, *>>, (raw) Boo<*, Boo<*, *, Boo<*, *, *>>, Boo<*, *, *>>, (raw) Boo<*, *, Boo<*, *, *>>, (raw) Boo<*, *, *>>!
 }
 
 public final class Foo</*0*/ P1 : Boo<P2, P3, P4>, /*1*/ P2 : Boo<P1, P3, P4>, /*2*/ P3 : Boo<P1, P2, P4>, /*3*/ P4 : Boo<P1, P2, P3>> {
@@ -18,3 +18,4 @@ public final class Foo</*0*/ P1 : Boo<P2, P3, P4>, /*1*/ P2 : Boo<P1, P3, P4>, /
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

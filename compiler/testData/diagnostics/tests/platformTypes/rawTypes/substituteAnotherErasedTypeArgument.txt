@@ -10,5 +10,6 @@ public/*package*/ open class X</*0*/ B : I<P!>!, /*1*/ P : kotlin.Any!> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public/*package*/ final val E: E<(X<(raw) I<kotlin.Any!>!, (raw) kotlin.Any!>..X<out I<*>!, *>?)>!
+    public/*package*/ final val E: E<X<(raw) I<kotlin.Any!>!, (raw) kotlin.Any!>!>!
 }
+
