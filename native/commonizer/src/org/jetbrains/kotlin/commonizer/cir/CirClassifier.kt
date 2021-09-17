@@ -10,4 +10,5 @@ sealed interface CirClassifier :
     CirHasAnnotations,
     CirHasName,
     CirHasTypeParameters,
-    CirHasVisibility
+    CirHasVisibility,
+    AnyClassifier

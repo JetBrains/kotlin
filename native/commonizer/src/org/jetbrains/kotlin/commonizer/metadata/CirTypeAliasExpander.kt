@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.commonizer.metadata
 
 import org.jetbrains.kotlin.commonizer.cir.*
-import org.jetbrains.kotlin.commonizer.mergedtree.CirProvided
+import org.jetbrains.kotlin.commonizer.cir.CirProvided
 import org.jetbrains.kotlin.commonizer.utils.compactMapIndexed
 import org.jetbrains.kotlin.types.Variance
 

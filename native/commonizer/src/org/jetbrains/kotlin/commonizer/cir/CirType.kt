@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.commonizer.utils.appendHashCode
 import org.jetbrains.kotlin.commonizer.utils.hashCode
 import org.jetbrains.kotlin.types.Variance
 
-
 /**
  * The hierarchy of [CirType]:
  *
@@ -40,8 +39,8 @@ data class CirFlexibleType(val lowerBound: CirSimpleType, val upperBound: CirSim
 /**
  * Note: Annotations at simple types are not preserved. After commonization all annotations assigned to types will be lost.
  */
-sealed class CirSimpleType : CirType() {
-    abstract val isMarkedNullable: Boolean
+sealed class CirSimpleType : CirType(), AnyType {
+    abstract override val isMarkedNullable: Boolean
 
     override fun appendDescriptionTo(builder: StringBuilder) {
         if (isMarkedNullable) builder.append('?')
@@ -71,8 +70,8 @@ abstract class CirTypeParameterType : CirSimpleType() {
     }
 }
 
-sealed class CirClassOrTypeAliasType : CirSimpleType() {
-    abstract val classifierId: CirEntityId
+sealed class CirClassOrTypeAliasType : CirSimpleType(), AnyClassOrTypeAliasType {
+    abstract override val classifierId: CirEntityId
     abstract val arguments: List<CirTypeProjection>
 
     override fun appendDescriptionTo(builder: StringBuilder) = appendDescriptionTo(builder, shortNameOnly = false)

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.commonizer.cir
 
-import org.jetbrains.kotlin.commonizer.mergedtree.CirProvided
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 
 internal fun CirProvided.ClassOrTypeAliasType.toCirClassOrTypeAliasTypeOrNull(classifiers: CirProvidedClassifiers): CirClassOrTypeAliasType? {

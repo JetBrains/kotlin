@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 
-interface CirClass : CirClassifier, CirContainingClass {
+interface CirClass : CirClassifier, CirContainingClass, AnyClass {
     var companion: CirName? // null means no companion object
     val isCompanion: Boolean
     val isValue: Boolean

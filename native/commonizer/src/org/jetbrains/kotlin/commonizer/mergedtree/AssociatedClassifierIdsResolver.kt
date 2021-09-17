@@ -11,6 +11,7 @@ import gnu.trove.THashMap
 import gnu.trove.THashSet
 import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.commonizer.cir.CirProvided
 import org.jetbrains.kotlin.commonizer.cir.CirTypeAlias
 
 internal fun AssociatedClassifierIdsResolver(

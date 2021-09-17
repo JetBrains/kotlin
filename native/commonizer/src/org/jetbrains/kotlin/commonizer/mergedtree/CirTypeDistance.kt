@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.commonizer.mergedtree
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirTypeDistance.Companion.unreachable
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 @JvmInline
 value class CirTypeDistance(private val value: Int) : Comparable<CirTypeDistance> {
@@ -100,10 +101,11 @@ internal fun typeDistance(
 
     val fromExpansion = from.expandedType()
     val distanceToExpansion = typeDistance(classifiers, targetIndex, from, fromExpansion.classifierId)
-    return backwardsTypeDistance(classifiers, targetIndex, from.expandedType().classifierId, to) - distanceToExpansion
+    return backwardsTypeDistance(classifiers, targetIndex, fromExpansion.classifierId, to) - distanceToExpansion
 }
 
-private fun forwardTypeDistance(from: CirClassOrTypeAliasType, to: CirEntityId): CirTypeDistance {
+internal fun forwardTypeDistance(from: CirClassOrTypeAliasType, to: CirEntityId): CirTypeDistance {
+    if (from.classifierId == to) return CirTypeDistance(0)
     if (from !is CirTypeAliasType) return unreachable
 
     var iteration = 0
@@ -117,31 +119,50 @@ private fun forwardTypeDistance(from: CirClassOrTypeAliasType, to: CirEntityId):
     }
 }
 
-private fun backwardsTypeDistance(
+internal fun backwardsTypeDistance(
     classifiers: CirKnownClassifiers, targetIndex: Int, from: CirEntityId, to: CirEntityId
 ): CirTypeDistance {
-    val resolvedDependencyClassifier =
-        classifiers.commonDependencies.classifier(to) ?: classifiers.targetDependencies[targetIndex].classifier(to)
-    if (resolvedDependencyClassifier != null) {
-        return backwardsTypeDistance(classifiers, targetIndex, from, resolvedDependencyClassifier)
+    if (from == to) return CirTypeDistance(0)
+    generateUnderlyingTypeSequence(classifiers, targetIndex, to)
+        .forEachIndexed { index, type -> if (type.classifierId == from) return CirTypeDistance(-index - 1) }
+    return unreachable
+}
+
+internal fun generateUnderlyingTypeSequence(
+    classifiers: CirKnownClassifiers, targetIndex: Int, id: CirEntityId
+): Sequence<AnyClassOrTypeAliasType> {
+    val resolvedClassifier = classifiers.classifierIndices[targetIndex].findClassifier(id)
+    if (resolvedClassifier != null) {
+        return generateUnderlyingTypeSequence(resolvedClassifier)
     }
 
-    val resolvedClassifier = classifiers.classifierIndices[targetIndex].findClassifier(to) ?: return unreachable
-    return backwardsTypeDistance(classifiers, targetIndex, from, resolvedClassifier)
+    val resolvedFromCommonDependencies = classifiers.commonDependencies.classifier(id)
+    if (resolvedFromCommonDependencies != null) {
+        return generateUnderlyingTypeSequence(classifiers.commonDependencies, resolvedFromCommonDependencies)
+    }
+
+    val resolvedFromTargetDependencies = classifiers.targetDependencies[targetIndex].classifier(id)
+    if (resolvedFromTargetDependencies != null) {
+        return generateUnderlyingTypeSequence(
+            CirProvidedClassifiers.of(classifiers.commonDependencies, classifiers.targetDependencies[targetIndex]),
+            resolvedFromTargetDependencies
+        )
+    }
+
+    return emptySequence()
 }
 
-private fun backwardsTypeDistance(
-    classifiers: CirKnownClassifiers, targetIndex: Int, from: CirEntityId, to: CirProvided.Classifier
-): CirTypeDistance {
-    if (to !is CirProvided.TypeAlias) return unreachable
-    if (to.underlyingType.classifierId == from) return CirTypeDistance(-1)
-    return backwardsTypeDistance(classifiers, targetIndex, from, to.underlyingType.classifierId) - 1
+internal fun generateUnderlyingTypeSequence(classifier: CirClassifier): Sequence<CirClassOrTypeAliasType> {
+    if (classifier !is CirTypeAlias) return emptySequence()
+    return generateSequence(classifier.underlyingType) { type -> if (type is CirTypeAliasType) type.underlyingType else null }
 }
 
-private fun backwardsTypeDistance(
-    classifiers: CirKnownClassifiers, targetIndex: Int, from: CirEntityId, to: CirClassifier
-): CirTypeDistance {
-    if (to !is CirTypeAlias) return unreachable
-    if (to.underlyingType.classifierId == from) return CirTypeDistance(-1)
-    return backwardsTypeDistance(classifiers, targetIndex, from, to.underlyingType.classifierId) - 1
+internal fun generateUnderlyingTypeSequence(
+    classifiers: CirProvidedClassifiers, classifier: CirProvided.Classifier
+): Sequence<CirProvided.ClassOrTypeAliasType> {
+    if (classifier !is CirProvided.TypeAlias) return emptySequence()
+    return generateSequence(classifier.underlyingType) next@{ type ->
+        if (type !is CirProvided.TypeAliasType) return@next null
+        classifiers.classifier(type.classifierId)?.safeAs<CirProvided.TypeAlias>()?.underlyingType
+    }
 }
