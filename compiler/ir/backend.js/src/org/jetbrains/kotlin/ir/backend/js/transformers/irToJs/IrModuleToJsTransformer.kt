@@ -113,7 +113,7 @@ class IrModuleToJsTransformer(
                 )
             }.reversed()
 
-            return CompilationOutputs(mainModule.jsCode, mainModule.sourceMap, dependencies)
+            return CompilationOutputs(mainModule.jsCode, mainModule.jsProgram, mainModule.sourceMap, dependencies)
         } else {
             return generateWrappedModuleBody2(
                 modules,
@@ -228,6 +228,7 @@ class IrModuleToJsTransformer(
 
         return CompilationOutputs(
             jsCode.toString(),
+            program,
             if(sourceMapsEnabled) sourceMapBuilder.build() else null
         )
     }

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
+import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
 
@@ -31,6 +32,7 @@ class CompilerResult(
 
 class CompilationOutputs(
     val jsCode: String,
+    val jsProgram: JsProgram? = null,
     val sourceMap: String? = null,
     val dependencies: Iterable<Pair<String, CompilationOutputs>> = emptyList()
 )
