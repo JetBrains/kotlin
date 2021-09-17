@@ -8592,6 +8592,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("candidateBehindHiddenPropertyAccessors.kt")
+            public void testCandidateBehindHiddenPropertyAccessors() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/deprecated/candidateBehindHiddenPropertyAccessors.kt");
+            }
+
+            @Test
             @TestMetadata("classWithCompanionObject.kt")
             public void testClassWithCompanionObject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/deprecated/classWithCompanionObject.kt");
