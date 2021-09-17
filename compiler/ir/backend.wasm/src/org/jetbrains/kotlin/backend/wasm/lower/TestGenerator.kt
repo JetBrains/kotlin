@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 
 fun generateWasmTests(context: WasmBackendContext, moduleFragment: IrModuleFragment) {
-    val generator = TestGenerator(context) { context.createTestContainerFun(moduleFragment) }
+    val generator = TestGenerator(context, true)
 
     moduleFragment.files.toList().forEach {
         generator.lower(it)

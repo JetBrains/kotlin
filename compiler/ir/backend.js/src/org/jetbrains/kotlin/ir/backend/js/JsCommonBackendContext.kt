@@ -42,7 +42,7 @@ interface JsCommonBackendContext : CommonBackendContext {
     val suiteFun: IrSimpleFunctionSymbol?
     val testFun: IrSimpleFunctionSymbol?
 
-    fun createTestContainerFun(module: IrModuleFragment): IrSimpleFunction
+    fun createTestContainerFun(irFile: IrFile): IrSimpleFunction
 }
 
 // TODO: investigate if it could be removed

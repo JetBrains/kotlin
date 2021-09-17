@@ -87,7 +87,7 @@ private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackend
         }
     }
 
-    rootDeclarations += context.testRoots.values
+    rootDeclarations += context.testFunsPerFile.values
 
     val dceRuntimeDiagnostic = context.dceRuntimeDiagnostic
     if (dceRuntimeDiagnostic != null) {

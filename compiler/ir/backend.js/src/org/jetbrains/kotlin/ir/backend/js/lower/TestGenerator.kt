@@ -27,20 +27,21 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-fun generateTests(context: JsCommonBackendContext, moduleFragment: IrModuleFragment) {
-    val generator = TestGenerator(context) { context.createTestContainerFun(moduleFragment) }
+fun generateJsTests(context: JsIrBackendContext, moduleFragment: IrModuleFragment) {
+    val generator = TestGenerator(context, false)
 
     moduleFragment.files.toList().forEach {
         generator.lower(it)
     }
 }
 
-class TestGenerator(val context: JsCommonBackendContext, val testContainerFactory: () -> IrSimpleFunction) : FileLoweringPass {
+class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boolean) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
-        irFile.declarations.forEach {
+        // Additional copy to prevent ConcurrentModificationException
+        ArrayList(irFile.declarations).forEach {
             if (it is IrClass) {
-                generateTestCalls(it) { suiteForPackage(irFile.fqName) }
+                generateTestCalls(it) { if (groupByPackage) suiteForPackage(irFile) else context.createTestContainerFun(irFile) }
             }
 
             // TODO top-level functions
@@ -49,8 +50,8 @@ class TestGenerator(val context: JsCommonBackendContext, val testContainerFactor
 
     private val packageSuites = mutableMapOf<FqName, IrSimpleFunction>()
 
-    private fun suiteForPackage(fqName: FqName) = packageSuites.getOrPut(fqName) {
-        context.suiteFun!!.createInvocation(fqName.asString(), testContainerFactory())
+    private fun suiteForPackage(irFile: IrFile) = packageSuites.getOrPut(irFile.fqName) {
+        context.suiteFun!!.createInvocation(irFile.fqName.asString(), context.createTestContainerFun(irFile))
     }
 
     private fun IrSimpleFunctionSymbol.createInvocation(

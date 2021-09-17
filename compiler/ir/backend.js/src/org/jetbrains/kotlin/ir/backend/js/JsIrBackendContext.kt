@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -121,12 +120,11 @@ class JsIrBackendContext(
         }
     }
 
-    private val testContainerFuns = mutableMapOf<IrModuleFragment, IrSimpleFunction>()
+    val testFunsPerFile = mutableMapOf<IrFile, IrSimpleFunction>()
 
-    override fun createTestContainerFun(module: IrModuleFragment): IrSimpleFunction {
-        return testContainerFuns.getOrPut(module) {
-            val file = syntheticFile("tests", module)
-            irFactory.addFunction(file) {
+    override fun createTestContainerFun(irFile: IrFile): IrSimpleFunction {
+        return testFunsPerFile.getOrPut(irFile) {
+            irFactory.addFunction(irFile) {
                 name = Name.identifier("test fun")
                 returnType = irBuiltIns.unitType
                 origin = JsIrBuilder.SYNTHESIZED_DECLARATION
@@ -135,9 +133,6 @@ class JsIrBackendContext(
             }
         }
     }
-
-    val testRoots: Map<IrModuleFragment, IrSimpleFunction>
-        get() = testContainerFuns
 
     override val inlineClassesUtils = JsInlineClassesUtils(this)
 

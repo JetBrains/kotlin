@@ -287,20 +287,7 @@ class IrModuleToJsTransformer(
     private fun generateModuleBody(modules: Iterable<IrModuleFragment>, staticContext: JsStaticContext): ModuleBody {
         val fragments = modules.map { it.files.map { generateProgramFragment(it, staticContext) } }
 
-        val statements = merge(fragments.flatMap { it }, staticContext).toMutableList()
-
-        // TODO: handle tests incrementally
-        modules.forEach {
-            backendContext.testRoots[it]?.let { testContainer ->
-                statements.startRegion("block: tests")
-                statements += JsInvocation(staticContext.getNameForStaticFunction(testContainer).makeRef()).makeStmt()
-                statements.endRegion()
-            }
-        }
-
-        val callToMain = fragments.last().sortedBy { it.packageFqn }.firstNotNullOfOrNull { it.mainFunction }
-
-        return ModuleBody(statements, callToMain)
+        return merge(fragments, staticContext)
     }
 
     private val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
@@ -351,13 +338,17 @@ class IrModuleToJsTransformer(
             }
         }
 
+        backendContext.testFunsPerFile[file]?.let {
+            result.testFunInvocation = JsInvocation(staticContext.getNameForStaticFunction(it).makeRef()).makeStmt()
+        }
+
         staticContext.classModels.clear()
         staticContext.initializerBlock.statements.clear()
 
         return result
     }
 
-    private fun merge(fragments: Iterable<JsIrProgramFragment>, staticContext: JsStaticContext): List<JsStatement> {
+    private fun merge(fragments: List<List<JsIrProgramFragment>>, staticContext: JsStaticContext): ModuleBody {
         val statements = mutableListOf<JsStatement>().also {
             if (!generateScriptModule) it += JsStringLiteral("use strict").makeStmt()
         }
@@ -370,9 +361,11 @@ class IrModuleToJsTransformer(
         val classModels = mutableMapOf<IrClassSymbol, JsIrClassModel>()
         val initializerBlock = JsGlobalBlock()
         fragments.forEach {
-            statements += it.declarations.statements
-            classModels += it.classes
-            initializerBlock.statements += it.initializers.statements
+            it.forEach {
+                statements += it.declarations.statements
+                classModels += it.classes
+                initializerBlock.statements += it.initializers.statements
+            }
         }
 
         // sort member forwarding code
@@ -381,7 +374,30 @@ class IrModuleToJsTransformer(
         statements.addWithComment("block: post-declaration", postDeclarationBlock.statements)
         statements.addWithComment("block: init", initializerBlock.statements)
 
-        return statements
+        val lastModuleFragments = fragments.last()
+
+        // Merge test function invocations
+        if (lastModuleFragments.any { it.testFunInvocation != null }) {
+            val testFunBody = JsBlock()
+            val testFun = JsFunction(emptyScope, testFunBody, "root test fun")
+            val suiteFunRef = staticContext.getNameForStaticFunction(backendContext.suiteFun!!.owner).makeRef()
+
+            val tests = lastModuleFragments.filter { it.testFunInvocation != null }.groupBy({ it.packageFqn }) { it.testFunInvocation } // String -> [IrSimpleFunction]
+
+            for ((pkg, testCalls) in tests) {
+                val pkgTestFun = JsFunction(emptyScope, JsBlock(), "test fun for $pkg")
+                pkgTestFun.body.statements += testCalls
+                testFun.body.statements += JsInvocation(suiteFunRef, JsStringLiteral(pkg), JsBooleanLiteral(false), pkgTestFun).makeStmt()
+            }
+
+            statements.startRegion("block: tests")
+            statements += JsInvocation(testFun).makeStmt()
+            statements.endRegion()
+        }
+
+        val callToMain = lastModuleFragments.sortedBy { it.packageFqn }.firstNotNullOfOrNull { it.mainFunction }
+
+        return ModuleBody(statements, callToMain)
     }
 
     private fun generateMainArguments(

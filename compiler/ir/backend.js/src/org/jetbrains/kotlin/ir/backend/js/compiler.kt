@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
-import org.jetbrains.kotlin.ir.backend.js.ic.SerializedIcData
 import org.jetbrains.kotlin.ir.backend.js.ic.ModuleCache
 import org.jetbrains.kotlin.ir.backend.js.ic.icCompile
-import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
+import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
@@ -118,7 +116,7 @@ fun compile(
     }
 
     // TODO should be done incrementally
-    generateTests(context, allModules.last())
+    generateJsTests(context, allModules.last())
 
     if (dceDriven) {
         val controller = MutableController(context, pirLowerings)

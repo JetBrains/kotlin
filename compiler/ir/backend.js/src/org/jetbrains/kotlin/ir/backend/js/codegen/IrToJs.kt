@@ -319,9 +319,10 @@ class IrToJs(
             }
         }
 
-        backendContext.testRoots[module]?.let { testContainer ->
-            statements += invokeFunctionFromEntryJsFileAsStatements(testContainer)
-        }
+        // TODO: tests
+//        backendContext.testRoots[module]?.let { testContainer ->
+//            statements += invokeFunctionFromEntryJsFileAsStatements(testContainer)
+//        }
     }
 
     fun generateModule(

@@ -9,12 +9,10 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
+import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
@@ -156,7 +154,7 @@ fun icCompile(
             moveBodilessDeclarationsToSeparatePlace(context, module)
         }
 
-        generateTests(context, modulesToLower.last())
+        generateJsTests(context, modulesToLower.last())
 
         modulesToLower.forEach {
             lowerPreservingIcData(it, context, controller)

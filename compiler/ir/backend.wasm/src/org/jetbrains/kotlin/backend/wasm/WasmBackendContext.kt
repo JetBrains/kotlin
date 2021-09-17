@@ -157,7 +157,8 @@ class WasmBackendContext(
     val testEntryPoints: Collection<IrSimpleFunction>
         get() = testContainerFuns.values
 
-    override fun createTestContainerFun(module: IrModuleFragment): IrSimpleFunction {
+    override fun createTestContainerFun(irFile: IrFile): IrSimpleFunction {
+        val module = irFile.module
         return testContainerFuns.getOrPut(module) {
             val file = syntheticFile("tests", module)
             irFactory.addFunction(file) {

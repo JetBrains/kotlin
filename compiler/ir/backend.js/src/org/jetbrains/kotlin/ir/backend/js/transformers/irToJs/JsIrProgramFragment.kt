@@ -14,4 +14,5 @@ class JsIrProgramFragment(val packageFqn: String) {
     val classes = mutableMapOf<IrClassSymbol, JsIrClassModel>()
     val initializers = JsGlobalBlock()
     var mainFunction: JsStatement? = null
+    var testFunInvocation: JsStatement? = null
 }
