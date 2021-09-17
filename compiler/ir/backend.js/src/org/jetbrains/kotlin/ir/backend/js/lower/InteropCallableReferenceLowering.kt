@@ -8,33 +8,39 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyToWithoutSuperTypes
-import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val newDeclarations = mutableListOf<IrDeclaration>()
-    private lateinit var implicitDeclarationFile: IrFile //= context.implicitDeclarationFile
+    private lateinit var implicitDeclarationFile: IrFile
+    private val transformedLambdas = mutableMapOf<IrConstructorSymbol, IrSimpleFunctionSymbol>()
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         newDeclarations.clear()
+
         implicitDeclarationFile = container.file // TODO
         irBody.transformChildrenVoid(CallableReferenceLowerTransformer())
-        implicitDeclarationFile.declarations += newDeclarations
+        implicitDeclarationFile.declarations.addAll(newDeclarations)
     }
 
     inner class CallableReferenceLowerTransformer : IrElementTransformerVoid() {
@@ -48,11 +54,18 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
     }
 
     private fun transformToJavaScriptFunction(expression: IrConstructorCall): IrExpression {
-        // TODO: perform inlining
-        val factory = buildFactoryFunction(expression)
-        newDeclarations += factory
+        val irConstructor = expression.symbol
+
+        // There could be more than one lambda instantiation so don't create redundant copies
+        // For testcase take a look into `boxInline/suspend/twiceRegeneratedAnonymousObject.kt`
+        val factory = transformedLambdas.getOrPut(irConstructor) {
+            buildFactoryFunction(expression).also { f ->
+                newDeclarations += f
+            }.symbol
+        }
+
         val newCall = expression.run {
-            IrCallImpl(startOffset, endOffset, type, factory.symbol, typeArgumentsCount, valueArgumentsCount, origin)
+            IrCallImpl(startOffset, endOffset, type, factory, typeArgumentsCount, valueArgumentsCount, origin)
         }
 
         newCall.dispatchReceiver = expression.dispatchReceiver
@@ -67,6 +80,45 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         }
 
         return newCall
+    }
+
+    private fun inlineLambdaBody(
+        lambdaDeclaration: IrSimpleFunction,
+        invokeFun: IrSimpleFunction,
+        invokeMapping: Map<IrValueParameterSymbol, IrValueParameterSymbol>,
+        factoryMapping: Map<IrFieldSymbol, IrValueParameterSymbol>
+    ): IrBlockBody {
+        val body = invokeFun.body ?: error("invoke() method has to have a body")
+
+        fun IrExpression.getValue(d: IrValueSymbol): IrExpression = IrGetValueImpl(startOffset, endOffset, d)
+
+        // TODO: remap type parameters???
+        body.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitGetField(expression: IrGetField): IrExpression {
+                expression.transformChildrenVoid()
+                val parameter = factoryMapping[expression.symbol] ?: return expression
+                return expression.getValue(parameter)
+            }
+
+            override fun visitGetValue(expression: IrGetValue): IrExpression {
+                expression.transformChildrenVoid()
+                val parameter = invokeMapping[expression.symbol] ?: return expression
+                return expression.getValue(parameter)
+            }
+
+            override fun visitReturn(expression: IrReturn): IrExpression {
+                expression.transformChildrenVoid()
+                if (expression.returnTargetSymbol != invokeFun.symbol) return expression
+                return expression.run {
+                    IrReturnImpl(startOffset, endOffset, type, lambdaDeclaration.symbol, value)
+                }
+            }
+        })
+
+        // Fix parents of declarations inside body
+        body.patchDeclarationParents(lambdaDeclaration)
+
+        return body as IrBlockBody
     }
 
     private fun buildLambdaBody(instance: IrVariable, lambdaDeclaration: IrSimpleFunction, invokeFun: IrSimpleFunction): IrBlockBody {
@@ -103,6 +155,27 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         )
     }
 
+    private fun capturedFieldsToParametersMap(constructor: IrConstructor, factoryFunction: IrSimpleFunction): Map<IrFieldSymbol, IrValueParameterSymbol> {
+        val statements = constructor.body?.let { it.cast<IrBlockBody>().statements } ?: error("Expecting Body for function ref constructor")
+
+        val fieldSetters = statements.filterIsInstance<IrSetField>()
+            .filter { it.origin == LoweredStatementOrigins.STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE }
+
+        fun remapVP(vp: IrValueParameterSymbol): IrValueParameterSymbol {
+            return factoryFunction.valueParameters[vp.owner.index].symbol
+        }
+
+        return fieldSetters.associate { it.symbol to remapVP(it.value.cast<IrGetValue>().symbol.cast()) }
+    }
+
+    private fun extractReferenceReflectionName(getter: IrSimpleFunction): IrExpression {
+        val body = getter.body?.cast<IrBlockBody>() ?: error("Expected body for ${getter.render()}")
+        val statements = body.statements
+
+        val returnStmt = statements[0] as IrReturn
+        return returnStmt.value
+    }
+
     private fun buildFactoryBody(factoryFunction: IrSimpleFunction, expression: IrConstructorCall): IrBlockBody {
         val constructor = expression.symbol.owner
         val lambdaClass = constructor.parentAsClass
@@ -125,25 +198,56 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         lambdaDeclaration.valueParameters = superInvokeFun.valueParameters.map { it.copyTo(lambdaDeclaration) }
 
         val statements = ArrayList<IrStatement>(4)
+        val isSuspendLambda = invokeFun.overriddenSymbols.any { it.owner.isSuspend }
 
-        val instanceVal = JsIrBuilder.buildVar(expression.type, factoryFunction, "i").apply {
-            initializer = expression.run {
-                val newCtorCall = IrConstructorCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, constructorTypeArgumentsCount, valueArgumentsCount, origin)
-                // TODO: forward type arguments
-                assert(expression.dispatchReceiver == null)
-                assert(expression.extensionReceiver == null)
+        if (isSuspendLambda) {
+            // Due to suspend lambda is a class itself it's not easy to inline it correctly and moreover I see no reason to do so
+            val instanceVal = JsIrBuilder.buildVar(expression.type, factoryFunction, "i").apply {
+                initializer = expression.run {
+                    val newCtorCall = IrConstructorCallImpl(
+                        startOffset,
+                        endOffset,
+                        type,
+                        symbol,
+                        typeArgumentsCount,
+                        constructorTypeArgumentsCount,
+                        valueArgumentsCount,
+                        origin
+                    )
+                    // TODO: forward type arguments
+                    assert(expression.dispatchReceiver == null)
+                    assert(expression.extensionReceiver == null)
 
-                for ((i, vp) in factoryFunction.valueParameters.withIndex()) {
-                    newCtorCall.putValueArgument(i, IrGetValueImpl(startOffset, endOffset, vp.type, vp.symbol))
+                    for ((i, vp) in factoryFunction.valueParameters.withIndex()) {
+                        newCtorCall.putValueArgument(i, IrGetValueImpl(startOffset, endOffset, vp.type, vp.symbol))
+                    }
+
+                    newCtorCall
                 }
-
-                newCtorCall
             }
+
+            statements.add(instanceVal)
+
+            lambdaDeclaration.body = buildLambdaBody(instanceVal, lambdaDeclaration, invokeFun)
+
+        } else {
+            val fieldToParameterMapping = capturedFieldsToParametersMap(constructor, factoryFunction)
+            val oldToNewInvokeParametersMapping = mutableMapOf<IrValueParameterSymbol, IrValueParameterSymbol>()
+            invokeFun.valueParameters.forEach {
+                oldToNewInvokeParametersMapping[it.symbol] = lambdaDeclaration.valueParameters[it.index].symbol
+            }
+            lambdaDeclaration.body =
+                inlineLambdaBody(lambdaDeclaration, invokeFun, oldToNewInvokeParametersMapping, fieldToParameterMapping)
+
+            val classContainer = lambdaClass.parent as IrDeclarationContainer
+
+            // lambdas could contain another lambdas and local classes in so let do not lose them
+            val lambdaInnerClasses =
+                lambdaClass.declarations.filter { it is IrClass || (it is IrSimpleFunction && it.dispatchReceiverParameter == null) }
+            classContainer.declarations.remove(lambdaClass)
+            classContainer.declarations.addAll(lambdaInnerClasses)
+            lambdaInnerClasses.forEach { it.parent = classContainer }
         }
-
-        statements.add(instanceVal)
-
-        lambdaDeclaration.body = buildLambdaBody(instanceVal, lambdaDeclaration, invokeFun)
 
         val functionExpression =
             expression.run { IrFunctionExpressionImpl(startOffset, endOffset, type, lambdaDeclaration, expression.origin!!) }
@@ -155,19 +259,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             statements.add(tmpVar)
 
             if (nameGetter != null) {
-                statements.add(setDynamicProperty(tmpVar.symbol, Namer.KCALLABLE_NAME,
-                    IrCallImpl(
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
-                        nameGetter.returnType,
-                        nameGetter.symbol,
-                        0,
-                        0,
-                        JsStatementOrigins.CALLABLE_REFERENCE_INVOKE
-                    ).apply {
-                        dispatchReceiver = JsIrBuilder.buildGetValue(instanceVal.symbol)
-                    }
-                ))
+                statements.add(setDynamicProperty(tmpVar.symbol, Namer.KCALLABLE_NAME, extractReferenceReflectionName(nameGetter)))
             }
 
             if (lambdaDeclaration.isSuspend) {
