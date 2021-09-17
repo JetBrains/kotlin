@@ -37,15 +37,6 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
             useFirField = value
         }
 
-    private var includeRuntimeField: kotlin.Boolean? = null
-
-    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
-    override var includeRuntime: kotlin.Boolean
-        get() = includeRuntimeField ?: false
-        set(value) {
-            includeRuntimeField = value
-        }
-
     private var javaParametersField: kotlin.Boolean? = null
     override var javaParameters: kotlin.Boolean
         get() = javaParametersField ?: false
@@ -72,31 +63,12 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
             noJdkField = value
         }
 
-    private var noReflectField: kotlin.Boolean? = null
-
-    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
-    override var noReflect: kotlin.Boolean
-        get() = noReflectField ?: true
-        set(value) {
-            noReflectField = value
-        }
-
     private var noStdlibField: kotlin.Boolean? = null
-
     @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
     override var noStdlib: kotlin.Boolean
         get() = noStdlibField ?: true
         set(value) {
             noStdlibField = value
-        }
-
-    private var useIRField: kotlin.Boolean? = null
-
-    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.WARNING)
-    override var useIR: kotlin.Boolean
-        get() = useIRField ?: false
-        set(value) {
-            useIRField = value
         }
 
     private var useOldBackendField: kotlin.Boolean? = null
@@ -113,15 +85,12 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         apiVersion?.let { args.apiVersion = it }
         languageVersion?.let { args.languageVersion = it }
         useFirField?.let { args.useFir = it }
-        includeRuntimeField?.let { args.includeRuntime = it }
         javaParametersField?.let { args.javaParameters = it }
         jdkHome?.let { args.jdkHome = it }
         jvmTargetField?.let { args.jvmTarget = it }
         moduleName?.let { args.moduleName = it }
         noJdkField?.let { args.noJdk = it }
-        noReflectField?.let { args.noReflect = it }
         noStdlibField?.let { args.noStdlib = it }
-        useIRField?.let { args.useIR = it }
         useOldBackendField?.let { args.useOldBackend = it }
     }
 }
@@ -133,14 +102,11 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fi
     apiVersion = null
     languageVersion = null
     useFir = false
-    includeRuntime = false
     javaParameters = false
     jdkHome = null
     jvmTarget = "1.8"
     moduleName = null
     noJdk = false
-    noReflect = true
     noStdlib = true
-    useIR = false
     useOldBackend = false
 }

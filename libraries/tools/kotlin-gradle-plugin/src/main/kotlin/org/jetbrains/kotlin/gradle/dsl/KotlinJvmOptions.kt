@@ -6,13 +6,6 @@ package org.jetbrains.kotlin.gradle.dsl
 interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions {
 
     /**
-     * Include Kotlin runtime into the resulting JAR
-     * Default value: false
-     */
-    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
-     var includeRuntime: kotlin.Boolean
-
-    /**
      * Generate metadata for Java 1.8 reflection on method parameters
      * Default value: false
      */
@@ -45,25 +38,11 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      var noJdk: kotlin.Boolean
 
     /**
-     * Don't automatically include Kotlin reflection into the classpath
-     * Default value: true
-     */
-    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
-     var noReflect: kotlin.Boolean
-
-    /**
      * Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection into the classpath
      * Default value: true
      */
     @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
      var noStdlib: kotlin.Boolean
-
-    /**
-     * Use the IR backend. This option has no effect unless the language version less than 1.5 is used
-     * Default value: false
-     */
-    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.WARNING)
-     var useIR: kotlin.Boolean
 
     /**
      * Use the old JVM backend
