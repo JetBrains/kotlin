@@ -54,6 +54,8 @@ compileKotlin {
     }
 }
 
+configureFrontendIr(project)
+
 jar {
     manifestAttributes(manifest, project, "internal")
 }

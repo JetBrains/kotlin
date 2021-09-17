@@ -40,3 +40,5 @@ compileKotlin {
     ]
     kotlinOptions.moduleName = project.name
 }
+
+configureFrontendIr(project)

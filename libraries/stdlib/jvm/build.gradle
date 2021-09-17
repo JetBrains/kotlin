@@ -143,6 +143,8 @@ compileLongRunningTestKotlin {
     kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.ExperimentalStdlibApi"
 }
 
+configureFrontendIr(project)
+
 task longRunningTest(type: Test, dependsOn: longRunningTestClasses) {
     group = "verification"
     testClassesDirs = sourceSets.longRunningTest.output.classesDirs

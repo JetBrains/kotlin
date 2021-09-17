@@ -57,6 +57,8 @@ compileTestKotlin {
     ]
 }
 
+configureFrontendIr(project)
+
 if (includeJava9) {
     LibrariesCommon.configureJava9Compilation(project, 'kotlin.test')
 }

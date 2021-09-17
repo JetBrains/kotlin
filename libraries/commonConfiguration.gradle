@@ -64,6 +64,16 @@ ext.configurePluginMarkers = { Project project, withEmptyJars = true ->
     PluginMarkersKt.publishPluginMarkers(project, withEmptyJars)
 }
 
+ext.configureFrontendIr = { Project project ->
+    project.tasks.withType(KotlinCompile.class) { task ->
+        task.kotlinOptions {
+            if (project.kotlinBuildProperties.useFirForLibraries) {
+                freeCompilerArgs += "-Xuse-fir"
+            }
+        }
+    }
+}
+
 allprojects { project ->
     project.ext.configureSourcesJar = { lambda = {} ->
         ArtifactsKt.sourcesJar(project) { task ->
