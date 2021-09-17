@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
+import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
@@ -531,8 +532,28 @@ private class EnhancementSignatureParts(
     override val TypeParameterMarker.isFromJava: Boolean
         get() = (this as ConeTypeParameterLookupTag).symbol.fir.origin == FirDeclarationOrigin.Java
 
-    override val TypeArgumentMarker.starProjectionType: KotlinTypeMarker?
-        get() = null // TODO
+    override val TypeParameterMarker.starProjectionType: KotlinTypeMarker
+        get() {
+            require(this is ConeTypeParameterLookupTag)
+            val firstBound = typeParameterSymbol.resolvedBounds.first().type
+            val otherParameters = (typeParameterSymbol.containingDeclarationSymbol?.fir as? FirTypeParameterRefsOwner)?.typeParameters
+                ?.mapTo(mutableSetOf()) { it.symbol } ?: return firstBound
+            // TODO: this can probably enter a loop on C<T extends V, V extends T>.
+            val substitutor = object : AbstractConeSubstitutor(session.typeContext) {
+                override fun substituteType(type: ConeKotlinType): ConeKotlinType? =
+                    if (type is ConeTypeParameterType && type.lookupTag.typeParameterSymbol in otherParameters)
+                        substituteOrNull(type.lookupTag.typeParameterSymbol.resolvedBounds.first().type)
+                    else
+                        null
+
+                override fun substituteArgument(projection: ConeTypeProjection): ConeTypeProjection? =
+                    if (projection.type.let { it is ConeTypeParameterType && it.lookupTag.typeParameterSymbol in otherParameters })
+                        ConeStarProjection
+                    else
+                        super.substituteArgument(projection)
+            }
+            return substitutor.substituteOrSelf(firstBound)
+        }
 
     override fun TypeConstructorMarker.replaceClassId(mapper: (ClassId) -> ClassId?): TypeConstructorMarker? =
         (this as? ConeClassLikeLookupTag)?.classId?.let(mapper)?.let(::ConeClassLikeLookupTagImpl)

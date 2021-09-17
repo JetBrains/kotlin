@@ -43,9 +43,8 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
     abstract fun KotlinTypeMarker.isEqual(other: KotlinTypeMarker): Boolean
     abstract fun KotlinTypeMarker.withEnhancementForWarnings(enhancement: KotlinTypeMarker): KotlinTypeMarker?
 
-    abstract val TypeArgumentMarker.starProjectionType: KotlinTypeMarker?
-
     abstract val TypeParameterMarker.isFromJava: Boolean
+    abstract val TypeParameterMarker.starProjectionType: KotlinTypeMarker
 
     abstract fun TypeConstructorMarker.replaceClassId(mapper: (ClassId) -> ClassId?): TypeConstructorMarker?
 
@@ -313,7 +312,7 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
                 !shouldEnhanceArguments -> null
                 !arg.isStarProjection() -> arg.getType().enhance(qualifiers, globalArgIndex)
                 qualifiers[globalArgIndex].nullability == NullabilityQualifier.FORCE_FLEXIBILITY ->
-                    arg.starProjectionType?.let {
+                    parameter?.starProjectionType?.let {
                         // Given `C<T extends @Nullable V>`, unannotated `C<?>` is `C<out (V..V?)>`.
                         typeFactory.createFlexibleType(
                             it.lowerBoundIfFlexible().withNullability(false),

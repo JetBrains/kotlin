@@ -260,8 +260,8 @@ private class SignatureParts(
     override val TypeParameterMarker.isFromJava: Boolean
         get() = this is LazyJavaTypeParameterDescriptor
 
-    override val TypeArgumentMarker.starProjectionType: KotlinTypeMarker
-        get() = (this as StarProjectionImpl).type
+    override val TypeParameterMarker.starProjectionType: KotlinTypeMarker
+        get() = (this as TypeParameterDescriptor).starProjectionType()
 
     override fun TypeConstructorMarker.replaceClassId(mapper: (ClassId) -> ClassId?): TypeConstructorMarker? {
         require(this is TypeConstructor)
