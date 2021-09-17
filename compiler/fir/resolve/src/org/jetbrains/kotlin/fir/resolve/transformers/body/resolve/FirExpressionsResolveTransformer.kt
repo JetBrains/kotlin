@@ -495,8 +495,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         // following `!!` is safe since `operatorIsSuccessful = true` implies `operatorCallReference != null`
         val operatorReturnTypeMatches = operatorIsSuccessful && operatorReturnTypeMatches(operatorCallReference!!.candidate)
 
-        val lhsReference = leftArgument.toResolvedCallableReference()
-        val lhsSymbol = lhsReference?.resolvedSymbol as? FirVariableSymbol<*>
+        val lhsReference = leftArgument.toReference()
+        val lhsSymbol = (lhsReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirVariableSymbol<*>
         val lhsVariable = lhsSymbol?.fir
         val lhsIsVar = lhsVariable?.isVar == true
 
@@ -528,7 +528,12 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                                     leftArgument.calleeReference.source
                                 else -> leftArgument.source
                             }
-                            diagnostic = if (lhsSymbol == null) ConeVariableExpectedError else ConeValReassignmentError(lhsSymbol)
+                            diagnostic = when {
+                                // Use a stub diagnostic to suppress unresolved error here because it would be reported by other logic
+                                lhsReference is FirErrorNamedReference -> ConeStubDiagnostic(ConeUnresolvedReferenceError())
+                                lhsSymbol == null -> ConeVariableExpectedError
+                                else -> ConeValReassignmentError(lhsSymbol)
+                            }
                         }
                     }
                     (leftArgument as? FirQualifiedAccess)?.let {

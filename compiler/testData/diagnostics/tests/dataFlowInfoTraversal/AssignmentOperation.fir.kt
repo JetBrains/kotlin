@@ -7,7 +7,7 @@ fun bar1(x: Number, y: Int) {
 }
 
 fun bar2(x: Number) {
-    <!UNRESOLVED_REFERENCE, VARIABLE_EXPECTED!>y<!> += x as Int
+    <!UNRESOLVED_REFERENCE!>y<!> += x as Int
     checkSubtype<Int>(x)
 }
 

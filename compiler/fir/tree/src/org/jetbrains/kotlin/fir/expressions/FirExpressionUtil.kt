@@ -56,8 +56,12 @@ inline val FirCall.argumentMapping: LinkedHashMap<FirExpression, FirValueParamet
     }
 
 fun FirExpression.toResolvedCallableReference(): FirResolvedNamedReference? {
+    return toReference() as? FirResolvedNamedReference
+}
+
+fun FirExpression.toReference(): FirReference? {
     if (this is FirWrappedArgumentExpression) return expression.toResolvedCallableReference()
-    return (this as? FirResolvable)?.calleeReference as? FirResolvedNamedReference
+    return (this as? FirResolvable)?.calleeReference
 }
 
 fun FirExpression.toResolvedCallableSymbol(): FirCallableSymbol<*>? {
