@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.commonizer.ModulesProvider.CInteropModuleAttributes
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirPackageName
+import org.jetbrains.kotlin.commonizer.cir.CirProvided
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers.Companion.FALLBACK_FORWARD_DECLARATION_CLASS
 import org.jetbrains.kotlin.commonizer.utils.*
 import org.jetbrains.kotlin.library.SerializedMetadata

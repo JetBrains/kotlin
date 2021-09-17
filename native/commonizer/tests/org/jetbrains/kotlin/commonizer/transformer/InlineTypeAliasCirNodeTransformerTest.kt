@@ -2,10 +2,7 @@ package org.jetbrains.kotlin.commonizer.transformer
 
 import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.commonizer.TargetDependent
-import org.jetbrains.kotlin.commonizer.cir.CirClassType
-import org.jetbrains.kotlin.commonizer.cir.CirEntityId
-import org.jetbrains.kotlin.commonizer.cir.CirName
-import org.jetbrains.kotlin.commonizer.cir.CirPackageName
+import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mapValue
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot

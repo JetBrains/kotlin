@@ -12,7 +12,7 @@ import kotlinx.metadata.klib.compileTimeValue
 import kotlinx.metadata.klib.getterAnnotations
 import kotlinx.metadata.klib.setterAnnotations
 import org.jetbrains.kotlin.commonizer.cir.*
-import org.jetbrains.kotlin.commonizer.mergedtree.CirProvided
+import org.jetbrains.kotlin.commonizer.cir.CirProvided
 import org.jetbrains.kotlin.commonizer.utils.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.types.Variance

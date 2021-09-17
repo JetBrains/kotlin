@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.commonizer.metadata
 import gnu.trove.TIntObjectHashMap
 import kotlinx.metadata.KmTypeParameter
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
-import org.jetbrains.kotlin.commonizer.mergedtree.CirProvided
+import org.jetbrains.kotlin.commonizer.cir.CirProvided
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.tree.deserializer.ClassesToProcess
 

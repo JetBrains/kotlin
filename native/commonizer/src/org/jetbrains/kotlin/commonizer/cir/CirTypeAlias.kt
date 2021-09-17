@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.commonizer.cir
 
 import org.jetbrains.kotlin.descriptors.Visibility
 
-interface CirTypeAlias : CirClassifier, CirLiftedUpDeclaration {
-    val underlyingType: CirClassOrTypeAliasType
+interface CirTypeAlias : CirClassifier, CirLiftedUpDeclaration, AnyTypeAlias {
+    override val underlyingType: CirClassOrTypeAliasType
     val expandedType: CirClassType
 
     companion object {
