@@ -19,6 +19,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
 ) : NullableSingleInvocationCommonizer<CirClassOrTypeAliasType> {
 
     private val isMarkedNullableCommonizer = TypeNullabilityCommonizer(typeCommonizer.options)
+    private val typeDistanceMeasurement = TypeDistanceMeasurement(typeCommonizer.options)
 
     override fun invoke(values: List<CirClassOrTypeAliasType>): CirClassOrTypeAliasType? {
         if (values.isEmpty()) return null
@@ -146,11 +147,6 @@ internal class ClassOrTypeAliasTypeCommonizer(
         if (sourceType.arguments.isNotEmpty()) return null
         if (destinationTypeAlias.typeParameters.isNotEmpty()) return null
 
-        /* Check if any type in the intermediate ta chain has arguments */
-        generateSequence(destinationTypeAlias.underlyingType) { type -> type.safeAs<CirTypeAliasType>()?.underlyingType }
-            .takeWhile { type -> type.classifierId != sourceType.classifierId }
-            .forEach { type -> if (type.arguments.isNotEmpty()) return null } // limitation!
-
         return CirTypeAliasType.createInterned(
             destinationTypeAliasId,
             underlyingType = destinationTypeAlias.underlyingType,
@@ -171,15 +167,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
          */
         if (sourceType.arguments.isNotEmpty()) return null
         if (destinationTypeAlias.typeParameters.isNotEmpty()) return null
-
         val providedClassifiers = CirProvidedClassifiers.of(classifiers.commonDependencies, classifiers.targetDependencies[targetIndex])
-
-        generateSequence(destinationTypeAlias.underlyingType) next@{ type ->
-            val typeAliasType = type as? CirProvided.TypeAliasType ?: return@next null
-            val typeAlias = providedClassifiers.classifier(typeAliasType.classifierId) as? CirProvided.TypeAlias ?: return@next null
-            typeAlias.underlyingType
-        }.takeWhile { type -> type.classifierId != sourceType.classifierId }
-            .forEach { type -> if (type.arguments.isNotEmpty()) return null }
 
         return CirTypeAliasType.createInterned(
             destinationTypeAliasId,
@@ -202,16 +190,27 @@ internal class ClassOrTypeAliasTypeCommonizer(
             classifiers.associatedIdsResolver.resolveAssociatedIds(it.classifierId)
         } ?: return null
 
-        val typeSubstitutionCandidates = resolveTypeSubstitutionCandidates(classifiers, associatedIds, types)
-            .filter { typeSubstitutionCandidate ->
+        val typeSubstitutionCandidates = resolveTypeSubstitutionCandidates(associatedIds, types)
+            .onEach { typeSubstitutionCandidate ->
                 assert(typeSubstitutionCandidate.typeDistance.isZero.not()) { "Expected no zero typeDistance" }
-                if (typeSubstitutionCandidate.typeDistance.isNotReachable) return@filter false
-                if (typeSubstitutionCandidate.typeDistance.isNegative && !backwardsSubstitutionAllowed) return@filter false
-                if (typeSubstitutionCandidate.typeDistance.isPositive && !forwardSubstitutionAllowed) return@filter false
-                true
+                assert(typeSubstitutionCandidate.typeDistance.isReachable) { "Expected substitution candidate to be reachable" }
             }
 
         return typeSubstitutionCandidates.minByOrNull { it.typeDistance.penalty }?.id
+    }
+
+    private fun resolveTypeSubstitutionCandidates(
+        associatedIds: AssociatedClassifierIds, types: List<CirClassOrTypeAliasType>
+    ): List<TypeSubstitutionCandidate> {
+        return associatedIds.ids.mapNotNull mapCandidateId@{ candidateId ->
+            val typeDistances = types.mapIndexed { targetIndex, type ->
+                typeDistanceMeasurement(classifiers, targetIndex, type, candidateId)
+                    .takeIf { it.isReachable } ?: return@mapCandidateId null
+            }
+            TypeSubstitutionCandidate(
+                id = candidateId, typeDistance = checkNotNull(typeDistances.maxByOrNull { it.penalty })
+            )
+        }
     }
 }
 
@@ -220,15 +219,34 @@ private class TypeSubstitutionCandidate(
     val typeDistance: CirTypeDistance
 )
 
-private fun resolveTypeSubstitutionCandidates(
-    classifiers: CirKnownClassifiers, associatedIds: AssociatedClassifierIds, types: List<CirClassOrTypeAliasType>
-): List<TypeSubstitutionCandidate> {
-    return associatedIds.ids.mapNotNull mapCandidateId@{ candidateId ->
-        val typeDistances = types.mapIndexed { targetIndex, type -> typeDistance(classifiers, targetIndex, type, candidateId) }
-        if (typeDistances.any { it.isNotReachable }) return@mapCandidateId null
-        TypeSubstitutionCandidate(
-            id = candidateId,
-            typeDistance = checkNotNull(typeDistances.maxByOrNull { it.penalty })
-        )
+private interface TypeDistanceMeasurement {
+    operator fun invoke(
+        classifiers: CirKnownClassifiers, targetIndex: Int, from: CirClassOrTypeAliasType, to: CirEntityId
+    ): CirTypeDistance
+
+    private object None : TypeDistanceMeasurement {
+        override fun invoke(
+            classifiers: CirKnownClassifiers, targetIndex: Int, from: CirClassOrTypeAliasType, to: CirEntityId
+        ): CirTypeDistance = CirTypeDistance.unreachable
+    }
+
+    private object ForwardOnly : TypeDistanceMeasurement {
+        override fun invoke(
+            classifiers: CirKnownClassifiers, targetIndex: Int, from: CirClassOrTypeAliasType, to: CirEntityId
+        ): CirTypeDistance = forwardTypeDistance(from, to)
+    }
+
+    private object Full : TypeDistanceMeasurement {
+        override fun invoke(
+            classifiers: CirKnownClassifiers, targetIndex: Int, from: CirClassOrTypeAliasType, to: CirEntityId
+        ): CirTypeDistance = typeDistance(classifiers, targetIndex, from, to)
+    }
+
+    companion object {
+        operator fun invoke(options: TypeCommonizer.Options): TypeDistanceMeasurement = when {
+            options.enableBackwardsTypeAliasSubstitution && options.enableForwardTypeAliasSubstitution -> Full
+            options.enableForwardTypeAliasSubstitution -> ForwardOnly
+            else -> None
+        }
     }
 }
