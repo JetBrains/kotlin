@@ -1,0 +1,20 @@
+class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val test_1: Int
+    field = try throw RuntimeException()
+    catch (e: Exception)1
+
+    get
+
+  val test_2: Int
+    field = try 1
+    catch (e: Exception)throw RuntimeException()
+
+    get
+
+}

@@ -807,6 +807,13 @@ class ControlFlowInformationProviderImpl private constructor(
             for (element in pseudocode.getValueElements(value)) {
                 trace.record(USED_AS_EXPRESSION, element, isUsedAsExpression)
                 trace.record(USED_AS_RESULT_OF_LAMBDA, element, isUsedAsResultOfLambda)
+                if (isUsedAsExpression && element is KtTryExpression) {
+                    trace.record(USED_AS_EXPRESSION, element.tryBlock, true)
+                    for (catchClause in element.catchClauses) {
+                        val body = catchClause.catchBody ?: continue
+                        trace.record(USED_AS_EXPRESSION, body, true)
+                    }
+                }
             }
         }
     }

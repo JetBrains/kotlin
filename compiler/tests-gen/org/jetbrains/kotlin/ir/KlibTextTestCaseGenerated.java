@@ -1133,6 +1133,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/kt48708.kt");
         }
 
+        @TestMetadata("kt48806.kt")
+        public void testKt48806() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/kt48806.kt");
+        }
+
         @TestMetadata("lambdaInCAO.kt")
         public void testLambdaInCAO() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/lambdaInCAO.kt");
