@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.*
@@ -24,7 +24,7 @@ interface FirQualifiedAccess : FirResolvable, FirStatement {
     val explicitReceiver: FirExpression?
     val dispatchReceiver: FirExpression
     val extensionReceiver: FirExpression
-    override val source: FirSourceElement?
+    override val source: KtSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitQualifiedAccess(this, data)
 
@@ -39,7 +39,7 @@ interface FirQualifiedAccess : FirResolvable, FirStatement {
     fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
     @FirImplementationDetail
-    fun replaceSource(newSource: FirSourceElement?)
+    fun replaceSource(newSource: KtSourceElement?)
 
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 

@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.cfa.util.*
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -66,7 +66,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
         if (functionalTypeEffects.isEmpty()) return
 
-        val leakedSymbols = mutableMapOf<FirBasedSymbol<*>, MutableList<FirSourceElement>>()
+        val leakedSymbols = mutableMapOf<FirBasedSymbol<*>, MutableList<KtSourceElement>>()
         graph.traverse(
             TraverseDirection.Forward,
             CapturedLambdaFinder(function),
@@ -125,7 +125,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
     private class IllegalScopeContext(
         private val functionalTypeSymbols: Set<FirBasedSymbol<*>>,
-        private val leakedSymbols: MutableMap<FirBasedSymbol<*>, MutableList<FirSourceElement>>,
+        private val leakedSymbols: MutableMap<FirBasedSymbol<*>, MutableList<KtSourceElement>>,
     ) {
         private var scopeDepth: Int = 0
         private var illegalScopeDepth: Int? = null
@@ -144,7 +144,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
         inline fun checkExpressionForLeakedSymbols(
             fir: FirExpression?,
-            source: FirSourceElement? = fir?.source,
+            source: KtSourceElement? = fir?.source,
             illegalUsage: () -> Boolean = { false }
         ) {
             val symbol = referenceToSymbol(fir.toQualifiedReference())

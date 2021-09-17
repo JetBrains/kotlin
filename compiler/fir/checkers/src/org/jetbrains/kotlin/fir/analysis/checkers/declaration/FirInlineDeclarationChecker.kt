@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isInlineOnly
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
@@ -18,9 +20,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.types.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.types.isFunctionalType
@@ -229,7 +233,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         private fun checkVisibilityAndAccess(
             accessExpression: FirQualifiedAccess,
             calledDeclaration: FirCallableSymbol<*>?,
-            source: FirSourceElement,
+            source: KtSourceElement,
             context: CheckerContext
         ) {
             if (
@@ -283,7 +287,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
 
         private fun checkPrivateClassMemberAccess(
             calledDeclaration: FirCallableSymbol<*>,
-            source: FirSourceElement,
+            source: KtSourceElement,
             context: CheckerContext
         ) {
             if (!isEffectivelyPrivateApiFunction) {
@@ -331,7 +335,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
 
         private fun checkRecursion(
             targetSymbol: FirBasedSymbol<*>,
-            source: FirSourceElement,
+            source: KtSourceElement,
             context: CheckerContext
         ) {
             if (targetSymbol == inlineFunction.symbol) {

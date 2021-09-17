@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.*
@@ -160,7 +160,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     override fun visitTypeRef(typeRef: FirTypeRef, data: Nothing?) {
-        if (typeRef.source != null && typeRef.source?.kind !is FirFakeSourceElementKind) {
+        if (typeRef.source != null && typeRef.source?.kind !is KtFakeSourceElementKind) {
             withAnnotationContainer(typeRef) {
                 checkElement(typeRef)
                 visitNestedElements(typeRef)
@@ -179,7 +179,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         if (resolvedTypeRef.type is ConeClassErrorType) {
             super.visitResolvedTypeRef(resolvedTypeRef, data)
         }
-        if (resolvedTypeRef.source?.kind is FirFakeSourceElementKind) return
+        if (resolvedTypeRef.source?.kind is KtFakeSourceElementKind) return
 
         //the note about is just wrong
         //if we don't visit resolved type we can't make any diagnostics on them

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extractClassesFromArgument
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -53,7 +53,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
     }
 
     private fun checkOptInIsEnabled(
-        element: FirSourceElement?,
+        element: KtSourceElement?,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {

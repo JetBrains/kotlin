@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.filterUseSiteTarget
@@ -55,11 +57,11 @@ class ValueParameter(
         }
 
         return buildProperty {
-            val propertySource = firValueParameter.source?.fakeElement(FirFakeSourceElementKind.PropertyFromParameter)
+            val propertySource = firValueParameter.source?.fakeElement(KtFakeSourceElementKind.PropertyFromParameter)
             source = propertySource
             this.moduleData = moduleData
             origin = FirDeclarationOrigin.Source
-            returnTypeRef = type.copyWithNewSourceKind(FirFakeSourceElementKind.PropertyFromParameter)
+            returnTypeRef = type.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyFromParameter)
             this.name = name
             initializer = buildPropertyAccessExpression {
                 source = propertySource
@@ -86,12 +88,12 @@ class ValueParameter(
                         it.useSiteTarget == AnnotationUseSiteTarget.FIELD ||
                         it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
             }
-            val defaultAccessorSource = propertySource?.fakeElement(FirFakeSourceElementKind.DefaultAccessor)
+            val defaultAccessorSource = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
             getter = FirDefaultPropertyGetter(
                 defaultAccessorSource,
                 moduleData,
                 FirDeclarationOrigin.Source,
-                type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
+                type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                 modifiers.getVisibility(),
                 symbol,
             ).also {
@@ -102,7 +104,7 @@ class ValueParameter(
                 defaultAccessorSource,
                 moduleData,
                 FirDeclarationOrigin.Source,
-                type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
+                type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                 modifiers.getVisibility(),
                 symbol,
                 parameterAnnotations = modifiers.annotations.filterUseSiteTarget(AnnotationUseSiteTarget.SETTER_PARAMETER)

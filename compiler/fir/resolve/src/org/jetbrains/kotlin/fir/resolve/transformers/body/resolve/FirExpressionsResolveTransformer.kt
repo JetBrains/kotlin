@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.*
@@ -214,7 +216,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 return markSuperReferenceError(diagnostic, superReferenceContainer, superReference)
             }
             superTypeRef is FirResolvedTypeRef -> {
-                superReferenceContainer.resultType = superTypeRef.copyWithNewSourceKind(FirFakeSourceElementKind.SuperCallExplicitType)
+                superReferenceContainer.resultType = superTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.SuperCallExplicitType)
             }
             superTypeRef !is FirImplicitTypeRef -> {
                 components.typeResolverTransformer.withAllowedBareTypes {
@@ -246,7 +248,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     diagnostic = ConeSimpleDiagnostic("Not a super type", DiagnosticKind.NotASupertype)
                 }
                 superReferenceContainer.resultType =
-                    actualSuperTypeRef.copyWithNewSourceKind(FirFakeSourceElementKind.SuperCallExplicitType)
+                    actualSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.SuperCallExplicitType)
                 superReference.replaceSuperTypeRef(actualSuperTypeRef)
             }
             else -> {
@@ -258,7 +260,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                         diagnostic = ConeStubDiagnostic(ConeSimpleDiagnostic("Unresolved super method", DiagnosticKind.Other))
                     }
                     1 -> buildResolvedTypeRef {
-                        source = superReferenceContainer.source?.fakeElement(FirFakeSourceElementKind.SuperCallImplicitType)
+                        source = superReferenceContainer.source?.fakeElement(KtFakeSourceElementKind.SuperCallImplicitType)
                         type = types.single()
                     }
                     else -> buildErrorTypeRef {
@@ -267,7 +269,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     }
                 }
                 superReferenceContainer.resultType =
-                    resultType.copyWithNewSourceKind(FirFakeSourceElementKind.SuperCallExplicitType)
+                    resultType.copyWithNewSourceKind(KtFakeSourceElementKind.SuperCallExplicitType)
                 superReference.replaceSuperTypeRef(resultType)
             }
         }
@@ -285,7 +287,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         superReferenceContainer.resultType = resultType
         superReference.replaceSuperTypeRef(resultType)
         superReferenceContainer.replaceCalleeReference(buildErrorNamedReference {
-            source = superReferenceContainer.source?.fakeElement(FirFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
+            source = superReferenceContainer.source?.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
             diagnostic = superNotAvailableDiagnostic
         })
         return superReferenceContainer
@@ -444,12 +446,12 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val rightArgument = assignmentOperatorStatement.rightArgument.transformSingle(transformer, ResolutionMode.ContextDependent)
 
         fun createFunctionCall(name: Name): FirFunctionCall = buildFunctionCall {
-            source = assignmentOperatorStatement.source?.fakeElement(FirFakeSourceElementKind.DesugaredCompoundAssignment)
+            source = assignmentOperatorStatement.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
             explicitReceiver = leftArgument
             argumentList = buildUnaryArgumentList(rightArgument)
             calleeReference = buildSimpleNamedReference {
                 // TODO: Use source of operator for callee reference source
-                source = assignmentOperatorStatement.source?.fakeElement(FirFakeSourceElementKind.DesugaredCompoundAssignment)
+                source = assignmentOperatorStatement.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
                 this.name = name
                 candidateSymbol = null
             }
@@ -650,7 +652,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             }
             FirOperation.AS -> {
                 resolved.resultType = buildResolvedTypeRef {
-                    source = conversionTypeRef.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
+                    source = conversionTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
                     type = conversionTypeRef.coneType
                     annotations += conversionTypeRef.annotations
                 }
@@ -1118,7 +1120,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         anonymousObjectExpression.transformAnonymousObject(transformer, data)
         if (anonymousObjectExpression.typeRef !is FirResolvedTypeRef) {
             anonymousObjectExpression.resultType = buildResolvedTypeRef {
-                source = anonymousObjectExpression.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
+                source = anonymousObjectExpression.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
                 this.type = anonymousObjectExpression.anonymousObject.defaultType()
             }
         }

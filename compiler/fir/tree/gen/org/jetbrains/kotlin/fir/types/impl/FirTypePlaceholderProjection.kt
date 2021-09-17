@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.types.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 object FirTypePlaceholderProjection : FirTypeProjection() {
-    override val source: FirSourceElement? get() = null
+    override val source: KtSourceElement? get() = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 

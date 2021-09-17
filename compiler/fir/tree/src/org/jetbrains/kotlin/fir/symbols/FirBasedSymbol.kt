@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.symbols
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -27,7 +27,7 @@ abstract class FirBasedSymbol<E : FirDeclaration> {
     val origin: FirDeclarationOrigin
         get() = fir.origin
 
-    val source: FirSourceElement?
+    val source: KtSourceElement?
         get() = fir.source
 
     val moduleData: FirModuleData

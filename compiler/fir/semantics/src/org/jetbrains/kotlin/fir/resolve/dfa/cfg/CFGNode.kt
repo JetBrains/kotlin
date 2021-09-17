@@ -7,8 +7,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
@@ -823,7 +823,7 @@ class AnnotationExitNode(owner: ControlFlowGraph, override val fir: FirAnnotatio
 // ----------------------------------- Stub -----------------------------------
 
 object FirStub : FirElement {
-    override val source: FirSourceElement? get() = null
+    override val source: KtSourceElement? get() = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 

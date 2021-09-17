@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.references.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirErrorNamedReferenceImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val candidateSymbol: FirBasedSymbol<*>?,
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorNamedReference() {

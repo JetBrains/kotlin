@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.DuplicatedFirSourceElementsException
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isErrorElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirRealPsiSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -17,8 +18,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.DuplicatedFirSourceElementsException
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isErrorElement
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTypeReference
 
@@ -93,9 +93,9 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
     private fun cacheElement(element: FirElement, cache: MutableMap<KtElement, FirElement>) {
         val psi = element.source
             ?.takeIf {
-                it is FirRealPsiSourceElement ||
-                        it.kind == FirFakeSourceElementKind.ReferenceInAtomicQualifiedAccess ||
-                        it.kind == FirFakeSourceElementKind.FromUseSiteTarget
+                it is KtRealPsiSourceElement ||
+                        it.kind == KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess ||
+                        it.kind == KtFakeSourceElementKind.FromUseSiteTarget
             }.psi as? KtElement
             ?: return
         cache(psi, element, cache)

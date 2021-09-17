@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.expressions.builder
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 interface FirLoopBuilder {
-    abstract var source: FirSourceElement?
+    abstract var source: KtSourceElement?
     abstract val annotations: MutableList<FirAnnotation>
     abstract var block: FirBlock
     abstract var condition: FirExpression

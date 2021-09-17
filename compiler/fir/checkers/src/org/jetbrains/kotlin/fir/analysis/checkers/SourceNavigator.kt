@@ -9,11 +9,11 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirLightSourceElement
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.getAncestors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.nameIdentifier
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -34,7 +34,7 @@ interface SourceNavigator {
 
     fun FirTypeRef.isInTypeConstraint(): Boolean
 
-    fun FirSourceElement.getRawIdentifier(): String?
+    fun KtSourceElement.getRawIdentifier(): String?
 
     fun FirDeclaration.getRawName(): String?
 
@@ -46,21 +46,21 @@ interface SourceNavigator {
 
         fun forElement(e: FirElement): SourceNavigator = forSource(e.source)
 
-        fun forSource(e: FirSourceElement?): SourceNavigator = when (e) {
-            is FirLightSourceElement -> lightTreeInstance
-            is FirPsiSourceElement -> PsiSourceNavigator
+        fun forSource(e: KtSourceElement?): SourceNavigator = when (e) {
+            is KtLightSourceElement -> lightTreeInstance
+            is KtPsiSourceElement -> PsiSourceNavigator
             null -> lightTreeInstance //shouldn't matter
         }
 
         inline fun <R> FirElement.withNavigator(block: SourceNavigator.() -> R): R = with(forSource(this.source), block)
 
-        inline fun <R> FirSourceElement.withNavigator(block: SourceNavigator.() -> R): R = with(forSource(this), block)
+        inline fun <R> KtSourceElement.withNavigator(block: SourceNavigator.() -> R): R = with(forSource(this), block)
     }
 }
 
 open class LightTreeSourceNavigator : SourceNavigator {
 
-    private fun <T> FirElement.withSource(f: (FirSourceElement) -> T): T? =
+    private fun <T> FirElement.withSource(f: (KtSourceElement) -> T): T? =
         source?.let { f(it) }
 
     override fun FirTypeRef.isInConstructorCallee(): Boolean = withSource { source ->
@@ -74,7 +74,7 @@ open class LightTreeSourceNavigator : SourceNavigator {
             ?.tokenType == KtNodeTypes.TYPE_CONSTRAINT
     }
 
-    override fun FirSourceElement.getRawIdentifier(): String? {
+    override fun KtSourceElement.getRawIdentifier(): String? {
         return when (elementType) {
             is KtNameReferenceExpressionElementType, KtTokens.IDENTIFIER -> lighterASTNode.toString()
             is KtTypeProjectionElementType -> lighterASTNode.getChildren(treeStructure).last().toString()
@@ -90,7 +90,7 @@ open class LightTreeSourceNavigator : SourceNavigator {
         return source?.getParentOfParent()?.tokenType == KtNodeTypes.CATCH
     }
 
-    private fun FirSourceElement?.getParentOfParent(): LighterASTNode? {
+    private fun KtSourceElement?.getParentOfParent(): LighterASTNode? {
         val source = this ?: return null
         var parent = source.treeStructure.getParent(source.lighterASTNode)
         parent?.let { parent = source.treeStructure.getParent(it) }
@@ -104,14 +104,14 @@ object PsiSourceNavigator : LightTreeSourceNavigator() {
     //Swallows incorrect casts!!!
     private inline fun <reified P : PsiElement> FirElement.psi(): P? = source?.psi()
 
-    private inline fun <reified P : PsiElement> FirSourceElement.psi(): P? {
-        val psi = (this as? FirPsiSourceElement)?.psi
+    private inline fun <reified P : PsiElement> KtSourceElement.psi(): P? {
+        val psi = (this as? KtPsiSourceElement)?.psi
         return psi as? P
     }
 
     override fun FirTypeRef.isInConstructorCallee(): Boolean = psi<KtTypeReference>()?.parent is KtConstructorCalleeExpression
 
-    override fun FirSourceElement.getRawIdentifier(): String? {
+    override fun KtSourceElement.getRawIdentifier(): String? {
         val psi = psi<PsiElement>()
         return if (psi is KtNameReferenceExpression) {
             psi.getReferencedNameElement().node.text

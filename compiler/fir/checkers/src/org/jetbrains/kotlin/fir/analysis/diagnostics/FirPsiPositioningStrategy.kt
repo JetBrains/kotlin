@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.cfg.UnreachableCode
 import org.jetbrains.kotlin.diagnostics.DiagnosticMarker
 import org.jetbrains.kotlin.diagnostics.PositioningStrategy
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
-import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
@@ -22,8 +22,8 @@ object FirPsiPositioningStrategies {
         override fun markDiagnostic(diagnostic: DiagnosticMarker): List<TextRange> {
             //todo it is better to implement arguments extraction in FirDiagnosticFactory, but kotlin struggle with checking types in it atm
             @Suppress("UNCHECKED_CAST")
-            val typed = diagnostic as FirDiagnosticWithParameters2<Set<FirSourceElement>, Set<FirSourceElement>>
-            val source = diagnostic.element as FirPsiSourceElement
+            val typed = diagnostic as FirDiagnosticWithParameters2<Set<KtSourceElement>, Set<KtSourceElement>>
+            val source = diagnostic.element as KtPsiSourceElement
             return UnreachableCode.getUnreachableTextRanges(
                 source.psi as KtElement,
                 typed.a.mapNotNull { it.psi as? KtElement }.toSet(),

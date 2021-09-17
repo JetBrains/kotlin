@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.unwrapArgument
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 
 class FirAnnotationArgumentMappingImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val mapping: Map<Name, FirExpression>
 ) : FirAnnotationArgumentMapping() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
@@ -26,7 +26,7 @@ class FirAnnotationArgumentMappingImpl(
 }
 
 object FirEmptyAnnotationArgumentMapping : FirAnnotationArgumentMapping() {
-    override val source: FirSourceElement?
+    override val source: KtSourceElement?
         get() = null
     override val mapping: Map<Name, FirExpression>
         get() = emptyMap()

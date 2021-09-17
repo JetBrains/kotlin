@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 interface FirDeclarationStatus : FirElement {
-    override val source: FirSourceElement?
+    override val source: KtSourceElement?
     val visibility: Visibility
     val modality: Modality?
     val isExpect: Boolean

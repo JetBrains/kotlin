@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -28,7 +29,7 @@ const val ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE = "_root_ide_package_"
 
 fun BodyResolveComponents.resolveRootPartOfQualifier(
     namedReference: FirSimpleNamedReference,
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     typeArguments: List<FirTypeProjection>,
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
 ): FirResolvedQualifier? {
@@ -73,7 +74,7 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
 
 fun FirResolvedQualifier.continueQualifier(
     namedReference: FirSimpleNamedReference,
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     typeArguments: List<FirTypeProjection>,
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
     components: BodyResolveComponents,
@@ -119,7 +120,7 @@ private fun FqName.continueQualifierInPackage(
     typeArguments: List<FirTypeProjection>,
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
     components: BodyResolveComponents,
-    source: FirSourceElement?
+    source: KtSourceElement?
 ): FirResolvedQualifier? {
     val childFqName = this.child(name)
     if (components.symbolProvider.getPackage(childFqName) != null) {
@@ -156,7 +157,7 @@ private fun FqName.continueQualifierInPackage(
 }
 
 internal fun extractNonFatalDiagnostics(
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     explicitReceiver: FirExpression?,
     symbol: FirClassLikeSymbol<*>,
     extraNotFatalDiagnostics: List<ConeDiagnostic>?

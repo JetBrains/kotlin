@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentTypeRefAndSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -53,7 +53,7 @@ object FirClassVarianceChecker : FirClassChecker() {
     ) {
         val memberSource = member.source
         if (member is FirSimpleFunction) {
-            if (memberSource != null && memberSource.kind !is FirFakeSourceElementKind) {
+            if (memberSource != null && memberSource.kind !is KtFakeSourceElementKind) {
                 for (param in member.valueParameters) {
                     checkVarianceConflict(param.returnTypeRef, Variance.IN_VARIANCE, context, reporter)
                 }
@@ -65,7 +65,7 @@ object FirClassVarianceChecker : FirClassChecker() {
 
         var returnSource = member.returnTypeRef.source
         if (returnSource != null && memberSource != null) {
-            if (returnSource.kind is FirFakeSourceElementKind && memberSource.kind !is FirFakeSourceElementKind) {
+            if (returnSource.kind is KtFakeSourceElementKind && memberSource.kind !is KtFakeSourceElementKind) {
                 returnSource = memberSource
             }
         }
@@ -94,7 +94,7 @@ object FirClassVarianceChecker : FirClassChecker() {
     private fun checkVarianceConflict(
         type: FirTypeRef, variance: Variance,
         context: CheckerContext, reporter: DiagnosticReporter,
-        source: FirSourceElement? = null
+        source: KtSourceElement? = null
     ) {
         checkVarianceConflict(type.coneType, variance, type, type.coneType, context, reporter, source)
     }
@@ -106,7 +106,7 @@ object FirClassVarianceChecker : FirClassChecker() {
         containingType: ConeKotlinType,
         context: CheckerContext,
         reporter: DiagnosticReporter,
-        source: FirSourceElement? = null,
+        source: KtSourceElement? = null,
         isInAbbreviation: Boolean = false
     ) {
         if (type is ConeTypeParameterType) {

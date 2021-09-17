@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -13,7 +14,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 interface FirTargetElement : FirElement {
-    override val source: FirSourceElement?
+    override val source: KtSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTargetElement(this, data)
 

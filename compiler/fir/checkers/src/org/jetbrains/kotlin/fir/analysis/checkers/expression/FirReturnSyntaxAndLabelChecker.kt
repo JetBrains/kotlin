@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirRealSourceElementKind
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker() {
     override fun check(expression: FirReturnExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = expression.source
-        if (source?.kind == FirFakeSourceElementKind.ImplicitReturn) return
+        if (source?.kind == KtFakeSourceElementKind.ImplicitReturn) return
 
         val labeledElement = expression.target.labeledElement
         val targetSymbol = labeledElement.symbol
@@ -36,7 +36,7 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker() {
 
         if (targetSymbol is FirAnonymousFunctionSymbol) {
             val label = targetSymbol.label
-            if (label?.source?.kind !is FirRealSourceElementKind) {
+            if (label?.source?.kind !is KtRealSourceElementKind) {
                 val functionCall = context.qualifiedAccessOrAnnotationCalls.asReversed().find {
                     it is FirFunctionCall &&
                             ((it.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirNamedFunctionSymbol)?.callableId ==

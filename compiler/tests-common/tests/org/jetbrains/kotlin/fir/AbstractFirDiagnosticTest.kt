@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory1
 import org.jetbrains.kotlin.checkers.utils.TypeOfCall
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
@@ -62,8 +62,8 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         const val DUMP_CFG_DIRECTIVE = "DUMP_CFG"
 
         private val allowedKindsForDebugInfo = setOf(
-            FirRealSourceElementKind,
-            FirFakeSourceElementKind.DesugaredCompoundAssignment,
+            KtRealSourceElementKind,
+            KtFakeSourceElementKind.DesugaredCompoundAssignment,
         )
 
         val TestFile.withDumpCfgDirective: Boolean
@@ -200,7 +200,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         val sourceElement = element.source ?: return null
         val sourceKind = sourceElement.kind
         if (sourceKind !in allowedKindsForDebugInfo) {
-            if (sourceKind != FirFakeSourceElementKind.ImplicitReturn || sourceElement.elementType != KtNodeTypes.RETURN) {
+            if (sourceKind != KtFakeSourceElementKind.ImplicitReturn || sourceElement.elementType != KtNodeTypes.RETURN) {
                 return null
             }
         }
@@ -212,14 +212,14 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
 
         val argumentText = argument()
         return when (sourceElement) {
-            is FirPsiSourceElement -> FirPsiDiagnosticWithParameters1(
+            is KtPsiSourceElement -> FirPsiDiagnosticWithParameters1(
                 sourceElement,
                 argumentText,
                 severity,
                 FirDiagnosticFactory1(name, severity, SourceElementPositioningStrategy.DEFAULT, PsiElement::class),
                 SourceElementPositioningStrategy.DEFAULT
             )
-            is FirLightSourceElement -> FirLightDiagnosticWithParameters1(
+            is KtLightSourceElement -> FirLightDiagnosticWithParameters1(
                 sourceElement,
                 argumentText,
                 severity,

@@ -6,15 +6,18 @@
 package org.jetbrains.kotlin.analysis.api.fir.generator
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -23,9 +26,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.ClassId
@@ -312,12 +312,12 @@ private object FirToKtConversionCreator {
             KtFunctionLikeSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirSimpleFunction")
         ),
-        FirSourceElement::class to HLFunctionCallConversion(
+        KtSourceElement::class to HLFunctionCallConversion(
             "({0} as FirPsiSourceElement).psi",
             PsiElement::class.createType(),
             importsToAdd = listOf(
                 "org.jetbrains.kotlin.fir.psi",
-                "org.jetbrains.kotlin.fir.FirPsiSourceElement"
+                "org.jetbrains.kotlin.FirPsiSourceElement"
             )
         )
     )

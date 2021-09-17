@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.isCompatible
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -55,7 +55,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         }
         if (compatibility != ConeTypeCompatibilityChecker.Compatibility.COMPATIBLE) {
             when (expression.source?.kind) {
-                FirRealSourceElementKind -> {
+                KtRealSourceElementKind -> {
                     // Note: FE1.0 reports INCOMPATIBLE_ENUM_COMPARISON_ERROR only when TypeIntersector.isIntersectionEmpty() thinks the
                     // given types are compatible. Exactly mimicking the behavior of FE1.0 is difficult and does not seem to provide any
                     // value. So instead, we deterministically output INCOMPATIBLE_ENUM_COMPARISON_ERROR if at least one of the value is an

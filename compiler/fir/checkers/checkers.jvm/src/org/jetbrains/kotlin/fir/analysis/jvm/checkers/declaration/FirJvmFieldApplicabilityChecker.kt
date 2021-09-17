@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.JvmFieldApplicabilityProblem.*
-import org.jetbrains.kotlin.name.JvmNames.JVM_MULTIFILE_CLASS_SHORT
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -29,7 +27,6 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -98,8 +95,8 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
     }
 
     private fun FirProperty.hasCustomAccessor(): Boolean {
-        return (getter != null && getter?.source?.kind !is FirFakeSourceElementKind) ||
-                (setter != null && setter?.source?.kind !is FirFakeSourceElementKind)
+        return (getter != null && getter?.source?.kind !is KtFakeSourceElementKind) ||
+                (setter != null && setter?.source?.kind !is KtFakeSourceElementKind)
     }
 
     private fun FirRegularClassSymbol.isInsideCompanionObjectOfInterface(session: FirSession): Boolean {

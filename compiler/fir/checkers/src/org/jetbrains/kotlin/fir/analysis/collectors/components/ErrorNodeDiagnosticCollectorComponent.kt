@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
@@ -59,7 +59,7 @@ class ErrorNodeDiagnosticCollectorComponent(
         // Don't report duplicated unresolved reference on annotation entry (already reported on its type)
         if (source.elementType == KtNodeTypes.ANNOTATION_ENTRY && errorNamedReference.diagnostic is ConeUnresolvedNameError) return
         // Already reported in FirConventionFunctionCallChecker
-        if (source.kind == FirFakeSourceElementKind.ArrayAccessNameReference &&
+        if (source.kind == KtFakeSourceElementKind.ArrayAccessNameReference &&
             errorNamedReference.diagnostic is ConeUnresolvedNameError
         ) return
 
@@ -106,10 +106,10 @@ class ErrorNodeDiagnosticCollectorComponent(
 
     private fun reportFirDiagnostic(
         diagnostic: ConeDiagnostic,
-        source: FirSourceElement,
+        source: KtSourceElement,
         reporter: DiagnosticReporter,
         context: CheckerContext,
-        qualifiedAccessSource: FirSourceElement? = null
+        qualifiedAccessSource: KtSourceElement? = null
     ) {
         // Will be handled by [FirDestructuringDeclarationChecker]
         if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
@@ -117,13 +117,13 @@ class ErrorNodeDiagnosticCollectorComponent(
         }
 
         // Will be handled by [FirDelegatedPropertyChecker]
-        if (source.kind == FirFakeSourceElementKind.DelegatedPropertyAccessor &&
+        if (source.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor &&
             (diagnostic is ConeUnresolvedNameError || diagnostic is ConeAmbiguityError || diagnostic is ConeInapplicableWrongReceiver || diagnostic is ConeInapplicableCandidateError)
         ) {
             return
         }
 
-        if (source.kind == FirFakeSourceElementKind.ImplicitConstructor || source.kind == FirFakeSourceElementKind.DesugaredForLoop) {
+        if (source.kind == KtFakeSourceElementKind.ImplicitConstructor || source.kind == KtFakeSourceElementKind.DesugaredForLoop) {
             // See FirForLoopChecker
             return
         }

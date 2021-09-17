@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirWhenBranchBuilder {
-    var source: FirSourceElement? = null
+    var source: KtSourceElement? = null
     lateinit var condition: FirExpression
     lateinit var result: FirBlock
 

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 sealed interface FirTypeParametersOwner : FirTypeParameterRefsOwner {
-    override val source: FirSourceElement?
+    override val source: KtSourceElement?
     override val typeParameters: List<FirTypeParameter>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeParametersOwner(this, data)

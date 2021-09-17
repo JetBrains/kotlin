@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.ConstantArgumentKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkConstantArguments
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -145,7 +145,7 @@ object FirAnnotationArgumentChecker : FirAnnotationCallChecker() {
     }
 
     private fun checkDeprecatedSinceKotlin(
-        source: FirSourceElement?,
+        source: KtSourceElement?,
         fqName: FqName?,
         argumentMapping: Map<Name, FirExpression>,
         context: CheckerContext,

@@ -8,11 +8,14 @@ package org.jetbrains.kotlin.analysis.api.fir
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.KtFakeSourceElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.KtDeclarationAndFirDeclarationEqualityChecker
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSession
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.KtDeclarationAndFirDeclarationEqualityChecker
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSession
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -137,17 +140,17 @@ object FirIdeDeserializedDeclarationSourceProvider {
 private fun KtElement.isCompiled(): Boolean = containingKtFile.isCompiled
 
 private val allowedFakeElementKinds = setOf(
-    FirFakeSourceElementKind.FromUseSiteTarget,
-    FirFakeSourceElementKind.PropertyFromParameter,
-    FirFakeSourceElementKind.ItLambdaParameter,
-    FirFakeSourceElementKind.DataClassGeneratedMembers,
-    FirFakeSourceElementKind.ImplicitConstructor,
+    KtFakeSourceElementKind.FromUseSiteTarget,
+    KtFakeSourceElementKind.PropertyFromParameter,
+    KtFakeSourceElementKind.ItLambdaParameter,
+    KtFakeSourceElementKind.DataClassGeneratedMembers,
+    KtFakeSourceElementKind.ImplicitConstructor,
 )
 
 private fun FirElement.getAllowedPsi() = when (val source = source) {
     null -> null
-    is FirRealPsiSourceElement -> source.psi
-    is FirFakeSourceElement -> if (source.kind in allowedFakeElementKinds) psi else null
+    is KtRealPsiSourceElement -> source.psi
+    is KtFakeSourceElement -> if (source.kind in allowedFakeElementKinds) psi else null
     else -> null
 }
 

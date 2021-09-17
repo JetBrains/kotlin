@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationInspector
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationPresenter
@@ -244,7 +245,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
             }
         }
 
-        if (declaration.source?.kind !is FirFakeSourceElementKind) {
+        if (declaration.source?.kind !is KtFakeSourceElementKind) {
             when (declaration) {
                 is FirMemberDeclaration -> {
                     if (declaration is FirFunction) {

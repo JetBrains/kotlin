@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirTarget
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirContinueExpression
 import org.jetbrains.kotlin.fir.expressions.FirLoop
-import org.jetbrains.kotlin.fir.fakeElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirContinueExpressionImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val annotations: MutableList<FirAnnotation>,
     override val target: FirTarget<FirLoop>,
 ) : FirContinueExpression() {
-    override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef))
+    override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef))
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)

@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistenceContextCollector
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistentCheckerContextFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LockProvider
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistenceContextCollector
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistentCheckerContextFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LockProvider
 
 internal abstract class FileStructureElementDiagnosticRetriever {
     abstract fun retrieve(
@@ -84,8 +84,8 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
 
     companion object {
         fun shouldDiagnosticsAlwaysBeCheckedOn(firElement: FirElement) = when (firElement.source?.kind) {
-            FirFakeSourceElementKind.PropertyFromParameter -> true
-            FirFakeSourceElementKind.ImplicitConstructor -> true
+            KtFakeSourceElementKind.PropertyFromParameter -> true
+            KtFakeSourceElementKind.ImplicitConstructor -> true
             else -> false
         }
     }

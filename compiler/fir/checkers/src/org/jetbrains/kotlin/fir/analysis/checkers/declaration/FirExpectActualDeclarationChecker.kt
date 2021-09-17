@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -118,7 +118,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
 
     @Suppress("UNUSED_PARAMETER")
     private fun checkAnnotationConstructors(
-        source: FirSourceElement?,
+        source: KtSourceElement?,
         expected: FirConstructorSymbol,
         actual: FirConstructorSymbol,
         context: CheckerContext,

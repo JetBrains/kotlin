@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCallInfo
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
@@ -12,9 +13,9 @@ import org.jetbrains.kotlin.utils.SmartList
 
 abstract class FirLookupTrackerComponent : FirSessionComponent {
 
-    abstract fun recordLookup(name: Name, inScopes: List<String>, source: FirSourceElement?, fileSource: FirSourceElement?)
+    abstract fun recordLookup(name: Name, inScopes: List<String>, source: KtSourceElement?, fileSource: KtSourceElement?)
 
-    abstract fun recordLookup(name: Name, inScope: String, source: FirSourceElement?, fileSource: FirSourceElement?)
+    abstract fun recordLookup(name: Name, inScope: String, source: KtSourceElement?, fileSource: KtSourceElement?)
 }
 
 fun FirLookupTrackerComponent.recordCallLookup(callInfo: AbstractCallInfo, inType: ConeKotlinType) {
@@ -30,11 +31,11 @@ fun FirLookupTrackerComponent.recordCallLookup(callInfo: AbstractCallInfo, inSco
     recordLookup(callInfo.name, inScopes, callInfo.callSite.source, callInfo.containingFile.source)
 }
 
-fun FirLookupTrackerComponent.recordTypeLookup(typeRef: FirTypeRef, inScopes: List<String>, fileSource: FirSourceElement?) {
+fun FirLookupTrackerComponent.recordTypeLookup(typeRef: FirTypeRef, inScopes: List<String>, fileSource: KtSourceElement?) {
     if (typeRef is FirUserTypeRef) recordLookup(typeRef.qualifier.first().name, inScopes, typeRef.source, fileSource)
 }
 
-fun FirLookupTrackerComponent.recordTypeResolveAsLookup(typeRef: FirTypeRef, source: FirSourceElement?, fileSource: FirSourceElement?) {
+fun FirLookupTrackerComponent.recordTypeResolveAsLookup(typeRef: FirTypeRef, source: KtSourceElement?, fileSource: KtSourceElement?) {
     if (typeRef !is FirResolvedTypeRef) return // TODO: check if this is the correct behavior
     if (source == null && fileSource == null) return // TODO: investigate all cases
 

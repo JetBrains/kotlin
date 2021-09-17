@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.cfa.util.*
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
@@ -185,7 +185,7 @@ object UnusedChecker : FirControlFlowChecker() {
             data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
         ): PathAwareVariableStatusInfo {
             val dataForNode = visitNode(node, data)
-            if (node.fir.source?.kind is FirFakeSourceElementKind) return dataForNode
+            if (node.fir.source?.kind is KtFakeSourceElementKind) return dataForNode
             val symbol = node.fir.symbol
             return update(dataForNode, symbol) { prev ->
                 when (prev) {
@@ -322,6 +322,6 @@ object UnusedChecker : FirControlFlowChecker() {
     private val FirPropertySymbol.isLoopIterator: Boolean
         get() {
             @OptIn(SymbolInternals::class)
-            return fir.initializer?.source?.kind == FirFakeSourceElementKind.DesugaredForLoop
+            return fir.initializer?.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
         }
 }

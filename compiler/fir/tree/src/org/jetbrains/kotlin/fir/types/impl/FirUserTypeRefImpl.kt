@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
 class FirUserTypeRefImpl(
-    override var source: FirSourceElement?,
+    override var source: KtSourceElement?,
     override val isMarkedNullable: Boolean,
     override val qualifier: MutableList<FirQualifierPart>,
     override val annotations: MutableList<FirAnnotation>

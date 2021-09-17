@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
+import org.jetbrains.kotlin.analysis.api.fir.utils.FirRefWithValidityCheck
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -13,10 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.originalIfFakeOverride
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
-import org.jetbrains.kotlin.analysis.api.fir.utils.FirRefWithValidityCheck
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 
 internal interface KtFirSymbol<out F : FirDeclaration> : KtSymbol, ValidityTokenOwner {
     val firRef: FirRefWithValidityCheck<F>
@@ -35,10 +35,10 @@ internal fun KtFirSymbol<*>.symbolHashCode(): Int = firRef.hashCode() * 31 + tok
 internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (origin) {
     FirDeclarationOrigin.Source -> {
         when (source?.kind) {
-            FirFakeSourceElementKind.ImplicitConstructor,
-            FirFakeSourceElementKind.DataClassGeneratedMembers,
-            FirFakeSourceElementKind.EnumGeneratedDeclaration,
-            FirFakeSourceElementKind.ItLambdaParameter -> KtSymbolOrigin.SOURCE_MEMBER_GENERATED
+            KtFakeSourceElementKind.ImplicitConstructor,
+            KtFakeSourceElementKind.DataClassGeneratedMembers,
+            KtFakeSourceElementKind.EnumGeneratedDeclaration,
+            KtFakeSourceElementKind.ItLambdaParameter -> KtSymbolOrigin.SOURCE_MEMBER_GENERATED
 
             else -> KtSymbolOrigin.SOURCE
         }

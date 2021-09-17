@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirRealSourceElementKind
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -29,7 +29,7 @@ object FirConventionFunctionCallChecker : FirFunctionCallChecker() {
         val calleeReference = expression.calleeReference as? FirErrorNamedReference ?: return
         val diagnostic = calleeReference.diagnostic as? ConeUnresolvedNameError ?: return
 
-        if (expression.calleeReference.source?.kind == FirFakeSourceElementKind.ArrayAccessNameReference) {
+        if (expression.calleeReference.source?.kind == KtFakeSourceElementKind.ArrayAccessNameReference) {
             when (diagnostic.name) {
                 OperatorNameConventions.GET -> reporter.reportOn(calleeReference.source, FirErrors.NO_GET_METHOD, context)
                 OperatorNameConventions.SET -> reporter.reportOn(calleeReference.source, FirErrors.NO_SET_METHOD, context)
@@ -44,9 +44,9 @@ object FirConventionFunctionCallChecker : FirFunctionCallChecker() {
         reporter: DiagnosticReporter
     ) {
         val sourceKind = callExpression.source?.kind
-        if (sourceKind !is FirRealSourceElementKind &&
-            sourceKind !is FirFakeSourceElementKind.GeneratedComparisonExpression &&
-            sourceKind !is FirFakeSourceElementKind.DesugaredCompoundAssignment
+        if (sourceKind !is KtRealSourceElementKind &&
+            sourceKind !is KtFakeSourceElementKind.GeneratedComparisonExpression &&
+            sourceKind !is KtFakeSourceElementKind.DesugaredCompoundAssignment
         ) return
         val unwrapped = when (receiver) {
             is FirExpressionWithSmartcast -> receiver.originalExpression

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentTypeRefAndSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -74,7 +74,7 @@ object FirProjectionRelationChecker : FirBasicDeclarationChecker() {
 
             val argTypeRefSource = extractArgumentTypeRefAndSource(typeRef, it) ?: continue
 
-            if (projectionRelation != ProjectionRelation.None && typeRef.source?.kind !is FirFakeSourceElementKind) {
+            if (projectionRelation != ProjectionRelation.None && typeRef.source?.kind !is KtFakeSourceElementKind) {
                 reporter.reportOn(
                     argTypeRefSource.source ?: argTypeRefSource.typeRef?.source,
                     if (projectionRelation == ProjectionRelation.Conflicting)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -494,7 +496,7 @@ class Fir2IrVisitor(
     internal fun convertToIrExpression(expression: FirExpression, annotationMode: Boolean = false): IrExpression {
         return when (expression) {
             is FirBlock -> expression.convertToIrExpressionOrBlock(
-                if (expression.source?.kind == FirFakeSourceElementKind.DesugaredForLoop) IrStatementOrigin.FOR_LOOP else null
+                if (expression.source?.kind == KtFakeSourceElementKind.DesugaredForLoop) IrStatementOrigin.FOR_LOOP else null
             )
             is FirUnitExpression -> expression.convertWithOffsets { startOffset, endOffset ->
                 IrGetObjectValueImpl(
@@ -629,7 +631,7 @@ class Fir2IrVisitor(
         if (size == 1) {
             val firStatement = single()
             if (firStatement is FirExpression &&
-                (firStatement !is FirBlock || firStatement.source?.kind != FirFakeSourceElementKind.DesugaredForLoop)
+                (firStatement !is FirBlock || firStatement.source?.kind != KtFakeSourceElementKind.DesugaredForLoop)
             ) {
                 return convertToIrExpression(firStatement)
             }

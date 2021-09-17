@@ -5,29 +5,32 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirRealSourceElementKind
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.getDeprecation
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.expressions.FirResolvable
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirDeprecationChecker : FirBasicExpressionChecker() {
 
     private val allowedSourceKinds = setOf(
-        FirRealSourceElementKind,
-        FirFakeSourceElementKind.DesugaredIncrementOrDecrement
+        KtRealSourceElementKind,
+        KtFakeSourceElementKind.DesugaredIncrementOrDecrement
     )
 
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -41,7 +44,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
     }
 
     internal fun reportDeprecationIfNeeded(
-        source: FirSourceElement?,
+        source: KtSourceElement?,
         referencedSymbol: FirBasedSymbol<*>,
         callSite: FirElement?,
         context: CheckerContext,
@@ -52,7 +55,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
     }
 
     internal fun reportDeprecation(
-        source: FirSourceElement?,
+        source: KtSourceElement?,
         referencedSymbol: FirBasedSymbol<*>,
         deprecationInfo: DeprecationInfo,
         reporter: DiagnosticReporter,

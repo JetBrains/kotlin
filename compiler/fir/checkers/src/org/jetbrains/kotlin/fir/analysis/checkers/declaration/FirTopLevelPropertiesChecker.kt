@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.FirModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -35,7 +35,7 @@ object FirTopLevelPropertiesChecker : FirFileChecker() {
 
     private fun checkProperty(property: FirProperty, reporter: DiagnosticReporter, context: CheckerContext) {
         val source = property.source ?: return
-        if (source.kind is FirFakeSourceElementKind) return
+        if (source.kind is KtFakeSourceElementKind) return
         // If multiple (potentially conflicting) modality modifiers are specified, not all modifiers are recorded at `status`.
         // So, our source of truth should be the full modifier list retrieved from the source.
         val modifierList = source.getModifierList()
@@ -57,7 +57,7 @@ object FirTopLevelPropertiesChecker : FirFileChecker() {
 // TODO: check class too
 internal fun checkExpectDeclarationVisibilityAndBody(
     declaration: FirMemberDeclaration,
-    source: FirSourceElement,
+    source: KtSourceElement,
     reporter: DiagnosticReporter,
     context: CheckerContext
 ) {

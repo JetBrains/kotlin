@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAbstractArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 abstract class FirResolvedArgumentList : FirAbstractArgumentList() {
-    abstract override val source: FirSourceElement?
+    abstract override val source: KtSourceElement?
     abstract val mapping: LinkedHashMap<FirExpression, FirValueParameter>
 
     override val arguments: List<FirExpression>
@@ -38,7 +38,7 @@ abstract class FirResolvedArgumentList : FirAbstractArgumentList() {
 
 
 internal class FirResolvedArgumentListImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     mapping: LinkedHashMap<FirExpression, FirValueParameter>
 ) : FirResolvedArgumentList() {
 
@@ -52,7 +52,7 @@ internal class FirResolvedArgumentListImpl(
 }
 
 internal class FirResolvedArgumentListForErrorCall(
-    override var source: FirSourceElement?,
+    override var source: KtSourceElement?,
     private var _mapping: LinkedHashMap<FirExpression, FirValueParameter?>
 ) : FirResolvedArgumentList() {
 

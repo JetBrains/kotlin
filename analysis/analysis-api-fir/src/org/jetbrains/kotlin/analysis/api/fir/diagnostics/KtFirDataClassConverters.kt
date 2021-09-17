@@ -5,38 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
+import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtAnonymousInitializer
-import org.jetbrains.kotlin.psi.KtArrayAccessExpression
-import org.jetbrains.kotlin.psi.KtBackingField
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtConstructor
-import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtDeclarationWithBody
-import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
-import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtExpressionWithLabel
 import org.jetbrains.kotlin.psi.KtFunction
@@ -253,7 +227,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a.fir),
             firDiagnostic.b,
             firDiagnostic.c,
-            firDiagnostic as FirPsiDiagnostic,
+            firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
@@ -369,26 +343,26 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.SUPER_IS_NOT_AN_EXPRESSION) { firDiagnostic ->
         SuperIsNotAnExpressionImpl(
-            firDiagnostic as FirPsiDiagnostic,
+            firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
     add(FirErrors.SUPER_NOT_AVAILABLE) { firDiagnostic ->
         SuperNotAvailableImpl(
-            firDiagnostic as FirPsiDiagnostic,
+            firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
     add(FirErrors.ABSTRACT_SUPER_CALL) { firDiagnostic ->
         AbstractSuperCallImpl(
-            firDiagnostic as FirPsiDiagnostic,
+            firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
     add(FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL) { firDiagnostic ->
         InstanceAccessBeforeSuperCallImpl(
             firDiagnostic.a,
-            firDiagnostic as FirPsiDiagnostic,
+            firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
@@ -993,19 +967,19 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET) { firDiagnostic ->
         OptInMarkerOnWrongTargetImpl(
             firDiagnostic.a,
-            firDiagnostic as FirPsiDiagnostic,
+            firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
     add(FirErrors.OPT_IN_MARKER_ON_OVERRIDE) { firDiagnostic ->
         OptInMarkerOnOverrideImpl(
-            firDiagnostic as FirPsiDiagnostic,
+            firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
     add(FirErrors.OPT_IN_MARKER_ON_OVERRIDE_WARNING) { firDiagnostic ->
         OptInMarkerOnOverrideWarningImpl(
-            firDiagnostic as FirPsiDiagnostic,
+            firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
@@ -2982,10 +2956,10 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.UNREACHABLE_CODE) { firDiagnostic ->
         UnreachableCodeImpl(
             firDiagnostic.a.map { firSourceElement ->
-                (firSourceElement as FirPsiSourceElement).psi
+                (firSourceElement as KtPsiSourceElement).psi
             },
             firDiagnostic.b.map { firSourceElement ->
-                (firSourceElement as FirPsiSourceElement).psi
+                (firSourceElement as KtPsiSourceElement).psi
             },
             firDiagnostic as FirPsiDiagnostic,
             token,
@@ -3178,13 +3152,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.CONFUSING_BRANCH_CONDITION.errorFactory) { firDiagnostic ->
         ConfusingBranchConditionErrorImpl(
-            firDiagnostic as FirPsiDiagnostic,
+            firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
     add(FirErrors.CONFUSING_BRANCH_CONDITION.warningFactory) { firDiagnostic ->
         ConfusingBranchConditionWarningImpl(
-            firDiagnostic as FirPsiDiagnostic,
+            firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
@@ -3390,7 +3364,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.DSL_SCOPE_VIOLATION) { firDiagnostic ->
         DslScopeViolationImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a.fir),
-            firDiagnostic as FirPsiDiagnostic,
+            firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
@@ -3517,7 +3491,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.NOT_A_FUNCTION_LABEL) { firDiagnostic ->
         NotAFunctionLabelImpl(
-            firDiagnostic as FirPsiDiagnostic,
+            firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }

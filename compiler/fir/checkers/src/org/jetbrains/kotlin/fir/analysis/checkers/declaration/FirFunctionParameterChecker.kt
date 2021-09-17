@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isInlineClass
 import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
@@ -43,7 +43,7 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
             val returnTypeRef = valueParameter.returnTypeRef
             if (returnTypeRef !is FirErrorTypeRef) continue
             // type problems on real source are already reported by ConeDiagnostic.toFirDiagnostics
-            if (returnTypeRef.source?.kind == FirRealSourceElementKind) continue
+            if (returnTypeRef.source?.kind == KtRealSourceElementKind) continue
 
             val diagnostic = returnTypeRef.diagnostic
             if (diagnostic is ConeSimpleDiagnostic && diagnostic.kind == DiagnosticKind.ValueParameterWithNoTypeAnnotation) {
@@ -125,7 +125,7 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
 
         for (valueParameter in function.valueParameters) {
             val source = valueParameter.source
-            if (source?.kind is FirFakeSourceElementKind) continue
+            if (source?.kind is KtFakeSourceElementKind) continue
             source.valOrVarKeyword?.let {
                 if (function is FirConstructor) {
                     reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, it, context)

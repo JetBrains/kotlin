@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
@@ -32,7 +32,7 @@ object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker() {
 
     private fun checkInternal(
         declaration: FirDeclaration,
-        reportSource: FirSourceElement?,
+        reportSource: KtSourceElement?,
         modality: Modality?,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -47,7 +47,7 @@ object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker() {
 
         if (!declaration.isExternal) return
         val source = declaration.source ?: return
-        if (source.kind is FirFakeSourceElementKind) return
+        if (source.kind is KtFakeSourceElementKind) return
 
         // WRONG_MODIFIER_TARGET on external constructor is intentionally NOT covered in this checker.
         if (declaration !is FirFunction) {

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.overriddenFunctions
@@ -45,7 +45,7 @@ object FirJvmInconsistentOperatorFromJavaCallChecker : FirFunctionCallChecker() 
         callableSymbol.check(expression.calleeReference.source, context, reporter)
     }
 
-    fun FirNamedFunctionSymbol.check(source: FirSourceElement?, context: CheckerContext, reporter: DiagnosticReporter): Boolean {
+    fun FirNamedFunctionSymbol.check(source: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter): Boolean {
         if (callableId == CONCURRENT_HASH_MAP_CALLABLE_ID) {
             reporter.reportOn(source, FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR, context)
             return true

@@ -2,11 +2,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
+import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.fir.FirLightSourceElement
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import kotlin.reflect.KClass
 
 @RequiresOptIn("Please use DiagnosticReporter.reportOn method if possible")
@@ -35,14 +35,14 @@ class FirDiagnosticFactory0(
 
     @InternalDiagnosticFactoryMethod
     fun on(
-        element: FirSourceElement,
+        element: KtSourceElement,
         positioningStrategy: SourceElementPositioningStrategy?
     ): FirSimpleDiagnostic {
         return when (element) {
-            is FirPsiSourceElement -> FirPsiSimpleDiagnostic(
+            is KtPsiSourceElement -> FirPsiSimpleDiagnostic(
                 element, severity, this, positioningStrategy ?: defaultPositioningStrategy
             )
-            is FirLightSourceElement -> FirLightSimpleDiagnostic(element, severity, this, positioningStrategy ?: defaultPositioningStrategy)
+            is KtLightSourceElement -> FirLightSimpleDiagnostic(element, severity, this, positioningStrategy ?: defaultPositioningStrategy)
             else -> incorrectElement(element)
         }
     }
@@ -61,15 +61,15 @@ class FirDiagnosticFactory1<A>(
 
     @InternalDiagnosticFactoryMethod
     fun on(
-        element: FirSourceElement,
+        element: KtSourceElement,
         a: A,
         positioningStrategy: SourceElementPositioningStrategy?
     ): FirDiagnosticWithParameters1<A> {
         return when (element) {
-            is FirPsiSourceElement -> FirPsiDiagnosticWithParameters1(
+            is KtPsiSourceElement -> FirPsiDiagnosticWithParameters1(
                 element, a, severity, this, positioningStrategy ?: defaultPositioningStrategy
             )
-            is FirLightSourceElement -> FirLightDiagnosticWithParameters1(
+            is KtLightSourceElement -> FirLightDiagnosticWithParameters1(
                 element,
                 a,
                 severity,
@@ -95,16 +95,16 @@ class FirDiagnosticFactory2<A, B>(
 
     @InternalDiagnosticFactoryMethod
     fun on(
-        element: FirSourceElement,
+        element: KtSourceElement,
         a: A,
         b: B,
         positioningStrategy: SourceElementPositioningStrategy?
     ): FirDiagnosticWithParameters2<A, B> {
         return when (element) {
-            is FirPsiSourceElement -> FirPsiDiagnosticWithParameters2(
+            is KtPsiSourceElement -> FirPsiDiagnosticWithParameters2(
                 element, a, b, severity, this, positioningStrategy ?: defaultPositioningStrategy
             )
-            is FirLightSourceElement -> FirLightDiagnosticWithParameters2(
+            is KtLightSourceElement -> FirLightDiagnosticWithParameters2(
                 element,
                 a,
                 b,
@@ -132,17 +132,17 @@ class FirDiagnosticFactory3<A, B, C>(
 
     @InternalDiagnosticFactoryMethod
     fun on(
-        element: FirSourceElement,
+        element: KtSourceElement,
         a: A,
         b: B,
         c: C,
         positioningStrategy: SourceElementPositioningStrategy?
     ): FirDiagnosticWithParameters3<A, B, C> {
         return when (element) {
-            is FirPsiSourceElement -> FirPsiDiagnosticWithParameters3(
+            is KtPsiSourceElement -> FirPsiDiagnosticWithParameters3(
                 element, a, b, c, severity, this, positioningStrategy ?: defaultPositioningStrategy
             )
-            is FirLightSourceElement -> FirLightDiagnosticWithParameters3(
+            is KtLightSourceElement -> FirLightDiagnosticWithParameters3(
                 element,
                 a,
                 b,
@@ -172,7 +172,7 @@ class FirDiagnosticFactory4<A, B, C, D>(
 
     @InternalDiagnosticFactoryMethod
     fun on(
-        element: FirSourceElement,
+        element: KtSourceElement,
         a: A,
         b: B,
         c: C,
@@ -180,10 +180,10 @@ class FirDiagnosticFactory4<A, B, C, D>(
         positioningStrategy: SourceElementPositioningStrategy?
     ): FirDiagnosticWithParameters4<A, B, C, D> {
         return when (element) {
-            is FirPsiSourceElement -> FirPsiDiagnosticWithParameters4(
+            is KtPsiSourceElement -> FirPsiDiagnosticWithParameters4(
                 element, a, b, c, d, severity, this, positioningStrategy ?: defaultPositioningStrategy
             )
-            is FirLightSourceElement -> FirLightDiagnosticWithParameters4(
+            is KtLightSourceElement -> FirLightDiagnosticWithParameters4(
                 element,
                 a,
                 b,
@@ -198,7 +198,7 @@ class FirDiagnosticFactory4<A, B, C, D>(
     }
 }
 
-private fun incorrectElement(element: FirSourceElement): Nothing {
+private fun incorrectElement(element: KtSourceElement): Nothing {
     throw IllegalArgumentException("Unknown element type: ${element::class}")
 }
 

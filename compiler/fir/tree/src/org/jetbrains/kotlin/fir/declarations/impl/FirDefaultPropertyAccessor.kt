@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
@@ -23,7 +26,7 @@ import org.jetbrains.kotlin.name.Name
 
 @OptIn(FirImplementationDetail::class)
 abstract class FirDefaultPropertyAccessor(
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     moduleData: FirModuleData,
     origin: FirDeclarationOrigin,
     propertyTypeRef: FirTypeRef,
@@ -67,7 +70,7 @@ abstract class FirDefaultPropertyAccessor(
 
     companion object {
         fun createGetterOrSetter(
-            source: FirSourceElement?,
+            source: KtSourceElement?,
             moduleData: FirModuleData,
             origin: FirDeclarationOrigin,
             propertyTypeRef: FirTypeRef,
@@ -89,7 +92,7 @@ abstract class FirDefaultPropertyAccessor(
 }
 
 class FirDefaultPropertyGetter(
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     moduleData: FirModuleData,
     origin: FirDeclarationOrigin,
     propertyTypeRef: FirTypeRef,
@@ -113,7 +116,7 @@ class FirDefaultPropertyGetter(
 )
 
 class FirDefaultPropertySetter(
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     moduleData: FirModuleData,
     origin: FirDeclarationOrigin,
     propertyTypeRef: FirTypeRef,
@@ -130,7 +133,7 @@ class FirDefaultPropertySetter(
     FirImplicitUnitTypeRef(source),
     valueParameters = mutableListOf(
         buildDefaultSetterValueParameter builder@{
-            this@builder.source = source?.fakeElement(FirFakeSourceElementKind.DefaultAccessor)
+            this@builder.source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
             this@builder.moduleData = moduleData
             this@builder.origin = origin
             this@builder.returnTypeRef = propertyTypeRef

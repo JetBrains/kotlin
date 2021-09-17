@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.PositioningStrategy
-import org.jetbrains.kotlin.fir.FirLightSourceElement
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
-import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.psi
 
 class SourceElementPositioningStrategy(
     private val lightTreeStrategy: LightTreePositioningStrategy,
@@ -19,15 +18,15 @@ class SourceElementPositioningStrategy(
 ) {
     fun markDiagnostic(diagnostic: FirDiagnostic): List<TextRange> {
         return when (val element = diagnostic.element) {
-            is FirPsiSourceElement -> psiStrategy.markDiagnostic(diagnostic)
-            is FirLightSourceElement -> lightTreeStrategy.markFirDiagnostic(element, diagnostic)
+            is KtPsiSourceElement -> psiStrategy.markDiagnostic(diagnostic)
+            is KtLightSourceElement -> lightTreeStrategy.markFirDiagnostic(element, diagnostic)
         }
     }
 
-    fun isValid(element: FirSourceElement): Boolean {
+    fun isValid(element: KtSourceElement): Boolean {
         return when (element) {
-            is FirPsiSourceElement -> psiStrategy.hackyIsValid(element.psi)
-            is FirLightSourceElement -> lightTreeStrategy.isValid(element.lighterASTNode, element.treeStructure)
+            is KtPsiSourceElement -> psiStrategy.hackyIsValid(element.psi)
+            is KtLightSourceElement -> lightTreeStrategy.isValid(element.lighterASTNode, element.treeStructure)
         }
     }
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -32,7 +33,7 @@ fun FirFunctionCall.copy(
     explicitReceiver: FirExpression? = this.explicitReceiver,
     dispatchReceiver: FirExpression = this.dispatchReceiver,
     extensionReceiver: FirExpression = this.extensionReceiver,
-    source: FirSourceElement? = this.source,
+    source: KtSourceElement? = this.source,
     typeArguments: List<FirTypeProjection> = this.typeArguments,
     resultType: FirTypeRef = this.typeRef
 ): FirFunctionCall {
@@ -79,7 +80,7 @@ inline fun FirFunctionCall.copyAsImplicitInvokeCall(
 
 fun FirAnonymousFunction.copy(
     receiverTypeRef: FirTypeRef? = this.receiverTypeRef,
-    source: FirSourceElement? = this.source,
+    source: KtSourceElement? = this.source,
     moduleData: FirModuleData = this.moduleData,
     origin: FirDeclarationOrigin = this.origin,
     returnTypeRef: FirTypeRef = this.returnTypeRef,

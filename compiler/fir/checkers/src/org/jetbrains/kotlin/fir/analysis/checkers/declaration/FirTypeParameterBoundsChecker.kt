@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -77,7 +77,7 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
         reporter: DiagnosticReporter
     ) {
         if (containingDeclaration is FirTypeAlias) {
-            declaration.bounds.filter { it.source?.kind == FirRealSourceElementKind }.forEach { bound ->
+            declaration.bounds.filter { it.source?.kind == KtRealSourceElementKind }.forEach { bound ->
                 reporter.reportOn(bound.source, FirErrors.BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED, context)
             }
         }

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.declarations.utils
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -30,7 +30,7 @@ var FirRegularClass.moduleName: String? by FirDeclarationDataRegistry.data(Modul
 /**
  * Constraint without corresponding type argument
  */
-data class DanglingTypeConstraint(val name: Name, val source: FirSourceElement)
+data class DanglingTypeConstraint(val name: Name, val source: KtSourceElement)
 
 var <T> T.danglingTypeConstraints: List<DanglingTypeConstraint>?
         where T : FirDeclaration, T : FirTypeParameterRefsOwner

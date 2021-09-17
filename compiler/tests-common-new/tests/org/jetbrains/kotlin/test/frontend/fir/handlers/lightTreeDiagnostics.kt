@@ -9,12 +9,12 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.toFirLightSourceElement
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.toKtLightSourceElement
 
 private typealias Tree = FlyweightCapableTreeStructure<LighterASTNode>
 
@@ -72,12 +72,12 @@ private object FirTreesExtractVisitor : FirVisitor<Unit, VisitorState>() {
     }
 }
 
-internal fun collectLightTreeSyntaxErrors(file: FirFile): List<FirLightSourceElement> {
+internal fun collectLightTreeSyntaxErrors(file: FirFile): List<KtLightSourceElement> {
     val state = VisitorState()
     file.accept(FirTreesExtractVisitor,state)
     return state.result.flatMap { (tree, offset) ->
         LightTreeErrorsCollector(tree).collectErrorNodes(tree.root).map {
-            it.toFirLightSourceElement(tree, startOffset = it.startOffset + offset, endOffset = it.endOffset + offset)
+            it.toKtLightSourceElement(tree, startOffset = it.startOffset + offset, endOffset = it.endOffset + offset)
         }
     }
 }

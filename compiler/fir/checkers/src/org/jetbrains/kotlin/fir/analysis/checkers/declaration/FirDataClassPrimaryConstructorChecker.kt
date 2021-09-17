@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -24,7 +24,7 @@ object FirDataClassPrimaryConstructorChecker : FirRegularClassChecker() {
 
         val primaryConstructor = declaration.primaryConstructorIfAny(context.session)
 
-        if (primaryConstructor == null || primaryConstructor.source.let { it == null || it.kind is FirFakeSourceElementKind }) {
+        if (primaryConstructor == null || primaryConstructor.source.let { it == null || it.kind is KtFakeSourceElementKind }) {
             reporter.reportOn(declaration.source, FirErrors.PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS, context)
             return
         }

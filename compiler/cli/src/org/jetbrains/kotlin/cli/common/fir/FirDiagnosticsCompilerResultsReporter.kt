@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.cli.common.fir
 
+import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.fir.FirLightSourceElement
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDefaultErrorMessages
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 
@@ -49,17 +49,17 @@ object FirDiagnosticsCompilerResultsReporter {
     }
 
     private fun FirDiagnostic.location(): CompilerMessageSourceLocation? = when (val element = element) {
-        is FirPsiSourceElement -> element.location(this)
-        is FirLightSourceElement -> element.location(this)
+        is KtPsiSourceElement -> element.location(this)
+        is KtLightSourceElement -> element.location(this)
     }
 
-    private fun FirPsiSourceElement.location(diagnostic: FirDiagnostic): CompilerMessageSourceLocation? {
+    private fun KtPsiSourceElement.location(diagnostic: FirDiagnostic): CompilerMessageSourceLocation? {
         val file = psi.containingFile
         return MessageUtil.psiFileToMessageLocation(file, file.name, DiagnosticUtils.getLineAndColumnRange(file, diagnostic.textRanges))
     }
 
     @Suppress("UNUSED_PARAMETER")
-    private fun FirLightSourceElement.location(diagnostic: FirDiagnostic): CompilerMessageSourceLocation? {
+    private fun KtLightSourceElement.location(diagnostic: FirDiagnostic): CompilerMessageSourceLocation? {
         // TODO: support light tree
         return null
     }
@@ -69,7 +69,7 @@ object FirDiagnosticsCompilerResultsReporter {
             val element1 = o1.element
             val element2 = o1.element
             // TODO: support light tree
-            if (element1 !is FirPsiSourceElement || element2 !is FirPsiSourceElement) return 0
+            if (element1 !is KtPsiSourceElement || element2 !is KtPsiSourceElement) return 0
 
             val file1 = element1.psi.containingFile
             val file2 = element2.psi.containingFile

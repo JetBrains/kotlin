@@ -15,59 +15,59 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 
-sealed class FirSourceElementKind
+sealed class KtSourceElementKind
 
-object FirRealSourceElementKind : FirSourceElementKind()
+object KtRealSourceElementKind : KtSourceElementKind()
 
-sealed class FirFakeSourceElementKind : FirSourceElementKind() {
+sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     // for some fir expression implicit return typeRef is generated
     // some of them are: break, continue, return, throw, string concat,
     // destruction parameters, function literals, explicitly boolean expressions
-    object ImplicitTypeRef : FirFakeSourceElementKind()
+    object ImplicitTypeRef : KtFakeSourceElementKind()
 
     // for each class special class self type ref is created
     // and have a fake source referencing it
-    object ClassSelfTypeRef : FirFakeSourceElementKind()
+    object ClassSelfTypeRef : KtFakeSourceElementKind()
 
     // FirErrorTypeRef may be built using unresolved firExpression
     // and have a fake source referencing it
-    object ErrorTypeRef : FirFakeSourceElementKind()
+    object ErrorTypeRef : KtFakeSourceElementKind()
 
     // for properties without accessors default getter & setter are generated
     // they have a fake source which refers to property
-    object DefaultAccessor : FirFakeSourceElementKind()
+    object DefaultAccessor : KtFakeSourceElementKind()
 
     // for delegated properties, getter & setter calls to the delegate
     // they have a fake source which refers to the call that creates the delegate
-    object DelegatedPropertyAccessor : FirFakeSourceElementKind()
+    object DelegatedPropertyAccessor : KtFakeSourceElementKind()
 
     // for kt classes without implicit primary constructor one is generated
     // with a fake source which refers to containing class
-    object ImplicitConstructor : FirFakeSourceElementKind()
+    object ImplicitConstructor : KtFakeSourceElementKind()
 
     // for constructors which do not have delegated constructor call the fake one is generated
     // with a fake sources which refers to the original constructor
-    object DelegatingConstructorCall : FirFakeSourceElementKind()
+    object DelegatingConstructorCall : KtFakeSourceElementKind()
 
     // for enum entry with bodies the initializer in a form of anonymous object is generated
     // with a fake sources which refers to the enum entry
-    object EnumInitializer : FirFakeSourceElementKind()
+    object EnumInitializer : KtFakeSourceElementKind()
 
     // for lambdas with implicit return the return statement is generated which is labeled
     // with a fake sources which refers to the target expression
-    object GeneratedLambdaLabel : FirFakeSourceElementKind()
+    object GeneratedLambdaLabel : KtFakeSourceElementKind()
 
     // for lambdas & functions with expression bodies the return statement is added
     // with a fake sources which refers to the return target
-    object ImplicitReturn : FirFakeSourceElementKind()
+    object ImplicitReturn : KtFakeSourceElementKind()
 
     // return expression in procedures -> return Unit
     // with a fake sources which refers to the return statement
-    object ImplicitUnit : FirFakeSourceElementKind()
+    object ImplicitUnit : KtFakeSourceElementKind()
 
     // delegates are wrapped into FirWrappedDelegateExpression
     // with a fake sources which refers to delegated expression
-    object WrappedDelegate : FirFakeSourceElementKind()
+    object WrappedDelegate : KtFakeSourceElementKind()
 
     //  `for (i in list) { println(i) }` is converted to
     //  ```
@@ -79,122 +79,122 @@ sealed class FirFakeSourceElementKind : FirSourceElementKind() {
     //  ```
     //  where the generated WHILE loop has source element of initial FOR loop,
     //  other generated elements are marked as fake ones
-    object DesugaredForLoop : FirFakeSourceElementKind()
+    object DesugaredForLoop : KtFakeSourceElementKind()
 
-    object ImplicitInvokeCall : FirFakeSourceElementKind()
+    object ImplicitInvokeCall : KtFakeSourceElementKind()
 
     // Consider an atomic qualified access like `i`. In the FIR tree, both the FirQualifiedAccessExpression and its calleeReference uses
     // `i` as the source. Hence, this fake kind is set on the `calleeReference` to make sure no PSI element is shared by multiple FIR
     // elements. This also applies to `this` and `super` references.
-    object ReferenceInAtomicQualifiedAccess : FirFakeSourceElementKind()
+    object ReferenceInAtomicQualifiedAccess : KtFakeSourceElementKind()
 
     // for enum classes we have valueOf & values functions generated
     // with a fake sources which refers to this the enum class
-    object EnumGeneratedDeclaration : FirFakeSourceElementKind()
+    object EnumGeneratedDeclaration : KtFakeSourceElementKind()
 
     // when (x) { "abc" -> 42 } --> when(val $subj = x) { $subj == "abc" -> 42 }
     // where $subj == "42" has fake psi source which refers to "42" as inner expression
     // and $subj fake source refers to "42" as KtWhenCondition
-    object WhenCondition : FirFakeSourceElementKind()
+    object WhenCondition : KtFakeSourceElementKind()
 
 
     // for primary constructor parameter the corresponding class property is generated
     // with a fake sources which refers to this the corresponding parameter
-    object PropertyFromParameter : FirFakeSourceElementKind()
+    object PropertyFromParameter : KtFakeSourceElementKind()
 
     // if (true) 1 --> if(true) { 1 }
     // with a fake sources for the block which refers to the wrapped expression
-    object SingleExpressionBlock : FirFakeSourceElementKind()
+    object SingleExpressionBlock : KtFakeSourceElementKind()
 
     // x++ -> x = x.inc()
     // x = x++ -> x = { val <unary> = x; x = <unary>.inc(); <unary> }
-    object DesugaredIncrementOrDecrement : FirFakeSourceElementKind()
+    object DesugaredIncrementOrDecrement : KtFakeSourceElementKind()
 
     // x !in list --> !(x in list) where ! and !(x in list) will have a fake source
-    object DesugaredInvertedContains : FirFakeSourceElementKind()
+    object DesugaredInvertedContains : KtFakeSourceElementKind()
 
     // for data classes fir generates componentN() & copy() functions
     // for componentN() functions the source will refer to the corresponding param and will be marked as a fake one
     // for copy() functions the source will refer class to the param and will be marked as a fake one
-    object DataClassGeneratedMembers : FirFakeSourceElementKind()
+    object DataClassGeneratedMembers : KtFakeSourceElementKind()
 
     // (vararg x: Int) --> (x: Array<out Int>) where array type ref has a fake source kind
-    object ArrayTypeFromVarargParameter : FirFakeSourceElementKind()
+    object ArrayTypeFromVarargParameter : KtFakeSourceElementKind()
 
     // val (a,b) = x --> val a = x.component1(); val b = x.component2()
     // where componentN calls will have the fake source elements refer to the corresponding KtDestructuringDeclarationEntry
-    object DesugaredComponentFunctionCall : FirFakeSourceElementKind()
+    object DesugaredComponentFunctionCall : KtFakeSourceElementKind()
 
     // when smart casts applied to the expression, its wrapped into FirExpressionWithSmartcast
     // which type reference will have a fake source refer to a original source element of it
-    object SmartCastedTypeRef : FirFakeSourceElementKind()
+    object SmartCastedTypeRef : KtFakeSourceElementKind()
 
     // for safe call expressions like a?.foo() the FirSafeCallExpression is generated
     // and it have a fake source
-    object DesugaredSafeCallExpression : FirFakeSourceElementKind()
+    object DesugaredSafeCallExpression : KtFakeSourceElementKind()
 
     // a += 2 --> a = a + 2
     // where a + 2 will have a fake source
-    object DesugaredCompoundAssignment : FirFakeSourceElementKind()
+    object DesugaredCompoundAssignment : KtFakeSourceElementKind()
 
     // `a > b` will be wrapped in FirComparisonExpression
     // with real source which points to initial `a > b` expression
     // and inner FirFunctionCall will refer to a fake source
-    object GeneratedComparisonExpression : FirFakeSourceElementKind()
+    object GeneratedComparisonExpression : KtFakeSourceElementKind()
 
     // a ?: b --> when(val $subj = a) { .... }
     // where `val $subj = a` has a fake source
-    object WhenGeneratedSubject : FirFakeSourceElementKind()
+    object WhenGeneratedSubject : KtFakeSourceElementKind()
 
     // list[0] -> list.get(0) where name reference will have a fake source element
-    object ArrayAccessNameReference : FirFakeSourceElementKind()
+    object ArrayAccessNameReference : KtFakeSourceElementKind()
 
     // super.foo() --> super<Supertype>.foo()
     // where `Supertype` has a fake source
-    object SuperCallImplicitType : FirFakeSourceElementKind()
+    object SuperCallImplicitType : KtFakeSourceElementKind()
 
     // Consider `super<Supertype>.foo()`. The source PSI `Supertype` is referenced by both the qualified access expression
     // `super<Supertype>` and the calleeExpression `super<Supertype>`. To avoid having two FIR elements sharing the same source, this fake
     // source is assigned to the qualified access expression.
-    object SuperCallExplicitType : FirFakeSourceElementKind()
+    object SuperCallExplicitType : KtFakeSourceElementKind()
 
     // fun foo(vararg args: Int) {}
     // fun bar(1, 2, 3) --> [resolved] fun bar(VarargArgument(1, 2, 3))
-    object VarargArgument : FirFakeSourceElementKind()
+    object VarargArgument : KtFakeSourceElementKind()
 
     // Part of desugared x?.y
-    object CheckedSafeCallSubject : FirFakeSourceElementKind()
+    object CheckedSafeCallSubject : KtFakeSourceElementKind()
 
     // { it + 1} --> { it -> it + 1 }
     // where `it` parameter declaration has fake source
-    object ItLambdaParameter : FirFakeSourceElementKind()
+    object ItLambdaParameter : KtFakeSourceElementKind()
 
     // for java annotations implicit constructor is generated
     // with a fake source which refers to containing class
-    object ImplicitJavaAnnotationConstructor : FirFakeSourceElementKind()
+    object ImplicitJavaAnnotationConstructor : KtFakeSourceElementKind()
 
     // for java annotations constructor implicit parameters are generated
     // with a fake source which refers to declared annotation methods
-    object ImplicitAnnotationAnnotationConstructorParameter : FirFakeSourceElementKind()
+    object ImplicitAnnotationAnnotationConstructorParameter : KtFakeSourceElementKind()
 
     // for the implicit field storing the delegated object for class delegation
     // with a fake source that refers to the KtExpression that creates the delegate
-    object ClassDelegationField : FirFakeSourceElementKind()
+    object ClassDelegationField : KtFakeSourceElementKind()
 
     // for annotation moved to another element due to annotation use-site target
-    object FromUseSiteTarget : FirFakeSourceElementKind()
+    object FromUseSiteTarget : KtFakeSourceElementKind()
 
     // for `@ParameterName` annotation call added to function types with names in the notation
     // with a fake source that refers to the value parameter in the function type notation
     // e.g., `(x: Int) -> Unit` becomes `Function1<@ParameterName("x") Int, Unit>`
-    object ParameterNameAnnotationCall : FirFakeSourceElementKind()
+    object ParameterNameAnnotationCall : KtFakeSourceElementKind()
 }
 
-sealed class FirSourceElement {
+sealed class KtSourceElement {
     abstract val elementType: IElementType
     abstract val startOffset: Int
     abstract val endOffset: Int
-    abstract val kind: FirSourceElementKind
+    abstract val kind: KtSourceElementKind
     abstract val lighterASTNode: LighterASTNode
     abstract val treeStructure: FlyweightCapableTreeStructure<LighterASTNode>
 
@@ -207,7 +207,7 @@ sealed class FirSourceElement {
 
 // NB: in certain situations, psi.node could be null
 // Potentially exceptions can be provoked by elementType / lighterASTNode
-sealed class FirPsiSourceElement(val psi: PsiElement) : FirSourceElement() {
+sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
     override val elementType: IElementType
         get() = psi.node.elementType
 
@@ -291,7 +291,7 @@ sealed class FirPsiSourceElement(val psi: PsiElement) : FirSourceElement() {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as FirPsiSourceElement
+        other as KtPsiSourceElement
 
         if (psi != other.psi) return false
 
@@ -303,17 +303,17 @@ sealed class FirPsiSourceElement(val psi: PsiElement) : FirSourceElement() {
     }
 }
 
-class FirRealPsiSourceElement(psi: PsiElement) : FirPsiSourceElement(psi) {
-    override val kind: FirSourceElementKind get() = FirRealSourceElementKind
+class KtRealPsiSourceElement(psi: PsiElement) : KtPsiSourceElement(psi) {
+    override val kind: KtSourceElementKind get() = KtRealSourceElementKind
 }
 
-class FirFakeSourceElement(psi: PsiElement, override val kind: FirFakeSourceElementKind) : FirPsiSourceElement(psi) {
+class KtFakeSourceElement(psi: PsiElement, override val kind: KtFakeSourceElementKind) : KtPsiSourceElement(psi) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
         if (!super.equals(other)) return false
 
-        other as FirFakeSourceElement
+        other as KtFakeSourceElement
 
         if (kind != other.kind) return false
 
@@ -327,49 +327,49 @@ class FirFakeSourceElement(psi: PsiElement, override val kind: FirFakeSourceElem
     }
 }
 
-fun FirSourceElement.fakeElement(newKind: FirFakeSourceElementKind): FirSourceElement {
+fun KtSourceElement.fakeElement(newKind: KtFakeSourceElementKind): KtSourceElement {
     if (kind == newKind) return this
     return when (this) {
-        is FirLightSourceElement -> FirLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, newKind)
-        is FirPsiSourceElement -> FirFakeSourceElement(psi, newKind)
+        is KtLightSourceElement -> KtLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, newKind)
+        is KtPsiSourceElement -> KtFakeSourceElement(psi, newKind)
     }
 }
 
-fun FirSourceElement.realElement(): FirSourceElement = when (this) {
-    is FirRealPsiSourceElement -> this
-    is FirLightSourceElement -> FirLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, FirRealSourceElementKind)
-    is FirPsiSourceElement -> FirRealPsiSourceElement(psi)
+fun KtSourceElement.realElement(): KtSourceElement = when (this) {
+    is KtRealPsiSourceElement -> this
+    is KtLightSourceElement -> KtLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, KtRealSourceElementKind)
+    is KtPsiSourceElement -> KtRealPsiSourceElement(psi)
 }
 
 
-class FirLightSourceElement(
+class KtLightSourceElement(
     override val lighterASTNode: LighterASTNode,
     override val startOffset: Int,
     override val endOffset: Int,
     override val treeStructure: FlyweightCapableTreeStructure<LighterASTNode>,
-    override val kind: FirSourceElementKind = FirRealSourceElementKind,
-) : FirSourceElement() {
+    override val kind: KtSourceElementKind = KtRealSourceElementKind,
+) : KtSourceElement() {
     override val elementType: IElementType
         get() = lighterASTNode.tokenType
 
     /**
-     * We can create a [FirLightSourceElement] from a [FirPsiSourceElement] by using [FirPsiSourceElement.lighterASTNode];
-     * [unwrapToFirPsiSourceElement] allows to get original [FirPsiSourceElement] in such case.
+     * We can create a [KtLightSourceElement] from a [KtPsiSourceElement] by using [KtPsiSourceElement.lighterASTNode];
+     * [unwrapToKtPsiSourceElement] allows to get original [KtPsiSourceElement] in such case.
      *
-     * If it is `pure` [FirLightSourceElement], i.e, compiler created it in light tree mode, then return [unwrapToFirPsiSourceElement] `null`.
+     * If it is `pure` [KtLightSourceElement], i.e, compiler created it in light tree mode, then return [unwrapToKtPsiSourceElement] `null`.
      * Otherwise, return some not-null result.
      */
-    fun unwrapToFirPsiSourceElement(): FirPsiSourceElement? {
-        if (treeStructure !is FirPsiSourceElement.WrappedTreeStructure) return null
+    fun unwrapToKtPsiSourceElement(): KtPsiSourceElement? {
+        if (treeStructure !is KtPsiSourceElement.WrappedTreeStructure) return null
         val node = treeStructure.unwrap(lighterASTNode)
-        return node.psi?.toFirPsiSourceElement(kind)
+        return node.psi?.toKtPsiSourceElement(kind)
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as FirLightSourceElement
+        other as KtLightSourceElement
 
         if (lighterASTNode != other.lighterASTNode) return false
         if (startOffset != other.startOffset) return false
@@ -390,25 +390,25 @@ class FirLightSourceElement(
     }
 }
 
-val FirSourceElement?.psi: PsiElement? get() = (this as? FirPsiSourceElement)?.psi
+val KtSourceElement?.psi: PsiElement? get() = (this as? KtPsiSourceElement)?.psi
 
-val FirSourceElement?.text: CharSequence?
+val KtSourceElement?.text: CharSequence?
     get() = when (this) {
-        is FirPsiSourceElement -> psi.text
-        is FirLightSourceElement -> treeStructure.toString(lighterASTNode)
+        is KtPsiSourceElement -> psi.text
+        is KtLightSourceElement -> treeStructure.toString(lighterASTNode)
         else -> null
     }
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun PsiElement.toFirPsiSourceElement(kind: FirSourceElementKind = FirRealSourceElementKind): FirPsiSourceElement = when (kind) {
-    is FirRealSourceElementKind -> FirRealPsiSourceElement(this)
-    is FirFakeSourceElementKind -> FirFakeSourceElement(this, kind)
+inline fun PsiElement.toKtPsiSourceElement(kind: KtSourceElementKind = KtRealSourceElementKind): KtPsiSourceElement = when (kind) {
+    is KtRealSourceElementKind -> KtRealPsiSourceElement(this)
+    is KtFakeSourceElementKind -> KtFakeSourceElement(this, kind)
 }
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun LighterASTNode.toFirLightSourceElement(
+inline fun LighterASTNode.toKtLightSourceElement(
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
-    kind: FirSourceElementKind = FirRealSourceElementKind,
+    kind: KtSourceElementKind = KtRealSourceElementKind,
     startOffset: Int = this.startOffset,
     endOffset: Int = this.endOffset
-): FirLightSourceElement = FirLightSourceElement(this, startOffset, endOffset, tree, kind)
+): KtLightSourceElement = KtLightSourceElement(this, startOffset, endOffset, tree, kind)

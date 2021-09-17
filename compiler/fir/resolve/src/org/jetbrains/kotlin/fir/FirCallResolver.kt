@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
@@ -776,7 +777,7 @@ class FirCallResolver(
     private fun buildErrorReference(
         callInfo: CallInfo,
         diagnostic: ConeDiagnostic,
-        source: FirSourceElement?
+        source: KtSourceElement?
     ): FirErrorReferenceWithCandidate {
         return createErrorReferenceWithErrorCandidate(
             callInfo,

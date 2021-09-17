@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -110,10 +113,10 @@ class FirSpecificTypeResolverTransformer(
             buildErrorTypeRef {
                 val typeRefSourceKind = typeRef.source?.kind
                 val diagnosticSource = resolvedType.diagnostic.safeAs<ConeUnexpectedTypeArgumentsError>()
-                    ?.source.safeAs<FirSourceElement>()
+                    ?.source.safeAs<KtSourceElement>()
 
                 source = if (diagnosticSource != null) {
-                    if (typeRefSourceKind is FirFakeSourceElementKind) {
+                    if (typeRefSourceKind is KtFakeSourceElementKind) {
                         diagnosticSource.fakeElement(typeRefSourceKind)
                     } else {
                         diagnosticSource

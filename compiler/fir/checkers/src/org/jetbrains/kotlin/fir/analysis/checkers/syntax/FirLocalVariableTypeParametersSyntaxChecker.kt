@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -18,12 +20,12 @@ import org.jetbrains.kotlin.psi.KtProperty
 
 // KtExpression is the appropriate PsiElement type; local variables are used in increments/decrements of dot-qualified expressions.
 object FirLocalVariableTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker<FirProperty, KtExpression>() {
-    override fun isApplicable(element: FirProperty, source: FirSourceElement): Boolean =
-        source.kind !is FirFakeSourceElementKind && element.isLocal
+    override fun isApplicable(element: FirProperty, source: KtSourceElement): Boolean =
+        source.kind !is KtFakeSourceElementKind && element.isLocal
 
     override fun checkPsi(
         element: FirProperty,
-        source: FirPsiSourceElement,
+        source: KtPsiSourceElement,
         psi: KtExpression,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -38,7 +40,7 @@ object FirLocalVariableTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker
 
     override fun checkLightTree(
         element: FirProperty,
-        source: FirLightSourceElement,
+        source: KtLightSourceElement,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {

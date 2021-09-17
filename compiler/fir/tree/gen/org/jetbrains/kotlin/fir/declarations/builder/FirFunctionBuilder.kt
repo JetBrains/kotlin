@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.declarations.builder
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 @FirBuilderDsl
 interface FirFunctionBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilder {
-    abstract override var source: FirSourceElement?
+    abstract override var source: KtSourceElement?
     abstract override var moduleData: FirModuleData
     abstract override var resolvePhase: FirResolvePhase
     abstract override var origin: FirDeclarationOrigin

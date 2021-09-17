@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.SourceNavigator
 import org.jetbrains.kotlin.fir.analysis.checkers.checkUnderscoreDiagnostics
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -54,7 +54,7 @@ object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker() {
         isSingleUnderscoreAllowed: Boolean = false
     ) {
         val declarationSource = declaration.source
-        if (declarationSource != null && declarationSource.kind !is FirFakeSourceElementKind) {
+        if (declarationSource != null && declarationSource.kind !is KtFakeSourceElementKind) {
             with(SourceNavigator.forElement(declaration)) {
                 val rawName = declaration.getRawName()
                 if (rawName?.isUnderscore == true && !(isSingleUnderscoreAllowed && rawName == "_")) {

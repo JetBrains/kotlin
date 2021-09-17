@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 
 @OptIn(FirImplementationDetail::class)
 class FirIntegerOperatorCall @FirImplementationDetail constructor(
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     typeRef: FirTypeRef,
     annotations: MutableList<FirAnnotation>,
     typeArguments: MutableList<FirTypeProjection>,
@@ -49,7 +49,7 @@ class FirIntegerOperatorCall @FirImplementationDetail constructor(
 
 @FirBuilderDsl
 class FirIntegerOperatorCallBuilder : FirQualifiedAccessBuilder, FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
-    override var source: FirSourceElement? = null
+    override var source: KtSourceElement? = null
     override var typeRef: FirTypeRef = buildImplicitTypeRef()
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()

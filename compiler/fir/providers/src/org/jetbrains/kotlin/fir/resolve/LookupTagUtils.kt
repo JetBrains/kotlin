@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationsByClassId
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
-import org.jetbrains.kotlin.fir.fakeElement
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -80,7 +80,7 @@ fun ConeKotlinType.withParameterNameAnnotation(valueParameter: FirValueParameter
     // Existing @ParameterName annotation takes precedence
     if (attributes.customAnnotations.getAnnotationsByClassId(StandardNames.FqNames.parameterNameClassId).isNotEmpty()) return this
 
-    val fakeSource = valueParameter.source?.fakeElement(FirFakeSourceElementKind.ParameterNameAnnotationCall)
+    val fakeSource = valueParameter.source?.fakeElement(KtFakeSourceElementKind.ParameterNameAnnotationCall)
     val parameterNameAnnotationCall = buildAnnotation {
         source = fakeSource
         annotationTypeRef =

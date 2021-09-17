@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirFunctionTypeRefImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val annotations: MutableList<FirAnnotation>,
     override val isMarkedNullable: Boolean,
     override var receiverTypeRef: FirTypeRef?,

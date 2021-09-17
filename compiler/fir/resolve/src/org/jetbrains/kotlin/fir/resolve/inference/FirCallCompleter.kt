@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -256,7 +258,7 @@ class FirCallCompleter(
                     val name = Name.identifier("it")
                     val itType = parameters.single()
                     buildValueParameter {
-                        source = lambdaAtom.atom.source?.fakeElement(FirFakeSourceElementKind.ItLambdaParameter)
+                        source = lambdaAtom.atom.source?.fakeElement(KtFakeSourceElementKind.ItLambdaParameter)
                         moduleData = session.moduleData
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = itType.approximateLambdaInputType().toFirResolvedTypeRef()

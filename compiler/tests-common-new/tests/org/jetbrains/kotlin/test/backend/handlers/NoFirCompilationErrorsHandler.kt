@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDefaultErrorMessages
-import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_FIR_DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer

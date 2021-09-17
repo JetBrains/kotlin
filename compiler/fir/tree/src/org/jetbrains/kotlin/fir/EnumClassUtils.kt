@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -34,7 +36,7 @@ private val VALUE = Name.identifier("value")
 fun FirRegularClassBuilder.generateValuesFunction(
     moduleData: FirModuleData, packageFqName: FqName, classFqName: FqName, makeExpect: Boolean = false
 ) {
-    val sourceElement = source?.fakeElement(FirFakeSourceElementKind.EnumGeneratedDeclaration)
+    val sourceElement = source?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
     declarations += buildSimpleFunction {
         source = sourceElement
         origin = FirDeclarationOrigin.Source
@@ -67,7 +69,7 @@ fun FirRegularClassBuilder.generateValuesFunction(
 fun FirRegularClassBuilder.generateValueOfFunction(
     moduleData: FirModuleData, packageFqName: FqName, classFqName: FqName, makeExpect: Boolean = false
 ) {
-    val sourceElement = source?.fakeElement(FirFakeSourceElementKind.EnumGeneratedDeclaration)
+    val sourceElement = source?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
     declarations += buildSimpleFunction {
         source = sourceElement
         origin = FirDeclarationOrigin.Source

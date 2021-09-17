@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
@@ -37,12 +37,12 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 
 object FirForLoopChecker : FirBlockChecker() {
     override fun check(expression: FirBlock, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (expression.source?.kind != FirFakeSourceElementKind.DesugaredForLoop) return
+        if (expression.source?.kind != KtFakeSourceElementKind.DesugaredForLoop) return
 
         val statements = expression.statements
         val iteratorDeclaration = statements[0] as? FirProperty ?: return
         val whileLoop = statements[1] as? FirWhileLoop ?: return
-        if (iteratorDeclaration.source?.kind != FirFakeSourceElementKind.DesugaredForLoop) return
+        if (iteratorDeclaration.source?.kind != KtFakeSourceElementKind.DesugaredForLoop) return
         val iteratorCall = iteratorDeclaration.initializer as FirFunctionCall
         val source = iteratorCall.explicitReceiver?.source ?: iteratorCall.source
         if (checkSpecialFunctionCall(
@@ -70,7 +70,7 @@ object FirForLoopChecker : FirBlockChecker() {
         )
 
         val loopParameter = whileLoop.block.statements.firstOrNull() as? FirProperty ?: return
-        if (loopParameter.initializer?.source?.kind != FirFakeSourceElementKind.DesugaredForLoop) return
+        if (loopParameter.initializer?.source?.kind != KtFakeSourceElementKind.DesugaredForLoop) return
         val nextCall = loopParameter.initializer as FirFunctionCall
         checkSpecialFunctionCall(
             nextCall,
@@ -91,7 +91,7 @@ object FirForLoopChecker : FirBlockChecker() {
     private fun checkSpecialFunctionCall(
         call: FirFunctionCall,
         reporter: DiagnosticReporter,
-        reportSource: FirSourceElement?,
+        reportSource: KtSourceElement?,
         context: CheckerContext,
         ambiguityFactory: FirDiagnosticFactory1<Collection<FirBasedSymbol<*>>>,
         missingFactory: FirDiagnosticFactory0,

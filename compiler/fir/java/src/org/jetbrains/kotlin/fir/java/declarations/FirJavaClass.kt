@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
@@ -31,7 +31,7 @@ import kotlin.properties.Delegates
 
 @OptIn(FirImplementationDetail::class)
 class FirJavaClass @FirImplementationDetail internal constructor(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     @Volatile
     override var resolvePhase: FirResolvePhase,
@@ -137,7 +137,7 @@ internal class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationCont
     lateinit var javaTypeParameterStack: JavaTypeParameterStack
     val existingNestedClassifierNames: MutableList<Name> = mutableListOf()
 
-    override var source: FirSourceElement? = null
+    override var source: KtSourceElement? = null
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()

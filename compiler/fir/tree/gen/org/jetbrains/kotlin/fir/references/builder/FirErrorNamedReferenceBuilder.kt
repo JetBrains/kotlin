@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.references.builder
 
 import kotlin.contracts.*
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirErrorNamedReferenceBuilder {
-    var source: FirSourceElement? = null
+    var source: KtSourceElement? = null
     var candidateSymbol: FirBasedSymbol<*>? = null
     lateinit var diagnostic: ConeDiagnostic
 

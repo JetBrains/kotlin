@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.canBeUsedForConstVal
 import org.jetbrains.kotlin.fir.analysis.checkers.checkConstantArguments
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -40,7 +40,7 @@ object FirConstPropertyChecker : FirPropertyChecker() {
         }
 
         val source = declaration.getter?.source
-        if (source != null && source.kind !is FirFakeSourceElementKind) {
+        if (source != null && source.kind !is KtFakeSourceElementKind) {
             reporter.reportOn(source, FirErrors.CONST_VAL_WITH_GETTER, context)
             return
         }

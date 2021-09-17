@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirTypeProjectionWithVariance : FirTypeProjection() {
-    abstract override val source: FirSourceElement?
+    abstract override val source: KtSourceElement?
     abstract val typeRef: FirTypeRef
     abstract val variance: Variance
 

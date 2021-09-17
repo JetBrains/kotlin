@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.generateTemporaryVariable
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -17,7 +17,7 @@ data class DestructuringDeclaration(
     val isVar: Boolean,
     val entries: List<FirVariable?>,
     val initializer: FirExpression,
-    val source: FirSourceElement,
+    val source: KtSourceElement,
     val modifier: Modifier,
 ) {
     fun toFirDestructingDeclaration(moduleData: FirModuleData): FirExpression {

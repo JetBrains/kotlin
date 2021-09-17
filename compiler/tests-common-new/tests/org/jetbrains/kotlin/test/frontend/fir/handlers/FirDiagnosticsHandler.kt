@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory1
 import org.jetbrains.kotlin.checkers.utils.TypeOfCall
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.renderForDebugInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -50,9 +52,9 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(testServices) {
     companion object {
         private val allowedKindsForDebugInfo = setOf(
-            FirRealSourceElementKind,
-            FirFakeSourceElementKind.DesugaredCompoundAssignment,
-            FirFakeSourceElementKind.ReferenceInAtomicQualifiedAccess,
+            KtRealSourceElementKind,
+            KtFakeSourceElementKind.DesugaredCompoundAssignment,
+            KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess,
         )
     }
 
@@ -130,7 +132,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     ) {
         val metaInfos = if (firFile.psi != null) {
             AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).flatMap {
-                FirErrors.SYNTAX.on(FirRealPsiSourceElement(it), positioningStrategy = null)
+                FirErrors.SYNTAX.on(KtRealPsiSourceElement(it), positioningStrategy = null)
                     .toMetaInfos(testFile, lightTreeEnabled, lightTreeComparingModeEnabled)
             }
         } else {
@@ -223,14 +225,14 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             Renderers.renderCallInfo(fqName, getTypeOfCall(reference, resolvedSymbol))
         }
 
-    private fun DebugInfoDiagnosticFactory1.getPositionedElement(sourceElement: FirSourceElement): FirSourceElement {
+    private fun DebugInfoDiagnosticFactory1.getPositionedElement(sourceElement: KtSourceElement): KtSourceElement {
         val elementType = sourceElement.elementType
         return if (this === DebugInfoDiagnosticFactory1.CALL
             && (elementType == KtNodeTypes.DOT_QUALIFIED_EXPRESSION || elementType == KtNodeTypes.SAFE_ACCESS_EXPRESSION)
         ) {
-            if (sourceElement is FirPsiSourceElement) {
+            if (sourceElement is KtPsiSourceElement) {
                 val psi = (sourceElement.psi as KtQualifiedExpression).selectorExpression
-                psi?.let { FirRealPsiSourceElement(it) } ?: sourceElement
+                psi?.let { KtRealPsiSourceElement(it) } ?: sourceElement
             } else {
                 val tree = sourceElement.treeStructure
                 val selector = tree.selector(sourceElement.lighterASTNode)
@@ -239,7 +241,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 } else {
                     val startDelta = tree.getStartOffset(selector) - tree.getStartOffset(sourceElement.lighterASTNode)
                     val endDelta = tree.getEndOffset(selector) - tree.getEndOffset(sourceElement.lighterASTNode)
-                    FirLightSourceElement(
+                    KtLightSourceElement(
                         selector, sourceElement.startOffset + startDelta, sourceElement.endOffset + endDelta, tree
                     )
                 }
@@ -270,14 +272,14 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         val argumentText = argument()
         val factory = FirDiagnosticFactory1<String>(name, severity, SourceElementPositioningStrategy.DEFAULT, PsiElement::class)
         return when (positionedElement) {
-            is FirPsiSourceElement -> FirPsiDiagnosticWithParameters1(
+            is KtPsiSourceElement -> FirPsiDiagnosticWithParameters1(
                 positionedElement,
                 argumentText,
                 severity,
                 factory,
                 factory.defaultPositioningStrategy
             )
-            is FirLightSourceElement -> FirLightDiagnosticWithParameters1(
+            is KtLightSourceElement -> FirLightDiagnosticWithParameters1(
                 positionedElement,
                 argumentText,
                 severity,

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.contracts.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.visitors.*
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirRawContractDescriptionImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val rawEffects: MutableList<FirExpression>,
 ) : FirRawContractDescription() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

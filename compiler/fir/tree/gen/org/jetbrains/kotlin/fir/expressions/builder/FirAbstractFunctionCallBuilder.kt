@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions.builder
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
@@ -31,7 +31,7 @@ interface FirAbstractFunctionCallBuilder : FirQualifiedAccessBuilder, FirCallBui
     abstract override var explicitReceiver: FirExpression?
     abstract override var dispatchReceiver: FirExpression
     abstract override var extensionReceiver: FirExpression
-    abstract override var source: FirSourceElement?
+    abstract override var source: KtSourceElement?
     abstract override var argumentList: FirArgumentList
     abstract var typeRef: FirTypeRef
     abstract var calleeReference: FirNamedReference

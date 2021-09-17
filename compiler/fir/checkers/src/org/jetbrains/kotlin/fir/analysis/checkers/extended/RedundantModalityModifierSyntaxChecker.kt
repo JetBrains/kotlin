@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.implicitModality
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirDeclarationSyntaxChecker
@@ -24,12 +24,12 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 
 object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirDeclaration, KtDeclaration>() {
 
-    override fun isApplicable(element: FirDeclaration, source: FirSourceElement): Boolean =
-        source.kind !is FirFakeSourceElementKind && element is FirMemberDeclaration
+    override fun isApplicable(element: FirDeclaration, source: KtSourceElement): Boolean =
+        source.kind !is KtFakeSourceElementKind && element is FirMemberDeclaration
 
     override fun checkPsiOrLightTree(
         element: FirDeclaration,
-        source: FirSourceElement,
+        source: KtSourceElement,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {

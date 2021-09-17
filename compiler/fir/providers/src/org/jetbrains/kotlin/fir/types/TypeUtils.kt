@@ -5,14 +5,19 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
@@ -205,7 +210,7 @@ fun ConeKotlinType.toSymbol(session: FirSession): FirBasedSymbol<*>? {
 }
 
 fun ConeKotlinType.toFirResolvedTypeRef(
-    source: FirSourceElement? = null,
+    source: KtSourceElement? = null,
     delegatedTypeRef: FirTypeRef? = null
 ): FirResolvedTypeRef {
     return if (this is ConeKotlinErrorType) {
@@ -256,7 +261,7 @@ fun FirTypeRef.withReplacedReturnType(newType: ConeKotlinType?): FirTypeRef {
 
 fun FirTypeRef.withReplacedConeType(
     newType: ConeKotlinType?,
-    firFakeSourceElementKind: FirFakeSourceElementKind? = null
+    firFakeSourceElementKind: KtFakeSourceElementKind? = null
 ): FirResolvedTypeRef {
     require(this is FirResolvedTypeRef)
     if (newType == null) return this
@@ -352,7 +357,7 @@ private fun FirTypeRef.hideLocalTypeIfNeeded(
     val superType = firClass.superTypeRefs.single()
     if (superType is FirResolvedTypeRef) {
         val newKind = source?.kind
-        return if (newKind is FirFakeSourceElementKind) superType.copyWithNewSourceKind(newKind) else superType
+        return if (newKind is KtFakeSourceElementKind) superType.copyWithNewSourceKind(newKind) else superType
     }
     return this
 }

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
@@ -16,7 +16,7 @@ class FirControlFlowGraphReferenceImpl(
     val controlFlowGraph: ControlFlowGraph,
     val dataFlowInfo: DataFlowInfo? = null
 ) : FirControlFlowGraphReference() {
-    override val source: FirSourceElement? get() = null
+    override val source: KtSourceElement? get() = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 

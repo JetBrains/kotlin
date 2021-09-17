@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.fir.lightTree.converter
 
 import com.intellij.lang.LighterASTNode
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.generateResolvedAccessExpression
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.expressions.builder.buildComponentCall
-import org.jetbrains.kotlin.fir.fakeElement
 import org.jetbrains.kotlin.fir.lightTree.fir.DestructuringDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.Name
@@ -93,7 +93,7 @@ fun generateDestructuringBlock(
                 returnTypeRef = entry.returnTypeRef
                 name = entry.name
                 initializer = buildComponentCall {
-                    val componentCallSource = entry.source?.fakeElement(FirFakeSourceElementKind.DesugaredComponentFunctionCall)
+                    val componentCallSource = entry.source?.fakeElement(KtFakeSourceElementKind.DesugaredComponentFunctionCall)
                     source = componentCallSource
                     explicitReceiver = generateResolvedAccessExpression(componentCallSource, container)
                     componentIndex = index + 1

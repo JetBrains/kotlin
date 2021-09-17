@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.isInterface
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirAnnotatedDeclarationChecker
@@ -66,7 +66,7 @@ object FirJvmStaticChecker : FirAnnotatedDeclarationChecker() {
         declaration: FirAnnotatedDeclaration,
         context: CheckerContext,
         reporter: DiagnosticReporter,
-        targetSource: FirSourceElement?,
+        targetSource: KtSourceElement?,
         outerProperty: FirProperty? = null,
     ) {
         if (declaration !is FirMemberDeclaration) {
@@ -101,7 +101,7 @@ object FirJvmStaticChecker : FirAnnotatedDeclarationChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter,
         supportsJvmStaticInInterface: Boolean,
-        targetSource: FirSourceElement?,
+        targetSource: KtSourceElement?,
     ) {
         val properDiagnostic = if (supportsJvmStaticInInterface) {
             FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION
@@ -116,7 +116,7 @@ object FirJvmStaticChecker : FirAnnotatedDeclarationChecker() {
         declaration: FirAnnotatedDeclaration,
         context: CheckerContext,
         reporter: DiagnosticReporter,
-        targetSource: FirSourceElement?,
+        targetSource: KtSourceElement?,
     ) {
         if (declaration !is FirCallableDeclaration) {
             return
@@ -182,7 +182,7 @@ object FirJvmStaticChecker : FirAnnotatedDeclarationChecker() {
         declaration: FirMemberDeclaration,
         context: CheckerContext,
         reporter: DiagnosticReporter,
-        targetSource: FirSourceElement?,
+        targetSource: KtSourceElement?,
         outerProperty: FirProperty? = null,
     ) {
         val isOverride = outerProperty?.isOverride ?: declaration.isOverride
@@ -198,7 +198,7 @@ object FirJvmStaticChecker : FirAnnotatedDeclarationChecker() {
         declaration: FirAnnotatedDeclaration,
         context: CheckerContext,
         reporter: DiagnosticReporter,
-        targetSource: FirSourceElement?,
+        targetSource: KtSourceElement?,
     ) {
         if (
             declaration is FirProperty && declaration.isConst ||

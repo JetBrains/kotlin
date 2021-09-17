@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -42,7 +42,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker() {
 
     private fun checkArgumentAndReport(
         typeArgument: ConeKotlinType?,
-        source: FirSourceElement,
+        source: KtSourceElement,
         isArray: Boolean,
         context: CheckerContext,
         reporter: DiagnosticReporter

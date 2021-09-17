@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 import com.intellij.lang.LighterASTNode
 import com.intellij.lang.PsiBuilder
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.FirLightSourceElement
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirStringConcatenationCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
@@ -38,8 +38,8 @@ object RedundantSingleExpressionStringTemplateChecker : FirStringConcatenationCa
 
     private fun FirStatement.stringParentChildrenCount(): Int? {
         return when (val source = source) {
-            is FirPsiSourceElement -> source.psi.stringParentChildrenCount()
-            is FirLightSourceElement -> source.lighterASTNode.stringParentChildrenCount(source)
+            is KtPsiSourceElement -> source.psi.stringParentChildrenCount()
+            is KtLightSourceElement -> source.lighterASTNode.stringParentChildrenCount(source)
             null -> null
         }
     }
@@ -49,7 +49,7 @@ object RedundantSingleExpressionStringTemplateChecker : FirStringConcatenationCa
         return parent.stringParentChildrenCount()
     }
 
-    private fun LighterASTNode.stringParentChildrenCount(source: FirLightSourceElement): Int? {
+    private fun LighterASTNode.stringParentChildrenCount(source: KtLightSourceElement): Int? {
         val parent = source.treeStructure.getParent(this)
         return if (parent != null && parent.tokenType == KtNodeTypes.STRING_TEMPLATE) {
             val childrenOfParent = parent.getChildren(source.treeStructure)

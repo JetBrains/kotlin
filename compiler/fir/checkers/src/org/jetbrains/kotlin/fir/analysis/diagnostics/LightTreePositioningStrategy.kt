@@ -10,14 +10,14 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE
 
 open class LightTreePositioningStrategy {
-    open fun markFirDiagnostic(element: FirSourceElement, diagnostic: FirDiagnostic): List<TextRange> {
+    open fun markFirDiagnostic(element: KtSourceElement, diagnostic: FirDiagnostic): List<TextRange> {
         return mark(element.lighterASTNode, element.startOffset, element.endOffset, element.treeStructure)
     }
 

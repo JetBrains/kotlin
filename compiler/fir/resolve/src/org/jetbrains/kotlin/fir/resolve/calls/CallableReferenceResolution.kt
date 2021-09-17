@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -21,6 +24,8 @@ import org.jetbrains.kotlin.fir.resolve.inference.extractInputOutputTypesFromCal
 import org.jetbrains.kotlin.fir.types.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
+import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -356,7 +361,7 @@ private fun createFakeArgumentsForReference(
 class FirFakeArgumentForCallableReference(
     val index: Int
 ) : FirExpression() {
-    override val source: FirSourceElement?
+    override val source: KtSourceElement?
         get() = null
 
     override val typeRef: FirTypeRef
@@ -404,7 +409,7 @@ private fun FirVariable.canBeMutableReference(candidate: Candidate): Boolean {
     if (!isVar) return false
     if (this is FirField) return true
     val original = this.unwrapFakeOverrides()
-    return original.source?.kind == FirFakeSourceElementKind.PropertyFromParameter ||
+    return original.source?.kind == KtFakeSourceElementKind.PropertyFromParameter ||
             (original.setter is FirMemberDeclaration &&
                     candidate.callInfo.session.visibilityChecker.isVisible(original.setter!!, candidate))
 }

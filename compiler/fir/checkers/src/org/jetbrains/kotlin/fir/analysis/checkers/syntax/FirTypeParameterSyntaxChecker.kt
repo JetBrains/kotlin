@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.SourceNavigator.Companion.withNavigator
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -19,12 +19,12 @@ import org.jetbrains.kotlin.psi.KtTypeParameter
 
 object FirTypeParameterSyntaxChecker : FirDeclarationSyntaxChecker<FirTypeParameter, KtTypeParameter>() {
 
-    override fun isApplicable(element: FirTypeParameter, source: FirSourceElement): Boolean =
+    override fun isApplicable(element: FirTypeParameter, source: KtSourceElement): Boolean =
         element.bounds.size >= 2
 
     override fun checkPsi(
         element: FirTypeParameter,
-        source: FirPsiSourceElement,
+        source: KtPsiSourceElement,
         psi: KtTypeParameter,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -37,7 +37,7 @@ object FirTypeParameterSyntaxChecker : FirDeclarationSyntaxChecker<FirTypeParame
 
     override fun checkPsiOrLightTree(
         element: FirTypeParameter,
-        source: FirSourceElement,
+        source: KtSourceElement,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {

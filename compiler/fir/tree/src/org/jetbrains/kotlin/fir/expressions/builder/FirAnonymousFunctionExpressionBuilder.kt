@@ -5,22 +5,21 @@
 
 package org.jetbrains.kotlin.fir.expressions.builder
 
-import kotlin.contracts.*
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirAnonymousFunctionExpressionImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
-import org.jetbrains.kotlin.fir.visitors.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 @FirBuilderDsl
 class FirAnonymousFunctionExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
-    override var source: FirSourceElement? = null
+    override var source: KtSourceElement? = null
     lateinit var anonymousFunction: FirAnonymousFunction
 
     override fun build(): FirAnonymousFunctionExpression {

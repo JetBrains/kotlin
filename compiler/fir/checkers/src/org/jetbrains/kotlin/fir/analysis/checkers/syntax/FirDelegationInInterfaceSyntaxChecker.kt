@@ -5,27 +5,27 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
+import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.FirLightSourceElement
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
-import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 
 object FirDelegationInInterfaceSyntaxChecker : FirDeclarationSyntaxChecker<FirRegularClass, KtClass>() {
 
-    override fun isApplicable(element: FirRegularClass, source: FirSourceElement): Boolean = element.isInterface
+    override fun isApplicable(element: FirRegularClass, source: KtSourceElement): Boolean = element.isInterface
 
     override fun checkPsi(
         element: FirRegularClass,
-        source: FirPsiSourceElement,
+        source: KtPsiSourceElement,
         psi: KtClass,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -40,7 +40,7 @@ object FirDelegationInInterfaceSyntaxChecker : FirDeclarationSyntaxChecker<FirRe
 
     override fun checkLightTree(
         element: FirRegularClass,
-        source: FirLightSourceElement,
+        source: KtLightSourceElement,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {

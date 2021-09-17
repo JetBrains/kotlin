@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -34,9 +34,9 @@ object FirInvalidAndDangerousCharactersChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun checkNameAndReport(name: Name, source: FirSourceElement?, context: CheckerContext, reporter: DiagnosticReporter) {
+    private fun checkNameAndReport(name: Name, source: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter) {
         if (source != null &&
-            source.kind !is FirFakeSourceElementKind &&
+            source.kind !is KtFakeSourceElementKind &&
             !name.isSpecial
         ) {
             val nameString = name.asString()

@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOnWithSuppression
-import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
+import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -120,7 +118,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                                 }
 
                             innerDeclaration.hasBackingField &&
-                                    innerDeclaration.source?.kind !is FirFakeSourceElementKind ->
+                                    innerDeclaration.source?.kind !is KtFakeSourceElementKind ->
                                 reporter.reportOnWithSuppression(
                                     innerDeclaration,
                                     FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS,
@@ -133,7 +131,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
             }
         }
 
-        if (primaryConstructor?.source?.kind !is FirRealSourceElementKind) {
+        if (primaryConstructor?.source?.kind !is KtRealSourceElementKind) {
             reporter.reportOn(declaration.source, FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS, context)
             return
         }
@@ -173,7 +171,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
     }
 
     private fun FirProperty.isRelatedToParameter(parameter: FirValueParameter?) =
-        name == parameter?.name && source?.kind is FirFakeSourceElementKind
+        name == parameter?.name && source?.kind is KtFakeSourceElementKind
 
     private fun FirValueParameter.isNotFinalReadOnly(primaryConstructorProperty: FirProperty?): Boolean {
         if (primaryConstructorProperty == null) return true

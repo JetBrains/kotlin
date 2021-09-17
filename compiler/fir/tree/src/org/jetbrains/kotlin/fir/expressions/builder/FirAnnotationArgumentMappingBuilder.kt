@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions.builder
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
@@ -14,14 +14,13 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirAnnotationArgumentMappingImp
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.name.Name
-import kotlin.annotations.jvm.UnderMigration
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @FirBuilderDsl
 class FirAnnotationArgumentMappingBuilder {
-    var source: FirSourceElement? = null
+    var source: KtSourceElement? = null
     val mapping: MutableMap<Name, FirExpression> = mutableMapOf()
 
     fun build(): FirAnnotationArgumentMapping {

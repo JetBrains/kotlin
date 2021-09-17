@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.diagnostics
 
 import kotlinx.collections.immutable.ImmutableList
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 
 sealed interface ConeUnresolvedError : ConeDiagnostic {
     val qualifier: String?
@@ -153,7 +153,7 @@ interface ConeUnmatchedTypeArgumentsError : ConeDiagnosticWithSingleCandidate {
 class ConeWrongNumberOfTypeArgumentsError(
     override val desiredCount: Int,
     override val candidateSymbol: FirRegularClassSymbol,
-    source: FirSourceElement
+    source: KtSourceElement
 ) : ConeDiagnosticWithSource(source), ConeUnmatchedTypeArgumentsError {
     override val reason: String get() = "Wrong number of type arguments"
 }
@@ -196,12 +196,12 @@ class ConeImportFromSingleton(val name: Name) : ConeDiagnostic {
     override val reason: String get() = "Import from singleton $name is not allowed"
 }
 
-open class ConeUnsupported(override val reason: String, val source: FirSourceElement? = null) : ConeDiagnostic
+open class ConeUnsupported(override val reason: String, val source: KtSourceElement? = null) : ConeDiagnostic
 
 class ConeUnsupportedDynamicType : ConeUnsupported("Dynamic types are not supported in this context")
 
 class ConeDeprecated(
-    val source: FirSourceElement?,
+    val source: KtSourceElement?,
     override val candidateSymbol: FirBasedSymbol<*>,
     val deprecationInfo: DeprecationInfo
 ) : ConeDiagnosticWithSingleCandidate {

@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -18,7 +17,7 @@ abstract class DiagnosticReporter {
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
 fun DiagnosticReporter.reportOn(
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     factory: FirDiagnosticFactory0,
     context: CheckerContext,
     positioningStrategy: SourceElementPositioningStrategy? = null
@@ -28,7 +27,7 @@ fun DiagnosticReporter.reportOn(
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
 fun <A : Any> DiagnosticReporter.reportOn(
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     factory: FirDiagnosticFactory1<A>,
     a: A,
     context: CheckerContext,
@@ -39,7 +38,7 @@ fun <A : Any> DiagnosticReporter.reportOn(
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
 fun <A : Any, B : Any> DiagnosticReporter.reportOn(
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     factory: FirDiagnosticFactory2<A, B>,
     a: A,
     b: B,
@@ -51,7 +50,7 @@ fun <A : Any, B : Any> DiagnosticReporter.reportOn(
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
 fun <A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     factory: FirDiagnosticFactory3<A, B, C>,
     a: A,
     b: B,
@@ -64,7 +63,7 @@ fun <A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
 fun <A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOn(
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     factory: FirDiagnosticFactory4<A, B, C, D>,
     a: A,
     b: B,
@@ -78,7 +77,7 @@ fun <A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOn(
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
 fun DiagnosticReporter.reportOn(
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     factory: FirDiagnosticFactoryForDeprecation0,
     context: CheckerContext,
     positioningStrategy: SourceElementPositioningStrategy? = null
@@ -88,7 +87,7 @@ fun DiagnosticReporter.reportOn(
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
 fun <A : Any> DiagnosticReporter.reportOn(
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     factory: FirDiagnosticFactoryForDeprecation1<A>,
     a: A,
     context: CheckerContext,
@@ -99,7 +98,7 @@ fun <A : Any> DiagnosticReporter.reportOn(
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
 fun <A : Any, B : Any> DiagnosticReporter.reportOn(
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     factory: FirDiagnosticFactoryForDeprecation2<A, B>,
     a: A,
     b: B,
@@ -111,7 +110,7 @@ fun <A : Any, B : Any> DiagnosticReporter.reportOn(
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
 fun <A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     factory: FirDiagnosticFactoryForDeprecation3<A, B, C>,
     a: A,
     b: B,
@@ -124,7 +123,7 @@ fun <A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
 fun <A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOn(
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     factory: FirDiagnosticFactoryForDeprecation4<A, B, C, D>,
     a: A,
     b: B,

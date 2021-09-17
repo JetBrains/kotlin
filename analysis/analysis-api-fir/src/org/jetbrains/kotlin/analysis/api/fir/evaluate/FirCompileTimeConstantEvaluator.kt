@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
@@ -201,7 +201,7 @@ internal object FirCompileTimeConstantEvaluator {
         }
     }
 
-    private fun <T> ConstantValueKind<T>?.toConstExpression(source: FirSourceElement?, value: Any): FirConstExpression<T>? =
+    private fun <T> ConstantValueKind<T>?.toConstExpression(source: KtSourceElement?, value: Any): FirConstExpression<T>? =
         if (this == null) null else
             @Suppress("UNCHECKED_CAST")
             buildConstExpression(source, this, value as T)

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations.builder
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 interface FirTypeParametersOwnerBuilder {
-    abstract var source: FirSourceElement?
+    abstract var source: KtSourceElement?
     abstract val typeParameters: MutableList<FirTypeParameter>
 
     fun build(): FirTypeParametersOwner

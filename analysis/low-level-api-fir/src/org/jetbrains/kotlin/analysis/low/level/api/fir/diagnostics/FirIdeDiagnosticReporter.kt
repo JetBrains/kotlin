@@ -27,7 +27,7 @@ internal class FirIdeDiagnosticReporter : DiagnosticReporter() {
 }
 
 private fun FirLightDiagnostic.toPsiDiagnostic(): FirPsiDiagnostic {
-    val psiSourceElement = element.unwrapToFirPsiSourceElement()
+    val psiSourceElement = element.unwrapToKtPsiSourceElement()
         ?: error("Diagnostic should be created from PSI in IDE")
     @Suppress("UNCHECKED_CAST")
     return when (this) {

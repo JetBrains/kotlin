@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
@@ -13,5 +13,5 @@ class TypeConstraint(
     val annotations: List<FirAnnotation>,
     val identifier: String,
     val firTypeRef: FirTypeRef,
-    val source: FirSourceElement
+    val source: KtSourceElement
 )

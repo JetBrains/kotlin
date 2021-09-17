@@ -12,7 +12,8 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.BaseFirBuilder
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.escapedStringToCharacter
@@ -31,10 +32,10 @@ abstract class BaseConverter(
 
     protected val implicitType = buildImplicitTypeRef()
 
-    override fun LighterASTNode.toFirSourceElement(kind: FirFakeSourceElementKind?): FirLightSourceElement {
+    override fun LighterASTNode.toFirSourceElement(kind: KtFakeSourceElementKind?): KtLightSourceElement {
         val startOffset = offset + tree.getStartOffset(this)
         val endOffset = offset + tree.getEndOffset(this)
-        return toFirLightSourceElement(tree, kind ?: context.forcedElementSourceKind ?: FirRealSourceElementKind, startOffset, endOffset)
+        return toKtLightSourceElement(tree, kind ?: context.forcedElementSourceKind ?: KtRealSourceElementKind, startOffset, endOffset)
     }
 
     override val LighterASTNode.elementType: IElementType

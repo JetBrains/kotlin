@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
-import org.jetbrains.kotlin.fir.FirRealSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
@@ -33,7 +33,7 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker() {
         )
 
     override fun check(expression: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (context.containingDeclarations.lastOrNull()?.source?.kind != FirRealSourceElementKind) return
+        if (context.containingDeclarations.lastOrNull()?.source?.kind != KtRealSourceElementKind) return
         val callableSymbol = expression.annotationTypeRef.toRegularClassSymbol(context.session)
         if (callableSymbol?.origin != FirDeclarationOrigin.Java) return
 

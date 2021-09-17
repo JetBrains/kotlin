@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions.builder
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -25,6 +25,6 @@ interface FirQualifiedAccessBuilder {
     abstract var explicitReceiver: FirExpression?
     abstract var dispatchReceiver: FirExpression
     abstract var extensionReceiver: FirExpression
-    abstract var source: FirSourceElement?
+    abstract var source: KtSourceElement?
     fun build(): FirQualifiedAccess
 }

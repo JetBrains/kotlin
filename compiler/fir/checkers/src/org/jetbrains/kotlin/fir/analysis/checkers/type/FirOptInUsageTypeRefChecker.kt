@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.FirRealSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationClassForOptInMarker
@@ -32,7 +32,7 @@ object FirOptInUsageTypeRefChecker : FirTypeRefChecker() {
     @OptIn(SymbolInternals::class)
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = typeRef.source
-        if (source?.kind !is FirRealSourceElementKind) return
+        if (source?.kind !is KtRealSourceElementKind) return
         // coneTypeSafe filters out all delegatedTypeRefs from here
         val coneType = typeRef.coneTypeSafe<ConeClassLikeType>() ?: return
 

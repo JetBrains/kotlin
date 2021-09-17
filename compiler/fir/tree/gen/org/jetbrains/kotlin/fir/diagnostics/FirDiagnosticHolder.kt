@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.diagnostics
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 interface FirDiagnosticHolder : FirElement {
-    override val source: FirSourceElement?
+    override val source: KtSourceElement?
     val diagnostic: ConeDiagnostic
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDiagnosticHolder(this, data)

@@ -5,15 +5,17 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.canHaveAbstractDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isOpen
@@ -43,7 +45,7 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
                 }
             }
             val getterReturnTypeRef = getter.returnTypeRef
-            if (getterReturnTypeRef.source?.kind is FirFakeSourceElementKind) {
+            if (getterReturnTypeRef.source?.kind is KtFakeSourceElementKind) {
                 return
             }
             val getterReturnType = getterReturnTypeRef.coneType
@@ -122,7 +124,7 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
         reporter: DiagnosticReporter
     ) {
         if (property.delegateFieldSymbol != null && accessor.body != null &&
-            accessor.source?.kind != FirFakeSourceElementKind.DelegatedPropertyAccessor
+            accessor.source?.kind != KtFakeSourceElementKind.DelegatedPropertyAccessor
         ) {
             reporter.reportOn(accessor.source, FirErrors.ACCESSOR_FOR_DELEGATED_PROPERTY, context)
         }

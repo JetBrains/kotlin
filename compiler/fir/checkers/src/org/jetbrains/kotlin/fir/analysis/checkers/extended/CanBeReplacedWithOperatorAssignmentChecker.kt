@@ -7,17 +7,21 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirVariableAssignmentChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.dispatchReceiverTypeOrNull
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isPrimitive
@@ -29,10 +33,10 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker
     override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
         val lValue = expression.lValue
         if (lValue !is FirResolvedNamedReference) return
-        if (expression.source?.kind is FirFakeSourceElementKind) return
+        if (expression.source?.kind is KtFakeSourceElementKind) return
 
         val rValue = expression.rValue as? FirFunctionCall ?: return
-        if (rValue.source?.kind is FirFakeSourceElementKind) return
+        if (rValue.source?.kind is KtFakeSourceElementKind) return
 
         if (rValue.explicitReceiver?.typeRef?.coneType?.isPrimitive != true) return
         val rValueResolvedSymbol = rValue.toResolvedCallableSymbol() ?: return
@@ -41,14 +45,14 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker
         var needToReport = false
         val assignmentSource = expression.source
 
-        if (assignmentSource is FirPsiSourceElement) {
+        if (assignmentSource is KtPsiSourceElement) {
             val lValuePsi = lValue.psi as? KtNameReferenceExpression ?: return
             val rValuePsi = rValue.psi as? KtBinaryExpression ?: return
 
             if (rValuePsi.matcher(lValuePsi)) {
                 needToReport = true
             }
-        } else if (assignmentSource is FirLightSourceElement) {
+        } else if (assignmentSource is KtLightSourceElement) {
             val lValueLightTree = lValue.source!!.lighterASTNode
             val rValueLightTree = rValue.source!!.lighterASTNode
             if (lightTreeMatcher(lValueLightTree, rValueLightTree, assignmentSource)) {
@@ -65,7 +69,7 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker
     fun lightTreeMatcher(
         variable: LighterASTNode,
         expression: LighterASTNode,
-        source: FirLightSourceElement,
+        source: KtLightSourceElement,
         prevOperator: LighterASTNode? = null
     ): Boolean {
         val tree = source.treeStructure

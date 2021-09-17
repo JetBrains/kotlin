@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirDynamicTypeRefImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val annotations: MutableList<FirAnnotation>,
     override val isMarkedNullable: Boolean,
 ) : FirDynamicTypeRef() {

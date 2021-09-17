@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirErrorImport
 import org.jetbrains.kotlin.fir.declarations.FirImport
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirErrorImportBuilder {
-    var aliasSource: FirSourceElement? = null
+    var aliasSource: KtSourceElement? = null
     lateinit var diagnostic: ConeDiagnostic
     lateinit var delegate: FirImport
 

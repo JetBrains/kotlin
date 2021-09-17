@@ -8,15 +8,15 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.fir.FirLightSourceElement
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 
 // ------------------------------ diagnostics ------------------------------
 
 sealed class FirDiagnostic : DiagnosticMarker {
-    abstract val element: FirSourceElement
+    abstract val element: KtSourceElement
     abstract val severity: Severity
     abstract val factory: AbstractFirDiagnosticFactory
     abstract val positioningStrategy: SourceElementPositioningStrategy
@@ -65,7 +65,7 @@ sealed class FirDiagnosticWithParameters4<A, B, C, D> : FirDiagnostic(), Diagnos
 
 interface FirPsiDiagnostic : DiagnosticMarker {
     val factory: AbstractFirDiagnosticFactory
-    val element: FirPsiSourceElement
+    val element: KtPsiSourceElement
     val textRanges: List<TextRange>
     val severity: Severity
 
@@ -87,7 +87,7 @@ private fun FirPsiDiagnostic.checkPsiTypeConsistency() {
 }
 
 data class FirPsiSimpleDiagnostic(
-    override val element: FirPsiSourceElement,
+    override val element: KtPsiSourceElement,
     override val severity: Severity,
     override val factory: FirDiagnosticFactory0,
     override val positioningStrategy: SourceElementPositioningStrategy
@@ -98,7 +98,7 @@ data class FirPsiSimpleDiagnostic(
 }
 
 data class FirPsiDiagnosticWithParameters1<A>(
-    override val element: FirPsiSourceElement,
+    override val element: KtPsiSourceElement,
     override val a: A,
     override val severity: Severity,
     override val factory: FirDiagnosticFactory1<A>,
@@ -111,7 +111,7 @@ data class FirPsiDiagnosticWithParameters1<A>(
 
 
 data class FirPsiDiagnosticWithParameters2<A, B>(
-    override val element: FirPsiSourceElement,
+    override val element: KtPsiSourceElement,
     override val a: A,
     override val b: B,
     override val severity: Severity,
@@ -124,7 +124,7 @@ data class FirPsiDiagnosticWithParameters2<A, B>(
 }
 
 data class FirPsiDiagnosticWithParameters3<A, B, C>(
-    override val element: FirPsiSourceElement,
+    override val element: KtPsiSourceElement,
     override val a: A,
     override val b: B,
     override val c: C,
@@ -138,7 +138,7 @@ data class FirPsiDiagnosticWithParameters3<A, B, C>(
 }
 
 data class FirPsiDiagnosticWithParameters4<A, B, C, D>(
-    override val element: FirPsiSourceElement,
+    override val element: KtPsiSourceElement,
     override val a: A,
     override val b: B,
     override val c: C,
@@ -155,7 +155,7 @@ data class FirPsiDiagnosticWithParameters4<A, B, C, D>(
 // ------------------------------ light tree diagnostics ------------------------------
 
 interface FirLightDiagnostic : DiagnosticMarker {
-    val element: FirLightSourceElement
+    val element: KtLightSourceElement
 
     @Deprecated("Should not be called", level = DeprecationLevel.HIDDEN)
     override val psiElement: PsiElement
@@ -163,14 +163,14 @@ interface FirLightDiagnostic : DiagnosticMarker {
 }
 
 data class FirLightSimpleDiagnostic(
-    override val element: FirLightSourceElement,
+    override val element: KtLightSourceElement,
     override val severity: Severity,
     override val factory: FirDiagnosticFactory0,
     override val positioningStrategy: SourceElementPositioningStrategy
 ) : FirSimpleDiagnostic(), FirLightDiagnostic
 
 data class FirLightDiagnosticWithParameters1<A>(
-    override val element: FirLightSourceElement,
+    override val element: KtLightSourceElement,
     override val a: A,
     override val severity: Severity,
     override val factory: FirDiagnosticFactory1<A>,
@@ -178,7 +178,7 @@ data class FirLightDiagnosticWithParameters1<A>(
 ) : FirDiagnosticWithParameters1<A>(), FirLightDiagnostic
 
 data class FirLightDiagnosticWithParameters2<A, B>(
-    override val element: FirLightSourceElement,
+    override val element: KtLightSourceElement,
     override val a: A,
     override val b: B,
     override val severity: Severity,
@@ -187,7 +187,7 @@ data class FirLightDiagnosticWithParameters2<A, B>(
 ) : FirDiagnosticWithParameters2<A, B>(), FirLightDiagnostic
 
 data class FirLightDiagnosticWithParameters3<A, B, C>(
-    override val element: FirLightSourceElement,
+    override val element: KtLightSourceElement,
     override val a: A,
     override val b: B,
     override val c: C,
@@ -197,7 +197,7 @@ data class FirLightDiagnosticWithParameters3<A, B, C>(
 ) : FirDiagnosticWithParameters3<A, B, C>(), FirLightDiagnostic
 
 data class FirLightDiagnosticWithParameters4<A, B, C, D>(
-    override val element: FirLightSourceElement,
+    override val element: KtLightSourceElement,
     override val a: A,
     override val b: B,
     override val c: C,

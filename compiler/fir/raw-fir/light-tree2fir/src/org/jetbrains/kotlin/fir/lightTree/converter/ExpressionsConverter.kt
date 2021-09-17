@@ -10,9 +10,13 @@ import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.ElementTypeUtils.getOperationSymbol
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -149,7 +153,7 @@ class ExpressionsConverter(
             hasExplicitParameterList = hasArrow
             label = context.getLastLabel(lambdaExpression) ?: context.calleeNamesForLambda.lastOrNull()?.let {
                 buildLabel {
-                    source = expressionSource.fakeElement(FirFakeSourceElementKind.GeneratedLambdaLabel)
+                    source = expressionSource.fakeElement(KtFakeSourceElementKind.GeneratedLambdaLabel)
                     name = it.asString()
                 }
             }
@@ -190,10 +194,10 @@ class ExpressionsConverter(
                         if (statements.isEmpty()) {
                             statements.add(
                                 buildReturnExpression {
-                                    source = expressionSource.fakeElement(FirFakeSourceElementKind.ImplicitReturn)
+                                    source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitReturn)
                                     this.target = target
                                     result = buildUnitExpression {
-                                        source = expressionSource.fakeElement(FirFakeSourceElementKind.ImplicitUnit)
+                                        source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit)
                                     }
                                 }
                             )
@@ -223,7 +227,7 @@ class ExpressionsConverter(
         lateinit var operationTokenName: String
         var leftArgNode: LighterASTNode? = null
         var rightArg: LighterASTNode? = null
-        var operationReferenceSource: FirLightSourceElement? = null
+        var operationReferenceSource: KtLightSourceElement? = null
         binaryExpression.forEachChildren {
             when (it.tokenType) {
                 OPERATION_REFERENCE -> {
@@ -337,7 +341,7 @@ class ExpressionsConverter(
      */
     private fun convertLabeledExpression(labeledExpression: LighterASTNode): FirElement {
         var firExpression: FirElement? = null
-        var errorLabelSource: FirSourceElement? = null
+        var errorLabelSource: KtSourceElement? = null
 
         labeledExpression.forEachChildren {
             context.setNewLabelUserNode(it)
@@ -548,7 +552,7 @@ class ExpressionsConverter(
         (firSelector as? FirQualifiedAccess)?.let {
             if (isSafe) {
                 @OptIn(FirImplementationDetail::class)
-                it.replaceSource(dotQualifiedExpression.toFirSourceElement(FirFakeSourceElementKind.DesugaredSafeCallExpression))
+                it.replaceSource(dotQualifiedExpression.toFirSourceElement(KtFakeSourceElementKind.DesugaredSafeCallExpression))
                 return it.wrapWithSafeCall(
                     firReceiver!!,
                     dotQualifiedExpression.toFirSourceElement()
@@ -813,7 +817,7 @@ class ExpressionsConverter(
 
         return if (whenRefWithSubject != null) {
             buildEqualityOperatorCall {
-                source = whenCondition.toFirSourceElement(FirFakeSourceElementKind.WhenCondition)
+                source = whenCondition.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
                 operation = FirOperation.EQ
                 argumentList = buildBinaryArgumentList(
                     buildWhenSubjectExpression {
@@ -832,7 +836,7 @@ class ExpressionsConverter(
     ): FirExpression {
         var isNegate = false
         var firExpression: FirExpression? = null
-        var conditionSource: FirLightSourceElement? = null
+        var conditionSource: KtLightSourceElement? = null
         whenCondition.forEachChildren {
             when {
                 it.tokenType == OPERATION_REFERENCE && it.asText == NOT_IN.value -> {
@@ -928,7 +932,7 @@ class ExpressionsConverter(
             val isGet = getArgument == null
             source = (if (isGet) arrayAccess else arrayAccess.getParent()!!).toFirSourceElement()
             calleeReference = buildSimpleNamedReference {
-                source = arrayAccess.toFirSourceElement().fakeElement(FirFakeSourceElementKind.ArrayAccessNameReference)
+                source = arrayAccess.toFirSourceElement().fakeElement(KtFakeSourceElementKind.ArrayAccessNameReference)
                 name = if (isGet) OperatorNameConventions.GET else OperatorNameConventions.SET
             }
             explicitReceiver =
@@ -976,10 +980,10 @@ class ExpressionsConverter(
      */
     private fun convertSimpleNameExpression(referenceExpression: LighterASTNode): FirQualifiedAccessExpression {
         val nameSource = referenceExpression.toFirSourceElement()
-        val referenceSourceElement = if (nameSource.kind is FirFakeSourceElementKind) {
+        val referenceSourceElement = if (nameSource.kind is KtFakeSourceElementKind) {
             nameSource
         } else {
-            nameSource.fakeElement(FirFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
+            nameSource.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
         }
         return buildPropertyAccessExpression {
             val rawText = referenceExpression.asText
@@ -992,7 +996,7 @@ class ExpressionsConverter(
     }
 
     private fun createSimpleNamedReference(
-        sourceElement: FirSourceElement,
+        sourceElement: KtSourceElement,
         referenceExpression: LighterASTNode
     ): FirNamedReference {
         return buildSimpleNamedReference {
@@ -1068,14 +1072,14 @@ class ExpressionsConverter(
 
         val calculatedRangeExpression =
             rangeExpression ?: buildErrorExpression(null, ConeSimpleDiagnostic("No range in for loop", DiagnosticKind.Syntax))
-        val fakeSource = forLoop.toFirSourceElement(FirFakeSourceElementKind.DesugaredForLoop)
+        val fakeSource = forLoop.toFirSourceElement(KtFakeSourceElementKind.DesugaredForLoop)
         val target: FirLoopTarget
         // NB: FirForLoopChecker relies on this block existence and structure
         return buildBlock {
             source = fakeSource
             val iteratorVal = generateTemporaryVariable(
                 baseModuleData,
-                calculatedRangeExpression.source?.fakeElement(FirFakeSourceElementKind.DesugaredForLoop),
+                calculatedRangeExpression.source?.fakeElement(KtFakeSourceElementKind.DesugaredForLoop),
                 SpecialNames.ITERATOR,
                 buildFunctionCall {
                     source = fakeSource
@@ -1309,7 +1313,7 @@ class ExpressionsConverter(
         }
 
         val calculatedFirExpression = firExpression ?: buildUnitExpression {
-            source = returnExpression.toFirSourceElement(FirFakeSourceElementKind.ImplicitUnit)
+            source = returnExpression.toFirSourceElement(KtFakeSourceElementKind.ImplicitUnit)
         }
         return calculatedFirExpression.toReturn(
             baseSource = returnExpression.toFirSourceElement(),

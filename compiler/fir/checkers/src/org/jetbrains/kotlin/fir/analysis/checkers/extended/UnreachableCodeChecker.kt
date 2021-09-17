@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -40,8 +40,8 @@ object UnreachableCodeChecker : FirControlFlowChecker() {
     }
 
     private val sourceKindsToSkip = setOf(
-        FirFakeSourceElementKind.ImplicitReturn,
-        FirFakeSourceElementKind.DesugaredForLoop
+        KtFakeSourceElementKind.ImplicitReturn,
+        KtFakeSourceElementKind.DesugaredForLoop
     )
 
     private fun CFGNode<*>.skipNode(): Boolean {

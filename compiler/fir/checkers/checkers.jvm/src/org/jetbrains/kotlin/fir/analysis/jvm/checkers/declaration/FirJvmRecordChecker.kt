@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
@@ -89,7 +89,7 @@ object FirJvmRecordChecker : FirRegularClassChecker() {
 
         declaration.declarations.forEach { decl ->
             if (decl is FirProperty) {
-                val fromConstructor = decl.source?.kind == FirFakeSourceElementKind.PropertyFromParameter
+                val fromConstructor = decl.source?.kind == KtFakeSourceElementKind.PropertyFromParameter
                 if (decl.isVar && fromConstructor) {
                     reporter.reportOn(decl.source, FirJvmErrors.JVM_RECORD_NOT_VAL_PARAMETER, context)
                 } else if (!fromConstructor && (decl.hasBackingField || decl.delegateFieldSymbol != null)) {
@@ -101,7 +101,7 @@ object FirJvmRecordChecker : FirRegularClassChecker() {
         }
 
         declaration.superTypeRefs.firstOrNull()?.let { typeRef ->
-            if (typeRef.source?.kind != FirRealSourceElementKind) return@let
+            if (typeRef.source?.kind != KtRealSourceElementKind) return@let
             if (typeRef.toRegularClassSymbol(context.session)?.classKind == ClassKind.CLASS) {
                 reporter.reportOn(declaration.source, FirJvmErrors.JVM_RECORD_EXTENDS_CLASS, typeRef.coneType, context)
             }

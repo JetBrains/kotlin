@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -22,7 +22,7 @@ fun checkInconsistentTypeParameters(
     firTypeRefClasses: List<Pair<FirTypeRef?, FirRegularClassSymbol>>,
     context: CheckerContext,
     reporter: DiagnosticReporter,
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     isValues: Boolean
 ) {
     val result = buildDeepSubstitutionMultimap(firTypeRefClasses, context)

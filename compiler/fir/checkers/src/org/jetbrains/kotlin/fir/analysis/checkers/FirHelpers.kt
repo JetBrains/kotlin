@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -534,13 +536,13 @@ fun checkTypeMismatch(
     assignment: FirVariableAssignment?,
     rValue: FirExpression,
     context: CheckerContext,
-    source: FirSourceElement,
+    source: KtSourceElement,
     reporter: DiagnosticReporter,
     isInitializer: Boolean
 ) {
     var lValueType = lValueOriginalType
     var rValueType = rValue.typeRef.coneType
-    if (source.kind is FirFakeSourceElementKind.DesugaredIncrementOrDecrement) {
+    if (source.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
         if (!lValueType.isNullable && rValueType.isNullable) {
             val tempType = rValueType
             rValueType = lValueType
@@ -584,7 +586,7 @@ fun checkTypeMismatch(
                     context
                 )
             }
-            source.kind is FirFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
+            source.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
                 if (!lValueType.isNullable && rValueType.isNullable) {
                     val tempType = rValueType
                     rValueType = lValueType
@@ -660,7 +662,7 @@ fun extractArgumentTypeRefAndSource(typeRef: FirTypeRef?, index: Int): FirTypeRe
     return null
 }
 
-data class FirTypeRefSource(val typeRef: FirTypeRef?, val source: FirSourceElement?)
+data class FirTypeRefSource(val typeRef: FirTypeRef?, val source: KtSourceElement?)
 
 fun FirRegularClassSymbol.collectEnumEntries(): Collection<FirEnumEntrySymbol> {
     assert(classKind == ClassKind.ENUM_CLASS)
@@ -718,13 +720,13 @@ fun getActualTargetList(annotated: FirDeclaration): AnnotationTargetList {
         is FirProperty -> {
             when {
                 annotated.isLocal ->
-                    if (annotated.source?.kind == FirFakeSourceElementKind.DesugaredComponentFunctionCall) {
+                    if (annotated.source?.kind == KtFakeSourceElementKind.DesugaredComponentFunctionCall) {
                         TargetLists.T_DESTRUCTURING_DECLARATION
                     } else {
                         TargetLists.T_LOCAL_VARIABLE
                     }
                 annotated.symbol.callableId.isMember() ->
-                    if (annotated.source?.kind == FirFakeSourceElementKind.PropertyFromParameter) {
+                    if (annotated.source?.kind == KtFakeSourceElementKind.PropertyFromParameter) {
                         TargetLists.T_VALUE_PARAMETER_WITH_VAL
                     } else {
                         TargetLists.T_MEMBER_PROPERTY(annotated.hasBackingField, annotated.delegate != null)
@@ -757,7 +759,7 @@ fun getActualTargetList(annotated: FirDeclaration): AnnotationTargetList {
         is FirTypeParameter -> TargetLists.T_TYPE_PARAMETER
         is FirAnonymousInitializer -> TargetLists.T_INITIALIZER
         is FirAnonymousObject ->
-            if (annotated.source?.kind == FirFakeSourceElementKind.EnumInitializer) {
+            if (annotated.source?.kind == KtFakeSourceElementKind.EnumInitializer) {
                 AnnotationTargetList(
                     KotlinTarget.classActualTargets(
                         ClassKind.ENUM_ENTRY,

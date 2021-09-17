@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.declarations.builder
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 interface FirDeclarationBuilder {
-    abstract var source: FirSourceElement?
+    abstract var source: KtSourceElement?
     abstract var moduleData: FirModuleData
     abstract var resolvePhase: FirResolvePhase
     abstract var origin: FirDeclarationOrigin

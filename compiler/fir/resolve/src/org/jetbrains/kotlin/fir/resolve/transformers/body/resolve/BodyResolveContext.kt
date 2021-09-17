@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -481,7 +481,7 @@ class BodyResolveContext(
         for (parameter in valueParameters) {
             allScope = allScope.storeVariable(parameter)
             val property = properties[parameter.name]
-            if (property?.source?.kind != FirFakeSourceElementKind.PropertyFromParameter) {
+            if (property?.source?.kind != KtFakeSourceElementKind.PropertyFromParameter) {
                 parameterScope = parameterScope.storeVariable(parameter)
             }
         }

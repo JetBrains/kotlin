@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
+import org.jetbrains.kotlin.KtFakeSourceElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.impl.barebone.parentOfType
-import org.jetbrains.kotlin.fir.FirFakeSourceElement
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -18,7 +18,7 @@ internal fun FirDeclaration.getKtDeclarationForFirElement(): KtDeclaration {
     require(this !is FirFile)
 
     val ktDeclaration = (psi as? KtDeclaration) ?: run {
-        (source as? FirFakeSourceElement).psi?.parentOfType()
+        (source as? KtFakeSourceElement).psi?.parentOfType()
     }
     check(ktDeclaration is KtDeclaration) {
         "FirDeclaration should have a PSI of type KtDeclaration"
@@ -34,7 +34,7 @@ internal fun FirDeclaration.getKtDeclarationForFirElement(): KtDeclaration {
                     if (containingDeclaration !is KtPropertyAccessor) containingDeclaration else containingDeclaration.property
                 }
                 is KtCallExpression -> {
-                    check(this.source?.kind == FirFakeSourceElementKind.DefaultAccessor)
+                    check(this.source?.kind == KtFakeSourceElementKind.DefaultAccessor)
                     ((ktDeclaration as? KtCallExpression)?.parent as? KtPropertyDelegate)?.parent as? KtProperty
                 }
                 else -> ktDeclaration
