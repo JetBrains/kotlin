@@ -13,11 +13,12 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.incremental.components.ConstantRef
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 internal val constPhase1 = makeIrFilePhase(
     ::ConstLowering,
@@ -31,20 +32,32 @@ internal val constPhase2 = makeIrFilePhase(
     description = "Substitute calls to const properties with constant values"
 )
 
-class ConstLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+class ConstLowering(val context: JvmBackendContext) : FileLoweringPass {
     val inlineConstTracker =
         context.state.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER]
-    var loweringFile: IrFile? = null
 
-    override fun lower(irFile: IrFile) {
-        loweringFile = irFile
-        irFile.transformChildrenVoid()
+    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(ConstTransformer(irFile, context, inlineConstTracker))
+}
+
+class ConstTransformer(
+    val irFile: IrFile,
+    val context: JvmBackendContext,
+    val inlineConstTracker: InlineConstTracker?
+) : IrElementTransformerVoid() {
+    override fun visitCall(expression: IrCall): IrExpression {
+        val function = (expression.symbol.owner as? IrSimpleFunction) ?: return super.visitCall(expression)
+        val property = function.correspondingPropertySymbol?.owner ?: return super.visitCall(expression)
+        // If `constantValue` is not null, `function` can only be the getter because the property is immutable.
+        return expression.lowerConstRead(expression.dispatchReceiver, property.backingField, irFile) ?: super.visitCall(expression)
     }
 
-    private fun IrExpression.lowerConstRead(receiver: IrExpression?, field: IrField?): IrExpression? {
+    override fun visitGetField(expression: IrGetField): IrExpression =
+        expression.lowerConstRead(expression.receiver, expression.symbol.owner, irFile) ?: super.visitGetField(expression)
+
+    private fun IrExpression.lowerConstRead(receiver: IrExpression?, field: IrField?, irFile: IrFile): IrExpression? {
         val value = field?.constantValue() ?: return null
         transformChildrenVoid()
-        reportInlineConst(field, value)
+        reportInlineConst(field, value, irFile)
 
         val resultExpression = if (context.state.shouldInlineConstVals)
             value.copyWithOffsets(startOffset, endOffset)
@@ -60,34 +73,20 @@ class ConstLowering(val context: JvmBackendContext) : IrElementTransformerVoid()
             )
     }
 
-    private fun reportInlineConst(field: IrField, value: IrConst<*>) {
-        if (inlineConstTracker == null || loweringFile == null) return
+    private fun reportInlineConst(field: IrField, value: IrConst<*>, irFile: IrFile) {
+        if (inlineConstTracker == null) return
         if (!context.state.shouldInlineConstVals) return
         if (field.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return
 
-        val name = field.name.asString()
+        val path = irFile.path
         val owner = field.parentClassOrNull?.fqNameWhenAvailable?.asString() ?: return
+        val name = field.name.asString()
         val constType = value.kind.asString
-        val cRef = ConstantRef(owner, name, constType)
-        val path = loweringFile?.path ?: return
 
-        inlineConstTracker.report(
-            path,
-            listOf(cRef)
-        )
+        inlineConstTracker.report(path, owner, name, constType)
     }
 
     private fun IrExpression.shouldDropConstReceiver() =
         this is IrConst<*> || this is IrGetValue ||
                 this is IrGetObjectValue
-
-    override fun visitCall(expression: IrCall): IrExpression {
-        val function = (expression.symbol.owner as? IrSimpleFunction) ?: return super.visitCall(expression)
-        val property = function.correspondingPropertySymbol?.owner ?: return super.visitCall(expression)
-        // If `constantValue` is not null, `function` can only be the getter because the property is immutable.
-        return expression.lowerConstRead(expression.dispatchReceiver, property.backingField) ?: super.visitCall(expression)
-    }
-
-    override fun visitGetField(expression: IrGetField): IrExpression =
-        expression.lowerConstRead(expression.receiver, expression.symbol.owner) ?: super.visitGetField(expression)
 }
