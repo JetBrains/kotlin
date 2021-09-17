@@ -136,7 +136,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var irDcePrintReachabilityInfo: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xir-property-lazy-initialization", description = "Perform lazy initialization for properties")
-    var irPropertyLazyInitialization: Boolean by FreezableVar(false)
+    var irPropertyLazyInitialization: Boolean by FreezableVar(true)
 
     @Argument(value = "-Xir-only", description = "Disables pre-IR backend")
     var irOnly: Boolean by FreezableVar(false)
