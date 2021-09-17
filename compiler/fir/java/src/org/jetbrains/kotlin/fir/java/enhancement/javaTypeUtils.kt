@@ -33,37 +33,20 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.extractRadix
 
 internal fun ConeKotlinType.enhance(session: FirSession, qualifiers: IndexedJavaTypeQualifiers): ConeKotlinType? =
-    enhanceConeKotlinType(session, qualifiers, 0, mutableListOf<Int>().apply { computeSubtreeSizes(this) })
-
-// The index in the lambda is the position of the type component in a depth-first walk of the tree.
-// Example: A<B<C, D>, E<F>> - 0<1<2, 3>, 4<5>>. For flexible types, some arguments in the lower bound
-// may be replaced with star projections in the upper bound, but otherwise corresponding arguments
-// have the same index: (A<B<C>, D>..E<*, F>) -> (0<1<2>, 3>..0<1, 3>). This function precomputes
-// the size of each subtree so that we can quickly skip to the next type argument; e.g. result[1] will
-// give 3 for B<C, D>, indicating that E<F> is at 1 + 3 = 4.
-private fun ConeKotlinType.computeSubtreeSizes(result: MutableList<Int>): Int {
-    val index = result.size
-    result.add(0) // reserve space at index
-    result[index] = 1 + typeArguments.sumOf {
-        // Star projections take up one (empty) entry.
-        it.type?.computeSubtreeSizes(result) ?: 1.also { result.add(1) }
-    }
-    return result[index]
-}
+    enhanceConeKotlinType(session, qualifiers, 0)
 
 private fun ConeKotlinType.enhanceConeKotlinType(
     session: FirSession,
     qualifiers: IndexedJavaTypeQualifiers,
     index: Int,
-    subtreeSizes: List<Int>
 ): ConeKotlinType? {
     return when (this) {
         is ConeFlexibleType -> {
             val lowerResult = lowerBound.enhanceInflexibleType(
-                session, TypeComponentPosition.FLEXIBLE_LOWER, qualifiers, index, subtreeSizes
+                session, TypeComponentPosition.FLEXIBLE_LOWER, qualifiers, index
             )
             val upperResult = upperBound.enhanceInflexibleType(
-                session, TypeComponentPosition.FLEXIBLE_UPPER, qualifiers, index, subtreeSizes
+                session, TypeComponentPosition.FLEXIBLE_UPPER, qualifiers, index
             )
 
             when {
@@ -73,7 +56,7 @@ private fun ConeKotlinType.enhanceConeKotlinType(
             }
         }
         is ConeSimpleKotlinType -> enhanceInflexibleType(
-            session, TypeComponentPosition.INFLEXIBLE, qualifiers, index, subtreeSizes
+            session, TypeComponentPosition.INFLEXIBLE, qualifiers, index
         )
         else -> null
     }
@@ -92,7 +75,6 @@ private fun ConeKotlinType.enhanceInflexibleType(
     position: TypeComponentPosition,
     qualifiers: IndexedJavaTypeQualifiers,
     index: Int,
-    subtreeSizes: List<Int>,
 ): ConeKotlinType? {
     require(this !is ConeFlexibleType) { "$this should not be flexible" }
     val shouldEnhance = position.shouldEnhance()
@@ -100,7 +82,7 @@ private fun ConeKotlinType.enhanceInflexibleType(
         return null
     }
 
-    val effectiveQualifiers = qualifiers(index)
+    val effectiveQualifiers = qualifiers[index]
     val enhancedTag = lookupTag.enhanceMutability(effectiveQualifiers, position)
 
     // TODO: implement warnings
@@ -114,8 +96,8 @@ private fun ConeKotlinType.enhanceInflexibleType(
 
     var globalArgIndex = index + 1
     val enhancedArguments = typeArguments.map { arg ->
-        val argIndex = globalArgIndex.also { globalArgIndex += subtreeSizes[it] }
-        arg.type?.enhanceConeKotlinType(session, qualifiers, argIndex, subtreeSizes)?.let {
+        val argIndex = globalArgIndex.also { globalArgIndex = qualifiers.nextSibling(it) }
+        arg.type?.enhanceConeKotlinType(session, qualifiers, argIndex)?.let {
             when (arg.kind) {
                 ProjectionKind.IN -> ConeKotlinTypeProjectionIn(it)
                 ProjectionKind.OUT -> ConeKotlinTypeProjectionOut(it)

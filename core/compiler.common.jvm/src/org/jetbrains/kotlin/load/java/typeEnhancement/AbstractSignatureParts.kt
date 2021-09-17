@@ -178,7 +178,8 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
             val superQualifiers = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type?.extractQualifiers() }
             qualifiers.computeQualifiersForOverride(superQualifiers, index == 0 && isCovariant, index == 0 && containerIsVarargParameter)
         }
-        return { index -> predefined?.map?.get(index) ?: computedResult.getOrElse(index) { JavaTypeQualifiers.NONE } }
+        val nextSiblingMap = IntArray(indexedThisType.size).apply { this[0] = findNextSibling(this, 0) }
+        return IndexedJavaTypeQualifiers(predefined?.map, computedResult, nextSiblingMap)
     }
 
     private fun <T> T.flattenTree(result: MutableList<T>, children: (T) -> Iterable<T>?) {
@@ -192,6 +193,10 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
     private fun KotlinTypeMarker.extractAndMergeDefaultQualifiers(oldQualifiers: JavaTypeQualifiersByElementType?) =
         annotationTypeQualifierResolver.extractAndMergeDefaultQualifiers(oldQualifiers, annotations)
 
+    // The index in the lambda is the position of the type component in a depth-first walk of the tree.
+    // Example: A<B<C, D>, E<F>> - 0<1<2, 3>, 4<5>>. For flexible types, some arguments in the lower bound
+    // may be replaced with star projections in the upper bound, but otherwise corresponding arguments
+    // have the same index: (A<B<C>, D>..E<*, F>) -> (0<1<2>, 3>..0<1, 3>).
     private fun KotlinTypeMarker.toIndexed(): List<TypeAndDefaultQualifiers> = with(typeSystem) {
         TypeAndDefaultQualifiers(this@toIndexed, extractAndMergeDefaultQualifiers(containerDefaultTypeQualifiers), null).flattenTree {
             // Enhancement of raw type arguments may enter a loop in FE1.0.
@@ -210,6 +215,20 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         }
     }
 
+    // This function permits quickly skipping to the next type argument in the list produced by `toIndexed`. E.g. for the example
+    // in that function's comment, the next sibling of 1 (B<C, D>) is 4 (E<F>).
+    private fun KotlinTypeMarker.findNextSibling(cache: IntArray, index: Int): Int = with(typeSystem) {
+        if (skipRawTypeArguments && asFlexibleType()?.asRawType() != null) return index + 1
+        getArguments().fold(index + 1) { argIndex, arg ->
+            if (arg.isStarProjection()) {
+                argIndex + 1
+            } else {
+                arg.getType().findNextSibling(cache, argIndex)
+            }.also { cache[argIndex] = it }
+        }
+    }
+
+
     private class TypeAndDefaultQualifiers(
         val type: KotlinTypeMarker?,
         val defaultQualifiers: JavaTypeQualifiersByElementType?,
@@ -217,4 +236,12 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
     )
 }
 
-typealias IndexedJavaTypeQualifiers = (Int) -> JavaTypeQualifiers
+class IndexedJavaTypeQualifiers(
+    private val predefined: Map<Int, JavaTypeQualifiers>?,
+    private val computed: Array<JavaTypeQualifiers>,
+    private val nextSiblingMap: IntArray
+) {
+    operator fun get(index: Int): JavaTypeQualifiers = predefined?.get(index) ?: computed.getOrNull(index) ?: JavaTypeQualifiers.NONE
+
+    fun nextSibling(index: Int): Int = nextSiblingMap[index]
+}
