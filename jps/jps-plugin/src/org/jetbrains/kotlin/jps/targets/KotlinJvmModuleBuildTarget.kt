@@ -367,7 +367,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
 
                 // process inlineConstTracker
                 for (sourceFile: File in sourceFiles) {
-                    val cRefs = inlineConstTracker.inlineConstMap[sourceFile.path]?.map { cRef ->
+                    val cRefs = inlineConstTracker.inlineConstMap[sourceFile.path]?.map { cRef: ConstantRef ->
                         val descriptor = when (cRef.constType) {
                             "Byte" -> "B"
                             "Short" -> "S"
