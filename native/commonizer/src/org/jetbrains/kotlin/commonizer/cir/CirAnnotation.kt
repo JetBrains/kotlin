@@ -36,28 +36,20 @@ private data class CirAnnotationInternedImpl(
     override val constantValueArguments: Map<CirName, CirConstantValue>,
     override val annotationValueArguments: Map<CirName, CirAnnotation>
 ) : CirAnnotation {
-    // See also org.jetbrains.kotlin.types.KotlinType.cachedHashCode
-    private var cachedHashCode = 0
-
-    private fun computeHashCode() = hashCode(type)
+    private var hashCode = hashCode(type)
         .appendHashCode(constantValueArguments)
         .appendHashCode(annotationValueArguments)
 
-    override fun hashCode(): Int {
-        var currentHashCode = cachedHashCode
-        if (currentHashCode != 0) return currentHashCode
 
-        currentHashCode = computeHashCode()
-        cachedHashCode = currentHashCode
-        return currentHashCode
-    }
+    override fun hashCode(): Int = hashCode
 
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
-
-        return other is CirAnnotation
-                && type == other.type
-                && constantValueArguments == other.constantValueArguments
-                && annotationValueArguments == other.annotationValueArguments
+        if (other is CirAnnotationInternedImpl && other.hashCode != this.hashCode) return false
+        if (other !is CirAnnotation) return false
+        if (other.type != this.type) return false
+        if (other.constantValueArguments != this.constantValueArguments) return false
+        if (other.annotationValueArguments != this.annotationValueArguments) return false
+        return true
     }
 }

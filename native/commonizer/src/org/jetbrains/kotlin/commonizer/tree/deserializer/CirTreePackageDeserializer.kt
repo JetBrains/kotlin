@@ -24,20 +24,17 @@ internal class CirTreePackageDeserializer(
     ): CirTreePackage {
         val pkg = CirPackage.create(packageName)
 
-        val properties = fragments.asSequence().mapNotNull { it.pkg }
+        val properties = fragments.mapNotNull { it.pkg }
             .flatMap { it.properties }
             .mapNotNull { property -> propertyDeserializer(property, null, typeResolver) }
-            .toList()
 
-        val functions = fragments.asSequence().mapNotNull { it.pkg }
+        val functions = fragments.mapNotNull { it.pkg }
             .flatMap { it.functions }
             .mapNotNull { function -> functionDeserializer(function, null, typeResolver) }
-            .toList()
 
-        val typeAliases = fragments.asSequence().mapNotNull { it.pkg }
+        val typeAliases = fragments.mapNotNull { it.pkg }
             .flatMap { it.typeAliases }
-            .mapNotNull { typeAlias -> typeAliasDeserializer(typeAlias, pkg.packageName, typeResolver) }
-            .toList()
+            .map { typeAlias -> typeAliasDeserializer(typeAlias, pkg.packageName, typeResolver) }
 
         val classes = ClassesToProcess()
             .apply { fragments.forEach { fragment -> addClassesFromFragment(fragment) } }
