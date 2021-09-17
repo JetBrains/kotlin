@@ -64,7 +64,7 @@ class ErrorTypeCorrector(
     }
 
     enum class TypeKind {
-        RETURN_TYPE, METHOD_PARAMETER_TYPE, SUPER_TYPE
+        RETURN_TYPE, METHOD_PARAMETER_TYPE, SUPER_TYPE, ANNOTATION
     }
 
     fun convert(type: KtTypeElement, substitutions: SubstitutionMap): JCTree.JCExpression {
@@ -147,6 +147,7 @@ class ErrorTypeCorrector(
             RETURN_TYPE -> typeSystem.getOptimalModeForReturnType(kotlinType, false)
             METHOD_PARAMETER_TYPE -> typeSystem.getOptimalModeForValueParameter(kotlinType)
             SUPER_TYPE -> TypeMappingMode.SUPER_TYPE
+            ANNOTATION -> TypeMappingMode.DEFAULT // see genAnnotation in org/jetbrains/kotlin/codegen/AnnotationCodegen.java
         }.updateArgumentModeFromAnnotations(kotlinType, typeSystem)
 
         val typeParameters = (target as? ClassifierDescriptor)?.typeConstructor?.parameters

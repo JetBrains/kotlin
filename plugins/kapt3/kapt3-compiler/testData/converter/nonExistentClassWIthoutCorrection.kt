@@ -1,7 +1,7 @@
 // NON_EXISTENT_CLASS
 // NO_VALIDATION
 
-@file:Suppress("UNRESOLVED_REFERENCE")
+@file:Suppress("CANNOT_INFER_PARAMETER_TYPE", "UNRESOLVED_REFERENCE")
 
 typealias String2 = String
 typealias Coocoo = ABC

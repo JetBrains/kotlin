@@ -40,8 +40,7 @@ import org.jetbrains.kotlin.kapt3.base.stubs.KotlinPosition
 import org.jetbrains.kotlin.kapt3.base.util.TopLevelJava9Aware
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
-import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.METHOD_PARAMETER_TYPE
-import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.RETURN_TYPE
+import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.*
 import org.jetbrains.kotlin.kapt3.util.*
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -63,6 +62,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
@@ -1142,12 +1142,18 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         descriptorAnnotations: Annotations
     ): JCModifiers {
         var seenOverride = false
+        val seenAnnotations = mutableSetOf<AnnotationDescriptor>()
         fun convertAndAdd(list: JavacList<JCAnnotation>, annotation: AnnotationNode): JavacList<JCAnnotation> {
             if (annotation.desc == "Ljava/lang/Override;") {
                 if (seenOverride) return list  // KT-34569: skip duplicate @Override annotations
                 seenOverride = true
             }
-            val annotationDescriptor = descriptorAnnotations.singleOrNull { checkIfAnnotationValueMatches(annotation, AnnotationValue(it)) }
+            // Missing annotation classes can match against multiple annotation descriptors
+            val annotationDescriptor = descriptorAnnotations.firstOrNull {
+                it !in seenAnnotations && checkIfAnnotationValueMatches(annotation, AnnotationValue(it))
+            }?.also {
+                seenAnnotations += it
+            }
             val annotationTree = convertAnnotation(containingClass, annotation, packageFqName, annotationDescriptor) ?: return list
             return list.prepend(annotationTree)
         }
@@ -1186,18 +1192,25 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             if (stripMetadata && fqName == KOTLIN_METADATA_ANNOTATION) return null
         }
 
-        val ktAnnotation = (annotationDescriptor?.source as? PsiSourceElement)?.psi as? KtAnnotationEntry
+        val ktAnnotation = annotationDescriptor?.source?.getPsi() as? KtAnnotationEntry
+        val annotationFqName = getNonErrorType(
+            annotationDescriptor?.type,
+            ANNOTATION,
+            { ktAnnotation?.typeReference },
+            {
+                val useSimpleName = '.' in fqName && fqName.substringBeforeLast('.', "") == packageFqName
+
+                when {
+                    useSimpleName -> treeMaker.FqName(fqName.substring(packageFqName!!.length + 1))
+                    else -> treeMaker.Type(annotationType)
+                }
+            }
+        )
+
         val argMapping = ktAnnotation?.calleeExpression
             ?.getResolvedCall(kaptContext.bindingContext)?.valueArguments
             ?.mapKeys { it.key.name.asString() }
             ?: emptyMap()
-
-        val useSimpleName = '.' in fqName && fqName.substringBeforeLast('.', "") == packageFqName
-
-        val annotationFqName = when {
-            useSimpleName -> treeMaker.FqName(fqName.substring(packageFqName!!.length + 1))
-            else -> treeMaker.Type(annotationType)
-        }
 
         val constantValues = pairedListToMap(annotation.values)
 
