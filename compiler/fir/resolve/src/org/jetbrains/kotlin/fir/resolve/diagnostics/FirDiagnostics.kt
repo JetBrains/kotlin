@@ -131,7 +131,7 @@ class ConeOperatorAmbiguityError(override val candidateSymbols: Collection<FirBa
     override val reason: String get() = "Operator overload ambiguity. Compatible candidates: ${candidateSymbols.map { describeSymbol(it) }}"
 }
 
-class ConeVariableExpectedError : ConeDiagnostic {
+object ConeVariableExpectedError : ConeDiagnostic {
     override val reason: String get() = "Variable expected"
 }
 

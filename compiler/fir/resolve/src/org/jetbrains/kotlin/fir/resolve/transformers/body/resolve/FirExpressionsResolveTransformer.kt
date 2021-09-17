@@ -528,7 +528,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                                     leftArgument.calleeReference.source
                                 else -> leftArgument.source
                             }
-                            diagnostic = if (lhsSymbol == null) ConeVariableExpectedError() else ConeValReassignmentError(lhsSymbol)
+                            diagnostic = if (lhsSymbol == null) ConeVariableExpectedError else ConeValReassignmentError(lhsSymbol)
                         }
                     }
                     (leftArgument as? FirQualifiedAccess)?.let {
