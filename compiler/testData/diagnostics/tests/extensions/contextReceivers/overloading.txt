@@ -1,0 +1,5 @@
+package
+
+public fun foo(): kotlin.Int
+public fun foo(): kotlin.Int
+public fun test(): kotlin.Unit

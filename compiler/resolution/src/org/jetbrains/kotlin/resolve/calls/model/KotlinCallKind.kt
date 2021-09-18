@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.model
 import org.jetbrains.kotlin.resolve.calls.components.ArgumentsToCandidateParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.CheckArgumentsInParenthesis
 import org.jetbrains.kotlin.resolve.calls.components.CheckCallableReference
+import org.jetbrains.kotlin.resolve.calls.components.CheckContextReceiversResolutionPart
 import org.jetbrains.kotlin.resolve.calls.components.CheckExplicitReceiverKindConsistency
 import org.jetbrains.kotlin.resolve.calls.components.CheckExternalArgument
 import org.jetbrains.kotlin.resolve.calls.components.CheckInfixResolutionPart
@@ -36,7 +37,8 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
         CollectionTypeVariableUsagesInfo,
         CheckExplicitReceiverKindConsistency,
         CheckReceivers,
-        PostponedVariablesInitializerResolutionPart
+        PostponedVariablesInitializerResolutionPart,
+        CheckContextReceiversResolutionPart
     ),
     FUNCTION(
         CheckVisibility,
@@ -55,7 +57,8 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
         EagerResolveOfCallableReferences,
         CompatibilityOfTypeVariableAsIntersectionTypePart,
         CompatibilityOfPartiallyApplicableSamConversion,
-        PostponedVariablesInitializerResolutionPart
+        PostponedVariablesInitializerResolutionPart,
+        CheckContextReceiversResolutionPart
     ),
     INVOKE(*FUNCTION.resolutionSequence.toTypedArray()),
     CALLABLE_REFERENCE(
