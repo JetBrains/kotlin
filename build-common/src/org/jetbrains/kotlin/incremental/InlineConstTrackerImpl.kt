@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
-import java.io.Serializable
 
 class InlineConstTrackerImpl : InlineConstTracker {
     private val inlineConst = hashMapOf<String, MutableSet<ConstantRef>>()
@@ -19,4 +18,4 @@ class InlineConstTrackerImpl : InlineConstTracker {
     }
 }
 
-data class ConstantRef(var owner: String, var name: String, var constType: String) : Serializable
+data class ConstantRef(var owner: String, var name: String, var constType: String)
