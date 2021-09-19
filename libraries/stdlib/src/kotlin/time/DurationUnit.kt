@@ -14,8 +14,8 @@ package kotlin.time
  *
  * The smallest time unit is [NANOSECONDS] and the largest is [DAYS], which corresponds to exactly 24 [HOURS].
  */
-@SinceKotlin("1.3")
-@ExperimentalTime
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalTime::class)
 public expect enum class DurationUnit {
     /**
      * Time unit representing one nanosecond, which is 1/1000 of a microsecond.
@@ -49,22 +49,18 @@ public expect enum class DurationUnit {
 
 /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
 @SinceKotlin("1.3")
-@ExperimentalTime
 internal expect fun convertDurationUnit(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double
 
 // overflown result is unspecified
 @SinceKotlin("1.5")
-@ExperimentalTime
 internal expect fun convertDurationUnitOverflow(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long
 
 // overflown result is coerced in the Long range boundaries
 @SinceKotlin("1.5")
-@ExperimentalTime
 internal expect fun convertDurationUnit(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long
 
 
 @SinceKotlin("1.3")
-@ExperimentalTime
 @Suppress("REDUNDANT_ELSE_IN_WHEN")
 internal fun DurationUnit.shortName(): String = when (this) {
     DurationUnit.NANOSECONDS -> "ns"
@@ -78,7 +74,6 @@ internal fun DurationUnit.shortName(): String = when (this) {
 }
 
 @SinceKotlin("1.5")
-@ExperimentalTime
 internal fun durationUnitByShortName(shortName: String): DurationUnit = when (shortName) {
     "ns" -> DurationUnit.NANOSECONDS
     "us" -> DurationUnit.MICROSECONDS
@@ -91,7 +86,6 @@ internal fun durationUnitByShortName(shortName: String): DurationUnit = when (sh
 }
 
 @SinceKotlin("1.5")
-@ExperimentalTime
 internal fun durationUnitByIsoChar(isoChar: Char, isTimeComponent: Boolean): DurationUnit =
     when {
         !isTimeComponent -> {

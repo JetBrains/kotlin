@@ -8,19 +8,17 @@
 @file:kotlin.jvm.JvmPackageName("kotlin.time.jdk8")
 package kotlin.time
 
-import java.time.*
-
 /**
  * Converts [java.time.Duration][java.time.Duration] value to [kotlin.time.Duration][Duration] value.
  *
  * Durations less than 104 days are converted exactly, and durations greater than that can lose some precision
  * due to rounding.
  */
-@SinceKotlin("1.3")
-@ExperimentalTime
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalTime::class)
 @kotlin.internal.InlineOnly
 public inline fun java.time.Duration.toKotlinDuration(): Duration =
-    Duration.seconds(this.seconds) + Duration.nanoseconds(this.nano)
+    this.seconds.toDuration(DurationUnit.SECONDS) + this.nano.toDuration(DurationUnit.NANOSECONDS)
 
 
 /**
@@ -28,8 +26,8 @@ public inline fun java.time.Duration.toKotlinDuration(): Duration =
  *
  * Durations greater than [Long.MAX_VALUE] seconds are cut to that value.
  */
-@SinceKotlin("1.3")
-@ExperimentalTime
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalTime::class)
 @kotlin.internal.InlineOnly
 public inline fun Duration.toJavaDuration(): java.time.Duration =
     toComponents { seconds, nanoseconds -> java.time.Duration.ofSeconds(seconds, nanoseconds.toLong()) }
