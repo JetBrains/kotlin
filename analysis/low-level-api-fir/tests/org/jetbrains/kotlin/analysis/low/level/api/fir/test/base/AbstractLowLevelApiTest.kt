@@ -132,5 +132,3 @@ abstract class AbstractLowLevelApiTest : TestWithDisposable() {
     }
 }
 
-fun String.indexOfOrNull(substring: String) =
-    indexOf(substring).takeIf { it >= 0 }

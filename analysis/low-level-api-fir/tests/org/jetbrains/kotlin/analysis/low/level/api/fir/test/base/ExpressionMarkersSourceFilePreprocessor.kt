@@ -99,4 +99,7 @@ class ExpressionMarkerProvider : TestService {
             .dropLastWhile { it is PsiWhiteSpace }
 }
 
+private fun String.indexOfOrNull(substring: String) =
+    indexOf(substring).takeIf { it >= 0 }
+
 val TestServices.expressionMarkerProvider: ExpressionMarkerProvider by TestServices.testServiceAccessor()

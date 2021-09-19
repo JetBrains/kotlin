@@ -44,11 +44,11 @@ fun MockProject.registerTestServices(
 ) {
     registerService(
         PackagePartProviderFactory::class.java,
-        TestPackagePartProvider(testServices, testModule)
+        PackagePartProviderTestImpl(testServices, testModule)
     )
     registerService(
         FirSealedClassInheritorsProcessorFactory::class.java,
-        TestFirSealedClassInheritorsProcessorFactory()
+        FirSealedClassInheritorsProcessorFactoryTestImpl()
     )
     registerService(KtModuleScopeProvider::class.java, KtModuleScopeProviderImpl())
     registerService(FirIdeResolveStateService::class.java)
@@ -58,17 +58,17 @@ fun MockProject.registerTestServices(
     )
     registerService(KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(allKtFiles))
     registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(allKtFiles))
-    registerService(ProjectStructureProvider::class.java, TestKotlinProjectStructureProvider(testServices))
+    registerService(ProjectStructureProvider::class.java, KotlinProjectStructureProviderTestImpl(testServices))
     reRegisterJavaElementFinder(this)
 }
 
-class TestFirSealedClassInheritorsProcessorFactory : FirSealedClassInheritorsProcessorFactory() {
+private class FirSealedClassInheritorsProcessorFactoryTestImpl : FirSealedClassInheritorsProcessorFactory() {
     override fun createSealedClassInheritorsProvider(): SealedClassInheritorsProvider {
         return SealedClassInheritorsProviderTestImpl()
     }
 }
 
-private class TestPackagePartProvider(
+private class PackagePartProviderTestImpl(
     private val testServices: TestServices,
     private val testModule: TestModule
 ) : PackagePartProviderFactory() {
@@ -78,7 +78,7 @@ private class TestPackagePartProvider(
     }
 }
 
-private class TestKotlinProjectStructureProvider(testServices: TestServices) : ProjectStructureProvider() {
+private class KotlinProjectStructureProviderTestImpl(testServices: TestServices) : ProjectStructureProvider() {
     private val moduleInfoProvider = testServices.projectModuleProvider
     override fun getKtModuleForKtElement(element: PsiElement): KtModule {
         val containingFile = element.containingFile as KtFile
