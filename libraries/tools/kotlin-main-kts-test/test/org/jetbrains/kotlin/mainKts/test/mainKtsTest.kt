@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.mainKts.test
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
 import org.jetbrains.kotlin.mainKts.impl.Directories
 import org.jetbrains.kotlin.mainKts.MainKtsScript
+import org.jetbrains.kotlin.mainKts.SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME
 import org.jetbrains.kotlin.scripting.compiler.plugin.assertTrue
 import org.junit.Assert
 import org.junit.Assert.assertEquals
@@ -143,6 +144,65 @@ class MainKtsTest {
         }.lines()
 
         Assert.assertEquals(listOf("Hi from sub", "Hi from super", "Hi from random"), out)
+    }
+
+    @Test
+    fun testScriptFileLocationDefaultVariable() {
+        val resOk = evalFile(File("$TEST_DATA_ROOT/script-file-location-default.main.kts"))
+        assertSucceeded(resOk)
+        val resultValue = resOk.valueOrThrow().returnValue
+        assertTrue(resultValue is ResultValue.Value) { "Result value should be of type Value" }
+        val value = (resultValue as ResultValue.Value).value!!
+        assertEquals("String", value::class.simpleName)
+        val expectedPathSuffix = "libraries/tools/kotlin-main-kts-test/testData/script-file-location-default.main.kts"
+        val actualPath = (value as String).replace("\\", "/")
+        assertTrue(actualPath.endsWith(expectedPathSuffix)) { "Script file path does not end with expected path" }
+    }
+
+    @Test
+    fun testScriptFileLocationCustomizedVariable() {
+        val resOk = evalFile(File("$TEST_DATA_ROOT/script-file-location-customized.main.kts"))
+        assertSucceeded(resOk)
+        val resultValue = resOk.valueOrThrow().returnValue
+        assertTrue(resultValue is ResultValue.Value) { "Result value should be of type Value" }
+        val value = (resultValue as ResultValue.Value).value!!
+        assertEquals("String", value::class.simpleName)
+        val expectedPathSuffix = "libraries/tools/kotlin-main-kts-test/testData/script-file-location-customized.main.kts"
+        val actualPath = (value as String).replace("\\", "/")
+        assertTrue(actualPath.endsWith(expectedPathSuffix)) { "Script file path does not end with expected path" }
+    }
+
+    @Test
+    fun testScriptFileLocationWithImportedScript() {
+        val resOk = evalFile(File("$TEST_DATA_ROOT/script-file-location-with-imported-file.main.kts"))
+        assertSucceeded(resOk)
+        val resultValue = resOk.valueOrThrow().returnValue
+        assertTrue(resultValue is ResultValue.Value) { "Result value should be of type Value" }
+        val value = (resultValue as ResultValue.Value).value!!
+        assertEquals("Array", value::class.simpleName)
+        val expectedSelfPathSuffix = "libraries/tools/kotlin-main-kts-test/testData/script-file-location-with-imported-file.main.kts"
+        val expectedImportedPathSuffix = "libraries/tools/kotlin-main-kts-test/testData/script-file-location-helper-imported-file.main.kts"
+        val actualPathSelf = (value as Array<*>)[0].toString().replace("\\", "/")
+        val actualPathImported = value[1].toString().replace("\\", "/")
+        assertTrue(actualPathSelf.endsWith(expectedSelfPathSuffix)) { "Script file path does not end with expected path" }
+        assertTrue(actualPathImported.endsWith(expectedImportedPathSuffix)) { "Script file path does not end with expected path" }
+    }
+
+    @Test
+    fun testScriptFileLocationDefaultVariableNotAvailableIfScriptFileVariableCustomized() {
+        val resFailed = evalFile(File("$TEST_DATA_ROOT/script-file-location-customized-default-not-available.main.kts"))
+        assertFailed("Unresolved reference: $SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME", resFailed)
+    }
+
+    @Test
+    fun testScriptFileLocationDefaultVariableRedefinition() {
+        val resOk = evalFile(File("$TEST_DATA_ROOT/script-file-location-redefine-variable.kts"))
+        assertSucceeded(resOk)
+        val resultValue = resOk.valueOrThrow().returnValue
+        assertTrue(resultValue is ResultValue.Value) { "Result value should be of type Value" }
+        val value = (resultValue as ResultValue.Value).value!!
+        assertEquals("String", value::class.simpleName)
+        assertEquals("success", value)
     }
 
     private fun assertIsJava6Bytecode(res: ResultWithDiagnostics<EvaluationResult>) {
