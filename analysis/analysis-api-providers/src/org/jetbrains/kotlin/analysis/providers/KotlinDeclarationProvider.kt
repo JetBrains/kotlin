@@ -14,6 +14,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
+/**
+ * A declaration provider for a given scope. Can be created via [KotlinDeclarationProviderFactory].
+ * May be called frequently, so for implementations it is better to cache results.
+ */
 public abstract class KotlinDeclarationProvider {
     public abstract fun getClassesByClassId(classId: ClassId): Collection<KtClassOrObject>
     public abstract fun getTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias>
