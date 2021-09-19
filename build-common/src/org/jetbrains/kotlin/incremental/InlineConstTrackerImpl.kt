@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 
+@Suppress("unused")
 class InlineConstTrackerImpl : InlineConstTracker {
     private val inlineConst = hashMapOf<String, MutableSet<ConstantRef>>()
 
