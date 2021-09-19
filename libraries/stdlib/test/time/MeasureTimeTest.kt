@@ -9,6 +9,7 @@ package test.time
 import kotlin.random.Random
 import kotlin.test.*
 import kotlin.time.*
+import kotlin.time.Duration.Companion.nanoseconds
 
 class MeasureTimeTest {
 
@@ -52,20 +53,20 @@ class MeasureTimeTest {
         val timeSource = TestTimeSource()
         val expectedNs = Random.nextLong(1_000_000_000L)
         val elapsed = timeSource.measureTime {
-            timeSource += Duration.nanoseconds(expectedNs)
+            timeSource += expectedNs.nanoseconds
         }
 
-        assertEquals(Duration.nanoseconds(expectedNs), elapsed)
+        assertEquals(expectedNs.nanoseconds, elapsed)
 
         val expectedResult: Long
 
         val (result, elapsed2) = timeSource.measureTimedValue {
-            timeSource += Duration.nanoseconds(expectedNs)
+            timeSource += expectedNs.nanoseconds
             expectedResult = expectedNs
             expectedNs
         }
 
         assertEquals(expectedResult, result)
-        assertEquals(Duration.nanoseconds(result), elapsed2)
+        assertEquals(result.nanoseconds, elapsed2)
     }
 }
