@@ -97,7 +97,6 @@ public enum class DeprecationLevel {
 @MustBeDocumented
 public annotation class ExtensionFunctionType
 
-// TODO: How to make it require opt-in? @RequiresOptIn doesn't support TYPE target
 @Target(TYPE)
 @MustBeDocumented
 public annotation class ContextFunctionTypeParams(val count: Int)

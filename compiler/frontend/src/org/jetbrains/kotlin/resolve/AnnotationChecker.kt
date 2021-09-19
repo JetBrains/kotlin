@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
@@ -224,6 +225,12 @@ class AnnotationChecker(
                  */
                 descriptor.forceResolveAllContents()
             }
+
+            val contextReceiversSupported = languageVersionSettings.supportsFeature(ContextReceivers)
+            if (descriptor.fqName == FqName("kotlin.ContextFunctionTypeParams") && !contextReceiversSupported) {
+                trace.report(Errors.UNSUPPORTED_FEATURE.on(entry, ContextReceivers to languageVersionSettings))
+            }
+
             val classDescriptor = descriptor.annotationClass ?: continue
 
             val useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget() ?: annotated.getDefaultUseSiteTarget(descriptor)
