@@ -8,6 +8,8 @@ package test.time
 
 import kotlin.test.*
 import kotlin.time.*
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.nanoseconds
 
 class TimeMarkTest {
 
@@ -27,19 +29,19 @@ class TimeMarkTest {
         }
 
         val mark = timeSource.markNow()
-        val markFuture1 = (mark + Duration.milliseconds(1)).apply { assertHasPassed(false) }
-        val markFuture2 = (mark - Duration.milliseconds((-1))).apply { assertHasPassed(false) }
+        val markFuture1 = (mark + 1.milliseconds).apply { assertHasPassed(false) }
+        val markFuture2 = (mark - (-1).milliseconds).apply { assertHasPassed(false) }
 
-        val markPast1 = (mark - Duration.milliseconds(1)).apply { assertHasPassed(true) }
-        val markPast2 = (markFuture1 + Duration.milliseconds((-2))).apply { assertHasPassed(true) }
+        val markPast1 = (mark - 1.milliseconds).apply { assertHasPassed(true) }
+        val markPast2 = (markFuture1 + (-2).milliseconds).apply { assertHasPassed(true) }
 
-        timeSource += Duration.nanoseconds(500_000)
+        timeSource += 500_000.nanoseconds
 
         val elapsed = mark.elapsedNow()
-        val elapsedFromFuture = elapsed - Duration.milliseconds(1)
-        val elapsedFromPast = elapsed + Duration.milliseconds(1)
+        val elapsedFromFuture = elapsed - 1.milliseconds
+        val elapsedFromPast = elapsed + 1.milliseconds
 
-        assertEquals(Duration.milliseconds(0.5), elapsed)
+        assertEquals(0.5.milliseconds, elapsed)
         assertEquals(elapsedFromFuture, markFuture1.elapsedNow())
         assertEquals(elapsedFromFuture, markFuture2.elapsedNow())
 
@@ -49,7 +51,7 @@ class TimeMarkTest {
         markFuture1.assertHasPassed(false)
         markPast1.assertHasPassed(true)
 
-        timeSource += Duration.milliseconds(1)
+        timeSource += 1.milliseconds
 
         markFuture1.assertHasPassed(true)
         markPast1.assertHasPassed(true)

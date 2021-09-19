@@ -9,37 +9,42 @@ import samples.*
 import kotlin.test.*
 
 import kotlin.time.*
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.nanoseconds
+import kotlin.time.Duration.Companion.seconds
 
 class Durations {
 
     @Sample
     fun toIsoString() {
-        assertPrints(Duration.nanoseconds(25).toIsoString(), "PT0.000000025S")
-        assertPrints(Duration.milliseconds(120.3).toIsoString(), "PT0.120300S")
-        assertPrints(Duration.seconds(30.5).toIsoString(), "PT30.500S")
-        assertPrints(Duration.minutes(30.5).toIsoString(), "PT30M30S")
-        assertPrints(Duration.seconds(86420).toIsoString(), "PT24H0M20S")
-        assertPrints(Duration.days(2).toIsoString(), "PT48H")
+        assertPrints(25.nanoseconds.toIsoString(), "PT0.000000025S")
+        assertPrints(120.3.milliseconds.toIsoString(), "PT0.120300S")
+        assertPrints(30.5.seconds.toIsoString(), "PT30.500S")
+        assertPrints(30.5.minutes.toIsoString(), "PT30M30S")
+        assertPrints(86420.seconds.toIsoString(), "PT24H0M20S")
+        assertPrints(2.days.toIsoString(), "PT48H")
         assertPrints(Duration.ZERO.toIsoString(), "PT0S")
         assertPrints(Duration.INFINITE.toIsoString(), "PT9999999999999H")
     }
 
     @Sample
     fun toStringDefault() {
-        assertPrints(Duration.days(45), "45d")
-        assertPrints(Duration.days(1.5), "1d 12h")
-        assertPrints(Duration.minutes(1230), "20h 30m")
-        assertPrints(Duration.minutes(920), "15h 20m")
-        assertPrints(Duration.seconds(1.546), "1.546s")
-        assertPrints(Duration.milliseconds(25.12), "25.12ms")
+        assertPrints(45.days, "45d")
+        assertPrints(1.5.days, "1d 12h")
+        assertPrints(1230.minutes, "20h 30m")
+        assertPrints(920.minutes, "15h 20m")
+        assertPrints(1.546.seconds, "1.546s")
+        assertPrints(25.12.milliseconds, "25.12ms")
     }
 
     @Sample
     fun toStringDecimals() {
-        assertPrints(Duration.minutes(1230).toString(DurationUnit.DAYS, 2), "0.85d")
-        assertPrints(Duration.minutes(1230).toString(DurationUnit.HOURS, 2), "20.50h")
-        assertPrints(Duration.minutes(1230).toString(DurationUnit.MINUTES), "1230m")
-        assertPrints(Duration.minutes(1230).toString(DurationUnit.SECONDS), "73800s")
+        assertPrints(1230.minutes.toString(DurationUnit.DAYS, 2), "0.85d")
+        assertPrints(1230.minutes.toString(DurationUnit.HOURS, 2), "20.50h")
+        assertPrints(1230.minutes.toString(DurationUnit.MINUTES), "1230m")
+        assertPrints(1230.minutes.toString(DurationUnit.SECONDS), "73800s")
     }
 
     @Sample

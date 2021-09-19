@@ -37,7 +37,7 @@ internal class HrTimeSource(val process: Process) : TimeSource {
     override fun markNow(): TimeMark = object : TimeMark() {
         val startedAt = process.hrtime()
         override fun elapsedNow(): Duration =
-            process.hrtime(startedAt).let { (seconds, nanos) -> Duration.seconds(seconds) + Duration.nanoseconds(nanos) }
+            process.hrtime(startedAt).let { (seconds, nanos) -> seconds.toDuration(DurationUnit.SECONDS) + nanos.toDuration(DurationUnit.NANOSECONDS) }
     }
 
     override fun toString(): String = "TimeSource(process.hrtime())"
