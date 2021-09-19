@@ -10583,6 +10583,18 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("contextReceiverTypeParamsUsage.kt")
+                public void testContextReceiverTypeParamsUsage() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/contextReceiverTypeParamsUsage.kt");
+                }
+
+                @Test
+                @TestMetadata("contextReceiverTypeParamsUsageError.kt")
+                public void testContextReceiverTypeParamsUsageError() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/contextReceiverTypeParamsUsageError.kt");
+                }
+
+                @Test
                 @TestMetadata("functionalType.kt")
                 public void testFunctionalType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/functionalType.kt");
