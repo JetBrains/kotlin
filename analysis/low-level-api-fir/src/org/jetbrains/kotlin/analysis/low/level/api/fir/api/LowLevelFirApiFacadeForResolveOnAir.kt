@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.analysis.low.level.api.fir.FirModuleResolveStateDepended
 import org.jetbrains.kotlin.analysis.low.level.api.fir.FirModuleResolveStateImpl
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DeclarationCopyBuilder.withBodyFrom
+import org.jetbrains.kotlin.analysis.low.level.api.fir.DeclarationCopyBuilder.withBodyFrom
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FileTowerProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerDataContextAllElementsCollector
