@@ -225,6 +225,9 @@ message Class {
 
   repeated int32 nested_class_name = 7 [packed = true, (name_id_in_table) = true];
 
+  repeated Type context_receiver_type = 20;
+  repeated int32 context_receiver_type_id = 21 [packed = true, (type_id_in_table) = true];
+
   repeated Constructor constructor = 8;
   repeated Function function = 9;
   repeated Property property = 10;
@@ -316,6 +319,9 @@ message Function {
   optional Type receiver_type = 5;
   optional int32 receiver_type_id = 8 [(type_id_in_table) = true];
 
+  repeated Type context_receiver_type = 10;
+  repeated int32 context_receiver_type_id = 11 [packed = true, (type_id_in_table) = true];
+
   repeated ValueParameter value_parameter = 6;
 
   optional TypeTable type_table = 30;
@@ -356,6 +362,9 @@ message Property {
 
   optional Type receiver_type = 5;
   optional int32 receiver_type_id = 10 [(type_id_in_table) = true];
+
+  repeated Type context_receiver_type = 12;
+  repeated int32 context_receiver_type_id = 13 [packed = true, (type_id_in_table) = true];
 
   optional ValueParameter setter_value_parameter = 6;
 
