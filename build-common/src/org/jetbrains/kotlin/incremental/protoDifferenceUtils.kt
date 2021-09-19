@@ -295,6 +295,11 @@ class DifferenceCalculatorForClass(
                 ProtoBufClassKind.INLINE_CLASS_UNDERLYING_TYPE_ID -> {
                     isClassAffected = true
                 }
+                ProtoBufClassKind.CONTEXT_RECEIVER_TYPE_LIST,
+                ProtoBufClassKind.CONTEXT_RECEIVER_TYPE_ID_LIST -> {
+                    isClassAffected = true
+                    areSubclassesAffected = true
+                }
             }
         }
 

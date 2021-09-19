@@ -170,6 +170,10 @@ open class ProtoCompareGenerated(
 
         if (!checkEqualsClassNestedClassName(old, new)) return false
 
+        if (!checkEqualsClassContextReceiverType(old, new)) return false
+
+        if (!checkEqualsClassContextReceiverTypeId(old, new)) return false
+
         if (!checkEqualsClassConstructor(old, new)) return false
 
         if (!checkEqualsClassFunction(old, new)) return false
@@ -275,6 +279,8 @@ open class ProtoCompareGenerated(
         SUPERTYPE_LIST,
         SUPERTYPE_ID_LIST,
         NESTED_CLASS_NAME_LIST,
+        CONTEXT_RECEIVER_TYPE_LIST,
+        CONTEXT_RECEIVER_TYPE_ID_LIST,
         CONSTRUCTOR_LIST,
         FUNCTION_LIST,
         PROPERTY_LIST,
@@ -319,6 +325,10 @@ open class ProtoCompareGenerated(
         if (!checkEqualsClassSupertypeId(old, new)) result.add(ProtoBufClassKind.SUPERTYPE_ID_LIST)
 
         if (!checkEqualsClassNestedClassName(old, new)) result.add(ProtoBufClassKind.NESTED_CLASS_NAME_LIST)
+
+        if (!checkEqualsClassContextReceiverType(old, new)) result.add(ProtoBufClassKind.CONTEXT_RECEIVER_TYPE_LIST)
+
+        if (!checkEqualsClassContextReceiverTypeId(old, new)) result.add(ProtoBufClassKind.CONTEXT_RECEIVER_TYPE_ID_LIST)
 
         if (!checkEqualsClassConstructor(old, new)) result.add(ProtoBufClassKind.CONSTRUCTOR_LIST)
 
@@ -453,6 +463,10 @@ open class ProtoCompareGenerated(
             if (!checkEquals(oldTypeTable.getType(old.receiverTypeId), newTypeTable.getType(new.receiverTypeId))) return false
         }
 
+        if (!checkEqualsFunctionContextReceiverType(old, new)) return false
+
+        if (!checkEqualsFunctionContextReceiverTypeId(old, new)) return false
+
         if (!checkEqualsFunctionValueParameter(old, new)) return false
 
         if (!checkEqualsFunctionVersionRequirement(old, new)) return false
@@ -551,6 +565,10 @@ open class ProtoCompareGenerated(
         if (old.hasReceiverTypeId()) {
             if (!checkEquals(oldTypeTable.getType(old.receiverTypeId), newTypeTable.getType(new.receiverTypeId))) return false
         }
+
+        if (!checkEqualsPropertyContextReceiverType(old, new)) return false
+
+        if (!checkEqualsPropertyContextReceiverTypeId(old, new)) return false
 
         if (old.hasSetterValueParameter() != new.hasSetterValueParameter()) return false
         if (old.hasSetterValueParameter()) {
@@ -1367,6 +1385,26 @@ open class ProtoCompareGenerated(
         return true
     }
 
+    open fun checkEqualsClassContextReceiverType(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
+        if (old.contextReceiverTypeCount != new.contextReceiverTypeCount) return false
+
+        for(i in 0..old.contextReceiverTypeCount - 1) {
+            if (!checkEquals(old.getContextReceiverType(i), new.getContextReceiverType(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsClassContextReceiverTypeId(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
+        if (old.contextReceiverTypeIdCount != new.contextReceiverTypeIdCount) return false
+
+        for(i in 0..old.contextReceiverTypeIdCount - 1) {
+            if (!checkEquals(oldTypeTable.getType(old.getContextReceiverTypeId(i)), newTypeTable.getType(new.getContextReceiverTypeId(i)))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsClassConstructor(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
         if (old.constructorCount != new.constructorCount) return false
 
@@ -1447,6 +1485,26 @@ open class ProtoCompareGenerated(
         return true
     }
 
+    open fun checkEqualsFunctionContextReceiverType(old: ProtoBuf.Function, new: ProtoBuf.Function): Boolean {
+        if (old.contextReceiverTypeCount != new.contextReceiverTypeCount) return false
+
+        for(i in 0..old.contextReceiverTypeCount - 1) {
+            if (!checkEquals(old.getContextReceiverType(i), new.getContextReceiverType(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsFunctionContextReceiverTypeId(old: ProtoBuf.Function, new: ProtoBuf.Function): Boolean {
+        if (old.contextReceiverTypeIdCount != new.contextReceiverTypeIdCount) return false
+
+        for(i in 0..old.contextReceiverTypeIdCount - 1) {
+            if (!checkEquals(oldTypeTable.getType(old.getContextReceiverTypeId(i)), newTypeTable.getType(new.getContextReceiverTypeId(i)))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsFunctionValueParameter(old: ProtoBuf.Function, new: ProtoBuf.Function): Boolean {
         if (old.valueParameterCount != new.valueParameterCount) return false
 
@@ -1472,6 +1530,26 @@ open class ProtoCompareGenerated(
 
         for(i in 0..old.typeParameterCount - 1) {
             if (!checkEquals(old.getTypeParameter(i), new.getTypeParameter(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsPropertyContextReceiverType(old: ProtoBuf.Property, new: ProtoBuf.Property): Boolean {
+        if (old.contextReceiverTypeCount != new.contextReceiverTypeCount) return false
+
+        for(i in 0..old.contextReceiverTypeCount - 1) {
+            if (!checkEquals(old.getContextReceiverType(i), new.getContextReceiverType(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsPropertyContextReceiverTypeId(old: ProtoBuf.Property, new: ProtoBuf.Property): Boolean {
+        if (old.contextReceiverTypeIdCount != new.contextReceiverTypeIdCount) return false
+
+        for(i in 0..old.contextReceiverTypeIdCount - 1) {
+            if (!checkEquals(oldTypeTable.getType(old.getContextReceiverTypeId(i)), newTypeTable.getType(new.getContextReceiverTypeId(i)))) return false
         }
 
         return true
@@ -1742,6 +1820,14 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
         hashCode = 31 * hashCode + stringIndexes(getNestedClassName(i))
     }
 
+    for(i in 0..contextReceiverTypeCount - 1) {
+        hashCode = 31 * hashCode + getContextReceiverType(i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..contextReceiverTypeIdCount - 1) {
+        hashCode = 31 * hashCode + typeById(getContextReceiverTypeId(i)).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
     for(i in 0..constructorCount - 1) {
         hashCode = 31 * hashCode + getConstructor(i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
@@ -1858,6 +1944,14 @@ fun ProtoBuf.Function.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + typeById(receiverTypeId).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
+    for(i in 0..contextReceiverTypeCount - 1) {
+        hashCode = 31 * hashCode + getContextReceiverType(i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..contextReceiverTypeIdCount - 1) {
+        hashCode = 31 * hashCode + typeById(getContextReceiverTypeId(i)).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
     for(i in 0..valueParameterCount - 1) {
         hashCode = 31 * hashCode + getValueParameter(i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
@@ -1936,6 +2030,14 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
 
     if (hasReceiverTypeId()) {
         hashCode = 31 * hashCode + typeById(receiverTypeId).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..contextReceiverTypeCount - 1) {
+        hashCode = 31 * hashCode + getContextReceiverType(i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..contextReceiverTypeIdCount - 1) {
+        hashCode = 31 * hashCode + typeById(getContextReceiverTypeId(i)).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     if (hasSetterValueParameter()) {

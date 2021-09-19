@@ -100,6 +100,13 @@ class DescriptorSerializer private constructor(
             builder.addTypeParameter(typeParameter(typeParameterDescriptor))
         }
 
+        val contextReceivers = classDescriptor.contextReceivers
+        if (useTypeTable()) {
+            contextReceivers.forEach { builder.addContextReceiverTypeId(typeId(it.type)) }
+        } else {
+            contextReceivers.forEach { builder.addContextReceiverType(type(it.type)) }
+        }
+
         if (!KotlinBuiltIns.isSpecialClassWithNoSupertypes(classDescriptor)) {
             // Special classes (Any, Nothing) have no supertypes
             for (supertype in classDescriptor.typeConstructor.supertypes) {
@@ -194,6 +201,12 @@ class DescriptorSerializer private constructor(
         if (metDefinitelyNotNullType) {
             builder.addVersionRequirement(
                 writeLanguageVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes, versionRequirementTable)
+            )
+        }
+
+        if (classDescriptor.contextReceivers.isNotEmpty()) {
+            builder.addVersionRequirement(
+                writeCompilerVersionRequirement(1, 6, 20, versionRequirementTable)
             )
         }
 
@@ -308,6 +321,13 @@ class DescriptorSerializer private constructor(
             }
         }
 
+        val contextReceivers = descriptor.contextReceiverParameters
+        if (useTypeTable()) {
+            contextReceivers.forEach { builder.addContextReceiverTypeId(local.typeId(it.type)) }
+        } else {
+            contextReceivers.forEach { builder.addContextReceiverType(local.type(it.type)) }
+        }
+
         versionRequirementTable?.run {
             builder.addAllVersionRequirement(serializeVersionRequirements(descriptor))
 
@@ -317,6 +337,10 @@ class DescriptorSerializer private constructor(
 
             if (descriptor.hasInlineClassTypesInSignature()) {
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
+            }
+
+            if (descriptor.contextReceiverParameters.isNotEmpty()) {
+                builder.addVersionRequirement(writeCompilerVersionRequirement(1, 6, 20))
             }
 
             if (local.metDefinitelyNotNullType) {
@@ -384,6 +408,13 @@ class DescriptorSerializer private constructor(
             }
         }
 
+        val contextReceivers = descriptor.contextReceiverParameters
+        if (useTypeTable()) {
+            contextReceivers.forEach { builder.addContextReceiverTypeId(local.typeId(it.type)) }
+        } else {
+            contextReceivers.forEach { builder.addContextReceiverType(local.type(it.type)) }
+        }
+
         for (valueParameterDescriptor in descriptor.valueParameters) {
             builder.addValueParameter(local.valueParameter(valueParameterDescriptor))
         }
@@ -404,6 +435,10 @@ class DescriptorSerializer private constructor(
 
             if (descriptor.hasInlineClassTypesInSignature()) {
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
+            }
+
+            if (descriptor.contextReceiverParameters.isNotEmpty()) {
+                builder.addVersionRequirement(writeCompilerVersionRequirement(1, 6, 20))
             }
 
             if (local.metDefinitelyNotNullType) {
@@ -747,6 +782,9 @@ class DescriptorSerializer private constructor(
         return writeLanguageVersionRequirement(languageFeature, this)
     }
 
+    private fun MutableVersionRequirementTable.writeCompilerVersionRequirement(major: Int, minor: Int, patch: Int): Int =
+        writeCompilerVersionRequirement(major, minor, patch, this)
+
     // Returns a list of indices into versionRequirementTable, or empty list if there's no @RequireKotlin on the descriptor
     private fun MutableVersionRequirementTable.serializeVersionRequirements(descriptor: DeclarationDescriptor): List<Int> =
         descriptor.annotations
@@ -897,6 +935,17 @@ class DescriptorSerializer private constructor(
                 versionRequirementTable
             )
         }
+
+        fun writeCompilerVersionRequirement(
+            major: Int,
+            minor: Int,
+            patch: Int,
+            versionRequirementTable: MutableVersionRequirementTable
+        ): Int = writeVersionRequirement(
+            major, minor, patch,
+            ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION,
+            versionRequirementTable
+        )
 
         fun writeVersionRequirement(
             major: Int,
