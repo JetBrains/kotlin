@@ -37,13 +37,6 @@ class AndroidIrBuilder internal constructor(
         }
     }
 
-    fun parcelReadValue(receiver: IrExpression, loader: IrExpression): IrExpression {
-        return irCall(androidSymbols.parcelReadValue).apply {
-            dispatchReceiver = receiver
-            putValueArgument(0, loader)
-        }
-    }
-
     fun parcelWriteInt(receiver: IrExpression, value: IrExpression): IrExpression {
         return irCall(androidSymbols.parcelWriteInt).apply {
             dispatchReceiver = receiver
@@ -63,13 +56,6 @@ class AndroidIrBuilder internal constructor(
         return irCall(androidSymbols.parcelWriteString).apply {
             dispatchReceiver = receiver
             putValueArgument(0, value)
-        }
-    }
-
-    fun parcelWriteValue(receiver: IrExpression, v: IrExpression): IrExpression {
-        return irCall(androidSymbols.parcelWriteValue).apply {
-            dispatchReceiver = receiver
-            putValueArgument(0, v)
         }
     }
 

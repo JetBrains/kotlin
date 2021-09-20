@@ -30,6 +30,11 @@ public class ParcelizeBytecodeListingTestGenerated extends AbstractParcelizeByte
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-compiler/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
     }
 
+    @TestMetadata("classLoaderValues.kt")
+    public void testClassLoaderValues() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/codegen/classLoaderValues.kt");
+    }
+
     @TestMetadata("customDescribeContents.kt")
     public void testCustomDescribeContents() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/codegen/customDescribeContents.kt");
