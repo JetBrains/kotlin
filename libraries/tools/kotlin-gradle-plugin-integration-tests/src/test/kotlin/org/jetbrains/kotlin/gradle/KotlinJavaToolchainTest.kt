@@ -14,6 +14,9 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.io.File
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createDirectories
+import kotlin.io.path.writeText
 
 @SimpleGradlePluginTests
 @DisplayName("Kotlin Java Toolchain support")
@@ -677,6 +680,78 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                 assertOutputContains(
                     "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
                             "should be set to the same Java version."
+                )
+            }
+        }
+    }
+
+    @DisplayName("Should skip JVM target validation if no java sources are available")
+    @GradleTest
+    internal fun shouldSkipJvmTargetValidationNoJavaSources(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = gradleVersion,
+            buildJdk = getJdk11().javaHome // should differ from default Kotlin jvm target value
+        ) {
+            //language=properties
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
+            build("assemble")
+        }
+    }
+
+    @DisplayName("Should do JVM target validation if java sources are added and configuration cache is reused")
+    @GradleTestVersions(minVersion = "6.6.1")
+    @GradleTest
+    @ExperimentalPathApi
+    internal fun shouldDoJvmTargetValidationOnNewJavaSourcesAndConfigurationCacheReuse(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = true,
+                configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL
+            ),
+            buildJdk = getJdk11().javaHome // should differ from default Kotlin jvm target value
+        ) {
+            // Validation mode should be 'warning' because of https://github.com/gradle/gradle/issues/9339
+            // which is fixed in Gradle 7.2
+            //language=properties
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = warning
+                """.trimIndent()
+            )
+
+            build("assemble") {
+                assertOutputDoesNotContain(
+                    "'compileJava' task (current target is 11) and 'compileKotlin' task (current target is 1.8) jvm target compatibility should be set to the same Java version."
+                )
+            }
+
+            projectPath.resolve("src/main/java/demo").run {
+                createDirectories()
+                //language=Java
+                resolve("HelloWorld.java").writeText(
+                    """
+                    package demo;
+
+                    public class HelloWorld {
+                        public static void main(String[] args) {
+                            System.out.println("Hello world!");
+                        }
+                    }
+                    """.trimIndent()
+                )
+            }
+
+            build("assemble") {
+                assertOutputContains(
+                    "'compileJava' task (current target is 11) and 'compileKotlin' task (current target is 1.8) jvm target compatibility should be set to the same Java version."
                 )
             }
         }
