@@ -404,7 +404,7 @@ class DiagnosticReporterByTrackingStrategy(
         }
 
         (position as? ExplicitTypeParameterConstraintPositionImpl)?.let {
-            val typeArgumentReference = (it.typeArgument as SimpleTypeArgumentImpl).typeReference
+            val typeArgumentReference = (it.typeArgument as SimpleTypeArgumentImpl).typeProjection.typeReference ?: return@let
             val diagnosticFactory = if (isWarning) UPPER_BOUND_VIOLATED_WARNING else UPPER_BOUND_VIOLATED
             report(diagnosticFactory.on(typeArgumentReference, error.upperKotlinType, error.lowerKotlinType))
         }

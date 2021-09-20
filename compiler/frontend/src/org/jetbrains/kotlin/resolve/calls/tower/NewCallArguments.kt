@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class SimpleTypeArgumentImpl(
-    val typeReference: KtTypeReference,
+    val typeProjection: KtTypeProjection,
     override val type: UnwrappedType
 ) : SimpleTypeArgument
 
