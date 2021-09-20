@@ -47,53 +47,6 @@ class KotlinCallComponents(
     val callableReferenceArgumentResolver: CallableReferenceArgumentResolver
 )
 
-enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
-    VARIABLE(
-        CheckVisibility,
-        CheckSuperExpressionCallPart,
-        NoTypeArguments,
-        NoArguments,
-        CreateFreshVariablesSubstitutor,
-        CollectionTypeVariableUsagesInfo,
-        CheckExplicitReceiverKindConsistency,
-        CheckReceivers,
-        PostponedVariablesInitializerResolutionPart
-    ),
-    FUNCTION(
-        CheckVisibility,
-        CheckInfixResolutionPart,
-        CheckOperatorResolutionPart,
-        CheckSuperExpressionCallPart,
-        MapTypeArguments,
-        MapArguments,
-        ArgumentsToCandidateParameterDescriptor,
-        CreateFreshVariablesSubstitutor,
-        CollectionTypeVariableUsagesInfo,
-        CheckExplicitReceiverKindConsistency,
-        CheckReceivers,
-        CheckArgumentsInParenthesis,
-        CheckExternalArgument,
-        EagerResolveOfCallableReferences,
-        CompatibilityOfTypeVariableAsIntersectionTypePart,
-        CompatibilityOfPartiallyApplicableSamConversion,
-        PostponedVariablesInitializerResolutionPart
-    ),
-    INVOKE(*FUNCTION.resolutionSequence.toTypedArray()),
-    CALLABLE_REFERENCE(
-        CheckVisibility,
-        NoTypeArguments,
-        NoArguments,
-        CreateFreshVariablesSubstitutor,
-        CollectionTypeVariableUsagesInfo,
-        CheckReceivers,
-        CheckCallableReference,
-        CompatibilityOfTypeVariableAsIntersectionTypePart
-    ),
-    UNSUPPORTED();
-
-    val resolutionSequence = resolutionPart.asList()
-}
-
 class GivenCandidate(
     val descriptor: FunctionDescriptor,
     val dispatchReceiver: ReceiverValueWithSmartCastInfo?,
