@@ -702,7 +702,7 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return toList()
     val list: ArrayList<T>
-    if (this is Collection<*>) {
+    if (this is Collection<*> && (size < Int.MAX_VALUE || this !is kotlin.internal.ProgressionCollection)) {
         val resultSize = size - n
         if (resultSize <= 0)
             return emptyList()
