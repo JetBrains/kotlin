@@ -15,4 +15,4 @@ public interface J2 {
 }
 
 // FILE: main.kt
-fun baz(j2: J2): String = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String..kotlin.String?!")!>j2.bar().foo()<!>
+fun baz(j2: J2): String = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String!")!>j2.bar().foo()<!>

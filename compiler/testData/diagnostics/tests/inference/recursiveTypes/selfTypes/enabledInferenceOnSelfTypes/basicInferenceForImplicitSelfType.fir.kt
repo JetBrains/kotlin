@@ -40,7 +40,7 @@ fun testStarJava(builder: JavaBuilder<*>) {
 }
 
 fun <K : JavaBuilder<K>> testTypeParamJava(builder: JavaBuilder<K>) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("K..K?!")!>builder.test()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("K!")!>builder.test()<!>
 
     builder
         .test()

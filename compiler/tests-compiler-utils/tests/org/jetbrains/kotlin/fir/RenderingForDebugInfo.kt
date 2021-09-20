@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.fir.types.*
 
 fun ConeKotlinType.renderForDebugInfo(): String {
-    val nullabilitySuffix = if (this !is ConeKotlinErrorType && this !is ConeClassErrorType) nullability.suffix else ""
+    val nullabilitySuffix = if (this !is ConeFlexibleType && this !is ConeClassErrorType) nullability.suffix else ""
     return when (this) {
         is ConeTypeVariableType -> "TypeVariable(${this.lookupTag.name})"
         is ConeDefinitelyNotNullType -> "${original.renderForDebugInfo()}!!"
@@ -29,9 +29,15 @@ fun ConeKotlinType.renderForDebugInfo(): String {
         }
         is ConeFlexibleType -> {
             buildString {
-                append(lowerBound.renderForDebugInfo())
-                append("..")
-                append(upperBound.renderForDebugInfo())
+                val lower = lowerBound.renderForDebugInfo()
+                val upper = upperBound.renderForDebugInfo()
+                append(lower)
+                if ("$lower?" == upper) {
+                    append("!")
+                } else {
+                    append("..")
+                    append(upper)
+                }
             }
         }
         is ConeIntersectionType -> {
