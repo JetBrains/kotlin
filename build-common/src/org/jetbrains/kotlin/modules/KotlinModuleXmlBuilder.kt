@@ -31,6 +31,7 @@ class KotlinModuleXmlBuilder {
         openTag(p, MODULES)
     }
 
+    @Deprecated(message = "State of IC should be set explicitly")
     fun addModule(
         moduleName: String,
         outputDir: String,
@@ -43,6 +44,34 @@ class KotlinModuleXmlBuilder {
         isTests: Boolean,
         directoriesToFilterOut: Set<File>,
         friendDirs: Iterable<File>
+    ) = addModule(
+        moduleName,
+        outputDir,
+        sourceFiles,
+        javaSourceRoots,
+        classpathRoots,
+        commonSourceFiles,
+        modularJdkRoot,
+        targetTypeId,
+        isTests,
+        directoriesToFilterOut,
+        friendDirs,
+        IncrementalCompilation.isEnabledForJvm()
+    )
+
+    fun addModule(
+        moduleName: String,
+        outputDir: String,
+        sourceFiles: Iterable<File>,
+        javaSourceRoots: Iterable<JvmSourceRoot>,
+        classpathRoots: Iterable<File>,
+        commonSourceFiles: Iterable<File>,
+        modularJdkRoot: File?,
+        targetTypeId: String,
+        isTests: Boolean,
+        directoriesToFilterOut: Set<File>,
+        friendDirs: Iterable<File>,
+        isIncrementalCompilation: Boolean
     ): KotlinModuleXmlBuilder {
         assert(!done) { "Already done" }
 
@@ -67,7 +96,7 @@ class KotlinModuleXmlBuilder {
         }
 
         processJavaSourceRoots(javaSourceRoots)
-        processClasspath(classpathRoots, directoriesToFilterOut)
+        processClasspath(classpathRoots, directoriesToFilterOut, isIncrementalCompilation)
 
         if (modularJdkRoot != null) {
             p.println("<", MODULAR_JDK_ROOT, " ", PATH, "=\"", getEscapedPath(modularJdkRoot), "\"/>")
@@ -79,10 +108,11 @@ class KotlinModuleXmlBuilder {
 
     private fun processClasspath(
             files: Iterable<File>,
-            directoriesToFilterOut: Set<File>) {
+            directoriesToFilterOut: Set<File>,
+            isIncrementalCompilation: Boolean) {
         p.println("<!-- Classpath -->")
         for (file in files) {
-            val isOutput = directoriesToFilterOut.contains(file) && !IncrementalCompilation.isEnabledForJvm()
+            val isOutput = directoriesToFilterOut.contains(file) && !isIncrementalCompilation
             if (isOutput) {
                 // For IDEA's make (incremental compilation) purposes, output directories of the current module and its dependencies
                 // appear on the class path, so we are at risk of seeing the results of the previous build, i.e. if some class was

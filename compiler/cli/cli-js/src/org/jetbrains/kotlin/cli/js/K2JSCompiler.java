@@ -66,6 +66,7 @@ import java.util.stream.Collectors;
 import static org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.kotlin.cli.common.ExitCode.OK;
 import static org.jetbrains.kotlin.cli.common.UtilsKt.getLibraryFromHome;
+import static org.jetbrains.kotlin.cli.common.UtilsKt.incrementalCompilationIsEnabledForJs;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*;
 
 public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
@@ -181,7 +182,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return exitCode;
         }
 
-        if (arguments.getFreeArgs().isEmpty() && !IncrementalCompilation.isEnabledForJs()) {
+        if (arguments.getFreeArgs().isEmpty() && (!incrementalCompilationIsEnabledForJs(arguments))) {
             if (arguments.getVersion()) {
                 return OK;
             }
@@ -219,7 +220,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return ExitCode.COMPILATION_ERROR;
         }
 
-        if (sourcesFiles.isEmpty() && !IncrementalCompilation.isEnabledForJs()) {
+        if (sourcesFiles.isEmpty() && !incrementalCompilationIsEnabledForJs(arguments)) {
             messageCollector.report(ERROR, "No source files", null);
             return COMPILATION_ERROR;
         }

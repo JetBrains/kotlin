@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.isIrBackendEnabled
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -52,7 +53,7 @@ fun makeJsIncrementally(
         .filter { it.isFile && it.extension.equals("kt", ignoreCase = true) }.toList()
 
     val buildReporter = BuildReporter(icReporter = reporter, buildMetricsReporter = DoNothingBuildMetricsReporter)
-    withJsIC {
+    withJsIC(args) {
         val compiler = IncrementalJsCompilerRunner(
             cachesDir, buildReporter,
             buildHistoryFile = buildHistoryFile,
@@ -63,11 +64,15 @@ fun makeJsIncrementally(
     }
 }
 
-inline fun <R> withJsIC(fn: () -> R): R {
+@Suppress("DEPRECATION")
+inline fun <R> withJsIC(args: CommonCompilerArguments, enabled: Boolean = true, fn: () -> R): R {
     val isJsEnabledBackup = IncrementalCompilation.isEnabledForJs()
     IncrementalCompilation.setIsEnabledForJs(true)
 
     try {
+        if (args.incrementalCompilation == null) {
+            args.incrementalCompilation = enabled
+        }
         return fn()
     } finally {
         IncrementalCompilation.setIsEnabledForJs(isJsEnabledBackup)
@@ -86,8 +91,6 @@ class IncrementalJsCompilerRunner(
     reporter,
     buildHistoryFile = buildHistoryFile
 ) {
-    override fun isICEnabled(): Boolean =
-        IncrementalCompilation.isEnabledForJs()
 
     override fun createCacheManager(args: K2JSCompilerArguments, projectDir: File?): IncrementalJsCachesManager {
         val serializerProtocol = if (!args.isIrBackendEnabled()) JsSerializerProtocol else KlibMetadataSerializerProtocol

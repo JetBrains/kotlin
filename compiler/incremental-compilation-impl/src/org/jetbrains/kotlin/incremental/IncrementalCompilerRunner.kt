@@ -61,7 +61,6 @@ abstract class IncrementalCompilerRunner<
     //TODO(valtman) temporal measure to ensure quick disable, should be deleted after successful release
     protected val withSnapshot: Boolean = CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS.value.toBooleanLenient() ?: false
 
-    protected abstract fun isICEnabled(): Boolean
     protected abstract fun createCacheManager(args: Args, projectDir: File?): CacheManager
     protected abstract fun destinationDir(args: Args): File
 
@@ -84,7 +83,6 @@ abstract class IncrementalCompilerRunner<
         providedChangedFiles: ChangedFiles?,
         projectDir: File? = null
     ): ExitCode {
-        assert(isICEnabled()) { "Incremental compilation is not enabled" }
         var caches = createCacheManager(args, projectDir)
 
         if (withSnapshot) {

@@ -159,7 +159,8 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
             "java-production",
             isTests = false,
             emptySet(),
-            friendDirs = moduleData.friendDirs
+            friendDirs = moduleData.friendDirs,
+            isIncrementalCompilation = true
         )
         val modulesFile = tmp.toFile().resolve("modules.xml")
         modulesFile.writeText(builder.asText().toString())

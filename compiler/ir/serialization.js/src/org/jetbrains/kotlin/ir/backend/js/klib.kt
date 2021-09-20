@@ -618,7 +618,7 @@ class ModulesStructure(
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         val analysisResult = analyzer.analysisResult
-        if (IncrementalCompilation.isEnabledForJs()) {
+        if (compilerConfiguration.getBoolean(CommonConfigurationKeys.INCREMENTAL_COMPILATION)) {
             /** can throw [IncrementalNextRoundException] */
             compareMetadataAndGoToNextICRoundIfNeeded(analysisResult, compilerConfiguration, project, files, errorPolicy.allowErrors)
         }
