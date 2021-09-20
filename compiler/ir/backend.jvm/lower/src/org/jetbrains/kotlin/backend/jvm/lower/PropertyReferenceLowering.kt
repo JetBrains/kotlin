@@ -287,7 +287,9 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         for (index in expression.symbol.owner.valueParameters.indices) {
             val value = expression.getValueArgument(index)
             if (value is IrCallableReference<*> && value.origin == IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE) {
-                if (!usesPropertyParameterCache.getOrPut(expression.symbol) { expression.symbol.owner.usesParameter(index) }) {
+                if (!usesPropertyParameterCache.getOrPut(expression.symbol) {
+                        expression.symbol.owner.let { it.resolveFakeOverride() ?: it }.usesParameter(index)
+                }) {
                     expression.putValueArgument(index, IrConstImpl.constNull(value.startOffset, value.endOffset, value.type))
                 }
             }
