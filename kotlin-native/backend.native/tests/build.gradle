@@ -5486,20 +5486,8 @@ if (isAppleTarget(project)) {
         def currentTarget = project.target.name
         enabled = currentTarget.startsWith("mac")
 
-        konanArtifacts {
-            library("frameworkBundleIdLib", targets: [target.name]) {
-                srcFiles("framework/bundle_id/lib.kt")
-                delegate.getByTarget(target.name).configure{
-                    UtilsKt.dependsOnDist(it)
-                }
-            }
-        }
-
         framework("Foo") {
-            sources = ["framework/bundle_id/main.kt"]
-            library = "frameworkBundleIdLib"
-            def exportedLib = konanArtifacts[library].getArtifactByTarget(target.name)
-            opts = ["-Xexport-library=$exportedLib"]
+            sources = ["framework/bundle_id/main.kt", "framework/bundle_id/lib.kt"]
         }
         swiftSources = []
 
