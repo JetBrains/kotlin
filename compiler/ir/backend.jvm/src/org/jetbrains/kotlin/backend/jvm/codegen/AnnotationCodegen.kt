@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
+import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
@@ -275,12 +277,12 @@ abstract class AnnotationCodegen(
                 visitor.visitEnd()
             }
             is IrClassReference -> {
-                var classType = value.classType
+                val classType = value.classType
                 classType.classOrNull?.owner?.let(innerClassConsumer::addInnerClassInfoFromAnnotation)
-                if (classType.isInlineClassType()) {
-                    classType = classType.makeNullable()
-                }
-                annotationVisitor.visit(name, typeMapper.mapType(classType))
+                val mappedType =
+                    if (classType.isInlineClassType()) typeMapper.mapClass(classType.erasedUpperBound)
+                    else typeMapper.mapType(classType)
+                annotationVisitor.visit(name, mappedType)
             }
             is IrErrorExpression -> error("Don't know how to compile annotation value ${ir2string(value)}")
             else -> error("Unsupported compile-time value ${ir2string(value)}")
