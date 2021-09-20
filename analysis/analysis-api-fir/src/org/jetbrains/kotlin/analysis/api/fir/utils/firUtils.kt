@@ -9,13 +9,10 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.declarations.utils.primaryConstructor
-import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -57,37 +54,6 @@ internal fun FirNamedReference.getReferencedElementType(resolveState: FirModuleR
     return firCallableDeclaration.withFirDeclaration(ResolveType.CallableReturnType, resolveState) {
         it.returnTypeRef.coneType
     }
-}
-
-internal fun mapAnnotationParameters(annotation: FirAnnotation, session: FirSession): Map<String, FirExpression> {
-    if (annotation.resolved) return annotation.argumentMapping.mapping.mapKeys { (name, _) -> name.identifier }
-    if (annotation !is FirAnnotationCall) return emptyMap()
-    val annotationCone = annotation.annotationTypeRef.coneType as? ConeClassLikeType ?: return emptyMap()
-
-    val annotationPrimaryCtor = (annotationCone.lookupTag.toSymbol(session)?.fir as? FirRegularClass)?.primaryConstructor
-    val annotationCtorParameterNames = annotationPrimaryCtor?.valueParameters?.map { it.name }
-
-    val resultSet = mutableMapOf<String, FirExpression>()
-
-    val namesSequence = annotationCtorParameterNames?.asSequence()?.iterator()
-
-    for (argument in annotation.argumentList.arguments.filterIsInstance<FirNamedArgumentExpression>()) {
-        resultSet[argument.name.asString()] = argument.expression
-    }
-
-    for (argument in annotation.argumentList.arguments) {
-        if (argument is FirNamedArgumentExpression) continue
-
-        while (namesSequence != null && namesSequence.hasNext()) {
-            val name = namesSequence.next().asString()
-            if (!resultSet.contains(name)) {
-                resultSet[name] = argument
-                break
-            }
-        }
-    }
-
-    return resultSet
 }
 
 internal fun KtTypeNullability.toConeNullability() = when (this) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.renderer
 
+import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.mapAnnotationParameters
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
@@ -12,7 +13,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.analysis.api.fir.utils.mapAnnotationParameters
 
 internal fun StringBuilder.renderAnnotations(
     coneTypeIdeRenderer: ConeTypeIdeRenderer,
