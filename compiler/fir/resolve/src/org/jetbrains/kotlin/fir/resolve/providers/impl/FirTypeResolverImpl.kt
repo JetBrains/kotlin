@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.fullyExpandedClass
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOuterClassArgumentsRequired
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedQualifierError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedDynamicType
@@ -235,12 +234,12 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
         }
 
-        if (symbol is FirClassLikeSymbol<*>) {
+        if (symbol is FirRegularClassSymbol) {
             val isPossibleBareType = areBareTypesAllowed && allTypeArguments.isEmpty()
             if (!isPossibleBareType) {
                 val actualSubstitutor = substitutor ?: ConeSubstitutor.Empty
 
-                val originalTypeParameters = collectTypeParameters(symbol)
+                val originalTypeParameters = symbol.fir.typeParameters
 
                 val (typeParametersAlignedToQualifierParts, outerDeclarations) = getClassesAlignedToQualifierParts(
                     symbol,
@@ -252,7 +251,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     when (symbol) {
                         is FirTypeAliasSymbol ->
                             outerDeclarations.sumOf { it?.let { d -> getActualTypeParametersCount(d) } ?: 0 }
-                        else -> (symbol as FirClassSymbol<*>).typeParameterSymbols.size
+                        else -> symbol.typeParameterSymbols.size
                     }
 
                 for ((typeParameterIndex, typeParameter) in originalTypeParameters.withIndex()) {
@@ -322,45 +321,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         }
     }
 
-    private fun collectTypeParameters(symbol: FirClassLikeSymbol<*>): List<FirTypeParameterRef> {
-        if (symbol is FirClassSymbol<*>) {
-            return symbol.fir.typeParameters
-        }
-
-        require(symbol is FirTypeAliasSymbol)
-
-        val typeAliasFir = symbol.fir
-        val typeAliasTypeParameters = typeAliasFir.typeParameters.toMutableList()
-        val fullyExpandedClass = typeAliasFir.fullyExpandedClass(session)
-        val newTypeParameters = if (fullyExpandedClass != null) { // TODO: Should not be null, move to resolver?
-            val expandedTypeRef = typeAliasFir.expandedTypeRef
-
-            fun checkTypeArguments(typeArgument: ConeTypeProjection) {
-                when (typeArgument) {
-                    is ConeTypeParameterType -> typeAliasTypeParameters.removeIf { it.symbol == typeArgument.lookupTag.symbol }
-                    is ConeClassLikeType -> {
-                        for (subTypeArgument in typeArgument.typeArguments) {
-                            checkTypeArguments(subTypeArgument)
-                        }
-                    }
-                    is ConeKotlinTypeProjection -> checkTypeArguments(typeArgument.type)
-                    else -> {
-                    }
-                }
-            }
-
-            checkTypeArguments(expandedTypeRef.coneType)
-            fullyExpandedClass.typeParameters.toMutableList()
-        } else {
-            mutableListOf()
-        }
-
-        for (typeParameter in typeAliasTypeParameters) {
-            newTypeParameters.add(typeParameter)
-        }
-        return newTypeParameters
-    }
-
     @OptIn(SymbolInternals::class)
     private fun getClassesAlignedToQualifierParts(
         symbol: FirClassLikeSymbol<*>,
@@ -393,7 +353,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             currentClassLikeDeclaration = reversedOuterClasses[index]
             val typeParameters = when (currentClassLikeDeclaration) {
                 is FirTypeAlias -> currentClassLikeDeclaration.typeParameters
-                else -> (currentClassLikeDeclaration as? FirClass)?.typeParameters
+                is FirClass -> currentClassLikeDeclaration.typeParameters
+                else -> null
             }
             if (currentClassLikeDeclaration != null && typeParameters != null) {
                 for (typeParameter in typeParameters) {
