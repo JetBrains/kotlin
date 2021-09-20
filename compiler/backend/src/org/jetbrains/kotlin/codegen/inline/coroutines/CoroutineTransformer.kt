@@ -177,9 +177,9 @@ private const val NOINLINE_CALL_MARKER = "\$\$\$\$\$NOINLINE_CALL_MARKER\$\$\$\$
 
 fun markNoinlineLambdaIfSuspend(mv: MethodVisitor, info: FunctionalArgument?) {
     when (info) {
-        NonInlineableArgumentForInlineableSuspendParameter ->
+        NonInlineArgumentForInlineSuspendParameter.OTHER ->
             mv.visitMethodInsn(Opcodes.INVOKESTATIC, NOINLINE_CALL_MARKER, "always", "()V", false)
-        NonInlineableArgumentForInlineableParameterCalledInSuspend ->
+        NonInlineArgumentForInlineSuspendParameter.INLINE_LAMBDA_AS_VARIABLE -> // depends on how it's substituted later
             mv.visitMethodInsn(Opcodes.INVOKESTATIC, NOINLINE_CALL_MARKER, "conditional", "()V", false)
     }
 }

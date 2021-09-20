@@ -97,7 +97,7 @@ class AnonymousObjectTransformationInfo internal constructor(
     //   to map the inner reference to the outer regenerated type and producing an infinite recursion.
     override fun shouldRegenerate(sameModule: Boolean): Boolean = alreadyRegenerated ||
             !sameModule || capturedOuterRegenerated || needReification || capturesAnonymousObjectThatMustBeRegenerated ||
-                    functionalArguments.values.any { it != NonInlineableArgumentForInlineableParameterCalledInSuspend }
+                    functionalArguments.values.any { it != NonInlineArgumentForInlineSuspendParameter.INLINE_LAMBDA_AS_VARIABLE }
 
     override fun canRemoveAfterTransformation(): Boolean {
         // Note: It is unsafe to remove anonymous class that is referenced by GETSTATIC within lambda

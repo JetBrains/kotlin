@@ -885,7 +885,7 @@ class MethodInliner(
             insnNode is FieldInsnNode && insnNode.name.startsWith(CAPTURED_FIELD_FOLD_PREFIX) ->
                 findCapturedField(insnNode, nodeRemapper).functionalArgument
             insnNode is FieldInsnNode && inliningContext.root.sourceCompilerForInline.isSuspendLambdaCapturedByOuterObjectOrLambda(insnNode.name) ->
-                NonInlineableArgumentForInlineableParameterCalledInSuspend
+                NonInlineArgumentForInlineSuspendParameter.INLINE_LAMBDA_AS_VARIABLE
             else ->
                 null
         }

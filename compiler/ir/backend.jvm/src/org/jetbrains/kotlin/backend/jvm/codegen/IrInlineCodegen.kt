@@ -111,9 +111,9 @@ class IrInlineCodegen(
                         ValueKind.DEFAULT_PARAMETER
                 isInlineParameter && irValueParameter.type.isSuspendFunction() ->
                     if (argumentExpression.isReadOfInlineLambda())
-                        ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND
+                        ValueKind.READ_OF_INLINE_LAMBDA_FOR_INLINE_SUSPEND_PARAMETER
                     else
-                        ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER
+                        ValueKind.READ_OF_OBJECT_FOR_INLINE_SUSPEND_PARAMETER
                 else ->
                     ValueKind.GENERAL
             }
@@ -196,7 +196,7 @@ class IrExpressionLambdaImpl(
         val captureStart = if (isExtensionLambda) 1 else 0 // extension receiver comes before captures
         val captureEnd = captureStart + capturedParameters.size
         capturedVars = capturedParameters.mapIndexed { index, (parameter, _) ->
-            val isSuspend = parameter.isInlineParameter() && parameter.type.isSuspendFunctionTypeOrSubtype()
+            val isSuspend = parameter.isInlineParameter() && parameter.type.isSuspendFunction()
             capturedParamDesc(parameter.name.asString(), asmMethod.argumentTypes[captureStart + index], isSuspend)
         }
         // The parameter list should include the continuation if this is a suspend lambda. In the IR backend,
