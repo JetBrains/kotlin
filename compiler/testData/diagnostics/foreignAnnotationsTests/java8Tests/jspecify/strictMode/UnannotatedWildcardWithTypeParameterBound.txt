@@ -1,0 +1,18 @@
+package
+
+public fun baz(/*0*/ j2: J2): kotlin.String
+
+@org.jspecify.nullness.NullMarked public interface J1</*0*/ V : kotlin.Any, /*1*/ T : @org.jspecify.nullness.Nullable V?> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface J2 {
+    public abstract fun bar(): J1<kotlin.String, out kotlin.Any!>!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

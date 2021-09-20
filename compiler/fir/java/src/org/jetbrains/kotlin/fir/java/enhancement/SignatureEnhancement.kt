@@ -532,28 +532,25 @@ private class EnhancementSignatureParts(
     override val TypeParameterMarker.isFromJava: Boolean
         get() = (this as ConeTypeParameterLookupTag).symbol.fir.origin == FirDeclarationOrigin.Java
 
-    override val TypeParameterMarker.starProjectionType: KotlinTypeMarker
-        get() {
-            require(this is ConeTypeParameterLookupTag)
-            val firstBound = typeParameterSymbol.resolvedBounds.first().type
-            val otherParameters = (typeParameterSymbol.containingDeclarationSymbol?.fir as? FirTypeParameterRefsOwner)?.typeParameters
-                ?.mapTo(mutableSetOf()) { it.symbol } ?: return firstBound
-            // TODO: this can probably enter a loop on C<T extends V, V extends T>.
-            val substitutor = object : AbstractConeSubstitutor(session.typeContext) {
+    override fun TypeParameterMarker.upperBound(substitution: Map<TypeParameterMarker, TypeArgumentMarker>): KotlinTypeMarker {
+        val firSubstitution = substitution.entries.associateTo(mutableMapOf()) { (parameter, argument) ->
+            // TODO: disregarding variance is probably wrong, but that's what class substitution scope does too? I'm confused.
+            (parameter as ConeTypeParameterLookupTag).typeParameterSymbol to (argument as ConeTypeProjection).type
+        }
+        return (this as ConeTypeParameterLookupTag).typeParameterSymbol.upperBound(firSubstitution)
+    }
+
+    private fun FirTypeParameterSymbol.upperBound(cache: MutableMap<FirTypeParameterSymbol, ConeKotlinType?>): ConeKotlinType =
+        cache.getOrPut(this) {
+            cache[this] = session.builtinTypes.nullableAnyType.type // avoid infinite recursion
+            object : AbstractConeSubstitutor(session.typeContext) {
                 override fun substituteType(type: ConeKotlinType): ConeKotlinType? =
-                    if (type is ConeTypeParameterType && type.lookupTag.typeParameterSymbol in otherParameters)
-                        substituteOrNull(type.lookupTag.typeParameterSymbol.resolvedBounds.first().type)
+                    if (type is ConeTypeParameterType)
+                        type.lookupTag.typeParameterSymbol.let { if (it in cache) cache[it] ?: it.upperBound(cache) else null }
                     else
                         null
-
-                override fun substituteArgument(projection: ConeTypeProjection): ConeTypeProjection? =
-                    if (projection.type.let { it is ConeTypeParameterType && it.lookupTag.typeParameterSymbol in otherParameters })
-                        ConeStarProjection
-                    else
-                        super.substituteArgument(projection)
-            }
-            return substitutor.substituteOrSelf(firstBound)
-        }
+            }.substituteOrSelf(ConeTypeIntersector.intersectTypes(session.typeContext, resolvedBounds.map { it.type }))
+        }!!
 
     override fun TypeConstructorMarker.replaceClassId(mapper: (ClassId) -> ClassId?): TypeConstructorMarker? =
         (this as? ConeClassLikeLookupTag)?.classId?.let(mapper)?.let(::ConeClassLikeLookupTagImpl)

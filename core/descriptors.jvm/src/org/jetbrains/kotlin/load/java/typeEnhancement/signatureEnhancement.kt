@@ -260,8 +260,14 @@ private class SignatureParts(
     override val TypeParameterMarker.isFromJava: Boolean
         get() = this is LazyJavaTypeParameterDescriptor
 
-    override val TypeParameterMarker.starProjectionType: KotlinTypeMarker
-        get() = (this as TypeParameterDescriptor).starProjectionType()
+    override fun TypeParameterMarker.upperBound(substitution: Map<TypeParameterMarker, TypeArgumentMarker>): KotlinTypeMarker {
+        // TODO: this is wrong as it doesn't account for subsitutions. But then again FE1.0 is just wrong in such cases:
+        //   public interface J<T, V extends @org.jspecify.nullness.Nullable T> {
+        //    V foo();
+        //   }
+        //   fun f(j: J<String, *>): String? = j.foo() // receiver mismatch???
+        return (this as TypeParameterDescriptor).starProjectionType()
+    }
 
     override fun TypeConstructorMarker.replaceClassId(mapper: (ClassId) -> ClassId?): TypeConstructorMarker? {
         require(this is TypeConstructor)

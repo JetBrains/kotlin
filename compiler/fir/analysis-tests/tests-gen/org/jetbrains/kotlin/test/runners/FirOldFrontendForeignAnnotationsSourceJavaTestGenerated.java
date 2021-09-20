@@ -721,6 +721,12 @@ public class FirOldFrontendForeignAnnotationsSourceJavaTestGenerated extends Abs
                 }
 
                 @Test
+                @TestMetadata("UnannotatedWildcardWithTypeParameterBound.kt")
+                public void testUnannotatedWildcardWithTypeParameterBound() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/UnannotatedWildcardWithTypeParameterBound.kt");
+                }
+
+                @Test
                 @TestMetadata("WildcardsWithDefault.kt")
                 public void testWildcardsWithDefault() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/WildcardsWithDefault.kt");

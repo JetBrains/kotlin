@@ -44,7 +44,7 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
     abstract fun KotlinTypeMarker.withEnhancementForWarnings(enhancement: KotlinTypeMarker): KotlinTypeMarker?
 
     abstract val TypeParameterMarker.isFromJava: Boolean
-    abstract val TypeParameterMarker.starProjectionType: KotlinTypeMarker
+    abstract fun TypeParameterMarker.upperBound(substitution: Map<TypeParameterMarker, TypeArgumentMarker>): KotlinTypeMarker
 
     abstract fun TypeConstructorMarker.replaceClassId(mapper: (ClassId) -> ClassId?): TypeConstructorMarker?
 
@@ -304,34 +304,57 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
             }
         }
 
+        val typeArguments = getArguments()
         val typeParameters = (enhancedConstructor ?: originalConstructor).getParameters()
-        var globalArgIndex = index + 1
-        val enhancedArguments = getArguments().mapIndexed { index, arg ->
+
+        // If we've changed the classifier, the variances need to be updated, as they may be at declaration site.
+        val enhancedArguments = typeArguments.mapIndexedTo(ArrayList(typeArguments.size)) { index, arg ->
             val parameter = typeParameters.getOrNull(index)
-            val enhanced = when {
-                !shouldEnhanceArguments -> null
-                !arg.isStarProjection() -> arg.getType().enhance(qualifiers, globalArgIndex)
-                qualifiers[globalArgIndex].nullability == NullabilityQualifier.FORCE_FLEXIBILITY ->
-                    parameter?.starProjectionType?.let {
-                        // Given `C<T extends @Nullable V>`, unannotated `C<?>` is `C<out (V..V?)>`.
-                        typeFactory.createFlexibleType(
-                            it.lowerBoundIfFlexible().withNullability(false),
-                            it.upperBoundIfFlexible().withNullability(true)
-                        )
-                    }
-                else -> null
+            if (enhancedConstructor == null || parameter == null) {
+                null
+            } else if (arg.isStarProjection()) {
+                typeFactory.createStarProjection(parameter)
+            } else {
+                val variance = arg.getVariance().takeIf { it != parameter.getVariance() } ?: TypeVariance.INV
+                typeFactory.createTypeArgument(arg.getType(), variance)
             }
-            val variance = (if (arg.isStarProjection()) TypeVariance.OUT else arg.getVariance()).takeIf { it != parameter?.getVariance() }
-                ?: TypeVariance.INV
-            globalArgIndex = if (shouldEnhanceArguments) qualifiers.nextSibling(globalArgIndex) else globalArgIndex
-            when {
-                enhanced != null -> typeFactory.createTypeArgument(enhanced, variance)
-                enhancedConstructor != null && parameter != null ->
-                    if (arg.isStarProjection())
-                        typeFactory.createStarProjection(parameter)
-                    else
-                        typeFactory.createTypeArgument(arg.getType(), variance)
-                else -> null
+        }
+
+        if (shouldEnhanceArguments) {
+            qualifiers.forEachIndexed(index, typeArguments) { globalIndex, localIndex, arg ->
+                if (arg.isStarProjection()) return@forEachIndexed
+                val enhanced = arg.getType().enhance(qualifiers, globalIndex) ?: return@forEachIndexed
+                enhancedArguments[localIndex] = typeFactory.createTypeArgument(enhanced, arg.getVariance())
+            }
+
+            // Enhancement of unbounded `?` should be done after all explicit arguments. This is because
+            // `?` is effectively the same as `? extends V` where `V` is the upper bound of the type parameter,
+            // but unlike an explicitly bounded wildcard, it may reference other type parameters. For example,
+            // given `class J<T, V extends @Nullable T>`, the type `J<@NotNull String, ?>` in a scope that forces
+            // `?` to be flexible should be enhanced into `J<String, out (String..String?)>`.
+            var typeParameterToArgument: Map<TypeParameterMarker, TypeArgumentMarker>? = null
+            qualifiers.forEachIndexed(index, typeArguments) { globalIndex, localIndex, arg ->
+                if (!arg.isStarProjection()) return@forEachIndexed
+                val parameter = typeParameters.getOrNull(localIndex) ?: return@forEachIndexed
+                val qualifier = qualifiers[globalIndex].nullability
+                // KT-48515: given `C<T extends @Nullable V>`, `C<?>` in unannotated scope is `C<out V..V?>`.
+                // The other options for the qualifier also have meaning, but we don't use them right now:
+                //   * `C<?>` -> `C<out V?>` - does something with jspecify if `C<T extends @NullnessUnspecified V>`;
+                //     maybe useful if the `?` is in a `@NullMarked` scope.
+                //   * `C<?>` -> `C<out V>` - jspecify explicitly states that this does *not* happen, and we
+                //     currently don't do it for JSR-305 type qualifier defaults either, but who knows.
+                if (qualifier != NullabilityQualifier.FORCE_FLEXIBILITY) return@forEachIndexed
+
+                val substitution = typeParameterToArgument
+                    ?: typeParameters.zip(enhancedArguments.zip(typeArguments) { enhanced, original -> enhanced ?: original }).toMap()
+                        .also { typeParameterToArgument = it }
+                val upperBound = parameter.upperBound(substitution)
+                if (upperBound.nullabilityQualifier == qualifier) return@forEachIndexed
+                val enhanced = typeFactory.createFlexibleType(
+                    upperBound.lowerBoundIfFlexible().withNullability(false),
+                    upperBound.upperBoundIfFlexible().withNullability(true)
+                )
+                enhancedArguments[localIndex] = typeFactory.createTypeArgument(enhanced, TypeVariance.OUT)
             }
         }
 
@@ -350,4 +373,11 @@ class IndexedJavaTypeQualifiers(
     operator fun get(index: Int): JavaTypeQualifiers = predefined?.get(index) ?: computed.getOrNull(index) ?: JavaTypeQualifiers.NONE
 
     fun nextSibling(index: Int): Int = nextSiblingMap[index]
+
+    inline fun forEachIndexed(index: Int, arguments: List<TypeArgumentMarker>, mapper: (Int, Int, TypeArgumentMarker) -> Unit) {
+        var nextGlobalIndex = index + 1
+        for ((localIndex, argument) in arguments.withIndex()) {
+            mapper(nextGlobalIndex.also { nextGlobalIndex = nextSibling(it) }, localIndex, argument)
+        }
+    }
 }
