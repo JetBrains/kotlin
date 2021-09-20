@@ -549,21 +549,6 @@ class KotlinToResolvedCallTransformer(
     }
 }
 
-class TrackingBindingTrace(val trace: BindingTrace) : BindingTrace by trace {
-    var reported: Boolean = false
-
-    override fun report(diagnostic: Diagnostic) {
-        if (bindingContext.diagnostics.noSuppression().forElement(diagnostic.psiElement).any { it == diagnostic }) return
-
-        trace.report(diagnostic)
-        reported = true
-    }
-
-    fun markAsReported() {
-        reported = true
-    }
-}
-
 sealed class NewAbstractResolvedCall<D : CallableDescriptor>() : ResolvedCall<D> {
     abstract val argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
     abstract val kotlinCall: KotlinCall
