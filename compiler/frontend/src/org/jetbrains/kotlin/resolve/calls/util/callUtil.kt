@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.calls.callUtil
+package org.jetbrains.kotlin.resolve.calls.util
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace

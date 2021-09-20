@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.contracts.description.ReturnsEffectDeclaration
 import org.jetbrains.kotlin.contracts.description.expressions.ConstantReference
 import org.jetbrains.kotlin.contracts.parsing.*
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 
 internal class PsiReturnsEffectParser(
     collector: ContractParsingDiagnosticsCollector,

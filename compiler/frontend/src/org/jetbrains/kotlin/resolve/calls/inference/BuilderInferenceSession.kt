@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
-import org.jetbrains.kotlin.resolve.calls.callUtil.shouldBeSubstituteWithStubTypes
-import org.jetbrains.kotlin.resolve.calls.callUtil.toOldSubstitution
+import org.jetbrains.kotlin.resolve.calls.util.shouldBeSubstituteWithStubTypes
+import org.jetbrains.kotlin.resolve.calls.util.toOldSubstitution
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.*

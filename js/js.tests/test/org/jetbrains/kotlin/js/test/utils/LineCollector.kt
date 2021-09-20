@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.test.utils
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.resolve.calls.callUtil.isFakePsiElement
+import org.jetbrains.kotlin.resolve.calls.util.isFakePsiElement
 
 class LineCollector : RecursiveJsVisitor() {
     val lines = mutableListOf<Int?>()
