@@ -674,13 +674,6 @@ fun CandidateApplicability.toResolutionStatus(): ResolutionStatus = when (this) 
     else -> ResolutionStatus.OTHER_ERROR
 }
 
-class NewVariableAsFunctionResolvedCallImpl(
-    override val variableCall: NewResolvedCallImpl<VariableDescriptor>,
-    override val functionCall: NewResolvedCallImpl<FunctionDescriptor>,
-) : VariableAsFunctionResolvedCall, ResolvedCall<FunctionDescriptor> by functionCall {
-    val baseCall get() = functionCall.resolvedCallAtom.atom.psiKotlinCall.cast<PSIKotlinCallForInvoke>().baseCall
-}
-
 fun ResolvedCall<*>.isNewNotCompleted(): Boolean {
     if (this is NewVariableAsFunctionResolvedCallImpl) {
         return !functionCall.isCompleted
