@@ -118,7 +118,8 @@ class KotlinResolutionCallbacksImpl(
                     newContext, deparenthesizedExpression, DataFlowInfo.EMPTY,
                     CallMaker.makeExternalValueArgument(deparenthesizedExpression),
                     argumentName = null,
-                    outerCallContext
+                    outerCallContext,
+                    tracingStrategy = TracingStrategyImpl.create(deparenthesizedExpression.callableReference, newContext.call)
                 )
             }
 

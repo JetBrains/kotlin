@@ -581,7 +581,8 @@ class PSICallResolver(
         val argumentsInParenthesis = if (extraArgumentsNumber == 0) allValueArguments else allValueArguments.dropLast(extraArgumentsNumber)
 
         val externalLambdaArguments = oldCall.functionLiteralArguments
-        val resolvedArgumentsInParenthesis = resolveArgumentsInParenthesis(context, argumentsInParenthesis, isSpecialFunction)
+        val resolvedArgumentsInParenthesis =
+            resolveArgumentsInParenthesis(context, argumentsInParenthesis, isSpecialFunction, tracingStrategy)
 
         val externalArgument = if (oldCall.callType == Call.CallType.ARRAY_SET_METHOD) {
             assert(externalLambdaArguments.isEmpty()) {
@@ -615,8 +616,9 @@ class PSICallResolver(
             else
                 context.dataFlowInfoForArguments.resultInfo
 
-        val resolvedExternalArgument =
-            externalArgument?.let { resolveValueArgument(context, dataFlowInfoAfterArgumentsInParenthesis, it, isSpecialFunction) }
+        val resolvedExternalArgument = externalArgument?.let {
+            resolveValueArgument(context, dataFlowInfoAfterArgumentsInParenthesis, it, isSpecialFunction, tracingStrategy)
+        }
         val resultDataFlowInfo = resolvedExternalArgument?.dataFlowInfoAfterThisArgument ?: dataFlowInfoAfterArgumentsInParenthesis
 
         resolvedArgumentsInParenthesis.forEach { it.setResultDataFlowInfoIfRelevant(resultDataFlowInfo) }
@@ -699,7 +701,8 @@ class PSICallResolver(
     private fun resolveArgumentsInParenthesis(
         context: BasicCallResolutionContext,
         arguments: List<ValueArgument>,
-        isSpecialFunction: Boolean
+        isSpecialFunction: Boolean,
+        tracingStrategy: TracingStrategy,
     ): List<KotlinCallArgument> {
         val dataFlowInfoForArguments = context.dataFlowInfoForArguments
         return arguments.map { argument ->
@@ -707,7 +710,8 @@ class PSICallResolver(
                 context,
                 dataFlowInfoForArguments.getInfo(argument),
                 argument,
-                isSpecialFunction
+                isSpecialFunction,
+                tracingStrategy
             ).also { resolvedArgument ->
                 dataFlowInfoForArguments.updateInfo(argument, resolvedArgument.dataFlowInfoAfterThisArgument)
             }
@@ -718,7 +722,8 @@ class PSICallResolver(
         outerCallContext: BasicCallResolutionContext,
         startDataFlowInfo: DataFlowInfo,
         valueArgument: ValueArgument,
-        isSpecialFunction: Boolean
+        isSpecialFunction: Boolean,
+        tracingStrategy: TracingStrategy,
     ): PSIKotlinCallArgument {
         val builtIns = outerCallContext.scope.ownerDescriptor.builtIns
 
@@ -760,13 +765,13 @@ class PSICallResolver(
 
         if (ktExpression is KtCallableReferenceExpression) {
             return createCallableReferenceKotlinCallArgument(
-                context, ktExpression, startDataFlowInfo, valueArgument, argumentName,
-                outerCallContext
+                context, ktExpression, startDataFlowInfo, valueArgument, argumentName, outerCallContext, tracingStrategy
             )
         }
 
         // argumentExpression instead of ktExpression is hack -- type info should be stored also for parenthesized expression
         val typeInfo = expressionTypingServices.getTypeInfo(argumentExpression, context)
+
         return createSimplePSICallArgument(context, valueArgument, typeInfo) ?: createParseErrorElement()
     }
 
