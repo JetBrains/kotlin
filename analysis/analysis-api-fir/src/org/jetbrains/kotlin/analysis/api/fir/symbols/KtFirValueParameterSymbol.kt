@@ -45,7 +45,7 @@ internal class KtFirValueParameterSymbol(
     override val annotatedType: KtTypeAndAnnotations by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir ->
         if (fir.isVararg) {
             val annotations = fir.returnTypeRef.annotations.map { annotation ->
-                KtFirAnnotationCall(firRef, annotation, _builder)
+                KtFirAnnotationCall(firRef, annotation)
             }
             // There SHOULD always be an array element type (even if it is an error type, e.g., unresolved).
             val arrayElementType = fir.returnTypeRef.coneType.arrayElementType()
@@ -58,7 +58,7 @@ internal class KtFirValueParameterSymbol(
 
     override val hasDefaultValue: Boolean get() = firRef.withFir { it.defaultValue != null }
 
-    override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList(_builder) }
+    override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList() }
     override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)
     override val annotationClassIds: Collection<ClassId> by cached { firRef.getAnnotationClassIds() }
 

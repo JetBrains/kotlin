@@ -186,7 +186,7 @@ internal fun KtConstantValue.toAnnotationMemberValue(parent: PsiElement): PsiAnn
                 values.mapNotNull { element -> element.toAnnotationMemberValue(arrayLiteralParent) }
             }
         is KtAnnotationConstantValue ->
-            FirLightSimpleAnnotation(fqName, parent, arguments, kotlinOrigin)
+            FirLightSimpleAnnotation(classId?.relativeClassName?.asString(), parent, arguments, kotlinOrigin)
         else ->
             createPsiLiteral(parent)?.let {
                 when (it) {
@@ -200,7 +200,7 @@ internal fun KtConstantValue.toAnnotationMemberValue(parent: PsiElement): PsiAnn
 private fun KtConstantValue.asStringForPsiLiteral(): String? =
     when (this) {
         is KtEnumEntryConstantValue ->
-            "${enumEntrySymbol.containingEnumClassIdIfNonLocal?.asSingleFqName()?.asString() ?: ""}.${enumEntrySymbol.name}"
+            "${callableId?.classId?.asSingleFqName()?.asString() ?: ""}.${callableId?.callableName}"
         is KtLiteralConstantValue<*> -> {
             when (val value = this.value) {
                 is String -> "\"${escapeString(value)}\""

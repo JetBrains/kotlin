@@ -57,7 +57,7 @@ internal class KtFirPropertySetterSymbol(
     override val modality: Modality get() = getModality()
     override val visibility: Visibility get() = getVisibility()
 
-    override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList(_builder) }
+    override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList() }
     override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)
     override val annotationClassIds: Collection<ClassId> by cached { firRef.getAnnotationClassIds() }
 

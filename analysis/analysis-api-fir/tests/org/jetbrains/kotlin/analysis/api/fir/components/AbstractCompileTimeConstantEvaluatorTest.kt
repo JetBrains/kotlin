@@ -45,7 +45,7 @@ abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractHLApiSingleFil
             }
             is KtAnnotationConstantValue -> buildString {
                 append("KtAnnotationConstantValue(")
-                append(fqName)
+                append(classId?.relativeClassName)
                 append(", ")
                 arguments.joinTo(this, separator = ", ", prefix = "(", postfix = ")") {
                     "${it.name} = ${it.expression.stringRepresentation()}"
@@ -54,7 +54,7 @@ abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractHLApiSingleFil
             }
             is KtEnumEntryConstantValue -> buildString {
                 append("KtEnumEntryConstantValue(")
-                append(enumEntrySymbol.callableIdIfNonLocal ?: enumEntrySymbol.name)
+                append("$callableId")
                 append(")")
             }
             is KtLiteralConstantValue<*> -> buildString {

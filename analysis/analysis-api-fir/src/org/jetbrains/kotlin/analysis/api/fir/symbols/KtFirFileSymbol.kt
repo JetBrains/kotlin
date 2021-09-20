@@ -27,7 +27,6 @@ internal class KtFirFileSymbol(
     fir: FirFile,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
-    _builder: KtSymbolByFirBuilder,
 ) : KtFileSymbol(), KtSymbolWithDeclarations, KtFirSymbol<FirFile> {
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.moduleData.session) }
@@ -37,7 +36,7 @@ internal class KtFirFileSymbol(
         TODO("Creating pointers for files from library is not supported yet")
     }
 
-    override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList(_builder) }
+    override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList() }
     override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)
     override val annotationClassIds: Collection<ClassId> by cached { firRef.getAnnotationClassIds() }
 

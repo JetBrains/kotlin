@@ -26,7 +26,7 @@ internal class KtFirCompileTimeConstantProvider(
         when (val fir = expression.getOrBuildFir(firResolveState)) {
             is FirExpression -> {
                 FirCompileTimeConstantEvaluator().evaluate(fir)?.let { KtFirConstantValueConverter.toConstantValue(it) }
-                    ?: KtFirConstantValueConverter.toConstantValue(fir, firResolveState.rootModuleSession, firSymbolBuilder)
+                    ?: KtFirConstantValueConverter.toConstantValue(fir, firResolveState.rootModuleSession)
             }
             else -> throwUnexpectedFirElementError(fir, expression)
         }

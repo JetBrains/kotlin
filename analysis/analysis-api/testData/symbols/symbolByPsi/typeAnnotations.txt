@@ -3,7 +3,7 @@ KtFirNamedClassOrObjectSymbol:
     kotlin/annotation/Target
   ]
   annotations: [
-    kotlin/annotation/Target(allowedTargets = KtEnumEntryConstantValue(KtFirEnumEntrySymbol(kotlin/annotation/AnnotationTarget.TYPE)))
+    kotlin/annotation/Target(allowedTargets = KtEnumEntryConstantValue(kotlin/annotation/AnnotationTarget.TYPE))
       psi: KtAnnotationEntry
   ]
   classIdIfNonLocal: Anno1
@@ -30,7 +30,7 @@ KtFirNamedClassOrObjectSymbol:
     kotlin/annotation/Target
   ]
   annotations: [
-    kotlin/annotation/Target(allowedTargets = KtEnumEntryConstantValue(KtFirEnumEntrySymbol(kotlin/annotation/AnnotationTarget.TYPE)))
+    kotlin/annotation/Target(allowedTargets = KtEnumEntryConstantValue(kotlin/annotation/AnnotationTarget.TYPE))
       psi: KtAnnotationEntry
   ]
   classIdIfNonLocal: Anno2
@@ -57,7 +57,7 @@ KtFirNamedClassOrObjectSymbol:
     kotlin/annotation/Target
   ]
   annotations: [
-    kotlin/annotation/Target(allowedTargets = KtEnumEntryConstantValue(KtFirEnumEntrySymbol(kotlin/annotation/AnnotationTarget.TYPE)))
+    kotlin/annotation/Target(allowedTargets = KtEnumEntryConstantValue(kotlin/annotation/AnnotationTarget.TYPE))
       psi: KtAnnotationEntry
   ]
   classIdIfNonLocal: Anno3
@@ -84,7 +84,7 @@ KtFirNamedClassOrObjectSymbol:
     kotlin/annotation/Target
   ]
   annotations: [
-    kotlin/annotation/Target(allowedTargets = KtEnumEntryConstantValue(KtFirEnumEntrySymbol(kotlin/annotation/AnnotationTarget.TYPE)))
+    kotlin/annotation/Target(allowedTargets = KtEnumEntryConstantValue(kotlin/annotation/AnnotationTarget.TYPE))
       psi: KtAnnotationEntry
   ]
   classIdIfNonLocal: Anno4

@@ -96,7 +96,7 @@ public object DebugSymbolRenderer {
             "${value::class.simpleName!!}($symbolTag)"
         }
         is KtLiteralConstantValue<*> -> renderValue(value.value)
-        is KtEnumEntryConstantValue -> "KtEnumEntryConstantValue(${renderValue(value.enumEntrySymbol)})"
+        is KtEnumEntryConstantValue -> "KtEnumEntryConstantValue(${renderValue(value.callableId)})"
         is KtNamedConstantValue -> "${renderValue(value.name)} = ${renderValue(value.expression)}"
         is KtAnnotationCall -> buildString {
             append(renderValue(value.classId))

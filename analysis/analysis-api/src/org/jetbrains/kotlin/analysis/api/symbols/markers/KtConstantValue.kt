@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols.markers
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -36,13 +37,13 @@ public class KtArrayConstantValue(
 ) : KtConstantValue()
 
 public class KtAnnotationConstantValue(
-    public val fqName: String?,
+    public val classId: ClassId?,
     public val arguments: List<KtNamedConstantValue>,
     override val kotlinOrigin: KtCallElement?,
 ) : KtConstantValue()
 
 public class KtEnumEntryConstantValue(
-    public val enumEntrySymbol: KtEnumEntrySymbol,
+    public val callableId: CallableId?,
     override val kotlinOrigin: KtElement?,
 ) : KtConstantValue()
 

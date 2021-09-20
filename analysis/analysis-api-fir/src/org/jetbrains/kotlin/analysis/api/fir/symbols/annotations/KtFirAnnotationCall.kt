@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.psi.KtCallElement
 internal class KtFirAnnotationCall(
     private val containingDeclaration: FirRefWithValidityCheck<FirDeclaration>,
     annotation: FirAnnotation,
-    _builder: KtSymbolByFirBuilder,
 ) : KtAnnotationCall() {
 
     private val annotationCallRef by weakRef(annotation)
@@ -45,7 +44,6 @@ internal class KtFirAnnotationCall(
         KtFirConstantValueConverter.toNamedConstantValue(
             mapAnnotationParameters(annotationCallRef, fir.moduleData.session),
             fir.moduleData.session,
-            _builder
         )
     }
 

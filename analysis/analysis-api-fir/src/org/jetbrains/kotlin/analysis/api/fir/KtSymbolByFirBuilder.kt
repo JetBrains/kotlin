@@ -109,7 +109,7 @@ internal class KtSymbolByFirBuilder private constructor(
 
     fun buildEnumEntrySymbol(fir: FirEnumEntry) = symbolsCache.cache(fir) { KtFirEnumEntrySymbol(fir, resolveState, token, this) }
 
-    fun buildFileSymbol(fir: FirFile) = filesCache.cache(fir) { KtFirFileSymbol(fir, resolveState, token, this) }
+    fun buildFileSymbol(fir: FirFile) = filesCache.cache(fir) { KtFirFileSymbol(fir, resolveState, token) }
 
     private val packageProvider = project.createPackageProvider(GlobalSearchScope.allScope(project))//todo scope
 
