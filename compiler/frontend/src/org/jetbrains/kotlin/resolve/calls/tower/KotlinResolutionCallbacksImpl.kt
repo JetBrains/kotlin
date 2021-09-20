@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
-import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -243,11 +242,10 @@ class KotlinResolutionCallbacksImpl(
     }
 
     private fun getLastDeparentesizedExpression(psiCallArgument: PSIKotlinCallArgument): KtExpression? {
-        val lastExpression: KtExpression?
-        if (psiCallArgument is LambdaKotlinCallArgumentImpl) {
-            lastExpression = psiCallArgument.ktLambdaExpression.bodyExpression?.statements?.lastOrNull()
+        val lastExpression = if (psiCallArgument is LambdaKotlinCallArgumentImpl) {
+            psiCallArgument.ktLambdaExpression.bodyExpression?.statements?.lastOrNull()
         } else {
-            lastExpression = (psiCallArgument as FunctionExpressionImpl).ktFunction.bodyExpression?.lastBlockStatementOrThis()
+            (psiCallArgument as FunctionExpressionImpl).ktFunction.bodyExpression?.lastBlockStatementOrThis()
         }
 
         return KtPsiUtil.deparenthesize(lastExpression)

@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.SmartList
-import kotlin.math.exp
 
 enum class ResolveArgumentsMode {
     RESOLVE_FUNCTION_ARGUMENTS,

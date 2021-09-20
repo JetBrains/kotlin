@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyForInvoke
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val KotlinCall.psiKotlinCall: PSIKotlinCall
     get() {

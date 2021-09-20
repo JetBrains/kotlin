@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
 import org.jetbrains.kotlin.resolve.calls.SPECIAL_FUNCTION_NAMES
 import org.jetbrains.kotlin.resolve.calls.util.isBinaryRemOperator
 import org.jetbrains.kotlin.resolve.calls.util.*
-import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceResolver
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
@@ -73,7 +72,6 @@ class PSICallResolver(
     private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
     private val deprecationResolver: DeprecationResolver,
     private val moduleDescriptor: ModuleDescriptor,
-    private val callableReferenceResolver: CallableReferenceResolver,
     private val candidateInterceptor: CandidateInterceptor,
     private val missingSupertypesResolver: MissingSupertypesResolver
 ) {
@@ -497,7 +495,7 @@ class PSICallResolver(
             }
 
             return variableCallArgument.receiver to SimpleCandidateFactory(
-                callComponents, scopeTower, callForInvoke, createResolutionCallbacks(context), callableReferenceResolver
+                callComponents, scopeTower, callForInvoke, createResolutionCallbacks(context)
             )
         }
 

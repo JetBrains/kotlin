@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
-import org.jetbrains.kotlin.resolve.calls.util.toOldSubstitution
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.commonSuperType
 import org.jetbrains.kotlin.resolve.calls.components.*
@@ -406,12 +405,12 @@ class ResolvedAtomCompleter(
             ?: callableCandidate.dispatchReceiver?.receiver?.receiverValue
         val extensionReceiver = recordedDescriptor.extensionReceiverParameter?.value
             ?: callableCandidate.extensionReceiver?.receiver?.receiverValue
-
         val explicitCallableReceiver = when (callableCandidate.explicitReceiverKind) {
             ExplicitReceiverKind.DISPATCH_RECEIVER -> dispatchReceiver
             ExplicitReceiverKind.EXTENSION_RECEIVER -> extensionReceiver
             else -> null
         }
+
         return CallableReferenceResultTypeInfo(
             dispatchReceiver,
             extensionReceiver,
@@ -514,6 +513,7 @@ class ResolvedAtomCompleter(
         callableReferenceAdaptation: CallableReferenceAdaptation?
     ) {
         if (callableReferenceAdaptation == null) return
+
         val callElement = resolvedCall.call.callElement
         val isUnboundReference = resolvedCall.dispatchReceiver is TransientReceiver
 

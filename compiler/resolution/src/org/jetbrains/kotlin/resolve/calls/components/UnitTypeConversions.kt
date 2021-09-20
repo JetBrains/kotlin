@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
-import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.markCandidateForCompatibilityResolve
 import org.jetbrains.kotlin.types.KotlinType
@@ -72,7 +71,7 @@ object UnitTypeConversions : ParameterTypeConversion {
         argument: KotlinCallArgument,
         parameter: ParameterDescriptor,
         expectedParameterType: UnwrappedType
-    ): UnwrappedType? {
+    ): UnwrappedType {
         val nonUnitReturnedParameterType = createFunctionType(
             candidate.callComponents.builtIns,
             expectedParameterType.annotations,

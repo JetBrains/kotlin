@@ -238,7 +238,7 @@ fun processFunctionalExpression(
     val expression = ArgumentTypeResolver.getFunctionLiteralArgumentIfAny(argumentExpression, outerCallContext) ?: return null
     val postponedExpression = if (expression is KtFunctionLiteral) expression.getParentOfType<KtLambdaExpression>(true) else expression
 
-    val lambdaArgument: PSIKotlinCallArgument? = when (postponedExpression) {
+    val lambdaArgument: PSIKotlinCallArgument = when (postponedExpression) {
         is KtLambdaExpression ->
             LambdaKotlinCallArgumentImpl(
                 outerCallContext, valueArgument, startDataFlowInfo, argumentName, postponedExpression, argumentExpression,
@@ -251,7 +251,7 @@ fun processFunctionalExpression(
             val receiverType = resolveType(outerCallContext, postponedExpression.receiverTypeReference, typeResolver)
             val parametersTypes = resolveParametersTypes(outerCallContext, postponedExpression, typeResolver) ?: emptyArray()
             val returnType = resolveType(outerCallContext, postponedExpression.typeReference, typeResolver)
-                    ?: if (postponedExpression.hasBlockBody()) builtIns.unitType else null
+                ?: if (postponedExpression.hasBlockBody()) builtIns.unitType else null
 
             FunctionExpressionImpl(
                 outerCallContext, valueArgument, startDataFlowInfo, argumentName,
@@ -323,7 +323,6 @@ internal fun createSimplePSICallArgument(
     dataFlowValueFactory: DataFlowValueFactory,
     call: Call
 ): SimplePSIKotlinCallArgument? {
-
     val ktExpression = KtPsiUtil.getLastElementDeparenthesized(valueArgument.getArgumentExpression(), statementFilter) ?: return null
     val partiallyResolvedCall = ktExpression.getCall(bindingContext)?.let {
         bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)?.result
