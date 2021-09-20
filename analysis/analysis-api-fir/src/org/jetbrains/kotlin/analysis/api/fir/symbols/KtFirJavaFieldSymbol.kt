@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirJavaFieldSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.firRef
 import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtJavaFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
@@ -48,7 +50,10 @@ internal class KtFirJavaFieldSymbol(
     override val isStatic: Boolean get() = firRef.withFir { it.isStatic }
 
     override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol> {
-        TODO("Creating pointers for java fields is not supported yet")
+        val containingClassId = firRef.withFir { it.containingClass()?.classId }
+            ?: error("Cannot find parent class for java field $callableIdIfNonLocal")
+
+        return KtFirJavaFieldSymbolPointer(containingClassId, name)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.containsAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.getAnnotationClassIds
 import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.toAnnotationsList
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirJavaSyntheticPropertySymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.convertConstantExpression
 import org.jetbrains.kotlin.analysis.api.fir.utils.firRef
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -95,7 +97,10 @@ internal class KtFirSyntheticJavaPropertySymbol(
     override val origin: KtSymbolOrigin get() = withValidityAssertion { KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY }
 
     override fun createPointer(): KtSymbolPointer<KtSyntheticJavaPropertySymbol> {
-        TODO("pointers to KtSyntheticJavaPropertySymbol is not supported yet")
+        val containingClassId = firRef.withFir { it.containingClass()?.classId }
+            ?: error("Cannot find parent class for synthetic java property $callableIdIfNonLocal")
+
+        return KtFirJavaSyntheticPropertySymbolPointer(containingClassId, name)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)
