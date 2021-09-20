@@ -35,7 +35,12 @@ private val typeOfCache = ConcurrentHashMap<Class<*>, CVariable.Type>()
 @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 inline fun <reified T : CVariable> typeOf() =
         @Suppress("DEPRECATION")
-        typeOfCache.computeIfAbsent(T::class.java) { T::class.companionObjectInstance as CVariable.Type }
+        typeOfCache.getOrPut(T::class.java) { T::class.companionObjectInstance as CVariable.Type }
+// Note: not using ^ `computeIfAbsent` because it can cause a deadlock:
+// companion object initializer can indirectly use `typeOf` (as it happens for enum "vars"),
+// so `computeIfAbsent` would be called recursively for different keys in the case.
+// See also the documentation for [ConcurrentHashMap.computeIfAbsent], which
+// specifically mentions this problem.
 
 /**
  * Returns interpretation of entity with given pointer, or `null` if it is null.
