@@ -513,11 +513,34 @@ internal object DataFlowIR {
             if (!isAbstract) {
                 val layoutBuilder = context.getLayoutBuilder(irClass)
                 type.vtable += layoutBuilder.vtableEntries.map {
-                    mapFunction(it.getImplementation(context)!!)
+                    val implementation = it.getImplementation(context)
+                            ?: error(
+                                    irClass.getContainingFile(),
+                                    irClass,
+                                    """
+                                        no implementation found for ${it.overriddenFunction.render()}
+                                        when building vtable for ${irClass.render()}
+                                    """.trimIndent()
+                            )
+
+                    mapFunction(implementation)
                 }
                 val interfaces = irClass.implementedInterfaces.map { context.getLayoutBuilder(it) }
                 for (iface in interfaces) {
-                    type.itable[iface.classId] = iface.interfaceVTableEntries.map { mapFunction(layoutBuilder.overridingOf(it)!!) }
+                    type.itable[iface.classId] = iface.interfaceVTableEntries.map {
+                        val implementation = layoutBuilder.overridingOf(it)
+                                ?: error(
+                                        irClass.getContainingFile(),
+                                        irClass,
+                                        """
+                                            no implementation found for ${it.render()}
+                                            when building itable for ${iface.irClass.render()}
+                                            implementation in ${irClass.render()}
+                                        """.trimIndent()
+                                )
+
+                        mapFunction(implementation)
+                    }
                 }
             } else if (irClass.isInterface) {
                 // Warmup interface table so it is computed before DCE.
