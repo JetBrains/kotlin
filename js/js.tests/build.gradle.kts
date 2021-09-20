@@ -239,7 +239,7 @@ val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
 
 projectTest(parallel = true) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = true)
-//    systemProperty("kotlin.js.ir.pir", "false")
+    systemProperty("kotlin.js.ir.pir", "false")
 
     inputs.dir(rootDir.resolve("compiler/cli/cli-common/resources")) // compiler.xml
 
