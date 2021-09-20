@@ -65,7 +65,7 @@ class ConstTransformer(
 
     private fun reportInlineConst(field: IrField, value: IrConst<*>) {
         if (inlineConstTracker == null) return
-        if (!context.state.shouldInlineConstVals) return
+        //if (!context.state.shouldInlineConstVals) return
         if (field.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return
 
         val path = irFile.path
