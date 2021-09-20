@@ -17,7 +17,7 @@ KtFirFunctionSymbol:
   name: add
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(element)
@@ -44,7 +44,7 @@ KtFirFunctionSymbol:
   name: add
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(index)
@@ -72,7 +72,7 @@ KtFirFunctionSymbol:
   name: addAll
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(index)
@@ -100,7 +100,7 @@ KtFirFunctionSymbol:
   name: addAll
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(elements)
@@ -127,7 +127,7 @@ KtFirFunctionSymbol:
   name: clear
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -152,7 +152,7 @@ KtFirFunctionSymbol:
   name: listIterator
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -177,7 +177,7 @@ KtFirFunctionSymbol:
   name: listIterator
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(index)
@@ -204,7 +204,7 @@ KtFirFunctionSymbol:
   name: remove
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(element)
@@ -231,7 +231,7 @@ KtFirFunctionSymbol:
   name: removeAll
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(elements)
@@ -258,7 +258,7 @@ KtFirFunctionSymbol:
   name: removeAt
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(index)
@@ -285,7 +285,7 @@ KtFirFunctionSymbol:
   name: retainAll
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(elements)
@@ -312,7 +312,7 @@ KtFirFunctionSymbol:
   name: set
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(index)
@@ -340,7 +340,7 @@ KtFirFunctionSymbol:
   name: subList
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(fromIndex)
@@ -368,7 +368,7 @@ KtFirFunctionSymbol:
   name: contains
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(element)
@@ -395,7 +395,7 @@ KtFirFunctionSymbol:
   name: containsAll
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(elements)
@@ -422,7 +422,7 @@ KtFirFunctionSymbol:
   name: get
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(index)
@@ -449,7 +449,7 @@ KtFirFunctionSymbol:
   name: indexOf
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(element)
@@ -476,7 +476,7 @@ KtFirFunctionSymbol:
   name: isEmpty
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -501,7 +501,7 @@ KtFirFunctionSymbol:
   name: iterator
   origin: INTERSECTION_OVERRIDE
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -526,7 +526,7 @@ KtFirFunctionSymbol:
   name: lastIndexOf
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(element)
@@ -557,7 +557,7 @@ KtFirKotlinPropertySymbol:
   origin: LIBRARY
   receiverType: null
   setter: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -584,7 +584,7 @@ KtFirFunctionSymbol:
   name: equals
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(other)
@@ -611,7 +611,7 @@ KtFirFunctionSymbol:
   name: hashCode
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -636,7 +636,7 @@ KtFirFunctionSymbol:
   name: toString
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public

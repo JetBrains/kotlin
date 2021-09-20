@@ -6,5 +6,5 @@ KtFirEnumEntrySymbol:
   name: SYNCHRONIZED
   origin: LIBRARY
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   deprecationStatus: null

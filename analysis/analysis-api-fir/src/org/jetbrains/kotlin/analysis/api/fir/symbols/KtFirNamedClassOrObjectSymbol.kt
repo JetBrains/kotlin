@@ -107,7 +107,7 @@ internal class KtFirNamedClassOrObjectSymbol(
         get() = firRef.withFir { fir ->
             when {
                 fir.isLocal -> KtSymbolKind.LOCAL
-                fir.symbol.classId.isNestedClass -> KtSymbolKind.MEMBER
+                fir.symbol.classId.isNestedClass -> KtSymbolKind.CLASS_MEMBER
                 else -> KtSymbolKind.TOP_LEVEL
             }
         }

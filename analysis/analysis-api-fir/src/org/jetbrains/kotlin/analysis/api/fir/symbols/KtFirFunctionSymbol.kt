@@ -91,7 +91,7 @@ internal class KtFirFunctionSymbol(
             when {
                 fir.isLocal -> KtSymbolKind.LOCAL
                 fir.containingClass()?.classId == null -> KtSymbolKind.TOP_LEVEL
-                else -> KtSymbolKind.MEMBER
+                else -> KtSymbolKind.CLASS_MEMBER
             }
         }
     override val modality: Modality get() = getModality()
@@ -104,7 +104,7 @@ internal class KtFirFunctionSymbol(
             KtSymbolKind.TOP_LEVEL -> firRef.withFir { fir ->
                 KtFirTopLevelFunctionSymbolPointer(fir.symbol.callableId, fir.createSignature())
             }
-            KtSymbolKind.MEMBER -> firRef.withFir { fir ->
+            KtSymbolKind.CLASS_MEMBER -> firRef.withFir { fir ->
                 KtFirMemberFunctionSymbolPointer(
                     fir.containingClass()?.classId ?: error("ClassId should not be null for member function"),
                     fir.name,

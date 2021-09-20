@@ -6,7 +6,7 @@ KtFirEnumEntrySymbol:
   name: Y
   origin: SOURCE
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   deprecationStatus: null
 
 KtFirEnumEntrySymbol:
@@ -17,7 +17,7 @@ KtFirEnumEntrySymbol:
   name: Z
   origin: SOURCE
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:

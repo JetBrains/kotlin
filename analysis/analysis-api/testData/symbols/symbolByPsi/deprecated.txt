@@ -230,7 +230,7 @@ KtFirKotlinPropertySymbol:
   origin: SOURCE
   receiverType: null
   setter: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   visibility: Public
   deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
   getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
@@ -262,7 +262,7 @@ KtFirFunctionSymbol:
   name: f2
   origin: SOURCE
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public

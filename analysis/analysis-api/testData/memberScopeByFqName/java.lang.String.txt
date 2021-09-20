@@ -8,7 +8,7 @@ KtFirJavaFieldSymbol:
   name: value
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   visibility: Private
   deprecationStatus: null
 
@@ -22,7 +22,7 @@ KtFirJavaFieldSymbol:
   name: hash
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   visibility: Private
   deprecationStatus: null
 
@@ -45,7 +45,7 @@ KtFirFunctionSymbol:
   name: hash32
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: PackageVisibility
@@ -61,7 +61,7 @@ KtFirJavaFieldSymbol:
   name: hash32
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   visibility: Private
   deprecationStatus: null
 
@@ -88,7 +88,7 @@ KtFirSyntheticJavaPropertySymbol:
   origin: JAVA_SYNTHETIC_PROPERTY
   receiverType: null
   setter: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -115,7 +115,7 @@ KtFirFunctionSymbol:
   name: isEmpty
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -140,7 +140,7 @@ KtFirFunctionSymbol:
   name: codePointAt
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -167,7 +167,7 @@ KtFirFunctionSymbol:
   name: codePointBefore
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -194,7 +194,7 @@ KtFirFunctionSymbol:
   name: codePointCount
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -222,7 +222,7 @@ KtFirFunctionSymbol:
   name: offsetByCodePoints
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -250,7 +250,7 @@ KtFirFunctionSymbol:
   name: getChars
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -278,7 +278,7 @@ KtFirFunctionSymbol:
   name: getChars
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -313,7 +313,7 @@ KtFirFunctionSymbol:
   name: getBytes
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -343,7 +343,7 @@ KtFirFunctionSymbol:
   name: getBytes
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -370,7 +370,7 @@ KtFirFunctionSymbol:
   name: getBytes
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -397,7 +397,7 @@ KtFirFunctionSymbol:
   name: getBytes
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -422,7 +422,7 @@ KtFirFunctionSymbol:
   name: equals
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -449,7 +449,7 @@ KtFirFunctionSymbol:
   name: contentEquals
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -476,7 +476,7 @@ KtFirFunctionSymbol:
   name: contentEquals
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -503,7 +503,7 @@ KtFirFunctionSymbol:
   name: equalsIgnoreCase
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -530,7 +530,7 @@ KtFirFunctionSymbol:
   name: compareTo
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -557,7 +557,7 @@ KtFirFunctionSymbol:
   name: compareToIgnoreCase
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -584,7 +584,7 @@ KtFirFunctionSymbol:
   name: regionMatches
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -614,7 +614,7 @@ KtFirFunctionSymbol:
   name: regionMatches
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -645,7 +645,7 @@ KtFirFunctionSymbol:
   name: startsWith
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -673,7 +673,7 @@ KtFirFunctionSymbol:
   name: startsWith
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -700,7 +700,7 @@ KtFirFunctionSymbol:
   name: endsWith
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -727,7 +727,7 @@ KtFirFunctionSymbol:
   name: hashCode
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -752,7 +752,7 @@ KtFirFunctionSymbol:
   name: indexOf
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -779,7 +779,7 @@ KtFirFunctionSymbol:
   name: indexOf
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -807,7 +807,7 @@ KtFirFunctionSymbol:
   name: indexOf
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -834,7 +834,7 @@ KtFirFunctionSymbol:
   name: indexOf
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -862,7 +862,7 @@ KtFirFunctionSymbol:
   name: indexOfSupplementary
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -890,7 +890,7 @@ KtFirFunctionSymbol:
   name: lastIndexOf
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -917,7 +917,7 @@ KtFirFunctionSymbol:
   name: lastIndexOf
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -945,7 +945,7 @@ KtFirFunctionSymbol:
   name: lastIndexOf
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -972,7 +972,7 @@ KtFirFunctionSymbol:
   name: lastIndexOf
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1000,7 +1000,7 @@ KtFirFunctionSymbol:
   name: lastIndexOfSupplementary
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1028,7 +1028,7 @@ KtFirFunctionSymbol:
   name: substring
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1055,7 +1055,7 @@ KtFirFunctionSymbol:
   name: substring
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1083,7 +1083,7 @@ KtFirFunctionSymbol:
   name: subSequence
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1111,7 +1111,7 @@ KtFirFunctionSymbol:
   name: concat
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1138,7 +1138,7 @@ KtFirFunctionSymbol:
   name: replace
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1166,7 +1166,7 @@ KtFirFunctionSymbol:
   name: replace
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1194,7 +1194,7 @@ KtFirFunctionSymbol:
   name: matches
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1221,7 +1221,7 @@ KtFirFunctionSymbol:
   name: contains
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1248,7 +1248,7 @@ KtFirFunctionSymbol:
   name: replaceFirst
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1276,7 +1276,7 @@ KtFirFunctionSymbol:
   name: replaceAll
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1304,7 +1304,7 @@ KtFirFunctionSymbol:
   name: split
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1332,7 +1332,7 @@ KtFirFunctionSymbol:
   name: split
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1359,7 +1359,7 @@ KtFirFunctionSymbol:
   name: toLowerCase
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1386,7 +1386,7 @@ KtFirFunctionSymbol:
   name: toLowerCase
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1411,7 +1411,7 @@ KtFirFunctionSymbol:
   name: toUpperCase
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1438,7 +1438,7 @@ KtFirFunctionSymbol:
   name: toUpperCase
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1463,7 +1463,7 @@ KtFirFunctionSymbol:
   name: trim
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1488,7 +1488,7 @@ KtFirFunctionSymbol:
   name: toString
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1513,7 +1513,7 @@ KtFirFunctionSymbol:
   name: toCharArray
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1538,7 +1538,7 @@ KtFirFunctionSymbol:
   name: intern
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1563,7 +1563,7 @@ KtFirFunctionSymbol:
   name: get
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1590,7 +1590,7 @@ KtFirNamedClassOrObjectSymbol:
     [] java/util/Comparator<ft<kotlin/String, kotlin/String?>>
     [] java/io/Serializable
   ]
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Private
   deprecationStatus: null
@@ -1607,7 +1607,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1625,7 +1625,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1645,7 +1645,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1665,7 +1665,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1687,7 +1687,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1714,7 +1714,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1742,7 +1742,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1763,7 +1763,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1786,7 +1786,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1809,7 +1809,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1830,7 +1830,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1851,7 +1851,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1873,7 +1873,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1893,7 +1893,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1913,7 +1913,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1933,7 +1933,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)
@@ -1959,7 +1959,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(p0)

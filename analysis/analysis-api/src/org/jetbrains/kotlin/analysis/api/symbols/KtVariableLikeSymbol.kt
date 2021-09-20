@@ -48,7 +48,7 @@ public abstract class KtBackingFieldSymbol : KtVariableLikeSymbol() {
 
 
 public abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithMembers, KtSymbolWithKind {
-    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
+    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.CLASS_MEMBER
     final override val isExtension: Boolean get() = false
     final override val receiverType: KtTypeAndAnnotations? get() = null
     public abstract val containingEnumClassIdIfNonLocal: ClassId?
@@ -67,7 +67,7 @@ public abstract class KtJavaFieldSymbol :
     KtSymbolWithModality,
     KtSymbolWithVisibility,
     KtSymbolWithKind {
-    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
+    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.CLASS_MEMBER
     final override val isExtension: Boolean get() = false
     final override val receiverType: KtTypeAndAnnotations? get() = null
     public abstract val isStatic: Boolean
@@ -110,7 +110,7 @@ public abstract class KtKotlinPropertySymbol : KtPropertySymbol() {
 public abstract class KtSyntheticJavaPropertySymbol : KtPropertySymbol() {
     final override val hasBackingField: Boolean get() = true
     final override val hasGetter: Boolean get() = true
-    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
+    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.CLASS_MEMBER
 
     abstract override val getter: KtPropertyGetterSymbol
 

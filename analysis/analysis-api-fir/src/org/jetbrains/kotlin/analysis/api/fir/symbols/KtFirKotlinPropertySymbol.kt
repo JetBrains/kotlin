@@ -77,7 +77,7 @@ internal class KtFirKotlinPropertySymbol(
         get() = firRef.withFir { fir ->
             when (fir.containingClass()?.classId) {
                 null -> KtSymbolKind.TOP_LEVEL
-                else -> KtSymbolKind.MEMBER
+                else -> KtSymbolKind.CLASS_MEMBER
             }
         }
     override val modality: Modality get() = getModality()
@@ -119,7 +119,7 @@ internal class KtFirKotlinPropertySymbol(
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         return when (symbolKind) {
             KtSymbolKind.TOP_LEVEL -> TODO("Creating symbol for top level properties is not supported yet")
-            KtSymbolKind.MEMBER -> firRef.withFir { fir ->
+            KtSymbolKind.CLASS_MEMBER -> firRef.withFir { fir ->
                 KtFirMemberPropertySymbolPointer(
                     fir.containingClass()?.classId ?: error("ClassId should not be null for member property"),
                     fir.name,

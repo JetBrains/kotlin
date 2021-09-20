@@ -64,7 +64,7 @@ public abstract class KtConstructorSymbol : KtFunctionLikeSymbol(),
     public abstract val containingClassIdIfNonLocal: ClassId?
 
     final override val callableIdIfNonLocal: CallableId? get() = null
-    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
+    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.CLASS_MEMBER
     final override val isExtension: Boolean get() = false
     final override val receiverType: KtTypeAndAnnotations? get() = null
 

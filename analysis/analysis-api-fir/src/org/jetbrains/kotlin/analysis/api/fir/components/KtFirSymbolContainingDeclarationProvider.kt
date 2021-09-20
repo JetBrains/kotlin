@@ -104,7 +104,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
 
     private fun getContainingDeclarationForLibrarySymbol(symbol: KtSymbolWithKind): KtSymbolWithKind = with(analysisSession) {
         require(symbol.origin == KtSymbolOrigin.LIBRARY || symbol.origin == KtSymbolOrigin.JAVA)
-        check(symbol.symbolKind == KtSymbolKind.MEMBER)
+        check(symbol.symbolKind == KtSymbolKind.CLASS_MEMBER)
 
         val containingClassId = when (symbol) {
             is KtClassLikeSymbol -> {

@@ -28,5 +28,5 @@ internal class KtFirClassInitializerSymbol(
         TODO("Figure out how to create such a pointer. Should we give an index to class initializers?")
     }
 
-    override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
+    override val symbolKind: KtSymbolKind get() = KtSymbolKind.CLASS_MEMBER
 }

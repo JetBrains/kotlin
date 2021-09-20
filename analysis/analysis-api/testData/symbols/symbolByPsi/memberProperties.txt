@@ -21,7 +21,7 @@ KtFirKotlinPropertySymbol:
   origin: SOURCE
   receiverType: null
   setter: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -72,7 +72,7 @@ KtFirKotlinPropertySymbol:
   origin: SOURCE
   receiverType: [] kotlin/Int
   setter: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null

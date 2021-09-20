@@ -10,7 +10,7 @@ KtFirConstructorSymbol:
   isPrimary: true
   origin: SOURCE
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -42,7 +42,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: SOURCE
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(x)
@@ -90,7 +90,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: SOURCE
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtFirValueParameterSymbol(y)

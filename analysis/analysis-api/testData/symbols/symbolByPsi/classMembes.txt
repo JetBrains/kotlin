@@ -21,7 +21,7 @@ KtFirKotlinPropertySymbol:
   origin: SOURCE
   receiverType: null
   setter: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -48,7 +48,7 @@ KtFirFunctionSymbol:
   name: x
   origin: SOURCE
   receiverType: null
-  symbolKind: MEMBER
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
