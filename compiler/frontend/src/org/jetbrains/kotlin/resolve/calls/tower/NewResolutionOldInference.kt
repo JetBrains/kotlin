@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isBinaryRemOperator
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInfixCall
+import org.jetbrains.kotlin.resolve.calls.util.isBinaryRemOperator
+import org.jetbrains.kotlin.resolve.calls.util.isConventionCall
+import org.jetbrains.kotlin.resolve.calls.util.isInfixCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
 import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSupport

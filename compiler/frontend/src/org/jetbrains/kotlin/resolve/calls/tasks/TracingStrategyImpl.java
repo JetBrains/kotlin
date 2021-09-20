@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtReferenceExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
+import org.jetbrains.kotlin.resolve.calls.util.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;

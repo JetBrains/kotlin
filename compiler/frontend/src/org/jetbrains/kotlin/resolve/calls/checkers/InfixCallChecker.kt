@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInfixCall
+import org.jetbrains.kotlin.resolve.calls.util.isInfixCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic

@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver.getCallableReferenceExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver.getFunctionLiteralArgumentIfAny
 import org.jetbrains.kotlin.resolve.calls.CallCompleter
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.hasUnknownFunctionParameter
+import org.jetbrains.kotlin.resolve.calls.util.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
+import org.jetbrains.kotlin.resolve.calls.util.getEffectiveExpectedType
+import org.jetbrains.kotlin.resolve.calls.util.hasUnknownFunctionParameter
 import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch

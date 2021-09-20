@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.CallTransformer.CallForImplicitInvoke
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getErasedReceiverType
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnExpressionWithBothReceivers
+import org.jetbrains.kotlin.resolve.calls.util.ResolveArgumentsMode
+import org.jetbrains.kotlin.resolve.calls.util.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS
+import org.jetbrains.kotlin.resolve.calls.util.getEffectiveExpectedType
+import org.jetbrains.kotlin.resolve.calls.util.getErasedReceiverType
+import org.jetbrains.kotlin.resolve.calls.util.isInvokeCallOnExpressionWithBothReceivers
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.context.*

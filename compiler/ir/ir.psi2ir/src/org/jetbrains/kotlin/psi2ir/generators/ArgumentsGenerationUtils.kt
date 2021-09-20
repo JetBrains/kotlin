@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpression
+import org.jetbrains.kotlin.resolve.calls.util.getSuperCallExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.components.isArrayOrArrayLiteral
 import org.jetbrains.kotlin.resolve.calls.components.isVararg

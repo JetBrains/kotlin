@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.Errors.CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isSuperOrDelegatingConstructorCall
+import org.jetbrains.kotlin.resolve.calls.util.isSuperOrDelegatingConstructorCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 object AbstractClassInstantiationChecker : CallChecker {

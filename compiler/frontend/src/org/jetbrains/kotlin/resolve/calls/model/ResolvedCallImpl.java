@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace;
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
+import org.jetbrains.kotlin.resolve.calls.util.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;

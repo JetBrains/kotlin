@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.checkReservedYield
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.CallResolver
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
+import org.jetbrains.kotlin.resolve.calls.util.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
