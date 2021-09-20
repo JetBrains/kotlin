@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.KotlinToResolvedCallTransformerK
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl;
 import org.jetbrains.kotlin.resolve.calls.tower.NewVariableAsFunctionResolvedCallImpl;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.resolve.calls.util.ResolvedCallUtilKt;
 
 import java.util.Collection;
 
