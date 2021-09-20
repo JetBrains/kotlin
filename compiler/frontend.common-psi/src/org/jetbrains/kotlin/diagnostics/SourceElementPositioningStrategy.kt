@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.diagnostics
+package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.AbstractSourceElementPositioningStrategy
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.LightTreePositioningStrategy
 import org.jetbrains.kotlin.diagnostics.PositioningStrategy
 
 class SourceElementPositioningStrategy(

@@ -3,17 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.diagnostics
+package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.cfg.UnreachableCode
-import org.jetbrains.kotlin.diagnostics.DiagnosticMarker
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithParameters2
-import org.jetbrains.kotlin.diagnostics.PositioningStrategy
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedDeclaration

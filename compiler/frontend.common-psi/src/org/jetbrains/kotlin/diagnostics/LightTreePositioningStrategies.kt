@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.diagnostics
+package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
@@ -14,8 +14,6 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithParameters2
 import org.jetbrains.kotlin.diagnostics.PositioningStrategies
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
@@ -1099,7 +1097,7 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.fieldKeyword(node: Lig
 private fun FlyweightCapableTreeStructure<LighterASTNode>.byKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.BY_KEYWORD)
 
-internal fun FlyweightCapableTreeStructure<LighterASTNode>.nameIdentifier(node: LighterASTNode): LighterASTNode? =
+fun FlyweightCapableTreeStructure<LighterASTNode>.nameIdentifier(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.IDENTIFIER)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.operationReference(node: LighterASTNode): LighterASTNode? =
@@ -1176,22 +1174,22 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.rightParenthesis(node:
 private fun FlyweightCapableTreeStructure<LighterASTNode>.objectKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.OBJECT_KEYWORD)
 
-internal fun FlyweightCapableTreeStructure<LighterASTNode>.valOrVarKeyword(node: LighterASTNode): LighterASTNode? =
+fun FlyweightCapableTreeStructure<LighterASTNode>.valOrVarKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, VAL_VAR_TOKEN_SET)
 
-internal fun FlyweightCapableTreeStructure<LighterASTNode>.visibilityModifier(declaration: LighterASTNode): LighterASTNode? =
+fun FlyweightCapableTreeStructure<LighterASTNode>.visibilityModifier(declaration: LighterASTNode): LighterASTNode? =
     modifierList(declaration)?.let { findChildByType(it, VISIBILITY_MODIFIERS) }
 
-internal fun FlyweightCapableTreeStructure<LighterASTNode>.modalityModifier(declaration: LighterASTNode): LighterASTNode? =
+fun FlyweightCapableTreeStructure<LighterASTNode>.modalityModifier(declaration: LighterASTNode): LighterASTNode? =
     modifierList(declaration)?.let { findChildByType(it, MODALITY_MODIFIERS) }
 
-internal fun FlyweightCapableTreeStructure<LighterASTNode>.overrideModifier(declaration: LighterASTNode): LighterASTNode? =
+fun FlyweightCapableTreeStructure<LighterASTNode>.overrideModifier(declaration: LighterASTNode): LighterASTNode? =
     modifierList(declaration)?.let { findChildByType(it, KtTokens.OVERRIDE_KEYWORD) }
 
-internal fun FlyweightCapableTreeStructure<LighterASTNode>.inlineModifier(declaration: LighterASTNode): LighterASTNode? =
+fun FlyweightCapableTreeStructure<LighterASTNode>.inlineModifier(declaration: LighterASTNode): LighterASTNode? =
     modifierList(declaration)?.let { findChildByType(it, KtTokens.INLINE_KEYWORD) }
 
-internal fun FlyweightCapableTreeStructure<LighterASTNode>.typeParametersList(declaration: LighterASTNode): LighterASTNode? =
+fun FlyweightCapableTreeStructure<LighterASTNode>.typeParametersList(declaration: LighterASTNode): LighterASTNode? =
     findChildByType(declaration, KtNodeTypes.TYPE_PARAMETER_LIST)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.supertypesList(node: LighterASTNode): LighterASTNode? =
@@ -1379,7 +1377,7 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.findParentOfType(
     return null
 }
 
-internal fun FlyweightCapableTreeStructure<LighterASTNode>.getAncestors(node: LighterASTNode): Sequence<LighterASTNode> =
+fun FlyweightCapableTreeStructure<LighterASTNode>.getAncestors(node: LighterASTNode): Sequence<LighterASTNode> =
     generateSequence(getParent(node)) { getParent(it) }
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.firstChild(node: LighterASTNode): LighterASTNode? {

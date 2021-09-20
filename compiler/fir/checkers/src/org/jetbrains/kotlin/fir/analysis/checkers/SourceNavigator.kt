@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.diagnostics.getAncestors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.nameIdentifier
+import org.jetbrains.kotlin.diagnostics.getAncestors
+import org.jetbrains.kotlin.diagnostics.nameIdentifier
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef

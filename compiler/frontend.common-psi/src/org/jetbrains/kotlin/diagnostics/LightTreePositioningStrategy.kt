@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.diagnostics
+package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
@@ -11,8 +11,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE
@@ -84,10 +82,10 @@ private val FILLER_TOKENS = setOf(
 )
 
 private fun LighterASTNode.nonFillerFirstChildOrSelf(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode =
-    getChildren(tree).firstOrNull { !it.isFiller() } ?: this
+    getChildren(tree).firstOrNull { !(it?.isFiller() ?: false) } ?: this
 
 internal fun LighterASTNode.nonFillerLastChildOrSelf(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode =
-    getChildren(tree).lastOrNull { !it.isFiller() } ?: this
+    getChildren(tree).lastOrNull { !(it?.isFiller() ?: false) } ?: this
 
 internal fun LighterASTNode.isFiller() = tokenType in FILLER_TOKENS
 

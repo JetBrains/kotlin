@@ -117,7 +117,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     val expressionToCreate get() = "SourceElementPositioningStrategies.${strategy ?: name}"
 
     companion object {
-        const val importToAdd = "org.jetbrains.kotlin.fir.analysis.diagnostics.SourceElementPositioningStrategies"
+        const val importToAdd = "org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies"
     }
 }
 
