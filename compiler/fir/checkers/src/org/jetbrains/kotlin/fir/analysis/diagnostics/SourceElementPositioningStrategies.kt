@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
+import org.jetbrains.kotlin.diagnostics.AbstractSourceElementPositioningStrategy
 import org.jetbrains.kotlin.diagnostics.PositioningStrategies
 
 object SourceElementPositioningStrategies {
     val DEFAULT = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DEFAULT,
         PositioningStrategies.DEFAULT
-    )
+    ).also {
+        AbstractSourceElementPositioningStrategy.setDefault(it)
+    }
 
     val VAL_OR_VAR_NODE = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.VAL_OR_VAR_NODE,

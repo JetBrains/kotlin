@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory1
 import org.jetbrains.kotlin.checkers.utils.TypeOfCall
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
@@ -216,15 +217,15 @@ abstract class AbstractKtDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
                 sourceElement,
                 argumentText,
                 severity,
-                KtDiagnosticFactory1(name, severity, SourceElementPositioningStrategy.DEFAULT, PsiElement::class),
-                SourceElementPositioningStrategy.DEFAULT
+                KtDiagnosticFactory1(name, severity, AbstractSourceElementPositioningStrategy.DEFAULT, PsiElement::class),
+                AbstractSourceElementPositioningStrategy.DEFAULT
             )
             is KtLightSourceElement -> KtLightDiagnosticWithParameters1(
                 sourceElement,
                 argumentText,
                 severity,
-                KtDiagnosticFactory1(name, severity, SourceElementPositioningStrategy.DEFAULT, PsiElement::class),
-                SourceElementPositioningStrategy.DEFAULT
+                KtDiagnosticFactory1(name, severity, AbstractSourceElementPositioningStrategy.DEFAULT, PsiElement::class),
+                AbstractSourceElementPositioningStrategy.DEFAULT
             )
         }
     }

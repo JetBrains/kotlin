@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.*
 
 internal interface KtFirDiagnosticCreator
 

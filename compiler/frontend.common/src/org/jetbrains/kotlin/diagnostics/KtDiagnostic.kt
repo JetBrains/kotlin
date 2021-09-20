@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.diagnostics
+package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
@@ -19,7 +19,7 @@ sealed class KtDiagnostic : DiagnosticMarker {
     abstract val element: KtSourceElement
     abstract val severity: Severity
     abstract val factory: AbstractKtDiagnosticFactory
-    abstract val positioningStrategy: SourceElementPositioningStrategy
+    abstract val positioningStrategy: AbstractSourceElementPositioningStrategy
 
     val textRanges: List<TextRange>
         get() = positioningStrategy.markDiagnostic(this)
@@ -90,7 +90,7 @@ data class KtPsiSimpleDiagnostic(
     override val element: KtPsiSourceElement,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory0,
-    override val positioningStrategy: SourceElementPositioningStrategy
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy
 ) : KtSimpleDiagnostic(), KtPsiDiagnostic {
     init {
         checkPsiTypeConsistency()
@@ -102,7 +102,7 @@ data class KtPsiDiagnosticWithParameters1<A>(
     override val a: A,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory1<A>,
-    override val positioningStrategy: SourceElementPositioningStrategy
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy
 ) : KtDiagnosticWithParameters1<A>(), KtPsiDiagnostic {
     init {
         checkPsiTypeConsistency()
@@ -116,7 +116,7 @@ data class KtPsiDiagnosticWithParameters2<A, B>(
     override val b: B,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory2<A, B>,
-    override val positioningStrategy: SourceElementPositioningStrategy
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy
 ) : KtDiagnosticWithParameters2<A, B>(), KtPsiDiagnostic {
     init {
         checkPsiTypeConsistency()
@@ -130,7 +130,7 @@ data class KtPsiDiagnosticWithParameters3<A, B, C>(
     override val c: C,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory3<A, B, C>,
-    override val positioningStrategy: SourceElementPositioningStrategy
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy
 ) : KtDiagnosticWithParameters3<A, B, C>(), KtPsiDiagnostic {
     init {
         checkPsiTypeConsistency()
@@ -145,7 +145,7 @@ data class KtPsiDiagnosticWithParameters4<A, B, C, D>(
     override val d: D,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory4<A, B, C, D>,
-    override val positioningStrategy: SourceElementPositioningStrategy
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy
 ) : KtDiagnosticWithParameters4<A, B, C, D>(), KtPsiDiagnostic {
     init {
         checkPsiTypeConsistency()
@@ -166,7 +166,7 @@ data class KtLightSimpleDiagnostic(
     override val element: KtLightSourceElement,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory0,
-    override val positioningStrategy: SourceElementPositioningStrategy
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy
 ) : KtSimpleDiagnostic(), KtLightDiagnostic
 
 data class KtLightDiagnosticWithParameters1<A>(
@@ -174,7 +174,7 @@ data class KtLightDiagnosticWithParameters1<A>(
     override val a: A,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory1<A>,
-    override val positioningStrategy: SourceElementPositioningStrategy
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy
 ) : KtDiagnosticWithParameters1<A>(), KtLightDiagnostic
 
 data class KtLightDiagnosticWithParameters2<A, B>(
@@ -183,7 +183,7 @@ data class KtLightDiagnosticWithParameters2<A, B>(
     override val b: B,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory2<A, B>,
-    override val positioningStrategy: SourceElementPositioningStrategy
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy
 ) : KtDiagnosticWithParameters2<A, B>(), KtLightDiagnostic
 
 data class KtLightDiagnosticWithParameters3<A, B, C>(
@@ -193,7 +193,7 @@ data class KtLightDiagnosticWithParameters3<A, B, C>(
     override val c: C,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory3<A, B, C>,
-    override val positioningStrategy: SourceElementPositioningStrategy
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy
 ) : KtDiagnosticWithParameters3<A, B, C>(), KtLightDiagnostic
 
 data class KtLightDiagnosticWithParameters4<A, B, C, D>(
@@ -204,5 +204,5 @@ data class KtLightDiagnosticWithParameters4<A, B, C, D>(
     override val d: D,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory4<A, B, C, D>,
-    override val positioningStrategy: SourceElementPositioningStrategy
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy
 ) : KtDiagnosticWithParameters4<A, B, C, D>(), KtLightDiagnostic

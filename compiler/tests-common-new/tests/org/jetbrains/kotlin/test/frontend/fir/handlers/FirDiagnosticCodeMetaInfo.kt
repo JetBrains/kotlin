@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.test.frontend.fir.handlers
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
 import org.jetbrains.kotlin.codeMetaInfo.renderConfigurations.AbstractCodeMetaInfoRenderConfiguration
-import org.jetbrains.kotlin.fir.analysis.diagnostics.AbstractKtDiagnosticWithParametersRenderer
+import org.jetbrains.kotlin.diagnostics.AbstractKtDiagnosticWithParametersRenderer
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDefaultErrorMessages
-import org.jetbrains.kotlin.fir.analysis.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 
 object FirMetaInfoUtils {
     val renderDiagnosticNoArgs = FirDiagnosticCodeMetaRenderConfiguration().apply { renderParams = false }

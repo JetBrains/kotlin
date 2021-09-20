@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 
 object DiagnosticComponentsFactory {
     fun createAllDiagnosticComponents(session: FirSession, reporter: DiagnosticReporter): List<AbstractDiagnosticCollectorComponent> {

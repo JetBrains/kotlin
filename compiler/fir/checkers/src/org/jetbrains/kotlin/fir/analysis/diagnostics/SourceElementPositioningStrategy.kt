@@ -10,20 +10,22 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.diagnostics.AbstractSourceElementPositioningStrategy
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.PositioningStrategy
 
 class SourceElementPositioningStrategy(
     private val lightTreeStrategy: LightTreePositioningStrategy,
     private val psiStrategy: PositioningStrategy<*>
-) {
-    fun markDiagnostic(diagnostic: KtDiagnostic): List<TextRange> {
+) : AbstractSourceElementPositioningStrategy() {
+    override fun markDiagnostic(diagnostic: KtDiagnostic): List<TextRange> {
         return when (val element = diagnostic.element) {
             is KtPsiSourceElement -> psiStrategy.markDiagnostic(diagnostic)
             is KtLightSourceElement -> lightTreeStrategy.markKtDiagnostic(element, diagnostic)
         }
     }
 
-    fun isValid(element: KtSourceElement): Boolean {
+    override fun isValid(element: KtSourceElement): Boolean {
         return when (element) {
             is KtPsiSourceElement -> psiStrategy.hackyIsValid(element.psi)
             is KtLightSourceElement -> lightTreeStrategy.isValid(element.lighterASTNode, element.treeStructure)
@@ -33,9 +35,5 @@ class SourceElementPositioningStrategy(
     private fun PositioningStrategy<*>.hackyIsValid(psi: PsiElement): Boolean {
         @Suppress("UNCHECKED_CAST")
         return (this as PositioningStrategy<PsiElement>).isValid(psi)
-    }
-
-    companion object {
-        val DEFAULT: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
     }
 }

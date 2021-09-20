@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.diagnostics
+package org.jetbrains.kotlin.diagnostics
 
-import org.jetbrains.kotlin.fir.analysis.diagnostics.impl.BaseDiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.impl.DiagnosticReporterWithSuppress
-import org.jetbrains.kotlin.fir.analysis.diagnostics.impl.SimpleDiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticReporterWithSuppress
+import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticReporter
 
 object DiagnosticReporterFactory {
     fun createReporter(disableSuppress: Boolean = false): BaseDiagnosticReporter {

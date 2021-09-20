@@ -59,7 +59,7 @@ object KtDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
     }
 
     override val defaultImports = listOf(
-        "org.jetbrains.kotlin.fir.analysis.diagnostics.KtPsiDiagnostic",
+        "org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic",
         "org.jetbrains.kotlin.analysis.api.tokens.ValidityToken",
     )
 }

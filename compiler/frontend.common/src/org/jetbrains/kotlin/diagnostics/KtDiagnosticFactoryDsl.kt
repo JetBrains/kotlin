@@ -1,108 +1,107 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.diagnostics
+package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.diagnostics.Severity
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 inline fun <reified P : PsiElement> warning0(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
 ): DiagnosticFactory0DelegateProvider {
     return DiagnosticFactory0DelegateProvider(Severity.WARNING, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A> warning1(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
 ): DiagnosticFactory1DelegateProvider<A> {
     return DiagnosticFactory1DelegateProvider(Severity.WARNING, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A, B> warning2(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
 ): DiagnosticFactory2DelegateProvider<A, B> {
     return DiagnosticFactory2DelegateProvider(Severity.WARNING, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A, B, C> warning3(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
 ): DiagnosticFactory3DelegateProvider<A, B, C> {
     return DiagnosticFactory3DelegateProvider(Severity.WARNING, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A, B, C, D> warning4(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
 ): DiagnosticFactory4DelegateProvider<A, B, C, D> {
     return DiagnosticFactory4DelegateProvider(Severity.WARNING, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement> error0(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
 ): DiagnosticFactory0DelegateProvider {
     return DiagnosticFactory0DelegateProvider(Severity.ERROR, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A> error1(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
 ): DiagnosticFactory1DelegateProvider<A> {
     return DiagnosticFactory1DelegateProvider(Severity.ERROR, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A, B> error2(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
 ): DiagnosticFactory2DelegateProvider<A, B> {
     return DiagnosticFactory2DelegateProvider(Severity.ERROR, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A, B, C> error3(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
 ): DiagnosticFactory3DelegateProvider<A, B, C> {
     return DiagnosticFactory3DelegateProvider(Severity.ERROR, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A, B, C, D> error4(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
 ): DiagnosticFactory4DelegateProvider<A, B, C, D> {
     return DiagnosticFactory4DelegateProvider(Severity.ERROR, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement> deprecationError0(
     featureForError: LanguageFeature,
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
 ): DeprecationDiagnosticFactory0DelegateProvider {
     return DeprecationDiagnosticFactory0DelegateProvider(featureForError, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A> deprecationError1(
     featureForError: LanguageFeature,
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
 ): DeprecationDiagnosticFactory1DelegateProvider<A> {
     return DeprecationDiagnosticFactory1DelegateProvider(featureForError, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A, B> deprecationError2(
     featureForError: LanguageFeature,
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
 ): DeprecationDiagnosticFactory2DelegateProvider<A, B> {
     return DeprecationDiagnosticFactory2DelegateProvider(featureForError, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A, B, C> deprecationError3(
     featureForError: LanguageFeature,
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
 ): DeprecationDiagnosticFactory3DelegateProvider<A, B, C> {
     return DeprecationDiagnosticFactory3DelegateProvider(featureForError, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A, B, C, D> deprecationError4(
     featureForError: LanguageFeature,
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
 ): DeprecationDiagnosticFactory4DelegateProvider<A, B, C, D> {
     return DeprecationDiagnosticFactory4DelegateProvider(featureForError, positioningStrategy, P::class)
 }
@@ -111,7 +110,7 @@ inline fun <reified P : PsiElement, A, B, C, D> deprecationError4(
 
 class DiagnosticFactory0DelegateProvider(
     private val severity: Severity,
-    private val positioningStrategy: SourceElementPositioningStrategy,
+    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory0> {
@@ -121,7 +120,7 @@ class DiagnosticFactory0DelegateProvider(
 
 class DiagnosticFactory1DelegateProvider<A>(
     private val severity: Severity,
-    private val positioningStrategy: SourceElementPositioningStrategy,
+    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory1<A>> {
@@ -131,7 +130,7 @@ class DiagnosticFactory1DelegateProvider<A>(
 
 class DiagnosticFactory2DelegateProvider<A, B>(
     private val severity: Severity,
-    private val positioningStrategy: SourceElementPositioningStrategy,
+    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory2<A, B>> {
@@ -141,7 +140,7 @@ class DiagnosticFactory2DelegateProvider<A, B>(
 
 class DiagnosticFactory3DelegateProvider<A, B, C>(
     private val severity: Severity,
-    private val positioningStrategy: SourceElementPositioningStrategy,
+    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory3<A, B, C>> {
@@ -151,7 +150,7 @@ class DiagnosticFactory3DelegateProvider<A, B, C>(
 
 class DiagnosticFactory4DelegateProvider<A, B, C, D>(
     private val severity: Severity,
-    private val positioningStrategy: SourceElementPositioningStrategy,
+    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory4<A, B, C, D>> {
@@ -164,7 +163,7 @@ private const val ERROR = "_ERROR"
 
 class DeprecationDiagnosticFactory0DelegateProvider(
     private val featureForError: LanguageFeature,
-    private val positioningStrategy: SourceElementPositioningStrategy,
+    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation0> {
@@ -176,7 +175,7 @@ class DeprecationDiagnosticFactory0DelegateProvider(
 
 class DeprecationDiagnosticFactory1DelegateProvider<A>(
     private val featureForError: LanguageFeature,
-    private val positioningStrategy: SourceElementPositioningStrategy,
+    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation1<A>> {
@@ -188,7 +187,7 @@ class DeprecationDiagnosticFactory1DelegateProvider<A>(
 
 class DeprecationDiagnosticFactory2DelegateProvider<A, B>(
     private val featureForError: LanguageFeature,
-    private val positioningStrategy: SourceElementPositioningStrategy,
+    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation2<A, B>> {
@@ -200,7 +199,7 @@ class DeprecationDiagnosticFactory2DelegateProvider<A, B>(
 
 class DeprecationDiagnosticFactory3DelegateProvider<A, B, C>(
     private val featureForError: LanguageFeature,
-    private val positioningStrategy: SourceElementPositioningStrategy,
+    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation3<A, B, C>> {
@@ -212,7 +211,7 @@ class DeprecationDiagnosticFactory3DelegateProvider<A, B, C>(
 
 class DeprecationDiagnosticFactory4DelegateProvider<A, B, C, D>(
     private val featureForError: LanguageFeature,
-    private val positioningStrategy: SourceElementPositioningStrategy,
+    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation4<A, B, C, D>> {

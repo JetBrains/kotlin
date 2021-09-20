@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.analysis.diagnostics.KtPsiDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 
 internal class FileStructureElementDiagnosticList(
     private val map: Map<PsiElement, List<KtPsiDiagnostic>>

@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.CLASS_KIND
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.RENDER_POSITION_VARIANCE
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
@@ -514,13 +517,13 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_MODIFIER_TA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_RETURN_TYPE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.KtDiagnosticRenderers.COLLECTION
-import org.jetbrains.kotlin.fir.analysis.diagnostics.KtDiagnosticRenderers.EMPTY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.KtDiagnosticRenderers.FUNCTION_PARAMETERS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.KtDiagnosticRenderers.NOT_RENDERED
-import org.jetbrains.kotlin.fir.analysis.diagnostics.KtDiagnosticRenderers.NULLABLE_STRING
-import org.jetbrains.kotlin.fir.analysis.diagnostics.KtDiagnosticRenderers.TO_STRING
-import org.jetbrains.kotlin.fir.analysis.diagnostics.KtDiagnosticRenderers.VISIBILITY
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.COLLECTION
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.EMPTY
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.FUNCTION_PARAMETERS
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.NOT_RENDERED
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.NULLABLE_STRING
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.VISIBILITY
 
 @Suppress("unused")
 class FirDefaultErrorMessages {

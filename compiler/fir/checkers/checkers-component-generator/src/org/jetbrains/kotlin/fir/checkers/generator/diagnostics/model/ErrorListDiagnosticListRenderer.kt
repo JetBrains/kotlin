@@ -17,6 +17,7 @@ import kotlin.reflect.KTypeProjection
 
 object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
     private const val BASE_PACKAGE = "org.jetbrains.kotlin.fir.analysis.diagnostics"
+    private const val DIAGNOSTICS_PACKAGE = "org.jetbrains.kotlin.diagnostics"
 
     override fun render(file: File, diagnosticList: DiagnosticList, packageName: String) {
         file.writeToFileUsingSmartPrinterIfFileContentChanged {
@@ -120,6 +121,9 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
     private fun collectImports(diagnosticList: DiagnosticList, packageName: String): Collection<String> = buildSet {
         if (packageName != BASE_PACKAGE) {
             add("$BASE_PACKAGE.*")
+        }
+        if (packageName != DIAGNOSTICS_PACKAGE) {
+            add("$DIAGNOSTICS_PACKAGE.*")
         }
         diagnosticList.allDiagnostics.forEach { diagnostic ->
             for (typeArgument in diagnostic.getAllTypeArguments()) {

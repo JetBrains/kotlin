@@ -68,7 +68,7 @@ object FirDiagnosticToKtDiagnosticConverterRenderer : AbstractDiagnosticsDataCla
         diagnosticParameter.importsToAdd
 
     override val defaultImports = listOf(
-        "org.jetbrains.kotlin.fir.analysis.diagnostics.KtPsiDiagnostic",
+        "org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic",
         "org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors",
         "org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors",
     )

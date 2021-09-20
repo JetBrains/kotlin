@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
-import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.*
 
 internal class FirIdeDiagnosticReporter : DiagnosticReporter() {
     val diagnostics = mutableMapOf<PsiElement, MutableList<KtPsiDiagnostic>>()

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDefaultErrorMessages
-import org.jetbrains.kotlin.fir.analysis.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 
 object FirDiagnosticsCompilerResultsReporter {
     fun reportDiagnostics(diagnostics: Collection<KtDiagnostic>, reporter: MessageCollector): Boolean {

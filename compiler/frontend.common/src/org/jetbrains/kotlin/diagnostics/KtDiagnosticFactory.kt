@@ -1,12 +1,16 @@
+/*
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 @file:Suppress("UNCHECKED_CAST")
 
-package org.jetbrains.kotlin.fir.analysis.diagnostics
+package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.diagnostics.Severity
 import kotlin.reflect.KClass
 
 @RequiresOptIn("Please use DiagnosticReporter.reportOn method if possible")
@@ -15,7 +19,7 @@ annotation class InternalDiagnosticFactoryMethod
 sealed class AbstractKtDiagnosticFactory(
     val name: String,
     val severity: Severity,
-    val defaultPositioningStrategy: SourceElementPositioningStrategy,
+    val defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
     val psiType: KClass<*>
 ) {
     abstract val ktRenderer: KtDiagnosticRenderer
@@ -28,7 +32,7 @@ sealed class AbstractKtDiagnosticFactory(
 class KtDiagnosticFactory0(
     name: String,
     severity: Severity,
-    defaultPositioningStrategy: SourceElementPositioningStrategy,
+    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
     psiType: KClass<*>
 ) : AbstractKtDiagnosticFactory(name, severity, defaultPositioningStrategy, psiType) {
     override val ktRenderer: KtDiagnosticRenderer = SimpleKtDiagnosticRenderer("")
@@ -36,14 +40,13 @@ class KtDiagnosticFactory0(
     @InternalDiagnosticFactoryMethod
     fun on(
         element: KtSourceElement,
-        positioningStrategy: SourceElementPositioningStrategy?
+        positioningStrategy: AbstractSourceElementPositioningStrategy?
     ): KtSimpleDiagnostic {
         return when (element) {
             is KtPsiSourceElement -> KtPsiSimpleDiagnostic(
                 element, severity, this, positioningStrategy ?: defaultPositioningStrategy
             )
             is KtLightSourceElement -> KtLightSimpleDiagnostic(element, severity, this, positioningStrategy ?: defaultPositioningStrategy)
-            else -> incorrectElement(element)
         }
     }
 }
@@ -51,7 +54,7 @@ class KtDiagnosticFactory0(
 class KtDiagnosticFactory1<A>(
     name: String,
     severity: Severity,
-    defaultPositioningStrategy: SourceElementPositioningStrategy,
+    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
     psiType: KClass<*>
 ) : AbstractKtDiagnosticFactory(name, severity, defaultPositioningStrategy, psiType) {
     override val ktRenderer: KtDiagnosticRenderer = KtDiagnosticWithParameters1Renderer(
@@ -63,7 +66,7 @@ class KtDiagnosticFactory1<A>(
     fun on(
         element: KtSourceElement,
         a: A,
-        positioningStrategy: SourceElementPositioningStrategy?
+        positioningStrategy: AbstractSourceElementPositioningStrategy?
     ): KtDiagnosticWithParameters1<A> {
         return when (element) {
             is KtPsiSourceElement -> KtPsiDiagnosticWithParameters1(
@@ -76,7 +79,6 @@ class KtDiagnosticFactory1<A>(
                 this,
                 positioningStrategy ?: defaultPositioningStrategy
             )
-            else -> incorrectElement(element)
         }
     }
 }
@@ -84,7 +86,7 @@ class KtDiagnosticFactory1<A>(
 class KtDiagnosticFactory2<A, B>(
     name: String,
     severity: Severity,
-    defaultPositioningStrategy: SourceElementPositioningStrategy,
+    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
     psiType: KClass<*>
 ) : AbstractKtDiagnosticFactory(name, severity, defaultPositioningStrategy, psiType) {
     override val ktRenderer: KtDiagnosticRenderer = KtDiagnosticWithParameters2Renderer(
@@ -98,7 +100,7 @@ class KtDiagnosticFactory2<A, B>(
         element: KtSourceElement,
         a: A,
         b: B,
-        positioningStrategy: SourceElementPositioningStrategy?
+        positioningStrategy: AbstractSourceElementPositioningStrategy?
     ): KtDiagnosticWithParameters2<A, B> {
         return when (element) {
             is KtPsiSourceElement -> KtPsiDiagnosticWithParameters2(
@@ -112,7 +114,6 @@ class KtDiagnosticFactory2<A, B>(
                 this,
                 positioningStrategy ?: defaultPositioningStrategy
             )
-            else -> incorrectElement(element)
         }
     }
 }
@@ -120,7 +121,7 @@ class KtDiagnosticFactory2<A, B>(
 class KtDiagnosticFactory3<A, B, C>(
     name: String,
     severity: Severity,
-    defaultPositioningStrategy: SourceElementPositioningStrategy,
+    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
     psiType: KClass<*>
 ) : AbstractKtDiagnosticFactory(name, severity, defaultPositioningStrategy, psiType) {
     override val ktRenderer: KtDiagnosticRenderer = KtDiagnosticWithParameters3Renderer(
@@ -136,7 +137,7 @@ class KtDiagnosticFactory3<A, B, C>(
         a: A,
         b: B,
         c: C,
-        positioningStrategy: SourceElementPositioningStrategy?
+        positioningStrategy: AbstractSourceElementPositioningStrategy?
     ): KtDiagnosticWithParameters3<A, B, C> {
         return when (element) {
             is KtPsiSourceElement -> KtPsiDiagnosticWithParameters3(
@@ -151,7 +152,6 @@ class KtDiagnosticFactory3<A, B, C>(
                 this,
                 positioningStrategy ?: defaultPositioningStrategy
             )
-            else -> incorrectElement(element)
         }
     }
 }
@@ -159,7 +159,7 @@ class KtDiagnosticFactory3<A, B, C>(
 class KtDiagnosticFactory4<A, B, C, D>(
     name: String,
     severity: Severity,
-    defaultPositioningStrategy: SourceElementPositioningStrategy,
+    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
     psiType: KClass<*>
 ) : AbstractKtDiagnosticFactory(name, severity, defaultPositioningStrategy, psiType) {
     override val ktRenderer: KtDiagnosticRenderer = KtDiagnosticWithParameters4Renderer(
@@ -177,7 +177,7 @@ class KtDiagnosticFactory4<A, B, C, D>(
         b: B,
         c: C,
         d: D,
-        positioningStrategy: SourceElementPositioningStrategy?
+        positioningStrategy: AbstractSourceElementPositioningStrategy?
     ): KtDiagnosticWithParameters4<A, B, C, D> {
         return when (element) {
             is KtPsiSourceElement -> KtPsiDiagnosticWithParameters4(
@@ -193,7 +193,6 @@ class KtDiagnosticFactory4<A, B, C, D>(
                 this,
                 positioningStrategy ?: defaultPositioningStrategy
             )
-            else -> incorrectElement(element)
         }
     }
 }
