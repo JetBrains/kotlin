@@ -109,9 +109,11 @@ class IrInlineCodegen(
                         ValueKind.DEFAULT_INLINE_PARAMETER
                     else
                         ValueKind.DEFAULT_PARAMETER
-                // TODO ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND?
-                isInlineParameter && irValueParameter.type.isSuspendFunctionTypeOrSubtype() ->
-                    ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER
+                isInlineParameter && irValueParameter.type.isSuspendFunction() ->
+                    if (argumentExpression.isReadOfInlineLambda())
+                        ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND
+                    else
+                        ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER
                 else ->
                     ValueKind.GENERAL
             }
