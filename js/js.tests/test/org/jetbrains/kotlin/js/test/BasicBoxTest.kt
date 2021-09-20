@@ -156,7 +156,6 @@ abstract class BasicBoxTest(
         val splitPerModule = SPLIT_PER_MODULE.matcher(fileContent).find()
         val skipMangleVerification = SKIP_MANGLE_VERIFICATION.matcher(fileContent).find()
 
-        val propertyLazyInitialization = PROPERTY_LAZY_INITIALIZATION.matcher(fileContent).find()
         val safeExternalBoolean = SAFE_EXTERNAL_BOOLEAN.matcher(fileContent).find()
         val safeExternalBooleanDiagnosticMatcher = SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC.matcher(fileContent)
 
@@ -232,7 +231,7 @@ abstract class BasicBoxTest(
                     skipDceDriven,
                     splitPerModule,
                     errorPolicy,
-                    propertyLazyInitialization,
+                    propertyLazyInitialization = true,
                     safeExternalBoolean,
                     safeExternalBooleanDiagnostic,
                     skipMangleVerification,
@@ -663,7 +662,7 @@ abstract class BasicBoxTest(
             isMainModule = false,
             skipDceDriven = true,
             splitPerModule = false,
-            propertyLazyInitialization = false,
+            propertyLazyInitialization = true,
             safeExternalBoolean = false,
             safeExternalBooleanDiagnostic = null,
             skipMangleVerification = false,
@@ -1164,8 +1163,6 @@ abstract class BasicBoxTest(
         private val SKIP_MANGLE_VERIFICATION = Pattern.compile("^// *SKIP_MANGLE_VERIFICATION *$", Pattern.MULTILINE)
 
         private val ERROR_POLICY_PATTERN = Pattern.compile("^// *ERROR_POLICY: *(.+)$", Pattern.MULTILINE)
-
-        private val PROPERTY_LAZY_INITIALIZATION = Pattern.compile("^// *PROPERTY_LAZY_INITIALIZATION *$", Pattern.MULTILINE)
 
         private val SAFE_EXTERNAL_BOOLEAN = Pattern.compile("^// *SAFE_EXTERNAL_BOOLEAN *$", Pattern.MULTILINE)
         private val SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC = Pattern.compile("^// *SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC: *(.+)$", Pattern.MULTILINE)
