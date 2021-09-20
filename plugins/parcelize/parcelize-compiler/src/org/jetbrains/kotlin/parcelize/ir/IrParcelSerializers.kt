@@ -215,15 +215,25 @@ class IrGenericParcelableParcelSerializer(private val parcelizeType: IrType) : I
     }
 }
 
-// Fallback parcel serializer for unknown types using Parcel.readValue/writeValue.
+// Creates a serializer from a pair of parcel methods of the form reader(ClassLoader)T and writer(T)V.
 // This needs a reference to the parcelize type itself in order to find the correct class loader to use, see KT-20027.
-class IrGenericValueParcelSerializer(private val parcelizeType: IrType) : IrParcelSerializer {
+class IrParcelSerializerWithClassLoader(
+    private val parcelizeType: IrType,
+    private val reader: IrSimpleFunctionSymbol,
+    private val writer: IrSimpleFunctionSymbol
+) : IrParcelSerializer {
     override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
-        return parcelReadValue(irGet(parcel), classGetClassLoader(javaClassReference(parcelizeType)))
+        return irCall(reader).apply {
+            dispatchReceiver = irGet(parcel)
+            putValueArgument(0, classGetClassLoader(javaClassReference(parcelizeType)))
+        }
     }
 
     override fun AndroidIrBuilder.writeParcel(parcel: IrValueDeclaration, flags: IrValueDeclaration, value: IrExpression): IrExpression {
-        return parcelWriteValue(irGet(parcel), value)
+        return irCall(writer).apply {
+            dispatchReceiver = irGet(parcel)
+            putValueArgument(0, value)
+        }
     }
 }
 

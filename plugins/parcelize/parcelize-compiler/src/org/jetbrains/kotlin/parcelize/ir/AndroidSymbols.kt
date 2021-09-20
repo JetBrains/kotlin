@@ -209,7 +209,9 @@ class AndroidSymbols(
         androidOsParcel.owner.addFunction("createStringArrayList", javaUtilArrayList.defaultType).symbol
 
     val parcelReadBundle: IrSimpleFunctionSymbol =
-        androidOsParcel.owner.addFunction("readBundle", androidOsBundle.defaultType).symbol
+        androidOsParcel.owner.addFunction("readBundle", androidOsBundle.defaultType).apply {
+            addValueParameter("loader", javaLangClassLoader.defaultType)
+        }.symbol
 
     val parcelReadByte: IrSimpleFunctionSymbol =
         androidOsParcel.owner.addFunction("readByte", irBuiltIns.byteType).symbol
@@ -235,7 +237,9 @@ class AndroidSymbols(
         }.symbol
 
     val parcelReadPersistableBundle: IrSimpleFunctionSymbol =
-        androidOsParcel.owner.addFunction("readPersistableBundle", androidOsPersistableBundle.defaultType).symbol
+        androidOsParcel.owner.addFunction("readPersistableBundle", androidOsPersistableBundle.defaultType).apply {
+            addValueParameter("loader", javaLangClassLoader.defaultType)
+        }.symbol
 
     val parcelReadSerializable: IrSimpleFunctionSymbol =
         androidOsParcel.owner.addFunction("readSerializable", javaIoSerializable.defaultType).symbol
