@@ -85,6 +85,9 @@ internal object FirReferenceResolveHelper {
             is FirBackingFieldReference -> {
                 listOfNotNull(resolvedSymbol.fir.buildSymbol(symbolBuilder))
             }
+            is FirResolvedCallableReference -> {
+                listOfNotNull(resolvedSymbol.fir.buildSymbol(symbolBuilder))
+            }
             is FirResolvedNamedReference -> {
                 val fir = when (val symbol = resolvedSymbol) {
                     is FirSyntheticPropertySymbol -> {
@@ -98,9 +101,6 @@ internal object FirReferenceResolveHelper {
                     else -> symbol.fir
                 }
                 listOfNotNull(fir.buildSymbol(symbolBuilder))
-            }
-            is FirResolvedCallableReference -> {
-                listOfNotNull(resolvedSymbol.fir.buildSymbol(symbolBuilder))
             }
             is FirThisReference -> {
                 listOfNotNull(boundSymbol?.fir?.buildSymbol(symbolBuilder))
