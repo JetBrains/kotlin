@@ -8787,6 +8787,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
                 runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt38925.kt");
             }
 
+            @TestMetadata("lvtWithInlineOnly.kt")
+            public void testLvtWithInlineOnly() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/varSpilling/lvtWithInlineOnly.kt");
+            }
+
             @TestMetadata("nullSpilling.kt")
             public void testNullSpilling() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/varSpilling/nullSpilling.kt");

@@ -12278,6 +12278,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("lvtWithInlineOnly.kt")
+            public void testLvtWithInlineOnly() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/varSpilling/lvtWithInlineOnly.kt");
+            }
+
+            @Test
             @TestMetadata("nullSpilling.kt")
             public void testNullSpilling() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/varSpilling/nullSpilling.kt");

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.optimization.boxing.isMethodInsnWith
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
+import org.jetbrains.kotlin.codegen.optimization.common.findNextOrNull
 import org.jetbrains.kotlin.codegen.optimization.common.removeUnusedLocalVariables
 import org.jetbrains.kotlin.codegen.optimization.common.updateMaxStack
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
@@ -24,6 +25,8 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
             collectSuspensionPoints(methodContext)
 
             transformMethod(methodContext)
+
+            methodNode.fixupLVT()
 
             methodNode.removeUnusedLocalVariables()
             methodNode.updateMaxStack()
@@ -366,6 +369,18 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
                 continue
             }
             insn = insn.next
+        }
+    }
+}
+
+// HACK: if new end label is before start label, change to the next one
+private fun MethodNode.fixupLVT() {
+    for (localVariable in localVariables) {
+        val startIndex = instructions.indexOf(localVariable.start)
+        val endIndex = instructions.indexOf(localVariable.end)
+        if (endIndex < startIndex) {
+            val newEnd = localVariable.start.findNextOrNull { it is LabelNode } as? LabelNode
+            localVariable.end = newEnd ?: localVariable.start
         }
     }
 }
