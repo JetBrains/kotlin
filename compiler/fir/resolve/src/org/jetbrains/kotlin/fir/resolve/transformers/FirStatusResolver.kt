@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -44,6 +45,22 @@ class FirStatusResolver(
             FirDeclarationStatusImpl.Modifier.values().toList() - NOT_INHERITED_MODIFIERS
     }
 
+    private val extensionStatusTransformers = session.extensionService.statusTransformerExtensions
+
+    private inline fun <T> T.applyExtensionTransformers(
+        operation: FirStatusTransformerExtension.(FirDeclarationStatus) -> FirDeclarationStatus
+    ): FirDeclarationStatus where T : FirMemberDeclaration, T : FirAnnotatedDeclaration {
+        if (extensionStatusTransformers.isEmpty()) return status
+        val declaration = this
+        return extensionStatusTransformers.fold(status) { acc, it ->
+            if (session.predicateBasedProvider.matches(it.predicate, declaration)) {
+                it.operation(acc)
+            } else {
+                acc
+            }
+        }
+    }
+
     fun resolveStatus(
         declaration: FirDeclaration,
         containingClass: FirClass?,
@@ -65,7 +82,8 @@ class FirStatusResolver(
 
     @OptIn(ExperimentalStdlibApi::class)
     fun resolveStatus(property: FirProperty, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
-        return resolveStatus(property, property.status, containingClass, null, isLocal) l@{
+        val status = property.applyExtensionTransformers { transformStatus(it, property, containingClass, isLocal) }
+        return resolveStatus(property, status, containingClass, null, isLocal) l@{
             if (containingClass == null) return@l emptyList()
             @Suppress("RemoveExplicitTypeArguments") // Workaround for KT-42175
             buildList<FirProperty> {
@@ -84,7 +102,8 @@ class FirStatusResolver(
 
     @OptIn(ExperimentalStdlibApi::class)
     fun resolveStatus(function: FirSimpleFunction, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
-        return resolveStatus(function, function.status, containingClass, null, isLocal) l@{
+        val status = function.applyExtensionTransformers { transformStatus(it, function, containingClass, isLocal) }
+        return resolveStatus(function, status, containingClass, null, isLocal) l@{
             if (containingClass == null) return@l emptyList()
             @Suppress("RemoveExplicitTypeArguments") // Workaround for KT-42175
             buildList<FirCallableDeclaration> {
@@ -106,7 +125,8 @@ class FirStatusResolver(
         containingClass: FirClass?,
         isLocal: Boolean
     ): FirResolvedDeclarationStatus {
-        return resolveStatus(regularClass, regularClass.status, containingClass, null, isLocal) { emptyList() }
+        val status = regularClass.applyExtensionTransformers { transformStatus(it, regularClass, containingClass, isLocal) }
+        return resolveStatus(regularClass, status, containingClass, null, isLocal) { emptyList() }
     }
 
     fun resolveStatus(
@@ -114,7 +134,8 @@ class FirStatusResolver(
         containingClass: FirClass?,
         isLocal: Boolean
     ): FirResolvedDeclarationStatus {
-        return resolveStatus(typeAlias, typeAlias.status, containingClass, null, isLocal) { emptyList() }
+        val status = typeAlias.applyExtensionTransformers { transformStatus(it, typeAlias, containingClass, isLocal) }
+        return resolveStatus(typeAlias, status, containingClass, null, isLocal) { emptyList() }
     }
 
     fun resolveStatus(
@@ -123,11 +144,15 @@ class FirStatusResolver(
         containingProperty: FirProperty?,
         isLocal: Boolean
     ): FirResolvedDeclarationStatus {
-        return resolveStatus(propertyAccessor, propertyAccessor.status, containingClass, containingProperty, isLocal) { emptyList() }
+        val status = propertyAccessor.applyExtensionTransformers {
+            transformStatus(it, propertyAccessor, containingClass, containingProperty, isLocal)
+        }
+        return resolveStatus(propertyAccessor, status, containingClass, containingProperty, isLocal) { emptyList() }
     }
 
     fun resolveStatus(constructor: FirConstructor, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
-        return resolveStatus(constructor, constructor.status, containingClass, null, isLocal) { emptyList() }
+        val status = constructor.applyExtensionTransformers { transformStatus(it, constructor, containingClass, isLocal) }
+        return resolveStatus(constructor, status, containingClass, null, isLocal) { emptyList() }
     }
 
     fun resolveStatus(field: FirField, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
@@ -139,11 +164,13 @@ class FirStatusResolver(
         containingClass: FirClass?,
         isLocal: Boolean
     ): FirResolvedDeclarationStatus {
-        return resolveStatus(backingField, backingField.status, containingClass, null, isLocal) { emptyList() }
+        val status = backingField.applyExtensionTransformers { transformStatus(it, backingField, containingClass, isLocal) }
+        return resolveStatus(backingField, status, containingClass, null, isLocal) { emptyList() }
     }
 
     fun resolveStatus(enumEntry: FirEnumEntry, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
-        return resolveStatus(enumEntry, enumEntry.status, containingClass, null, isLocal) { emptyList() }
+        val status = enumEntry.applyExtensionTransformers { transformStatus(it, enumEntry, containingClass, isLocal) }
+        return resolveStatus(enumEntry, status, containingClass, null, isLocal) { emptyList() }
     }
 
     private inline fun resolveStatus(

@@ -24,7 +24,7 @@ class AllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExtens
         private val ALL_OPEN = FqName("org.jetbrains.kotlin.fir.plugin.AllOpen")
     }
 
-    override fun transformStatus(declaration: FirDeclaration, owners: List<FirAnnotatedDeclaration>, status: FirDeclarationStatus): FirDeclarationStatus {
+    override fun transformStatus(status: FirDeclarationStatus, declaration: FirAnnotatedDeclaration): FirDeclarationStatus {
         if (status.modality != null) return status
         return status.transform(modality = Modality.OPEN)
     }

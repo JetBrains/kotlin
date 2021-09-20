@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.fir.extensions
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import kotlin.reflect.KClass
 
@@ -24,11 +22,94 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirPredicate
 
     final override val extensionType: KClass<out FirExtension> = FirStatusTransformerExtension::class
 
-    abstract fun transformStatus(
-        declaration: FirDeclaration,
-        owners: List<FirAnnotatedDeclaration>,
-        status: FirDeclarationStatus
-    ): FirDeclarationStatus
+    protected open fun transformStatus(
+        status: FirDeclarationStatus,
+        declaration: FirAnnotatedDeclaration
+    ): FirDeclarationStatus {
+        return status
+    }
+
+    open fun transformStatus(
+        status: FirDeclarationStatus,
+        property: FirProperty,
+        containingClass: FirClass?,
+        isLocal: Boolean
+    ): FirDeclarationStatus {
+        return transformStatus(status, property)
+    }
+
+    open fun transformStatus(
+        status: FirDeclarationStatus,
+        function: FirSimpleFunction,
+        containingClass: FirClass?,
+        isLocal: Boolean
+    ): FirDeclarationStatus {
+        return transformStatus(status, function)
+    }
+
+    open fun transformStatus(
+        status: FirDeclarationStatus,
+        regularClass: FirRegularClass,
+        containingClass: FirClass?,
+        isLocal: Boolean
+    ): FirDeclarationStatus {
+        return transformStatus(status, regularClass)
+    }
+
+    open fun transformStatus(
+        status: FirDeclarationStatus,
+        typeAlias: FirTypeAlias,
+        containingClass: FirClass?,
+        isLocal: Boolean
+    ): FirDeclarationStatus {
+        return transformStatus(status, typeAlias)
+    }
+
+    open fun transformStatus(
+        status: FirDeclarationStatus,
+        propertyAccessor: FirPropertyAccessor,
+        containingClass: FirClass?,
+        containingProperty: FirProperty?,
+        isLocal: Boolean
+    ): FirDeclarationStatus {
+        return transformStatus(status, propertyAccessor)
+    }
+
+    open fun transformStatus(
+        status: FirDeclarationStatus,
+        constructor: FirConstructor,
+        containingClass: FirClass?,
+        isLocal: Boolean
+    ): FirDeclarationStatus {
+        return transformStatus(status, constructor)
+    }
+
+    open fun transformStatus(
+        status: FirDeclarationStatus,
+        field: FirField,
+        containingClass: FirClass?,
+        isLocal: Boolean
+    ): FirDeclarationStatus {
+        return transformStatus(status, field)
+    }
+
+    open fun transformStatus(
+        status: FirDeclarationStatus,
+        backingField: FirBackingField,
+        containingClass: FirClass?,
+        isLocal: Boolean
+    ): FirDeclarationStatus {
+        return transformStatus(status, backingField)
+    }
+
+    open fun transformStatus(
+        status: FirDeclarationStatus,
+        enumEntry: FirEnumEntry,
+        containingClass: FirClass?,
+        isLocal: Boolean
+    ): FirDeclarationStatus {
+        return transformStatus(status, enumEntry)
+    }
 
     fun interface Factory : FirExtension.Factory<FirStatusTransformerExtension>
 }

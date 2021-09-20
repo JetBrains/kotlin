@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.hasOrUnder
+import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.transform
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -39,11 +40,8 @@ class AllOpenVisibilityTransformer(session: FirSession) : FirStatusTransformerEx
         private val ProtectedName = Name.identifier("Protected")
     }
 
-    override fun transformStatus(
-        declaration: FirDeclaration,
-        owners: List<FirAnnotatedDeclaration>,
-        status: FirDeclarationStatus
-    ): FirDeclarationStatus {
+    override fun transformStatus(status: FirDeclarationStatus, declaration: FirAnnotatedDeclaration): FirDeclarationStatus {
+        val owners = session.predicateBasedProvider.getOwnersOfDeclaration(declaration) ?: emptyList()
         val visibility = findVisibility(declaration, owners) ?: return status
         if (visibility == status.visibility) return status
         return status.transform(visibility = visibility)
