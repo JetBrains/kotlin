@@ -1295,6 +1295,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 runTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/differentErasureInSuperClass.kt");
             }
 
+            @TestMetadata("differentErasureInSuperClassComplex.kt")
+            public void testDifferentErasureInSuperClassComplex() throws Exception {
+                runTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/differentErasureInSuperClassComplex.kt");
+            }
+
             @TestMetadata("enum.kt")
             public void testEnum() throws Exception {
                 runTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/enum.kt");
@@ -6626,6 +6631,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         @TestMetadata("nothisnoclosure.kt")
         public void testNothisnoclosure() throws Exception {
             runTest("compiler/testData/codegen/box/functions/nothisnoclosure.kt");
+        }
+
+        @TestMetadata("overloadByInterfaceType.kt")
+        public void testOverloadByInterfaceType() throws Exception {
+            runTest("compiler/testData/codegen/box/functions/overloadByInterfaceType.kt");
         }
 
         @TestMetadata("prefixRecursiveCall.kt")

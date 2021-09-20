@@ -255,7 +255,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         // Processing it separately
         if (call.symbol == wasmSymbols.boxIntrinsic) {
             val toType = call.getTypeArgument(0)!!
-            val klass = toType.erasedUpperBound!!
+            val klass = toType.getRuntimeClass!!
             val structTypeName = context.referenceGcType(klass.symbol)
             val klassId = context.referenceClassId(klass.symbol)
 
@@ -332,7 +332,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     }
 
     private fun generateTypeRTT(type: IrType) {
-        val rtClass = type.erasedUpperBound?.symbol ?: context.backendContext.irBuiltIns.anyClass
+        val rtClass = type.getRuntimeClass?.symbol ?: context.backendContext.irBuiltIns.anyClass
         body.buildGetGlobal(context.referenceClassRTT(rtClass))
     }
 

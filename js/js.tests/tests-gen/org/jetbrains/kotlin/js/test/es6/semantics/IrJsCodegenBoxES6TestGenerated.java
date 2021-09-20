@@ -12153,6 +12153,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/functions/nothisnoclosure.kt");
         }
 
+        @TestMetadata("overloadByInterfaceType.kt")
+        public void testOverloadByInterfaceType() throws Exception {
+            runTest("compiler/testData/codegen/box/functions/overloadByInterfaceType.kt");
+        }
+
         @TestMetadata("prefixRecursiveCall.kt")
         public void testPrefixRecursiveCall() throws Exception {
             runTest("compiler/testData/codegen/box/functions/prefixRecursiveCall.kt");
