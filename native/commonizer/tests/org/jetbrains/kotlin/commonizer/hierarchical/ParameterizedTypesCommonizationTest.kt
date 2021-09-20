@@ -122,26 +122,22 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
             simpleSingleSourceTarget(
                 "a", """
                     class Triple<T, R, M>
-                    typealias T1<T, R, M> = Triple<T, R, M>
-                    typealias T2<T, R, M> = Triple<T, R, M>
-                    typealias T3<T, M> = Triple<T, String, M>
-                    typealias T4<T, M> = Triple<T, String, M>
+                    typealias A<T, M> = Triple<T, String, M>
+                    typealias B<T, M> = Triple<T, String, M>
 
-                    fun x1(x: T4<Int, Long>)
-                    fun x2(x: T3<Int, Long>)
+                    fun x1(x: B<Int, Long>)
+                    fun x2(x: A<Int, Long>)
                 """.trimIndent()
             )
 
             simpleSingleSourceTarget(
                 "b", """
                     class Triple<T, R, M>
-                    typealias T1<T, R, M> = Triple<T, R, M>
-                    typealias T2<T, R, M> = Triple<T, R, M>
-                    typealias T3<T, M> = Triple<T, String, M>
-                    typealias T4<T, M> = Triple<T, String, M>
+                    typealias A<T, M> = Triple<T, String, M>
+                    typealias B<T, M> = Triple<T, String, M>
 
-                    fun x1(x: T3<Int, Long>) // NOTE: T3 & T4 flipped
-                    fun x2(x: T4<Int, Long>) // NOTE: T3 & T4 flipped
+                    fun x1(x: A<Int, Long>) // NOTE: A & B flipped
+                    fun x2(x: B<Int, Long>) // NOTE: A & B flipped
                 """.trimIndent()
             )
         }
@@ -149,10 +145,8 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         result.assertCommonized(
             "(a, b)", """
                  expect class Triple<T, R, M>()
-                 typealias T1<T, R, M> = Triple<T, R, M>
-                 typealias T2<T, R, M> = Triple<T, R, M>
-                 typealias T3<T, M> = Triple<T, String, M>
-                 typealias T4<T, M> = Triple<T, String, M>
+                 typealias A<T, M> = Triple<T, String, M>
+                 typealias B<T, M> = Triple<T, String, M>
                  
                  expect fun x1(x: Triple<Int, String, Long>) 
                  expect fun x2(x: Triple<Int, String, Long>)
