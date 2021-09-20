@@ -22,16 +22,15 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.fir.DependencyListForCliModule
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.buildFirFromKtFiles
 import org.jetbrains.kotlin.fir.pipeline.convertToIr
 import org.jetbrains.kotlin.fir.pipeline.runCheckers
@@ -41,6 +40,11 @@ import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionFactory.createSessionWithDependencies
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.fir.types.arrayElementType
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isArrayType
+import org.jetbrains.kotlin.fir.types.isString
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
@@ -78,7 +82,7 @@ object FirKotlinToJvmBytecodeCompiler {
             "ATTENTION!\n This build uses in-dev FIR: \n  -Xuse-fir"
         )
 
-        val outputs = newLinkedHashMapWithExpectedSize<Module, GenerationState>(chunk.size)
+        val outputs = newLinkedHashMapWithExpectedSize<Module, Pair<FirResult, GenerationState>>(chunk.size)
         val targetIds = projectConfiguration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
         val incrementalComponents = projectConfiguration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
         val isMultiModuleChunk = chunk.size > 1
@@ -102,17 +106,21 @@ object FirKotlinToJvmBytecodeCompiler {
             outputs[module] = generationState
         }
 
-        val mainClassFqName: FqName? =
-            if (chunk.size == 1 && projectConfiguration.get(JVMConfigurationKeys.OUTPUT_JAR) != null)
-                TODO(".jar output is not yet supported for -Xuse-fir: KT-42868")
-            else null
+        val mainClassFqName: FqName? = runIf(chunk.size == 1 && projectConfiguration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
+            val firResult = outputs.values.single().first
+            findMainClass(firResult)
+        }
 
         return writeOutputs(
-            (projectEnvironment as? PsiBasedProjectEnvironment)?.project, projectConfiguration, chunk, outputs, mainClassFqName
+            (projectEnvironment as? PsiBasedProjectEnvironment)?.project,
+            projectConfiguration,
+            chunk,
+            outputs.mapValues { (_, value) -> value.second },
+            mainClassFqName
         )
     }
 
-    private fun CompilationContext.compileModule(): GenerationState? {
+    private fun CompilationContext.compileModule(): Pair<FirResult, GenerationState>? {
         performanceManager?.notifyAnalysisStarted()
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -141,7 +149,7 @@ object FirKotlinToJvmBytecodeCompiler {
         performanceManager?.notifyGenerationFinished()
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-        return generationState
+        return firResult to generationState
     }
 
     private class FirResult(
@@ -335,4 +343,38 @@ object FirKotlinToJvmBytecodeCompiler {
         val incrementalComponents: IncrementalCompilationComponents?,
         val extendedAnalysisMode: Boolean
     )
+
+    private fun findMainClass(firResult: FirResult): FqName? {
+        // TODO: replace with proper main function detector, KT-44557
+        val compatibleClasses = mutableListOf<FqName>()
+        val visitor = object : FirVisitorVoid() {
+            lateinit var file: FirFile
+
+            override fun visitElement(element: FirElement) {}
+
+            override fun visitFile(file: FirFile) {
+                this.file = file
+                file.acceptChildren(this)
+            }
+
+            override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+                if (simpleFunction.name.asString() != "main") return
+                if (simpleFunction.typeParameters.isNotEmpty()) return
+                when (simpleFunction.valueParameters.size) {
+                    0 -> {}
+                    1 -> {
+                        val parameterType = simpleFunction.valueParameters.single().returnTypeRef.coneType
+                        if (!parameterType.isArrayType || parameterType.arrayElementType()?.isString != true) return
+                    }
+                    else -> return
+                }
+
+                compatibleClasses += FqName.fromSegments(
+                    file.packageFqName.pathSegments().map { it.asString() } + "${file.name.removeSuffix(".kt").capitalize()}Kt"
+                )
+            }
+        }
+        firResult.fir.forEach { it.accept(visitor) }
+        return compatibleClasses.singleOrNull()
+    }
 }
