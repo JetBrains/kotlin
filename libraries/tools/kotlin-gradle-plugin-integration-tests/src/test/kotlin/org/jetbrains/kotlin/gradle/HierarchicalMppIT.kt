@@ -211,9 +211,8 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
-    // If we tested the build of the sample multimodules project we could catch KT-48370 at an earlier stage.
     @Test
-    fun testMultiModulesHmpp() = with(Project("hierarchical-mpp-multi-modules", GradleVersionRequired.FOR_MPP_SUPPORT)) {
+    fun testMultiModulesHmppKt48370() = with(Project("hierarchical-mpp-multi-modules", GradleVersionRequired.FOR_MPP_SUPPORT)) {
         build("assemble", options = defaultBuildOptions().copy(parallelTasksInProject = true)) {
             assertSuccessful()
         }
