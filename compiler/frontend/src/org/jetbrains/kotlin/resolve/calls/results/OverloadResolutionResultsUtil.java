@@ -66,7 +66,7 @@ public class OverloadResolutionResultsUtil {
                 newResolvedCall = null;
             }
             if (newResolvedCall != null) {
-                if (!KotlinToResolvedCallTransformerKt.hasInferredReturnType(newResolvedCall)) {
+                if (!ResolvedCallUtilKt.hasInferredReturnType(newResolvedCall)) {
                     return null;
                 }
             } else if (!((MutableResolvedCall<D>) resultingCall).hasInferredReturnType()) {
