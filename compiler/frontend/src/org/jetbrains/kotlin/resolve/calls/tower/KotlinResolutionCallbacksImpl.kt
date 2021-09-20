@@ -320,6 +320,13 @@ class KotlinResolutionCallbacksImpl(
         trace.record(BindingContext.NEW_INFERENCE_IS_LAMBDA_FOR_OVERLOAD_RESOLUTION_INLINE, literal, isLambdaInline)
     }
 
+    override fun getLhsResult(call: KotlinCall): LHSResult {
+        val callableReferenceExpression = call.extractCallableReferenceExpression()
+            ?: throw IllegalStateException("Not a callable reference")
+        val (_, lhsResult) = psiCallResolver.getLhsResult(topLevelCallContext, callableReferenceExpression)
+        return lhsResult
+    }
+
     private fun convertSignedConstantToUnsigned(expression: KtExpression): IntegerValueTypeConstant? {
         val constant = trace[BindingContext.COMPILE_TIME_VALUE, expression]
         if (constant !is IntegerValueTypeConstant || !constantCanBeConvertedToUnsigned(constant)) return null

@@ -720,7 +720,8 @@ class DoubleColonExpressionResolver(
         receiver: Receiver?,
         reference: KtSimpleNameExpression,
         outerContext: ResolutionContext<*>,
-        resolutionMode: ResolveArgumentsMode
+        resolutionMode: ResolveArgumentsMode,
+        lhs: DoubleColonLHS?
     ): ResolutionResultsAndTraceCommitCallback? {
         // we should preserve information about `call` because callable references are analyzed two times,
         // otherwise there will be not completed calls in trace
@@ -737,7 +738,12 @@ class DoubleColonExpressionResolver(
                 outerContext.replaceTraceAndCache(temporaryTrace)
 
         val resolutionResults = callResolver.resolveCallForMember(
-            reference, BasicCallResolutionContext.create(newContext, call, CheckArgumentTypesMode.CHECK_CALLABLE_TYPE)
+            reference,
+            BasicCallResolutionContext.create(
+                newContext.replaceCallPosition(CallPosition.CallableReferenceRhs(lhs)),
+                call,
+                CheckArgumentTypesMode.CHECK_CALLABLE_TYPE
+            )
         )
 
         return when {
@@ -763,7 +769,7 @@ class DoubleColonExpressionResolver(
         if (lhsType == null) {
             if (!expression.isEmptyLHS) return null
 
-            return tryResolveRHSWithReceiver("resolve callable reference with empty LHS", null, reference, c, mode)
+            return tryResolveRHSWithReceiver("resolve callable reference with empty LHS", null, reference, c, mode, lhs)
                 ?.apply { commitTrace() }?.results
         }
 
@@ -780,14 +786,14 @@ class DoubleColonExpressionResolver(
                     if (qualifier is ClassQualifier) {
                         yieldIfNotNull(
                             tryResolveRHSWithReceiver(
-                                "resolve unbound callable reference in static scope", qualifier, reference, c, mode
+                                "resolve unbound callable reference in static scope", qualifier, reference, c, mode, lhs
                             )
                         )
                     }
 
                     yieldIfNotNull(
                         tryResolveRHSWithReceiver(
-                            "resolve unbound callable reference with receiver", TransientReceiver(lhsType), reference, c, mode
+                            "resolve unbound callable reference with receiver", TransientReceiver(lhsType), reference, c, mode, lhs
                         )
                     )
                 }
@@ -795,7 +801,7 @@ class DoubleColonExpressionResolver(
                     val expressionReceiver = ExpressionReceiver.create(expression.receiverExpression!!, lhsType, c.trace.bindingContext)
                     yieldIfNotNull(
                         tryResolveRHSWithReceiver(
-                            "resolve bound callable reference", expressionReceiver, reference, c, mode
+                            "resolve bound callable reference", expressionReceiver, reference, c, mode, lhs
                         )
                     )
 
@@ -806,7 +812,7 @@ class DoubleColonExpressionResolver(
                             val qualifier = ClassQualifier(calleeExpression, classifier)
                             yieldIfNotNull(
                                 tryResolveRHSWithReceiver(
-                                    "resolve object callable reference in static scope", qualifier, reference, c, mode
+                                    "resolve object callable reference in static scope", qualifier, reference, c, mode, lhs
                                 )
                             )
                         }

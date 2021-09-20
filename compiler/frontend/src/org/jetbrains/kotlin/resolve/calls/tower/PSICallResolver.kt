@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
@@ -769,6 +770,47 @@ class PSICallResolver(
         // argumentExpression instead of ktExpression is hack -- type info should be stored also for parenthesized expression
         val typeInfo = expressionTypingServices.getTypeInfo(argumentExpression, context)
         return createSimplePSICallArgument(context, valueArgument, typeInfo) ?: createParseErrorElement()
+    }
+
+    fun getLhsResult(context: BasicCallResolutionContext, ktExpression: KtCallableReferenceExpression): Pair<DoubleColonLHS?, LHSResult> {
+        val expressionTypingContext = ExpressionTypingContext.newContext(context)
+
+        if (ktExpression.isEmptyLHS) return null to LHSResult.Empty
+
+        val doubleColonLhs = (context.callPosition as? CallPosition.CallableReferenceRhs)?.lhs
+            ?: doubleColonExpressionResolver.resolveDoubleColonLHS(ktExpression, expressionTypingContext)
+            ?: return null to LHSResult.Empty
+        val lhsResult = when (doubleColonLhs) {
+            is DoubleColonLHS.Expression -> {
+                if (doubleColonLhs.isObjectQualifier) {
+                    val classifier = doubleColonLhs.type.constructor.declarationDescriptor
+                    val calleeExpression = ktExpression.receiverExpression?.getCalleeExpressionIfAny()
+                    if (calleeExpression is KtSimpleNameExpression && classifier is ClassDescriptor) {
+                        LHSResult.Object(ClassQualifier(calleeExpression, classifier))
+                    } else {
+                        LHSResult.Error
+                    }
+                } else {
+                    val fakeArgument = FakeValueArgumentForLeftCallableReference(ktExpression)
+
+                    val kotlinCallArgument = createSimplePSICallArgument(context, fakeArgument, doubleColonLhs.typeInfo)
+                    kotlinCallArgument?.let { LHSResult.Expression(it as SimpleKotlinCallArgument) } ?: LHSResult.Error
+                }
+            }
+            is DoubleColonLHS.Type -> {
+                val qualifiedExpression = ktExpression.receiverExpression!!
+                val qualifier = expressionTypingContext.trace.get(BindingContext.QUALIFIER, qualifiedExpression)
+                val classifier = doubleColonLhs.type.constructor.declarationDescriptor
+                if (classifier !is ClassDescriptor) {
+                    expressionTypingContext.trace.report(Errors.CALLABLE_REFERENCE_LHS_NOT_A_CLASS.on(ktExpression))
+                    LHSResult.Error
+                } else {
+                    LHSResult.Type(qualifier, doubleColonLhs.type.unwrap())
+                }
+            }
+        }
+
+        return doubleColonLhs to lhsResult
     }
 
     fun createCallableReferenceKotlinCallArgument(

@@ -87,6 +87,8 @@ interface KotlinResolutionCallbacks {
 
     fun disableContractsIfNecessary(resolvedAtom: ResolvedCallAtom)
 
+    fun getLhsResult(call: KotlinCall): LHSResult
+
     fun convertSignedConstantToUnsigned(argument: KotlinCallArgument): IntegerValueTypeConstant?
 
     fun recordInlinabilityOfLambda(atom: Set<Map.Entry<SimpleResolutionCandidate, ResolvedLambdaAtom>>)
