@@ -182,7 +182,7 @@ private object FirToKtConversionCreator {
             KtExpression::class.createType(nullable = true),
             importsToAdd = listOf(
                 "org.jetbrains.kotlin.psi.KtExpression",
-                "org.jetbrains.kotlin.fir.psi"
+                "org.jetbrains.kotlin.psi"
             )
         ),
     )
@@ -214,7 +214,7 @@ private object FirToKtConversionCreator {
             KtExpression::class.createType(),
             importsToAdd = listOf(
                 "org.jetbrains.kotlin.psi.KtExpression",
-                "org.jetbrains.kotlin.fir.psi"
+                "org.jetbrains.kotlin.psi"
             )
         ),
         FirQualifiedAccess::class to HLFunctionCallConversion(
@@ -222,7 +222,7 @@ private object FirToKtConversionCreator {
             KtExpression::class.createType(),
             importsToAdd = listOf(
                 "org.jetbrains.kotlin.psi.KtExpression",
-                "org.jetbrains.kotlin.fir.psi"
+                "org.jetbrains.kotlin.psi"
             )
         ),
         FirValueParameter::class to HLFunctionCallConversion(
@@ -313,11 +313,11 @@ private object FirToKtConversionCreator {
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirSimpleFunction")
         ),
         KtSourceElement::class to HLFunctionCallConversion(
-            "({0} as FirPsiSourceElement).psi",
+            "({0} as KtPsiSourceElement).psi",
             PsiElement::class.createType(),
             importsToAdd = listOf(
-                "org.jetbrains.kotlin.fir.psi",
-                "org.jetbrains.kotlin.FirPsiSourceElement"
+                "org.jetbrains.kotlin.psi",
+                "org.jetbrains.kotlin.KtPsiSourceElement"
             )
         )
     )

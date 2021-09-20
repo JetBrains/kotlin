@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.generator.rendererrs
 
-import org.jetbrains.kotlin.fir.checkers.generator.inBracketsWithIndent
 import org.jetbrains.kotlin.analysis.api.fir.generator.ConversionContext
 import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticList
 import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticParameter
+import org.jetbrains.kotlin.fir.checkers.generator.inBracketsWithIndent
 import org.jetbrains.kotlin.util.SmartPrinter
 import org.jetbrains.kotlin.util.withIndent
 
@@ -45,7 +45,7 @@ object FirDiagnosticToKtDiagnosticConverterRenderer : AbstractDiagnosticsDataCla
 
     private fun SmartPrinter.printDiagnosticParameters(diagnostic: HLDiagnostic) {
         printCustomParameters(diagnostic)
-        println("firDiagnostic as FirPsiDiagnostic,")
+        println("firDiagnostic as KtPsiDiagnostic,")
         println("token,")
     }
 
@@ -68,7 +68,7 @@ object FirDiagnosticToKtDiagnosticConverterRenderer : AbstractDiagnosticsDataCla
         diagnosticParameter.importsToAdd
 
     override val defaultImports = listOf(
-        "org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic",
+        "org.jetbrains.kotlin.fir.analysis.diagnostics.KtPsiDiagnostic",
         "org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors",
         "org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors",
     )
