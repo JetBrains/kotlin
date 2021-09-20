@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidIrBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
 import org.jetbrains.kotlin.fir.plugin.AbstractFirAllOpenDiagnosticTest
 import org.jetbrains.kotlin.generators.TestGroup
+import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.jvm.abi.*
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeIrBytecodeLi
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverScriptTest
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverTest
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlinx.serialization.AbstractSerializationIrBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnosticTest
@@ -269,12 +269,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/fir/fir-plugin-prototype/tests", "plugins/fir/fir-plugin-prototype/testData") {
-            testClass<AbstractFirAllOpenDiagnosticTest> {
-                model("")
-            }
-        }
-
         testGroup("plugins/lombok/lombok-compiler-plugin/tests", "plugins/lombok/lombok-compiler-plugin/testData") {
             testClass<AbstractLombokCompileTest> {
                 model("compile")
@@ -372,6 +366,12 @@ fun main(args: Array<String>) {
 
             testClass<AbstractParcelizeIrBytecodeListingTest> {
                 model("codegen")
+            }
+        }
+
+        testGroup("plugins/fir/fir-plugin-prototype/tests", "plugins/fir/fir-plugin-prototype/testData") {
+            testClass<AbstractFirAllOpenDiagnosticTest> {
+                model("")
             }
         }
     }

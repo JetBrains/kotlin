@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractInnerDecl
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration
 import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
-import org.jetbrains.kotlin.test.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTestSpec
 
 fun main(args: Array<String>) {

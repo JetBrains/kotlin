@@ -66,6 +66,10 @@ dependencies {
     testCompileOnly(project(":kotlin-reflect-api"))
     testImplementation(intellijDep()) { includeJars("idea_rt") }
     testImplementation(project(":kotlin-reflect"))
+    testImplementation(projectTests(":compiler:test-infrastructure-utils"))
+    testImplementation(projectTests(":compiler:test-infrastructure"))
+    testImplementation(projectTests(":compiler:tests-common-new"))
+    testApiJUnit5()
 
     if (Ide.IJ()) {
         testCompileOnly(jpsBuildTest())

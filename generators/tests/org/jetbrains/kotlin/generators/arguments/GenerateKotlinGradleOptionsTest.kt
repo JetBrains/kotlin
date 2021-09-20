@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.generators.arguments.test
 
-import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.generators.arguments.generateKotlinGradleOptions
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.utils.Printer
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -35,7 +35,7 @@ class GenerateKotlinGradleOptionsTest : TestCase() {
             }
 
             val upToDateContent = bytesOut.toString()
-            UsefulTestCase.assertSameLinesWithFile(file.absolutePath, upToDateContent)
+            KtUsefulTestCase.assertSameLinesWithFile(file.absolutePath, upToDateContent)
         }
 
         generateKotlinGradleOptions(::getPrinter)

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.SPEC_TEST_PATH
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTS_MAP_FILENAME
 import org.jetbrains.kotlin.spec.utils.SectionsJsonMapGenerator
 import org.jetbrains.kotlin.spec.utils.TestsJsonMapGenerator
-import org.jetbrains.kotlin.test.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTestSpec
 import java.io.File
 import java.nio.file.Files

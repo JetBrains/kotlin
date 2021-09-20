@@ -10,7 +10,12 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(kotlinStdlib())
     testApi(commonDep("junit:junit"))
+    testApiJUnit5()
     testApi(project(":generators"))
+
+    testCompileOnly(project(":kotlin-reflect-api"))
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":core:descriptors.runtime"))
 }
 
 sourceSets {
