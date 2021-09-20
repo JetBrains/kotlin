@@ -3936,6 +3936,11 @@ public class IrJsCodegenInlineES6TestGenerated extends AbstractIrJsCodegenInline
             runTest("compiler/testData/codegen/boxInline/suspend/inlineOrdinaryOfNoinlineSuspend.kt");
         }
 
+        @TestMetadata("inlinePassthrough.kt")
+        public void testInlinePassthrough() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/suspend/inlinePassthrough.kt");
+        }
+
         @TestMetadata("inlineSuspendOfCrossinlineOrdinary.kt")
         public void testInlineSuspendOfCrossinlineOrdinary() throws Exception {
             runTest("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfCrossinlineOrdinary.kt");

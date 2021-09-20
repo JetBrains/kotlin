@@ -4935,6 +4935,12 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         }
 
         @Test
+        @TestMetadata("inlinePassthrough.kt")
+        public void testInlinePassthrough() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/suspend/inlinePassthrough.kt");
+        }
+
+        @Test
         @TestMetadata("inlineSuspendContinuation.kt")
         public void testInlineSuspendContinuation() throws Exception {
             runTest("compiler/testData/codegen/boxInline/suspend/inlineSuspendContinuation.kt");
