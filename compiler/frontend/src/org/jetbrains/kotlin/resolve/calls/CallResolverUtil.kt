@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.getNestedTypeVariables
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate
 import org.jetbrains.kotlin.resolve.descriptorUtil.isParameterOfAnnotation
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
@@ -277,7 +277,7 @@ fun createResolutionCandidatesForConstructors(
     typeWithConstructors: KotlinType,
     useKnownTypeSubstitutor: Boolean,
     syntheticScopes: SyntheticScopes
-): List<ResolutionCandidate<ConstructorDescriptor>> {
+): List<OldResolutionCandidate<ConstructorDescriptor>> {
     val classWithConstructors = typeWithConstructors.constructor.declarationDescriptor as ClassDescriptor
 
     val unwrappedType = typeWithConstructors.unwrap()
@@ -320,7 +320,7 @@ fun createResolutionCandidatesForConstructors(
     val syntheticConstructors = constructors.flatMap { syntheticScopes.collectSyntheticConstructors(it) }
 
     return (constructors + syntheticConstructors).map {
-        ResolutionCandidate.create(call, it, dispatchReceiver, receiverKind, knownSubstitutor)
+        OldResolutionCandidate.create(call, it, dispatchReceiver, receiverKind, knownSubstitutor)
     }
 }
 

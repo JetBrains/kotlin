@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.findTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -102,7 +102,7 @@ fun getExpectedTypePredicate(
         val predicates = ArrayList<TypePredicate>()
 
         for (candidate in candidates) {
-            val resolutionCandidate = ResolutionCandidate.create(
+            val resolutionCandidate = OldResolutionCandidate.create(
                 call,
                 candidate,
                 null,

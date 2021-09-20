@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
-import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
@@ -121,7 +121,7 @@ class PSICallResolver(
     // actually, `D` is at least FunctionDescriptor, but right now because of CallResolver it isn't possible change upper bound for `D`
     fun <D : CallableDescriptor> runResolutionAndInferenceForGivenCandidates(
         context: BasicCallResolutionContext,
-        resolutionCandidates: Collection<ResolutionCandidate<D>>,
+        resolutionCandidates: Collection<OldResolutionCandidate<D>>,
         tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
         val dispatchReceiver = resolutionCandidates.firstNotNullOfOrNull { it.dispatchReceiver }
