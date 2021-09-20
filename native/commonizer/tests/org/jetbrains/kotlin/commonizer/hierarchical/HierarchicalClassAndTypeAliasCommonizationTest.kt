@@ -642,4 +642,85 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
             """.trimIndent()
         )
     }
+
+    fun `test 'crossed' type aliases - 0`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            simpleSingleSourceTarget(
+                "a", """
+                    class X
+                    class Y
+
+                    typealias A = X
+                    typealias B = Y
+
+                    fun x(x: A)
+                    fun x(x: B)
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class X
+                    class Y
+
+                    typealias A = Y // NOTE: Y & X are swapped
+                    typealias B = X // NOTE: Y & X are swapped
+
+                    fun x(x: A)
+                    fun x(x: B)
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class X()
+                expect class Y()
+                expect class A()
+                expect class B()
+                expect fun x(x: A)
+                expect fun x(x: B)
+            """.trimIndent()
+        )
+    }
+
+    fun `test 'crossed' type aliases - 1`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            simpleSingleSourceTarget(
+                "a", """
+                    class X
+                    class Y
+
+                    typealias A = X
+                    typealias B = Y
+
+                    fun x(x: A)
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class X
+                    class Y
+
+                    typealias A = Y // NOTE: Y & X are swapped
+                    typealias B = X // NOTE: Y & X are swapped
+
+                    fun x(x: A)
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class X()
+                expect class Y()
+                expect class A()
+                expect class B()
+                expect fun x(x: A)
+            """.trimIndent()
+        )
+    }
 }
