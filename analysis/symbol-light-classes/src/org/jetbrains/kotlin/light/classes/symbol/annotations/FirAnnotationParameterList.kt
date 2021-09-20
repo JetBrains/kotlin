@@ -10,9 +10,7 @@ import com.intellij.psi.impl.light.LightIdentifier
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedConstantValue
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSimpleConstantValue
 import org.jetbrains.kotlin.psi.KtElement
 
 internal class FirAnnotationParameterList(

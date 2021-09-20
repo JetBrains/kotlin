@@ -199,9 +199,9 @@ internal fun KtConstantValue.toAnnotationMemberValue(parent: PsiElement): PsiAnn
 
 private fun KtConstantValue.asStringForPsiLiteral(): String? =
     when (this) {
-        is KtEnumEntryValue ->
+        is KtEnumEntryConstantValue ->
             "${enumEntrySymbol.containingEnumClassIdIfNonLocal?.asSingleFqName()?.asString() ?: ""}.${enumEntrySymbol.name}"
-        is KtSimpleConstantValue<*> -> {
+        is KtLiteralConstantValue<*> -> {
             when (val value = this.value) {
                 is String -> "\"${escapeString(value)}\""
                 is Long -> "${value}L"

@@ -1,12 +1,12 @@
 expression: arrayOf(Annotation("v1", "v2"), Annotation(strings = arrayOf("v3", "v4")))
 constant_value: KtArrayConstantValue [
   KtAnnotationConstantValue(Annotation, (strings = KtArrayConstantValue [
-    KtSimpleConstantValue(constantValueKind=String, value=v1)
-    KtSimpleConstantValue(constantValueKind=String, value=v2)
+    KtLiteralConstantValue(constantValueKind=String, value=v1)
+    KtLiteralConstantValue(constantValueKind=String, value=v2)
   ]))
   KtAnnotationConstantValue(Annotation, (strings = KtArrayConstantValue [
-    KtSimpleConstantValue(constantValueKind=String, value=v3)
-    KtSimpleConstantValue(constantValueKind=String, value=v4)
+    KtLiteralConstantValue(constantValueKind=String, value=v3)
+    KtLiteralConstantValue(constantValueKind=String, value=v4)
   ]))
 ]
 constant: null

@@ -31,7 +31,7 @@ abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractHLApiSingleFil
         val actual = buildString {
             appendLine("expression: ${expression.text}")
             appendLine("constant_value: ${analyse(ktFile) { constantValue?.stringRepresentation() }}")
-            appendLine("constant: ${(constantValue as? KtSimpleConstantValue<*>)?.toConst()}")
+            appendLine("constant: ${(constantValue as? KtLiteralConstantValue<*>)?.toConst()}")
         }
         testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
     }
@@ -52,12 +52,17 @@ abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractHLApiSingleFil
                 }
                 append(")")
             }
-            is KtEnumEntryValue -> buildString {
-                append("KtEnumEntryValue(")
+            is KtEnumEntryConstantValue -> buildString {
+                append("KtEnumEntryConstantValue(")
                 append(enumEntrySymbol.callableIdIfNonLocal ?: enumEntrySymbol.name)
                 append(")")
             }
-            is KtSimpleConstantValue<*> -> toString()
+            is KtLiteralConstantValue<*> -> buildString {
+                append("KtLiteralConstantValue(")
+                append("constantValueKind=${constantValueKind}")
+                append(", ")
+                append("value=${value})")
+            }
             is KtUnsupportedConstantValue -> "KtUnsupportedConstantValue"
         }
     }

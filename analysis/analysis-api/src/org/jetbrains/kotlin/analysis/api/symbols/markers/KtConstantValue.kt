@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.types.ConstantValueKind
  *   * other annotation types, and
  *   * array of aforementioned types
  *
- *  [KtSimpleConstantValue] covers first two kinds;
- *  [KtEnumEntryValue] corresponds to enum types;
+ *  [KtLiteralConstantValue] covers first two kinds;
+ *  [KtEnumEntryConstantValue] corresponds to enum types;
  *  [KtAnnotationConstantValue] represents annotation types (with annotation fq name and arguments); and
  *  [KtArrayConstantValue] abstracts an array of [KtConstantValue]s.
  */
@@ -41,12 +41,12 @@ public class KtAnnotationConstantValue(
     override val kotlinOrigin: KtCallElement?,
 ) : KtConstantValue()
 
-public class KtEnumEntryValue(
+public class KtEnumEntryConstantValue(
     public val enumEntrySymbol: KtEnumEntrySymbol,
     override val kotlinOrigin: KtElement?,
 ) : KtConstantValue()
 
-public class KtSimpleConstantValue<T>(
+public class KtLiteralConstantValue<T>(
     public val constantValueKind: ConstantValueKind<T>,
     public val value: T,
     override val kotlinOrigin: KtElement?,
@@ -67,9 +67,5 @@ public class KtSimpleConstantValue<T>(
                 else -> it
             }
         } ?: value
-    }
-
-    override fun toString(): String {
-        return "KtSimpleConstantValue(constantValueKind=${constantValueKind}, value=${value})"
     }
 }

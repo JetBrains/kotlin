@@ -39,11 +39,11 @@ internal object KtFirConstantValueConverter {
 
     fun <T> toConstantValue(
         firConstExpression: FirConstExpression<T>,
-    ): KtSimpleConstantValue<T> =
+    ): KtLiteralConstantValue<T> =
         firConstExpression.convertConstantExpression()
 
-    private fun <T> FirConstExpression<T>.convertConstantExpression(): KtSimpleConstantValue<T> =
-        KtSimpleConstantValue(kind, value, realPsi as? KtElement)
+    private fun <T> FirConstExpression<T>.convertConstantExpression(): KtLiteralConstantValue<T> =
+        KtLiteralConstantValue(kind, value, realPsi as? KtElement)
 
     private fun Collection<FirExpression>.convertConstantExpression(
         session: FirSession,
@@ -112,7 +112,10 @@ internal object KtFirConstantValueConverter {
                 val reference = calleeReference as? FirResolvedNamedReference ?: return null
                 when (val resolvedSymbol = reference.resolvedSymbol) {
                     is FirEnumEntrySymbol -> {
-                        KtEnumEntryValue(resolvedSymbol.fir.buildSymbol(firSymbolBuilder) as KtEnumEntrySymbol, realPsi as? KtElement)
+                        KtEnumEntryConstantValue(
+                            resolvedSymbol.fir.buildSymbol(firSymbolBuilder) as KtEnumEntrySymbol,
+                            realPsi as? KtElement
+                        )
                     }
                     else -> null
                 }
