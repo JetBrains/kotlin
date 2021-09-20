@@ -35,6 +35,8 @@ val CallableDescriptor.returnTypeOrNothing: UnwrappedType
 fun TypeSubstitutor.substitute(type: UnwrappedType): UnwrappedType = safeSubstitute(type, Variance.INVARIANT).unwrap()
 
 fun CallableDescriptor.substitute(substitutor: NewTypeSubstitutor): CallableDescriptor {
+    if (substitutor.isEmpty) return this
+
     val wrappedSubstitution = object : TypeSubstitution() {
         override fun get(key: KotlinType): TypeProjection? = null
         override fun prepareTopLevelType(topLevelType: KotlinType, position: Variance) = substitutor.safeSubstitute(topLevelType.unwrap())
@@ -44,16 +46,20 @@ fun CallableDescriptor.substitute(substitutor: NewTypeSubstitutor): CallableDesc
 
 fun CallableDescriptor.substituteAndApproximateTypes(
     substitutor: NewTypeSubstitutor,
-    typeApproximator: TypeApproximator?
+    typeApproximator: TypeApproximator?,
+    positionDependentApproximation: Boolean = false
 ): CallableDescriptor {
+    if (substitutor.isEmpty) return this
+
     val wrappedSubstitution = object : TypeSubstitution() {
         override fun get(key: KotlinType): TypeProjection? = null
 
         override fun prepareTopLevelType(topLevelType: KotlinType, position: Variance) =
             substitutor.safeSubstitute(topLevelType.unwrap()).let { substitutedType ->
-                typeApproximator?.approximateToSuperType(
+                typeApproximator?.approximateTo(
                     substitutedType,
-                    TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+                    TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference,
+                    position != Variance.IN_VARIANCE || !positionDependentApproximation
                 ) ?: substitutedType
             }
     }

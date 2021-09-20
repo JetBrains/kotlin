@@ -20,15 +20,21 @@ import org.jetbrains.kotlin.psi.psiUtil.getBinaryWithTypeParent
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
+import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
+import org.jetbrains.kotlin.resolve.calls.util.extractCallableReferenceExpression
 import org.jetbrains.kotlin.resolve.calls.components.*
+import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyImpl
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
@@ -71,7 +77,8 @@ class KotlinResolutionCallbacksImpl(
     private val deprecationResolver: DeprecationResolver,
     private val moduleDescriptor: ModuleDescriptor,
     private val topLevelCallContext: BasicCallResolutionContext,
-    private val missingSupertypesResolver: MissingSupertypesResolver
+    private val missingSupertypesResolver: MissingSupertypesResolver,
+    private val kotlinCallResolver: KotlinCallResolver,
 ) : KotlinResolutionCallbacks {
     class LambdaInfo(val expectedType: UnwrappedType, val contextDependency: ContextDependency) {
         val returnStatements = ArrayList<Pair<KtReturnExpression, LambdaContextInfo?>>()
@@ -81,6 +88,19 @@ class KotlinResolutionCallbacksImpl(
             val STUB_EMPTY = LambdaInfo(TypeUtils.NO_EXPECTED_TYPE, ContextDependency.INDEPENDENT)
         }
     }
+
+    override fun resolveCallableReferenceArgument(
+        argument: CallableReferenceKotlinCallArgument,
+        expectedType: UnwrappedType?,
+        baseSystem: ConstraintStorage,
+    ): Collection<CallableReferenceResolutionCandidate> =
+        kotlinCallResolver.resolveCallableReferenceArgument(argument, expectedType, baseSystem, this)
+
+    override fun getCandidateFactoryForInvoke(
+        scopeTower: ImplicitScopeTower,
+        kotlinCall: KotlinCall
+    ): PSICallResolver.FactoryProviderForInvoke =
+        psiCallResolver.FactoryProviderForInvoke(topLevelCallContext, scopeTower, kotlinCall as PSIKotlinCallImpl)
 
     override fun analyzeAndGetLambdaReturnArguments(
         lambdaArgument: LambdaKotlinCallArgument,
@@ -113,21 +133,22 @@ class KotlinResolutionCallbacksImpl(
             }
 
             val deparenthesizedExpression = KtPsiUtil.deparenthesize(ktExpression) ?: ktExpression
-            if (deparenthesizedExpression is KtCallableReferenceExpression) {
-                return psiCallResolver.createCallableReferenceKotlinCallArgument(
+
+            return if (deparenthesizedExpression is KtCallableReferenceExpression) {
+                psiCallResolver.createCallableReferenceKotlinCallArgument(
                     newContext, deparenthesizedExpression, DataFlowInfo.EMPTY,
                     CallMaker.makeExternalValueArgument(deparenthesizedExpression),
                     argumentName = null,
                     outerCallContext,
                     tracingStrategy = TracingStrategyImpl.create(deparenthesizedExpression.callableReference, newContext.call)
                 )
+            } else {
+                createSimplePSICallArgument(
+                    trace.bindingContext, outerCallContext.statementFilter, outerCallContext.scope.ownerDescriptor,
+                    CallMaker.makeExternalValueArgument(ktExpression), DataFlowInfo.EMPTY, typeInfo, languageVersionSettings,
+                    dataFlowValueFactory, outerCallContext.call
+                )
             }
-
-            return createSimplePSICallArgument(
-                trace.bindingContext, outerCallContext.statementFilter, outerCallContext.scope.ownerDescriptor,
-                CallMaker.makeExternalValueArgument(ktExpression), DataFlowInfo.EMPTY, typeInfo, languageVersionSettings,
-                dataFlowValueFactory, outerCallContext.call
-            )
         }
 
         val lambdaInfo = LambdaInfo(

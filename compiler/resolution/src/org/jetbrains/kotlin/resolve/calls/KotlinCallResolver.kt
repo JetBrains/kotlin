@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.resolve.calls
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
-import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceResolver
-import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
-import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
-import org.jetbrains.kotlin.resolve.calls.components.NewOverloadingConflictResolver
+import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_FQ_NAME
@@ -24,24 +24,116 @@ class KotlinCallResolver(
     private val towerResolver: TowerResolver,
     private val kotlinCallCompleter: KotlinCallCompleter,
     private val overloadingConflictResolver: NewOverloadingConflictResolver,
-    private val callableReferenceResolver: CallableReferenceResolver,
+    private val callableReferenceArgumentResolver: CallableReferenceArgumentResolver,
     private val callComponents: KotlinCallComponents
 ) {
-    fun resolveCall(
+    fun resolveAndCompleteCall(
         scopeTower: ImplicitScopeTower,
         resolutionCallbacks: KotlinResolutionCallbacks,
         kotlinCall: KotlinCall,
         expectedType: UnwrappedType?,
         collectAllCandidates: Boolean,
-        createFactoryProviderForInvoke: () -> CandidateFactoryProviderForInvoke<ResolutionCandidate>
+    ): CallResolutionResult {
+        val candidateFactory = createFactory(scopeTower, kotlinCall, resolutionCallbacks, expectedType)
+        val candidates = resolveCall(scopeTower, resolutionCallbacks, kotlinCall, collectAllCandidates, candidateFactory)
+
+        if (collectAllCandidates) {
+            return kotlinCallCompleter.createAllCandidatesResult(candidates, expectedType, resolutionCallbacks)
+        }
+
+        return kotlinCallCompleter.runCompletion(candidateFactory, candidates, expectedType, resolutionCallbacks)
+    }
+
+    fun resolveAndCompleteGivenCandidates(
+        scopeTower: ImplicitScopeTower,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+        kotlinCall: KotlinCall,
+        expectedType: UnwrappedType?,
+        givenCandidates: Collection<GivenCandidate>,
+        collectAllCandidates: Boolean
     ): CallResolutionResult {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         kotlinCall.checkCallInvariants()
 
-        val candidateFactory = SimpleCandidateFactory(
-            callComponents, scopeTower, kotlinCall, resolutionCallbacks, callableReferenceResolver
+        val candidateFactory = SimpleCandidateFactory(callComponents, scopeTower, kotlinCall, resolutionCallbacks)
+        val resolutionCandidates = givenCandidates.map { candidateFactory.createCandidate(it).forceResolution() }
+
+        if (collectAllCandidates) {
+            val allCandidates = towerResolver.runWithEmptyTowerData(
+                KnownResultProcessor(resolutionCandidates),
+                TowerResolver.AllCandidatesCollector(),
+                useOrder = false
+            )
+            return kotlinCallCompleter.createAllCandidatesResult(allCandidates, expectedType, resolutionCallbacks)
+
+        }
+
+        val candidates = towerResolver.runWithEmptyTowerData(
+            KnownResultProcessor(resolutionCandidates),
+            TowerResolver.SuccessfulResultCollector(),
+            useOrder = true
         )
+        val mostSpecificCandidates = choseMostSpecific(kotlinCall, resolutionCallbacks, candidates)
+
+        return kotlinCallCompleter.runCompletion(candidateFactory, mostSpecificCandidates, expectedType, resolutionCallbacks)
+    }
+
+    fun resolveCallableReferenceArgument(
+        argument: CallableReferenceKotlinCallArgument,
+        expectedType: UnwrappedType?,
+        baseSystem: ConstraintStorage,
+        resolutionCallbacks: KotlinResolutionCallbacks
+    ): Collection<CallableReferenceResolutionCandidate> {
+        val scopeTower = callComponents.statelessCallbacks.getScopeTowerForCallableReferenceArgument(argument)
+        val factory = createCallableReferenceCallFactory(scopeTower, argument.call, resolutionCallbacks, expectedType, argument, baseSystem)
+
+        return resolveCall(scopeTower, resolutionCallbacks, argument.call, collectAllCandidates = false, factory)
+    }
+
+    private fun createCallableReferenceCallFactory(
+        scopeTower: ImplicitScopeTower,
+        kotlinCall: KotlinCall,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+        expectedType: UnwrappedType?,
+        argument: CallableReferenceKotlinCallArgument? = null,
+        baseSystem: ConstraintStorage? = null
+    ): CandidateFactory<CallableReferenceResolutionCandidate> {
+        val resolutionAtom = argument
+            ?: CallableReferenceKotlinCall(kotlinCall, resolutionCallbacks.getLhsResult(kotlinCall), kotlinCall.name)
+
+        return CallableReferencesCandidateFactory(resolutionAtom, callComponents, scopeTower, expectedType, baseSystem, resolutionCallbacks)
+    }
+
+    private fun createSimpleCallFactory(
+        scopeTower: ImplicitScopeTower,
+        kotlinCall: KotlinCall,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+    ): CandidateFactory<ResolutionCandidate> = SimpleCandidateFactory(callComponents, scopeTower, kotlinCall, resolutionCallbacks)
+
+    private fun createFactory(
+        scopeTower: ImplicitScopeTower,
+        kotlinCall: KotlinCall,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+        expectedType: UnwrappedType?
+    ): CandidateFactory<ResolutionCandidate> =
+        when (kotlinCall.callKind) {
+            KotlinCallKind.CALLABLE_REFERENCE -> createCallableReferenceCallFactory(scopeTower, kotlinCall, resolutionCallbacks, expectedType)
+            else -> createSimpleCallFactory(scopeTower, kotlinCall, resolutionCallbacks)
+        }
+
+    private fun <C : ResolutionCandidate> resolveCall(
+        scopeTower: ImplicitScopeTower,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+        kotlinCall: KotlinCall,
+        collectAllCandidates: Boolean,
+        candidateFactory: CandidateFactory<C>,
+    ): Collection<C> {
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
+        kotlinCall.checkCallInvariants()
+
+        @Suppress("UNCHECKED_CAST")
         val processor = when (kotlinCall.callKind) {
             KotlinCallKind.VARIABLE -> {
                 createVariableAndObjectProcessor(scopeTower, kotlinCall.name, candidateFactory, kotlinCall.explicitReceiver?.receiver)
@@ -51,9 +143,12 @@ class KotlinCallResolver(
                     scopeTower,
                     kotlinCall.name,
                     candidateFactory,
-                    createFactoryProviderForInvoke(),
+                    resolutionCallbacks.getCandidateFactoryForInvoke(scopeTower, kotlinCall),
                     kotlinCall.explicitReceiver?.receiver
-                )
+                ) as ScopeTowerProcessor<C>
+            }
+            KotlinCallKind.CALLABLE_REFERENCE -> {
+                createCallableReferenceProcessor(candidateFactory as CallableReferencesCandidateFactory) as ScopeTowerProcessor<C>
             }
             KotlinCallKind.INVOKE -> {
                 createProcessorWithReceiverValueOrEmpty(kotlinCall.explicitReceiver?.receiver) {
@@ -69,8 +164,7 @@ class KotlinCallResolver(
         }
 
         if (collectAllCandidates) {
-            val allCandidates = towerResolver.collectAllCandidates(scopeTower, processor, kotlinCall.name)
-            return kotlinCallCompleter.createAllCandidatesResult(allCandidates, expectedType, resolutionCallbacks)
+            return towerResolver.collectAllCandidates(scopeTower, processor, kotlinCall.name)
         }
 
         val candidates = towerResolver.runResolve(
@@ -80,73 +174,55 @@ class KotlinCallResolver(
             name = kotlinCall.name
         )
 
-        return choseMostSpecific(candidateFactory, resolutionCallbacks, expectedType, candidates)
-    }
-
-    fun resolveGivenCandidates(
-        scopeTower: ImplicitScopeTower,
-        resolutionCallbacks: KotlinResolutionCallbacks,
-        kotlinCall: KotlinCall,
-        expectedType: UnwrappedType?,
-        givenCandidates: Collection<GivenCandidate>,
-        collectAllCandidates: Boolean
-    ): CallResolutionResult {
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-
-        kotlinCall.checkCallInvariants()
-        val candidateFactory = SimpleCandidateFactory(
-            callComponents, scopeTower, kotlinCall, resolutionCallbacks, callableReferenceResolver
-        )
-
-        val resolutionCandidates = givenCandidates.map { candidateFactory.createCandidate(it).forceResolution() }
-
-        if (collectAllCandidates) {
-            val allCandidates = towerResolver.runWithEmptyTowerData(
-                KnownResultProcessor(resolutionCandidates),
-                TowerResolver.AllCandidatesCollector(),
-                useOrder = false
-            )
-            return kotlinCallCompleter.createAllCandidatesResult(allCandidates, expectedType, resolutionCallbacks)
-
-        }
-        val candidates = towerResolver.runWithEmptyTowerData(
-            KnownResultProcessor(resolutionCandidates),
-            TowerResolver.SuccessfulResultCollector(),
-            useOrder = true
-        )
-        return choseMostSpecific(candidateFactory, resolutionCallbacks, expectedType, candidates)
+        @Suppress("UNCHECKED_CAST")
+        return choseMostSpecific(kotlinCall, resolutionCallbacks, candidates) as Set<C>
     }
 
     private fun choseMostSpecific(
-        candidateFactory: SimpleCandidateFactory,
+        kotlinCall: KotlinCall,
         resolutionCallbacks: KotlinResolutionCallbacks,
-        expectedType: UnwrappedType?,
         candidates: Collection<ResolutionCandidate>
-    ): CallResolutionResult {
+    ): Set<ResolutionCandidate> {
         var refinedCandidates = candidates
-        if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.RefinedSamAdaptersPriority)) {
+
+        if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.RefinedSamAdaptersPriority) && kotlinCall.callKind != KotlinCallKind.CALLABLE_REFERENCE) {
             val nonSynthesized = candidates.filter { !it.resolvedCall.candidateDescriptor.isSynthesized }
-            if (!nonSynthesized.isEmpty()) {
+            if (nonSynthesized.isNotEmpty()) {
                 refinedCandidates = nonSynthesized
             }
         }
 
-        var maximallySpecificCandidates = overloadingConflictResolver.chooseMaximallySpecificCandidates(
-            refinedCandidates,
-            CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-            discriminateGenerics = true // todo
-        )
+        var maximallySpecificCandidates = if (kotlinCall.callKind == KotlinCallKind.CALLABLE_REFERENCE) {
+            @Suppress("UNCHECKED_CAST")
+            callableReferenceArgumentResolver.callableReferenceOverloadConflictResolver.chooseMaximallySpecificCandidates(
+                refinedCandidates as Collection<CallableReferenceResolutionCandidate>,
+                CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+                discriminateGenerics = true
+            )
+        } else {
+            overloadingConflictResolver.chooseMaximallySpecificCandidates(
+                refinedCandidates,
+                CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+                discriminateGenerics = true // todo
+            )
+        }
 
         if (
             maximallySpecificCandidates.size > 1 &&
             callComponents.languageVersionSettings.supportsFeature(LanguageFeature.OverloadResolutionByLambdaReturnType) &&
-            candidates.all { resolutionCallbacks.inferenceSession.shouldRunCompletion(it) }
+            candidates.all { resolutionCallbacks.inferenceSession.shouldRunCompletion(it) } &&
+            kotlinCall.callKind != KotlinCallKind.CALLABLE_REFERENCE
         ) {
-            val candidatesWithAnnotation =
-                candidates.filter { it.resolvedCall.candidateDescriptor.annotations.hasAnnotation(OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_FQ_NAME) }
+            val candidatesWithAnnotation = candidates.filter {
+                it.resolvedCall.candidateDescriptor.annotations.hasAnnotation(OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_FQ_NAME)
+            }.toSet()
             val candidatesWithoutAnnotation = candidates - candidatesWithAnnotation
             if (candidatesWithAnnotation.isNotEmpty()) {
-                val newCandidates = kotlinCallCompleter.chooseCandidateRegardingOverloadResolutionByLambdaReturnType(maximallySpecificCandidates, resolutionCallbacks)
+                @Suppress("UNCHECKED_CAST")
+                val newCandidates = kotlinCallCompleter.chooseCandidateRegardingOverloadResolutionByLambdaReturnType(
+                    maximallySpecificCandidates as Set<SimpleResolutionCandidate>,
+                    resolutionCallbacks
+                )
                 maximallySpecificCandidates = overloadingConflictResolver.chooseMaximallySpecificCandidates(
                     newCandidates,
                     CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
@@ -160,7 +236,6 @@ class KotlinCallResolver(
             }
         }
 
-        return kotlinCallCompleter.runCompletion(candidateFactory, maximallySpecificCandidates, expectedType, resolutionCallbacks)
+        return maximallySpecificCandidates
     }
 }
-

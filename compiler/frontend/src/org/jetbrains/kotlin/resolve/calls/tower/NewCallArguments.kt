@@ -325,7 +325,10 @@ internal fun createSimplePSICallArgument(
     call: Call
 ): SimplePSIKotlinCallArgument? {
     val ktExpression = KtPsiUtil.getLastElementDeparenthesized(valueArgument.getArgumentExpression(), statementFilter) ?: return null
-    val partiallyResolvedCall = ktExpression.getCall(bindingContext)?.let {
+    val ktExpressionToExtractResolvedCall =
+        if (ktExpression is KtCallableReferenceExpression) ktExpression.callableReference else ktExpression
+
+    val partiallyResolvedCall = ktExpressionToExtractResolvedCall.getCall(bindingContext)?.let {
         bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)?.result
     }
     // todo hack for if expression: sometimes we not write properly type information for branches

@@ -18,6 +18,11 @@ class Foo6
 class Foo7<T>
 fun foo7() = null as Foo7<Int>
 
+fun poll0(flag: Boolean) {
+    val inv = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction0<kotlin.Int>")!>if (flag) { ::bar2 } else { ::foo4 }<!>
+    inv()
+}
+
 fun poll1(flag: Boolean) {
     val inv = if (flag) { ::bar2 } else { ::foo2 }
     inv()

@@ -33,10 +33,10 @@ class CallableReferenceResolutionCandidate(
     val reflectionCandidateType: UnwrappedType,
     val callableReferenceAdaptation: CallableReferenceAdaptation?,
     val kotlinCall: CallableReferenceResolutionAtom,
+    val expectedType: UnwrappedType?,
     override val callComponents: KotlinCallComponents,
     override val scopeTower: ImplicitScopeTower,
     override val resolutionCallbacks: KotlinResolutionCallbacks,
-    val expectedType: UnwrappedType?,
     override val baseSystem: ConstraintStorage?
 ) : ResolutionCandidate() {
     override val variableCandidateIfInvoke: ResolutionCandidate? = null

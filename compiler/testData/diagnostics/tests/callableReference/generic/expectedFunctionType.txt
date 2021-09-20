@@ -1,11 +1,14 @@
 package
 
+public fun </*0*/ K> id(/*0*/ x: K): K
+
 public final class A1 {
     public constructor A1()
     public final fun </*0*/ T> a1(/*0*/ t: T): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final fun test1(): (kotlin.String) -> kotlin.Unit
+    public final fun test2(): (kotlin.String) -> kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 

@@ -118,7 +118,7 @@ public object C {
 
     public final class Derived : C.Base {
         public constructor Derived()
-        public final val a: [ERROR : Type for FromCBaseCompanion::foo]
+        public final val a: kotlin.reflect.KFunction1<C.Base.Companion.FromCBaseCompanion, kotlin.Int>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

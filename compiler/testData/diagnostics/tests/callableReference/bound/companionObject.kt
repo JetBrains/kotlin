@@ -37,5 +37,5 @@ fun test() {
     val r7 = c::foo
     checkSubtype<() -> String>(r7)
 
-    C::<!UNRESOLVED_REFERENCE!>bar<!>
+    C::bar
 }

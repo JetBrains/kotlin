@@ -45,4 +45,7 @@ class TypeApproximator(
     // resultType <: type
     fun approximateToSubType(type: UnwrappedType, conf: TypeApproximatorConfiguration): UnwrappedType? =
         super.approximateToSubType(type, conf) as UnwrappedType?
+
+    fun approximateTo(type: UnwrappedType, conf: TypeApproximatorConfiguration, toSuperType: Boolean): UnwrappedType? =
+        if (toSuperType) approximateToSuperType(type, conf) else approximateToSubType(type, conf)
 }

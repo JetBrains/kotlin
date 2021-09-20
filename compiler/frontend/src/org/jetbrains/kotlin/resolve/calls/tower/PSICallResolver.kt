@@ -80,7 +80,8 @@ class PSICallResolver(
     val defaultResolutionKinds = setOf(
         NewResolutionOldInference.ResolutionKind.Function,
         NewResolutionOldInference.ResolutionKind.Variable,
-        NewResolutionOldInference.ResolutionKind.Invoke
+        NewResolutionOldInference.ResolutionKind.Invoke,
+        NewResolutionOldInference.ResolutionKind.CallableReference
     )
 
     fun <D : CallableDescriptor> runResolutionAndInference(
@@ -98,10 +99,9 @@ class PSICallResolver(
         val resolutionCallbacks = createResolutionCallbacks(context)
 
         val expectedType = calculateExpectedType(context)
-        var result =
-            kotlinCallResolver.resolveCall(scopeTower, resolutionCallbacks, kotlinCall, expectedType, context.collectAllCandidates) {
-                FactoryProviderForInvoke(context, scopeTower, kotlinCall)
-            }
+        var result = kotlinCallResolver.resolveAndCompleteCall(
+            scopeTower, resolutionCallbacks, kotlinCall, expectedType, context.collectAllCandidates
+        )
 
         val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
         if (isBinaryRemOperator && shouldUseOperatorRem && (result.isEmpty() || result.areAllInapplicable())) {
@@ -141,7 +141,7 @@ class PSICallResolver(
             )
         }
 
-        val result = kotlinCallResolver.resolveGivenCandidates(
+        val result = kotlinCallResolver.resolveAndCompleteGivenCandidates(
             scopeTower, resolutionCallbacks, kotlinCall, calculateExpectedType(context), givenCandidates, context.collectAllCandidates
         )
         val overloadResolutionResults = convertToOverloadResolutionResults<D>(context, result, tracingStrategy)
@@ -169,11 +169,9 @@ class PSICallResolver(
         val callWithDeprecatedName = toKotlinCall(
             context, kotlinCallKind, context.call, deprecatedName, tracingStrategy, isSpecialFunction = false
         )
-        return kotlinCallResolver.resolveCall(
+        return kotlinCallResolver.resolveAndCompleteCall(
             scopeTower, resolutionCallbacks, callWithDeprecatedName, expectedType, context.collectAllCandidates
-        ) {
-            FactoryProviderForInvoke(context, scopeTower, callWithDeprecatedName)
-        }
+        )
     }
 
     private fun refineNameForRemOperator(isBinaryRemOperator: Boolean, name: Name): Name {
@@ -190,17 +188,14 @@ class PSICallResolver(
             argumentTypeResolver, languageVersionSettings, kotlinToResolvedCallTransformer,
             dataFlowValueFactory, inferenceSession, constantExpressionEvaluator, typeResolver,
             this, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents,
-            doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, context, missingSupertypesResolver
+            doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, context, missingSupertypesResolver, kotlinCallResolver
         )
 
     private fun calculateExpectedType(context: BasicCallResolutionContext): UnwrappedType? {
         val expectedType = context.expectedType.unwrap()
 
         return if (context.contextDependency == ContextDependency.DEPENDENT) {
-            assert(TypeUtils.noExpectedType(expectedType)) {
-                "Should have no expected type, got: $expectedType"
-            }
-            null
+            if (TypeUtils.noExpectedType(expectedType)) null else expectedType
         } else {
             if (expectedType.isError) TypeUtils.NO_EXPECTED_TYPE else expectedType
         }
@@ -282,7 +277,7 @@ class PSICallResolver(
     ): ManyCandidates<D> {
         val resolvedCalls = diagnostic.candidates.map {
             kotlinToResolvedCallTransformer.onlyTransform<D>(
-                it.resolvedCall, it.diagnosticsFromResolutionParts + it.getSystem().errors.asDiagnostics()
+                it.resolvedCall, it.diagnostics + it.getSystem().errors.asDiagnostics()
             )
         }
 
@@ -454,7 +449,7 @@ class PSICallResolver(
         }
     }
 
-    private inner class FactoryProviderForInvoke(
+    inner class FactoryProviderForInvoke(
         val context: BasicCallResolutionContext,
         val scopeTower: ImplicitScopeTower,
         val kotlinCall: PSIKotlinCallImpl
@@ -472,9 +467,7 @@ class PSICallResolver(
         override fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<ResolutionCandidate> {
             val explicitReceiver = if (stripExplicitReceiver) null else kotlinCall.explicitReceiver
             val variableCall = PSIKotlinCallForVariable(kotlinCall, explicitReceiver, kotlinCall.name)
-            return SimpleCandidateFactory(
-                callComponents, scopeTower, variableCall, createResolutionCallbacks(context), callableReferenceResolver
-            )
+            return SimpleCandidateFactory(callComponents, scopeTower, variableCall, createResolutionCallbacks(context))
         }
 
         override fun factoryForInvoke(variable: ResolutionCandidate, useExplicitReceiver: Boolean):
@@ -554,7 +547,7 @@ class PSICallResolver(
             is NewResolutionOldInference.ResolutionKind.Function -> KotlinCallKind.FUNCTION
             is NewResolutionOldInference.ResolutionKind.Variable -> KotlinCallKind.VARIABLE
             is NewResolutionOldInference.ResolutionKind.Invoke -> KotlinCallKind.INVOKE
-            is NewResolutionOldInference.ResolutionKind.CallableReference -> KotlinCallKind.UNSUPPORTED
+            is NewResolutionOldInference.ResolutionKind.CallableReference -> KotlinCallKind.CALLABLE_REFERENCE
             is NewResolutionOldInference.ResolutionKind.GivenCandidates -> KotlinCallKind.UNSUPPORTED
         }
 
@@ -822,52 +815,22 @@ class PSICallResolver(
         startDataFlowInfo: DataFlowInfo,
         valueArgument: ValueArgument,
         argumentName: Name?,
-        outerCallContext: BasicCallResolutionContext
+        outerCallContext: BasicCallResolutionContext,
+        tracingStrategy: TracingStrategy
     ): CallableReferenceKotlinCallArgumentImpl {
         checkNoSpread(outerCallContext, valueArgument)
 
-        val expressionTypingContext = ExpressionTypingContext.newContext(context)
-        val lhsResult = if (ktExpression.isEmptyLHS) null else doubleColonExpressionResolver.resolveDoubleColonLHS(
-            ktExpression,
-            expressionTypingContext
-        )
-        val newDataFlowInfo = (lhsResult as? DoubleColonLHS.Expression)?.dataFlowInfo ?: startDataFlowInfo
-        val name = ktExpression.callableReference.getReferencedNameAsName()
-
-        val lhsNewResult = when (lhsResult) {
-            null -> LHSResult.Empty
-            is DoubleColonLHS.Expression -> {
-                if (lhsResult.isObjectQualifier) {
-                    val classifier = lhsResult.type.constructor.declarationDescriptor
-                    val calleeExpression = ktExpression.receiverExpression?.getCalleeExpressionIfAny()
-                    if (calleeExpression is KtSimpleNameExpression && classifier is ClassDescriptor) {
-                        LHSResult.Object(ClassQualifier(calleeExpression, classifier))
-                    } else {
-                        LHSResult.Error
-                    }
-                } else {
-                    val fakeArgument = FakeValueArgumentForLeftCallableReference(ktExpression)
-
-                    val kotlinCallArgument = createSimplePSICallArgument(context, fakeArgument, lhsResult.typeInfo)
-                    kotlinCallArgument?.let { LHSResult.Expression(it as SimpleKotlinCallArgument) } ?: LHSResult.Error
-                }
-            }
-            is DoubleColonLHS.Type -> {
-                val qualifiedExpression = ktExpression.receiverExpression!!
-                val qualifier = expressionTypingContext.trace.get(BindingContext.QUALIFIER, qualifiedExpression)
-                val classifier = lhsResult.type.constructor.declarationDescriptor
-                if (classifier !is ClassDescriptor) {
-                    expressionTypingContext.trace.report(Errors.CALLABLE_REFERENCE_LHS_NOT_A_CLASS.on(ktExpression))
-                    LHSResult.Error
-                } else {
-                    LHSResult.Type(qualifier, lhsResult.type.unwrap())
-                }
-            }
-        }
+        val (doubleColonLhs, lhsResult) = getLhsResult(context, ktExpression)
+        val newDataFlowInfo = (doubleColonLhs as? DoubleColonLHS.Expression)?.dataFlowInfo ?: startDataFlowInfo
+        val rhsExpression = ktExpression.callableReference
+        val rhsName = rhsExpression.getReferencedNameAsName()
+        val call = outerCallContext.trace[BindingContext.CALL, rhsExpression]
+            ?: CallMaker.makeCall(rhsExpression, null, null, rhsExpression, emptyList())
+        val kotlinCall = toKotlinCall(context, KotlinCallKind.CALLABLE_REFERENCE, call, rhsName, tracingStrategy, isSpecialFunction = false)
 
         return CallableReferenceKotlinCallArgumentImpl(
-            ASTScopeTower(context, ktExpression.callableReference), valueArgument, startDataFlowInfo, newDataFlowInfo,
-            ktExpression, argumentName, lhsNewResult, name
+            ASTScopeTower(context, rhsExpression), valueArgument, startDataFlowInfo,
+            newDataFlowInfo, ktExpression, argumentName, lhsResult, rhsName, kotlinCall
         )
     }
 

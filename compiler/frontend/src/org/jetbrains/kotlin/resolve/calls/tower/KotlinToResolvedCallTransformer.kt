@@ -213,7 +213,10 @@ class KotlinToResolvedCallTransformer(
 
         return if (completedSimpleAtom.atom.callKind == KotlinCallKind.CALLABLE_REFERENCE) {
             NewCallableReferenceResolvedCall(
-                completedSimpleAtom as ResolvedCallableReferenceCallAtom, typeApproximator, resultSubstitutor
+                completedSimpleAtom as ResolvedCallableReferenceCallAtom,
+                typeApproximator,
+                expressionTypingServices.languageVersionSettings,
+                resultSubstitutor
             )
         } else {
             NewResolvedCallImpl(
@@ -384,7 +387,7 @@ class KotlinToResolvedCallTransformer(
         )
     }
 
-    private fun getResolvedCallForArgumentExpression(expression: KtExpression, context: BasicCallResolutionContext) =
+    fun getResolvedCallForArgumentExpression(expression: KtExpression, context: BasicCallResolutionContext) =
         if (!ExpressionTypingUtils.dependsOnExpectedType(expression))
             null
         else
@@ -486,7 +489,7 @@ class KotlinToResolvedCallTransformer(
 
         outerTracingStrategy.bindReference(trace, variableCall)
         outerTracingStrategy.bindResolvedCall(trace, variableAsFunction)
-        functionCall.kotlinCall.psiKotlinCall.tracingStrategy.bindReference(trace, functionCall)
+        functionCall.psiKotlinCall.tracingStrategy.bindReference(trace, functionCall)
     }
 
     fun reportCallDiagnostic(

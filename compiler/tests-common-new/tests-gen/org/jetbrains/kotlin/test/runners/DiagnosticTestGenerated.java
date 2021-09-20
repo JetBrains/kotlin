@@ -2820,12 +2820,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
-            @TestMetadata("referenceAdaptationHasDependencyOnApi14.kt")
-            public void testReferenceAdaptationHasDependencyOnApi14() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/callableReference/referenceAdaptationHasDependencyOnApi14.kt");
-            }
-
-            @Test
             @TestMetadata("referenceToCompanionObjectMemberViaClassName.kt")
             public void testReferenceToCompanionObjectMemberViaClassName() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/referenceToCompanionObjectMemberViaClassName.kt");

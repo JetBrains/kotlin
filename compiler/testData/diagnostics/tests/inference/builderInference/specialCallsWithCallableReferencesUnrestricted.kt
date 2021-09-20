@@ -383,7 +383,7 @@ fun poll65(): Flow<String> {
 
 fun poll66(): Flow<String> {
     return flow {
-        val inv = ::<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!>
+        val inv = ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!>
         <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
     }
 }

@@ -511,3 +511,15 @@ fun PsiElement?.unwrapParenthesesLabelsAndAnnotations(): PsiElement? {
         }
     }
 }
+
+fun PsiElement.unwrapParenthesesLabelsAndAnnotationsDeeply(): PsiElement {
+    var current: PsiElement = this
+    var unwrapped: PsiElement?
+
+    do {
+        unwrapped = current.parent?.unwrapParenthesesLabelsAndAnnotations()
+        current = current.parent
+    } while (unwrapped != current)
+
+    return unwrapped
+}

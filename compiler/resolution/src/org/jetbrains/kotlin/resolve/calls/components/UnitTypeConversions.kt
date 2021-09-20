@@ -28,8 +28,10 @@ object UnitTypeConversions : ParameterTypeConversion {
         if (argument !is SimpleKotlinCallArgument) return true
 
         val receiver = argument.receiver
-        if (receiver.receiverValue.type.hasUnitOrSubtypeReturnType(candidate.csBuilder)) return true
-        if (receiver.typesFromSmartCasts.any { it.hasUnitOrSubtypeReturnType(candidate.csBuilder) }) return true
+        val csBuilder = candidate.getSystem().getBuilder()
+
+        if (receiver.receiverValue.type.hasUnitOrSubtypeReturnType(csBuilder)) return true
+        if (receiver.typesFromSmartCasts.any { it.hasUnitOrSubtypeReturnType(csBuilder) }) return true
 
         if (
             !expectedParameterType.isBuiltinFunctionalType ||

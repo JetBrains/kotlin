@@ -25,8 +25,6 @@ open class SimpleResolutionCandidate(
     override val resolvedCall: MutableResolvedCallAtom,
     override val knownTypeParametersResultingSubstitutor: TypeSubstitutor? = null,
 ) : ResolutionCandidate() {
-    private var subResolvedAtoms: MutableList<ResolvedAtom> = arrayListOf()
-
     override val variableCandidateIfInvoke: ResolutionCandidate?
         get() = callComponents.statelessCallbacks.getVariableCandidateIfInvoke(resolvedCall.atom)
 
@@ -35,4 +33,6 @@ open class SimpleResolutionCandidate(
     override fun addResolvedKtPrimitive(resolvedAtom: ResolvedAtom) {
         subResolvedAtoms.add(resolvedAtom)
     }
+
+    private var subResolvedAtoms: MutableList<ResolvedAtom> = arrayListOf()
 }

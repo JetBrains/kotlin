@@ -6,32 +6,19 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.*
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstitutor.createToFreshVariableSubstitutorAndAddInitialConstraints
+import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPositionImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.DISPATCH_RECEIVER
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.EXTENSION_RECEIVER
 import org.jetbrains.kotlin.resolve.calls.tower.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
-import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.captureFromExpression
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
-import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.supertypes
-import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 sealed class CallableReceiver(val receiver: ReceiverValueWithSmartCastInfo) {
     class UnboundReference(receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver(receiver)
@@ -39,10 +26,6 @@ sealed class CallableReceiver(val receiver: ReceiverValueWithSmartCastInfo) {
     class ScopeReceiver(receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver(receiver)
     class ExplicitValueReceiver(receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver(receiver)
 }
-
-// todo investigate similar code in CheckVisibility
-private val CallableReceiver.asReceiverValueForVisibilityChecks: ReceiverValue
-    get() = receiver.receiverValue
 
 class CallableReferenceAdaptation(
     val argumentTypes: Array<KotlinType>,
@@ -90,41 +73,31 @@ fun createCallableReferenceProcessor(factory: CallableReferencesCandidateFactory
     }
 }
 
-fun ConstraintSystemOperation.checkCallableReference(
-    argument: CallableReferenceKotlinCallArgument,
-    dispatchReceiver: CallableReceiver?,
-    extensionReceiver: CallableReceiver?,
-    candidateDescriptor: CallableDescriptor,
-    reflectionCandidateType: UnwrappedType,
-    expectedType: UnwrappedType?,
-    ownerDescriptor: DeclarationDescriptor
-): Pair<FreshVariableNewTypeSubstitutor, KotlinCallDiagnostic?> {
-    val position = ArgumentConstraintPositionImpl(argument)
-
-    val toFreshSubstitutor = createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, this)
-
-    if (!ErrorUtils.isError(candidateDescriptor)) {
-        addReceiverConstraint(toFreshSubstitutor, dispatchReceiver, candidateDescriptor.dispatchReceiverParameter, position)
-        addReceiverConstraint(toFreshSubstitutor, extensionReceiver, candidateDescriptor.extensionReceiverParameter, position)
+fun CallableReferenceResolutionCandidate.addConstraints(
+    constraintSystem: ConstraintSystemOperation,
+    substitutor: FreshVariableNewTypeSubstitutor,
+    callableReference: CallableReferenceResolutionAtom
+) {
+    val position = when (callableReference) {
+        is CallableReferenceKotlinCallArgument -> ArgumentConstraintPositionImpl(callableReference)
+        is CallableReferenceKotlinCall -> CallableReferenceConstraintPositionImpl(callableReference)
     }
 
-    if (expectedType != null && !hasContradiction) {
-        addSubtypeConstraint(toFreshSubstitutor.safeSubstitute(reflectionCandidateType), expectedType, position)
+    if (!ErrorUtils.isError(candidate)) {
+        constraintSystem.addReceiverConstraint(substitutor, dispatchReceiver, candidate.dispatchReceiverParameter, position)
+        constraintSystem.addReceiverConstraint(substitutor, extensionReceiver, candidate.extensionReceiverParameter, position)
     }
 
-    val invisibleMember = DescriptorVisibilities.findInvisibleMember(
-        dispatchReceiver?.asReceiverValueForVisibilityChecks,
-        candidateDescriptor, ownerDescriptor
-    )
-    return toFreshSubstitutor to invisibleMember?.let(::VisibilityError)
+    if (expectedType != null && !TypeUtils.noExpectedType(expectedType) && !constraintSystem.hasContradiction) {
+        constraintSystem.addSubtypeConstraint(substitutor.safeSubstitute(reflectionCandidateType), expectedType, position)
+    }
 }
-
 
 private fun ConstraintSystemOperation.addReceiverConstraint(
     toFreshSubstitutor: FreshVariableNewTypeSubstitutor,
     receiverArgument: CallableReceiver?,
     receiverParameter: ReceiverParameterDescriptor?,
-    position: ArgumentConstraintPositionImpl
+    position: ConstraintPosition
 ) {
     if (receiverArgument == null || receiverParameter == null) {
         assert(receiverArgument == null) { "Receiver argument should be null if parameter is: $receiverArgument" }

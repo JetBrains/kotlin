@@ -11,10 +11,15 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateFactoryProviderForInvoke
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.types.KotlinType
@@ -37,7 +42,7 @@ interface KotlinResolutionStatelessCallbacks {
 
     fun isSuperExpression(receiver: SimpleKotlinCallArgument?): Boolean
     fun getScopeTowerForCallableReferenceArgument(argument: CallableReferenceKotlinCallArgument): ImplicitScopeTower
-    fun getVariableCandidateIfInvoke(functionCall: KotlinCall): KotlinResolutionCandidate?
+    fun getVariableCandidateIfInvoke(functionCall: KotlinCall): ResolutionCandidate?
     fun isBuilderInferenceCall(argument: KotlinCallArgument, parameter: ValueParameterDescriptor): Boolean
     fun isApplicableCallForBuilderInference(descriptor: CallableDescriptor, languageVersionSettings: LanguageVersionSettings): Boolean
 
@@ -76,6 +81,17 @@ interface KotlinResolutionCallbacks {
         annotations: Annotations,
         stubsForPostponedVariables: Map<NewTypeVariable, StubTypeForBuilderInference>,
     ): ReturnArgumentsAnalysisResult
+
+    fun getCandidateFactoryForInvoke(
+        scopeTower: ImplicitScopeTower,
+        kotlinCall: KotlinCall,
+    ): CandidateFactoryProviderForInvoke<ResolutionCandidate>
+
+    fun resolveCallableReferenceArgument(
+        argument: CallableReferenceKotlinCallArgument,
+        expectedType: UnwrappedType?,
+        baseSystem: ConstraintStorage,
+    ): Collection<CallableReferenceResolutionCandidate>
 
     fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom)
 

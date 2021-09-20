@@ -81,7 +81,9 @@ open class MutableResolvedCallAtom(
     override val candidateDescriptor: CallableDescriptor, // original candidate descriptor
     override val explicitReceiverKind: ExplicitReceiverKind,
     override val dispatchReceiverArgument: SimpleKotlinCallArgument?,
-    override val extensionReceiverArgument: SimpleKotlinCallArgument?
+    override val extensionReceiverArgument: SimpleKotlinCallArgument?,
+    open val reflectionCandidateType: UnwrappedType? = null,
+    open val candidate: CallableReferenceResolutionCandidate? = null
 ) : ResolvedCallAtom() {
     override lateinit var typeArgumentMappingByOriginal: TypeArgumentsToParametersMapper.TypeArgumentsMapping
     override lateinit var argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>

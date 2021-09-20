@@ -1,5 +1,6 @@
 package
 
+public fun </*0*/ K> id(/*0*/ x: K): K
 public fun test1(): kotlin.Unit
 public fun test2(): kotlin.Unit
 public fun test3(): kotlin.Unit

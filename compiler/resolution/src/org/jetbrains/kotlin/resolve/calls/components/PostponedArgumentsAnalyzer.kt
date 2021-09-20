@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class PostponedArgumentsAnalyzer(
-    private val callableReferenceResolver: CallableReferenceResolver,
+    private val callableReferenceArgumentResolver: CallableReferenceArgumentResolver,
     private val languageVersionSettings: LanguageVersionSettings
 ) {
 
@@ -49,8 +49,10 @@ class PostponedArgumentsAnalyzer(
                     diagnosticsHolder
                 )
 
-            is ResolvedCallableReferenceAtom ->
-                callableReferenceResolver.processCallableReferenceArgument(c.getBuilder(), argument, diagnosticsHolder, resolutionCallbacks)
+            is ResolvedCallableReferenceArgumentAtom ->
+                callableReferenceArgumentResolver.processCallableReferenceArgument(
+                    c.getBuilder(), argument, diagnosticsHolder, resolutionCallbacks
+                )
 
             is ResolvedCollectionLiteralAtom -> TODO("Not supported")
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.util
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtPsiUtil
@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.calls.tower.*
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.getOwnerForEffectiveDispatchReceiverParameter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassValueReceiver
@@ -98,7 +99,8 @@ fun KtCallElement.getArgumentByParameterIndex(index: Int, context: BindingContex
     val parameterToProcess = resolvedCall.resultingDescriptor.valueParameters.getOrNull(index) ?: return emptyList()
     return resolvedCall.valueArguments[parameterToProcess]?.arguments ?: emptyList()
 }
-fun CallableMemberDescriptor.isNotSimpleCall(): Boolean =
+
+fun CallableDescriptor.isNotSimpleCall(): Boolean =
     typeParameters.isNotEmpty() ||
             (returnType?.let { type ->
                 type.contains {
@@ -109,7 +111,7 @@ fun CallableMemberDescriptor.isNotSimpleCall(): Boolean =
                 }
             } ?: false)
 
-fun ResolvedCall<*>.isNewNotCompleted(): Boolean = if (this is NewAbstractResolvedCall) !isCompleted else false
+fun ResolvedCall<*>.isNewNotCompleted(): Boolean = if (this is NewAbstractResolvedCall) !isCompleted() else false
 
 fun ResolvedCall<*>.hasInferredReturnType(): Boolean {
     if (isNewNotCompleted()) return false

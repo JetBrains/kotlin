@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
@@ -42,7 +43,7 @@ class CompletionModeCalculator {
             if (returnType == null) return ConstraintSystemCompletionMode.PARTIAL
 
             // Full if return type for call has no type variables
-            if (csBuilder.isProperType(returnType)) return ConstraintSystemCompletionMode.FULL
+            if (getSystem().getBuilder().isProperType(returnType)) return ConstraintSystemCompletionMode.FULL
 
             // For nested call with variables in return type check possibility of full completion
             return CalculatorForNestedCall(

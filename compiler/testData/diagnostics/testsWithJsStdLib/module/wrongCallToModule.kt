@@ -42,7 +42,7 @@ fun box() {
 
     println(::<!CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM!>bar<!>.name)
     println(::<!CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM!>baz<!>.name)
-    println(<!CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM!>A<!>::f.name)
+    println(<!CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM!>A<!>::<!CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM!>f<!>.name)
 
     B.<!CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM!>Nested<!>()
 

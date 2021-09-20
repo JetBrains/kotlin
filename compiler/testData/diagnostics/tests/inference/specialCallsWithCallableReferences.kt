@@ -18,6 +18,11 @@ class Foo6
 class Foo7<T>
 fun foo7() = null as Foo7<Int>
 
+fun poll0(flag: Boolean) {
+    val inv = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction0<kotlin.Int>")!>if (flag) { ::bar2 } else { ::foo4 }<!>
+    inv()
+}
+
 fun poll1(flag: Boolean) {
     val inv = if (flag) { ::bar2 } else { ::foo2 }
     inv()
@@ -39,7 +44,7 @@ fun poll13(flag: Boolean) {
 }
 
 fun poll14(flag: Boolean) {
-    val inv = if (flag) { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::bar4<!> } else { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::foo4<!> }
+    val inv = if (flag) { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar4<!> } else { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo4<!> }
     <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
 }
 
@@ -54,8 +59,8 @@ fun poll16(flag: Boolean) {
 }
 
 fun poll17(flag: Boolean) {
-    val inv = if (flag) { foo7() } else { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> }
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
+    val inv = if (flag) { <!IMPLICIT_CAST_TO_ANY!>foo7()<!> } else { <!IMPLICIT_CAST_TO_ANY!>::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!><!> }
+    inv
 }
 
 fun poll2(flag: Boolean) {
@@ -144,7 +149,7 @@ fun poll42() {
 }
 
 fun poll43() {
-    val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::bar4<!> } finally { ::<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo4<!> }
+    val inv = try { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar4<!> } finally { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo4<!> }
     <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
 }
 
@@ -159,7 +164,7 @@ fun poll45() {
 }
 
 fun poll46() {
-    val inv = try { foo7() } finally { ::<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!> }
+    val inv = try { foo7() } finally { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!> }
     inv
 }
 
@@ -179,7 +184,7 @@ fun poll52() {
 }
 
 fun poll53() {
-    val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::bar4<!> } catch (e: Exception) { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::foo4<!> } finally { ::<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo4<!> }
+    val inv = try { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar4<!> } catch (e: Exception) { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo4<!> } finally { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo4<!> }
     <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
 }
 
@@ -194,8 +199,8 @@ fun poll55() {
 }
 
 fun poll56() {
-    val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> } catch (e: Exception) { foo7() } finally { foo7() }
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
+    val inv = try { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!> } catch (e: Exception) { foo7() } finally { foo7() }
+    inv
 }
 
 fun poll6() {
@@ -214,7 +219,7 @@ fun poll62() {
 }
 
 fun poll63() {
-    val inv = ::<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar4<!>
+    val inv = ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar4<!>
     <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
 }
 
@@ -229,7 +234,7 @@ fun poll65() {
 }
 
 fun poll66() {
-    val inv = ::<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!>
+    val inv = ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!>
     <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
 }
 

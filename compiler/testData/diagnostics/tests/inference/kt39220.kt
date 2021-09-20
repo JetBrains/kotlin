@@ -114,14 +114,14 @@ fun <T : Foo, R: Number, D: Int> main() {
     bar7(Foo::resolve) // OK
 
     // with LHS and sentension function expected type
-    bar10<D>(<!TYPE_MISMATCH!>Int::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x1<!><!>) // ERROR before the fix in NI
+    bar10<D>(<!TYPE_MISMATCH!>Int::x1<!>) // ERROR before the fix in NI
     bar10<Int>(Int::x1) // OK
     bar10(Int::x1) // OK
 
     fun Int.ext() {
         // with LHS and sentension function expected type
-        bar10<D>(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x1<!>) // ERROR before the fix in NI
-        bar10<Int>(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x1<!>) // OK
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar10<!>(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x1<!>) // OK
+        bar10<D>(<!TYPE_MISMATCH("KProperty1<TypeVariable(K), String>; KProperty0<String>")!>::x1<!>) // ERROR before the fix in NI
+        bar10<Int>(<!TYPE_MISMATCH("KProperty1<TypeVariable(K), String>; KProperty0<String>")!>::x1<!>) // OK
+        bar10(<!TYPE_MISMATCH("KProperty1<TypeVariable(K), String>; KProperty0<String>")!>::x1<!>) // OK
     }
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.components.transformToResolvedLambda
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -286,7 +287,7 @@ class KotlinConstraintSystemCompleter(
         diagnosticsHolder: KotlinDiagnosticsHolder,
     ): ResolvedLambdaAtom {
         val returnVariable = TypeVariableForLambdaReturnType(candidate.callComponents.builtIns, "_R")
-        val csBuilder = candidate.csBuilder
+        val csBuilder = candidate.getSystem().getBuilder()
         csBuilder.registerVariable(returnVariable)
         val functionalType: KotlinType = csBuilder.buildCurrentSubstitutor().safeSubstitute(candidate.getSystem().asConstraintSystemCompleterContext(), atom.expectedType!!) as KotlinType
         val expectedType = KotlinTypeFactory.simpleType(
