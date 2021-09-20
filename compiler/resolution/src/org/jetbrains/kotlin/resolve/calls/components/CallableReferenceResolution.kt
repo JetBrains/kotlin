@@ -44,42 +44,6 @@ sealed class CallableReceiver(val receiver: ReceiverValueWithSmartCastInfo) {
 private val CallableReceiver.asReceiverValueForVisibilityChecks: ReceiverValue
     get() = receiver.receiverValue
 
-/**
- * Suppose we have class A with staticM, memberM, memberExtM.
- * For A::staticM both receivers will be null
- * For A::memberM dispatchReceiver = UnboundReceiver, extensionReceiver = null
- * For a::memberExtM dispatchReceiver = ExplicitValueReceiver, extensionReceiver = ExplicitValueReceiver
- *
- * For class B with companion object B::companionM dispatchReceiver = BoundValueReference
- */
-class CallableReferenceCandidate(
-    val candidate: CallableDescriptor,
-    val dispatchReceiver: CallableReceiver?,
-    val extensionReceiver: CallableReceiver?,
-    val explicitReceiverKind: ExplicitReceiverKind,
-    val reflectionCandidateType: UnwrappedType,
-    val callableReferenceAdaptation: CallableReferenceAdaptation?,
-    initialDiagnostics: List<KotlinCallDiagnostic>
-) : Candidate {
-    private val mutableDiagnostics = initialDiagnostics.toMutableList()
-    val diagnostics: List<KotlinCallDiagnostic> = mutableDiagnostics
-
-    override val resultingApplicability = getResultApplicability(diagnostics)
-
-    override fun addCompatibilityWarning(other: Candidate) {
-        if (this !== other && other is CallableReferenceCandidate) {
-            mutableDiagnostics.add(CompatibilityWarning(other.candidate))
-        }
-    }
-
-    override val isSuccessful get() = resultingApplicability.isSuccess
-
-    var freshSubstitutor: FreshVariableNewTypeSubstitutor? = null
-        internal set
-
-    val numDefaults get() = callableReferenceAdaptation?.defaults ?: 0
-}
-
 class CallableReferenceAdaptation(
     val argumentTypes: Array<KotlinType>,
     val coercionStrategy: CoercionStrategy,
