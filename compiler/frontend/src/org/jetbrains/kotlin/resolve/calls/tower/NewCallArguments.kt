@@ -139,7 +139,8 @@ class CallableReferenceKotlinCallArgumentImpl(
     val ktCallableReferenceExpression: KtCallableReferenceExpression,
     override val argumentName: Name?,
     override val lhsResult: LHSResult,
-    override val rhsName: Name
+    override val rhsName: Name,
+    override val call: KotlinCall
 ) : CallableReferenceKotlinCallArgument, PSIKotlinCallArgument()
 
 class CollectionLiteralKotlinCallArgumentImpl(

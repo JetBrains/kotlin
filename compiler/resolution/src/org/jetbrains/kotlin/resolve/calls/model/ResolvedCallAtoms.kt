@@ -64,7 +64,19 @@ fun KotlinDiagnosticsHolder.addError(error: ConstraintSystemError) {
     addDiagnostic(error.asDiagnostic())
 }
 
-class MutableResolvedCallAtom(
+class ResolvedCallableReferenceCallAtom(
+    atom: KotlinCall,
+    candidateDescriptor: CallableDescriptor,
+    explicitReceiverKind: ExplicitReceiverKind,
+    dispatchReceiverArgument: SimpleKotlinCallArgument?,
+    extensionReceiverArgument: SimpleKotlinCallArgument?,
+    reflectionCandidateType: UnwrappedType? = null,
+    candidate: CallableReferenceResolutionCandidate? = null
+) : MutableResolvedCallAtom(
+    atom, candidateDescriptor, explicitReceiverKind, dispatchReceiverArgument, extensionReceiverArgument, reflectionCandidateType, candidate
+), ResolvedCallableReferenceAtom
+
+open class MutableResolvedCallAtom(
     override val atom: KotlinCall,
     override val candidateDescriptor: CallableDescriptor, // original candidate descriptor
     override val explicitReceiverKind: ExplicitReceiverKind,

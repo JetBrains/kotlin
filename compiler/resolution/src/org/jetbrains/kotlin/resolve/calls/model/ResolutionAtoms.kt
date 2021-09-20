@@ -7,15 +7,14 @@ package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
-import org.jetbrains.kotlin.resolve.calls.components.ReturnArgumentsInfo
-import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper
-import org.jetbrains.kotlin.resolve.calls.components.extractInputOutputTypesFromCallableReferenceExpectedType
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -31,6 +30,20 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
  * Expression with type is also primitive. This is done for simplification. todo
  */
 interface ResolutionAtom
+
+sealed interface CallableReferenceResolutionAtom : ResolutionAtom {
+    val lhsResult: LHSResult
+    val rhsName: Name
+    val call: KotlinCall
+}
+
+class CallableReferenceKotlinCall(
+    override val call: KotlinCall,
+    override val lhsResult: LHSResult,
+    override val rhsName: Name,
+) : CallableReferenceResolutionAtom
+
+sealed interface ResolvedCallableReferenceAtom
 
 sealed class ResolvedAtom {
     abstract val atom: ResolutionAtom? // CallResolutionResult has no ResolutionAtom
@@ -163,10 +176,10 @@ fun ResolvedLambdaAtom.unwrap(): ResolvedLambdaAtom {
     return if (resultArgumentsInfo != null) this else subResolvedAtoms!!.single() as ResolvedLambdaAtom
 }
 
-abstract class ResolvedCallableReferenceAtom(
+abstract class ResolvedCallableReferenceArgumentAtom(
     override val atom: CallableReferenceKotlinCallArgument,
     override val expectedType: UnwrappedType?
-) : PostponedResolvedAtom() {
+) : PostponedResolvedAtom(), ResolvedCallableReferenceAtom {
     var candidate: CallableReferenceResolutionCandidate? = null
         private set
 
@@ -185,8 +198,7 @@ abstract class ResolvedCallableReferenceAtom(
 class EagerCallableReferenceAtom(
     atom: CallableReferenceKotlinCallArgument,
     expectedType: UnwrappedType?
-) : ResolvedCallableReferenceAtom(atom, expectedType) {
-
+) : ResolvedCallableReferenceArgumentAtom(atom, expectedType) {
     override val inputTypes: Collection<UnwrappedType> get() = emptyList()
     override val outputType: UnwrappedType? get() = null
 
@@ -196,7 +208,7 @@ class EagerCallableReferenceAtom(
 sealed class AbstractPostponedCallableReferenceAtom(
     atom: CallableReferenceKotlinCallArgument,
     expectedType: UnwrappedType?
-) : ResolvedCallableReferenceAtom(atom, expectedType) {
+) : ResolvedCallableReferenceArgumentAtom(atom, expectedType) {
     override val inputTypes: Collection<UnwrappedType>
         get() = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType)?.inputTypes ?: listOfNotNull(expectedType)
 

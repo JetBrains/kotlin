@@ -60,9 +60,8 @@ class CallableReferenceAdaptation(
  * C::foo <-> Object
  * D.E::foo <-> Expression
  */
-fun createCallableReferenceProcessor(factory: CallableReferencesCandidateFactory): ScopeTowerProcessor<CallableReferenceCandidate> {
-    val lhsResult = factory.argument.lhsResult
-    when (lhsResult) {
+fun createCallableReferenceProcessor(factory: CallableReferencesCandidateFactory): ScopeTowerProcessor<CallableReferenceResolutionCandidate> {
+    when (val lhsResult = factory.kotlinCall.lhsResult) {
         LHSResult.Empty, LHSResult.Error, is LHSResult.Expression -> {
             val explicitReceiver = (lhsResult as? LHSResult.Expression)?.lshCallArgument?.receiver
             return factory.createCallableProcessor(explicitReceiver)
