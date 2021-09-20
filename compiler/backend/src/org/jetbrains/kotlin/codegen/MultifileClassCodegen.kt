@@ -372,7 +372,7 @@ class MultifileClassCodegenImpl(
         private fun getCompiledPackageFragment(
             facadeFqName: FqName, state: GenerationState
         ): IncrementalPackageFragmentProvider.IncrementalMultifileClassPackageFragment? {
-            if (!IncrementalCompilation.isEnabledForJvm()) return null
+            if (!state.isIncrementalCompilation) return null
 
             val packageFqName = facadeFqName.parent()
 

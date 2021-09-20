@@ -240,7 +240,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments, services: Services
     ) {
         with(configuration) {
-            if (IncrementalCompilation.isEnabledForJvm()) {
+            if (true == arguments.incrementalCompilation) {
                 putIfNotNull(CommonConfigurationKeys.LOOKUP_TRACKER, services[LookupTracker::class.java])
 
                 putIfNotNull(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER, services[ExpectActualTracker::class.java])

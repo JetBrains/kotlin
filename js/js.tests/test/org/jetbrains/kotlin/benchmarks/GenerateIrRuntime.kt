@@ -319,7 +319,7 @@ class GenerateIrRuntime {
 
         val cleanBuildStart = System.nanoTime()
 
-        withJsIC {
+        withJsIC(args) {
             val buildHistoryFile = File(cachesDir, "build-history.bin")
             val compiler = IncrementalJsCompilerRunner(
                 cachesDir, BuildReporter(EmptyICReporter, DoNothingBuildMetricsReporter),
@@ -363,7 +363,7 @@ class GenerateIrRuntime {
             done,
             update
         ) {
-            withJsIC {
+            withJsIC(args) {
                 val buildHistoryFile = File(cachesDir, "build-history.bin")
                 val compiler = IncrementalJsCompilerRunner(
                     cachesDir, BuildReporter(EmptyICReporter, DoNothingBuildMetricsReporter),

@@ -47,7 +47,8 @@ fun makeModuleFile(
     commonSources: Iterable<File>,
     javaSourceRoots: Iterable<JvmSourceRoot>,
     classpath: Iterable<File>,
-    friendDirs: Iterable<File>
+    friendDirs: Iterable<File>,
+    isIncrementalMode: Boolean = true
 ): File {
     val builder = KotlinModuleXmlBuilder()
     builder.addModule(
@@ -65,7 +66,8 @@ fun makeModuleFile(
         isTest,
         // this excludes the output directories from the class path, to be removed for true incremental compilation
         setOf(outputDir),
-        friendDirs
+        friendDirs,
+        isIncrementalMode
     )
 
     val scriptFile = Files.createTempFile("kjps", sanitizeJavaIdentifier(name) + ".script.xml").toFile()

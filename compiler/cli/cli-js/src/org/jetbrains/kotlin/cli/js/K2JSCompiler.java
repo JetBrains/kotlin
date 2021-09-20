@@ -181,7 +181,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return exitCode;
         }
 
-        if (arguments.getFreeArgs().isEmpty() && !IncrementalCompilation.isEnabledForJs()) {
+        if (arguments.getFreeArgs().isEmpty() && (!Boolean.TRUE.equals(arguments.getIncrementalCompilation()))) {
             if (arguments.getVersion()) {
                 return OK;
             }
@@ -219,7 +219,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return ExitCode.COMPILATION_ERROR;
         }
 
-        if (sourcesFiles.isEmpty() && !IncrementalCompilation.isEnabledForJs()) {
+        if (sourcesFiles.isEmpty() && !Boolean.TRUE.equals(arguments.getIncrementalCompilation())) {
             messageCollector.report(ERROR, "No source files", null);
             return COMPILATION_ERROR;
         }

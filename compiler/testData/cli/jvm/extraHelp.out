@@ -170,6 +170,8 @@ where advanced options include:
                              Use 'warning' level to issue warnings instead of errors.
   -Xextended-compiler-checks Enable additional compiler checks that might provide verbose diagnostic information for certain errors.
                              Warning: this mode is not backward-compatible and might cause compilation errors in previously compiled code.
+  -Xenable-incremental-compilation
+                             Enable incremental compilation
   -Xinference-compatibility  Enable compatibility changes for generic type inference algorithm
   -Xinline-classes           Enable experimental inline classes
   -Xintellij-plugin-root=<path> Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found

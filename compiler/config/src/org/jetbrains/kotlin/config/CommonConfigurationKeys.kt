@@ -66,6 +66,10 @@ object CommonConfigurationKeys {
     @JvmField
     val KLIB_NORMALIZE_ABSOLUTE_PATH =
         CompilerConfigurationKey.create<Boolean>("Normalize absolute paths in klib (replace file separator with '/')")
+
+    @JvmField
+    val INCREMENTAL_COMPILATION =
+        CompilerConfigurationKey.create<Boolean>("Enable incremental compilation")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings

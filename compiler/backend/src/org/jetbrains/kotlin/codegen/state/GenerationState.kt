@@ -72,6 +72,7 @@ class GenerationState private constructor(
     val isIrBackend: Boolean,
     val ignoreErrors: Boolean,
     val diagnosticReporter: DiagnosticReporter,
+    val isIncrementalCompilation: Boolean
 ) {
     class Builder(
         private val project: Project,
@@ -129,13 +130,16 @@ class GenerationState private constructor(
         fun diagnosticReporter(v: DiagnosticReporter) =
             apply { diagnosticReporter = v }
 
+        val isIncrementalCompilation: Boolean = configuration.getBoolean(CommonConfigurationKeys.INCREMENTAL_COMPILATION)
+
         fun build() =
             GenerationState(
                 project, builderFactory, module, bindingContext, files, configuration,
                 generateDeclaredClassFilter, codegenFactory, targetId,
                 moduleName, outDirectory, onIndependentPartCompilationEnd, wantsDiagnostics,
                 jvmBackendClassResolver, isIrBackend, ignoreErrors,
-                diagnosticReporter ?: DiagnosticReporterFactory.createReporter()
+                diagnosticReporter ?: DiagnosticReporterFactory.createReporter(),
+                isIncrementalCompilation
             )
     }
 

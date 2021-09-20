@@ -27,6 +27,7 @@ fun <A : CommonCompilerArguments> CompilerConfiguration.setupCommonArguments(
     put(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER, arguments.expectActualLinker)
     putIfNotNull(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, arguments.intellijPluginRoot)
     put(CommonConfigurationKeys.REPORT_OUTPUT_FILES, arguments.reportOutputFiles)
+    put(CommonConfigurationKeys.INCREMENTAL_COMPILATION, arguments.incrementalCompilation ?: false)
 
     val metadataVersionString = arguments.metadataVersion
     if (metadataVersionString != null) {
