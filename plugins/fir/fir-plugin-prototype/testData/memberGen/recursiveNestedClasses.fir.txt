@@ -15,5 +15,5 @@ FILE: recursiveNestedClasses.kt
     }
     public final fun test_2(x: R|SomeClass.Nested.Nested|): R|kotlin/Unit| {
     }
-    public final fun test_3(x: R|ERROR CLASS: Symbol not found, for `SomeClass.Nested.Nested.Nested`|): R|kotlin/Unit| {
+    public final fun test_3(x: <ERROR TYPE REF: Symbol not found for SomeClass.Nested.Nested.Nested>): R|kotlin/Unit| {
     }

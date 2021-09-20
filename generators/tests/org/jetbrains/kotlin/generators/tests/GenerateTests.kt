@@ -369,7 +369,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/fir/fir-plugin-prototype/tests", "plugins/fir/fir-plugin-prototype/testData") {
+        testGroup("plugins/fir/fir-plugin-prototype/tests-gen", "plugins/fir/fir-plugin-prototype/testData") {
             testClass<AbstractFirAllOpenDiagnosticTest> {
                 model("")
             }

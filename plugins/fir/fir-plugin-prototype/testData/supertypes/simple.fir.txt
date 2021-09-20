@@ -4,15 +4,15 @@ FILE: simple.kt
             super<R|kotlin/Any|>()
         }
 
-        public final class MyNested : R|org/jetbrains/kotlin/fir/plugin/LibraryClassWithNestedClass.NestedClass| {
+        public final class MyNested : <ERROR TYPE REF: Symbol not found for NestedClass> {
             public constructor(): R|A.MyNested| {
-                super<R|ERROR CLASS: Symbol not found, for `NestedClass`|>()
+                super<<ERROR TYPE REF: Symbol not found for NestedClass>>()
             }
 
         }
 
         public final fun test(): R|kotlin/Unit| {
-            R|/A.MyNested.MyNested|().R|org/jetbrains/kotlin/fir/plugin/LibraryClassWithNestedClass.NestedClass.foo|()
+            R|/A.MyNested.MyNested|().<Unresolved name: foo>#()
         }
 
     }

@@ -1,0 +1,45 @@
+FILE: visibilityTransformation.kt
+    @R|org/jetbrains/kotlin/fir/plugin/AllPublic|(visibility = Q|org/jetbrains/kotlin/fir/plugin/Visibility|.R|org/jetbrains/kotlin/fir/plugin/Visibility.Protected|) public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+        public final class Nested : R|kotlin/Any| {
+            public constructor(): R|A.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun bar(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/AllPublic|(visibility = Q|org/jetbrains/kotlin/fir/plugin/Visibility|.R|org/jetbrains/kotlin/fir/plugin/Visibility.Private|) public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+        public final class Nested : R|kotlin/Any| {
+            public constructor(): R|B.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun bar(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }

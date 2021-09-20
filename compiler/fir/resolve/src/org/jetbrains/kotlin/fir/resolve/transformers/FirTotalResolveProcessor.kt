@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitTyp
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.*
 
-class FirTotalResolveProcessor(session: FirSession) {
+class FirTotalResolveProcessor(session: FirSession, enablePluginPhases: Boolean = false) {
     val scopeSession: ScopeSession = ScopeSession()
 
-    private val processors: List<FirResolveProcessor> = createAllCompilerResolveProcessors(session, scopeSession)
+    private val processors: List<FirResolveProcessor> = createAllCompilerResolveProcessors(session, scopeSession, enablePluginPhases)
 
     fun process(files: List<FirFile>) {
         for (processor in processors) {

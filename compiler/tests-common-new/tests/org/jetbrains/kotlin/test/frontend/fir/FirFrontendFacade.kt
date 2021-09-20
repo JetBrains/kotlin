@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.moduleData
@@ -38,8 +39,14 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 
 class FirFrontendFacade(
-    testServices: TestServices
+    testServices: TestServices,
+    private val additionalSessionConfiguration: SessionConfiguration?
 ) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
+    // Separate constructor is needed for creating callable references to it
+    constructor(testServices: TestServices) : this(testServices, additionalSessionConfiguration = null)
+
+    fun interface SessionConfiguration : (FirSessionFactory.FirSessionConfigurator) -> Unit
+
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::FirModuleInfoProvider))
 
@@ -98,11 +105,20 @@ class FirFrontendFacade(
             if (FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS in module.directives) {
                 registerExtendedCommonCheckers()
             }
+            additionalSessionConfiguration?.invoke(this)
         }
 
         moduleInfoProvider.registerModuleData(module, session.moduleData)
 
-        val firAnalyzerFacade = FirAnalyzerFacade(session, languageVersionSettings, ktFiles, originalFiles, lightTreeEnabled)
+        val enablePluginPhases = FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES in module.directives
+        val firAnalyzerFacade = FirAnalyzerFacade(
+            session,
+            languageVersionSettings,
+            ktFiles,
+            originalFiles,
+            lightTreeEnabled,
+            enablePluginPhases
+        )
         val firFiles = firAnalyzerFacade.runResolution()
         val filesMap = firFiles.mapNotNull { firFile ->
             val testFile = module.files.firstOrNull { it.name == firFile.name } ?: return@mapNotNull null

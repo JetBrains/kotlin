@@ -57,4 +57,8 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
             Enables ${FirScopeDumpHandler::class}
         """.trimIndent()
     )
+
+    val ENABLE_PLUGIN_PHASES by directive(
+        description = "Enable plugin phases"
+    )
 }

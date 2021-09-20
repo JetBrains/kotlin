@@ -20,7 +20,7 @@ FILE: functionForProperty.kt
 
     }
     public final fun test_1(a: R|A|): R|kotlin/Unit| {
-        R|<local>/a|.R|/A.helloX|()
+        R|<local>/a|.<Unresolved name: helloX>#()
     }
     public final fun test_2(b: R|B|): R|kotlin/Unit| {
         R|<local>/b|.<Unresolved name: helloX>#()

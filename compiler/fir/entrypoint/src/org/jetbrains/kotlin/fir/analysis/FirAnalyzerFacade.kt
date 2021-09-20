@@ -45,7 +45,8 @@ class FirAnalyzerFacade(
     val languageVersionSettings: LanguageVersionSettings,
     val ktFiles: Collection<KtFile> = emptyList(), // may be empty if light tree mode enabled
     val originalFiles: Collection<File> = emptyList(), // may be empty if light tree mode disabled
-    val useLightTree: Boolean = false
+    val useLightTree: Boolean = false,
+    val enablePluginPhases: Boolean = false,
 ) : AbstractFirAnalyzerFacade() {
     private var firFiles: List<FirFile>? = null
     private var _scopeSession: ScopeSession? = null
@@ -77,7 +78,7 @@ class FirAnalyzerFacade(
     override fun runResolution(): List<FirFile> {
         if (firFiles == null) buildRawFir()
         if (_scopeSession != null) return firFiles!!
-        val resolveProcessor = FirTotalResolveProcessor(session)
+        val resolveProcessor = FirTotalResolveProcessor(session, enablePluginPhases)
         resolveProcessor.process(firFiles!!)
         _scopeSession = resolveProcessor.scopeSession
         return firFiles!!

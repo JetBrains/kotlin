@@ -6,7 +6,7 @@ FILE: topLevelClass.kt
 
     }
     public final fun test(): R|kotlin/Unit| {
-        Q|TopLevelSomeClass|.R|/TopLevelSomeClass.hello|()
+        Q|TopLevelSomeClass|.<Unresolved name: hello>#()
     }
     public final object TopLevelSomeClass {
         public final fun hello(): R|kotlin/Int|

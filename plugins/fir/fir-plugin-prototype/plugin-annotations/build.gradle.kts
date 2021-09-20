@@ -3,6 +3,9 @@ plugins {
     id("jps-compatible")
 }
 
+dependencies {
+    api(kotlinStdlib())
+}
 
 sourceSets {
     "main" { projectDefault() }

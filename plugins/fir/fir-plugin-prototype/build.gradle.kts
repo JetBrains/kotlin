@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.ideaExt.idea
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -8,36 +10,54 @@ dependencies {
     api(project(":compiler:fir:tree"))
     api(project(":compiler:fir:resolve"))
     api(project(":compiler:fir:checkers"))
-    api(project(":compiler:frontend"))
+    api(intellijCoreDep()) { includeJars("intellij-core") }
 
     compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
-    testApi(intellijDep())
-
-    testApi(commonDep("junit:junit"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
-    testApi(projectTests(":compiler:tests-common"))
+    testApiJUnit5()
+    testApi(projectTests(":compiler:tests-common-new"))
+    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(project(":compiler:fir:checkers"))
     testApi(project(":compiler:fir:checkers:checkers.jvm"))
-    testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testApi(project(":compiler:frontend"))
 
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntimeOnly(intellijDep()) {
+        includeJars("jna", rootProject = rootProject)
+    }
+
+    testRuntimeOnly(intellijDep()) { includeJars(
+        "intellij-deps-fastutil-8.4.1-4",
+        "trove4j",
+        "jdom"
+    ) }
+    testRuntimeOnly(toolsJar())
 }
+
+val generationRoot = projectDir.resolve("tests-gen")
 
 sourceSets {
-    "main" { projectDefault() }
-    "test" { projectDefault() }
+    "main" {
+        projectDefault()
+    }
+    "test" {
+        projectDefault()
+        this.java.srcDir(generationRoot.name)
+    }
 }
 
-projectTest(parallel = true) {
+if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
+    apply(plugin = "idea")
+    idea {
+        this.module.generatedSourceDirs.add(generationRoot)
+    }
+}
+
+projectTest(parallel = true, jUnit5Enabled = true) {
     workingDir = rootDir
     jvmArgs!!.removeIf { it.contains("-Xmx") }
     maxHeapSize = "3g"
