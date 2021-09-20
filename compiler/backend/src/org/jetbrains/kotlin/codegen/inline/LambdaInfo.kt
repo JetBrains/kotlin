@@ -51,7 +51,7 @@ abstract class LambdaInfo : FunctionalArgument {
                 ?: error("Captured field not found: " + info.containingLambdaName + "." + info.fieldName)
             val recapturedParamInfo = builder.addCapturedParam(field, info.fieldName)
             if (info.isSuspend) {
-                recapturedParamInfo.functionalArgument = NonInlineableArgumentForInlineableParameterCalledInSuspend
+                recapturedParamInfo.functionalArgument = NonInlineArgumentForInlineSuspendParameter.INLINE_LAMBDA_AS_VARIABLE
             }
         }
 
@@ -65,8 +65,7 @@ abstract class LambdaInfo : FunctionalArgument {
     }
 }
 
-object NonInlineableArgumentForInlineableParameterCalledInSuspend : FunctionalArgument
-object NonInlineableArgumentForInlineableSuspendParameter : FunctionalArgument
+enum class NonInlineArgumentForInlineSuspendParameter : FunctionalArgument { INLINE_LAMBDA_AS_VARIABLE, OTHER }
 object DefaultValueOfInlineParameter : FunctionalArgument
 
 abstract class ExpressionLambda : LambdaInfo() {
