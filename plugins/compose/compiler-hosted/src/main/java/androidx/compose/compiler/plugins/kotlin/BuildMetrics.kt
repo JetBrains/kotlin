@@ -99,7 +99,8 @@ interface ModuleMetrics {
     fun Appendable.appendComposablesCsv()
     fun Appendable.appendComposablesTxt()
     fun Appendable.appendClassesTxt()
-    fun saveTo(directory: String)
+    fun saveMetricsTo(directory: String)
+    fun saveReportsTo(directory: String)
     fun makeFunctionMetrics(function: IrFunction): FunctionMetrics
 }
 
@@ -115,7 +116,8 @@ object EmptyModuleMetrics : ModuleMetrics {
     override fun Appendable.appendComposablesCsv() {}
     override fun Appendable.appendComposablesTxt() {}
     override fun Appendable.appendClassesTxt() {}
-    override fun saveTo(directory: String) {}
+    override fun saveMetricsTo(directory: String) {}
+    override fun saveReportsTo(directory: String) {}
     override fun makeFunctionMetrics(function: IrFunction): FunctionMetrics = EmptyFunctionMetrics
 }
 
@@ -391,7 +393,7 @@ class ModuleMetricsImpl(
         }
     }
 
-    override fun saveTo(directory: String) {
+    override fun saveMetricsTo(directory: String) {
         val dir = File(directory)
         val prefix = name
             .replace('.', '_')
@@ -400,7 +402,14 @@ class ModuleMetricsImpl(
         File(dir, "$prefix-module.json").write {
             appendModuleJson()
         }
+    }
 
+    override fun saveReportsTo(directory: String) {
+        val dir = File(directory)
+        val prefix = name
+            .replace('.', '_')
+            .replace("<", "")
+            .replace(">", "")
         File(dir, "$prefix-composables.csv").write {
             appendComposablesCsv()
         }
