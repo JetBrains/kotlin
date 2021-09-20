@@ -284,8 +284,7 @@ private fun <T> IrDeclaration.withPersistentSafe(transform: IrDeclaration.() -> 
     } else null
 
 private fun IrDeclaration.isCompatibleDeclaration(context: JsIrBackendContext) =
-    (this as? IrField)
-        ?.correspondingProperty
+    correspondingProperty
         ?.hasAnnotation(context.intrinsics.jsEagerInitializationAnnotationSymbol) != true &&
             withPersistentSafe { origin in compatibleOrigins } == true
 
