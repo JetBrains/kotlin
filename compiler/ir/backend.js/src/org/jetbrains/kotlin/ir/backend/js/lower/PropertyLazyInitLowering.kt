@@ -290,7 +290,7 @@ private fun IrDeclaration.isCompatibleDeclaration(context: JsIrBackendContext) =
 
 
 private fun IrDeclaration.assertCompatibleDeclaration() {
-    assert(this !is PersistentIrElementBase<*> || createdOn == 0)
+    assert(this !is PersistentIrElementBase<*> || this.createdOn <= this.factory.stageController.currentStage)
 }
 
 private val compatibleOrigins = listOf(
