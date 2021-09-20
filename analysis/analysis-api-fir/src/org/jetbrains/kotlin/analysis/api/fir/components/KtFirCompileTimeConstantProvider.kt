@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.api.components.KtCompileTimeConstantProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.utils.convertConstantExpression
+import org.jetbrains.kotlin.analysis.api.fir.evaluate.KtFirConstantValueConverter
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
@@ -25,8 +25,8 @@ internal class KtFirCompileTimeConstantProvider(
     override fun evaluate(expression: KtExpression): KtConstantValue? = withValidityAssertion {
         when (val fir = expression.getOrBuildFir(firResolveState)) {
             is FirExpression -> {
-                FirCompileTimeConstantEvaluator().evaluate(fir)?.convertConstantExpression()
-                    ?: fir.convertConstantExpression(firResolveState.rootModuleSession, firSymbolBuilder)
+                FirCompileTimeConstantEvaluator().evaluate(fir)?.let { KtFirConstantValueConverter.toConstantValue(it) }
+                    ?: KtFirConstantValueConverter.toConstantValue(fir, firResolveState.rootModuleSession, firSymbolBuilder)
             }
             else -> throwUnexpectedFirElementError(fir, expression)
         }

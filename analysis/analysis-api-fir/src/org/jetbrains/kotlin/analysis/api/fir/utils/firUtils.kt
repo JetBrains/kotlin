@@ -5,8 +5,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
@@ -22,19 +20,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.realPsi
-import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.ArrayFqNames
 
 internal fun PsiElement.unwrap(): PsiElement {
     return when (this) {
@@ -96,89 +88,6 @@ internal fun mapAnnotationParameters(annotation: FirAnnotation, session: FirSess
     }
 
     return resultSet
-}
-
-internal fun Map<String, FirExpression>.toNamedConstantValue(
-    session: FirSession,
-    firSymbolBuilder: KtSymbolByFirBuilder
-): List<KtNamedConstantValue> =
-    map { (name, expression) ->
-        KtNamedConstantValue(
-            name,
-            expression.convertConstantExpression(session, firSymbolBuilder) ?: KtUnsupportedConstantValue
-        )
-    }
-
-internal fun <T> FirConstExpression<T>.convertConstantExpression(): KtSimpleConstantValue<T> =
-    KtSimpleConstantValue(kind, value, realPsi as? KtElement)
-
-private fun Collection<FirExpression>.convertConstantExpression(
-    session: FirSession,
-    firSymbolBuilder: KtSymbolByFirBuilder
-): Collection<KtConstantValue> =
-    mapNotNull { it.convertConstantExpression(session, firSymbolBuilder) }
-
-private fun Collection<KtConstantValue>.toArrayConstantValueIfNecessary(kotlinOrigin: KtElement?): KtConstantValue {
-    return if (size == 1)
-        single()
-    else
-        KtArrayConstantValue(this, kotlinOrigin)
-}
-
-internal fun FirExpression.convertConstantExpression(
-    session: FirSession,
-    firSymbolBuilder: KtSymbolByFirBuilder
-): KtConstantValue? {
-    return when (this) {
-        is FirConstExpression<*> -> convertConstantExpression()
-        is FirNamedArgumentExpression -> {
-            expression.convertConstantExpression(session, firSymbolBuilder)
-        }
-        is FirVarargArgumentsExpression -> {
-            arguments.convertConstantExpression(session, firSymbolBuilder)
-                .toArrayConstantValueIfNecessary(realPsi as? KtElement)
-        }
-        is FirArrayOfCall -> {
-            argumentList.arguments.convertConstantExpression(session, firSymbolBuilder)
-                .toArrayConstantValueIfNecessary(realPsi as? KtElement)
-        }
-        is FirFunctionCall -> {
-            val reference = calleeReference as? FirResolvedNamedReference ?: return null
-            when (val resolvedSymbol = reference.resolvedSymbol) {
-                is FirConstructorSymbol -> {
-                    val classSymbol = resolvedSymbol.getContainingClassSymbol(session) ?: return null
-                    if ((classSymbol.fir as? FirClass)?.classKind == ClassKind.ANNOTATION_CLASS) {
-                        val resultMap = mutableMapOf<String, FirExpression>()
-                        argumentMapping?.entries?.forEach { (arg, param) ->
-                            resultMap[param.name.asString()] = arg
-                        }
-                        KtAnnotationConstantValue(
-                            resolvedSymbol.callableId.className?.asString(),
-                            resultMap.toNamedConstantValue(session, firSymbolBuilder),
-                            this.realPsi as? KtCallElement
-                        )
-                    } else null
-                }
-                is FirNamedFunctionSymbol -> {
-                    if (resolvedSymbol.callableId.asSingleFqName() in ArrayFqNames.ARRAY_CALL_FQ_NAMES)
-                        argumentList.arguments.convertConstantExpression(session, firSymbolBuilder)
-                            .toArrayConstantValueIfNecessary(realPsi as? KtElement)
-                    else null
-                }
-                else -> null
-            }
-        }
-        is FirPropertyAccessExpression -> {
-            val reference = calleeReference as? FirResolvedNamedReference ?: return null
-            when (val resolvedSymbol = reference.resolvedSymbol) {
-                is FirEnumEntrySymbol -> {
-                    KtEnumEntryValue(resolvedSymbol.fir.buildSymbol(firSymbolBuilder) as KtEnumEntrySymbol, realPsi as? KtElement)
-                }
-                else -> null
-            }
-        }
-        else -> KtUnsupportedConstantValue
-    }
 }
 
 internal fun KtTypeNullability.toConeNullability() = when (this) {
