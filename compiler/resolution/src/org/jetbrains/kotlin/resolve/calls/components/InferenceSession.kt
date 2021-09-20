@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -18,7 +19,7 @@ interface InferenceSession {
         val default = object : InferenceSession {
             override val parentSession: InferenceSession? = null
 
-            override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean = true
+            override fun shouldRunCompletion(candidate: ResolutionCandidate): Boolean = true
             override fun addPartialCallInfo(callInfo: PartialCallInfo) {}
             override fun addErrorCallInfo(callInfo: ErrorCallInfo) {}
             override fun addCompletedCallInfo(callInfo: CompletedCallInfo) {}
@@ -36,14 +37,14 @@ interface InferenceSession {
             override fun callCompleted(resolvedAtom: ResolvedAtom): Boolean = false
             override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom) = true
             override fun computeCompletionMode(
-                candidate: KotlinResolutionCandidate
+                candidate: ResolutionCandidate
             ): ConstraintSystemCompletionMode? = null
 
             override fun resolveReceiverIndependently(): Boolean = false
         }
     }
 
-    fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean
+    fun shouldRunCompletion(candidate: ResolutionCandidate): Boolean
     fun addPartialCallInfo(callInfo: PartialCallInfo)
     fun addCompletedCallInfo(callInfo: CompletedCallInfo)
     fun addErrorCallInfo(callInfo: ErrorCallInfo)
@@ -60,7 +61,7 @@ interface InferenceSession {
     fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean
     fun callCompleted(resolvedAtom: ResolvedAtom): Boolean
     fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom): Boolean
-    fun computeCompletionMode(candidate: KotlinResolutionCandidate): ConstraintSystemCompletionMode?
+    fun computeCompletionMode(candidate: ResolutionCandidate): ConstraintSystemCompletionMode?
     fun resolveReceiverIndependently(): Boolean
 }
 

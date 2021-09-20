@@ -38,7 +38,7 @@ class CallableReferencesCandidateFactory(
     val expectedType: UnwrappedType?,
     private val csBuilder: ConstraintSystemOperation,
     private val resolutionCallbacks: KotlinResolutionCallbacks
-) : CandidateFactory<CallableReferenceCandidate> {
+) : CandidateFactory<CallableReferenceResolutionCandidate> {
 
     fun createCallableProcessor(explicitReceiver: DetailedReceiver?) =
         createCallableReferenceProcessor(scopeTower, argument.rhsName, this, explicitReceiver)
@@ -47,7 +47,7 @@ class CallableReferencesCandidateFactory(
         towerCandidate: CandidateWithBoundDispatchReceiver,
         explicitReceiverKind: ExplicitReceiverKind,
         extensionReceiver: ReceiverValueWithSmartCastInfo?
-    ): CallableReferenceCandidate {
+    ): CallableReferenceResolutionCandidate {
 
         val dispatchCallableReceiver =
             towerCandidate.dispatchReceiver?.let { toCallableReceiver(it, explicitReceiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER) }
@@ -63,8 +63,8 @@ class CallableReferencesCandidateFactory(
             callComponents.builtIns
         )
 
-        fun createReferenceCandidate(): CallableReferenceCandidate =
-            CallableReferenceCandidate(
+        fun createReferenceCandidate(): CallableReferenceResolutionCandidate =
+            CallableReferenceResolutionCandidate(
                 candidateDescriptor, dispatchCallableReceiver, extensionCallableReceiver,
                 explicitReceiverKind, reflectionCandidateType, callableReferenceAdaptation, diagnostics
             )
@@ -92,7 +92,7 @@ class CallableReferencesCandidateFactory(
         }
 
         if (candidateDescriptor !is CallableMemberDescriptor) {
-            return CallableReferenceCandidate(
+            return CallableReferenceResolutionCandidate(
                 candidateDescriptor, dispatchCallableReceiver, extensionCallableReceiver,
                 explicitReceiverKind, reflectionCandidateType, callableReferenceAdaptation,
                 listOf(NotCallableMemberReference(argument, candidateDescriptor))

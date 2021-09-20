@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.calls.components.*
-import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
@@ -37,13 +38,13 @@ import org.jetbrains.kotlin.utils.SmartList
 
 
 abstract class ResolutionPart {
-    abstract fun KotlinResolutionCandidate.process(workIndex: Int)
+    abstract fun ResolutionCandidate.process(workIndex: Int)
 
-    open fun KotlinResolutionCandidate.workCount(): Int = 1
+    open fun ResolutionCandidate.workCount(): Int = 1
 
     // helper functions
-    protected inline val KotlinResolutionCandidate.candidateDescriptor get() = resolvedCall.candidateDescriptor
-    protected inline val KotlinResolutionCandidate.kotlinCall get() = resolvedCall.atom
+    protected inline val ResolutionCandidate.candidateDescriptor get() = resolvedCall.candidateDescriptor
+    protected inline val ResolutionCandidate.kotlinCall get() = resolvedCall.atom
 }
 
 interface KotlinDiagnosticsHolder {
@@ -139,7 +140,7 @@ class MutableResolvedCallAtom(
     override fun toString(): String = "$atom, candidate = $candidateDescriptor"
 }
 
-fun KotlinResolutionCandidate.markCandidateForCompatibilityResolve() {
+fun ResolutionCandidate.markCandidateForCompatibilityResolve() {
     if (callComponents.languageVersionSettings.supportsFeature(LanguageFeature.DisableCompatibilityModeForNewInference)) return
     addDiagnostic(LowerPriorityToPreserveCompatibility.asDiagnostic())
 }

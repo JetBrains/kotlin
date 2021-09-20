@@ -282,7 +282,7 @@ class KotlinConstraintSystemCompleter(
 
     fun prepareLambdaAtomForFactoryPattern(
         atom: ResolvedLambdaAtom,
-        candidate: KotlinResolutionCandidate,
+        candidate: SimpleResolutionCandidate,
         diagnosticsHolder: KotlinDiagnosticsHolder,
     ): ResolvedLambdaAtom {
         val returnVariable = TypeVariableForLambdaReturnType(candidate.callComponents.builtIns, "_R")

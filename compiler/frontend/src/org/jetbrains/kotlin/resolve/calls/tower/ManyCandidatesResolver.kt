@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.*
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
@@ -40,7 +41,7 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
         // do nothing
     }
 
-    override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean {
+    override fun shouldRunCompletion(candidate: ResolutionCandidate): Boolean {
         return false
     }
 
@@ -168,7 +169,7 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
         return allCandidates
     }
 
-    override fun computeCompletionMode(candidate: KotlinResolutionCandidate) = null
+    override fun computeCompletionMode(candidate: ResolutionCandidate) = null
 
     override fun resolveReceiverIndependently(): Boolean = false
 

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
-import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallArgument
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.types.KotlinType
@@ -37,7 +37,7 @@ class NewOverloadingConflictResolver(
     statelessCallbacks: KotlinResolutionStatelessCallbacks,
     constraintInjector: ConstraintInjector,
     kotlinTypeRefiner: KotlinTypeRefiner,
-) : OverloadingConflictResolver<KotlinResolutionCandidate>(
+) : OverloadingConflictResolver<ResolutionCandidate>(
     builtIns,
     module,
     specificityComparator,
@@ -56,7 +56,7 @@ class NewOverloadingConflictResolver(
 ) {
 
     companion object {
-        private fun createFlatSignature(candidate: KotlinResolutionCandidate): FlatSignature<KotlinResolutionCandidate> {
+        private fun createFlatSignature(candidate: ResolutionCandidate): FlatSignature<ResolutionCandidate> {
 
             val resolvedCall = candidate.resolvedCall
             val originalDescriptor = resolvedCall.candidateDescriptor.original

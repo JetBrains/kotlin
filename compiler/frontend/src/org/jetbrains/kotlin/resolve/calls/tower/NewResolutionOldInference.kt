@@ -487,6 +487,10 @@ class NewResolutionOldInference(
             }
         }
 
+        override fun createErrorCandidate(): MyCandidate {
+            throw IllegalStateException("Not supported creating error candidate for the old type inference candidate factory")
+        }
+
         private fun createDiagnosticsForCandidate(
             towerCandidate: CandidateWithBoundDispatchReceiver,
             candidateCall: ResolvedCallImpl<CallableDescriptor>

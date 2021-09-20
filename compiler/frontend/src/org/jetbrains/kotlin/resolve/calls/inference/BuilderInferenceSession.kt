@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.util.shouldBeSubstituteWithStubTypes
 import org.jetbrains.kotlin.resolve.calls.util.toOldSubstitution
 import org.jetbrains.kotlin.resolve.calls.components.*
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
@@ -80,7 +81,7 @@ class BuilderInferenceSession(
 
     override val parentSession = topLevelCallContext.inferenceSession
 
-    override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean {
+    override fun shouldRunCompletion(candidate: ResolutionCandidate): Boolean {
         val system = candidate.getSystem() as NewConstraintSystemImpl
 
         if (system.hasContradiction) return true

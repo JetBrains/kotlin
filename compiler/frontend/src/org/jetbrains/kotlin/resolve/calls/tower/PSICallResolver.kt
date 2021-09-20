@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceResolver
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
@@ -327,12 +328,12 @@ class PSICallResolver(
     private fun CallResolutionResult.isEmpty(): Boolean =
         diagnostics.firstIsInstanceOrNull<NoneCandidatesCallDiagnostic>() != null
 
-    private fun Collection<KotlinResolutionCandidate>.areAllFailed() =
+    private fun Collection<ResolutionCandidate>.areAllFailed() =
         all {
             !it.resultingApplicability.isSuccess
         }
 
-    private fun Collection<KotlinResolutionCandidate>.areAllFailedWithInapplicableWrongReceiver() =
+    private fun Collection<ResolutionCandidate>.areAllFailedWithInapplicableWrongReceiver() =
         all {
             it.resultingApplicability == CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
         }
@@ -458,18 +459,18 @@ class PSICallResolver(
         val context: BasicCallResolutionContext,
         val scopeTower: ImplicitScopeTower,
         val kotlinCall: PSIKotlinCallImpl
-    ) : CandidateFactoryProviderForInvoke<KotlinResolutionCandidate> {
+    ) : CandidateFactoryProviderForInvoke<ResolutionCandidate> {
 
         init {
             assert(kotlinCall.dispatchReceiverForInvokeExtension == null) { kotlinCall }
         }
 
         override fun transformCandidate(
-            variable: KotlinResolutionCandidate,
-            invoke: KotlinResolutionCandidate
+            variable: ResolutionCandidate,
+            invoke: ResolutionCandidate
         ) = invoke
 
-        override fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<KotlinResolutionCandidate> {
+        override fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<ResolutionCandidate> {
             val explicitReceiver = if (stripExplicitReceiver) null else kotlinCall.explicitReceiver
             val variableCall = PSIKotlinCallForVariable(kotlinCall, explicitReceiver, kotlinCall.name)
             return SimpleCandidateFactory(
@@ -477,8 +478,8 @@ class PSICallResolver(
             )
         }
 
-        override fun factoryForInvoke(variable: KotlinResolutionCandidate, useExplicitReceiver: Boolean):
-                Pair<ReceiverValueWithSmartCastInfo, CandidateFactory<KotlinResolutionCandidate>>? {
+        override fun factoryForInvoke(variable: ResolutionCandidate, useExplicitReceiver: Boolean):
+                Pair<ReceiverValueWithSmartCastInfo, CandidateFactory<ResolutionCandidate>>? {
             if (isRecursiveVariableResolution(variable)) return null
 
             assert(variable.isSuccessful) {
@@ -500,13 +501,13 @@ class PSICallResolver(
         }
 
         // todo: create special check that there is no invoke on variable
-        private fun isRecursiveVariableResolution(variable: KotlinResolutionCandidate): Boolean {
+        private fun isRecursiveVariableResolution(variable: ResolutionCandidate): Boolean {
             val variableType = variable.resolvedCall.candidateDescriptor.returnType
             return variableType is DeferredType && variableType.isComputing
         }
 
         // todo: review
-        private fun createReceiverCallArgument(variable: KotlinResolutionCandidate): SimpleKotlinCallArgument {
+        private fun createReceiverCallArgument(variable: ResolutionCandidate): SimpleKotlinCallArgument {
             variable.forceResolution()
             val variableReceiver = createReceiverValueWithSmartCastInfo(variable)
             if (variableReceiver.hasTypesFromSmartCasts()) {
@@ -528,7 +529,7 @@ class PSICallResolver(
         }
 
         // todo: decrease hacks count
-        private fun createReceiverValueWithSmartCastInfo(variable: KotlinResolutionCandidate): ReceiverValueWithSmartCastInfo {
+        private fun createReceiverValueWithSmartCastInfo(variable: ResolutionCandidate): ReceiverValueWithSmartCastInfo {
             val callForVariable = variable.resolvedCall.atom as PSIKotlinCallForVariable
             val calleeExpression = callForVariable.baseCall.psiCall.calleeExpression as? KtReferenceExpression
                 ?: error("Unexpected call : ${callForVariable.baseCall.psiCall}")

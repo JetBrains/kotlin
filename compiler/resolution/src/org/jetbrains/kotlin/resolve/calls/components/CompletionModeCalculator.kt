@@ -24,7 +24,7 @@ typealias CsCompleterContext = ConstraintSystemCompletionContext
 class CompletionModeCalculator {
     companion object {
         fun computeCompletionMode(
-            candidate: KotlinResolutionCandidate,
+            candidate: ResolutionCandidate,
             expectedType: UnwrappedType?,
             returnType: UnwrappedType?,
             trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
@@ -53,7 +53,7 @@ class CompletionModeCalculator {
     }
 
     private class CalculatorForNestedCall(
-        private val candidate: KotlinResolutionCandidate,
+        private val candidate: ResolutionCandidate,
         private val returnType: UnwrappedType?,
         private val csCompleterContext: CsCompleterContext,
         private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,

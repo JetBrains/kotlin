@@ -21,10 +21,8 @@ import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.util.toOldSubstitution
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.commonSuperType
-import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceAdaptation
-import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceCandidate
-import org.jetbrains.kotlin.resolve.calls.components.SuspendConversionStrategy
-import org.jetbrains.kotlin.resolve.calls.components.isVararg
+import org.jetbrains.kotlin.resolve.calls.components.*
+import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
@@ -401,7 +399,7 @@ class ResolvedAtomCompleter(
     }
 
     private fun extractCallableReferenceResultTypeInfoFromDescriptor(
-        callableCandidate: CallableReferenceCandidate,
+        callableCandidate: CallableReferenceResolutionCandidate,
         recordedDescriptor: CallableDescriptor
     ): CallableReferenceResultTypeInfo {
         val dispatchReceiver = recordedDescriptor.dispatchReceiverParameter?.value

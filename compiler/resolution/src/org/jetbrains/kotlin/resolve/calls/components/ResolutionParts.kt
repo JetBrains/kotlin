@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
@@ -35,7 +37,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.compactIfPossible
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal object CheckVisibility : ResolutionPart() {
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         val containingDescriptor = scopeTower.lexicalScope.ownerDescriptor
         val dispatchReceiverArgument = resolvedCall.dispatchReceiverArgument
 
@@ -62,7 +64,7 @@ internal object CheckVisibility : ResolutionPart() {
 }
 
 internal object MapTypeArguments : ResolutionPart() {
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         resolvedCall.typeArgumentMappingByOriginal =
                 callComponents.typeArgumentsToParametersMapper.mapTypeArguments(kotlinCall, candidateDescriptor.original).also {
                     it.diagnostics.forEach(this@process::addDiagnostic)
@@ -71,7 +73,7 @@ internal object MapTypeArguments : ResolutionPart() {
 }
 
 internal object NoTypeArguments : ResolutionPart() {
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         assert(kotlinCall.typeArguments.isEmpty()) {
             "Variable call cannot has explicit type arguments: ${kotlinCall.typeArguments}. Call: $kotlinCall"
         }
@@ -80,7 +82,7 @@ internal object NoTypeArguments : ResolutionPart() {
 }
 
 internal object MapArguments : ResolutionPart() {
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         val mapping = callComponents.argumentsToParametersMapper.mapArguments(kotlinCall, candidateDescriptor)
         mapping.diagnostics.forEach(this::addDiagnostic)
 
@@ -89,7 +91,7 @@ internal object MapArguments : ResolutionPart() {
 }
 
 internal object ArgumentsToCandidateParameterDescriptor : ResolutionPart() {
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         val map = hashMapOf<KotlinCallArgument, ValueParameterDescriptor>()
         for ((originalValueParameter, resolvedCallArgument) in resolvedCall.argumentMappingByOriginal) {
             val valueParameter = candidateDescriptor.valueParameters.getOrNull(originalValueParameter.index) ?: continue
@@ -102,7 +104,7 @@ internal object ArgumentsToCandidateParameterDescriptor : ResolutionPart() {
 }
 
 internal object NoArguments : ResolutionPart() {
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         assert(kotlinCall.argumentsInParenthesis.isEmpty()) {
             "Variable call cannot has arguments: ${kotlinCall.argumentsInParenthesis}. Call: $kotlinCall"
         }
@@ -116,7 +118,7 @@ internal object NoArguments : ResolutionPart() {
 
 
 internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         val toFreshVariables =
             if (candidateDescriptor.typeParameters.isEmpty())
                 FreshVariableNewTypeSubstitutor.Empty
@@ -272,7 +274,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
 }
 
 internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         for ((argument, parameter) in resolvedCall.argumentToCandidateParameter) {
             if (!callComponents.statelessCallbacks.isBuilderInferenceCall(argument, parameter)) continue
             val receiverType = parameter.type.getReceiverTypeFromFunctionType() ?: continue
@@ -299,7 +301,7 @@ internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
 }
 
 internal object CompatibilityOfTypeVariableAsIntersectionTypePart : ResolutionPart() {
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         for ((_, variableWithConstraints) in csBuilder.currentStorage().notFixedTypeVariables) {
             val constraints = variableWithConstraints.constraints.filter { csBuilder.isProperType(it.type) }
 
@@ -317,7 +319,7 @@ internal object CompatibilityOfTypeVariableAsIntersectionTypePart : ResolutionPa
 }
 
 internal object CompatibilityOfPartiallyApplicableSamConversion : ResolutionPart() {
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         if (resolvedCall.argumentsWithConversion.isEmpty()) return
         if (resolvedCall.argumentsWithConversion.size == candidateDescriptor.valueParameters.size) return
 
@@ -339,14 +341,14 @@ internal object CompatibilityOfPartiallyApplicableSamConversion : ResolutionPart
 }
 
 internal object CheckExplicitReceiverKindConsistency : ResolutionPart() {
-    private fun KotlinResolutionCandidate.hasError(): Nothing =
+    private fun ResolutionCandidate.hasError(): Nothing =
         error(
             "Inconsistent call: $kotlinCall. \n" +
                     "Candidate: $candidateDescriptor, explicitReceiverKind: ${resolvedCall.explicitReceiverKind}.\n" +
                     "Explicit receiver: ${kotlinCall.explicitReceiver}, dispatchReceiverForInvokeExtension: ${kotlinCall.dispatchReceiverForInvokeExtension}"
         )
 
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         when (resolvedCall.explicitReceiverKind) {
             NO_EXPLICIT_RECEIVER -> if (kotlinCall.explicitReceiver is SimpleKotlinCallArgument || kotlinCall.dispatchReceiverForInvokeExtension != null) hasError()
             DISPATCH_RECEIVER, EXTENSION_RECEIVER ->
@@ -483,7 +485,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
         freshTypeConstructor.isContainedInInvariantOrContravariantPositions = true
     }
 
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         for (variable in resolvedCall.freshVariablesSubstitutor.freshVariables) {
             if (resolvedCall.candidateDescriptor is ClassConstructorDescriptor) {
                 val typeParameters = resolvedCall.candidateDescriptor.containingDeclaration.declaredTypeParameters
@@ -498,7 +500,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
     }
 }
 
-private fun KotlinResolutionCandidate.resolveKotlinArgument(
+private fun ResolutionCandidate.resolveKotlinArgument(
     argument: KotlinCallArgument,
     candidateParameter: ParameterDescriptor?,
     receiverInfo: ReceiverInfo
@@ -598,7 +600,7 @@ private fun KotlinResolutionCandidate.resolveKotlinArgument(
     }
 }
 
-private fun KotlinResolutionCandidate.shouldRunConversionForConstants(expectedType: UnwrappedType): Boolean {
+private fun ResolutionCandidate.shouldRunConversionForConstants(expectedType: UnwrappedType): Boolean {
     if (UnsignedTypes.isUnsignedType(expectedType)) return true
     if (csBuilder.isTypeVariable(expectedType)) {
         val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[expectedType.constructor] ?: return false
@@ -617,7 +619,7 @@ internal enum class ImplicitInvokeCheckStatus {
     NO_INVOKE, INVOKE_ON_NOT_NULL_VARIABLE, UNSAFE_INVOKE_REPORTED
 }
 
-private fun KotlinResolutionCandidate.checkUnsafeImplicitInvokeAfterSafeCall(argument: SimpleKotlinCallArgument): ImplicitInvokeCheckStatus {
+private fun ResolutionCandidate.checkUnsafeImplicitInvokeAfterSafeCall(argument: SimpleKotlinCallArgument): ImplicitInvokeCheckStatus {
     val variableForInvoke = variableCandidateIfInvoke ?: return ImplicitInvokeCheckStatus.NO_INVOKE
 
     val receiverArgument = with(variableForInvoke.resolvedCall) {
@@ -637,13 +639,13 @@ private fun KotlinResolutionCandidate.checkUnsafeImplicitInvokeAfterSafeCall(arg
     return ImplicitInvokeCheckStatus.INVOKE_ON_NOT_NULL_VARIABLE
 }
 
-private fun KotlinResolutionCandidate.prepareExpectedType(expectedType: UnwrappedType): UnwrappedType {
+private fun ResolutionCandidate.prepareExpectedType(expectedType: UnwrappedType): UnwrappedType {
     val resultType = resolvedCall.freshVariablesSubstitutor.safeSubstitute(expectedType)
     return resolvedCall.knownParametersSubstitutor.safeSubstitute(resultType)
 }
 
 internal object CheckReceivers : ResolutionPart() {
-    private fun KotlinResolutionCandidate.checkReceiver(
+    private fun ResolutionCandidate.checkReceiver(
         receiverArgument: SimpleKotlinCallArgument?,
         receiverParameter: ReceiverParameterDescriptor?,
         shouldCheckImplicitInvoke: Boolean,
@@ -666,7 +668,7 @@ internal object CheckReceivers : ResolutionPart() {
         resolveKotlinArgument(receiverArgument, receiverParameter, receiverInfo)
     }
 
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         if (workIndex == 0) {
             checkReceiver(
                 resolvedCall.dispatchReceiverArgument,
@@ -682,20 +684,20 @@ internal object CheckReceivers : ResolutionPart() {
         }
     }
 
-    override fun KotlinResolutionCandidate.workCount() = 2
+    override fun ResolutionCandidate.workCount() = 2
 }
 
 internal object CheckArgumentsInParenthesis : ResolutionPart() {
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         val argument = kotlinCall.argumentsInParenthesis[workIndex]
         resolveKotlinArgument(argument, resolvedCall.argumentToCandidateParameter[argument], ReceiverInfo.notReceiver)
     }
 
-    override fun KotlinResolutionCandidate.workCount() = kotlinCall.argumentsInParenthesis.size
+    override fun ResolutionCandidate.workCount() = kotlinCall.argumentsInParenthesis.size
 }
 
 internal object CheckExternalArgument : ResolutionPart() {
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         val argument = kotlinCall.externalArgument ?: return
 
         resolveKotlinArgument(argument, resolvedCall.argumentToCandidateParameter[argument], ReceiverInfo.notReceiver)
@@ -703,7 +705,7 @@ internal object CheckExternalArgument : ResolutionPart() {
 }
 
 internal object EagerResolveOfCallableReferences : ResolutionPart() {
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         getSubResolvedAtoms()
             .filterIsInstance<EagerCallableReferenceAtom>()
             .forEach {
@@ -713,7 +715,7 @@ internal object EagerResolveOfCallableReferences : ResolutionPart() {
 }
 
 internal object CheckInfixResolutionPart : ResolutionPart() {
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         val candidateDescriptor = resolvedCall.candidateDescriptor
         if (candidateDescriptor !is FunctionDescriptor) return
         if (!candidateDescriptor.isInfix && callComponents.statelessCallbacks.isInfixCall(kotlinCall)) {
@@ -723,7 +725,7 @@ internal object CheckInfixResolutionPart : ResolutionPart() {
 }
 
 internal object CheckOperatorResolutionPart : ResolutionPart() {
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         val candidateDescriptor = resolvedCall.candidateDescriptor
         if (candidateDescriptor !is FunctionDescriptor) return
         if (!candidateDescriptor.isOperator && callComponents.statelessCallbacks.isOperatorCall(kotlinCall)) {
@@ -733,7 +735,7 @@ internal object CheckOperatorResolutionPart : ResolutionPart() {
 }
 
 internal object CheckSuperExpressionCallPart : ResolutionPart() {
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         val candidateDescriptor = resolvedCall.candidateDescriptor
 
         if (callComponents.statelessCallbacks.isSuperExpression(resolvedCall.dispatchReceiverArgument)) {
@@ -750,7 +752,7 @@ internal object CheckSuperExpressionCallPart : ResolutionPart() {
 }
 
 internal object ErrorDescriptorResolutionPart : ResolutionPart() {
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+    override fun ResolutionCandidate.process(workIndex: Int) {
         assert(ErrorUtils.isError(candidateDescriptor)) {
             "Should be error descriptor: $candidateDescriptor"
         }

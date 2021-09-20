@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -93,7 +94,7 @@ class PSIKotlinCallForVariable(
 
 class PSIKotlinCallForInvoke(
     val baseCall: PSIKotlinCallImpl,
-    val variableCall: KotlinResolutionCandidate,
+    val variableCall: ResolutionCandidate,
     override val explicitReceiver: ReceiverKotlinCallArgument,
     override val dispatchReceiverForInvokeExtension: SimpleKotlinCallArgument?
 ) : PSIKotlinCall() {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 object UnitTypeConversions : ParameterTypeConversion {
     override fun conversionDefinitelyNotNeeded(
-        candidate: KotlinResolutionCandidate,
+        candidate: ResolutionCandidate,
         argument: KotlinCallArgument,
         expectedParameterType: UnwrappedType
     ): Boolean {
@@ -67,7 +68,7 @@ object UnitTypeConversions : ParameterTypeConversion {
     }
 
     override fun convertParameterType(
-        candidate: KotlinResolutionCandidate,
+        candidate: ResolutionCandidate,
         argument: KotlinCallArgument,
         parameter: ParameterDescriptor,
         expectedParameterType: UnwrappedType

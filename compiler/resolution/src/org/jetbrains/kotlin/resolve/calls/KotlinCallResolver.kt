@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceResolver
 import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.components.NewOverloadingConflictResolver
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.*
@@ -32,7 +33,7 @@ class KotlinCallResolver(
         kotlinCall: KotlinCall,
         expectedType: UnwrappedType?,
         collectAllCandidates: Boolean,
-        createFactoryProviderForInvoke: () -> CandidateFactoryProviderForInvoke<KotlinResolutionCandidate>
+        createFactoryProviderForInvoke: () -> CandidateFactoryProviderForInvoke<ResolutionCandidate>
     ): CallResolutionResult {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -120,7 +121,7 @@ class KotlinCallResolver(
         candidateFactory: SimpleCandidateFactory,
         resolutionCallbacks: KotlinResolutionCallbacks,
         expectedType: UnwrappedType?,
-        candidates: Collection<KotlinResolutionCandidate>
+        candidates: Collection<ResolutionCandidate>
     ): CallResolutionResult {
         var refinedCandidates = candidates
         if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.RefinedSamAdaptersPriority)) {

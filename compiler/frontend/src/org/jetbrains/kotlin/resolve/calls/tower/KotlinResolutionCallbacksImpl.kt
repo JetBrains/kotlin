@@ -309,7 +309,7 @@ class KotlinResolutionCallbacksImpl(
         return convertSignedConstantToUnsigned(argumentExpression)
     }
 
-    override fun recordInlinabilityOfLambda(atom: Set<Map.Entry<KotlinResolutionCandidate, ResolvedLambdaAtom>>) {
+    override fun recordInlinabilityOfLambda(atom: Set<Map.Entry<SimpleResolutionCandidate, ResolvedLambdaAtom>>) {
         val call = atom.first().value.atom.psiCallArgument.valueArgument as? KtLambdaArgument ?: return
         val literal = call.getLambdaExpression()?.functionLiteral ?: return
         val isLambdaInline = atom.all { (candidate, atom) ->

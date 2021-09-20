@@ -46,6 +46,8 @@ interface CandidateFactory<out C : Candidate> {
         explicitReceiverKind: ExplicitReceiverKind,
         extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): C
+
+    fun createErrorCandidate(): C
 }
 
 interface CandidateFactoryProviderForInvoke<C : Candidate> {

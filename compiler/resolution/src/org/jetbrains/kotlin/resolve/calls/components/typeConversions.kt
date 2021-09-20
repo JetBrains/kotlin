@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
 import org.jetbrains.kotlin.types.UnwrappedType
 
 interface ParameterTypeConversion {
     fun conversionDefinitelyNotNeeded(
-        candidate: KotlinResolutionCandidate,
+        candidate: ResolutionCandidate,
         argument: KotlinCallArgument,
         expectedParameterType: UnwrappedType
     ): Boolean
@@ -21,7 +22,7 @@ interface ParameterTypeConversion {
     fun conversionIsNeededAfterSubtypingCheck(argument: KotlinCallArgument): Boolean
 
     fun convertParameterType(
-        candidate: KotlinResolutionCandidate,
+        candidate: ResolutionCandidate,
         argument: KotlinCallArgument,
         parameter: ParameterDescriptor,
         expectedParameterType: UnwrappedType
@@ -30,7 +31,7 @@ interface ParameterTypeConversion {
 
 object TypeConversions {
     fun performCompositeConversionBeforeSubtyping(
-        candidate: KotlinResolutionCandidate,
+        candidate: ResolutionCandidate,
         argument: KotlinCallArgument,
         candidateParameter: ParameterDescriptor,
         candidateExpectedType: UnwrappedType,
@@ -61,7 +62,7 @@ object TypeConversions {
     }
 
     fun performCompositeConversionAfterSubtyping(
-        candidate: KotlinResolutionCandidate,
+        candidate: ResolutionCandidate,
         argument: KotlinCallArgument,
         candidateParameter: ParameterDescriptor,
         candidateExpectedType: UnwrappedType,
@@ -86,7 +87,7 @@ object TypeConversions {
     }
 
     private fun performConversionAfterSubtyping(
-        candidate: KotlinResolutionCandidate,
+        candidate: ResolutionCandidate,
         argument: KotlinCallArgument,
         candidateParameter: ParameterDescriptor,
         candidateExpectedType: UnwrappedType,
@@ -103,7 +104,7 @@ object TypeConversions {
     }
 
     private fun performConversionBeforeSubtyping(
-        candidate: KotlinResolutionCandidate,
+        candidate: ResolutionCandidate,
         argument: KotlinCallArgument,
         candidateParameter: ParameterDescriptor,
         candidateExpectedType: UnwrappedType,

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.incremental.record
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.jetbrains.kotlin.resolve.sam.getFunctionTypeForPossibleSamType
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 
 object SamTypeConversions : ParameterTypeConversion {
     override fun conversionDefinitelyNotNeeded(
-        candidate: KotlinResolutionCandidate,
+        candidate: ResolutionCandidate,
         argument: KotlinCallArgument,
         expectedParameterType: UnwrappedType
     ): Boolean {
@@ -72,7 +73,7 @@ object SamTypeConversions : ParameterTypeConversion {
     }
 
     override fun convertParameterType(
-        candidate: KotlinResolutionCandidate,
+        candidate: ResolutionCandidate,
         argument: KotlinCallArgument,
         parameter: ParameterDescriptor,
         expectedParameterType: UnwrappedType
@@ -118,7 +119,7 @@ object SamTypeConversions : ParameterTypeConversion {
         return convertedTypeByCandidate
     }
 
-    private fun needCompatibilityResolveForSAM(candidate: KotlinResolutionCandidate, typeToConvert: UnwrappedType): Boolean {
+    private fun needCompatibilityResolveForSAM(candidate: ResolutionCandidate, typeToConvert: UnwrappedType): Boolean {
         // fun interfaces is a new feature with a new modifier, so no compatibility resolve is needed
         val descriptor = typeToConvert.constructor.declarationDescriptor
         if (descriptor is ClassDescriptor && descriptor.isFun) return false
@@ -128,7 +129,7 @@ object SamTypeConversions : ParameterTypeConversion {
     }
 
     fun isJavaParameterCanBeConverted(
-        candidate: KotlinResolutionCandidate,
+        candidate: ResolutionCandidate,
         expectedParameterType: UnwrappedType
     ): Boolean {
         val callComponents = candidate.callComponents

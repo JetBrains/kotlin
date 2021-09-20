@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.resolve.calls.components.*
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
@@ -112,7 +113,7 @@ class InferenceSessionForExistingCandidates(
     private val resolveReceiverIndependently: Boolean,
     override val parentSession: InferenceSession?
 ) : InferenceSession {
-    override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean {
+    override fun shouldRunCompletion(candidate: ResolutionCandidate): Boolean {
         return !ErrorUtils.isError(candidate.resolvedCall.candidateDescriptor)
     }
 
@@ -135,7 +136,7 @@ class InferenceSessionForExistingCandidates(
     }
 
     override fun computeCompletionMode(
-        candidate: KotlinResolutionCandidate
+        candidate: ResolutionCandidate
     ): ConstraintSystemCompletionMode? = null
 
     override fun resolveReceiverIndependently(): Boolean = resolveReceiverIndependently
