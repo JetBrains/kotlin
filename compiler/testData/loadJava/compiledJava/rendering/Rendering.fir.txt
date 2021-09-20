@@ -56,7 +56,7 @@ public open class Rendering : R|kotlin/Any| {
 
     }
     public/*package*/ abstract interface I_Wildcard : R|kotlin/Any| {
-        public abstract fun foo1(x: R|ft<kotlin/collections/MutableList<out ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<out ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+        public abstract fun foo1(x: R|ft<kotlin/collections/MutableList<out ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
 
         public abstract fun foo2(x: R|ft<kotlin/collections/MutableList<in ft<kotlin/String, kotlin/String?>>, kotlin/collections/MutableList<in ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
 

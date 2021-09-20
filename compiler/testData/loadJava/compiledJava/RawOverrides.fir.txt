@@ -2,7 +2,7 @@ public open class RawOverrides : R|kotlin/Any| {
     public constructor(): R|test/RawOverrides|
 
     public abstract interface A<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
-        public abstract fun <E : R|ft<kotlin/CharSequence, kotlin/CharSequence?>|> foo(x: R|ft<T, T?>|, y: R|ft<kotlin/collections/MutableList<out ft<T, T?>>, kotlin/collections/List<out ft<T, T?>>?>|): R|ft<E, E?>|
+        public abstract fun <E : R|ft<kotlin/CharSequence, kotlin/CharSequence?>|> foo(x: R|ft<T, T?>|, y: R|ft<kotlin/collections/MutableList<out ft<T, T?>>, kotlin/collections/List<ft<T, T?>>?>|): R|ft<E, E?>|
 
     }
     public open inner class B : R|kotlin/Any|, R|test/RawOverrides.A<ft<kotlin/Any, kotlin/Any?>>| {

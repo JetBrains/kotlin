@@ -133,7 +133,11 @@ private fun JavaType?.toConeTypeProjection(
                 ConeStarProjection
             } else {
                 val boundType = bound.toConeKotlinType(session, javaTypeParameterStack, mode)
-                if (isExtends) ConeKotlinTypeProjectionOut(boundType) else ConeKotlinTypeProjectionIn(boundType)
+                when (argumentVariance) {
+                    parameterVariance -> boundType
+                    Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(boundType)
+                    else -> ConeKotlinTypeProjectionIn(boundType)
+                }
             }
         }
 
