@@ -17,7 +17,7 @@ import kotlinx.dom.clear as newClear
     message = "This API is moved to another package, use 'kotlinx.dom.clear' instead.",
     replaceWith = ReplaceWith("this.clear()", "kotlinx.dom.clear")
 )
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
 public inline fun Node.clear() = this.newClear()
 
 /**
@@ -30,5 +30,5 @@ public inline fun Node.clear() = this.newClear()
     message = "This API is moved to another package, use 'kotlinx.dom.appendText' instead.",
     replaceWith = ReplaceWith("this.appendText(text)", "kotlinx.dom.appendText")
 )
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
 inline fun Element.appendText(text: String): Element = this.newAppendText(text)

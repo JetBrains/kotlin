@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-import kotlin.browser.*
+import kotlinx.browser.*
 import org.w3c.fetch.*
 import org.jetbrains.report.json.*
 import org.jetbrains.buildInfo.Build
