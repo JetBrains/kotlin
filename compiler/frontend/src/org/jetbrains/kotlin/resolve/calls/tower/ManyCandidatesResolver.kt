@@ -202,7 +202,7 @@ class PSIPartialCallInfo(
 class PSICompletedCallInfo(
     override val callResolutionResult: CompletedCallResolutionResult,
     context: BasicCallResolutionContext,
-    val resolvedCall: ResolvedCall<*>,
+    val resolvedCall: NewAbstractResolvedCall<*>,
     tracingStrategy: TracingStrategy
 ) : CallInfo(callResolutionResult, context, tracingStrategy), CompletedCallInfo
 

@@ -30,15 +30,16 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-
 class NewResolvedCallImpl<D : CallableDescriptor>(
-    val resolvedCallAtom: ResolvedCallAtom,
+    override val resolvedCallAtom: ResolvedCallAtom,
     substitutor: NewTypeSubstitutor?,
     private var diagnostics: Collection<KotlinCallDiagnostic>,
     private val typeApproximator: TypeApproximator,
     override val languageVersionSettings: LanguageVersionSettings,
 ) : NewAbstractResolvedCall<D>() {
-    var isCompleted = false
+    override val psiKotlinCall: PSIKotlinCall = resolvedCallAtom.atom.psiKotlinCall
+
+    override var isCompleted = false
         private set
     private lateinit var resultingDescriptor: D
 
@@ -104,7 +105,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
         dispatchReceiver = dispatchReceiver?.replaceType(newType)
     }
 
-    fun setResultingSubstitutor(substitutor: NewTypeSubstitutor?) {
+    override fun setResultingSubstitutor(substitutor: NewTypeSubstitutor?) {
         //clear cached values
         argumentToParameterMap = null
         _valueArguments = null
@@ -192,8 +193,12 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
         val inferredTypeVariablesSubstitutor = substitutor ?: FreshVariableNewTypeSubstitutor.Empty
 
         // TODO: merge last two substitutors to avoid redundant descriptor substitutions
-        return substitute(resolvedCallAtom.freshVariablesSubstitutor).substitute(resolvedCallAtom.knownParametersSubstitutor)
-            .substituteAndApproximateTypes(inferredTypeVariablesSubstitutor, if (shouldApproximate) typeApproximator else null)
+        return substitute(resolvedCallAtom.freshVariablesSubstitutor)
+            .substitute(resolvedCallAtom.knownParametersSubstitutor)
+            .substituteAndApproximateTypes(
+                inferredTypeVariablesSubstitutor,
+                typeApproximator.takeIf { shouldApproximate }
+            )
     }
 
     fun getArgumentTypeForConstantConvertedArgument(valueArgument: ValueArgument): IntegerValueTypeConstant? {

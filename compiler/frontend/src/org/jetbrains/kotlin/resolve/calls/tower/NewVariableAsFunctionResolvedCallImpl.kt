@@ -9,14 +9,32 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class NewVariableAsFunctionResolvedCallImpl(
-    override val variableCall: NewResolvedCallImpl<VariableDescriptor>,
-    override val functionCall: NewResolvedCallImpl<FunctionDescriptor>,
-) : VariableAsFunctionResolvedCall, ResolvedCall<FunctionDescriptor> by functionCall {
-    val baseCall get() = functionCall.resolvedCallAtom.atom.psiKotlinCall.cast<PSIKotlinCallForInvoke>().baseCall
+    override val variableCall: NewAbstractResolvedCall<VariableDescriptor>,
+    override val functionCall: NewAbstractResolvedCall<FunctionDescriptor>,
+) : VariableAsFunctionResolvedCall, NewAbstractResolvedCall<FunctionDescriptor>() {
+    override val resolvedCallAtom = functionCall.resolvedCallAtom
+    override val psiKotlinCall: PSIKotlinCall = functionCall.psiKotlinCall
+    val baseCall get() = functionCall.psiKotlinCall.cast<PSIKotlinCallForInvoke>().baseCall
+    override fun getStatus() = functionCall.status
+    override fun getCandidateDescriptor() = functionCall.candidateDescriptor
+    override fun getResultingDescriptor() = functionCall.resultingDescriptor
+    override fun getExtensionReceiver() = functionCall.extensionReceiver
+    override fun getDispatchReceiver() = functionCall.dispatchReceiver
+    override fun getExplicitReceiverKind() = functionCall.explicitReceiverKind
+    override fun getTypeArguments() = functionCall.typeArguments
+    override fun getSmartCastDispatchReceiverType() = functionCall.smartCastDispatchReceiverType
+    override val argumentMappingByOriginal = functionCall.argumentMappingByOriginal
+    override val kotlinCall = functionCall.kotlinCall
+    override val languageVersionSettings = functionCall.languageVersionSettings
+    override fun containsOnlyOnlyInputTypesErrors() = functionCall.containsOnlyOnlyInputTypesErrors()
+    override fun argumentToParameterMap(
+        resultingDescriptor: CallableDescriptor,
+        valueArguments: Map<ValueParameterDescriptor, ResolvedValueArgument>
+    ) = functionCall.argumentToParameterMap(resultingDescriptor, valueArguments)
+    override val isCompleted: Boolean = functionCall.isCompleted
 }

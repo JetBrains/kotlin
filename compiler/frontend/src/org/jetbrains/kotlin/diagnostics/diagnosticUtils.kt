@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.calls.inference.wrapWithCapturingSubstitution
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution

@@ -18,10 +18,13 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.compactIfPossible
 
-sealed class NewAbstractResolvedCall<D : CallableDescriptor>() : ResolvedCall<D> {
+sealed class NewAbstractResolvedCall<D : CallableDescriptor> : ResolvedCall<D> {
     abstract val argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
     abstract val kotlinCall: KotlinCall
-    protected abstract val languageVersionSettings: LanguageVersionSettings
+    abstract val languageVersionSettings: LanguageVersionSettings
+    abstract val resolvedCallAtom: ResolvedCallAtom?
+    abstract val psiKotlinCall: PSIKotlinCall
+    abstract val isCompleted: Boolean
 
     protected var argumentToParameterMap: Map<ValueArgument, ArgumentMatchImpl>? = null
     protected var _valueArguments: Map<ValueParameterDescriptor, ResolvedValueArgument>? = null
@@ -39,9 +42,15 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>() : ResolvedCall<D>
         return _valueArguments!!
     }
 
+    fun setValueArguments(m: Map<ValueParameterDescriptor, ResolvedValueArgument>) {
+        _valueArguments = m
+    }
+
+    open fun setResultingSubstitutor(substitutor: NewTypeSubstitutor?) {}
+
     override fun getValueArgumentsByIndex(): List<ResolvedValueArgument>? {
         val arguments = ArrayList<ResolvedValueArgument?>(candidateDescriptor.valueParameters.size)
-        for (i in 0..candidateDescriptor.valueParameters.size - 1) {
+        for (i in 0 until candidateDescriptor.valueParameters.size) {
             arguments.add(null)
         }
 
@@ -86,7 +95,7 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>() : ResolvedCall<D>
         nonTrivialUpdatedResultInfo = dataFlowInfo.and(kotlinCall.psiKotlinCall.resultDataFlowInfo)
     }
 
-    protected abstract fun argumentToParameterMap(
+    abstract fun argumentToParameterMap(
         resultingDescriptor: CallableDescriptor,
         valueArguments: Map<ValueParameterDescriptor, ResolvedValueArgument>,
     ): Map<ValueArgument, ArgumentMatchImpl>
@@ -130,5 +139,4 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>() : ResolvedCall<D>
                 }
             }
         }.compactIfPossible()
-
 }
