@@ -627,6 +627,12 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
+            @Test
+            @TestMetadata("default.kt")
+            public void testDefault() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/default.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode")
             @TestDataPath("$PROJECT_ROOT")

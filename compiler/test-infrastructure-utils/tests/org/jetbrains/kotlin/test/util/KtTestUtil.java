@@ -124,7 +124,7 @@ public class KtTestUtil {
             if (otherProp != null) {
                 return getJdkHome(otherProp, null, prop);
             } else {
-                throw new AssertionError("Environment variable " + propToReport + " is not set!");
+                return getJdkHome("JDK_8", "JDK_18");
             }
         }
         return new File(jdk);
