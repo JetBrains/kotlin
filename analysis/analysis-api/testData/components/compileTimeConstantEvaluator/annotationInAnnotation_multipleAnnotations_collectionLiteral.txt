@@ -1,4 +1,4 @@
-expression: [Annotation("v1", "v2"), Annotation(["v3", "v4"])]
+expression: [Annotation("v1", "v2"), Annotation(strings = ["v3", "v4"])]
 constant_value: KtArrayConstantValue [
   KtAnnotationConstantValue(Annotation, (strings = KtArrayConstantValue [
     KtLiteralConstantValue(constantValueKind=String, value=v1)

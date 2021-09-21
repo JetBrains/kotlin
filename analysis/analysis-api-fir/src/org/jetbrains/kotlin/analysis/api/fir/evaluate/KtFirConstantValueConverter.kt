@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.realPsi
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.psi.KtCallElement
-import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 
 internal object KtFirConstantValueConverter {
@@ -39,18 +39,37 @@ internal object KtFirConstantValueConverter {
         firConstExpression.convertConstantExpression()
 
     private fun <T> FirConstExpression<T>.convertConstantExpression(): KtLiteralConstantValue<T> =
-        KtLiteralConstantValue(kind, value, realPsi as? KtElement)
+        KtLiteralConstantValue(kind, value, psi as? KtElement)
 
     private fun Collection<FirExpression>.convertConstantExpression(
         session: FirSession,
     ): Collection<KtConstantValue> =
         mapNotNull { it.convertConstantExpression(session) }
 
-    private fun Collection<KtConstantValue>.toArrayConstantValueIfNecessary(kotlinOrigin: KtElement?): KtConstantValue {
-        return if (size == 1)
-            single()
-        else
+    // Refer to KtLightAnnotationParameterList#checkIfToArrayConversionExpected
+    private fun ValueArgument?.arrayConversionExpected(): Boolean {
+        return when {
+            this == null -> false
+            this is KtValueArgument && isSpread -> {
+                // Anno(*[1,2,3])
+                false
+            }
+            else -> {
+                // Anno(a = [1,2,3]) v.s. Anno(1) or Anno(1,2,3)
+                !isNamed()
+            }
+        }
+    }
+
+    private fun Collection<KtConstantValue>.toArrayConstantValueIfNecessary(kotlinOrigin: KtElement?): KtConstantValue? {
+        val valueArgument = if (kotlinOrigin is ValueArgument) kotlinOrigin else
+            (kotlinOrigin?.parents?.firstOrNull { it is ValueArgument } as? ValueArgument)
+        val wrap = valueArgument?.arrayConversionExpected() ?: false
+        return if (wrap) {
             KtArrayConstantValue(this, kotlinOrigin)
+        } else {
+            singleOrNull()
+        }
     }
 
     fun toConstantValue(
@@ -67,13 +86,15 @@ internal object KtFirConstantValueConverter {
             is FirNamedArgumentExpression -> {
                 expression.convertConstantExpression(session)
             }
+            is FirSpreadArgumentExpression -> {
+                expression.convertConstantExpression(session)
+            }
             is FirVarargArgumentsExpression -> {
-                arguments.convertConstantExpression(session)
-                    .toArrayConstantValueIfNecessary(realPsi as? KtElement)
+                arguments.convertConstantExpression(session).toArrayConstantValueIfNecessary(psi as? KtElement)
             }
             is FirArrayOfCall -> {
-                argumentList.arguments.convertConstantExpression(session)
-                    .toArrayConstantValueIfNecessary(realPsi as? KtElement)
+                // Desugared collection literals.
+                KtArrayConstantValue(argumentList.arguments.convertConstantExpression(session), psi as? KtElement)
             }
             is FirFunctionCall -> {
                 val reference = calleeReference as? FirResolvedNamedReference ?: return null
@@ -88,14 +109,14 @@ internal object KtFirConstantValueConverter {
                             KtAnnotationConstantValue(
                                 resolvedSymbol.callableId.classId,
                                 toNamedConstantValue(resultMap, session),
-                                this.realPsi as? KtCallElement
+                                psi as? KtCallElement
                             )
                         } else null
                     }
                     is FirNamedFunctionSymbol -> {
+                        // arrayOf call with a single vararg argument.
                         if (resolvedSymbol.callableId.asSingleFqName() in ArrayFqNames.ARRAY_CALL_FQ_NAMES)
-                            argumentList.arguments.convertConstantExpression(session)
-                                .toArrayConstantValueIfNecessary(realPsi as? KtElement)
+                            argumentList.arguments.single().convertConstantExpression(session)
                         else null
                     }
                     else -> null
@@ -105,7 +126,7 @@ internal object KtFirConstantValueConverter {
                 val reference = calleeReference as? FirResolvedNamedReference ?: return null
                 when (val resolvedSymbol = reference.resolvedSymbol) {
                     is FirEnumEntrySymbol -> {
-                        KtEnumEntryConstantValue(resolvedSymbol.callableId, realPsi as? KtElement)
+                        KtEnumEntryConstantValue(resolvedSymbol.callableId, psi as? KtElement)
                     }
                     else -> null
                 }

@@ -37,6 +37,12 @@ public class CompileTimeConstantEvaluatorTestGenerated extends AbstractCompileTi
     }
 
     @Test
+    @TestMetadata("annotationInAnnotation_collectionLiteral_spread.kt")
+    public void testAnnotationInAnnotation_collectionLiteral_spread() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantEvaluator/annotationInAnnotation_collectionLiteral_spread.kt");
+    }
+
+    @Test
     @TestMetadata("annotationInAnnotation_multipleAnnotations_arrayOf.kt")
     public void testAnnotationInAnnotation_multipleAnnotations_arrayOf() throws Exception {
         runTest("analysis/analysis-api/testData/components/compileTimeConstantEvaluator/annotationInAnnotation_multipleAnnotations_arrayOf.kt");
@@ -46,6 +52,18 @@ public class CompileTimeConstantEvaluatorTestGenerated extends AbstractCompileTi
     @TestMetadata("annotationInAnnotation_multipleAnnotations_collectionLiteral.kt")
     public void testAnnotationInAnnotation_multipleAnnotations_collectionLiteral() throws Exception {
         runTest("analysis/analysis-api/testData/components/compileTimeConstantEvaluator/annotationInAnnotation_multipleAnnotations_collectionLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationInAnnotation_single.kt")
+    public void testAnnotationInAnnotation_single() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantEvaluator/annotationInAnnotation_single.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationInAnnotation_vararg.kt")
+    public void testAnnotationInAnnotation_vararg() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantEvaluator/annotationInAnnotation_vararg.kt");
     }
 
     @Test
