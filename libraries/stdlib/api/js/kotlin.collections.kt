@@ -10425,7 +10425,7 @@ public final class ArrayDeque<E> : kotlin.collections.AbstractMutableList<E> {
 public open class ArrayList<E> : kotlin.collections.AbstractMutableList<E>, kotlin.collections.MutableList<E>, kotlin.collections.RandomAccess {
     public constructor ArrayList<E>()
 
-    public constructor ArrayList<E>(initialCapacity: kotlin.Int = ...)
+    public constructor ArrayList<E>(initialCapacity: kotlin.Int)
 
     public constructor ArrayList<E>(elements: kotlin.collections.Collection<E>)
 
@@ -10530,7 +10530,7 @@ public open class HashMap<K, V> : kotlin.collections.AbstractMutableMap<K, V>, k
 
     public constructor HashMap<K, V>(initialCapacity: kotlin.Int)
 
-    public constructor HashMap<K, V>(initialCapacity: kotlin.Int, loadFactor: kotlin.Float = ...)
+    public constructor HashMap<K, V>(initialCapacity: kotlin.Int, loadFactor: kotlin.Float)
 
     public constructor HashMap<K, V>(original: kotlin.collections.Map<out K, V>)
 
@@ -10556,7 +10556,7 @@ public open class HashSet<E> : kotlin.collections.AbstractMutableSet<E>, kotlin.
 
     public constructor HashSet<E>(initialCapacity: kotlin.Int)
 
-    public constructor HashSet<E>(initialCapacity: kotlin.Int, loadFactor: kotlin.Float = ...)
+    public constructor HashSet<E>(initialCapacity: kotlin.Int, loadFactor: kotlin.Float)
 
     public constructor HashSet<E>(elements: kotlin.collections.Collection<E>)
 
@@ -10618,7 +10618,7 @@ public open class LinkedHashMap<K, V> : kotlin.collections.HashMap<K, V>, kotlin
 
     public constructor LinkedHashMap<K, V>(initialCapacity: kotlin.Int)
 
-    public constructor LinkedHashMap<K, V>(initialCapacity: kotlin.Int, loadFactor: kotlin.Float = ...)
+    public constructor LinkedHashMap<K, V>(initialCapacity: kotlin.Int, loadFactor: kotlin.Float)
 
     public constructor LinkedHashMap<K, V>(original: kotlin.collections.Map<out K, V>)
 
@@ -10642,7 +10642,7 @@ public open class LinkedHashSet<E> : kotlin.collections.HashSet<E>, kotlin.colle
 
     public constructor LinkedHashSet<E>(initialCapacity: kotlin.Int)
 
-    public constructor LinkedHashSet<E>(initialCapacity: kotlin.Int, loadFactor: kotlin.Float = ...)
+    public constructor LinkedHashSet<E>(initialCapacity: kotlin.Int, loadFactor: kotlin.Float)
 
     public constructor LinkedHashSet<E>(elements: kotlin.collections.Collection<E>)
 }

@@ -24,8 +24,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
      * Creates an empty [ArrayList].
      * @param initialCapacity initial capacity (ignored)
      */
-    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-    public actual constructor(initialCapacity: Int = 0) : this(emptyArray()) {}
+    public actual constructor(initialCapacity: Int) : this(emptyArray()) {}
 
     /**
      * Creates an [ArrayList] filled from the [elements] collection.
