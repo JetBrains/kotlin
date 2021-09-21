@@ -75,9 +75,9 @@ object FirOptInUsageBaseChecker {
     }
 
     fun FirBasedSymbol<*>.loadExperimentalities(
-        context: CheckerContext, fromSetter: Boolean
+        context: CheckerContext, fromSetter: Boolean, dispatchReceiverType: ConeKotlinType?
     ): Set<Experimentality> = loadExperimentalities(
-        context, knownExperimentalities = null, visited = mutableSetOf(), fromSetter
+        context, knownExperimentalities = null, visited = mutableSetOf(), fromSetter, dispatchReceiverType
     )
 
     @OptIn(SymbolInternals::class)
@@ -86,6 +86,7 @@ object FirOptInUsageBaseChecker {
         knownExperimentalities: SmartSet<Experimentality>?,
         visited: MutableSet<FirAnnotatedDeclaration>,
         fromSetter: Boolean,
+        dispatchReceiverType: ConeKotlinType?,
     ): Set<Experimentality> {
         ensureResolved(FirResolvePhase.STATUS)
         val fir = this.fir as? FirAnnotatedDeclaration ?: return emptySet()
@@ -99,12 +100,12 @@ object FirOptInUsageBaseChecker {
                 val parentClassScope = parentClassSymbol?.unsubstitutedScope(context)
                 if (this is FirNamedFunctionSymbol) {
                     parentClassScope?.processDirectlyOverriddenFunctions(this) {
-                        it.loadExperimentalities(context, result, visited, fromSetter = false)
+                        it.loadExperimentalities(context, result, visited, fromSetter = false, dispatchReceiverType = null)
                         ProcessorAction.NEXT
                     }
                 } else if (this is FirPropertySymbol) {
                     parentClassScope?.processDirectlyOverriddenProperties(this) {
-                        it.loadExperimentalities(context, result, visited, fromSetter)
+                        it.loadExperimentalities(context, result, visited, fromSetter, dispatchReceiverType = null)
                         ProcessorAction.NEXT
                     }
                 }
@@ -119,13 +120,17 @@ object FirOptInUsageBaseChecker {
                     }
                 }
             }
-            parentClassSymbol?.loadExperimentalities(context, result, visited, fromSetter = false)
+            if (dispatchReceiverType == null) {
+                parentClassSymbol?.loadExperimentalities(context, result, visited, fromSetter = false, dispatchReceiverType = null)
+            } else {
+                dispatchReceiverType.addExperimentalities(context, result, visited)
+            }
             if (fromSetter && this is FirPropertySymbol) {
-                setterSymbol?.loadExperimentalities(context, result, visited, fromSetter = false)
+                setterSymbol?.loadExperimentalities(context, result, visited, fromSetter = false, dispatchReceiverType)
             }
         } else if (this is FirRegularClassSymbol && fir is FirRegularClass && !fir.isLocal) {
             val parentClassSymbol = outerClassSymbol(context)
-            parentClassSymbol?.loadExperimentalities(context, result, visited, fromSetter = false)
+            parentClassSymbol?.loadExperimentalities(context, result, visited, fromSetter = false, dispatchReceiverType = null)
         }
 
         for (annotation in fir.annotations) {
@@ -164,7 +169,7 @@ object FirOptInUsageBaseChecker {
     ) {
         if (this !is ConeClassLikeType) return
         lookupTag.toSymbol(context.session)?.loadExperimentalities(
-            context, result, visited, fromSetter = false
+            context, result, visited, fromSetter = false, dispatchReceiverType = null
         )
         fullyExpandedType(context.session).typeArguments.forEach {
             if (!it.isStarProjection) it.type?.addExperimentalities(context, result, visited)

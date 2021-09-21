@@ -55,4 +55,4 @@ fun use1() {
     C.D.<!OPT_IN_USAGE!>E<!>.<!OPT_IN_USAGE!>F<!>()
 }
 
-fun use2(f: <!OPT_IN_USAGE!>C.D.E.F<!>) = <!OPT_IN_USAGE!>f<!>.hashCode()
+fun use2(f: <!OPT_IN_USAGE!>C.D.E.F<!>) = <!OPT_IN_USAGE!>f<!>.<!OPT_IN_USAGE!>hashCode<!>()

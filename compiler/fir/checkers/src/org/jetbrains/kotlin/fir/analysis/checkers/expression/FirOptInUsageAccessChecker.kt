@@ -10,8 +10,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.coneType
 
 object FirOptInUsageAccessChecker : FirQualifiedAccessChecker() {
     override fun check(expression: FirQualifiedAccess, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -21,14 +24,16 @@ object FirOptInUsageAccessChecker : FirQualifiedAccessChecker() {
         ) return
         val reference = expression.calleeReference as? FirResolvedNamedReference ?: return
         val resolvedSymbol = reference.resolvedSymbol
+        val dispatchReceiverType =
+            expression.dispatchReceiver.takeIf { it !is FirNoReceiverExpression }?.typeRef?.coneType?.fullyExpandedType(context.session)
         with(FirOptInUsageBaseChecker) {
             if (expression is FirVariableAssignment && resolvedSymbol is FirPropertySymbol) {
-                val experimentalities = resolvedSymbol.loadExperimentalities(context, fromSetter = true) +
+                val experimentalities = resolvedSymbol.loadExperimentalities(context, fromSetter = true, dispatchReceiverType) +
                         loadExperimentalitiesFromTypeArguments(context, expression.typeArguments)
                 reportNotAcceptedExperimentalities(experimentalities, expression.lValue, context, reporter)
                 return
             }
-            val experimentalities = resolvedSymbol.loadExperimentalities(context, fromSetter = false) +
+            val experimentalities = resolvedSymbol.loadExperimentalities(context, fromSetter = false, dispatchReceiverType) +
                     loadExperimentalitiesFromTypeArguments(context, expression.typeArguments)
             reportNotAcceptedExperimentalities(experimentalities, expression, context, reporter)
         }
