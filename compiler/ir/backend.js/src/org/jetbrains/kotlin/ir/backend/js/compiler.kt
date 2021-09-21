@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
-import org.jetbrains.kotlin.ir.backend.js.ic.ModuleCache
 import org.jetbrains.kotlin.ir.backend.js.ic.icCompile
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
@@ -78,10 +81,50 @@ fun compile(
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, _) =
         loadIr(depsDescriptors, irFactory, verifySignatures, filesToLower, loadFunctionInterfacesIntoStdlib = true)
 
-    val mainModule = depsDescriptors.mainModule
-    val configuration = depsDescriptors.compilerConfiguration
+    return compileIr(
+        moduleFragment,
+        depsDescriptors.mainModule,
+        depsDescriptors.compilerConfiguration,
+        dependencyModules,
+        irBuiltIns,
+        symbolTable,
+        deserializer,
+        phaseConfig,
+        exportedDeclarations,
+        dceDriven,
+        dceRuntimeDiagnostic,
+        es6mode,
+        propertyLazyInitialization,
+        baseClassIntoMetadata,
+        lowerPerModule,
+        safeExternalBoolean,
+        safeExternalBooleanDiagnostic,
+        granularity
+    )
+}
 
+fun compileIr(
+    moduleFragment: IrModuleFragment,
+    mainModule: MainModule,
+    configuration: CompilerConfiguration,
+    dependencyModules: List<IrModuleFragment>,
+    irBuiltIns: IrBuiltIns,
+    symbolTable: SymbolTable,
+    deserializer: JsIrLinker,
+    phaseConfig: PhaseConfig,
+    exportedDeclarations: Set<FqName>,
+    dceDriven: Boolean,
+    dceRuntimeDiagnostic: RuntimeDiagnostic?,
+    es6mode: Boolean,
+    propertyLazyInitialization: Boolean,
+    baseClassIntoMetadata: Boolean,
+    lowerPerModule: Boolean,
+    safeExternalBoolean: Boolean,
+    safeExternalBooleanDiagnostic: RuntimeDiagnostic?,
+    granularity: JsGenerationGranularity,
+): LoweredIr {
     val moduleDescriptor = moduleFragment.descriptor
+    val irFactory = symbolTable.irFactory
 
     val allModules = when (mainModule) {
         is MainModule.SourceFiles -> dependencyModules + listOf(moduleFragment)
