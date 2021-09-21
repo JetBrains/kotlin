@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.CompositeProjectComponentArtifactMetadata
 import org.jetbrains.kotlin.gradle.utils.`is`
 import org.jetbrains.kotlin.gradle.utils.topRealPath
+import org.jetbrains.kotlin.gradle.utils.unavailableValueError
 import java.io.File
 import java.io.Serializable
 
@@ -61,6 +62,7 @@ internal class KotlinCompilationNpmResolver(
     }
 
     val nodeJs get() = rootResolver.nodeJs
+    private val nodeJs_ get() = nodeJs ?: unavailableValueError("nodeJs")
 
     val target get() = compilation.target
 
@@ -82,7 +84,7 @@ internal class KotlinCompilationNpmResolver(
             npmProject.publicPackageJsonTaskName,
             listOf(compilation)
         ) {
-            it.dependsOn(nodeJs.npmInstallTaskProvider)
+            it.dependsOn(nodeJs_.npmInstallTaskProvider)
             it.dependsOn(packageJsonTaskHolder)
         }.also { packageJsonTask ->
             if (compilation.isMain()) {
@@ -187,7 +189,7 @@ internal class KotlinCompilationNpmResolver(
         }
 
         // We don't have `kotlin-js-test-runner` in NPM yet
-        all.dependencies.add(nodeJs.versions.kotlinJsTestRunner.createDependency(project))
+        all.dependencies.add(nodeJs_.versions.kotlinJsTestRunner.createDependency(project))
 
         project.dependencies.add(
             all.name,
@@ -413,12 +415,9 @@ internal class KotlinCompilationNpmResolver(
         var fileCollectionDependencies: Collection<FileCollectionExternalGradleDependency>,
         val projectPath: String
     ) : Serializable {
-        private val projectPackagesDir by lazy { compilationResolver.nodeJs.projectPackagesDir }
-        private val rootDir by lazy { compilationResolver.nodeJs.rootProject.rootDir }
-
-        private val dukatPackageVersion by lazy {
-            compilationResolver.nodeJs.versions.dukat
-        }
+        private val projectPackagesDir by lazy { compilationResolver.nodeJs_.projectPackagesDir }
+        private val rootDir by lazy { compilationResolver.nodeJs_.rootProject.rootDir }
+        private val dukatPackageVersion by lazy { compilationResolver.nodeJs_.versions.dukat }
 
         @Transient
         internal lateinit var compilationResolver: KotlinCompilationNpmResolver
@@ -464,7 +463,7 @@ internal class KotlinCompilationNpmResolver(
             }
                 .filterNotNull()
 
-            val toolsNpmDependencies = compilationResolver.rootResolver.nodeJs.taskRequirements
+            val toolsNpmDependencies = compilationResolver.rootResolver.taskRequirements
                 .getCompilationNpmRequirements(projectPath, compilationResolver.compilationDisambiguatedName)
 
             val dukatIfNecessary = if (externalNpmDependencies.any { it.generateExternals }) {

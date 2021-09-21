@@ -11,6 +11,7 @@ import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
 
@@ -23,12 +24,12 @@ class Yarn : NpmApi {
     override fun setup(project: Project) =
         getDelegate(project.rootProject).setup(project)
 
-    override fun preparedFiles(nodeJs: NodeJsRootExtension): Collection<File> =
+    override fun preparedFiles(nodeJs: NpmEnvironment): Collection<File> =
         yarnWorkspaces.preparedFiles(nodeJs)
 
     override fun prepareRootProject(
         rootProject: Project?,
-        nodeJs: NodeJsRootExtension,
+        nodeJs: NpmEnvironment,
         rootProjectName: String,
         rootProjectVersion: String,
         logger: Logger,
@@ -50,7 +51,7 @@ class Yarn : NpmApi {
     override fun resolveRootProject(
         services: ServiceRegistry,
         logger: Logger,
-        nodeJs: NodeJsRootExtension,
+        nodeJs: NpmEnvironment,
         command: String,
         isStandalone: Boolean,
         npmProjects: Collection<KotlinCompilationNpmResolution>,
