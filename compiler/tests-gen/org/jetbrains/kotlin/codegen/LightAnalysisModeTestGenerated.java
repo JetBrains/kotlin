@@ -20392,6 +20392,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class NoDefaultImpls extends AbstractLightAnalysisModeTest {
+                @TestMetadata("kt42967_all.kt")
+                public void ignoreKt42967_all() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/kt42967_all.kt");
+                }
+
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
                 }
@@ -20676,6 +20681,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class JavaDefaults extends AbstractLightAnalysisModeTest {
+            @TestMetadata("kt42967.kt")
+            public void ignoreKt42967() throws Exception {
+                runTest("compiler/testData/codegen/box/jvm8/javaDefaults/kt42967.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }

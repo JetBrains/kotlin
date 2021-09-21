@@ -24513,6 +24513,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 }
 
                 @Test
+                @TestMetadata("kt42967_all.kt")
+                public void testKt42967_all() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/kt42967_all.kt");
+                }
+
+                @Test
                 @TestMetadata("localDelegatedProperties.kt")
                 public void testLocalDelegatedProperties() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/localDelegatedProperties.kt");
@@ -24745,6 +24751,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("kt40920_map.kt")
             public void testKt40920_map() throws Exception {
                 runTest("compiler/testData/codegen/box/jvm8/javaDefaults/kt40920_map.kt");
+            }
+
+            @Test
+            @TestMetadata("kt42967.kt")
+            public void testKt42967() throws Exception {
+                runTest("compiler/testData/codegen/box/jvm8/javaDefaults/kt42967.kt");
             }
 
             @Test
