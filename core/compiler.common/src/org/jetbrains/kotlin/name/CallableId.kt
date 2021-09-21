@@ -33,6 +33,7 @@ data class CallableId(
             }
             return field
         }
+        private set
 
     constructor(classId: ClassId, callableName: Name) : this(classId.packageFqName, classId.relativeClassName, callableName) {
         this.classId = classId
