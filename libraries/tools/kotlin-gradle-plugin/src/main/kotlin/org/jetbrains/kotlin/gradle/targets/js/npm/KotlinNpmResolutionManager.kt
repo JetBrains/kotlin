@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmR
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinProjectNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import org.jetbrains.kotlin.gradle.utils.unavailableValueError
 import java.io.File
 
 /**
@@ -80,9 +81,9 @@ import java.io.File
  *
  * Note that in this case resolution process will be performed outside of task execution.
  */
-class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension) {
+class KotlinNpmResolutionManager(@Transient private val nodeJsSettings: NodeJsRootExtension?) {
     private val forceFullResolve: Boolean by lazy {
-        nodeJsSettings.rootProject.isInIdeaSync
+        (nodeJsSettings ?: unavailableValueError("nodeJsSettings")).rootProject.isInIdeaSync
     }
 
     internal val resolver = KotlinRootNpmResolver(nodeJsSettings, forceFullResolve)
@@ -92,9 +93,11 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
         internal var state: ResolutionState? = null
     }
 
-    private val stateHolderProvider = nodeJsSettings.rootProject.gradle.sharedServices.registerIfAbsent(
-        "npm-resolution-manager-state-holder", KotlinNpmResolutionManagerStateHolder::class.java) {
-    }
+    private val stateHolderProvider = (nodeJsSettings ?: unavailableValueError("nodeJsSettings"))
+        .rootProject.gradle.sharedServices.registerIfAbsent(
+            "npm-resolution-manager-state-holder", KotlinNpmResolutionManagerStateHolder::class.java
+        ) {
+        }
 
     private val stateHolder get() = stateHolderProvider.get()
 
@@ -159,7 +162,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
                 return (state as ResolutionState.Installed).resolved
             }
 
-            val installUpToDate = nodeJsSettings.npmInstallTaskProvider?.get()?.state?.upToDate ?: false
+            val installUpToDate = nodeJsSettings?.npmInstallTaskProvider?.get()?.state?.upToDate ?: false
             val forceUpToDate = installUpToDate && !forceFullResolve
 
             val installation = prepareIfNeeded(requireUpToDateReason = reason, logger = logger)
@@ -202,7 +205,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
                     when (state1) {
                         is ResolutionState.Prepared -> alreadyResolved(state1.preparedInstallation)
                         is ResolutionState.Configuring -> {
-                            val upToDate = nodeJsSettings.rootPackageJsonTaskProvider?.get()?.state?.upToDate ?: true
+                            val upToDate = nodeJsSettings?.rootPackageJsonTaskProvider?.get()?.state?.upToDate ?: true
                             if (requireUpToDateReason != null && !upToDate) {
                                 error("NPM dependencies should be resolved $requireUpToDateReason")
                             }

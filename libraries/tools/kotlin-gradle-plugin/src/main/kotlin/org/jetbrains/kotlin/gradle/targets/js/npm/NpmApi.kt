@@ -11,18 +11,19 @@ import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
+import java.io.Serializable
 
 /**
  * NodeJS package manager API
  */
-interface NpmApi {
+interface NpmApi : Serializable {
     fun setup(project: Project)
 
-    fun preparedFiles(nodeJs: NodeJsRootExtension): Collection<File>
+    fun preparedFiles(nodeJs: NpmEnvironment): Collection<File>
 
     fun prepareRootProject(
         rootProject: Project?,
-        nodeJs: NodeJsRootExtension,
+        nodeJs: NpmEnvironment,
         rootProjectName: String,
         rootProjectVersion: String,
         logger: Logger,
@@ -33,7 +34,7 @@ interface NpmApi {
     fun resolveRootProject(
         services: ServiceRegistry,
         logger: Logger,
-        nodeJs: NodeJsRootExtension,
+        nodeJs: NpmEnvironment,
         yarnHome: File,
         npmProjects: Collection<KotlinCompilationNpmResolution>,
         cliArgs: List<String>
@@ -50,3 +51,11 @@ interface NpmApi {
             "Resolving NPM dependencies using $packageManagerTitle"
     }
 }
+
+data class NpmEnvironment(
+    val rootPackageDir: File,
+    val nodeExecutable: String
+) : Serializable
+
+internal val NodeJsRootExtension.asNpmEnvironment
+    get() = NpmEnvironment(rootPackageDir, requireConfigured().nodeExecutable)

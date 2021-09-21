@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.jetbrains.kotlin.gradle.targets.js.npm.buildNpmVersion
+import java.io.Serializable
 
 class YarnResolution(
     val path: String
-) {
+) : Serializable {
     var includedVersions = mutableListOf<String>()
     var excludedVersions = mutableListOf<String>()
 

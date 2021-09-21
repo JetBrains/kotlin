@@ -5,20 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
-import com.google.gson.Gson
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.internal.service.ServiceRegistry
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
 
 class YarnWorkspaces : YarnBasics() {
-    override fun preparedFiles(nodeJs: NodeJsRootExtension): Collection<File> {
+    override fun preparedFiles(nodeJs: NpmEnvironment): Collection<File> {
         return listOf(
             nodeJs
                 .rootPackageDir
@@ -28,7 +26,7 @@ class YarnWorkspaces : YarnBasics() {
 
     override fun prepareRootProject(
         rootProject: Project?,
-        nodeJs: NodeJsRootExtension,
+        nodeJs: NpmEnvironment,
         rootProjectName: String,
         rootProjectVersion: String,
         logger: Logger,
@@ -48,7 +46,7 @@ class YarnWorkspaces : YarnBasics() {
     }
 
     private fun prepareRootPackageJson(
-        nodeJs: NodeJsRootExtension,
+        nodeJs: NpmEnvironment,
         rootProjectName: String,
         rootProjectVersion: String,
         logger: Logger,
@@ -70,7 +68,7 @@ class YarnWorkspaces : YarnBasics() {
     override fun resolveRootProject(
         services: ServiceRegistry,
         logger: Logger,
-        nodeJs: NodeJsRootExtension,
+        nodeJs: NpmEnvironment,
         yarnHome: File,
         npmProjects: Collection<KotlinCompilationNpmResolution>,
         cliArgs: List<String>
