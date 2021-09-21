@@ -1235,6 +1235,64 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/arrays/forInUnsignedArray")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ForInUnsignedArray {
+            @Test
+            public void testAllFilesPresentInForInUnsignedArray() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/forInUnsignedArray"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("forInUnsignedArray.kt")
+            public void testForInUnsignedArray() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArray.kt");
+            }
+
+            @Test
+            @TestMetadata("forInUnsignedArrayIndices.kt")
+            public void testForInUnsignedArrayIndices() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayIndices.kt");
+            }
+
+            @Test
+            @TestMetadata("forInUnsignedArrayIndicesReversed.kt")
+            public void testForInUnsignedArrayIndicesReversed() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayIndicesReversed.kt");
+            }
+
+            @Test
+            @TestMetadata("forInUnsignedArrayReversed.kt")
+            public void testForInUnsignedArrayReversed() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayReversed.kt");
+            }
+
+            @Test
+            @TestMetadata("forInUnsignedArrayWithIndex.kt")
+            public void testForInUnsignedArrayWithIndex() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayWithIndex.kt");
+            }
+
+            @Test
+            @TestMetadata("forInUnsignedArrayWithIndexNoElementVar.kt")
+            public void testForInUnsignedArrayWithIndexNoElementVar() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayWithIndexNoElementVar.kt");
+            }
+
+            @Test
+            @TestMetadata("forInUnsignedArrayWithIndexNoIndexVar.kt")
+            public void testForInUnsignedArrayWithIndexNoIndexVar() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayWithIndexNoIndexVar.kt");
+            }
+
+            @Test
+            @TestMetadata("forInUnsignedArrayWithIndexReversed.kt")
+            public void testForInUnsignedArrayWithIndexReversed() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayWithIndexReversed.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl")
         @TestDataPath("$PROJECT_ROOT")
         public class MultiDecl {

@@ -406,6 +406,59 @@ public class JsLegacyPrimitiveArraysBoxTestGenerated extends AbstractJsLegacyPri
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/arrays/forInUnsignedArray")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ForInUnsignedArray extends AbstractJsLegacyPrimitiveArraysBoxTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInForInUnsignedArray() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/forInUnsignedArray"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+        }
+
+        @TestMetadata("forInUnsignedArray.kt")
+        public void testForInUnsignedArray() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArray.kt");
+        }
+
+        @TestMetadata("forInUnsignedArrayIndices.kt")
+        public void testForInUnsignedArrayIndices() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayIndices.kt");
+        }
+
+        @TestMetadata("forInUnsignedArrayIndicesReversed.kt")
+        public void testForInUnsignedArrayIndicesReversed() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayIndicesReversed.kt");
+        }
+
+        @TestMetadata("forInUnsignedArrayReversed.kt")
+        public void testForInUnsignedArrayReversed() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayReversed.kt");
+        }
+
+        @TestMetadata("forInUnsignedArrayWithIndex.kt")
+        public void testForInUnsignedArrayWithIndex() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayWithIndex.kt");
+        }
+
+        @TestMetadata("forInUnsignedArrayWithIndexNoElementVar.kt")
+        public void testForInUnsignedArrayWithIndexNoElementVar() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayWithIndexNoElementVar.kt");
+        }
+
+        @TestMetadata("forInUnsignedArrayWithIndexNoIndexVar.kt")
+        public void testForInUnsignedArrayWithIndexNoIndexVar() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayWithIndexNoIndexVar.kt");
+        }
+
+        @TestMetadata("forInUnsignedArrayWithIndexReversed.kt")
+        public void testForInUnsignedArrayWithIndexReversed() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayWithIndexReversed.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

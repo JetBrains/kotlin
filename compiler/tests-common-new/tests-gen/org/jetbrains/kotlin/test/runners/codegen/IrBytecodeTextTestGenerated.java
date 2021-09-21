@@ -3114,6 +3114,24 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             }
 
             @Test
+            @TestMetadata("forInUnsignedArray.kt")
+            public void testForInUnsignedArray() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/forInUnsignedArray.kt");
+            }
+
+            @Test
+            @TestMetadata("forInUnsignedArrayIndices.kt")
+            public void testForInUnsignedArrayIndices() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/forInUnsignedArrayIndices.kt");
+            }
+
+            @Test
+            @TestMetadata("forInUnsignedArrayWithIndex.kt")
+            public void testForInUnsignedArrayWithIndex() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/forInUnsignedArrayWithIndex.kt");
+            }
+
+            @Test
             @TestMetadata("forInUntilUIntMaxValue.kt")
             public void testForInUntilUIntMaxValue() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/forInUntilUIntMaxValue.kt");
