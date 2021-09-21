@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -102,6 +103,10 @@ private class FirAnnotationResolveTransformer(
         owners = state
     }
 
+    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Multimap<AnnotationFqn, FirRegularClass>): FirStatement {
+        return transformAnnotation(annotationCall, data)
+    }
+
     override fun transformAnnotation(
         annotation: FirAnnotation,
         data: Multimap<AnnotationFqn, FirRegularClass>
@@ -116,7 +121,7 @@ private class FirAnnotationResolveTransformer(
         regularClass: FirRegularClass,
         data: Multimap<AnnotationFqn, FirRegularClass>
     ): FirStatement {
-        withClassDeclarationCleanup(classDeclarationsStack, classDeclarationsStack.last()) {
+        withClassDeclarationCleanup(classDeclarationsStack, regularClass) {
             return super.transformRegularClass(regularClass, data).also {
                 if (regularClass.classKind == ClassKind.ANNOTATION_CLASS && metaAnnotations.isNotEmpty()) {
                     val annotations = regularClass.annotations.mapNotNull { it.fqName(session) }
