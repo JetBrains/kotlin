@@ -14,8 +14,9 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 
 object DummyNameChecker : FirSimpleFunctionChecker() {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration.name.asString() == "dummy") {
-            reporter.reportOn(declaration.source, FirErrors.SYNTAX, context)
+        val name = declaration.name.asString()
+        if (name == "dummy") {
+            reporter.reportOn(declaration.source, AllOpenErrors.FUNCTION_WITH_DUMMY_NAME, name, context)
         }
     }
 }

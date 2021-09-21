@@ -1,11 +1,11 @@
-<!SYNTAX_ERROR!>fun dummy(x: Int) {
+fun <!FUNCTION_WITH_DUMMY_NAME!>dummy<!>(x: Int) {
 
-}<!>
+}
 
 class A {
-    <!SYNTAX_ERROR!>fun dummy() {
+    fun <!FUNCTION_WITH_DUMMY_NAME!>dummy<!>() {
 
-    }<!>
+    }
 }
 
 class B {
