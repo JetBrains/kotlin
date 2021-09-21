@@ -26,15 +26,16 @@ internal class ClassOrTypeAliasTypeCommonizer(
         val expansions = values.map { it.expandedType() }
         val isMarkedNullable = isMarkedNullableCommonizer.commonize(expansions.map { it.isMarkedNullable }) ?: return null
 
-        val types = substituteTypesIfNecessary(values) ?: typeCommonizer.options.enableOptimisticNumberTypeCommonization.ifTrue {
-            return OptimisticNumbersTypeCommonizer.commonize(expansions)
-        } ?: return null
+        val substitutedTypes = substituteTypesIfNecessary(values)
+            ?: typeCommonizer.options.enableOptimisticNumberTypeCommonization.ifTrue {
+                return OptimisticNumbersTypeCommonizer.commonize(expansions)?.makeNullableIfNecessary(isMarkedNullable)
+            } ?: return null
 
-        val classifierId = types.singleDistinctValueOrNull { it.classifierId } ?: return null
+        val classifierId = substitutedTypes.singleDistinctValueOrNull { it.classifierId } ?: return null
 
-        val arguments = TypeArgumentListCommonizer(typeCommonizer).commonize(types.map { it.arguments }) ?: return null
+        val arguments = TypeArgumentListCommonizer(typeCommonizer).commonize(substitutedTypes.map { it.arguments }) ?: return null
 
-        val outerTypes = types.safeCastValues<CirClassOrTypeAliasType, CirClassType>()?.map { it.outerType }
+        val outerTypes = substitutedTypes.safeCastValues<CirClassOrTypeAliasType, CirClassType>()?.map { it.outerType }
         val outerType = when {
             outerTypes == null -> null
             outerTypes.all { it == null } -> null
@@ -42,6 +43,9 @@ internal class ClassOrTypeAliasTypeCommonizer(
             else -> invoke(outerTypes.map { checkNotNull(it) }) as? CirClassType ?: return null
         }
 
+        /*
+        Classifiers under this package (forward declarations) can always be used in common
+         */
         if (classifierId.packageName.isUnderKotlinNativeSyntheticPackages) {
             return CirClassType.createInterned(
                 classId = classifierId,
@@ -51,6 +55,9 @@ internal class ClassOrTypeAliasTypeCommonizer(
             )
         }
 
+        /*
+        Classifier is coming from common dependencies and therefore the type can be used in common
+         */
         when (val dependencyClassifier = classifiers.commonDependencies.classifier(classifierId)) {
             is CirProvided.Class -> return CirClassType.createInterned(
                 classId = classifierId,
@@ -70,6 +77,9 @@ internal class ClassOrTypeAliasTypeCommonizer(
             else -> Unit
         }
 
+        /*
+        Classifier is coming from 'sources' and is commonized and therefore the type can be used in common
+         */
         val commonizedClassifier = classifiers.commonizedNodes.classNode(classifierId)?.commonDeclaration?.invoke()
             ?: classifiers.commonizedNodes.typeAliasNode(classifierId)?.commonDeclaration?.invoke()
 
@@ -176,6 +186,15 @@ internal class ClassOrTypeAliasTypeCommonizer(
         )
     }
 
+    /**
+     * Will select *the* associated classifier that is
+     * - reachable from all [types] on all platforms
+     * - Has the lowest penalty score (where penalty score will be the maximum penalty on all platforms)
+     *
+     * Will return null if
+     * - No substitution is allowed
+     * - The input [types] do not have a single distinct set of associated ids
+     */
     private fun selectSubstitutionClassifierId(types: List<CirClassOrTypeAliasType>): CirEntityId? {
         val forwardSubstitutionAllowed = typeCommonizer.options.enableForwardTypeAliasSubstitution
         val backwardsSubstitutionAllowed = typeCommonizer.options.enableBackwardsTypeAliasSubstitution
