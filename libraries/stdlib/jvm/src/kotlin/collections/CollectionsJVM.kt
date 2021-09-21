@@ -21,7 +21,6 @@ public fun <T> listOf(element: T): List<T> = java.util.Collections.singletonList
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 internal actual inline fun <E> buildListInternal(builderAction: MutableList<E>.() -> Unit): List<E> {
     return build(createListBuilder<E>().apply(builderAction))
@@ -29,7 +28,6 @@ internal actual inline fun <E> buildListInternal(builderAction: MutableList<E>.(
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 internal actual inline fun <E> buildListInternal(capacity: Int, builderAction: MutableList<E>.() -> Unit): List<E> {
     return build(createListBuilder<E>(capacity).apply(builderAction))
@@ -37,21 +35,18 @@ internal actual inline fun <E> buildListInternal(capacity: Int, builderAction: M
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 internal fun <E> createListBuilder(): MutableList<E> {
     return ListBuilder<E>()
 }
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 internal fun <E> createListBuilder(capacity: Int): MutableList<E> {
     return ListBuilder<E>(capacity)
 }
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 internal fun <E> build(builder: MutableList<E>): List<E> {
     return (builder as ListBuilder<E>).build()
 }

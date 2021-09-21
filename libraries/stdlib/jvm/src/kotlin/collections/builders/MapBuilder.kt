@@ -651,7 +651,6 @@ private class SerializedMap(
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     override fun readExternal(input: java.io.ObjectInput) {
         val flags = input.readByte().toInt()
         if (flags != 0) {

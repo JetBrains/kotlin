@@ -397,7 +397,6 @@ internal class SerializedCollection(
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     override fun readExternal(input: java.io.ObjectInput) {
         val flags = input.readByte().toInt()
         val tag = flags and 1

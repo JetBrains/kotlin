@@ -15,6 +15,5 @@ internal actual fun mapCapacity(expectedSize: Int): Int = TODO("Wasm stdlib: Map
  * Checks a collection builder function capacity argument.
  */
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 @PublishedApi
 internal fun checkBuilderCapacity(capacity: Int) { TODO("Wasm stdlib: Maps") }
