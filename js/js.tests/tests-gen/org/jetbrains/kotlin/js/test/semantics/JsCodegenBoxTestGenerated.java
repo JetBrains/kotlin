@@ -20582,6 +20582,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInDownTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
             }
 
+            @TestMetadata("forInDownToWithPossibleUnderflow.kt")
+            public void testForInDownToWithPossibleUnderflow() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/forInDownTo/forInDownToWithPossibleUnderflow.kt");
+            }
+
             @TestMetadata("forIntInDownTo.kt")
             public void testForIntInDownTo() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/forInDownTo/forIntInDownTo.kt");

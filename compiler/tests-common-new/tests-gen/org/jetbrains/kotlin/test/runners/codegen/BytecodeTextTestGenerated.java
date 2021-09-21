@@ -2343,6 +2343,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("forInDownToLongConstNoUnderflow.kt")
+        public void testForInDownToLongConstNoUnderflow() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/forLoop/forInDownToLongConstNoUnderflow.kt");
+        }
+
+        @Test
         @TestMetadata("forInDownToLongMinValue.kt")
         public void testForInDownToLongMinValue() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/forLoop/forInDownToLongMinValue.kt");
