@@ -10355,6 +10355,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DefaultArguments extends AbstractLightAnalysisModeTest {
+        @TestMetadata("useNextParamInLambdaTailrec.kt")
+        public void ignoreUseNextParamInLambdaTailrec() throws Exception {
+            runTest("compiler/testData/codegen/box/defaultArguments/useNextParamInLambdaTailrec.kt");
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }

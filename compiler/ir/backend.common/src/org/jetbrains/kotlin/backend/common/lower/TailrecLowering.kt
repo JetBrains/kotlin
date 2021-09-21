@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.collectTailRecursionCalls
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -156,25 +157,22 @@ private class BodyTransformer(
             // that captures another parameter, it won't capture it as a mutable ref.
             parameter to irTemporary(argument)
         }
-
-        // For each unspecified argument set the corresponding variable to default:
-        parameters
-            .filter { it !in parameterToArgument }
-            .let { if (properComputationOrderOfTailrecDefaultParameters) it else it.asReversed() }
+        // Create new null-initialized variables for all other values in case of forward references:
+        //   fun f(x: () -> T = { y }, y: T = ...) // in `f()`, `x()` returns `null`
+        val defaultValuedParameters = parameters.filter { it !in parameterToArgument }
+        defaultValuedParameters.associateWithTo(parameterToArgument) {
+            // Note that we intentionally keep the original type of the parameter for the variable even though that violates type safety
+            // if it's non-null. This ensures that capture parameters have the same types for all copies of `x`.
+            // TODO: on the JVM, this might not be correct for inline classes - copy code from JvmDefaultParameterInjector?
+            irTemporary(IrConstImpl.defaultValueForType(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.type.makeNullable()), irType = it.type)
+        }
+        // Now replace those variables with ones containing actual default values. Unused null-valued temporaries will hopefully
+        // be optimized out later.
+        val remapper = VariableRemapper(parameterToArgument)
+        defaultValuedParameters.let { if (properComputationOrderOfTailrecDefaultParameters) it else it.asReversed() }
             .associateWithTo(parameterToArgument) { parameter ->
                 val originalDefaultValue = parameter.defaultValue?.expression ?: throw Error("no argument specified for $parameter")
-                // Copy default value, mapping parameters to variables containing freshly computed arguments:
-                val defaultValue = originalDefaultValue
-                    .deepCopyWithVariables().patchDeclarationParents(parent)
-                    .transform(object : VariableRemapper(parameterToArgument) {
-                        override fun visitGetValue(expression: IrGetValue): IrExpression {
-                            // If this parameter references a different parameter declared later, produce null:
-                            if (expression.symbol.owner.let { it is IrValueParameter && it.parent == irFunction && it !in parameterToArgument })
-                                return IrConstImpl.defaultValueForType(startOffset, endOffset, expression.type.makeNullable())
-                            return super.visitGetValue(expression)
-                        }
-                    }, null)
-                irTemporary(defaultValue)
+                irTemporary(originalDefaultValue.deepCopyWithVariables().patchDeclarationParents(parent).transform(remapper, null))
             }
 
         // Copy the new `val`s into the `var`s declared outside the loop:

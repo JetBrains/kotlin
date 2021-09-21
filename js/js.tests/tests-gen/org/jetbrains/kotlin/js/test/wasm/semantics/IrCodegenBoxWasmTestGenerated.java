@@ -4754,6 +4754,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/defaultArguments/useNextParamInLambda.kt");
         }
 
+        @TestMetadata("useNextParamInLambdaTailrec.kt")
+        public void testUseNextParamInLambdaTailrec() throws Exception {
+            runTest("compiler/testData/codegen/box/defaultArguments/useNextParamInLambdaTailrec.kt");
+        }
+
         @TestMetadata("useThisInLambda.kt")
         public void testUseThisInLambda() throws Exception {
             runTest("compiler/testData/codegen/box/defaultArguments/useThisInLambda.kt");
