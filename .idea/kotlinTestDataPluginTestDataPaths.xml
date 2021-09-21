@@ -8,6 +8,7 @@
         <option value="$PROJECT_DIR$/compiler/tests-spec/testData" />
         <option value="$PROJECT_DIR$/js/js.translator/testData" />
         <option value="$PROJECT_DIR$/plugins/parcelize/parcelize-compiler/testData" />
+        <option value="$PROJECT_DIR$/plugins/fir/fir-plugin-prototype/testData" />
       </array>
     </option>
   </component>
