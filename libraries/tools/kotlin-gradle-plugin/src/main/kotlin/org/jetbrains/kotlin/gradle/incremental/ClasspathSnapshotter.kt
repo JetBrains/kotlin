@@ -239,8 +239,7 @@ private object DirectoryOrJarContentsReader {
      *
      * The map entries are sorted based on their Unix-style relative paths (to ensure deterministic results across filesystems).
      *
-     * Note: If a jar has duplicate entries, only one of them will be used (there is no guarantee which one will be used, but the selection
-     * will be deterministic).
+     * Note: If a jar has duplicate entries after filtering, only the first one is retained.
      */
     fun read(
         directoryOrJar: File,
@@ -258,31 +257,31 @@ private object DirectoryOrJarContentsReader {
         directory: File,
         entryFilter: ((unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean)? = null
     ): LinkedHashMap<String, ByteArray> {
-        val relativePathsToContents: MutableList<Pair<String, ByteArray>> = mutableListOf()
+        val relativePathsToContents = mutableMapOf<String, ByteArray>()
         directory.walk().forEach { file ->
             val unixStyleRelativePath = file.relativeTo(directory).invariantSeparatorsPath
             if (entryFilter == null || entryFilter(unixStyleRelativePath, file.isDirectory)) {
-                relativePathsToContents.add(unixStyleRelativePath to file.readBytes())
+                relativePathsToContents[unixStyleRelativePath] = file.readBytes()
             }
         }
-        return relativePathsToContents.sortedBy { it.first }.toMap(LinkedHashMap())
+        return relativePathsToContents.toSortedMap().toMap(LinkedHashMap())
     }
 
     private fun readJar(
         jarFile: File,
         entryFilter: ((unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean)? = null
     ): LinkedHashMap<String, ByteArray> {
-        val relativePathsToContents: MutableList<Pair<String, ByteArray>> = mutableListOf()
+        val relativePathsToContents = mutableMapOf<String, ByteArray>()
         ZipInputStream(jarFile.inputStream().buffered()).use { zipInputStream ->
             while (true) {
                 val entry = zipInputStream.nextEntry ?: break
                 val unixStyleRelativePath = entry.name
                 if (entryFilter == null || entryFilter(unixStyleRelativePath, entry.isDirectory)) {
-                    relativePathsToContents.add(unixStyleRelativePath to zipInputStream.readBytes())
+                    relativePathsToContents.computeIfAbsent(unixStyleRelativePath) { zipInputStream.readBytes() }
                 }
             }
         }
-        return relativePathsToContents.sortedBy { it.first }.toMap(LinkedHashMap())
+        return relativePathsToContents.toSortedMap().toMap(LinkedHashMap())
     }
 }
 

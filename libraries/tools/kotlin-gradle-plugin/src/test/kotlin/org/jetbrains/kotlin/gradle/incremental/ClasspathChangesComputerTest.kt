@@ -5,64 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.incremental
 
+import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.*
+import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.snapshot
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.LookupSymbol
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+import java.io.File
 
 abstract class ClasspathChangesComputerTest : ClasspathSnapshotTestCommon() {
-
-    protected abstract val testSourceFile: ChangeableTestSourceFile
-
-    private lateinit var originalSnapshot: ClassSnapshot
-
-    @Before
-    fun setUp() {
-        originalSnapshot = testSourceFile.compileAndSnapshot()
-    }
-
-    /** Adapted version of [ClasspathChanges.Available] for readability in this test. */
-    private data class Changes(private val lookupSymbols: Set<LookupSymbol>, private val fqNames: Set<FqName>)
-
-    private fun computeClassChanges(current: ClassSnapshot, previous: ClassSnapshot): Changes {
-        val classChanges =
-            ClasspathChangesComputer.compute(current.toClasspathSnapshot(), previous.toClasspathSnapshot()) as ClasspathChanges.Available
-        return Changes(HashSet(classChanges.lookupSymbols), HashSet(classChanges.fqNames))
-    }
-
-    private fun ClassSnapshot.toClasspathSnapshot(): ClasspathSnapshot {
-        return ClasspathSnapshot(
-            classpathEntrySnapshots = listOf(
-                ClasspathEntrySnapshot(
-                    LinkedHashMap<String, ClassSnapshot>(1).also {
-                        it[getClassId()!!.getUnixStyleRelativePath()] = this
-                    })
-            )
-        )
-    }
-
-    private fun ClassSnapshot.getClassId(): ClassId? {
-        return when (this) {
-            is KotlinClassSnapshot -> classInfo.classId
-            is RegularJavaClassSnapshot -> serializedJavaClass.classId
-            is EmptyJavaClassSnapshot, is ContentHashJavaClassSnapshot -> null
-        }
-    }
-
-    private fun ClassId.getUnixStyleRelativePath() = asString().replace('.', '$') + ".class"
-
-    /**
-     * Returns the [FqName] of the class in this source file (e.g., "com/example/Foo$Bar.kt" or
-     * "com/example/Foo$Bar.java" has [FqName] "com.example.Foo.Bar").
-     *
-     * This source file must contain only 1 class.
-     */
-    private fun SourceFile.getClassFqName() =
-        FqName(unixStyleRelativePath.substringBeforeLast('.').replace('/', '.').replace('$', '.'))
 
     // TODO Add more test cases:
     //   - private/non-private fields
@@ -71,37 +25,173 @@ abstract class ClasspathChangesComputerTest : ClasspathSnapshotTestCommon() {
     //   - adding an annotation
 
     @Test
-    fun testComputeClassChanges_changedPublicMethodSignature() {
-        val updatedSnapshot = testSourceFile.changePublicMethodSignature().compileAndSnapshot()
-        val classChanges = computeClassChanges(updatedSnapshot, originalSnapshot)
+    abstract fun testSingleClass_changePublicMethodSignature()
 
-        val testClassFqName = testSourceFile.sourceFile.getClassFqName()
+    @Test
+    abstract fun testSingleClass_changeMethodImplementation()
+
+    @Test
+    abstract fun testMultipleClasses()
+}
+
+class KotlinClassesClasspathChangesComputerTest : ClasspathChangesComputerTest() {
+
+    @Test
+    override fun testSingleClass_changePublicMethodSignature() {
+        val sourceFile = SimpleKotlinClass(tmpDir)
+        val previousSnapshot = sourceFile.compileAndSnapshot()
+        val currentSnapshot = sourceFile.changePublicMethodSignature().compileAndSnapshot()
+        val changes = ClasspathChangesComputer.compute(listOf(currentSnapshot), listOf(previousSnapshot)).normalize()
+
         assertEquals(
             Changes(
                 lookupSymbols = setOf(
-                    LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = testClassFqName.asString()),
-                    LookupSymbol(name = "changedPublicMethod", scope = testClassFqName.asString()),
-                    LookupSymbol(name = "publicMethod", scope = testClassFqName.asString())
+                    LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SimpleKotlinClass"),
+                    LookupSymbol(name = "changedPublicMethod", scope = "com.example.SimpleKotlinClass"),
+                    LookupSymbol(name = "publicMethod", scope = "com.example.SimpleKotlinClass")
                 ),
-                fqNames = setOf(testClassFqName),
+                fqNames = setOf(
+                    FqName("com.example.SimpleKotlinClass")
+                ),
             ),
-            classChanges
+            changes
         )
     }
 
     @Test
-    fun testComputeClassChanges_changedMethodImplementation() {
-        val updatedSnapshot = testSourceFile.changeMethodImplementation().compileAndSnapshot()
-        val classChanges = computeClassChanges(updatedSnapshot, originalSnapshot)
+    override fun testSingleClass_changeMethodImplementation() {
+        val sourceFile = SimpleKotlinClass(tmpDir)
+        val previousSnapshot = sourceFile.compileAndSnapshot()
+        val currentSnapshot = sourceFile.changeMethodImplementation().compileAndSnapshot()
+        val changes = ClasspathChangesComputer.compute(listOf(currentSnapshot), listOf(previousSnapshot)).normalize()
 
-        assertEquals(Changes(emptySet(), emptySet()), classChanges)
+        assertEquals(Changes(emptySet(), emptySet()), changes)
+    }
+
+    @Test
+    override fun testMultipleClasses() {
+        val classpathSourceDir = File(testDataDir, "../ClasspathChangesComputerTest/testMultipleClasses/src/kotlin").canonicalFile
+        val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir)
+        val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir)
+        val changes = ClasspathChangesComputer.compute(currentSnapshot, previousSnapshot).normalize()
+
+        assertEquals(
+            Changes(
+                lookupSymbols = setOf(
+                    LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.B"),
+                    LookupSymbol(name = "b2", scope = "com.example.B"),
+                    LookupSymbol(name = "b3", scope = "com.example.B"),
+                    LookupSymbol(name = "b4", scope = "com.example.B"),
+                    LookupSymbol(name = "C", scope = "com.example"),
+                    LookupSymbol(name = "D", scope = "com.example")
+                ),
+                fqNames = setOf(
+                    FqName("com.example.B"),
+                    FqName("com.example.C"),
+                    FqName("com.example.D")
+                )
+            ),
+            changes
+        )
     }
 }
 
-class KotlinClassesClasspathChangesComputerTest : ClasspathChangesComputerTest() {
-    override val testSourceFile = SimpleKotlinClass(tmpDir)
+class JavaClassesClasspathChangesComputerTest : ClasspathChangesComputerTest() {
+
+    @Test
+    override fun testSingleClass_changePublicMethodSignature() {
+        val sourceFile = SimpleJavaClass(tmpDir)
+        val previousSnapshot = sourceFile.compileAndSnapshot()
+        val currentSnapshot = sourceFile.changePublicMethodSignature().compileAndSnapshot()
+        val changes = ClasspathChangesComputer.compute(listOf(currentSnapshot), listOf(previousSnapshot)).normalize()
+
+        assertEquals(
+            Changes(
+                lookupSymbols = setOf(
+                    LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SimpleJavaClass"),
+                    LookupSymbol(name = "changedPublicMethod", scope = "com.example.SimpleJavaClass"),
+                    LookupSymbol(name = "publicMethod", scope = "com.example.SimpleJavaClass")
+                ),
+                fqNames = setOf(
+                    FqName("com.example.SimpleJavaClass")
+                ),
+            ),
+            changes
+        )
+    }
+
+    @Test
+    override fun testSingleClass_changeMethodImplementation() {
+        val sourceFile = SimpleJavaClass(tmpDir)
+        val previousSnapshot = sourceFile.compileAndSnapshot()
+        val currentSnapshot = sourceFile.changeMethodImplementation().compileAndSnapshot()
+        val changes = ClasspathChangesComputer.compute(listOf(currentSnapshot), listOf(previousSnapshot)).normalize()
+
+        assertEquals(Changes(emptySet(), emptySet()), changes)
+    }
+
+    @Test
+    override fun testMultipleClasses() {
+        val classpathSourceDir = File(testDataDir, "../ClasspathChangesComputerTest/testMultipleClasses/src/java").canonicalFile
+        val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir)
+        val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir)
+        val changes = ClasspathChangesComputer.compute(currentSnapshot, previousSnapshot).normalize()
+
+        assertEquals(
+            Changes(
+                lookupSymbols = setOf(
+                    LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.B"),
+                    LookupSymbol(name = "b2", scope = "com.example.B"),
+                    LookupSymbol(name = "b3", scope = "com.example.B"),
+                    LookupSymbol(name = "b4", scope = "com.example.B"),
+                    LookupSymbol(name = "C", scope = "com.example"),
+                    LookupSymbol(name = "D", scope = "com.example"),
+                    LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.D"),
+                    LookupSymbol(name = "<init>", scope = "com.example.D"),
+                    LookupSymbol(name = "d", scope = "com.example.D")
+                ),
+                fqNames = setOf(
+                    FqName("com.example.B"),
+                    FqName("com.example.C"),
+                    FqName("com.example.D")
+                )
+            ),
+            changes
+        )
+    }
 }
 
-class JavaClassesClasspathChangesComputerTest : ClasspathChangesComputerTest() {
-    override val testSourceFile = SimpleJavaClass(tmpDir)
+private fun snapshotClasspath(classpathSourceDir: File, tmpDir: TemporaryFolder): ClasspathSnapshot {
+    val classpathEntrySnapshots = classpathSourceDir.listFiles()!!.map { classpathEntrySourceDir ->
+        val relativePathsInDir = classpathEntrySourceDir.walk()
+            .filter { it.extension == "kt" || it.extension == "java" }
+            .map { file -> file.toRelativeString(classpathEntrySourceDir) }
+            .sortedBy { it }
+        val sourceFiles = relativePathsInDir.map { relativePath ->
+            if (relativePath.endsWith(".kt")) {
+                KotlinSourceFile(
+                    classpathEntrySourceDir, relativePath,
+                    preCompiledClassFile = ClassFile(
+                        File(classpathEntrySourceDir.path.replace("src/kotlin", "classes/kotlin")),
+                        relativePath.replace(".kt", ".class")
+                    )
+                )
+            } else {
+                SourceFile(classpathEntrySourceDir, relativePath)
+            }
+        }
+        val classFiles = sourceFiles.map { TestSourceFile(it, tmpDir).compile() }
+        ClasspathEntrySnapshot(
+            classSnapshots = classFiles.map { it.unixStyleRelativePath to it.snapshot() }.toMap(LinkedHashMap())
+        )
+    }
+    return ClasspathSnapshot(classpathEntrySnapshots)
+}
+
+/** Adapted version of [ClasspathChanges.Available] for readability in this test. */
+private data class Changes(private val lookupSymbols: Set<LookupSymbol>, private val fqNames: Set<FqName>)
+
+private fun ClasspathChanges.normalize(): Changes {
+    this as ClasspathChanges.Available
+    return Changes(lookupSymbols, fqNames)
 }

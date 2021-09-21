@@ -26,7 +26,7 @@ abstract class ClasspathSnapshotTestCommon {
     private val gson by lazy { GsonBuilder().setPrettyPrinting().create() }
     protected fun Any.toGson(): String = gson.toJson(this)
 
-    class SourceFile(val baseDir: File, relativePath: String) {
+    open class SourceFile(val baseDir: File, relativePath: String) {
         val unixStyleRelativePath: String
 
         init {
@@ -36,14 +36,18 @@ abstract class ClasspathSnapshotTestCommon {
         fun asFile() = File(baseDir, unixStyleRelativePath)
     }
 
-    /** Same as [SourceFile] but with a [TemporaryFolder] to store the results of operations on the [SourceFile]. */
-    open class TestSourceFile(val sourceFile: SourceFile, protected val tmpDir: TemporaryFolder) {
+    class KotlinSourceFile(baseDir: File, relativePath: String, val preCompiledClassFile: ClassFile) : SourceFile(baseDir, relativePath)
 
-        fun replace(oldValue: String, newValue: String, newBaseDir: File? = null): TestSourceFile {
+    /** Same as [SourceFile] but with a [TemporaryFolder] to store the results of operations on the [SourceFile]. */
+    open class TestSourceFile(val sourceFile: SourceFile, private val tmpDir: TemporaryFolder) {
+
+        fun replace(oldValue: String, newValue: String, preCompiledKotlinClassFile: ClassFile? = null): TestSourceFile {
             val fileContents = sourceFile.asFile().readText()
             check(fileContents.contains(oldValue)) { "String '$oldValue' not found in file '${sourceFile.asFile().path}'" }
 
-            val newSourceFile = SourceFile(newBaseDir ?: tmpDir.newFolder(), sourceFile.unixStyleRelativePath)
+            val newSourceFile =
+                preCompiledKotlinClassFile?.let { KotlinSourceFile(tmpDir.newFolder(), sourceFile.unixStyleRelativePath, it) }
+                    ?: SourceFile(tmpDir.newFolder(), sourceFile.unixStyleRelativePath)
             newSourceFile.asFile().parentFile.mkdirs()
             newSourceFile.asFile().writeText(fileContents.replace(oldValue, newValue))
             return TestSourceFile(newSourceFile, tmpDir)
@@ -69,14 +73,12 @@ abstract class ClasspathSnapshotTestCommon {
         }
 
         private fun compileKotlin(): List<ClassFile> {
-            // TODO: Call Kotlin compiler to generate classes (see https://github.com/JetBrains/kotlin/pull/4512#discussion_r679432232)
-            // Currently, we use the precompiled classes in the test data.
-            return listOf(
-                ClassFile(
-                    File(testDataDir.path + "/classes/" + sourceFile.baseDir.name),
-                    sourceFile.unixStyleRelativePath.replace(".kt", ".class")
-                )
-            )
+            // TODO: Call Kotlin compiler to generate classes, for example:
+            // org.jetbrains.kotlin.test.MockLibraryUtil.compileKotlin(sourceFile.asFile().path, sourceFile.preCompiledClassFile.classRoot)
+            // However, currently it is not possible (see https://github.com/JetBrains/kotlin/pull/4512#discussion_r679432232), so we use
+            // the precompiled classes in the test data instead.
+            sourceFile as KotlinSourceFile
+            return listOf(sourceFile.preCompiledClassFile)
         }
 
         private fun compileJava(): List<ClassFile> {
@@ -125,17 +127,25 @@ abstract class ClasspathSnapshotTestCommon {
     }
 
     class SimpleKotlinClass(tmpDir: TemporaryFolder) : ChangeableTestSourceFile(
-        SourceFile(File(testDataDir, "src/original"), "com/example/SimpleKotlinClass.kt"), tmpDir
+        KotlinSourceFile(
+            baseDir = File(testDataDir, "src/original"),
+            relativePath = "com/example/SimpleKotlinClass.kt",
+            preCompiledClassFile = ClassFile(File(testDataDir, "classes/original"), "com/example/SimpleKotlinClass.class")
+        ), tmpDir
     ) {
 
         override fun changePublicMethodSignature() = replace(
             "publicMethod()", "changedPublicMethod()",
-            newBaseDir = File(tmpDir.newFolder(), "changedPublicMethodSignature")
+            preCompiledKotlinClassFile = ClassFile(
+                File(testDataDir, "classes/changedPublicMethodSignature"), "com/example/SimpleKotlinClass.class"
+            )
         )
 
         override fun changeMethodImplementation() = replace(
             "I'm in a public method", "This method implementation has changed!",
-            newBaseDir = File(tmpDir.newFolder(), "changedMethodImplementation")
+            preCompiledKotlinClassFile = ClassFile(
+                File(testDataDir, "classes/changedMethodImplementation"), "com/example/SimpleKotlinClass.class"
+            )
         )
     }
 
