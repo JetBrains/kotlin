@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
-import org.jetbrains.kotlin.analysis.api.fir.isImplicitFunctionCall
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
@@ -187,7 +186,7 @@ internal object FirReferenceResolveHelper {
             is FirErrorNamedReference -> getSymbolsByErrorNamedReference(fir, symbolBuilder)
             is FirVariableAssignment -> getSymbolsByVariableAssignment(fir, session, symbolBuilder)
             is FirResolvedNamedReference -> getSymbolByResolvedNameReference(fir, expression, analysisSession, session, symbolBuilder)
-            is FirResolvable -> getSymbolsByResolvable(fir, expression, session, symbolBuilder)
+            is FirResolvable -> getSymbolsByResolvable(fir, session, symbolBuilder)
             is FirNamedArgumentExpression -> getSymbolsByNameArgumentExpression(expression, analysisSession, symbolBuilder)
             else -> handleUnknownFirElement(expression, analysisSession, session, symbolBuilder)
         }
@@ -212,7 +211,7 @@ internal object FirReferenceResolveHelper {
         if (parentAsCall != null) {
             val firResolvable = parentAsCall.getOrBuildFirSafe<FirResolvable>(analysisSession.firResolveState)
             if (firResolvable != null) {
-                return getSymbolsByResolvable(firResolvable, expression, session, symbolBuilder)
+                return getSymbolsByResolvable(firResolvable, session, symbolBuilder)
             }
         }
         return fir.toTargetSymbol(session, symbolBuilder)
@@ -285,21 +284,10 @@ internal object FirReferenceResolveHelper {
 
     private fun getSymbolsByResolvable(
         fir: FirResolvable,
-        expression: KtSimpleNameExpression,
         session: FirSession,
         symbolBuilder: KtSymbolByFirBuilder
     ): Collection<KtSymbol> {
-        val calleeReference =
-            if (fir is FirFunctionCall
-                && fir.isImplicitFunctionCall()
-                && expression is KtNameReferenceExpression
-            ) {
-                // we are resolving implicit invoke call, like
-                // fun foo(a: () -> Unit) {
-                //     <expression>a</expression>()
-                // }
-                (fir.dispatchReceiver as FirQualifiedAccessExpression).calleeReference
-            } else fir.calleeReference
+        val calleeReference = fir.calleeReference
         return calleeReference.toTargetSymbol(session, symbolBuilder)
     }
 
