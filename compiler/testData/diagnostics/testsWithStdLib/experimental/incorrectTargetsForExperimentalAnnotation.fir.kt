@@ -42,7 +42,7 @@ annotation class E4
 annotation class E5
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-@Target(PROPERTY, FUNCTION, PROPERTY_SETTER, VALUE_PARAMETER, FIELD, LOCAL_VARIABLE)
+@Target(PROPERTY, FUNCTION, PROPERTY_SETTER, VALUE_PARAMETER, FIELD, LOCAL_VARIABLE, CLASS)
 @Retention(AnnotationRetention.BINARY)
 annotation class E6
 
@@ -82,6 +82,27 @@ class Derived : Base {
     override fun foo() {}
 
     override fun <!OPT_IN_MARKER_ON_WRONG_TARGET!>@receiver:E6<!> String.withReceiver() {}
+}
+
+@E6
+interface BaseMarked {
+    val bar: Int
+}
+
+@E6
+class Outer {
+    interface Nested {
+        val baz: Int
+    }
+}
+
+@OptIn(E6::class)
+class DerivedOptIn : BaseMarked, Outer.Nested {
+    @E6
+    override val bar: Int = 42 // Ok
+
+    @E6
+    override val baz: Int = 24 // Ok
 }
 
 abstract class Another(<!OPT_IN_MARKER_ON_WRONG_TARGET!>@param:E6<!> val x: String) : Base {

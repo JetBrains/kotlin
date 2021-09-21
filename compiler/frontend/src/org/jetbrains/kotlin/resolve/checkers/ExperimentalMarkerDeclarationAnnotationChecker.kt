@@ -115,6 +115,13 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
             if (overridden.annotations.any { it.fqName == experimentalFqName }) {
                 return true
             }
+            var containingDeclaration = overridden.containingDeclaration
+            while (containingDeclaration is ClassDescriptor) {
+                if (containingDeclaration.annotations.any { it.fqName == experimentalFqName }) {
+                    return true
+                }
+                containingDeclaration = containingDeclaration.containingDeclaration
+            }
             if (overridden.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
                 overridden.hasExperimentalOverriddenDescriptors(experimentalFqName)
             ) {

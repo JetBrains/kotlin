@@ -41,6 +41,13 @@ package api {
         public abstract fun kotlin.String.withReceiver(): kotlin.Unit
     }
 
+    @api.E6 public interface BaseMarked {
+        public abstract val bar: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
     public interface C1 : api.A, api.B {
         public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public abstract override /*2*/ /*fake_override*/ fun f(): kotlin.Unit
@@ -64,6 +71,15 @@ package api {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         public open override /*1*/ fun @receiver:api.E6 kotlin.String.withReceiver(): kotlin.Unit
+    }
+
+    @kotlin.OptIn(markerClass = {api.E6::class}) public final class DerivedOptIn : api.BaseMarked, api.Outer.Nested {
+        public constructor DerivedOptIn()
+        @api.E6 public open override /*1*/ val bar: kotlin.Int = 42
+        @api.E6 public open override /*1*/ val baz: kotlin.Int = 24
+        public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
     @kotlin.RequiresOptIn(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class E1 : kotlin.Annotation {
@@ -115,7 +131,7 @@ package api {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.RequiresOptIn(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class E6 : kotlin.Annotation {
+    @kotlin.RequiresOptIn(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class E6 : kotlin.Annotation {
         public constructor E6()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -127,6 +143,20 @@ package api {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         @api.E6 public open override /*1*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @api.E6 public final class Outer {
+        public constructor Outer()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public interface Nested {
+            public abstract val baz: kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
     }
 
     public final class X1 : api.C1 {
