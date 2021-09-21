@@ -128,6 +128,10 @@ object AbstractTypeMapper {
                 }
             }
 
+            type.isFlexible() -> {
+                return mapType(context, type.upperBoundIfFlexible(), mode, sw)
+            }
+
             else -> throw UnsupportedOperationException("Unknown type $type")
         }
     }

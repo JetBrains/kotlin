@@ -109,6 +109,10 @@ fun main(args: Array<String>) {
                 model("components/psiTypeProvider")
             }
 
+            testClass<AbstractExpressionPsiTypeProviderTest> {
+                model("components/expressionPsiType")
+            }
+
             testClass<AbstractFirHLSmartCastInfoTest> {
                 model("components/smartCastInfo")
             }
