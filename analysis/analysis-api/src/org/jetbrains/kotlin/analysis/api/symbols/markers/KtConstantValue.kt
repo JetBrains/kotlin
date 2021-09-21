@@ -27,30 +27,30 @@ import org.jetbrains.kotlin.types.ConstantValueKind
  *  [KtArrayConstantValue] abstracts an array of [KtConstantValue]s.
  */
 public sealed class KtConstantValue(
-    public open val kotlinOrigin: KtElement? = null
+    public open val sourcePsi: KtElement? = null
 )
 public object KtUnsupportedConstantValue : KtConstantValue()
 
 public class KtArrayConstantValue(
     public val values: Collection<KtConstantValue>,
-    override val kotlinOrigin: KtElement?,
+    override val sourcePsi: KtElement?,
 ) : KtConstantValue()
 
 public class KtAnnotationConstantValue(
     public val classId: ClassId?,
     public val arguments: List<KtNamedConstantValue>,
-    override val kotlinOrigin: KtCallElement?,
+    override val sourcePsi: KtCallElement?,
 ) : KtConstantValue()
 
 public class KtEnumEntryConstantValue(
     public val callableId: CallableId?,
-    override val kotlinOrigin: KtElement?,
+    override val sourcePsi: KtElement?,
 ) : KtConstantValue()
 
 public class KtLiteralConstantValue<T>(
     public val constantValueKind: ConstantValueKind<T>,
     public val value: T,
-    override val kotlinOrigin: KtElement?,
+    override val sourcePsi: KtElement?,
 ) : KtConstantValue() {
     public fun toConst(): Any? {
         return (value as? Long)?.let {

@@ -61,12 +61,12 @@ internal object KtFirConstantValueConverter {
         }
     }
 
-    private fun Collection<KtConstantValue>.toArrayConstantValueIfNecessary(kotlinOrigin: KtElement?): KtConstantValue? {
-        val valueArgument = if (kotlinOrigin is ValueArgument) kotlinOrigin else
-            (kotlinOrigin?.parents?.firstOrNull { it is ValueArgument } as? ValueArgument)
+    private fun Collection<KtConstantValue>.toArrayConstantValueIfNecessary(sourcePsi: KtElement?): KtConstantValue? {
+        val valueArgument = if (sourcePsi is ValueArgument) sourcePsi else
+            (sourcePsi?.parents?.firstOrNull { it is ValueArgument } as? ValueArgument)
         val wrap = valueArgument?.arrayConversionExpected() ?: false
         return if (wrap) {
-            KtArrayConstantValue(this, kotlinOrigin)
+            KtArrayConstantValue(this, sourcePsi)
         } else {
             singleOrNull()
         }

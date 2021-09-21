@@ -182,16 +182,16 @@ private fun escapeString(str: String): String = buildString {
 internal fun KtConstantValue.toAnnotationMemberValue(parent: PsiElement): PsiAnnotationMemberValue? {
     return when (this) {
         is KtArrayConstantValue ->
-            FirPsiArrayInitializerMemberValue(kotlinOrigin, parent) { arrayLiteralParent ->
+            FirPsiArrayInitializerMemberValue(sourcePsi, parent) { arrayLiteralParent ->
                 values.mapNotNull { element -> element.toAnnotationMemberValue(arrayLiteralParent) }
             }
         is KtAnnotationConstantValue ->
-            FirLightSimpleAnnotation(classId?.relativeClassName?.asString(), parent, arguments, kotlinOrigin)
+            FirLightSimpleAnnotation(classId?.relativeClassName?.asString(), parent, arguments, sourcePsi)
         else ->
             createPsiLiteral(parent)?.let {
                 when (it) {
-                    is PsiLiteral -> FirPsiLiteral(kotlinOrigin, parent, it)
-                    else -> FirPsiExpression(kotlinOrigin, parent, it)
+                    is PsiLiteral -> FirPsiLiteral(sourcePsi, parent, it)
+                    else -> FirPsiExpression(sourcePsi, parent, it)
                 }
             }
     }
