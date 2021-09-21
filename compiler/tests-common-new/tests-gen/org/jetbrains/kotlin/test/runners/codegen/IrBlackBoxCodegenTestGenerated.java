@@ -408,6 +408,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("annotationFromStdlib.kt")
+            public void testAnnotationFromStdlib() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/annotationFromStdlib.kt");
+            }
+
+            @Test
             @TestMetadata("annotationInstances.kt")
             public void testAnnotationInstances() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationInstances.kt");
@@ -435,6 +441,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("annotationType.kt")
             public void testAnnotationType() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationType.kt");
+            }
+
+            @Test
+            @TestMetadata("inInlineFunction.kt")
+            public void testInInlineFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/inInlineFunction.kt");
             }
 
             @Test

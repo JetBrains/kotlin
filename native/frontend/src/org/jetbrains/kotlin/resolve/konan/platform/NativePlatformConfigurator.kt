@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
-import org.jetbrains.kotlin.resolve.calls.checkers.InstantiationOfAnnotationClassesCallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.TypeOfChecker
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.inline.ReasonableInlineRule
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.resolve.konan.diagnostics.*
 object NativePlatformConfigurator : PlatformConfiguratorBase(
     additionalCallCheckers = listOf(
         SuperCallWithDefaultArgumentsChecker(),
-        InstantiationOfAnnotationClassesCallChecker
     ),
     additionalDeclarationCheckers = listOf(
         NativeThrowsChecker, NativeSharedImmutableChecker,

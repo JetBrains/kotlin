@@ -97,6 +97,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationEqHc.kt");
             }
 
+            @TestMetadata("annotationFromStdlib.kt")
+            public void testAnnotationFromStdlib() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/annotationFromStdlib.kt");
+            }
+
             @TestMetadata("annotationInstances.kt")
             public void testAnnotationInstances() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationInstances.kt");
@@ -112,6 +117,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationToString.kt");
             }
 
+            @TestMetadata("inInlineFunction.kt")
+            public void testInInlineFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/inInlineFunction.kt");
+            }
+
             @TestMetadata("multifileEqHc.kt")
             public void testMultifileEqHc() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/multifileEqHc.kt");
@@ -120,6 +130,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             @TestMetadata("multiplatformInstantiation.kt")
             public void testMultiplatformInstantiation() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/multiplatformInstantiation.kt");
+            }
+
+            @TestMetadata("nestedAnnotationInstances.kt")
+            public void testNestedAnnotationInstances() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/nestedAnnotationInstances.kt");
             }
         }
 

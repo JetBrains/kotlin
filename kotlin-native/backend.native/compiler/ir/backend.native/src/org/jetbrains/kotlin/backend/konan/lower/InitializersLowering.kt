@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.konan.isNonGeneratedAnnotation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
@@ -154,16 +153,6 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
         }
 
         private fun lowerConstructors(initializeMethodSymbol: IrSimpleFunctionSymbol?) {
-            if (irClass.kind == ClassKind.ANNOTATION_CLASS) {
-                if (irClass.isNonGeneratedAnnotation()) return
-
-                val irConstructor = irClass.declarations.filterIsInstance<IrConstructor>().single()
-                assert(irConstructor.body == null)
-                irConstructor.body = context.createIrBuilder(irConstructor.symbol).irBlockBody(irConstructor) {
-                    +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
-                    +IrInstanceInitializerCallImpl(startOffset, endOffset, irClass.symbol, context.irBuiltIns.unitType)
-                }
-            }
             irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
 
                 override fun visitClass(declaration: IrClass): IrStatement {

@@ -87,6 +87,12 @@ internal val stripTypeAliasDeclarationsPhase = makeKonanModuleLoweringPhase(
         description = "Strip typealias declarations"
 )
 
+internal val annotationImplementationPhase = makeKonanFileLoweringPhase(
+        { context -> AnnotationImplementationLowering { NativeAnnotationImplementationTransformer(context, it) } },
+        name = "AnnotationImplementation",
+        description = "Create synthetic annotations implementations and use them in annotations constructor calls"
+)
+
 internal val lowerBeforeInlinePhase = makeKonanModuleLoweringPhase(
         ::PreInlineLowering,
         name = "LowerBeforeInline",

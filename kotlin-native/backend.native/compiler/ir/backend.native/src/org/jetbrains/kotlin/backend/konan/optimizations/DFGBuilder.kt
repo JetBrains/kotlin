@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.konan.ir.actualCallee
 import org.jetbrains.kotlin.backend.konan.ir.isAny
 import org.jetbrains.kotlin.backend.konan.ir.isObjCObjectType
 import org.jetbrains.kotlin.backend.konan.ir.isVirtualCall
-import org.jetbrains.kotlin.backend.konan.isNonGeneratedAnnotation
 import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.backend.konan.lower.erasedUpperBound
 import org.jetbrains.kotlin.ir.IrElement
@@ -201,8 +200,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
             override fun visitConstructor(declaration: IrConstructor) {
                 val body = declaration.body
-                assert (body != null || declaration.constructedClass.isNonGeneratedAnnotation()) {
-                    "Non-annotation class constructor has empty body"
+                assert (body != null) {
+                    "Class constructor has empty body"
                 }
                 context.logMultiple {
                     +"Analysing function ${declaration.descriptor}"

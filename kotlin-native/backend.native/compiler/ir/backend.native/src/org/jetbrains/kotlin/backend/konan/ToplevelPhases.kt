@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
-import org.jetbrains.kotlin.backend.konan.MemoryModel
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SamSuperTypesChecker
@@ -224,6 +223,7 @@ internal val allLoweringsPhase = NamedCompilerPhase(
                         name = "IrLowerByFile",
                         description = "IR Lowering by file",
                         lower = listOf(
+                            annotationImplementationPhase,
                             rangeContainsLoweringPhase,
                             forLoopsPhase,
                             flattenStringConcatenationPhase,
