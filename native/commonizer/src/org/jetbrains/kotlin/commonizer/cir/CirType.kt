@@ -99,12 +99,7 @@ abstract class CirClassType : CirClassOrTypeAliasType() {
 
     override fun withArguments(arguments: List<CirTypeProjection>): CirClassOrTypeAliasType {
         if (arguments == this.arguments) return this
-        return createInterned(
-            classId = classifierId,
-            outerType = outerType,
-            arguments = arguments,
-            isMarkedNullable = isMarkedNullable
-        )
+        return copyInterned(arguments = arguments)
     }
 
     companion object {
