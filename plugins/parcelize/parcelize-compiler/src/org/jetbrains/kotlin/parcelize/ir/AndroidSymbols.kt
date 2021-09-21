@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -121,6 +122,38 @@ class AndroidSymbols(
     val kotlinULong: IrClassSymbol =
         createClass(kotlin, "ULong", ClassKind.CLASS, Modality.FINAL, true).apply {
             owner.inlineClassRepresentation = InlineClassRepresentation(Name.identifier("data"), irBuiltIns.longType as IrSimpleType)
+        }
+
+    val kotlinUByteArray: IrClassSymbol =
+        createClass(kotlin, "UByteArray", ClassKind.CLASS, Modality.FINAL, true).apply {
+            owner.inlineClassRepresentation = InlineClassRepresentation(
+                Name.identifier("storage"),
+                irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.byteType).owner.defaultType
+            )
+        }
+
+    val kotlinUShortArray: IrClassSymbol =
+        createClass(kotlin, "UShortArray", ClassKind.CLASS, Modality.FINAL, true).apply {
+            owner.inlineClassRepresentation = InlineClassRepresentation(
+                Name.identifier("storage"),
+                irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.shortType).owner.defaultType
+            )
+        }
+
+    val kotlinUIntArray: IrClassSymbol =
+        createClass(kotlin, "UIntArray", ClassKind.CLASS, Modality.FINAL, true).apply {
+            owner.inlineClassRepresentation = InlineClassRepresentation(
+                Name.identifier("storage"),
+                irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.intType).owner.defaultType
+            )
+        }
+
+    val kotlinULongArray: IrClassSymbol =
+        createClass(kotlin, "ULongArray", ClassKind.CLASS, Modality.FINAL, true).apply {
+            owner.inlineClassRepresentation = InlineClassRepresentation(
+                Name.identifier("storage"),
+                irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.longType).owner.defaultType
+            )
         }
 
     val androidOsParcelableCreator: IrClassSymbol = irFactory.buildClass {

@@ -243,7 +243,6 @@ class IrCustomParcelSerializer(private val parcelerObject: IrClass) : IrParcelSe
 
 // Parcel serializer for array types. This handles both primitive array types (for ShortArray and for primitive arrays using custom element
 // parcelers) as well as boxed arrays.
-// TODO: Unsigned array types
 class IrArrayParcelSerializer(
     private val arrayType: IrType,
     private val elementType: IrType,

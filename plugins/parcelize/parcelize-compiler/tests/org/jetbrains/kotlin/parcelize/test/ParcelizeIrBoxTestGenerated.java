@@ -380,6 +380,11 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/typeParameters.kt");
     }
 
+    @TestMetadata("unsignedArrays.kt")
+    public void testUnsignedArrays() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/unsignedArrays.kt");
+    }
+
     @TestMetadata("valueClassWrapper.kt")
     public void testValueClassWrapper() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/valueClassWrapper.kt");

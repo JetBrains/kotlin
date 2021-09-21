@@ -139,4 +139,9 @@ public class ParcelizeBytecodeListingTestGenerated extends AbstractParcelizeByte
     public void testSize() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/codegen/size.kt");
     }
+
+    @TestMetadata("unsignedPrimitiveArrays.kt")
+    public void testUnsignedPrimitiveArrays() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/codegen/unsignedPrimitiveArrays.kt");
+    }
 }
