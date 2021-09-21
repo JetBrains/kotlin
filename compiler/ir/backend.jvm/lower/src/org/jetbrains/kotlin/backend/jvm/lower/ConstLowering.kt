@@ -40,7 +40,7 @@ class ConstLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(ConstTransformer(irFile, context, inlineConstTracker))
 }
 
-class ConstTransformer(
+private class ConstTransformer(
     val irFile: IrFile,
     val context: JvmBackendContext,
     val inlineConstTracker: InlineConstTracker?
