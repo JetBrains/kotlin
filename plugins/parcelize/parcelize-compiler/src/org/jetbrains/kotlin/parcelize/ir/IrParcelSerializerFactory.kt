@@ -110,6 +110,19 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols) {
             "android.util.SparseBooleanArray" ->
                 if (!scope.hasCustomSerializer(irBuiltIns.booleanType))
                     return sparseBooleanArraySerializer
+
+            // Unsigned array types
+            "kotlin.UByteArray" ->
+                return ubyteArraySerializer
+            "kotlin.UShortArray" ->
+                return wrapNullableSerializerIfNeeded(
+                    irType,
+                    ushortArraySerializer
+                )
+            "kotlin.UIntArray" ->
+                return uintArraySerializer
+            "kotlin.ULongArray" ->
+                return ulongArraySerializer
         }
 
         // Generic container types
@@ -289,12 +302,42 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols) {
     private val booleanSerializer = IrWrappedIntParcelSerializer(irBuiltIns.booleanType)
     private val shortSerializer = IrWrappedIntParcelSerializer(irBuiltIns.shortType)
     private val charSerializer = IrWrappedIntParcelSerializer(irBuiltIns.charType)
+    private val shortArraySerializer = IrArrayParcelSerializer(
+        irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.shortType).defaultType,
+        irBuiltIns.shortType,
+        shortSerializer
+    )
 
     // Unsigned primitive types
     private val ubyteSerializer = IrUnsafeCoerceWrappedSerializer(byteSerializer, symbols.kotlinUByte.defaultType, irBuiltIns.byteType)
     private val ushortSerializer = IrUnsafeCoerceWrappedSerializer(shortSerializer, symbols.kotlinUShort.defaultType, irBuiltIns.shortType)
     private val uintSerializer = IrUnsafeCoerceWrappedSerializer(intSerializer, symbols.kotlinUInt.defaultType, irBuiltIns.intType)
     private val ulongSerializer = IrUnsafeCoerceWrappedSerializer(longSerializer, symbols.kotlinULong.defaultType, irBuiltIns.longType)
+
+    // Unsigned array types
+    private val ubyteArraySerializer = IrUnsafeCoerceWrappedSerializer(
+        byteArraySerializer,
+        symbols.kotlinUByteArray.owner.defaultType,
+        symbols.kotlinUByteArray.owner.inlineClassRepresentation!!.underlyingType
+    )
+
+    private val ushortArraySerializer = IrUnsafeCoerceWrappedSerializer(
+        shortArraySerializer,
+        symbols.kotlinUShortArray.owner.defaultType,
+        symbols.kotlinUShortArray.owner.inlineClassRepresentation!!.underlyingType
+    )
+
+    private val uintArraySerializer = IrUnsafeCoerceWrappedSerializer(
+        intArraySerializer,
+        symbols.kotlinUIntArray.owner.defaultType,
+        symbols.kotlinUIntArray.owner.inlineClassRepresentation!!.underlyingType
+    )
+
+    private val ulongArraySerializer = IrUnsafeCoerceWrappedSerializer(
+        longArraySerializer,
+        symbols.kotlinULongArray.owner.defaultType,
+        symbols.kotlinULongArray.owner.inlineClassRepresentation!!.underlyingType
+    )
 
     private val charSequenceSerializer = IrCharSequenceParcelSerializer()
 

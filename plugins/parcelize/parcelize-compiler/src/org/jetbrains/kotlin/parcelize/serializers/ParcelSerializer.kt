@@ -428,7 +428,8 @@ interface ParcelSerializer {
         }
 
         private fun Type.isUnsigned(): Boolean = when (descriptor) {
-            "Lkotlin/UByte;", "Lkotlin/UShort;", "Lkotlin/UInt;", "Lkotlin/ULong;" -> true
+            "Lkotlin/UByte;", "Lkotlin/UShort;", "Lkotlin/UInt;", "Lkotlin/ULong;",
+            "Lkotlin/UByteArray;", "Lkotlin/UShortArray;", "Lkotlin/UIntArray;", "Lkotlin/ULongArray;" -> true
             else -> false
         }
 
