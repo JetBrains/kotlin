@@ -2,10 +2,7 @@ package model
 
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.base.transformers.documentables.InheritorsInfo
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.links.JavaClassReference
-import org.jetbrains.dokka.links.PointingToDeclaration
-import org.jetbrains.dokka.links.sureClassNames
+import org.jetbrains.dokka.links.*
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.Param
 import org.jetbrains.dokka.model.doc.Text
@@ -369,7 +366,8 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
                         "java.lang.annotation",
                         "RetentionPolicy",
                         DRICallable("RUNTIME", null, emptyList()),
-                        PointingToDeclaration
+                        PointingToDeclaration,
+                        DRIExtraContainer().also { it[EnumEntryDRIExtra] = EnumEntryDRIExtra }.encode()
                     )
                 )
 

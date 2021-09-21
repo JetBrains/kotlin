@@ -1,7 +1,10 @@
 package org.jetbrains.dokka.links
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 
 /**
  * [DRI] stands for DokkaResourceIdentifier
@@ -21,6 +24,24 @@ data class DRI(
         val topLevel = DRI()
 
     }
+}
+
+object EnumEntryDRIExtra: DRIExtraProperty<EnumEntryDRIExtra>()
+
+abstract class DRIExtraProperty<T> {
+    val key: String = this::class.qualifiedName
+        ?: (this.javaClass.let { it.`package`.name + "." + it.simpleName.ifEmpty { "anonymous" } })
+}
+
+class DRIExtraContainer(val data: String? = null) {
+    val map: MutableMap<String, Any> = if (data != null) ObjectMapper().readValue(data) else mutableMapOf()
+    inline operator fun <reified T> get(prop: DRIExtraProperty<T>): T? =
+        map[prop.key]?.let { prop as? T }
+
+    inline operator fun <reified T> set(prop: DRIExtraProperty<T>, value: T) =
+        value.also { map[prop.key] = it as Any }
+
+    fun encode(): String = ObjectMapper().writeValueAsString(map)
 }
 
 val DriOfUnit = DRI("kotlin", "Unit")
