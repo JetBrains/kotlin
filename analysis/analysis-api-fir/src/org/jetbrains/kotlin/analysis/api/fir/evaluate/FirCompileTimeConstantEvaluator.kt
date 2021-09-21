@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.ConstantValueKind
  * An evaluator that transform numeric operation, such as div, into compile-time constant iff involved operands, such as explicit receiver
  * and the argument, are compile-time constant as well.
  */
-internal class FirCompileTimeConstantEvaluator {
+internal object FirCompileTimeConstantEvaluator {
 
     // TODO: Handle boolean operators, const property loading, class reference, array, annotation values, etc.
     fun evaluate(expression: FirExpression): FirConstExpression<*>? =
