@@ -69,4 +69,38 @@ class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
         """
         )
     }
+
+    @Test
+    fun testComposableExpectDefaultParameter() = ensureSetup {
+        multiplatform(
+            """
+                import androidx.compose.runtime.Composable
+
+                @Composable
+                expect fun One(param: Int = 0)
+            """,
+            """
+                import androidx.compose.runtime.Composable
+
+                @Composable
+                actual fun One(param: Int) { }
+            """,
+            """
+                final class JvmKt%One%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+                  OUTERCLASS JvmKt One (ILandroidx/compose/runtime/Composer;II)V
+                  final static INNERCLASS JvmKt%One%1 null null
+                  final synthetic I %param
+                  final synthetic I %%changed
+                  final synthetic I %%default
+                  <init>(III)V
+                  public final invoke(Landroidx/compose/runtime/Composer;I)V
+                  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+                }
+                public final class JvmKt {
+                  final static INNERCLASS JvmKt%One%1 null null
+                  public final static One(ILandroidx/compose/runtime/Composer;II)V
+                }
+            """.trimIndent()
+        )
+    }
 }
