@@ -350,6 +350,16 @@ public class ParcelizeBoxTestGenerated extends AbstractParcelizeBoxTest {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/sealedClass.kt");
     }
 
+    @TestMetadata("sealedClass2.kt")
+    public void testSealedClass2() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/sealedClass2.kt");
+    }
+
+    @TestMetadata("sealedInterface.kt")
+    public void testSealedInterface() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/sealedInterface.kt");
+    }
+
     @TestMetadata("shortArray.kt")
     public void testShortArray() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/shortArray.kt");

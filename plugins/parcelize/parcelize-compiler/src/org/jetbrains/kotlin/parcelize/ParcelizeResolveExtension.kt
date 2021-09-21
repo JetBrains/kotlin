@@ -30,8 +30,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent.ComponentKind.DESCRIBE_CONTENTS
 import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent.ComponentKind.WRITE_TO_PARCEL
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
@@ -122,6 +125,7 @@ open class ParcelizeResolveExtension : SyntheticResolveExtension {
 
         if (name.asString() == DESCRIBE_CONTENTS.methodName
             && thisDescriptor.isParcelize
+            && !thisDescriptor.isSealed()
             && isParcelizePluginEnabled()
             && result.none { it.isDescribeContents() }
             && fromSupertypes.none { it.isDescribeContents() }
@@ -129,6 +133,7 @@ open class ParcelizeResolveExtension : SyntheticResolveExtension {
             result += createMethod(thisDescriptor, DESCRIBE_CONTENTS, Modality.OPEN, thisDescriptor.builtIns.intType)
         } else if (name.asString() == WRITE_TO_PARCEL.methodName
             && thisDescriptor.isParcelize
+            && !thisDescriptor.isSealed()
             && isParcelizePluginEnabled()
             && result.none { it.isWriteToParcel() }
         ) {
@@ -197,16 +202,13 @@ val RAW_VALUE_ANNOTATION_FQ_NAMES = listOf(
 internal val PARCELER_FQNAME = FqName("kotlinx.parcelize.Parceler")
 internal val OLD_PARCELER_FQNAME = FqName("kotlinx.android.parcel.Parceler")
 
-val ClassDescriptor.isParcelize: Boolean
-    get() {
-        for (fqName in PARCELIZE_CLASS_FQ_NAMES) {
-            if (this.annotations.hasAnnotation(fqName)) {
-                return true
-            }
-        }
+val ClassDescriptor.hasParcelizeAnnotation: Boolean
+    get() = PARCELIZE_CLASS_FQ_NAMES.any(annotations::hasAnnotation)
 
-        return false
-    }
+val ClassDescriptor.isParcelize: Boolean
+    get() = hasParcelizeAnnotation
+            || getSuperClassNotAny()?.takeIf(DescriptorUtils::isSealedClass)?.hasParcelizeAnnotation == true
+            || getSuperInterfaces().any { DescriptorUtils.isSealedClass(it) && it.hasParcelizeAnnotation }
 
 val KotlinType.isParceler: Boolean
     get() = constructor.declarationDescriptor?.fqNameSafe == PARCELER_FQNAME
