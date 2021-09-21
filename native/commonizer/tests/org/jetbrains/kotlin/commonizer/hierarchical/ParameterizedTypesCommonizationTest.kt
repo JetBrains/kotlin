@@ -462,4 +462,66 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
             """.trimIndent()
         )
     }
+
+    @Suppress("unused") // https://youtrack.jetbrains.com/issue/KT-48850
+    fun `KT-48850 - test non-commonizable type alias arguments - 0`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    class Foo<T1, T2, T3>
+                    typealias X<T1, T2, T3> = Foo<T3, T2, T1>
+                    fun<T1, T2, T3> x(x: X<T3, T2, T1>)
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class Foo<T1, T2, T3>
+                    typealias X<T1, T2, T3> = Foo<T1, T2, T3>
+                    fun<T1, T2, T3> x(x: X<T1, T2, T3>)
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class Foo<T1, T2, T3>() 
+                expect fun<T1, T2, T3> x(x: Foo<T1, T2, T3>)
+            """.trimIndent()
+        )
+    }
+
+    @Suppress("unused") // https://youtrack.jetbrains.com/issue/KT-48850
+    fun `KT-48850 - test non-commonizable type alias arguments - 1`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    class Foo<T1, T2, T3>
+                    typealias X<T1, T2, T3> = Foo<T3, T2, T1>
+                    typealias Y<T1, T2, T3> = X<T1, T2, T3>
+                    fun<T1, T2, T3> x(x: Y<T3, T2, T1>)
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class Foo<T1, T2, T3>
+                    typealias X<T1, T2, T3> = Foo<T1, T2, T3>
+                    typealias Y<T1, T2, T3> = X<T1, T2, T3>
+                    fun<T1, T2, T3> x(x: Y<T1, T2, T3>)
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class Foo<T1, T2, T3>() 
+                expect fun<T1, T2, T3> x(x: Foo<T1, T2, T3>)
+            """.trimIndent()
+        )
+    }
 }
