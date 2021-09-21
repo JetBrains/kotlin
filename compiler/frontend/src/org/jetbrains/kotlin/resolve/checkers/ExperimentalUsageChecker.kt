@@ -169,18 +169,29 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             moduleAnnotationsResolver: ModuleAnnotationsResolver,
             languageVersionSettings: LanguageVersionSettings,
             visited: MutableSet<DeclarationDescriptor> = mutableSetOf(),
-            useFutureError: Boolean = false
+            useFutureError: Boolean = false,
+            useMarkersFromContainer: Boolean = true,
         ): Set<Experimentality> {
             if (!visited.add(this)) return emptySet()
             val result = SmartSet.create<Experimentality>()
             if (this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
                 for (overridden in overriddenDescriptors) {
-                    result.addAll(overridden.loadExperimentalities(
-                        moduleAnnotationsResolver,
-                        languageVersionSettings,
-                        visited,
-                        useFutureError = !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures)
-                    ))
+                    result.addAll(
+                        overridden.loadExperimentalities(
+                            moduleAnnotationsResolver,
+                            languageVersionSettings,
+                            visited,
+                            useFutureError = !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures),
+                            useMarkersFromContainer = false
+                        )
+                    )
+                    if (useMarkersFromContainer) {
+                        (containingDeclaration as? ClassDescriptor)?.let {
+                            result.addAll(
+                                it.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings, visited, useFutureError)
+                            )
+                        }
+                    }
                 }
                 return result
             }
@@ -218,6 +229,11 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                 if (accessibility is SinceKotlinAccessibility.NotAccessibleButWasExperimental) {
                     result.addAll(accessibility.markerClasses.mapNotNull { it.loadExperimentalityForMarkerAnnotation() })
                 }
+            }
+
+            val container = containingDeclaration
+            if (useMarkersFromContainer && container is ClassDescriptor && this !is ConstructorDescriptor) {
+                result.addAll(container.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings, visited, useFutureError))
             }
 
             for (moduleAnnotationClassId in moduleAnnotationsResolver.getAnnotationsOnContainingModule(this)) {
