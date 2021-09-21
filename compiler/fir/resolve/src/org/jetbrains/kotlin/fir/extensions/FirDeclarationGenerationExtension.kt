@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClass
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import kotlin.reflect.KClass
 
 /*
@@ -26,19 +29,10 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirPredi
 
     final override val extensionType: KClass<out FirExtension> = FirDeclarationGenerationExtension::class
 
-    abstract fun generateClasses(
-        annotatedDeclaration: FirDeclaration,
-        owners: List<FirAnnotatedDeclaration>
-    ): List<GeneratedDeclaration<FirRegularClass>>
-
-    abstract fun generateMembersForGeneratedClass(generatedClass: GeneratedClass): List<FirDeclaration>
-
-    abstract fun generateMembers(
-        annotatedDeclaration: FirDeclaration,
-        owners: List<FirAnnotatedDeclaration>
-    ): List<GeneratedDeclaration<*>>
-
-    data class GeneratedDeclaration<out T : FirDeclaration>(val newDeclaration: T, val owner: FirAnnotatedDeclaration)
+    open fun generateClassLikeDeclaration(classId: ClassId, owner: FirClassSymbol<*>?): FirClassLikeSymbol<*>? = null
+    open fun generateFunctions(callableId: CallableId, owner: FirClassSymbol<*>?): List<FirNamedFunctionSymbol> = emptyList()
+    open fun generateProperties(callableId: CallableId, owner: FirClassSymbol<*>?): List<FirPropertySymbol> = emptyList()
+    open fun hasPackage(packageFqName: FqName): Boolean = false
 
     fun interface Factory : FirExtension.Factory<FirDeclarationGenerationExtension>
 }

@@ -5,82 +5,74 @@
 
 package org.jetbrains.kotlin.fir.plugin.generators
 
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.has
+import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.packageFqName
+import org.jetbrains.kotlin.fir.plugin.AllOpenPluginKey
 import org.jetbrains.kotlin.fir.plugin.fqn
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClass
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
-    override fun generateClasses(
-        annotatedDeclaration: FirDeclaration,
-        owners: List<FirAnnotatedDeclaration>
-    ): List<GeneratedDeclaration<FirRegularClass>> {
-        val file = owners.first() as FirFile
-        val klass = annotatedDeclaration as? FirRegularClass ?: return emptyList()
-        val newClass = buildRegularClass {
-            moduleData = session.moduleData
-            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-            origin = FirDeclarationOrigin.Plugin(key)
-            status = FirResolvedDeclarationStatusImpl(
-                Visibilities.Public,
-                Modality.FINAL,
-                EffectiveVisibility.Public
-            )
-            classKind = ClassKind.OBJECT
-            name = Name.identifier("TopLevel${klass.name}")
-            symbol = FirRegularClassSymbol(ClassId(file.packageFqName, name))
-            scopeProvider = klass.scopeProvider
-        }
-        return listOf(GeneratedDeclaration(newClass, file))
+    private val predicateBasedProvider = session.predicateBasedProvider
+    private val matchedClasses by lazy {
+        predicateBasedProvider.getSymbolsByPredicate(predicate).map { it.symbol }.filterIsInstance<FirRegularClassSymbol>()
     }
 
-    override fun generateMembersForGeneratedClass(generatedClass: GeneratedClass): List<FirDeclaration> {
-        val klass = generatedClass.klass
+    override fun generateFunctions(callableId: CallableId, owner: FirClassSymbol<*>?): List<FirNamedFunctionSymbol> {
+        if (owner != null) return emptyList()
+        val matchedClassSymbol = findMatchedClassForFunction(callableId) ?: return emptyList()
         val function = buildSimpleFunction {
             moduleData = session.moduleData
-            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-            origin = FirDeclarationOrigin.Plugin(key)
-            returnTypeRef = session.builtinTypes.intType
+            origin = key.origin
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
                 Modality.FINAL,
                 EffectiveVisibility.Public
             )
-            name = Name.identifier("hello")
-            symbol = FirNamedFunctionSymbol(CallableId(klass.symbol.classId, name))
+            returnTypeRef = session.builtinTypes.stringType
+            valueParameters += buildValueParameter {
+                moduleData = session.moduleData
+                origin = key.origin
+                returnTypeRef = buildResolvedTypeRef {
+                    type = ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(matchedClassSymbol.classId), emptyArray(), isNullable = false)
+                }
+                name = Name.identifier("value")
+                symbol = FirValueParameterSymbol(name)
+                isCrossinline = false
+                isNoinline = false
+                isVararg = false
+            }
+            symbol = FirNamedFunctionSymbol(callableId)
+            name = callableId.callableName
         }
-        return listOf(function)
+        return listOf(function.symbol)
     }
 
-    override fun generateMembers(
-        annotatedDeclaration: FirDeclaration,
-        owners: List<FirAnnotatedDeclaration>
-    ): List<GeneratedDeclaration<*>> {
-        return emptyList()
+    private fun findMatchedClassForFunction(callableId: CallableId): FirRegularClassSymbol? {
+        // We generate only top-level functions
+        if (callableId.classId != null) return null
+        return matchedClasses
+            .filter { it.classId.packageFqName == callableId.packageName }
+            .firstOrNull { callableId.callableName.identifier == "dummy${it.classId.shortClassName.identifier}" }
     }
 
-    override val key: FirPluginKey
-        get() = Key
+    override val key: AllOpenPluginKey
+        get() = AllOpenPluginKey
 
     override val predicate: DeclarationPredicate
         get() = has("A".fqn())
 
-    private object Key : FirPluginKey()
 }

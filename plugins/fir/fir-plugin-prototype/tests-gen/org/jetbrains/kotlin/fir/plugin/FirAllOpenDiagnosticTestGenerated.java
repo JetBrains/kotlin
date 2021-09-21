@@ -68,6 +68,12 @@ public class FirAllOpenDiagnosticTestGenerated extends AbstractFirAllOpenDiagnos
         }
 
         @Test
+        @TestMetadata("topLevelCallables.kt")
+        public void testTopLevelCallables() throws Exception {
+            runTest("plugins/fir/fir-plugin-prototype/testData/memberGen/topLevelCallables.kt");
+        }
+
+        @Test
         @TestMetadata("topLevelClass.kt")
         public void testTopLevelClass() throws Exception {
             runTest("plugins/fir/fir-plugin-prototype/testData/memberGen/topLevelClass.kt");

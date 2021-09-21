@@ -66,7 +66,6 @@ fun FirResolvePhase.createCompilerProcessorByPhase(
     return when (this) {
         RAW_FIR -> throw IllegalArgumentException("Raw FIR building phase does not have a transformer")
         ANNOTATIONS_FOR_PLUGINS -> FirPluginAnnotationsResolveProcessor(session, scopeSession)
-        CLASS_GENERATION -> FirGlobalClassGenerationProcessor(session, scopeSession)
         IMPORTS -> FirImportResolveProcessor(session, scopeSession)
         SUPER_TYPES -> FirSupertypeResolverProcessor(session, scopeSession)
         SEALED_CLASS_INHERITORS -> FirSealedClassInheritorsProcessor(session, scopeSession)
@@ -74,7 +73,6 @@ fun FirResolvePhase.createCompilerProcessorByPhase(
         STATUS -> FirStatusResolveProcessor(session, scopeSession)
         ARGUMENTS_OF_ANNOTATIONS -> FirAnnotationArgumentsResolveProcessor(session, scopeSession)
         CONTRACTS -> FirContractResolveProcessor(session, scopeSession)
-        NEW_MEMBERS_GENERATION -> FirGlobalNewMemberGenerationProcessor(session, scopeSession)
         IMPLICIT_TYPES_BODY_RESOLVE -> FirImplicitTypeBodyResolveProcessor(session, scopeSession)
         BODY_RESOLVE -> FirBodyResolveProcessor(session, scopeSession)
     }

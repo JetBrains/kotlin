@@ -25,4 +25,6 @@ sealed class FirDeclarationOrigin(private val displayName: String? = null, val f
     }
 }
 
-abstract class FirPluginKey
+abstract class FirPluginKey {
+    val origin: FirDeclarationOrigin = FirDeclarationOrigin.Plugin(this)
+}

@@ -15,10 +15,10 @@ class FirAllOpenComponentRegistrar : FirExtensionRegistrar() {
         +::AllOpenSupertypeGenerator
 
         // Declaration generators
-        +::AllOpenMemberGenerator
-        +::AllOpenNestedClassGenerator
+//        +::AllOpenMemberGenerator
+//        +::AllOpenNestedClassGenerator
         +::AllOpenAdditionalCheckers
         +::AllOpenTopLevelDeclarationsGenerator
-        +::AllOpenRecursiveNestedClassGenerator
+//        +::AllOpenRecursiveNestedClassGenerator
     }
 }
