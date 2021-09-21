@@ -131,7 +131,6 @@ internal class ClassOrTypeAliasTypeCommonizer(
     ): CirClassOrTypeAliasType? {
         return generateSequence(sourceType.underlyingType) { type -> type.safeAs<CirTypeAliasType>()?.underlyingType }
             .firstOrNull { underlyingType -> underlyingType.classifierId == destinationClassifierId }
-            ?.withParentArguments(sourceType.arguments, sourceType.isMarkedNullable)
     }
 
     private fun backwardsSubstitute(

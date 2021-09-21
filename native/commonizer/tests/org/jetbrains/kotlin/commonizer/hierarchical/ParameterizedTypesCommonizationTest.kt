@@ -358,4 +358,108 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
             """.trimIndent()
         )
     }
+
+    fun `test parameterized function - 3`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    class Foo<A>
+                    typealias Bar<A> = Foo<A>
+                    fun <T0, T1> fn(arg: Bar<T1>) {}
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class Foo<A>
+                    typealias Bar<A> = Foo<A>
+                    fun <T0, T1> fn(arg: Foo<T1>) {}
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class Foo<A>()
+                typealias Bar<A> = Foo<A>
+                expect fun <T0, T1> fn(arg: Foo<T1>)
+            """.trimIndent()
+        )
+    }
+
+    fun `test member function - 0`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    class Foo<T1, T2, T3> {
+                        fun t(x: Baz<T3>) = Unit
+                    }
+                    typealias Bar<T1, T2> = Foo<Int, T1, T2>                   
+                    typealias Baz<T1> = Bar<String, T1>
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class Foo<T1, T2, T3> {
+                        fun t(x: Boo<T3>) {}
+                    }
+                    typealias Boo<T1> = Foo<Int, String, T1>
+                    
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class Foo<T1, T2, T3>() {
+                    expect fun t(x: Foo<Int, String, T3>)
+                }
+            """.trimIndent()
+        )
+    }
+
+    fun `test member function - 1`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    class Foo<T1, T2, T3> {
+                        fun t(x: Z<T3>) = Unit
+                    }
+
+                    typealias X<T1, T2, T3> = Foo<T1, T2, T3>
+                    typealias Y<T1, T3> = X<T1, String, T3>
+                    typealias Z<T1> = Y<T1, Int>
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                   class Foo<T1, T2, T3> {
+                        fun t(x: Y<T3, Int>) = Unit
+                    }
+
+                   typealias X<T1, T2, T3> = Foo<T1, T2, T3>
+                   typealias Y<T1, T3> = X<T1, String, T3>
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class Foo<T1, T2, T3>() {
+                    expect fun t(x: Y<T3, Int>)
+                }
+
+                typealias X<T1, T2, T3> = Foo<T1, T2, T3>
+                typealias Y<T1, T3> = X<T1, String, T3>
+            """.trimIndent()
+        )
+    }
 }
