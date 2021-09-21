@@ -96,7 +96,7 @@ bitcode {
                 "-funwind-tables",
                 "-W", "-Wall", "-Wwrite-strings", "-Wstrict-prototypes", "-Wmissing-prototypes",
                 "-Wold-style-definition", "-Wmissing-format-attribute", "-Wcast-qual", "-O2",
-                "-DBACKTRACE_ELF_SIZE=$elfSize".takeIf { useElf }
+                "-DBACKTRACE_ELF_SIZE=$elfSize".takeIf { useElf }, "-Wno-atomic-alignment"
         ))
         headersDirs = files("$srcRoot/c/include")
 
