@@ -1,5 +1,5 @@
 fun test_1() {
-    val list = <!OPT_IN_USAGE_ERROR!>buildList<!> {
+    val list = buildList {
         add("")
     }
     takeList(list)

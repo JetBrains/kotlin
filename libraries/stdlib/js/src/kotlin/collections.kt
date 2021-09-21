@@ -67,7 +67,6 @@ public fun <T> listOf(element: T): List<T> = arrayListOf(element)
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 internal actual inline fun <E> buildListInternal(builderAction: MutableList<E>.() -> Unit): List<E> {
     return ArrayList<E>().apply(builderAction).build()
@@ -75,7 +74,6 @@ internal actual inline fun <E> buildListInternal(builderAction: MutableList<E>.(
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 internal actual inline fun <E> buildListInternal(capacity: Int, builderAction: MutableList<E>.() -> Unit): List<E> {
     checkBuilderCapacity(capacity)
@@ -90,7 +88,6 @@ public fun <T> setOf(element: T): Set<T> = hashSetOf(element)
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 internal actual inline fun <E> buildSetInternal(builderAction: MutableSet<E>.() -> Unit): Set<E> {
     return LinkedHashSet<E>().apply(builderAction).build()
@@ -98,7 +95,6 @@ internal actual inline fun <E> buildSetInternal(builderAction: MutableSet<E>.() 
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 internal actual inline fun <E> buildSetInternal(capacity: Int, builderAction: MutableSet<E>.() -> Unit): Set<E> {
     return LinkedHashSet<E>(capacity).apply(builderAction).build()
@@ -113,7 +109,6 @@ public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 internal actual inline fun <K, V> buildMapInternal(builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
     return LinkedHashMap<K, V>().apply(builderAction).build()
@@ -121,7 +116,6 @@ internal actual inline fun <K, V> buildMapInternal(builderAction: MutableMap<K, 
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 internal actual inline fun <K, V> buildMapInternal(capacity: Int, builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
     return LinkedHashMap<K, V>(capacity).apply(builderAction).build()
@@ -261,7 +255,6 @@ internal actual fun mapCapacity(expectedSize: Int) = expectedSize
  * In JS no validation is made in Map/Set constructor yet.
  */
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 @PublishedApi
 internal fun checkBuilderCapacity(capacity: Int) {
     require(capacity >= 0) { "capacity must be non-negative." }
