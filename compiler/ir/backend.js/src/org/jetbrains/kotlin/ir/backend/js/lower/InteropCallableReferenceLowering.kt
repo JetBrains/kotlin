@@ -323,14 +323,12 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         val newDeclarations = mutableListOf<IrDeclaration>()
         val constructor = lambdaClass.declarations.single { it is IrConstructor } as IrConstructor
 
-        val factoryName = Name.identifier("${lambdaClass.name.asString()}\$factory")
-
         val factoryDeclaration = context.irFactory.buildFun {
             startOffset = lambdaClass.startOffset
             endOffset = lambdaClass.endOffset
             visibility = lambdaClass.visibility
             returnType = lambdaClass.defaultType
-            name = factoryName
+            name = lambdaClass.name
             origin = JsStatementOrigins.FACTORY_ORIGIN
         }
 

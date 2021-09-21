@@ -123,6 +123,41 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         private val superFunctionInterface = reference.type.classOrNull?.owner ?: error("Expected functional type")
         private val isKReference = superFunctionInterface.name.identifier[0] == 'K'
 
+        private fun StringBuilder.collectNamesForLambda(d: IrDeclarationWithName) {
+            val parent = d.parent
+
+            if (parent is IrPackageFragment) {
+                append(d.name.asString())
+                return
+            }
+
+            collectNamesForLambda(parent as IrDeclarationWithName)
+
+            if (d is IrAnonymousInitializer) return
+
+            fun IrDeclaration.isLambdaFun(): Boolean = origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+
+            when {
+                d.isLambdaFun() -> {
+                    append('$')
+                    if (d is IrSimpleFunction && d.isSuspend) append('s')
+                    append("lambda")
+                }
+                d.name == SpecialNames.NO_NAME_PROVIDED -> append("\$o")
+                else -> {
+                    append('$')
+                    append(d.name.asString())
+                }
+            }
+        }
+
+        private fun makeContextDependentName(): Name {
+            val sb = StringBuilder()
+            sb.collectNamesForLambda(function)
+            if (!isLambda) sb.append("\$ref")
+            return Name.identifier(sb.toString())
+        }
+
         private fun buildReferenceClass(): IrClass {
             return context.irFactory.buildClass {
                 setSourceRange(reference)
@@ -130,7 +165,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 // A callable reference results in a synthetic class, while a lambda is not synthetic.
                 // We don't produce GENERATED_SAM_IMPLEMENTATION, which is always synthetic.
                 origin = if (isKReference || !isLambda) FUNCTION_REFERENCE_IMPL else LAMBDA_IMPL
-                name = SpecialNames.NO_NAME_PROVIDED
+                name = makeContextDependentName()
             }.apply {
                 superTypes = listOf(superClass, reference.type)
 //                if (samSuperType == null)
