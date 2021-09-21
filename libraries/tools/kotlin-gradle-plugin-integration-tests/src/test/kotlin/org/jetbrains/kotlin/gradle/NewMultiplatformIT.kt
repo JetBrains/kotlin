@@ -1144,7 +1144,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
 
             assertEquals(
-                setOf("commonMain", "jvm6Main", "linux64Main", "macos64Main", "mingw64Main", "mingw86Main", "nodeJsMain"),
+                setOf("commonMain", "jvm6Main", "linux64Main", "linuxMipsel32Main", "macos64Main", "mingw64Main", "mingw86Main", "nodeJsMain"),
                 sourceJarSourceRoots[null]
             )
             assertEquals(setOf("commonMain", "jvm6Main"), sourceJarSourceRoots["jvm6"])
@@ -1472,7 +1472,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
 
             val expectedDefaultSourceSets = listOf(
-                "jvm6", "nodeJs", "mingw64", "mingw86", "linux64", "macos64"
+                "jvm6", "nodeJs", "mingw64", "mingw86", "linux64", "macos64", "linuxMipsel32"
             ).flatMapTo(mutableSetOf()) { target ->
                 listOf("main", "test").map { compilation ->
                     Triple(target, compilation, "$target${compilation.capitalize()}")
