@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.getPropertyGetter
-import org.jetbrains.kotlin.ir.util.getSimpleFunction
-import org.jetbrains.kotlin.ir.util.isPrimitiveArray
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -75,7 +72,7 @@ abstract class IndexedGetIterationHandler(
 
 /** Builds a [HeaderInfo] for arrays. */
 internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context, canCacheLast = true) {
-    override fun matchIterable(expression: IrExpression) = expression.type.run { isArray() || isPrimitiveArray() }
+    override fun matchIterable(expression: IrExpression) = expression.type.run { isArray() || isPrimitiveArray() || isUnsignedArray() }
 
     override val IrType.sizePropertyGetter
         get() = getClass()!!.getPropertyGetter("size")!!.owner

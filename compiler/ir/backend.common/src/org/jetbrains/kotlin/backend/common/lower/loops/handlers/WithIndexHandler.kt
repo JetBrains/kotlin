@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.types.isIterable
 import org.jetbrains.kotlin.ir.types.isSequence
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
+import org.jetbrains.kotlin.ir.util.isUnsignedArray
 import org.jetbrains.kotlin.name.FqName
 
 /** Builds a [HeaderInfo] for calls to `withIndex()`. */
@@ -30,7 +31,7 @@ internal class WithIndexHandler(context: CommonBackendContext, private val visit
         createIrCallMatcher(Quantifier.ANY) {
             callee {
                 fqName { it == FqName("kotlin.collections.withIndex") }
-                extensionReceiver { it != null && it.type.run { isArray() || isPrimitiveArray() || isIterable() } }
+                extensionReceiver { it != null && it.type.run { isArray() || isPrimitiveArray() || isUnsignedArray() || isIterable() } }
                 parameterCount { it == 0 }
             }
             callee {

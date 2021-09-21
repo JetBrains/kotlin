@@ -47,7 +47,9 @@ fun testLong() {
         s += i
         if (t > 2) throw Exception("too many iterations: $t")
     }
-    if (s != "-9223372036854775807-9223372036854775808") throw Exception(s)
+    if (s != "-9223372036854775807-9223372036854775808" &&
+            s != "-9223372036854776000-9223372036854776000" // JS
+    ) throw Exception(s)
 }
 
 fun testChar() {
