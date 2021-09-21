@@ -97,6 +97,7 @@ open class CompileToBitcode @Inject constructor(
                     listOf("-std=gnu11", "-O3", "-Wall", "-Wextra", "-Werror")
                 Language.CPP ->
                     listOfNotNull("-std=c++17", "-Werror", "-O2",
+                            "-fno-aligned-allocation", // TODO: Remove when all targets support aligned allocation in C++ runtime.
                             "-Wall", "-Wextra",
                             "-Wno-unused-parameter"  // False positives with polymorphic functions.
                     )
