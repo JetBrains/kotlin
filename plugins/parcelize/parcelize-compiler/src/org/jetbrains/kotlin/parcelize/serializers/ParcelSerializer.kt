@@ -100,11 +100,12 @@ interface ParcelSerializer {
             findCustomParcelerType(type)?.let { return TypeParcelerParcelSerializer(asmType, it, context.typeMapper) }
 
             return when {
+                // Somewhat inconsistently, there are no `Parcel.writeShortArray/createShortArray` methods,
+                // so we need to exclude "[S" here.
                 asmType.descriptor == "[I"
                         || asmType.descriptor == "[Z"
                         || asmType.descriptor == "[B"
                         || asmType.descriptor == "[C"
-                        || asmType.descriptor == "[S"
                         || asmType.descriptor == "[D"
                         || asmType.descriptor == "[F"
                         || asmType.descriptor == "[J"
