@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.fir.plugin.Visibility
 
 @AllPublic(Visibility.Protected)
 class A {
-    val x: String
+    val x: String = ""
 
     fun foo() {}
 
@@ -16,7 +16,7 @@ class A {
 
 @AllPublic(Visibility.Private)
 class B {
-    val x: String
+    val x: String = ""
 
     fun foo() {
 

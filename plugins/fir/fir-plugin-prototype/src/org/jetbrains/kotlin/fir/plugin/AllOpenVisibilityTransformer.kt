@@ -8,21 +8,19 @@ package org.jetbrains.kotlin.fir.plugin
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.hasOrUnder
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.transform
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.ClassId
@@ -59,10 +57,9 @@ class AllOpenVisibilityTransformer(session: FirSession) : FirStatusTransformerEx
         val annotation = annotations.firstOrNull {
             it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == AllPublicClassId
         } as? FirAnnotationCall ?: return null
-        val argument = annotation.arguments.firstOrNull() as? FirQualifiedAccessExpression ?: return null
-        val symbol = (argument.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirVariableSymbol<*> ?: return null
-        val name = symbol.takeIf { it.containingClass()?.classId == VisibilityClassId }?.callableId?.callableName ?: return null
-        return when (name) {
+        val argument = annotation.arguments.firstOrNull() as? FirPropertyAccessExpression ?: return null
+        val reference = argument.calleeReference as? FirNamedReference ?: return null
+        return when (reference.name) {
             PublicName -> Visibilities.Public
             InternalName -> Visibilities.Internal
             PrivateName -> Visibilities.Private
