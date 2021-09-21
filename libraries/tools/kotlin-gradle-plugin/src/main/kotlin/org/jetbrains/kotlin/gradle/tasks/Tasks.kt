@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskConfigurator
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
-import org.jetbrains.kotlin.gradle.internal.transforms.CLASSPATH_ENTRY_SNAPSHOT_FILE_NAME
 import org.jetbrains.kotlin.gradle.internal.transforms.ClasspathEntrySnapshotTransform
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
@@ -62,6 +61,7 @@ import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
+import java.util.LinkedHashSet
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
@@ -447,7 +447,8 @@ open class KotlinCompileArgumentsProvider<T : AbstractKotlinCompile<out CommonCo
     val isMultiplatform: Boolean = taskProvider.multiPlatformEnabled.get()
     private val pluginData = taskProvider.kotlinPluginData?.orNull
     val pluginClasspath: FileCollection = listOfNotNull(taskProvider.pluginClasspath, pluginData?.classpath).reduce(FileCollection::plus)
-    val pluginOptions: CompilerPluginOptions = listOfNotNull(taskProvider.pluginOptions, pluginData?.options).reduce(CompilerPluginOptions::plus)
+    val pluginOptions: CompilerPluginOptions =
+        listOfNotNull(taskProvider.pluginOptions, pluginData?.options).reduce(CompilerPluginOptions::plus)
 }
 
 class KotlinJvmCompilerArgumentsProvider
@@ -709,7 +710,7 @@ abstract class KotlinCompile @Inject constructor(
 
         with(classpathSnapshotProperties) {
             if (isIncrementalCompilationEnabled() && useClasspathSnapshot.get()) {
-                copyClasspathSnapshotFilesToDir(classpathSnapshot.files.toList(), classpathSnapshotDir.get().asFile)
+                copyCurrentClasspathEntrySnapshotFiles()
             }
         }
 
@@ -796,44 +797,54 @@ abstract class KotlinCompile @Inject constructor(
         return super.source(*sources)
     }
 
-    private fun getClasspathChanges(@Suppress("UNUSED_PARAMETER") inputChanges: InputChanges): ClasspathChanges {
-        val currentSnapshotFiles = classpathSnapshotProperties.classpathSnapshot.files.toList()
-        val previousSnapshotFiles = getClasspathSnapshotFilesInDir(classpathSnapshotProperties.classpathSnapshotDir.get().asFile)
-
-        // TODO: Compute changes for the changed snapshot files only, ignoring unchanged ones.
-        // We'll need to be careful when the classpath contains duplicate classes, as we'll need to look at the entire classpath in order to
-        // detect them.
-        val currentSnapshot = ClasspathSnapshotSerializer.load(currentSnapshotFiles)
-        val previousSnapshot = ClasspathSnapshotSerializer.load(previousSnapshotFiles)
-
-        return ClasspathChangesComputer.compute(currentSnapshot, previousSnapshot)
-    }
-
-    /**
-     * Copies classpath snapshot files to the given directory.
-     *
-     * To preserve their order, we put them in subdirectories with names being their indices in the original list, as shown below:
-     *     classpathSnapshotDir/0/snapshotFileName
-     *     classpathSnapshotDir/1/snapshotFileName
-     *     ...
-     *     classpathSnapshotDir/N-1/snapshotFileName
-     */
-    private fun copyClasspathSnapshotFilesToDir(classpathSnapshotFiles: List<File>, classpathSnapshotDir: File) {
-        classpathSnapshotDir.deleteRecursively()
-        classpathSnapshotDir.mkdirs()
-        for ((index, file) in classpathSnapshotFiles.withIndex()) {
-            file.copyTo(File("$classpathSnapshotDir/$index/$CLASSPATH_ENTRY_SNAPSHOT_FILE_NAME"), overwrite = true)
+    private fun getClasspathChanges(inputChanges: InputChanges): ClasspathChanges {
+        val fileChanges = inputChanges.getFileChanges(classpathSnapshotProperties.classpathSnapshot).toList()
+        return if (fileChanges.isEmpty()) {
+            ClasspathChanges.Available(LinkedHashSet(), LinkedHashSet())
+        } else {
+            val currentClasspathEntrySnapshotFiles = classpathSnapshotProperties.classpathSnapshot.files.toList()
+            val changedCurrentFiles = fileChanges
+                .filter { it.changeType == ChangeType.ADDED || it.changeType == ChangeType.MODIFIED }
+                .map { it.file }.toSet()
+            ClasspathChangesComputer.compute(
+                currentClasspathEntrySnapshotFiles = currentClasspathEntrySnapshotFiles,
+                previousClasspathEntrySnapshotFiles = getPreviousClasspathEntrySnapshotFiles(),
+                unchangedCurrentClasspathEntrySnapshotFiles = currentClasspathEntrySnapshotFiles.filter { it !in changedCurrentFiles }
+            )
         }
     }
 
     /**
-     * Returns all classpath snapshot files in the given directory, sorted by their original indices (the subdirectories' names).
+     * Copies classpath entry snapshot files of the current build to `classpathSnapshotDir`. They will be used in the next build (see
+     * [getPreviousClasspathEntrySnapshotFiles]).
      *
-     * See [copyClasspathSnapshotFilesToDir] for the structure of the classpath snapshot directory.
+     * To preserve their order, we put them in subdirectories with names being their indices, as shown below:
+     *     classpathSnapshotDir/0/a-snapshot.bin
+     *     classpathSnapshotDir/1/b-snapshot.bin
+     *     ...
+     *     classpathSnapshotDir/N-1/z-snapshot.bin
      */
-    private fun getClasspathSnapshotFilesInDir(classpathSnapshotDir: File): List<File> {
-        val subDirs = classpathSnapshotDir.listFiles() ?: return emptyList()
-        return subDirs.toList().sortedBy { it.name.toInt() }.map { File(it, CLASSPATH_ENTRY_SNAPSHOT_FILE_NAME) }
+    private fun copyCurrentClasspathEntrySnapshotFiles() {
+        val snapshotFiles = classpathSnapshotProperties.classpathSnapshot.files.toList()
+        val classpathSnapshotDir = classpathSnapshotProperties.classpathSnapshotDir.get().asFile
+        classpathSnapshotDir.deleteRecursively()
+        classpathSnapshotDir.mkdirs()
+        snapshotFiles.forEachIndexed { index, snapshotFile ->
+            val targetFile = File("$classpathSnapshotDir/$index/${snapshotFile.name}")
+            snapshotFile.copyTo(targetFile, overwrite = true)
+            // Preserve timestamp to find out unchanged files later (see `ClasspathChangesComputer.alignUnchangedSnapshotFiles`)
+            targetFile.setLastModified(snapshotFile.lastModified())
+        }
+    }
+
+    /**
+     * Returns classpath entry snapshot files of the previous build, stored in `classpathSnapshotDir` (see
+     * [copyCurrentClasspathEntrySnapshotFiles]).
+     */
+    private fun getPreviousClasspathEntrySnapshotFiles(): List<File> {
+        val classpathSnapshotDir = classpathSnapshotProperties.classpathSnapshotDir.get().asFile
+        val subDirs = classpathSnapshotDir.listFiles()!!.sortedBy { it.name.toInt() }
+        return subDirs.map { it.listFiles()!!.single() }
     }
 }
 

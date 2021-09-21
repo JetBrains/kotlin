@@ -22,11 +22,9 @@ abstract class ClasspathEntrySnapshotTransform : TransformAction<TransformParame
 
     override fun transform(outputs: TransformOutputs) {
         val classpathEntry = inputArtifact.get().asFile
-        val snapshotFile = outputs.file(CLASSPATH_ENTRY_SNAPSHOT_FILE_NAME)
+        val snapshotFile = outputs.file(classpathEntry.name.replace('.', '_') + "-snapshot.bin")
 
         val snapshot = ClasspathEntrySnapshotter.snapshot(classpathEntry)
         ClasspathEntrySnapshotSerializer.save(snapshotFile, snapshot)
     }
 }
-
-const val CLASSPATH_ENTRY_SNAPSHOT_FILE_NAME = "classpath-entry-snapshot.bin"

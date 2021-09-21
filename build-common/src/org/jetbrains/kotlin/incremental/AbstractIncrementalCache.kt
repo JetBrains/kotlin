@@ -109,13 +109,15 @@ abstract class AbstractIncrementalCache<ClassName>(
 
     override fun markDirty(removedAndCompiledSources: Collection<File>) {
         for (sourceFile in removedAndCompiledSources) {
-            val classes = sourceToClassesMap[sourceFile]
-            classes.forEach {
-                dirtyOutputClassesMap.markDirty(it)
+            sourceToClassesMap[sourceFile].forEach { className ->
+                markDirty(className)
             }
-
             sourceToClassesMap.clearOutputsForSource(sourceFile)
         }
+    }
+
+    fun markDirty(className: ClassName) {
+        dirtyOutputClassesMap.markDirty(className)
     }
 
     /**
