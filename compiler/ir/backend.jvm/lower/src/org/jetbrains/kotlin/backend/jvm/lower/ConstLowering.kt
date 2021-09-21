@@ -16,9 +16,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.ir.util.classId
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 internal val constPhase1 = makeIrFilePhase(
@@ -69,25 +68,11 @@ private class ConstTransformer(
         if (field.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return
 
         val path = irFile.path
-        val owner = field.parentClassOrNull?.getFqName() ?: return
+        val owner = field.parentAsClass.classId?.asString()?.replace(".", "$")?.replace("/", ".") ?: return
         val name = field.name.asString()
         val constType = value.kind.asString
 
         inlineConstTracker.report(path, owner, name, constType)
-    }
-
-    /**
-     * Get FqName or null in format pkg.Outer$Inner for JPS
-     */
-    private fun IrClass.getFqName(): String? {
-        val fqName = this.fqNameWhenAvailable?.asString() ?: return null
-
-        if (this.isInner) {
-            val parentFqName = (this.parent as IrLazyClass).getFqName() ?: return null
-            return parentFqName + "$" + fqName.substringAfterLast('.')
-        } else {
-            return fqName
-        }
     }
 
     private fun IrExpression.shouldDropConstReceiver() =
