@@ -4038,6 +4038,10 @@ public class kotlin/jvm/internal/ReflectionFactory {
 public abstract interface annotation class kotlin/jvm/internal/RepeatableContainer : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/jvm/internal/SerializedIr : java/lang/annotation/Annotation {
+	public abstract fun b ()[Ljava/lang/String;
+}
+
 public final class kotlin/jvm/internal/ShortCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/ShortCompanionObject;
 	public static final field MAX_VALUE S

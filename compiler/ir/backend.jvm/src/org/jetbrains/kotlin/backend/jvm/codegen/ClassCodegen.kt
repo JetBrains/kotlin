@@ -300,9 +300,8 @@ class ClassCodegen private constructor(
                 assert(isFileClass) { "JvmPackageName is not supported for classes: ${irClass.render()}" }
                 av.visit(JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME, irClass.fqNameWhenAvailable!!.parent().asString())
             }
-
-            serializedIr?.let { storeSerializedIr(av, it) }
         }
+        serializedIr?.let { storeSerializedIr(it) }
     }
 
     private fun IrFile.loadSourceFilesInfo(): List<File> {
@@ -499,6 +498,17 @@ class ClassCodegen private constructor(
                 OtherOrigin(psiElement, toIrBasedDescriptor())
         }
 
+    private fun storeSerializedIr(serializedIr: ByteArray) {
+        val av = visitor.newAnnotation(JvmAnnotationNames.SERIALIZED_IR_DESC, true)
+        val partsVisitor = av.visitArray(JvmAnnotationNames.SERIALIZED_IR_BYTES_FIELD_NAME)
+        val serializedIrParts = BitEncoding.encodeBytes(serializedIr)
+        for (part in serializedIrParts) {
+            partsVisitor.visit(null, part)
+        }
+        partsVisitor.visitEnd()
+        av.visitEnd()
+    }
+
     companion object {
         fun getOrCreate(
             irClass: IrClass,
@@ -583,15 +593,6 @@ private val Modality.flags: Int
 
 private val DescriptorVisibility.flags: Int
     get() = DescriptorAsmUtil.getVisibilityAccessFlag(this) ?: throw AssertionError("Unsupported visibility $this")
-
-private fun storeSerializedIr(av: AnnotationVisitor, serializedIr: ByteArray) {
-    val serializedIrParts = BitEncoding.encodeBytes(serializedIr)
-    val partsVisitor = av.visitArray(JvmAnnotationNames.METADATA_SERIALIZED_IR_FIELD_NAME)
-    for (part in serializedIrParts) {
-        partsVisitor.visit(null, part)
-    }
-    partsVisitor.visitEnd()
-}
 
 // From `isAnonymousClass` in inlineCodegenUtils.kt
 private val Type.isAnonymousClass: Boolean

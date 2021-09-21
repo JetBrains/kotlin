@@ -35,7 +35,6 @@ public final class JvmAnnotationNames {
     public static final String METADATA_PACKAGE_NAME_FIELD_NAME = "pn";
     public static final String METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME = METADATA_EXTRA_STRING_FIELD_NAME;
     public static final String METADATA_EXTRA_INT_FIELD_NAME = "xi";
-    public static final String METADATA_SERIALIZED_IR_FIELD_NAME = "si";
 
     public static final int METADATA_MULTIFILE_PARTS_INHERIT_FLAG = 1 << 0;
     public static final int METADATA_PRE_RELEASE_FLAG = 1 << 1;
@@ -67,6 +66,10 @@ public final class JvmAnnotationNames {
     public static final FqName PURELY_IMPLEMENTS_ANNOTATION = new FqName("kotlin.jvm.PurelyImplements");
 
     public static final FqName KOTLIN_JVM_INTERNAL = new FqName("kotlin.jvm.internal");
+
+    public static final FqName SERIALIZED_IR_FQ_NAME = new FqName("kotlin.jvm.internal.SerializedIr");
+    public static final String SERIALIZED_IR_DESC = "L" + JvmClassName.byFqNameWithoutInnerClasses(SERIALIZED_IR_FQ_NAME).getInternalName() + ";";
+    public static final String SERIALIZED_IR_BYTES_FIELD_NAME = "b";
 
     // Just for internal use: there is no such real classes in bytecode
     public static final FqName ENHANCED_NULLABILITY_ANNOTATION = new FqName("kotlin.jvm.internal.EnhancedNullability");
