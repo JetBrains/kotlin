@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.ir.remapTypeParameters
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -82,6 +84,7 @@ import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.isVararg
+import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -93,6 +96,7 @@ import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.findCompatibleExpectedForActual
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.math.min
 
@@ -489,13 +493,17 @@ class ComposerParamTransformer(
     }
 
     private fun IrFunction.requiresDefaultParameter(): Boolean {
+        val expectDescriptor = expectDescriptor()
         // we only add a default mask parameter if one of the parameters has a default
         // expression. Note that if this is a "fake override" method, then only the overridden
         // symbols will have the default value expressions
         return this is IrSimpleFunction && (
-            valueParameters.any {
-                it.defaultValue != null
-            } || overriddenSymbols.any { it.owner.requiresDefaultParameter() }
+            valueParameters.any { it.defaultValue != null } ||
+                (
+                    expectDescriptor != null &&
+                        expectDescriptor.valueParameters.any { it.declaresDefaultValue() }
+                    ) ||
+                overriddenSymbols.any { it.owner.requiresDefaultParameter() }
             )
     }
 
@@ -586,7 +594,7 @@ class ComposerParamTransformer(
             }
 
             // $default[n]
-            if (fn.requiresDefaultParameter()) {
+            if (oldFn.requiresDefaultParameter()) {
                 val defaults = KtxNameConventions.DEFAULT_PARAMETER.identifier
                 for (i in 0 until defaultParamCount(realParams)) {
                     fn.addValueParameter(
@@ -685,6 +693,14 @@ class ComposerParamTransformer(
         }
         return false
     }
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    private fun IrFunction.expectDescriptor(): CallableDescriptor? =
+        if (descriptor !is IrBasedDeclarationDescriptor<*>) {
+            descriptor.findCompatibleExpectedForActual(module).singleOrNull() as? CallableDescriptor
+        } else {
+            null
+        }
 
     /**
      * With klibs, composable functions are always deserialized from IR instead of being restored
