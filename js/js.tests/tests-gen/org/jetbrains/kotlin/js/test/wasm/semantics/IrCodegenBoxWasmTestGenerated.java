@@ -13912,6 +13912,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInDownTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
 
+            @TestMetadata("forInDownToWithPossibleUnderflow.kt")
+            public void testForInDownToWithPossibleUnderflow() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/forInDownTo/forInDownToWithPossibleUnderflow.kt");
+            }
+
             @TestMetadata("forIntInDownTo.kt")
             public void testForIntInDownTo() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/forInDownTo/forIntInDownTo.kt");

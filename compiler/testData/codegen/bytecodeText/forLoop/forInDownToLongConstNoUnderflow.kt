@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_FIR: JVM_IR
+
 // IMPORTANT!
 // Please, when your changes cause failures in bytecodeText tests for 'for' loops,
 // examine the resulting bytecode shape carefully.
@@ -7,12 +9,14 @@
 // Run Kotlin compiler benchmarks (https://github.com/Kotlin/kotlin-benchmarks)
 // with compiler built from your changes if you are not sure.
 
-fun test(): Int {
-    var sum = 0
-    for (i in 4 downTo 1) {
-        sum = sum * 10 + i
+const val M = 1L
+
+fun f(a: Long): Int {
+    var n = 0
+    for (i in a downTo M) {
+        n++
     }
-    return sum
+    return n
 }
 
 // 0 iterator
@@ -20,12 +24,13 @@ fun test(): Int {
 // 0 getEnd
 // 0 getFirst
 // 0 getLast
-// 1 IF_ICMP
+// 0 getStep
+// 1 LCMP
 // 1 IF
 
 // JVM_IR_TEMPLATES
-// 4 ILOAD
-// 3 ISTORE
-// 1 IADD
+// 1 ILOAD
+// 1 ISTORE
+// 0 IADD
 // 0 ISUB
 // 1 IINC

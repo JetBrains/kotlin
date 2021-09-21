@@ -20537,6 +20537,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInDownTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
+            @TestMetadata("forInDownToWithPossibleUnderflow.kt")
+            public void testForInDownToWithPossibleUnderflow() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/forInDownTo/forInDownToWithPossibleUnderflow.kt");
+            }
+
             @TestMetadata("forIntInDownTo.kt")
             public void testForIntInDownTo() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/forInDownTo/forIntInDownTo.kt");

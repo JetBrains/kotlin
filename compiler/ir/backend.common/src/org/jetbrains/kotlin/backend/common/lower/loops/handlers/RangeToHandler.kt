@@ -35,45 +35,37 @@ internal class RangeToHandler(private val context: CommonBackendContext) :
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol) =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
+            val first = expression.dispatchReceiver!!
             val last = expression.getValueArgument(0)!!
+            val step = irInt(1)
+            val direction = ProgressionDirection.INCREASING
 
-            if (preferJavaLikeCounterLoop && canUseExclusiveUpperBound(last, data)) {
+            if (preferJavaLikeCounterLoop) {
                 // Convert range with inclusive upper bound to exclusive upper bound if possible.
                 // This affects loop code performance on JVM.
-                val lastExclusive = last.convertToExclusiveUpperBound()
+                val lastExclusive = last.convertToExclusiveUpperBound(data)
                 if (lastExclusive != null) {
                     return@with ProgressionHeaderInfo(
                         data,
-                        first = expression.dispatchReceiver!!,
+                        first = first,
                         last = lastExclusive,
-                        step = irInt(1),
-                        direction = ProgressionDirection.INCREASING,
+                        step = step,
+                        direction = direction,
                         isLastInclusive = false,
+                        canOverflow = false,
                         originalLastInclusive = last
                     )
                 }
             }
 
-            ProgressionHeaderInfo(
-                data,
-                first = expression.dispatchReceiver!!,
-                last = last,
-                step = irInt(1),
-                direction = ProgressionDirection.INCREASING
-            )
+            ProgressionHeaderInfo(data, first = first, last = last, step = step, direction = direction)
         }
 
-    private fun canUseExclusiveUpperBound(last: IrExpression, progressionType: ProgressionType): Boolean {
-        val lastLongValue = last.constLongValue
-            ?: return false
-        return if (progressionType is UnsignedProgressionType) {
-            lastLongValue != -1L
-        } else {
-            lastLongValue != progressionType.maxValueAsLong
+    private fun IrExpression.convertToExclusiveUpperBound(progressionType: ProgressionType): IrExpression? {
+        if (progressionType is UnsignedProgressionType) {
+            if (this.constLongValue == -1L) return null
         }
-    }
 
-    private fun IrExpression.convertToExclusiveUpperBound(): IrConstImpl<out Any>? {
         val irConst = this as? IrConst<*> ?: return null
         return when (irConst.kind) {
             IrConstKind.Char -> {
