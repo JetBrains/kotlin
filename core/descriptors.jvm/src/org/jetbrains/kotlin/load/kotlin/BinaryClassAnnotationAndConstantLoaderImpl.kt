@@ -1,27 +1,13 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
-import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -145,12 +131,11 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
             }
 
             override fun visitEnd() {
-                val annotation = AnnotationDescriptorImpl(annotationClass.defaultType, arguments, source)
                 // Do not load the @java.lang.annotation.Repeatable annotation instance generated automatically by the compiler for
                 // Kotlin-repeatable annotation classes. Otherwise the reference to the implicit nested "Container" class cannot be
                 // resolved, since that class is only generated in the backend, and is not visible to the frontend.
-                if (!isRepeatableWithImplicitContainer(annotation)) {
-                    result.add(annotation)
+                if (!isRepeatableWithImplicitContainer(annotationClassId, arguments)) {
+                    result.add(AnnotationDescriptorImpl(annotationClass.defaultType, arguments, source))
                 }
             }
 
@@ -163,19 +148,5 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
 
     private fun resolveClass(classId: ClassId): ClassDescriptor {
         return module.findNonGenericClassAcrossDependencies(classId, notFoundClasses)
-    }
-
-    private fun isRepeatableWithImplicitContainer(annotation: AnnotationDescriptor): Boolean {
-        if (annotation.fqName != JvmAnnotationNames.REPEATABLE_ANNOTATION) return false
-
-        val containerKClassValue = annotation.allValueArguments[Name.identifier("value")] as? KClassValue ?: return false
-        val normalClass = containerKClassValue.value as? KClassValue.Value.NormalClass ?: return false
-        val classId = normalClass.classId
-        if (classId.outerClassId == null ||
-            classId.shortClassName.asString() != JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME
-        ) return false
-
-        val klass = kotlinClassFinder.findKotlinClass(classId)
-        return klass != null && SpecialJvmAnnotations.isAnnotatedWithContainerMetaAnnotation(klass)
     }
 }
