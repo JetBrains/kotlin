@@ -43,7 +43,7 @@ object DefaultErrorMessagesParcelize : DefaultErrorMessages.Extension {
 
         MAP.put(
             ErrorsParcelize.PARCELABLE_SHOULD_BE_INSTANTIABLE,
-            "'Parcelable' should not be a 'sealed' or 'abstract' class"
+            "'Parcelable' should not be an 'abstract' class"
         )
 
         MAP.put(

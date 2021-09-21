@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.FrameMap
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -153,7 +150,7 @@ open class ParcelizeDeclarationChecker : DeclarationChecker {
             return
         }
 
-        if (declaration is KtClass && (declaration.isAnnotation() || declaration.isInterface())) {
+        if (declaration is KtClass && (declaration.isAnnotation() || declaration.isInterface() && !declaration.isSealed())) {
             val reportElement = declaration.nameIdentifier ?: declaration
             diagnosticHolder.report(ErrorsParcelize.PARCELABLE_SHOULD_BE_CLASS.on(reportElement))
             return
@@ -166,10 +163,9 @@ open class ParcelizeDeclarationChecker : DeclarationChecker {
             }
         }
 
-        val sealedOrAbstract =
-            declaration.modifierList?.let { it.getModifier(KtTokens.ABSTRACT_KEYWORD) ?: it.getModifier(KtTokens.SEALED_KEYWORD) }
-        if (sealedOrAbstract != null) {
-            diagnosticHolder.report(ErrorsParcelize.PARCELABLE_SHOULD_BE_INSTANTIABLE.on(sealedOrAbstract))
+        val abstractModifier = declaration.modifierList?.let { it.getModifier(KtTokens.ABSTRACT_KEYWORD) }
+        if (abstractModifier != null) {
+            diagnosticHolder.report(ErrorsParcelize.PARCELABLE_SHOULD_BE_INSTANTIABLE.on(abstractModifier))
         }
 
         if (declaration is KtClass && declaration.isInner()) {

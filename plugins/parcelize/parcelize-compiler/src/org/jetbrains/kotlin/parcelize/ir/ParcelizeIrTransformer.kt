@@ -122,7 +122,10 @@ class ParcelizeIrTransformer(private val context: IrPluginContext, private val a
 
     override fun visitClass(declaration: IrClass) {
         declaration.acceptChildren(this, null)
-        if (!declaration.isParcelize)
+
+        // Sealed classes can be annotated with `@Parcelize`, but that only implies that we
+        // should process their immediate subclasses.
+        if (!declaration.isParcelize || declaration.modality == Modality.SEALED)
             return
 
         val parcelableProperties = declaration.parcelableProperties

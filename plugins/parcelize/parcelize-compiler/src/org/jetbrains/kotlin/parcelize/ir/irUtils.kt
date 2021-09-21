@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.parcelize.ir
 import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -34,7 +35,12 @@ import org.jetbrains.kotlin.types.Variance
 
 // true if the class should be processed by the parcelize plugin
 val IrClass.isParcelize: Boolean
-    get() = kind in ParcelizeExtensionBase.ALLOWED_CLASS_KINDS && hasAnyAnnotation(PARCELIZE_CLASS_FQ_NAMES)
+    get() = kind in ParcelizeExtensionBase.ALLOWED_CLASS_KINDS &&
+            (hasAnyAnnotation(PARCELIZE_CLASS_FQ_NAMES) || superTypes.any { superType ->
+                superType.classOrNull?.owner?.let {
+                    it.modality == Modality.SEALED && it.hasAnyAnnotation(PARCELIZE_CLASS_FQ_NAMES)
+                } == true
+            })
 
 // Finds the getter for a pre-existing CREATOR field on the class companion, which is used for manual Parcelable implementations in Kotlin.
 val IrClass.creatorGetter: IrSimpleFunctionSymbol?
