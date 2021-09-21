@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResoluti
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.unavailableValueError
 
 internal class DukatCompilationResolverPlugin(
     @Transient
@@ -26,7 +27,8 @@ internal class DukatCompilationResolverPlugin(
 ) : CompilationResolverPlugin {
     val project get() = resolver.project
     val nodeJs get() = resolver.nodeJs
-    val versions by lazy { nodeJs.versions }
+    private val nodeJs_ get() = nodeJs ?: unavailableValueError("nodeJs")
+    val versions by lazy { nodeJs_.versions }
     val npmProject by lazy { resolver.npmProject }
     val compilation get() = npmProject.compilation
     val compilationName by lazy {
@@ -50,7 +52,7 @@ internal class DukatCompilationResolverPlugin(
             it.group = DUKAT_TASK_GROUP
             it.description = "Integrated generation Kotlin/JS external declarations for .d.ts files in $compilation"
             it.externalsOutputFormat = externalsOutputFormat
-            it.dependsOn(nodeJs.npmInstallTaskProvider, npmProject.packageJsonTask)
+            it.dependsOn(nodeJs_.npmInstallTaskProvider, npmProject.packageJsonTask)
         }
     }
 
@@ -80,7 +82,7 @@ internal class DukatCompilationResolverPlugin(
         ) {
             it.group = DUKAT_TASK_GROUP
             it.description = "Generate Kotlin/JS external declarations for .d.ts files of all NPM dependencies in ${compilation}"
-            it.dependsOn(nodeJs.npmInstallTaskProvider, npmProject.packageJsonTask)
+            it.dependsOn(nodeJs_.npmInstallTaskProvider, npmProject.packageJsonTask)
         }
     }
 
@@ -91,7 +93,7 @@ internal class DukatCompilationResolverPlugin(
         externalNpmDependencies: Set<NpmDependency>,
         fileCollectionDependencies: Set<KotlinCompilationNpmResolver.FileCollectionExternalGradleDependency>
     ) {
-        if (nodeJs.experimental.discoverTypes) {
+        if (nodeJs_.experimental.discoverTypes) {
             // todo: discoverTypes
         }
     }

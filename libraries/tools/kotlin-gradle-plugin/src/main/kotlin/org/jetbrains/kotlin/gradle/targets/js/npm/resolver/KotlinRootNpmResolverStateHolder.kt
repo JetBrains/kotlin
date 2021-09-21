@@ -8,17 +8,25 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.RootResolverPlugin
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnResolution
 
 // We use this service as a single storage for duplicated data in configuration cache
 internal abstract class KotlinRootNpmResolverStateHolder : BuildService<KotlinRootNpmResolverStateHolder.Parameters> {
     interface Parameters : BuildServiceParameters {
         val plugins: ListProperty<RootResolverPlugin>
         val projectResolvers: MapProperty<String, KotlinProjectNpmResolver>
+        val packageManager: Property<NpmApi>
+        val yarnEnvironment: Property<YarnEnv>
+        val npmEnvironment: Property<NpmEnvironment>
+        val yarnResolutions: ListProperty<YarnResolution>
+        val taskRequirements: Property<TasksRequirements>
     }
 
     var initialized = false
