@@ -19,3 +19,11 @@ public abstract class KtCallableSymbol : KtSymbol, KtSymbolWithKind {
 
     abstract override fun createPointer(): KtSymbolPointer<KtCallableSymbol>
 }
+
+/**
+ * Symbol for a receiver parameter of a function or property. For example, consider code `fun String.foo() {...}`, the declaration of
+ * `String` receiver parameter is such a symbol.
+ */
+public abstract class KtReceiverParameterSymbol : KtSymbol {
+    public abstract val type: KtTypeAndAnnotations
+}

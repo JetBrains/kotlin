@@ -1,0 +1,2 @@
+Resolved to:
+0: extension receiver of fun kotlin.String.foo()

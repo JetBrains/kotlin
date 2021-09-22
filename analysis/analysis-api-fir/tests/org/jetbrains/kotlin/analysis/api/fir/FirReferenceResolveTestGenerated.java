@@ -493,6 +493,30 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
     }
 
     @Test
+    @TestMetadata("thisWithLabelToFunction_caretAtLabel.kt")
+    public void testThisWithLabelToFunction_caretAtLabel() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/thisWithLabelToFunction_caretAtLabel.kt");
+    }
+
+    @Test
+    @TestMetadata("thisWithLabelToFunction_caretAtThis.kt")
+    public void testThisWithLabelToFunction_caretAtThis() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/thisWithLabelToFunction_caretAtThis.kt");
+    }
+
+    @Test
+    @TestMetadata("thisWithLabelToProperty_caretAtLabel.kt")
+    public void testThisWithLabelToProperty_caretAtLabel() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/thisWithLabelToProperty_caretAtLabel.kt");
+    }
+
+    @Test
+    @TestMetadata("thisWithLabelToProperty_caretAtThis.kt")
+    public void testThisWithLabelToProperty_caretAtThis() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/thisWithLabelToProperty_caretAtThis.kt");
+    }
+
+    @Test
     @TestMetadata("TopLevelClassVsLocalClassConstructor.kt")
     public void testTopLevelClassVsLocalClassConstructor() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/TopLevelClassVsLocalClassConstructor.kt");

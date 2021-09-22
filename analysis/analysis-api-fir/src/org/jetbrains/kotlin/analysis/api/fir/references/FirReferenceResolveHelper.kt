@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
@@ -80,7 +81,11 @@ internal object FirReferenceResolveHelper {
         return classLikeDeclaration?.buildSymbol(symbolBuilder)
     }
 
-    fun FirReference.toTargetSymbol(session: FirSession, symbolBuilder: KtSymbolByFirBuilder): Collection<KtSymbol> {
+    fun FirReference.toTargetSymbol(
+        session: FirSession,
+        symbolBuilder: KtSymbolByFirBuilder,
+        isInLabelReference: Boolean = false
+    ): Collection<KtSymbol> {
         return when (this) {
             is FirBackingFieldReference -> {
                 listOfNotNull(resolvedSymbol.fir.buildSymbol(symbolBuilder))
@@ -103,7 +108,12 @@ internal object FirReferenceResolveHelper {
                 listOfNotNull(fir.buildSymbol(symbolBuilder))
             }
             is FirThisReference -> {
-                listOfNotNull(boundSymbol?.fir?.buildSymbol(symbolBuilder))
+                val boundSymbol = boundSymbol
+                when {
+                    !isInLabelReference && boundSymbol is FirCallableSymbol<*> ->
+                        symbolBuilder.callableBuilder.buildExtensionReceiverSymbol(boundSymbol.fir)
+                    else -> boundSymbol?.fir?.buildSymbol(symbolBuilder)
+                }.let { listOfNotNull(it) }
             }
             is FirSuperReference -> {
                 listOfNotNull((superTypeRef as? FirResolvedTypeRef)?.toTargetSymbol(session, symbolBuilder))
@@ -308,7 +318,7 @@ internal object FirReferenceResolveHelper {
                     fir.dispatchReceiver as? FirQualifiedAccessExpression ?: fir.extensionReceiver as FirQualifiedAccessExpression
                 receiver.calleeReference
             } else fir.calleeReference
-        return calleeReference.toTargetSymbol(session, symbolBuilder)
+        return calleeReference.toTargetSymbol(session, symbolBuilder, isInLabelReference = expression is KtLabelReferenceExpression)
     }
 
 

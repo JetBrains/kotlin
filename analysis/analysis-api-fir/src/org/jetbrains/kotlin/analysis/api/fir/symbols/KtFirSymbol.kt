@@ -32,7 +32,7 @@ internal fun KtFirSymbol<*>.symbolEquals(other: Any?): Boolean {
 
 internal fun KtFirSymbol<*>.symbolHashCode(): Int = firRef.hashCode() * 31 + token.hashCode()
 
-private tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (origin) {
+internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (origin) {
     FirDeclarationOrigin.Source -> {
         when (source?.kind) {
             FirFakeSourceElementKind.ImplicitConstructor,
