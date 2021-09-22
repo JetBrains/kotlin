@@ -611,6 +611,7 @@ actual class StringBuilder private constructor (
         checkBoundsIndexes(startIndex, endIndex, value.size)
 
         val extraLength = endIndex - startIndex
+        ensureExtraCapacity(extraLength)
         array.copyInto(array, startIndex = index, endIndex = _length, destinationOffset = index + extraLength)
         value.copyInto(array, startIndex = startIndex, endIndex = endIndex, destinationOffset = index)
 
