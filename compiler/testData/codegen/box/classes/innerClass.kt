@@ -1,5 +1,5 @@
 // DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_STRING_BUILDER
+// WASM_MUTE_REASON: STDLIB_TEXT
 // KJS_WITH_FULL_RUNTIME
 class Outer(val foo: StringBuilder) {
   inner class Inner() {
