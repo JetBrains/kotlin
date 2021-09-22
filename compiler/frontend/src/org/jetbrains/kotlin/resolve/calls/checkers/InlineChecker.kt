@@ -277,7 +277,9 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
             calledFunEffectiveVisibility.toVisibility() === Visibilities.Protected) {
             when {
                 isConstructorCall -> {
-                    context.trace.report(PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE.on(expression, calledDescriptor))
+                    context.trace.report(
+                        PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE.on(context.languageVersionSettings, expression, calledDescriptor)
+                    )
                 }
                 else -> {
                     context.trace.report(
