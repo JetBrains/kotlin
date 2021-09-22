@@ -244,10 +244,10 @@ class ModuleStructureExtractorImpl(
                         assertions.fail { "JVM target should be single" }
                     } else {
                         when (values.single()) {
-                            "1.6" -> JvmPlatforms.jvm16
-                            "1.8" -> JvmPlatforms.jvm18
-                            "9" -> JvmPlatforms.jvm9
-                            "15" -> JvmPlatforms.jvm15
+                            "1.6" -> JvmPlatforms.jvm6
+                            "1.8" -> JvmPlatforms.jvm8
+                            "11" -> JvmPlatforms.jvm11
+                            "17" -> JvmPlatforms.jvm17
                             else -> assertions.fail { "Incorrect value for JVM target" }
                         }
                     }

@@ -38,7 +38,7 @@ object MockLibraryUtil {
         extraOptions: List<String> = emptyList(),
         extraClasspath: List<String> = emptyList(),
         extraModulepath: List<String> = emptyList(),
-        useJava9: Boolean = false,
+        useJava11: Boolean = false,
         assertions: Assertions
     ): File {
         return compileLibraryToJar(
@@ -50,7 +50,7 @@ object MockLibraryUtil {
             extraOptions,
             extraClasspath,
             extraModulepath,
-            useJava9,
+            useJava11,
             assertions
         )
     }
@@ -64,7 +64,7 @@ object MockLibraryUtil {
         extraClasspath: List<String> = emptyList(),
         extraModulepath: List<String> = emptyList(),
         assertions: Assertions,
-        useJava9: Boolean = false
+        useJava11: Boolean = false
     ): File {
         return compileJvmLibraryToJar(
             sourcesPath, jarName, addSources,
@@ -72,7 +72,7 @@ object MockLibraryUtil {
             extraOptions,
             extraClasspath,
             extraModulepath,
-            useJava9,
+            useJava11,
             assertions
         )
     }
@@ -88,10 +88,10 @@ object MockLibraryUtil {
         extraOptions: List<String> = emptyList(),
         extraClasspath: List<String> = emptyList(),
         extraModulepath: List<String> = emptyList(),
-        useJava9: Boolean = false,
+        useJava11: Boolean = false,
         assertions: Assertions
     ): File {
-        assertTrue("Module path can be used only for compilation using javac 9 and higher", useJava9 || extraModulepath.isEmpty())
+        assertTrue("Module path can be used only for compilation using javac 9 and higher", useJava11 || extraModulepath.isEmpty())
 
         val classesDir = File(contentDir, "classes")
 
@@ -121,14 +121,14 @@ object MockLibraryUtil {
                 add("-d")
                 add(classesDir.path)
 
-                if (useJava9 && extraModulepath.isNotEmpty()) {
+                if (useJava11 && extraModulepath.isNotEmpty()) {
                     add("--module-path")
                     add(extraModulepath.joinToString(File.pathSeparator))
                 }
             }
 
             val compile =
-                if (useJava9) ::compileJavaFilesExternallyWithJava9
+                if (useJava11) ::compileJavaFilesExternallyWithJava11
                 else { files, opts -> compileJavaFiles(files, opts, assertions = assertions) }
 
             val success = compile(javaFiles, options)

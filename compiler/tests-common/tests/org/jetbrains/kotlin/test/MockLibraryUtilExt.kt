@@ -38,7 +38,7 @@ object MockLibraryUtilExt {
         allowKotlinSources: Boolean = true,
         extraOptions: List<String> = emptyList(),
         extraClasspath: List<String> = emptyList(),
-        useJava9: Boolean = false,
+        useJava11: Boolean = false,
     ): File {
         return MockLibraryUtil.compileJvmLibraryToJar(
             sourcesPath,
@@ -48,7 +48,7 @@ object MockLibraryUtilExt {
             extraOptions,
             extraClasspath,
             extraModulepath = listOf(),
-            useJava9,
+            useJava11,
             JUnit4Assertions
         )
     }
@@ -63,7 +63,7 @@ object MockLibraryUtilExt {
         allowKotlinSources: Boolean = true,
         extraOptions: List<String> = emptyList(),
         extraClasspath: List<String> = emptyList(),
-        useJava9: Boolean = false
+        useJava11: Boolean = false
     ): File {
         return MockLibraryUtil.compileLibraryToJar(
             sourcesPath,
@@ -74,7 +74,7 @@ object MockLibraryUtilExt {
             extraOptions,
             extraClasspath,
             extraModulepath = listOf(),
-            useJava9,
+            useJava11,
             JUnit4Assertions
         )
     }

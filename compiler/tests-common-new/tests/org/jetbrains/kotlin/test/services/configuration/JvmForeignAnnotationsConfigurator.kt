@@ -78,7 +78,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val registeredDirectives = module.directives
         val javaVersionToCompile = registeredDirectives[JvmEnvironmentConfigurationDirectives.COMPILE_JAVA_USING].singleOrNull()
-        val useJava9ToCompileIncludedJavaFiles = javaVersionToCompile == TestJavacVersion.JAVAC_9
+        val useJava11ToCompileIncludedJavaFiles = javaVersionToCompile == TestJavacVersion.JAVAC_11
         val annotationPath = registeredDirectives[ForeignAnnotationsDirectives.ANNOTATIONS_PATH].singleOrNull()
             ?: JavaForeignAnnotationType.Java8Annotations
         val javaFilesDir = createTempDirectory().toFile().also {
@@ -89,9 +89,9 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
             "foreign-annotations",
             assertions = JUnit5Assertions,
             extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath },
-            useJava9 = useJava9ToCompileIncludedJavaFiles
+            useJava11 = useJava11ToCompileIncludedJavaFiles
         )
-        configuration.addModularRootIfNotNull(useJava9ToCompileIncludedJavaFiles, "java9_annotations", foreignAnnotationsJar)
+        configuration.addModularRootIfNotNull(useJava11ToCompileIncludedJavaFiles, "java9_annotations", foreignAnnotationsJar)
         configuration.addJvmClasspathRoot(ForTestCompileRuntime.jvmAnnotationsForTests())
 
         if (JvmEnvironmentConfigurationDirectives.WITH_JSR305_TEST_ANNOTATIONS in registeredDirectives) {

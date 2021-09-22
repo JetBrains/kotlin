@@ -25,8 +25,8 @@ enum class TargetPlatformEnum(val targetPlatform: TargetPlatform) {
     ),
 
     JVM(JvmPlatforms.unspecifiedJvmPlatform),
-    JVM_1_6(JvmPlatforms.jvm16),
-    JVM_1_8(JvmPlatforms.jvm18),
+    JVM_1_6(JvmPlatforms.jvm6),
+    JVM_1_8(JvmPlatforms.jvm8),
 
     JS(JsPlatforms.defaultJsPlatform),
     Native(NativePlatforms.unspecifiedNativePlatform)

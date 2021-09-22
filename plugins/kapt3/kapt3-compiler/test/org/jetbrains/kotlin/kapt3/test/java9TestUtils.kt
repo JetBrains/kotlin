@@ -26,13 +26,6 @@ import java.net.URLClassLoader
 import java.util.concurrent.TimeUnit
 
 interface CustomJdkTestLauncher {
-    fun doTestWithJdk9(mainClass: Class<*>, arg: String) {
-        // Already under Java 9
-        if (isJava9OrLater()) return
-
-        doTestCustomJdk(mainClass, arg, KtTestUtil.getJdk9Home())
-    }
-
     fun doTestWithJdk11(mainClass: Class<*>, arg: String) {
         if (isJava9OrLater()) return
         KtTestUtil.getJdk11Home().let { doTestCustomJdk(mainClass, arg, it) }

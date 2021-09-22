@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// JDK_KIND: FULL_JDK_9
+// JDK_KIND: FULL_JDK_11
 // WITH_STDLIB
 import java.util.stream.IntStream
 

@@ -55,8 +55,8 @@ fun compileJavaFiles(
     }
 }
 
-fun compileJavaFilesExternallyWithJava9(files: Collection<File>, options: List<String?>): Boolean {
-    return compileJavaFilesExternally(files, options, KtTestUtil.getJdk9Home())
+fun compileJavaFilesExternallyWithJava11(files: Collection<File>, options: List<String?>): Boolean {
+    return compileJavaFilesExternally(files, options, KtTestUtil.getJdk11Home())
 }
 
 fun compileJavaFilesExternally(files: Collection<File>, options: List<String?>, jdkHome: File): Boolean {

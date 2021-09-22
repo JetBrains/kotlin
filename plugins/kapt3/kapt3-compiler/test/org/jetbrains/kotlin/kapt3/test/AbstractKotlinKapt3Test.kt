@@ -264,7 +264,6 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
         addOrRemoveFlag(KaptFlag.KEEP_KDOC_COMMENTS_IN_STUBS, testFile)
 
         super.doTest(filePath)
-        doTestWithJdk9(AbstractClassFileToSourceStubConverterTest::class.java, filePath)
         doTestWithJdk11(AbstractClassFileToSourceStubConverterTest::class.java, filePath)
     }
 

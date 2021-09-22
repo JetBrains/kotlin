@@ -1,4 +1,4 @@
-// JVM_TARGET: 9
+// JVM_TARGET: 11
 data class A(val x: Unit)
 
 fun test(): Unit {}

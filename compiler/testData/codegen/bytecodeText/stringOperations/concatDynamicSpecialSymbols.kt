@@ -1,4 +1,4 @@
-// JVM_TARGET: 9
+// JVM_TARGET: 11
 
 fun box(a: String, b: String?) {
     val s = a + "\u0001" + 2.toChar() + 3.toChar() + 4L + b + 5.0 + 6F + '7' + b + "\u0002" + 1.toChar()

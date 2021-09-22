@@ -81,7 +81,7 @@ class JavaCompilerFacade(private val testServices: TestServices) {
         val jdkHome = when (jvmTarget) {
             JvmTarget.JVM_1_6 -> KtTestUtil.getJdk6Home()
             JvmTarget.JVM_1_8 -> KtTestUtil.getJdk8Home()
-            JvmTarget.JVM_9 -> KtTestUtil.getJdk9Home()
+            JvmTarget.JVM_9,
             JvmTarget.JVM_11 -> KtTestUtil.getJdk11Home()
             JvmTarget.JVM_15,
             JvmTarget.JVM_17 -> KtTestUtil.getJdk17Home()

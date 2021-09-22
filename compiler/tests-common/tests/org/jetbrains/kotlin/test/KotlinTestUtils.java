@@ -190,9 +190,6 @@ public class KotlinTestUtils {
             assert jdk6 != null : "Environment variable JDK_16 is not set";
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(jdk6));
         }
-        else if (jdkKind == TestJdkKind.FULL_JDK_9) {
-            configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk9Home());
-        }
         else if (jdkKind == TestJdkKind.FULL_JDK_17) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk17Home());
         }
@@ -415,8 +412,8 @@ public class KotlinTestUtils {
         return JvmCompilationUtils.compileJavaFiles(files, options, javaErrorFile, JUnit4Assertions.INSTANCE);
     }
 
-    public static boolean compileJavaFilesExternallyWithJava9(@NotNull Collection<File> files, @NotNull List<String> options) {
-        return JvmCompilationUtils.compileJavaFilesExternally(files, options, KtTestUtil.getJdk9Home());
+    public static boolean compileJavaFilesExternallyWithJava11(@NotNull Collection<File> files, @NotNull List<String> options) {
+        return JvmCompilationUtils.compileJavaFilesExternally(files, options, KtTestUtil.getJdk11Home());
     }
 
     public static boolean compileJavaFilesExternally(@NotNull Collection<File> files, @NotNull List<String> options, @NotNull File jdkHome) {

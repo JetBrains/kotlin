@@ -31,10 +31,10 @@ object JvmPlatforms {
 
     val defaultJvmPlatform: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.DEFAULT]!!
 
-    val jvm16: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_1_6]!!
-    val jvm18: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_1_8]!!
-    val jvm9: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_9]!!
-    val jvm15: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_15]!!
+    val jvm6: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_1_6]!!
+    val jvm8: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_1_8]!!
+    val jvm11: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_11]!!
+    val jvm17: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_17]!!
 
     fun jvmPlatformByTargetVersion(targetVersion: JvmTarget): TargetPlatform =
         jvmTargetToJdkPlatform[targetVersion]!!

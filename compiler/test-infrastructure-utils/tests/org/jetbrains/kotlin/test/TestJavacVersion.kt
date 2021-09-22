@@ -6,5 +6,5 @@
 package org.jetbrains.kotlin.test
 
 enum class TestJavacVersion {
-    JAVAC_1_8, JAVAC_9
+    JAVAC_1_8, JAVAC_11
 }

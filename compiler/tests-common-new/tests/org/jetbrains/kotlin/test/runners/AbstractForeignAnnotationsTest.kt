@@ -92,11 +92,11 @@ abstract class AbstractForeignAnnotationsTestBase(private val kind: ForeignAnnot
             }
         }
 
-        forTestsMatching("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/*") {
+        forTestsMatching("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/*") {
             defaultDirectives {
                 ANNOTATIONS_PATH with JavaForeignAnnotationType.Java9Annotations
-                JDK_KIND with TestJdkKind.FULL_JDK_9
-                COMPILE_JAVA_USING with TestJavacVersion.JAVAC_9
+                JDK_KIND with TestJdkKind.FULL_JDK_11
+                COMPILE_JAVA_USING with TestJavacVersion.JAVAC_11
             }
         }
     }

@@ -166,9 +166,6 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
                 val jdk6 = System.getenv("JDK_16") ?: error("Environment variable JDK_16 is not set")
                 configuration.put(JVMConfigurationKeys.JDK_HOME, File(jdk6))
             }
-            TestJdkKind.FULL_JDK_9 -> {
-                configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk9Home())
-            }
             TestJdkKind.FULL_JDK_11 -> {
                 configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk11Home())
             }
@@ -195,7 +192,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             module.javaFiles.filter { INCLUDE_JAVA_AS_BINARY in it.directives }
         } else module.javaFiles
 
-        val useJava9ToCompileIncludedJavaFiles = javaVersionToCompile == TestJavacVersion.JAVAC_9
+        val useJava11ToCompileIncludedJavaFiles = javaVersionToCompile == TestJavacVersion.JAVAC_11
 
         if (configurationKind.withRuntime) {
             configuration.configureStandardLibs(PathUtil.kotlinPathsForDistDirectory, K2JVMCompilerArguments().also { it.noReflect = true })
@@ -239,7 +236,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
                         JAVA_BINARIES_JAR_NAME,
                         extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath },
                         assertions = JUnit5Assertions,
-                        useJava9 = useJava9ToCompileIncludedJavaFiles
+                        useJava11 = useJava11ToCompileIncludedJavaFiles
                     )
                 )
             }
@@ -340,7 +337,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath },
             extraModulepath = modulePath,
             assertions = JUnit5Assertions,
-            useJava9 = true
+            useJava11 = true
         )
     }
 

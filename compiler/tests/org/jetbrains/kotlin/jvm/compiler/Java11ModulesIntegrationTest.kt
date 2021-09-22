@@ -14,7 +14,7 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 import java.util.jar.Manifest
 
-class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
+class Java11ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     override val testDataPath: String
         get() = "compiler/testData/javaModules/"
 
@@ -29,7 +29,7 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         val paths = (modulePath + ForTestCompileRuntime.runtimeJarForTests()).joinToString(separator = File.pathSeparator) { it.path }
 
         val kotlinOptions = mutableListOf(
-            "-jdk-home", KtTestUtil.getJdk9Home().path,
+            "-jdk-home", KtTestUtil.getJdk11Home().path,
             "-jvm-target", "1.8",
             "-Xmodule-path=$paths"
         )
@@ -50,7 +50,7 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
                     javaOptions += "--add-modules"
                     javaOptions += addModules.joinToString()
                 }
-                KotlinTestUtils.compileJavaFilesExternallyWithJava9(javaFiles, javaOptions)
+                KotlinTestUtils.compileJavaFilesExternallyWithJava11(javaFiles, javaOptions)
             },
             checkKotlinOutput = checkKotlinOutput,
             manifest = manifest
@@ -65,7 +65,7 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
 
     private fun runModule(className: String, modulePath: List<File>): ModuleRunResult {
         val command = listOf(
-            File(KtTestUtil.getJdk9Home(), "bin/java").path,
+            File(KtTestUtil.getJdk11Home(), "bin/java").path,
             "-p", (modulePath + ForTestCompileRuntime.runtimeJarForTests()).joinToString(File.pathSeparator, transform = File::getPath),
             "-m", className
         )
@@ -172,7 +172,7 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
 
         val kotlinOptions = mutableListOf(
             "$testDataDirectory/someOtherDirectoryWithTheActualModuleInfo/module-info.java",
-            "-jdk-home", KtTestUtil.getJdk9Home().path,
+            "-jdk-home", KtTestUtil.getJdk11Home().path,
             "-Xmodule-path=${a.path}"
         )
         compileLibrary(
@@ -186,15 +186,15 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     fun testMultiReleaseLibrary() {
         val librarySrc = FileUtil.findFilesByMask(JAVA_FILES, File(testDataDirectory, "library"))
         val libraryOut = File(tmpdir, "out")
-        KotlinTestUtils.compileJavaFilesExternallyWithJava9(librarySrc, listOf("-d", libraryOut.path))
+        KotlinTestUtils.compileJavaFilesExternallyWithJava11(librarySrc, listOf("-d", libraryOut.path))
 
-        val libraryOut9 = File(tmpdir, "out9")
-        libraryOut9.mkdirs()
-        File(libraryOut, "module-info.class").renameTo(File(libraryOut9, "module-info.class"))
+        val libraryOut11 = File(tmpdir, "out11")
+        libraryOut11.mkdirs()
+        File(libraryOut, "module-info.class").renameTo(File(libraryOut11, "module-info.class"))
 
         // Use the name other from 'library' to prevent it from being loaded as an automatic module if module-info.class is not found
         val libraryJar = createMultiReleaseJar(
-            KtTestUtil.getJdk9Home(), File(tmpdir, "multi-release-library.jar"), libraryOut, libraryOut9
+            KtTestUtil.getJdk11Home(), File(tmpdir, "multi-release-library.jar"), libraryOut, libraryOut11
         )
 
         module("main", listOf(libraryJar))

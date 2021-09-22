@@ -43,7 +43,7 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Custom
     ) {
         super.test(name, *supportedAnnotations, options = options, process = process)
 
-        doTestWithJdk9(
+        doTestWithJdk11(
             SingleJUnitTestRunner::class.java,
             KotlinKapt3IntegrationTests::class.java.name + "#test" + getTestName(false)
         )

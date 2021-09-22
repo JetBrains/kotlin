@@ -20,7 +20,7 @@ class IrKotlinKapt3IntegrationTests : AbstractIrKotlinKapt3IntegrationTest(), Cu
     ) {
         super.test(name, *supportedAnnotations, options = options, process = process)
 
-        doTestWithJdk9(
+        doTestWithJdk11(
             SingleJUnitTestRunner::class.java,
             IrKotlinKapt3IntegrationTests::class.java.name + "#test" + getTestName(false)
         )

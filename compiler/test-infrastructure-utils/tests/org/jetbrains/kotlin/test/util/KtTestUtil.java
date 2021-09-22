@@ -141,11 +141,6 @@ public class KtTestUtil {
     }
 
     @NotNull
-    public static File getJdk9Home() {
-        return getJdkHome("JDK_9", "JDK_19");
-    }
-
-    @NotNull
     public static File getJdk11Home() {
         return getJdkHome("JDK_11");
     }
