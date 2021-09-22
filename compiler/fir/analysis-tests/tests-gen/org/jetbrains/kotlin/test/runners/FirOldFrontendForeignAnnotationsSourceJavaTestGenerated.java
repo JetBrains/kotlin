@@ -902,6 +902,18 @@ public class FirOldFrontendForeignAnnotationsSourceJavaTestGenerated extends Abs
             }
 
             @Test
+            @TestMetadata("annotatedPrimitiveArray.kt")
+            public void testAnnotatedPrimitiveArray() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/annotatedPrimitiveArray.kt");
+            }
+
+            @Test
+            @TestMetadata("annotatedPrimitiveArray_before.kt")
+            public void testAnnotatedPrimitiveArray_before() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/annotatedPrimitiveArray_before.kt");
+            }
+
+            @Test
             @TestMetadata("annotatedTypeArguments.kt")
             public void testAnnotatedTypeArguments() throws Exception {
                 runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/annotatedTypeArguments.kt");
