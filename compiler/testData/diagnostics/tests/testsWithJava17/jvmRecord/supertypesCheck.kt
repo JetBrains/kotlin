@@ -1,6 +1,6 @@
 // !API_VERSION: 1.5
 // !LANGUAGE: +JvmRecordSupport
-// JVM_TARGET: 15
+// JVM_TARGET: 17
 // ENABLE_JVM_PREVIEW
 
 abstract class Abstract

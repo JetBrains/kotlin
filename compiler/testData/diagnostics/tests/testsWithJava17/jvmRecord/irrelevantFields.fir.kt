@@ -1,7 +1,7 @@
 // !API_VERSION: 1.5
 // !LANGUAGE: +JvmRecordSupport
 // SKIP_TXT
-// JVM_TARGET: 15
+// JVM_TARGET: 17
 // ENABLE_JVM_PREVIEW
 
 interface I
@@ -9,7 +9,7 @@ interface I
 val i: I = object : I {}
 
 @JvmRecord
-data class MyRec1(val name: String) : <!DELEGATION_BY_IN_JVM_RECORD!>I by i<!>
+data class MyRec1(val name: String) : I by <!DELEGATION_BY_IN_JVM_RECORD!>i<!>
 
 @JvmRecord
 data class MyRec2(val name: String) {

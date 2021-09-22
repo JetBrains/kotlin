@@ -29,13 +29,10 @@ enum class TestJdkKind(val requiresSeparateProcess: Boolean = false) {
     // JDK found at $JDK_9
     FULL_JDK_9(requiresSeparateProcess = true),
 
-    // JDK found at $JDK_15
+    // JDK found at $JDK_11
     FULL_JDK_11(requiresSeparateProcess = true),
 
-    // JDK found at $JDK_15
-    FULL_JDK_15(requiresSeparateProcess = true),
-
-    // JDK found at $JDK_15
+    // JDK found at $JDK_17
     FULL_JDK_17(requiresSeparateProcess = true),
 
     // JDK found at java.home

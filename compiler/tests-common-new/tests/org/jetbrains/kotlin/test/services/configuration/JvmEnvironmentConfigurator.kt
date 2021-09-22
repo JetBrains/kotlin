@@ -172,9 +172,6 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             TestJdkKind.FULL_JDK_11 -> {
                 configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk11Home())
             }
-            TestJdkKind.FULL_JDK_15 -> {
-                configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk15Home())
-            }
             TestJdkKind.FULL_JDK_17 -> {
                 configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk17Home())
             }

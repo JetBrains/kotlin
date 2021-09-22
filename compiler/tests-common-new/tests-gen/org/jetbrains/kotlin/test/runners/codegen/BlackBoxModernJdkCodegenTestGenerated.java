@@ -129,87 +129,6 @@ public class BlackBoxModernJdkCodegenTestGenerated extends AbstractBlackBoxCodeg
 
     @Nested
     @Tag("<modernJava>")
-    @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava15")
-    @TestDataPath("$PROJECT_ROOT")
-    public class TestsWithJava15 {
-        @Test
-        public void testAllFilesPresentInTestsWithJava15() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava15"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava15/records")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Records {
-            @Test
-            public void testAllFilesPresentInRecords() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava15/records"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-            }
-
-            @Test
-            @TestMetadata("bytecodeShapeForJava.kt")
-            public void testBytecodeShapeForJava() throws Exception {
-                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava15/records/bytecodeShapeForJava.kt");
-            }
-
-            @Test
-            @TestMetadata("collectionSizeOverrides.kt")
-            public void testCollectionSizeOverrides() throws Exception {
-                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava15/records/collectionSizeOverrides.kt");
-            }
-
-            @Test
-            @TestMetadata("dataJvmRecord.kt")
-            public void testDataJvmRecord() throws Exception {
-                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava15/records/dataJvmRecord.kt");
-            }
-
-            @Test
-            @TestMetadata("jvmRecordBinary.kt")
-            public void testJvmRecordBinary() throws Exception {
-                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava15/records/jvmRecordBinary.kt");
-            }
-
-            @Test
-            @TestMetadata("propertiesOverrides.kt")
-            public void testPropertiesOverrides() throws Exception {
-                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava15/records/propertiesOverrides.kt");
-            }
-
-            @Test
-            @TestMetadata("propertiesOverridesAllCompatibilityJvmDefault.kt")
-            public void testPropertiesOverridesAllCompatibilityJvmDefault() throws Exception {
-                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava15/records/propertiesOverridesAllCompatibilityJvmDefault.kt");
-            }
-
-            @Test
-            @TestMetadata("propertiesOverridesEnableJvmDefault.kt")
-            public void testPropertiesOverridesEnableJvmDefault() throws Exception {
-                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava15/records/propertiesOverridesEnableJvmDefault.kt");
-            }
-
-            @Test
-            @TestMetadata("recordDifferentPropertyOverride.kt")
-            public void testRecordDifferentPropertyOverride() throws Exception {
-                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava15/records/recordDifferentPropertyOverride.kt");
-            }
-
-            @Test
-            @TestMetadata("recordDifferentSyntheticProperty.kt")
-            public void testRecordDifferentSyntheticProperty() throws Exception {
-                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava15/records/recordDifferentSyntheticProperty.kt");
-            }
-
-            @Test
-            @TestMetadata("recordPropertyAccess.kt")
-            public void testRecordPropertyAccess() throws Exception {
-                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava15/records/recordPropertyAccess.kt");
-            }
-        }
-    }
-
-    @Nested
-    @Tag("<modernJava>")
     @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava17")
     @TestDataPath("$PROJECT_ROOT")
     public class TestsWithJava17 {
@@ -218,52 +137,132 @@ public class BlackBoxModernJdkCodegenTestGenerated extends AbstractBlackBoxCodeg
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
-        @Test
-        @TestMetadata("compiledJavaSealedClass.kt")
-        public void testCompiledJavaSealedClass() throws Exception {
-            runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/compiledJavaSealedClass.kt");
+        @Nested
+        @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava17/records")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Records {
+            @Test
+            public void testAllFilesPresentInRecords() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/records"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @Test
+            @TestMetadata("bytecodeShapeForJava.kt")
+            public void testBytecodeShapeForJava() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/bytecodeShapeForJava.kt");
+            }
+
+            @Test
+            @TestMetadata("collectionSizeOverrides.kt")
+            public void testCollectionSizeOverrides() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/collectionSizeOverrides.kt");
+            }
+
+            @Test
+            @TestMetadata("dataJvmRecord.kt")
+            public void testDataJvmRecord() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/dataJvmRecord.kt");
+            }
+
+            @Test
+            @TestMetadata("jvmRecordBinary.kt")
+            public void testJvmRecordBinary() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/jvmRecordBinary.kt");
+            }
+
+            @Test
+            @TestMetadata("propertiesOverrides.kt")
+            public void testPropertiesOverrides() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/propertiesOverrides.kt");
+            }
+
+            @Test
+            @TestMetadata("propertiesOverridesAllCompatibilityJvmDefault.kt")
+            public void testPropertiesOverridesAllCompatibilityJvmDefault() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/propertiesOverridesAllCompatibilityJvmDefault.kt");
+            }
+
+            @Test
+            @TestMetadata("propertiesOverridesEnableJvmDefault.kt")
+            public void testPropertiesOverridesEnableJvmDefault() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/propertiesOverridesEnableJvmDefault.kt");
+            }
+
+            @Test
+            @TestMetadata("recordDifferentPropertyOverride.kt")
+            public void testRecordDifferentPropertyOverride() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/recordDifferentPropertyOverride.kt");
+            }
+
+            @Test
+            @TestMetadata("recordDifferentSyntheticProperty.kt")
+            public void testRecordDifferentSyntheticProperty() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/recordDifferentSyntheticProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("recordPropertyAccess.kt")
+            public void testRecordPropertyAccess() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/recordPropertyAccess.kt");
+            }
         }
 
-        @Test
-        @TestMetadata("compiledJavaSealedInterface.kt")
-        public void testCompiledJavaSealedInterface() throws Exception {
-            runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/compiledJavaSealedInterface.kt");
-        }
+        @Nested
+        @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Sealed {
+            @Test
+            public void testAllFilesPresentInSealed() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
 
-        @Test
-        @TestMetadata("javaRecordsViaKotlinReflection.kt")
-        public void testJavaRecordsViaKotlinReflection() throws Exception {
-            runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/javaRecordsViaKotlinReflection.kt");
-        }
+            @Test
+            @TestMetadata("compiledJavaSealedClass.kt")
+            public void testCompiledJavaSealedClass() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed/compiledJavaSealedClass.kt");
+            }
 
-        @Test
-        @TestMetadata("javaSealedClass.kt")
-        public void testJavaSealedClass() throws Exception {
-            runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/javaSealedClass.kt");
-        }
+            @Test
+            @TestMetadata("compiledJavaSealedInterface.kt")
+            public void testCompiledJavaSealedInterface() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed/compiledJavaSealedInterface.kt");
+            }
 
-        @Test
-        @TestMetadata("javaSealedInterface.kt")
-        public void testJavaSealedInterface() throws Exception {
-            runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/javaSealedInterface.kt");
-        }
+            @Test
+            @TestMetadata("javaRecordsViaKotlinReflection.kt")
+            public void testJavaRecordsViaKotlinReflection() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed/javaRecordsViaKotlinReflection.kt");
+            }
 
-        @Test
-        @TestMetadata("sealedJavaClassViaJavaReflection.kt")
-        public void testSealedJavaClassViaJavaReflection() throws Exception {
-            runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealedJavaClassViaJavaReflection.kt");
-        }
+            @Test
+            @TestMetadata("javaSealedClass.kt")
+            public void testJavaSealedClass() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed/javaSealedClass.kt");
+            }
 
-        @Test
-        @TestMetadata("sealedJavaClassViaKotlinReflection.kt")
-        public void testSealedJavaClassViaKotlinReflection() throws Exception {
-            runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealedJavaClassViaKotlinReflection.kt");
-        }
+            @Test
+            @TestMetadata("javaSealedInterface.kt")
+            public void testJavaSealedInterface() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed/javaSealedInterface.kt");
+            }
 
-        @Test
-        @TestMetadata("sealedJavaInterfaceViaKotlinReflection.kt")
-        public void testSealedJavaInterfaceViaKotlinReflection() throws Exception {
-            runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealedJavaInterfaceViaKotlinReflection.kt");
+            @Test
+            @TestMetadata("sealedJavaClassViaJavaReflection.kt")
+            public void testSealedJavaClassViaJavaReflection() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed/sealedJavaClassViaJavaReflection.kt");
+            }
+
+            @Test
+            @TestMetadata("sealedJavaClassViaKotlinReflection.kt")
+            public void testSealedJavaClassViaKotlinReflection() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed/sealedJavaClassViaKotlinReflection.kt");
+            }
+
+            @Test
+            @TestMetadata("sealedJavaInterfaceViaKotlinReflection.kt")
+            public void testSealedJavaInterfaceViaKotlinReflection() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed/sealedJavaInterfaceViaKotlinReflection.kt");
+            }
         }
     }
 }

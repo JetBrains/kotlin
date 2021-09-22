@@ -206,13 +206,13 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("loadJava/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
             }
 
-            testClass<AbstractLoadJava15Test> {
-                model("loadJava15", extension = "java", testMethod = "doTestCompiledJava", testClassName = "CompiledJava")
-                model("loadJava15", extension = "java", testMethod = "doTestSourceJava", testClassName = "SourceJava")
+            testClass<AbstractLoadJava17Test> {
+                model("loadJava17", extension = "java", testMethod = "doTestCompiledJava", testClassName = "CompiledJava")
+                model("loadJava17", extension = "java", testMethod = "doTestSourceJava", testClassName = "SourceJava")
             }
 
-            testClass<AbstractLoadJava15WithPsiClassReadingTest> {
-                model("loadJava15", extension = "java", testMethod = "doTestCompiledJava")
+            testClass<AbstractLoadJava17WithPsiClassReadingTest> {
+                model("loadJava17", extension = "java", testMethod = "doTestCompiledJava")
             }
 
             testClass<AbstractCompileJavaAgainstKotlinTest> {

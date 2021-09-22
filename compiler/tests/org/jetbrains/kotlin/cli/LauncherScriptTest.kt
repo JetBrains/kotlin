@@ -332,16 +332,16 @@ compiler/testData/launcher/noInline.myscript:1:7: error: unresolved reference: C
         runProcess("kotlin", "-howtorun", "classfile", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
     }
 
-    fun testKotlincJdk15() {
-        val jdk15 = mapOf("JAVA_HOME" to KtTestUtil.getJdk15Home().absolutePath)
+    fun testKotlincJdk17() {
+        val jdk17 = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath)
         runProcess(
             "kotlinc", "$testDataDirectory/helloWorld.kt", "-d", tmpdir.path,
-            environment = jdk15,
+            environment = jdk17,
         )
 
         runProcess(
             "kotlin", "-e", "listOf('O'.toString() + 'K')",
-            expectedStdout = "[OK]\n", environment = jdk15,
+            expectedStdout = "[OK]\n", environment = jdk17,
         )
     }
 

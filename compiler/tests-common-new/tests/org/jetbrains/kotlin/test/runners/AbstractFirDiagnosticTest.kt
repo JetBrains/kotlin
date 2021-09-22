@@ -117,9 +117,9 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
         }
     }
 
-    forTestsMatching("compiler/testData/diagnostics/tests/testsWithJava15/*") {
+    forTestsMatching("compiler/testData/diagnostics/tests/testsWithJava17/*") {
         defaultDirectives {
-            JDK_KIND with TestJdkKind.FULL_JDK_15
+            JDK_KIND with TestJdkKind.FULL_JDK_17
             +WITH_STDLIB
             +WITH_REFLECT
         }

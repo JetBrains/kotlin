@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
-abstract class AbstractLoadJava15WithPsiClassReadingTest : AbstractLoadJavaWithPsiClassReadingTest() {
-    override fun getJdkKind(): TestJdkKind = TestJdkKind.FULL_JDK_15
-    override fun getJdkHomeForJavac(): File = KtTestUtil.getJdk15Home()
-    override fun getAdditionalJavacArgs(): List<String> = ADDITIONAL_JAVAC_ARGS_FOR_15
+abstract class AbstractLoadJava17Test : AbstractLoadJavaTest() {
+    override fun getJdkKind(): TestJdkKind = TestJdkKind.FULL_JDK_17
+    override fun getJdkHomeForJavac(): File = KtTestUtil.getJdk17Home()
+    override fun getAdditionalJavacArgs(): List<String> = ADDITIONAL_JAVAC_ARGS_FOR_17
 }
+
+val ADDITIONAL_JAVAC_ARGS_FOR_17  = listOf("--release", "17")

@@ -1,9 +1,9 @@
 // !API_VERSION: 1.5
 // !LANGUAGE: +JvmRecordSupport
-// JVM_TARGET: 15
+// JVM_TARGET: 17
 // ENABLE_JVM_PREVIEW
 // WITH_RUNTIME
-// JDK_KIND: FULL_JDK_15
+// JDK_KIND: FULL_JDK_17
 
 // D8 does not yet desugar java records.
 // IGNORE_DEXING

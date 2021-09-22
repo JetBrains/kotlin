@@ -193,8 +193,8 @@ public class KotlinTestUtils {
         else if (jdkKind == TestJdkKind.FULL_JDK_9) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk9Home());
         }
-        else if (jdkKind == TestJdkKind.FULL_JDK_15) {
-            configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk15Home());
+        else if (jdkKind == TestJdkKind.FULL_JDK_17) {
+            configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk17Home());
         }
         else if (SystemInfo.IS_AT_LEAST_JAVA9) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(System.getProperty("java.home")));

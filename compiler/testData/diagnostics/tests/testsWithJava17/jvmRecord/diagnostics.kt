@@ -2,7 +2,7 @@
 // !API_VERSION: 1.5
 // !LANGUAGE: +JvmRecordSupport
 // SKIP_TXT
-// JVM_TARGET: 15
+// JVM_TARGET: 17
 // ENABLE_JVM_PREVIEW
 
 <!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>

@@ -30071,68 +30071,58 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
         }
 
         @Nested
-        @TestMetadata("compiler/testData/diagnostics/tests/testsWithJava15")
-        @TestDataPath("$PROJECT_ROOT")
-        public class TestsWithJava15 {
-            @Test
-            public void testAllFilesPresentInTestsWithJava15() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithJava15"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-            }
-
-            @Nested
-            @TestMetadata("compiler/testData/diagnostics/tests/testsWithJava15/jvmRecord")
-            @TestDataPath("$PROJECT_ROOT")
-            public class JvmRecord {
-                @Test
-                public void testAllFilesPresentInJvmRecord() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithJava15/jvmRecord"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-                }
-
-                @Test
-                @TestMetadata("diagnostics.kt")
-                public void testDiagnostics() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/testsWithJava15/jvmRecord/diagnostics.kt");
-                }
-
-                @Test
-                @TestMetadata("disabledFeature.kt")
-                public void testDisabledFeature() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/testsWithJava15/jvmRecord/disabledFeature.kt");
-                }
-
-                @Test
-                @TestMetadata("irrelevantFields.kt")
-                public void testIrrelevantFields() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/testsWithJava15/jvmRecord/irrelevantFields.kt");
-                }
-
-                @Test
-                @TestMetadata("jvmRecordDescriptorStructure.kt")
-                public void testJvmRecordDescriptorStructure() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/testsWithJava15/jvmRecord/jvmRecordDescriptorStructure.kt");
-                }
-
-                @Test
-                @TestMetadata("simpleRecords.kt")
-                public void testSimpleRecords() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/testsWithJava15/jvmRecord/simpleRecords.kt");
-                }
-
-                @Test
-                @TestMetadata("supertypesCheck.kt")
-                public void testSupertypesCheck() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/testsWithJava15/jvmRecord/supertypesCheck.kt");
-                }
-            }
-        }
-
-        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/testsWithJava17")
         @TestDataPath("$PROJECT_ROOT")
         public class TestsWithJava17 {
             @Test
             public void testAllFilesPresentInTestsWithJava17() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithJava17"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord")
+            @TestDataPath("$PROJECT_ROOT")
+            public class JvmRecord {
+                @Test
+                public void testAllFilesPresentInJvmRecord() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("diagnostics.kt")
+                public void testDiagnostics() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord/diagnostics.kt");
+                }
+
+                @Test
+                @TestMetadata("disabledFeature.kt")
+                public void testDisabledFeature() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord/disabledFeature.kt");
+                }
+
+                @Test
+                @TestMetadata("irrelevantFields.kt")
+                public void testIrrelevantFields() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord/irrelevantFields.kt");
+                }
+
+                @Test
+                @TestMetadata("jvmRecordDescriptorStructure.kt")
+                public void testJvmRecordDescriptorStructure() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord/jvmRecordDescriptorStructure.kt");
+                }
+
+                @Test
+                @TestMetadata("simpleRecords.kt")
+                public void testSimpleRecords() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord/simpleRecords.kt");
+                }
+
+                @Test
+                @TestMetadata("supertypesCheck.kt")
+                public void testSupertypesCheck() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord/supertypesCheck.kt");
+                }
             }
 
             @Nested

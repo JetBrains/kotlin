@@ -182,7 +182,6 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
     ): String {
         val jdkHome = when (jdkKind) {
             TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
-            TestJdkKind.FULL_JDK_15 -> KtTestUtil.getJdk15Home()
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
             else -> error("Unsupported JDK kind: $jdkKind")
         }
