@@ -294,9 +294,12 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 )
 
                 val superQualifier = getSuperQualifier(resolvedCall)
+                val candidateDescriptor = resolvedCall.candidateDescriptor as PropertyDescriptor
 
                 // TODO property imported from an object
-                createPropertyLValue(ktLeft, descriptor, propertyReceiver, getTypeArguments(resolvedCall), origin, superQualifier)
+                createPropertyLValue(
+                    ktLeft, descriptor, candidateDescriptor, propertyReceiver, getTypeArguments(resolvedCall), origin, superQualifier
+                )
             }
         }
 
@@ -308,26 +311,29 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
 
     private fun createPropertyLValue(
         ktExpression: KtExpression,
-        descriptor: PropertyDescriptor,
+        resultingDescriptor: PropertyDescriptor,
+        candidateDescriptor: PropertyDescriptor,
         propertyReceiver: CallReceiver,
         typeArgumentsMap: Map<TypeParameterDescriptor, KotlinType>?,
         origin: IrStatementOrigin?,
         superQualifier: ClassDescriptor?
     ): PropertyLValueBase {
 
-        val unwrappedPropertyDescriptor = descriptor.unwrapPropertyDescriptor()
+        val unwrappedPropertyDescriptor = resultingDescriptor.unwrapPropertyDescriptor()
         val getterDescriptor = unwrappedPropertyDescriptor.unwrappedGetMethod
         val setterDescriptor = unwrappedPropertyDescriptor.unwrappedSetMethod
 
         val getterSymbol = getterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it.original) }
         val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it.original) }
 
-        val propertyIrType = descriptor.type.toIrType()
+        val propertyIrType = resultingDescriptor.type.toIrType()
         return if (getterSymbol != null || setterSymbol != null) {
             val superQualifierSymbol = superQualifier?.let { context.symbolTable.referenceClass(it) }
             val typeArgumentsList =
                 typeArgumentsMap?.let { typeArguments ->
-                    descriptor.original.typeParameters.map { typeArguments[it]!!.toIrType() }
+                    candidateDescriptor.typeParameters.map {
+                        typeArguments[it]!!.toIrType()
+                    }
                 }
             AccessorPropertyLValue(
                 context,
