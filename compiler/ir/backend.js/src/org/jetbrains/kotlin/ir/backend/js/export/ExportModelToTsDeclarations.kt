@@ -11,16 +11,13 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 // TODO: Support module kinds other than plain
 
 fun ExportedModule.toTypeScript(): String {
-    val indent = if (moduleKind == ModuleKind.PLAIN) "    " else ""
-    val types = "${indent}type Nullable<T> = T | null | undefined\n"
+    return wrapTypeScript(name, moduleKind, declarations.toTypeScript(moduleKind))
+}
 
-    val declarationsDts =
-        types + declarations.joinToString("\n") {
-            it.toTypeScript(
-                indent = indent,
-                prefix = if (moduleKind == ModuleKind.PLAIN) "" else "export "
-            )
-        }
+fun wrapTypeScript(name: String, moduleKind: ModuleKind, dts: String): String {
+    val types = "${moduleKind.indent}type Nullable<T> = T | null | undefined\n"
+
+    val declarationsDts = types + dts
 
     val namespaceName = sanitizeName(name)
 
@@ -28,6 +25,18 @@ fun ExportedModule.toTypeScript(): String {
         ModuleKind.PLAIN -> "declare namespace $namespaceName {\n$declarationsDts\n}\n"
         ModuleKind.AMD, ModuleKind.COMMON_JS, ModuleKind.ES -> declarationsDts
         ModuleKind.UMD -> "$declarationsDts\nexport as namespace $namespaceName;"
+    }
+}
+
+private val ModuleKind.indent: String
+    get() = if (this == ModuleKind.PLAIN) "    " else ""
+
+fun List<ExportedDeclaration>.toTypeScript(moduleKind: ModuleKind): String {
+    return joinToString("\n") {
+        it.toTypeScript(
+            indent = moduleKind.indent,
+            prefix = if (moduleKind == ModuleKind.PLAIN) "" else "export "
+        )
     }
 }
 
