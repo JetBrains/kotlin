@@ -1,4 +1,3 @@
-// !LANGUAGE: -ProhibitSuperCallsFromPublicInline
 // FILE: 1.kt
 
 package test
@@ -11,8 +10,8 @@ object X : A() {
     override val test: String
         get() = "fail"
 
-    inline fun doTest(): String {
-        return super.test
+    <!NOTHING_TO_INLINE!>inline<!> fun doTest(): String {
+        return <!SUPER_CALL_FROM_PUBLIC_INLINE!>super<!>.test
     }
 }
 

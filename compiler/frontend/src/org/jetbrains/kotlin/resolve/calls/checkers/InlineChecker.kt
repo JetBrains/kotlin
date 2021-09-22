@@ -316,7 +316,11 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
             val descriptor = thisTypeForSuperCall.constructor.declarationDescriptor as? DeclarationDescriptorWithVisibility ?: return
 
             if (!isDefinedInInlineFunction(descriptor)) {
-                context.trace.report(SUPER_CALL_FROM_PUBLIC_INLINE.on(expression.parent.parent ?: superCall, callableDescriptor))
+                context.trace.report(
+                    SUPER_CALL_FROM_PUBLIC_INLINE.on(
+                        context.languageVersionSettings, expression.parent.parent ?: superCall, callableDescriptor
+                    )
+                )
             }
         }
     }

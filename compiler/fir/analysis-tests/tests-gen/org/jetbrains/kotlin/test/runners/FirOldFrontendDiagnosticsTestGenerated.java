@@ -15850,9 +15850,33 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("superCall.kt")
+            public void testSuperCall() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/superCall.kt");
+            }
+
+            @Test
             @TestMetadata("superCallDepecation.kt")
             public void testSuperCallDepecation() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inline/superCallDepecation.kt");
+            }
+
+            @Test
+            @TestMetadata("superCallDepecationWarning.kt")
+            public void testSuperCallDepecationWarning() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/superCallDepecationWarning.kt");
+            }
+
+            @Test
+            @TestMetadata("superCallFromMultipleSubclasses.kt")
+            public void testSuperCallFromMultipleSubclasses() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/superCallFromMultipleSubclasses.kt");
+            }
+
+            @Test
+            @TestMetadata("superProperty.kt")
+            public void testSuperProperty() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/superProperty.kt");
             }
 
             @Test
