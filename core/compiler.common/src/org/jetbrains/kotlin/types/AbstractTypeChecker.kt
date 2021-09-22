@@ -202,6 +202,7 @@ object AbstractTypeChecker {
         return equalTypes(context.newTypeCheckerState(false, stubTypesEqualToAnything), a, b)
     }
 
+    @JvmOverloads
     fun isSubtypeOf(
         state: TypeCheckerState,
         subType: KotlinTypeMarker,
