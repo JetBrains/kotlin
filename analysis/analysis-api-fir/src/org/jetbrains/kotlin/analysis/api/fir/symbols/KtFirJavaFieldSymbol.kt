@@ -30,9 +30,8 @@ internal class KtFirJavaFieldSymbol(
     fir: FirField,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
-    _builder: KtSymbolByFirBuilder
+    private val builder: KtSymbolByFirBuilder
 ) : KtJavaFieldSymbol(), KtFirSymbol<FirField> {
-    private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.moduleData.session) }
 

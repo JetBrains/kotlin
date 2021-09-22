@@ -44,14 +44,13 @@ internal class KtFirKotlinPropertySymbol(
     fir: FirProperty,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
-    _builder: KtSymbolByFirBuilder
+    private val builder: KtSymbolByFirBuilder
 ) : KtKotlinPropertySymbol(), KtFirSymbol<FirProperty> {
     init {
         assert(!fir.isLocal)
         check(fir !is FirSyntheticProperty)
     }
 
-    private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.moduleData.session) }
 

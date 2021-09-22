@@ -5,31 +5,23 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
-import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.tokens.assertIsValidAndAccessible
-import java.lang.ref.WeakReference
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 
-internal class FirRefWithValidityCheck<out D : FirDeclaration>(fir: D, resolveState: FirModuleResolveState, val token: ValidityToken) {
-    private val firWeakRef = WeakReference(fir)
-    private val resolveStateWeakRef = WeakReference(resolveState)
-
-    @TestOnly
-    internal fun isCollected(): Boolean =
-        firWeakRef.get() == null && resolveStateWeakRef.get() == null
+internal class FirRefWithValidityCheck<out D : FirDeclaration>(
+    private val fir: D,
+    val resolveState: FirModuleResolveState,
+    val token: ValidityToken
+) {
 
     inline fun <R> withFir(phase: FirResolvePhase = FirResolvePhase.RAW_FIR, crossinline action: (fir: D) -> R): R {
         token.assertIsValidAndAccessible()
-        val fir = firWeakRef.get()
-            ?: throw EntityWasGarbageCollectedException("FirElement")
-        val resolveState = resolveStateWeakRef.get()
-            ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
         return fir.withFirDeclaration(resolveState, phase) { action(it) }
     }
 
@@ -40,13 +32,8 @@ internal class FirRefWithValidityCheck<out D : FirDeclaration>(fir: D, resolveSt
      */
     inline fun <R> withFirUnsafe(action: (fir: D) -> R): R {
         token.assertIsValidAndAccessible()
-        val fir = firWeakRef.get()
-            ?: throw EntityWasGarbageCollectedException("FirElement")
         return action(fir)
     }
-
-    val resolveState
-        get() = resolveStateWeakRef.get() ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
 
     inline fun <R> withFirAndCache(phase: FirResolvePhase = FirResolvePhase.RAW_FIR, crossinline createValue: (fir: D) -> R) =
         ValidityAwareCachedValue(token) {
@@ -55,10 +42,6 @@ internal class FirRefWithValidityCheck<out D : FirDeclaration>(fir: D, resolveSt
 
     inline fun <R> withFirByType(type: ResolveType, crossinline action: (fir: D) -> R): R {
         token.assertIsValidAndAccessible()
-        val fir = firWeakRef.get()
-            ?: throw EntityWasGarbageCollectedException("FirElement")
-        val resolveState = resolveStateWeakRef.get()
-            ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
         return fir.withFirDeclaration(type, resolveState) { action(it) }
     }
 
@@ -69,16 +52,13 @@ internal class FirRefWithValidityCheck<out D : FirDeclaration>(fir: D, resolveSt
 
     override fun equals(other: Any?): Boolean {
         if (other !is FirRefWithValidityCheck<*>) return false
-        return getRefFir() == other.getRefFir() && this.token == other.token
+        return fir == other.fir && this.token == other.token
     }
 
     override fun hashCode(): Int {
-        return getRefFir().hashCode() * 31 + token.hashCode()
+        return fir.hashCode() * 31 + token.hashCode()
     }
 
-    private fun getRefFir(): FirDeclaration {
-        return firWeakRef.get() ?: throw EntityWasGarbageCollectedException("FirElement")
-    }
 }
 
 @Suppress("NOTHING_TO_INLINE")

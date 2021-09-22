@@ -39,13 +39,12 @@ internal class KtFirPropertySetterSymbol(
     fir: FirPropertyAccessor,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
-    _builder: KtSymbolByFirBuilder,
+    private val builder: KtSymbolByFirBuilder,
 ) : KtPropertySetterSymbol(), KtFirSymbol<FirPropertyAccessor> {
     init {
         require(fir.isSetter)
     }
 
-    private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.moduleData.session) }
 

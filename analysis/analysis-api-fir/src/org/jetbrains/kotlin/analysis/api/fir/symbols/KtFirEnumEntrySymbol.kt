@@ -29,9 +29,8 @@ internal class KtFirEnumEntrySymbol(
     fir: FirEnumEntry,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
-    _builder: KtSymbolByFirBuilder
+    private val builder: KtSymbolByFirBuilder
 ) : KtEnumEntrySymbol(), KtFirSymbol<FirEnumEntry> {
-    private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
 
     override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.moduleData.session) }

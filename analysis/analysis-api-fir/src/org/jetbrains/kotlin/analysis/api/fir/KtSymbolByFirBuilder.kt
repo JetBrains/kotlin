@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.api.KtStarProjectionTypeArgument
 import org.jetbrains.kotlin.analysis.api.KtTypeArgument
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
@@ -411,7 +412,7 @@ private class BuilderCache<From, To: Any> private constructor(
     private val cache: ConcurrentMap<From, To>,
     private val isReadOnly: Boolean
 ) {
-    constructor() : this(ConcurrentHashMap<From, To>(), isReadOnly = false)
+    constructor() : this(ContainerUtil.createConcurrentSoftMap(), isReadOnly = false)
 
     fun createReadOnlyCopy(): BuilderCache<From, To> {
         check(!isReadOnly) { "Cannot create readOnly BuilderCache from a readonly one" }

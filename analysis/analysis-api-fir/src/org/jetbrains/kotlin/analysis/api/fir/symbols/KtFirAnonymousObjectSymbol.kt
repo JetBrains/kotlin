@@ -29,9 +29,8 @@ internal class KtFirAnonymousObjectSymbol(
     fir: FirAnonymousObject,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
-    _builder: KtSymbolByFirBuilder
+    private val builder: KtSymbolByFirBuilder
 ) : KtAnonymousObjectSymbol(), KtFirSymbol<FirAnonymousObject> {
-    private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.moduleData.session) }
 

@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 
 internal class KtFirTypeAndAnnotations<T : FirDeclaration>(
     private val containingDeclaration: FirRefWithValidityCheck<T>,
     @Suppress("UNUSED_PARAMETER") typeResolvePhase: FirResolvePhase,
-    _builder: KtSymbolByFirBuilder,
+    private val builder: KtSymbolByFirBuilder,
     private val typeRef: (T) -> FirTypeRef,
 ) : KtTypeAndAnnotations() {
-    private val builder by weakRef(_builder)
 
     override val token: ValidityToken get() = containingDeclaration.token
 
@@ -43,20 +43,16 @@ internal class KtFirTypeAndAnnotations<T : FirDeclaration>(
 }
 
 internal class KtSimpleFirTypeAndAnnotations(
-    coneType: ConeKotlinType,
-    annotationsList: List<KtAnnotationCall>,
-    builder: KtSymbolByFirBuilder,
+    private val coneType: ConeKotlinType,
+    private val _annotations: List<KtAnnotationCall>,
+    private val builder: KtSymbolByFirBuilder,
     override val token: ValidityToken
 ) : KtTypeAndAnnotations() {
-
-    private val coneTypeRef by weakRef(coneType)
-    private val annotationsListRef by weakRef(annotationsList)
-
     override val type: KtType by cached {
-        builder.typeBuilder.buildKtType(coneTypeRef)
+        builder.typeBuilder.buildKtType(coneType)
     }
 
-    override val annotations: List<KtAnnotationCall> get() = annotationsListRef
+    override val annotations: List<KtAnnotationCall> get() = withValidityAssertion { _annotations }
 }
 
 internal fun FirRefWithValidityCheck<FirClass>.superTypesAndAnnotationsList(builder: KtSymbolByFirBuilder): List<KtTypeAndAnnotations> =
@@ -66,7 +62,7 @@ internal fun FirRefWithValidityCheck<FirClass>.superTypesAndAnnotationsList(buil
 
 internal fun FirRefWithValidityCheck<FirRegularClass>.superTypesAndAnnotationsListForRegularClass(builder: KtSymbolByFirBuilder): List<KtTypeAndAnnotations> {
     return withFir { fir ->
-        if(fir.resolvePhase >= FirResolvePhase.SUPER_TYPES) {
+        if (fir.resolvePhase >= FirResolvePhase.SUPER_TYPES) {
             fir.superTypeRefs.mapToTypeAndAnnotations(this, builder)
         } else null
     } ?: withFirByType(ResolveType.NoResolve) { fir ->

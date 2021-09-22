@@ -38,9 +38,8 @@ internal class KtFirNamedClassOrObjectSymbol(
     fir: FirRegularClass,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
-    _builder: KtSymbolByFirBuilder
+    private val builder: KtSymbolByFirBuilder
 ) : KtNamedClassOrObjectSymbol(), KtFirSymbol<FirRegularClass> {
-    private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.moduleData.session) }
     override val name: Name get() = firRef.withFir { it.name }

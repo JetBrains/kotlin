@@ -23,9 +23,8 @@ internal class KtFirBackingFieldSymbol(
     propertyFir: FirProperty,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
-    _builder: KtSymbolByFirBuilder
-) : KtBackingFieldSymbol(){
-    private val builder by weakRef(_builder)
+    private val builder: KtSymbolByFirBuilder
+) : KtBackingFieldSymbol() {
     private val propertyFirRef = firRef(propertyFir, resolveState)
 
     override val annotatedType: KtTypeAndAnnotations by cached {
