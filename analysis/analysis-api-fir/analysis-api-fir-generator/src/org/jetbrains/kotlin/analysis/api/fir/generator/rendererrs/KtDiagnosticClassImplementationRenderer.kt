@@ -34,17 +34,14 @@ object KtDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
         }
         print(") : KtFirDiagnostic.${diagnostic.className}(), KtAbstractFirDiagnostic<")
         printTypeWithShortNames(diagnostic.original.psiType)
-        print(">")
-        inBracketsWithIndent {
-            println("override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)")
-        }
+        println(">")
     }
 
     private fun SmartPrinter.printParameters(diagnostic: HLDiagnostic, diagnosticList: HLDiagnosticList) {
         for (parameter in diagnostic.parameters) {
             printParameter(parameter, diagnosticList)
         }
-        println("firDiagnostic: FirPsiDiagnostic,")
+        println("override val firDiagnostic: FirPsiDiagnostic,")
         println("override val token: ValidityToken,")
     }
 
@@ -62,7 +59,6 @@ object KtDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
     }
 
     override val defaultImports = listOf(
-        "org.jetbrains.kotlin.analysis.api.fir.utils.weakRef",
         "org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic",
         "org.jetbrains.kotlin.analysis.api.tokens.ValidityToken",
     )
