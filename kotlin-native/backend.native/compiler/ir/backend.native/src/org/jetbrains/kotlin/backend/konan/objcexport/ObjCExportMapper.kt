@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.common.descriptors.allParameters
-import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenDescriptors
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
@@ -71,10 +70,12 @@ internal fun ObjCExportMapper.getClassIfCategory(extensionReceiverType: KotlinTy
     }
 }
 
+private fun isSealedClassConstructor(descriptor: ConstructorDescriptor) = descriptor.constructedClass.isSealed()
+
 // Note: partially duplicated in ObjCExportLazyImpl.translateTopLevels.
 internal fun ObjCExportMapper.shouldBeExposed(descriptor: CallableMemberDescriptor): Boolean =
         descriptor.isEffectivelyPublicApi && !descriptor.isExpect &&
-                !isHiddenByDeprecation(descriptor)
+                !isHiddenByDeprecation(descriptor) && !(descriptor is ConstructorDescriptor && isSealedClassConstructor(descriptor))
 
 internal fun ObjCExportMapper.shouldBeExposed(descriptor: ClassDescriptor): Boolean =
         shouldBeVisible(descriptor) && !isSpecialMapped(descriptor) && !descriptor.defaultType.isObjCObjectType()

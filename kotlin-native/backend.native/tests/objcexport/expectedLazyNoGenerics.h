@@ -1055,6 +1055,56 @@ __attribute__((swift_name("OverrideMethodsOfAnyKt")))
 + (BOOL)testObj:(id)obj other:(id)other swift:(BOOL)swift error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("test(obj:other:swift:)")));
 @end;
 
+__attribute__((swift_name("Person")))
+@interface KtPerson : KtBase
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Person.User")))
+@interface KtPersonUser : KtPerson
+- (instancetype)initWithId:(int32_t)id __attribute__((swift_name("init(id:)"))) __attribute__((objc_designated_initializer));
+- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
+- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSString *)description __attribute__((swift_name("description()")));
+- (int32_t)component1 __attribute__((swift_name("component1()")));
+- (KtPersonUser *)doCopyId:(int32_t)id __attribute__((swift_name("doCopy(id:)")));
+@property (readonly) int32_t id __attribute__((swift_name("id")));
+@end;
+
+__attribute__((swift_name("Person.Worker")))
+@interface KtPersonWorker : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Person.WorkerEmployee")))
+@interface KtPersonWorkerEmployee : KtPersonWorker
+- (instancetype)initWithId:(int32_t)id __attribute__((swift_name("init(id:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
++ (instancetype)new __attribute__((unavailable));
+- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
+- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSString *)description __attribute__((swift_name("description()")));
+- (int32_t)component1 __attribute__((swift_name("component1()")));
+- (KtPersonWorkerEmployee *)doCopyId:(int32_t)id __attribute__((swift_name("doCopy(id:)")));
+@property (readonly) int32_t id __attribute__((swift_name("id")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Person.WorkerContractor")))
+@interface KtPersonWorkerContractor : KtPersonWorker
+- (instancetype)initWithId:(int32_t)id __attribute__((swift_name("init(id:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
++ (instancetype)new __attribute__((unavailable));
+- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
+- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSString *)description __attribute__((swift_name("description()")));
+- (int32_t)component1 __attribute__((swift_name("component1()")));
+- (KtPersonWorkerContractor *)doCopyId:(int32_t)id __attribute__((swift_name("doCopy(id:)")));
+@property (readonly) int32_t id __attribute__((swift_name("id")));
+@end;
+
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("ThrowableAsError")))
 @interface KtThrowableAsError : KtKotlinThrowable
@@ -2575,8 +2625,6 @@ __attribute__((swift_name("ValuesKt")))
 
 __attribute__((swift_name("InvariantSuper")))
 @interface KtInvariantSuper : KtBase
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
-+ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -2588,8 +2636,6 @@ __attribute__((swift_name("Invariant")))
 
 __attribute__((swift_name("OutVariantSuper")))
 @interface KtOutVariantSuper : KtBase
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
-+ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -2601,8 +2647,6 @@ __attribute__((swift_name("OutVariant")))
 
 __attribute__((swift_name("InVariantSuper")))
 @interface KtInVariantSuper : KtBase
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
-+ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
