@@ -61,4 +61,7 @@ interface CommonBackendContext : BackendContext, LoggingContext {
 
     val inductionVariableOrigin: IrDeclarationOrigin
         get() = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+
+    val optimizeLoopsOverUnsignedArrays: Boolean
+        get() = false
 }
