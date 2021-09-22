@@ -76,9 +76,14 @@ internal class CollectionIndicesHandler(context: CommonBackendContext) : Indices
 }
 
 internal class ArrayIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
+    private val supportsUnsignedArrays = context.optimizeLoopsOverUnsignedArrays
 
     override val matcher = SimpleCalleeMatcher {
-        extensionReceiver { it != null && it.type.run { isArray() || isPrimitiveArray() || isUnsignedArray() } }
+        extensionReceiver {
+            it != null && it.type.run {
+                isArray() || isPrimitiveArray() || (supportsUnsignedArrays && isUnsignedArray())
+            }
+        }
         fqName { it == FqName("kotlin.collections.<get-indices>") }
         parameterCount { it == 0 }
     }

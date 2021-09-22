@@ -72,7 +72,10 @@ abstract class IndexedGetIterationHandler(
 
 /** Builds a [HeaderInfo] for arrays. */
 internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context, canCacheLast = true) {
-    override fun matchIterable(expression: IrExpression) = expression.type.run { isArray() || isPrimitiveArray() || isUnsignedArray() }
+    private val supportsUnsignedArrays = context.optimizeLoopsOverUnsignedArrays
+
+    override fun matchIterable(expression: IrExpression) =
+        expression.type.run { isArray() || isPrimitiveArray() || (supportsUnsignedArrays && isUnsignedArray()) }
 
     override val IrType.sizePropertyGetter
         get() = getClass()!!.getPropertyGetter("size")!!.owner
