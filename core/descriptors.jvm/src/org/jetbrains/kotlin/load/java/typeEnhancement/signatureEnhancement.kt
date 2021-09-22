@@ -249,11 +249,15 @@ private class SignatureParts(
     override val typeSystem: TypeSystemInferenceExtensionContext
         get() = SimpleClassicTypeSystemContext
 
-    override val AnnotationDescriptor.forceWarning: Boolean
-        get() = (this is PossiblyExternalAnnotationDescriptor && isIdeExternalAnnotation) ||
+    override fun AnnotationDescriptor.forceWarning(unenhancedType: KotlinTypeMarker?): Boolean =
+        (this is PossiblyExternalAnnotationDescriptor && isIdeExternalAnnotation) ||
                 (this is LazyJavaAnnotationDescriptor && !enableImprovementsInStrictMode &&
                         (isFreshlySupportedTypeUseAnnotation ||
-                                containerApplicabilityType == AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS))
+                                containerApplicabilityType == AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS)) ||
+                // Previously, type use annotations on primitive arrays were lost, so temporarily treat them as warnings.
+                (unenhancedType != null && KotlinBuiltIns.isPrimitiveArray(unenhancedType as KotlinType) &&
+                        annotationTypeQualifierResolver.isTypeUseAnnotation(this) &&
+                        !containerContext.components.settings.enhancePrimitiveArrays)
 
     override val KotlinTypeMarker.annotations: Iterable<AnnotationDescriptor>
         get() = (this as KotlinType).annotations
