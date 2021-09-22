@@ -48,7 +48,8 @@ class ComposeIrGenerationExtension(
     private val sourceInformationEnabled: Boolean = true,
     private val intrinsicRememberEnabled: Boolean = true,
     private val decoysEnabled: Boolean = false,
-    private val metricsDestination: String? = null
+    private val metricsDestination: String? = null,
+    private val reportsDestination: String? = null
 ) : IrGenerationExtension {
     var metrics: ModuleMetrics = EmptyModuleMetrics
     @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -69,8 +70,11 @@ class ComposeIrGenerationExtension(
         // create a symbol remapper to be used across all transforms
         val symbolRemapper = ComposableSymbolRemapper()
 
-        if (metricsDestination != null) {
-            metrics = ModuleMetricsImpl(moduleFragment.name.asString(), pluginContext)
+        if (metricsDestination != null || reportsDestination != null) {
+            metrics = ModuleMetricsImpl(
+                moduleFragment.name.asString(),
+                pluginContext
+            )
         }
 
         ClassStabilityTransformer(
@@ -183,7 +187,10 @@ class ComposeIrGenerationExtension(
         }
 
         if (metricsDestination != null) {
-            metrics.saveTo(metricsDestination)
+            metrics.saveMetricsTo(metricsDestination)
+        }
+        if (reportsDestination != null) {
+            metrics.saveReportsTo(reportsDestination)
         }
     }
 }
