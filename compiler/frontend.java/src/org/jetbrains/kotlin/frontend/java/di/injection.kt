@@ -149,7 +149,8 @@ fun StorageComponentContainer.configureJavaSpecificComponents(
         JavaResolverSettings.create(
             correctNullabilityForNotNullTypeParameter = languageVersionSettings.supportsFeature(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated),
             typeEnhancementImprovementsInStrictMode = languageVersionSettings.supportsFeature(LanguageFeature.TypeEnhancementImprovementsInStrictMode),
-            ignoreNullabilityForErasedValueParameters = languageVersionSettings.supportsFeature(LanguageFeature.IgnoreNullabilityForErasedValueParameters)
+            ignoreNullabilityForErasedValueParameters = languageVersionSettings.supportsFeature(LanguageFeature.IgnoreNullabilityForErasedValueParameters),
+            enhancePrimitiveArrays = languageVersionSettings.supportsFeature(LanguageFeature.EnhanceNullabilityOfPrimitiveArrays),
         )
     )
     useInstance(JavaModuleResolver.getInstance(moduleContext.project))
