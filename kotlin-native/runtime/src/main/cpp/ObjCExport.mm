@@ -1111,6 +1111,14 @@ extern "C" void Kotlin_ObjCExport_AbstractMethodCalled(id self, SEL selector) {
         class_getName(object_getClass(self)), sel_getName(selector)];
 }
 
+extern "C" void Kotlin_ObjCExport_AbstractClassConstructorCalled(id self, const TypeInfo *clazz) {
+    Class objectClass = object_getClass(self);
+    Class constructorClass = getOrCreateClass(clazz);
+    if (objectClass == constructorClass) {
+        [NSException raise:NSGenericException format:@"Class %s is abstract and can't be instantiated", class_getName(objectClass)];
+    }
+}
+
 extern "C" NSInteger Kotlin_ObjCExport_NSIntegerTypeProvider() {
     return 0;
 }

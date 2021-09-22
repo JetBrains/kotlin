@@ -525,6 +525,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
     val Kotlin_ObjCExport_convertUnitToRetained by lazyRtFunction
     val Kotlin_ObjCExport_GetAssociatedObject by lazyRtFunction
     val Kotlin_ObjCExport_AbstractMethodCalled by lazyRtFunction
+    val Kotlin_ObjCExport_AbstractClassConstructorCalled by lazyRtFunction
     val Kotlin_ObjCExport_RethrowExceptionAsNSError by lazyRtFunction
     val Kotlin_ObjCExport_WrapExceptionToNSError by lazyRtFunction
     val Kotlin_ObjCExport_RethrowNSErrorAsException by lazyRtFunction

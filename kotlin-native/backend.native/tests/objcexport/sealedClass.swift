@@ -2,7 +2,6 @@ import Kt
 
 private func test1() throws {
     let user = Person.User(id: 1)
-    let worker = Person.Worker()
     let employee = Person.WorkerEmployee(id: 2)
     let contractor = Person.WorkerContractor(id: 3)
     let userAsPerson: Person = user

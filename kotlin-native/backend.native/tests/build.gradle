@@ -5450,6 +5450,14 @@ if (isAppleTarget(project)) {
         swiftSources = ['framework/stacktraceByLibbacktrace/']
     }
 
+    frameworkTest("testAbstractInstantiationFramework") {
+        framework('AbstractInstantiation') {
+            sources = ['framework/abstractInstantiation']
+        }
+        swiftSources = ['framework/abstractInstantiation/']
+        expectedExitStatus = 134
+    }
+
     frameworkTest("testFrameworkBundleId") {
         def currentTarget = project.target.name
         enabled = currentTarget.startsWith("mac")

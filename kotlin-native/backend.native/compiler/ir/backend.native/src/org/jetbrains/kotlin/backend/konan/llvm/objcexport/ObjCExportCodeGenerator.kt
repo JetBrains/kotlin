@@ -876,6 +876,12 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
             isDirect = !isVirtual,
             baseMethod = baseMethod
     ) { args, resultLifetime, exceptionHandler ->
+        if (target is IrConstructor && target.constructedClass.isAbstract()) {
+            callFromBridge(
+                    context.llvm.Kotlin_ObjCExport_AbstractClassConstructorCalled,
+                    listOf(param(0), codegen.typeInfoValue(target.parent as IrClass))
+            )
+        }
         val llvmTarget = if (!isVirtual) {
             codegen.llvmFunction(target)
         } else {
