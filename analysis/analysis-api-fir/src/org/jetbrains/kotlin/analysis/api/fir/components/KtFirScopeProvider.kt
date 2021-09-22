@@ -50,7 +50,6 @@ internal class KtFirScopeProvider(
     override val analysisSession: KtFirAnalysisSession by weakRef(analysisSession)
     private val builder by weakRef(builder)
     private val firResolveState by weakRef(firResolveState)
-    private val firScopeStorage = FirScopeRegistry()
 
     private val memberScopeCache = IdentityHashMap<KtSymbolWithMembers, KtMemberScope>()
     private val declaredMemberScopeCache = IdentityHashMap<KtSymbolWithMembers, KtDeclaredMemberScope>()
@@ -80,7 +79,6 @@ internal class KtFirScopeProvider(
                 )
             } ?: return@getOrPut KtFirEmptyMemberScope(classSymbol)
 
-            firScopeStorage.register(firScope)
             KtFirMemberScope(classSymbol, firScope, token, builder)
         }
     }
@@ -89,7 +87,6 @@ internal class KtFirScopeProvider(
         val firScope = symbol.withFirForScope { fir ->
             fir.scopeProvider.getStaticScope(fir, analysisSession.rootModuleSession, ScopeSession())
         } ?: return KtFirEmptyMemberScope(symbol)
-        firScopeStorage.register(firScope)
         check(firScope is FirContainingNamesAwareScope)
         return KtFirDelegatingScopeImpl(firScope, builder, token)
     }
@@ -99,8 +96,6 @@ internal class KtFirScopeProvider(
             val firScope = classSymbol.withFirForScope {
                 analysisSession.rootModuleSession.declaredMemberScope(it)
             } ?: return@getOrPut KtFirEmptyMemberScope(classSymbol)
-
-            firScopeStorage.register(firScope)
 
             KtFirDeclaredMemberScope(classSymbol, firScope, token, builder)
         }
@@ -119,7 +114,6 @@ internal class KtFirScopeProvider(
                 packageSymbol.fqName,
                 project,
                 builder,
-                this,
                 token,
                 analysisSession.searchScope,
                 analysisSession.targetPlatform
@@ -127,9 +121,6 @@ internal class KtFirScopeProvider(
         }
     }
 
-    fun registerScope(scope: FirScope) {
-        firScopeStorage.register(scope)
-    }
 
     override fun getCompositeScope(subScopes: List<KtScope>): KtCompositeScope = withValidityAssertion {
         KtFirCompositeScope(subScopes, token)
@@ -190,7 +181,6 @@ internal class KtFirScopeProvider(
     }
 
     private fun convertToKtScope(firScope: FirScope): KtScope {
-        firScopeStorage.register(firScope)
         return when (firScope) {
             is FirAbstractSimpleImportingScope -> KtFirNonStarImportingScope(firScope, builder, token)
             is FirAbstractStarImportingScope -> KtFirStarImportingScope(firScope, builder, project, token)
@@ -198,7 +188,6 @@ internal class KtFirScopeProvider(
                 firScope.fqName,
                 project,
                 builder,
-                this,
                 token,
                 analysisSession.searchScope,
                 analysisSession.targetPlatform
@@ -211,21 +200,7 @@ internal class KtFirScopeProvider(
 }
 
 private class KtFirDelegatingScopeImpl<S>(
-    firScope: S, builder: KtSymbolByFirBuilder,
+    override val firScope: S,
+    builder: KtSymbolByFirBuilder,
     token: ValidityToken
-) : KtFirDelegatingScope<S>(builder, token), ValidityTokenOwner where S : FirContainingNamesAwareScope, S : FirScope {
-    override val firScope: S by weakRef(firScope)
-}
-
-/**
- * Stores strong references to all instances of [FirScope] used
- * Needed as the only entity which may have a strong references to FIR internals is [KtFirAnalysisSession] & [KtAnalysisSessionComponent]
- * Entities which needs storing [FirScope] instances will store them as weak references via [org.jetbrains.kotlin.analysis.api.fir.utils.weakRef]
- */
-internal class FirScopeRegistry {
-    private val scopes = mutableListOf<FirScope>()
-
-    fun register(scope: FirScope) {
-        scopes += scope
-    }
-}
+) : KtFirDelegatingScope<S>(builder, token), ValidityTokenOwner where S : FirContainingNamesAwareScope, S : FirScope

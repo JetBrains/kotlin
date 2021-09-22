@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.components.KtFirScopeProvider
-import org.jetbrains.kotlin.analysis.api.fir.utils.lazyThreadUnsafeWeakRef
-import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
 import org.jetbrains.kotlin.analysis.api.scopes.KtPackageScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
@@ -31,19 +29,15 @@ internal class KtFirPackageScope(
     override val fqName: FqName,
     private val project: Project,
     private val builder: KtSymbolByFirBuilder,
-    _scopeProvider: KtFirScopeProvider,
     override val token: ValidityToken,
     private val searchScope: GlobalSearchScope,
     private val targetPlatform: TargetPlatform,
 ) : KtPackageScope {
-    private val scopeProvider by weakRef(_scopeProvider)
     private val declarationsProvider = project.createDeclarationProvider(searchScope)
     private val packageProvider = project.createPackageProvider(searchScope)
 
-    private val firScope: FirPackageMemberScope by lazyThreadUnsafeWeakRef {
-        val scope = FirPackageMemberScope(fqName, builder.rootSession)
-        scopeProvider.registerScope(scope)
-        scope
+    private val firScope: FirPackageMemberScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        FirPackageMemberScope(fqName, builder.rootSession)
     }
 
     override fun getPossibleCallableNames() = withValidityAssertion {

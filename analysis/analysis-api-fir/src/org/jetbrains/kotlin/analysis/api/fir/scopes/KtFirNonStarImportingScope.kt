@@ -22,11 +22,10 @@ import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirNonStarImportingScope(
-    firScope: FirAbstractSimpleImportingScope,
+    private val firScope : FirAbstractSimpleImportingScope,
     private val builder: KtSymbolByFirBuilder,
     override val token: ValidityToken
 ) : KtNonStarImportingScope, ValidityTokenOwner {
-    private val firScope: FirAbstractSimpleImportingScope by weakRef(firScope)
 
     @OptIn(ExperimentalStdlibApi::class)
     override val imports: List<NonStarImport> by cached {

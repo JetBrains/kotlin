@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 
 internal class KtFirMemberScope(
     override val owner: KtSymbolWithMembers,
-    firScope: FirTypeScope,
+    override val firScope: FirTypeScope,
     token: ValidityToken,
     builder: KtSymbolByFirBuilder
-) : KtFirDelegatingScope<FirTypeScope>(builder, token), KtMemberScope, ValidityTokenOwner {
-    override val firScope: FirTypeScope by weakRef(firScope)
-}
-
+) : KtFirDelegatingScope<FirTypeScope>(builder, token), KtMemberScope, ValidityTokenOwner

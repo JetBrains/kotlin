@@ -28,12 +28,11 @@ import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirStarImportingScope(
-    firScope: FirAbstractStarImportingScope,
+    private val firScope: FirAbstractStarImportingScope,
     private val builder: KtSymbolByFirBuilder,
     project: Project,
     override val token: ValidityToken,
 ) : KtStarImportingScope, ValidityTokenOwner {
-    private val firScope: FirAbstractStarImportingScope by weakRef(firScope)
     override val isDefaultImportingScope: Boolean = withValidityAssertion { firScope is FirDefaultStarImportingScope }
 
     //todo use more concrete scope
