@@ -1,7 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_COLLECTIONS
 
 fun box(): String {
     val a = arrayListOf<String>()

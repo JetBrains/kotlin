@@ -212,6 +212,7 @@ task distNativeSources(type: Zip) {
     include('**/*.kt')
 
     from(project(':kotlin-native:runtime').file('src/main/kotlin'))
+    from(project(":kotlin-stdlib-common").file('../native-wasm/src/'))
     from(project(':kotlin-native:Interop:Runtime').file('src/main/kotlin'))
     from(project(':kotlin-native:Interop:Runtime').file('src/native/kotlin'))
     from(project(':kotlin-native:Interop:JsRuntime').file('src/main/kotlin')) {

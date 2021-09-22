@@ -93,3 +93,8 @@ public actual open class UninitializedPropertyAccessException actual constructor
     actual constructor(cause: Throwable?) : this(null, cause)
 }
 
+public open class OutOfMemoryError : Error {
+    constructor() : super()
+    constructor(message: String?) : super(message)
+}
+

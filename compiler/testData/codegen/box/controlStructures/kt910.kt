@@ -1,8 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
 
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_COLLECTIONS
-
 fun foo() : Int =
     try {
         2
