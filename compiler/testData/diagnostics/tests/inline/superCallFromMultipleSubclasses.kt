@@ -1,4 +1,3 @@
-// !LANGUAGE: -ProhibitSuperCallsFromPublicInline
 // FILE: 1.kt
 
 package test
@@ -10,13 +9,13 @@ open class A {
 object B : A() {
     override fun test(s: String) = "fail"
 
-    inline fun doTest(s: String) = super.test(s)
+    <!NOTHING_TO_INLINE!>inline<!> fun doTest(s: String) = <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super.test(s)<!>
 }
 
 object C : A() {
     override fun test(s: String) = "fail"
 
-    inline fun doTest(s: String) = super.test(s)
+    <!NOTHING_TO_INLINE!>inline<!> fun doTest(s: String) = <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super.test(s)<!>
 }
 
 // FILE: 2.kt

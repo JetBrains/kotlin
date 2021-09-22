@@ -1164,7 +1164,7 @@ public interface Errors {
     DiagnosticFactory0<KtAnnotationEntry> NON_INTERNAL_PUBLISHED_API = DiagnosticFactory0.create(ERROR);
     DiagnosticFactoryForDeprecation1<PsiElement, CallableDescriptor> PROTECTED_CALL_FROM_PUBLIC_INLINE = DiagnosticFactoryForDeprecation1.create(LanguageFeature.ProhibitProtectedCallFromInline);
     DiagnosticFactory1<PsiElement, CallableDescriptor> PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE = DiagnosticFactory1.create(WARNING);
-    DiagnosticFactory1<PsiElement, CallableDescriptor> SUPER_CALL_FROM_PUBLIC_INLINE = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactoryForDeprecation1<PsiElement, CallableDescriptor> SUPER_CALL_FROM_PUBLIC_INLINE = DiagnosticFactoryForDeprecation1.create(LanguageFeature.ProhibitSuperCallsFromPublicInline);
     DiagnosticFactory2<KtElement, KtExpression, DeclarationDescriptor> INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<KtElement, KtExpression, DeclarationDescriptor> NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<PsiElement> PRIVATE_INLINE_FUNCTIONS_RETURNING_ANONYMOUS_OBJECTS = DiagnosticFactory0.create(WARNING);

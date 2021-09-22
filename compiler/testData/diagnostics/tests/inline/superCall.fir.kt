@@ -1,4 +1,3 @@
-// !LANGUAGE: -ProhibitSuperCallsFromPublicInline
 // FILE: 1.kt
 
 package test
@@ -12,8 +11,8 @@ object X : A() {
         return "fail"
     }
 
-    inline fun doTest(): String {
-        return super.test()
+    <!NOTHING_TO_INLINE!>inline<!> fun doTest(): String {
+        return <!SUPER_CALL_FROM_PUBLIC_INLINE!>super<!>.test()
     }
 }
 

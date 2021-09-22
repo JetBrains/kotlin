@@ -1,0 +1,112 @@
+package
+
+public interface AndroidModuleConfigurator : ModuleConfiguratorWithSettings {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun getConfiguratorSettings(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class AndroidTargetConfigurator : Base, ModuleConfiguratorWithTests, AndroidModuleConfigurator {
+    public constructor AndroidTargetConfigurator()
+    public final override /*1*/ /*fake_override*/ fun classFun(): kotlin.String
+    public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ fun getConfiguratorSettings(): kotlin.String
+    public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final inline fun inlineFun(): kotlin.String
+    public final inline fun inlineFunAnonymousNoDiagnostics(): kotlin.String
+    public final inline fun inlineFunAnonymousObjects(): kotlin.String
+    @kotlin.PublishedApi internal final inline fun inlineFunPublished(): kotlin.String
+    internal final inline fun inlineInternal(): kotlin.String
+    private final inline fun inlinePrivate(): kotlin.String
+    public final fun noInline(): kotlin.Unit
+    public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Base {
+    public constructor Base()
+    public final fun classFun(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final enum class FooEmum : kotlin.Enum<FooEmum> {
+    enum entry A
+
+    enum entry B
+
+    private constructor FooEmum()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    public final fun classFun(): kotlin.String
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: FooEmum): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<FooEmum!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): FooEmum
+    public final /*synthesized*/ fun values(): kotlin.Array<FooEmum>
+}
+
+public final class FooOuter : Base {
+    public constructor FooOuter()
+    public final override /*1*/ /*fake_override*/ fun classFun(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class FooInner : Base {
+        public constructor FooInner()
+        public final override /*1*/ /*fake_override*/ fun classFun(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final inline fun test(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public sealed class FooSealed : Base {
+    protected constructor FooSealed()
+    public final override /*1*/ /*fake_override*/ fun classFun(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final inline fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class A : FooSealed {
+        public constructor A()
+        public final override /*1*/ /*fake_override*/ fun classFun(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ inline /*fake_override*/ fun test(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class B : FooSealed {
+        public constructor B()
+        public final override /*1*/ /*fake_override*/ fun classFun(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ inline /*fake_override*/ fun test(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public interface ModuleConfiguratorWithSettings {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun getConfiguratorSettings(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface ModuleConfiguratorWithTests : ModuleConfiguratorWithSettings {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun getConfiguratorSettings(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

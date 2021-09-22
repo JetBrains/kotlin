@@ -1,3 +1,4 @@
+// !LANGUAGE: -ProhibitSuperCallsFromPublicInline
 // !DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
 
 // FILE: main.kt
@@ -7,21 +8,21 @@ open class AndroidTargetConfigurator :
     AndroidModuleConfigurator {
 
     public inline fun inlineFun(): String {
-        return <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super.classFun()<!> + <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super<ModuleConfiguratorWithTests>.getConfiguratorSettings()<!> + <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super<AndroidModuleConfigurator>.getConfiguratorSettings()<!>
+        return <!SUPER_CALL_FROM_PUBLIC_INLINE_WARNING!>super.classFun()<!> + <!SUPER_CALL_FROM_PUBLIC_INLINE_WARNING!>super<ModuleConfiguratorWithTests>.getConfiguratorSettings()<!> + <!SUPER_CALL_FROM_PUBLIC_INLINE_WARNING!>super<AndroidModuleConfigurator>.getConfiguratorSettings()<!>
     }
 
     @PublishedApi
     internal inline fun inlineFunPublished(): String {
-        return <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super.classFun()<!> + <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super<ModuleConfiguratorWithTests>.getConfiguratorSettings()<!> + <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super<AndroidModuleConfigurator>.getConfiguratorSettings()<!>
+        return <!SUPER_CALL_FROM_PUBLIC_INLINE_WARNING!>super.classFun()<!> + <!SUPER_CALL_FROM_PUBLIC_INLINE_WARNING!>super<ModuleConfiguratorWithTests>.getConfiguratorSettings()<!> + <!SUPER_CALL_FROM_PUBLIC_INLINE_WARNING!>super<AndroidModuleConfigurator>.getConfiguratorSettings()<!>
     }
 
     public inline fun inlineFunAnonymousObjects(): String {
         {
-            <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super.classFun()<!> + <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super<ModuleConfiguratorWithTests>.getConfiguratorSettings()<!> + <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super<AndroidModuleConfigurator>.getConfiguratorSettings()<!>
+            <!SUPER_CALL_FROM_PUBLIC_INLINE_WARNING!>super.classFun()<!> + <!SUPER_CALL_FROM_PUBLIC_INLINE_WARNING!>super<ModuleConfiguratorWithTests>.getConfiguratorSettings()<!> + <!SUPER_CALL_FROM_PUBLIC_INLINE_WARNING!>super<AndroidModuleConfigurator>.getConfiguratorSettings()<!>
         }()
 
         return object {
-            fun run() = <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super@AndroidTargetConfigurator.classFun()<!> + <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super<ModuleConfiguratorWithTests>@AndroidTargetConfigurator.getConfiguratorSettings()<!> + <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super<AndroidModuleConfigurator>@AndroidTargetConfigurator.getConfiguratorSettings()<!>
+            fun run() = <!SUPER_CALL_FROM_PUBLIC_INLINE_WARNING!>super@AndroidTargetConfigurator.classFun()<!> + <!SUPER_CALL_FROM_PUBLIC_INLINE_WARNING!>super<ModuleConfiguratorWithTests>@AndroidTargetConfigurator.getConfiguratorSettings()<!> + <!SUPER_CALL_FROM_PUBLIC_INLINE_WARNING!>super<AndroidModuleConfigurator>@AndroidTargetConfigurator.getConfiguratorSettings()<!>
         }.run()
     }
 
@@ -94,7 +95,7 @@ sealed class FooSealed : Base() {
     class B: FooSealed()
 
     inline fun test() {
-        <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super.classFun()<!>
+        <!SUPER_CALL_FROM_PUBLIC_INLINE_WARNING!>super.classFun()<!>
     }
 
 }
@@ -103,7 +104,7 @@ enum class FooEmum {
     A, B {
 
         inline fun test() {
-            <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super.classFun()<!>
+            <!SUPER_CALL_FROM_PUBLIC_INLINE_WARNING!>super.classFun()<!>
         }
     };
 
@@ -114,8 +115,8 @@ class FooOuter : Base() {
 
     inner class FooInner: Base() {
         inline fun test() {
-            <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super@FooOuter.classFun()<!>
-            <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super.classFun()<!>
+            <!SUPER_CALL_FROM_PUBLIC_INLINE_WARNING!>super@FooOuter.classFun()<!>
+            <!SUPER_CALL_FROM_PUBLIC_INLINE_WARNING!>super.classFun()<!>
         }
     }
 

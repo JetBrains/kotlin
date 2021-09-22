@@ -214,6 +214,7 @@ enum class LanguageFeature(
     RepeatableAnnotationContainerConstraints(KOTLIN_1_6, kind = BUG_FIX),
     UseBuilderInferenceOnlyIfNeeded(KOTLIN_1_6),
     SuspendConversion(KOTLIN_1_6),
+    ProhibitSuperCallsFromPublicInline(KOTLIN_1_6),
 
     // 1.7
 
