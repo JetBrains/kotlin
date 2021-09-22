@@ -10,10 +10,13 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.Experimentality
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.analysis.overridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
@@ -47,7 +50,10 @@ object FirOverrideChecker : FirClassChecker() {
 
         for (it in declaration.declarations) {
             if (it is FirSimpleFunction || it is FirProperty) {
-                checkMember((it as FirCallableDeclaration).symbol, declaration, reporter, typeCheckerState, firTypeScope, context)
+                val callable = it as FirCallableDeclaration
+                withSuppressedDiagnostics(callable, context) {
+                    checkMember(callable.symbol, declaration, reporter, typeCheckerState, firTypeScope, context)
+                }
             }
         }
     }
@@ -271,6 +277,8 @@ object FirOverrideChecker : FirClassChecker() {
             return
         }
 
+        checkOverriddenExperimentalities(member, overriddenMemberSymbols, context, reporter)
+
         checkModality(overriddenMemberSymbols)?.let {
             reporter.reportOverridingFinalMember(member, it, context)
         }
@@ -299,6 +307,24 @@ object FirOverrideChecker : FirClassChecker() {
                     reporter.reportTypeMismatchOnProperty(member, restriction, context)
                 }
             }
+        }
+    }
+
+    @OptIn(SymbolInternals::class)
+    private fun checkOverriddenExperimentalities(
+        memberSymbol: FirCallableSymbol<*>,
+        overriddenMemberSymbols: List<FirCallableSymbol<*>>,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        with(FirOptInUsageBaseChecker) {
+            val experimentalities = mutableSetOf<Experimentality>()
+            for (overriddenMemberSymbol in overriddenMemberSymbols) {
+                overriddenMemberSymbol.loadExperimentalitiesFromAnnotationTo(context.session, experimentalities)
+            }
+            reportNotAcceptedOverrideExperimentalities(
+                experimentalities, memberSymbol, context, reporter
+            )
         }
     }
 

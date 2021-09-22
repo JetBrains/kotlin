@@ -280,11 +280,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FqName>("optInMarkerFqName")
             parameter<String>("message")
         }
-        val OPT_IN_OVERRIDE by warning<PsiElement> {
+        val OPT_IN_OVERRIDE by warning<PsiElement>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FqName>("optInMarkerFqName")
             parameter<String>("message")
         }
-        val OPT_IN_OVERRIDE_ERROR by error<PsiElement> {
+        val OPT_IN_OVERRIDE_ERROR by error<PsiElement>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FqName>("optInMarkerFqName")
             parameter<String>("message")
         }

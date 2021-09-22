@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -52,6 +53,29 @@ object FirOptInUsageBaseChecker {
         ensureResolved(FirResolvePhase.BODY_RESOLVE)
         @OptIn(SymbolInternals::class)
         return fir.loadExperimentalityForMarkerAnnotation()
+    }
+
+    fun FirBasedSymbol<*>.loadExperimentalitiesFromAnnotationTo(session: FirSession, result: MutableCollection<Experimentality>) {
+        ensureResolved(FirResolvePhase.STATUS)
+        @OptIn(SymbolInternals::class)
+        (fir as? FirAnnotatedDeclaration)?.loadExperimentalitiesFromAnnotationTo(session, result)
+    }
+
+    private fun FirAnnotatedDeclaration.loadExperimentalitiesFromAnnotationTo(
+        session: FirSession,
+        result: MutableCollection<Experimentality>,
+        fromSetter: Boolean = false
+    ) {
+        for (annotation in annotations) {
+            val annotationType = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()
+            if (annotation.useSiteTarget != AnnotationUseSiteTarget.PROPERTY_SETTER || fromSetter) {
+                result.addIfNotNull(
+                    annotationType?.lookupTag?.toFirRegularClassSymbol(
+                        session
+                    )?.loadExperimentalityForMarkerAnnotation()
+                )
+            }
+        }
     }
 
     fun loadExperimentalitiesFromTypeArguments(
@@ -133,16 +157,7 @@ object FirOptInUsageBaseChecker {
             parentClassSymbol?.loadExperimentalities(context, result, visited, fromSetter = false, dispatchReceiverType = null)
         }
 
-        for (annotation in fir.annotations) {
-            val annotationType = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()
-            if (annotation.useSiteTarget != AnnotationUseSiteTarget.PROPERTY_SETTER || fromSetter) {
-                result.addIfNotNull(
-                    annotationType?.lookupTag?.toFirRegularClassSymbol(
-                        session
-                    )?.loadExperimentalityForMarkerAnnotation()
-                )
-            }
-        }
+        fir.loadExperimentalitiesFromAnnotationTo(session, result, fromSetter)
 
         if (fir is FirTypeAlias) {
             fir.expandedTypeRef.coneType.addExperimentalities(context, result, visited)
@@ -195,15 +210,35 @@ object FirOptInUsageBaseChecker {
     ) {
         for ((annotationClassId, severity, message) in experimentalities) {
             if (!isExperimentalityAcceptableInContext(annotationClassId, context)) {
-                val diagnostic = when (severity) {
-                    Experimentality.Severity.WARNING -> FirErrors.OPT_IN_USAGE
-                    Experimentality.Severity.ERROR -> FirErrors.OPT_IN_USAGE_ERROR
+                val (diagnostic, verb) = when (severity) {
+                    Experimentality.Severity.WARNING -> FirErrors.OPT_IN_USAGE to "should"
+                    Experimentality.Severity.ERROR -> FirErrors.OPT_IN_USAGE_ERROR to "must"
                 }
-                val reportedMessage = message ?: when (severity) {
-                    Experimentality.Severity.WARNING -> "This declaration is experimental and its usage should be marked"
-                    Experimentality.Severity.ERROR -> "This declaration is experimental and its usage must be marked"
-                }
+                val reportedMessage = message ?: "This declaration is experimental and its usage $verb be marked"
                 reporter.reportOn(element.source, diagnostic, annotationClassId.asSingleFqName(), reportedMessage, context)
+            }
+        }
+    }
+
+    @SymbolInternals
+    fun reportNotAcceptedOverrideExperimentalities(
+        experimentalities: Collection<Experimentality>,
+        symbol: FirCallableSymbol<*>,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        for ((annotationClassId, severity, _) in experimentalities) {
+            if (!symbol.fir.isExperimentalityAcceptable(annotationClassId) &&
+                !isExperimentalityAcceptableInContext(annotationClassId, context)
+            ) {
+                val (diagnostic, verb) = when (severity) {
+                    Experimentality.Severity.WARNING -> FirErrors.OPT_IN_OVERRIDE to "should"
+                    Experimentality.Severity.ERROR -> FirErrors.OPT_IN_OVERRIDE_ERROR to "must"
+                }
+                val reportedMessage = "This declaration overrides experimental member of supertype " +
+                        "'${symbol.callableId.className?.shortName()?.asString()}' and $verb be annotated " +
+                        "with '@${annotationClassId.asFqNameString()}'"
+                reporter.reportOn(symbol.source, diagnostic, annotationClassId.asSingleFqName(), reportedMessage, context)
             }
         }
     }

@@ -242,8 +242,8 @@ object FirErrors {
     // OptIn
     val OPT_IN_USAGE by warning2<PsiElement, FqName, String>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val OPT_IN_USAGE_ERROR by error2<PsiElement, FqName, String>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val OPT_IN_OVERRIDE by warning2<PsiElement, FqName, String>()
-    val OPT_IN_OVERRIDE_ERROR by error2<PsiElement, FqName, String>()
+    val OPT_IN_OVERRIDE by warning2<PsiElement, FqName, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val OPT_IN_OVERRIDE_ERROR by error2<PsiElement, FqName, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val OPT_IN_IS_NOT_ENABLED by warning0<KtAnnotationEntry>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION by error0<PsiElement>()
     val OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN by error0<PsiElement>()
