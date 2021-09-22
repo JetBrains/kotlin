@@ -550,7 +550,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(val irBackend: Boolean) : BaseGra
             val publishedPom = fileInWorkingDir(moduleDir + "kotlin-js-plugin-1.0.pom")
             val kotlinVersion = defaultBuildOptions().kotlinVersion
             val pomText = publishedPom.readText().replace(Regex("\\s+"), "")
-            assertTrue { "kotlinx-html-js</artifactId><version>0.6.10</version><scope>compile</scope>" in pomText }
+            assertTrue { "kotlinx-html-js</artifactId><version>0.6.12</version><scope>compile</scope>" in pomText }
             assertTrue { "kotlin-stdlib-js</artifactId><version>$kotlinVersion</version><scope>runtime</scope>" in pomText }
 
             assertFileExists(moduleDir + "kotlin-js-plugin-1.0-sources.jar")
