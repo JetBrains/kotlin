@@ -348,6 +348,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
                     it.putValueArgument(0, irInt(arity + 1))
                     it.putValueArgument(1, irGet(completionParameterSymbol))
                 }
+                +IrInstanceInitializerCallImpl(startOffset, endOffset, symbol, context.irBuiltIns.unitType)
             }
         }
 }
