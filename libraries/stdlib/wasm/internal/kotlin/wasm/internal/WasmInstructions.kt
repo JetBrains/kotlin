@@ -324,3 +324,9 @@ public external fun wasm_i32_clz(a: Int): Int
 
 @WasmOp(WasmOp.I64_CLZ)
 public external fun wasm_i64_clz(a: Long): Long
+
+@WasmOp(WasmOp.I64_POPCNT)
+public external fun wasm_i64_popcnt(a: Long): Long
+
+@WasmOp(WasmOp.I64_CTZ)
+public external fun wasm_i64_ctz(a: Long): Long

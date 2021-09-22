@@ -20,14 +20,16 @@ val builtInsSources by task<Sync> {
 
     val excluded = listOf(
         // JS-specific optimized version of emptyArray() already defined
-        "core/builtins/src/kotlin/ArrayIntrinsics.kt"
+        "ArrayIntrinsics.kt",
+        // Included with K/N collections
+        "Collections.kt", "Iterator.kt", "Iterators.kt"
     )
 
     sources.forEach { path ->
         from("$rootDir/$path") {
             into(path.dropLastWhile { it != '/' })
-            excluded.filter { it.startsWith(path) }.forEach {
-                exclude(it.substring(path.length))
+            excluded.forEach {
+                exclude(it)
             }
         }
     }
@@ -58,6 +60,7 @@ kotlin {
     sourceSets {
         val jsMain by getting {
             kotlin.srcDirs("builtins", "internal", "runtime", "src", "stubs")
+            kotlin.srcDirs("../commonNative/")
             kotlin.srcDirs(files(builtInsSources.map { it.destinationDir }))
         }
 
