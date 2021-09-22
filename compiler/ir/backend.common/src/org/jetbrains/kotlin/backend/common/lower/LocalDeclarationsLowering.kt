@@ -17,14 +17,15 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -165,6 +166,14 @@ class LocalDeclarationsLowering(
         override lateinit var transformedDeclaration: IrConstructor
     }
 
+    private class PotentiallyUnusedField {
+        var symbolIfUsed: IrFieldSymbol? = null
+            private set
+
+        val symbol: IrFieldSymbol
+            get() = symbolIfUsed ?: IrFieldSymbolImpl().also { symbolIfUsed = it }
+    }
+
     private inner class LocalClassContext(
         val declaration: IrClass,
         val inInlineFunctionScope: Boolean,
@@ -174,7 +183,7 @@ class LocalDeclarationsLowering(
 
         // NOTE: This map is iterated over in `rewriteClassMembers` and we're relying on
         // the deterministic iteration order that `mutableMapOf` provides.
-        val capturedValueToField: MutableMap<IrValueDeclaration, Lazy<IrField>> = mutableMapOf()
+        val capturedValueToField: MutableMap<IrValueDeclaration, PotentiallyUnusedField> = mutableMapOf()
 
         override fun irGet(startOffset: Int, endOffset: Int, valueDeclaration: IrValueDeclaration): IrExpression? {
             // On the JVM backend, `AnonymousObjectTransformer` in the bytecode inliner uses field assignment
@@ -190,11 +199,10 @@ class LocalDeclarationsLowering(
                 constructorContext?.irGet(startOffset, endOffset, valueDeclaration)?.let { return it }
             }
 
-            val field = capturedValueToField[valueDeclaration]?.value ?: return null
-
+            val field = capturedValueToField[valueDeclaration] ?: return null
             val receiver = declaration.thisReceiver!!
             return IrGetFieldImpl(
-                startOffset, endOffset, field.symbol, field.type,
+                startOffset, endOffset, field.symbol, valueDeclaration.type,
                 receiver = IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol)
             )
         }
@@ -205,12 +213,12 @@ class LocalDeclarationsLowering(
 
     private class LocalClassMemberContext(val member: IrDeclaration, val classContext: LocalClassContext) : LocalContext() {
         override fun irGet(startOffset: Int, endOffset: Int, valueDeclaration: IrValueDeclaration): IrExpression? {
-            val field = classContext.capturedValueToField[valueDeclaration]?.value ?: return null
+            val field = classContext.capturedValueToField[valueDeclaration] ?: return null
             // This lowering does not process accesses to outer `this`.
             val receiver = (if (member is IrFunction) member.dispatchReceiverParameter else classContext.declaration.thisReceiver)
                 ?: error("No dispatch receiver parameter for ${member.render()}")
             return IrGetFieldImpl(
-                startOffset, endOffset, field.symbol, field.type,
+                startOffset, endOffset, field.symbol, valueDeclaration.type,
                 receiver = IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol)
             )
         }
@@ -500,7 +508,7 @@ class LocalDeclarationsLowering(
 
             assert(constructorsCallingSuper.any()) { "Expected at least one constructor calling super; class: $irClass" }
 
-            val usedCaptureFields = localClassContext.capturedValueToField.values.mapNotNull { if (it.isInitialized()) it.value else null }
+            val usedCaptureFields = createFieldsForCapturedValues(localClassContext)
             irClass.declarations += usedCaptureFields
 
             context.mapping.capturedFields[irClass] =
@@ -515,9 +523,9 @@ class LocalDeclarationsLowering(
                 blockBody.statements.addAll(
                     0,
                     localClassContext.capturedValueToField.mapNotNull { (capturedValue, field) ->
-                        if (!field.isInitialized()) return@mapNotNull null
+                        val symbol = field.symbolIfUsed ?: return@mapNotNull null
                         IrSetFieldImpl(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.value.symbol,
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol,
                             IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irClass.thisReceiver!!.symbol),
                             constructorContext.irGet(UNDEFINED_OFFSET, UNDEFINED_OFFSET, capturedValue)!!,
                             context.irBuiltIns.unitType,
@@ -582,9 +590,10 @@ class LocalDeclarationsLowering(
             }
 
             localClasses.values.forEach {
-                val localClassVisibility = visibilityPolicy.forClass(it.declaration, it.inInlineFunctionScope)
-                it.declaration.visibility = localClassVisibility
-                createFieldsForCapturedValues(it)
+                it.declaration.visibility = visibilityPolicy.forClass(it.declaration, it.inInlineFunctionScope)
+                it.closure.capturedValues.associateTo(it.capturedValueToField) { capturedValue ->
+                    capturedValue.owner to PotentiallyUnusedField()
+                }
             }
 
             localClassConstructors.values.forEach {
@@ -766,44 +775,26 @@ class LocalDeclarationsLowering(
             context.mapping.capturedConstructors[oldDeclaration] = newDeclaration
         }
 
-        private fun createFieldForCapturedValue(
-            startOffset: Int,
-            endOffset: Int,
-            name: Name,
-            visibility: DescriptorVisibility,
-            parent: IrClass,
-            fieldType: IrType,
-            isCrossinline: Boolean
-        ): IrField =
-            context.irFactory.buildField {
-                this.startOffset = startOffset
-                this.endOffset = endOffset
-                this.origin =
-                    if (isCrossinline) DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE
-                    else DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
-                this.name = name
-                this.type = fieldType
-                this.visibility = visibility
-                this.isFinal = true
-            }.also {
-                it.parent = parent
-            }
-
-        private fun createFieldsForCapturedValues(localClassContext: LocalClassContext) {
+        private fun createFieldsForCapturedValues(localClassContext: LocalClassContext): List<IrField> {
             val classDeclaration = localClassContext.declaration
             val generatedNames = mutableSetOf<String>()
-            localClassContext.closure.capturedValues.forEach { capturedValue ->
-                val owner = capturedValue.owner
-                localClassContext.capturedValueToField[owner] = lazy(LazyThreadSafetyMode.NONE) {
-                    createFieldForCapturedValue(
-                        classDeclaration.startOffset,
-                        classDeclaration.endOffset,
-                        suggestNameForCapturedValue(owner, generatedNames),
-                        visibilityPolicy.forCapturedField(capturedValue),
-                        classDeclaration,
-                        owner.type,
-                        owner is IrValueParameter && owner.isCrossinline
-                    )
+            return localClassContext.capturedValueToField.mapNotNull { (capturedValue, field) ->
+                val symbol = field.symbolIfUsed ?: return@mapNotNull null
+                val origin = if (capturedValue is IrValueParameter && capturedValue.isCrossinline)
+                    DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE
+                else
+                    DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
+                context.irFactory.createField(
+                    classDeclaration.startOffset,
+                    classDeclaration.endOffset,
+                    origin,
+                    symbol,
+                    suggestNameForCapturedValue(capturedValue, generatedNames),
+                    capturedValue.type,
+                    visibilityPolicy.forCapturedField(capturedValue.symbol),
+                    isFinal = true, isExternal = false, isStatic = false,
+                ).also {
+                    it.parent = classDeclaration
                 }
             }
         }
