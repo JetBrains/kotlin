@@ -83,12 +83,20 @@ class KotlinClassesClasspathChangesComputerTest : ClasspathChangesComputerTest()
                     LookupSymbol(name = "b3", scope = "com.example.B"),
                     LookupSymbol(name = "b4", scope = "com.example.B"),
                     LookupSymbol(name = "C", scope = "com.example"),
-                    LookupSymbol(name = "D", scope = "com.example")
+                    LookupSymbol(name = "D", scope = "com.example"),
+                    LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example"),
+                    LookupSymbol(name = "topLevelFuncB", scope = "com.example"),
+                    LookupSymbol(name = "topLevelFuncC", scope = "com.example"),
+                    LookupSymbol(name = "topLevelFuncD", scope = "com.example"),
+                    LookupSymbol(name = "topLevelFuncInCKtMovedToDKt", scope = "com.example"),
+                    LookupSymbol(name = "CKt", scope = "com.example"),
                 ),
                 fqNames = setOf(
                     FqName("com.example.B"),
                     FqName("com.example.C"),
-                    FqName("com.example.D")
+                    FqName("com.example.D"),
+                    FqName("com.example"),
+                    FqName("com.example.CKt"),
                 )
             ),
             changes
@@ -169,18 +177,19 @@ private fun snapshotClasspath(classpathSourceDir: File, tmpDir: TemporaryFolder)
             .sortedBy { it }
         val sourceFiles = relativePathsInDir.map { relativePath ->
             if (relativePath.endsWith(".kt")) {
+                val preCompiledClassFilesRoot = File(classpathEntrySourceDir.path.replace("src/kotlin", "classes/kotlin"))
                 KotlinSourceFile(
                     classpathEntrySourceDir, relativePath,
-                    preCompiledClassFile = ClassFile(
-                        File(classpathEntrySourceDir.path.replace("src/kotlin", "classes/kotlin")),
-                        relativePath.replace(".kt", ".class")
-                    )
+                    preCompiledClassFiles = listOf(
+                        ClassFile(preCompiledClassFilesRoot, relativePath.replace(".kt", ".class")),
+                        ClassFile(preCompiledClassFilesRoot, relativePath.replace(".kt", "Kt.class"))
+                    ).filter { File(it.classRoot, it.unixStyleRelativePath).exists() }
                 )
             } else {
                 SourceFile(classpathEntrySourceDir, relativePath)
             }
         }
-        val classFiles = sourceFiles.map { TestSourceFile(it, tmpDir).compile() }
+        val classFiles = sourceFiles.flatMap { TestSourceFile(it, tmpDir).compileAll() }
         ClasspathEntrySnapshot(
             classSnapshots = classFiles.map { it.unixStyleRelativePath to it.snapshot() }.toMap(LinkedHashMap())
         )

@@ -36,7 +36,12 @@ abstract class ClasspathSnapshotTestCommon {
         fun asFile() = File(baseDir, unixStyleRelativePath)
     }
 
-    class KotlinSourceFile(baseDir: File, relativePath: String, val preCompiledClassFile: ClassFile) : SourceFile(baseDir, relativePath)
+    class KotlinSourceFile(baseDir: File, relativePath: String, val preCompiledClassFiles: List<ClassFile>) :
+        SourceFile(baseDir, relativePath) {
+
+        constructor(baseDir: File, relativePath: String, preCompiledClassFile: ClassFile) :
+                this(baseDir, relativePath, listOf(preCompiledClassFile))
+    }
 
     /** Same as [SourceFile] but with a [TemporaryFolder] to store the results of operations on the [SourceFile]. */
     open class TestSourceFile(val sourceFile: SourceFile, private val tmpDir: TemporaryFolder) {
@@ -73,12 +78,25 @@ abstract class ClasspathSnapshotTestCommon {
         }
 
         private fun compileKotlin(): List<ClassFile> {
-            // TODO: Call Kotlin compiler to generate classes, for example:
-            // org.jetbrains.kotlin.test.MockLibraryUtil.compileKotlin(sourceFile.asFile().path, sourceFile.preCompiledClassFile.classRoot)
-            // However, currently it is not possible (see https://github.com/JetBrains/kotlin/pull/4512#discussion_r679432232), so we use
-            // the precompiled classes in the test data instead.
             sourceFile as KotlinSourceFile
-            return listOf(sourceFile.preCompiledClassFile)
+
+            // TODO: Call Kotlin compiler to generate classes.
+            // If <kotlin-repo>/dist/kotlinc/lib/kotlin-compiler.jar is available (e.g., by running ./gradlew dist), we will be able to
+            // call the Kotlin compiler to generate classes from here. For example:
+//            val classesDir = tmpDir.newFolder()
+//            org.jetbrains.kotlin.test.MockLibraryUtil.compileKotlin(sourceFile.asFile().path, classesDir)
+//            val classFiles = classesDir.walk()
+//                .filter { it.isFile && !it.toRelativeString(classesDir).startsWith("META-INF/") }
+//                .map { ClassFile(classesDir, it.toRelativeString(classesDir)) }
+//                .sortedBy { it.unixStyleRelativePath.substringBefore(".class") }
+//                .toList()
+//            kotlin.test.assertEquals(classFiles.size, sourceFile.preCompiledClassFiles.size)
+//            sourceFile.preCompiledClassFiles.forEach {
+//                File(classesDir, it.unixStyleRelativePath).copyTo(File(it.classRoot, it.unixStyleRelativePath), overwrite = true)
+//            }
+            // However, kotlin-compiler.jar is currently not available in CI builds, so we need to pre-compile the classes, put them in the
+            // test data, and use them here instead.
+            return sourceFile.preCompiledClassFiles
         }
 
         private fun compileJava(): List<ClassFile> {

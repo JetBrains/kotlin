@@ -7,3 +7,6 @@ public class B {
     //val b3: Int = 0 // Removed field
     val b4: Int = 0 // Added field
 }
+
+// Modified top-level function
+fun topLevelFuncB(): Int = 0
