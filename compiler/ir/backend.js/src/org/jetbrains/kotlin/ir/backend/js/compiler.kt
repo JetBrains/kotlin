@@ -50,7 +50,6 @@ fun compile(
     relativeRequirePath: Boolean = false,
     propertyLazyInitialization: Boolean,
     verifySignatures: Boolean = true,
-    legacyPropertyAccess: Boolean = false,
     baseClassIntoMetadata: Boolean = false,
     lowerPerModule: Boolean = false,
     safeExternalBoolean: Boolean = false,
@@ -70,7 +69,6 @@ fun compile(
             relativeRequirePath,
             propertyLazyInitialization,
             baseClassIntoMetadata,
-            legacyPropertyAccess,
             safeExternalBoolean,
             safeExternalBooleanDiagnostic,
         )
@@ -98,7 +96,6 @@ fun compile(
         es6mode = es6mode,
         dceRuntimeDiagnostic = dceRuntimeDiagnostic,
         propertyLazyInitialization = propertyLazyInitialization,
-        legacyPropertyAccess = legacyPropertyAccess,
         baseClassIntoMetadata = baseClassIntoMetadata,
         safeExternalBoolean = safeExternalBoolean,
         safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic

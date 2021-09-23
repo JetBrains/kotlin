@@ -94,11 +94,6 @@ private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackend
         rootDeclarations += dceRuntimeDiagnostic.unreachableDeclarationMethod(context).owner
     }
 
-    if (context.legacyPropertyAccess) {
-        rootDeclarations += context.intrinsics.safePropertyGet.owner
-        rootDeclarations += context.intrinsics.safePropertySet.owner
-    }
-
     JsMainFunctionDetector.getMainFunctionOrNull(modules.last())?.let { mainFunction ->
         rootDeclarations += mainFunction
         if (mainFunction.isSuspend) {

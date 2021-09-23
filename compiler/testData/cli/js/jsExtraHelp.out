@@ -18,7 +18,6 @@ where advanced options include:
                              Print declarations' reachability info to stdout during performing DCE
   -Xir-dce-runtime-diagnostic={log|exception}
                              Enable runtime diagnostics when performing DCE instead of removing declarations
-  -Xir-legacy-property-access Force property access via JS properties (requires -Xir-export-all)
   -Xir-module-name=<name>    Specify a compilation module name for IR backend
   -Xir-only                  Disables pre-IR backend
   -Xir-per-module            Splits generated .js per-module

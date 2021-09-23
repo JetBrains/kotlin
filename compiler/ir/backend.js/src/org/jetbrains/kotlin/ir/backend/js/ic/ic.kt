@@ -132,7 +132,6 @@ fun icCompile(
     multiModule: Boolean = false,
     relativeRequirePath: Boolean = false,
     propertyLazyInitialization: Boolean,
-    legacyPropertyAccess: Boolean = false,
     baseClassIntoMetadata: Boolean = false,
     safeExternalBoolean: Boolean = false,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
@@ -150,7 +149,6 @@ fun icCompile(
         propertyLazyInitialization,
         irFactory,
         baseClassIntoMetadata,
-        legacyPropertyAccess,
         safeExternalBoolean,
         safeExternalBooleanDiagnostic
     )
@@ -215,7 +213,6 @@ private fun prepareIr(
     es6mode: Boolean = false,
     propertyLazyInitialization: Boolean,
     irFactory: PersistentIrFactory,
-    legacyPropertyAccess: Boolean = false,
     baseClassIntoMetadata: Boolean = false,
     safeExternalBoolean: Boolean = false,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
@@ -240,7 +237,6 @@ private fun prepareIr(
         es6mode = es6mode,
         dceRuntimeDiagnostic = dceRuntimeDiagnostic,
         propertyLazyInitialization = propertyLazyInitialization,
-        legacyPropertyAccess = legacyPropertyAccess,
         baseClassIntoMetadata = baseClassIntoMetadata,
         safeExternalBoolean = safeExternalBoolean,
         safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,

@@ -57,7 +57,6 @@ class JsIrBackendContext(
     override val es6mode: Boolean = false,
     val dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
     val propertyLazyInitialization: Boolean = false,
-    val legacyPropertyAccess: Boolean = false,
     val baseClassIntoMetadata: Boolean = false,
     val safeExternalBoolean: Boolean = false,
     val safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,

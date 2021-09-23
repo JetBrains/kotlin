@@ -347,7 +347,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 multiModule = arguments.irPerModule,
                 relativeRequirePath = true,
                 propertyLazyInitialization = arguments.irPropertyLazyInitialization,
-                legacyPropertyAccess = arguments.irLegacyPropertyAccess,
                 baseClassIntoMetadata = arguments.irBaseClassInMetadata,
                 safeExternalBoolean = arguments.irSafeExternalBoolean,
                 safeExternalBooleanDiagnostic = RuntimeDiagnostic.resolve(

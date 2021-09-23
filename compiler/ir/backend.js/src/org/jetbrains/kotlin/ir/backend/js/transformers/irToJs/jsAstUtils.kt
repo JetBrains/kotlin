@@ -224,27 +224,7 @@ fun translateCall(
             }
         }
     } else {
-        val defaultResult = JsInvocation(ref, listOfNotNull(jsExtensionReceiver) + arguments)
-
-        val alternativeResult =
-            if (jsDispatchReceiver != null && jsExtensionReceiver == null && context.staticContext.backendContext.legacyPropertyAccess) {
-                val property = function.correspondingPropertySymbol?.owner
-                if (property != null) {
-                    val propertyName = context.getNameForProperty(property)
-                    val args = mutableListOf(jsDispatchReceiver, JsStringLiteral(symbolName.ident), JsStringLiteral(propertyName.ident))
-                    val fnName = when (function) {
-                        property.getter -> context.getNameForStaticFunction(context.staticContext.backendContext.intrinsics.safePropertyGet.owner)
-                        property.setter -> {
-                            args += arguments
-                            context.getNameForStaticFunction(context.staticContext.backendContext.intrinsics.safePropertySet.owner)
-                        }
-                        else -> error("Function must be an accessor of corresponding property")
-                    }
-                    JsInvocation(fnName.makeRef(), args)
-                } else null
-            } else null
-
-        alternativeResult ?: defaultResult
+        JsInvocation(ref, listOfNotNull(jsExtensionReceiver) + arguments)
     }
 }
 
