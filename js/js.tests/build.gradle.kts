@@ -346,5 +346,8 @@ projectTest("wasmTest", true) {
     dependsOn(":kotlin-stdlib-wasm:compileKotlinJs")
     systemProperty("kotlin.wasm.stdlib.path", "libraries/stdlib/wasm/build/classes/kotlin/js/main")
 
+    dependsOn(":kotlin-test:kotlin-test-wasm:compileKotlinJs")
+    systemProperty("kotlin.wasm.kotlin.test.path", "libraries/kotlin.test/wasm/build/classes/kotlin/js/main")
+
     setUpBoxTests()
 }

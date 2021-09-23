@@ -23,7 +23,7 @@ private val underscore = kotlin.test.setAdapter(object : FrameworkAdapter {
         sortingContext.suite(name, ignored) { suiteFn() }
     }
 
-    override fun test(name: String, ignored: Boolean, testFn: () -> dynamic) {
+    override fun test(name: String, ignored: Boolean, testFn: () -> Any?) {
         sortingContext.test(name, ignored) { returned(testFn()) }
     }
 })
@@ -42,7 +42,7 @@ interface TestBodyContext {
 
     fun caught(msg: String)
 
-    fun returned(msg: dynamic)
+    fun returned(msg: Any?)
 }
 
 private sealed class Entity(val name: String,
@@ -126,7 +126,7 @@ private class LoggingContext : SuiteContext, TestBodyContext{
         record("caught(\"$msg\")")
     }
 
-    override fun returned(msg: dynamic) = indent {
+    override fun returned(msg: Any?) = indent {
         if (msg is String) record("returned(\"$msg\")")
     }
 
