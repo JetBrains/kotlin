@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.Experimentality
+import org.jetbrains.kotlin.fir.analysis.checkers.outerClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -24,6 +27,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
@@ -32,10 +36,8 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 
@@ -318,14 +320,43 @@ object FirOverrideChecker : FirClassChecker() {
         reporter: DiagnosticReporter
     ) {
         with(FirOptInUsageBaseChecker) {
-            val experimentalities = mutableSetOf<Experimentality>()
+            val overriddenExperimentalities = mutableSetOf<Experimentality>()
+            val session = context.session
             for (overriddenMemberSymbol in overriddenMemberSymbols) {
-                overriddenMemberSymbol.loadExperimentalitiesFromAnnotationTo(context.session, experimentalities)
+                overriddenMemberSymbol.loadExperimentalitiesFromAnnotationTo(session, overriddenExperimentalities)
             }
             reportNotAcceptedOverrideExperimentalities(
-                experimentalities, memberSymbol, context, reporter
+                overriddenExperimentalities, memberSymbol, context, reporter
             )
+            for (annotation in memberSymbol.fir.annotations) {
+                val annotationType = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()
+                val lookupTag = annotationType?.lookupTag ?: continue
+                withSuppressedDiagnostics(annotation, context) {
+                    val useSiteTarget = annotation.useSiteTarget
+                    if (useSiteTarget == null || useSiteTarget == AnnotationUseSiteTarget.PROPERTY) {
+                        val experimentality = lookupTag.toFirRegularClassSymbol(session)?.loadExperimentalityForMarkerAnnotation()
+                        if (experimentality != null && experimentality !in overriddenExperimentalities && overriddenMemberSymbols.all {
+                                val ownerClassSymbol = it.dispatchReceiverClassOrNull()?.toFirRegularClassSymbol(session)
+                                ownerClassSymbol == null || !ownerClassSymbol.hasAnnotationItselfOrInParent(context, lookupTag.classId)
+                            }
+                        ) {
+                            val factory = if (session.languageVersionSettings.supportsFeature(LanguageFeature.OptInOnOverrideForbidden)) {
+                                FirErrors.OPT_IN_MARKER_ON_OVERRIDE
+                            } else {
+                                FirErrors.OPT_IN_MARKER_ON_OVERRIDE_WARNING
+                            }
+                            reporter.reportOn(annotation.source, factory, context)
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    private tailrec fun FirRegularClassSymbol.hasAnnotationItselfOrInParent(context: CheckerContext, classId: ClassId): Boolean {
+        if (getAnnotationByClassId(classId) != null) return true
+        val outerClassSymbol = outerClassSymbol(context) as? FirRegularClassSymbol ?: return false
+        return outerClassSymbol.hasAnnotationItselfOrInParent(context, classId)
     }
 
     private fun DiagnosticReporter.reportNothingToOverride(declaration: FirCallableSymbol<*>, context: CheckerContext) {
