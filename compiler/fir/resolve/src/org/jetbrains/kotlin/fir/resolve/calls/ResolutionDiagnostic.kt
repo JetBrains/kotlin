@@ -63,6 +63,8 @@ object InapplicableCandidate : ResolutionDiagnostic(INAPPLICABLE)
 
 object HiddenCandidate : ResolutionDiagnostic(HIDDEN)
 
+object VisibilityError : ResolutionDiagnostic(VISIBILITY_ERROR)
+
 object ResolvedWithLowPriority : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
 
 class InapplicableWrongReceiver(

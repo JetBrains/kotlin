@@ -237,7 +237,7 @@ internal object CheckVisibility : CheckerStage() {
 
             if (classSymbol is FirRegularClassSymbol) {
                 if (classSymbol.fir.classKind.isSingleton) {
-                    sink.yieldDiagnostic(HiddenCandidate)
+                    sink.yieldDiagnostic(VisibilityError)
                 }
                 checkVisibility(classSymbol.fir, sink, candidate, visibilityChecker)
             }
@@ -251,7 +251,7 @@ internal object CheckVisibility : CheckerStage() {
         visibilityChecker: FirVisibilityChecker
     ): Boolean {
         if (!visibilityChecker.isVisible(declaration, candidate)) {
-            sink.yieldDiagnostic(HiddenCandidate)
+            sink.yieldDiagnostic(VisibilityError)
             return false
         }
         return true
