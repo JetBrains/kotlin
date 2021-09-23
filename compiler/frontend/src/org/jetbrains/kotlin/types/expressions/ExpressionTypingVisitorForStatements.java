@@ -371,8 +371,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         VariableDescriptor descriptor = BindingContextUtils.extractVariableFromResolvedCall(bindingContext, leftOperand);
 
         if (descriptor instanceof PropertyDescriptor) {
-            PropertySetterDescriptor setter = ((PropertyDescriptor) descriptor).getSetter();
-            if (setter != null) return setter.getValueParameters().get(0).getType();
+            KotlinType inType = ((PropertyDescriptor) descriptor).getInType();
+            if (inType != null) return inType;
         }
 
         return leftOperandType;
