@@ -11,16 +11,16 @@ interface TestInterface<R> {
     fun get(): R
 }
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <R1> build(@BuilderInference block: TestInterface<R1>.() -> Unit) {}
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <R1 : Any> build2(@BuilderInference block: TestInterface<R1>.() -> Unit) {}
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <R1 : R2, R2 : Any> build3(@BuilderInference block: TestInterface<R1>.() -> Unit) {}
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <R1 : R2, R2> build4(x: R2, @BuilderInference block: TestInterface<R1>.() -> Unit) {}
 
 fun test(a: String?) {
