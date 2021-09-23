@@ -204,7 +204,6 @@ public inline fun CharRange.randomOrNull(): Char? {
  * Returns a random element from this progression, or `null` if this progression is empty.
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun IntProgression.randomOrNull(): Int? {
     return randomOrNull(Random)
@@ -214,7 +213,6 @@ public inline fun IntProgression.randomOrNull(): Int? {
  * Returns a random element from this progression, or `null` if this progression is empty.
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun LongProgression.randomOrNull(): Long? {
     return randomOrNull(Random)
@@ -224,7 +222,6 @@ public inline fun LongProgression.randomOrNull(): Long? {
  * Returns a random element from this progression, or `null` if this progression is empty.
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun CharProgression.randomOrNull(): Char? {
     return randomOrNull(Random)
@@ -267,7 +264,6 @@ public fun CharRange.randomOrNull(random: Random): Char? {
  * Returns a random element from this progression using the specified source of randomness, or `null` if this progression is empty.
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun IntProgression.randomOrNull(random: Random): Int? {
     if (isEmpty())
         return null
@@ -282,7 +278,6 @@ public fun IntProgression.randomOrNull(random: Random): Int? {
  * Returns a random element from this progression using the specified source of randomness, or `null` if this progression is empty.
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun LongProgression.randomOrNull(random: Random): Long? {
     if (isEmpty())
         return null
@@ -297,7 +292,6 @@ public fun LongProgression.randomOrNull(random: Random): Long? {
  * Returns a random element from this progression using the specified source of randomness, or `null` if this progression is empty.
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun CharProgression.randomOrNull(random: Random): Char? {
     if (isEmpty())
         return null

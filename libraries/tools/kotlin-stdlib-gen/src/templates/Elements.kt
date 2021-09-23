@@ -962,6 +962,7 @@ object Elements : TemplateGroupBase() {
         }
         specialFor(ProgressionsOfPrimitives) {
             since("1.6")
+            wasExperimentalAnnotations -= "ExperimentalStdlibApi"
         }
     }
 
@@ -1102,6 +1103,7 @@ ${progressionRandomBody(primitive!!)}
         }
         specialFor(ProgressionsOfPrimitives) {
             since("1.6")
+            wasExperimentalAnnotations -= "ExperimentalStdlibApi"
             body {
                 """
                 if (isEmpty())
