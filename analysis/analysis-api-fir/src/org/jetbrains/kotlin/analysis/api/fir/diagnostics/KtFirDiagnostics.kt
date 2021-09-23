@@ -2371,6 +2371,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ReturnNotAllowed::class
     }
 
+    abstract class NotAFunctionLabel : KtFirDiagnostic<KtReturnExpression>() {
+        override val diagnosticClass get() = NotAFunctionLabel::class
+    }
+
     abstract class ReturnInFunctionWithExpressionBody : KtFirDiagnostic<KtReturnExpression>() {
         override val diagnosticClass get() = ReturnInFunctionWithExpressionBody::class
     }

@@ -647,6 +647,7 @@ object FirErrors {
 
     // Returns
     val RETURN_NOT_ALLOWED by error0<KtReturnExpression>(SourceElementPositioningStrategies.RETURN_WITH_LABEL)
+    val NOT_A_FUNCTION_LABEL by error0<KtReturnExpression>(SourceElementPositioningStrategies.RETURN_WITH_LABEL)
     val RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY by error0<KtReturnExpression>(SourceElementPositioningStrategies.RETURN_WITH_LABEL)
     val NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY by error0<KtDeclarationWithBody>(SourceElementPositioningStrategies.DECLARATION_WITH_BODY)
     val ANONYMOUS_INITIALIZER_IN_INTERFACE by error0<KtAnonymousInitializer>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)

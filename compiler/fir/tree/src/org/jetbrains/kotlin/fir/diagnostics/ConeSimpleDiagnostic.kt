@@ -32,6 +32,7 @@ enum class DiagnosticKind {
 
     ReturnNotAllowed,
     UnresolvedLabel,
+    NotAFunctionLabel,
     NoThis,
     IllegalConstExpression,
     IllegalSelector,

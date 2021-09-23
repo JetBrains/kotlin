@@ -1216,6 +1216,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
     val RETURNS by object : DiagnosticGroup("Returns") {
         val RETURN_NOT_ALLOWED by error<KtReturnExpression>(PositioningStrategy.RETURN_WITH_LABEL)
+        val NOT_A_FUNCTION_LABEL by error<KtReturnExpression>(PositioningStrategy.RETURN_WITH_LABEL)
         val RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY by error<KtReturnExpression>(PositioningStrategy.RETURN_WITH_LABEL)
         val NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY by error<KtDeclarationWithBody>(PositioningStrategy.DECLARATION_WITH_BODY)
 

@@ -366,6 +366,7 @@ private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagno
     return when (kind) {
         DiagnosticKind.Syntax -> FirErrors.SYNTAX
         DiagnosticKind.ReturnNotAllowed -> FirErrors.RETURN_NOT_ALLOWED
+        DiagnosticKind.NotAFunctionLabel -> FirErrors.NOT_A_FUNCTION_LABEL
         DiagnosticKind.UnresolvedLabel -> FirErrors.UNRESOLVED_LABEL
         DiagnosticKind.NoThis -> FirErrors.NO_THIS
         DiagnosticKind.IllegalConstExpression -> FirErrors.ILLEGAL_CONST_EXPRESSION

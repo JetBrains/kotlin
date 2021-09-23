@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -24,9 +26,11 @@ object FirReturnAllowedChecker : FirReturnExpressionChecker() {
         val source = expression.source
         if (source?.kind == FirFakeSourceElementKind.ImplicitReturn) return
 
-        val targetSymbol = expression.target.labeledElement.symbol
-
-        if (!isReturnAllowed(targetSymbol, context)) {
+        val labeledElement = expression.target.labeledElement
+        val targetSymbol = labeledElement.symbol
+        if (labeledElement is FirErrorFunction && (labeledElement.diagnostic as? ConeSimpleDiagnostic)?.kind == DiagnosticKind.NotAFunctionLabel) {
+            reporter.reportOn(source, FirErrors.NOT_A_FUNCTION_LABEL, context)
+        } else if (!isReturnAllowed(targetSymbol, context)) {
             reporter.reportOn(source, FirErrors.RETURN_NOT_ALLOWED, context)
         }
 

@@ -2859,6 +2859,11 @@ internal class ReturnNotAllowedImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ReturnNotAllowed(), KtAbstractFirDiagnostic<KtReturnExpression>
 
+internal class NotAFunctionLabelImpl(
+    override val firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NotAFunctionLabel(), KtAbstractFirDiagnostic<KtReturnExpression>
+
 internal class ReturnInFunctionWithExpressionBodyImpl(
     override val firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

@@ -183,7 +183,11 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     }
                 }
                 target = FirFunctionTarget(labelName, false).apply {
-                    bindToErrorFunction("Cannot bind label $labelName to a function", DiagnosticKind.UnresolvedLabel)
+                    if (context.firLabels.any { it.name == labelName } || context.firLoopTargets.any { it.labelName == labelName }) {
+                        bindToErrorFunction("Label $labelName does not target a function", DiagnosticKind.NotAFunctionLabel)
+                    } else {
+                        bindToErrorFunction("Cannot bind label $labelName to a function", DiagnosticKind.UnresolvedLabel)
+                    }
                 }
             }
         }
