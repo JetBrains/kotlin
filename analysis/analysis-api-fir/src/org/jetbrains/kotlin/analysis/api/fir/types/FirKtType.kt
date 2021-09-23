@@ -30,11 +30,10 @@ internal interface KtFirType : ValidityTokenOwner {
 
 private fun KtFirType.typeEquals(other: Any?): Boolean {
     if (other !is KtFirType) return false
-    if (this.token != other.token) return false
     return this.coneType == other.coneType
 }
 
-private fun KtFirType.typeHashcode(): Int = token.hashCode() * 31 + coneType.hashCode()
+private fun KtFirType.typeHashcode(): Int = coneType.hashCode()
 
 internal class KtFirUsualClassType(
     override val coneType: ConeClassLikeTypeImpl,

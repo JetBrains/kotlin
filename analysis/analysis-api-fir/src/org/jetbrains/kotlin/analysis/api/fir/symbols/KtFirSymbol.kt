@@ -26,11 +26,10 @@ internal interface KtFirSymbol<out F : FirDeclaration> : KtSymbol, ValidityToken
 
 internal fun KtFirSymbol<*>.symbolEquals(other: Any?): Boolean {
     if (other !is KtFirSymbol<*>) return false
-    if (this.token != other.token) return false
     return this.firRef == other.firRef
 }
 
-internal fun KtFirSymbol<*>.symbolHashCode(): Int = firRef.hashCode() * 31 + token.hashCode()
+internal fun KtFirSymbol<*>.symbolHashCode(): Int = firRef.hashCode()
 
 internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (origin) {
     FirDeclarationOrigin.Source -> {

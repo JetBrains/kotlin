@@ -47,9 +47,9 @@ class KtAnalysisSessionFe10BindingHolder private constructor(
 
     companion object {
         @InvalidWayOfUsingAnalysisSession
-        fun create(firResolveState: FirModuleResolveState, token: ValidityToken, ktElement: KtElement): KtAnalysisSessionFe10BindingHolder {
+        fun create(firResolveState: FirModuleResolveState, token: ValidityToken, @Suppress("UNUSED_PARAMETER") ktElement: KtElement): KtAnalysisSessionFe10BindingHolder {
             @Suppress("DEPRECATION")
-            val firAnalysisSession = KtFirAnalysisSession.createAnalysisSessionByResolveState(firResolveState, token, ktElement)
+            val firAnalysisSession = KtFirAnalysisSession.createAnalysisSessionByResolveState(firResolveState, token)
             return KtAnalysisSessionFe10BindingHolder(firAnalysisSession)
         }
     }

@@ -139,8 +139,8 @@ internal class KtFirScopeProvider(
                 project,
                 builder,
                 token,
-                analysisSession.searchScope,
-                analysisSession.targetPlatform
+                GlobalSearchScope.allScope(project), // TODO
+                analysisSession.targetPlatform,
             )
         }
     }
