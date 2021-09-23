@@ -55,49 +55,56 @@ public:
 TEST(LoggingTest, FormatLogEntry_Debug_OneTag) {
     std::array<char, 1024> buffer;
     FormatLogEntry(buffer, logging::Level::kDebug, {"t1"}, "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[DEBUG][t1] Log #42"));
+    EXPECT_THAT(buffer.data(), testing::StrEq("[DEBUG][t1] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Debug_TwoTags) {
     std::array<char, 1024> buffer;
     FormatLogEntry(buffer, logging::Level::kDebug, {"t1", "t2"}, "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[DEBUG][t1,t2] Log #42"));
+    EXPECT_THAT(buffer.data(), testing::StrEq("[DEBUG][t1,t2] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Info_OneTag) {
     std::array<char, 1024> buffer;
     FormatLogEntry(buffer, logging::Level::kInfo, {"t1"}, "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[INFO][t1] Log #42"));
+    EXPECT_THAT(buffer.data(), testing::StrEq("[INFO][t1] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Info_TwoTags) {
     std::array<char, 1024> buffer;
     FormatLogEntry(buffer, logging::Level::kInfo, {"t1", "t2"}, "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[INFO][t1,t2] Log #42"));
+    EXPECT_THAT(buffer.data(), testing::StrEq("[INFO][t1,t2] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Warning_OneTag) {
     std::array<char, 1024> buffer;
     FormatLogEntry(buffer, logging::Level::kWarning, {"t1"}, "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[WARN][t1] Log #42"));
+    EXPECT_THAT(buffer.data(), testing::StrEq("[WARN][t1] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Warning_TwoTags) {
     std::array<char, 1024> buffer;
     FormatLogEntry(buffer, logging::Level::kWarning, {"t1", "t2"}, "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[WARN][t1,t2] Log #42"));
+    EXPECT_THAT(buffer.data(), testing::StrEq("[WARN][t1,t2] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Error_OneTag) {
     std::array<char, 1024> buffer;
     FormatLogEntry(buffer, logging::Level::kError, {"t1"}, "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[ERROR][t1] Log #42"));
+    EXPECT_THAT(buffer.data(), testing::StrEq("[ERROR][t1] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Error_TwoTags) {
     std::array<char, 1024> buffer;
     FormatLogEntry(buffer, logging::Level::kError, {"t1", "t2"}, "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[ERROR][t1,t2] Log #42"));
+    EXPECT_THAT(buffer.data(), testing::StrEq("[ERROR][t1,t2] Log #42\n"));
+}
+
+TEST(LoggingTest, FormatLogEntry_Overflow) {
+    std::array<char, 20> buffer;
+    FormatLogEntry(buffer, logging::Level::kError, {"t1", "t2"}, "Log #%d", 42);
+    // Only 18 characters are used for the log string contents, another 2 are \n and \0.
+    EXPECT_THAT(buffer.data(), testing::StrEq("[ERROR][t1,t2] Log\n"));
 }
 
 TEST(LoggingDeathTest, StderrLogger) {
@@ -215,6 +222,6 @@ TEST_F(LoggingLogTest, Log_Success) {
     constexpr auto level = logging::Level::kInfo;
     const std::initializer_list<const char*> tags = {"t1", "t2"};
     EXPECT_CALL(logFilter(), Enabled(level, TagsAre(tags))).WillOnce(testing::Return(true));
-    EXPECT_CALL(logger(), Log(level, TagsAre(tags), "[INFO][t1,t2] Message 42"));
+    EXPECT_CALL(logger(), Log(level, TagsAre(tags), "[INFO][t1,t2] Message 42\n"));
     Log(level, tags, "Message %d", 42);
 }

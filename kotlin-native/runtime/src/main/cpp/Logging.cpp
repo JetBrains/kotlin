@@ -114,7 +114,6 @@ class StderrLogger : public logging::internal::Logger {
 public:
     void Log(logging::Level level, std_support::span<const char* const> tags, std::string_view message) const noexcept override {
         konan::consoleErrorUtf8(message.data(), message.size());
-        konan::consoleErrorf("\n");
     }
 };
 
@@ -157,10 +156,13 @@ std_support::span<char> logging::internal::FormatLogEntry(
         std_support::span<const char* const> tags,
         const char* format,
         std::va_list args) noexcept {
-    buffer = FormatLevel(buffer, level);
-    buffer = FormatTags(buffer, tags);
-    buffer = FormatToSpan(buffer, " ");
-    buffer = VFormatToSpan(buffer, format, args);
+    auto subbuffer = buffer.subspan(0, buffer.size() - 1);
+    subbuffer = FormatLevel(subbuffer, level);
+    subbuffer = FormatTags(subbuffer, tags);
+    subbuffer = FormatToSpan(subbuffer, " ");
+    subbuffer = VFormatToSpan(subbuffer, format, args);
+    buffer = buffer.subspan(subbuffer.data() - buffer.data());
+    buffer = FormatToSpan(buffer, "\n");
     return buffer;
 }
 
