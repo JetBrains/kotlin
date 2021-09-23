@@ -26,11 +26,12 @@ class WorkaroundTests : IndexerTests() {
             
             NS_FORMAT_ARGUMENT(1) int f(const char* c);
         """.trimIndent()
+        val language = Language.OBJECTIVE_C
         val compilation = CompilationImpl(
                 includes = emptyList(),
                 additionalPreambleLines = code.split("\n"),
-                compilerArgs = listOf(),
-                language = Language.C
+                compilerArgs = defaultCompilerArgs(language),
+                language = language
         )
         withIndex { index ->
             val translationUnit = compilation.parse(
