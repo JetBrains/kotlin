@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.js.backend.ast.JsStatement
 
 class JsIrProgramFragment(val packageFqn: String) {
     val declarations = JsGlobalBlock()
+    val exports = JsGlobalBlock()
+    var dts: String? = null
     val classes = mutableMapOf<IrClassSymbol, JsIrClassModel>()
     val initializers = JsGlobalBlock()
     var mainFunction: JsStatement? = null

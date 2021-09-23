@@ -72,7 +72,7 @@ class IrModuleToJsTransformer(
             namer.merge(module.files, additionalPackages)
         }
 
-        val jsCode = if (fullJs) generateWrappedModuleBody(modules, exportData, namer) else null
+        val jsCode = if (fullJs) generateWrappedModuleBody(modules, generateProgramFragments(modules, exportData, namer), namer) else null
 
         val dceJsCode = if (dceJs) {
             eliminateDeadDeclarations(modules, backendContext, removeUnusedAssociatedObjects)
@@ -80,15 +80,51 @@ class IrModuleToJsTransformer(
             // TODO: is this mode relevant for scripting? If yes, refactor so that the external name tables are used here when needed.
             val namer = NameTables(emptyList(), context = backendContext)
             namer.merge(modules.flatMap { it.files }, additionalPackages)
-            generateWrappedModuleBody(modules, exportData, namer)
+            generateWrappedModuleBody(modules, generateProgramFragments(modules, exportData, namer), namer)
         } else null
 
         return CompilerResult(jsCode, dceJsCode, dts)
     }
 
-    private fun generateWrappedModuleBody(
+    private fun generateProgramFragments(
         modules: Iterable<IrModuleFragment>,
         exportData: Map<IrModuleFragment, Map<IrFile, List<ExportedDeclaration>>>,
+        namer: NameTables,
+    ): Map<IrFile, JsIrProgramFragment> {
+
+        val nameGenerator = IrNamerImpl(newNameTables = namer, backendContext)
+
+        val fragments = mutableMapOf<IrFile, JsIrProgramFragment>()
+        modules.forEach { m ->
+            m.files.forEach { f ->
+                val fragment = JsIrProgramFragment(f.fqName.asString())
+
+                val exports = exportData[m]!![f]!! // TODO
+
+                val internalModuleName = JsName("_")
+                val globalNames = NameTable<String>(namer.globalNames)
+                val exportStatements =
+                    ExportModelToJsStatements(nameGenerator, { globalNames.declareFreshName(it, it) }).generateModuleExport(
+                        ExportedModule(mainModuleName, moduleKind, exports),
+                        internalModuleName,
+                    )
+
+                fragment.exports.statements += exportStatements
+
+                if (exports.isNotEmpty()) {
+                    fragment.dts = exports.toTypeScript(moduleKind)
+                }
+
+                fragments[f] = fragment
+            }
+        }
+
+        return fragments
+    }
+
+    private fun generateWrappedModuleBody(
+        modules: Iterable<IrModuleFragment>,
+        fragments: Map<IrFile, JsIrProgramFragment>,
         namer: NameTables
     ): CompilationOutputs {
         if (multiModule) {
@@ -104,7 +140,7 @@ class IrModuleToJsTransformer(
                 mainModuleName,
                 listOf(main),
                 others,
-                exportData,
+                fragments,
                 namer,
                 refInfo,
                 generateMainCall = true
@@ -117,7 +153,7 @@ class IrModuleToJsTransformer(
                     moduleName,
                     listOf(module),
                     others.drop(index + 1),
-                    exportData,
+                    fragments,
                     namer,
                     refInfo,
                     generateMainCall = false
@@ -130,7 +166,7 @@ class IrModuleToJsTransformer(
                 mainModuleName,
                 modules,
                 emptyList(),
-                exportData,
+                fragments,
                 namer,
                 EmptyCrossModuleReferenceInfo
             )
@@ -141,7 +177,7 @@ class IrModuleToJsTransformer(
         moduleName: String,
         modules: Iterable<IrModuleFragment>,
         dependencies: Iterable<IrModuleFragment>,
-        exportData: Map<IrModuleFragment, Map<IrFile, List<ExportedDeclaration>>>,
+        fragments: Map<IrFile, JsIrProgramFragment>,
         namer: NameTables,
         refInfo: CrossModuleReferenceInfo,
         generateMainCall: Boolean = true
@@ -163,17 +199,9 @@ class IrModuleToJsTransformer(
                 declareFreshGlobal = { JsName(sanitizeName(it)) } // TODO: Declare fresh name
             )
 
-        val (moduleBody, callToMain) = generateModuleBody(modules, staticContext)
+        val (moduleBody, callToMain, exportStatements) = generateModuleBody(modules, staticContext, fragments)
 
         val internalModuleName = JsName("_")
-        val globalNames = NameTable<String>(namer.globalNames)
-
-        val exportStatements = exportData.entries.filter { (m, _) -> m in modules }.flatMap { (_, f) -> f.values.flatMap {
-            ExportModelToJsStatements(nameGenerator, { globalNames.declareFreshName(it, it) }).generateModuleExport(
-                ExportedModule(moduleName, moduleKind, it),
-                internalModuleName,
-            )
-        } }
 
         val (crossModuleImports, importedKotlinModules) = generateCrossModuleImports(
             nameGenerator,
@@ -304,23 +332,26 @@ class IrModuleToJsTransformer(
         }
     }
 
-    private data class ModuleBody(val statements: List<JsStatement>, val mainFunction: JsStatement?)
+    private data class ModuleBody(val statements: List<JsStatement>, val mainFunction: JsStatement?, val exportStatements: List<JsStatement>)
 
-    private fun generateModuleBody(modules: Iterable<IrModuleFragment>, staticContext: JsStaticContext): ModuleBody {
-        val fragments = modules.map { it.files.map { generateProgramFragment(it, staticContext) } }
+    private fun generateModuleBody(
+        modules: Iterable<IrModuleFragment>,
+        staticContext: JsStaticContext,
+        fragments: Map<IrFile, JsIrProgramFragment>
+    ): ModuleBody {
+        val thisModuleFragments = modules.map { it.files.map { fragments[it]!!.fillProgramFragment(it, staticContext) } }
 
-        return merge(fragments, staticContext)
+        return merge(thisModuleFragments, staticContext)
     }
 
     private val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
     private val pathPrefixMap = backendContext.configuration.getMap(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP)
 
-    private fun generateProgramFragment(file: IrFile, staticContext: JsStaticContext): JsIrProgramFragment {
+    private fun JsIrProgramFragment.fillProgramFragment(file: IrFile, staticContext: JsStaticContext): JsIrProgramFragment {
         require(staticContext.classModels.isEmpty())
         require(staticContext.initializerBlock.statements.isEmpty())
 
-        val result = JsIrProgramFragment(file.fqName.asString())
-        val statements = result.declarations.statements
+        val statements = this.declarations.statements
 
         val fileStatements = file.accept(IrFileToJsTransformer(), staticContext).statements
         if (fileStatements.isNotEmpty()) {
@@ -348,26 +379,26 @@ class IrModuleToJsTransformer(
             statements.endRegion()
         }
 
-        result.classes += staticContext.classModels
-        result.initializers.statements += staticContext.initializerBlock.statements
+        this.classes += staticContext.classModels
+        this.initializers.statements += staticContext.initializerBlock.statements
 
         if (mainArguments != null) {
             JsMainFunctionDetector(backendContext).getMainFunctionOrNull(file)?.let {
                 val jsName = staticContext.getNameForStaticFunction(it)
                 val generateArgv = it.valueParameters.firstOrNull()?.isStringArrayParameter() ?: false
                 val generateContinuation = it.isLoweredSuspendFunction(backendContext)
-                result.mainFunction = JsInvocation(jsName.makeRef(), generateMainArguments(generateArgv, generateContinuation, staticContext)).makeStmt()
+                this.mainFunction = JsInvocation(jsName.makeRef(), generateMainArguments(generateArgv, generateContinuation, staticContext)).makeStmt()
             }
         }
 
         backendContext.testFunsPerFile[file]?.let {
-            result.testFunInvocation = JsInvocation(staticContext.getNameForStaticFunction(it).makeRef()).makeStmt()
+            this.testFunInvocation = JsInvocation(staticContext.getNameForStaticFunction(it).makeRef()).makeStmt()
         }
 
         staticContext.classModels.clear()
         staticContext.initializerBlock.statements.clear()
 
-        return result
+        return this
     }
 
     private fun merge(fragments: List<List<JsIrProgramFragment>>, staticContext: JsStaticContext): ModuleBody {
@@ -420,7 +451,9 @@ class IrModuleToJsTransformer(
 
         val callToMain = lastModuleFragments.sortedBy { it.packageFqn }.firstNotNullOfOrNull { it.mainFunction }
 
-        return ModuleBody(statements, callToMain)
+        val exportStatements = fragments.flatMap { it.flatMap { it.exports.statements } }
+
+        return ModuleBody(statements, callToMain, exportStatements)
     }
 
     private fun generateMainArguments(
