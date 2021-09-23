@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -212,7 +213,7 @@ internal class KtFirScopeProvider(
                 project,
                 builder,
                 token,
-                analysisSession.searchScope,
+                GlobalSearchScope.allScope(project), // todo
                 analysisSession.targetPlatform
             )
             is FirContainingNamesAwareScope -> KtFirDelegatingScopeImpl(firScope, builder, token)

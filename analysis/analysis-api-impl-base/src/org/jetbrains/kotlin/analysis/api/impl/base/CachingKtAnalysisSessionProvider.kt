@@ -33,7 +33,6 @@ abstract class CachingKtAnalysisSessionProvider<State : Any>(private val project
     protected abstract fun createAnalysisSession(
         resolveState: State,
         validityToken: ValidityToken,
-        contextElement: KtElement
     ): KtAnalysisSession
 
     @InvalidWayOfUsingAnalysisSession
@@ -41,7 +40,7 @@ abstract class CachingKtAnalysisSessionProvider<State : Any>(private val project
         val resolveState = getResolveState(contextElement)
         return cache.getAnalysisSession(resolveState to factory.identifier) {
             val validityToken = factory.create(project)
-            createAnalysisSession(resolveState, validityToken, contextElement)
+            createAnalysisSession(resolveState, validityToken)
         }
     }
 
@@ -49,7 +48,7 @@ abstract class CachingKtAnalysisSessionProvider<State : Any>(private val project
         val resolveState = getResolveState(contextSymbol)
         val token = contextSymbol.token
         return getCachedAnalysisSession(resolveState, token)
-            ?: error("analysis session was not found for ${contextSymbol::class}, symbol.isValid=${contextSymbol.isValid()}")
+            ?: createAnalysisSession(resolveState, contextSymbol.token)
     }
 
     private fun getCachedAnalysisSession(resolveState: State, token: ValidityToken): KtAnalysisSession? {

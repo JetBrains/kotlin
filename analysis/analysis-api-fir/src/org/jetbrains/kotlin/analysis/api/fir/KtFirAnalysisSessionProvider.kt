@@ -30,9 +30,10 @@ class KtFirAnalysisSessionProvider(project: Project) : CachingKtAnalysisSessionP
     override fun createAnalysisSession(
         resolveState: FirModuleResolveState,
         validityToken: ValidityToken,
-        contextElement: KtElement
     ): KtAnalysisSession {
         @Suppress("DEPRECATION")
-        return KtFirAnalysisSession.createAnalysisSessionByResolveState(resolveState, validityToken, contextElement)
+        return KtFirAnalysisSession.createAnalysisSessionByResolveState(resolveState, validityToken)
     }
 }
+
+

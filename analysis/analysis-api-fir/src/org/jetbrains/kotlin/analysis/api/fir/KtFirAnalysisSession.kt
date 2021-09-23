@@ -31,7 +31,6 @@ private constructor(
     val firResolveState: FirModuleResolveState,
     internal val firSymbolBuilder: KtSymbolByFirBuilder,
     token: ValidityToken,
-    element: KtElement,
     private val mode: AnalysisSessionMode,
 ) : KtAnalysisSession(token) {
 
@@ -110,7 +109,6 @@ private constructor(
             contextResolveState,
             firSymbolBuilder.createReadOnlyCopy(contextResolveState),
             token,
-            originalKtFile,
             AnalysisSessionMode.DEPENDENT_COPY
         )
     }
@@ -118,15 +116,12 @@ private constructor(
     val rootModuleSession: FirSession get() = firResolveState.rootModuleSession
     val firSymbolProvider: FirSymbolProvider get() = rootModuleSession.symbolProvider
     val targetPlatform: TargetPlatform get() = rootModuleSession.moduleData.platform
-    val searchScope: GlobalSearchScope = element.resolveScope//todo
 
     companion object {
         @InvalidWayOfUsingAnalysisSession
-        @Deprecated("Please use org.jetbrains.kotlin.analysis.api.KtAnalysisSessionProviderKt.analyze")
         internal fun createAnalysisSessionByResolveState(
             firResolveState: FirModuleResolveState,
             token: ValidityToken,
-            element: KtElement,
         ): KtFirAnalysisSession {
             val project = firResolveState.project
             val firSymbolBuilder = KtSymbolByFirBuilder(
@@ -139,7 +134,6 @@ private constructor(
                 firResolveState,
                 firSymbolBuilder,
                 token,
-                element,
                 AnalysisSessionMode.REGULAR,
             )
         }
