@@ -13,6 +13,6 @@ class A(val x: String) {
 // 2 ACONST_NULL
 
 // JVM_IR_TEMPLATES
-// 0 IFNULL
-// 4 IFNONNULL
-// 0 ACONST_NULL
+// 4 IFNULL
+// 2 IFNONNULL
+// 2 ACONST_NULL

@@ -5449,6 +5449,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("notNullReceiversInChain.kt")
+        public void testNotNullReceiversInChain() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/temporaryVals/notNullReceiversInChain.kt");
+        }
+
+        @Test
         @TestMetadata("safeCallChain1.kt")
         public void testSafeCallChain1() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/temporaryVals/safeCallChain1.kt");
@@ -5470,6 +5476,18 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         @TestMetadata("safeCallChainMemberExt2.kt")
         public void testSafeCallChainMemberExt2() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/temporaryVals/safeCallChainMemberExt2.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallElvisSafeCallElvisSomething.kt")
+        public void testSafeCallElvisSafeCallElvisSomething() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/temporaryVals/safeCallElvisSafeCallElvisSomething.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallWithElvis.kt")
+        public void testSafeCallWithElvis() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/temporaryVals/safeCallWithElvis.kt");
         }
     }
 

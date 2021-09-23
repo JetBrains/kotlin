@@ -9,13 +9,13 @@
 
 fun box(): String {
     for (i in (4 .. 1).reversed()) {
-        throw AssertionError("Loop should not be executed")
+        throw AssertionError("Loop over empty Int range should not be executed")
     }
     for (i in (4L .. 1L).reversed()) {
-        throw AssertionError("Loop should not be executed")
+        throw AssertionError("Loop over empty Long range should not be executed")
     }
     for (i in ('D' .. 'A').reversed()) {
-        throw AssertionError("Loop should not be executed")
+        throw AssertionError("Loop over empty Char range should not be executed")
     }
     return "OK"
 }
@@ -29,8 +29,14 @@ fun box(): String {
 // 0 getStep
 
 // JVM_IR_TEMPLATES
+// Int- and Char-based loops are completely elimiated
 // 0 ILOAD
-// 2 ISTORE
+// 0 ISTORE
 // 0 IADD
 // 0 ISUB
 // 0 IINC
+// 3 LLOAD
+// 2 LSTORE
+// 1 LADD
+// 0 LSUB
+// 4 LDC

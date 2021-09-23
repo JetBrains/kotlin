@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
+import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.removeUnusedLocalVariables
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -21,6 +22,8 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
     override fun transform(internalClassName: String, methodNode: MethodNode) {
         if (!state.isIrBackend) return
 
+        simplifyTrivialInstructions(methodNode)
+
         val cfg = ControlFlowGraph(methodNode)
         processLabels(cfg)
 
@@ -35,6 +38,42 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
     }
 
 
+    private fun simplifyTrivialInstructions(methodNode: MethodNode) {
+        val insnList = methodNode.instructions
+        for (insn in insnList.toArray()) {
+            when {
+                insn.matchOpcodes(Opcodes.ILOAD, Opcodes.POP) ||
+                        insn.matchOpcodes(Opcodes.FLOAD, Opcodes.POP) ||
+                        insn.matchOpcodes(Opcodes.ALOAD, Opcodes.POP) -> {
+                    // Remove size 1 LOAD immediately followed by a POP
+                    val popInsn = insn.next
+                    insnList.insert(insn, InsnNode(Opcodes.NOP))
+                    insnList.remove(insn)
+                    insnList.remove(popInsn)
+                }
+                insn.matchOpcodes(Opcodes.DLOAD, Opcodes.POP2) ||
+                        insn.matchOpcodes(Opcodes.LLOAD, Opcodes.POP2) -> {
+                    // Remove size 2 LOAD immediately followed by a POP2
+                    val pop2Insn = insn.next
+                    insnList.insert(insn, InsnNode(Opcodes.NOP))
+                    insnList.remove(insn)
+                    insnList.remove(pop2Insn)
+                }
+            }
+        }
+        for (insn in insnList.toArray()) {
+            // Remove NOPs immediately preceded or immediately followed by an instruction that does something
+            // - not a LINENUMBER, not a LABEL, and not a FRAME.
+            if (insn.opcode == Opcodes.NOP) {
+                val next = insn.next
+                val prev = insn.previous
+                if (next != null && next.isMeaningful || prev != null && prev.isMeaningful) {
+                    insnList.remove(insn)
+                }
+            }
+        }
+    }
+
     private class ControlFlowGraph(val methodNode: MethodNode) {
         private val nonTrivialPredecessors = HashMap<LabelNode, MutableList<AbstractInsnNode>>()
 
@@ -48,6 +87,22 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
 
         fun hasNonTrivialPredecessors(label: LabelNode) =
             nonTrivialPredecessors.containsKey(label)
+
+        fun getAllPredecessors(label: LabelNode): List<AbstractInsnNode> {
+            val result = ArrayList<AbstractInsnNode>()
+
+            val trivialPredecessor = label.previous
+            if (trivialPredecessor.opcode != Opcodes.GOTO &&
+                trivialPredecessor.opcode !in Opcodes.IRETURN..Opcodes.RETURN &&
+                trivialPredecessor.opcode != Opcodes.ATHROW
+            ) {
+                result.add(trivialPredecessor)
+            }
+
+            result.addAll(nonTrivialPredecessors[label] ?: emptyList())
+
+            return result
+        }
 
         fun hasSinglePredecessor(label: LabelNode, expectedPredecessor: AbstractInsnNode): Boolean {
             var trivialPredecessor = label.previous
@@ -334,10 +389,132 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
                         continue
                     }
                 }
+            } else if (insn.matchOpcodes(Opcodes.ALOAD, Opcodes.IFNULL)) {
+                // This looks like a start of some safe call chain:
+                //      { ... evaluate receiver ... }
+                //      ASTORE v1
+                //      ALOAD v1        << insn
+                //      IFNULL L
+                //      [ possible first receiver - ALOAD or GETSTATIC ]
+                //      ALOAD v1
+                //      { ... call-1 ... }
+                //      ASTORE v2
+                //      ALOAD v2
+                //      IFNULL L
+                //      [ possible first receiver - ALOAD or GETSTATIC ]
+                //      ALOAD v2
+                //      { ... call-2 ... }
+                //      ...
+                //      ASTORE vN
+                //      ALOAD vN
+                //      IFNULL L
+                //      [ possible first receiver - ALOAD or GETSTATIC ]
+                //      ALOAD vN
+                //      { ... call-N ... }
+                //  L:
+                //      { ... if null ... }
+
+                val ifNull1 = insn.next as JumpInsnNode
+                val ifNullLabel = ifNull1.label
+                val predecessors = cfg.getAllPredecessors(ifNullLabel)
+                if (predecessors.all { isRewritableSafeCallPart(it) }) {
+                    predecessors.forEach { rewriteSafeCallPart(it, insnList) }
+                    insnList.insert(ifNullLabel, InsnNode(Opcodes.POP))
+                    maxStackIncrement = max(maxStackIncrement, 1)
+                    continue
+                }
             }
         }
 
         cfg.methodNode.maxStack += maxStackIncrement
+    }
+
+    private fun isRewritableSafeCallPart(branchInsn: AbstractInsnNode): Boolean {
+        val start = branchInsn.previous ?: return false
+        //      ALOAD v1        << start
+        //      IFNULL L
+        //      [ possible first receiver - ALOAD or GETSTATIC ]
+        //      ALOAD v1
+        if (start.matchOpcodes(Opcodes.ALOAD, Opcodes.IFNULL)) {
+            val aLoad1 = start as VarInsnNode
+            val ifNull = start.next as JumpInsnNode
+            val ifNullNext = ifNull.next
+            if (ifNullNext.opcode == Opcodes.ALOAD) {
+                val aLoad2 = ifNullNext as VarInsnNode
+                if (aLoad2.`var` == aLoad1.`var`) return true
+                val aLoad2Next = aLoad2.next
+                if (aLoad2Next.opcode == Opcodes.ALOAD) {
+                    val aLoad3 = aLoad2Next as VarInsnNode
+                    if (aLoad3.`var` == aLoad1.`var`) return true
+                }
+            } else if (ifNullNext.matchOpcodes(Opcodes.GETSTATIC, Opcodes.ALOAD)) {
+                val getStaticInsn = ifNullNext as FieldInsnNode
+                if (Type.getType(getStaticInsn.desc).size != 1) return false
+                val aLoad2 = getStaticInsn.next as VarInsnNode
+                if (aLoad2.`var` == aLoad1.`var`) return true
+            }
+        }
+        return false
+    }
+
+    private fun rewriteSafeCallPart(branchInsn: AbstractInsnNode, insnList: InsnList) {
+        val start = branchInsn.previous
+        //      ALOAD v1        << start
+        //      IFNULL L
+        //      [ possible first receiver - ALOAD or GETSTATIC ]
+        //      ALOAD v1
+        val aLoad1 = start as VarInsnNode
+        val ifNull = start.next as JumpInsnNode
+        val ifNullNext = ifNull.next
+        if (ifNullNext.opcode == Opcodes.ALOAD) {
+            val aLoad2 = ifNullNext as VarInsnNode
+            if (aLoad2.`var` == aLoad1.`var`) {
+                // Rewrite
+                //      ALOAD v1
+                //      IFNULL L
+                //      ALOAD v1
+                // to
+                //      ALOAD v1
+                //      DUP
+                //      IFNULL L
+                insnList.insertBefore(ifNull, InsnNode(Opcodes.DUP))
+                insnList.remove(aLoad2)
+                return
+            } else {
+                val aLoad3 = aLoad2.next as VarInsnNode
+                // Rewrite
+                //      ALOAD v1
+                //      IFNULL L
+                //      ALOAD x
+                //      ALOAD v1
+                // to
+                //      ALOAD v1
+                //      DUP
+                //      IFNULL L
+                //      ALOAD x
+                //      SWAP
+                insnList.insertBefore(ifNull, InsnNode(Opcodes.DUP))
+                insnList.remove(aLoad3)
+                insnList.insert(aLoad2, InsnNode(Opcodes.SWAP))
+                return
+            }
+        } else {
+            // Rewrite
+            //      ALOAD v1
+            //      IFNULL L
+            //      GETSTATIC s
+            //      ALOAD v1
+            // to
+            //      ALOAD v1
+            //      DUP
+            //      IFNULL L
+            //      GETSTATIC s
+            //      SWAP
+            val aLoad2 = ifNullNext.next
+            insnList.insertBefore(ifNull, InsnNode(Opcodes.DUP))
+            insnList.remove(aLoad2)
+            insnList.insert(ifNullNext, InsnNode(Opcodes.SWAP))
+        }
     }
 
     private fun AbstractInsnNode.matchOpcodes(vararg opcodes: Int): Boolean {
