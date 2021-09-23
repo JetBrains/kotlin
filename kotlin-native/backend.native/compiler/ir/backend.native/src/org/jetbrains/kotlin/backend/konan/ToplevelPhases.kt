@@ -256,56 +256,57 @@ internal val allLoweringsPhase = NamedCompilerPhase(
         name = "IrLowering",
         description = "IR Lowering",
         // TODO: The lowerings before inlinePhase should be aligned with [NativeInlineFunctionResolver.kt]
-        lower = removeExpectDeclarationsPhase then
-                stripTypeAliasDeclarationsPhase then
-                lowerBeforeInlinePhase then
-                arrayConstructorPhase then
-                lateinitPhase then
-                sharedVariablesPhase then
-                inventNamesForLocalClasses then
-                extractLocalClassesFromInlineBodies then
-                inlinePhase then
-                provisionalFunctionExpressionPhase then
-                lowerAfterInlinePhase then
-                performByIrFile(
-                        name = "IrLowerByFile",
-                        description = "IR Lowering by file",
-                        lower = listOf(
-                            annotationImplementationPhase,
-                            rangeContainsLoweringPhase,
-                            forLoopsPhase,
-                            flattenStringConcatenationPhase,
-                            foldConstantLoweringPhase,
-                            computeStringTrimPhase,
-                            stringConcatenationPhase,
-                            enumConstructorsPhase,
-                            initializersPhase,
-                            localFunctionsPhase,
-                            tailrecPhase,
-                            defaultParameterExtentPhase,
-                            innerClassPhase,
-                            dataClassesPhase,
-                            ifNullExpressionsFusionPhase,
-                            testProcessorPhase,
-                            delegationPhase,
-                            functionReferencePhase,
-                            singleAbstractMethodPhase,
-                            enumWhenPhase,
-                            builtinOperatorPhase,
-                            finallyBlocksPhase,
-                            enumClassPhase,
-                            enumUsagePhase,
-                            interopPhase,
-                            varargPhase,
-                            kotlinNothingValueExceptionPhase,
-                            coroutinesPhase,
-                            typeOperatorPhase,
-                            expressionBodyTransformPhase,
-                            fileInitializersPhase,
-                            bridgesPhase,
-                            autoboxPhase,
-                        )
-                ),
+        lower = performByIrFile(
+                name = "IrLowerByFile",
+                description = "IR Lowering by file",
+                lower = listOf(
+                        removeExpectDeclarationsPhase,
+                        stripTypeAliasDeclarationsPhase,
+                        lowerBeforeInlinePhase,
+                        arrayConstructorPhase,
+                        lateinitPhase,
+                        sharedVariablesPhase,
+                        inventNamesForLocalClasses,
+                        extractLocalClassesFromInlineBodies,
+                        inlinePhase,
+                        provisionalFunctionExpressionPhase,
+                        postInlinePhase,
+                        contractsDslRemovePhase,
+                        annotationImplementationPhase,
+                        rangeContainsLoweringPhase,
+                        forLoopsPhase,
+                        flattenStringConcatenationPhase,
+                        foldConstantLoweringPhase,
+                        computeStringTrimPhase,
+                        stringConcatenationPhase,
+                        enumConstructorsPhase,
+                        initializersPhase,
+                        localFunctionsPhase,
+                        tailrecPhase,
+                        defaultParameterExtentPhase,
+                        innerClassPhase,
+                        dataClassesPhase,
+                        ifNullExpressionsFusionPhase,
+                        testProcessorPhase,
+                        delegationPhase,
+                        functionReferencePhase,
+                        singleAbstractMethodPhase,
+                        enumWhenPhase,
+                        builtinOperatorPhase,
+                        finallyBlocksPhase,
+                        enumClassPhase,
+                        enumUsagePhase,
+                        interopPhase,
+                        varargPhase,
+                        kotlinNothingValueExceptionPhase,
+                        coroutinesPhase,
+                        typeOperatorPhase,
+                        expressionBodyTransformPhase,
+                        fileInitializersPhase,
+                        bridgesPhase,
+                        autoboxPhase,
+                )
+        ),
         actions = setOf(defaultDumper, ::moduleValidationCallback)
 )
 
