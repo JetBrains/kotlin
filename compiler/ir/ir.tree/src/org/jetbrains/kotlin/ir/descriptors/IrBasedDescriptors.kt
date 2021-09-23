@@ -884,6 +884,8 @@ open class IrBasedPropertyDescriptor(owner: IrProperty) :
         TODO("not implemented")
     }
 
+    override fun getInType(): KotlinType? = setter?.valueParameters?.get(0)?.type
+
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
 
@@ -1061,6 +1063,8 @@ open class IrBasedFieldDescriptor(owner: IrField) : PropertyDescriptor, IrBasedD
     // Following functions are used in error reporting when rendering annotations on properties
     override fun getBackingField(): FieldDescriptor? = null // TODO
     override fun getDelegateField(): FieldDescriptor? = null // TODO
+
+    override fun getInType(): KotlinType? = setter?.valueParameters?.get(0)?.type
 
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
