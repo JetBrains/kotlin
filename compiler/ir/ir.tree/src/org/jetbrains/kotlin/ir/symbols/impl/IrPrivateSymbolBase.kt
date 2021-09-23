@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.util.render
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class IrSymbolBase<out D : DeclarationDescriptor>(
-    @ObsoleteDescriptorBasedAPI
+    @property:ObsoleteDescriptorBasedAPI
     override val descriptor: D
 ) : IrSymbol {
     override fun toString(): String {

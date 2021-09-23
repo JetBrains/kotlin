@@ -17,8 +17,6 @@ annotation class Protected
 
 @OptIn(Protected::class)
 abstract class AbstractArrayMapOwner<K : Any, V : Any> {
-    // TODO: make [arrayMap] protected and remove annotation after KT-19306 fix
-    @get:Protected
     abstract val arrayMap: ArrayMap<V>
     protected abstract val typeRegistry: TypeRegistry<K, V>
 

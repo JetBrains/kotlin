@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.providers
 import org.jetbrains.kotlin.fir.PrivateForInline
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-inline class SymbolProviderCache<K, V : Any> @PrivateForInline constructor(@PrivateForInline val cache: HashMap<K, Any>) {
+inline class SymbolProviderCache<K, V : Any> @PrivateForInline constructor(@property:PrivateForInline val cache: HashMap<K, Any>) {
     @OptIn(PrivateForInline::class)
     constructor() : this(HashMap())
 
