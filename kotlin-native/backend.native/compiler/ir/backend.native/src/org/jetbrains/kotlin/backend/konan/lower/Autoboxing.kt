@@ -42,6 +42,8 @@ internal class Autoboxing(val context: Context) : FileLoweringPass {
     private val transformer = AutoboxingTransformer(context)
 
     override fun lower(irFile: IrFile) {
+//        if (irFile.fileEntry.name == "/Users/igor.chevdar/work/kotlin/kotlin-native/Interop/Runtime/src/main/kotlin/kotlinx/cinterop/Utils.kt")
+//            println(irFile.dump())
         irFile.transformChildrenVoid(transformer)
         irFile.transform(InlineClassTransformer(context), data = null)
     }

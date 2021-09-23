@@ -16,8 +16,12 @@ import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.FinallyBlocksLowering
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.KonanBCEForLoopBodyTransformer
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 private val validateAll = false
 private val filePhaseActions = if (validateAll) setOf(defaultDumper, ::fileValidationCallback) else setOf(defaultDumper)
@@ -75,13 +79,21 @@ internal val specialBackendChecksPhase = konanUnitPhase(
         description = "Special backend checks"
 )
 
-internal val removeExpectDeclarationsPhase = makeKonanModuleLoweringPhase(
+internal val propertyAccessorInlinePhase = makeKonanModuleLoweringPhase(
+        ::PropertyAccessorInlineLowering,
+        name = "PropertyAccessorInline",
+        description = "Property accessor inline lowering"
+)
+
+/* IrFile phases */
+
+internal val removeExpectDeclarationsPhase = makeKonanFileLoweringPhase(
         ::ExpectDeclarationsRemoving,
         name = "RemoveExpectDeclarations",
         description = "Expect declarations removing"
 )
 
-internal val stripTypeAliasDeclarationsPhase = makeKonanModuleLoweringPhase(
+internal val stripTypeAliasDeclarationsPhase = makeKonanFileLoweringPhase(
         { StripTypeAliasDeclarationsLowering() },
         name = "StripTypeAliasDeclarations",
         description = "Strip typealias declarations"
@@ -93,102 +105,89 @@ internal val annotationImplementationPhase = makeKonanFileLoweringPhase(
         description = "Create synthetic annotations implementations and use them in annotations constructor calls"
 )
 
-internal val lowerBeforeInlinePhase = makeKonanModuleLoweringPhase(
+internal val lowerBeforeInlinePhase = makeKonanFileLoweringPhase(
         ::PreInlineLowering,
         name = "LowerBeforeInline",
         description = "Special operations processing before inlining"
 )
 
-internal val arrayConstructorPhase = makeKonanModuleLoweringPhase(
+internal val arrayConstructorPhase = makeKonanFileLoweringPhase(
         ::ArrayConstructorLowering,
         name = "ArrayConstructor",
         description = "Transform `Array(size) { index -> value }` into a loop"
 )
 
-internal val lateinitPhase = makeKonanModuleOpPhase(
-        { context, irModule ->
-            NullableFieldsForLateinitCreationLowering(context).lower(irModule)
-            NullableFieldsDeclarationLowering(context).lower(irModule)
-            LateinitUsageLowering(context).lower(irModule)
+internal val lateinitPhase = makeKonanFileOpPhase(
+        { context, irFile ->
+            NullableFieldsForLateinitCreationLowering(context).lower(irFile)
+            NullableFieldsDeclarationLowering(context).lower(irFile)
+            LateinitUsageLowering(context).lower(irFile)
         },
         name = "Lateinit",
         description = "Lateinit properties lowering"
 )
 
-internal val propertyAccessorInlinePhase = makeKonanModuleLoweringPhase(
-        ::PropertyAccessorInlineLowering,
-        name = "PropertyAccessorInline",
-        description = "Property accessor inline lowering"
-)
-
-internal val sharedVariablesPhase = makeKonanModuleLoweringPhase(
+internal val sharedVariablesPhase = makeKonanFileLoweringPhase(
         ::SharedVariablesLowering,
         name = "SharedVariables",
         description = "Shared variable lowering",
         prerequisite = setOf(lateinitPhase)
 )
 
-internal val inventNamesForLocalClasses = makeKonanModuleLoweringPhase(
-        ::NativeInventNamesForLocalClasses,
+internal val inventNamesForLocalClasses = makeKonanFileLoweringPhase(
+        { NativeInventNamesForLocalClasses(it) },
         name = "InventNamesForLocalClasses",
         description = "Invent names for local classes and anonymous objects"
 )
 
-internal val extractLocalClassesFromInlineBodies = NamedCompilerPhase(
-        lower = object : SameTypeCompilerPhase<Context, IrModuleFragment> {
-            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
-                LocalClassesInInlineLambdasLowering(context).run {
-                    input.files.forEach { lower(it) }
-                }
-                LocalClassesInInlineFunctionsLowering(context).run {
-                    input.files.forEach { lower(it) }
-                }
-                LocalClassesExtractionFromInlineFunctionsLowering(context).run {
-                    input.files.forEach { lower(it) }
-                }
-                return input
-            }
+internal val extractLocalClassesFromInlineBodies = makeKonanFileOpPhase(
+        { context, irFile ->
+            LocalClassesInInlineLambdasLowering(context).lower(irFile)
+            LocalClassesInInlineFunctionsLowering(context).lower(irFile)
+            LocalClassesExtractionFromInlineFunctionsLowering(context).lower(irFile)
         },
         name = "ExtractLocalClassesFromInlineBodies",
         description = "Extraction of local classes from inline bodies",
         prerequisite = setOf(sharedVariablesPhase), // TODO: add "soft" dependency on inventNamesForLocalClasses
-        nlevels = 0,
-        actions = modulePhaseActions
 )
 
-internal val inlinePhase = NamedCompilerPhase(
-        lower = object : SameTypeCompilerPhase<Context, IrModuleFragment> {
-            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
-                FunctionInlining(context, NativeInlineFunctionResolver(context)).run {
-                    input.files.forEach { lower(it) }
+internal val inlinePhase = makeKonanFileOpPhase(
+        { context, irFile ->
+            irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
                 }
-                return input
-            }
+
+                override fun visitFunction(declaration: IrFunction) {
+                    if (declaration.isInline)
+                        context.specialDeclarationsFactory.getNonLoweredInlineFunction(declaration)
+                    declaration.acceptChildrenVoid(this)
+                }
+            })
+
+            FunctionInlining(context, NativeInlineFunctionResolver(context)).lower(irFile)
         },
         name = "Inline",
         description = "Functions inlining",
-        prerequisite = setOf(lowerBeforeInlinePhase, arrayConstructorPhase, extractLocalClassesFromInlineBodies),
-        nlevels = 0,
-        actions = modulePhaseActions
 )
 
-internal val lowerAfterInlinePhase = makeKonanModuleOpPhase(
-        { context, irModule ->
-            irModule.files.forEach(PostInlineLowering(context)::lower)
-            // TODO: Seems like this should be deleted in PsiToIR.
-            irModule.files.forEach(ContractsDslRemover(context)::lower)
-        },
-        name = "LowerAfterInline",
-        description = "Special operations processing after inlining"
+internal val postInlinePhase = makeKonanFileLoweringPhase(
+        { PostInlineLowering(it) },
+        name = "PostInline",
+        description = "Post-processing after inlining"
 )
 
-/* IrFile phases */
+internal val contractsDslRemovePhase = makeKonanFileLoweringPhase(
+        { ContractsDslRemover(it) },
+        name = "RemoveContractsDsl",
+        description = "Contracts dsl removing"
+)
 
 // TODO make all lambda-related stuff work with IrFunctionExpression and drop this phase (see kotlin: dd3f8ecaacd)
-internal val provisionalFunctionExpressionPhase = makeKonanModuleLoweringPhase(
-    { ProvisionalFunctionExpressionLowering() },
-    name = "FunctionExpression-before-inliner",
-    description = "Transform IrFunctionExpression to a local function reference"
+internal val provisionalFunctionExpressionPhase = makeKonanFileLoweringPhase(
+        { ProvisionalFunctionExpressionLowering() },
+        name = "FunctionExpression",
+        description = "Transform IrFunctionExpression to a local function reference"
 )
 
 internal val flattenStringConcatenationPhase = makeKonanFileLoweringPhase(
