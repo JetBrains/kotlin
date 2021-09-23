@@ -7,6 +7,8 @@ package kotlin.time
 
 import kotlin.native.internal.GCUnsafeCall
 
+internal actual inline val durationAssertionsEnabled: Boolean get() = true
+
 @GCUnsafeCall("Kotlin_DurationValue_formatToExactDecimals")
 internal actual external fun formatToExactDecimals(value: Double, decimals: Int): String
 

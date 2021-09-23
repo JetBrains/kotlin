@@ -8,6 +8,8 @@ package kotlin.time
 import kotlin.js.json
 import kotlin.math.*
 
+internal actual inline val durationAssertionsEnabled: Boolean get() = true
+
 internal actual fun formatToExactDecimals(value: Double, decimals: Int): String {
     val rounded = if (decimals == 0) {
         value

@@ -38,12 +38,13 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     private val storageUnit get() = if (isInNanos()) DurationUnit.NANOSECONDS else DurationUnit.MILLISECONDS
 
     init {
-        // TODO: disable assertions in final version
-        if (isInNanos()) {
-            if (value !in -MAX_NANOS..MAX_NANOS) throw AssertionError("$value ns is out of nanoseconds range")
-        } else {
-            if (value !in -MAX_MILLIS..MAX_MILLIS) throw AssertionError("$value ms is out of milliseconds range")
-            if (value in -MAX_NANOS_IN_MILLIS..MAX_NANOS_IN_MILLIS) throw AssertionError("$value ms is denormalized")
+        if (durationAssertionsEnabled) {
+            if (isInNanos()) {
+                if (value !in -MAX_NANOS..MAX_NANOS) throw AssertionError("$value ns is out of nanoseconds range")
+            } else {
+                if (value !in -MAX_MILLIS..MAX_MILLIS) throw AssertionError("$value ms is out of milliseconds range")
+                if (value in -MAX_NANOS_IN_MILLIS..MAX_NANOS_IN_MILLIS) throw AssertionError("$value ms is denormalized")
+            }
         }
     }
 
@@ -1421,6 +1422,7 @@ private fun durationOfMillisNormalized(millis: Long) =
         durationOfMillis(millis.coerceIn(-MAX_MILLIS, MAX_MILLIS))
     }
 
+internal expect val durationAssertionsEnabled: Boolean
 
 internal expect fun formatToExactDecimals(value: Double, decimals: Int): String
 internal expect fun formatUpToDecimals(value: Double, decimals: Int): String
