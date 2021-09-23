@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
     object VariableAccess : CallKind(
+        CheckDeprecatedSinceKotlin,
         CheckVisibility,
         DiscriminateSynthetics,
         CheckExplicitReceiverConsistency,
@@ -17,7 +18,6 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckExtensionReceiver,
         CheckLowPriorityInOverloadResolution,
         PostponedVariablesInitializerResolutionStage,
-        CheckDeprecatedSinceKotlin,
     )
 
     object SyntheticSelect : CallKind(
@@ -30,6 +30,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
     )
 
     object Function : CallKind(
+        CheckDeprecatedSinceKotlin,
         CheckVisibility,
         DiscriminateSynthetics,
         MapArguments,
@@ -44,10 +45,10 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         EagerResolveOfCallableReferences,
         CheckLowPriorityInOverloadResolution,
         PostponedVariablesInitializerResolutionStage,
-        CheckDeprecatedSinceKotlin
     )
 
     object DelegatingConstructorCall : CallKind(
+        CheckDeprecatedSinceKotlin,
         CheckVisibility,
         MapArguments,
         CheckExplicitReceiverConsistency,
@@ -58,10 +59,10 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckExtensionReceiver,
         CheckArguments,
         EagerResolveOfCallableReferences,
-        CheckDeprecatedSinceKotlin,
     )
 
     object CallableReference : CallKind(
+        CheckDeprecatedSinceKotlin,
         CheckVisibility,
         DiscriminateSynthetics,
         NoTypeArguments,
@@ -71,7 +72,6 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckExtensionReceiver,
         CheckCallableReferenceExpectedType,
         CheckLowPriorityInOverloadResolution,
-        CheckDeprecatedSinceKotlin,
     )
 
     object SyntheticIdForCallableReferencesResolution : CallKind(

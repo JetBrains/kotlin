@@ -26,6 +26,9 @@ open class A {
     open fun memberFun(){}
 
     @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
+    private fun privateFun(){}
+
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
     val memberProperty = 1
 
     @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
@@ -36,14 +39,22 @@ open class A {
 
     fun foo() {
         <!INVISIBLE_REFERENCE!>topLevelFun<!>()
+        <!INVISIBLE_REFERENCE!>topLevelFun<!>(1)
         <!INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>topLevelProperty<!>++
         "".<!INVISIBLE_REFERENCE!>topLevelExtensionFun<!>()
+        1.<!INVISIBLE_REFERENCE!>topLevelExtensionFun<!>()
         "".<!INVISIBLE_REFERENCE!>topLevelExtensionProperty<!>
+        1.<!INVISIBLE_REFERENCE!>topLevelExtensionProperty<!>
 
         <!INVISIBLE_REFERENCE!>memberFun<!>()
+        <!INVISIBLE_REFERENCE!>memberFun<!>(1)
+        <!INVISIBLE_REFERENCE!>privateFun<!>()
+        <!INVISIBLE_REFERENCE!>privateFun<!>(1)
         <!INVISIBLE_REFERENCE!>memberProperty<!>
         "".<!INVISIBLE_REFERENCE!>memberExtensionFun<!>()
+        1.<!INVISIBLE_REFERENCE!>memberExtensionFun<!>()
         "".<!INVISIBLE_REFERENCE!>memberExtensionProperty<!>
+        1.<!INVISIBLE_REFERENCE!>memberExtensionProperty<!>
 
         A(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
     }
@@ -66,6 +77,8 @@ class B : A(<!ARGUMENT_TYPE_MISMATCH!>""<!>) {
     // still can override it
     override fun <!OVERRIDE_DEPRECATION!>memberFun<!>() {
         super.<!INVISIBLE_REFERENCE!>memberFun<!>() // but cannot call super :)
+        <!INVISIBLE_REFERENCE!>privateFun<!>()
+        <!INVISIBLE_REFERENCE!>privateFun<!>(1)
     }
 }
 

@@ -15,6 +15,7 @@ package test {
         public final fun foo(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "hidden") public open fun memberFun(): kotlin.Unit
+        @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "hidden") private final fun privateFun(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "hidden") public final fun kotlin.String.memberExtensionFun(): kotlin.Unit
     }
@@ -27,6 +28,7 @@ package test {
         public final override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ fun memberFun(): kotlin.Unit
+        @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "hidden") invisible_fake final override /*1*/ /*fake_override*/ fun privateFun(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "hidden") public final override /*1*/ /*fake_override*/ fun kotlin.String.memberExtensionFun(): kotlin.Unit
     }
@@ -39,6 +41,7 @@ package test {
         public final override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "hidden") public open override /*1*/ /*fake_override*/ fun memberFun(): kotlin.Unit
+        @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "hidden") invisible_fake final override /*1*/ /*fake_override*/ fun privateFun(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "hidden") public final override /*1*/ /*fake_override*/ fun kotlin.String.memberExtensionFun(): kotlin.Unit
     }
