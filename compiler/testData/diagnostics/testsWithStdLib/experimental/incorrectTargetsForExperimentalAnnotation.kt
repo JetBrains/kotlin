@@ -85,6 +85,8 @@ class Derived : Base {
     override fun <!OPT_IN_MARKER_ON_WRONG_TARGET!>@receiver:E6<!> String.withReceiver() {}
 }
 
+class Wrapper(@property:E6 val foo: Int)
+
 @E6
 interface BaseMarked {
     val bar: Int
