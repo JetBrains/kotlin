@@ -151,6 +151,18 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     }
 
     @Test
+    @TestMetadata("Deprecated.kt")
+    public void testDeprecated() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/Deprecated.kt");
+    }
+
+    @Test
+    @TestMetadata("DeprecatedHidden.kt")
+    public void testDeprecatedHidden() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/DeprecatedHidden.kt");
+    }
+
+    @Test
     @TestMetadata("EnumValues.kt")
     public void testEnumValues() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/EnumValues.kt");
@@ -268,6 +280,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     @TestMetadata("InVaragReferenceInNamedParameter.kt")
     public void testInVaragReferenceInNamedParameter() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/InVaragReferenceInNamedParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("InvisibleMember.kt")
+    public void testInvisibleMember() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/InvisibleMember.kt");
     }
 
     @Test

@@ -47,6 +47,10 @@ internal fun FirNamedReference.getCandidateSymbols(): Collection<FirBasedSymbol<
 
 internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>> =
     when (this) {
+        is ConeHiddenCandidateError -> {
+            // Candidate with @Deprecated(DeprecationLevel.HIDDEN)
+            emptyList()
+        }
         is ConeDiagnosticWithCandidates -> candidateSymbols
         else -> emptyList()
     }
