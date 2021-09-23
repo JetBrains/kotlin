@@ -346,6 +346,7 @@ private fun kotlinTestCapabilityForJvmSourceSet(project: Project, kotlinSourceSe
         }
     }
 
+    // TODO: Review Sergey Igushkin: https://youtrack.jetbrains.com/issue/KT-48885
     return "$KOTLIN_MODULE_GROUP:$KOTLIN_TEST_ROOT_MODULE_NAME-framework-${frameworks.singleOrNull() ?: return null}"
 }
 
