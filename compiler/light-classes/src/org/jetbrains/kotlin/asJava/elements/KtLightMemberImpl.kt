@@ -107,7 +107,7 @@ private class KtLightMemberModifierList(
     }
 
     override fun hasExplicitModifier(name: String) =
-        // kotlin methods can't be truly default atm, that way we can avoid being reported on by diagnostics, namely android lint
+        // Kotlin methods can't be truly default atm, that way we can avoid being reported on by diagnostics, namely UAST
         if (name == PsiModifier.DEFAULT) false else super.hasExplicitModifier(name)
 
     private fun isMethodOverride() = owner is KtLightMethod && owner.kotlinOrigin?.hasModifier(KtTokens.OVERRIDE_KEYWORD) ?: false

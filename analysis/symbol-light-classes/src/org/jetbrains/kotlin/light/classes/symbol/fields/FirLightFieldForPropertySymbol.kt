@@ -92,7 +92,7 @@ internal class FirLightFieldForPropertySymbol(
             annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD,
         )
 
-        FirLightClassModifierList(this, modifiers, annotations)
+        FirLightMemberModifierList(this, modifiers, annotations)
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

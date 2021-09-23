@@ -27,7 +27,7 @@ internal class FirLightFieldForObjectSymbol(
     private val _modifierList: PsiModifierList by lazyPub {
         val modifiers = setOf(objectSymbol.toPsiVisibilityForMember(isTopLevel = false), PsiModifier.STATIC, PsiModifier.FINAL)
         val notNullAnnotation = FirLightSimpleAnnotation("org.jetbrains.annotations.NotNull", this)
-        FirLightClassModifierList(this, modifiers, listOf(notNullAnnotation))
+        FirLightMemberModifierList(this, modifiers, listOf(notNullAnnotation))
     }
 
     private val _isDeprecated: Boolean by lazyPub {

@@ -47,7 +47,7 @@ internal class FirLightConstructorForSymbol(
     }
 
     private val _modifierList: PsiModifierList by lazyPub {
-        FirLightClassModifierList(this, _modifiers, _annotations)
+        FirLightMemberModifierList(this, _modifiers, _annotations)
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

@@ -22,7 +22,7 @@ internal class FirLightFieldForEnumEntry(
 ) : FirLightField(containingClass, lightMemberOrigin), PsiEnumConstant {
 
     private val _modifierList by lazyPub {
-        FirLightClassModifierList(
+        FirLightMemberModifierList(
             containingDeclaration = this@FirLightFieldForEnumEntry,
             modifiers = setOf(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC),
             annotations = emptyList()

@@ -131,7 +131,7 @@ internal class FirLightAccessorMethodForSymbol(
     private val _modifierList: PsiModifierList by lazyPub {
         val modifiers = computeModifiers()
         val annotations = computeAnnotations(modifiers.contains(PsiModifier.PRIVATE))
-        FirLightClassModifierList(this, modifiers, annotations)
+        FirLightMemberModifierList(this, modifiers, annotations)
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList
