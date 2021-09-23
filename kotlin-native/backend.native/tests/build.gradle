@@ -3228,8 +3228,7 @@ task codegen_escapeAnalysis_recursion(type: KonanLocalTest) {
 
 standaloneTest("codegen_escapeAnalysis_stackAllocated") {
     disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
-        project.globalTestArgs.contains('-g') || // -g and -opt are incompatible
-        isExperimentalMM // TODO: Experimental MM doesn't support stack-allocated objects yet.
+        project.globalTestArgs.contains('-g') // -g and -opt are incompatible
     flags = ['-opt', '-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
     source = "codegen/escapeAnalysis/stackAllocated.kt"
 }
