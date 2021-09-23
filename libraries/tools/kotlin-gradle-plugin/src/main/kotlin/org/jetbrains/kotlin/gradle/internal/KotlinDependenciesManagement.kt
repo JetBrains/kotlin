@@ -196,7 +196,8 @@ private fun chooseAndAddStdlibDependency(
 
         // If the exact same module is added in the source sets hierarchy, possibly even with a different scope, we don't add it
         val moduleAddedInHierarchy = hierarchySourceSetsDependencyConfigurations.any {
-            it.allNonProjectDependencies().any { dependency -> dependency.group == KOTLIN_MODULE_GROUP && dependency.name == stdlibModuleName }
+            it.allNonProjectDependencies()
+                .any { dependency -> dependency.group == KOTLIN_MODULE_GROUP && dependency.name == stdlibModuleName }
         }
 
         if (stdlibModuleName != null && !moduleAddedInHierarchy)
@@ -280,7 +281,8 @@ internal fun configureKotlinTestDependency(project: Project) {
 
             project.tryWithDependenciesIfUnresolved(configuration) { dependencies ->
                 val parentOrOwnVersions: List<String?> =
-                    kotlinSourceSet.withAllDependsOnSourceSets().filter(versionOrNullBySourceSet::contains).map(versionOrNullBySourceSet::get)
+                    kotlinSourceSet.withAllDependsOnSourceSets().filter(versionOrNullBySourceSet::contains)
+                        .map(versionOrNullBySourceSet::get)
 
                 finalizingDependencies = true
 
@@ -307,6 +309,7 @@ internal fun configureKotlinTestDependency(project: Project) {
 private fun kotlinTestCapabilityForJvmSourceSet(project: Project, kotlinSourceSet: KotlinSourceSet): String? {
     val compilations = CompilationSourceSetUtil.compilationsBySourceSets(project).getValue(kotlinSourceSet)
         .filter { it.target !is KotlinMetadataTarget }
+        .ifEmpty { return null }
 
     val platformTypes = compilations.map { it.platformType }
     // TODO: Extract jvmPlatformTypes to public constant?
