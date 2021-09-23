@@ -68,33 +68,37 @@ object ClasspathChangesComputer {
     /**
      * Maps the unchanged snapshot files of the current build to the unchanged snapshot files of the previous build (selected from all the
      * snapshot files of the previous build).
+     *
+     * Note that the unchanged files of the current build were detected by Gradle, so a mapping must exist for each of them, we only have to
+     * find it.
+     *
+     * IMPORTANT: The alignment algorithm must use the same input normalization that is used for snapshot files in the Gradle task.
+     * Currently, snapshot files are annotated with `@Classpath` and are regular files (not jars), so (only) their contents and order
+     * matter.
      */
     private fun alignUnchangedSnapshotFiles(unchangedCurrentSnapshotFiles: List<File>, previousSnapshotFiles: List<File>): Map<File, File> {
-        var index = 0
+        val sizeToPreviousFiles: Map<Long, List<IndexedValue<File>>> = previousSnapshotFiles.withIndex().groupBy { it.value.length() }
+
+        var startIndexToSearch = 0
         return unchangedCurrentSnapshotFiles.associateWith { unchangedCurrentFile ->
-            var candidates = previousSnapshotFiles.subList(index, previousSnapshotFiles.size).filter { previousFile ->
-                unchangedCurrentFile.lastModified() == previousFile.lastModified() && unchangedCurrentFile.length() == previousFile.length()
+            val candidates = (sizeToPreviousFiles[unchangedCurrentFile.length()] ?: emptyList()).filter { it.index >= startIndexToSearch }
+            val unchangedPreviousFileWithIndex: IndexedValue<File> = if (candidates.size == 1) {
+                // A matching file must exist, so if there is only one candidate, it is the one.
+                candidates.single()
+            } else {
+                // If there are multiple matching files, select the first one. (Even if it doesn't match Gradle's alignment, it is still a
+                // correct alignment.)
+                val unchangedContents = unchangedCurrentFile.readBytes()
+                candidates.firstOrNull { candidate ->
+                    unchangedContents.contentEquals(candidate.value.readBytes())
+                } ?: error("Can't find previous snapshot file of unchanged current snapshot file '${unchangedCurrentFile.path}'")
             }
-            if (candidates.size > 1) {
-                candidates = candidates.filter { candidate ->
-                    unchangedCurrentFile.readBytes().contentEquals(candidate.readBytes())
-                }
-            }
-            check(candidates.isNotEmpty()) {
-                "Can't find previous snapshot file of unchanged current snapshot file '${unchangedCurrentFile.path}'"
-            }
-            // If there are multiple candidates, select the first one. (It doesn't have to match Gradle's alignment as long as it's still a
-            // correct alignment.)
-            val unchangedPreviousFile = candidates.first()
-            while (previousSnapshotFiles[index] != unchangedPreviousFile) {
-                index++
-            }
-            index++
-            unchangedPreviousFile
+            startIndexToSearch = unchangedPreviousFileWithIndex.index + 1
+            unchangedPreviousFileWithIndex.value
         }
     }
 
-    /** Returns `true` if this snapshot file contains a duplicate class with another snapshot file in the given set. */
+    /** Returns `true` if this snapshot file contains a duplicate class with another snapshot file in the given list. */
     @Suppress("unused", "UNUSED_PARAMETER")
     private fun File.containsDuplicatesWith(otherSnapshotFiles: List<File>): Boolean {
         // TODO: Implement and optimize this method
@@ -129,8 +133,8 @@ object ClasspathChangesComputer {
         //   - Add previous class snapshots to incrementalJvmCache.
         //   - Internally, incrementalJvmCache maintains a set of dirty classes to detect removed classes. Add previous classes to this set
         //     to detect removed classes later (see step 2).
-        //   - The final ChangesCollector result will contain all symbols in the previous classes (we actually don't need them, but it's
-        //     part of the API's effects).
+        //   - The ChangesCollector result will contain symbols in the previous classes (we actually don't need them, but it's part of the
+        //     API's effects).
         val unusedChangesCollector = ChangesCollector()
         for (previousSnapshot in previousClassSnapshots) {
             when (previousSnapshot) {
@@ -161,13 +165,11 @@ object ClasspathChangesComputer {
 
         // Step 2:
         //   - Add current class snapshots to incrementalJvmCache. This will overwrite any previous class snapshots that have the same
-        //     `JvmClassName`. The previous class snapshots that are not overwritten will be detected as removed class snapshots and will be
-        //     removed from incrementalJvmCache in step 3.
-        //   - Internally, incrementalJvmCache will mark these classes as non-dirty. That means unchanged/modified classes that were marked
-        //     as dirty in step 1 will now be non-dirty (added classes will also be marked as non-dirty even though they were not marked as
-        //     dirty before). After this, the remaining dirty classes will be removed classes.
-        //   - The intermediate ChangesCollector result will contain all symbols in added classes and changed (added/modified/removed)
-        //     symbols in modified classes. We will collect all symbols in removed classes in step 3.
+        //     `JvmClassName`. The remaining previous class snapshots will be removed in step 3.
+        //   - Internally, incrementalJvmCache will remove current classes from the set of dirty classes. After this, the remaining dirty
+        //     classes will be classes that are present on the previous classpath but not on the current classpath (i.e., removed classes).
+        //   - The intermediate ChangesCollector result will contain symbols in added classes and changed (added/modified/removed) symbols
+        //     in modified classes. We will collect symbols in removed classes in step 3.
         val changesCollector = ChangesCollector()
         for (currentSnapshot in currentClassSnapshots) {
             when (currentSnapshot) {
@@ -195,10 +197,10 @@ object ClasspathChangesComputer {
         }
 
         // Step 3:
-        //   - Detect removed classes: they are the remaining dirty classes.
-        //   - Remove previous class snapshots of removed classes from incrementalJvmCache.
-        //   - The final ChangesCollector result will contain all symbols in added classes, changed (added/modified/removed) symbols in
-        //     modified classes, and all symbols in removed classes.
+        //   - Detect removed classes: They are the remaining dirty classes.
+        //   - Remove class snapshots of removed classes from incrementalJvmCache.
+        //   - The final ChangesCollector result will contain symbols in added classes, changed (added/modified/removed) symbols in modified
+        //     classes, and symbols in removed classes.
         incrementalJvmCache.clearCacheForRemovedClasses(changesCollector)
 
         // Normalize the changes and clean up

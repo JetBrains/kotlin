@@ -1,6 +1,6 @@
 package com.example;
 
-// Will be removed
+// To-be-removed class
 public class C {
     public int c = 0;
 }
