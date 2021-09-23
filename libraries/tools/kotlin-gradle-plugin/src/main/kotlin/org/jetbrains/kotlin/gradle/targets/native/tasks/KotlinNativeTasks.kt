@@ -21,6 +21,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.compilerRunner.KotlinNativeCInteropRunner.Companion.run
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
+import org.jetbrains.kotlin.gradle.targets.native.tasks.createExecutionContext
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 import org.jetbrains.kotlin.konan.CompilerVersion
@@ -1136,6 +1138,10 @@ open class CInteropProcess @Inject constructor(@get:Internal val settings: Defau
     val outputFile: File
         get() = outputFileProvider.get()
 
+    init {
+        outputs.upToDateWhen { outputFile.isFile }
+    }
+
     // Inputs and outputs.
 
     @OutputFile
@@ -1214,6 +1220,6 @@ open class CInteropProcess @Inject constructor(@get:Internal val settings: Defau
         }
 
         outputFile.parentFile.mkdirs()
-        KotlinNativeCInteropRunner(project).run(args)
+        KotlinNativeCInteropRunner.createExecutionContext(this).run(args)
     }
 }

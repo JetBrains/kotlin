@@ -71,8 +71,8 @@ internal abstract class KotlinNativeToolRunner(
         }
 
         listOfNotNull(
-                if (konanHomeRequired) "konan.home" to project.konanHome else null,
-                MessageRenderer.PROPERTY_KEY to MessageRenderer.GRADLE_STYLE.name
+            if (konanHomeRequired) "konan.home" to project.konanHome else null,
+            MessageRenderer.PROPERTY_KEY to MessageRenderer.GRADLE_STYLE.name
         ).toMap()
     }
 
@@ -140,7 +140,19 @@ internal abstract class AbstractKotlinNativeCInteropRunner(toolName: String, pro
 }
 
 /** Kotlin/Native C-interop tool runner */
-internal class KotlinNativeCInteropRunner(project: Project) : AbstractKotlinNativeCInteropRunner("cinterop", project)
+internal class KotlinNativeCInteropRunner private constructor(project: Project) : AbstractKotlinNativeCInteropRunner("cinterop", project) {
+    interface ExecutionContext {
+        val project: Project
+        fun runWithContext(action: () -> Unit)
+    }
+
+    companion object {
+        fun ExecutionContext.run(args: List<String>) {
+            val runner = KotlinNativeCInteropRunner(project)
+            runWithContext { runner.run(args) }
+        }
+    }
+}
 
 /** Kotlin/Native compiler runner */
 internal class KotlinNativeCompilerRunner(project: Project) : KotlinNativeToolRunner("konanc", project) {
@@ -172,8 +184,7 @@ internal class KotlinNativeKlibRunner(project: Project) : KotlinNativeToolRunner
 
 /** Platform libraries generation tool. Runs the cinterop tool under the hood. */
 internal class KotlinNativeLibraryGenerationRunner(project: Project) :
-    AbstractKotlinNativeCInteropRunner("generatePlatformLibraries", project)
-{
+    AbstractKotlinNativeCInteropRunner("generatePlatformLibraries", project) {
     // The library generator works for a long time so enabling C2 can improve performance.
     override val disableC2: Boolean = false
 }
