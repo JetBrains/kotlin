@@ -4,5 +4,6 @@
  */
 package kotlin.time
 
+internal actual inline val durationAssertionsEnabled: Boolean get() = true
 internal actual fun formatToExactDecimals(value: Double, decimals: Int): String = TODO("Wasm stdlib: Duration")
 internal actual fun formatUpToDecimals(value: Double, decimals: Int): String = TODO("Wasm stdlib: Duration")

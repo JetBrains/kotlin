@@ -9,6 +9,8 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 import kotlin.concurrent.getOrSet
 
+internal actual val durationAssertionsEnabled: Boolean = Duration::class.java.desiredAssertionStatus()
+
 private val precisionFormats = Array(4) { ThreadLocal<DecimalFormat>() }
 
 private fun createFormatForDecimals(decimals: Int) = DecimalFormat("0").apply {
