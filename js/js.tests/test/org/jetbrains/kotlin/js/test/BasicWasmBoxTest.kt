@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.ir.backend.js.loadKlib
 import org.jetbrains.kotlin.ir.backend.js.prepareAnalyzedSourceModule
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
@@ -34,9 +35,6 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.Closeable
 import java.io.File
 
-private val wasmRuntimeKlib =
-    loadKlib(System.getProperty("kotlin.wasm.stdlib.path"))
-
 abstract class BasicWasmBoxTest(
     private val pathToTestDir: String,
     testGroupOutputDirPrefix: String,
@@ -45,6 +43,8 @@ abstract class BasicWasmBoxTest(
     private val testGroupOutputDirForCompilation = File(pathToRootOutputDir + "out/" + testGroupOutputDirPrefix)
 
     private val spiderMonkey by lazy { SpiderMonkeyEngine() }
+
+    private val COMMON_FILES_NAME = "_common"
 
     @Suppress("UNUSED_PARAMETER")
     fun doTestWithCoroutinesPackageReplacement(filePath: String, coroutinesPackage: String) {
@@ -84,7 +84,12 @@ abstract class BasicWasmBoxTest(
                 }
             }
 
-            val psiFiles = createPsiFiles(kotlinFiles.map { File(it).canonicalPath }.sorted())
+            val localCommonFile = file.parent + "/" + COMMON_FILES_NAME + "." + KotlinFileType.EXTENSION
+            val localCommonFiles = if (File(localCommonFile).exists()) listOf(localCommonFile) else emptyList()
+
+            val allSourceFiles = kotlinFiles + localCommonFiles
+
+            val psiFiles = createPsiFiles(allSourceFiles.map { File(it).canonicalPath }.sorted())
             val config = createConfig(languageVersionSettings)
             translateFiles(
                 file,
@@ -160,7 +165,7 @@ abstract class BasicWasmBoxTest(
             filesToCompile,
             config.configuration,
             // TODO: Bypass the resolver fow wasm.
-            listOf(System.getProperty("kotlin.wasm.stdlib.path")!!),
+            listOf(System.getProperty("kotlin.wasm.stdlib.path")!!, System.getProperty("kotlin.wasm.kotlin.test.path")!!),
             emptyList(),
             AnalyzerWithCompilerReport(config.configuration)
         )
