@@ -24,9 +24,10 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
             *additionalDefaultProperties
         )
 
-        val parallelBuild = arrayOf(
+        val parallelRerunBuild = arrayOf(
             *defaultArguments,
             "--parallel",
+            "--rerun-tasks"
         )
 
         val nonParallelBuild = arrayOf(
@@ -34,10 +35,15 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
             "--no-parallel",
         )
 
+        val nonParallelRerunBuild = arrayOf(
+            *nonParallelBuild,
+            "--rerun-tasks",
+        )
+
         defaultArguments(*defaultArguments)
 
         scenario("${prefix}clean build") {
-            arguments(*nonParallelBuild)
+            arguments(*nonParallelRerunBuild)
             expectSlowBuild("clean build")
             step {
                 doNotMeasure()
@@ -61,7 +67,7 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
         }
 
         scenario("${prefix}clean build parallel") {
-            arguments(*parallelBuild)
+            arguments(*parallelRerunBuild)
             expectSlowBuild("clean build")
             step {
                 doNotMeasure()
