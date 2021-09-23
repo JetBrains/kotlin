@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.analysis.api.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.elements.KtLightField
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
@@ -109,6 +109,44 @@ internal class FirLightClassForSymbol(
         result
     }
 
+    private fun addMethodsFromCompanionIfNeeded(result: MutableList<KtLightMethod>) {
+        classOrObjectSymbol.companionObject?.run {
+            analyzeWithSymbolAsContext(this) {
+                val methods = getDeclaredMemberScope().getCallableSymbols()
+                    .filterIsInstance<KtFunctionSymbol>()
+                    .filter { it.hasJvmStaticAnnotation() }
+                createMethods(methods, result)
+            }
+        }
+    }
+
+    private val _ownFields: List<KtLightField> by lazyPub {
+
+        val result = mutableListOf<KtLightField>()
+
+        addCompanionObjectFieldIfNeeded(result)
+        addInstanceFieldIfNeeded(result)
+
+        addFieldsFromCompanionIfNeeded(result)
+        addPropertyBackingFields(result)
+
+        result
+    }
+
+    private fun addInstanceFieldIfNeeded(result: MutableList<KtLightField>) {
+        val isNamedObject = classOrObjectSymbol.classKind == KtClassKind.OBJECT
+        if (isNamedObject && classOrObjectSymbol.symbolKind != KtSymbolKind.LOCAL) {
+            result.add(
+                FirLightFieldForObjectSymbol(
+                    objectSymbol = classOrObjectSymbol,
+                    containingClass = this@FirLightClassForSymbol,
+                    name = JvmAbi.INSTANCE_FIELD,
+                    lightMemberOrigin = null
+                )
+            )
+        }
+    }
+
     private fun addFieldsFromCompanionIfNeeded(result: MutableList<KtLightField>) {
         classOrObjectSymbol.companionObject?.run {
             analyzeWithSymbolAsContext(this) {
@@ -127,31 +165,6 @@ internal class FirLightClassForSymbol(
                         )
                     }
             }
-        }
-    }
-
-    private fun addMethodsFromCompanionIfNeeded(result: MutableList<KtLightMethod>) {
-        classOrObjectSymbol.companionObject?.run {
-            analyzeWithSymbolAsContext(this) {
-                val methods = getDeclaredMemberScope().getCallableSymbols()
-                    .filterIsInstance<KtFunctionSymbol>()
-                    .filter { it.hasJvmStaticAnnotation() }
-                createMethods(methods, result)
-            }
-        }
-    }
-
-    private fun addInstanceFieldIfNeeded(result: MutableList<KtLightField>) {
-        val isNamedObject = classOrObjectSymbol.classKind == KtClassKind.OBJECT
-        if (isNamedObject && classOrObjectSymbol.symbolKind != KtSymbolKind.LOCAL) {
-            result.add(
-                FirLightFieldForObjectSymbol(
-                    objectSymbol = classOrObjectSymbol,
-                    containingClass = this@FirLightClassForSymbol,
-                    name = JvmAbi.INSTANCE_FIELD,
-                    lightMemberOrigin = null
-                )
-            )
         }
     }
 
@@ -192,19 +205,6 @@ internal class FirLightClassForSymbol(
                     .mapTo(result) { FirLightFieldForEnumEntry(it, this@FirLightClassForSymbol, null) }
             }
         }
-    }
-
-    private val _ownFields: List<KtLightField> by lazyPub {
-
-        val result = mutableListOf<KtLightField>()
-
-        addCompanionObjectFieldIfNeeded(result)
-        addInstanceFieldIfNeeded(result)
-
-        addFieldsFromCompanionIfNeeded(result)
-        addPropertyBackingFields(result)
-
-        result
     }
 
     override fun hashCode(): Int = classOrObjectSymbol.hashCode()
