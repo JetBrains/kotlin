@@ -183,7 +183,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     }
                 }
                 target = FirFunctionTarget(labelName, false).apply {
-                    if (context.firLabels.any { it.name == labelName } || context.firLoopTargets.any { it.labelName == labelName }) {
+                    if (context.firLabels.any { it.name == labelName }) {
                         bindToErrorFunction("Label $labelName does not target a function", DiagnosticKind.NotAFunctionLabel)
                     } else {
                         bindToErrorFunction("Cannot bind label $labelName to a function", DiagnosticKind.UnresolvedLabel)
@@ -217,9 +217,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
     }
 
-    fun FirLoopBuilder.prepareTarget(): FirLoopTarget = prepareTarget(context.firLabels.pop())
-
-    fun stashLabel(): FirLabel? = context.firLabels.pop()
+    fun FirLoopBuilder.prepareTarget(firLabelUser: Any): FirLoopTarget = prepareTarget(context.getLastLabel(firLabelUser))
 
     fun FirLoopBuilder.prepareTarget(label: FirLabel?): FirLoopTarget {
         this.label = label

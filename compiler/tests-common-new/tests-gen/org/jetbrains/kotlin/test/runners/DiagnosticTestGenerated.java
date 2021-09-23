@@ -6278,6 +6278,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("nestedLoopsWithMultipleLabels.kt")
+            public void testNestedLoopsWithMultipleLabels() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/nestedLoopsWithMultipleLabels.kt");
+            }
+
+            @Test
             @TestMetadata("notAFunctionLabel_after.kt")
             public void testNotAFunctionLabel_after() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlStructures/notAFunctionLabel_after.kt");

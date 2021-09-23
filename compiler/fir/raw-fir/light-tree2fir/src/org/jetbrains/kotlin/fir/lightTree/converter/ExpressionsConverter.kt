@@ -67,6 +67,8 @@ class ExpressionsConverter(
         return when (expression.tokenType) {
             LAMBDA_EXPRESSION -> {
                 val lambdaTree = LightTree2Fir.buildLightTreeLambdaExpression(expression.asText)
+                // Pass on label user to the lambda root
+                context.forwardLabelUsagePermission(expression, lambdaTree.root)
                 declarationsConverter.withOffset(offset + expression.startOffset) {
                     ExpressionsConverter(baseSession, lambdaTree, declarationsConverter, context)
                         .convertLambdaExpression(lambdaTree.root)
@@ -100,7 +102,11 @@ class ExpressionsConverter(
             BREAK, CONTINUE -> convertLoopJump(expression)
             RETURN -> convertReturn(expression)
             THROW -> convertThrow(expression)
-            PARENTHESIZED -> getAsFirExpression(expression.getExpressionInParentheses(), "Empty parentheses")
+            PARENTHESIZED -> {
+                val content = expression.getExpressionInParentheses()
+                context.forwardLabelUsagePermission(expression, content)
+                getAsFirExpression(content, "Empty parentheses")
+            }
             PROPERTY_DELEGATE, INDICES, CONDITION, LOOP_RANGE ->
                 getAsFirExpression(expression.getExpressionInParentheses(), errorReason)
             THIS_EXPRESSION -> convertThisExpression(expression)
@@ -136,7 +142,7 @@ class ExpressionsConverter(
             receiverTypeRef = implicitType
             symbol = FirAnonymousFunctionSymbol()
             isLambda = true
-            label = context.firLabels.pop() ?: context.calleeNamesForLambda.lastOrNull()?.let {
+            label = context.getLastLabel(lambdaExpression) ?: context.calleeNamesForLambda.lastOrNull()?.let {
                 buildLabel {
                     source = expressionSource.fakeElement(FirFakeSourceElementKind.GeneratedLambdaLabel)
                     name = it.asString()
@@ -326,15 +332,15 @@ class ExpressionsConverter(
      */
     private fun convertLabeledExpression(labeledExpression: LighterASTNode): FirElement {
         var firExpression: FirElement? = null
-        val previousLabelsSize = context.firLabels.size
         var errorLabelSource: FirSourceElement? = null
 
         labeledExpression.forEachChildren {
+            context.setNewLabelUserNode(it)
             when (it.tokenType) {
                 LABEL_QUALIFIER -> {
                     val rawName = it.toString()
                     val pair = buildLabelAndErrorSource(rawName.substring(0, rawName.length - 1), it.toFirSourceElement())
-                    context.firLabels += pair.first
+                    context.addNewLabel(pair.first)
                     errorLabelSource = pair.second
                 }
                 BLOCK -> firExpression = declarationsConverter.convertBlock(it)
@@ -343,9 +349,7 @@ class ExpressionsConverter(
             }
         }
 
-        if (context.firLabels.size != previousLabelsSize) {
-            context.firLabels.removeLast()
-        }
+        context.dropLastLabel()
 
         return buildExpressionWithErrorLabel(firExpression, errorLabelSource, labeledExpression.toFirSourceElement())
     }
@@ -426,7 +430,10 @@ class ExpressionsConverter(
             when (it.tokenType) {
                 ANNOTATION -> firAnnotationList += declarationsConverter.convertAnnotation(it)
                 ANNOTATION_ENTRY -> firAnnotationList += declarationsConverter.convertAnnotationEntry(it)
-                else -> if (it.isExpression()) firExpression = getAsFirExpression(it)
+                else -> if (it.isExpression()) {
+                    context.forwardLabelUsagePermission(annotatedExpression, it)
+                    firExpression = getAsFirExpression(it)
+                }
             }
         }
 
@@ -998,7 +1005,7 @@ class ExpressionsConverter(
         return FirDoWhileLoopBuilder().apply {
             source = doWhileLoop.toFirSourceElement()
             // For break/continue in the do-while loop condition, prepare the loop target first so that it can refer to the same loop.
-            target = prepareTarget()
+            target = prepareTarget(doWhileLoop)
             doWhileLoop.forEachChildren {
                 when (it.tokenType) {
                     BODY -> block = it
@@ -1017,7 +1024,6 @@ class ExpressionsConverter(
     private fun convertWhile(whileLoop: LighterASTNode): FirElement {
         var block: LighterASTNode? = null
         var firCondition: FirExpression? = null
-        val label = stashLabel() //get label of while, otherwise if condition has lambda, it will steal the label
         whileLoop.forEachChildren {
             when (it.tokenType) {
                 BODY -> block = it
@@ -1032,7 +1038,7 @@ class ExpressionsConverter(
                 firCondition ?: buildErrorExpression(null, ConeSimpleDiagnostic("No condition in while loop", DiagnosticKind.Syntax))
             // break/continue in the while loop condition will refer to an outer loop if any.
             // So, prepare the loop target after building the condition.
-            target = prepareTarget(label)
+            target = prepareTarget(whileLoop)
         }.configure(target) { convertLoopBody(block) }
     }
 
@@ -1085,7 +1091,7 @@ class ExpressionsConverter(
                 }
                 // break/continue in the for loop condition will refer to an outer loop if any.
                 // So, prepare the loop target after building the condition.
-                target = prepareTarget()
+                target = prepareTarget(forLoop)
             }.configure(target) {
                 // NB: just body.toFirBlock() isn't acceptable here because we need to add some statements
                 buildBlock block@{

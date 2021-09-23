@@ -51,12 +51,21 @@ fun testLoopLabelInReturn(xs: List<Int>) {
 }
 
 fun testValLabelInReturn() {
-    L@ val fn = { return@L }
+    L@ val fn = { <!NOT_A_FUNCTION_LABEL!>return@L<!> }
     fn()
 }
 
 fun testHighOrderFunctionCallLabelInReturn() {
     L@ run {
-        return@L
+        <!NOT_A_FUNCTION_LABEL!>return@L<!>
+    }
+}
+
+fun testMultipleLabelsWithNestedLambda() {
+    l1@ l2@{
+        {
+            <!NOT_A_FUNCTION_LABEL!>return@l1<!>
+        }
+        return@l2
     }
 }

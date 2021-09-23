@@ -1323,7 +1323,7 @@ open class RawFirBuilder(
                     }
                 }
                 val expressionSource = expression.toFirSourceElement()
-                label = context.firLabels.pop() ?: context.calleeNamesForLambda.lastOrNull()?.let {
+                label = context.getLastLabel(expression) ?: context.calleeNamesForLambda.lastOrNull()?.let {
                     buildLabel {
                         source = expressionSource.fakeElement(FirFakeSourceElementKind.GeneratedLambdaLabel)
                         name = it.asString()
@@ -1945,7 +1945,7 @@ open class RawFirBuilder(
             return FirDoWhileLoopBuilder().apply {
                 source = expression.toFirSourceElement()
                 // For break/continue in the do-while loop condition, prepare the loop target first so that it can refer to the same loop.
-                target = prepareTarget()
+                target = prepareTarget(expression)
                 condition = expression.condition.toFirExpression("No condition in do-while loop")
             }.configure(target) { expression.body.toFirBlock() }
         }
@@ -1954,11 +1954,10 @@ open class RawFirBuilder(
             val target: FirLoopTarget
             return FirWhileLoopBuilder().apply {
                 source = expression.toFirSourceElement()
-                val label = stashLabel() //get label of while, otherwise if condition has lambda, it will steal the label
                 condition = expression.condition.toFirExpression("No condition in while loop")
                 // break/continue in the while loop condition will refer to an outer loop if any.
                 // So, prepare the loop target after building the condition.
-                target = prepareTarget(label)
+                target = prepareTarget(expression)
             }.configure(target) { expression.body.toFirBlock() }
         }
 
@@ -1995,7 +1994,7 @@ open class RawFirBuilder(
                     }
                     // break/continue in the for loop condition will refer to an outer loop if any.
                     // So, prepare the loop target after building the condition.
-                    target = prepareTarget()
+                    target = prepareTarget(expression)
                 }.configure(target) {
                     // NB: just body.toFirBlock() isn't acceptable here because we need to add some statements
                     val blockBuilder = when (val body = expression.body) {
@@ -2323,33 +2322,33 @@ open class RawFirBuilder(
         }
 
         override fun visitParenthesizedExpression(expression: KtParenthesizedExpression, data: Unit): FirElement {
+            context.forwardLabelUsagePermission(expression, expression.expression)
             return expression.expression?.accept(this, data)
                 ?: buildErrorExpression(expression.toFirSourceElement(), ConeSimpleDiagnostic("Empty parentheses", DiagnosticKind.Syntax))
         }
 
         override fun visitLabeledExpression(expression: KtLabeledExpression, data: Unit): FirElement {
             val label = expression.getTargetLabel()
-            val previousLabelsSize = context.firLabels.size
             var errorLabelSource: FirSourceElement? = null
 
-            if (label != null) {
+            val result = if (label != null) {
                 val rawName = label.getReferencedNameElement().node!!.text
                 val labelAndErrorSource = buildLabelAndErrorSource(rawName, label.toFirPsiSourceElement())
-                context.firLabels += labelAndErrorSource.first
                 errorLabelSource = labelAndErrorSource.second
-            }
-
-            val result = expression.baseExpression?.accept(this, data)
-
-            if (context.firLabels.size != previousLabelsSize) {
-                context.firLabels.removeLast()
+                context.withNewLabel(labelAndErrorSource.first, expression.baseExpression) {
+                    expression.baseExpression?.accept(this, data)
+                }
+            } else {
+                expression.baseExpression?.accept(this, data)
             }
 
             return buildExpressionWithErrorLabel(result, errorLabelSource, expression.toFirSourceElement())
         }
 
         override fun visitAnnotatedExpression(expression: KtAnnotatedExpression, data: Unit): FirElement {
-            val rawResult = expression.baseExpression?.accept(this, data)
+            val baseExpression = expression.baseExpression
+            context.forwardLabelUsagePermission(expression, baseExpression)
+            val rawResult = baseExpression?.accept(this, data)
             val result = rawResult as? FirAnnotationContainer
                 ?: buildErrorExpression(
                     expression.toFirSourceElement(),
