@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import kotlin.reflect.KClass
 
 /*
@@ -29,10 +27,19 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirPredi
 
     final override val extensionType: KClass<out FirExtension> = FirDeclarationGenerationExtension::class
 
-    open fun generateClassLikeDeclaration(classId: ClassId, owner: FirClassSymbol<*>?): FirClassLikeSymbol<*>? = null
+    // Can be called on SUPERTYPES stage
+    open fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? = null
+
+    // Can be called on STATUS stage
     open fun generateFunctions(callableId: CallableId, owner: FirClassSymbol<*>?): List<FirNamedFunctionSymbol> = emptyList()
     open fun generateProperties(callableId: CallableId, owner: FirClassSymbol<*>?): List<FirPropertySymbol> = emptyList()
+    open fun generateConstructors(callableId: CallableId): List<FirConstructorSymbol> = emptyList()
+
+    // Can be called on IMPORTS stage
     open fun hasPackage(packageFqName: FqName): Boolean = false
+
+    open fun getCallableNamesForGeneratedClass(classSymbol: FirClassSymbol<*>): Set<Name> = emptySet()
+    open fun getNestedClassifiersNamesForGeneratedClass(classSymbol: FirClassSymbol<*>): Set<Name> = emptySet()
 
     fun interface Factory : FirExtension.Factory<FirDeclarationGenerationExtension>
 }

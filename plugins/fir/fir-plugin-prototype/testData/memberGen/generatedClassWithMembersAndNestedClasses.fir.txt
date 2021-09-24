@@ -1,0 +1,28 @@
+FILE: generatedClassWithMembersAndNestedClasses.kt
+    @R|org/jetbrains/kotlin/fir/plugin/B|() public final class Foo : R|kotlin/Any| {
+        public constructor(): R|bar/Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/B|() public final class Bar : R|kotlin/Any| {
+        public constructor(): R|bar/Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun testConstructor(): R|kotlin/Unit| {
+        lval generatedClass: R|foo/AllOpenGenerated| = R|foo/AllOpenGenerated|()
+    }
+    public final fun testNestedClasses(): R|kotlin/Unit| {
+        lval nestedFoo: R|foo/AllOpenGenerated.NestedFoo| = Q|foo/AllOpenGenerated|.R|foo/AllOpenGenerated.NestedFoo|()
+        R|<local>/nestedFoo|.R|foo/AllOpenGenerated.NestedFoo.materialize|().R|bar/Foo.foo|()
+        lval nestedBar: R|foo/AllOpenGenerated.NestedBar| = Q|foo/AllOpenGenerated|.R|foo/AllOpenGenerated.NestedBar|()
+        R|<local>/nestedBar|.R|foo/AllOpenGenerated.NestedBar.materialize|().R|bar/Bar.bar|()
+    }

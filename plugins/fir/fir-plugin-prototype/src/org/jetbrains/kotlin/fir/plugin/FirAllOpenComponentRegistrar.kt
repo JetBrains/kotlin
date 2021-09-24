@@ -19,6 +19,7 @@ class FirAllOpenComponentRegistrar : FirExtensionRegistrar() {
 //        +::AllOpenNestedClassGenerator
         +::AllOpenAdditionalCheckers
         +::AllOpenTopLevelDeclarationsGenerator
+        +::AllOpenClassGenerator
 //        +::AllOpenRecursiveNestedClassGenerator
     }
 }

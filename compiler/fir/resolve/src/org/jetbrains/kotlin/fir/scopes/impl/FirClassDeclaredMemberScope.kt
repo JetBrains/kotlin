@@ -17,13 +17,15 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-class FirClassDeclaredMemberScope(
+abstract class FirClassDeclaredMemberScope : FirScope(), FirContainingNamesAwareScope
+
+class FirClassDeclaredMemberScopeImpl(
     val useSiteSession: FirSession,
     klass: FirClass,
     useLazyNestedClassifierScope: Boolean = false,
     existingNames: List<Name>? = null,
     symbolProvider: FirSymbolProvider? = null
-) : FirScope(), FirContainingNamesAwareScope {
+) : FirClassDeclaredMemberScope() {
     private val nestedClassifierScope: FirScope? = if (useLazyNestedClassifierScope) {
         lazyNestedClassifierScope(klass.symbol.classId, existingNames!!, symbolProvider!!)
     } else {

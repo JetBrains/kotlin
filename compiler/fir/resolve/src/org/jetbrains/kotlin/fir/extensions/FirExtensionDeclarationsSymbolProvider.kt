@@ -9,13 +9,11 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -56,7 +54,7 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
 
     private fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
         // TODO: what we should do if multiple extensions want to generate class with same classId?
-        return extensions.firstNotNullOfOrNull { it.generateClassLikeDeclaration(classId, owner = null) }?.also { it.fir.validate() }
+        return extensions.firstNotNullOfOrNull { it.generateClassLikeDeclaration(classId) }?.also { it.fir.validate() }
     }
 
     private fun generateTopLevelFunctions(callableId: CallableId): List<FirNamedFunctionSymbol> {
@@ -74,23 +72,24 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
     // ------------------------------------------ provider methods ------------------------------------------
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-        return classCache.getValue(classId, context = null)
+        return classCache.getValue(classId)
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
-        destination += functionCache.getValue(CallableId(packageFqName, name), context = null)
-        destination += propertyCache.getValue(CallableId(packageFqName, name), context = null)
+        val callableId = CallableId(packageFqName, name)
+        destination += functionCache.getValue(callableId)
+        destination += propertyCache.getValue(callableId)
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
-        destination += functionCache.getValue(CallableId(packageFqName, name), context = null)
+        destination += functionCache.getValue(CallableId(packageFqName, name))
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
-        destination += propertyCache.getValue(CallableId(packageFqName, name), context = null)
+        destination += propertyCache.getValue(CallableId(packageFqName, name))
     }
 
     override fun getPackage(fqName: FqName): FqName? {

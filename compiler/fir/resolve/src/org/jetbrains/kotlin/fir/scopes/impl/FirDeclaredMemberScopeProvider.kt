@@ -50,7 +50,11 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
         existingNames: List<Name>?,
         symbolProvider: FirSymbolProvider?
     ): FirClassDeclaredMemberScope {
-        return FirClassDeclaredMemberScope(useSiteSession, klass, useLazyNestedClassifierScope, existingNames, symbolProvider)
+        return if (klass.origin.generated) {
+            FirGeneratedClassDeclaredMemberScope(useSiteSession, klass)
+        } else {
+            FirClassDeclaredMemberScopeImpl(useSiteSession, klass, useLazyNestedClassifierScope, existingNames, symbolProvider)
+        }
     }
 
     fun nestedClassifierScope(klass: FirClass): FirNestedClassifierScope? {
@@ -58,7 +62,11 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
     }
 
     private fun createNestedClassifierScope(klass: FirClass): FirNestedClassifierScope? {
-        return FirNestedClassifierScope(klass, useSiteSession).takeUnless { it.isEmpty() }
+        return if (klass.origin.generated) {
+            FirGeneratedClassNestedClassifierScope(klass, useSiteSession)
+        } else {
+            FirNestedClassifierScopeImpl(klass, useSiteSession)
+        }.takeUnless { it.isEmpty() }
     }
 }
 

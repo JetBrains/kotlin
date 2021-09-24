@@ -50,21 +50,9 @@ public class FirAllOpenDiagnosticTestGenerated extends AbstractFirAllOpenDiagnos
         }
 
         @Test
-        @TestMetadata("functionForProperty.kt")
-        public void testFunctionForProperty() throws Exception {
-            runTest("plugins/fir/fir-plugin-prototype/testData/memberGen/functionForProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("nestedClass.kt")
-        public void testNestedClass() throws Exception {
-            runTest("plugins/fir/fir-plugin-prototype/testData/memberGen/nestedClass.kt");
-        }
-
-        @Test
-        @TestMetadata("recursiveNestedClasses.kt")
-        public void testRecursiveNestedClasses() throws Exception {
-            runTest("plugins/fir/fir-plugin-prototype/testData/memberGen/recursiveNestedClasses.kt");
+        @TestMetadata("generatedClassWithMembersAndNestedClasses.kt")
+        public void testGeneratedClassWithMembersAndNestedClasses() throws Exception {
+            runTest("plugins/fir/fir-plugin-prototype/testData/memberGen/generatedClassWithMembersAndNestedClasses.kt");
         }
 
         @Test
