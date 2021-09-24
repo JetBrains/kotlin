@@ -141,7 +141,7 @@ class SerializableIrGenerator(
 
                 val ifNotSeenExpr: IrExpression = if (prop.optional) {
                     val initializerBody =
-                        requireNotNull(initializerAdapter(prop.irField.initializer!!)) { "Optional value without an initializer" } // todo: filter abstract here
+                        requireNotNull(initializerAdapter(prop.irField?.initializer!!)) { "Optional value without an initializer" } // todo: filter abstract here
                     irSetField(irGet(thiz), backingFieldToAssign, initializerBody)
                 } else {
                     // property required
