@@ -62,7 +62,7 @@ fun main1() {
     {1}();
     (fun (x : Int) = x)(1)
     1.(<!FUNCTION_EXPECTED!>fun Int.(x : Int) = x<!>)(1);
-    l@{1}()
+    <!REDUNDANT_LABEL_WARNING!>l@<!>{1}()
     1.((<!FUNCTION_EXPECTED!>fun Int.() = 1<!>))()
     1.(<!FUNCTION_EXPECTED!>f()<!>)()
     1.<!FUNCTION_EXPECTED!>if(true){f()}else{f()}<!>()

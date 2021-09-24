@@ -22,6 +22,6 @@ fun main() {
     <!NO_COMPANION_OBJECT!>System<!> is Int
     <!INVISIBLE_REFERENCE!>System<!>()
     (<!NO_COMPANION_OBJECT!>System<!>)
-    foo@ <!NO_COMPANION_OBJECT!>System<!>
+    <!REDUNDANT_LABEL_WARNING!>foo@<!> <!NO_COMPANION_OBJECT!>System<!>
     null <!UNRESOLVED_REFERENCE!>in<!> System
 }

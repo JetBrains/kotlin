@@ -57,19 +57,19 @@ annotation class Ann
 
 fun canBe(i0: Int, j: Int) {
     var i = i0
-    (label@ i) = 34
+    (<!REDUNDANT_LABEL_WARNING!>label@<!> i) = 34
 
-    (label@ <!VAL_REASSIGNMENT!>j<!>) = 34 //repeat for j
+    (<!REDUNDANT_LABEL_WARNING!>label@<!> <!VAL_REASSIGNMENT!>j<!>) = 34 //repeat for j
 
     val a = A()
-    (l@ a.a) = 3894
+    (<!REDUNDANT_LABEL_WARNING!>l@<!> a.a) = 3894
 
     @Ann
-    l@ (i) = 123
+    <!REDUNDANT_LABEL_WARNING!>l@<!> (i) = 123
 }
 
 fun canBe2(j: Int) {
-    (label@ <!VAL_REASSIGNMENT!>j<!>) = 34
+    (<!REDUNDANT_LABEL_WARNING!>label@<!> <!VAL_REASSIGNMENT!>j<!>) = 34
 }
 
 class A() {
@@ -79,29 +79,29 @@ class A() {
 class Test() {
     fun testIllegalValues() {
         <!VARIABLE_EXPECTED!>1<!> += 23
-        (l@ <!VARIABLE_EXPECTED!>1<!>) += 23
+        (<!REDUNDANT_LABEL_WARNING!>l@<!> <!VARIABLE_EXPECTED!>1<!>) += 23
 
         <!VARIABLE_EXPECTED!>getInt()<!> += 343
-        (f@ <!VARIABLE_EXPECTED!>getInt()<!>) += 343
+        (<!REDUNDANT_LABEL_WARNING!>f@<!> <!VARIABLE_EXPECTED!>getInt()<!>) += 343
 
         <!VARIABLE_EXPECTED!>1<!>++
-        (r@ <!VARIABLE_EXPECTED!>1<!>)--
+        (<!REDUNDANT_LABEL_WARNING!>r@<!> <!VARIABLE_EXPECTED!>1<!>)--
 
         <!VARIABLE_EXPECTED!>getInt()<!>++
-        (m@ <!VARIABLE_EXPECTED!>getInt()<!>)--
+        (<!REDUNDANT_LABEL_WARNING!>m@<!> <!VARIABLE_EXPECTED!>getInt()<!>)--
 
         ++<!VARIABLE_EXPECTED!>2<!>
-        --(r@ <!VARIABLE_EXPECTED!>2<!>)
+        --(<!REDUNDANT_LABEL_WARNING!>r@<!> <!VARIABLE_EXPECTED!>2<!>)
 
         this<!UNRESOLVED_REFERENCE!>++<!>
 
         var s : String = "r"
         s += "ss"
         s += this
-        s += (a@ 2)
+        s += (<!REDUNDANT_LABEL_WARNING!>a@<!> 2)
 
         @Ann
-        l@ (<!VARIABLE_EXPECTED!>1<!>) = 123
+        <!REDUNDANT_LABEL_WARNING!>l@<!> (<!VARIABLE_EXPECTED!>1<!>) = 123
     }
 
     fun testIncompleteSyntax() {
@@ -114,22 +114,22 @@ class Test() {
         val b: Int = 34
 
         a += 34
-        (l@ a) += 34
+        (<!REDUNDANT_LABEL_WARNING!>l@<!> a) += 34
 
         <!VAL_REASSIGNMENT!>b<!> += 34
 
         a++
-        (@Ann l@ a)--
+        (@Ann <!REDUNDANT_LABEL_WARNING!>l@<!> a)--
         (a)++
         --a
-        ++(@Ann l@ a)
+        ++(@Ann <!REDUNDANT_LABEL_WARNING!>l@<!> a)
         --(a)
     }
 
     fun testVariables1() {
         val b: Int = 34
 
-        (l@ <!VAL_REASSIGNMENT!>b<!>) += 34
+        (<!REDUNDANT_LABEL_WARNING!>l@<!> <!VAL_REASSIGNMENT!>b<!>) += 34
         //repeat for b
         (<!VAL_REASSIGNMENT!>b<!>) += 3
     }
@@ -140,12 +140,12 @@ class Test() {
         a[6] += 43
         @Ann
         a[7] = 7
-        (@Ann l@ (a))[8] = 8
+        (@Ann <!REDUNDANT_LABEL_WARNING!>l@<!> (a))[8] = 8
 
         ab.getArray()[54] = 23
         ab.getArray()[54]++
 
-        (f@ a)[3] = 4
+        (<!REDUNDANT_LABEL_WARNING!>f@<!> a)[3] = 4
 
         this<!NO_SET_METHOD!>[54]<!> = 34
     }

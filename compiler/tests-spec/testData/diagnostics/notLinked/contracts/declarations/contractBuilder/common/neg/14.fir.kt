@@ -31,7 +31,7 @@ inline fun case_4(block: () -> Unit) {
 
 // TESTCASE NUMBER: 5
 inline fun case_5(block: () -> Unit) {
-    test@ contract {
+    <!REDUNDANT_LABEL_WARNING!>test@<!> contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
     return block()

@@ -32,7 +32,7 @@ fun main() {
     val w: Foo? = null
     w<!UNSAFE_CALL!>.<!>f = z
     (w<!UNSAFE_CALL!>.<!>f) = z
-    (label@ w<!UNSAFE_CALL!>.<!>f) = z
+    (<!REDUNDANT_LABEL_WARNING!>label@<!> w<!UNSAFE_CALL!>.<!>f) = z
     w!!.f = z
     w.f = z
     w<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.f = z

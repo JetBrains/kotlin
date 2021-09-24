@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !CHECK_TYPE
 
 inline fun inlineFunWithInvoke(s: (p: Int) -> Unit) {

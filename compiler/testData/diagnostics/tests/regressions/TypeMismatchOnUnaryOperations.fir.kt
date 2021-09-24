@@ -8,8 +8,8 @@ fun main() {
     val h : String = v--;
     val h1 : String = --v;
     val i : String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>!true<!>;
-    val j : String = <!INITIALIZER_TYPE_MISMATCH!>foo@ true<!>;
-    val k : String = <!INITIALIZER_TYPE_MISMATCH!>foo@ bar@ true<!>;
+    val j : String = <!INITIALIZER_TYPE_MISMATCH!><!REDUNDANT_LABEL_WARNING!>foo@<!> true<!>;
+    val k : String = <!INITIALIZER_TYPE_MISMATCH!><!REDUNDANT_LABEL_WARNING!>foo@<!> <!REDUNDANT_LABEL_WARNING!>bar@<!> true<!>;
     val l : String = <!INITIALIZER_TYPE_MISMATCH!>-1<!>;
     val m : String = <!INITIALIZER_TYPE_MISMATCH!>+1<!>;
 }

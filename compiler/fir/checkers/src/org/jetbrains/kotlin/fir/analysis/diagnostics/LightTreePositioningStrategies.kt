@@ -518,7 +518,7 @@ object LightTreePositioningStrategies {
             ) {
                 val lhs = tree.firstChildExpression(node)
                 lhs?.let {
-                    tree.unwrapParenthesesLabelsAndAnnotations(it)?.let { unwrapped ->
+                    tree.unwrapParenthesesLabelsAndAnnotations(it).let { unwrapped ->
                         return markElement(unwrapped, startOffset, endOffset, tree, node)
                     }
                 }
@@ -880,7 +880,7 @@ object LightTreePositioningStrategies {
                     tree.firstChildExpression(node)
                 }
                 lhs?.let {
-                    tree.unwrapParenthesesLabelsAndAnnotations(it)?.let { unwrapped ->
+                    tree.unwrapParenthesesLabelsAndAnnotations(it).let { unwrapped ->
                         return markElement(unwrapped, startOffset, endOffset, tree, node)
                     }
                 }
@@ -1153,8 +1153,7 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.referenceExpression(
     }
     return result
 }
-
-private fun FlyweightCapableTreeStructure<LighterASTNode>.unwrapParenthesesLabelsAndAnnotations(node: LighterASTNode): LighterASTNode? {
+fun FlyweightCapableTreeStructure<LighterASTNode>.unwrapParenthesesLabelsAndAnnotations(node: LighterASTNode): LighterASTNode {
     var unwrapped = node
     while (true) {
         unwrapped = when (unwrapped.tokenType) {

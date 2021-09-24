@@ -19,7 +19,7 @@ class TestObjectLiteral {
             val y = obj
         }
     }
-    val obj1: A = l@ ( object: A(obj1) {
+    val obj1: A = <!REDUNDANT_LABEL_WARNING!>l@<!> ( object: A(obj1) {
         init {
             val x = obj1
         }
