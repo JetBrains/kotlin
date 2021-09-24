@@ -227,7 +227,7 @@ class DokkaBase : DokkaPlugin() {
             after(stylesInstaller)
             after(scriptsInstaller)
             after(assetsInstaller)
-        } applyIf { !delayTemplateSubstitution }
+        }
     }
 
     val packageListCreator by extending {
