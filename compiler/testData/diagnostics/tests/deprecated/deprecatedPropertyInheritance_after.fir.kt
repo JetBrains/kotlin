@@ -107,8 +107,8 @@ fun use(
     setterDeprecated.p
     setterDeprecated.p <!DEPRECATION!>=<!> 1
 
-    hiddenDeprecated.<!INVISIBLE_REFERENCE!>p<!>
-    hiddenDeprecated.<!INVISIBLE_REFERENCE!>p<!> = 1
+    hiddenDeprecated.<!UNRESOLVED_REFERENCE!>p<!>
+    hiddenDeprecated.<!UNRESOLVED_REFERENCE!>p<!> = 1
 
     wd.p
     wd.p = 1
@@ -132,5 +132,5 @@ fun use(
     ned.p = 1
 
     diff.<!DEPRECATION_ERROR!>p<!>
-    diff.<!INVISIBLE_REFERENCE!>p<!> = 1
+    diff.<!UNRESOLVED_REFERENCE!>p<!> = 1
 }

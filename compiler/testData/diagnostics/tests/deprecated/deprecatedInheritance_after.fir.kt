@@ -115,7 +115,7 @@ fun use(
 ) {
     wd.<!DEPRECATION!>f<!>()
     ed.<!DEPRECATION_ERROR!>f<!>()
-    hd.<!INVISIBLE_REFERENCE!>f<!>()
+    hd.<!UNRESOLVED_REFERENCE!>f<!>()
 
     we.f()
     wh.f()
