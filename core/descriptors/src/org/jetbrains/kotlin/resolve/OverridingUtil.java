@@ -60,18 +60,23 @@ public class OverridingUtil {
             };
 
     static {
-
-        DEFAULT = new OverridingUtil(DEFAULT_TYPE_CONSTRUCTOR_EQUALITY, KotlinTypeRefiner.Default.INSTANCE);
-    }
-
-    @NotNull
-    public static OverridingUtil createWithEqualityAxioms(@NotNull KotlinTypeChecker.TypeConstructorEquality equalityAxioms) {
-        return new OverridingUtil(equalityAxioms, KotlinTypeRefiner.Default.INSTANCE);
+        DEFAULT = new OverridingUtil(
+                DEFAULT_TYPE_CONSTRUCTOR_EQUALITY, KotlinTypeRefiner.Default.INSTANCE, KotlinTypePreparator.Default.INSTANCE,
+                null
+        );
     }
 
     @NotNull
     public static OverridingUtil createWithTypeRefiner(@NotNull KotlinTypeRefiner kotlinTypeRefiner) {
-        return new OverridingUtil(DEFAULT_TYPE_CONSTRUCTOR_EQUALITY, kotlinTypeRefiner);
+        return new OverridingUtil(DEFAULT_TYPE_CONSTRUCTOR_EQUALITY, kotlinTypeRefiner, KotlinTypePreparator.Default.INSTANCE, null);
+    }
+
+    @NotNull
+    public static OverridingUtil createWithTypePreparatorAndCustomSubtype(
+            @NotNull KotlinTypePreparator kotlinTypePreparator,
+            @NotNull Function2<KotlinType, KotlinType, Boolean> customSubtype
+    ) {
+        return new OverridingUtil(DEFAULT_TYPE_CONSTRUCTOR_EQUALITY, KotlinTypeRefiner.Default.INSTANCE, kotlinTypePreparator, customSubtype);
     }
 
     @NotNull
@@ -79,18 +84,24 @@ public class OverridingUtil {
             @NotNull KotlinTypeRefiner kotlinTypeRefiner,
             @NotNull KotlinTypeChecker.TypeConstructorEquality equalityAxioms
     ) {
-            return new OverridingUtil(equalityAxioms, kotlinTypeRefiner);
+        return new OverridingUtil(equalityAxioms, kotlinTypeRefiner, KotlinTypePreparator.Default.INSTANCE, null);
     }
 
     private final KotlinTypeRefiner kotlinTypeRefiner;
+    private final KotlinTypePreparator kotlinTypePreparator;
     private final KotlinTypeChecker.TypeConstructorEquality equalityAxioms;
+    private final Function2<KotlinType, KotlinType, Boolean> customSubtype;
 
     private OverridingUtil(
             @NotNull KotlinTypeChecker.TypeConstructorEquality axioms,
-            @NotNull KotlinTypeRefiner kotlinTypeRefiner
+            @NotNull KotlinTypeRefiner kotlinTypeRefiner,
+            @NotNull KotlinTypePreparator kotlinTypePreparator,
+            @Nullable Function2<KotlinType, KotlinType, Boolean> customSubtype
     ) {
         equalityAxioms = axioms;
         this.kotlinTypeRefiner = kotlinTypeRefiner;
+        this.kotlinTypePreparator = kotlinTypePreparator;
+        this.customSubtype = customSubtype;
     }
 
     /**
@@ -395,8 +406,9 @@ public class OverridingUtil {
                 "Should be the same number of type parameters: " + firstParameters + " vs " + secondParameters;
 
         if (firstParameters.isEmpty()) {
-            return new OverridingUtilTypeSystemContext(null, equalityAxioms, kotlinTypeRefiner)
-                    .newTypeCheckerState(true, true);
+            return new OverridingUtilTypeSystemContext(
+                    null, equalityAxioms, kotlinTypeRefiner, kotlinTypePreparator, customSubtype
+            ).newTypeCheckerState(true, true);
         }
 
         Map<TypeConstructor, TypeConstructor> matchingTypeConstructors = new HashMap<TypeConstructor, TypeConstructor>();
@@ -404,8 +416,9 @@ public class OverridingUtil {
             matchingTypeConstructors.put(firstParameters.get(i).getTypeConstructor(), secondParameters.get(i).getTypeConstructor());
         }
 
-        return new OverridingUtilTypeSystemContext(matchingTypeConstructors, equalityAxioms, kotlinTypeRefiner)
-                .newTypeCheckerState(true, true);
+        return new OverridingUtilTypeSystemContext(
+                matchingTypeConstructors, equalityAxioms, kotlinTypeRefiner, kotlinTypePreparator, customSubtype
+        ).newTypeCheckerState(true, true);
     }
 
     @Nullable

@@ -779,6 +779,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
                 }
 
                 @Test
+                @TestMetadata("OverrideOfAnnotated.kt")
+                public void testOverrideOfAnnotated() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/OverrideOfAnnotated.kt");
+                }
+
+                @Test
                 @TestMetadata("SelfType.kt")
                 public void testSelfType() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/SelfType.kt");

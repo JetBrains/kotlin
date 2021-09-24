@@ -1,0 +1,34 @@
+package
+
+public interface Q1</*0*/ X> : SLRUMap<X> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ fun </*0*/ K2> id(/*0*/ k2: K2): K2
+    public abstract override /*1*/ fun </*0*/ E1> takeE(/*0*/ e: E1): kotlin.Unit
+    public abstract override /*1*/ fun </*0*/ E2> takeEList(/*0*/ l2: kotlin.collections.List<E2>): kotlin.Unit
+    public abstract override /*1*/ fun takeV(/*0*/ x: X): kotlin.Unit
+    public abstract override /*1*/ fun takeVList(/*0*/ l: kotlin.collections.List<X>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Q2</*0*/ X : kotlin.Any> : SLRUMap<X> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ fun </*0*/ K2> id(/*0*/ k2: K2): K2
+    public abstract override /*1*/ fun </*0*/ E1 : kotlin.Any> takeE(/*0*/ e: E1): kotlin.Unit
+    public abstract override /*1*/ fun </*0*/ E2 : kotlin.Any> takeEList(/*0*/ l2: kotlin.collections.List<E2>): kotlin.Unit
+    public abstract override /*1*/ fun takeV(/*0*/ x: X): kotlin.Unit
+    public abstract override /*1*/ fun takeVList(/*0*/ l: kotlin.collections.List<X>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface SLRUMap</*0*/ V : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun </*0*/ K : kotlin.Any!> id(/*0*/ value: K!): K!
+    public abstract fun </*0*/ E : kotlin.Any!> takeE(/*0*/ @org.jetbrains.annotations.NotNull value: E): kotlin.Unit
+    public abstract fun </*0*/ E : kotlin.Any!> takeEList(/*0*/ @org.jetbrains.annotations.NotNull value: kotlin.collections.(Mutable)List<@org.jetbrains.annotations.NotNull E>): kotlin.Unit
+    public abstract fun takeV(/*0*/ @org.jetbrains.annotations.NotNull value: V): kotlin.Unit
+    public abstract fun takeVList(/*0*/ @org.jetbrains.annotations.NotNull value: kotlin.collections.(Mutable)List<@org.jetbrains.annotations.NotNull V>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

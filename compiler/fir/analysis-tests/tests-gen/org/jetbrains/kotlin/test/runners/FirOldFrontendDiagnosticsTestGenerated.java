@@ -17849,6 +17849,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("notNullTypeParameterWithKotlinOverridesDefinitelyNonNullable.kt")
+                public void testNotNullTypeParameterWithKotlinOverridesDefinitelyNonNullable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/types/notNullTypeParameterWithKotlinOverridesDefinitelyNonNullable.kt");
+                }
+
+                @Test
+                @TestMetadata("notNullTypeParameterWithKotlinOverridesWarning.kt")
+                public void testNotNullTypeParameterWithKotlinOverridesWarning() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/types/notNullTypeParameterWithKotlinOverridesWarning.kt");
+                }
+
+                @Test
                 @TestMetadata("returnCollection.kt")
                 public void testReturnCollection() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/types/returnCollection.kt");

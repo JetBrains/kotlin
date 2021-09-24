@@ -189,17 +189,6 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
         return metWrongNullabilityInsideArguments
     }
 
-    private fun isNullableTypeAgainstNotNullTypeParameter(
-        subType: KotlinType,
-        superType: KotlinType
-    ): Boolean {
-        if (superType !is NotNullTypeVariable) return false
-        return !AbstractNullabilityChecker.isSubtypeOfAny(
-            createClassicTypeCheckerState(isErrorTypeEqualsToAnything = true),
-            subType
-        )
-    }
-
     override fun checkReceiver(
         receiverParameter: ReceiverParameterDescriptor,
         receiverArgument: ReceiverValue,
@@ -279,6 +268,10 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
     }
 
     companion object {
+        val typePreparatorUnwrappingEnhancement: KotlinTypePreparator = object : KotlinTypePreparator() {
+            override fun prepareType(type: KotlinTypeMarker): UnwrappedType =
+                super.prepareType(type).let { it.getEnhancementDeeply() ?: it }.unwrap()
+        }
         val typeCheckerForEnhancedTypes = NewKotlinTypeCheckerImpl(
             kotlinTypeRefiner = KotlinTypeRefiner.Default,
             kotlinTypePreparator = object : KotlinTypePreparator() {
@@ -287,6 +280,17 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
             }
         )
         val typeCheckerForBaseTypes = NewKotlinTypeCheckerImpl(KotlinTypeRefiner.Default)
+
+        fun isNullableTypeAgainstNotNullTypeParameter(
+            subType: KotlinType,
+            superType: KotlinType
+        ): Boolean {
+            if (superType !is NotNullTypeVariable || subType is NotNullTypeVariable) return false
+            return !AbstractNullabilityChecker.isSubtypeOfAny(
+                createClassicTypeCheckerState(isErrorTypeEqualsToAnything = true),
+                subType
+            )
+        }
     }
 }
 
