@@ -195,7 +195,8 @@ public actual annotation class JsExport
 /**
  * Forces a top-level property to be initialized eagerly, opposed to lazily on the first access to file and/or property.
  */
-@Target(AnnotationTarget.PROPERTY)
-@Retention(AnnotationRetention.BINARY)
 @ExperimentalStdlibApi
-public annotation class JsEagerInitialization
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.PROPERTY)
+@SinceKotlin("1.6")
+public actual annotation class JsEagerInitialization
