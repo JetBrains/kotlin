@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.constructedClassType
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.js.backend.ast.*
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
@@ -64,8 +65,11 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
 
     private fun IrExpression.maybeOptimizeIntoSwitch(context: JsGenerationContext, transformer: (JsExpression) -> JsStatement): JsStatement {
         if (this is IrWhen) {
-            val stmtTransformer = { stmt: JsStatement -> transformer((stmt as JsExpressionStatement).expression) }
-            SwitchOptimizer(context, stmtTransformer).tryOptimize(this)?.let { return it }
+            val stmtTransformer = { stmt: JsStatement ->
+                assert(stmt is JsExpressionStatement) { "${render()} is not a statement $stmt" }
+                transformer((stmt as JsExpressionStatement).expression)
+            }
+            SwitchOptimizer(context, isExpression = true, stmtTransformer).tryOptimize(this)?.let { return it }
         }
 
         return transformer(accept(IrElementToJsExpressionTransformer(), context))
@@ -112,7 +116,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
                 JsBinaryOperation(JsBinaryOperator.ASG, varRef, expr).makeStmt()
             }
 
-            SwitchOptimizer(context, transformer).tryOptimize(value)?.let {
+            SwitchOptimizer(context, isExpression = true, transformer).tryOptimize(value)?.let {
                 return JsBlock(JsVars(JsVars.JsVar(varName)), it).withSource(declaration, context)
             }
         }
