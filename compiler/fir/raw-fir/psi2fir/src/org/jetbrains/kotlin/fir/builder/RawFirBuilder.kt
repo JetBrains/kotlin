@@ -1174,7 +1174,8 @@ open class RawFirBuilder(
                     receiverTypeRef = receiverType
                     symbol = FirAnonymousFunctionSymbol()
                     isLambda = false
-                    labelName = function.getLabelName() ?: context.calleeNamesForLambda.lastOrNull()?.identifier
+                    label = context.getLastLabel(function)
+                    labelName = label?.name ?: context.calleeNamesForLambda.lastOrNull()?.identifier
                 }
             } else {
                 FirSimpleFunctionBuilder().apply {

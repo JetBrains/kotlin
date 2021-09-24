@@ -1507,14 +1507,15 @@ class DeclarationsConverter(
         val functionSymbol: FirFunctionSymbol<*>
         val isAnonymousFunction = identifier == null && isLocal
         val functionBuilder = if (isAnonymousFunction) {
-            val labelName = functionDeclaration.getLabelName() ?: context.calleeNamesForLambda.lastOrNull()?.identifier
-            target = FirFunctionTarget(labelName = labelName, isLambda = false)
             functionSymbol = FirAnonymousFunctionSymbol()
             FirAnonymousFunctionBuilder().apply {
                 source = functionSource
                 receiverTypeRef = receiverType
                 symbol = functionSymbol
                 isLambda = false
+                label = context.getLastLabel(functionDeclaration)
+                val labelName = label?.name ?: context.calleeNamesForLambda.lastOrNull()?.identifier
+                target = FirFunctionTarget(labelName = labelName, isLambda = false)
             }
         } else {
             val functionName = identifier.nameAsSafeName()

@@ -1,17 +1,17 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 val funLit = lambda@ fun String.() {
-    val d1 = this<!UNRESOLVED_LABEL!>@lambda<!>
+    val d1 = this@lambda
 }
 
 fun test() {
-    val funLit = lambda@ fun String.(): <!UNRESOLVED_LABEL!>String<!> {
-        return this<!UNRESOLVED_LABEL!>@lambda<!>
+    val funLit = lambda@ fun String.(): String {
+        return this@lambda
     }
 }
 
 fun lambda() {
-    val funLit = lambda@ fun String.(): <!UNRESOLVED_LABEL!>String<!> {
-        return this<!UNRESOLVED_LABEL!>@lambda<!>
+    val funLit = lambda@ fun String.(): String {
+        return this@lambda
     }
 }
