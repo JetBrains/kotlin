@@ -231,6 +231,7 @@ enum class LanguageFeature(
     SafeCallsAreAlwaysNullable(KOTLIN_1_7),
     StopPropagatingDeprecationThroughOverrides(KOTLIN_1_7),
     AbstractClassMemberNotImplementedWithIntermediateAbstractClass(KOTLIN_1_7, kind = BUG_FIX),
+    RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_7),
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),

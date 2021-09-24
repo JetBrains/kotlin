@@ -1,3 +1,4 @@
+// !LANGUAGE: +RefineTypeCheckingOnAssignmentsToJavaFields
 // WITH_RUNTIME
 
 // FILE: Foo.java
@@ -25,6 +26,7 @@ public class Foo3<T> {
 
 fun takeStarFoo(x: Foo<*>) {
     x.value = <!TYPE_MISMATCH("Nothing!; String")!>"test"<!>
+    x.value <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> "test"
 }
 
 fun main1() {
@@ -42,6 +44,7 @@ public class Bar<T> {
 
 fun takeStarBar(x: Bar<*>) {
     <!SETTER_PROJECTED_OUT!>x.value<!> = "test"
+    x.value <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> "test"
 }
 
 fun main2() {
@@ -55,6 +58,7 @@ fun main2() {
 
 fun takeStarFoo2(x: Foo2<*>) {
     x.value = <!TYPE_MISMATCH("Nothing?; String")!>"test"<!>
+    x.value <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> "test"
 }
 
 fun main3() {
@@ -71,6 +75,7 @@ public class Bar2<T> {
 
 fun takeStarBar2(x: Bar2<*>) {
     x.value = <!TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS("Nothing?; String; Bar2<CapturedType(*)>; public final var value: T? defined in Bar2")!>"test"<!>
+    x.value <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> "test"
 }
 
 fun main4() {
@@ -84,6 +89,7 @@ fun main4() {
 
 fun takeStarFoo3(x: Foo3<*>) {
     x.value = <!TYPE_MISMATCH("Nothing; String")!>"test"<!>
+    x.value <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> "test"
 }
 
 fun main5() {
@@ -101,6 +107,7 @@ class Bar3<T> {
 
 fun takeStarBar3(x: Bar3<*>) {
     x.value = <!TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS("Nothing?; String; Bar3<CapturedType(*)>; public final var value: T? defined in Bar3")!>"test"<!>
+    x.value <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> "test"
 }
 
 fun main6() {
