@@ -13,6 +13,7 @@
 #include <utility>
 
 #include "CompilerConstants.hpp"
+#include "Logging.hpp"
 #include "Types.h"
 #include "Utils.hpp"
 
@@ -41,6 +42,8 @@ struct GCSchedulerConfig {
 
     GCSchedulerConfig() noexcept {
         if (compiler::gcAggressive()) {
+            // TODO: Make a separate GCSchedulerData for the aggressive mode and move this log there.
+            RuntimeLogInfo({kTagGC}, "Initialize GC scheduler config in the aggressive mode");
             // TODO: Make it even more aggressive and run on a subset of backend.native tests.
             threshold = 1000;
             allocationThresholdBytes = 10000;
