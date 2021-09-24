@@ -67,9 +67,11 @@ private fun Project.getPropagatedCInteropDependenciesOrEmpty(sourceSet: DefaultK
         /* Participating in multiple compilations? -> can't propagate -> should be commonized */
         val compilation = compilations.singleOrNull() as? KotlinNativeCompilation ?: return@files emptySet<File>()
 
-        /* Source Set is directly included in compilation -> No need to add dependency again (will be handled already) */
-        if (sourceSet in compilation.kotlinSourceSets) return@files emptySet<File>()
-        getAllCInteropOutputFiles(compilation)
+        (compilation.associateWith + compilation)
+            .filterIsInstance<KotlinNativeCompilation>()
+            /* Source Set is directly included in compilation -> No need to add dependency again (will be handled already) */
+            .filter { relevantCompilation -> sourceSet !in relevantCompilation.kotlinSourceSets }
+            .map { relevantCompilation -> getAllCInteropOutputFiles(relevantCompilation) }
     }
 }
 
