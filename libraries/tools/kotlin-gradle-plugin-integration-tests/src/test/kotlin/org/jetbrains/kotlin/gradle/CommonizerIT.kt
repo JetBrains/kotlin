@@ -387,6 +387,27 @@ class CommonizerIT : BaseGradleIT() {
     }
 
     @Test
+    fun `test KT-48856 single native target dependency propagation - test source set - cinterop`() {
+        fun CompiledProject.containsCinteropDependency(): Boolean {
+            val nativeMainContainsCInteropDependencyRegex = Regex(""".*Dependency:.*cinterop-sampleInterop.*""")
+            return output.lineSequence().any { line ->
+                line.matches(nativeMainContainsCInteropDependencyRegex)
+            }
+        }
+
+        with(Project("commonize-kt-48856-singleNativeTargetPropagation-testSourceSet")) {
+            build("listNativeTestDependencies") {
+                assertSuccessful()
+                assertTrue(containsCinteropDependency(), "Expected sourceSet 'nativeTest' to list cinterop dependency")
+            }
+
+            build("assemble") {
+                assertSuccessful()
+            }
+        }
+    }
+
+    @Test
     fun `test KT-46856 filename too long - all native targets configured`() {
         with(Project("commonize-kt-46856-all-targets")) {
             build(":commonize", options = BuildOptions(forceOutputToStdout = true)) {
@@ -663,4 +684,3 @@ private object CommonizableTargets {
         else -> fail("Unsupported os: ${os.name}")
     }
 }
-
