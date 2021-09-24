@@ -67,6 +67,96 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     }
 
     @Test
+    @TestMetadata("annotationOnDelegate.kt")
+    public void testAnnotationOnDelegate() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationOnDelegate.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnExpression_asT.kt")
+    public void testAnnotationOnExpression_asT() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationOnExpression_asT.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnExpression_destructuring.kt")
+    public void testAnnotationOnExpression_destructuring() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationOnExpression_destructuring.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnExpression_if.kt")
+    public void testAnnotationOnExpression_if() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationOnExpression_if.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnExpression_whenBranch.kt")
+    public void testAnnotationOnExpression_whenBranch() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationOnExpression_whenBranch.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnFile.kt")
+    public void testAnnotationOnFile() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationOnFile.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnParameter_param.kt")
+    public void testAnnotationOnParameter_param() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationOnParameter_param.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnParameter_parameterProperty.kt")
+    public void testAnnotationOnParameter_parameterProperty() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationOnParameter_parameterProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnParameter_reified.kt")
+    public void testAnnotationOnParameter_reified() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationOnParameter_reified.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnParameter_setparam.kt")
+    public void testAnnotationOnParameter_setparam() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationOnParameter_setparam.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnProperty_field.kt")
+    public void testAnnotationOnProperty_field() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationOnProperty_field.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnProperty_get.kt")
+    public void testAnnotationOnProperty_get() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationOnProperty_get.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnProperty_property.kt")
+    public void testAnnotationOnProperty_property() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationOnProperty_property.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnProperty_set.kt")
+    public void testAnnotationOnProperty_set() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationOnProperty_set.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnReceiver.kt")
+    public void testAnnotationOnReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/annotationOnReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("arrayOfInAnnotation.kt")
     public void testArrayOfInAnnotation() throws Exception {
         runTest("analysis/analysis-api/testData/analysisSession/resolveCall/arrayOfInAnnotation.kt");

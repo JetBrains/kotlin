@@ -55,6 +55,11 @@ abstract class AbstractResolveCallTest : AbstractHLApiSingleModuleTest() {
                 ?: error("Only single annotation entry is supported for now")
             annotationEntry.resolveCall()
         }
+        is KtFileAnnotationList -> {
+            val annotationEntry = element.annotationEntries.singleOrNull()
+                ?: error("Only single annotation entry is supported for now")
+            annotationEntry.resolveCall()
+        }
         else -> error("Selected element type (${element::class.simpleName}) is not supported for resolveCall()")
     }
 
