@@ -327,7 +327,7 @@ interface IrBuilderExtension {
     fun KotlinType.toIrType() = compilerContext.typeTranslator.translateType(this)
 
     // note: this method should be used only for properties from current module. Fields from other modules are private and inaccessible.
-    val SerializableProperty.irField: IrField get() = compilerContext.symbolTable.referenceField(this.descriptor).owner
+    val SerializableProperty.irField: IrField? get() = compilerContext.symbolTable.referenceField(this.descriptor).let {  if (it.isBound) it.owner else null }
 
     fun IrClass.searchForProperty(descriptor: PropertyDescriptor): IrProperty {
         // this API is used to reference both current module descriptors and external ones (because serializable class can be in any of them),
@@ -1250,11 +1250,12 @@ interface IrBuilderExtension {
 
             // check for call to .shouldEncodeElementDefault
             val encodeDefaults = property.getIrPropertyFrom(serializableIrClass).getEncodeDefaultAnnotationValue()
-            if (!property.optional || encodeDefaults == true) {
+            val field = property.irField // Nullable when property from another module; can't compare it with default value on JS or Native
+            if (!property.optional || encodeDefaults == true || field == null) {
                 // emit call right away
                 +elementCall
             } else {
-                val partB = irNotEquals(property.irGet(), initializerAdapter(property.irField.initializer!!))
+                val partB = irNotEquals(property.irGet(), initializerAdapter(field.initializer!!))
 
                 val condition = if (encodeDefaults == false) {
                     // drop default without call to .shouldEncodeElementDefault
