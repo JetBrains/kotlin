@@ -143,6 +143,7 @@ object FirSessionFactory {
             registerJavaSpecificResolveComponents()
 
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
+            register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
             val firProvider = FirProviderImpl(this, kotlinScopeProvider)
             register(FirProvider::class, firProvider)
@@ -209,6 +210,7 @@ object FirSessionFactory {
             registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver())
 
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
+            register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
             val classFileBasedSymbolProvider = JvmClassFileBasedSymbolProvider(
                 this,

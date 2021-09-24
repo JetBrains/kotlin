@@ -76,6 +76,7 @@ internal object FirIdeSessionFactory {
         return session.apply session@{
             val moduleData = KtModuleBasedModuleData(module).apply { bindSession(this@session) }
             registerModuleData(moduleData)
+            register(FirKotlinScopeProvider::class, scopeProvider)
 
             val cache = ModuleFileCacheImpl(this)
             val firPhaseManager = IdeFirPhaseManager(FirLazyDeclarationResolver(firFileBuilder), cache, sessionInvalidator)
@@ -182,12 +183,15 @@ internal object FirIdeSessionFactory {
             registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
             registerJavaSpecificResolveComponents()
 
+            val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
+            register(FirKotlinScopeProvider::class, kotlinScopeProvider)
+
             val mainModuleData = KtModuleBasedModuleData(sourceModule).apply { bindSession(this@session) }
 
             val classFileBasedSymbolProvider = JvmClassFileBasedSymbolProvider(
                 this@session,
                 moduleDataProvider = createModuleDataProvider(sourceModule, this),
-                kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped),
+                kotlinScopeProvider = kotlinScopeProvider,
                 packagePartProvider = project.createPackagePartProviderForLibrary(searchScope),
                 kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(searchScope),
                 javaFacade = FirJavaFacade(
@@ -241,6 +245,7 @@ internal object FirIdeSessionFactory {
             registerModuleData(moduleData)
 
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
+            register(FirKotlinScopeProvider::class, kotlinScopeProvider)
             val symbolProvider = FirCompositeSymbolProvider(
                 this,
                 listOf(

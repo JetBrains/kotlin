@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -28,7 +29,7 @@ class FirKotlinScopeProvider(
         useSiteSession: FirSession,
         scopeSession: ScopeSession
     ) -> FirScope = { _, declaredMemberScope, _, _ -> declaredMemberScope }
-) : FirScopeProvider() {
+) : FirScopeProvider(), FirSessionComponent {
     override fun getUseSiteMemberScope(
         klass: FirClass,
         useSiteSession: FirSession,
@@ -163,3 +164,5 @@ private fun FirClass.scopeForClassImpl(
         )
     }
 }
+
+val FirSession.kotlinScopeProvider: FirKotlinScopeProvider by FirSession.sessionComponentAccessor()
