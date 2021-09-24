@@ -54,7 +54,8 @@ internal abstract class FirLightMethodForSymbol(
 
     override fun getParameterList(): PsiParameterList = _parametersList
 
-    override val kotlinOrigin: KtDeclaration? = functionSymbol.psi as? KtDeclaration
+    override val kotlinOrigin: KtDeclaration? =
+        lightMemberOrigin?.originalElement ?: functionSymbol.psi as? KtDeclaration
 
     override fun isValid(): Boolean = super.isValid() && functionSymbol.isValid()
 }
