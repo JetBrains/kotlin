@@ -62,9 +62,24 @@ open class AnnotationImplementationTransformer(val context: BackendContext, val 
             implClass.defaultType,
             ctor.symbol,
         )
-        newCall.copyTypeAndValueArgumentsFrom(expression)
+        moveValueArgumentsUsingNames(expression, newCall)
         newCall.transformChildrenVoid() // for annotations in annotations
         return newCall
+    }
+
+    private fun moveValueArgumentsUsingNames(source: IrConstructorCall, destination: IrConstructorCall) {
+        val argumentsByName = source.getArgumentsWithIr().associateBy(
+            { (param, _) -> param.name },
+            { (_, value) -> value }
+        )
+
+        destination.symbol.owner.valueParameters.forEachIndexed { index, parameter ->
+            val valueArg = argumentsByName[parameter.name]
+            if (parameter.defaultValue == null && valueArg == null)
+                error("Usage of default value argument for this annotation is not yet possible.\n" +
+                       "Please specify value for '${source.type.classOrNull?.owner?.name}.${parameter.name}' explicitly")
+            destination.putValueArgument(index, valueArg)
+        }
     }
 
     private fun createAnnotationImplementation(annotationClass: IrClass): IrClass {

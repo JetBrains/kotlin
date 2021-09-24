@@ -444,6 +444,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("kotlinExistingAnnotation.kt")
+            public void testKotlinExistingAnnotation() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/kotlinExistingAnnotation.kt");
+            }
+
+            @Test
             @TestMetadata("multifileEqHc.kt")
             public void testMultifileEqHc() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/multifileEqHc.kt");
