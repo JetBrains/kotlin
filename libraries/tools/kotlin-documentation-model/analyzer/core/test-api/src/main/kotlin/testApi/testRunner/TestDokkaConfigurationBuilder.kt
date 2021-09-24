@@ -37,6 +37,7 @@ class TestDokkaConfigurationBuilder {
     var suppressObviousFunctions: Boolean = DokkaDefaults.suppressObviousFunctions
     var includes: List<File> = emptyList()
     var suppressInheritedMembers: Boolean = DokkaDefaults.suppressInheritedMembers
+    var delayTemplateSubstitution: Boolean = DokkaDefaults.delayTemplateSubstitution
     private val lazySourceSets = mutableListOf<Lazy<DokkaSourceSetImpl>>()
 
     fun build() = DokkaConfigurationImpl(
@@ -53,6 +54,7 @@ class TestDokkaConfigurationBuilder {
         suppressObviousFunctions = suppressObviousFunctions,
         includes = includes.toSet(),
         suppressInheritedMembers = suppressInheritedMembers,
+        delayTemplateSubstitution = delayTemplateSubstitution
     )
 
     fun sourceSets(block: SourceSetsBuilder.() -> Unit) {
