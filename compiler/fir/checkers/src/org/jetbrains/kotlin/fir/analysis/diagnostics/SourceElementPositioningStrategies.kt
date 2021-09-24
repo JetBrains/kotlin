@@ -324,4 +324,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.FIELD_KEYWORD,
         PositioningStrategies.FIELD_KEYWORD
     )
+
+    val TAILREC_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.TAILREC_MODIFIER,
+        PositioningStrategies.TAILREC_MODIFIER
+    )
 }

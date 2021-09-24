@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 class A(val a: A) {
-    <!NO_TAIL_CALLS_FOUND!>tailrec fun foo1()<!> {
+    <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo1() {
         a.<!NON_TAIL_RECURSIVE_CALL!>foo1<!>()
     }
 
@@ -12,7 +12,7 @@ class A(val a: A) {
         foo3()
     }
 
-    <!NO_TAIL_CALLS_FOUND!>tailrec fun foo4()<!> {
+    <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo4() {
         with(a) {
             <!NON_TAIL_RECURSIVE_CALL!>foo4<!>()
             return

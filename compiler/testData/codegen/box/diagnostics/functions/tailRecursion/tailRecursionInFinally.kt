@@ -6,7 +6,7 @@
 // DONT_RUN_GENERATED_CODE: JS
 // IGNORE_BACKEND: JS
 
-<!NO_TAIL_CALLS_FOUND!>tailrec fun test(go: Boolean) : Unit<!> {
+<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun test(go: Boolean) : Unit {
     if (!go) return
     try {
         <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>test<!>(false)

@@ -293,6 +293,9 @@ object PositioningStrategies {
     val ENUM_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.ENUM_KEYWORD)
 
     @JvmField
+    val TAILREC_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.TAILREC_KEYWORD)
+
+    @JvmField
     val FIELD_KEYWORD: PositioningStrategy<KtBackingField> = object : DeclarationHeader<KtBackingField>() {
         override fun mark(element: KtBackingField): List<TextRange> {
             return markElement(element.fieldKeyword)

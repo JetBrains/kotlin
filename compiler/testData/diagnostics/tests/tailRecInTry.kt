@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-<!NO_TAIL_CALLS_FOUND!>tailrec fun foo1()<!> {
+<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo1() {
     try {
         <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo1<!>()
     } catch (e: Exception) {
@@ -9,7 +9,7 @@
     }
 }
 
-<!NO_TAIL_CALLS_FOUND!>tailrec fun foo2()<!> {
+<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo2() {
     try {
         <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo2<!>()
         foo1()
@@ -22,7 +22,7 @@
     }
 }
 
-<!NO_TAIL_CALLS_FOUND!>tailrec fun foo3()<!> {
+<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo3() {
     try {
         try {
             <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo3<!>()
@@ -41,7 +41,7 @@
     }
 }
 
-<!NO_TAIL_CALLS_FOUND!>tailrec fun foo4()<!> {
+<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo4() {
     try {
         if (true) {
             <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo4<!>()

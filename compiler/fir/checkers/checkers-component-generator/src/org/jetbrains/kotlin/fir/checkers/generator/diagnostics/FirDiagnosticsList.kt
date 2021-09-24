@@ -821,8 +821,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         // TODO: replace with KtParameter
         val CANNOT_INFER_PARAMETER_TYPE by error<KtElement>()
 
-        val NO_TAIL_CALLS_FOUND by warning<KtNamedFunction>(PositioningStrategy.DECLARATION_SIGNATURE)
-        val TAILREC_ON_VIRTUAL_MEMBER_ERROR by error<KtNamedFunction>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val NO_TAIL_CALLS_FOUND by warning<KtNamedFunction>(PositioningStrategy.TAILREC_MODIFIER)
+        val TAILREC_ON_VIRTUAL_MEMBER_ERROR by error<KtNamedFunction>(PositioningStrategy.TAILREC_MODIFIER)
         val NON_TAIL_RECURSIVE_CALL by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
         val TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
     }

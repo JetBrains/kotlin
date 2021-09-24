@@ -442,8 +442,8 @@ object FirErrors {
     val FORBIDDEN_VARARG_PARAMETER_TYPE by error1<KtParameter, ConeKotlinType>(SourceElementPositioningStrategies.PARAMETER_VARARG_MODIFIER)
     val VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION by error0<KtParameter>()
     val CANNOT_INFER_PARAMETER_TYPE by error0<KtElement>()
-    val NO_TAIL_CALLS_FOUND by warning0<KtNamedFunction>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
-    val TAILREC_ON_VIRTUAL_MEMBER_ERROR by error0<KtNamedFunction>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val NO_TAIL_CALLS_FOUND by warning0<KtNamedFunction>(SourceElementPositioningStrategies.TAILREC_MODIFIER)
+    val TAILREC_ON_VIRTUAL_MEMBER_ERROR by error0<KtNamedFunction>(SourceElementPositioningStrategies.TAILREC_MODIFIER)
     val NON_TAIL_RECURSIVE_CALL by warning0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED by warning0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
 

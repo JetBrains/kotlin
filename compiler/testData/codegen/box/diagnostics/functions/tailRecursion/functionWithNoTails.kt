@@ -6,7 +6,7 @@
 // DONT_RUN_GENERATED_CODE: JS
 // IGNORE_BACKEND: JS
 
-<!NO_TAIL_CALLS_FOUND!>tailrec fun noTails()<!> {
+<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun noTails() {
     // nothing here
 }
 
