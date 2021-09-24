@@ -3055,6 +3055,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/when"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
             }
 
+            @TestMetadata("constantsInWhen.kt")
+            public void testConstantsInWhen() throws Exception {
+                runTest("js/js.translator/testData/box/expression/when/constantsInWhen.kt");
+            }
+
             @TestMetadata("doWhileWithOneStmWhen.kt")
             public void testDoWhileWithOneStmWhen() throws Exception {
                 runTest("js/js.translator/testData/box/expression/when/doWhileWithOneStmWhen.kt");

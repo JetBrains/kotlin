@@ -3040,6 +3040,11 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/when"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
+            @TestMetadata("constantsInWhen.kt")
+            public void testConstantsInWhen() throws Exception {
+                runTest("js/js.translator/testData/box/expression/when/constantsInWhen.kt");
+            }
+
             @TestMetadata("doWhileWithOneStmWhen.kt")
             public void testDoWhileWithOneStmWhen() throws Exception {
                 runTest("js/js.translator/testData/box/expression/when/doWhileWithOneStmWhen.kt");
