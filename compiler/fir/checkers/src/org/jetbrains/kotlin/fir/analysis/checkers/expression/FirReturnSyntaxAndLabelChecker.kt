@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 
-object FirReturnAllowedChecker : FirReturnExpressionChecker() {
+object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker() {
     override fun check(expression: FirReturnExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = expression.source
         if (source?.kind == FirFakeSourceElementKind.ImplicitReturn) return

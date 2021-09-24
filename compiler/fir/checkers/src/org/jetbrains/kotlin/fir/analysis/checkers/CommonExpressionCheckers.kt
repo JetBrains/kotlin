@@ -96,7 +96,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val returnExpressionCheckers: Set<FirReturnExpressionChecker>
         get() = setOf(
-            FirReturnAllowedChecker,
+            FirReturnSyntaxAndLabelChecker,
             FirFunctionReturnTypeMismatchChecker
         )
 
