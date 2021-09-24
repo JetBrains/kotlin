@@ -144,6 +144,8 @@ allprojects {
 
     // backent.native/tests/coverage
     ext.testOutputCoverage = rootProject.file("$testOutputRoot/coverage")
+
+    ext.testOutputFileCheck = rootProject.file("$testOutputRoot/filecheck")
 }
 testOutputExternal.mkdirs()
 testOutputStdlib.mkdirs()
@@ -211,6 +213,7 @@ task sanity {
     // Add regular gradle test tasks
     dependsOn(tasksOf(Test))
     dependsOn(tasksOf(CoverageTest))
+    dependsOn(tasksOf(FileCheckTest))
     dependsOn(":kotlin-native:Interop:Indexer:check")
 }
 
@@ -5809,6 +5812,53 @@ pluginTest("runtime_basic_init", "nopPlugin") {
     disabled = (project.testTarget == 'wasm32')
     source = "runtime/basic/runtime_basic_init.kt"
     flags = ["-tr"]
+}
+
+
+Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
+    return project.tasks.create(name, FileCheckTest) { task ->
+        task.configure(configureClosure)
+        task.llvmIr = project.file("$testOutputFileCheck/$name/out.ll")
+        if (task.enabled) {
+            konanArtifacts {
+                // We could use `bitcode` here to make things faster. But:
+                // 1. `bitcode` has no other usages.
+                // 2. Unification should help porting to the new test infra.
+                // 3. Compiler might behave differently when outputting bitcode instead of object files.
+                program(name, targets: [ target ]) {
+                    srcFiles task.annotatedSource
+                    baseDir "$testOutputFileCheck/$name"
+                    extraOpts project.globalTestArgs
+                    extraOpts "-Xtemporary-files-dir=$testOutputFileCheck/$name", "-Xsave-llvm-ir"
+                }
+                UtilsKt.dependsOnKonanBuildingTask(task, name, target)
+            }
+        }
+    }
+}
+
+fileCheckTest("filecheck_smoke0") {
+    annotatedSource = project.file('filecheck/smoke0.kt')
+}
+
+fileCheckTest("filecheck_replace_invoke_with_call") {
+    annotatedSource = project.file('filecheck/replace_invoke_with_call.kt')
+}
+
+fileCheckTest("filecheck_intrinsics") {
+    annotatedSource = project.file('filecheck/intrinsics.kt')
+}
+
+fileCheckTest("filecheck_escape_analysis_enabled") {
+    annotatedSource = project.file('filecheck/escape_analysis.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+    checkPrefix = "CHECK-OPT"
+}
+
+fileCheckTest("filecheck_escape_analysis_disabled") {
+    annotatedSource = project.file('filecheck/escape_analysis.kt')
+    enabled = project.globalTestArgs.contains('-g')
+    checkPrefix = "CHECK-DEBUG"
 }
 
 dependencies {
