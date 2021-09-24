@@ -5,6 +5,7 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.makeVisibilityHiddenLikeLlvmInternalizePass
 import org.jetbrains.kotlin.konan.target.*
 
@@ -126,6 +127,11 @@ internal fun runLlvmOptimizationPipeline(context: Context) {
             inline_threshold: ${config.customInlineThreshold ?: "default"}
         """.trimIndent()
     }
+    getFunctions(llvmModule).forEach {
+        if (LLVMGetGC(it) == null) {
+            LLVMSetGC(it, "disabled")
+        }
+    }
     memScoped {
         LLVMKotlinInitializeTargets()
 
@@ -176,6 +182,7 @@ internal fun runLlvmOptimizationPipeline(context: Context) {
         // from cinterop "glue" bitcode.
         // TODO: Consider adding other ObjC passes.
         LLVMAddObjCARCContractPass(modulePasses)
+        LLVMAddPlaceSafepointsPass(modulePasses)
 
         LLVMRunPassManager(modulePasses, llvmModule)
 
@@ -185,6 +192,9 @@ internal fun runLlvmOptimizationPipeline(context: Context) {
     }
     if (shouldRunLateBitcodePasses(context)) {
         runLateBitcodePasses(context, llvmModule)
+    }
+    getFunctions(llvmModule).forEach {
+        LLVMSetGC(it, null)
     }
 }
 

@@ -1523,9 +1523,10 @@ internal abstract class FunctionGenerationContext(
     }
 
     private fun handleEpilogueForExperimentalMM(safePointFunction: LLVMValueRef) {
+        safePointFunction.let{}
         if (context.memoryModel == MemoryModel.EXPERIMENTAL) {
             if (!forbidRuntime) {
-                call(safePointFunction, emptyList())
+                LLVMSetGC(function, "statepoint-example")
             }
             if (switchToRunnable) {
                 check(!forbidRuntime) { "Generating a bridge when runtime is forbidden" }

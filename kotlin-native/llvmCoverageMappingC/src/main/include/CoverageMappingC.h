@@ -78,6 +78,9 @@ void LLVMAddObjCARCContractPass(LLVMPassManagerRef passManagerRef);
 
 void LLVMKotlinInitializeTargets();
 
+
+void LLVMAddPlaceSafepointsPass(LLVMPassManagerRef passManagerRef);
+
 # ifdef __cplusplus
 }
 # endif

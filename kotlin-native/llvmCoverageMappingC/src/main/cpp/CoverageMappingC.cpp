@@ -22,6 +22,7 @@
 #include <llvm/Transforms/ObjCARC.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/Path.h>
+#include <llvm/Transforms/Scalar.h>
 
 #include <utility>
 #include <string>
@@ -235,6 +236,11 @@ void LLVMKotlinAddTargetLibraryInfoWrapperPass(LLVMPassManagerRef passManagerRef
 void LLVMAddObjCARCContractPass(LLVMPassManagerRef passManagerRef) {
     legacy::PassManagerBase *passManager = unwrap(passManagerRef);
     passManager->add(createObjCARCContractPass());
+}
+
+void LLVMAddPlaceSafepointsPass(LLVMPassManagerRef passManagerRef) {
+    legacy::PassManagerBase *passManager = unwrap(passManagerRef);
+    passManager->add(createPlaceSafepointsPass());
 }
 
 void LLVMKotlinInitializeTargets() {

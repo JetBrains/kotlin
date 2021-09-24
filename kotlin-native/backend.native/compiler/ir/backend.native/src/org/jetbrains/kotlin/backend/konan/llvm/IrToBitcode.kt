@@ -1344,8 +1344,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             functionGenerationContext.condBr(condition, loopBody, loopScope.loopExit)
 
             functionGenerationContext.positionAtEnd(loopBody)
-            if (context.memoryModel == MemoryModel.EXPERIMENTAL)
-                call(context.llvm.Kotlin_mm_safePointWhileLoopBody, emptyList())
             loop.body?.generate()
 
             functionGenerationContext.br(loopScope.loopCheck)
@@ -1366,8 +1364,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             functionGenerationContext.br(loopBody)
 
             functionGenerationContext.positionAtEnd(loopBody)
-            if (context.memoryModel == MemoryModel.EXPERIMENTAL)
-                call(context.llvm.Kotlin_mm_safePointWhileLoopBody, emptyList())
             loop.body?.generate()
             functionGenerationContext.br(loopScope.loopCheck)
 
@@ -2642,6 +2638,16 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                             functionType(int32Type, false, int8TypePtr, int8TypePtr, int32Type))
             overrideRuntimeGlobal("Kotlin_getSourceInfo_Function", constValue(getSourceInfoFunction!!))
         }
+        LLVMAddFunction(context.llvmModule, "gc.safepoint_poll", functionType(voidType, false))?.apply {
+            val bb = LLVMAppendBasicBlockInContext(llvmContext, this, "")
+            val builder = LLVMCreateBuilderInContext(llvmContext)!!
+            LLVMPositionBuilderAtEnd(builder, bb)
+            LLVMBuildCall(builder, context.llvm.Kotlin_mm_safePointFunctionEpilogue, cValuesOf<LLVMOpaqueValue>(), 0, "")
+            LLVMBuildRetVoid(builder)
+            LLVMDisposeBuilder(builder)
+            context.llvm.usedFunctions.add(this)
+        }
+
     }
 
     //-------------------------------------------------------------------------//
