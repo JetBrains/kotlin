@@ -18,7 +18,10 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 
 /**
- * Checker that heavily relies on source tree. So it should have different implementation for each tree variant
+ * Checker that heavily relies on source tree. So it may have different implementation for each tree variant. Subclass should either
+ *
+ * - implement `checkPsiOrLightTree` in an AST-agnostic manner, or
+ * - implement both `checkPsi` and `checkLightTree` if it's difficult to handle PSI and LT tree in a unified way.
  */
 interface FirSyntaxChecker<in D : FirElement, P : PsiElement> {
 
@@ -34,18 +37,18 @@ interface FirSyntaxChecker<in D : FirElement, P : PsiElement> {
 
     fun isApplicable(element: D, source: FirSourceElement): Boolean = true
 
-    /**
-     *  By default psi tree should be equivalent to light tree and can be processed the same way
-     */
     fun checkPsi(element: D, source: FirPsiSourceElement, psi: P, context: CheckerContext, reporter: DiagnosticReporter) {
-        checkLightTree(element, source, context, reporter)
+        checkPsiOrLightTree(element, source, context, reporter)
     }
 
-    /*
-        accepts FirSourceElement instead of FirLightSourceElement because now they have the same interface
-        and it allows to reuse LT check for psi tree
+    fun checkLightTree(element: D, source: FirLightSourceElement, context: CheckerContext, reporter: DiagnosticReporter) {
+        checkPsiOrLightTree(element, source, context, reporter)
+    }
+
+    /**
+     *  By default psi tree should be equivalent to light tree and can be processed the same way.
      */
-    fun checkLightTree(element: D, source: FirSourceElement, context: CheckerContext, reporter: DiagnosticReporter)
+    fun checkPsiOrLightTree(element: D, source: FirSourceElement, context: CheckerContext, reporter: DiagnosticReporter) {}
 }
 
 abstract class FirDeclarationSyntaxChecker<in D : FirDeclaration, P : PsiElement> :

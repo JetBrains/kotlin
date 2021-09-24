@@ -35,7 +35,7 @@ object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenE
 
     override fun checkLightTree(
         element: FirWhenExpression,
-        source: FirSourceElement,
+        source: FirLightSourceElement,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {

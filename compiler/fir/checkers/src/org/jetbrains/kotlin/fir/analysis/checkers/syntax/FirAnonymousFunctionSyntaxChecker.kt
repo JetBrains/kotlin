@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
+import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -34,7 +34,7 @@ object FirAnonymousFunctionSyntaxChecker : FirDeclarationSyntaxChecker<FirAnonym
 
     override fun checkLightTree(
         element: FirAnonymousFunction,
-        source: FirSourceElement,
+        source: FirLightSourceElement,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {

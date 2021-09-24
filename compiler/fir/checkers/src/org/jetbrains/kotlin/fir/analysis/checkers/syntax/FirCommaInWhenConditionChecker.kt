@@ -23,7 +23,7 @@ object FirCommaInWhenConditionChecker : FirExpressionSyntaxChecker<FirWhenExpres
         return element.subject == null
     }
 
-    override fun checkLightTree(
+    override fun checkPsiOrLightTree(
         element: FirWhenExpression,
         source: FirSourceElement,
         context: CheckerContext,

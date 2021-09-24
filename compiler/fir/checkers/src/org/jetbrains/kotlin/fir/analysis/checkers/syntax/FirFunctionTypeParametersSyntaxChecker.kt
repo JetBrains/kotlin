@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -39,7 +40,7 @@ object FirFunctionTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker<FirS
 
     override fun checkLightTree(
         element: FirSimpleFunction,
-        source: FirSourceElement,
+        source: FirLightSourceElement,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {

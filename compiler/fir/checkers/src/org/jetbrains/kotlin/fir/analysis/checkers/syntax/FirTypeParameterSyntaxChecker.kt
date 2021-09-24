@@ -35,7 +35,7 @@ object FirTypeParameterSyntaxChecker : FirDeclarationSyntaxChecker<FirTypeParame
         }
     }
 
-    override fun checkLightTree(
+    override fun checkPsiOrLightTree(
         element: FirTypeParameter,
         source: FirSourceElement,
         context: CheckerContext,

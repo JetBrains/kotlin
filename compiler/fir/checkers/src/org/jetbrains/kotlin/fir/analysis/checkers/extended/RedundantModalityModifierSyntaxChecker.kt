@@ -27,7 +27,7 @@ object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirD
     override fun isApplicable(element: FirDeclaration, source: FirSourceElement): Boolean =
         source.kind !is FirFakeSourceElementKind && element is FirMemberDeclaration
 
-    override fun checkLightTree(
+    override fun checkPsiOrLightTree(
         element: FirDeclaration,
         source: FirSourceElement,
         context: CheckerContext,
