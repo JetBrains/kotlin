@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.backend.common.ir.addFakeOverrides
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -56,12 +57,27 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
             implClass.defaultType,
             ctor.symbol,
         )
-        newCall.copyTypeAndValueArgumentsFrom(expression)
+        moveValueArgumentsUsingNames(expression, newCall)
         newCall.transformChildrenVoid() // for annotations in annotations
         return newCall
     }
 
     open fun IrClass.platformSetup() {}
+
+    private fun moveValueArgumentsUsingNames(source: IrConstructorCall, destination: IrConstructorCall) {
+        val argumentsByName = source.getArgumentsWithIr().associateBy(
+            { (param, _) -> param.name },
+            { (_, value) -> value }
+        )
+
+        destination.symbol.owner.valueParameters.forEachIndexed { index, parameter ->
+            val valueArg = argumentsByName[parameter.name]
+            if (parameter.defaultValue == null && valueArg == null)
+                error("Usage of default value argument for this annotation is not yet possible.\n" +
+                       "Please specify value for '${source.type.classOrNull?.owner?.name}.${parameter.name}' explicitly")
+            destination.putValueArgument(index, valueArg)
+        }
+    }
 
     private fun createAnnotationImplementation(annotationClass: IrClass): IrClass {
         val localDeclarationParent = currentClass?.scope?.getLocalDeclarationParent() as? IrClass
