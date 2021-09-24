@@ -21,8 +21,6 @@ enum class JdkMajorVersion(
     JDK_9(9, overrideMajorVersion = 11),
     JDK_10(10, mandatory = false, overrideMajorVersion = 11),
     JDK_11(11, mandatory = false),
-    JDK_15(15, mandatory = false),
-    JDK_16(16, mandatory = false),
     JDK_17(17, mandatory = false);
 
     fun isMandatory(): Boolean = mandatory
