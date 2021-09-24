@@ -84,3 +84,7 @@ open class J {
         get() = 3.1415926535
         set(value) {}
 }
+
+private class Foo {
+    <!REDUNDANT_VISIBILITY_MODIFIER!>internal<!> fun barBarian() {}
+}

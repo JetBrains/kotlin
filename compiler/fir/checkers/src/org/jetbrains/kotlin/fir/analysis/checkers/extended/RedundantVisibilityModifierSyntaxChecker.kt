@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirDeclarationSyntaxChe
 import org.jetbrains.kotlin.fir.analysis.checkers.toVisibilityOrNull
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
-import org.jetbrains.kotlin.fir.declarations.utils.isOverride
-import org.jetbrains.kotlin.fir.declarations.utils.isSealed
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -51,7 +48,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
 
         val redundantVisibility = when {
             explicitVisibility == implicitVisibility -> implicitVisibility
-            explicitVisibility == Visibilities.Internal && containingMemberDeclaration?.isLocalMember == true -> Visibilities.Internal
+            explicitVisibility.isEffectivelyHiddenBy(containingMemberDeclaration) -> explicitVisibility
             else -> return
         }
 
@@ -64,6 +61,17 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         ) return
 
         reporter.reportOn(source, FirErrors.REDUNDANT_VISIBILITY_MODIFIER, context)
+    }
+
+    private fun Visibility?.isEffectivelyHiddenBy(declaration: FirMemberDeclaration?): Boolean {
+        val containerVisibility = declaration?.effectiveVisibility?.toVisibility() ?: return false
+
+        if (containerVisibility == Visibilities.Local && this == Visibilities.Internal) {
+            return true
+        }
+
+        val difference = this?.compareTo(containerVisibility) ?: return false
+        return difference > 0
     }
 
     private fun FirDeclaration.implicitVisibility(context: CheckerContext): Visibility {

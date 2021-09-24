@@ -171,3 +171,12 @@ FILE: RedundantVisibilityModifierChecker.kt
             }
 
     }
+    private final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        internal final fun barBarian(): R|kotlin/Unit| {
+        }
+
+    }
