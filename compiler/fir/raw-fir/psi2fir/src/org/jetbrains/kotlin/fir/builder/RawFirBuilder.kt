@@ -2368,8 +2368,11 @@ open class RawFirBuilder(
 
         override fun visitDestructuringDeclaration(multiDeclaration: KtDestructuringDeclaration, data: Unit): FirElement {
             val baseVariable = generateTemporaryVariable(
-                baseModuleData, multiDeclaration.toFirSourceElement(), "destruct",
+                baseModuleData,
+                multiDeclaration.toFirSourceElement(),
+                "destruct",
                 multiDeclaration.initializer.toFirExpression("Initializer required for destructuring declaration", DiagnosticKind.Syntax),
+                extractAnnotationsTo = { extractAnnotationsTo(it) }
             )
             return generateDestructuringBlock(
                 baseModuleData,

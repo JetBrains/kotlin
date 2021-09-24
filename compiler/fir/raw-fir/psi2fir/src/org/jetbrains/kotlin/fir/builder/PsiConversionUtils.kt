@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 internal fun KtWhenCondition.toFirWhenCondition(
@@ -80,6 +82,46 @@ internal fun Array<KtWhenCondition>.toFirWhenCondition(
     }
     return firCondition!!
 }
+
+internal fun generateTemporaryVariable(
+    moduleData: FirModuleData,
+    source: FirSourceElement?,
+    name: Name,
+    initializer: FirExpression,
+    typeRef: FirTypeRef? = null,
+    extractAnnotationsTo: (KtAnnotated.(FirAnnotationContainerBuilder) -> Unit),
+): FirVariable =
+    buildProperty {
+        this.source = source
+        this.moduleData = moduleData
+        origin = FirDeclarationOrigin.Source
+        returnTypeRef = typeRef ?: buildImplicitTypeRef {
+            this.source = source
+        }
+        this.name = name
+        this.initializer = initializer
+        symbol = FirPropertySymbol(name)
+        isVar = false
+        isLocal = true
+        status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+        (source.psi as? KtAnnotated)?.extractAnnotationsTo(this)
+    }
+
+internal fun generateTemporaryVariable(
+    moduleData: FirModuleData,
+    source: FirSourceElement?,
+    specialName: String,
+    initializer: FirExpression,
+    extractAnnotationsTo: (KtAnnotated.(FirAnnotationContainerBuilder) -> Unit),
+): FirVariable =
+    generateTemporaryVariable(
+        moduleData,
+        source,
+        Name.special("<$specialName>"),
+        initializer,
+        null,
+        extractAnnotationsTo,
+    )
 
 internal fun generateDestructuringBlock(
     moduleData: FirModuleData,

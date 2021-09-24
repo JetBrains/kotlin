@@ -1,1 +1,3 @@
-null
+KtAnnotationCall:
+argumentMapping = { "UNCHECKED_CAST" -> (vararg names: kotlin.String) }
+targetFunction = <constructor>(vararg names: kotlin.String): kotlin.Suppress

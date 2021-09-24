@@ -1188,12 +1188,14 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitDestructuringDeclaration
      */
     private fun convertDestructingDeclaration(destructingDeclaration: LighterASTNode): DestructuringDeclaration {
+        var modifiers = Modifier()
         var isVar = false
         val entries = mutableListOf<FirVariable?>()
         val source = destructingDeclaration.toFirSourceElement()
         var firExpression: FirExpression? = null
         destructingDeclaration.forEachChildren {
             when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifierList(it)
                 VAR_KEYWORD -> isVar = true
                 DESTRUCTURING_DECLARATION_ENTRY -> entries += convertDestructingDeclarationEntry(it)
                 else -> if (it.isExpression()) firExpression =
@@ -1208,7 +1210,8 @@ class DeclarationsConverter(
                 null,
                 ConeSimpleDiagnostic("Initializer required for destructuring declaration", DiagnosticKind.Syntax)
             ),
-            source
+            source,
+            modifiers
         )
     }
 
