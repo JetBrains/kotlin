@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
+import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COPY
+import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.COPY_NAME
-import org.jetbrains.kotlin.fir.HASHCODE_NAME
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
@@ -330,7 +330,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
 
     companion object {
         fun isCopy(irFunction: IrFunction): Boolean =
-            irFunction.name == COPY_NAME
+            irFunction.name == DATA_CLASS_COPY
 
         fun isComponentN(irFunction: IrFunction): Boolean {
             if (irFunction.name.isSpecial) {

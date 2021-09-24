@@ -24,6 +24,10 @@ object StandardNames {
 
     @JvmField val ENUM_VALUE_OF = Name.identifier("valueOf")
 
+    @JvmField val DATA_CLASS_COPY = Name.identifier("copy")
+
+    @JvmField val HASHCODE_NAME = Name.identifier("hashCode")
+
     @JvmField val CHAR_CODE = Name.identifier("code")
 
     @JvmField val COROUTINES_PACKAGE_FQ_NAME = FqName("kotlin.coroutines")
