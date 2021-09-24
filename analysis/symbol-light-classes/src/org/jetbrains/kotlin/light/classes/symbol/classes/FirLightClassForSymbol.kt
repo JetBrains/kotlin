@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COPY
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
@@ -162,7 +162,7 @@ internal class FirLightClassForSymbol(
             classOrObjectSymbol.getMemberScope().getCallableSymbols().forEach { symbol ->
                 if (symbol is KtFunctionSymbol) {
                     val name = symbol.name
-                    if (name.isCopy || name.isComponentN) {
+                    if (DataClassResolver.isCopy(name) || DataClassResolver.isComponentLike(name)) {
                         componentAndCopyFunctions.add(symbol)
                     }
                     if (name.isFromAny) {
@@ -177,17 +177,6 @@ internal class FirLightClassForSymbol(
             functionsFromAny[EQUALS]?.let { createMethodFromAny(it) }
         }
     }
-
-    private val Name.isCopy: Boolean
-        get() = this == DATA_CLASS_COPY
-
-    private val Name.isComponentN: Boolean
-        get() {
-            if (isSpecial) return false
-            if (!identifier.startsWith("component")) return false
-            val n = identifier.substring("component".length).toIntOrNull()
-            return n != null && n > 0
-        }
 
     private val Name.isFromAny: Boolean
         get() = this == EQUALS || this == HASHCODE_NAME || this == TO_STRING

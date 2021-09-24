@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COPY
 import org.jetbrains.kotlin.name.Name
 
 object DataClassResolver {
@@ -27,4 +28,6 @@ object DataClassResolver {
 
         return true
     }
+
+    fun isCopy(name: Name): Boolean = name == DATA_CLASS_COPY
 }

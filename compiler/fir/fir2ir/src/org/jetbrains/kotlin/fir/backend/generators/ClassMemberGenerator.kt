@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.constructedClassType
 import org.jetbrains.kotlin.ir.util.isSetter
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.resolve.DataClassResolver
 
 internal class ClassMemberGenerator(
     private val components: Fir2IrComponents,
@@ -128,10 +129,10 @@ internal class ClassMemberGenerator(
                     irFunction.parent is IrClass && irFunction.parentAsClass.isData -> {
                         val lookupTag = firFunction?.symbol?.dispatchReceiverClassOrNull()
                         when {
-                            DataClassMembersGenerator.isComponentN(irFunction) ->
+                            DataClassResolver.isComponentLike(irFunction.name) ->
                                 firFunction?.body?.let { irFunction.body = visitor.convertToIrBlockBody(it) }
                                     ?: DataClassMembersGenerator(components).generateDataClassComponentBody(irFunction, lookupTag!!)
-                            DataClassMembersGenerator.isCopy(irFunction) ->
+                            DataClassResolver.isCopy(irFunction.name) ->
                                 firFunction?.body?.let { irFunction.body = visitor.convertToIrBlockBody(it) }
                                     ?: DataClassMembersGenerator(components).generateDataClassCopyBody(irFunction, lookupTag!!)
                             else ->

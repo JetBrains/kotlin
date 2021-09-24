@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
-import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COPY
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
@@ -46,6 +45,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.DataClassMembersGenerator
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 
@@ -246,7 +246,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
         }
 
         fun generateComponentBody(irFunction: IrFunction) {
-            val index = getComponentIndex(irFunction)!!
+            val index = DataClassResolver.getComponentIndex(irFunction.name.asString())
             val valueParameter = irClass.primaryConstructor!!.valueParameters[index - 1]
             val irProperty = irDataClassMembersGenerator.getProperty(null, valueParameter)!!
             irDataClassMembersGenerator.generateComponentFunction(irFunction, irProperty)
@@ -326,25 +326,5 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
             ).apply {
                 parent = irFunction
             }
-    }
-
-    companion object {
-        fun isCopy(irFunction: IrFunction): Boolean =
-            irFunction.name == DATA_CLASS_COPY
-
-        fun isComponentN(irFunction: IrFunction): Boolean {
-            if (irFunction.name.isSpecial) {
-                return false
-            }
-            val name = irFunction.name.identifier
-            if (!name.startsWith("component")) {
-                return false
-            }
-            val n = getComponentIndex(irFunction)
-            return n != null && n > 0
-        }
-
-        fun getComponentIndex(irFunction: IrFunction): Int? =
-            irFunction.name.identifier.substring("component".length).toIntOrNull()
     }
 }
