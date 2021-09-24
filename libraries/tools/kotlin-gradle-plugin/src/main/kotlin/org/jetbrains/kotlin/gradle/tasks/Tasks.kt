@@ -830,10 +830,7 @@ abstract class KotlinCompile @Inject constructor(
         classpathSnapshotDir.deleteRecursively()
         classpathSnapshotDir.mkdirs()
         snapshotFiles.forEachIndexed { index, snapshotFile ->
-            val targetFile = File("$classpathSnapshotDir/$index/${snapshotFile.name}")
-            snapshotFile.copyTo(targetFile, overwrite = true)
-            // Preserve timestamp to find out unchanged files later (see `ClasspathChangesComputer.alignUnchangedSnapshotFiles`)
-            targetFile.setLastModified(snapshotFile.lastModified())
+            snapshotFile.copyTo(File("$classpathSnapshotDir/$index/${snapshotFile.name}"))
         }
     }
 
