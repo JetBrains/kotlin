@@ -201,7 +201,6 @@ enum class LanguageFeature(
     ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_6, kind = BUG_FIX),
     ProhibitSelfCallsInNestedObjects(KOTLIN_1_6, kind = BUG_FIX),
     ProperCheckAnnotationsTargetInTypeUsePositions(KOTLIN_1_6, kind = BUG_FIX),
-    AbstractClassMemberNotImplementedWithIntermediateAbstractClass(KOTLIN_1_6, kind = BUG_FIX),
 
     SuspendFunctionAsSupertype(KOTLIN_1_6),
     UnrestrictedBuilderInference(KOTLIN_1_6),
@@ -234,6 +233,7 @@ enum class LanguageFeature(
     SafeCallsAreAlwaysNullable(KOTLIN_1_7),
     ApproximateIntegerLiteralTypesInReceiverPosition(KOTLIN_1_7),
     RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_7),
+    AbstractClassMemberNotImplementedWithIntermediateAbstractClass(KOTLIN_1_7, kind = BUG_FIX),
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),

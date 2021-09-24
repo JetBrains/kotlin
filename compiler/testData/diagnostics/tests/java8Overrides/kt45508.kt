@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// !LANGUAGE: +AbstractClassMemberNotImplementedWithIntermediateAbstractClass
 interface A {
     fun foo(): Any
 }
