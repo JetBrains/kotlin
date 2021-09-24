@@ -37,7 +37,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
         val reference = resolvable.calleeReference as? FirResolvedNamedReference ?: return
         val referencedSymbol = reference.resolvedSymbol
 
-        reportDeprecationIfNeeded(expression.source, referencedSymbol, expression, context, reporter)
+        reportDeprecationIfNeeded(reference.source, referencedSymbol, expression, context, reporter)
     }
 
     internal fun reportDeprecationIfNeeded(

@@ -33,14 +33,16 @@ fun FirBasedSymbol<*>.getDeprecation(callSite: FirElement?): DeprecationInfo? {
     val deprecationInfos = mutableListOf<DeprecationInfo>()
     when (this) {
         is FirPropertySymbol ->
-            if (callSite is FirVariableAssignment) {
-                deprecationInfos.addIfNotNull(
-                    getDeprecationForCallSite(AnnotationUseSiteTarget.PROPERTY_SETTER, AnnotationUseSiteTarget.PROPERTY)
-                )
-            } else {
-                deprecationInfos.addIfNotNull(
-                    getDeprecationForCallSite(AnnotationUseSiteTarget.PROPERTY_GETTER, AnnotationUseSiteTarget.PROPERTY)
-                )
+            when (callSite) {
+                is FirVariableAssignment ->
+                    deprecationInfos.addIfNotNull(
+                        getDeprecationForCallSite(AnnotationUseSiteTarget.PROPERTY_SETTER, AnnotationUseSiteTarget.PROPERTY)
+                    )
+                is FirPropertyAccessExpression ->
+                    deprecationInfos.addIfNotNull(
+                        getDeprecationForCallSite(AnnotationUseSiteTarget.PROPERTY_GETTER, AnnotationUseSiteTarget.PROPERTY)
+                    )
+                else -> deprecationInfos.addIfNotNull(getDeprecationForCallSite(AnnotationUseSiteTarget.PROPERTY))
             }
         else -> deprecationInfos.addIfNotNull(getDeprecationForCallSite())
     }

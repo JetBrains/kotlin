@@ -7,12 +7,12 @@ fun foo(javaClass: JavaClass) {
     javaClass.<!DEPRECATION!>something2<!>++
 
     javaClass.something3
-    javaClass.something3 <!DEPRECATION!>=<!> 1
-    javaClass.something3<!DEPRECATION!>++<!>
+    javaClass.<!DEPRECATION!>something3<!> = 1
+    javaClass.<!DEPRECATION!>something3<!>++
 
     javaClass.<!DEPRECATION!>something4<!>
-    javaClass.something4 <!DEPRECATION!>=<!> 1
-    javaClass.<!DEPRECATION!>something4<!><!DEPRECATION!>++<!>
+    javaClass.<!DEPRECATION!>something4<!> = 1
+    javaClass.<!DEPRECATION, DEPRECATION!>something4<!>++
 
     javaClass.something5
     javaClass.something5 = 1

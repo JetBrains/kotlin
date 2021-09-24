@@ -896,6 +896,10 @@ object PositioningStrategies {
      */
     class FindReferencePositioningStrategy(val locateReferencedName: Boolean) : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
+            if (element is KtBinaryExpression && element.operationToken == KtTokens.EQ) {
+                // Look for reference in LHS of variable assignment.
+                element.left?.let { return mark(it) }
+            }
             var result: PsiElement = when (element) {
                 is KtQualifiedExpression -> {
                     when (val selectorExpression = element.selectorExpression) {

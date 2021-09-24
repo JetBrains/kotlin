@@ -21,7 +21,7 @@ open class A {
         <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>test<!>()
         <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>z<!>
         zVar
-        zVar <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>=<!> "123"
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>zVar<!> = "123"
     }
 
     internal inline fun callFromInternal() {
