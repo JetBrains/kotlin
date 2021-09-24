@@ -261,7 +261,7 @@ class BodyResolveContext(
     ) {
         if (owningClass == null) return
         addReceiver(
-            name = null,
+            name = owningClass.name,
             implicitReceiverValue = InaccessibleImplicitReceiverValue(
                 owningClass.symbol,
                 owningClass.defaultType(),
