@@ -219,18 +219,20 @@ private class VarargTransformer(
     }
 
     private fun transformFunctionAccessExpression(expression: IrFunctionAccessExpression): IrExpression {
+        expression.transformChildrenVoid()
+
         if (expression.symbol.owner.isExternal) {
             for (i in 0 until expression.valueArgumentsCount) {
                 val parameter = expression.symbol.owner.valueParameters[i]
                 val varargElementType = parameter.varargElementType
                 if (varargElementType != null) {
-                    (expression.getValueArgument(i) as IrVararg?)?.let {
+                    (expression.getValueArgument(i) as? IrVararg)?.let {
                         externalVarargs.add(it)
                     }
                 }
             }
         }
-        expression.transformChildrenVoid()
+
         val size = expression.valueArgumentsCount
 
         for (i in 0 until size) {
