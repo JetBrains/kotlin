@@ -13699,6 +13699,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("kt46727Warnings.kt")
+                public void testKt46727Warnings() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/kt46727Warnings.kt");
+                }
+
+                @Test
                 @TestMetadata("memberScopeOfCaptured.kt")
                 public void testMemberScopeOfCaptured() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/memberScopeOfCaptured.kt");

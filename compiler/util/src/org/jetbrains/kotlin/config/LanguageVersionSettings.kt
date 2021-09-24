@@ -232,6 +232,7 @@ enum class LanguageFeature(
     ProhibitSimplificationOfNonTrivialConstBooleanExpressions(KOTLIN_1_7),
     SafeCallsAreAlwaysNullable(KOTLIN_1_7),
     ApproximateIntegerLiteralTypesInReceiverPosition(KOTLIN_1_7),
+    RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_7),
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),
