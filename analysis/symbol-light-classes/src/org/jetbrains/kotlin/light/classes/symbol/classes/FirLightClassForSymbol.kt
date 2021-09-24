@@ -159,14 +159,16 @@ internal class FirLightClassForSymbol(
             val functionsFromAny = mutableMapOf<Name, KtFunctionSymbol>()
             // NB: componentN and copy are added during RAW FIR, but synthetic members from `Any` are not.
             // Thus, using declared member scope is not sufficient to lookup "all" synthetic members.
-            classOrObjectSymbol.getMemberScope().getCallableSymbols().forEach { symbol ->
-                if (symbol is KtFunctionSymbol) {
-                    val name = symbol.name
-                    if (DataClassResolver.isCopy(name) || DataClassResolver.isComponentLike(name)) {
-                        componentAndCopyFunctions.add(symbol)
+            classOrObjectSymbol.getMemberScope().getCallableSymbols().forEach { functionSymbol ->
+                if (functionSymbol is KtFunctionSymbol) {
+                    val name = functionSymbol.name
+                    if (functionSymbol.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED &&
+                        (DataClassResolver.isCopy(name) || DataClassResolver.isComponentLike(name))
+                    ) {
+                        componentAndCopyFunctions.add(functionSymbol)
                     }
-                    if (name.isFromAny) {
-                        functionsFromAny[name] = symbol
+                    if (functionSymbol.dispatchType?.isAny == true && name.isFromAny) {
+                        functionsFromAny[name] = functionSymbol
                     }
                 }
             }
