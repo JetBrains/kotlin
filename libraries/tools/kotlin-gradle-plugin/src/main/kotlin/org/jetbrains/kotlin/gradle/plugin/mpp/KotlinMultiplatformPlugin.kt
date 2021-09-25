@@ -174,13 +174,14 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         with(project.multiplatformExtension.presets) {
             add(KotlinJvmTargetPreset(project))
             add(KotlinJsTargetPreset(project).apply { irPreset = null })
-            add(KotlinJsIrTargetPreset(project).apply { mixedMode = false })
+            add(KotlinJsIrTargetPreset(project, isWasm = false).apply { mixedMode = false })
             add(
                 KotlinJsTargetPreset(project).apply {
-                    irPreset = KotlinJsIrTargetPreset(project)
+                    irPreset = KotlinJsIrTargetPreset(project, isWasm = false)
                         .apply { mixedMode = true }
                 }
             )
+            add(KotlinJsIrTargetPreset(project, isWasm = true).apply { mixedMode = false })
             add(KotlinAndroidTargetPreset(project))
             add(KotlinJvmWithJavaTargetPreset(project))
 

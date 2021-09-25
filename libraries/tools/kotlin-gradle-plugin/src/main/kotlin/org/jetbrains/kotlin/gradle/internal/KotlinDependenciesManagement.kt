@@ -138,6 +138,7 @@ private fun addStdlibToPm20Project(
                 KotlinPlatformType.common -> error("variants are not expected to be common")
                 KotlinPlatformType.jvm -> "kotlin-stdlib" // TODO get JDK from JVM variants
                 KotlinPlatformType.js -> "kotlin-stdlib-js"
+                KotlinPlatformType.wasm -> "kotlin-stdlib-wasm"
                 KotlinPlatformType.androidJvm -> null // TODO: expect support on the AGP side?
                 KotlinPlatformType.native -> null
             }
@@ -189,6 +190,7 @@ private fun chooseAndAddStdlibDependency(
             KotlinPlatformType.androidJvm ->
                 if (kotlinSourceSet.name == androidMainSourceSetName(project)) stdlibModuleForJvmCompilations(compilations) else null
             KotlinPlatformType.js -> "kotlin-stdlib-js"
+            KotlinPlatformType.wasm -> "kotlin-stdlib-wasm"
             KotlinPlatformType.native -> null
             KotlinPlatformType.common -> // there's no platform compilation that the source set is default for
                 "kotlin-stdlib-common"

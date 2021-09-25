@@ -1144,7 +1144,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
 
             assertEquals(
-                setOf("commonMain", "jvm6Main", "linux64Main", "linuxMipsel32Main", "macos64Main", "mingw64Main", "mingw86Main", "nodeJsMain"),
+                setOf("commonMain", "jvm6Main", "linux64Main", "linuxMipsel32Main", "macos64Main", "mingw64Main", "mingw86Main", "nodeJsMain", "wasmMain"),
                 sourceJarSourceRoots[null]
             )
             assertEquals(setOf("commonMain", "jvm6Main"), sourceJarSourceRoots["jvm6"])
@@ -1472,7 +1472,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
 
             val expectedDefaultSourceSets = listOf(
-                "jvm6", "nodeJs", "mingw64", "mingw86", "linux64", "macos64", "linuxMipsel32"
+                "jvm6", "nodeJs", "mingw64", "mingw86", "linux64", "macos64", "linuxMipsel32", "wasm"
             ).flatMapTo(mutableSetOf()) { target ->
                 listOf("main", "test").map { compilation ->
                     Triple(target, compilation, "$target${compilation.capitalize()}")
@@ -1869,6 +1869,26 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertContains("Collected 1 exception(s)")
                 assertContains("ERROR DURING CONFIGURATION PHASE")
             }
+        }
+    }
+
+    @Test
+    fun testWasmJs() = with(Project("new-mpp-wasm-js", gradleVersion)) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        build("build") {
+            assertSuccessful()
+            assertTasksExecuted(":compileKotlinJs")
+            assertTasksExecuted(":compileKotlinWasm")
+
+            val outputPrefix = "build/js/packages/"
+
+            val jsOutput = outputPrefix + "redefined-js-module-name/kotlin/"
+            assertFileExists(jsOutput + "redefined-js-module-name.js")
+
+            val wasmOutput = outputPrefix + "redefined-wasm-module-name/kotlin/"
+            assertFileExists(wasmOutput + "redefined-wasm-module-name.js")
+            assertFileExists(wasmOutput + "redefined-wasm-module-name.wasm")
         }
     }
 

@@ -319,7 +319,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 outputWatFile.writeText(res.wat)
 
                 val runner = """
-                    const ${sanitizeName(moduleName)} = WebAssembly.instantiateStreaming(fetch('${outputWasmFile.name}'), { runtime, js_code }).then((it) => {
+                    export default WebAssembly.instantiateStreaming(fetch('${outputWasmFile.name}'), { runtime, js_code }).then((it) => {
                         wasmInstance = it.instance;
                         wasmInstance.exports.main?.();
                         return it.instance.exports;

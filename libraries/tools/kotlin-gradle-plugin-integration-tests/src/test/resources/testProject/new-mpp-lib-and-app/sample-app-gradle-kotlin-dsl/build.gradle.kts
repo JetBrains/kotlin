@@ -22,6 +22,9 @@ kotlin {
 	val nodeJs = js("nodeJs")
 	val linux64 = linuxX64("linux64")
 
+    wasm {
+    }
+
     configure(listOf(linux64)) {
         binaries.executable("main", listOf(DEBUG)) {
             entryPoint = "com.example.app.native.main"

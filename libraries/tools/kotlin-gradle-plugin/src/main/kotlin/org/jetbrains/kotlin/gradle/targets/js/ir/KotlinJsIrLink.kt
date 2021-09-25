@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptionsImpl
 import org.jetbrains.kotlin.gradle.dsl.copyFreeCompilerArgsToArgs
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
@@ -184,6 +185,10 @@ abstract class KotlinJsIrLink @Inject constructor(
         freeCompilerArgs += additionalCompilerArgs.toList() +
                 PRODUCE_JS +
                 "$ENTRY_IR_MODULE=${entryModule.get().asFile.canonicalPath}"
+
+        if (compilation.platformType == KotlinPlatformType.wasm) {
+            freeCompilerArgs += WASM_BACKEND
+        }
     }
 }
 

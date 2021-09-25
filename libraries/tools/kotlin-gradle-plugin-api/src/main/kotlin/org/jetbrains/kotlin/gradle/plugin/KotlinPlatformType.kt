@@ -11,7 +11,7 @@ import org.gradle.util.GradleVersion
 import java.io.Serializable
 
 enum class KotlinPlatformType: Named, Serializable {
-    common, jvm, js, androidJvm, native;
+    common, jvm, js, androidJvm, native, wasm;
 
     override fun toString(): String = name
     override fun getName(): String = name

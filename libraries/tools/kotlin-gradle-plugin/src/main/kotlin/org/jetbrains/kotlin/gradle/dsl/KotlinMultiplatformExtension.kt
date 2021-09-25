@@ -17,6 +17,7 @@ open class KotlinMultiplatformExtension(project: Project) :
     KotlinProjectExtension(project),
     KotlinTargetContainerWithPresetFunctions,
     KotlinTargetContainerWithJsPresetFunctions,
+    KotlinTargetContainerWithWasmPresetFunctions,
     KotlinTargetContainerWithNativeShortcuts {
     override lateinit var presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>
         internal set

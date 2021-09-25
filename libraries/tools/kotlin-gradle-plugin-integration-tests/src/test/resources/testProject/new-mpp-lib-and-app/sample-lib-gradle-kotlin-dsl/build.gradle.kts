@@ -15,6 +15,7 @@ kotlin {
     val jvm = jvm("jvm6")
     val js = js("nodeJs")
     linuxX64("linux64")
+    wasm()
 
     targets.all {
         mavenPublication(Action<MavenPublication> {

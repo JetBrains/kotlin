@@ -12,12 +12,6 @@ publish()
 val default = configurations.getByName(Dependency.DEFAULT_CONFIGURATION)
 default.extendsFrom(configurations.publishedRuntime.get())
 
-dependencies {
-    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        publishedRuntime(project(":kotlin-test:kotlin-test-js"))
-    }
-}
-
 node {
     version.set("16.2.0")
     download.set(true)

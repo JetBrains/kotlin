@@ -89,7 +89,8 @@ internal class KotlinProjectNpmResolver(
     private fun addTargetListeners(target: KotlinTarget) {
         check(!closed) { resolver.alreadyResolvedMessage("add target $target") }
 
-        if (target.platformType == KotlinPlatformType.js) {
+        if (target.platformType == KotlinPlatformType.js ||
+            target.platformType == KotlinPlatformType.wasm) {
             target.compilations.all { compilation ->
                 if (compilation is KotlinJsCompilation) {
                     // compilation may be KotlinWithJavaTarget for old Kotlin2JsPlugin

@@ -71,6 +71,10 @@ open class KotlinJsIrTargetConfigurator() :
         target.compilations.all { compilation ->
             compilation.kotlinOptions {
                 configureOptions()
+                
+                if (target.platformType == KotlinPlatformType.wasm) {
+                    freeCompilerArgs = freeCompilerArgs + WASM_BACKEND
+                }
 
                 var produceUnzippedKlib = isProduceUnzippedKlib()
                 val produceZippedKlib = isProduceZippedKlib()

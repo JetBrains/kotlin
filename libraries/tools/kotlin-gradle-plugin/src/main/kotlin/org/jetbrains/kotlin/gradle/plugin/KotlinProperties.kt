@@ -159,7 +159,10 @@ internal fun PropertiesProvider.mapKotlinDaemonProperties(task: CompileUsingKotl
     val mppStabilityNoWarn: Boolean?
         get() = booleanProperty(KotlinMultiplatformPlugin.STABILITY_NOWARN_FLAG)
 
-    val ignoreDisabledNativeTargets: Boolean?
+     val wasmStabilityNoWarn: Boolean
+         get() = booleanProperty("kotlin.wasm.stability.nowarn") ?: false
+
+     val ignoreDisabledNativeTargets: Boolean?
         get() = booleanProperty(DisabledNativeTargetsReporter.DISABLE_WARNING_PROPERTY_NAME)
 
     val ignoreIncorrectNativeDependencies: Boolean?
