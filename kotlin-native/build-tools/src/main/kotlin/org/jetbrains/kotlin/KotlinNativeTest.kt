@@ -228,7 +228,6 @@ open class KonanLocalTest : KonanTest() {
      * Used to validate output against the golden data.
      */
     @Input
-    @Optional
     var useGoldenData: Boolean = false
 
     @get:InputFile
@@ -245,7 +244,6 @@ open class KonanLocalTest : KonanTest() {
             }
         }
 
-    @Internal
     protected open fun computeGoldenDataFile(): File {
         val sourceFile = project.file(source)
         return sourceFile.parentFile.resolve(sourceFile.nameWithoutExtension + ".out")
@@ -266,7 +264,6 @@ open class KonanLocalTest : KonanTest() {
      * Input test data to be passed to process stdin.
      */
     @Input
-    @Optional
     var useTestData: Boolean = false
 
     @get:InputFile
