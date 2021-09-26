@@ -107,11 +107,11 @@ class NewNamerImpl(
         )
         // TODO: Webpack not minimize member names, it is long name, which is not minimized, so it affects final JS bundle size
         // Use shorter names
-        return JsName("f_$fieldName")
+        return JsName("f_$fieldName", false)
     }
 
     override fun getNameForStaticDeclaration(declaration: IrDeclarationWithName): JsName {
-        staticNames.names[declaration]?.let { return JsName(it) }
+        staticNames.names[declaration]?.let { return JsName(it, false) }
 
         fun registerImport(moduleId: String, importedName: String) {
             val fullModuleId = if (moduleId.startsWith(".")) {
@@ -164,7 +164,7 @@ class NewNamerImpl(
             }
         }
 
-        return JsName(staticNames.names[declaration]!!)
+        return JsName(staticNames.names[declaration]!!, false)
     }
 }
 

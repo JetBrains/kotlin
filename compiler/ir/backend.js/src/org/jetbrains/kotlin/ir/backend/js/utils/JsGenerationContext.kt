@@ -52,17 +52,17 @@ class JsGenerationContext(
     fun getNameForValueDeclaration(declaration: IrDeclarationWithName): JsName {
         val name = localNames!!.variableNames.names[declaration]
             ?: error("Variable name is not found ${declaration.name}")
-        return JsName(name)
+        return JsName(name, false)
     }
 
     fun getNameForLoop(loop: IrLoop): JsName? {
         val name = localNames!!.localLoopNames.names[loop] ?: return null
-        return JsName(name)
+        return JsName(name, false)
     }
 
     fun getNameForReturnableBlock(block: IrReturnableBlock): JsName? {
         val name = localNames!!.localReturnableBlockNames.names[block] ?: return null
-        return JsName(name)
+        return JsName(name, false)
     }
 
     fun checkIfJsCode(symbol: IrFunctionSymbol): Boolean = symbol == staticContext.backendContext.intrinsics.jsCode

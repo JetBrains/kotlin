@@ -14,7 +14,7 @@ class JsImport(
         val name: JsName,
         val alias: JsName?
     ) {
-        constructor(name: String, alias: String?) : this(JsName(name), alias?.let { JsName(it) })
+        constructor(name: String, alias: String?) : this(JsName(name, false), alias?.let { JsName(it, false) })
     }
 
     override fun accept(visitor: JsVisitor) {

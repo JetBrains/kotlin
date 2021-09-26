@@ -32,12 +32,11 @@ class ExportModelToJsStatements(
                 for (element in elements) {
                     val newNamespace = "$currentNamespace$$element"
                     val newNameSpaceRef = namespaceToRefMap.getOrPut(newNamespace) {
-                        val varName = declareNewNamespace(newNamespace)
-                        val varRef = JsNameRef(varName)
+                        val varName = JsName(declareNewNamespace(newNamespace), false)
                         val namespaceRef = JsNameRef(element, currentRef)
                         statements += JsVars(
                             JsVars.JsVar(
-                                JsName(varName),
+                                varName,
                                 JsAstUtils.or(
                                     namespaceRef,
                                     jsAssignment(
@@ -47,7 +46,7 @@ class ExportModelToJsStatements(
                                 )
                             )
                         )
-                        varRef
+                        JsNameRef(varName)
                     }
                     currentRef = newNameSpaceRef
                     currentNamespace = newNamespace
@@ -58,7 +57,7 @@ class ExportModelToJsStatements(
             is ExportedFunction -> {
                 val name = namer.getNameForStaticDeclaration(declaration.ir)
                 if (namespace == null) {
-                    listOf(JsExport(name, alias = JsName(declaration.name)))
+                    listOf(JsExport(name, alias = JsName(declaration.name, false)))
                 } else {
                     listOf(
                         jsAssignment(
@@ -86,7 +85,7 @@ class ExportModelToJsStatements(
                 val name = namer.getNameForStaticDeclaration(declaration.ir)
                 val klassExport =
                     if (namespace == null) {
-                        JsExport(name, alias = JsName(declaration.name))
+                        JsExport(name, alias = JsName(declaration.name, false))
                     } else {
                         jsAssignment(
                             newNameSpace,

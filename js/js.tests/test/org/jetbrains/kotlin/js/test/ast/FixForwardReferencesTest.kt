@@ -241,7 +241,7 @@ private fun String.toAst(): JsNode {
             val (name, index) = parts
             if (ident != "${name}_$index") error("Unable to parse: $ident")
 
-            JsName(name).also {
+            JsName(name, false).also {
                 nameMapping[ident] = this to it
             }
         }
@@ -259,7 +259,7 @@ private fun JsNode.makeNamesUnique(): JsNode {
                 nameCounter[ident] = it + 1
             }
 
-            JsName("${ident}_$index").also {
+            JsName("${ident}_$index", false).also {
                 nameMap[this] = it
             }
         }

@@ -179,7 +179,7 @@ fun translateCall(
                 )
             } else {
                 // TODO: Do not create IIFE at all? (Currently there is no reliable way to create temporary variable in current scope)
-                val receiverName = JsName("\$externalVarargReceiverTmp")
+                val receiverName = JsName("\$externalVarargReceiverTmp", false)
                 val receiverRef = receiverName.makeRef()
 
                 val iifeFun = JsFunction(

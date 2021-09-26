@@ -195,7 +195,7 @@ class IrToJs(
                 // Postpone initialization by putting it into a separate function
                 // Will be called later in proper order after class model is initialized
                 val initFunction = JsFunction(emptyScope, JsBlock(initializerBlock.statements), "init fun")
-                initFunction.name = JsName(unit.initFunctionName)
+                initFunction.name = JsName(unit.initFunctionName, false)
                 statements += initFunction.makeStmt()
                 statements += JsExport(initFunction.name)
             }
@@ -205,7 +205,7 @@ class IrToJs(
 
         val internalExports = mutableListOf<JsExport.Element>()
         fun export(declaration: IrDeclarationWithName) {
-            internalExports += JsExport.Element(nameGenerator.getNameForStaticDeclaration(declaration), JsName(guid(declaration)))
+            internalExports += JsExport.Element(nameGenerator.getNameForStaticDeclaration(declaration), JsName(guid(declaration), false))
         }
 
         for (fragment in unit.packageFragments) {
@@ -346,7 +346,7 @@ class IrToJs(
 
                     val importElements = JsImport.Element(unit.initFunctionName, null)
                     indexJsStatements += JsImport("./$pathToSubModule", mutableListOf(importElements))
-                    indexJsStatements += JsInvocation(JsNameRef(JsName(unit.initFunctionName))).makeStmt()
+                    indexJsStatements += JsInvocation(JsNameRef(JsName(unit.initFunctionName, false))).makeStmt()
 
                     exportedDeclarations += generatedUnit.exportedDeclarations
 

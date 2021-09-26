@@ -98,7 +98,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.jsNewTarget) { _, _ ->
-                JsNameRef(JsName("target"), JsNameRef(JsName("new")))
+                JsNameRef(JsName("target", false), JsNameRef(JsName("new", false)))
             }
 
             add(intrinsics.jsOpenInitializerBox) { call, context ->

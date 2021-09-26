@@ -101,7 +101,7 @@ class IrModuleToJsTransformer(
 
                 val exports = exportData[m]!![f]!! // TODO
 
-                val internalModuleName = JsName("_")
+                val internalModuleName = JsName("_", false)
                 val globalNames = NameTable<String>(namer.globalNames)
                 val exportStatements =
                     ExportModelToJsStatements(nameGenerator, { globalNames.declareFreshName(it, it) }).generateModuleExport(
@@ -196,18 +196,18 @@ class IrModuleToJsTransformer(
         val (importStatements, importedJsModules) =
             generateImportStatements(
                 getNameForExternalDeclaration = { staticContext.getNameForStaticDeclaration(it) },
-                declareFreshGlobal = { JsName(sanitizeName(it)) } // TODO: Declare fresh name
+                declareFreshGlobal = { JsName(sanitizeName(it), false) } // TODO: Declare fresh name
             )
 
         val (moduleBody, callToMain, exportStatements) = generateModuleBody(modules, staticContext, fragments)
 
-        val internalModuleName = JsName("_")
+        val internalModuleName = JsName("_", false)
 
         val (crossModuleImports, importedKotlinModules) = generateCrossModuleImports(
             nameGenerator,
             modules,
             dependencies,
-            { JsName(sanitizeName(it)) })
+            { JsName(sanitizeName(it), false) })
         val crossModuleExports = generateCrossModuleExports(modules, refInfo, internalModuleName)
 
         val program = JsProgram()
@@ -302,7 +302,7 @@ class IrModuleToJsTransformer(
             modules += JsImportedModule(module.externalModuleName(), moduleName, null, relativeRequirePath)
 
             names.forEach {
-                imports += JsVars(JsVars.JsVar(JsName(it), JsNameRef(it, JsNameRef("\$crossModule\$", moduleName.makeRef()))))
+                imports += JsVars(JsVars.JsVar(JsName(it, false), JsNameRef(it, JsNameRef("\$crossModule\$", moduleName.makeRef()))))
             }
         }
 
