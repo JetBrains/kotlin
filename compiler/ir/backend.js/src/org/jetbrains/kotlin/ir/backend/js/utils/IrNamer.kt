@@ -28,7 +28,7 @@ abstract class IrNamerBase : IrNamer {
     abstract override fun getNameForMemberField(field: IrField): JsName
     abstract override fun getNameForStaticDeclaration(declaration: IrDeclarationWithName): JsName
 
-    protected fun String.toJsName() = JsName(this)
+    protected fun String.toJsName(temporary: Boolean = true) = JsName(this, temporary)
 
     override fun getNameForStaticFunction(function: IrSimpleFunction): JsName =
         getNameForStaticDeclaration(function)
