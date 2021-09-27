@@ -131,7 +131,7 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
                     )
                     IrGetFieldImpl(
                         defaultStartOffset, defaultEndOffset,
-                        context.symbolTable.referenceField(context.additionalDescriptorStorage.getField(receiver)),
+                        context.additionalDescriptorStorage.getSyntheticField(receiver).symbol,
                         irReceiverType, thisReceiver
                     )
                 }

@@ -350,7 +350,7 @@ class BodyGenerator(
             irBlockBody.statements.add(
                 IrSetFieldImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    context.symbolTable.referenceField(context.additionalDescriptorStorage.getField(receiverDescriptor.value)),
+                    context.additionalDescriptorStorage.getSyntheticField(receiverDescriptor.value).symbol,
                     receiver,
                     IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValueParameter.type, irValueParameter.symbol),
                     context.irBuiltIns.unitType
