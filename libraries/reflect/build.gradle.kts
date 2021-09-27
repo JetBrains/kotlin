@@ -239,6 +239,7 @@ javadocJar()
 
 modularJar {
     dependsOn(intermediate)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from {
         zipTree(intermediate.get().singleOutputFile())
     }
