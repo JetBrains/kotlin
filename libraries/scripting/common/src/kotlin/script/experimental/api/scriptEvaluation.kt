@@ -60,6 +60,11 @@ val ScriptEvaluationConfigurationKeys.implicitReceivers by PropertiesCollection.
 val ScriptEvaluationConfigurationKeys.providedProperties by PropertiesCollection.key<Map<String, Any?>>() // external variables
 
 /**
+ * The link to the actual {@link ScriptCompilationConfiguration} object that contains properties used for compiling the script
+ */
+val ScriptEvaluationConfigurationKeys.compilationConfiguration by PropertiesCollection.key<ScriptCompilationConfiguration>(isTransient = true)
+
+/**
  * Constructor arguments, additional to implicit receivers and provided properties, according to the script base class constructor
  */
 val ScriptEvaluationConfigurationKeys.constructorArgs by PropertiesCollection.key<List<Any?>>()

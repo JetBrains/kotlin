@@ -28,7 +28,9 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                 }.onSuccess { importedScriptsEvalResults ->
 
                     val refinedEvalConfiguration =
-                        sharedConfiguration.refineBeforeEvaluation(compiledScript).valueOr {
+                        sharedConfiguration.with {
+                            compilationConfiguration(compiledScript.compilationConfiguration)
+                        }.refineBeforeEvaluation(compiledScript).valueOr {
                             return@invoke ResultWithDiagnostics.Failure(it.reports)
                         }
 
