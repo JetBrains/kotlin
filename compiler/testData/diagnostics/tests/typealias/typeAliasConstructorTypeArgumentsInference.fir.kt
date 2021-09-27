@@ -4,7 +4,7 @@ class Num<Tn : Number>(val x: Tn)
 typealias N<T> = Num<T>
 
 val test0 = N(1)
-val test1 = N("1")
+val test1 = N(<!ARGUMENT_TYPE_MISMATCH!>"1"<!>)
 
 
 class Cons<T>(val head: T, val tail: Cons<T>?)

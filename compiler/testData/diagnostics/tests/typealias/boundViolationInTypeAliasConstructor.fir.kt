@@ -4,8 +4,8 @@ typealias N<T> = Num<T>
 typealias N2<T> = N<T>
 
 val x1 = Num<<!UPPER_BOUND_VIOLATED!>String<!>>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
-val x2 = N<<!UPPER_BOUND_VIOLATED!>String<!>>("")
-val x3 = N2<<!UPPER_BOUND_VIOLATED!>String<!>>("")
+val x2 = N<<!UPPER_BOUND_VIOLATED!>String<!>>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
+val x3 = N2<<!UPPER_BOUND_VIOLATED!>String<!>>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 
 class TColl<T, C : Collection<T>>
 
