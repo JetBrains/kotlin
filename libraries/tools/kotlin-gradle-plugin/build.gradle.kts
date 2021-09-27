@@ -84,6 +84,8 @@ dependencies {
         because("Functional tests are using APIs from Android. Latest Version is used to avoid NoClassDefFoundError")
     }
 
+    functionalTestImplementation(gradleKotlinDsl())
+
     testImplementation(intellijDep()) { includeJars("junit", "serviceMessages", rootProject = rootProject) }
 
     testCompileOnly(project(":compiler"))
