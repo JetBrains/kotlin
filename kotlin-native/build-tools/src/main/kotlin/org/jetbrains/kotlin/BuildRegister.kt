@@ -7,6 +7,9 @@ package org.jetbrains.kotlin
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import java.io.BufferedReader
 import java.io.FileInputStream
 import java.io.InputStreamReader
@@ -23,12 +26,23 @@ import java.util.*
  * @property fileWithResult json file with benchmarks run results
  */
 open class BuildRegister : DefaultTask() {
+    @Input
+    @Optional
     var onlyBranch: String? = null
 
+    @Input
+    @Optional
     var bundleSize: Int? = null
+
+    @Input
+    @Optional
     var buildNumberSuffix: String? = null
+
+    @Input
+    @Optional
     var fileWithResult: String = "nativeReport.json"
 
+    @Internal
     val performanceServer = "https://kotlin-native-perf-summary.labs.jb.gg"
 
     private fun sendPostRequest(url: String, body: String): String {
