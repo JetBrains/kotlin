@@ -137,7 +137,8 @@ abstract class AbstractKotlinTarget(
             adhocVariant as SoftwareComponent
 
             object : ComponentWithVariants, ComponentWithCoordinates, SoftwareComponentInternal {
-                override fun getCoordinates() = (kotlinVariant as? ComponentWithCoordinates)?.coordinates
+                override fun getCoordinates() =
+                    (kotlinVariant as? ComponentWithCoordinates)?.coordinates ?: error("kotlinVariant is not ComponentWithCoordinates")
 
                 override fun getVariants(): Set<SoftwareComponent> =
                     (kotlinVariant as? KotlinVariantWithMetadataVariant)?.variants.orEmpty()

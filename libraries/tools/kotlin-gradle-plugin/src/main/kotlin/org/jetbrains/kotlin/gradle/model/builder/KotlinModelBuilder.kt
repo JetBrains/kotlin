@@ -36,22 +36,20 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
         return modelName == KotlinProject::class.java.name
     }
 
-    override fun buildAll(modelName: String, project: Project): Any? {
-        if (modelName == KotlinProject::class.java.name) {
-            val kotlinCompileTasks = project.tasks.withType(AbstractKotlinCompile::class.java).toList()
-            val projectType = getProjectType(project)
-            return KotlinProjectImpl(
-                project.name,
-                kotlinPluginVersion,
-                projectType,
-                kotlinCompileTasks.mapNotNull {
-                    if (androidTarget != null) it.createAndroidSourceSet(androidTarget) else it.createSourceSet(project, projectType)
-                },
-                getExpectedByDependencies(project),
-                kotlinCompileTasks.first()!!.createExperimentalFeatures()
-            )
-        }
-        return null
+    override fun buildAll(modelName: String, project: Project): Any {
+        require(canBuild(modelName)) { "buildAll(\"$modelName\") has been called while canBeBuild is false" }
+        val kotlinCompileTasks = project.tasks.withType(AbstractKotlinCompile::class.java).toList()
+        val projectType = getProjectType(project)
+        return KotlinProjectImpl(
+            project.name,
+            kotlinPluginVersion,
+            projectType,
+            kotlinCompileTasks.mapNotNull {
+                if (androidTarget != null) it.createAndroidSourceSet(androidTarget) else it.createSourceSet(project, projectType)
+            },
+            getExpectedByDependencies(project),
+            kotlinCompileTasks.first()!!.createExperimentalFeatures()
+        )
     }
 
     companion object {

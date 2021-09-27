@@ -21,11 +21,9 @@ class AllOpenModelBuilder : ToolingModelBuilder {
         return modelName == AllOpen::class.java.name
     }
 
-    override fun buildAll(modelName: String, project: Project): Any? {
-        if (modelName == AllOpen::class.java.name) {
-            val extension = project.extensions.getByType(AllOpenExtension::class.java)
-            return AllOpenImpl(project.name, extension.myAnnotations, extension.myPresets)
-        }
-        return null
+    override fun buildAll(modelName: String, project: Project): Any {
+        require(canBuild(modelName)) { "buildAll(\"$modelName\") has been called while canBeBuild is false" }
+        val extension = project.extensions.getByType(AllOpenExtension::class.java)
+        return AllOpenImpl(project.name, extension.myAnnotations, extension.myPresets)
     }
 }

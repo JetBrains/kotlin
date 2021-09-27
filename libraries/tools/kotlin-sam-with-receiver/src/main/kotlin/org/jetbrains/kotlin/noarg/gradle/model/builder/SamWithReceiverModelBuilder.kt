@@ -21,11 +21,9 @@ class SamWithReceiverModelBuilder : ToolingModelBuilder {
         return modelName == SamWithReceiver::class.java.name
     }
 
-    override fun buildAll(modelName: String, project: Project): Any? {
-        if (modelName == SamWithReceiver::class.java.name) {
-            val extension = project.extensions.getByType(SamWithReceiverExtension::class.java)
-            return SamWithReceiverImpl(project.name, extension.myAnnotations, extension.myPresets)
-        }
-        return null
+    override fun buildAll(modelName: String, project: Project): Any {
+        require(canBuild(modelName)) { "buildAll(\"$modelName\") has been called while canBeBuild is false" }
+        val extension = project.extensions.getByType(SamWithReceiverExtension::class.java)
+        return SamWithReceiverImpl(project.name, extension.myAnnotations, extension.myPresets)
     }
 }

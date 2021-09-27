@@ -15,11 +15,9 @@ class LombokModelBuilder : ToolingModelBuilder {
 
     override fun canBuild(modelName: String): Boolean = modelName == Lombok::class.java.name
 
-    override fun buildAll(modelName: String, project: Project): Any? =
-        if (canBuild(modelName)) {
-            val extension = project.extensions.getByType(LombokExtension::class.java)
-            LombokImpl(project.name, extension.configurationFile)
-        } else {
-            null
-        }
+    override fun buildAll(modelName: String, project: Project): Any {
+        require(canBuild(modelName)) { "buildAll(\"$modelName\") has been called while canBeBuild is false" }
+        val extension = project.extensions.getByType(LombokExtension::class.java)
+        return LombokImpl(project.name, extension.configurationFile)
+    }
 }

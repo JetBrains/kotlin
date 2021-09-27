@@ -79,7 +79,7 @@ class AllOpenGradleSubplugin @Inject internal constructor(private val registry: 
     //region Stub implementation for legacy API, KT-39809
     internal constructor(): this(object : ToolingModelBuilderRegistry {
         override fun register(p0: ToolingModelBuilder) = Unit
-        override fun getBuilder(p0: String): ToolingModelBuilder? = null
+        override fun getBuilder(p0: String): ToolingModelBuilder = error("Method should not be called")
     })
 
     override fun isApplicable(project: Project, task: AbstractCompile): Boolean = true

@@ -171,9 +171,8 @@ class StructureTransformTestAction(val input: File, val projectDir: File) : Stru
 
     override val inputArtifact: Provider<FileSystemLocation> = project.provider { project.objects.fileProperty().fileValue(input).get() }
 
-    override fun getParameters(): TransformParameters.None? {
-        //no need for StructureTransformAction and so for test
-        return null
+    override fun getParameters(): TransformParameters.None {
+        error("Should not be called")
     }
 }
 
