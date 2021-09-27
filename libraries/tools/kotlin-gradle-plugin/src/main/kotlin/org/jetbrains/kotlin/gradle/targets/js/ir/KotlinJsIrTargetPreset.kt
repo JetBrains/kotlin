@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.runPostEvaluationProjectConfigurationHealthCheck
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 
 open class KotlinJsIrTargetPreset(
@@ -31,7 +32,7 @@ open class KotlinJsIrTargetPreset(
         return project.objects.newInstance(KotlinJsIrTarget::class.java, project, platformType, mixedMode).apply {
             this.isMpp = this@KotlinJsIrTargetPreset.isMpp
             if (!mixedMode) {
-                project.whenEvaluated {
+                project.runPostEvaluationProjectConfigurationHealthCheck {
                     if (!isBrowserConfigured && !isNodejsConfigured) {
                         project.logger.warn(
                             """

@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
+import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheck
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import javax.inject.Inject
 import kotlin.reflect.KClass
@@ -201,7 +202,7 @@ open class KotlinJsPluginWrapper : KotlinBasePluginWrapper() {
     override val projectExtensionClass: KClass<out KotlinJsProjectExtension>
         get() = KotlinJsProjectExtension::class
 
-    override fun whenBuildEvaluated(project: Project) {
+    override fun whenBuildEvaluated(project: Project) = project.runProjectConfigurationHealthCheck {
         val isJsTargetUninitialized = (project.kotlinExtension as KotlinJsProjectExtension)
             ._target == null
 
@@ -232,7 +233,7 @@ open class KotlinMultiplatformPluginWrapper : KotlinBasePluginWrapper() {
     override val projectExtensionClass: KClass<out KotlinMultiplatformExtension>
         get() = KotlinMultiplatformExtension::class
 
-    override fun whenBuildEvaluated(project: Project) {
+    override fun whenBuildEvaluated(project: Project) = project.runProjectConfigurationHealthCheck {
         val isNoTargetsInitialized = (project.kotlinExtension as KotlinMultiplatformExtension)
             .targets
             .none { it !is KotlinMetadataTarget }

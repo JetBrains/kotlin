@@ -26,6 +26,7 @@ pill {
 }
 
 dependencies {
+    compileOnly(gradleKotlinDsl())
     api(project(":kotlin-gradle-plugin-api"))
     api(project(":kotlin-gradle-plugin-model"))
     compileOnly(project(":compiler"))

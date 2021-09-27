@@ -1848,6 +1848,30 @@ class NewMultiplatformIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testErrorInClasspathMode() {
+        val classpathModeOptions = defaultBuildOptions().copy(
+            freeCommandLineArgs = listOf("-Dorg.gradle.kotlin.dsl.provider.mode=classpath")
+        )
+
+        with(Project("kotlin-mpp-classpathMode")) {
+            build("tasks") {
+                assertFailed()
+                assertContains("ERROR DURING CONFIGURATION PHASE")
+            }
+
+            build("tasks", options = classpathModeOptions) {
+                assertSuccessful()
+            }
+
+            build("listCollectedErrors", options = classpathModeOptions) {
+                assertSuccessful()
+                assertContains("Collected 1 exception(s)")
+                assertContains("ERROR DURING CONFIGURATION PHASE")
+            }
+        }
+    }
+
     private fun detectNativeEnabledCompilation(): String = when {
         HostManager.hostIsLinux -> "linuxX64"
         HostManager.hostIsMingw -> "mingwX64"
