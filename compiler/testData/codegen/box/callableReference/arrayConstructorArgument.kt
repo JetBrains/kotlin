@@ -1,6 +1,4 @@
 // WITH_RUNTIME
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: PROPERTY_REFERENCES
 fun foo(it: Int) = "O"[it]
 
 val Int.foo: Char

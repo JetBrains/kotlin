@@ -1,5 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: PROPERTY_REFERENCES
 // KT-30629
 
 abstract class BaseFragment<T : BaseViewModel> {

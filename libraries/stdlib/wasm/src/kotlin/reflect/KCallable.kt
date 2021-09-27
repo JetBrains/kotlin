@@ -20,4 +20,10 @@ public actual interface KCallable<out R> {
      *   the setter, similarly, will have the name "<set-foo>".
      */
     actual public val name: String
+
+
+    /**
+     * The type of values returned by this callable.
+     */
+    public val returnType: KType
 }

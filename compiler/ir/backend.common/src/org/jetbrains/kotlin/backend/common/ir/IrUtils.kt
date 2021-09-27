@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -699,3 +700,28 @@ fun IrExpression?.isPure(
 
     return false
 }
+
+fun CommonBackendContext.createArrayOfExpression(
+    startOffset: Int, endOffset: Int,
+    arrayElementType: IrType,
+    arrayElements: List<IrExpression>
+): IrExpression {
+
+    val arrayType = ir.symbols.array.typeWith(arrayElementType)
+    val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, arrayElementType, arrayElements)
+
+    return IrCallImpl(
+        startOffset,
+        endOffset,
+        arrayType,
+        ir.symbols.arrayOf,
+        1,
+        1
+    ).apply {
+        putTypeArgument(0, arrayElementType)
+        putValueArgument(0, arg0)
+    }
+}
+
+fun IrBuiltIns.getKFunctionType(returnType: IrType, parameterTypes: List<IrType>) =
+    kFunctionN(parameterTypes.size).typeWith(parameterTypes + returnType)
