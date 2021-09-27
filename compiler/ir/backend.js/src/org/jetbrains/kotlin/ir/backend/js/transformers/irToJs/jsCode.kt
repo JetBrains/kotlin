@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
 import com.google.gwt.dev.js.rhino.CodePosition
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
+import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -30,6 +29,31 @@ fun translateJsCodeIntoStatementList(code: IrExpression): List<JsStatement>? {
         expression.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 foldingFailed = true
+            }
+
+            override fun visitGetValue(expression: IrGetValue) {
+                expression.symbol.owner.acceptVoid(this)
+            }
+
+            override fun visitVariable(declaration: IrVariable) {
+                declaration.initializer?.let {
+                    it.acceptVoid(this)
+                    return
+                }
+
+                super.visitVariable(declaration)
+            }
+
+            override fun visitGetField(expression: IrGetField) {
+                expression.symbol.owner.initializer?.expression?.acceptVoid(this)
+            }
+
+            override fun visitCall(expression: IrCall) {
+                if (expression.origin != IrStatementOrigin.PLUS) {
+                    return super.visitCall(expression)
+                }
+
+                expression.acceptChildrenVoid(this)
             }
 
             override fun <T> visitConst(expression: IrConst<T>) {
