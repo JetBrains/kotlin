@@ -22733,6 +22733,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("recursiveGeneric.kt")
+        public void testRecursiveGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/recursiveGeneric.kt");
+        }
+
+        @Test
+        @TestMetadata("recursiveGeneric2.kt")
+        public void testRecursiveGeneric2() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/recursiveGeneric2.kt");
+        }
+
+        @Test
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/codegen/box/ir/simple.kt");

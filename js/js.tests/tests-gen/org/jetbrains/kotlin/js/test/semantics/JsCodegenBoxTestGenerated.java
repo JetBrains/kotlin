@@ -15584,6 +15584,16 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/ir/objectClass.kt");
         }
 
+        @TestMetadata("recursiveGeneric.kt")
+        public void testRecursiveGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/recursiveGeneric.kt");
+        }
+
+        @TestMetadata("recursiveGeneric2.kt")
+        public void testRecursiveGeneric2() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/recursiveGeneric2.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/codegen/box/ir/simple.kt");
