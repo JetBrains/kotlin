@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @Target(AnnotationTarget.TYPE)
 annotation class A
 

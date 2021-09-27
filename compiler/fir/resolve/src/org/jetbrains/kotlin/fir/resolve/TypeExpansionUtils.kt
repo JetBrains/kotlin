@@ -120,7 +120,7 @@ private fun mapTypeAliasArguments(
                 is ConeDefinitelyNotNullType,
                 is ConeTypeParameterTypeImpl,
                 is ConeFlexibleType -> {
-                    mappedType.withAttributes(type.attributes, useSiteSession.typeContext)
+                    mappedType.withAttributes(type.attributes.add(mappedType.attributes), useSiteSession.typeContext)
                 }
                 null -> return mappedProjection
                 else -> mappedType

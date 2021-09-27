@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.*
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -172,6 +174,28 @@ private fun FirExpression.unfoldArrayOrVararg(): List<FirExpression> {
         is FirVarargArgumentsExpression -> arguments
         is FirArrayOfCall -> arguments
         else -> return emptyList()
+    }
+}
+
+fun checkRepeatedAnnotation(
+    annotationContainer: FirAnnotationContainer?,
+    annotations: List<FirAnnotation>,
+    context: CheckerContext,
+    reporter: DiagnosticReporter
+) {
+    if (annotations.size <= 1) return
+
+    val annotationsMap = hashMapOf<ConeKotlinType, MutableList<AnnotationUseSiteTarget?>>()
+
+    for (annotation in annotations) {
+        val useSiteTarget = annotation.useSiteTarget ?: annotationContainer?.getDefaultUseSiteTarget(annotation, context)
+        val existingTargetsForAnnotation = annotationsMap.getOrPut(annotation.annotationTypeRef.coneType) { arrayListOf() }
+
+        withSuppressedDiagnostics(annotation, context) {
+            checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, context, reporter)
+        }
+
+        existingTargetsForAnnotation.add(useSiteTarget)
     }
 }
 

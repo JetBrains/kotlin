@@ -20,8 +20,11 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.fqName
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.customAnnotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -56,11 +59,15 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
         }
 
         checkRepeatedAnnotations(declaration, context, reporter)
+
         if (declaration is FirProperty) {
             checkRepeatedAnnotationsInProperty(declaration, context, reporter)
+        } else if (declaration is FirCallableDeclaration) {
+            if (declaration.source?.kind !is FirFakeSourceElementKind) {
+                checkRepeatedAnnotations(declaration.returnTypeRef.coneTypeSafe(), context, reporter)
+            }
         } else if (declaration is FirTypeAlias) {
-            checkRepeatedAnnotations(declaration.expandedTypeRef, context, reporter)
-            // TODO: KT-48652, implement after KT-48651
+            checkRepeatedAnnotations(declaration.expandedTypeRef.coneType, context, reporter)
         }
     }
 
@@ -211,17 +218,21 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val annotationsMap = hashMapOf<ConeKotlinType, MutableList<AnnotationUseSiteTarget?>>()
+        checkRepeatedAnnotation(annotationContainer, annotationContainer.annotations, context, reporter)
+    }
 
-        for (annotation in annotationContainer.annotations) {
-            val useSiteTarget = annotation.useSiteTarget ?: annotationContainer.getDefaultUseSiteTarget(annotation, context)
-            val existingTargetsForAnnotation = annotationsMap.getOrPut(annotation.annotationTypeRef.coneType) { arrayListOf() }
-
-            withSuppressedDiagnostics(annotation, context) {
-                checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, context, reporter)
+    private fun checkRepeatedAnnotations(
+        type: ConeKotlinType?,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        if (type == null) return
+        val fullyExpandedType = type.fullyExpandedType(context.session)
+        checkRepeatedAnnotation(null, fullyExpandedType.attributes.customAnnotations, context, reporter)
+        for (typeArgument in fullyExpandedType.typeArguments) {
+            if (typeArgument is ConeKotlinType) {
+                checkRepeatedAnnotations(typeArgument, context, reporter)
             }
-
-            existingTargetsForAnnotation.add(useSiteTarget)
         }
     }
 
