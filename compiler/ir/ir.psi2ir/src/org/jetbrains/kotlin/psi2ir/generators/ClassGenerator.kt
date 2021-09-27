@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.expressions.putTypeArguments
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.createIrClassFromDescriptor
@@ -435,35 +436,18 @@ class ClassGenerator(
 
     private fun generateFieldsForAdditionalReceivers(irClass: IrClass, classDescriptor: ClassDescriptor) {
         for ((fieldIndex, receiverDescriptor) in classDescriptor.contextReceivers.withIndex()) {
-            val descriptor = PropertyDescriptorImpl.create(
-                classDescriptor,
-                Annotations.EMPTY,
-                Modality.FINAL,
-                DescriptorVisibilities.DEFAULT_VISIBILITY,
-                false,
-                Name.identifier("additionalReceiverField$fieldIndex"),
-                CallableMemberDescriptor.Kind.DECLARATION,
-                SourceElement.NO_SOURCE,
-                false, false,
-                classDescriptor.isExpect,
-                false, false, false
-            )
-            descriptor.setType(
-                receiverDescriptor.type, emptyList(), DescriptorUtils.getDispatchReceiverParameterIfNeeded(classDescriptor), null,
-                emptyList()
-            )
-            descriptor.initialize(
-                null, null,
-                FieldDescriptorImpl(Annotations.EMPTY, descriptor),
-                null
-            )
-            context.additionalDescriptorStorage.put(receiverDescriptor.value, descriptor)
-            val irField = context.symbolTable.declareField(
+            val irField = context.irFactory.createField(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 IrDeclarationOrigin.FIELD_FOR_CLASS_CONTEXT_RECEIVER,
-                descriptor, descriptor.type.toIrType(),
-                descriptor.visibility
+                IrFieldSymbolImpl(),
+                Name.identifier("additionalReceiverField$fieldIndex"),
+                receiverDescriptor.type.toIrType(),
+                DescriptorVisibilities.PRIVATE,
+                isFinal = true,
+                isExternal = false,
+                isStatic = false
             )
+            context.additionalDescriptorStorage.put(receiverDescriptor.value, irField)
             irClass.addMember(irField)
         }
     }
