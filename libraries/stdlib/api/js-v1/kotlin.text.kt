@@ -1635,6 +1635,11 @@ public object Typography {
 
     public const final val leftDoubleQuote: kotlin.Char = \u201C ('“') { get; }
 
+    @kotlin.SinceKotlin(version = "1.6")
+    public const final val leftGuillemet: kotlin.Char = \u00AB ('«') { get; }
+
+    @kotlin.Deprecated(message = "This constant has a typo in the name. Use leftGuillemet instead.", replaceWith = kotlin.ReplaceWith(expression = "Typography.leftGuillemet", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.6")
     public const final val leftGuillemete: kotlin.Char = \u00AB ('«') { get; }
 
     public const final val leftSingleQuote: kotlin.Char = \u2018 ('‘') { get; }
@@ -1671,6 +1676,11 @@ public object Typography {
 
     public const final val rightDoubleQuote: kotlin.Char = \u201D ('”') { get; }
 
+    @kotlin.SinceKotlin(version = "1.6")
+    public const final val rightGuillemet: kotlin.Char = \u00BB ('»') { get; }
+
+    @kotlin.Deprecated(message = "This constant has a typo in the name. Use rightGuillemet instead.", replaceWith = kotlin.ReplaceWith(expression = "Typography.rightGuillemet", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.6")
     public const final val rightGuillemete: kotlin.Char = \u00BB ('»') { get; }
 
     public const final val rightSingleQuote: kotlin.Char = \u2019 ('’') { get; }

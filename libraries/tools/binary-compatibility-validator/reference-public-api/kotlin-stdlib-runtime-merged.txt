@@ -5594,6 +5594,7 @@ public final class kotlin/text/Typography {
 	public static final field greaterOrEqual C
 	public static final field half C
 	public static final field leftDoubleQuote C
+	public static final field leftGuillemet C
 	public static final field leftGuillemete C
 	public static final field leftSingleQuote C
 	public static final field less C
@@ -5612,6 +5613,7 @@ public final class kotlin/text/Typography {
 	public static final field quote C
 	public static final field registered C
 	public static final field rightDoubleQuote C
+	public static final field rightGuillemet C
 	public static final field rightGuillemete C
 	public static final field rightSingleQuote C
 	public static final field section C
