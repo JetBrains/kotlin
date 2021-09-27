@@ -1139,7 +1139,7 @@ open class CInteropProcess @Inject constructor(@get:Internal val settings: Defau
         get() = outputFileProvider.get()
 
     init {
-        outputs.upToDateWhen { outputFile.isFile }
+        outputs.upToDateWhen { outputFile.exists() }
     }
 
     // Inputs and outputs.
