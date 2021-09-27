@@ -122,6 +122,7 @@ include ":benchmarks",
         ":compiler:frontend.common-psi",
         ":compiler:frontend.java",
         ":compiler:frontend:cfg",
+        ":kotlin-compiler-runner-unshaded",
         ":kotlin-compiler-runner",
         ":compiler:cli-common",
         ":compiler:ir.tree",
@@ -551,6 +552,7 @@ project(':daemon-common-new').projectDir = "$rootDir/compiler/daemon/daemon-comm
 project(':kotlin-daemon-client').projectDir = "$rootDir/compiler/daemon/daemon-client" as File
 project(':kotlin-daemon-client-new').projectDir = "$rootDir/compiler/daemon/daemon-client-new" as File
 project(':kotlin-daemon-tests').projectDir = "$rootDir/compiler/daemon/daemon-tests" as File
+project(':kotlin-compiler-runner-unshaded').projectDir = "$rootDir/compiler/compiler-runner-unshaded" as File
 project(':kotlin-compiler-runner').projectDir = "$rootDir/compiler/compiler-runner" as File
 project(':kotlin-ant').projectDir = "$rootDir/ant" as File
 project(':compiler:ir.tree').projectDir = "$rootDir/compiler/ir/ir.tree" as File

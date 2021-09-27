@@ -280,7 +280,7 @@ extra["compilerModulesForJps"] = listOf(
     ":kotlin-util-klib",
     ":kotlin-util-klib-metadata",
     ":compiler:cli-common",
-    ":kotlin-compiler-runner",
+    ":kotlin-compiler-runner-unshaded",
     ":daemon-common",
     ":daemon-common-new",
     ":core:compiler.common",

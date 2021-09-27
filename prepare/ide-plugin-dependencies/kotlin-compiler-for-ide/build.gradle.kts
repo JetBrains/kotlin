@@ -23,7 +23,7 @@ val excludedCompilerModules = listOf(
 )
 
 val projects = compilerModules.asList() - excludedCompilerModules + listOf(
-    ":kotlin-compiler-runner",
+    ":kotlin-compiler-runner-unshaded",
     ":kotlin-preloader",
     ":daemon-common",
     ":kotlin-daemon-client"
