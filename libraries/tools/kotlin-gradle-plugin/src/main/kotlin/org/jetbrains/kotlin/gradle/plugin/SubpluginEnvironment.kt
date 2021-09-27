@@ -27,7 +27,7 @@ class SubpluginEnvironment(
         fun loadSubplugins(project: Project): SubpluginEnvironment {
             val kotlinPluginVersion = project.getKotlinPluginVersion()
             return try {
-                @Suppress("DEPRECATION") // support for the deprecated plugin API
+                @Suppress("DEPRECATION_ERROR") // support for the deprecated plugin API
                 val klass = KotlinGradleSubplugin::class.java
                 val buildscriptClassloader = project.buildscript.classLoader
                 val klassFromBuildscript = try {
@@ -44,7 +44,7 @@ class SubpluginEnvironment(
 
                 val result = project.plugins.filterIsInstance<KotlinCompilerPluginSupportPlugin>()
 
-                @Suppress("DEPRECATION", "UNCHECKED_CAST")
+                @Suppress("DEPRECATION_ERROR", "UNCHECKED_CAST")
                 val compatibilitySubplugins = ServiceLoader.load(klass, classloader)
                     .filter { it !is KotlinCompilerPluginSupportPlugin }
                     .map { LegacyKotlinCompilerPluginSupportPlugin(it as KotlinGradleSubplugin<AbstractCompile>) }
@@ -139,7 +139,7 @@ internal fun addCompilationSourcesToExternalCompileTask(compilation: KotlinCompi
 }
 
 internal class LegacyKotlinCompilerPluginSupportPlugin(
-    @Suppress("deprecation") // support for deprecated API
+    @Suppress("DEPRECATION_ERROR") // support for deprecated API
     val oldPlugin: KotlinGradleSubplugin<AbstractCompile>
 ) : KotlinCompilerPluginSupportPlugin {
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean =

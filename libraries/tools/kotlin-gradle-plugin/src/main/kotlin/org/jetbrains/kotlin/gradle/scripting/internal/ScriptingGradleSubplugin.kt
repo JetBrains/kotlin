@@ -213,7 +213,7 @@ private fun Configuration.discoverScriptExtensionsFiles() =
 
 class ScriptingKotlinGradleSubplugin :
     KotlinCompilerPluginSupportPlugin,
-    @Suppress("DEPRECATION") // implementing to fix KT-39809
+    @Suppress("DEPRECATION_ERROR") // implementing to fix KT-39809
     KotlinGradleSubplugin<KotlinCompile> {
     companion object {
         const val SCRIPTING_ARTIFACT_NAME = "kotlin-scripting-compiler-embeddable"

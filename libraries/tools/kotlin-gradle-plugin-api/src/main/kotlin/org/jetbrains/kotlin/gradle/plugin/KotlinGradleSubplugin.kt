@@ -70,7 +70,8 @@ open class InternalSubpluginOption(key: String, value: String) : SubpluginOption
     message = "This interface will be removed due to performance considerations. " +
             "Please use the KotlinCompilerPluginSupportPlugin interface instead " +
             "and remove the META-INF/services/org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin entry.",
-    replaceWith = ReplaceWith("KotlinCompilerPluginSupportPlugin")
+    replaceWith = ReplaceWith("KotlinCompilerPluginSupportPlugin"),
+    level = DeprecationLevel.ERROR
 )
 interface KotlinGradleSubplugin<in KotlinCompile : AbstractCompile> {
     fun isApplicable(project: Project, task: AbstractCompile): Boolean

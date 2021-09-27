@@ -839,7 +839,7 @@ private val BaseVariant.dataBindingDependencyArtifactsIfSupported: FileCollectio
         ?.invoke(this) as? FileCollection
 
 //region Stub implementation for legacy API, KT-39809
-@Suppress("DEPRECATION") // implementing to fix KT-39809
+@Suppress("DEPRECATION_ERROR") // implementing to fix KT-39809
 class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
     override fun isApplicable(project: Project, task: AbstractCompile): Boolean = false
 
