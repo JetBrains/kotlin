@@ -5645,15 +5645,15 @@ public final class kotlin/text/UStringsKt {
 }
 
 public abstract class kotlin/time/AbstractDoubleTimeSource : kotlin/time/TimeSource {
-	public fun <init> (Ljava/util/concurrent/TimeUnit;)V
-	protected final fun getUnit ()Ljava/util/concurrent/TimeUnit;
+	public fun <init> (Lkotlin/time/DurationUnit;)V
+	protected final fun getUnit ()Lkotlin/time/DurationUnit;
 	public fun markNow ()Lkotlin/time/TimeMark;
 	protected abstract fun read ()D
 }
 
 public abstract class kotlin/time/AbstractLongTimeSource : kotlin/time/TimeSource {
-	public fun <init> (Ljava/util/concurrent/TimeUnit;)V
-	protected final fun getUnit ()Ljava/util/concurrent/TimeUnit;
+	public fun <init> (Lkotlin/time/DurationUnit;)V
+	protected final fun getUnit ()Lkotlin/time/DurationUnit;
 	public fun markNow ()Lkotlin/time/TimeMark;
 	protected abstract fun read ()J
 }
@@ -5699,22 +5699,22 @@ public final class kotlin/time/Duration : java/lang/Comparable {
 	public static final fun toComponents-impl (JLkotlin/jvm/functions/Function3;)Ljava/lang/Object;
 	public static final fun toComponents-impl (JLkotlin/jvm/functions/Function4;)Ljava/lang/Object;
 	public static final fun toComponents-impl (JLkotlin/jvm/functions/Function5;)Ljava/lang/Object;
-	public static final fun toDouble-impl (JLjava/util/concurrent/TimeUnit;)D
-	public static final fun toInt-impl (JLjava/util/concurrent/TimeUnit;)I
+	public static final fun toDouble-impl (JLkotlin/time/DurationUnit;)D
+	public static final fun toInt-impl (JLkotlin/time/DurationUnit;)I
 	public static final fun toIsoString-impl (J)Ljava/lang/String;
-	public static final fun toLong-impl (JLjava/util/concurrent/TimeUnit;)J
+	public static final fun toLong-impl (JLkotlin/time/DurationUnit;)J
 	public static final fun toLongMilliseconds-impl (J)J
 	public static final fun toLongNanoseconds-impl (J)J
 	public fun toString ()Ljava/lang/String;
 	public static fun toString-impl (J)Ljava/lang/String;
-	public static final fun toString-impl (JLjava/util/concurrent/TimeUnit;I)Ljava/lang/String;
-	public static synthetic fun toString-impl$default (JLjava/util/concurrent/TimeUnit;IILjava/lang/Object;)Ljava/lang/String;
+	public static final fun toString-impl (JLkotlin/time/DurationUnit;I)Ljava/lang/String;
+	public static synthetic fun toString-impl$default (JLkotlin/time/DurationUnit;IILjava/lang/Object;)Ljava/lang/String;
 	public static final fun unaryMinus-UwyO8pc (J)J
 	public final synthetic fun unbox-impl ()J
 }
 
 public final class kotlin/time/Duration$Companion {
-	public final fun convert (DLjava/util/concurrent/TimeUnit;Ljava/util/concurrent/TimeUnit;)D
+	public final fun convert (DLkotlin/time/DurationUnit;Lkotlin/time/DurationUnit;)D
 	public final fun days-UwyO8pc (D)J
 	public final fun days-UwyO8pc (I)J
 	public final fun days-UwyO8pc (J)J
@@ -5766,9 +5766,26 @@ public final class kotlin/time/DurationKt {
 	public static final fun getSeconds (D)J
 	public static final fun getSeconds (I)J
 	public static final fun getSeconds (J)J
-	public static final fun toDuration (DLjava/util/concurrent/TimeUnit;)J
-	public static final fun toDuration (ILjava/util/concurrent/TimeUnit;)J
-	public static final fun toDuration (JLjava/util/concurrent/TimeUnit;)J
+	public static final fun toDuration (DLkotlin/time/DurationUnit;)J
+	public static final fun toDuration (ILkotlin/time/DurationUnit;)J
+	public static final fun toDuration (JLkotlin/time/DurationUnit;)J
+}
+
+public final class kotlin/time/DurationUnit : java/lang/Enum {
+	public static final field DAYS Lkotlin/time/DurationUnit;
+	public static final field HOURS Lkotlin/time/DurationUnit;
+	public static final field MICROSECONDS Lkotlin/time/DurationUnit;
+	public static final field MILLISECONDS Lkotlin/time/DurationUnit;
+	public static final field MINUTES Lkotlin/time/DurationUnit;
+	public static final field NANOSECONDS Lkotlin/time/DurationUnit;
+	public static final field SECONDS Lkotlin/time/DurationUnit;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/time/DurationUnit;
+	public static fun values ()[Lkotlin/time/DurationUnit;
+}
+
+public final class kotlin/time/DurationUnitKt {
+	public static final fun toDurationUnit (Ljava/util/concurrent/TimeUnit;)Lkotlin/time/DurationUnit;
+	public static final fun toTimeUnit (Lkotlin/time/DurationUnit;)Ljava/util/concurrent/TimeUnit;
 }
 
 public abstract interface annotation class kotlin/time/ExperimentalTime : java/lang/annotation/Annotation {

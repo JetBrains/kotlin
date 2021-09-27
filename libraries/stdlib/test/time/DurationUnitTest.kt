@@ -19,6 +19,7 @@ import kotlin.time.DurationUnit.NANOSECONDS
 class DurationUnitTest {
 
     @Test
+    @OptIn(ExperimentalTime::class)
     fun conversion() {
         fun test(sourceValue: Double, sourceUnit: DurationUnit, targetValue: Double, targetUnit: DurationUnit) {
             assertEquals(
