@@ -133,7 +133,8 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
 
     override fun visitCall(expression: IrCall, data: JsGenerationContext): JsStatement {
         if (data.checkIfJsCode(expression.symbol)) {
-            val statements = translateJsCodeIntoStatementList(expression.getValueArgument(0) ?: error("JsCode is expected"))!!
+            val statements = translateJsCodeIntoStatementList(expression.getValueArgument(0) ?: error("JsCode is expected"))
+                ?: error("Cannot compute js code for ${expression.render()}")
             return when (statements.size) {
                 0 -> JsEmpty
                 1 -> statements.single().withSource(expression, data)
