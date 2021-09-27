@@ -12,7 +12,6 @@ import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import com.gradle.scan.plugin.BuildScanExtension
 import org.gradle.api.provider.Provider
-import org.gradle.build.event.BuildEventsListenerRegistry
 import org.gradle.tooling.events.OperationCompletionListener
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.ReportStatisticsToBuildScan
 import org.jetbrains.kotlin.gradle.plugin.statistics.ReportStatisticsToElasticSearch
 import org.jetbrains.kotlin.gradle.report.configureReporting
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
-import java.util.*
 
 //Support Gradle 6 and less. Move to
 internal class KotlinGradleBuildServices private constructor(
@@ -78,15 +76,16 @@ internal class KotlinGradleBuildServices private constructor(
             val kotlinGradleEsListenerProvider = project.provider {
                 val listeners = project.rootProject.objects.listProperty(ReportStatistics::class.java)
                     .value(listOf<ReportStatistics>(ReportStatisticsToElasticSearch))
-                project.rootProject.extensions.findByName("buildScan")
-                    ?.also { listeners.add(ReportStatisticsToBuildScan(it as BuildScanExtension)) }
-                KotlinBuildEsStatListener(project.rootProject.name, listeners.get(), UUID.randomUUID().toString())
+                if (project.gradle.startParameter.isBuildScan) {
+                    project.rootProject.extensions.findByName("buildScan")
+                        ?.also { listeners.add(ReportStatisticsToBuildScan(it as BuildScanExtension)) }
+                }
+                KotlinBuildEsStatListener(project.rootProject.name, listeners.get())
             }
 
 
             if (instance != null) {
                 log.kotlinDebug(ALREADY_INITIALIZED_MESSAGE)
-//                instance!!.gradleListenerProviders.forEach { listenerRegistry.onTaskCompletion(it) }
                 return instance!!
             }
 
