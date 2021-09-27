@@ -6,7 +6,7 @@ public annotation class AllOpen {
 
 @AllOpen
 @kotlin.Metadata
-final class Test {
+class Test {
     // source: 'privateMembers.kt'
     private final @org.jetbrains.annotations.NotNull field internalProp: java.lang.String
     private final field privateProp: java.lang.String
@@ -17,8 +17,7 @@ final class Test {
     protected @org.jetbrains.annotations.NotNull method getProtectedProp(): java.lang.String
     public @org.jetbrains.annotations.NotNull method getPublicProp(): java.lang.String
     public method internalMethod$test_module(): void
-    private final method privateMethod(): void
-    private final method privateTailrecMethod(): void
+    private method privateMethod(): void
     protected method protectedMethod(): void
     public method publicMethod(): void
 }
