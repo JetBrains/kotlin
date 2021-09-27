@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 
 class IrSymbolDeserializer(
     val symbolTable: ReferenceSymbolTable,
-    val fileReader: IrLibraryFile,
+    val libraryFile: IrLibraryFile,
     val fileSymbol: IrFileSymbol,
     val actuals: List<Actual>,
     val enqueueLocalTopLevelDeclaration: (IdSignature) -> Unit,
@@ -103,7 +103,7 @@ class IrSymbolDeserializer(
         }
     }
 
-    val signatureDeserializer = IdSignatureDeserializer(fileReader, fileSymbol)
+    val signatureDeserializer = IdSignatureDeserializer(libraryFile, fileSymbol)
 
     fun deserializeIdSignature(index: Int): IdSignature {
         return signatureDeserializer.deserializeIdSignature(index)

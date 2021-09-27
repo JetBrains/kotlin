@@ -16,15 +16,18 @@ import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.encodings.WobblyTF8
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
 
 class IrFileDeserializer(
     val file: IrFile,
-    private val fileReader: IrLibraryFile,
+    private val libraryFile: IrLibraryFile,
     fileProto: ProtoFile,
     val symbolDeserializer: IrSymbolDeserializer,
     val declarationDeserializer: IrDeclarationDeserializer,
@@ -39,12 +42,9 @@ class IrFileDeserializer(
         }
     }
 
-    private fun readDeclaration(index: Int): CodedInputStream =
-        fileReader.irDeclaration(index).codedInputStream
-
     private fun loadTopLevelDeclarationProto(idSig: IdSignature): ProtoDeclaration {
         val idSigIndex = reversedSignatureIndex[idSig] ?: error("Not found Idx for $idSig")
-        return ProtoDeclaration.parseFrom(readDeclaration(idSigIndex), ExtensionRegistryLite.newInstance())
+        return libraryFile.declaration(idSigIndex)
     }
 
     fun deserializeFileImplicitDataIfFirstUse() {
@@ -58,7 +58,7 @@ class IrFileDeserializer(
 class FileDeserializationState(
     val linker: KotlinIrLinker,
     file: IrFile,
-    fileReader: IrLibraryFile,
+    fileReader: IrLibraryFileFromBytes,
     fileProto: ProtoFile,
     deserializeBodies: Boolean,
     allowErrorNodes: Boolean,
@@ -139,6 +139,16 @@ class FileDeserializationState(
 }
 
 abstract class IrLibraryFile {
+    abstract fun declaration(index: Int): ProtoDeclaration
+    abstract fun type(index: Int): ProtoType
+    abstract fun signature(index: Int): ProtoIdSignature
+    abstract fun string(index: Int): String
+    abstract fun expressionBody(index: Int): ProtoExpression
+    abstract fun statementBody(index: Int): ProtoStatement
+    abstract fun debugInfo(index: Int): String?
+}
+
+abstract class IrLibraryBytesSource {
     abstract fun irDeclaration(index: Int): ByteArray
     abstract fun type(index: Int): ByteArray
     abstract fun signature(index: Int): ByteArray
@@ -147,7 +157,32 @@ abstract class IrLibraryFile {
     abstract fun debugInfo(index: Int): ByteArray?
 }
 
-class IrLibraryFileFromKlib(private val klib: IrLibrary, private val fileIndex: Int) : IrLibraryFile() {
+class IrLibraryFileFromBytes(private val bytesSource: IrLibraryBytesSource) : IrLibraryFile() {
+
+    override fun declaration(index: Int): ProtoDeclaration =
+        ProtoDeclaration.parseFrom(bytesSource.irDeclaration(index).codedInputStream, extensionRegistryLite)
+
+    override fun type(index: Int): ProtoType = ProtoType.parseFrom(bytesSource.type(index).codedInputStream, extensionRegistryLite)
+
+    override fun signature(index: Int): ProtoIdSignature =
+        ProtoIdSignature.parseFrom(bytesSource.signature(index).codedInputStream, extensionRegistryLite)
+
+    override fun string(index: Int): String = WobblyTF8.decode(bytesSource.string(index))
+
+    override fun expressionBody(index: Int): ProtoExpression =
+        ProtoExpression.parseFrom(bytesSource.body(index).codedInputStream, extensionRegistryLite)
+
+    override fun statementBody(index: Int): ProtoStatement =
+        ProtoStatement.parseFrom(bytesSource.body(index).codedInputStream, extensionRegistryLite)
+
+    override fun debugInfo(index: Int): String? = bytesSource.debugInfo(index)?.let { WobblyTF8.decode(it) }
+
+    companion object {
+        val extensionRegistryLite: ExtensionRegistryLite = ExtensionRegistryLite.newInstance()
+    }
+}
+
+class IrKlibBytesSource(private val klib: IrLibrary, private val fileIndex: Int) : IrLibraryBytesSource() {
     override fun irDeclaration(index: Int): ByteArray = klib.irDeclaration(index, fileIndex)
     override fun type(index: Int): ByteArray = klib.type(index, fileIndex)
     override fun signature(index: Int): ByteArray = klib.signature(index, fileIndex)
@@ -156,11 +191,8 @@ class IrLibraryFileFromKlib(private val klib: IrLibrary, private val fileIndex: 
     override fun debugInfo(index: Int): ByteArray? = klib.debugInfo(index, fileIndex)
 }
 
-internal fun IrLibraryFile.deserializeString(index: Int): String = WobblyTF8.decode(string(index))
-internal fun IrLibraryFile.deserializeDebugInfo(index: Int): String? = debugInfo(index)?.let { WobblyTF8.decode(it) }
-
 internal fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
-    fqn.joinToString(".", transform = ::deserializeString)
+    fqn.joinToString(".", transform = ::string)
 
 fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile): IrFile {
     val fileName = fileProto.fileEntry.name

@@ -23,13 +23,12 @@ import org.jetbrains.kotlin.library.impl.DeclarationIrTableMemoryReader
 import org.jetbrains.kotlin.library.impl.IrArrayMemoryReader
 import org.jetbrains.kotlin.library.impl.IrLongArrayMemoryReader
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoIrDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoIrFile
 
 class IcFileDeserializer(
     val linker: JsIrLinker,
     private val file: IrFile,
-    originalFileReader: IrLibraryFile,
+    originalFileReader: IrLibraryFileFromBytes,
     fileProto: ProtoIrFile,
     deserializeBodies: Boolean,
     allowErrorNodes: Boolean,
@@ -115,7 +114,7 @@ class IcFileDeserializer(
 
     // IC data processing starts here
 
-    private val icFileReader = FileReaderFromSerializedIrFile(icFileData.file)
+    private val icFileReader = IrLibraryFileFromBytes(FileReaderFromSerializedIrFile(icFileData.file))
 
     val symbolDeserializer = IrSymbolDeserializer(
         linker.symbolTable,
@@ -195,8 +194,7 @@ class IcFileDeserializer(
         cachedDeclaration(idSig)?.let { return it }
 
         val idSigIndex = reversedSignatureIndex[idSig] ?: return null
-        val declarationStream = icFileReader.irDeclaration(idSigIndex).codedInputStream
-        val declarationProto = ProtoIrDeclaration.parseFrom(declarationStream, extensionRegistryLite)
+        val declarationProto = icFileReader.declaration(idSigIndex)
         return declarationDeserializer.deserializeDeclaration(declarationProto)
     }
 
@@ -221,8 +219,7 @@ class IcFileDeserializer(
         }
 
         reversedSignatureIndex[maybeTopLevel]?.let { idSigIndex ->
-            val declarationStream = icFileReader.irDeclaration(idSigIndex).codedInputStream
-            val declarationProto = ProtoIrDeclaration.parseFrom(declarationStream, extensionRegistryLite)
+            val declarationProto = icFileReader.declaration(idSigIndex)
             return declarationDeserializer.deserializeDeclaration(declarationProto)
         }
 
@@ -250,9 +247,7 @@ class IcFileDeserializer(
     }
 }
 
-private val extensionRegistryLite = ExtensionRegistryLite.newInstance()
-
-private class FileReaderFromSerializedIrFile(val irFile: SerializedIrFile) : IrLibraryFile() {
+private class FileReaderFromSerializedIrFile(val irFile: SerializedIrFile) : IrLibraryBytesSource() {
     private val declarationReader = DeclarationIrTableMemoryReader(irFile.declarations)
     private val typeReader = IrArrayMemoryReader(irFile.types)
     private val signatureReader = IrArrayMemoryReader(irFile.signatures)

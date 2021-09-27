@@ -127,7 +127,7 @@ class IcModuleDeserializer(
         allowErrorNodes: Boolean
     ): IrFile {
 
-        val fileReader = IrLibraryFileFromKlib(moduleDeserializer.klib, fileIndex)
+        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(moduleDeserializer.klib, fileIndex))
         val file = fileReader.createFile(moduleFragment, fileProto)
         val fileStrategy = strategyResolver(file.fileEntry.name)
 

@@ -78,7 +78,7 @@ class IrBodyDeserializer(
     private val builtIns: IrBuiltIns,
     private val allowErrorNodes: Boolean,
     private val irFactory: IrFactory,
-    private val fileReader: IrLibraryFile,
+    private val libraryFile: IrLibraryFile,
     private val declarationDeserializer: IrDeclarationDeserializer,
     private val statementOriginIndex: Map<String, IrStatementOrigin>,
     private val allowErrorStatementOrigins: Boolean, // TODO: support InlinerExpressionLocationHint
@@ -382,9 +382,9 @@ class IrBodyDeserializer(
         start: Int, end: Int, type: IrType
     ): IrErrorExpression {
         require(allowErrorNodes) {
-            "IrErrorExpression($start, $end, \"${fileReader.deserializeString(proto.description)}\") found but error code is not allowed"
+            "IrErrorExpression($start, $end, \"${libraryFile.string(proto.description)}\") found but error code is not allowed"
         }
-        return IrErrorExpressionImpl(start, end, type, fileReader.deserializeString(proto.description))
+        return IrErrorExpressionImpl(start, end, type, libraryFile.string(proto.description))
     }
 
     private fun deserializeErrorCallExpression(
@@ -392,9 +392,9 @@ class IrBodyDeserializer(
         start: Int, end: Int, type: IrType
     ): IrErrorCallExpression {
         require(allowErrorNodes) {
-            "IrErrorCallExpressionImpl($start, $end, \"${fileReader.deserializeString(proto.description)}\") found but error code is not allowed"
+            "IrErrorCallExpressionImpl($start, $end, \"${libraryFile.string(proto.description)}\") found but error code is not allowed"
         }
-        return IrErrorCallExpressionImpl(start, end, type, fileReader.deserializeString(proto.description)).apply {
+        return IrErrorCallExpressionImpl(start, end, type, libraryFile.string(proto.description)).apply {
             if (proto.hasReceiver()) {
                 explicitReceiver = deserializeExpression(proto.receiver)
             }
@@ -672,7 +672,7 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeLoop(proto: ProtoLoop, loop: IrLoop): IrLoop {
-        val label = if (proto.hasLabel()) fileReader.deserializeString(proto.label) else null
+        val label = if (proto.hasLabel()) libraryFile.string(proto.label) else null
         val body = if (proto.hasBody()) deserializeExpression(proto.body) else null
         val condition = deserializeExpression(proto.condition)
 
@@ -713,7 +713,7 @@ class IrBodyDeserializer(
             start,
             end,
             type,
-            fileReader.deserializeString(proto.memberName),
+            libraryFile.string(proto.memberName),
             deserializeExpression(proto.receiver)
         )
 
@@ -774,7 +774,7 @@ class IrBodyDeserializer(
         }
 
     private fun deserializeBreak(proto: ProtoBreak, start: Int, end: Int, type: IrType): IrBreak {
-        val label = if (proto.hasLabel()) fileReader.deserializeString(proto.label) else null
+        val label = if (proto.hasLabel()) libraryFile.string(proto.label) else null
         val loopId = proto.loopId
         val loop = deserializeLoopHeader(loopId) {
             if (allowErrorLoopIndices) {
@@ -790,7 +790,7 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeContinue(proto: ProtoContinue, start: Int, end: Int, type: IrType): IrContinue {
-        val label = if (proto.hasLabel()) fileReader.deserializeString(proto.label) else null
+        val label = if (proto.hasLabel()) libraryFile.string(proto.label) else null
         val loopId = proto.loopId
         val loop = deserializeLoopHeader(loopId) {
             if (allowErrorLoopIndices) {
@@ -822,7 +822,7 @@ class IrBodyDeserializer(
             LONG
             -> IrConstImpl.long(start, end, type, proto.long)
             STRING
-            -> IrConstImpl.string(start, end, type, fileReader.deserializeString(proto.string))
+            -> IrConstImpl.string(start, end, type, libraryFile.string(proto.string))
             FLOAT_BITS
             -> IrConstImpl.float(start, end, type, Float.fromBits(proto.floatBits))
             DOUBLE_BITS
@@ -891,7 +891,7 @@ class IrBodyDeserializer(
     }
 
     fun deserializeIrStatementOrigin(protoName: Int): IrStatementOrigin {
-        return fileReader.deserializeString(protoName).let {
+        return libraryFile.string(protoName).let {
             val componentPrefix = "COMPONENT_"
             when {
                 it.startsWith(componentPrefix) -> {

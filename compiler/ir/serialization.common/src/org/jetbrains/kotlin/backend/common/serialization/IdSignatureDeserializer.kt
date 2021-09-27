@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignature.FileSignature
-import org.jetbrains.kotlin.protobuf.CodedInputStream
-import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature as ProtoCommonIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature as ProtoCompositeSignature
@@ -19,14 +17,12 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as Pr
 import org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature as ProtoLocalSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature as ProtoLoweredIdSignature
 
-class IdSignatureDeserializer(private val fileReader: IrLibraryFile, fileSymbol: IrFileSymbol?) {
-
-    private fun readSignature(index: Int): CodedInputStream = fileReader.signature(index).codedInputStream
+class IdSignatureDeserializer(private val libraryFile: IrLibraryFile, fileSymbol: IrFileSymbol?) {
 
     private val fileSignature: FileSignature? = fileSymbol?.let { FileSignature(it) }
 
     private fun loadSignatureProto(index: Int): ProtoIdSignature {
-        return ProtoIdSignature.parseFrom(readSignature(index), extensionRegistryLite)
+        return libraryFile.signature(index)
     }
 
     private val signatureCache = HashMap<Int, IdSignature>()
@@ -39,8 +35,8 @@ class IdSignatureDeserializer(private val fileReader: IrLibraryFile, fileSymbol:
     }
 
     private fun deserializePublicIdSignature(proto: ProtoCommonIdSignature): IdSignature.CommonSignature {
-        val pkg = fileReader.deserializeFqName(proto.packageFqNameList)
-        val cls = fileReader.deserializeFqName(proto.declarationFqNameList)
+        val pkg = libraryFile.deserializeFqName(proto.packageFqNameList)
+        val cls = libraryFile.deserializeFqName(proto.declarationFqNameList)
         val memberId = if (proto.hasMemberUniqId()) proto.memberUniqId else null
 
         return IdSignature.CommonSignature(pkg, cls, memberId, proto.flags)
@@ -49,7 +45,7 @@ class IdSignatureDeserializer(private val fileReader: IrLibraryFile, fileSymbol:
     private fun deserializeAccessorIdSignature(proto: ProtoAccessorIdSignature): IdSignature.AccessorSignature {
         val propertySignature = deserializeIdSignature(proto.propertySignature)
         require(propertySignature is IdSignature.CommonSignature) { "For public accessor corresponding property supposed to be public as well" }
-        val name = fileReader.deserializeString(proto.name)
+        val name = libraryFile.string(proto.name)
         val hash = proto.accessorHashId
         val mask = proto.flags
 
@@ -78,9 +74,9 @@ class IdSignatureDeserializer(private val fileReader: IrLibraryFile, fileSymbol:
     }
 
     private fun deserializeLocalIdSignature(proto: ProtoLocalSignature): IdSignature.LocalSignature {
-        val localFqn = fileReader.deserializeFqName(proto.localFqNameList)
+        val localFqn = libraryFile.deserializeFqName(proto.localFqNameList)
         val localHash = if (proto.hasLocalHash()) proto.localHash else null
-        val description = if (proto.hasDebugInfo()) fileReader.deserializeDebugInfo(proto.debugInfo) else null
+        val description = if (proto.hasDebugInfo()) libraryFile.debugInfo(proto.debugInfo) else null
         return IdSignature.LocalSignature(localFqn, localHash, description)
     }
 
@@ -104,9 +100,5 @@ class IdSignatureDeserializer(private val fileReader: IrLibraryFile, fileSymbol:
 
     fun signatureToIndexMapping(): Map<IdSignature, Int> {
         return signatureCache.entries.associate { it.value to it.key }
-    }
-
-    companion object {
-        private val extensionRegistryLite = ExtensionRegistryLite.newInstance()
     }
 }

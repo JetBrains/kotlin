@@ -54,11 +54,16 @@ class JvmIrSerializerSession(
 
     private fun serializeAuxTables(): JvmIr.AuxTables {
         val proto = JvmIr.AuxTables.newBuilder()
-        protoTypeArray.forEach { proto.addType(it.toByteString()) }
-        protoIdSignatureArray.forEach { proto.addSignature(it.toByteString()) }
-        protoStringArray.forEach { proto.addString(ByteString.copyFromUtf8(it)) }
-        protoBodyArray.forEach { proto.addBody(ByteString.copyFrom(it.toByteArray())) }
-        protoDebugInfoArray.forEach { proto.addDebugInfo(ByteString.copyFromUtf8(it)) }
+        protoTypeArray.forEach(proto::addType)
+        protoIdSignatureArray.forEach(proto::addSignature)
+        protoStringArray.forEach(proto::addString)
+        protoBodyArray.forEach { proto.addBody(it.toProto()) }
+        protoDebugInfoArray.forEach(proto::addDebugInfo)
         return proto.build()
+    }
+
+    fun XStatementOrExpression.toProto(): JvmIr.XStatementOrExpression = when (this) {
+        is XStatementOrExpression.XStatement -> JvmIr.XStatementOrExpression.newBuilder().setStatement(toProtoStatement()).build()
+        is XStatementOrExpression.XExpression -> JvmIr.XStatementOrExpression.newBuilder().setExpression(toProtoExpression()).build()
     }
 }

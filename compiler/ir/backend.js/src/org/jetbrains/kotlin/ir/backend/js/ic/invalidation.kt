@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.IdSignatureDeserializer
-import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFile
+import org.jetbrains.kotlin.backend.common.serialization.IrLibraryBytesSource
+import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -121,7 +122,7 @@ private fun KotlinLibrary.filesAndSigReaders(): List<Pair<String, IdSignatureDes
     for (i in 0 until fileSize) {
         val fileStream = file(i).codedInputStream
         val fileProto = ProtoFile.parseFrom(fileStream, extReg)
-        val sigReader = IdSignatureDeserializer(object : IrLibraryFile() {
+        val sigReader = IdSignatureDeserializer(IrLibraryFileFromBytes(object : IrLibraryBytesSource() {
             private fun err(): Nothing = error("Not supported")
             override fun irDeclaration(index: Int): ByteArray = err()
 
@@ -134,7 +135,7 @@ private fun KotlinLibrary.filesAndSigReaders(): List<Pair<String, IdSignatureDes
             override fun body(index: Int): ByteArray = err()
 
             override fun debugInfo(index: Int): ByteArray? = null
-        }, null)
+        }), null)
 
         result.add(fileProto.fileEntry.name to sigReader)
     }
