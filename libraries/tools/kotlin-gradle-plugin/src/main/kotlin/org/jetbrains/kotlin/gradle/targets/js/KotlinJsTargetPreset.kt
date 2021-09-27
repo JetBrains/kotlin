@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.runPostEvaluationProjectConfigurationHealthCheck
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 
 open class KotlinJsTargetPreset(
@@ -54,7 +55,7 @@ open class KotlinJsTargetPreset(
             }
             this.isMpp = this@KotlinJsTargetPreset.isMpp
 
-            project.whenEvaluated {
+            project.runPostEvaluationProjectConfigurationHealthCheck {
                 if (!isBrowserConfigured && !isNodejsConfigured) {
                     project.logger.warn(
                         """
