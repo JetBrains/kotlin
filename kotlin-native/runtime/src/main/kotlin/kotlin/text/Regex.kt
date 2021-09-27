@@ -253,10 +253,23 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
     }
 
     /**
-     * Replaces all occurrences of this regular expression in the specified [input] string with
-     * specified [replacement] expression.
+     * Replaces all occurrences of this regular expression in the specified [input] string with specified [replacement] expression.
      *
-     * @param replacement A replacement expression that can include substitutions.
+     * The replacement string may contain references to the captured groups during a match. Occurrences of `$index`
+     * in the replacement string will be substituted with the subsequences corresponding to the captured groups with the specified index.
+     * The first digit after '$' is always treated as part of group reference. Subsequent digits are incorporated
+     * into `index` only if they would form a valid group reference. Only the digits '0'..'9' are considered as potential components
+     * of the group reference. Note that indexes of captured groups start from 1, and the group with index 0 is the whole match.
+     *
+     * Backslash character '\' can be used to include the succeeding character as a literal in the replacement string, e.g, `\$` or `\\`.
+     * [Regex.escapeReplacement] can be used if [replacement] have to be treated as a literal string.
+     *
+     * Note that named capturing groups are not supported in Kotlin/Native.
+     *
+     * @param input the char sequence to find matches of this regular expression in
+     * @param replacement the expression to replace found matches with
+     * @return the result of replacing each occurrence of this regular expression in [input] with the result of evaluating the [replacement] expression
+     * @throws RuntimeException if [replacement] expression is malformed, or capturing group with specified `name` or `index` does not exist
      */
     actual fun replace(input: CharSequence, replacement: String): String
             = replace(input) { match -> processReplacement(match, replacement) }
@@ -290,7 +303,21 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
     /**
      * Replaces the first occurrence of this regular expression in the specified [input] string with specified [replacement] expression.
      *
-     * @param replacement A replacement expression that can include substitutions.
+     * The replacement string may contain references to the captured groups during a match. Occurrences of `$index`
+     * in the replacement string will be substituted with the subsequences corresponding to the captured groups with the specified index.
+     * The first digit after '$' is always treated as part of group reference. Subsequent digits are incorporated
+     * into `index` only if they would form a valid group reference. Only the digits '0'..'9' are considered as potential components
+     * of the group reference. Note that indexes of captured groups start from 1, and the group with index 0 is the whole match.
+     *
+     * Backslash character '\' can be used to include the succeeding character as a literal in the replacement string, e.g, `\$` or `\\`.
+     * [Regex.escapeReplacement] can be used if [replacement] have to be treated as a literal string.
+     *
+     * Note that named capturing groups are not supported in Kotlin/Native.
+     *
+     * @param input the char sequence to find a match of this regular expression in
+     * @param replacement the expression to replace the found match with
+     * @return the result of replacing the first occurrence of this regular expression in [input] with the result of evaluating the [replacement] expression
+     * @throws RuntimeException if [replacement] expression is malformed, or capturing group with specified `name` or `index` does not exist
      */
     actual fun replaceFirst(input: CharSequence, replacement: String): String {
         val match = find(input) ?: return input.toString()
