@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.PsiCompiledElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
@@ -42,7 +44,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -52,6 +57,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
@@ -65,7 +71,7 @@ internal fun <T : IrElement> FirElement.convertWithOffsets(
     return source.convertWithOffsets(f)
 }
 
-internal fun <T : IrElement> FirSourceElement?.convertWithOffsets(
+internal fun <T : IrElement> KtSourceElement?.convertWithOffsets(
     f: (startOffset: Int, endOffset: Int) -> T
 ): T {
     val psi = psi
@@ -466,7 +472,7 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? {
                     IrStatementOrigin.FOR_LOOP_ITERATOR
                 source?.elementType == KtNodeTypes.OPERATION_REFERENCE ->
                     nameToOperationConventionOrigin[symbol.callableId.callableName]
-                source?.kind is FirFakeSourceElementKind.DesugaredComponentFunctionCall ->
+                source?.kind is KtFakeSourceElementKind.DesugaredComponentFunctionCall ->
                     IrStatementOrigin.COMPONENT_N.withIndex(name.asString().removePrefix("component").toInt())
                 else ->
                     null
@@ -631,7 +637,7 @@ fun FirVariableAssignment.getIrAssignmentOrigin(): IrStatementOrigin {
                     IrStatementOrigin.POSTFIX_DECR
             }
 
-            if (calleeReference.source?.kind is FirFakeSourceElementKind &&
+            if (calleeReference.source?.kind is KtFakeSourceElementKind &&
                 calleeReferenceSymbol == rValue.explicitReceiver?.toResolvedCallableSymbol()
             ) {
                 if (callableName == OperatorNameConventions.PLUS) {

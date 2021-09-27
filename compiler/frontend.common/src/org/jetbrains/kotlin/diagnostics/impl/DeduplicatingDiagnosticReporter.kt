@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.diagnostics.impl
 
-import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.diagnostics.AbstractKtDiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 
 class DeduplicatingDiagnosticReporter(private val inner: DiagnosticReporter) : DiagnosticReporter() {
 
-    private val reported = mutableSetOf<Pair<KtSourceElement, AbstractKtDiagnosticFactory>>()
+    private val reported = mutableSetOf<Pair<AbstractKtSourceElement, AbstractKtDiagnosticFactory>>()
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic != null && reported.add(Pair(diagnostic.element, diagnostic.factory))) {

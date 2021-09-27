@@ -8,15 +8,14 @@ package org.jetbrains.kotlin.diagnostics
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.diagnostics.*
 
 // ------------------------------ diagnostics ------------------------------
 
 sealed class KtDiagnostic : DiagnosticMarker {
-    abstract val element: KtSourceElement
+    abstract val element: AbstractKtSourceElement
     abstract val severity: Severity
     abstract val factory: AbstractKtDiagnosticFactory
     abstract val positioningStrategy: AbstractSourceElementPositioningStrategy
@@ -206,3 +205,58 @@ data class KtLightDiagnosticWithParameters4<A, B, C, D>(
     override val factory: KtDiagnosticFactory4<A, B, C, D>,
     override val positioningStrategy: AbstractSourceElementPositioningStrategy
 ) : KtDiagnosticWithParameters4<A, B, C, D>(), KtLightDiagnostic
+
+// ------------------------------ light tree diagnostics ------------------------------
+
+interface KtOffsetsOnlyDiagnostic : DiagnosticMarker {
+    val element: AbstractKtSourceElement
+
+    @Deprecated("Should not be called", level = DeprecationLevel.HIDDEN)
+    override val psiElement: PsiElement
+        get() = error("psiElement should not be called on KtOffsetsOnlyDiagnostic")
+}
+
+data class KtOffsetsOnlySimpleDiagnostic(
+    override val element: AbstractKtSourceElement,
+    override val severity: Severity,
+    override val factory: KtDiagnosticFactory0,
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy
+) : KtSimpleDiagnostic(), KtOffsetsOnlyDiagnostic
+
+data class KtOffsetsOnlyDiagnosticWithParameters1<A>(
+    override val element: AbstractKtSourceElement,
+    override val a: A,
+    override val severity: Severity,
+    override val factory: KtDiagnosticFactory1<A>,
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy
+) : KtDiagnosticWithParameters1<A>(), KtOffsetsOnlyDiagnostic
+
+data class KtOffsetsOnlyDiagnosticWithParameters2<A, B>(
+    override val element: AbstractKtSourceElement,
+    override val a: A,
+    override val b: B,
+    override val severity: Severity,
+    override val factory: KtDiagnosticFactory2<A, B>,
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy
+) : KtDiagnosticWithParameters2<A, B>(), KtOffsetsOnlyDiagnostic
+
+data class KtOffsetsOnlyDiagnosticWithParameters3<A, B, C>(
+    override val element: AbstractKtSourceElement,
+    override val a: A,
+    override val b: B,
+    override val c: C,
+    override val severity: Severity,
+    override val factory: KtDiagnosticFactory3<A, B, C>,
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy
+) : KtDiagnosticWithParameters3<A, B, C>(), KtOffsetsOnlyDiagnostic
+
+data class KtOffsetsOnlyDiagnosticWithParameters4<A, B, C, D>(
+    override val element: AbstractKtSourceElement,
+    override val a: A,
+    override val b: B,
+    override val c: C,
+    override val d: D,
+    override val severity: Severity,
+    override val factory: KtDiagnosticFactory4<A, B, C, D>,
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy
+) : KtDiagnosticWithParameters4<A, B, C, D>(), KtOffsetsOnlyDiagnostic

@@ -7,10 +7,10 @@
 
 package org.jetbrains.kotlin.diagnostics
 
-import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.AbstractKtSourceElement
 
 fun DiagnosticReporter.reportOn(
-    source: KtSourceElement?,
+    source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactory0,
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
@@ -19,7 +19,7 @@ fun DiagnosticReporter.reportOn(
 }
 
 fun <A : Any> DiagnosticReporter.reportOn(
-    source: KtSourceElement?,
+    source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactory1<A>,
     a: A,
     context: DiagnosticContext,
@@ -29,7 +29,7 @@ fun <A : Any> DiagnosticReporter.reportOn(
 }
 
 fun <A : Any, B : Any> DiagnosticReporter.reportOn(
-    source: KtSourceElement?,
+    source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactory2<A, B>,
     a: A,
     b: B,
@@ -40,7 +40,7 @@ fun <A : Any, B : Any> DiagnosticReporter.reportOn(
 }
 
 fun <A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
-    source: KtSourceElement?,
+    source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactory3<A, B, C>,
     a: A,
     b: B,
@@ -52,7 +52,7 @@ fun <A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
 }
 
 fun <A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOn(
-    source: KtSourceElement?,
+    source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactory4<A, B, C, D>,
     a: A,
     b: B,
@@ -65,7 +65,7 @@ fun <A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOn(
 }
 
 fun DiagnosticReporter.reportOn(
-    source: KtSourceElement?,
+    source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactoryForDeprecation0,
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
@@ -74,7 +74,7 @@ fun DiagnosticReporter.reportOn(
 }
 
 fun <A : Any> DiagnosticReporter.reportOn(
-    source: KtSourceElement?,
+    source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactoryForDeprecation1<A>,
     a: A,
     context: DiagnosticContext,
@@ -84,7 +84,7 @@ fun <A : Any> DiagnosticReporter.reportOn(
 }
 
 fun <A : Any, B : Any> DiagnosticReporter.reportOn(
-    source: KtSourceElement?,
+    source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactoryForDeprecation2<A, B>,
     a: A,
     b: B,
@@ -95,7 +95,7 @@ fun <A : Any, B : Any> DiagnosticReporter.reportOn(
 }
 
 fun <A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
-    source: KtSourceElement?,
+    source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactoryForDeprecation3<A, B, C>,
     a: A,
     b: B,
@@ -107,7 +107,7 @@ fun <A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
 }
 
 fun <A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOn(
-    source: KtSourceElement?,
+    source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactoryForDeprecation4<A, B, C, D>,
     a: A,
     b: B,

@@ -190,10 +190,19 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     object ParameterNameAnnotationCall : KtFakeSourceElementKind()
 }
 
-sealed class KtSourceElement {
-    abstract val elementType: IElementType
+abstract class AbstractKtSourceElement {
     abstract val startOffset: Int
     abstract val endOffset: Int
+}
+
+class KtOffsetsOnlySourceElement(
+    override val startOffset: Int,
+    override val endOffset: Int,
+) : AbstractKtSourceElement()
+
+// TODO: consider renaming to something like AstBasedSourceElement
+sealed class KtSourceElement : AbstractKtSourceElement() {
+    abstract val elementType: IElementType
     abstract val kind: KtSourceElementKind
     abstract val lighterASTNode: LighterASTNode
     abstract val treeStructure: FlyweightCapableTreeStructure<LighterASTNode>
@@ -390,7 +399,7 @@ class KtLightSourceElement(
     }
 }
 
-val KtSourceElement?.psi: PsiElement? get() = (this as? KtPsiSourceElement)?.psi
+val AbstractKtSourceElement?.psi: PsiElement? get() = (this as? KtPsiSourceElement)?.psi
 
 val KtSourceElement?.text: CharSequence?
     get() = when (this) {

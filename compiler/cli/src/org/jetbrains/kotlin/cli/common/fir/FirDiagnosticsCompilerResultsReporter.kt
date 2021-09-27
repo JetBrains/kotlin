@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.common.fir
 
+import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -12,9 +13,9 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDefaultErrorMessages
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 
 object FirDiagnosticsCompilerResultsReporter {
     fun reportDiagnostics(diagnostics: Collection<KtDiagnostic>, reporter: MessageCollector): Boolean {
@@ -51,6 +52,7 @@ object FirDiagnosticsCompilerResultsReporter {
     private fun KtDiagnostic.location(): CompilerMessageSourceLocation? = when (val element = element) {
         is KtPsiSourceElement -> element.location(this)
         is KtLightSourceElement -> element.location(this)
+        else -> element.genericLocation(this)
     }
 
     private fun KtPsiSourceElement.location(diagnostic: KtDiagnostic): CompilerMessageSourceLocation? {
@@ -61,6 +63,12 @@ object FirDiagnosticsCompilerResultsReporter {
     @Suppress("UNUSED_PARAMETER")
     private fun KtLightSourceElement.location(diagnostic: KtDiagnostic): CompilerMessageSourceLocation? {
         // TODO: support light tree
+        return null
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    private fun AbstractKtSourceElement.genericLocation(diagnostic: KtDiagnostic): CompilerMessageSourceLocation? {
+        // TODO: support generic location
         return null
     }
 

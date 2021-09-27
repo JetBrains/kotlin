@@ -7,9 +7,9 @@
 
 package org.jetbrains.kotlin.diagnostics
 
+import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import kotlin.reflect.KClass
 
@@ -39,7 +39,7 @@ class KtDiagnosticFactory0(
 
     @InternalDiagnosticFactoryMethod
     fun on(
-        element: KtSourceElement,
+        element: AbstractKtSourceElement,
         positioningStrategy: AbstractSourceElementPositioningStrategy?
     ): KtSimpleDiagnostic {
         return when (element) {
@@ -47,6 +47,7 @@ class KtDiagnosticFactory0(
                 element, severity, this, positioningStrategy ?: defaultPositioningStrategy
             )
             is KtLightSourceElement -> KtLightSimpleDiagnostic(element, severity, this, positioningStrategy ?: defaultPositioningStrategy)
+            else -> KtOffsetsOnlySimpleDiagnostic(element, severity, this, positioningStrategy ?: defaultPositioningStrategy)
         }
     }
 }
@@ -64,7 +65,7 @@ class KtDiagnosticFactory1<A>(
 
     @InternalDiagnosticFactoryMethod
     fun on(
-        element: KtSourceElement,
+        element: AbstractKtSourceElement,
         a: A,
         positioningStrategy: AbstractSourceElementPositioningStrategy?
     ): KtDiagnosticWithParameters1<A> {
@@ -78,6 +79,9 @@ class KtDiagnosticFactory1<A>(
                 severity,
                 this,
                 positioningStrategy ?: defaultPositioningStrategy
+            )
+            else -> KtOffsetsOnlyDiagnosticWithParameters1(
+                element, a, severity, this, positioningStrategy ?: defaultPositioningStrategy
             )
         }
     }
@@ -97,7 +101,7 @@ class KtDiagnosticFactory2<A, B>(
 
     @InternalDiagnosticFactoryMethod
     fun on(
-        element: KtSourceElement,
+        element: AbstractKtSourceElement,
         a: A,
         b: B,
         positioningStrategy: AbstractSourceElementPositioningStrategy?
@@ -113,6 +117,9 @@ class KtDiagnosticFactory2<A, B>(
                 severity,
                 this,
                 positioningStrategy ?: defaultPositioningStrategy
+            )
+            else -> KtOffsetsOnlyDiagnosticWithParameters2(
+                element, a, b, severity, this, positioningStrategy ?: defaultPositioningStrategy
             )
         }
     }
@@ -133,7 +140,7 @@ class KtDiagnosticFactory3<A, B, C>(
 
     @InternalDiagnosticFactoryMethod
     fun on(
-        element: KtSourceElement,
+        element: AbstractKtSourceElement,
         a: A,
         b: B,
         c: C,
@@ -151,6 +158,9 @@ class KtDiagnosticFactory3<A, B, C>(
                 severity,
                 this,
                 positioningStrategy ?: defaultPositioningStrategy
+            )
+            else -> KtOffsetsOnlyDiagnosticWithParameters3(
+                element, a, b, c, severity, this, positioningStrategy ?: defaultPositioningStrategy
             )
         }
     }
@@ -172,7 +182,7 @@ class KtDiagnosticFactory4<A, B, C, D>(
 
     @InternalDiagnosticFactoryMethod
     fun on(
-        element: KtSourceElement,
+        element: AbstractKtSourceElement,
         a: A,
         b: B,
         c: C,
@@ -193,12 +203,11 @@ class KtDiagnosticFactory4<A, B, C, D>(
                 this,
                 positioningStrategy ?: defaultPositioningStrategy
             )
+            else -> KtOffsetsOnlyDiagnosticWithParameters4(
+                element, a, b, c, d, severity, this, positioningStrategy ?: defaultPositioningStrategy
+            )
         }
     }
-}
-
-private fun incorrectElement(element: KtSourceElement): Nothing {
-    throw IllegalArgumentException("Unknown element type: ${element::class}")
 }
 
 // ------------------------------ factories for deprecation ------------------------------

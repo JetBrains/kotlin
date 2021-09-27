@@ -7,29 +7,28 @@ package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.diagnostics.AbstractSourceElementPositioningStrategy
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.LightTreePositioningStrategy
-import org.jetbrains.kotlin.diagnostics.PositioningStrategy
 
 class SourceElementPositioningStrategy(
     private val lightTreeStrategy: LightTreePositioningStrategy,
-    private val psiStrategy: PositioningStrategy<*>
+    private val psiStrategy: PositioningStrategy<*>,
+    private val offsetsOnlyPositioningStrategy: OffsetsOnlyPositioningStrategy = OffsetsOnlyPositioningStrategy(),
 ) : AbstractSourceElementPositioningStrategy() {
     override fun markDiagnostic(diagnostic: KtDiagnostic): List<TextRange> {
         return when (val element = diagnostic.element) {
             is KtPsiSourceElement -> psiStrategy.markDiagnostic(diagnostic)
             is KtLightSourceElement -> lightTreeStrategy.markKtDiagnostic(element, diagnostic)
+            else -> offsetsOnlyPositioningStrategy.markKtDiagnostic(element, diagnostic)
         }
     }
 
-    override fun isValid(element: KtSourceElement): Boolean {
+    override fun isValid(element: AbstractKtSourceElement): Boolean {
         return when (element) {
             is KtPsiSourceElement -> psiStrategy.hackyIsValid(element.psi)
             is KtLightSourceElement -> lightTreeStrategy.isValid(element.lighterASTNode, element.treeStructure)
+            else -> true
         }
     }
 
