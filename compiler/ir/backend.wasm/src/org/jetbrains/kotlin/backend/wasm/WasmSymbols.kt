@@ -17,10 +17,12 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -177,6 +179,31 @@ class WasmSymbols(
 
     val arraysCopyInto = findFunctions(collectionsPackage.memberScope, Name.identifier("copyInto"))
         .map { symbolTable.referenceSimpleFunction(it) }
+
+    private val getProgressionLastElementSymbols =
+        irBuiltIns.findFunctions(Name.identifier("getProgressionLastElement"), "kotlin", "internal")
+
+    override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
+        getProgressionLastElementSymbols.associateBy { it.owner.returnType.classifierOrFail }
+    }
+
+    private val toUIntSymbols = irBuiltIns.findFunctions(Name.identifier("toUInt"), "kotlin")
+
+    override val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
+        toUIntSymbols.associateBy {
+            it.owner.extensionReceiverParameter?.type?.classifierOrFail
+                ?: error("Expected extension receiver for ${it.owner.render()}")
+        }
+    }
+
+    private val toULongSymbols = irBuiltIns.findFunctions(Name.identifier("toULong"), "kotlin")
+
+    override val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
+        toULongSymbols.associateBy {
+            it.owner.extensionReceiverParameter?.type?.classifierOrFail
+                ?: error("Expected extension receiver for ${it.owner.render()}")
+        }
+    }
 
     override fun functionN(n: Int): IrClassSymbol =
         functionNInterfaces[n]

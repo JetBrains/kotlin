@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.getPropertyGetter
-import org.jetbrains.kotlin.ir.util.getPropertySetter
-import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
@@ -260,6 +257,32 @@ class JsIrBackendContext(
 
             override fun suspendFunctionN(n: Int): IrClassSymbol {
                 return irFactory.stageController.withInitialIr { super.suspendFunctionN(n) }
+            }
+
+
+            private val getProgressionLastElementSymbols =
+                irBuiltIns.findFunctions(Name.identifier("getProgressionLastElement"), "kotlin", "internal")
+
+            override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
+                getProgressionLastElementSymbols.associateBy { it.owner.returnType.classifierOrFail }
+            }
+
+            private val toUIntSymbols = irBuiltIns.findFunctions(Name.identifier("toUInt"), "kotlin")
+
+            override val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
+                toUIntSymbols.associateBy {
+                    it.owner.extensionReceiverParameter?.type?.classifierOrFail
+                        ?: error("Expected extension receiver for ${it.owner.render()}")
+                }
+            }
+
+            private val toULongSymbols = irBuiltIns.findFunctions(Name.identifier("toULong"), "kotlin")
+
+            override val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
+                toULongSymbols.associateBy {
+                    it.owner.extensionReceiverParameter?.type?.classifierOrFail
+                        ?: error("Expected extension receiver for ${it.owner.render()}")
+                }
             }
         }
 

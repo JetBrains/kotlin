@@ -6,11 +6,10 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
-import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.metadata.KlibMetadataCachedPackageFragment
-import org.jetbrains.kotlin.library.metadata.KlibMetadataDeserializedPackageFragment
-import org.jetbrains.kotlin.library.metadata.KlibMetadataPackageFragment
-import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.exportForwardDeclarations
+import org.jetbrains.kotlin.library.isInterop
+import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -32,8 +31,18 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
     ) = packageFragmentNames.flatMap {
         val fqName = FqName(it)
         val parts = library.packageMetadataParts(fqName.asString())
+        val isBuiltInModule = moduleDescriptor.builtIns.builtInsModule === moduleDescriptor
         parts.map { partName ->
-            KlibMetadataDeserializedPackageFragment(fqName, library, packageAccessedHandler, storageManager, moduleDescriptor, partName)
+            if (isBuiltInModule)
+                BuiltInKlibMetadataDeserializedPackageFragment(
+                    fqName,
+                    library,
+                    packageAccessedHandler,
+                    storageManager,
+                    moduleDescriptor,
+                    partName
+                ) else
+                KlibMetadataDeserializedPackageFragment(fqName, library, packageAccessedHandler, storageManager, moduleDescriptor, partName)
         }
     }
 
