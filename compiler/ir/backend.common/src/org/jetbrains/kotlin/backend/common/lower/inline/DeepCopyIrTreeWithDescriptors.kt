@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
@@ -66,28 +67,54 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(
 
         override fun leaveScope() {}
 
-        private fun remapTypeArguments(arguments: List<IrTypeArgument>, erase: Boolean) =
+        private fun remapTypeArguments(
+            arguments: List<IrTypeArgument>,
+            erasedParameters: MutableSet<IrTypeParameterSymbol>?
+        ) =
             arguments.map { argument ->
-                (argument as? IrTypeProjection)?.let { makeTypeProjection(remapTypeAndOptionallyErase(it.type, erase), it.variance) }
+                (argument as? IrTypeProjection)?.let { proj ->
+                    remapTypeAndOptionallyErase(proj.type, erasedParameters)?.let { newType ->
+                        makeTypeProjection(newType, proj.variance)
+                    } ?: IrStarProjectionImpl
+                }
                     ?: argument
             }
 
         override fun remapType(type: IrType) = remapTypeAndOptionallyErase(type, erase = false)
 
         fun remapTypeAndOptionallyErase(type: IrType, erase: Boolean): IrType {
+            val erasedParams = if (erase) mutableSetOf<IrTypeParameterSymbol>() else null
+            return remapTypeAndOptionallyErase(type, erasedParams) ?: error("Cannot substitute type ${type.render()}")
+        }
+
+        private fun remapTypeAndOptionallyErase(type: IrType, erasedParameters: MutableSet<IrTypeParameterSymbol>?): IrType? {
             if (type !is IrSimpleType) return type
 
             val classifier = type.classifier
             val substitutedType = typeArguments?.get(classifier)
 
             // Erase non-reified type parameter if asked to.
-            if (erase && substitutedType != null && (classifier as? IrTypeParameterSymbol)?.owner?.isReified == false) {
+            if (erasedParameters != null && substitutedType != null && (classifier as? IrTypeParameterSymbol)?.owner?.isReified == false) {
+
+                if (classifier in erasedParameters) {
+                    return null
+                }
+
+                erasedParameters.add(classifier)
+
                 // Pick the (necessarily unique) non-interface upper bound if it exists.
-                val superClass = classifier.owner.superTypes.firstOrNull {
+                val superTypes = classifier.owner.superTypes
+                val superClass = superTypes.firstOrNull {
                     it.classOrNull?.owner?.isInterface == false
                 }
-                val erasedUpperBound = superClass
-                    ?: remapTypeAndOptionallyErase(classifier.owner.superTypes.first(), erase = true)
+
+                val upperBound = superClass ?: superTypes.first()
+
+                // TODO: Think about how to reduce complexity from k^N to N^k
+                val erasedUpperBound = remapTypeAndOptionallyErase(upperBound, erasedParameters)
+                    ?: error("Cannot erase upperbound ${upperBound.render()}")
+
+                erasedParameters.remove(classifier)
 
                 return if (type.hasQuestionMark) erasedUpperBound.makeNullable() else erasedUpperBound
             }
@@ -104,7 +131,7 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(
             return type.buildSimpleType {
                 kotlinType = null
                 this.classifier = symbolRemapper.getReferencedClassifier(classifier)
-                arguments = remapTypeArguments(type.arguments, erase)
+                arguments = remapTypeArguments(type.arguments, erasedParameters)
                 annotations = type.annotations.map { it.transform(copier, null) as IrConstructorCall }
             }
         }
