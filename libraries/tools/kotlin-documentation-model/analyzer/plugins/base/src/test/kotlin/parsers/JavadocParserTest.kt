@@ -4,11 +4,8 @@ import com.jetbrains.rd.util.first
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.DEnum
 import org.jetbrains.dokka.model.DModule
-import org.jetbrains.dokka.model.doc.CodeBlock
-import org.jetbrains.dokka.model.doc.CodeInline
+import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.doc.P
-import org.jetbrains.dokka.model.doc.Pre
-import org.jetbrains.dokka.model.doc.Text
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import utils.*
@@ -208,6 +205,44 @@ class JavadocParserTest : BaseAbstractTest() {
                             Text(body = "An example of using the literal tag "),
                             Text(body = "a<B>c")
                         )),
+                    ),
+                    root.children
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `html img tag`() {
+        val source = """
+            |/src/main/kotlin/test/Test.java
+            |package example
+            |
+            | /**
+            | * <img src="/path/to/img.jpg" alt="Alt text"/>
+            | */
+            | public class Test  {}
+            """.trimIndent()
+        testInline(
+            source,
+            configuration,
+        ) {
+            documentablesCreationStage = { modules ->
+                val docs = modules.first().packages.first().classlikes.single().documentation.first().value
+                val root = docs.children.first().root
+
+                kotlin.test.assertEquals(
+                    listOf(
+                        P(
+                            children = listOf(
+                                Img(
+                                    params = mapOf(
+                                        "href" to "/path/to/img.jpg",
+                                        "alt" to "Alt text"
+                                    )
+                                )
+                            )
+                        )
                     ),
                     root.children
                 )
