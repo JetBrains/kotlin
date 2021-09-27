@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ContextReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -599,7 +600,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             else if (!receivers.isEmpty()) {
                 // `this` cannot point to context receiver
                 for (ReceiverParameterDescriptor receiver : receivers) {
-                    if (!(receiver.getValue() instanceof ExtensionReceiver) || !((ExtensionReceiver) receiver.getValue()).isContextReceiver()) {
+                    if (!(receiver.getValue() instanceof ContextReceiver)) {
                         result = receiver;
                         break;
                     }

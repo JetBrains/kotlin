@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.*;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ContextReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.Variance;
@@ -189,18 +190,19 @@ public class DescriptorFactory {
             @Nullable KotlinType receiverParameterType,
             @NotNull Annotations annotations
     ) {
-        return createExtensionReceiverParameterForCallable(owner, receiverParameterType, annotations, false);
+        return receiverParameterType == null
+               ? null
+               : new ReceiverParameterDescriptorImpl(owner, new ExtensionReceiver(owner, receiverParameterType, null), annotations);
     }
 
     @Nullable
-    public static ReceiverParameterDescriptor createExtensionReceiverParameterForCallable(
+    public static ReceiverParameterDescriptor createContextReceiverParameterForCallable(
             @NotNull CallableDescriptor owner,
             @Nullable KotlinType receiverParameterType,
-            @NotNull Annotations annotations,
-            boolean isContextReceiver
+            @NotNull Annotations annotations
     ) {
         return receiverParameterType == null
                ? null
-               : new ReceiverParameterDescriptorImpl(owner, new ExtensionReceiver(owner, receiverParameterType, null, isContextReceiver), annotations);
+               : new ReceiverParameterDescriptorImpl(owner, new ContextReceiver(owner, receiverParameterType, null), annotations);
     }
 }
