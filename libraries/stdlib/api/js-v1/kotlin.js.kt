@@ -226,9 +226,10 @@ public external interface JsClass<T : kotlin.Any> {
     public abstract val name: kotlin.String { get; }
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY})
-@kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
 @kotlin.ExperimentalStdlibApi
+@kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY})
+@kotlin.SinceKotlin(version = "1.6")
 public final annotation class JsEagerInitialization : kotlin.Annotation {
     public constructor JsEagerInitialization()
 }
