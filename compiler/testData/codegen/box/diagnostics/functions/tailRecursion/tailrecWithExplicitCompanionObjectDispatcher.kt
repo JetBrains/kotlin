@@ -12,7 +12,7 @@
 
 class C {
     companion object {
-        <!NO_TAIL_CALLS_FOUND!>tailrec fun rec(i: Int)<!> {
+        <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun rec(i: Int) {
             if (i <= 0) return
             C.<!NON_TAIL_RECURSIVE_CALL!>rec<!>(i - 1)
         }

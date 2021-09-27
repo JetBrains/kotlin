@@ -644,8 +644,8 @@ public interface Errors {
 
     DiagnosticFactory0<KtParameter> VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<KtNamedFunction> NO_TAIL_CALLS_FOUND = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
-    DiagnosticFactoryForDeprecation0<KtNamedFunction> TAILREC_ON_VIRTUAL_MEMBER = DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitTailrecOnVirtualMember, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtNamedFunction> NO_TAIL_CALLS_FOUND = DiagnosticFactory0.create(WARNING, TAILREC_MODIFIER);
+    DiagnosticFactoryForDeprecation0<KtNamedFunction> TAILREC_ON_VIRTUAL_MEMBER = DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitTailrecOnVirtualMember, TAILREC_MODIFIER);
 
     DiagnosticFactory0<KtParameter>
             ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR, PARAMETER_DEFAULT_VALUE);

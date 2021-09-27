@@ -12,7 +12,7 @@ open class A {
 }
 
 class B : A() {
-    <!NO_TAIL_CALLS_FOUND!>override tailrec fun foo(s: String): String<!> {
+    override <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo(s: String): String {
         return if (s == "OK") s else foo()
     }
 }

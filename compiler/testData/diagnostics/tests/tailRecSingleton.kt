@@ -22,7 +22,7 @@ class Bar {
             this.bar2()
         }
 
-        <!NO_TAIL_CALLS_FOUND!>tailrec fun bar3()<!> {
+        <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun bar3() {
             Bar.<!NON_TAIL_RECURSIVE_CALL!>bar3<!>()
         }
 
@@ -44,7 +44,7 @@ enum class E {
         }
     },
     C {
-        <!NO_TAIL_CALLS_FOUND!>override tailrec fun rec()<!> {
+        override <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun rec() {
             C.rec() // resolution goes to `E.rec`. Hence the resolved symbol is considered different from `C.rec`.
         }
     };

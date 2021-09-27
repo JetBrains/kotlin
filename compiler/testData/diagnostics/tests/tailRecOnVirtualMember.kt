@@ -1,15 +1,15 @@
 //!LANGUAGE: -ProhibitTailrecOnVirtualMember
 
 open class A {
-    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec open fun foo(x: Int)<!> {
+    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec<!> open fun foo(x: Int) {
         foo(x)
     }
 
-    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>internal tailrec open fun bar(y: Int)<!> {
+    internal <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec<!> open fun bar(y: Int) {
         bar(y)
     }
 
-    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>protected tailrec open fun baz(y: Int)<!> {
+    protected <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec<!> open fun baz(y: Int) {
         baz(y)
     }
 
@@ -38,15 +38,15 @@ open class B : A() {
 
 
 open class C : A() {
-    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec override fun foo(x: Int)<!> {
+    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec<!> override fun foo(x: Int) {
         foo(x)
     }
 
-    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec override fun bar(y: Int)<!> {
+    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec<!> override fun bar(y: Int) {
         bar(y)
     }
 
-    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec override fun baz(y: Int)<!> {
+    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec<!> override fun baz(y: Int) {
         baz(y)
     }
 }
@@ -66,15 +66,15 @@ object D : A() {
 }
 
 sealed class E : A() {
-    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec override fun foo(x: Int)<!> {
+    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec<!> override fun foo(x: Int) {
         foo(x)
     }
 
-    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec override fun bar(y: Int)<!> {
+    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec<!> override fun bar(y: Int) {
         bar(y)
     }
 
-    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec override fun baz(y: Int)<!> {
+    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec<!> override fun baz(y: Int) {
         baz(y)
     }
 
@@ -109,15 +109,15 @@ enum class F {
         }
     };
 
-    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec open fun foo(x: Int)<!> {
+    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec<!> open fun foo(x: Int) {
         foo(x)
     }
 
-    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>internal tailrec open fun bar(y: Int)<!> {
+    internal <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec<!> open fun bar(y: Int) {
         bar(y)
     }
 
-    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>protected tailrec open fun baz(y: Int)<!> {
+    protected <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec<!> open fun baz(y: Int) {
         baz(y)
     }
 
@@ -134,15 +134,15 @@ enum class G {
 
     G1;
 
-    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec open fun foo(x: Int)<!> {
+    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec<!> open fun foo(x: Int) {
         foo(x)
     }
 
-    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>internal tailrec open fun bar(y: Int)<!> {
+    internal <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec<!> open fun bar(y: Int) {
         bar(y)
     }
 
-    <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>protected tailrec open fun baz(y: Int)<!> {
+    protected <!TAILREC_ON_VIRTUAL_MEMBER_WARNING!>tailrec<!> open fun baz(y: Int) {
         baz(y)
     }
 
