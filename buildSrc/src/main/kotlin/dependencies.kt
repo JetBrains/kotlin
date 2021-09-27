@@ -172,14 +172,14 @@ fun DependencyHandler.jpsLikeModuleDependency(moduleName: String, scope: JpsDepS
     when (scope) {
         JpsDepScope.COMPILE -> {
             if (exported) {
-                add("testCompile", projectTests(moduleName))
+                add("testApi", projectTests(moduleName))
             } else {
                 add("testImplementation", projectTests(moduleName))
             }
         }
         JpsDepScope.TEST -> {
             if (exported) {
-                add("testCompile", projectTests(moduleName))
+                add("testApi", projectTests(moduleName))
             } else {
                 add("testImplementation", projectTests(moduleName))
             }
@@ -189,7 +189,7 @@ fun DependencyHandler.jpsLikeModuleDependency(moduleName: String, scope: JpsDepS
         }
         JpsDepScope.PROVIDED -> {
             if (exported) {
-                add("testCompile", projectTests(moduleName))
+                add("testApi", projectTests(moduleName))
             } else {
                 add("testImplementation", projectTests(moduleName))
             }
