@@ -8673,6 +8673,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/defaultArguments/callDefaultFromInitializer.kt");
         }
 
+        @TestMetadata("captureInTailrec.kt")
+        public void testCaptureInTailrec() throws Exception {
+            runTest("compiler/testData/codegen/box/defaultArguments/captureInTailrec.kt");
+        }
+
         @TestMetadata("complexInheritance.kt")
         public void testComplexInheritance() throws Exception {
             runTest("compiler/testData/codegen/box/defaultArguments/complexInheritance.kt");

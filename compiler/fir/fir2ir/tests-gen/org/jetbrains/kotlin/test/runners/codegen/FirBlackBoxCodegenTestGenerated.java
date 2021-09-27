@@ -12953,6 +12953,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("captureInTailrec.kt")
+        public void testCaptureInTailrec() throws Exception {
+            runTest("compiler/testData/codegen/box/defaultArguments/captureInTailrec.kt");
+        }
+
+        @Test
         @TestMetadata("complexInheritance.kt")
         public void testComplexInheritance() throws Exception {
             runTest("compiler/testData/codegen/box/defaultArguments/complexInheritance.kt");
