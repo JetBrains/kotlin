@@ -33,10 +33,9 @@ dependencies {
 
     testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(intellijDep()) {
-        includeJars("jna", rootProject = rootProject)
+        includeJars("intellij-deps-fastutil-8.4.1-4", "jps-model", "streamex", "jna", rootProject = rootProject)
     }
 
-    testRuntimeOnly(intellijDep()) { includeJars("intellij-deps-fastutil-8.4.1-4") }
     testRuntimeOnly(toolsJar())
 }
 

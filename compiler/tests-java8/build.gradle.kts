@@ -8,11 +8,10 @@ plugins {
 dependencies {
     testApi(project(":kotlin-scripting-compiler"))
     testApi(projectTests(":compiler:tests-common"))
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
     testApi(projectTests(":generators:test-generator"))
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(toolsJar())
-    testRuntimeOnly(intellijDep())
     testRuntimeOnly(intellijPluginDep("java"))
     if (isIdeaActive) testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
 }

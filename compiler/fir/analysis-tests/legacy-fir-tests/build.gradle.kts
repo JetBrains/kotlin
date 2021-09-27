@@ -13,8 +13,6 @@ plugins {
 dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
-    testApi(intellijDep())
-
     testApi(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
@@ -30,6 +28,7 @@ dependencies {
 
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntimeOnly(intellijDep()) { includeJars("idea_rt", "streamex", "jps-model", rootProject = rootProject) }
 }
 
 val generationRoot = projectDir.resolve("tests-gen")

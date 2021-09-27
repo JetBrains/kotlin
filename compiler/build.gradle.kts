@@ -12,7 +12,7 @@ val otherCompilerModules = compilerModules.filter { it != path }
 val antLauncherJar by configurations.creating
 
 dependencies {
-    testImplementation(intellijDep()) // Should come before compiler, because of "progarded" stuff needed for tests
+    testImplementation(intellijDep()) { includeJars("platform-impl", rootProject = rootProject) } // Should come before compiler, because of "progarded" stuff needed for tests
 
     testApi(project(":kotlin-script-runtime"))
     testApi(project(":kotlin-test:kotlin-test-jvm"))
@@ -37,7 +37,15 @@ dependencies {
         testCompileOnly(project(it))
     }
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompileOnly(intellijDep()) { includeJars("idea", "idea_rt", "util", "asm-all", rootProject = rootProject) }
+
+    testRuntimeOnly(intellijDep()) {
+        includeJars(
+            "jps-model",
+            "streamex",
+            "idea_rt",
+            rootProject = rootProject
+        )
+    }
 
     testRuntimeOnly(intellijPluginDep("java"))
 

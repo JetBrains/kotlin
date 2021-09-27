@@ -38,6 +38,7 @@ dependencies {
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
 
+    testApi(intellijDep()) { includeJars("platform-impl", rootProject = rootProject) }
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(project(":kotlin-compiler"))
 

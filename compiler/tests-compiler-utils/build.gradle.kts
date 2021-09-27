@@ -31,20 +31,11 @@ dependencies {
 
     testApi(intellijDep()) {
         includeJars(
-            "jps-model",
-            "extensions",
-            "util",
-            "platform-api",
-            "platform-impl",
-            "idea",
-            "idea_rt",
             "guava",
             "trove4j",
             "asm-all",
             "log4j",
             "jdom",
-            "streamex",
-            "bootstrap",
             rootProject = rootProject
         )
         isTransitive = false

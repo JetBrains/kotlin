@@ -35,22 +35,17 @@ dependencies {
     testApi(project(":kotlin-reflect"))
     testImplementation(project(":analysis:symbol-light-classes"))
 
-    testRuntimeOnly(intellijDep()) {
+    testApi(intellijDep()) {
         includeJars(
             "jps-model",
-            "extensions",
-            "util",
             "platform-api",
             "platform-impl",
-            "idea",
             "guava",
             "trove4j",
             "asm-all",
             "log4j",
             "jdom",
             "streamex",
-            "bootstrap",
-            "jna",
             rootProject = rootProject
         )
     }

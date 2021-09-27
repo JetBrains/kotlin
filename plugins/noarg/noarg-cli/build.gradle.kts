@@ -21,8 +21,7 @@ dependencies {
     testApi(project(":compiler:cli"))
     testApi(projectTests(":compiler:tests-common"))
     testApi(commonDep("junit:junit"))
-
-    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testApi(intellijCoreDep()) { includeJars("intellij-core")}
 }
 
 sourceSets {

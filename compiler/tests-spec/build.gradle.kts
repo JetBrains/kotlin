@@ -9,12 +9,13 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common-new"))
 
     testApi(intellijDep()) {
-        includeJars("groovy", "groovy-xml", rootProject = rootProject)
-    }
-    testApi(intellijDep()) {
-        includeJars("gson", rootProject = rootProject)
+        includeJars("gson", "groovy", "groovy-xml", rootProject = rootProject)
     }
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntimeOnly(intellijDep()) {
+        includeJars("streamex", rootProject = rootProject)
+    }
+
     testRuntimeOnly(intellijPluginDep("java"))
     api("org.jsoup:jsoup:1.14.2")
     if (isIdeaActive) testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))

@@ -17,7 +17,7 @@ dependencies {
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
-    testImplementation(intellijDep())
+    testImplementation(intellijDep()) { includeJars("platform-api", rootProject = rootProject) }
 
     testImplementation(commonDep("junit:junit"))
     testImplementation(projectTests(":compiler:tests-common"))

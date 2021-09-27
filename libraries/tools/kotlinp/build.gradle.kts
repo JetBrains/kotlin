@@ -28,9 +28,9 @@ dependencies {
 
     testRuntimeOnly(project(":kotlinx-metadata-jvm"))
 
-    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testApi(intellijCoreDep()) { includeJars("intellij-core") }
 
-    testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency", "platform-objectSerializer") }
+    testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency", "platform-objectSerializer", "idea_rt") }
 
     shadows(project(":kotlinx-metadata-jvm"))
     shadows("org.jetbrains.intellij.deps:asm-all:$kotlinpAsmVersion")

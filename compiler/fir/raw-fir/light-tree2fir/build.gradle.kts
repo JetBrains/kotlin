@@ -23,7 +23,6 @@ dependencies {
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
-    testImplementation(intellijDep())
     testImplementation(commonDep("junit:junit"))
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:fir:raw-fir:psi2fir"))

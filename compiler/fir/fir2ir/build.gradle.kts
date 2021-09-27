@@ -43,7 +43,7 @@ dependencies {
         includeJars("jna", rootProject = rootProject)
     }
 
-    testRuntimeOnly(intellijDep()) { includeJars("intellij-deps-fastutil-8.4.1-4") }
+    testRuntimeOnly(intellijDep()) { includeJars("intellij-deps-fastutil-8.4.1-4", "jps-model", "streamex", rootProject = rootProject) }
 }
 
 val generationRoot = projectDir.resolve("tests-gen")
