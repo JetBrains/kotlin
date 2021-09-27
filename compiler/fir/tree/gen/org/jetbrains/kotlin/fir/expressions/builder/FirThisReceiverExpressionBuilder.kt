@@ -36,6 +36,7 @@ class FirThisReceiverExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotatio
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     lateinit var calleeReference: FirThisReference
+    var isImplicit: Boolean = false
 
     override fun build(): FirThisReceiverExpression {
         return FirThisReceiverExpressionImpl(
@@ -44,6 +45,7 @@ class FirThisReceiverExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotatio
             annotations,
             typeArguments,
             calleeReference,
+            isImplicit,
         )
     }
 

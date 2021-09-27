@@ -198,7 +198,7 @@ object CheckDslScopeViolation : ResolutionStage() {
             (candidate.symbol as? FirNamedFunctionSymbol)?.name == OperatorNameConventions.INVOKE
         ) {
             val firstArg = candidate.argumentMapping?.keys?.firstOrNull() as? FirThisReceiverExpression ?: return
-            if (firstArg.source != null) return // Having no source means it's implicit.
+            if (!firstArg.isImplicit) return
             firstArg.checkImpl(
                 candidate,
                 sink,

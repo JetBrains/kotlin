@@ -625,6 +625,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         thisReceiverExpression.configure {
             +field("calleeReference", thisReference)
+            +booleanField("isImplicit")
         }
 
         whenExpression.configure {

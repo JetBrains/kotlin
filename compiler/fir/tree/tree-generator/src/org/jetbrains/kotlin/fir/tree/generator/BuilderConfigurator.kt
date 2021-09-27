@@ -221,6 +221,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         builder(thisReceiverExpression) {
             parents += qualifiedAccessBuilder
+            default("isImplicit", "false")
         }
 
         builder(variableAssignment) {

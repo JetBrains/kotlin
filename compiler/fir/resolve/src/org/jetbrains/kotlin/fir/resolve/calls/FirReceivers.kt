@@ -124,6 +124,7 @@ private fun receiverExpression(symbol: FirBasedSymbol<*>, type: ConeKotlinType):
         typeRef = buildResolvedTypeRef {
             this.type = type
         }
+        isImplicit = true
     }
 
 class ImplicitDispatchReceiverValue internal constructor(

@@ -28,6 +28,7 @@ internal class FirThisReceiverExpressionImpl(
     override val annotations: MutableList<FirAnnotation>,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var calleeReference: FirThisReference,
+    override val isImplicit: Boolean,
 ) : FirThisReceiverExpression() {
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression

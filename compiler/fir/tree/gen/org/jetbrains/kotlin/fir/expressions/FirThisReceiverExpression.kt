@@ -28,6 +28,7 @@ abstract class FirThisReceiverExpression : FirQualifiedAccessExpression() {
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
     abstract override val calleeReference: FirThisReference
+    abstract val isImplicit: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitThisReceiverExpression(this, data)
 
