@@ -1,4 +1,4 @@
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class AllOpen {
     // source: 'privateMembers.kt'
@@ -18,6 +18,7 @@ class Test {
     public @org.jetbrains.annotations.NotNull method getPublicProp(): java.lang.String
     public method internalMethod$test_module(): void
     private method privateMethod(): void
+    private method privateTailrecMethod(): void
     protected method protectedMethod(): void
     public method publicMethod(): void
 }

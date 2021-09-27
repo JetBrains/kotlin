@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -16,7 +17,8 @@ object TailrecFunctionChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration !is KtNamedFunction || descriptor !is FunctionDescriptor || !descriptor.isTailrec) return
 
-        if (descriptor.isEffectivelyFinal(false)) return
+        // Private check is needed for opened private functions by allopen plugin (see KT-48117)
+        if (descriptor.isEffectivelyFinal(false) || DescriptorVisibilities.isPrivate(descriptor.visibility)) return
 
         context.trace.report(Errors.TAILREC_ON_VIRTUAL_MEMBER.on(context.languageVersionSettings, declaration))
     }
