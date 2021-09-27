@@ -232,7 +232,7 @@ class FunctionDescriptorResolver(
         val extensionReceiver = receiverType?.let {
             val splitter = AnnotationSplitter(storageManager, receiverType.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
             DescriptorFactory.createExtensionReceiverParameterForCallable(
-                functionDescriptor, it, splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER), false
+                functionDescriptor, it, splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER)
             )
         }?.apply {
             val extensionReceiverName = receiverTypeRef?.nameForReceiverLabel()
@@ -243,15 +243,16 @@ class FunctionDescriptorResolver(
 
         val contextReceiverDescriptors = contextReceiverTypes.mapNotNull { type ->
             val splitter = AnnotationSplitter(storageManager, type.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
-            DescriptorFactory.createExtensionReceiverParameterForCallable(
-                functionDescriptor, type, splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER), true
+            DescriptorFactory.createContextReceiverParameterForCallable(
+                functionDescriptor, type, splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER)
             )
         }
-        contextReceiverDescriptors.reversed().zip(contextReceivers.lastIndex downTo 0).forEach { (contextReceiverDescriptor, i) ->
-            contextReceivers[i].name()?.let {
-                receiverToLabelMap[contextReceiverDescriptor] = it
+        contextReceiverDescriptors.zip(0 until contextReceivers.size).reversed()
+            .forEach { (contextReceiverDescriptor, i) ->
+                contextReceivers[i].name()?.let {
+                    receiverToLabelMap[contextReceiverDescriptor] = it
+                }
             }
-        }
         trace.record(BindingContext.DESCRIPTOR_TO_NAMED_RECEIVERS, functionDescriptor, receiverToLabelMap)
         functionDescriptor.initialize(
             extensionReceiver,

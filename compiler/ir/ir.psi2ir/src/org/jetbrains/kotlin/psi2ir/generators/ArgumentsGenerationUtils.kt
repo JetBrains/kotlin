@@ -95,11 +95,11 @@ fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: R
 fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffset: Int, receiver: ReceiverValue): IntermediateValue {
     val irReceiverType =
         when (receiver) {
-            is ExtensionReceiver -> {
-                val receiverParameters =
-                    receiver.declarationDescriptor.contextReceiverParameters + listOfNotNull(receiver.declarationDescriptor.extensionReceiverParameter)
-                val receiverParameter = receiverParameters.firstOrNull { it.value == receiver }
-                    ?: receiver.declarationDescriptor.extensionReceiverParameter!!
+            is ExtensionReceiver ->
+                receiver.declarationDescriptor.extensionReceiverParameter!!.type.toIrType()
+            is ContextReceiver -> {
+                val receiverParameter = receiver.declarationDescriptor.contextReceiverParameters.firstOrNull()
+                    ?: error("Unknown receiver: $receiver")
                 receiverParameter.type.toIrType()
             }
             else ->
@@ -142,10 +142,14 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
                 is ExpressionReceiver ->
                     generateExpression(receiver.expression)
                 is ExtensionReceiver -> {
-                    val receiverParameters = listOfNotNull(receiver.declarationDescriptor.extensionReceiverParameter) +
-                            receiver.declarationDescriptor.contextReceiverParameters
-                    val receiverParameter = receiverParameters.singleOrNull { it.value == receiver }
-                        ?: receiver.declarationDescriptor.extensionReceiverParameter!!
+                    IrGetValueImpl(
+                        defaultStartOffset, defaultStartOffset, irReceiverType,
+                        context.symbolTable.referenceValueParameter(receiver.declarationDescriptor.extensionReceiverParameter!!)
+                    )
+                }
+                is ContextReceiver -> {
+                    val receiverParameter = receiver.declarationDescriptor.contextReceiverParameters
+                        .single { it.value == receiver }
                     IrGetValueImpl(
                         defaultStartOffset, defaultStartOffset, irReceiverType,
                         context.symbolTable.referenceValueParameter(receiverParameter)

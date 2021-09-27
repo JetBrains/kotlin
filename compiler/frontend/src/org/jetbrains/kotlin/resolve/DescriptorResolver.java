@@ -965,8 +965,8 @@ public class DescriptorResolver {
             receiverType = typeResolver.resolveType(scopeForDeclarationResolutionWithTypeParameters, receiverTypeRef, trace, true);
             AnnotationSplitter splitter = new AnnotationSplitter(storageManager, receiverType.getAnnotations(), EnumSet.of(RECEIVER));
             receiverDescriptor = DescriptorFactory.createExtensionReceiverParameterForCallable(
-                    propertyDescriptor, receiverType, splitter.getAnnotationsForTarget(RECEIVER),
-                    false);
+                    propertyDescriptor, receiverType, splitter.getAnnotationsForTarget(RECEIVER)
+            );
             receiverToLabelMap.put(receiverDescriptor, receiverTypeRef.nameForReceiverLabel());
         }
 
@@ -1046,9 +1046,9 @@ public class DescriptorResolver {
         return Lists.reverse(contextReceivers).stream().map(contextReceiver -> {
             KotlinType receiverType = contextReceiversToTypes.get(contextReceiver);
             AnnotationSplitter splitter = new AnnotationSplitter(storageManager, receiverType.getAnnotations(), EnumSet.of(RECEIVER));
-            ReceiverParameterDescriptor receiverDescriptor = DescriptorFactory.createExtensionReceiverParameterForCallable(
-                    propertyDescriptor, receiverType, splitter.getAnnotationsForTarget(RECEIVER),
-                    true);
+            ReceiverParameterDescriptor receiverDescriptor = DescriptorFactory.createContextReceiverParameterForCallable(
+                    propertyDescriptor, receiverType, splitter.getAnnotationsForTarget(RECEIVER)
+            );
             String contextReceiverName = contextReceiver.name();
             if (contextReceiverName != null) {
                 receiverToLabelMap.put(receiverDescriptor, contextReceiverName);
