@@ -47,6 +47,9 @@ internal val Project.nativeJson: String
 internal val Project.jvmJson: String
     get() = project.property("jvmJson") as String
 
+internal val Project.buildType: NativeBuildType
+    get() = (findProperty("nativeBuildType") as String?)?.let { NativeBuildType.valueOf(it) } ?: NativeBuildType.RELEASE
+
 internal val Project.commonBenchmarkProperties: Map<String, Any>
     get() = mapOf(
             "cpu" to System.getProperty("os.arch"),
@@ -63,7 +66,7 @@ open class BenchmarkExtension @Inject constructor(val project: Project) {
     var compileTasks: List<String> = emptyList()
     var linkerOpts: Collection<String> = emptyList()
     var compilerOpts: List<String> = emptyList()
-    var buildType: NativeBuildType = NativeBuildType.RELEASE
+    var buildType: NativeBuildType = project.buildType
     var repeatingType: BenchmarkRepeatingType = BenchmarkRepeatingType.INTERNAL
     var cleanBeforeRunTask: String? = "konanRun"
 

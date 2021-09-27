@@ -11,8 +11,6 @@ plugins {
     id("benchmarking")
 }
 
-val defaultBuildType = NativeBuildType.RELEASE
-
 benchmark {
     applicationName = "Startup"
     commonSrcDirs = listOf("../../tools/benchmarks/shared/src/main/kotlin/report", "src/main/kotlin", "../shared/src/main/kotlin")
@@ -20,6 +18,5 @@ benchmark {
     nativeSrcDirs = listOf("../shared/src/main/kotlin-native/common")
     mingwSrcDirs = listOf("../shared/src/main/kotlin-native/mingw")
     posixSrcDirs = listOf("../shared/src/main/kotlin-native/posix")
-    buildType = (findProperty("nativeBuildType") as String?)?.let { NativeBuildType.valueOf(it) } ?: defaultBuildType
     repeatingType = BenchmarkRepeatingType.EXTERNAL
 }
