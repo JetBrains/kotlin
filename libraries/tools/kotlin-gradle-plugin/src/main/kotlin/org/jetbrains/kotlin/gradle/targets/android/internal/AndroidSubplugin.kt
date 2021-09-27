@@ -73,7 +73,7 @@ class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private v
 
 class AndroidSubplugin :
     KotlinCompilerPluginSupportPlugin,
-    @Suppress("DEPRECATION") // implementing to fix KT-39809
+    @Suppress("DEPRECATION_ERROR") // implementing to fix KT-39809
     KotlinGradleSubplugin<AbstractCompile>
 {
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {

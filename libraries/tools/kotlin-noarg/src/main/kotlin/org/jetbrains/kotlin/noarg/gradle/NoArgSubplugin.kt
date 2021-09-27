@@ -29,7 +29,7 @@ import javax.inject.Inject
 
 class NoArgGradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) :
     KotlinCompilerPluginSupportPlugin,
-    @Suppress("DEPRECATION") // implementing to fix KT-39809
+    @Suppress("DEPRECATION_ERROR") // implementing to fix KT-39809
     KotlinGradleSubplugin<AbstractCompile> {
 
     companion object {

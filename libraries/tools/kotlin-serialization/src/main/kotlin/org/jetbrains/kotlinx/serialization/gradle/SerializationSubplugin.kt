@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 class SerializationGradleSubplugin :
     KotlinCompilerPluginSupportPlugin,
-    @Suppress("DEPRECATION") // implementing to fix KT-39809
+    @Suppress("DEPRECATION_ERROR") // implementing to fix KT-39809
     KotlinGradleSubplugin<AbstractCompile> {
 
     companion object {

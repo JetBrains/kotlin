@@ -20,7 +20,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.*
 
-class ExampleLegacySubplugin : @Suppress("DEPRECATION") KotlinGradleSubplugin<AbstractCompile> {
+class ExampleLegacySubplugin : @Suppress("DEPRECATION_ERROR") KotlinGradleSubplugin<AbstractCompile> {
 
     override fun isApplicable(project: Project, task: AbstractCompile): Boolean {
         return true
