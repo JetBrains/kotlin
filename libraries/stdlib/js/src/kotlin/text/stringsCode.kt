@@ -160,7 +160,7 @@ public actual fun CharSequence.repeat(n: Int): String {
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
-    nativeReplace(RegExp(Regex.escape(oldValue), if (ignoreCase) "gui" else "gu"), Regex.escapeReplacement(newValue))
+    nativeReplace(RegExp(Regex.escape(oldValue), if (ignoreCase) "gui" else "gu"), Regex.nativeEscapeReplacement(newValue))
 
 /**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
@@ -173,7 +173,7 @@ public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boole
 
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
-    nativeReplace(RegExp(Regex.escape(oldValue), if (ignoreCase) "ui" else "u"), Regex.escapeReplacement(newValue))
+    nativeReplace(RegExp(Regex.escape(oldValue), if (ignoreCase) "ui" else "u"), Regex.nativeEscapeReplacement(newValue))
 
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String =
