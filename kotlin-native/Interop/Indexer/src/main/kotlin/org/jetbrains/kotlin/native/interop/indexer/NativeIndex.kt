@@ -58,6 +58,34 @@ interface Compilation {
     val language: Language
 }
 
+fun defaultCompilerArgs(language: Language): List<String> =
+        listOf(
+                // We compile with -O2 because Clang may insert inline asm in bitcode at -O0.
+                // It is undesirable in case of watchos_arm64 since we target armv7k
+                // for this target instead of arm64_32 because it is not supported in LLVM 8.
+                //
+                // Note that PCH and the *.c file should be compiled with the same optimization level.
+                "-O2",
+                // Allow throwing exceptions through generated stubs.
+                "-fexceptions",
+        ) + when (language) {
+            Language.C -> emptyList()
+            Language.CPP -> emptyList()
+            Language.OBJECTIVE_C -> listOf(
+                    // "Objective-C" within interop means "Objective-C with ARC":
+                    "-fobjc-arc",
+                    // Using this flag here has two effects:
+                    // 1. The headers are parsed with ARC enabled, thus the API is visible correctly.
+                    // 2. The generated Objective-C stubs are compiled with ARC enabled, so reference counting
+                    // calls are inserted automatically.
+
+                    // Workaround for https://youtrack.jetbrains.com/issue/KT-48807.
+                    // TODO(LLVM): Remove after update to a version with
+                    //  https://github.com/apple/llvm-project/commit/2de0a18a8949f0235fb3a08dcc55ff3aa7d969e7.
+                    "-DNS_FORMAT_ARGUMENT(A)="
+            )
+        }
+
 data class CompilationWithPCH(
         override val compilerArgs: List<String>,
         override val language: Language
