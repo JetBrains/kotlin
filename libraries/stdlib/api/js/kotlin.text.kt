@@ -330,6 +330,9 @@ public inline fun kotlin.CharSequence.forEach(action: (kotlin.Char) -> kotlin.Un
 
 public inline fun kotlin.CharSequence.forEachIndexed(action: (index: kotlin.Int, kotlin.Char) -> kotlin.Unit): kotlin.Unit
 
+@kotlin.SinceKotlin(version = "1.7")
+public operator fun kotlin.text.MatchGroupCollection.get(name: kotlin.String): kotlin.text.MatchGroup?
+
 @kotlin.internal.InlineOnly
 public inline fun kotlin.CharSequence.getOrElse(index: kotlin.Int, defaultValue: (kotlin.Int) -> kotlin.Char): kotlin.Char
 

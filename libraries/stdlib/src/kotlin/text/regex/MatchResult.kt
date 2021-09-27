@@ -36,7 +36,8 @@ public interface MatchNamedGroupCollection : MatchGroupCollection {
      * Returns a named group with the specified [name].
      * @return An instance of [MatchGroup] if the group with the specified [name] was matched or `null` otherwise.
      * @throws IllegalArgumentException if there is no group with the specified [name] defined in the regex pattern.
-     * @throws UnsupportedOperationException if getting named groups isn't supported on the current platform.
+     * @throws UnsupportedOperationException if this match group collection doesn't support getting match groups by name,
+     * for example, when it's not supported by the current platform.
      */
     public operator fun get(name: String): MatchGroup?
 }
