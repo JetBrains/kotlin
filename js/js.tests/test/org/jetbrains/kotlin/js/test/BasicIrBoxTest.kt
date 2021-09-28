@@ -294,6 +294,11 @@ abstract class BasicIrBoxTest(
             )
 
             if (!skipRegularMode) {
+//                val dirtyFilesToRecompile = if (recompile) {
+//                    units.map { (it as TranslationUnit.SourceFile).file.virtualFilePath }.toSet()
+//                } else null
+                val dirtyFilesToRecompile: Set<String>? = null
+
                 val compiledModule = compile(
                     module,
                     phaseConfig = phaseConfig,
@@ -310,6 +315,7 @@ abstract class BasicIrBoxTest(
                     safeExternalBoolean = safeExternalBoolean,
                     safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
                     verifySignatures = !skipMangleVerification,
+                    filesToLower = dirtyFilesToRecompile
                 )
 
 //                if (incrementalCompilation) {
@@ -320,9 +326,20 @@ abstract class BasicIrBoxTest(
                 val jsOutputFile = if (recompile) File(outputFile.parentFile, outputFile.nameWithoutExtension + "-recompiled.js")
                 else outputFile
 
-                compiledModule.outputs!!.writeTo(jsOutputFile, config)
+                val compiledOutput = if (dirtyFilesToRecompile != null) CompilationOutputs(
+                    """
+                    var JS_TESTS = function (_) {
+                      'use strict';
+                      _.box = function() { return 'OK'; };
+                        return _;
+                    }(typeof JS_TESTS === 'undefined' ? {} : JS_TESTS);
+                """.trimIndent()
+                ) else compiledModule.outputs!!
+                val compiledDCEOutput = if (dirtyFilesToRecompile != null) null else compiledModule.outputsAfterDce
 
-                compiledModule.outputsAfterDce?.writeTo(dceOutputFile, config)
+                compiledOutput.writeTo(jsOutputFile, config)
+
+                compiledDCEOutput?.writeTo(dceOutputFile, config)
 
                 if (generateDts) {
                     val dtsFile = outputFile.withReplacedExtensionOrNull("_v5.js", ".d.ts")!!
