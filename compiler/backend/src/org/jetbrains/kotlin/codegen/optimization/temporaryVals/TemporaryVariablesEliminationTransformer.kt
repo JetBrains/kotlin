@@ -37,7 +37,6 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
         methodNode.removeUnusedLocalVariables()
     }
 
-
     private fun simplifyTrivialInstructions(methodNode: MethodNode) {
         val insnList = methodNode.instructions
         for (insn in insnList.toArray()) {
@@ -61,12 +60,14 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
                 }
             }
         }
+        val tcbStartLabels = methodNode.tryCatchBlocks.mapTo(HashSet()) { it.start }
         for (insn in insnList.toArray()) {
             // Remove NOPs immediately preceded or immediately followed by an instruction that does something
             // - not a LINENUMBER, not a LABEL, and not a FRAME.
             if (insn.opcode == Opcodes.NOP) {
-                val next = insn.next
                 val prev = insn.previous
+                if (prev in tcbStartLabels) continue
+                val next = insn.next
                 if (next != null && next.isMeaningful || prev != null && prev.isMeaningful) {
                     insnList.remove(insn)
                 }
