@@ -42,6 +42,8 @@ class DiagnosticFactoryForDeprecation0<E : PsiElement>(
     fun on(languageVersionSettings: LanguageVersionSettings, element: E): SimpleDiagnostic<E> {
         return languageVersionSettings.chooseFactory().on(element)
     }
+
+    fun onError(element: E): SimpleDiagnostic<E> = errorFactory.on(element)
 }
 
 class DiagnosticFactoryForDeprecation1<E : PsiElement, A : Any>(
