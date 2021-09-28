@@ -163,7 +163,7 @@ private fun FirClassLikeDeclaration.typeParametersScope(): FirScope? {
     return FirMemberTypeParameterScope(this)
 }
 
-private fun createScopesForNestedClasses(
+private fun createOtherScopesForNestedClasses(
     klass: FirClass,
     session: FirSession,
     scopeSession: ScopeSession,
@@ -185,7 +185,9 @@ private fun createScopesForNestedClasses(
             it.lookupTag.getNestedClassifierScope(session, scopeSession)
                 ?.wrapNestedClassifierScopeWithSubstitutionForSuperType(it, session)
         }
-        addIfNotNull(klass.typeParametersScope())
+        // The type parameters scope has already been
+        // added by this time;
+        // See: prepareScopes()
     }
 
 fun FirRegularClass.resolveSupertypesInTheAir(session: FirSession): List<FirTypeRef> {
@@ -225,7 +227,7 @@ open class FirSupertypeResolverVisitor(
             val scopes = prepareScopes(klass)
 
             resolveAllSupertypes(klass, klass.superTypeRefs)
-            scopes.pushAll(createScopesForNestedClasses(klass, session, scopeSession, supertypeComputationSession))
+            scopes.pushAll(createOtherScopesForNestedClasses(klass, session, scopeSession, supertypeComputationSession))
         }
     }
 
