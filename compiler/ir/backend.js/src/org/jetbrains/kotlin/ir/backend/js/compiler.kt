@@ -54,6 +54,7 @@ fun compile(
     lowerPerModule: Boolean = false,
     safeExternalBoolean: Boolean = false,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
+    filesToLower: Set<String>? = null
 ): CompilerResult {
 
     if (lowerPerModule) {
@@ -75,7 +76,7 @@ fun compile(
     }
 
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
-        loadIr(depsDescriptors, irFactory, verifySignatures)
+        loadIr(depsDescriptors, irFactory, verifySignatures, filesToLower)
     val mainModule = depsDescriptors.mainModule
     val configuration = depsDescriptors.compilerConfiguration
 

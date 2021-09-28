@@ -255,7 +255,8 @@ object EmptyLoweringsCacheProvider : LoweringsCacheProvider {
 fun loadIr(
     depsDescriptors: ModulesStructure,
     irFactory: IrFactory,
-    verifySignatures: Boolean
+    verifySignatures: Boolean,
+    filesToLoad: Set<String>? = null
 ): IrModuleInfo {
     val project = depsDescriptors.project
     val mainModule = depsDescriptors.mainModule
@@ -269,6 +270,7 @@ fun loadIr(
 
     when (mainModule) {
         is MainModule.SourceFiles -> {
+            assert(filesToLoad == null)
             val (psi2IrContext, _) = preparePsi2Ir(depsDescriptors, errorPolicy, symbolTable)
             val irBuiltIns = psi2IrContext.irBuiltIns
             val feContext = psi2IrContext.run {
@@ -362,18 +364,25 @@ fun loadIr(
 
             val deserializedModuleFragments =
                 sortDependencies(reachableDependencies.getFullResolvedList(), depsDescriptors.descriptors).map { klib ->
-                    val strategy =
-                        if (klib == mainModuleLib)
+                    val descriptor = depsDescriptors.getModuleDescriptor(klib)
+                    if (filesToLoad != null) {
+                        if (klib == mainModuleLib) {
+                            irLinker.deserializeDirtyFiles(descriptor, klib, filesToLoad)
+                        } else {
+                            irLinker.deserializeHeadersWithInlineBodies(descriptor, klib)
+                        }
+                    } else {
+                        val strategy = if (klib == mainModuleLib)
                             DeserializationStrategy.ALL
                         else
                             DeserializationStrategy.EXPLICITLY_EXPORTED
 
-                    irLinker.deserializeIrModuleHeader(depsDescriptors.getModuleDescriptor(klib), klib, { strategy })
-                        .also { moduleFragment ->
-                            klib.manifestProperties.getProperty(KLIB_PROPERTY_JS_OUTPUT_NAME)?.let {
-                                moduleFragmentToUniqueName[moduleFragment] = it
-                            }
+                        irLinker.deserializeIrModuleHeader(descriptor, klib, { strategy })
+                    }.also { moduleFragment ->
+                        klib.manifestProperties.getProperty(KLIB_PROPERTY_JS_OUTPUT_NAME)?.let {
+                            moduleFragmentToUniqueName[moduleFragment] = it
                         }
+                    }
                 }
 
             val moduleFragment = deserializedModuleFragments.last()
