@@ -2,23 +2,23 @@ public open class Rendering : R|kotlin/Any| {
     public constructor(): R|test/Rendering|
 
     public/*package*/ open inner class A_Plain : R|kotlin/Any| {
-        public/*package*/ constructor(): R|test/Rendering.A_Plain|
+        public/*package*/ test/Rendering.constructor(): R|test/Rendering.A_Plain|
 
     }
     public/*package*/ open inner class B_Super : R|kotlin/Any| {
-        public/*package*/ constructor(): R|test/Rendering.B_Super|
+        public/*package*/ test/Rendering.constructor(): R|test/Rendering.B_Super|
 
     }
     public/*package*/ open inner class C_Sub : R|test/Rendering.B_Super| {
-        public/*package*/ constructor(): R|test/Rendering.C_Sub|
+        public/*package*/ test/Rendering.constructor(): R|test/Rendering.C_Sub|
 
     }
     public/*package*/ open inner class D_SuperG<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
-        public/*package*/ constructor<T : R|ft<kotlin/Any, kotlin/Any?>|>(): R|test/Rendering.D_SuperG<T>|
+        public/*package*/ test/Rendering.constructor<T : R|ft<kotlin/Any, kotlin/Any?>|>(): R|test/Rendering.D_SuperG<T>|
 
     }
     public/*package*/ open inner class E_SubG : R|test/Rendering.D_SuperG<ft<kotlin/String, kotlin/String?>>| {
-        public/*package*/ constructor(): R|test/Rendering.E_SubG|
+        public/*package*/ test/Rendering.constructor(): R|test/Rendering.E_SubG|
 
     }
     public/*package*/ abstract interface F_Array : R|kotlin/Any| {

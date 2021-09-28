@@ -5,7 +5,7 @@ FILE: complexTypes.kt
         }
 
         public final inner class D<R, in P, T, out S> : R|kotlin/Any| {
-            public constructor<R, in P>(): R|a/b/C.D<R, P, T, S>| {
+            public a/b/C<T, S>.constructor<R, in P>(): R|a/b/C.D<R, P, T, S>| {
                 super<R|kotlin/Any|>()
             }
 

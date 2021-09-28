@@ -68,12 +68,12 @@ FILE: conflictingProjection.kt
         }
 
         public final inner class Intermediate<K, T> : R|kotlin/Any| {
-            public constructor<K>(): R|Outer.Intermediate<K, T>| {
+            public Outer<T>.constructor<K>(): R|Outer.Intermediate<K, T>| {
                 super<R|kotlin/Any|>()
             }
 
             public final inner class Inner<G, K, T> : R|kotlin/Any| {
-                public constructor<G>(): R|Outer.Intermediate.Inner<G, K, T>| {
+                public Outer.Intermediate<K, T>.constructor<G>(): R|Outer.Intermediate.Inner<G, K, T>| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -115,12 +115,12 @@ FILE: conflictingProjection.kt
         }
 
         public final inner class OutIntermediate<out K, in T> : R|kotlin/Any| {
-            public constructor<out K>(): R|InOuter.OutIntermediate<K, T>| {
+            public InOuter<T>.constructor<out K>(): R|InOuter.OutIntermediate<K, T>| {
                 super<R|kotlin/Any|>()
             }
 
             public final inner class InInner<in G, out K, in T> : R|kotlin/Any| {
-                public constructor<in G>(): R|InOuter.OutIntermediate.InInner<G, K, T>| {
+                public InOuter.OutIntermediate<K, T>.constructor<in G>(): R|InOuter.OutIntermediate.InInner<G, K, T>| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -162,12 +162,12 @@ FILE: conflictingProjection.kt
         }
 
         public final inner class TwoParametersIntermediate<out K, K1, T, in T1> : R|kotlin/Any| {
-            public constructor<out K, K1>(): R|TwoParametersOuter.TwoParametersIntermediate<K, K1, T, T1>| {
+            public TwoParametersOuter<T, T1>.constructor<out K, K1>(): R|TwoParametersOuter.TwoParametersIntermediate<K, K1, T, T1>| {
                 super<R|kotlin/Any|>()
             }
 
             public final inner class InInner<in G, G1, out K, K1, T, in T1> : R|kotlin/Any| {
-                public constructor<in G, G1>(): R|TwoParametersOuter.TwoParametersIntermediate.InInner<G, G1, K, K1, T, T1>| {
+                public TwoParametersOuter.TwoParametersIntermediate<K, K1, T, T1>.constructor<in G, G1>(): R|TwoParametersOuter.TwoParametersIntermediate.InInner<G, G1, K, K1, T, T1>| {
                     super<R|kotlin/Any|>()
                 }
 

@@ -5,7 +5,7 @@ FILE: throwableSubclass.kt
         }
 
         public final inner class Test2<S, T, B> : R|kotlin/Throwable| {
-            public constructor<S>(): R|Test1.Test2<S, T, B>| {
+            public Test1<T, B>.constructor<S>(): R|Test1.Test2<S, T, B>| {
                 super<R|kotlin/Throwable|>()
             }
 
@@ -32,7 +32,7 @@ FILE: throwableSubclass.kt
         }
 
         public final inner class Test6<T, B> : R|kotlin/Exception| {
-            public constructor(): R|Test5.Test6<T, B>| {
+            public Test5<T, B>.constructor(): R|Test5.Test6<T, B>| {
                 super<R|kotlin/Exception|>()
             }
 

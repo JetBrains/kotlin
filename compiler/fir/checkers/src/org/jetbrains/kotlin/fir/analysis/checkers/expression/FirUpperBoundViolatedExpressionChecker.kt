@@ -9,19 +9,17 @@ import org.jetbrains.kotlin.fir.analysis.checkers.FirTypeRefSource
 import org.jetbrains.kotlin.fir.analysis.checkers.checkUpperBoundViolated
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
+import org.jetbrains.kotlin.fir.resolve.calls.isTypeAliasedConstructor
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceiver
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.toSymbol
-import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -40,16 +38,20 @@ object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChec
             calleeSymbol = calleReference.candidateSymbol as? FirCallableSymbol<*>
         }
 
-        var typeArguments: List<Any>? = null
-        var typeArgumentRefsAndSources: List<FirTypeRefSource?>? = null
-        val typeParameters = if (calleeSymbol is FirConstructorSymbol) {
-            typeArgumentRefsAndSources =
-                expression.typeArguments.map { FirTypeRefSource((it as? FirTypeProjectionWithVariance)?.typeRef, it.source) }
-            val prototypeClass = calleeSymbol.dispatchReceiverType?.toSymbol(context.session) as? FirRegularClassSymbol
-            prototypeClass?.typeParameterSymbols
+        val typeArguments: List<FirTypeProjection>?
+        val typeArgumentRefsAndSources: List<FirTypeRefSource>?
+        val typeParameters: List<FirTypeParameterSymbol>?
+
+        if (calleeSymbol is FirConstructorSymbol && calleeSymbol.isTypeAliasedConstructor) {
+            typeArguments = null
+            typeArgumentRefsAndSources = expression.typeArguments.map {
+                FirTypeRefSource((it as? FirTypeProjectionWithVariance)?.typeRef, it.source)
+            }
+            typeParameters = null
         } else {
             typeArguments = expression.typeArguments
-            calleeSymbol?.typeParameterSymbols
+            typeArgumentRefsAndSources = null
+            typeParameters = calleeSymbol?.typeParameterSymbols
         }
 
         checkUpperBoundViolated(

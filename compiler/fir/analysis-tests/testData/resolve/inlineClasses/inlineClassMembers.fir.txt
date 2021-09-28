@@ -91,7 +91,7 @@ FILE: inlineClassMembers.kt
             public get(): R|kotlin/String|
 
         public final inner class Inner : R|kotlin/Any| {
-            public constructor(): R|WithInner.Inner| {
+            public WithInner.constructor(): R|WithInner.Inner| {
                 super<R|kotlin/Any|>()
             }
 

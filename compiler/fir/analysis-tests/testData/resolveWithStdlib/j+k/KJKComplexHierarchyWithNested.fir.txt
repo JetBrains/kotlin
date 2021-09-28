@@ -25,7 +25,7 @@ FILE: K3.kt
         }
 
         public open inner class NestedInSuperClass<T> : R|kotlin/Any| {
-            public constructor(): R|SuperClass.NestedInSuperClass<T>| {
+            public SuperClass<T>.constructor(): R|SuperClass.NestedInSuperClass<T>| {
                 super<R|kotlin/Any|>()
             }
 

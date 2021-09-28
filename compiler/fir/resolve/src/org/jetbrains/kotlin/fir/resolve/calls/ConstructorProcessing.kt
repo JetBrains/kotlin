@@ -260,3 +260,6 @@ private class TypeAliasConstructorsSubstitutingScope(
 private object TypeAliasConstructorKey : FirDeclarationDataKey()
 
 var FirConstructor.originalConstructorIfTypeAlias: FirConstructor? by FirDeclarationDataRegistry.data(TypeAliasConstructorKey)
+
+val FirConstructorSymbol.isTypeAliasedConstructor: Boolean
+    get() = fir.originalConstructorIfTypeAlias != null

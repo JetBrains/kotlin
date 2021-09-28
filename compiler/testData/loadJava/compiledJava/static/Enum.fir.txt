@@ -13,7 +13,7 @@ public final enum class Enum : R|kotlin/Enum<ft<test/Enum, test/Enum?>>| {
 
         public/*package*/ open fun valueOf(s: R|ft<kotlin/String, kotlin/String?>|): R|kotlin/Unit|
 
-        public constructor(): R|test/Enum.Inner|
+        public test/Enum.constructor(): R|test/Enum.Inner|
 
     }
     public open class Nested : R|kotlin/Any| {

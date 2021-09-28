@@ -4,7 +4,7 @@ public open class InnerClass : R|kotlin/Any| {
     public open inner class Inner : R|kotlin/Any| {
         public open fun foo(): R|kotlin/Unit|
 
-        public constructor(): R|test/InnerClass.Inner|
+        public test/InnerClass.constructor(): R|test/InnerClass.Inner|
 
     }
     public open class Nested : R|kotlin/Any| {

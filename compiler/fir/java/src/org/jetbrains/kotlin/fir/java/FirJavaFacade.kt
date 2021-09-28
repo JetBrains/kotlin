@@ -247,7 +247,8 @@ class FirJavaFacade(
                     javaClass,
                     ownerClassBuilder = this,
                     classTypeParameters,
-                    javaTypeParameterStack
+                    javaTypeParameterStack,
+                    parentClassSymbol,
                 )
             }
             for (javaConstructor in javaClassDeclaredConstructors) {
@@ -258,6 +259,7 @@ class FirJavaFacade(
                     ownerClassBuilder = this,
                     classTypeParameters,
                     javaTypeParameterStack,
+                    parentClassSymbol,
                 )
             }
 
@@ -440,6 +442,7 @@ class FirJavaFacade(
         ownerClassBuilder: FirJavaClassBuilder,
         classTypeParameters: List<FirTypeParameter>,
         javaTypeParameterStack: JavaTypeParameterStack,
+        outerClassSymbol: FirRegularClassSymbol?,
     ): FirJavaConstructor {
         val constructorSymbol = FirConstructorSymbol(constructorId)
         return buildJavaConstructor {
@@ -464,6 +467,7 @@ class FirJavaFacade(
             returnTypeRef = buildResolvedTypeRef {
                 type = ownerClassBuilder.buildSelfTypeRef()
             }
+            dispatchReceiverType = if (isThisInner) outerClassSymbol?.defaultType() else null
             typeParameters += classTypeParameters.map { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
 
             if (javaConstructor != null) {

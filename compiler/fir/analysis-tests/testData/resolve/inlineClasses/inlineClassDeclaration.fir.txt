@@ -5,7 +5,7 @@ FILE: inlineClassDeclaration.kt
         }
 
         public final inner inline class B : R|kotlin/Any| {
-            public constructor(x: R|kotlin/Int|): R|A.B| {
+            public A.constructor(x: R|kotlin/Int|): R|A.B| {
                 super<R|kotlin/Any|>()
             }
 
@@ -28,7 +28,7 @@ FILE: inlineClassDeclaration.kt
         }
 
         public final inner inline class D : R|kotlin/Any| {
-            public constructor(x: R|kotlin/Int|): R|A.D| {
+            public A.constructor(x: R|kotlin/Int|): R|A.D| {
                 super<R|kotlin/Any|>()
             }
 

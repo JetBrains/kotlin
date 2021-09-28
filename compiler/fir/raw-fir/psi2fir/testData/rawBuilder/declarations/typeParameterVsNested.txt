@@ -7,7 +7,7 @@ FILE: typeParameterVsNested.kt
         }
 
         public? final? inner class T<T : Some> : R|kotlin/Any| {
-            public? [ContainingClassKey=T] constructor(): R|test/My.T<T>| {
+            public? [ContainingClassKey=T] test/My<T>.constructor(): R|test/My.T<T>| {
                 super<R|kotlin/Any|>()
             }
 

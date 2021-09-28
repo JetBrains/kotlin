@@ -106,7 +106,7 @@ FILE: incompatibleModifiers.kt
         }
 
         public final inner data class Y : R|kotlin/Any| {
-            public constructor(i: R|kotlin/Int|): R|X.Y| {
+            public X.constructor(i: R|kotlin/Int|): R|X.Y| {
                 super<R|kotlin/Any|>()
             }
 
@@ -120,7 +120,7 @@ FILE: incompatibleModifiers.kt
         }
 
         public sealed inner class Z : R|kotlin/Any| {
-            protected constructor(): R|X.Z| {
+            protected X.constructor(): R|X.Z| {
                 super<R|kotlin/Any|>()
             }
 

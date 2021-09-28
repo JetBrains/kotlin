@@ -5,7 +5,7 @@ FILE: innerTypes.kt
         }
 
         public final inner class Inner<K, T> : R|kotlin/Any| {
-            public constructor<K>(): R|Outer.Inner<K, T>| {
+            public Outer<T>.constructor<K>(): R|Outer.Inner<K, T>| {
                 super<R|kotlin/Any|>()
             }
 

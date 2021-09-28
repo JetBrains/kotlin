@@ -175,6 +175,12 @@ class FirClassSubstitutionScope(
         val constructor = original.fir
 
         val (newTypeParameters, _, _, newReturnType, newSubstitutor, fakeOverrideSubstitution) = createSubstitutedData(constructor)
+
+        // If constructor has a dispatch receiver, it should be an inner class' constructor.
+        // It means that we need to substitute its dispatcher as every other type,
+        // instead of using dispatchReceiverTypeForSubstitutedMembers
+        val newDispatchReceiverType = original.dispatchReceiverType?.substitute(substitutor)
+
         val newParameterTypes = constructor.valueParameters.map {
             it.returnTypeRef.coneType.substitute(newSubstitutor)
         }
@@ -185,8 +191,14 @@ class FirClassSubstitutionScope(
 
         return FirFakeOverrideGenerator.createSubstitutionOverrideConstructor(
             FirConstructorSymbol(original.callableId),
-            session, constructor, dispatchReceiverTypeForSubstitutedMembers,
-            newReturnType, newParameterTypes, newTypeParameters, makeExpect, fakeOverrideSubstitution
+            session,
+            constructor,
+            newDispatchReceiverType,
+            newReturnType,
+            newParameterTypes,
+            newTypeParameters,
+            makeExpect,
+            fakeOverrideSubstitution
         ).symbol
     }
 

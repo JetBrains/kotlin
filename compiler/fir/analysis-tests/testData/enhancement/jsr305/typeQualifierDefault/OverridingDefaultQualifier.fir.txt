@@ -22,7 +22,7 @@
 
         @R|javax/annotation/Nullable|() public open fun baz(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>?, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|
 
-        public constructor(): R|A.B|
+        public A.constructor(): R|A.B|
 
     }
     @R|FieldsAreNullable|() public open inner class C : R|kotlin/Any| {
@@ -36,7 +36,7 @@
 
         @R|javax/annotation/Nullable|() public open fun baz(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>?, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|
 
-        public constructor(): R|A.C|
+        public A.constructor(): R|A.C|
 
     }
 }

@@ -49,7 +49,7 @@ FILE: implicitInLocalClasses.kt
                 public get(): R|B.Inner|
 
             local final inner class Inner : R|kotlin/Any| {
-                public constructor(): R|B.Inner| {
+                public B.constructor(): R|B.Inner| {
                     super<R|kotlin/Any|>()
                 }
 

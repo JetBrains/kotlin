@@ -17,7 +17,7 @@ FILE: first.kt
         }
 
         public final inner class Inner : R|kotlin/Any| {
-            public constructor(): R|Private.Inner| {
+            public Private.constructor(): R|Private.Inner| {
                 super<R|kotlin/Any|>()
             }
 
@@ -76,7 +76,7 @@ FILE: first.kt
             }
 
             local final inner class Inner : R|kotlin/Any| {
-                public constructor(): R|Local.Inner| {
+                public Local.constructor(): R|Local.Inner| {
                     super<R|kotlin/Any|>()
                 }
 

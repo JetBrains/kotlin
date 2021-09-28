@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeProjectionModifier
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
-import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -843,6 +842,7 @@ class DeclarationsConverter(
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = classWrapper.delegatedSelfTypeRef
+                dispatchReceiverType = classWrapper.obtainDispatchReceiverForConstructor()
                 this.status = status
                 symbol = FirConstructorSymbol(callableIdForClassConstructor())
                 annotations += modifiers.annotations
@@ -911,6 +911,7 @@ class DeclarationsConverter(
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
             returnTypeRef = delegatedSelfTypeRef
+            dispatchReceiverType = classWrapper.obtainDispatchReceiverForConstructor()
             this.status = status
             symbol = FirConstructorSymbol(callableIdForClassConstructor())
             delegatedConstructor = constructorDelegationCall
@@ -927,6 +928,9 @@ class DeclarationsConverter(
             target.bind(it)
         }
     }
+
+    private fun ClassWrapper.obtainDispatchReceiverForConstructor(): ConeClassLikeType? =
+        if (isInner()) dispatchReceiverForInnerClassConstructor() else null
 
     /**
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.convert(

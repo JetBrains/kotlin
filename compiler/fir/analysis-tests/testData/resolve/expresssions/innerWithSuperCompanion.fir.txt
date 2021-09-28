@@ -24,7 +24,7 @@ FILE: innerWithSuperCompanion.kt
             public get(): R|kotlin/String|
 
         public final inner class Inner : R|Base| {
-            public constructor(): R|Outer.Inner| {
+            public Outer.constructor(): R|Outer.Inner| {
                 super<R|Base|>()
             }
 

@@ -10,7 +10,7 @@ public open class RawSuperTypeWithBound : R|kotlin/Any| {
 
         @R|java/lang/Override|() public open fun dummy(): R|kotlin/Unit|
 
-        public constructor(): R|test/RawSuperTypeWithBound.Derived|
+        public test/RawSuperTypeWithBound.constructor(): R|test/RawSuperTypeWithBound.Derived|
 
     }
     public abstract interface Super<T : R|ft<test/RawSuperTypeWithBound.Bound, test/RawSuperTypeWithBound.Bound?>|> : R|kotlin/Any| {

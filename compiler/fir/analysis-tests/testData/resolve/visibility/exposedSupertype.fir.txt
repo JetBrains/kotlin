@@ -24,7 +24,7 @@ FILE: exposedSupertype.kt
         }
 
         public final inner class BInner : R|kotlin/Any| {
-            public constructor(): R|B.BInner| {
+            public B.constructor(): R|B.BInner| {
                 super<R|kotlin/Any|>()
             }
 

@@ -12,7 +12,7 @@ FILE: nestedVisibility.kt
         }
 
         private final inner class PrivateInner : R|kotlin/Any| {
-            public constructor(): R|Outer.PrivateInner| {
+            public Outer.constructor(): R|Outer.PrivateInner| {
                 super<R|kotlin/Any|>()
             }
 
@@ -26,7 +26,7 @@ FILE: nestedVisibility.kt
         }
 
         protected final inner class ProtectedInner : R|kotlin/Any| {
-            public constructor(): R|Outer.ProtectedInner| {
+            public Outer.constructor(): R|Outer.ProtectedInner| {
                 super<R|kotlin/Any|>()
             }
 
@@ -40,7 +40,7 @@ FILE: nestedVisibility.kt
         }
 
         public final inner class PublicInner : R|kotlin/Any| {
-            public constructor(): R|Outer.PublicInner| {
+            public Outer.constructor(): R|Outer.PublicInner| {
                 super<R|kotlin/Any|>()
             }
 
