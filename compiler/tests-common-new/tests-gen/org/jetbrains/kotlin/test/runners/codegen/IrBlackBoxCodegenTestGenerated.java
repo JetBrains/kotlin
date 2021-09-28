@@ -39745,6 +39745,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         public void testSafeCallOnLong() throws Exception {
             runTest("compiler/testData/codegen/box/safeCall/safeCallOnLong.kt");
         }
+
+        @Test
+        @TestMetadata("safeCallWithElvisFolding.kt")
+        public void testSafeCallWithElvisFolding() throws Exception {
+            runTest("compiler/testData/codegen/box/safeCall/safeCallWithElvisFolding.kt");
+        }
     }
 
     @Nested

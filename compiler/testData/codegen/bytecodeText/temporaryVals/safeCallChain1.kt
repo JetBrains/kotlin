@@ -6,3 +6,6 @@ fun test(an: A?) = an?.b?.c?.s
 
 // JVM_IR_TEMPLATES
 // 0 ASTORE
+// 1 IFNULL
+// 0 IFNONNULL
+// 1 ACONST_NULL

@@ -5449,6 +5449,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("elvisChain.kt")
+        public void testElvisChain() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/temporaryVals/elvisChain.kt");
+        }
+
+        @Test
         @TestMetadata("notNullReceiversInChain.kt")
         public void testNotNullReceiversInChain() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/temporaryVals/notNullReceiversInChain.kt");

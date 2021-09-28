@@ -12,3 +12,6 @@ object Host {
 
 // JVM_IR_TEMPLATES
 // 0 ASTORE
+// 1 ACONST_NULL
+// 1 IFNULL
+// 0 IFNONNULL
