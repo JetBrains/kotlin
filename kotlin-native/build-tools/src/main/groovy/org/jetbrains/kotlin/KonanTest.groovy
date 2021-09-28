@@ -181,7 +181,7 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
 
         def exitCodeMismatch = false
         for (int i = 0; i < times; i++) {
-            ExecResult execResult = project.execute {
+            ExecResult execResult = project.extensions.executor.execute {
 
                 commandLine exe
 
