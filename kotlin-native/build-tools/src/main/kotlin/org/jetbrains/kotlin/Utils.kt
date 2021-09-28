@@ -328,6 +328,9 @@ fun targetSupportsMimallocAllocator(targetName: String) =
 fun targetSupportsLibBacktrace(targetName: String) =
         HostManager().targetByName(targetName).supportsLibBacktrace()
 
+fun targetSupportsCoreSymbolication(targetName: String) =
+        HostManager().targetByName(targetName).supportsCoreSymbolication()
+
 
 fun Project.mergeManifestsByTargets(source: File, destination: File) {
     logger.info("Merging manifests: $source -> $destination")

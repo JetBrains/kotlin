@@ -2669,19 +2669,19 @@ task extend_exception(type: KonanLocalTest) {
 }
 
 standaloneTest("check_stacktrace_format") {
-    disabled = !isAppleTarget(project) || project.globalTestArgs.contains('-opt')
+    disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g']
     source = "runtime/exceptions/check_stacktrace_format.kt"
 }
 
 standaloneTest("check_stacktrace_format_coresymbolication") {
-    disabled = !isAppleTarget(project) || project.globalTestArgs.contains('-opt')
+    disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=coresymbolication']
     source = "runtime/exceptions/check_stacktrace_format.kt"
 }
 
 standaloneTest("stack_trace_inline") {
-    disabled = !isAppleTarget(project) || project.globalTestArgs.contains('-opt')
+    disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xg-generate-debug-trampoline=enable', '-Xbinary=sourceInfoType=coresymbolication']
     source = "runtime/exceptions/stack_trace_inline.kt"
     // test on simulator is writing Invalid connection: com.apple.coresymbolicationd by unknown reason
@@ -2690,14 +2690,13 @@ standaloneTest("stack_trace_inline") {
 }
 
 standaloneTest("stack_trace_out_of_bounds") {
-    disabled = !isAppleTarget(project) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'ios_arm64')
+    disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'ios_arm64')
     flags = ['-g', '-Xg-generate-debug-trampoline=enable', '-Xbinary=stripDebugInfoFromNativeLibs=false']
     source = "runtime/exceptions/stack_trace_out_of_bounds.kt"
 }
 
-
 standaloneTest("kt-37572") {
-    disabled = !isAppleTarget(project) || project.globalTestArgs.contains('-opt')
+    disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=coresymbolication']
     source = "runtime/exceptions/kt-37572.kt"
     // test on simulator is writing Invalid connection: com.apple.coresymbolicationd by unknown reason

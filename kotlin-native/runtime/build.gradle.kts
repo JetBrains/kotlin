@@ -122,6 +122,7 @@ bitcode {
 
     create("source_info_core_symbolication", file("src/source_info/core_symbolication")) {
         includeRuntime()
+        onlyIf { targetSupportsCoreSymbolication(target) }
     }
     create("source_info_libbacktrace", file("src/source_info/libbacktrace")) {
         includeRuntime()

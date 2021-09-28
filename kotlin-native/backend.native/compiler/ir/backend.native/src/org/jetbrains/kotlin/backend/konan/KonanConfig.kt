@@ -96,7 +96,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
     val sourceInfoType: SourceInfoType
         get() = configuration.get(BinaryOptions.sourceInfoType)
-                ?: SourceInfoType.CORESYMBOLICATION.takeIf { debug && target.family.isAppleFamily }
+                ?: SourceInfoType.CORESYMBOLICATION.takeIf { debug && target.supportsCoreSymbolication() }
                 ?: SourceInfoType.NOOP
 
 
@@ -227,7 +227,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             }
         }
         if (shouldCoverLibraries || shouldCoverSources) add("profileRuntime.bc")
-        add("source_info_core_symbolication.bc")
+        if (target.supportsCoreSymbolication()) {
+            add("source_info_core_symbolication.bc")
+        }
         if (target.supportsLibBacktrace()) {
             add("source_info_libbacktrace.bc")
             add("libbacktrace.bc")

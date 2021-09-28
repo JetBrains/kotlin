@@ -43,6 +43,11 @@ object PlatformInfo {
     }
 
     @JvmStatic
+    fun supportsCoreSymbolication(project: Project): Boolean {
+        return getTarget(project).supportsCoreSymbolication()
+    }
+
+    @JvmStatic
     fun checkXcodeVersion(project: Project) {
         val properties = PropertiesProvider(project)
         val requiredMajorVersion = properties.xcodeMajorVersion
