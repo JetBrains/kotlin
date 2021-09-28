@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.inlineScopeVisibility
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.KtErrors
 import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -127,9 +128,9 @@ class IrSourceCompilerForInline(
 
     // TODO: Find a way to avoid using PSI here
     override fun reportSuspensionPointInsideMonitor(stackTraceElement: String) {
-        codegen.context.psiErrorBuilder
+        codegen.context.ktDiagnosticReporter
             .at(callElement.symbol.owner as IrDeclaration)
-            .report(SUSPENSION_POINT_INSIDE_MONITOR, stackTraceElement)
+            .report(KtErrors.SUSPENSION_POINT_INSIDE_MONITOR, stackTraceElement)
     }
 }
 

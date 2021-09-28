@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.diagnostics.KtErrors
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.Type
@@ -117,9 +117,9 @@ class IrInlineIntrinsicsSupport(
 
     override fun checkAnnotatedType(type: IrType) {
         if (type.hasAnnotation(StandardNames.FqNames.extensionFunctionType)) {
-            context.psiErrorBuilder.at(reportErrorsOn, containingFile).report(TYPEOF_EXTENSION_FUNCTION_TYPE)
+            context.ktDiagnosticReporter.at(reportErrorsOn, containingFile).report(KtErrors.TYPEOF_EXTENSION_FUNCTION_TYPE)
         } else if (type.annotations.any { !it.symbol.owner.constructedClass.isSpecialAnnotation() }) {
-            context.psiErrorBuilder.at(reportErrorsOn, containingFile).report(TYPEOF_ANNOTATED_TYPE)
+            context.ktDiagnosticReporter.at(reportErrorsOn, containingFile).report(KtErrors.TYPEOF_ANNOTATED_TYPE)
         }
     }
 
@@ -131,11 +131,11 @@ class IrInlineIntrinsicsSupport(
                 hasEqualFqName(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME)
 
     override fun reportSuspendTypeUnsupported() {
-        context.psiErrorBuilder.at(reportErrorsOn, containingFile).report(TYPEOF_SUSPEND_TYPE)
+        context.ktDiagnosticReporter.at(reportErrorsOn, containingFile).report(KtErrors.TYPEOF_SUSPEND_TYPE)
     }
 
     override fun reportNonReifiedTypeParameterWithRecursiveBoundUnsupported(typeParameterName: Name) {
-        context.psiErrorBuilder.at(reportErrorsOn, containingFile)
-            .report(TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, typeParameterName.asString())
+        context.ktDiagnosticReporter.at(reportErrorsOn, containingFile)
+            .report(KtErrors.TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, typeParameterName.asString())
     }
 }
