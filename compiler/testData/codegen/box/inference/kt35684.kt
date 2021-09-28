@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // !OPT_IN: kotlin.RequiresOptIn
 // WITH_RUNTIME
 

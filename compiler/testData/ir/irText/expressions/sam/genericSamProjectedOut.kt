@@ -1,10 +1,10 @@
-// !LANGUAGE: -NewInference
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FILE: genericSamProjectedOut.kt
 import example.SomeJavaClass
 
-fun test(a: SomeJavaClass<out String>) {
+fun test() {
+    var a: SomeJavaClass<out String> = SomeJavaClass()
     // a::someFunction parameter has type of Nothing
     // while it's completely safe to pass a lambda for a SAM
     // since Hello is effectively contravariant by its parameter
@@ -12,6 +12,8 @@ fun test(a: SomeJavaClass<out String>) {
     a.someFunction {}
     a + {}
     a[{}]
+    a += {}
+    a[0] = {}
 }
 
 // FILE: example/Hello.java
@@ -30,11 +32,16 @@ public class SomeJavaClass<A> {
         ((Hello)hello).invoke("OK");
     }
 
-    public void plus(Hello<A> hello) {
+    public SomeJavaClass<A> plus(Hello<A> hello) {
         ((Hello)hello).invoke("OK");
+        return this;
     }
 
     public void get(Hello<A> hello) {
+        ((Hello)hello).invoke("OK");
+    }
+
+    public void set(int i, Hello<A> hello) {
         ((Hello)hello).invoke("OK");
     }
 }

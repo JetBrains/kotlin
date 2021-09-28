@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument
 fun interface MyRunnable {
     fun run()
 }

@@ -1,4 +1,3 @@
-// !LANGUAGE: -NewInference
 // FIR_IDENTICAL
 
 interface Continuation<in T>

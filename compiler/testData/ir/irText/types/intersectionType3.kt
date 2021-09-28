@@ -1,4 +1,4 @@
-// !LANGUAGE: -NewInference
+// FIR_IDENTICAL
 
 interface In<in T>
 

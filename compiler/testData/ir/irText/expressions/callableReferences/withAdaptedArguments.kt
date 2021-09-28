@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference, +FunctionReferenceWithDefaultValueAsOtherType
 import Host.importedObjectMemberWithVarargs
 
 fun use(fn: (Int) -> String) = fn(1)

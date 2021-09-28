@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // WITH_RUNTIME
 
 inline fun foo(x: (Int, Int) -> Int): Int =

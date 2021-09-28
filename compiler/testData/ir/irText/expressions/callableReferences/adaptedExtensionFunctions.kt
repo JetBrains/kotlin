@@ -1,5 +1,3 @@
-// !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
-
 fun use(f: C.(Int) -> Unit) {}
 
 class C

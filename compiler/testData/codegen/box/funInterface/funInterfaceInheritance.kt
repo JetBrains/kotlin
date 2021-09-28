@@ -1,5 +1,3 @@
-// !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
-
 fun interface Base {
     fun doStuff(): String
 }

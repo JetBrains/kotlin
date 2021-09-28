@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // WITH_RUNTIME
 
 inline fun <T> foo(f: () -> T): String {

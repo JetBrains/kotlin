@@ -1,5 +1,4 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
 
 fun interface IFoo {
     fun foo(i: Int)

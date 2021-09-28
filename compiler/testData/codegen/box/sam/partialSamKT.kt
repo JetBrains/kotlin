@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference +SamConversionForKotlinFunctions +SamConversionPerArgument
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FILE: Fn.java

@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // WITH_RUNTIME
 
 class Holder(val list: List<String>?)

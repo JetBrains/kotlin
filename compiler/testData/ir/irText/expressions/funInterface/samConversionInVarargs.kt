@@ -1,5 +1,3 @@
-// !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
-
 fun interface IFoo {
     fun foo(i: Int)
 }

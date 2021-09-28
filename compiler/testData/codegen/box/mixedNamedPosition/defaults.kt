@@ -1,5 +1,3 @@
-// !LANGUAGE: +NewInference +MixedNamedArgumentsInTheirOwnPosition
-
 fun foo(
     p1: Int = 1,
     p2: String = "2",

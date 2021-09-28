@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: IGNORED_IN_JS
-// !LANGUAGE: +NewInference
 // WITH_RUNTIME
 
 inline fun foo(mkString: (Char, Char) -> String): String =

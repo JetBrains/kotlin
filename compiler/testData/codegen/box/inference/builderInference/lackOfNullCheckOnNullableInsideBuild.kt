@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // WITH_RUNTIME
 // Issue: KT-36371
 

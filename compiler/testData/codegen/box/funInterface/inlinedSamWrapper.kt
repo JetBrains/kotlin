@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
 // WITH_RUNTIME
 
 fun interface MyRunnable {

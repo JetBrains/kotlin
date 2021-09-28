@@ -14130,11 +14130,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/functions/functionExpression/functionExpressionWithThisReference.kt");
             }
 
-            @TestMetadata("functionExpressionWithThisReferenceNI.kt")
-            public void testFunctionExpressionWithThisReferenceNI() throws Exception {
-                runTest("compiler/testData/codegen/box/functions/functionExpression/functionExpressionWithThisReferenceNI.kt");
-            }
-
             @TestMetadata("functionLiteralExpression.kt")
             public void testFunctionLiteralExpression() throws Exception {
                 runTest("compiler/testData/codegen/box/functions/functionExpression/functionLiteralExpression.kt");
@@ -19653,11 +19648,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("genericSamProjectedOut.kt")
         public void testGenericSamProjectedOut() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/genericSamProjectedOut.kt");
-        }
-
-        @TestMetadata("genericSamProjectedOutWithNewInference.kt")
-        public void testGenericSamProjectedOutWithNewInference() throws Exception {
-            runTest("compiler/testData/codegen/box/javaInterop/genericSamProjectedOutWithNewInference.kt");
         }
 
         @TestMetadata("genericSamSmartcast.kt")

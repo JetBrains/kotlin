@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // WITH_RUNTIME
 
 @file:OptIn(ExperimentalTypeInference::class)

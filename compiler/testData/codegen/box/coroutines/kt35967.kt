@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // WITH_RUNTIME
 // FULL_JDK
 // ISSUE: KT-35967

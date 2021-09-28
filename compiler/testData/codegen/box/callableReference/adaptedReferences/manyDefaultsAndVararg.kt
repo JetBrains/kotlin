@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
 // WITH_RUNTIME
 
 import kotlin.test.assertEquals

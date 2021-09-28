@@ -1,4 +1,4 @@
-FILE fqName:<root> fileName:/intersectionType2_OI.kt
+FILE fqName:<root> fileName:/intersectionType2.kt
   CLASS INTERFACE name:A modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A<T of <root>.A>
     TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any?]

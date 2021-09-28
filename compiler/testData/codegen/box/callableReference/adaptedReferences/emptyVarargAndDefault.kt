@@ -1,5 +1,3 @@
-// !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
-
 fun foo(x: String = "O", vararg y: String): String =
         if (y.size == 0) x + "K" else "Fail"
 

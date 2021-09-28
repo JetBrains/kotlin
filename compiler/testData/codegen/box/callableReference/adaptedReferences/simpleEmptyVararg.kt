@@ -1,5 +1,3 @@
-// !LANGUAGE: +NewInference
-
 fun foo(x: String, vararg y: String): String =
         if (y.size == 0) x + "K" else "Fail"
 

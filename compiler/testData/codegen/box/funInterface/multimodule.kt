@@ -1,5 +1,3 @@
-// !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
-
 // MODULE: m1
 // FILE: m1.kt
 

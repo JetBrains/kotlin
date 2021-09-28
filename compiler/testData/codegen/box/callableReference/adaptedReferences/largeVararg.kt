@@ -1,5 +1,3 @@
-// !LANGUAGE: +NewInference
-
 fun foo(
     f: (
         Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,

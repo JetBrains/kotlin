@@ -1,4 +1,4 @@
-FILE fqName:<root> fileName:/starProjection_OI.kt
+FILE fqName:<root> fileName:/starProjection.kt
   CLASS INTERFACE name:Continuation modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Continuation<T of <root>.Continuation>
     TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any?]

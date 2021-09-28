@@ -1,4 +1,4 @@
-FILE fqName:<root> fileName:/fixationOrder1.kt
+FILE fqName:<root> fileName:/newInferenceFixationOrder1.kt
   FUN name:foo visibility:public modality:FINAL <X, Y> () returnType:kotlin.Function1<X of <root>.foo, Y of <root>.foo>
     TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?]
     TYPE_PARAMETER name:Y index:1 variance: superTypes:[kotlin.Any?]

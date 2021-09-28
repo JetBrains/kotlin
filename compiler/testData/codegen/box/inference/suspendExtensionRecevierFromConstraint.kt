@@ -1,5 +1,4 @@
 // WITH_RUNTIME
-// !LANGUAGE: +NewInference
 
 class ExtensionReceiver
 typealias SuspendExtensionFunction = suspend ExtensionReceiver.() -> Unit

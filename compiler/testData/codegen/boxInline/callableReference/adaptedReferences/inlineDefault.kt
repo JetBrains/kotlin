@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_TEXT
-// !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
 

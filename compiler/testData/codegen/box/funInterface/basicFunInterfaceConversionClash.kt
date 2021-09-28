@@ -1,5 +1,3 @@
-// !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
-
 // FILE: lib.kt
 
 fun interface Foo {

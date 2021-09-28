@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // WITH_RUNTIME
 
 fun test(foo: MutableList<String>?): List<String> {

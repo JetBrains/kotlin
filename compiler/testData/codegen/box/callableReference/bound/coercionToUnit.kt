@@ -1,5 +1,3 @@
-
-// !LANGUAGE: +NewInference
 // WITH_RUNTIME
 
 class Foo

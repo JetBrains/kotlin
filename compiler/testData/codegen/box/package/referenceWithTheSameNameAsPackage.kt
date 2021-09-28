@@ -1,6 +1,4 @@
-// !LANGUAGE: +NewInference
 // WITH_RUNTIME
-
 // FILE: messages/foo.kt
 
 package messages
