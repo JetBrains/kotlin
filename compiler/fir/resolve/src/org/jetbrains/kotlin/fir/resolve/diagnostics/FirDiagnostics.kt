@@ -216,6 +216,10 @@ class ConePropertyAsOperator(val symbol: FirPropertySymbol) : ConeDiagnostic {
     override val reason: String get() = "Cannot use a property as an operator"
 }
 
+class ConeUnknownLambdaParameterTypeDiagnostic : ConeDiagnostic {
+    override val reason: String get() = "Unknown return lambda parameter type"
+}
+
 private fun describeSymbol(symbol: FirBasedSymbol<*>): String {
     return when (symbol) {
         is FirClassLikeSymbol<*> -> symbol.classId.asString()

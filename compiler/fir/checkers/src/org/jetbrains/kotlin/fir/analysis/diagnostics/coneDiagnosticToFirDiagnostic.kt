@@ -190,12 +190,15 @@ private fun mapInapplicableCandidateError(
                 rootCause.argument.source,
                 rootCause.forbiddenNamedArgumentsTarget
             )
-            is ArgumentTypeMismatch -> FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
-                rootCause.argument.source ?: source,
-                rootCause.expectedType,
-                rootCause.actualType,
-                rootCause.isMismatchDueToNullability
-            )
+            is ArgumentTypeMismatch -> {
+                val typeContext = diagnostic.candidate.callInfo.session.typeContext
+                FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
+                    rootCause.argument.source ?: source,
+                    rootCause.expectedType.removeTypeVariableTypes(typeContext),
+                    rootCause.argument.typeRef.coneType.removeTypeVariableTypes(typeContext),
+                    rootCause.isMismatchDueToNullability
+                )
+            }
             is NullForNotNullType -> FirErrors.NULL_FOR_NONNULL_TYPE.createOn(
                 rootCause.argument.source ?: source
             )
@@ -299,8 +302,8 @@ private fun ConstraintSystemError.toDiagnostic(
             argument?.let {
                 return FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
                     it.source ?: source,
-                    lowerConeType,
-                    upperConeType,
+                    lowerConeType.removeTypeVariableTypes(typeContext),
+                    upperConeType.removeTypeVariableTypes(typeContext),
                     typeMismatchDueToNullability
                 )
             }
@@ -319,8 +322,8 @@ private fun ConstraintSystemError.toDiagnostic(
 
                     FirErrors.TYPE_MISMATCH.createOn(
                         qualifiedAccessSource ?: source,
-                        upperConeType,
-                        inferredType,
+                        upperConeType.removeTypeVariableTypes(typeContext),
+                        inferredType.removeTypeVariableTypes(typeContext),
                         typeMismatchDueToNullability
                     )
                 }
