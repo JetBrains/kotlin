@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -26,7 +25,7 @@ class FirLocalScope private constructor(
     val properties: PersistentMap<Name, FirVariableSymbol<*>>,
     val functions: PersistentMultimap<Name, FirNamedFunctionSymbol>,
     val classes: PersistentMap<Name, FirRegularClassSymbol>
-) : FirScope(), FirContainingNamesAwareScope {
+) : FirContainingNamesAwareScope() {
     constructor() : this(persistentMapOf(), PersistentMultimap(), persistentMapOf())
 
     fun storeClass(klass: FirRegularClass): FirLocalScope {

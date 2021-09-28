@@ -38,7 +38,7 @@ class FirSyntheticFunctionSymbol(
 class FirSyntheticPropertiesScope(
     val session: FirSession,
     private val baseScope: FirTypeScope
-) : FirScope(), FirContainingNamesAwareScope {
+) : FirContainingNamesAwareScope() {
     private val syntheticNamesProvider = session.syntheticNamesProvider
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {

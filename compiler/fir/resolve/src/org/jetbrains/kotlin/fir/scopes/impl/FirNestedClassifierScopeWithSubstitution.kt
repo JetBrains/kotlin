@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.name.Name
 private class FirNestedClassifierScopeWithSubstitution(
     private val scope: FirScope,
     private val substitutor: ConeSubstitutor
-) : FirScope(), FirContainingNamesAwareScope {
+) : FirContainingNamesAwareScope() {
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         scope.processFunctionsByName(name, processor)

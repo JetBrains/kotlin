@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
-class FirCompositeScope(val scopes: Iterable<FirScope>) : FirScope(), FirContainingNamesAwareScope {
+class FirCompositeScope(val scopes: Iterable<FirScope>) : FirContainingNamesAwareScope() {
 
     override fun processClassifiersByNameWithSubstitution(
         name: Name,

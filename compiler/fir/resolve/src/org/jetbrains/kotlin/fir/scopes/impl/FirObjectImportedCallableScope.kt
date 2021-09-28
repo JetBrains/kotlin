@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -24,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 class FirObjectImportedCallableScope(
     private val importedClassId: ClassId,
     private val objectUseSiteScope: FirTypeScope
-) : FirScope(), FirContainingNamesAwareScope {
+) : FirContainingNamesAwareScope() {
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         objectUseSiteScope.processFunctionsByName(name) wrapper@{ symbol ->
             val function = symbol.fir

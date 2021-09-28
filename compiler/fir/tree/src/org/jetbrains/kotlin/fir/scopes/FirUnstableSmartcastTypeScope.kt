@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
 class FirUnstableSmartcastTypeScope(
     private val smartcastScope: FirTypeScope,
     private val originalScope: FirTypeScope
-) : FirTypeScope(), FirContainingNamesAwareScope {
+) : FirTypeScope() {
     private val scopes = listOf(originalScope, smartcastScope)
     private val symbolsFromUnstableSmartcast = mutableSetOf<FirCallableSymbol<*>>()
     override fun processClassifiersByNameWithSubstitution(

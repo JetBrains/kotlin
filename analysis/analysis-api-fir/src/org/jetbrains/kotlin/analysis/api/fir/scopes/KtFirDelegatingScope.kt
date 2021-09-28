@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
-internal abstract class KtFirDelegatingScope<S>(
+internal abstract class KtFirDelegatingScope<S : FirContainingNamesAwareScope>(
     private val builder: KtSymbolByFirBuilder,
     final override val token: ValidityToken
-) : KtScope where S : FirContainingNamesAwareScope, S : FirScope {
+) : KtScope {
 
     abstract val firScope: S
 
@@ -79,11 +79,11 @@ internal fun FirScope.getCallableSymbols(callableNames: Collection<Name>, builde
     }
 }
 
-internal class KtFirDelegatingScopeImpl<S>(
+internal class KtFirDelegatingScopeImpl<S : FirContainingNamesAwareScope>(
     override val firScope: S,
     builder: KtSymbolByFirBuilder,
     token: ValidityToken
-) : KtFirDelegatingScope<S>(builder, token) where S : FirContainingNamesAwareScope, S : FirScope
+) : KtFirDelegatingScope<S>(builder, token)
 
 
 internal fun FirScope.getClassifierSymbols(classLikeNames: Collection<Name>, builder: KtSymbolByFirBuilder): Sequence<KtClassifierSymbol> =

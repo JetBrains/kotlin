@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-abstract class FirClassDeclaredMemberScope : FirScope(), FirContainingNamesAwareScope
+abstract class FirClassDeclaredMemberScope : FirContainingNamesAwareScope()
 
 class FirClassDeclaredMemberScopeImpl(
     val useSiteSession: FirSession,

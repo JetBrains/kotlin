@@ -22,7 +22,7 @@ class JavaClassStaticUseSiteScope internal constructor(
     private val superClassScope: FirScope,
     private val superTypesScopes: List<FirScope>,
     javaTypeParameterStack: JavaTypeParameterStack,
-) : FirScope(), FirContainingNamesAwareScope {
+) : FirContainingNamesAwareScope() {
     private val functions = hashMapOf<Name, Collection<FirNamedFunctionSymbol>>()
     private val properties = hashMapOf<Name, Collection<FirVariableSymbol<*>>>()
     private val overrideChecker = JavaOverrideChecker(session, javaTypeParameterStack)

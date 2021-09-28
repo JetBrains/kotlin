@@ -33,7 +33,7 @@ class FirDelegatedMemberScope(
     private val containingClass: FirClass,
     private val declaredMemberScope: FirScope,
     private val delegateFields: List<FirField>,
-) : FirScope(), FirContainingNamesAwareScope {
+) : FirContainingNamesAwareScope() {
     private val dispatchReceiverType = containingClass.defaultType()
     private val overrideChecker = FirStandardOverrideChecker(session)
 
