@@ -347,7 +347,14 @@ internal class SafeCallInfo(
 )
 
 internal fun IrBlock.parseSafeCall(irBuiltIns: IrBuiltIns): SafeCallInfo? {
-    if (this.origin != IrStatementOrigin.SAFE_CALL) return null
+    //  {
+    //      val tmp = <safe_receiver>
+    //      when {
+    //          tmp == null -> null
+    //          else -> <safe_call_result>
+    //      }
+    //  }
+
     if (this.statements.size != 2) return null
     val tmpVal = this.statements[0] as? IrVariable ?: return null
     val whenExpr = this.statements[1] as? IrWhen ?: return null
@@ -377,7 +384,14 @@ internal class ElvisInfo(
 )
 
 internal fun IrBlock.parseElvis(irBuiltIns: IrBuiltIns): ElvisInfo? {
-    if (this.origin != IrStatementOrigin.ELVIS) return null
+    //  {
+    //      val tmp = <elvis_lhs>
+    //      when {
+    //          tmp == null -> <elvis_rhs>
+    //          else -> tmp
+    //      }
+    //  }
+
     if (this.statements.size != 2) return null
     val tmpVal = this.statements[0] as? IrVariable ?: return null
     val whenExpr = this.statements[1] as? IrWhen ?: return null
@@ -393,6 +407,10 @@ internal fun IrBlock.parseElvis(irBuiltIns: IrBuiltIns): ElvisInfo? {
     val arg1 = ifNullBranchCondition.getValueArgument(1)
     if (arg1 !is IrConst<*> || arg1.value != null) return null
     val elvisRhs = ifNullBranch.result
+
+    val ifNonNullBranch = whenExpr.branches[1]
+    val ifNonNullBranchResult = ifNonNullBranch.result
+    if (ifNonNullBranchResult !is IrGetValue || ifNonNullBranchResult.symbol != tmpVal.symbol) return null
 
     return ElvisInfo(this, tmpVal, elvisLhs, elvisRhs)
 }
