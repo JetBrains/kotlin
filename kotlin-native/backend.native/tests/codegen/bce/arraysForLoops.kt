@@ -257,44 +257,44 @@ import kotlin.test.*
 }
 
 @Test fun forDownToWithStep() {
-    val array = Array(10) { 0L }
-    val array1 = Array(3) { 0L }
+    val array = UIntArray(10) { 0U }
+    val array1 = UIntArray(3) { 0U }
     var j = 8
 
     assertFailsWith<ArrayIndexOutOfBoundsException> {
         for (i in array.size - 1 downTo 0 step 2) {
-            array[j] = 6
+            array[j] = 6U
             j++
         }
     }
 
     assertFailsWith<ArrayIndexOutOfBoundsException> {
         for (i in array.size - 1 downTo 1 step 2) {
-            array[i + 1] = 6
+            array[i + 1] = 6U
         }
     }
 
     assertFailsWith<ArrayIndexOutOfBoundsException> {
         for (i in array.size - 1 downTo 1 step 2) {
-            array1[i] = 6
+            array1[i] = 6U
         }
     }
 
     assertFailsWith<ArrayIndexOutOfBoundsException> {
         for (i in (array.size / 0.2).toInt() downTo 1 step 2) {
-            array[i] = 6
+            array[i] = 6U
         }
     }
 
     assertFailsWith<ArrayIndexOutOfBoundsException> {
         for (i in array.size - 1 downTo -3 step 2) {
-            array[i] = 6
+            array[i] = 6U
         }
     }
 
     assertFailsWith<ArrayIndexOutOfBoundsException> {
         for (i in array.size downTo 1 step 2) {
-            array[i] = 6
+            array[i] = 6U
         }
     }
 }
