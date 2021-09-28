@@ -200,6 +200,28 @@ internal class KtFirIntersectionType(
     override fun hashCode() = typeHashcode()
 }
 
+internal class KtFirIntegerLiteralType(
+    override val coneType: ConeIntegerLiteralType,
+    override val token: ValidityToken,
+    private val builder: KtSymbolByFirBuilder,
+) : KtIntegerLiteralType(), KtFirType {
+    override val isUnsigned: Boolean get() = withValidityAssertion { coneType.isUnsigned }
+
+    override val value: Long get() = withValidityAssertion { coneType.value }
+
+    override val possibleTypes: List<KtClassType> by cached {
+        coneType.possibleTypes.map { possibleType ->
+            builder.typeBuilder.buildKtType(possibleType) as KtClassType
+        }
+    }
+
+    override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+
+    override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
+    override fun equals(other: Any?) = typeEquals(other)
+    override fun hashCode() = typeHashcode()
+}
+
 private fun ConeNullability.asKtNullability(): KtTypeNullability = when (this) {
     ConeNullability.NULLABLE -> KtTypeNullability.NULLABLE
     ConeNullability.UNKNOWN -> KtTypeNullability.UNKNOWN

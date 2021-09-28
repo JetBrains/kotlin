@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.analysis.api.KtTypeArgument
 import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -79,6 +81,31 @@ public abstract class KtFlexibleType : KtType {
 
 public abstract class KtIntersectionType : KtType {
     public abstract val conjuncts: List<KtType>
+
+    override fun toString(): String = asStringForDebugging()
+}
+
+/**
+ * Non-denotable type representing some number type. This type generally come when retrieving some integer literal `KtType`
+ * It is unknown which number type it exactly is, but possible options based on [value] can be retrieved via [possibleTypes].
+ */
+public abstract class KtIntegerLiteralType : KtType {
+    /**
+     * Literal value for which the type was created.
+     */
+    public abstract val value: Long
+
+    /**
+     * Is the type unsigned (i.e. corresponding literal had `u` suffix)
+     */
+    public abstract val isUnsigned: Boolean
+
+    /**
+     * The list of `Number` types the type may be represented as.
+     *
+     * The possible options are: `Byte`, `Short` ,`Int`, `Long`, `UByte`, `UShort` `UInt`, `ULong`
+     */
+    public abstract val possibleTypes: Collection<KtClassType>
 
     override fun toString(): String = asStringForDebugging()
 }

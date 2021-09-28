@@ -359,6 +359,7 @@ internal class KtSymbolByFirBuilder private constructor(
                     is ConeIntersectionType -> KtFirIntersectionType(coneType, token, this@KtSymbolByFirBuilder)
                     is ConeDefinitelyNotNullType -> KtFirDefinitelyNotNullType(coneType, token, this@KtSymbolByFirBuilder)
                     is ConeCapturedType -> KtFirCapturedType(coneType, token)
+                    is ConeIntegerLiteralType -> KtFirIntegerLiteralType(coneType, token, this@KtSymbolByFirBuilder)
                     else -> throwUnexpectedElementError(coneType)
                 }
             }
