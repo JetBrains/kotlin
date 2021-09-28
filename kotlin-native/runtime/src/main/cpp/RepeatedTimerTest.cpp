@@ -12,30 +12,44 @@
 
 using namespace kotlin;
 
+TEST(RepeatedTimerTest, WillNotExecuteImmediately) {
+    std::atomic<int> counter = 0;
+    RepeatedTimer timer(std::chrono::minutes(10), [&counter]() {
+        ++counter;
+        return std::chrono::minutes(10);
+    });
+    // The function is not executed immediately.
+    EXPECT_THAT(counter.load(), 0);
+}
+
 TEST(RepeatedTimerTest, WillRun) {
     std::atomic<int> counter = 0;
     RepeatedTimer timer(std::chrono::milliseconds(10), [&counter]() {
         ++counter;
         return std::chrono::milliseconds(10);
     });
-    // The function is not executed immediately.
-    EXPECT_THAT(counter.load(), 0);
-    // And now wait until the counter increases at least twice
+    // Wait until the counter increases at least twice.
     while (counter < 2) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
 
-TEST(RepeatedTimerTest, WillStop) {
+TEST(RepeatedTimerTest, WillStopInDestructor) {
     std::atomic<int> counter = 0;
     {
-        RepeatedTimer timer(std::chrono::minutes(1), [&counter]() {
+        RepeatedTimer timer(std::chrono::milliseconds(1), [&counter]() {
+            // This lambda will only get executed once.
+            EXPECT_THAT(counter.load(), 0);
             ++counter;
             return std::chrono::minutes(10);
         });
+        // Wait until the counter increases once.
+        while (counter < 1) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
     }
-    // The function was never executed.
-    EXPECT_THAT(counter.load(), 0);
+    // The destructor was fired and cancelled the timer without executing the function.
+    EXPECT_THAT(counter.load(), 1);
 }
 
 TEST(RepeatedTimerTest, AdjustInterval) {
