@@ -316,7 +316,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         checkWithAttachment(declarations.size == 1, { "unexpected ${declarations.size} declarations" }) {
             it.withAttachment("text.kt", text)
             for (d in declarations.withIndex()) {
-                it.withAttachment("declaration${d.index}.kt", d.value.text)
+                it.withPsiAttachment("declaration${d.index}.kt", d.value)
             }
         }
         @Suppress("UNCHECKED_CAST")

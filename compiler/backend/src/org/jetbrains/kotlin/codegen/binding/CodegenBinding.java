@@ -123,7 +123,7 @@ public class CodegenBinding {
         Type result = asmTypeForAnonymousClassOrNull(bindingContext, expression);
         if (result == null) {
             throw new KotlinExceptionWithAttachments("Couldn't compute ASM type for expression")
-                    .withAttachment("expression.kt", PsiUtilsKt.getElementTextWithContext(expression));
+                    .withPsiAttachment("expression.kt", expression);
         }
 
         return result;

@@ -72,7 +72,7 @@ class KtDotQualifiedExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtDo
                 LOG.error(
                     KotlinExceptionWithAttachments(
                         "Invalid stub structure. DOT_QUALIFIED_EXPRESSION must have one or two children. Was: ${expressions.size}\n"
-                    ).withAttachment("file.kt", containingFile.text)
+                    ).withPsiAttachment("file.kt", containingFile)
                 )
                 return null
             }
