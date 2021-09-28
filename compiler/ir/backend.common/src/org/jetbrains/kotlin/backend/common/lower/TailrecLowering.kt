@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.transformStatement
-import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 open class TailrecLowering(val context: BackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (container is IrFunction) {
-            // TODO Shouldn't this be done after local declarations lowering?
             // Lower local declarations
             irBody.acceptChildrenVoid(object : IrElementVisitorVoid {
                 override fun visitElement(element: IrElement) {
@@ -62,26 +61,22 @@ open class TailrecLowering(val context: BackendContext) : BodyLoweringPass {
         }
     }
 
-    private fun lowerTailRecursionCalls(function: IrFunction) =
-        lowerTailRecursionCalls(context, function, useProperComputationOrderOfTailrecDefaultParameters(), ::followFunctionReference)
-
-    open fun useProperComputationOrderOfTailrecDefaultParameters() = true
+    open val useProperComputationOrderOfTailrecDefaultParameters: Boolean
+        get() = true
 
     open fun followFunctionReference(reference: IrFunctionReference): Boolean = false
+
+    open fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression =
+        IrConstImpl.defaultValueForType(startOffset, endOffset, type)
 }
 
-private fun lowerTailRecursionCalls(
-    context: BackendContext,
-    irFunction: IrFunction,
-    properComputationOrderOfTailrecDefaultParameters: Boolean,
-    followFunctionReference: (IrFunctionReference) -> Boolean
-) {
-    val tailRecursionCalls = collectTailRecursionCalls(irFunction, followFunctionReference)
+private fun TailrecLowering.lowerTailRecursionCalls(irFunction: IrFunction) {
+    val tailRecursionCalls = collectTailRecursionCalls(irFunction, ::followFunctionReference)
     if (tailRecursionCalls.isEmpty()) {
         return
     }
 
-    val oldBody = irFunction.body as IrBlockBody
+    val oldBody = irFunction.body as? IrBlockBody ?: return
     val oldBodyStatements = ArrayList(oldBody.statements)
     val builder = context.createIrBuilder(irFunction.symbol).at(oldBody)
 
@@ -104,14 +99,9 @@ private fun lowerTailRecursionCalls(
                 val parameterToNew = parameters.associateWith {
                     createTmpVariable(irGet(parameterToVariable[it]!!), nameHint = it.symbol.suggestVariableName())
                 }
-
                 val transformer = BodyTransformer(
-                    builder, irFunction, loop,
-                    parameterToNew, parameterToVariable, tailRecursionCalls,
-                    properComputationOrderOfTailrecDefaultParameters,
-                    followFunctionReference
+                    this@lowerTailRecursionCalls, builder, irFunction, loop, parameterToNew, parameterToVariable, tailRecursionCalls
                 )
-
                 oldBodyStatements.forEach {
                     +it.transformStatement(transformer)
                 }
@@ -123,14 +113,13 @@ private fun lowerTailRecursionCalls(
 }
 
 private class BodyTransformer(
-    val builder: IrBuilderWithScope,
-    val irFunction: IrFunction,
-    val loop: IrLoop,
-    val parameterToNew: Map<IrValueParameter, IrValueDeclaration>,
-    val parameterToVariable: Map<IrValueParameter, IrVariable>,
-    val tailRecursionCalls: Set<IrCall>,
-    val properComputationOrderOfTailrecDefaultParameters: Boolean,
-    val followFunctionReference: (IrFunctionReference) -> Boolean
+    private val lowering: TailrecLowering,
+    private val builder: IrBuilderWithScope,
+    irFunction: IrFunction,
+    private val loop: IrLoop,
+    parameterToNew: Map<IrValueParameter, IrValueDeclaration>,
+    private val parameterToVariable: Map<IrValueParameter, IrVariable>,
+    private val tailRecursionCalls: Set<IrCall>,
 ) : VariableRemapper(parameterToNew) {
 
     val parameters = irFunction.explicitParameters
@@ -144,7 +133,7 @@ private class BodyTransformer(
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        if (followFunctionReference(expression)) {
+        if (lowering.followFunctionReference(expression)) {
             expression.symbol.owner.body?.transformChildrenVoid(this)
         }
         return super.visitFunctionReference(expression)
@@ -163,13 +152,12 @@ private class BodyTransformer(
         defaultValuedParameters.associateWithTo(parameterToArgument) {
             // Note that we intentionally keep the original type of the parameter for the variable even though that violates type safety
             // if it's non-null. This ensures that capture parameters have the same types for all copies of `x`.
-            // TODO: on the JVM, this might not be correct for inline classes - copy code from JvmDefaultParameterInjector?
-            irTemporary(IrConstImpl.defaultValueForType(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.type.makeNullable()), irType = it.type)
+            irTemporary(lowering.nullConst(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.type))
         }
         // Now replace those variables with ones containing actual default values. Unused null-valued temporaries will hopefully
         // be optimized out later.
         val remapper = VariableRemapper(parameterToArgument)
-        defaultValuedParameters.let { if (properComputationOrderOfTailrecDefaultParameters) it else it.asReversed() }
+        defaultValuedParameters.let { if (lowering.useProperComputationOrderOfTailrecDefaultParameters) it else it.asReversed() }
             .associateWithTo(parameterToArgument) { parameter ->
                 val originalDefaultValue = parameter.defaultValue?.expression ?: throw Error("no argument specified for $parameter")
                 irTemporary(originalDefaultValue.deepCopyWithVariables().patchDeclarationParents(parent).transform(remapper, null))
