@@ -64,8 +64,8 @@ fun Candidate.preprocessLambdaArgument(
             if (!csBuilder.addSubtypeConstraintIfCompatible(lambdaType, expectedType, position)) {
                 sink.reportDiagnostic(
                     ArgumentTypeMismatch(
-                        lambdaType,
                         expectedType,
+                        lambdaType,
                         argument,
                         context.session.typeContext.isTypeMismatchDueToNullability(lambdaType, expectedType)
                     )
