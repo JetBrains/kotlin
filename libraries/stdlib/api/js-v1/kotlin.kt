@@ -1432,6 +1432,7 @@ public open class Exception : kotlin.Throwable {
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS})
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
 @kotlin.SinceKotlin(version = "1.2")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.6", warningSince = "1.4")
 @kotlin.Deprecated(message = "Please use RequiresOptIn instead.")
 public final annotation class Experimental : kotlin.Annotation {
     public constructor Experimental(level: kotlin.Experimental.Level = ...)
@@ -1445,7 +1446,6 @@ public final annotation class Experimental : kotlin.Annotation {
     }
 }
 
-@kotlin.Experimental
 @kotlin.RequiresOptIn
 @kotlin.annotation.MustBeDocumented
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS})
@@ -1454,7 +1454,6 @@ public final annotation class ExperimentalMultiplatform : kotlin.Annotation {
     public constructor ExperimentalMultiplatform()
 }
 
-@kotlin.Experimental(level = Level.ERROR)
 @kotlin.RequiresOptIn(level = Level.ERROR)
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS})
@@ -1464,7 +1463,6 @@ public final annotation class ExperimentalStdlibApi : kotlin.Annotation {
     public constructor ExperimentalStdlibApi()
 }
 
-@kotlin.Experimental(level = Level.WARNING)
 @kotlin.RequiresOptIn(level = Level.WARNING)
 @kotlin.annotation.MustBeDocumented
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS})
@@ -3219,6 +3217,7 @@ public open class UnsupportedOperationException : kotlin.RuntimeException {
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE, AnnotationTarget.TYPEALIAS})
 @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE)
 @kotlin.SinceKotlin(version = "1.2")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.6", warningSince = "1.4")
 @kotlin.Deprecated(message = "Please use OptIn instead.", replaceWith = kotlin.ReplaceWith(expression = "OptIn(*markerClass)", imports = {"kotlin.OptIn"}))
 public final annotation class UseExperimental : kotlin.Annotation {
     public constructor UseExperimental(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>)

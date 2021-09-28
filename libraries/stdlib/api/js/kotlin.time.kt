@@ -529,7 +529,6 @@ public final enum class DurationUnit : kotlin.Enum<kotlin.time.DurationUnit> {
     enum entry DAYS
 }
 
-@kotlin.Experimental(level = Level.ERROR)
 @kotlin.RequiresOptIn(level = Level.ERROR)
 @kotlin.annotation.MustBeDocumented
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)

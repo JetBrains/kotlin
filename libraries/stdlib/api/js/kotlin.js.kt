@@ -192,7 +192,6 @@ public final external class Date {
     }
 }
 
-@kotlin.Experimental(level = Level.WARNING)
 @kotlin.RequiresOptIn(level = Level.WARNING)
 @kotlin.annotation.MustBeDocumented
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)

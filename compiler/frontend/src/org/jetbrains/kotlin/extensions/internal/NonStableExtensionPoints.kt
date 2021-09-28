@@ -35,8 +35,6 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
  * Please do not use them in general code.
  */
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
-@Suppress("DEPRECATION")
-@Experimental(level = Experimental.Level.ERROR)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class InternalNonStableExtensionPoints
 

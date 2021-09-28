@@ -23,8 +23,6 @@ public expect annotation class JsName(val name: String)
  * the [OptIn] annotation, e.g. `@OptIn(ExperimentalJsExport::class)`,
  * or with the `-opt-in=kotlin.js.ExperimentalJsExport` compiler option is given.
  */
-@Suppress("DEPRECATION")
-@Experimental(level = Experimental.Level.WARNING)
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @MustBeDocumented
 @Retention(AnnotationRetention.BINARY)

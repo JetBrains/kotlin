@@ -41,7 +41,6 @@ public interface Effect {
 
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
 @kotlin.SinceKotlin(version = "1.3")
-@kotlin.Experimental
 @kotlin.RequiresOptIn
 @kotlin.annotation.MustBeDocumented
 public final annotation class ExperimentalContracts : kotlin.Annotation {

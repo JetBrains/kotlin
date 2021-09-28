@@ -12,8 +12,6 @@ package kotlin.experimental
  * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalTypeInference::class)`,
  * or by using the compiler argument `-opt-in=kotlin.experimental.ExperimentalTypeInference`.
  */
-@Suppress("DEPRECATION")
-@Experimental(level = Experimental.Level.ERROR)
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @MustBeDocumented
 @Retention(AnnotationRetention.BINARY)
