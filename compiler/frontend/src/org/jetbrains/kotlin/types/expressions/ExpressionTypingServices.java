@@ -353,8 +353,12 @@ public class ExpressionTypingServices {
             }
             blockLevelVisitor = new ExpressionTypingVisitorDispatcher.ForBlock(expressionTypingComponents, annotationChecker, scope);
 
-            if (isFirstStatement) {
-                expressionTypingComponents.contractParsingServices.checkContractAndRecordIfPresent(statementExpression, context.trace, scope);
+            DeclarationDescriptor ownerDescriptor = scope.getOwnerDescriptor();
+
+            if (isFirstStatement && ownerDescriptor instanceof FunctionDescriptor) {
+                expressionTypingComponents.contractParsingServices.checkContractAndRecordIfPresent(
+                        statementExpression, context.trace, (FunctionDescriptor) ownerDescriptor
+                );
                 isFirstStatement = false;
             }
         }
