@@ -802,15 +802,25 @@ abstract class KotlinCompile @Inject constructor(
         return if (fileChanges.isEmpty()) {
             ClasspathChanges.Available(LinkedHashSet(), LinkedHashSet())
         } else {
-            val currentClasspathEntrySnapshotFiles = classpathSnapshotProperties.classpathSnapshot.files.toList()
-            val changedCurrentFiles = fileChanges
-                .filter { it.changeType == ChangeType.ADDED || it.changeType == ChangeType.MODIFIED }
-                .map { it.file }.toSet()
-            ClasspathChangesComputer.compute(
-                currentClasspathEntrySnapshotFiles = currentClasspathEntrySnapshotFiles,
-                previousClasspathEntrySnapshotFiles = getPreviousClasspathEntrySnapshotFiles(),
-                unchangedCurrentClasspathEntrySnapshotFiles = currentClasspathEntrySnapshotFiles.filter { it !in changedCurrentFiles }
-            )
+            val previousClasspathEntrySnapshotFiles = getPreviousClasspathEntrySnapshotFiles()
+            if (previousClasspathEntrySnapshotFiles.isEmpty()) {
+                // When this happens, it means that either the previous classpath was empty or there were no source files to compile in the
+                // previous non-incremental run so the task action was skipped and the classpath snapshot directory was not populated (see
+                // AbstractKotlinCompile.executeImpl).
+                // We could improve this handling, but it's fine to return `UnableToCompute` here as it's likely that there are also no
+                // source files to compile/recompile in this incremental run.
+                ClasspathChanges.NotAvailable.UnableToCompute
+            } else {
+                val currentClasspathEntrySnapshotFiles = classpathSnapshotProperties.classpathSnapshot.files.toList()
+                val changedCurrentFiles = fileChanges
+                    .filter { it.changeType == ChangeType.ADDED || it.changeType == ChangeType.MODIFIED }
+                    .map { it.file }.toSet()
+                ClasspathChangesComputer.compute(
+                    currentClasspathEntrySnapshotFiles = currentClasspathEntrySnapshotFiles,
+                    previousClasspathEntrySnapshotFiles = previousClasspathEntrySnapshotFiles,
+                    unchangedCurrentClasspathEntrySnapshotFiles = currentClasspathEntrySnapshotFiles.filter { it !in changedCurrentFiles }
+                )
+            }
         }
     }
 
