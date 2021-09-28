@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterPublicSymbolImpl
@@ -305,6 +305,7 @@ class IrDeclarationDeserializer(
             ).apply {
                 if (proto.hasDefaultValue())
                     defaultValue = deserializeExpressionBody(proto.defaultValue)
+                        ?: irFactory.createExpressionBody(IrCompositeImpl(startOffset, endOffset, type))
             }
         }
 
@@ -495,27 +496,21 @@ class IrDeclarationDeserializer(
         return ProtoExpression.parseFrom(readBody(index), extensionRegistry)
     }
 
-    fun deserializeExpressionBody(index: Int): IrExpressionBody {
-        return irFactory.createExpressionBody(
-            if (deserializeBodies) {
-                val bodyData = loadExpressionBodyProto(index)
-                bodyDeserializer.deserializeExpression(bodyData)
-            } else {
-                val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
-                IrErrorExpressionImpl(-1, -1, errorType, "Expression body is not deserialized yet")
-            }
-        )
+    fun deserializeExpressionBody(index: Int): IrExpressionBody? {
+        return if (deserializeBodies) {
+            val bodyData = loadExpressionBodyProto(index)
+            irFactory.createExpressionBody(bodyDeserializer.deserializeExpression(bodyData))
+        } else {
+            null
+        }
     }
 
-    fun deserializeStatementBody(index: Int): IrElement {
+    fun deserializeStatementBody(index: Int): IrElement? {
         return if (deserializeBodies) {
             val bodyData = loadStatementBodyProto(index)
             bodyDeserializer.deserializeStatement(bodyData)
         } else {
-            val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
-            irFactory.createBlockBody(
-                -1, -1, listOf(IrErrorExpressionImpl(-1, -1, errorType, "Statement body is not deserialized yet"))
-            )
+            null
         }
     }
 
@@ -539,7 +534,7 @@ class IrDeclarationDeserializer(
                             if (proto.hasExtensionReceiver()) deserializeIrValueParameter(proto.extensionReceiver, -1)
                             else null
                         body =
-                            if (proto.hasBody()) deserializeStatementBody(proto.body) as IrBody
+                            if (proto.hasBody()) deserializeStatementBody(proto.body) as IrBody?
                             else null
                     }
                 }
@@ -615,7 +610,7 @@ class IrDeclarationDeserializer(
     private fun deserializeIrAnonymousInit(proto: ProtoAnonymousInit): IrAnonymousInitializer =
         withDeserializedIrDeclarationBase(proto.base) { symbol, _, startOffset, endOffset, origin, _ ->
             irFactory.createAnonymousInitializer(startOffset, endOffset, origin, checkSymbolType(symbol)).apply {
-                body = deserializeStatementBody(proto.body) as IrBlockBody
+                body = deserializeStatementBody(proto.body) as IrBlockBody? ?: irFactory.createBlockBody(startOffset, endOffset)
             }
         }
 

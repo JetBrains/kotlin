@@ -54,7 +54,7 @@ class CarrierDeserializer(
     private val expressionBodyCache = mutableMapOf<Int, IrExpressionBody>()
 
     private fun deserializeExpressionBody(index: Int): IrExpressionBody = expressionBodyCache.getOrPut(index) {
-        declarationDeserializer.deserializeExpressionBody(index).also {
+        declarationDeserializer.deserializeExpressionBody(index)!!.also {
             injectCarriers(it, index)
         }
     }
