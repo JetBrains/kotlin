@@ -28,7 +28,7 @@ object NativePlatformConfigurator : PlatformConfiguratorBase(
         NativeTopLevelSingletonChecker, NativeThreadLocalChecker
     )
 ) {
-    override fun configureModuleComponents(container: StorageComponentContainer, languageVersionSettings: LanguageVersionSettings) {
+    override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useInstance(NativeInliningRule)
         container.useImpl<NativeIdentifierChecker>()
     }
