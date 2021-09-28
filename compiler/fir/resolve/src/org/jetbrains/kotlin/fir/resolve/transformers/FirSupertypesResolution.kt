@@ -172,7 +172,6 @@ private fun createScopesForNestedClasses(
     mutableListOf<FirScope>().apply {
         // Note: from higher priority to lower priority
         // See also: BodyResolveContext.withScopesForClass
-        addIfNotNull(klass.typeParametersScope())
         addIfNotNull(session.nestedClassifierScope(klass))
         val companionObjects = klass.declarations.filterIsInstance<FirRegularClass>().filter { it.isCompanion }
         for (companionObject in companionObjects) {
@@ -186,6 +185,7 @@ private fun createScopesForNestedClasses(
             it.lookupTag.getNestedClassifierScope(session, scopeSession)
                 ?.wrapNestedClassifierScopeWithSubstitutionForSuperType(it, session)
         }
+        addIfNotNull(klass.typeParametersScope())
     }
 
 fun FirRegularClass.resolveSupertypesInTheAir(session: FirSession): List<FirTypeRef> {
