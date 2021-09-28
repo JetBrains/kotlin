@@ -177,7 +177,9 @@ private fun snapshotClasspath(classpathSourceDir: File, tmpDir: TemporaryFolder)
             .sortedBy { it }
         val sourceFiles = relativePathsInDir.map { relativePath ->
             if (relativePath.endsWith(".kt")) {
-                val preCompiledClassFilesRoot = File(classpathEntrySourceDir.path.replace("src/kotlin", "classes/kotlin"))
+                val preCompiledClassFilesRoot = classpathEntrySourceDir.path.let {
+                    File(it.substringBeforeLast("src") + "classes" + it.substringAfterLast("src"))
+                }.also { check(it.exists()) }
                 KotlinSourceFile(
                     classpathEntrySourceDir, relativePath,
                     preCompiledClassFiles = listOf(
