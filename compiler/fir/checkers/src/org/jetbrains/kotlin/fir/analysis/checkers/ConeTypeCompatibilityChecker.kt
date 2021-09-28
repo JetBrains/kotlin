@@ -239,9 +239,8 @@ object ConeTypeCompatibilityChecker {
             is ConeClassErrorType -> emptySet() // Ignore error types
             is ConeLookupTagBasedType -> when (this) {
                 is ConeClassLikeType -> setOf(this)
-                is ConeTypeVariableType -> when (val tag = lookupTag) {
-                    is ConeTypeVariableTypeConstructor -> (tag.originalTypeParameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol.collectUpperBounds()
-                    else -> throw IllegalStateException("missing branch for ${lookupTag.javaClass.name}")
+                is ConeTypeVariableType -> {
+                    (lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol.collectUpperBounds()
                 }
                 is ConeTypeParameterType -> lookupTag.typeParameterSymbol.collectUpperBounds()
                 else -> throw IllegalStateException("missing branch for ${javaClass.name}")
