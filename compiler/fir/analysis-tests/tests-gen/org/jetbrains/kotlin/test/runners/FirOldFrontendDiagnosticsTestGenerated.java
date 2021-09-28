@@ -31690,6 +31690,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("kt48162.kt")
+            public void testKt48162() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/kt48162.kt");
+            }
+
+            @Test
             @TestMetadata("MoreSpecificVarargsOfEqualLength.kt")
             public void testMoreSpecificVarargsOfEqualLength() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/varargs/MoreSpecificVarargsOfEqualLength.kt");

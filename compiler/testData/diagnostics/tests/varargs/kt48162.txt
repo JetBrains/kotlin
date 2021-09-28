@@ -1,0 +1,16 @@
+package
+
+public fun arr(/*0*/ x: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun </*0*/ T> toArray3(/*0*/ x: kotlin.collections.Collection<T>): kotlin.Array<T>
+public fun use(/*0*/ arg: kotlin.Array<kotlin.String>, /*1*/ s: kotlin.collections.Collection<kotlin.String>, /*2*/ x: Foo<kotlin.String>): kotlin.Unit
+public fun </*0*/ T> kotlin.collections.Collection<T>.toArray(): kotlin.Array<T>
+public fun kotlin.collections.Collection<kotlin.String>.toArray2(): kotlin.Array<kotlin.String>
+
+public final class Foo</*0*/ T> {
+    public constructor Foo</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun plus(/*0*/ x: Foo<T>): kotlin.Array<T>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
