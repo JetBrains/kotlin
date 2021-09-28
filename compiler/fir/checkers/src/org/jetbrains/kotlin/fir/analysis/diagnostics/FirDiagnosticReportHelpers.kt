@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 fun DiagnosticReporter.reportOnWithSuppression(
     element: FirAnnotationContainer,
     factory: KtDiagnosticFactory0,
-    context: DiagnosticContext,
+    context: MutableDiagnosticContext,
     positioningStrategy: SourceElementPositioningStrategy? = null
 ) {
     withSuppressedDiagnostics(element, context) {
@@ -24,7 +24,7 @@ fun <A : Any> DiagnosticReporter.reportOnWithSuppression(
     element: FirAnnotationContainer,
     factory: KtDiagnosticFactory1<A>,
     a: A,
-    context: DiagnosticContext,
+    context: MutableDiagnosticContext,
     positioningStrategy: SourceElementPositioningStrategy? = null
 ) {
     withSuppressedDiagnostics(element, context) {
@@ -37,7 +37,7 @@ fun <A : Any, B : Any> DiagnosticReporter.reportOnWithSuppression(
     factory: KtDiagnosticFactory2<A, B>,
     a: A,
     b: B,
-    context: DiagnosticContext,
+    context: MutableDiagnosticContext,
     positioningStrategy: SourceElementPositioningStrategy? = null
 ) {
     withSuppressedDiagnostics(element, context) {
@@ -51,7 +51,7 @@ fun <A : Any, B : Any, C : Any> DiagnosticReporter.reportOnWithSuppression(
     a: A,
     b: B,
     c: C,
-    context: DiagnosticContext,
+    context: MutableDiagnosticContext,
     positioningStrategy: SourceElementPositioningStrategy? = null
 ) {
     withSuppressedDiagnostics(element, context) {
@@ -66,7 +66,7 @@ fun <A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOnWithSuppress
     b: B,
     c: C,
     d: D,
-    context: DiagnosticContext,
+    context: MutableDiagnosticContext,
     positioningStrategy: SourceElementPositioningStrategy? = null
 ) {
     withSuppressedDiagnostics(element, context) {
@@ -74,7 +74,7 @@ fun <A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOnWithSuppress
     }
 }
 
-inline fun <reified C : DiagnosticContext> withSuppressedDiagnostics(
+inline fun <reified C : MutableDiagnosticContext> withSuppressedDiagnostics(
     annotationContainer: FirAnnotationContainer,
     context: C,
     f: (C) -> Unit

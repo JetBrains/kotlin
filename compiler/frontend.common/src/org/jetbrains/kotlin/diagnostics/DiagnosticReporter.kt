@@ -10,14 +10,16 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 interface DiagnosticContext {
     fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean
 
-    fun addSuppressedDiagnostics(
+    val languageVersionSettings: LanguageVersionSettings
+}
+
+abstract class MutableDiagnosticContext : DiagnosticContext {
+    abstract fun addSuppressedDiagnostics(
         diagnosticNames: Collection<String>,
         allInfosSuppressed: Boolean,
         allWarningsSuppressed: Boolean,
         allErrorsSuppressed: Boolean
     ): DiagnosticContext
-
-    val languageVersionSettings: LanguageVersionSettings
 }
 
 abstract class DiagnosticReporter {
