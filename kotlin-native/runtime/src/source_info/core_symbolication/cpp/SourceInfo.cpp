@@ -5,7 +5,6 @@
 
 #include "SourceInfo.h"
 
-#ifdef KONAN_CORE_SYMBOLICATION
 #include <KAssert.h>
 #include <cstdint>
 #include <dlfcn.h>
@@ -197,4 +196,3 @@ extern "C" int Kotlin_getSourceInfo_core_symbolication(void* addr, SourceInfo *r
   result_buffer[0] = result;
   return 1;
 }
-#endif // KONAN_CORE_SYMBOLICATION
