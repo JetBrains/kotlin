@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.ir.backend.js.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.export.*
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.utils.serialization.JsIrAstDeserializer
+import org.jetbrains.kotlin.ir.backend.js.utils.serialization.JsIrAstSerializer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isInterface
@@ -26,6 +28,9 @@ import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
 import org.jetbrains.kotlin.js.util.TextOutputImpl
+import org.jetbrains.kotlin.serialization.js.ast.JsAstSerializer
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.File
 
 class IrModuleToJsTransformer(
@@ -84,7 +89,26 @@ class IrModuleToJsTransformer(
             }
         }
 
-        return fragments
+        // TODO remove serialization -> deserialization work
+        val serialized = mutableListOf<Pair<IrFile, ByteArray>>()
+
+        val serializer = JsIrAstSerializer()
+        fragments.entries.forEach { (file, fragment) ->
+            val output = ByteArrayOutputStream()
+            serializer.serialize(fragment, output)
+            val binaryAst = output.toByteArray()
+            serialized += file to binaryAst
+        }
+
+        val restoredMap = mutableMapOf<IrFile, JsIrProgramFragment>()
+
+        val deserializer = JsIrAstDeserializer()
+
+        serialized.forEach { (file, binaryAst) ->
+            restoredMap[file] = deserializer.deserialize(ByteArrayInputStream(binaryAst))
+        }
+
+        return restoredMap
     }
 
     private fun generateWrappedModuleBody(
