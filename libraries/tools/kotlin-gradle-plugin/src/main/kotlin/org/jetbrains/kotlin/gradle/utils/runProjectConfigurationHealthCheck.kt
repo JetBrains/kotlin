@@ -74,8 +74,8 @@ internal inline fun Project.runProjectConfigurationHealthCheck(check: Project.()
  * ```
  * @see runProjectConfigurationHealthCheck
  */
-internal inline fun Project.runPostEvaluationProjectConfigurationHealthCheck(crossinline action: Project.() -> Unit) {
+internal inline fun Project.runProjectConfigurationHealthCheckWhenEvaluated(crossinline check: Project.() -> Unit) {
     whenEvaluated {
-        runProjectConfigurationHealthCheck(action)
+        runProjectConfigurationHealthCheck(check)
     }
 }

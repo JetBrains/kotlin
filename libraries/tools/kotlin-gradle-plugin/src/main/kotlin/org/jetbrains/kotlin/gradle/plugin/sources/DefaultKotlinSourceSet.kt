@@ -92,7 +92,7 @@ class DefaultKotlinSourceSet(
         // Fail-fast approach: check on each new added edge and report a circular dependency at once when the edge is added.
         checkForCircularDependencies()
 
-        project.runPostEvaluationProjectConfigurationHealthCheck {
+        project.runProjectConfigurationHealthCheckWhenEvaluated {
             defaultSourceSetLanguageSettingsChecker.runAllChecks(this@DefaultKotlinSourceSet, other)
         }
     }
