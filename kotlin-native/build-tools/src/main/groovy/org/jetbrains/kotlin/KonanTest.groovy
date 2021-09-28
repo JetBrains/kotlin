@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin
 
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
@@ -31,26 +33,57 @@ import java.util.stream.Collectors
 import java.io.File
 
 class RunExternalTestGroup extends JavaExec implements CompilerRunner {
-    def platformManager = project.project(":kotlin-native").platformManager
-    def target = platformManager.targetManager(project.testTarget).target
+    private def platformManager = project.project(":kotlin-native").platformManager
+    private def target = platformManager.targetManager(project.testTarget).target
+
+    @Internal
     def dist = UtilsKt.getKotlinNativeDist(project)
 
+    @Input
     def enableKonanAssertions = true
+
+    @Input
     def verifyIr = true
+
+    @Input
+    @Optional
     String outputDirectory = null
+    @Input
+    @Optional
     String goldValue = null
+
+    @Input
     // Checks test's output against gold value and returns true if the output matches the expectation
     Function<String, Boolean> outputChecker = { str -> (goldValue == null || goldValue == str) }
+
+    @Input
     boolean printOutput = true
+
+    @Input
+    @Optional
     String testData = null
+
+    @Input
     int expectedExitStatus = 0
+
+    @Input
+    @Optional
     List<String> arguments = null
+
+    @Input
+    @Optional
     List<String> flags = null
 
+    @Input
     boolean multiRuns = false
+    @Input
+    @Optional
     List<List<String>> multiArguments = null
 
+    @Input
     boolean expectedFail = false
+
+    @Input
     boolean compilerMessages = false
 
     // Uses directory defined in $outputSourceSetName source set
@@ -125,6 +158,7 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
     // FIXME: output directory here changes and hence this is not a property
     String executablePath() { return "$outputDirectory/program.tr" }
 
+    @Internal
     OutputStream out
 
     void runExecutable() {
@@ -204,15 +238,20 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
      * 2. Build a final executable from this klibrary.
      */
     @Input
-    public def enableTwoStageCompilation = false
+    def enableTwoStageCompilation = false
 
     @Input
     def groupDirectory = "."
 
-    def ignoredTests = []
+    @Input
+    @Optional
+    List<String> ignoredTests = null
 
+    @Input
+    @Optional
     String filter = project.findProperty("filter")
 
+    @Internal
     def testGroupReporter = new KonanTestGroupReportEnvironment(project)
 
     void parseLanguageFlags(String src) {
