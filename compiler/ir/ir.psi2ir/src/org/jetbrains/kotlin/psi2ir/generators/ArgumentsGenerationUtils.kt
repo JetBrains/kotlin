@@ -43,12 +43,12 @@ import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
-import org.jetbrains.kotlin.resolve.calls.util.getSuperCallExpression
-import org.jetbrains.kotlin.resolve.calls.util.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.components.isArrayOrArrayLiteral
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
+import org.jetbrains.kotlin.resolve.calls.util.getSuperCallExpression
+import org.jetbrains.kotlin.resolve.calls.util.isSafeCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -552,7 +552,6 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
                 "$originalDescriptor has ${originalDescriptor.typeParameters}"
     }
 
-    val partialSamConversionIsSupported = context.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument)
     val resolvedCallArguments = resolvedCall.safeAs<NewResolvedCallImpl<*>>()?.argumentMappingByOriginal?.values
     assert(resolvedCallArguments == null || resolvedCallArguments.size == underlyingValueParameters.size) {
         "Mismatching resolved call arguments:\n" +
@@ -562,7 +561,6 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
             (underlyingValueParameters zip resolvedCallArguments).any { (param, arg) ->
                 param.isVararg && arg is ResolvedCallArgument.SimpleArgument && arg.callArgument.isArrayOrArrayLiteral()
             }
-    val expectSamConvertedArgumentToBeAvailableInResolvedCall = partialSamConversionIsSupported && !isArrayAssignedToVararg
 
     val substitutionContext = call.original.typeArguments.entries.associate { (typeParameterDescriptor, typeArgument) ->
         underlyingDescriptor.typeParameters[typeParameterDescriptor.index].typeConstructor to TypeProjectionImpl(typeArgument)
@@ -573,12 +571,12 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
         val underlyingValueParameter: ValueParameterDescriptor = underlyingValueParameters[i]
 
         val expectedSamConversionTypesForVararg =
-            if (expectSamConvertedArgumentToBeAvailableInResolvedCall && resolvedCall is NewResolvedCallImpl<*>) {
+            if (!isArrayAssignedToVararg && resolvedCall is NewResolvedCallImpl<*>) {
                 val arguments = resolvedCall.valueArguments[originalValueParameters[i]]?.arguments
                 arguments?.map { resolvedCall.getExpectedTypeForSamConvertedArgument(it) }
             } else null
 
-        if (expectedSamConversionTypesForVararg?.all { it == null } != false) {
+        if (expectedSamConversionTypesForVararg == null || expectedSamConversionTypesForVararg.all { it == null }) {
             // When the method is `f(T)` with `T` = a SAM type, the substituted type is a SAM while the original is not;
             // when the method is `f(X<T>)` with `T` = `out V` where `X` is a SAM type, the substituted type is `Nothing`
             // while the original is a SAM interface. Thus, if *either* of those is a SAM type then it's fine.
