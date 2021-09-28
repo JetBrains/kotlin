@@ -2,3 +2,5 @@ $TESTDATA_DIR$/classAndTraitClash.kt
 -d
 $TEMP_DIR$
 -Xuse-old-backend
+-language-version
+1.5

@@ -736,6 +736,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/nullabilityAnnotations.args");
         }
 
+        @TestMetadata("oldBackendLv16.args")
+        public void testOldBackendLv16() throws Exception {
+            runTest("compiler/testData/cli/jvm/oldBackendLv16.args");
+        }
+
         @TestMetadata("pluginSimple.args")
         public void testPluginSimple() throws Exception {
             runTest("compiler/testData/cli/jvm/pluginSimple.args");

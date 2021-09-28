@@ -534,4 +534,26 @@ default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise""
         }
         return result
     }
+
+    override fun defaultLanguageVersion(collector: MessageCollector): LanguageVersion =
+        if (useOldBackend) {
+            if (!suppressVersionWarnings) {
+                collector.report(
+                    CompilerMessageSeverity.STRONG_WARNING,
+                    "Language version is automatically inferred to ${LanguageVersion.KOTLIN_1_5.versionString} when using " +
+                            "the old JVM backend. Consider specifying -language-version explicitly, or remove -Xuse-old-backend"
+                )
+            }
+            LanguageVersion.KOTLIN_1_5
+        } else super.defaultLanguageVersion(collector)
+
+    override fun checkPlatformSpecificSettings(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
+        if (useOldBackend && languageVersionSettings.languageVersion >= LanguageVersion.KOTLIN_1_6) {
+            collector.report(
+                CompilerMessageSeverity.ERROR,
+                "Old JVM backend does not support language version 1.6 or above. " +
+                        "Please use language version 1.5 or below, or remove -Xuse-old-backend"
+            )
+        }
+    }
 }
