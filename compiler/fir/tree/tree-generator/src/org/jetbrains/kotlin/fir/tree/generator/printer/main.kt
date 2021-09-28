@@ -27,8 +27,10 @@ fun generateElements(builder: AbstractFirTreeBuilder, generationPath: File): Lis
     builder.elements.flatMap { it.allImplementations }.mapNotNull { it.builder }.mapTo(generatedFiles) { it.generateCode(generationPath) }
     builder.intermediateBuilders.mapTo(generatedFiles) { it.generateCode(generationPath) }
 
-    generatedFiles += printVisitor(builder.elements, generationPath)
+    generatedFiles += printVisitor(builder.elements, generationPath, false)
     generatedFiles += printVisitorVoid(builder.elements, generationPath)
+    generatedFiles += printVisitor(builder.elements, generationPath, true)
+    generatedFiles += printDefaultVisitorVoid(builder.elements, generationPath)
     generatedFiles += printTransformer(builder.elements, generationPath)
     return generatedFiles
 }

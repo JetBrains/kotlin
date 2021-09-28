@@ -11,9 +11,10 @@ import org.jetbrains.kotlin.util.SmartPrinter
 import org.jetbrains.kotlin.util.withIndent
 import java.io.File
 
-fun printVisitor(elements: List<Element>, generationPath: File): GeneratedFile {
+fun printVisitor(elements: List<Element>, generationPath: File, visitSuperTypeByDefault: Boolean): GeneratedFile {
+    val className = if (visitSuperTypeByDefault) "FirDefaultVisitor" else "FirVisitor"
     val dir = File(generationPath, VISITOR_PACKAGE.replace(".", "/"))
-    val file = File(dir, "FirVisitor.kt")
+    val file = File(dir, "$className.kt")
     val stringBuilder = StringBuilder()
     SmartPrinter(stringBuilder).apply {
         printCopyright()
@@ -23,15 +24,32 @@ fun printVisitor(elements: List<Element>, generationPath: File): GeneratedFile {
         println()
         printGeneratedMessage()
 
-        println("abstract class FirVisitor<out R, in D> {")
+        print("abstract class $className<out R, in D> ")
+        if (visitSuperTypeByDefault) {
+            print(": FirVisitor<R, D>() ")
+        }
+        println("{")
 
         pushIndent()
-        println("abstract fun visitElement(element: FirElement, data: D): R\n")
+        if (!visitSuperTypeByDefault) {
+            println("abstract fun visitElement(element: FirElement, data: D): R\n")
+        }
         for (element in elements) {
             if (element == AbstractFirTreeBuilder.baseFirElement) continue
             with(element) {
                 val varName = safeDecapitalizedName
-                println("open fun ${typeParameters}visit$name($varName: $typeWithArguments, data: D): R${multipleUpperBoundsList()} = visitElement($varName, data)")
+                if (visitSuperTypeByDefault) {
+                    print("override")
+                } else {
+                    print("open")
+                }
+                print(" fun ${typeParameters}visit$name($varName: $typeWithArguments, data: D): R${multipleUpperBoundsList()} = visit")
+                if (visitSuperTypeByDefault) {
+                    print(parents.first().name)
+                } else {
+                    print("Element")
+                }
+                println("($varName, data)")
                 println()
             }
         }
@@ -84,6 +102,36 @@ fun printVisitorVoid(elements: List<Element>, generationPath: File): GeneratedFi
                 }
             }
         }
+        println("}")
+    }
+    return GeneratedFile(file, stringBuilder.toString())
+}
+
+fun printDefaultVisitorVoid(elements: List<Element>, generationPath: File): GeneratedFile {
+    val className = "FirDefaultVisitorVoid"
+    val dir = File(generationPath, VISITOR_PACKAGE.replace(".", "/"))
+    val file = File(dir, "$className.kt")
+    val stringBuilder = StringBuilder()
+    SmartPrinter(stringBuilder).apply {
+        printCopyright()
+        println("package $VISITOR_PACKAGE")
+        println()
+        elements.forEach { println("import ${it.fullQualifiedName}") }
+        println()
+        printGeneratedMessage()
+
+        println("abstract class $className : FirVisitorVoid() {")
+
+        pushIndent()
+        for (element in elements) {
+            if (element == AbstractFirTreeBuilder.baseFirElement) continue
+            with(element) {
+                val varName = safeDecapitalizedName
+                println("override fun ${typeParameters}visit$name($varName: $typeWithArguments)${multipleUpperBoundsList()} = visit${parents.first().name}($varName)")
+                println()
+            }
+        }
+        popIndent()
         println("}")
     }
     return GeneratedFile(file, stringBuilder.toString())

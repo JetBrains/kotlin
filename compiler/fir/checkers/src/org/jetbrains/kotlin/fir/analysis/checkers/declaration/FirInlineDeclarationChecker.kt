@@ -112,9 +112,8 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             checkReceiversOfQualifiedAccessExpression(qualifiedAccessExpression, targetSymbol, data)
         }
 
-        override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: CheckerContext) {
-            visitQualifiedAccessExpression(propertyAccessExpression, data)
-        }
+        // prevent delegation to visitQualifiedAccessExpression, which causes redundant diagnostics
+        override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: CheckerContext) {}
 
         override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: CheckerContext) {
             val propertySymbol = variableAssignment.calleeReference.toResolvedCallableSymbol() as? FirPropertySymbol ?: return
