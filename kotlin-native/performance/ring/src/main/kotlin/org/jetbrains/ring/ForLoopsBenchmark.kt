@@ -20,6 +20,18 @@ class ForLoopsBenchmark {
         it.toFloat()
     }
 
+    private val uIntArray = UIntArray(BENCHMARK_SIZE) {
+        it.toUInt()
+    }
+
+    private val uShortArray = UShortArray(BENCHMARK_SIZE) {
+        it.toUShort()
+    }
+
+    private val uLongArray = ULongArray(BENCHMARK_SIZE) {
+        it.toULong()
+    }
+
     fun arrayLoop(): Long {
         var sum = 0L
         for (e in array) {
@@ -55,6 +67,30 @@ class ForLoopsBenchmark {
     fun floatArrayLoop(): Double {
         var sum = 0.0
         for (e in floatArray) {
+            sum += e
+        }
+        return sum
+    }
+
+    fun uIntArrayLoop(): ULong {
+        var sum: ULong = 0u
+        for (e in uIntArray) {
+            sum += e
+        }
+        return sum
+    }
+
+    fun uShortArrayLoop(): ULong {
+        var sum: ULong = 0u
+        for (e in uShortArray) {
+            sum += e
+        }
+        return sum
+    }
+
+    fun uLongArrayLoop(): ULong {
+        var sum: ULong = 0u
+        for (e in uLongArray) {
             sum += e
         }
         return sum
@@ -98,6 +134,30 @@ class ForLoopsBenchmark {
         var sum = 0.0
         for (i in floatArray.indices) {
             sum += floatArray[i]
+        }
+        return sum
+    }
+
+    fun uIntArrayIndicesLoop(): ULong {
+        var sum: ULong = 0u
+        for (i in uIntArray.indices) {
+            sum += uIntArray[i]
+        }
+        return sum
+    }
+
+    fun uShortArrayIndicesLoop(): ULong {
+        var sum: ULong = 0u
+        for (i in uShortArray.indices) {
+            sum += uShortArray[i]
+        }
+        return sum
+    }
+
+    fun uLongArrayIndicesLoop(): ULong {
+        var sum: ULong = 0u
+        for (i in uLongArray.indices) {
+            sum += uLongArray[i]
         }
         return sum
     }
