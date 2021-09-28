@@ -227,14 +227,14 @@ class CycleDetector : private kotlin::Pinned, public KonanAllocatorAware {
   }
 
   void insertCandidate(KRef candidate) {
-    std::lock_guard<kotlin::SpinLock> guard(lock_);
+    std::lock_guard guard(lock_);
 
     auto it = candidateList_.insert(candidateList_.begin(), candidate);
     candidateInList_.emplace(candidate, it);
   }
 
   void removeCandidate(KRef candidate) {
-    std::lock_guard<kotlin::SpinLock> guard(lock_);
+    std::lock_guard guard(lock_);
 
     auto it = candidateInList_.find(candidate);
     if (it == candidateInList_.end())
@@ -243,7 +243,7 @@ class CycleDetector : private kotlin::Pinned, public KonanAllocatorAware {
     candidateInList_.erase(it);
   }
 
-  kotlin::SpinLock lock_;
+  kotlin::SpinLock<kotlin::MutexThreadStateHandling::kIgnore> lock_;
   using CandidateList = KStdList<KRef>;
   CandidateList candidateList_;
   KStdUnorderedMap<KRef, CandidateList::iterator> candidateInList_;
@@ -2994,7 +2994,7 @@ ScopedRefHolder::~ScopedRefHolder() {
 CycleDetectorRootset CycleDetector::collectRootset() {
   auto& detector = instance();
   CycleDetectorRootset rootset;
-  std::lock_guard<kotlin::SpinLock> guard(detector.lock_);
+  std::lock_guard guard(detector.lock_);
   for (auto* candidate: detector.candidateList_) {
     // Only frozen candidates are to be analyzed.
     if (!isPermanentOrFrozen(candidate))

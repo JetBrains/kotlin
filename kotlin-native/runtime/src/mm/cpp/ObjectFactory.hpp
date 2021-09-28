@@ -163,7 +163,7 @@ public:
                 return;
             }
 
-            std::lock_guard<SpinLock> guard(owner_.mutex_);
+            std::lock_guard guard(owner_.mutex_);
 
             owner_.AssertCorrectUnsafe();
 
@@ -328,7 +328,7 @@ public:
 
     private:
         ObjectFactoryStorage& owner_; // weak
-        std::unique_lock<SpinLock> guard_;
+        std::unique_lock<SpinLock<MutexThreadStateHandling::kIgnore>> guard_;
     };
 
     ~ObjectFactoryStorage() {
@@ -389,7 +389,7 @@ private:
     unique_ptr<Node> root_;
     Node* last_ = nullptr;
     size_t size_ = 0;
-    SpinLock mutex_;
+    SpinLock<MutexThreadStateHandling::kIgnore> mutex_;
 };
 
 class SimpleAllocator {

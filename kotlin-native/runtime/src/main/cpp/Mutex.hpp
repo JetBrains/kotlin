@@ -20,13 +20,48 @@
 #include <cstdint>
 
 #include "KAssert.h"
+#include "Memory.h"
 #include "Utils.hpp"
 
 namespace kotlin {
 
-class SpinLock : private Pinned {
+enum class MutexThreadStateHandling {
+    kIgnore, kSwitchIfRegistered
+};
+
+template <MutexThreadStateHandling threadStateHandling>
+class SpinLock;
+
+template <>
+class SpinLock<MutexThreadStateHandling::kIgnore> : private Pinned {
 public:
     void lock() noexcept {
+        while (!__sync_bool_compare_and_swap(&atomicInt, 0, 1)) {
+            // TODO: yield.
+        }
+    }
+
+    void unlock() noexcept {
+        if (!__sync_bool_compare_and_swap(&atomicInt, 1, 0)) {
+            RuntimeAssert(false, "Unable to unlock");
+        }
+    }
+
+private:
+    // TODO: Consider using `std::atomic_flag`.
+    int32_t atomicInt = 0;
+};
+
+template <>
+class SpinLock<MutexThreadStateHandling::kSwitchIfRegistered> : private Pinned {
+public:
+    void lock() noexcept {
+        // Fast path without thread state switching.
+        if (__sync_bool_compare_and_swap(&atomicInt, 0, 1)) {
+            return;
+        }
+
+        kotlin::NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
         while (!__sync_bool_compare_and_swap(&atomicInt, 0, 1)) {
             // TODO: yield.
         }

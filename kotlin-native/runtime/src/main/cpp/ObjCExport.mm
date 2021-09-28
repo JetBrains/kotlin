@@ -982,7 +982,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
   return result;
 }
 
-static kotlin::SpinLock typeInfoCreationMutex;
+static kotlin::SpinLock<kotlin::MutexThreadStateHandling::kSwitchIfRegistered> typeInfoCreationMutex;
 
 static const TypeInfo* getOrCreateTypeInfo(Class clazz) {
   const TypeInfo* result = Kotlin_ObjCExport_getAssociatedTypeInfo(clazz);
@@ -996,7 +996,7 @@ static const TypeInfo* getOrCreateTypeInfo(Class clazz) {
     theForeignObjCObjectTypeInfo :
     getOrCreateTypeInfo(superClass);
 
-  std::lock_guard<kotlin::SpinLock> lockGuard(typeInfoCreationMutex);
+  std::lock_guard lockGuard(typeInfoCreationMutex);
 
   result = Kotlin_ObjCExport_getAssociatedTypeInfo(clazz); // double-checking.
   if (result == nullptr) {
@@ -1016,7 +1016,7 @@ const TypeInfo* Kotlin_ObjCExport_createTypeInfoWithKotlinFieldsFrom(Class clazz
   return createTypeInfo(clazz, superType, fieldsInfo);
 }
 
-static kotlin::SpinLock classCreationMutex;
+static kotlin::SpinLock<kotlin::MutexThreadStateHandling::kSwitchIfRegistered> classCreationMutex;
 static int anonymousClassNextId = 0;
 
 static void addVirtualAdapters(Class clazz, const ObjCTypeAdapter* typeAdapter) {
@@ -1092,7 +1092,7 @@ static Class getOrCreateClass(const TypeInfo* typeInfo) {
   } else {
     Class superClass = getOrCreateClass(typeInfo->superType_);
 
-    std::lock_guard<kotlin::SpinLock> lockGuard(classCreationMutex); // Note: non-recursive
+    std::lock_guard lockGuard(classCreationMutex); // Note: non-recursive
 
     result = typeInfo->writableInfo_->objCExport.objCClass; // double-checking.
     if (result == nullptr) {

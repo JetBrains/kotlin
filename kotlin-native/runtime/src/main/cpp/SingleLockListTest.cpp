@@ -19,7 +19,7 @@ using namespace kotlin;
 
 namespace {
 
-using IntList = SingleLockList<int>;
+using IntList = SingleLockList<int, SpinLock<MutexThreadStateHandling::kIgnore>>;
 
 } // namespace
 
@@ -376,7 +376,7 @@ private:
 } // namespace
 
 TEST(SingleLockListTest, PinnedType) {
-    SingleLockList<PinnedType> list;
+    SingleLockList<PinnedType, SpinLock<MutexThreadStateHandling::kIgnore>> list;
     constexpr int kFirst = 1;
 
     auto* itemNode = list.Emplace(kFirst);
@@ -414,7 +414,7 @@ private:
 TEST(SingleLockListTest, Destructor) {
     testing::StrictMock<testing::MockFunction<DestructorHook>> hook;
     {
-        SingleLockList<WithDestructorHook> list;
+        SingleLockList<WithDestructorHook, SpinLock<MutexThreadStateHandling::kIgnore>> list;
         auto* first = list.Emplace(hook.AsStdFunction())->Get();
         auto* second = list.Emplace(hook.AsStdFunction())->Get();
         auto* third = list.Emplace(hook.AsStdFunction())->Get();
