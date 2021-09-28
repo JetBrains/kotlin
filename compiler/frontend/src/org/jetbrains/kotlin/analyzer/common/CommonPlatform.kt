@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.storage.StorageManager
 
 private object CommonPlatformConfigurator : PlatformConfiguratorBase() {
-    override fun configureModuleComponents(container: StorageComponentContainer, languageVersionSettings: LanguageVersionSettings) {}
+    override fun configureModuleComponents(container: StorageComponentContainer) {}
 }
 
 object CommonPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
