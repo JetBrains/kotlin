@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilt
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.createResolveStateForNoCaching
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.FirLazyTransformerForIDE
-import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TestConfiguration
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -54,6 +54,10 @@ abstract class AbstractCompilerBasedTest : AbstractKotlinCompilerTest() {
 
         useAdditionalService(::TestKtModuleProvider)
         usePreAnalysisHandlers(::ModuleRegistrarPreAnalysisHandler.bind(disposable))
+
+        firHandlersStep {
+            useHandlers(::LLDiagnosticParameterChecker)
+        }
     }
 
     open fun TestConfigurationBuilder.configureTest() {}
