@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.FragmentConsistencyChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.FragmentConsistencyChecks
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.runPostEvaluationProjectConfigurationHealthCheck
+import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenEvaluated
 import org.jetbrains.kotlin.project.model.KotlinModuleDependency
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 import org.jetbrains.kotlin.project.model.refinesClosure
@@ -56,7 +56,7 @@ open class KotlinGradleFragmentInternal @Inject constructor(
             project.addExtendsFromRelation(getConfiguration(this), getConfiguration(other.get())) // todo eager instantiation; fix?
         }
 
-        project.runPostEvaluationProjectConfigurationHealthCheck {
+        project.runProjectConfigurationHealthCheckWhenEvaluated {
             kotlinGradleFragmentConsistencyChecker.runAllChecks(this@KotlinGradleFragmentInternal, other.get())
         }
     }

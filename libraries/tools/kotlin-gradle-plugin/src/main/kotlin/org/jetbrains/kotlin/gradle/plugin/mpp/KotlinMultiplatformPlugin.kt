@@ -227,7 +227,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         UnusedSourceSetsChecker.checkSourceSets(project)
 
-        project.runPostEvaluationProjectConfigurationHealthCheck {
+        project.runProjectConfigurationHealthCheckWhenEvaluated {
             checkSourceSetVisibilityRequirements(project)
         }
     }

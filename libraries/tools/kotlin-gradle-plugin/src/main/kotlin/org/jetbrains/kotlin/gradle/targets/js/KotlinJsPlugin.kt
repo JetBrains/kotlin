@@ -46,7 +46,7 @@ open class KotlinJsPlugin(
             defaultJsCompilerType = PropertiesProvider(project).jsCompiler
         }
 
-        project.runPostEvaluationProjectConfigurationHealthCheck {
+        project.runProjectConfigurationHealthCheckWhenEvaluated {
             if (kotlinExtension._target == null) {
                 project.logger.warn(
                     """
