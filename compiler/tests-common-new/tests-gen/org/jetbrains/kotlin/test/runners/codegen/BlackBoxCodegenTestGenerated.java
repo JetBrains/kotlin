@@ -27431,6 +27431,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("initializationOrderConsts.kt")
+        public void testInitializationOrderConsts() throws Exception {
+            runTest("compiler/testData/codegen/box/objects/initializationOrderConsts.kt");
+        }
+
+        @Test
         @TestMetadata("initializerBlockResetToDefault.kt")
         public void testInitializerBlockResetToDefault() throws Exception {
             runTest("compiler/testData/codegen/box/objects/initializerBlockResetToDefault.kt");

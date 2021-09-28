@@ -14401,6 +14401,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/objects/initializationOrder.kt");
         }
 
+        @TestMetadata("initializationOrderConsts.kt")
+        public void testInitializationOrderConsts() throws Exception {
+            runTest("compiler/testData/codegen/box/objects/initializationOrderConsts.kt");
+        }
+
         @TestMetadata("initializerBlockResetToDefault.kt")
         public void testInitializerBlockResetToDefault() throws Exception {
             runTest("compiler/testData/codegen/box/objects/initializerBlockResetToDefault.kt");
