@@ -216,6 +216,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     override val internalPackageFqn: FqName = RuntimeNames.kotlinNativeInternalPackageName
 
+    override val optimizeLoopsOverUnsignedArrays = true
+
     val phaseConfig = config.phaseConfig
 
     private val packageScope by lazy { builtIns.builtInsModule.getPackage(KonanFqNames.internalPackageName).memberScope }

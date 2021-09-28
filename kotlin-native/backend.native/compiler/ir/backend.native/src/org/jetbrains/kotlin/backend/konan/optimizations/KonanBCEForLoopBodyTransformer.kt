@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isArray
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.getPropertyGetter
-import org.jetbrains.kotlin.ir.util.isPrimitiveArray
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -73,7 +70,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
         }
     }
 
-    private fun IrType.isBasicArray() = isPrimitiveArray() || isArray()
+    private fun IrType.isBasicArray() = isPrimitiveArray() || isArray() || isUnsignedArray()
 
     private fun IrCall.isGetSizeCall() = dispatchReceiver?.type?.isBasicArray() == true &&
             symbol.owner == dispatchReceiver!!.type.getClass()!!.getPropertyGetter("size")!!.owner

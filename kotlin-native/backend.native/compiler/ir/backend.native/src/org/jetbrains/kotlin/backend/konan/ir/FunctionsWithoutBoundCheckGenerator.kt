@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
-import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -18,9 +18,8 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.addMember
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isAnnotationWithEqualFqName
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -28,7 +27,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendContext) {
     private val symbols = context.ir.symbols
 
-    private fun generateFunction(baseFunction: IrSimpleFunction, functionName: Name) =
+    private fun generateFunction(baseFunction: IrSimpleFunction, delegatingToFunction: IrSimpleFunction?, functionName: Name) =
             context.irFactory.createFunction(
                     baseFunction.startOffset, baseFunction.endOffset,
                     IrDeclarationOrigin.GENERATED_SETTER_GETTER,
@@ -37,20 +36,20 @@ internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendCont
                     DescriptorVisibilities.PUBLIC,
                     Modality.FINAL,
                     baseFunction.returnType,
-                    isInline = baseFunction.isInline,
-                    isExternal = baseFunction.isExternal,
-                    isTailrec = baseFunction.isTailrec,
-                    isSuspend = baseFunction.isSuspend,
-                    isExpect = baseFunction.isExpect,
-                    isFakeOverride = baseFunction.isFakeOverride,
-                    isOperator = baseFunction.isOperator,
-                    isInfix = baseFunction.isInfix
+                    isInline = false,
+                    isExternal = true,
+                    isTailrec = false,
+                    isSuspend = false,
+                    isExpect = false,
+                    isFakeOverride = false,
+                    isOperator = false,
+                    isInfix = false
             ).also { function ->
                 function.parent = baseFunction.parent
                 function.createDispatchReceiverParameter()
                 function.valueParameters = baseFunction.valueParameters.map { it.copyTo(function) }
                 // Copy annotations.
-                val setWithoutBEAnnotations = baseFunction.annotations.map { annotation ->
+                val setWithoutBEAnnotations = (delegatingToFunction ?: baseFunction).annotations.map { annotation ->
                     annotation.deepCopyWithSymbols().also { copy ->
                         if (copy.isAnnotationWithEqualFqName(KonanFqNames.gcUnsafeCall)) {
                             val value = "${annotation.getAnnotationStringValue("callee")}_without_BoundCheck"
@@ -62,15 +61,17 @@ internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendCont
                 function.annotations = setWithoutBEAnnotations
             }
 
-
     fun generate() {
-        val arraysClasses = symbols.primitiveTypesToPrimitiveArrays.values + symbols.array
-        arraysClasses.forEach { classSymbol ->
+        symbols.arrays.forEach { classSymbol ->
+            val underlyingClass = (classSymbol.defaultType.computeBinaryType() as BinaryType.Reference)
+                    .types.single().takeIf { classSymbol.owner.isInline }
             val setFunction = classSymbol.owner.functions.single { it.name == OperatorNameConventions.SET }
-            classSymbol.owner.addMember(generateFunction(setFunction, KonanNameConventions.setWithoutBoundCheck))
+            val setDelegatingToFunction = underlyingClass?.functions?.single { it.name == OperatorNameConventions.SET }
+            classSymbol.owner.addMember(generateFunction(setFunction, setDelegatingToFunction, KonanNameConventions.setWithoutBoundCheck))
 
-            val getFunction = classSymbol.owner.functions.single { it.descriptor.name == OperatorNameConventions.GET }
-            classSymbol.owner.addMember(generateFunction(getFunction, KonanNameConventions.getWithoutBoundCheck))
+            val getFunction = classSymbol.owner.functions.single { it.name == OperatorNameConventions.GET }
+            val getDelegatingToFunction = underlyingClass?.functions?.single { it.name == OperatorNameConventions.GET }
+            classSymbol.owner.addMember(generateFunction(getFunction, getDelegatingToFunction, KonanNameConventions.getWithoutBoundCheck))
         }
     }
 }
