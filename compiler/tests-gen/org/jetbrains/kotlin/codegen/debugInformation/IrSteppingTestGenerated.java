@@ -291,6 +291,12 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("linenumberForOneParametersArgumentCall.kt")
+    public void testLinenumberForOneParametersArgumentCall() throws Exception {
+        runTest("compiler/testData/debug/stepping/linenumberForOneParametersArgumentCall.kt");
+    }
+
+    @Test
     @TestMetadata("localFunction.kt")
     public void testLocalFunction() throws Exception {
         runTest("compiler/testData/debug/stepping/localFunction.kt");

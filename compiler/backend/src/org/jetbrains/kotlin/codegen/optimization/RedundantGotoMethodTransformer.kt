@@ -19,11 +19,7 @@ package org.jetbrains.kotlin.codegen.optimization
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
-import org.jetbrains.org.objectweb.asm.tree.LabelNode
-import org.jetbrains.org.objectweb.asm.tree.LineNumberNode
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.tree.*
 
 class RedundantGotoMethodTransformer : MethodTransformer() {
     /**
@@ -80,6 +76,7 @@ class RedundantGotoMethodTransformer : MethodTransformer() {
         }
 
         for (insnToRemove in insnsToRemove) {
+            methodNode.instructions.insertBefore(insnToRemove, InsnNode(Opcodes.NOP))
             methodNode.instructions.remove(insnToRemove)
         }
     }
