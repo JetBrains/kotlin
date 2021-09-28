@@ -349,7 +349,7 @@ public class ValueArgumentsToParametersMapper {
             else {
                 LeafPsiElement spread = valueArgument.getSpreadElement();
                 if (spread != null) {
-                    candidateCall.getTrace().report(NON_VARARG_SPREAD.on(spread));
+                    candidateCall.getTrace().report(NON_VARARG_SPREAD.onError(spread));
                     setStatus(WEAK_ERROR);
                 }
                 ResolvedValueArgument argument = new ExpressionValueArgument(valueArgument);
