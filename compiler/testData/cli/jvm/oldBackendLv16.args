@@ -1,7 +1,6 @@
 $TESTDATA_DIR$/simple.kt
 -d
 $TEMP_DIR$
--Xuse-ir
 -Xuse-old-backend
 -language-version
-1.5
+1.6
