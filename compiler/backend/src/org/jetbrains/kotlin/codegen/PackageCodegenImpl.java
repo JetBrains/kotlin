@@ -174,7 +174,7 @@ public class PackageCodegenImpl implements PackageCodegen {
             if (fragment == null) {
                 LOG.error(new KotlinExceptionWithAttachments(
                         "package fragment is not found for module:" + state.getModule() + " file:" + file)
-                        .withAttachment("file.kt", file.getText()));
+                        .withPsiAttachment("file.kt", file));
             } else if (!expectedPackageFqName.equals(fragment.getFqName())) {
                 LOG.error("expected package fq name: " + expectedPackageFqName + ", actual: " + fragment.getFqName());
             }

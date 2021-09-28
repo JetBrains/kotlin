@@ -42,7 +42,7 @@ class MainFunctionDetector {
         this.getFunctionDescriptor = { function ->
             bindingContext.get(BindingContext.FUNCTION, function)
                 ?: throw throw KotlinExceptionWithAttachments("No descriptor resolved for $function")
-                    .withAttachment("function.text", function.text)
+                    .withPsiAttachment("function.text", function)
         }
         this.languageVersionSettings = languageVersionSettings
     }
