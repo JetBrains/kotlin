@@ -838,6 +838,18 @@ public class FirOldFrontendForeignAnnotationsSourceJavaTestGenerated extends Abs
             }
 
             @Test
+            @TestMetadata("overrideWithTypeUseInClasspath.kt")
+            public void testOverrideWithTypeUseInClasspath() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/overrideWithTypeUseInClasspath.kt");
+            }
+
+            @Test
+            @TestMetadata("overrideWithTypeUseInClasspathWithArray.kt")
+            public void testOverrideWithTypeUseInClasspathWithArray() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/overrideWithTypeUseInClasspathWithArray.kt");
+            }
+
+            @Test
             @TestMetadata("springNullableWithTypeUse.kt")
             public void testSpringNullableWithTypeUse() throws Exception {
                 runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/springNullableWithTypeUse.kt");

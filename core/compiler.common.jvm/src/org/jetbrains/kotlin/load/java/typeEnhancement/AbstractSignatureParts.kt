@@ -36,6 +36,7 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
     abstract val KotlinTypeMarker.enhancedForWarnings: KotlinTypeMarker?
     abstract val KotlinTypeMarker.fqNameUnsafe: FqNameUnsafe?
     abstract fun KotlinTypeMarker.isEqual(other: KotlinTypeMarker): Boolean
+    abstract fun KotlinTypeMarker.isArrayOrPrimitiveArray(): Boolean
 
     abstract val TypeParameterMarker.isFromJava: Boolean
 
@@ -78,7 +79,7 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         val typeParameterBounds = containerApplicabilityType == AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS
         val composedAnnotation = when {
             !isHeadTypeConstructor -> typeAnnotations
-            !typeParameterBounds && enableImprovementsInStrictMode ->
+            !typeParameterBounds && enableImprovementsInStrictMode && type?.isArrayOrPrimitiveArray() == true ->
                 // We don't apply container type use annotations to avoid double applying them like with arrays:
                 //      @NotNull Integer [] f15();
                 // Otherwise, in the example above we would apply `@NotNull` to `Integer` (i.e. array element; as TYPE_USE annotation)
