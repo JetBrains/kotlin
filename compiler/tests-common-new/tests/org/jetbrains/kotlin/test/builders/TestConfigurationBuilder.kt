@@ -115,12 +115,15 @@ class TestConfigurationBuilder {
         artifactKind: TestArtifactKind<I>,
         init: HandlersStepBuilder<I>.() -> Unit
     ): HandlersStepBuilder<I> {
-        val step = handlersStep(artifactKind, init)
-        val previouslyContainedStep = namedSteps.put(name, step)
-        if (previouslyContainedStep != null) {
-            error { "Step with name \"$name\" already registered" }
+        val previouslyContainedStep = namedStepOfType<I>(name)
+        if (previouslyContainedStep == null) {
+            val step = handlersStep(artifactKind, init)
+            namedSteps[name] = step
+            return step
+        } else {
+            configureNamedHandlersStep(name, artifactKind, init)
+            return previouslyContainedStep
         }
-        return step
     }
 
     inline fun <I : ResultingArtifact<I>> configureNamedHandlersStep(
@@ -128,11 +131,14 @@ class TestConfigurationBuilder {
         artifactKind: TestArtifactKind<I>,
         init: HandlersStepBuilder<I>.() -> Unit
     ) {
-        val step = namedSteps[name] ?: error { "Step \"$name\" not found" }
-        require(step is HandlersStepBuilder<*>) { "Step '$name' is not a handlers step" }
+        val step = namedStepOfType<I>(name) ?: error { "Step \"$name\" not found" }
         require(step.artifactKind == artifactKind) { "Step kind: ${step.artifactKind}, passed kind is $artifactKind" }
+        step.apply(init)
+    }
+
+    fun <I : ResultingArtifact<I>> namedStepOfType(name: String):  HandlersStepBuilder<I>?  {
         @Suppress("UNCHECKED_CAST")
-        (step as HandlersStepBuilder<I>).apply(init)
+        return namedSteps[name] as HandlersStepBuilder<I>?
     }
 
     fun useSourcePreprocessor(vararg preprocessors: Constructor<SourceFilePreprocessor>, needToPrepend: Boolean = false) {
