@@ -41,14 +41,13 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
      *
      * Otherwise, it may lead to inconsistent resolve state and failed assertions
      */
-    fun checkContractAndRecordIfPresent(expression: KtExpression, trace: BindingTrace, scope: LexicalScope) {
+    fun checkContractAndRecordIfPresent(expression: KtExpression, trace: BindingTrace, ownerDescriptor: FunctionDescriptor) {
         // Fastpath. Note that it doesn't violates invariant described in KDoc, because 'isContractDescriptionCallPsiCheck'
         // is a *necessary* (but not sufficient, actually) condition for presence of 'LazyContractProvider'
         if (!expression.isContractDescriptionCallPsiCheck()) return
 
-        val callContext = ContractCallContext(expression, scope, trace, languageVersionSettings)
-        val contractProviderIfAny =
-            (scope.ownerDescriptor as? FunctionDescriptor)?.getUserData(ContractProviderKey) as? LazyContractProvider?
+        val callContext = ContractCallContext(expression, ownerDescriptor, trace, languageVersionSettings)
+        val contractProviderIfAny = ownerDescriptor.getUserData(ContractProviderKey) as? LazyContractProvider?
         var resultingContractDescription: ContractDescription? = null
 
         try {
@@ -103,11 +102,9 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
 
 class ContractCallContext(
     val contractCallExpression: KtExpression,
-    val scope: LexicalScope,
+    val functionDescriptor: FunctionDescriptor,
     val trace: BindingTrace,
     val languageVersionSettings: LanguageVersionSettings
 ) {
-    val ownerDescriptor: DeclarationDescriptor = scope.ownerDescriptor
-    val functionDescriptor: FunctionDescriptor = ownerDescriptor as FunctionDescriptor
     val bindingContext: BindingContext = trace.bindingContext
 }

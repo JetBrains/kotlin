@@ -12373,6 +12373,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inference/kt42130.kt");
         }
 
+        @TestMetadata("kt45118.kt")
+        public void testKt45118() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/kt45118.kt");
+        }
+
         @TestMetadata("lambdaWithStarReturn.kt")
         public void testLambdaWithStarReturn() throws Exception {
             runTest("compiler/testData/codegen/box/inference/lambdaWithStarReturn.kt");
