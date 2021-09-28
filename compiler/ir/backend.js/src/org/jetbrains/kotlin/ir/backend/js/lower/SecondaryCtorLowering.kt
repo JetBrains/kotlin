@@ -124,14 +124,26 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : Declaratio
     private fun generateInitBody(constructor: IrConstructor, irClass: IrClass, delegate: IrSimpleFunction) {
         val thisParam = delegate.valueParameters.last()
         val oldThisReceiver = irClass.thisReceiver!!
-        val constructorBody = constructor.body!!
+        val constructorBody = constructor.body
         val oldValueParameters = constructor.valueParameters + oldThisReceiver
 
         // TODO: replace parameters as well
-        delegate.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-            statements += (constructorBody.deepCopyWithSymbols(delegate) as IrStatementContainer).statements
-            statements += JsIrBuilder.buildReturn(delegate.symbol, JsIrBuilder.buildGetValue(thisParam.symbol), context.irBuiltIns.nothingType)
-            transformChildrenVoid(ThisUsageReplaceTransformer(constructor.symbol, delegate.symbol, oldValueParameters.zip(delegate.valueParameters).toMap()))
+        if (constructorBody != null) {
+            delegate.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+                statements += (constructorBody.deepCopyWithSymbols(delegate) as IrStatementContainer).statements
+                statements += JsIrBuilder.buildReturn(
+                    delegate.symbol,
+                    JsIrBuilder.buildGetValue(thisParam.symbol),
+                    context.irBuiltIns.nothingType
+                )
+                transformChildrenVoid(
+                    ThisUsageReplaceTransformer(
+                        constructor.symbol,
+                        delegate.symbol,
+                        oldValueParameters.zip(delegate.valueParameters).toMap()
+                    )
+                )
+            }
         }
     }
 

@@ -394,7 +394,9 @@ class EnumClassCreateInitializerLowering(val context: JsCommonBackendContext) : 
 
                     irClass.enumEntries.forEach { entry ->
                         entry.correspondingField?.let { instanceField ->
-                            +irSetField(null, instanceField, entry.initializerExpression!!.expression.deepCopyWithSymbols(it))
+                            entry.initializerExpression?.let { initializer ->
+                                +irSetField(null, instanceField, initializer.expression.deepCopyWithSymbols(it))
+                            }
                         }
                     }
 
