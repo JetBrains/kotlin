@@ -39,6 +39,7 @@ class FirFileBuilder : FirAnnotationContainerBuilder {
     val imports: MutableList<FirImport> = mutableListOf()
     val declarations: MutableList<FirDeclaration> = mutableListOf()
     lateinit var name: String
+    var path: String? = null
 
     override fun build(): FirFile {
         return FirFileImpl(
@@ -52,6 +53,7 @@ class FirFileBuilder : FirAnnotationContainerBuilder {
             imports,
             declarations,
             name,
+            path,
         )
     }
 

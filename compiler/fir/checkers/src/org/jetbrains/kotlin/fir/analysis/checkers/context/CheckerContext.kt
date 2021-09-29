@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -84,6 +85,9 @@ abstract class CheckerContext : MutableDiagnosticContext() {
 
     override val languageVersionSettings: LanguageVersionSettings
         get() = session.languageVersionSettings
+
+    override val containingFilePath: String?
+        get() = containingDeclarations.firstOrNull()?.let { (it as? FirFile)?.path }
 }
 
 /**

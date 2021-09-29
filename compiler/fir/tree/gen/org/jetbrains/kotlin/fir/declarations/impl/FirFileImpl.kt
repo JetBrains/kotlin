@@ -35,6 +35,7 @@ internal class FirFileImpl(
     override val imports: MutableList<FirImport>,
     override val declarations: MutableList<FirDeclaration>,
     override val name: String,
+    override val path: String?,
 ) : FirFile() {
     override val symbol: FirFileSymbol = FirFileSymbol()
 

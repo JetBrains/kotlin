@@ -68,7 +68,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             val treeFromPsi = StringBuilder().also { FirRenderer(it).visitFile(firFileFromPsi) }.toString()
 
             //light tree
-            val firFileFromLightTree = lightTreeConverter.buildFirFile(text, file.name)
+            val firFileFromLightTree = lightTreeConverter.buildFirFile(text, file.name, file.path)
             val treeFromLightTree = StringBuilder().also { FirRenderer(it).visitFile(firFileFromLightTree) }.toString()
 
             return@compareBase treeFromLightTree == treeFromPsi
@@ -98,7 +98,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
                 .replace("<Unsupported LValue.*?>".toRegex(), "<Unsupported LValue>")
 
             //light tree
-            val firFileFromLightTree = lightTreeConverter.buildFirFile(text, file.name)
+            val firFileFromLightTree = lightTreeConverter.buildFirFile(text, file.name, file.path)
             val treeFromLightTree = StringBuilder().also { FirRenderer(it).visitFile(firFileFromLightTree) }.toString()
                 .replace("<Unsupported LValue.*?>".toRegex(), "<Unsupported LValue>")
 

@@ -84,7 +84,7 @@ class DeclarationsConverter(
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parsePreamble]
      */
-    fun convertFile(file: LighterASTNode, fileName: String = ""): FirFile {
+    fun convertFile(file: LighterASTNode, fileName: String = "", filePath: String?): FirFile {
         if (file.tokenType != KT_FILE) {
             //TODO throw error
             throw Exception()
@@ -118,6 +118,7 @@ class DeclarationsConverter(
             origin = FirDeclarationOrigin.Source
             moduleData = baseModuleData
             name = fileName
+            path = filePath
             this.packageDirective = packageDirective ?: buildPackageDirective { packageFqName = context.packageFqName }
             annotations += fileAnnotationList
             imports += importList

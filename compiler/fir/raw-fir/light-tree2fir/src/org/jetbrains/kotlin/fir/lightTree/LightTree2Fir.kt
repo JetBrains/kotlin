@@ -47,7 +47,7 @@ class LightTree2Fir(
 
     fun buildFirFile(file: File): FirFile {
         val code = FileUtil.loadFile(file, CharsetToolkit.UTF8, true)
-        return buildFirFile(code, file.name)
+        return buildFirFile(code, file.name, file.path)
     }
 
     fun buildLightTree(code: String): FlyweightCapableTreeStructure<LighterASTNode> {
@@ -56,10 +56,10 @@ class LightTree2Fir(
         return builder.lightTree
     }
 
-    fun buildFirFile(code: String, fileName: String): FirFile {
+    fun buildFirFile(code: String, fileName: String, path: String?): FirFile {
         val lightTree = buildLightTree(code)
 
         return DeclarationsConverter(session, scopeProvider, lightTree)
-            .convertFile(lightTree.root, fileName)
+            .convertFile(lightTree.root, fileName, path)
     }
 }

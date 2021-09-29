@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.diagnostics
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 
 interface DiagnosticContext {
+    val containingFilePath: String?
+
     fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean
 
     val languageVersionSettings: LanguageVersionSettings

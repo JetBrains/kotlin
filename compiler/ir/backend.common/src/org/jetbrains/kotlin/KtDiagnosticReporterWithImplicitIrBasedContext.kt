@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.name
+import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.file
 
 class KtDiagnosticReporterWithImplicitIrBasedContext(
@@ -36,11 +38,14 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
         val sourceElement = irElement.sourceElement()
 
         override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean {
-            TODO("Not yet implemented")
+            return false
+//            TODO("Not yet implemented")
         }
 
         override val languageVersionSettings: LanguageVersionSettings
             get() = this@KtDiagnosticReporterWithImplicitIrBasedContext.languageVersionSettings
+
+        override val containingFilePath: String = containingIrFile.path
 
         @OptIn(InternalDiagnosticFactoryMethod::class)
         fun report(

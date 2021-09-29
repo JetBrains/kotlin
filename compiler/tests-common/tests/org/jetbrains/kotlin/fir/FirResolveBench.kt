@@ -142,7 +142,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
             val code: String
             val time = measureNanoTime {
                 code = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
-                firFile = builder.buildFirFile(code, file.name)
+                firFile = builder.buildFirFile(code, file.name, file.path)
                 (builder.session.firProvider as FirProviderImpl).recordFile(firFile)
             }
             val after = vmStateSnapshot()

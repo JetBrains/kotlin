@@ -29,6 +29,7 @@ abstract class FirFile : FirAnnotatedDeclaration() {
     abstract val imports: List<FirImport>
     abstract val declarations: List<FirDeclaration>
     abstract val name: String
+    abstract val path: String?
     abstract override val symbol: FirFileSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFile(this, data)

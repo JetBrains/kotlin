@@ -31,7 +31,7 @@ open class LightTree2FirGenerator : TreeGenerator, AbstractRawFirBuilderTestCase
             session = FirSessionFactory.createEmptySession(),
             scopeProvider = StubFirScopeProvider
         )
-        val firFile = lightTreeConverter.buildFirFile(text, file.name)
+        val firFile = lightTreeConverter.buildFirFile(text, file.name, file.path)
         StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()
     }
 
