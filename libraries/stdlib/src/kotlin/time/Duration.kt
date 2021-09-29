@@ -57,6 +57,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         internal val NEG_INFINITE: Duration = durationOfMillis(-MAX_MILLIS)
 
         /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
+        @ExperimentalTime
         public fun convert(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double =
             convertDurationUnit(value, sourceUnit, targetUnit)
 
