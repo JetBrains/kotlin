@@ -294,7 +294,12 @@ open class KtLightNullabilityAnnotation<D : KtLightElement<*, PsiModifierListOwn
         }
 
         // don't annotate property setters
-        if (annotatedElement is KtValVarKeywordOwner && member is KtLightMethod && member.returnType == PsiType.VOID) return@lazy null
+        if (annotatedElement is KtValVarKeywordOwner
+            && member is KtLightMethod
+            && (member.originalElement as? KtPropertyAccessor)?.isSetter == true
+        ) {
+            return@lazy null
+        }
 
         if (annotatedElement is KtNamedFunction && annotatedElement.modifierList?.hasSuspendModifier() == true) {
             return@lazy Nullable::class.java.name
