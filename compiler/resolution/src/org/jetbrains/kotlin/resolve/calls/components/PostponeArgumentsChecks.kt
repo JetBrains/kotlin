@@ -250,11 +250,6 @@ private fun preprocessCallableReference(
 
     if (expectedType == null) return result
 
-    val lhsResult = argument.lhsResult
-    if (lhsResult is LHSResult.Type) {
-        csBuilder.addConstraintFromLHS(argument, lhsResult, expectedType)
-    }
-
     val notCallableTypeConstructor =
         csBuilder.getProperSuperTypeConstructors(expectedType)
             .firstOrNull { !ReflectionTypes.isPossibleExpectedCallableType(it.requireIs()) }
@@ -269,30 +264,6 @@ private fun preprocessCallableReference(
         )
     }
     return result
-}
-
-private fun ConstraintSystemBuilder.addConstraintFromLHS(
-    argument: CallableReferenceKotlinCallArgument,
-    lhsResult: LHSResult.Type,
-    expectedType: UnwrappedType
-) {
-    if (!ReflectionTypes.isNumberedTypeWithOneOrMoreNumber(expectedType)) return
-
-    val lhsType = lhsResult.unboundDetailedReceiver.stableType
-    val expectedTypeProjectionForLHS = expectedType.arguments.first()
-    val expectedTypeForLHS = expectedTypeProjectionForLHS.type
-    val constraintPosition = LHSArgumentConstraintPositionImpl(argument, lhsResult.qualifier ?: lhsResult.unboundDetailedReceiver)
-    val expectedTypeVariance = expectedTypeProjectionForLHS.projectionKind.convertVariance()
-    val effectiveVariance = AbstractTypeChecker.effectiveVariance(
-        expectedType.constructor.parameters.first().variance.convertVariance(),
-        expectedTypeVariance
-    ) ?: expectedTypeVariance
-
-    when (effectiveVariance) {
-        TypeVariance.INV -> addEqualityConstraint(lhsType, expectedTypeForLHS, constraintPosition)
-        TypeVariance.IN -> addSubtypeConstraint(expectedTypeForLHS, lhsType, constraintPosition)
-        TypeVariance.OUT -> addSubtypeConstraint(lhsType, expectedTypeForLHS, constraintPosition)
-    }
 }
 
 private fun preprocessCollectionLiteralArgument(

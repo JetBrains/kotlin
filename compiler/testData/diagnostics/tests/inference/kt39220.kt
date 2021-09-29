@@ -27,22 +27,22 @@ interface Foo {
     // CR on property with to receivers are forbidden
     fun <T: Foo> test() {
         // with LHS and property
-        bar8<T>(<!TYPE_MISMATCH!>Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x1<!><!>)
+        bar8<T>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x1<!>)
         bar8<Foo>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x1<!>)
-        bar8(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x1<!>)
+        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar8<!>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x1<!>)
 
         // with LHS and mutable property
-        bar8<T>(<!TYPE_MISMATCH!>Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x2<!><!>)
+        bar8<T>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x2<!>)
         bar8<Foo>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x2<!>)
-        bar8(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x2<!>)
+        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar8<!>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x2<!>)
 
         // with LHS and propery + mutable property (mixed)
-        bar8<T>(<!TYPE_MISMATCH!>Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x3<!><!>)
+        bar8<T>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x3<!>)
         bar8<Foo>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x3<!>)
-        bar8(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x3<!>)
-        bar9<T>(<!TYPE_MISMATCH!>Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x3<!><!>)
+        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar8<!>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x3<!>)
+        bar9<T>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x3<!>)
         bar9<Foo>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x3<!>)
-        bar9(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x3<!>)
+        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar9<!>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x3<!>)
     }
 }
 
@@ -84,9 +84,9 @@ fun <T : Foo, R: Number, D: Int> main() {
     bar1(::resolve) // OK
 
     // with LHS and conflicting projection
-    bar2<T>(<!TYPE_MISMATCH!>Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>resolve<!><!>)
+    bar2<T>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>resolve<!>)
     bar2<Foo>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>resolve<!>)
-    bar2(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>resolve<!>)
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar2<!>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>resolve<!>)
 
     // with LHS and Any? expected type
     bar3<T>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>resolve<!>)

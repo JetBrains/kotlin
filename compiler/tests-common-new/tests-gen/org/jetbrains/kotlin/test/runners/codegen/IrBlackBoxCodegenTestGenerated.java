@@ -2753,6 +2753,60 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("callableReferenceOfCompanionConst.kt")
+        public void testCallableReferenceOfCompanionConst() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/callableReferenceOfCompanionConst.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReferenceOfCompanionMethod.kt")
+        public void testCallableReferenceOfCompanionMethod() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/callableReferenceOfCompanionMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReferenceOfCompanionProperty.kt")
+        public void testCallableReferenceOfCompanionProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/callableReferenceOfCompanionProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReferenceOfJavaNestedClass.kt")
+        public void testCallableReferenceOfJavaNestedClass() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/callableReferenceOfJavaNestedClass.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReferenceOfKotlinNestedClass.kt")
+        public void testCallableReferenceOfKotlinNestedClass() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/callableReferenceOfKotlinNestedClass.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReferenceOfNestedClass.kt")
+        public void testCallableReferenceOfNestedClass() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/callableReferenceOfNestedClass.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReferenceOfObjectMethod.kt")
+        public void testCallableReferenceOfObjectMethod() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/callableReferenceOfObjectMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReferenceOfStaticField.kt")
+        public void testCallableReferenceOfStaticField() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/callableReferenceOfStaticField.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReferenceOfStaticMethod.kt")
+        public void testCallableReferenceOfStaticMethod() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/callableReferenceOfStaticMethod.kt");
+        }
+
+        @Test
         @TestMetadata("charArrayOf.kt")
         public void testCharArrayOf() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/charArrayOf.kt");
