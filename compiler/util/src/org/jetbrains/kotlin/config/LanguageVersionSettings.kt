@@ -227,7 +227,6 @@ enum class LanguageFeature(
     DefinitelyNonNullableTypes(KOTLIN_1_7),
     ProhibitSimplificationOfNonTrivialConstBooleanExpressions(KOTLIN_1_7),
     SafeCallsAreAlwaysNullable(KOTLIN_1_7),
-    ApproximateIntegerLiteralTypesInReceiverPosition(KOTLIN_1_7),
     StopPropagatingDeprecationThroughOverrides(KOTLIN_1_7),
     AbstractClassMemberNotImplementedWithIntermediateAbstractClass(KOTLIN_1_7, kind = BUG_FIX),
 
@@ -235,6 +234,8 @@ enum class LanguageFeature(
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),
     // Disabled for indefinite time. See KT-48535 and related discussion
     OptInOnOverrideForbidden(sinceVersion = null, kind = BUG_FIX),
+    ApproximateIntegerLiteralTypesInReceiverPosition(sinceVersion = null),
+    ReportChangingIntegerOperatorResolve(sinceVersion = null),
 
     // Experimental features
 

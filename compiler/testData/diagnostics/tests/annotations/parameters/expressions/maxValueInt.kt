@@ -12,8 +12,8 @@ annotation class Ann(
 @Ann(
     p1 = <!INTEGER_OVERFLOW!>java.lang.Integer.MAX_VALUE + 1<!>,
     p2 = 1 + 1,
-    p3 = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE, INTEGER_OVERFLOW, TYPE_MISMATCH!>java.lang.Integer.MAX_VALUE + 1<!>,
-    p4 = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE, TYPE_MISMATCH!>1.toInt() + 1.toInt()<!>,
+    p3 = <!INTEGER_OVERFLOW, TYPE_MISMATCH!>java.lang.Integer.MAX_VALUE + 1<!>,
+    p4 = <!TYPE_MISMATCH!>1.toInt() + 1.toInt()<!>,
     p5 = 1.toInt() + 1.toInt()
 ) class MyClass
 
