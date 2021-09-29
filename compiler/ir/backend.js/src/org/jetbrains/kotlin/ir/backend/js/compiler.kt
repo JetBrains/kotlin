@@ -165,14 +165,6 @@ fun lowerPreservingIcData(module: IrModuleFragment, context: JsIrBackendContext,
     controller.currentStage = pirLowerings.size + 1
 }
 
-@Suppress("UNUSED_PARAMETER")
-fun generateJsFromAst(
-    mainModule: String,
-    caches: Map<String, ModuleCache>
-): CompilerResult {
-    TODO(">> EP to generate Js from BinaryAST with root $mainModule")
-}
-
 fun generateJsCode(
     context: JsIrBackendContext,
     moduleFragment: IrModuleFragment,

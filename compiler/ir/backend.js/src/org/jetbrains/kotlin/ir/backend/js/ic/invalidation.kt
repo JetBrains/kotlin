@@ -17,15 +17,12 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.js.JsFactories
-import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
-import org.jetbrains.kotlin.ir.backend.js.moduleName
-import org.jetbrains.kotlin.ir.backend.js.toResolverLogger
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -34,6 +31,7 @@ import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -145,7 +143,9 @@ private fun KotlinLibrary.filesAndSigReaders(): List<Pair<String, IdSignatureDes
 
 private fun buildCacheForModule(
     libraryPath: String,
+    configuration: CompilerConfiguration,
     irModule: IrModuleFragment,
+    deserializer: JsIrLinker,
     dependencies: Collection<IrModuleFragment>,
     dirtyFiles: Collection<String>,
     cleanInlineHashes: Map<IdSignature, Hash>,
@@ -191,7 +191,7 @@ private fun buildCacheForModule(
     }
 
     // TODO: actual way of building a cache could change in future
-    buildCacheForModuleFiles(irModule, dependencies, dirtyFiles, cacheConsumer)
+    buildCacheForModuleFiles(irModule, dependencies, deserializer, configuration, dirtyFiles, cacheConsumer)
 
     cacheConsumer.commitLibraryPath(libraryPath)
 }
@@ -229,10 +229,14 @@ private fun loadModules(
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-private fun createLinker(configuration: CompilerConfiguration, loadedModules: Map<ModuleDescriptor, KotlinLibrary>): JsIrLinker {
+private fun createLinker(
+    configuration: CompilerConfiguration,
+    loadedModules: Map<ModuleDescriptor, KotlinLibrary>,
+    irFactory: IrFactory
+): JsIrLinker {
     val logger = configuration[IrMessageLogger.IR_MESSAGE_LOGGER] ?: IrMessageLogger.None
     val signaturer = IdSignatureDescriptor(JsManglerDesc)
-    val symbolTable = SymbolTable(signaturer, PersistentIrFactory())
+    val symbolTable = SymbolTable(signaturer, irFactory)
     val moduleDescriptor = loadedModules.keys.last()
     val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
     val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
@@ -289,7 +293,8 @@ fun actualizeCacheForModule(
     cachePath: String,
     compilerConfiguration: CompilerConfiguration,
     dependencies: Collection<ModulePath>,
-    icCachePaths: Collection<String>
+    icCachePaths: Collection<String>,
+    irFactory: IrFactory,
 ): Boolean {
     val icCacheMap: Map<ModulePath, String> = loadCacheInfo(icCachePaths).also {
         it[moduleName.toCanonicalPath()] = cachePath
@@ -312,7 +317,7 @@ fun actualizeCacheForModule(
     val currentModule = libraries[moduleName.toCanonicalPath()] ?: error("No loaded library found for path $moduleName")
     val persistentCacheConsumer = createCacheConsumer(cachePath)
 
-    return actualizeCacheForModule(currentModule, compilerConfiguration, dependencyGraph, persistentCacheProviders, persistentCacheConsumer)
+    return actualizeCacheForModule(currentModule, compilerConfiguration, dependencyGraph, persistentCacheProviders, persistentCacheConsumer, irFactory)
 }
 
 
@@ -321,7 +326,8 @@ private fun actualizeCacheForModule(
     configuration: CompilerConfiguration,
     dependencyGraph: Map<KotlinLibrary, Collection<KotlinLibrary>>,
     persistentCacheProviders: Map<KotlinLibrary, PersistentCacheProvider>,
-    persistentCacheConsumer: PersistentCacheConsumer
+    persistentCacheConsumer: PersistentCacheConsumer,
+    irFactory: IrFactory,
 ): Boolean {
     // 1. Invalidate
     val dependencies = dependencyGraph[library]!!
@@ -375,7 +381,7 @@ private fun actualizeCacheForModule(
 
     val loadedModules = loadModules(configuration.languageVersionSettings, dependencyGraph)
 
-    val jsIrLinker = createLinker(configuration, loadedModules)
+    val jsIrLinker = createLinker(configuration, loadedModules, irFactory)
 
     val irModules = ArrayList<Pair<IrModuleFragment, KotlinLibrary>>(loadedModules.size)
 
@@ -408,7 +414,9 @@ private fun actualizeCacheForModule(
 
     buildCacheForModule(
         library.libraryFile.canonicalPath,
+        configuration,
         currentIrModule,
+        jsIrLinker,
         irModules.map { it.first },
         dirtySet,
         sigHashes,
@@ -424,11 +432,12 @@ fun rebuildCacheForDirtyFiles(
     configuration: CompilerConfiguration,
     dependencyGraph: Map<KotlinLibrary, Collection<KotlinLibrary>>,
     dirtyFiles: Collection<String>?,
-    cacheConsumer: PersistentCacheConsumer
+    cacheConsumer: PersistentCacheConsumer,
+    irFactory: IrFactory,
 ) {
     val loadedModules = loadModules(configuration.languageVersionSettings, dependencyGraph)
 
-    val jsIrLinker = createLinker(configuration, loadedModules)
+    val jsIrLinker = createLinker(configuration, loadedModules, irFactory)
 
     val irModules = ArrayList<Pair<IrModuleFragment, KotlinLibrary>>(loadedModules.size)
 
@@ -453,16 +462,28 @@ fun rebuildCacheForDirtyFiles(
 
     val currentIrModule = irModules.find { it.second == library }?.first!!
 
-    buildCacheForModuleFiles(currentIrModule, irModules.map { it.first }, dirtyFiles, cacheConsumer)
+    buildCacheForModuleFiles(currentIrModule, irModules.map { it.first }, jsIrLinker, configuration, dirtyFiles, cacheConsumer)
 }
 
 @Suppress("UNUSED_PARAMETER")
 private fun buildCacheForModuleFiles(
     currentModule: IrModuleFragment,
     dependencies: Collection<IrModuleFragment>,
+    deserializer: JsIrLinker,
+    configuration: CompilerConfiguration,
     dirtyFiles: Collection<String>?, // if null consider the whole module dirty
     cacheConsumer: PersistentCacheConsumer
 ) {
+    compileWithIC(
+        currentModule,
+        configuration = configuration,
+        deserializer = deserializer,
+        dependencies = dependencies,
+        exportedDeclarations = setOf(FqName("box")),
+        filesToLower = dirtyFiles?.toSet(),
+        cacheConsumer = cacheConsumer,
+    )
+
 //    println("creating caches for module ${currentModule.name}")
 //    println("Store them into $cacheConsumer")
 //    val dirtyS = if (dirtyFiles == null) "[ALL]" else dirtyFiles.joinToString(",", "[", "]") { it }

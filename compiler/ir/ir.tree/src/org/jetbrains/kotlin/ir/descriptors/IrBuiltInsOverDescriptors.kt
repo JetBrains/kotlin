@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 class IrBuiltInsOverDescriptors(
     val builtIns: KotlinBuiltIns,
     private val typeTranslator: TypeTranslator,
-    private val symbolTable: SymbolTable
+    val symbolTable: SymbolTable
 ) : IrBuiltIns() {
     override val languageVersionSettings = typeTranslator.languageVersionSettings
 
