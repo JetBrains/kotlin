@@ -344,7 +344,10 @@ class ExpressionsConverter(
             when (it.tokenType) {
                 LABEL_QUALIFIER -> {
                     val rawName = it.toString()
-                    val pair = buildLabelAndErrorSource(rawName.substring(0, rawName.length - 1), it.toFirSourceElement())
+                    val pair = buildLabelAndErrorSource(
+                        rawName.substring(0, rawName.length - 1),
+                        it.getChildNodesByType(LABEL).single().toFirSourceElement()
+                    )
                     context.addNewLabel(pair.first)
                     errorLabelSource = pair.second
                 }
