@@ -407,8 +407,8 @@ class CallableReferencesCandidateFactory(
         }
 
         for (valueParameter in descriptor.valueParameters) {
-            if (valueParameter.isVararg && valueParameter !in mappedArguments) {
-                mappedArguments[valueParameter] = ResolvedCallArgument.VarargArgument(emptyList())
+            if (valueParameter.isVararg) {
+                mappedArguments.putIfAbsent(valueParameter.original, ResolvedCallArgument.VarargArgument(emptyList()))
             }
         }
 
