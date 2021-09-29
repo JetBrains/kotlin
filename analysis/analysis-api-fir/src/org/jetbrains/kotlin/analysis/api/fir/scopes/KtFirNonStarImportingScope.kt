@@ -27,7 +27,6 @@ internal class KtFirNonStarImportingScope(
     private val firScope: FirAbstractSimpleImportingScope,
     private val builder: KtSymbolByFirBuilder,
     override val token: ValidityToken,
-    private val firSession: FirSession
 ) : KtNonStarImportingScope, ValidityTokenOwner {
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -38,7 +37,7 @@ internal class KtFirNonStarImportingScope(
                     val importedClassId = import.importedName?.let { importedName ->
                         val importedClassId =
                             import.resolvedParentClassId?.createNestedClassId(importedName) ?: ClassId(import.packageFqName, importedName)
-                        importedClassId.takeIf { firSession.symbolProvider.getClassLikeSymbolByClassId(it) != null }
+                        importedClassId.takeIf { firScope.session.symbolProvider.getClassLikeSymbolByClassId(it) != null }
                     }
                     NonStarImport(
                         import.packageFqName,
