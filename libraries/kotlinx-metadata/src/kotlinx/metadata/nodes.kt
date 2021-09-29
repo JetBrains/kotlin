@@ -586,7 +586,7 @@ class KmValueParameter(
     /**
      * Type of the value parameter, if this is **not** a `vararg` parameter.
      */
-    var type: KmType? = null
+    lateinit var type: KmType
 
     /**
      * Type of the value parameter, if this is a `vararg` parameter.
@@ -611,7 +611,7 @@ class KmValueParameter(
      * @param visitor the visitor which will visit data in this value parameter
      */
     fun accept(visitor: KmValueParameterVisitor) {
-        type?.let { visitor.visitType(it.flags)?.let(it::accept) }
+        visitor.visitType(type.flags)?.let(type::accept)
         varargElementType?.let { visitor.visitVarargElementType(it.flags)?.let(it::accept) }
         extensions.forEach { visitor.visitExtensions(it.type)?.let(it::accept) }
         visitor.visitEnd()
