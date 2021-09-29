@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -229,7 +229,7 @@ abstract class RandomSmokeTest {
             assertEquals(0L, subject.nextLong(1))
         }
 
-        for (bound in listOf(2, 23, 32, 0x1_0000_0000, 0x4000_0000_0000_0000, Long.MAX_VALUE)) {
+        for (bound in listOf(2, 23, 32, 0x1_0000_0000, 0x4_0000_0000, 0x4000_0000_0000_0000, Long.MAX_VALUE)) {
             repeat(1000) {
                 val x = subject.nextLong(bound)
                 if (x !in 0L until bound)
@@ -246,7 +246,7 @@ abstract class RandomSmokeTest {
             assertEquals(0uL, subject.nextULong(1uL))
         }
 
-        for (bound in listOf(2uL, 23uL, 32uL, 0x1_0000_0000uL, 0x8000_0000_0000_000uL, ULong.MAX_VALUE)) {
+        for (bound in listOf(2uL, 23uL, 32uL, 0x1_0000_0000uL, 0x4_0000_0000uL, 0x8000_0000_0000_000uL, ULong.MAX_VALUE)) {
             repeat(1000) {
                 val x = subject.nextULong(bound)
                 if (x !in 0uL until bound) {
@@ -267,8 +267,8 @@ abstract class RandomSmokeTest {
             assertEquals(n, subject.nextLong(n, n + 1))
         }
 
-        for ((from, until) in listOf((0L to 32L), (-1L to 5L), (0L to 0x1_0000_0000),
-                                       (0L to Long.MAX_VALUE), (-1L to Long.MAX_VALUE), (Long.MIN_VALUE to Long.MAX_VALUE))) {
+        for ((from, until) in listOf((0L to 32L), (-1L to 5L), (0L to 0x1_0000_0000), (-0x10L to 0x3_FFFF_FFF0L),
+                                     (0L to Long.MAX_VALUE), (-1L to Long.MAX_VALUE), (Long.MIN_VALUE to Long.MAX_VALUE))) {
             repeat(1000) {
                 val x = subject.nextLong(from, until)
                 if (x !in from until until)
@@ -291,6 +291,7 @@ abstract class RandomSmokeTest {
             (0uL to 32uL),
             (1uL to 6uL),
             (0uL to 0x1_0000_0000.toULong()),
+            (0x10uL to 0x4_0000_0010.toULong()),
             (0uL to ULong.MAX_VALUE)
         )) {
             repeat(1000) {
@@ -314,7 +315,7 @@ abstract class RandomSmokeTest {
             assertEquals(n, subject.nextLong(n..n))
         }
 
-        for (range in listOf((0L until 2L), (-1L until 5L), (0L until 32L), (0L until Long.MAX_VALUE),
+        for (range in listOf((0L until 2L), (-1L until 5L), (0L until 32L), (0L until 1L.shl(33)), (0L until Long.MAX_VALUE),
                              (0L..Long.MAX_VALUE), (Long.MIN_VALUE..0L), (Long.MIN_VALUE..Long.MAX_VALUE))) {
             repeat(1000) {
                 val x = subject.nextLong(range)
@@ -339,6 +340,7 @@ abstract class RandomSmokeTest {
             (0uL..1uL),
             (1uL..5uL),
             (0uL..31uL),
+            (0uL until 0x4_0000_0000uL),
             (0uL..(ULong.MAX_VALUE - 1uL)),
             (1uL..ULong.MAX_VALUE),
             (0uL..ULong.MAX_VALUE)
