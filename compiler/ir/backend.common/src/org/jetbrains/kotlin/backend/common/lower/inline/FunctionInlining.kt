@@ -320,7 +320,7 @@ class FunctionInlining(
                                 val arg = boundFunctionParametersMap[parameter]!!
                                 if (arg is IrGetValueWithoutLocation)
                                     arg.withLocation(irCall.startOffset, irCall.endOffset)
-                                else arg
+                                else copyIrElement.copy(arg) as IrExpression
                             } else {
                                 if (unboundIndex == valueParameters.size && parameter.defaultValue != null)
                                     copyIrElement.copy(parameter.defaultValue!!.expression) as IrExpression
