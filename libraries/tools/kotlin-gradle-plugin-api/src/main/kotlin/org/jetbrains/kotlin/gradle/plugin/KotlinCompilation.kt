@@ -96,6 +96,9 @@ interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptions> : KotlinComp
         get() = super.relatedConfigurationNames + runtimeDependencyConfigurationName
 }
 
+val <T : KotlinCommonOptions> KotlinCompilation<T>.runtimeDependencyConfigurationName: String?
+    get() = (this as? KotlinCompilationToRunnableFiles<T>)?.runtimeDependencyConfigurationName
+
 interface KotlinCompilationWithResources<T : KotlinCommonOptions> : KotlinCompilation<T> {
     val processResourcesTaskName: String
 }
