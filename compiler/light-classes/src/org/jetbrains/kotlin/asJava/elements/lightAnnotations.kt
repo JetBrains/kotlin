@@ -277,20 +277,20 @@ open class KtLightNullabilityAnnotation<D : KtLightElement<*, PsiModifierListOwn
 
     override fun findAttributeValue(attributeName: String?): PsiAnnotationMemberValue? = null
 
-    private val _qualifiedName: String? by lazy {
+    private val _qualifiedName: String? by lazyPub {
         val annotatedElement = member.takeIf(::isFromSources)?.kotlinOrigin
             ?: // it is out of our hands
-            return@lazy getClsNullabilityAnnotation(member)?.qualifiedName
+            return@lazyPub getClsNullabilityAnnotation(member)?.qualifiedName
 
-        if (!fastCheckIsNullabilityApplied(member)) return@lazy null
+        if (!fastCheckIsNullabilityApplied(member)) return@lazyPub null
 
         // all data-class generated members are not-null
-        if (annotatedElement is KtClass && annotatedElement.isData()) return@lazy NotNull::class.java.name
+        if (annotatedElement is KtClass && annotatedElement.isData()) return@lazyPub NotNull::class.java.name
 
         // objects and companion objects have NotNull annotation (if annotated element is implicit ctor then skip annotation)
         if (annotatedElement is KtObjectDeclaration) {
-            if ((parent.parent as? PsiMethod)?.isConstructor == true) return@lazy null
-            return@lazy NotNull::class.java.name
+            if ((parent.parent as? PsiMethod)?.isConstructor == true) return@lazyPub null
+            return@lazyPub NotNull::class.java.name
         }
 
         // don't annotate property setters
@@ -298,27 +298,27 @@ open class KtLightNullabilityAnnotation<D : KtLightElement<*, PsiModifierListOwn
             && member is KtLightMethod
             && (member.originalElement as? KtPropertyAccessor)?.isSetter == true
         ) {
-            return@lazy null
+            return@lazyPub null
         }
 
         if (annotatedElement is KtNamedFunction && annotatedElement.modifierList?.hasSuspendModifier() == true) {
-            return@lazy Nullable::class.java.name
+            return@lazyPub Nullable::class.java.name
         }
 
-        val kotlinType = getTargetType(annotatedElement) ?: return@lazy null
+        val kotlinType = getTargetType(annotatedElement) ?: return@lazyPub null
 
         if (KotlinBuiltIns.isPrimitiveType(kotlinType) && (annotatedElement as? KtParameter)?.isVarArg != true) {
             // no need to annotate them explicitly except the case when overriding reference-type makes it non-primitive for Jvm
-            if (!(annotatedElement is KtCallableDeclaration && annotatedElement.hasModifier(KtTokens.OVERRIDE_KEYWORD))) return@lazy null
+            if (!(annotatedElement is KtCallableDeclaration && annotatedElement.hasModifier(KtTokens.OVERRIDE_KEYWORD))) return@lazyPub null
 
             val overriddenDescriptors =
                 (annotatedElement.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, annotatedElement] as? CallableMemberDescriptor)?.overriddenDescriptors
-            if (overriddenDescriptors?.all { it.returnType == kotlinType } == true) return@lazy null
+            if (overriddenDescriptors?.all { it.returnType == kotlinType } == true) return@lazyPub null
         }
-        if (kotlinType.isUnit() && (annotatedElement !is KtValVarKeywordOwner)) return@lazy null // not annotate unit-functions
+        if (kotlinType.isUnit() && (annotatedElement !is KtValVarKeywordOwner)) return@lazyPub null // not annotate unit-functions
         if (kotlinType.isTypeParameter()) {
-            if (!TypeUtils.hasNullableSuperType(kotlinType)) return@lazy NotNull::class.java.name
-            if (!kotlinType.isMarkedNullable) return@lazy null
+            if (!TypeUtils.hasNullableSuperType(kotlinType)) return@lazyPub NotNull::class.java.name
+            if (!kotlinType.isMarkedNullable) return@lazyPub null
         }
 
         when (kotlinType.nullability()) {
