@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
+import kotlinx.cinterop.alloc
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.ptr
+import kotlinx.cinterop.toKStringFromUtf8
 import llvm.*
 import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
@@ -12,7 +16,6 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaserState
 import org.jetbrains.kotlin.backend.common.phaser.namedUnitPhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysis
-import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
 import org.jetbrains.kotlin.backend.konan.lower.InlineClassPropertyAccessorsLowering
 import org.jetbrains.kotlin.backend.konan.lower.RedundantCoercionsCleaner
 import org.jetbrains.kotlin.backend.konan.lower.ReturnsInsertionLowering
@@ -27,7 +30,6 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
         name = "ContextLLVMSetup",
@@ -325,6 +327,17 @@ internal val codegenPhase = makeKonanModuleOpPhase(
         description = "Code generation",
         op = { context, irModule ->
             irModule.acceptVoid(context.codegenVisitor)
+            // TODO: Consider adding LLVM_IR compiler output kind.
+            if (context.configuration.getBoolean(KonanConfigKeys.SAVE_LLVM_IR)) {
+                val moduleName: String = memScoped {
+                    val sizeVar = alloc<size_tVar>()
+                    LLVMGetModuleIdentifier(context.llvmModule, sizeVar.ptr)!!.toKStringFromUtf8()
+                }
+                val output = context.config.tempFiles.create(moduleName,".ll")
+                if (LLVMPrintModuleToFile(context.llvmModule, output.absolutePath, null) != 0) {
+                    error("Can't dump LLVM IR to ${output.absolutePath}")
+                }
+            }
         }
 )
 

@@ -255,6 +255,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xtemporary-files-dir", deprecatedName = "--temporary_files_dir", valueDescription = "<path>", description = "Save temporary files to the given directory")
     var temporaryFilesDir: String? = null
 
+    @Argument(value = "-Xsave-llvm-ir", description = "Save result of Kotlin IR to LLVM IR translation to the temporary files directory.")
+    var saveLlvmIr: Boolean = false
+
     @Argument(value = "-Xverify-bitcode", deprecatedName = "--verify_bitcode", description = "Verify llvm bitcode after each method")
     var verifyBitCode: Boolean = false
 
