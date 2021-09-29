@@ -20,11 +20,13 @@ annotation class PluginServicesInitialization
 class FirExtensionService(val session: FirSession) : ComponentArrayOwner<FirExtension, List<FirExtension>>(), FirSessionComponent {
     companion object : TypeRegistry<FirExtension, List<FirExtension>>() {
         inline fun <reified P : FirExtension, V : List<P>> registeredExtensions(): ArrayMapAccessor<FirExtension, List<FirExtension>, V> {
-            return generateAccessor(P::class)
+            @Suppress("UNCHECKED_CAST")
+            return generateAccessor(P::class, default = emptyList<P>() as V)
         }
 
         fun <P : FirExtension, V : List<P>> registeredExtensions(kClass: KClass<P>): ArrayMapAccessor<FirExtension, List<FirExtension>, V> {
-            return generateAccessor(kClass)
+            @Suppress("UNCHECKED_CAST")
+            return generateAccessor(kClass, default = emptyList<P>() as V)
         }
     }
 

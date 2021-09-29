@@ -12,16 +12,20 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.extensions.declarationGenerators
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.resolve.declaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 @ThreadSafeMutableState
 class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessionComponent {
-    private val declaredMemberCache: FirCache<FirClass, FirClassDeclaredMemberScope, DeclaredMemberScopeContext> =
+    private val declaredMemberCache: FirCache<FirClass, FirContainingNamesAwareScope, DeclaredMemberScopeContext> =
         useSiteSession.firCachesFactory.createCache { klass, context ->
             createDeclaredMemberScope(klass, context.useLazyNestedClassifierScope, context.existingNames, context.symbolProvider)
         }
@@ -29,12 +33,14 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
     private val nestedClassifierCache: FirCache<FirClass, FirNestedClassifierScope?, Nothing?> =
         useSiteSession.firCachesFactory.createCache { klass, _ -> createNestedClassifierScope(klass) }
 
+    private val extensions by lazy(LazyThreadSafetyMode.PUBLICATION) { useSiteSession.extensionService.declarationGenerators }
+
     fun declaredMemberScope(
         klass: FirClass,
         useLazyNestedClassifierScope: Boolean,
         existingNames: List<Name>?,
         symbolProvider: FirSymbolProvider?
-    ): FirClassDeclaredMemberScope {
+    ): FirContainingNamesAwareScope {
         return declaredMemberCache.getValue(klass, DeclaredMemberScopeContext(useLazyNestedClassifierScope, existingNames, symbolProvider))
     }
 
@@ -49,11 +55,27 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
         useLazyNestedClassifierScope: Boolean,
         existingNames: List<Name>?,
         symbolProvider: FirSymbolProvider?
-    ): FirClassDeclaredMemberScope {
-        return if (klass.origin.generated) {
-            FirGeneratedClassDeclaredMemberScope(useSiteSession, klass)
-        } else {
-            FirClassDeclaredMemberScopeImpl(useSiteSession, klass, useLazyNestedClassifierScope, existingNames, symbolProvider)
+    ): FirContainingNamesAwareScope {
+        return when {
+            klass.origin.generated -> {
+                FirGeneratedClassDeclaredMemberScope(useSiteSession, klass, needNestedClassifierScope = true)
+            }
+            else -> {
+                val baseScope = FirClassDeclaredMemberScopeImpl(
+                    useSiteSession,
+                    klass,
+                    useLazyNestedClassifierScope,
+                    existingNames,
+                    symbolProvider
+                )
+                if (extensions.any { useSiteSession.predicateBasedProvider.matches(it.predicate, klass) }) {
+                    FirCompositeScope(
+                        listOf(baseScope, FirGeneratedClassDeclaredMemberScope(useSiteSession, klass, needNestedClassifierScope = false))
+                    )
+                } else {
+                    baseScope
+                }
+            }
         }
     }
 
@@ -65,17 +87,26 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
         return if (klass.origin.generated) {
             FirGeneratedClassNestedClassifierScope(klass, useSiteSession)
         } else {
-            FirNestedClassifierScopeImpl(klass, useSiteSession)
+            val baseScope = FirNestedClassifierScopeImpl(klass, useSiteSession)
+            if (extensions.any { useSiteSession.predicateBasedProvider.matches(it.predicate, klass) }) {
+                FirCompositeNestedClassifierScope(
+                    listOf(baseScope, FirGeneratedClassNestedClassifierScope(klass, useSiteSession)),
+                    klass,
+                    useSiteSession
+                )
+            } else {
+                baseScope
+            }
         }.takeUnless { it.isEmpty() }
     }
 }
 
-fun FirSession.declaredMemberScope(klass: FirClass): FirClassDeclaredMemberScope {
+fun FirSession.declaredMemberScope(klass: FirClass): FirContainingNamesAwareScope {
     return declaredMemberScopeProvider
         .declaredMemberScope(klass, useLazyNestedClassifierScope = false, existingNames = null, symbolProvider = null)
 }
 
-fun FirSession.declaredMemberScope(klass: FirClassSymbol<*>): FirClassDeclaredMemberScope {
+fun FirSession.declaredMemberScope(klass: FirClassSymbol<*>): FirContainingNamesAwareScope {
     return declaredMemberScope(klass.fir)
 }
 
@@ -83,7 +114,7 @@ fun FirSession.declaredMemberScopeWithLazyNestedScope(
     klass: FirClass,
     existingNames: List<Name>,
     symbolProvider: FirSymbolProvider
-): FirScope {
+): FirContainingNamesAwareScope {
     return declaredMemberScopeProvider
         .declaredMemberScope(klass, useLazyNestedClassifierScope = true, existingNames = existingNames, symbolProvider = symbolProvider)
 }

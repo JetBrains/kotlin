@@ -38,8 +38,8 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirPredi
     // Can be called on IMPORTS stage
     open fun hasPackage(packageFqName: FqName): Boolean = false
 
-    open fun getCallableNamesForGeneratedClass(classSymbol: FirClassSymbol<*>): Set<Name> = emptySet()
-    open fun getNestedClassifiersNamesForGeneratedClass(classSymbol: FirClassSymbol<*>): Set<Name> = emptySet()
+    open fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> = emptySet()
+    open fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>): Set<Name> = emptySet()
 
     fun interface Factory : FirExtension.Factory<FirDeclarationGenerationExtension>
 }

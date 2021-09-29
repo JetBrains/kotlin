@@ -5,19 +5,18 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
 import org.jetbrains.kotlin.analysis.api.scopes.KtDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 
 internal class KtFirDeclaredMemberScope(
     override val owner: KtSymbolWithMembers,
-    override val firScope: FirClassDeclaredMemberScope,
+    override val firScope: FirContainingNamesAwareScope,
     token: ValidityToken,
     builder: KtSymbolByFirBuilder
-) : KtFirDelegatingScope<FirClassDeclaredMemberScope>(builder, token),
+) : KtFirDelegatingScope<FirContainingNamesAwareScope>(builder, token),
     KtDeclaredMemberScope,
     ValidityTokenOwner

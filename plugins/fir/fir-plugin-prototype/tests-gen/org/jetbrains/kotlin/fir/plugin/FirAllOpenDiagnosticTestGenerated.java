@@ -50,6 +50,12 @@ public class FirAllOpenDiagnosticTestGenerated extends AbstractFirAllOpenDiagnos
         }
 
         @Test
+        @TestMetadata("classWithGeneratedMembersAndNestedClass.kt")
+        public void testClassWithGeneratedMembersAndNestedClass() throws Exception {
+            runTest("plugins/fir/fir-plugin-prototype/testData/memberGen/classWithGeneratedMembersAndNestedClass.kt");
+        }
+
+        @Test
         @TestMetadata("generatedClassWithMembersAndNestedClasses.kt")
         public void testGeneratedClassWithMembersAndNestedClasses() throws Exception {
             runTest("plugins/fir/fir-plugin-prototype/testData/memberGen/generatedClassWithMembersAndNestedClasses.kt");
@@ -59,12 +65,6 @@ public class FirAllOpenDiagnosticTestGenerated extends AbstractFirAllOpenDiagnos
         @TestMetadata("topLevelCallables.kt")
         public void testTopLevelCallables() throws Exception {
             runTest("plugins/fir/fir-plugin-prototype/testData/memberGen/topLevelCallables.kt");
-        }
-
-        @Test
-        @TestMetadata("topLevelClass.kt")
-        public void testTopLevelClass() throws Exception {
-            runTest("plugins/fir/fir-plugin-prototype/testData/memberGen/topLevelClass.kt");
         }
     }
 

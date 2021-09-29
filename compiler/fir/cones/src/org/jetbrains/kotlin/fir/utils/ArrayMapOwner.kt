@@ -41,10 +41,13 @@ abstract class AbstractArrayMapOwner<K : Any, V : Any> : Iterable<V> {
 
 class ArrayMapAccessor<K : Any, V : Any, T : V>(
     key: KClass<out K>,
-    id: Int
+    id: Int,
+    val default: T? = null
 ) : AbstractArrayMapOwner.AbstractArrayMapAccessor<K, V, T>(key, id), ReadOnlyProperty<AbstractArrayMapOwner<K, V>, V> {
     override fun getValue(thisRef: AbstractArrayMapOwner<K, V>, property: KProperty<*>): T {
-        return extractValue(thisRef) ?: error("No '$key'($id) in array owner: $thisRef")
+        return extractValue(thisRef)
+            ?: default
+            ?: error("No '$key'($id) in array owner: $thisRef")
     }
 }
 
@@ -62,8 +65,8 @@ abstract class TypeRegistry<K : Any, V : Any> {
     private val idCounter = AtomicInteger(0)
 
 
-    fun <T : V, KK : K> generateAccessor(kClass: KClass<KK>): ArrayMapAccessor<K, V, T> {
-        return ArrayMapAccessor(kClass, getId(kClass))
+    fun <T : V, KK : K> generateAccessor(kClass: KClass<KK>, default: T? = null): ArrayMapAccessor<K, V, T> {
+        return ArrayMapAccessor(kClass, getId(kClass), default)
     }
 
     fun <T : V, KK : K> generateNullableAccessor(kClass: KClass<KK>): NullableArrayMapAccessor<K, V, T> {

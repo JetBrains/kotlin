@@ -59,6 +59,28 @@ class FirNestedClassifierScopeImpl(klass: FirClass, useSiteSession: FirSession) 
     override fun getClassifierNames(): Set<Name> = classIndex.keys
 }
 
+class FirCompositeNestedClassifierScope(
+    val scopes: List<FirNestedClassifierScope>,
+    klass: FirClass,
+    useSiteSession: FirSession
+) : FirNestedClassifierScope(klass, useSiteSession) {
+    override fun getNestedClassSymbol(name: Name): FirRegularClassSymbol? {
+        error("Should not be called")
+    }
+
+    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
+        scopes.forEach { it.processClassifiersByNameWithSubstitution(name, processor) }
+    }
+
+    override fun isEmpty(): Boolean {
+        return scopes.all { it.isEmpty() }
+    }
+
+    override fun getClassifierNames(): Set<Name> {
+        return scopes.flatMapTo(mutableSetOf()) { it.getClassifierNames() }
+    }
+}
+
 fun FirTypeParameterRef.toConeType(): ConeKotlinType = symbol.toConeType()
 
 fun FirTypeParameterSymbol.toConeType(): ConeKotlinType = ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(this), isNullable = false)

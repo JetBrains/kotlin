@@ -13,13 +13,11 @@ class FirAllOpenComponentRegistrar : FirExtensionRegistrar() {
         +::AllOpenStatusTransformer
         +::AllOpenVisibilityTransformer
         +::AllOpenSupertypeGenerator
+        +::AllOpenAdditionalCheckers
 
         // Declaration generators
-//        +::AllOpenMemberGenerator
-//        +::AllOpenNestedClassGenerator
-        +::AllOpenAdditionalCheckers
         +::AllOpenTopLevelDeclarationsGenerator
         +::AllOpenClassGenerator
-//        +::AllOpenRecursiveNestedClassGenerator
+        +::AllOpenMembersGenerator
     }
 }

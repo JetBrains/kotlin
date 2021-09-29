@@ -88,24 +88,7 @@ class AllOpenClassGenerator(session: FirSession) : FirDeclarationGenerationExten
             else -> return emptyList()
         }
 
-        val constructor = buildPrimaryConstructor {
-            moduleData = session.moduleData
-            origin = key.origin
-            returnTypeRef = buildResolvedTypeRef {
-                type = ConeClassLikeTypeImpl(
-                    ConeClassLikeLookupTagImpl(classId),
-                    emptyArray(),
-                    isNullable = false
-                )
-            }
-            status = FirResolvedDeclarationStatusImpl(
-                Visibilities.Public,
-                Modality.FINAL,
-                EffectiveVisibility.Public
-            )
-            symbol = FirConstructorSymbol(callableId)
-        }
-        return listOf(constructor.symbol)
+        return listOf(buildConstructor(classId, callableId, isInner = false).symbol)
     }
 
     private val CallableId.isGeneratedConstructor: Boolean
@@ -136,25 +119,7 @@ class AllOpenClassGenerator(session: FirSession) : FirDeclarationGenerationExten
         require(owner is FirRegularClassSymbol)
         val matchedClassId = owner.fir.matchedClass ?: return emptyList()
         val matchedClassSymbol = session.symbolProvider.getClassLikeSymbolByClassId(matchedClassId) ?: return emptyList()
-        val function = buildSimpleFunction {
-            moduleData = session.moduleData
-            origin = key.origin
-            status = FirResolvedDeclarationStatusImpl(
-                Visibilities.Public,
-                Modality.FINAL,
-                EffectiveVisibility.Public
-            )
-            returnTypeRef = buildResolvedTypeRef {
-                type = ConeClassLikeTypeImpl(
-                    matchedClassSymbol.toLookupTag(),
-                    emptyArray(),
-                    isNullable = false
-                )
-            }
-            name = MATERIALIZE_NAME
-            symbol = FirNamedFunctionSymbol(callableId)
-        }
-        return listOf(function.symbol)
+        return listOf(buildMaterializeFunction(matchedClassSymbol, callableId).symbol)
     }
 
     private fun buildClass(classId: ClassId): FirRegularClass {
@@ -170,7 +135,7 @@ class AllOpenClassGenerator(session: FirSession) : FirDeclarationGenerationExten
         }
     }
 
-    override fun getCallableNamesForGeneratedClass(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
         return if (classSymbol.classId in classIdsForMatchedClasses) {
             setOf(MATERIALIZE_NAME)
         } else {
@@ -178,7 +143,7 @@ class AllOpenClassGenerator(session: FirSession) : FirDeclarationGenerationExten
         }
     }
 
-    override fun getNestedClassifiersNamesForGeneratedClass(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>): Set<Name> {
         return if (classSymbol.classId == GENERATED_CLASS_ID) {
             return classIdsForMatchedClasses.keys.mapTo(mutableSetOf()) { it.shortClassName }
         } else {

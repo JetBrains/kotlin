@@ -16,19 +16,23 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirGeneratedClassDeclaredMemberScope(
     val useSiteSession: FirSession,
-    val firClass: FirClass
+    val firClass: FirClass,
+    needNestedClassifierScope: Boolean
 ) : FirClassDeclaredMemberScope() {
-    private val extension: FirDeclarationGenerationExtension = firClass.findGeneratedExtension(useSiteSession)
-    private val nestedClassifierScope: FirNestedClassifierScope? = useSiteSession.nestedClassifierScope(firClass)
+    private val extensions: List<FirDeclarationGenerationExtension> = firClass.findGeneratedExtensions(useSiteSession)
+    private val nestedClassifierScope: FirNestedClassifierScope? = runIf(needNestedClassifierScope) {
+        useSiteSession.nestedClassifierScope(firClass)
+    }
 
     private val firCachesFactory = useSiteSession.firCachesFactory
 
@@ -47,17 +51,17 @@ class FirGeneratedClassDeclaredMemberScope(
     }
 
     private val callableNamesCache: FirLazyValue<Set<Name>, Nothing?> = firCachesFactory.createLazyValue {
-        extension.getCallableNamesForGeneratedClass(firClass.symbol)
+        extensions.flatMapTo(mutableSetOf()) { it.getCallableNamesForClass(firClass.symbol) }
     }
 
     // ------------------------------------------ generators ------------------------------------------
 
     private fun generateMemberFunctions(name: Name): List<FirNamedFunctionSymbol> {
-        return extension.generateFunctions(CallableId(firClass.classId, name), firClass.symbol)
+        return extensions.flatMap { it.generateFunctions(CallableId(firClass.classId, name), firClass.symbol) }
     }
 
     private fun generateMemberProperties(name: Name): List<FirPropertySymbol> {
-        return extension.generateProperties(CallableId(firClass.classId, name), firClass.symbol)
+        return extensions.flatMap { it.generateProperties(CallableId(firClass.classId, name), firClass.symbol) }
     }
 
     private fun generateConstructors(): List<FirConstructorSymbol> {
@@ -67,7 +71,7 @@ class FirGeneratedClassDeclaredMemberScope(
         } else {
             CallableId(classId.asSingleFqName().parent(), classId.shortClassName)
         }
-        return extension.generateConstructors(callableId)
+        return extensions.flatMap { it.generateConstructors(callableId) }
     }
 
     // ------------------------------------------ scope methods ------------------------------------------
@@ -109,7 +113,7 @@ class FirGeneratedClassNestedClassifierScope(
     klass: FirClass,
     useSiteSession: FirSession
 ) : FirNestedClassifierScope(klass, useSiteSession) {
-    private val extension = klass.findGeneratedExtension(useSiteSession)
+    private val extensions = klass.findGeneratedExtensions(useSiteSession)
 
     private val nestedClassifierCache: FirCache<Name, FirRegularClassSymbol?, Nothing?> =
         useSiteSession.firCachesFactory.createCache { name, _ ->
@@ -118,7 +122,7 @@ class FirGeneratedClassNestedClassifierScope(
 
     private val nestedClassifiersNames: FirLazyValue<Set<Name>, Nothing?> =
         useSiteSession.firCachesFactory.createLazyValue {
-            extension.getNestedClassifiersNamesForGeneratedClass(klass.symbol)
+            extensions.flatMapTo(mutableSetOf()) { it.getNestedClassifiersNames(klass.symbol) }
         }
 
     private fun generateNestedClassifier(name: Name): FirRegularClassSymbol? {
@@ -142,13 +146,15 @@ class FirGeneratedClassNestedClassifierScope(
 }
 
 
-private fun FirClass.findGeneratedExtension(useSiteSession: FirSession): FirDeclarationGenerationExtension {
+private fun FirClass.findGeneratedExtensions(useSiteSession: FirSession): List<FirDeclarationGenerationExtension> {
     val origin = origin
-    require(origin is FirDeclarationOrigin.Plugin) {
-        "GeneratedClassDeclaredMemberScope can not be created for non-generated class: ${this.render()}"
+    val declarationGenerators = useSiteSession.extensionService.declarationGenerators
+    return if (origin is FirDeclarationOrigin.Plugin) {
+        declarationGenerators.filter { it.key == origin.key }.also {
+            require(it.isNotEmpty()) { "Extension for ${origin.key} not found" }
+        }
+    } else {
+        val predicateBasedProvider = useSiteSession.predicateBasedProvider
+        declarationGenerators.filter { predicateBasedProvider.matches(it.predicate, this) }
     }
-
-    return useSiteSession.extensionService.declarationGenerators.firstOrNull {
-        it.key == origin.key
-    } ?: error("Extension for ${origin.key} not found")
 }
