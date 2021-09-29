@@ -363,6 +363,7 @@ public final inline class Duration : kotlin.Comparable<kotlin.time.Duration> {
         @kotlin.internal.InlineOnly
         public final val kotlin.Long.seconds: kotlin.time.Duration { get; }
 
+        @kotlin.time.ExperimentalTime
         public final fun convert(value: kotlin.Double, sourceUnit: kotlin.time.DurationUnit, targetUnit: kotlin.time.DurationUnit): kotlin.Double
 
         @kotlin.SinceKotlin(version = "1.5")
