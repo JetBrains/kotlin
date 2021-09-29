@@ -108,7 +108,10 @@ def construct_cmake_flags(
         '-DLLVM_ENABLE_Z3_SOLVER=OFF',
         '-DCOMPILER_RT_BUILD_BUILTINS=ON',
         '-DLLVM_ENABLE_THREADS=ON',
-        '-DLLVM_OPTIMIZED_TABLEGEN=ON'
+        '-DLLVM_OPTIMIZED_TABLEGEN=ON',
+        '-DLLVM_ENABLE_IDE=OFF',
+        '-DLLVM_BUILD_UTILS=ON',
+        '-DLLVM_INSTALL_UTILS=ON'
     ]
     if not building_bootstrap:
         if distribution_components:
