@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
-import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -218,8 +217,8 @@ class CallableReferencesCandidateFactory(
         }
 
         for (valueParameter in descriptor.valueParameters) {
-            if (valueParameter.isVararg && valueParameter !in mappedArguments) {
-                mappedArguments[valueParameter] = ResolvedCallArgument.VarargArgument(emptyList())
+            if (valueParameter.isVararg) {
+                mappedArguments.putIfAbsent(valueParameter.original, ResolvedCallArgument.VarargArgument(emptyList()))
             }
         }
 
