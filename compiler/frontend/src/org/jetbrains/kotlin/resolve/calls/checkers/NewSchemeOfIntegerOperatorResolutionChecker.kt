@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ApproximateIntegerLiteralTypesInReceiverPosition)) return
+        if (!context.languageVersionSettings.needReport()) return
         for ((valueParameter, arguments) in resolvedCall.valueArguments) {
             val expectedType = if (valueParameter.isVararg) {
                 valueParameter.varargElementType ?: continue
@@ -52,6 +52,11 @@ object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
         }
     }
 
+    private fun LanguageVersionSettings.needReport(): Boolean {
+        return supportsFeature(LanguageFeature.ReportChangingIntegerOperatorResolve) &&
+                !supportsFeature(LanguageFeature.ApproximateIntegerLiteralTypesInReceiverPosition)
+    }
+
     @JvmStatic
     fun checkArgument(
         expectedType: KotlinType,
@@ -60,7 +65,7 @@ object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
         trace: BindingTrace,
         moduleDescriptor: ModuleDescriptor
     ) {
-        if (languageVersionSettings.supportsFeature(LanguageFeature.ApproximateIntegerLiteralTypesInReceiverPosition)) return
+        if (!languageVersionSettings.needReport()) return
         val type = expectedType.lowerIfFlexible()
         if (type.isPrimitiveNumberOrNullableType()) {
             checkArgumentImpl(type, KtPsiUtil.deparenthesize(argument)!!, trace, moduleDescriptor)

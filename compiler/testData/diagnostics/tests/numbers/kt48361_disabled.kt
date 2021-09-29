@@ -1,4 +1,4 @@
-// !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
+// !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition +ReportChangingIntegerOperatorResolve
 
 fun foo(ttlMillis: Long = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>5 * 60 * 1000<!>) {}
 

@@ -1,4 +1,4 @@
-// LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
+// LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition +ReportChangingIntegerOperatorResolve
 // ISSUE: Kt-47447, KT-47729
 
 fun takeLong(value : Long) {}

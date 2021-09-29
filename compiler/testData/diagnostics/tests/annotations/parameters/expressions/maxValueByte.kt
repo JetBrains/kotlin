@@ -11,7 +11,7 @@ annotation class Ann(
 
 @Ann(
     p1 = <!TYPE_MISMATCH!>java.lang.Byte.MAX_VALUE + 1<!>,
-    p2 = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 1<!>,
+    p2 = 1 + 1,
     p3 = java.lang.Byte.MAX_VALUE + 1,
     p4 = 1.toByte() + 1.toByte(),
     p5 = <!TYPE_MISMATCH!>1.toByte() + 1.toByte()<!>

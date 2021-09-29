@@ -1,4 +1,4 @@
-// !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
+// !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition +ReportChangingIntegerOperatorResolve
 
 fun foo(ttlMillis: Long = <!TYPE_MISMATCH!>5 * 60 * 1000<!>) {}
 

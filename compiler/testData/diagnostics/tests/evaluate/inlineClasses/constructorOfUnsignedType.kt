@@ -29,7 +29,7 @@ const val ui2 = UInt(40 + 2)
 @AnnoUB(UByte(1), ub0)
 fun f0() {}
 
-@AnnoUS(UShort(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 + 5<!>), us0)
+@AnnoUS(UShort(2 + 5), us0)
 fun f1() {}
 
 @AnnoUI(ui0, ui1, ui2, UInt(100))

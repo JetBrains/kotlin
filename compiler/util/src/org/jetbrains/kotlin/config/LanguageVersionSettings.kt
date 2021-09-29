@@ -231,12 +231,13 @@ enum class LanguageFeature(
     ReportNonVarargSpreadOnGenericCalls(KOTLIN_1_7, kind = BUG_FIX),
     ProhibitSimplificationOfNonTrivialConstBooleanExpressions(KOTLIN_1_7),
     SafeCallsAreAlwaysNullable(KOTLIN_1_7),
-    ApproximateIntegerLiteralTypesInReceiverPosition(KOTLIN_1_7),
     RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_7),
     AbstractClassMemberNotImplementedWithIntermediateAbstractClass(KOTLIN_1_7, kind = BUG_FIX),
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),
+    ApproximateIntegerLiteralTypesInReceiverPosition(sinceVersion = null),
+    ReportChangingIntegerOperatorResolve(sinceVersion = null),
 
     // Experimental features
 
