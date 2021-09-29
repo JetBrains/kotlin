@@ -14,6 +14,7 @@ import org.gradle.api.Task
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.getByType
@@ -53,14 +54,27 @@ internal data class Entry(
 }
 
 open class GenerateCompilationDatabase @Inject constructor(@Input val target: String,
-                                                           @Input val srcRoot: File,
-                                                           @Input val files: Iterable<File>,
+                                                           @Internal val srcRoot: File,
+                                                           @Internal val files: Iterable<File>,
                                                            @Input val executable: String,
                                                            @Input val compilerFlags: List<String>,
-                                                           @Input val outputDir: File
+                                                           @Internal val outputDir: File
 ) : DefaultTask() {
     @OutputFile
     var outputFile = File(outputDir, "compile_commands.json")
+
+    // Annotate as an input because this path affects the content of the generated file.
+    @get:Input
+    val outputDirPath: String
+        get() = outputDir.absolutePath
+
+    @get:Input
+    val srcRootPath: String
+        get() = srcRoot.absolutePath
+
+    @get:Input
+    val pathsToFiles: Iterable<String>
+        get() = files.map { it.absolutePath }
 
     @TaskAction
     fun run() {
