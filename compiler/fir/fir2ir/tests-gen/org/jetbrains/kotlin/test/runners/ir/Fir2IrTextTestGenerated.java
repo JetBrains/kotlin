@@ -2090,6 +2090,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             }
 
             @Test
+            @TestMetadata("functionSupertype.kt")
+            public void testFunctionSupertype() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/funInterface/functionSupertype.kt");
+            }
+
+            @Test
             @TestMetadata("partialSam.kt")
             public void testPartialSam() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/funInterface/partialSam.kt");
