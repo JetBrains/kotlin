@@ -1134,6 +1134,12 @@ public class IrSerializeCompileKotlinAgainstInlineKotlinTestGenerated extends Ab
             }
 
             @Test
+            @TestMetadata("doubleBoundToThis.kt")
+            public void testDoubleBoundToThis() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/callableReference/bound/doubleBoundToThis.kt");
+            }
+
+            @Test
             @TestMetadata("emptyLhsFunction.kt")
             public void testEmptyLhsFunction() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/callableReference/bound/emptyLhsFunction.kt");

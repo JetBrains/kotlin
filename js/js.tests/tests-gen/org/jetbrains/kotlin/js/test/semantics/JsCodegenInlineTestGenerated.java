@@ -858,6 +858,11 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
                 runTest("compiler/testData/codegen/boxInline/callableReference/bound/classProperty.kt");
             }
 
+            @TestMetadata("doubleBoundToThis.kt")
+            public void testDoubleBoundToThis() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/callableReference/bound/doubleBoundToThis.kt");
+            }
+
             @TestMetadata("emptyLhsFunction.kt")
             public void testEmptyLhsFunction() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/callableReference/bound/emptyLhsFunction.kt");
