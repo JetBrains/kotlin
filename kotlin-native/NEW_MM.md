@@ -29,24 +29,7 @@ The new MM also brings another set of changes:
 
 ### Update the Kotlin/Native compiler
 
-Update to Kotlin/Native 1.6.0-M1-139 and enable dev repositories:
-
-```kotlin
-// build.gradle.kts
-
-repositories {
-    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/temporary")
-}
-
-// settings.gradle.kts
-
-pluginManagement {
-    repositories {
-        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/temporary")
-        gradlePluginPortal()
-    }
-}
-```
+Update to Kotlin 1.6.0-M1 or newer.
 
 ### Switch to the new MM
 
