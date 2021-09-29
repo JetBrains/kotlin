@@ -202,11 +202,13 @@ private fun Printer.generateImpl(
             println()
             val propertyType = property.gradleReturnType
             if (propertyType.endsWith("?")) {
+                generateOptionDeprecation(property)
                 generatePropertyDeclaration(property, modifiers = "override", value = "null")
             } else {
                 val backingField = property.backingField()
                 val visibilityModified = property.gradleBackingFieldVisibility.name.lowercase(Locale.US)
                 println("$visibilityModified var $backingField: $propertyType? = null")
+                generateOptionDeprecation(property)
                 generatePropertyDeclaration(property, modifiers = "override")
                 withIndent {
                     println("get() = $backingField ?: ${property.gradleDefaultValue}")
