@@ -1636,6 +1636,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
                 runTest("compiler/testData/ir/irText/expressions/funInterface/castFromAny.kt");
             }
 
+            @TestMetadata("partialSam.kt")
+            public void testPartialSam() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/funInterface/partialSam.kt");
+            }
+
             @TestMetadata("samConversionInVarargs.kt")
             public void testSamConversionInVarargs() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/funInterface/samConversionInVarargs.kt");
