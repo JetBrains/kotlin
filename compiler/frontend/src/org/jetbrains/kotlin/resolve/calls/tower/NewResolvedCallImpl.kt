@@ -48,9 +48,11 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     private var argumentTypeForConstantConvertedMap: Map<KtExpression, IntegerValueTypeConstant>? = null
     private var extensionReceiver = resolvedCallAtom.extensionReceiverArgument?.receiver?.receiverValue
     private var dispatchReceiver = resolvedCallAtom.dispatchReceiverArgument?.receiver?.receiverValue
+    private var contextReceivers = resolvedCallAtom.contextReceiversArguments.map { it.receiver.receiverValue }
 
     override fun getExtensionReceiver(): ReceiverValue? = extensionReceiver
     override fun getDispatchReceiver(): ReceiverValue? = dispatchReceiver
+    override fun getContextReceivers(): List<ReceiverValue> = contextReceivers
 
     @Suppress("UNCHECKED_CAST")
     override fun getCandidateDescriptor(): D = resolvedCallAtom.candidateDescriptor as D
@@ -65,6 +67,11 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     override fun updateExtensionReceiverType(newType: KotlinType) {
         if (extensionReceiver?.type == newType) return
         extensionReceiver = extensionReceiver?.replaceType(newType)
+    }
+
+    override fun updateContextReceiverTypes(newTypes: List<KotlinType>) {
+        if (contextReceivers.size != newTypes.size) return
+        contextReceivers = contextReceivers.zip(newTypes).map { (receiver, type) -> receiver.replaceType(type) }
     }
 
     override fun getStatus(): ResolutionStatus = getResultApplicability(diagnostics).toResolutionStatus()

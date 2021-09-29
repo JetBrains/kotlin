@@ -46,6 +46,7 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor> : ResolvedCall<D> {
 
     abstract fun updateDispatchReceiverType(newType: KotlinType)
     abstract fun updateExtensionReceiverType(newType: KotlinType)
+    abstract fun updateContextReceiverTypes(newTypes: List<KotlinType>)
     abstract fun containsOnlyOnlyInputTypesErrors(): Boolean
     abstract fun setResultingSubstitutor(substitutor: NewTypeSubstitutor?)
     abstract fun argumentToParameterMap(
