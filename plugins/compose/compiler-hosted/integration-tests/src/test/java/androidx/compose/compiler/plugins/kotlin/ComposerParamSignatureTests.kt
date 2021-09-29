@@ -125,6 +125,19 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     )
 
     @Test
+    fun testArrayListSizeOverride(): Unit = validateBytecode(
+        """
+        class CustomList : ArrayList<Any>() {
+            override val size: Int
+                get() = super.size
+        }
+        """, dumpClasses = true
+    ) {
+        assertTrue(it.contains("INVOKESPECIAL java/util/ArrayList.size ()I"))
+        assertFalse(it.contains("INVOKESPECIAL java/util/ArrayList.getSize ()I"))
+    }
+
+    @Test
     fun test32Params(): Unit = codegen(
         """
         @Composable

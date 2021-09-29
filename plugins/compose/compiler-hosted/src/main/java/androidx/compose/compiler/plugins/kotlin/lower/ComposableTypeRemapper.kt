@@ -236,13 +236,17 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
         ) {
             if (ownerFn.correspondingPropertySymbol != null) {
                 val property = ownerFn.correspondingPropertySymbol!!.owner
-                symbolRemapper.visitProperty(property)
-                visitProperty(property).also {
-                    it.getter?.correspondingPropertySymbol = it.symbol
-                    it.setter?.correspondingPropertySymbol = it.symbol
-                    it.parent = ownerFn.parent
-                    it.patchDeclarationParents(it.parent)
-                    it.copyAttributes(property)
+                // avoid java properties since they go through a different lowering and it is
+                // also impossible for them to have composable types
+                if (property.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) {
+                    symbolRemapper.visitProperty(property)
+                    visitProperty(property).also {
+                        it.getter?.correspondingPropertySymbol = it.symbol
+                        it.setter?.correspondingPropertySymbol = it.symbol
+                        it.parent = ownerFn.parent
+                        it.patchDeclarationParents(it.parent)
+                        it.copyAttributes(property)
+                    }
                 }
             } else {
                 symbolRemapper.visitSimpleFunction(ownerFn)
