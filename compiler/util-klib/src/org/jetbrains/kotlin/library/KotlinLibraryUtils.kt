@@ -31,9 +31,5 @@ fun File.unpackZippedKonanLibraryTo(newDir: File) {
 
 val List<String>.toUnresolvedLibraries
     get() = this.map {
-
-        val version = it.substringAfterLast('@', "")
-            .let { if (it.isEmpty()) null else it }
-        val name = it.substringBeforeLast('@')
-        UnresolvedLibrary(name, version)
+        UnresolvedLibrary(it, null)
     }

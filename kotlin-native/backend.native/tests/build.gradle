@@ -5103,45 +5103,6 @@ dynamicTest("interop_exceptions_throwThroughBridge") {
     interop = "exceptions_throwThroughBridge"
 }
 
-tasks.register("library_mismatch", KonanDriverTest) {
-    // Does not work for cross targets yet.
-    enabled = !(project.testTarget != null && project.target.name != project.hostName)
-
-    def dir = buildDir.absolutePath
-    def lib = "$projectDir/link/versioning/empty.kt"
-
-    def currentTarget = project.target.name
-    def someOtherTarget = (project.testTarget == 'wasm32' ? project.hostName : 'wasm32')
-
-    if (!useCustomDist) {
-        // we actually need any target other than the current one.
-        dependsOn ':kotlin-native:wasm32CrossDistRuntime'
-        dependsOn ':kotlin-native:wasm32CrossDistEndorsedLibraries'
-    }
-
-    doBeforeBuild {
-        konanc("$lib -p library -o $dir/1.2/empty -target $currentTarget -lv 1.2")
-        konanc("$lib -p library -o $dir/3.4/empty -target $someOtherTarget")
-        konanc("$lib -p library -o $dir/5.6/empty -target $currentTarget -lv 5.6")
-        konanc("$lib -p library -o $dir/7.8/empty -target $currentTarget -lv 7.8")
-
-    }
-    source = "link/versioning/hello.kt"
-    flags = ['-l', 'empty@5.6', '-r', "$dir/1.2", '-r', "$dir/3.4", '-r', "$dir/5.6"]
-    compilerMessages = true
-    def messages =
-        "warning: skipping $dir/1.2/empty.klib. The library versions don't match. Expected '5.6', found '1.2'\n" +
-        //"warning: skipping $dir/3.4/empty.klib. The target doesn't match. Expected '$currentTarget', found [$someOtherTarget]\n" +
-        "Hello, versioned world!\n"
-    messages = PlatformInfo.isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
-    outputChecker = { out ->
-        def outV = out.split("\n").findAll{ !it.startsWith("WARNING: ") }.join("\n")
-        messages.split("\n")
-                .collect { line -> outV.contains(line) }
-                .every { it == true }
-    }
-}
-
 tasks.register("library_ir_provider_mismatch", KonanDriverTest) {
     def dir = buildDir.absolutePath
     def lib = "$projectDir/link/ir_providers/library/empty.kt"
