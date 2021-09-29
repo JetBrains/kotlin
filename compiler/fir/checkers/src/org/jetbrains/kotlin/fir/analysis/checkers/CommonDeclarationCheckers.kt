@@ -60,6 +60,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirInlinePropertyChecker,
             FirPropertyFromParameterChecker,
             FirLocalVariableTypeParametersSyntaxChecker,
+            FirDelegateUsesExtensionPropertyTypeParameterChecker,
         )
 
     override val backingFieldCheckers: Set<FirBackingFieldChecker>

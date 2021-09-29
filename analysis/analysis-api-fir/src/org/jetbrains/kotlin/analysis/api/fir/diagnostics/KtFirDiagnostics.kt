@@ -1749,6 +1749,14 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val actualType: KtType
     }
 
+    abstract class DelegateUsesExtensionPropertyTypeParameter : KtFirDiagnostic<KtProperty>() {
+        override val diagnosticClass get() = DelegateUsesExtensionPropertyTypeParameter::class
+    }
+
+    abstract class DelegateUsesExtensionPropertyTypeParameterWarning : KtFirDiagnostic<KtProperty>() {
+        override val diagnosticClass get() = DelegateUsesExtensionPropertyTypeParameterWarning::class
+    }
+
     abstract class InitializerTypeMismatch : KtFirDiagnostic<KtProperty>() {
         override val diagnosticClass get() = InitializerTypeMismatch::class
         abstract val expectedType: KtType

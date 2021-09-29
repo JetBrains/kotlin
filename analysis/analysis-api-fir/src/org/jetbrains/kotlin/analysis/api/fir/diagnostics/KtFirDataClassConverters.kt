@@ -2471,6 +2471,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER) { firDiagnostic ->
+        DelegateUsesExtensionPropertyTypeParameterImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER_WARNING) { firDiagnostic ->
+        DelegateUsesExtensionPropertyTypeParameterWarningImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INITIALIZER_TYPE_MISMATCH) { firDiagnostic ->
         InitializerTypeMismatchImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
