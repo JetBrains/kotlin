@@ -31,12 +31,12 @@ val KtElement.mainReference: KtReference?
         else -> references.firstIsInstanceOrNull()
     }
 
-fun KtExpression.readWriteAccess(useResolveForReadWrite: Boolean) =
-    readWriteAccessWithFullExpression(useResolveForReadWrite).first
-
-fun KtExpression.readWriteAccessWithFullExpression(
-    useResolveForReadWrite: Boolean,
-    readWriteAccessWithFullExpressionByResolve: (KtBinaryExpression) -> Pair<ReferenceAccess, KtExpression>? = { null },
+@Deprecated(
+    "Not for the IDE usage",
+    replaceWith = ReplaceWith("readWriteAccessWithFullExpression", "org.jetbrains.kotlin.idea.references")
+)
+fun KtExpression.readWriteAccessWithFullExpressionWithPossibleResolve(
+    readWriteAccessWithFullExpressionByResolve: (KtBinaryExpression) -> Pair<ReferenceAccess, KtExpression>?,
 ): Pair<ReferenceAccess, KtExpression> {
     var expression = getQualifiedExpressionForSelectorOrThis()
     loop@ while (true) {
@@ -52,7 +52,7 @@ fun KtExpression.readWriteAccessWithFullExpression(
             KtTokens.EQ -> ReferenceAccess.WRITE to assignment
 
             else -> {
-                (if (useResolveForReadWrite) readWriteAccessWithFullExpressionByResolve(assignment) else null)
+                readWriteAccessWithFullExpressionByResolve(assignment)
                     ?: (ReferenceAccess.READ_WRITE to assignment)
             }
         }

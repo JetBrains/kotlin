@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper
-import org.jetbrains.kotlin.idea.references.readWriteAccess
+import org.jetbrains.kotlin.idea.references.readWriteAccessWithFullExpressionWithPossibleResolve
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findAssignment
@@ -59,7 +59,11 @@ internal class KtFirCallResolver(
         when (val fir = call.getOrBuildFir(firResolveState)) {
             is FirResolvedNamedReference -> {
                 val propertySymbol = fir.resolvedSymbol as? FirPropertySymbol ?: return null
-                val access = call.readWriteAccess(useResolveForReadWrite = false)
+
+                @Suppress("DEPRECATION")
+                val access =
+                    call.readWriteAccessWithFullExpressionWithPossibleResolve(readWriteAccessWithFullExpressionByResolve = { null }).first
+
                 val setterValue = findAssignment(call)?.right
                 val accessor = when {
                     access.isWrite -> propertySymbol.setterSymbol?.fir
