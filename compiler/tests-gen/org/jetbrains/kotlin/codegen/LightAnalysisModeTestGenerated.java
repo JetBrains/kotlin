@@ -31688,6 +31688,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/safeCall/safeCallOnLong.kt");
         }
 
+        @TestMetadata("safeCallSimplificationEnhancedNullabilityType.kt")
+        public void testSafeCallSimplificationEnhancedNullabilityType() throws Exception {
+            runTest("compiler/testData/codegen/box/safeCall/safeCallSimplificationEnhancedNullabilityType.kt");
+        }
+
+        @TestMetadata("safeCallSimplificationFlexibleType.kt")
+        public void testSafeCallSimplificationFlexibleType() throws Exception {
+            runTest("compiler/testData/codegen/box/safeCall/safeCallSimplificationFlexibleType.kt");
+        }
+
         @TestMetadata("safeCallWithElvisFolding.kt")
         public void testSafeCallWithElvisFolding() throws Exception {
             runTest("compiler/testData/codegen/box/safeCall/safeCallWithElvisFolding.kt");

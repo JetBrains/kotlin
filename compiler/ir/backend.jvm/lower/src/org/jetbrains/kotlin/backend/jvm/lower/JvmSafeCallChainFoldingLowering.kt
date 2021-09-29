@@ -8,18 +8,18 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
-import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 
 
 val jvmSafeCallFoldingPhase = makeIrFilePhase(
@@ -119,14 +119,17 @@ class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) : FileLowe
         IrConstImpl.boolean(startOffset, endOffset, context.irBuiltIns.booleanType, false)
 
     private fun irValNotNull(startOffset: Int, endOffset: Int, irVariable: IrVariable): IrExpression =
-        if (irVariable.type.isNullable())
+        if (irVariable.type.isJvmNullable())
             IrGetValueImpl(startOffset, endOffset, irVariable.symbol).irEqEqNull().irNot()
         else
             irTrue(startOffset, endOffset)
 
+    private fun IrType.isJvmNullable(): Boolean =
+        isNullable() || hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)
+    
     private fun IrType.isJvmPrimitive(): Boolean =
-        // TODO get rid of type mapper (take care of '@EnhancedNullability', maybe some other stuff).
-        AsmUtil.isPrimitive(context.typeMapper.mapType(this))
+        (isBoolean() || isByte() || isShort() || isInt() || isLong() || isChar() || isFloat() || isDouble()) &&
+                !hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)
 
     private inner class Transformer : IrElementTransformerVoid() {
         override fun visitBlock(expression: IrBlock): IrExpression {
@@ -393,7 +396,7 @@ class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) : FileLowe
             if (this.origin != JvmLoweredStatementOrigin.FOLDED_SAFE_CALL) return false
             val innerWhen = this.statements[0] as? IrWhen ?: return false
             val safeCallResult = innerWhen.branches[0].result
-            return !safeCallResult.type.isNullable()
+            return !safeCallResult.type.isJvmNullable()
         }
 
         override fun visitCall(expression: IrCall): IrExpression {

@@ -39591,6 +39591,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("safeCallSimplificationEnhancedNullabilityType.kt")
+        public void testSafeCallSimplificationEnhancedNullabilityType() throws Exception {
+            runTest("compiler/testData/codegen/box/safeCall/safeCallSimplificationEnhancedNullabilityType.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallSimplificationFlexibleType.kt")
+        public void testSafeCallSimplificationFlexibleType() throws Exception {
+            runTest("compiler/testData/codegen/box/safeCall/safeCallSimplificationFlexibleType.kt");
+        }
+
+        @Test
         @TestMetadata("safeCallWithElvisFolding.kt")
         public void testSafeCallWithElvisFolding() throws Exception {
             runTest("compiler/testData/codegen/box/safeCall/safeCallWithElvisFolding.kt");
