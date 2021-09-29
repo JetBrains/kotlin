@@ -28,7 +28,7 @@ To build only essential parts, run the following command:
 ```
 python3 package.py --build-targets install-distribution --distribution-components $DISTRIBUTION_COMPONENTS
 ```
-Set of required `$DISTRIBUTION_COMPONENTS` is depends on OS:
+Set of required `$DISTRIBUTION_COMPONENTS` depends on OS:
 
 | OS | Distribution components |
 | --- | --- |
@@ -54,10 +54,8 @@ You can use Docker to build LLVM for Linux:
 ```shell
 docker build -t kotlin-llvm-builder .
 docker run --rm -it -v <HOST_PATH>:/output kotlin-llvm-builder --install-path /output/llvm-11.1.0-linux-x64 --pack
-
 ```
 
 ### Known problems
-1. Bootstrap build is not working on macOS for default git branch.
-2. `libcxx` and `compiler-rt` are built as projects, not runtimes.
-3. No way to run LLVM tests out of the box.
+1. `libcxx` and `compiler-rt` are built as projects, not runtimes.
+2. No way to run LLVM tests out of the box.

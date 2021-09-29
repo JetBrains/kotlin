@@ -138,7 +138,6 @@ def construct_cmake_flags(
             cxx_flags = ['-isysroot', isysroot, '-stdlib=libc++']
             linker_flags = ['-stdlib=libc++']
 
-
     if host_is_darwin():
         cmake_args.append('-DLLVM_ENABLE_LIBCXX=ON')
         if building_bootstrap:
@@ -263,7 +262,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Build LLVM toolchain for Kotlin/Native")
     # Output configuration.
     parser.add_argument("--install-path", type=str, default="llvm-distribution", required=False,
-                        help="Where final LLVM distribution will be enabled")
+                        help="Where final LLVM distribution will be installed")
     parser.add_argument("--pack", action='store_true',
                         help="Create an archive and its sha256 for final distribution at `--install-path`")
     parser.add_argument("--build-targets", default=["install"],
