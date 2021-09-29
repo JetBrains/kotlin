@@ -1621,6 +1621,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
                 runTest("compiler/testData/ir/irText/expressions/funInterface/castFromAny.kt");
             }
 
+            @TestMetadata("functionSupertype.kt")
+            public void testFunctionSupertype() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/funInterface/functionSupertype.kt");
+            }
+
             @TestMetadata("samConversionInVarargs.kt")
             public void testSamConversionInVarargs() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/funInterface/samConversionInVarargs.kt");
