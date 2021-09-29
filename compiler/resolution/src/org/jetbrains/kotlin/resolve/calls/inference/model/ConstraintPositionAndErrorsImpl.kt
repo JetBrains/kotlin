@@ -43,11 +43,6 @@ class FixVariableConstraintPositionImpl(
 
 class KnownTypeParameterConstraintPositionImpl(typeArgument: KotlinType) : KnownTypeParameterConstraintPosition<KotlinType>(typeArgument)
 
-class LHSArgumentConstraintPositionImpl(
-    argument: CallableReferenceKotlinCallArgument,
-    receiver: DetailedReceiver
-) : LHSArgumentConstraintPosition<CallableReferenceKotlinCallArgument, DetailedReceiver>(argument, receiver)
-
 class LambdaArgumentConstraintPositionImpl(lambda: ResolvedLambdaAtom) : LambdaArgumentConstraintPosition<ResolvedLambdaAtom>(lambda)
 
 class DelegatedPropertyConstraintPositionImpl(topLevelCall: KotlinCall) : DelegatedPropertyConstraintPosition<KotlinCall>(topLevelCall)

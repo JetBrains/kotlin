@@ -359,7 +359,6 @@ class DiagnosticReporterByTrackingStrategy(
             when (position) {
                 is ArgumentConstraintPositionImpl -> position.argument
                 is ReceiverConstraintPositionImpl -> position.argument
-                is LHSArgumentConstraintPositionImpl -> position.argument
                 is LambdaArgumentConstraintPositionImpl -> position.lambda.atom
                 else -> null
             }

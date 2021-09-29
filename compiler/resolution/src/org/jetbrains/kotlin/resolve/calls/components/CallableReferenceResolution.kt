@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstitutor.createToFreshVariableSubstitutorAndAddInitialConstraints
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPositionImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.DISPATCH_RECEIVER
@@ -27,6 +29,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastI
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.captureFromExpression
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
+import org.jetbrains.kotlin.types.model.TypeVariance
+import org.jetbrains.kotlin.types.model.convertVariance
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.supertypes
@@ -136,9 +140,19 @@ fun ConstraintSystemOperation.checkCallableReference(
     expectedType: UnwrappedType?,
     ownerDescriptor: DeclarationDescriptor
 ): Pair<FreshVariableNewTypeSubstitutor, KotlinCallDiagnostic?> {
+    val lhsResult = argument.lhsResult
     val position = ArgumentConstraintPositionImpl(argument)
 
     val toFreshSubstitutor = createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, this)
+
+    if (lhsResult is LHSResult.Type && expectedType != null && !TypeUtils.noExpectedType(expectedType)) {
+        // NB: regular objects have lhsResult of `LHSResult.Object` type and won't be proceeded here
+        val isStaticOrCompanionMember =
+            DescriptorUtils.isStaticDeclaration(candidateDescriptor) || candidateDescriptor.containingDeclaration.isCompanionObject()
+        if (!isStaticOrCompanionMember) {
+            addLhsTypeConstraint(lhsResult.unboundDetailedReceiver.stableType, expectedType, position)
+        }
+    }
 
     if (!ErrorUtils.isError(candidateDescriptor)) {
         addReceiverConstraint(toFreshSubstitutor, dispatchReceiver, candidateDescriptor.dispatchReceiverParameter, position)
@@ -156,6 +170,28 @@ fun ConstraintSystemOperation.checkCallableReference(
     return toFreshSubstitutor to invisibleMember?.let(::VisibilityError)
 }
 
+
+private fun ConstraintSystemOperation.addLhsTypeConstraint(
+    lhsType: KotlinType,
+    expectedType: UnwrappedType,
+    position: ConstraintPosition
+) {
+    if (!ReflectionTypes.isNumberedTypeWithOneOrMoreNumber(expectedType)) return
+
+    val expectedTypeProjectionForLHS = expectedType.arguments.first()
+    val expectedTypeForLHS = expectedTypeProjectionForLHS.type
+    val expectedTypeVariance = expectedTypeProjectionForLHS.projectionKind.convertVariance()
+    val effectiveVariance = AbstractTypeChecker.effectiveVariance(
+        expectedType.constructor.parameters.first().variance.convertVariance(),
+        expectedTypeVariance
+    ) ?: expectedTypeVariance
+
+    when (effectiveVariance) {
+        TypeVariance.INV -> addEqualityConstraint(lhsType, expectedTypeForLHS, position)
+        TypeVariance.IN -> addSubtypeConstraint(expectedTypeForLHS, lhsType, position)
+        TypeVariance.OUT -> addSubtypeConstraint(lhsType, expectedTypeForLHS, position)
+    }
+}
 
 private fun ConstraintSystemOperation.addReceiverConstraint(
     toFreshSubstitutor: FreshVariableNewTypeSubstitutor,
