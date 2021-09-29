@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstituto
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallAtom
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -34,6 +33,7 @@ class NewVariableAsFunctionResolvedCallImpl(
     override fun getCandidateDescriptor() = functionCall.candidateDescriptor
     override fun getResultingDescriptor() = functionCall.resultingDescriptor
     override fun getExtensionReceiver() = functionCall.extensionReceiver
+    override fun getContextReceivers() = functionCall.contextReceivers
     override fun getDispatchReceiver() = functionCall.dispatchReceiver
     override fun getExplicitReceiverKind() = functionCall.explicitReceiverKind
     override fun getTypeArguments() = functionCall.typeArguments
@@ -41,6 +41,7 @@ class NewVariableAsFunctionResolvedCallImpl(
     override fun containsOnlyOnlyInputTypesErrors() = functionCall.containsOnlyOnlyInputTypesErrors()
     override fun updateDispatchReceiverType(newType: KotlinType) = functionCall.updateDispatchReceiverType(newType)
     override fun updateExtensionReceiverType(newType: KotlinType) = functionCall.updateExtensionReceiverType(newType)
+    override fun updateContextReceiverTypes(newTypes: List<KotlinType>) = functionCall.updateContextReceiverTypes(newTypes)
     override fun argumentToParameterMap(
         resultingDescriptor: CallableDescriptor,
         valueArguments: Map<ValueParameterDescriptor, ResolvedValueArgument>

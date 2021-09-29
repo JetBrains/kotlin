@@ -65,6 +65,7 @@ class NewCallableReferenceResolvedCall<D : CallableDescriptor>(
 
     override fun getExtensionReceiver(): ReceiverValue? = extensionReceiver
     override fun getDispatchReceiver(): ReceiverValue? = dispatchReceiver
+    override fun getContextReceivers() = emptyList<ReceiverValue>()
 
     override fun updateDispatchReceiverType(newType: KotlinType) {
         if (dispatchReceiver?.type == newType) return
@@ -74,6 +75,11 @@ class NewCallableReferenceResolvedCall<D : CallableDescriptor>(
     override fun updateExtensionReceiverType(newType: KotlinType) {
         if (extensionReceiver?.type == newType) return
         extensionReceiver = extensionReceiver?.replaceType(newType)
+    }
+
+    override fun updateContextReceiverTypes(newTypes: List<KotlinType>) {
+        // TODO: Update context receivers
+        return
     }
 
     @Suppress("UNCHECKED_CAST")
