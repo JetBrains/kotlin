@@ -144,101 +144,31 @@ import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
  */
 
 abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
-    override fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer, data: D): R  = visitElement(annotationContainer, data)
-
     override fun visitTypeRef(typeRef: FirTypeRef, data: D): R  = visitAnnotationContainer(typeRef, data)
 
-    override fun visitReference(reference: FirReference, data: D): R  = visitElement(reference, data)
-
-    override fun visitLabel(label: FirLabel, data: D): R  = visitElement(label, data)
-
-    override fun visitResolvable(resolvable: FirResolvable, data: D): R  = visitElement(resolvable, data)
-
-    override fun visitTargetElement(targetElement: FirTargetElement, data: D): R  = visitElement(targetElement, data)
-
-    override fun visitDeclarationStatus(declarationStatus: FirDeclarationStatus, data: D): R  = visitElement(declarationStatus, data)
-
     override fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: D): R  = visitDeclarationStatus(resolvedDeclarationStatus, data)
-
-    override fun visitControlFlowGraphOwner(controlFlowGraphOwner: FirControlFlowGraphOwner, data: D): R  = visitElement(controlFlowGraphOwner, data)
 
     override fun visitStatement(statement: FirStatement, data: D): R  = visitAnnotationContainer(statement, data)
 
     override fun visitExpression(expression: FirExpression, data: D): R  = visitStatement(expression, data)
 
-    override fun visitDeclaration(declaration: FirDeclaration, data: D): R  = visitElement(declaration, data)
-
-    override fun visitAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration, data: D): R  = visitDeclaration(annotatedDeclaration, data)
-
-    override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): R  = visitDeclaration(anonymousInitializer, data)
-
     override fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: D): R  = visitAnnotatedDeclaration(typedDeclaration, data)
-
-    override fun visitTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: D): R  = visitElement(typeParameterRefsOwner, data)
 
     override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): R  = visitTypeParameterRefsOwner(typeParametersOwner, data)
 
     override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: D): R  = visitTypeParameterRefsOwner(memberDeclaration, data)
 
-    override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): R  = visitTypedDeclaration(callableDeclaration, data)
-
-    override fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: D): R  = visitElement(typeParameterRef, data)
-
-    override fun visitTypeParameter(typeParameter: FirTypeParameter, data: D): R  = visitTypeParameterRef(typeParameter, data)
-
-    override fun visitVariable(variable: FirVariable, data: D): R  = visitCallableDeclaration(variable, data)
-
-    override fun visitValueParameter(valueParameter: FirValueParameter, data: D): R  = visitVariable(valueParameter, data)
-
-    override fun visitProperty(property: FirProperty, data: D): R  = visitVariable(property, data)
-
     override fun visitField(field: FirField, data: D): R  = visitVariable(field, data)
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): R  = visitVariable(enumEntry, data)
 
-    override fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration, data: D): R  = visitAnnotatedDeclaration(classLikeDeclaration, data)
-
-    override fun visitClass(klass: FirClass, data: D): R  = visitClassLikeDeclaration(klass, data)
-
-    override fun visitRegularClass(regularClass: FirRegularClass, data: D): R  = visitClass(regularClass, data)
-
-    override fun visitTypeAlias(typeAlias: FirTypeAlias, data: D): R  = visitClassLikeDeclaration(typeAlias, data)
-
-    override fun visitFunction(function: FirFunction, data: D): R  = visitCallableDeclaration(function, data)
-
-    override fun visitContractDescriptionOwner(contractDescriptionOwner: FirContractDescriptionOwner, data: D): R  = visitElement(contractDescriptionOwner, data)
-
-    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: D): R  = visitFunction(simpleFunction, data)
-
-    override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: D): R  = visitFunction(propertyAccessor, data)
-
-    override fun visitBackingField(backingField: FirBackingField, data: D): R  = visitVariable(backingField, data)
-
-    override fun visitConstructor(constructor: FirConstructor, data: D): R  = visitFunction(constructor, data)
-
     override fun visitFile(file: FirFile, data: D): R  = visitAnnotatedDeclaration(file, data)
-
-    override fun visitPackageDirective(packageDirective: FirPackageDirective, data: D): R  = visitElement(packageDirective, data)
-
-    override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: D): R  = visitFunction(anonymousFunction, data)
 
     override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: D): R  = visitExpression(anonymousFunctionExpression, data)
 
-    override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: D): R  = visitClass(anonymousObject, data)
-
     override fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression, data: D): R  = visitExpression(anonymousObjectExpression, data)
 
-    override fun visitDiagnosticHolder(diagnosticHolder: FirDiagnosticHolder, data: D): R  = visitElement(diagnosticHolder, data)
-
-    override fun visitImport(import: FirImport, data: D): R  = visitElement(import, data)
-
     override fun visitResolvedImport(resolvedImport: FirResolvedImport, data: D): R  = visitImport(resolvedImport, data)
-
-    override fun visitErrorImport(errorImport: FirErrorImport, data: D): R  = visitImport(errorImport, data)
-
-    override fun visitLoop(loop: FirLoop, data: D): R  = visitStatement(loop, data)
-
-    override fun visitErrorLoop(errorLoop: FirErrorLoop, data: D): R  = visitLoop(errorLoop, data)
 
     override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: D): R  = visitLoop(doWhileLoop, data)
 
@@ -256,67 +186,27 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitContinueExpression(continueExpression: FirContinueExpression, data: D): R  = visitLoopJump(continueExpression, data)
 
-    override fun visitCatch(catch: FirCatch, data: D): R  = visitElement(catch, data)
-
-    override fun visitTryExpression(tryExpression: FirTryExpression, data: D): R  = visitExpression(tryExpression, data)
-
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: D): R  = visitExpression(constExpression, data)
-
-    override fun visitTypeProjection(typeProjection: FirTypeProjection, data: D): R  = visitElement(typeProjection, data)
 
     override fun visitStarProjection(starProjection: FirStarProjection, data: D): R  = visitTypeProjection(starProjection, data)
 
     override fun visitTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance, data: D): R  = visitTypeProjection(typeProjectionWithVariance, data)
 
-    override fun visitArgumentList(argumentList: FirArgumentList, data: D): R  = visitElement(argumentList, data)
-
     override fun visitCall(call: FirCall, data: D): R  = visitStatement(call, data)
 
     override fun visitAnnotation(annotation: FirAnnotation, data: D): R  = visitExpression(annotation, data)
 
-    override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: D): R  = visitAnnotation(annotationCall, data)
-
-    override fun visitAnnotationArgumentMapping(annotationArgumentMapping: FirAnnotationArgumentMapping, data: D): R  = visitElement(annotationArgumentMapping, data)
-
     override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: D): R  = visitExpression(comparisonExpression, data)
 
-    override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: D): R  = visitExpression(typeOperatorCall, data)
-
     override fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: D): R  = visitStatement(assignmentOperatorStatement, data)
-
-    override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: D): R  = visitExpression(equalityOperatorCall, data)
-
-    override fun visitWhenExpression(whenExpression: FirWhenExpression, data: D): R  = visitExpression(whenExpression, data)
-
-    override fun visitWhenBranch(whenBranch: FirWhenBranch, data: D): R  = visitElement(whenBranch, data)
-
-    override fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess, data: D): R  = visitResolvable(qualifiedAccess, data)
-
-    override fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: D): R  = visitExpression(checkNotNullCall, data)
-
-    override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: D): R  = visitExpression(elvisExpression, data)
-
-    override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: D): R  = visitExpression(arrayOfCall, data)
 
     override fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall, data: D): R  = visitStatement(augmentedArraySetCall, data)
 
     override fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: D): R  = visitExpression(classReferenceExpression, data)
 
-    override fun visitErrorExpression(errorExpression: FirErrorExpression, data: D): R  = visitExpression(errorExpression, data)
-
-    override fun visitErrorFunction(errorFunction: FirErrorFunction, data: D): R  = visitFunction(errorFunction, data)
-
-    override fun visitErrorProperty(errorProperty: FirErrorProperty, data: D): R  = visitVariable(errorProperty, data)
-
-    override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: D): R  = visitExpression(qualifiedAccessExpression, data)
-
     override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: D): R  = visitQualifiedAccessExpression(propertyAccessExpression, data)
 
-    override fun visitFunctionCall(functionCall: FirFunctionCall, data: D): R  = visitQualifiedAccessExpression(functionCall, data)
-
     override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: D): R  = visitFunctionCall(implicitInvokeCall, data)
-
-    override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: D): R  = visitResolvable(delegatedConstructorCall, data)
 
     override fun visitComponentCall(componentCall: FirComponentCall, data: D): R  = visitFunctionCall(componentCall, data)
 
@@ -332,8 +222,6 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitCheckedSafeCallSubject(checkedSafeCallSubject: FirCheckedSafeCallSubject, data: D): R  = visitExpression(checkedSafeCallSubject, data)
 
-    override fun visitGetClassCall(getClassCall: FirGetClassCall, data: D): R  = visitExpression(getClassCall, data)
-
     override fun visitWrappedExpression(wrappedExpression: FirWrappedExpression, data: D): R  = visitExpression(wrappedExpression, data)
 
     override fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: D): R  = visitWrappedExpression(wrappedArgumentExpression, data)
@@ -348,13 +236,9 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: D): R  = visitExpression(resolvedQualifier, data)
 
-    override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: D): R  = visitResolvedQualifier(errorResolvedQualifier, data)
-
     override fun visitResolvedReifiedParameterReference(resolvedReifiedParameterReference: FirResolvedReifiedParameterReference, data: D): R  = visitExpression(resolvedReifiedParameterReference, data)
 
     override fun visitReturnExpression(returnExpression: FirReturnExpression, data: D): R  = visitJump(returnExpression, data)
-
-    override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: D): R  = visitCall(stringConcatenationCall, data)
 
     override fun visitThrowExpression(throwExpression: FirThrowExpression, data: D): R  = visitExpression(throwExpression, data)
 
@@ -365,8 +249,6 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression, data: D): R  = visitWrappedExpression(wrappedDelegateExpression, data)
 
     override fun visitNamedReference(namedReference: FirNamedReference, data: D): R  = visitReference(namedReference, data)
-
-    override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: D): R  = visitNamedReference(errorNamedReference, data)
 
     override fun visitSuperReference(superReference: FirSuperReference, data: D): R  = visitReference(superReference, data)
 
@@ -384,8 +266,6 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: D): R  = visitTypeRef(resolvedTypeRef, data)
 
-    override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: D): R  = visitResolvedTypeRef(errorTypeRef, data)
-
     override fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: D): R  = visitTypeRef(typeRefWithNullability, data)
 
     override fun visitUserTypeRef(userTypeRef: FirUserTypeRef, data: D): R  = visitTypeRefWithNullability(userTypeRef, data)
@@ -395,10 +275,6 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitFunctionTypeRef(functionTypeRef: FirFunctionTypeRef, data: D): R  = visitTypeRefWithNullability(functionTypeRef, data)
 
     override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: D): R  = visitTypeRef(implicitTypeRef, data)
-
-    override fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration, data: D): R  = visitElement(effectDeclaration, data)
-
-    override fun visitContractDescription(contractDescription: FirContractDescription, data: D): R  = visitElement(contractDescription, data)
 
     override fun visitLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription, data: D): R  = visitContractDescription(legacyRawContractDescription, data)
 

@@ -35,7 +35,9 @@ fun printVisitor(elements: List<Element>, generationPath: File, visitSuperTypeBy
             println("abstract fun visitElement(element: FirElement, data: D): R\n")
         }
         for (element in elements) {
-            if (element == AbstractFirTreeBuilder.baseFirElement) continue
+            if (element == AbstractFirTreeBuilder.baseFirElement ||
+                visitSuperTypeByDefault && (element.parents.size != 1 || element.parents.single().name == "Element")
+            ) continue
             with(element) {
                 val varName = safeDecapitalizedName
                 if (visitSuperTypeByDefault) {
@@ -45,7 +47,7 @@ fun printVisitor(elements: List<Element>, generationPath: File, visitSuperTypeBy
                 }
                 print(" fun ${typeParameters}visit$name($varName: $typeWithArguments, data: D): R${multipleUpperBoundsList()} = visit")
                 if (visitSuperTypeByDefault) {
-                    print(parents.first().name)
+                    print(parents.single().name)
                 } else {
                     print("Element")
                 }
@@ -124,7 +126,7 @@ fun printDefaultVisitorVoid(elements: List<Element>, generationPath: File): Gene
 
         pushIndent()
         for (element in elements) {
-            if (element == AbstractFirTreeBuilder.baseFirElement) continue
+            if (element == AbstractFirTreeBuilder.baseFirElement || element.parents.size != 1 || element.parents.single().name == "Element") continue
             with(element) {
                 val varName = safeDecapitalizedName
                 println("override fun ${typeParameters}visit$name($varName: $typeWithArguments)${multipleUpperBoundsList()} = visit${parents.first().name}($varName)")

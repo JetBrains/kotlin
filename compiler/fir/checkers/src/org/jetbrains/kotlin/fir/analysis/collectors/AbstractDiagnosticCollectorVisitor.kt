@@ -172,6 +172,10 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
+    override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: Nothing?) {
+        visitResolvedTypeRef(errorTypeRef, data)
+    }
+
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?) {
         // Assuming no errors, the children of FirResolvedTypeRef (currently this can be FirAnnotationCalls) will also be present
         // as children in delegatedTypeRef. We should make sure those elements are only visited once, otherwise diagnostics will be
