@@ -350,12 +350,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             try {
                 val initialExplicitReceiver = functionCall.explicitReceiver
                 val resultExpression = callResolver.resolveCallAndSelectCandidate(functionCall).let {
-                    collectionLiteralResolver.replaceCollectionLiteral(it)
+                    collectionLiteralResolver.replaceCollectionLiterals(it)
                 }
-//                if (resultExpression.arguments.any { it is FirCollectionLiteral }) {
-                    // так приходится делать из-за того, что после замены аргементов мы сломали все мапинги
-//                    return collectionLiteralResolver.replaceCollectionLiteral(resultExpression).transformSingle(transformer, data)
-//                }
                 val resultExplicitReceiver = resultExpression.explicitReceiver
                 if (initialExplicitReceiver !== resultExplicitReceiver && resultExplicitReceiver is FirQualifiedAccess) {
                     // name.invoke() case

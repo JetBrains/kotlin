@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystem
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class FirCollectionLiteralResolver(
@@ -53,8 +55,7 @@ class FirCollectionLiteralResolver(
     private val session: FirSession get() = components.session
     private inline val inferenceComponents: InferenceComponents get() = session.inferenceComponents
 
-    //    private val typeToBuilderCache = mutableMapOf<ConeKotlinType, Candidate>()
-    private val buildersForCollectionLiteral: MutableMap<FirCollectionLiteral, MutableMap<ConeKotlinType, Candidate>> = mutableMapOf()
+    private val buildersForCollectionLiteral: MutableMap<FirCollectionLiteral, MutableMap<ClassId, Candidate>> = mutableMapOf()
 
     fun processSequenceLiteral(cl: FirCollectionLiteral): FirStatement {
         require(cl.kind == CollectionLiteralKind.SEQ_LITERAL)
@@ -82,22 +83,25 @@ class FirCollectionLiteralResolver(
 
             val initialType = components.initialTypeOfCandidate(builder)
 
-            val tv = builder.freshVariables.single()
-            builder.csBuilder.fixVariable(tv, fixedArgumentType.fixedType, ConeFixVariableConstraintPosition(tv))
-            builder.substitutor = builder.csBuilder.buildCurrentSubstitutor() as ConeSubstitutor
-            builder.substitutor.substituteOrSelf(initialType).also {
+//            val tv = builder.freshVariables.single()
+//            builder.csBuilder.fixVariable(tv, fixedArgumentType.fixedType, ConeFixVariableConstraintPosition(tv))
+//            builder.substitutor = builder.csBuilder.buildCurrentSubstitutor() as ConeSubstitutor
+//            builder.substitutor.substituteOrSelf(initialType).also {
+//                buildersForCollectionLiteral.getOrPut(cl) {
+//                    mutableMapOf()
+//                }[it] = builder
+//            }
+            initialType.also {
                 buildersForCollectionLiteral.getOrPut(cl) {
                     mutableMapOf()
-                }[it] = builder
+                }[it.classId!!] = builder
             }
         }
 
         val type = ConeTypeIntersector.intersectTypes(session.inferenceComponents.ctx, possibleTypes)
         cl.replaceArgumentType(fixedArgumentType.fixedType as? ConeKotlinType ?: error("cant infer type of CL arguments"))
 
-
         cl.resultType = cl.resultType.resolvedTypeFromPrototype(type)
-
 
         return cl
     }
@@ -107,10 +111,9 @@ class FirCollectionLiteralResolver(
         TODO()
     }
 
-
-    fun replaceCollectionLiteral(call: FirFunctionCall): FirFunctionCall {
+    fun replaceCollectionLiterals(call: FirFunctionCall): FirFunctionCall {
         val candidate = (call.calleeReference as? FirNamedReferenceWithCandidate)?.candidate ?: return call
-        val argumentMapping = candidate.argumentMapping ?: return call
+        val argumentMapping = candidate.argumentMapping ?: error("cant get argument mapping for $candidate")
         if (!argumentMapping.keys.any { it is FirCollectionLiteral }) return call
 
         val replacer = object : FirTransformer<Unit>() {
@@ -120,11 +123,9 @@ class FirCollectionLiteralResolver(
             }
 
             override fun transformCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: Unit): FirStatement {
-                val c = candidate
-                println(c)
-                val param = argumentMapping[collectionLiteral] ?: error("")
-                val typeToBuilder = buildersForCollectionLiteral[collectionLiteral] ?: error("no builder for $collectionLiteral")
-                val builder = typeToBuilder[param.returnTypeRef.coneType] ?: error("")
+                val param = argumentMapping[collectionLiteral]!!
+                val builder = chooseBuilder(candidate, collectionLiteral, param.returnTypeRef) ?: return collectionLiteral
+
                 return createFunctionCallForCollectionLiteral(builder, collectionLiteral).transformSingle(
                     transformer,
                     ResolutionMode.ContextDependent
@@ -134,9 +135,29 @@ class FirCollectionLiteralResolver(
                 }
             }
         }
+        return call.transformSingle(replacer, Unit)
+    }
 
-        val res = call.transformSingle(replacer, Unit)
-        return res
+    private fun chooseBuilder(candidate: Candidate, cl: FirCollectionLiteral, type: FirTypeRef): Candidate? {
+        val substituted = candidate.substitutor.substituteOrSelf(type.coneType)
+        val typeConstructor = substituted.typeConstructor(candidate.system)
+        val notFixed = candidate.system.currentStorage().notFixedTypeVariables[typeConstructor]
+        val clType = if (notFixed != null) {
+            val resultType = inferenceComponents.resultTypeResolver.findResultType(
+                candidate.system,
+                notFixed,
+                TypeVariableDirectionCalculator.ResolveDirection.TO_SUBTYPE
+            )
+            val it = resultType as? ConeIntersectionType ?: error("not it type")
+            val clType = it.alternativeType
+            if (clType !in it.intersectedTypes) {
+                TODO("report ambiguity")
+            }
+            clType
+        } else {
+            substituted
+        } ?: error("")
+        return buildersForCollectionLiteral[cl]?.get(clType.classId!!)
     }
 
     fun typeOfArgumentsSequence(cl: FirCollectionLiteral): FixedArgument {
