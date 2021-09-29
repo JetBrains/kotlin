@@ -238,6 +238,18 @@ extern "C" RUNTIME_NOTHROW void LeaveFrame(ObjHeader** start, int parameters, in
     threadData->shadowStack().LeaveFrame(start, parameters, count);
 }
 
+extern "C" RUNTIME_NOTHROW void SetCurrentFrame(ObjHeader** start) {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+    threadData->shadowStack().SetCurrentFrame(start);
+}
+
+extern "C" RUNTIME_NOTHROW FrameOverlay* getCurrentFrame() {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+    return threadData->shadowStack().getCurrentFrame();
+}
+
 extern "C" RUNTIME_NOTHROW void AddTLSRecord(MemoryState* memory, void** key, int size) {
     memory->GetThreadData()->tls().AddRecord(key, size);
 }

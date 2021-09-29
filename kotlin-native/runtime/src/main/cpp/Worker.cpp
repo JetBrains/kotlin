@@ -160,7 +160,7 @@ class Worker {
 
   bool waitForQueueLocked(KLong timeoutMicroseconds, KLong* remaining);
 
-  JobKind processQueueElement(bool blocking);
+  RUNTIME_NODEBUG JobKind processQueueElement(bool blocking);
 
   bool park(KLong timeoutMicroseconds, bool process);
 
@@ -1052,21 +1052,22 @@ JobKind Worker::processQueueElement(bool blocking) {
       ObjHolder operationHolder, dummyHolder;
       KRef obj = DerefStablePointer(job.executeAfter.operation, operationHolder.slot());
       try {
-#if KONAN_OBJC_INTEROP
-        konan::AutoreleasePool autoreleasePool;
-#endif
-        WorkerLaunchpad(obj, dummyHolder.slot());
-      } catch (ExceptionObjHolder& e) {
+        #if KONAN_OBJC_INTEROP
+          konan::AutoreleasePool autoreleasePool;
+        #endif
+          WorkerLaunchpad(obj, dummyHolder.slot());
+      } catch(ExceptionObjHolder& e) {
         switch (exceptionHandling()) {
-            case WorkerExceptionHandling::kIgnore: break;
-            case WorkerExceptionHandling::kDefault:
-                kotlin::ProcessUnhandledException(e.GetExceptionObject());
-                break;
-            case WorkerExceptionHandling::kLog:
-                ReportUnhandledException(e.GetExceptionObject());
-                break;
+          case WorkerExceptionHandling::kIgnore: break;
+          case WorkerExceptionHandling::kDefault:
+              kotlin::ProcessUnhandledException(e.GetExceptionObject());
+              break;
+          case WorkerExceptionHandling::kLog:
+              ReportUnhandledException(e.GetExceptionObject());
+              break;
         }
       }
+
       DisposeStablePointer(job.executeAfter.operation);
       break;
     }
@@ -1076,15 +1077,21 @@ JobKind Worker::processQueueElement(bool blocking) {
       ObjHolder argumentHolder;
       ObjHolder resultHolder;
       KRef argument = AdoptStablePointer(job.regularJob.argument, argumentHolder.slot());
+      #if !KONAN_NO_EXCEPTIONS
+        FrameOverlay* currentFrame = getCurrentFrame();
+      #else
+        RuntimeFail("Exceptions aren't supported!\n");
+      #endif
       try {
-#if KONAN_OBJC_INTEROP
-        konan::AutoreleasePool autoreleasePool;
-#endif
-        job.regularJob.function(argument, resultHolder.slot());
-        argumentHolder.clear();
-        // Transfer the result.
-        result = transfer(&resultHolder, job.regularJob.transferMode);
+        #if KONAN_OBJC_INTEROP
+          konan::AutoreleasePool autoreleasePool;
+        #endif
+          job.regularJob.function(argument, resultHolder.slot());
+          argumentHolder.clear();
+          // Transfer the result.
+          result = transfer(&resultHolder, job.regularJob.transferMode);
       } catch (ExceptionObjHolder& e) {
+        SetCurrentFrame(reinterpret_cast<ObjHeader**>(currentFrame));
         ok = false;
         switch (exceptionHandling()) {
             case WorkerExceptionHandling::kIgnore:

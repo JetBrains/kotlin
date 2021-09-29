@@ -35,3 +35,11 @@ void mm::ShadowStack::LeaveFrame(ObjHeader** start, int parameters, int count) n
     FrameOverlay* frame = reinterpret_cast<FrameOverlay*>(start);
     currentFrame_ = frame->previous;
 }
+
+void mm::ShadowStack::SetCurrentFrame(ObjHeader** start) noexcept {
+    currentFrame_ = reinterpret_cast<FrameOverlay*>(start);
+}
+
+FrameOverlay* mm::ShadowStack::getCurrentFrame() noexcept {
+    return currentFrame_;
+}

@@ -35,6 +35,7 @@ void EnsureDeclarationsEmitted() {
     ensureUsed(ZeroArrayRefs);
     ensureUsed(EnterFrame);
     ensureUsed(LeaveFrame);
+    ensureUsed(SetCurrentFrame);
     ensureUsed(AddTLSRecord);
     ensureUsed(LookupTLS);
     ensureUsed(MutationCheck);
