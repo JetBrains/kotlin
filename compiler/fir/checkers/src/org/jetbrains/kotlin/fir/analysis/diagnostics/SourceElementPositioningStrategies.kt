@@ -329,4 +329,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.TAILREC_MODIFIER,
         PositioningStrategies.TAILREC_MODIFIER
     )
+
+    val PROPERTY_DELEGATE = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.PROPERTY_DELEGATE,
+        PositioningStrategies.PROPERTY_DELEGATE
+    )
 }

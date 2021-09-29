@@ -13,6 +13,7 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.diagnostics.PositioningStrategies
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
@@ -398,6 +399,22 @@ object LightTreePositioningStrategies {
 
         override fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
             return tree.fieldKeyword(node) != null
+        }
+    }
+
+    val PROPERTY_DELEGATE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val delegate = tree.findChildByType(node, KtNodeTypes.PROPERTY_DELEGATE)
+            return markElement(delegate ?: node, startOffset, endOffset, tree, node)
+        }
+
+        override fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
+            return tree.findChildByType(node, KtNodeTypes.PROPERTY_DELEGATE) != null
         }
     }
 
@@ -1022,6 +1039,9 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.returnKeyword(node: Li
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.fieldKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.FIELD_KEYWORD)
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.byKeyword(node: LighterASTNode): LighterASTNode? =
+    findChildByType(node, KtTokens.BY_KEYWORD)
 
 internal fun FlyweightCapableTreeStructure<LighterASTNode>.nameIdentifier(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.IDENTIFIER)

@@ -303,6 +303,18 @@ object PositioningStrategies {
     }
 
     @JvmField
+    val PROPERTY_DELEGATE: PositioningStrategy<KtProperty> = object : DeclarationHeader<KtProperty>() {
+        override fun mark(element: KtProperty): List<TextRange> {
+            val delegate = element.delegate
+            return if (delegate != null) {
+                markElement(delegate)
+            } else {
+                DEFAULT.mark(element)
+            }
+        }
+    }
+
+    @JvmField
     val FOR_REDECLARATION: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             val nameIdentifier = when (element) {
