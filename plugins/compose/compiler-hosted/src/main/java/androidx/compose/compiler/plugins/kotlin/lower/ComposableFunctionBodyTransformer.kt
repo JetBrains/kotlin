@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -155,6 +154,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.math.ceil
@@ -3031,7 +3031,7 @@ class ComposableFunctionBodyTransformer(
 
                             irCall(
                                 int.binaryOperator(
-                                    OperatorNames.SHL,
+                                    OperatorNameConventions.SHL,
                                     int
                                 ),
                                 null,
@@ -4054,11 +4054,11 @@ class ComposableFunctionBodyTransformer(
             if (bitsToShiftLeft == 0) return value
             val int = context.irBuiltIns.intType
             val shiftLeft = int.binaryOperator(
-                OperatorNames.SHL,
+                OperatorNameConventions.SHL,
                 int
             )
             val shiftRight = int.binaryOperator(
-                OperatorNames.SHR,
+                OperatorNameConventions.SHR,
                 int
             )
 
