@@ -29,7 +29,10 @@ fun KonanTarget.supportsMimallocAllocator(): Boolean =
     }
 
 fun KonanTarget.supportsLibBacktrace(): Boolean =
-        this.family.isAppleFamily || this.family == Family.LINUX || this.family == Family.ANDROID
+        this.family.isAppleFamily ||
+                // MIPS architectures have issues, see KT-48949
+                (this.family == Family.LINUX && this.architecture !in listOf(Architecture.MIPS32, Architecture.MIPSEL32)) ||
+                this.family == Family.ANDROID
 
 fun KonanTarget.supportsCoreSymbolication(): Boolean =
         this in listOf(
