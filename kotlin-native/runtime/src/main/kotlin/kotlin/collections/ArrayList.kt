@@ -143,6 +143,7 @@ actual class ArrayList<E> private constructor(
 
     final actual fun ensureCapacity(minCapacity: Int) {
         if (backing != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
+        if (minCapacity < 0) throw OutOfMemoryError()    // overflow
         if (minCapacity > array.size) {
             val newSize = ArrayDeque.newCapacity(array.size, minCapacity)
             array = array.copyOfUninitializedElements(newSize)

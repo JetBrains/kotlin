@@ -180,6 +180,7 @@ actual class HashMap<K, V> private constructor(
     }
 
     private fun ensureCapacity(capacity: Int) {
+        if (capacity < 0) throw OutOfMemoryError()    // overflow
         if (capacity > this.capacity) {
             var newSize = this.capacity * 3 / 2
             if (capacity > newSize) newSize = capacity

@@ -6,9 +6,7 @@
 package test.collections
 
 import kotlin.collections.builders.*
-import kotlin.test.Test
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 @Suppress("INVISIBLE_MEMBER")
 class ListBuilderTest {
@@ -56,5 +54,23 @@ class ListBuilderTest {
         testToArray(numberOfElements) { (this as java.util.Collection<Int>).toArray(it) }
         testToArray(numberOfElements + 1) { (this as java.util.Collection<Int>).toArray(it) }
         testToArray(numberOfElements + 2) { (this as java.util.Collection<Int>).toArray(it) }
+    }
+
+    @Test
+    fun capacityOverflow() {
+        val builderSize = 15
+        val giantListSize = Int.MAX_VALUE - builderSize + 1
+
+        val giantList = object : AbstractList<String>() {
+            override val size: Int get() = giantListSize
+            override fun get(index: Int): String = "element"
+        }
+
+        buildList {
+            repeat(builderSize) { add("element") }
+
+            assertFails { addAll(giantList) }
+            assertEquals(builderSize, size)
+        }
     }
 }

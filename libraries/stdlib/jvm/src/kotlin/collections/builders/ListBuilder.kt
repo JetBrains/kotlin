@@ -178,6 +178,7 @@ internal class ListBuilder<E> private constructor(
 
     private fun ensureCapacity(minCapacity: Int) {
         if (backing != null) throw IllegalStateException() // just in case somebody casts subList to ListBuilder
+        if (minCapacity < 0) throw OutOfMemoryError()    // overflow
         if (minCapacity > array.size) {
             val newSize = ArrayDeque.newCapacity(array.size, minCapacity)
             array = array.copyOfUninitializedElements(newSize)
