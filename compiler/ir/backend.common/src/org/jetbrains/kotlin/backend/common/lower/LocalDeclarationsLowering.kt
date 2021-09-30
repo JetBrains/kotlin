@@ -939,6 +939,8 @@ class LocalDeclarationsLowering(
                     super.visitConstructor(declaration, data)
 
                     if (!isScriptMode && !declaration.constructedClass.isLocalNotInner()) return
+                    // Inner classes in scripts are handled properly in the InnerClassesLowering
+                    if (isScriptMode && declaration.constructedClass.isInner) return
                     // LDL doesn't work on the enums because local enums are not allowed, so skipping them in scripts too
                     if (isScriptMode && declaration.constructedClass.kind == ClassKind.ENUM_CLASS) return
 
@@ -950,6 +952,8 @@ class LocalDeclarationsLowering(
                     super.visitClass(declaration, data.withCurrentClass(declaration))
 
                     if (!isScriptMode && !declaration.isLocalNotInner()) return
+                    // Inner classes in scripts are handled properly in the InnerClassesLowering
+                    if (isScriptMode && declaration.isInner) return
                     // LDL doesn't work on the enums because local enums are not allowed, so skipping them in scripts too
                     if (isScriptMode && declaration.kind == ClassKind.ENUM_CLASS) return
 
