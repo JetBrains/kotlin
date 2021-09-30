@@ -38,8 +38,11 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirPredi
     // Can be called on IMPORTS stage
     open fun hasPackage(packageFqName: FqName): Boolean = false
 
+    // Can be called after BODY_RESOLVE stage (checkers and fir2ir)
     open fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> = emptySet()
     open fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>): Set<Name> = emptySet()
+    open fun getTopLevelCallableIds(): Set<CallableId> = emptySet()
+    open fun getTopLevelClassIds(): Set<ClassId> = emptySet()
 
     fun interface Factory : FirExtension.Factory<FirDeclarationGenerationExtension>
 }

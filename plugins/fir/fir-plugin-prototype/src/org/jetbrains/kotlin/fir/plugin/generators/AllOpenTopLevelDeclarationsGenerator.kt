@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
@@ -66,7 +67,18 @@ class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclaration
         if (callableId.classId != null) return null
         return matchedClasses
             .filter { it.classId.packageFqName == callableId.packageName }
-            .firstOrNull { callableId.callableName.identifier == "dummy${it.classId.shortClassName.identifier}" }
+            .firstOrNull { callableId.callableName.identifier == it.classId.toDummyCallableName() }
+    }
+
+    private fun ClassId.toDummyCallableName(): String {
+        return "dummy${shortClassName.identifier}"
+    }
+
+    override fun getTopLevelCallableIds(): Set<CallableId> {
+        return matchedClasses.mapTo(mutableSetOf()) {
+            val classId = it.classId
+            CallableId(classId.packageFqName, Name.identifier(classId.toDummyCallableName()))
+        }
     }
 
     override val key: AllOpenPluginKey

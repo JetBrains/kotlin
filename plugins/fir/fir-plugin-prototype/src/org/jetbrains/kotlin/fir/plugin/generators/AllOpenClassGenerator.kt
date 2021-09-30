@@ -151,6 +151,10 @@ class AllOpenClassGenerator(session: FirSession) : FirDeclarationGenerationExten
         }
     }
 
+    override fun getTopLevelClassIds(): Set<ClassId> {
+        return setOf(GENERATED_CLASS_ID)
+    }
+
     override fun hasPackage(packageFqName: FqName): Boolean {
         return packageFqName == FOO_PACKAGE
     }
