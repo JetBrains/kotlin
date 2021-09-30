@@ -96,7 +96,8 @@ class IrModuleToJsTransformer(
                 others,
                 exportedModule,
                 namer,
-                refInfo
+                refInfo,
+                generateMainCall = true
             )
 
             val dependencies = others.mapIndexed { index, module ->
@@ -109,7 +110,8 @@ class IrModuleToJsTransformer(
                     others.drop(index + 1),
                     ExportedModule(moduleName, exportedModule.moduleKind, exportedDeclarations),
                     namer,
-                    refInfo
+                    refInfo,
+                    generateMainCall = false
                 )
             }.reversed()
 
@@ -130,7 +132,8 @@ class IrModuleToJsTransformer(
         dependencies: Iterable<IrModuleFragment>,
         exportedModule: ExportedModule,
         namer: NameTables,
-        refInfo: CrossModuleReferenceInfo
+        refInfo: CrossModuleReferenceInfo,
+        generateMainCall: Boolean = true
     ): CompilationOutputs {
 
         val nameGenerator = refInfo.withReferenceTracking(
@@ -161,8 +164,6 @@ class IrModuleToJsTransformer(
         val globalNames = NameTable<String>(namer.globalNames)
         val exportStatements = ExportModelToJsStatements(internalModuleName, nameGenerator, { globalNames.declareFreshName(it, it)}).generateModuleExport(exportedModule)
 
-        val callToMain = generateCallToMain(modules, rootContext)
-
         val (crossModuleImports, importedKotlinModules) = generateCrossModuleImports(nameGenerator, modules, dependencies, { JsName(sanitizeName(it)) })
         val crossModuleExports = generateCrossModuleExports(modules, refInfo, internalModuleName)
 
@@ -181,7 +182,9 @@ class IrModuleToJsTransformer(
                     statements.addWithComment("block: imports", importStatements + crossModuleImports)
                     statements += moduleBody
                     statements.addWithComment("block: exports", exportStatements + crossModuleExports)
-                    statements += callToMain
+                    if (generateMainCall) {
+                        statements += generateCallToMain(modules, rootContext)
+                    }
                     statements += JsReturn(internalModuleName.makeRef())
                 }
             }

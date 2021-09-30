@@ -880,6 +880,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/crossModuleRefIR/objectIsObject.kt");
         }
 
+        @TestMetadata("onlyMainModuleCall.kt")
+        public void testOnlyMainModuleCall() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/onlyMainModuleCall.kt");
+        }
+
         @TestMetadata("topLevelExtension.kt")
         public void testTopLevelExtension() throws Exception {
             runTest("js/js.translator/testData/box/crossModuleRefIR/topLevelExtension.kt");
