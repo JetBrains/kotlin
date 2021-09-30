@@ -42,6 +42,9 @@ internal class GradleCompilerRunnerWithWorkers(
                 it.taskOutputs.from(taskOutputsBackup.outputs)
                 it.taskOutputsSnapshot.set(taskOutputsBackup.previousOutputs)
                 it.metricsReporter.set(buildMetrics)
+            } else {
+                // MapProperty has empty value by default: https://github.com/gradle/gradle/issues/7485
+                it.taskOutputsSnapshot.set(null as Map<File, Array<Byte>>?)
             }
         }
         return workQueue
