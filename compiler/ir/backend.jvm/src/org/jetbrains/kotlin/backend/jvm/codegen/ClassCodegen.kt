@@ -446,7 +446,7 @@ class ClassCodegen private constructor(
                     ?: error("Class in a non-static initializer found, but container has no constructors: ${containerClass.render()}")
             } else parentFunction
             if (enclosingFunction != null || irClass.isAnonymousInnerClass) {
-                val method = enclosingFunction?.let(context.methodSignatureMapper::mapAsmMethod)
+                val method = enclosingFunction?.let(context.methodSignatureMapper::mapAsmMethod)?.takeIf { it.name != "<clinit>" }
                 visitor.visitOuterClass(parentClassCodegen!!.type.internalName, method?.name, method?.descriptor)
             }
         }

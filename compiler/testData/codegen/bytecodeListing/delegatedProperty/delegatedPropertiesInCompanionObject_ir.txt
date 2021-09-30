@@ -43,7 +43,7 @@ public final class H1 {
 @kotlin.Metadata
 final class H2$Companion$property$2 {
     // source: 'delegatedPropertiesInCompanionObject.kt'
-    enclosing method H2.<clinit>()V
+    enclosing class H2
     public final static field INSTANCE: H2$Companion$property$2
     inner (anonymous) class H2$Companion$property$2
     static method <clinit>(): void
