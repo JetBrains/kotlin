@@ -1990,6 +1990,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantSingleExpressionStringTemplateChecker.kt");
         }
 
+        @TestMetadata("RedundantVisibilityDueToOverride.kt")
+        public void testRedundantVisibilityDueToOverride() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityDueToOverride.kt");
+        }
+
         @TestMetadata("RedundantVisibilityModifierChecker.kt")
         public void testRedundantVisibilityModifierChecker() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityModifierChecker.kt");

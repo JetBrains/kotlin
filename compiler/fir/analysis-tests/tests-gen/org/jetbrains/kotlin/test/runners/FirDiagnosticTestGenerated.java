@@ -2274,6 +2274,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("RedundantVisibilityDueToOverride.kt")
+            public void testRedundantVisibilityDueToOverride() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityDueToOverride.kt");
+            }
+
+            @Test
             @TestMetadata("RedundantVisibilityModifierChecker.kt")
             public void testRedundantVisibilityModifierChecker() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityModifierChecker.kt");
