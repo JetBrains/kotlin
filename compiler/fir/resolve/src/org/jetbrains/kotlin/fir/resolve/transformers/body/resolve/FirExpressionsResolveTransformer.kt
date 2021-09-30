@@ -376,38 +376,19 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     override fun transformCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: ResolutionMode): FirStatement {
         collectionLiteral.transformChildren(transformer, data)
 
-        return when (collectionLiteral.kind) {
+        val processedCL = when (collectionLiteral.kind) {
             CollectionLiteralKind.SEQ_LITERAL -> collectionLiteralResolver.processSequenceLiteral(collectionLiteral)
             CollectionLiteralKind.DICT_LITERAL -> TODO()
         }
-//        return when {
-//            data is ResolutionMode.WithExpectedType -> {
-//                val expectedClassId = when (data.expectedTypeRef) {
-//                    is FirImplicitTypeRef -> StandardClassIds.List
-//                    is FirResolvedTypeRef -> data.expectedTypeRef.coneType.classId!!
-//                    is FirTypeRefWithNullability -> TODO()
-//                }
-//
-//                val receiverName = if (possibleTypes.map { it.classId }.contains(expectedClassId)) {
-//                    expectedClassId.shortClassName
-//                } else {
-//                    // Some kind of diagnostic???
-//                    TODO()
-//                }
-//                // TODO check for implicit
-//                val buildCall = createFunctionCallForCollectionLiteral(
-//                    collectionLiteral.kind,
-//                    receiverName,
-//                    collectionLiteral.expressions,
-//                    collectionLiteral.argumentType!!.toFirResolvedTypeRef()
-//                )
-//                transformer.transformFunctionCall(buildCall, data)
-//            }
-//            possibleTypes.size == 1 -> {
-//                TODO("build")
-//            }
-//            else -> collectionLiteral
-//        }
+
+        return when {
+            data is ResolutionMode.WithExpectedType ->
+                collectionLiteralResolver.replaceCollectionLiteral(
+                    processedCL as FirCollectionLiteral,
+                    data.expectedType
+                )
+            else -> processedCL
+        }
     }
 
     private fun createFunctionCallForCollectionLiteral(

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.builder.buildLabel
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.dfa.put
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
@@ -38,6 +36,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
@@ -83,19 +82,19 @@ class FirCollectionLiteralResolver(
 
             val initialType = components.initialTypeOfCandidate(builder)
 
-//            val tv = builder.freshVariables.single()
-//            builder.csBuilder.fixVariable(tv, fixedArgumentType.fixedType, ConeFixVariableConstraintPosition(tv))
-//            builder.substitutor = builder.csBuilder.buildCurrentSubstitutor() as ConeSubstitutor
-//            builder.substitutor.substituteOrSelf(initialType).also {
-//                buildersForCollectionLiteral.getOrPut(cl) {
-//                    mutableMapOf()
-//                }[it] = builder
-//            }
-            initialType.also {
+            val tv = builder.freshVariables.single()
+            builder.csBuilder.fixVariable(tv, fixedArgumentType.fixedType, ConeFixVariableConstraintPosition(tv))
+            builder.substitutor = builder.csBuilder.buildCurrentSubstitutor() as ConeSubstitutor
+            builder.substitutor.substituteOrSelf(initialType).also {
                 buildersForCollectionLiteral.getOrPut(cl) {
                     mutableMapOf()
                 }[it.classId!!] = builder
             }
+//            initialType.also {
+//                buildersForCollectionLiteral.getOrPut(cl) {
+//                    mutableMapOf()
+//                }[it.classId!!] = builder
+//            }
         }
 
         val type = ConeTypeIntersector.intersectTypes(session.inferenceComponents.ctx, possibleTypes)
@@ -124,7 +123,11 @@ class FirCollectionLiteralResolver(
 
             override fun transformCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: Unit): FirStatement {
                 val param = argumentMapping[collectionLiteral]!!
-                val builder = chooseBuilder(candidate, collectionLiteral, param.returnTypeRef) ?: return collectionLiteral
+                val builder = chooseBuilder(candidate, collectionLiteral, param.returnTypeRef)
+                    ?: return cantChooseBuilder(collectionLiteral).also {
+                        argumentMapping[it as FirExpression] = param
+                        argumentMapping.remove(collectionLiteral)
+                    }
 
                 return createFunctionCallForCollectionLiteral(builder, collectionLiteral).transformSingle(
                     transformer,
@@ -136,6 +139,52 @@ class FirCollectionLiteralResolver(
             }
         }
         return call.transformSingle(replacer, Unit)
+    }
+
+    private fun cantFindBuilder(cl: FirCollectionLiteral, classId: ClassId): FirStatement {
+        return buildErrorExpression(
+            cl.source,
+            ConeSimpleDiagnostic(
+                "Collection literal has no builder for ${classId.shortClassName} in the current scope",
+                DiagnosticKind.NoBuildersForCollectionLiteralFound
+            )
+        )
+    }
+
+    private fun cantChooseBuilder(cl: FirCollectionLiteral): FirStatement {
+        return buildErrorExpression(
+            cl.source,
+            ConeSimpleDiagnostic(
+                "Cant choose builder",
+                DiagnosticKind.CantChooseBuilder
+            )
+        )
+    }
+
+    fun replaceCollectionLiteral(collectionLiteral: FirCollectionLiteral, expectedType: FirTypeRef?): FirStatement {
+        expectedType ?: return collectionLiteral
+        val builder: Candidate = when (expectedType) {
+            is FirImplicitTypeRef -> {
+                val listBuilder = buildersForCollectionLiteral[collectionLiteral]?.get(StandardClassIds.List)
+                // TODO по идеи такого быть не может
+                listBuilder ?: return cantFindBuilder(collectionLiteral, StandardClassIds.List)
+            }
+            is FirResolvedTypeRef -> {
+                val coneType = expectedType.coneType
+                if (coneType is ConeTypeParameterType) {
+                    error("")
+                } else {
+                    val classId = coneType.classId!!
+                    buildersForCollectionLiteral[collectionLiteral]?.get(classId)
+                        ?: return cantFindBuilder(collectionLiteral, classId)
+                }
+            }
+            is FirTypeRefWithNullability -> TODO()
+        }
+        return createFunctionCallForCollectionLiteral(builder, collectionLiteral).transformSingle(
+            transformer,
+            ResolutionMode.ContextDependent
+        )
     }
 
     private fun chooseBuilder(candidate: Candidate, cl: FirCollectionLiteral, type: FirTypeRef): Candidate? {
@@ -151,7 +200,14 @@ class FirCollectionLiteralResolver(
             val it = resultType as? ConeIntersectionType ?: error("not it type")
             val clType = it.alternativeType
             if (clType !in it.intersectedTypes) {
-                TODO("report ambiguity")
+                return null
+            }
+            clType?.let {
+                candidate.system.fixVariable(
+                    notFixed.typeVariable,
+                    it,
+                    ConeFixVariableConstraintPosition(notFixed.typeVariable)
+                )
             }
             clType
         } else {

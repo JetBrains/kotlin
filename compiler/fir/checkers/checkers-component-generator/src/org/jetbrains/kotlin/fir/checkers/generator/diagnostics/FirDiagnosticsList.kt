@@ -38,6 +38,7 @@ import kotlin.properties.ReadOnlyProperty
 object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     val CollectionLiteralsErrors by object : DiagnosticGroup("Collection literals") {
         val NO_BUILDERS_FOR_COLLECTION_LITERAL by error<PsiElement>()
+        val CANT_CHOOSE_BUILDER by error<PsiElement>()
     }
 
     val MetaErrors by object : DiagnosticGroup("Meta-errors") {

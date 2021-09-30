@@ -92,6 +92,7 @@ import org.jetbrains.kotlin.types.Variance
 object FirErrors {
     // Collection literals
     val NO_BUILDERS_FOR_COLLECTION_LITERAL by error0<PsiElement>()
+    val CANT_CHOOSE_BUILDER by error0<PsiElement>()
 
     // Meta-errors
     val UNSUPPORTED by error1<PsiElement, String>()

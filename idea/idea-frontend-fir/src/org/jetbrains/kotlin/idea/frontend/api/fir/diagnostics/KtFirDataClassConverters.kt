@@ -73,6 +73,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CANT_CHOOSE_BUILDER) { firDiagnostic ->
+        CantChooseBuilderImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.UNSUPPORTED) { firDiagnostic ->
         UnsupportedImpl(
             firDiagnostic.a,

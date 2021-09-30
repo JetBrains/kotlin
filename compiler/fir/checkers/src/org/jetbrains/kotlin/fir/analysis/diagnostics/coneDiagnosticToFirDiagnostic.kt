@@ -371,6 +371,7 @@ private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagno
         DiagnosticKind.IsEnumEntry -> FirErrors.IS_ENUM_ENTRY
         DiagnosticKind.EnumEntryAsType -> FirErrors.ENUM_ENTRY_AS_TYPE
         DiagnosticKind.NoBuildersForCollectionLiteralFound -> FirErrors.NO_BUILDERS_FOR_COLLECTION_LITERAL
+        DiagnosticKind.CantChooseBuilder -> FirErrors.CANT_CHOOSE_BUILDER
         DiagnosticKind.UnresolvedSupertype,
         DiagnosticKind.UnresolvedExpandedType,
         DiagnosticKind.Other -> FirErrors.OTHER_ERROR
