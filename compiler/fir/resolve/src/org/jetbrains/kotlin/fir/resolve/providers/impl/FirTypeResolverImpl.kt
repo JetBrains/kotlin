@@ -243,13 +243,16 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
         }
 
-        return symbol.constructType(allTypeArguments.toTypedArray(), typeRef.isMarkedNullable, typeRef.annotations.computeTypeAttributes())
-            .also {
-                val lookupTag = it.lookupTag
-                if (lookupTag is ConeClassLikeLookupTagImpl && symbol is FirClassLikeSymbol<*>) {
-                    lookupTag.bindSymbolToLookupTag(session, symbol)
-                }
+        return symbol.constructType(
+            allTypeArguments.toTypedArray(),
+            typeRef.isMarkedNullable,
+            typeRef.annotations.computeTypeAttributes(session)
+        ).also {
+            val lookupTag = it.lookupTag
+            if (lookupTag is ConeClassLikeLookupTagImpl && symbol is FirClassLikeSymbol<*>) {
+                lookupTag.bindSymbolToLookupTag(session, symbol)
             }
+        }
     }
 
     @OptIn(SymbolInternals::class)
@@ -352,7 +355,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         } else {
             StandardClassIds.FunctionN(typeRef.parametersCount)
         }
-        val attributes = typeRef.annotations.computeTypeAttributes()
+        val attributes = typeRef.annotations.computeTypeAttributes(session)
         val symbol = resolveBuiltInQualified(classId, session)
         return ConeClassLikeTypeImpl(
             symbol.toLookupTag().also {

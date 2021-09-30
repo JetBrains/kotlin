@@ -1,0 +1,26 @@
+FILE: signedNumbersCheckers.kt
+    public final fun takePositive(x: R|@Positive kotlin/Number|): R|kotlin/Unit| {
+    }
+    public final fun takeNegative(x: R|@Negative kotlin/Number|): R|kotlin/Unit| {
+    }
+    public final fun takeAny(x: R|kotlin/Number|): R|kotlin/Unit| {
+    }
+    public final fun <K> id(x: R|K|): R|K| {
+        ^id R|<local>/x|
+    }
+    public final fun <K> select(x: R|K|, y: R|K|): R|K| {
+        ^select R|<local>/x|
+    }
+    public final fun test(positiveInt: R|@Positive kotlin/Int|, positiveDouble: R|@Positive kotlin/Double|, negativeDouble: R|@Negative kotlin/Double|): R|kotlin/Unit| {
+        R|/takePositive|(R|<local>/positiveInt|)
+        R|/takeNegative|(R|<local>/negativeDouble|)
+        R|/takeAny|(R|<local>/positiveInt|)
+        R|/takePositive|(R|<local>/negativeDouble|)
+        R|/takeNegative|(R|<local>/positiveInt|)
+        R|/takePositive|(R|/id|<R|@Positive kotlin/Int|>(R|<local>/positiveInt|))
+        R|/takeNegative|(R|/id|<R|@Positive kotlin/Int|>(R|<local>/positiveInt|))
+        R|/takePositive|(R|/select|<R|@Positive kotlin/Int|>(R|<local>/positiveInt|, R|<local>/positiveInt|))
+        R|/takePositive|(R|/select|<R|it(kotlin/Number & kotlin/Comparable<*>)|>(R|<local>/positiveInt|, R|<local>/positiveDouble|))
+        R|/takePositive|(R|/select|<R|it(kotlin/Number & kotlin/Comparable<*>)|>(R|<local>/positiveInt|, R|<local>/negativeDouble|))
+        R|/takeNegative|(R|/select|<R|it(kotlin/Number & kotlin/Comparable<*>)|>(R|<local>/positiveInt|, R|<local>/negativeDouble|))
+    }

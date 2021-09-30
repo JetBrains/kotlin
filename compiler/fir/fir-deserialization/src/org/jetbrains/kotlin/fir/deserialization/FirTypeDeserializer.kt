@@ -109,7 +109,7 @@ class FirTypeDeserializer(
 
     fun type(proto: ProtoBuf.Type): ConeKotlinType {
         val annotations = annotationDeserializer.loadTypeAnnotations(proto, nameResolver)
-        val attributes = annotations.computeTypeAttributes()
+        val attributes = annotations.computeTypeAttributes(moduleData.session)
         return type(proto, attributes)
     }
 

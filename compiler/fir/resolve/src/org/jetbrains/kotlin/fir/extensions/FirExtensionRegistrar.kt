@@ -15,7 +15,8 @@ abstract class FirExtensionRegistrar {
             FirStatusTransformerExtension::class,
             FirDeclarationGenerationExtension::class,
             AbstractFirAdditionalCheckersExtension::class,
-            FirSupertypeGenerationExtension::class
+            FirSupertypeGenerationExtension::class,
+            FirTypeAttributeExtension::class,
         )
     }
 
@@ -43,6 +44,11 @@ abstract class FirExtensionRegistrar {
         @JvmName("plusSupertypeGenerationExtension")
         operator fun ((FirSession) -> FirSupertypeGenerationExtension).unaryPlus() {
             registerExtension(FirSupertypeGenerationExtension::class, FirSupertypeGenerationExtension.Factory { this.invoke(it) })
+        }
+
+        @JvmName("plusTypeAttributeExtension")
+        operator fun ((FirSession) -> FirTypeAttributeExtension).unaryPlus() {
+            registerExtension(FirTypeAttributeExtension::class, FirTypeAttributeExtension.Factory { this.invoke(it) })
         }
     }
 

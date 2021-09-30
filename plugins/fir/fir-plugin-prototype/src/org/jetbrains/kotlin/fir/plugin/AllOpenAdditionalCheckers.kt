@@ -8,16 +8,24 @@ package org.jetbrains.kotlin.fir.plugin
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.plugin.checkers.DummyNameChecker
+import org.jetbrains.kotlin.fir.plugin.checkers.SignedNumberCallChecker
 
 class AllOpenAdditionalCheckers(session: FirSession) : FirAdditionalCheckersExtension(session) {
     override val key: FirPluginKey
         get() = AllOpenPluginKey
 
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
-                override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
+        override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
             get() = setOf(DummyNameChecker)
+    }
+
+    override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
+        override val functionCallCheckers: Set<FirFunctionCallChecker>
+            get() = setOf(SignedNumberCallChecker)
     }
 }

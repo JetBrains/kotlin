@@ -609,7 +609,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
     private fun ProtoBuf.Type.toTypeRef(context: FirDeserializationContext): FirTypeRef {
         return buildResolvedTypeRef {
             annotations += context.annotationDeserializer.loadTypeAnnotations(this@toTypeRef, context.nameResolver)
-            val attributes = annotations.computeTypeAttributes()
+            val attributes = annotations.computeTypeAttributes(context.session)
             type = context.typeDeserializer.type(this@toTypeRef, attributes)
         }
     }

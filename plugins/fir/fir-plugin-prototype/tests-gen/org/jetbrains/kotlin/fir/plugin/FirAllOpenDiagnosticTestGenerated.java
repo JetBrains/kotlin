@@ -34,6 +34,12 @@ public class FirAllOpenDiagnosticTestGenerated extends AbstractFirAllOpenDiagnos
         }
 
         @Test
+        @TestMetadata("signedNumbersCheckers.kt")
+        public void testSignedNumbersCheckers() throws Exception {
+            runTest("plugins/fir/fir-plugin-prototype/testData/checkers/signedNumbersCheckers.kt");
+        }
+
+        @Test
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("plugins/fir/fir-plugin-prototype/testData/checkers/simple.kt");

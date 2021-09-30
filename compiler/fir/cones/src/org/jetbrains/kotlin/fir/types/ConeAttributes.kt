@@ -25,7 +25,7 @@ abstract class ConeAttribute<T : ConeAttribute<T>> : AnnotationMarker {
      *
      * This function must be symmetrical: a.add(b) == b.add(a)
      */
-    abstract fun add(other: @UnsafeVariance T?): T
+    abstract fun add(other: @UnsafeVariance T?): T?
     abstract fun isSubtypeOf(other: @UnsafeVariance T?): Boolean
 
     abstract override fun toString(): String

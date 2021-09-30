@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.typeAttributeExtensions
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
@@ -109,26 +112,25 @@ fun ConeClassLikeType.toConstKind(): ConstantValueKind<*>? = when (lookupTag.cla
     else -> null
 }
 
-fun List<FirAnnotation>.computeTypeAttributes(
-    additionalProcessor: MutableList<ConeAttribute<*>>.(ClassId) -> Unit = {}
-): ConeAttributes {
+fun List<FirAnnotation>.computeTypeAttributes(session: FirSession): ConeAttributes {
     if (this.isEmpty()) return ConeAttributes.Empty
     val attributes = mutableListOf<ConeAttribute<*>>()
     val customAnnotations = mutableListOf<FirAnnotation>()
     for (annotation in this) {
         val type = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
-        when (val classId = type.lookupTag.classId) {
+        when (type.lookupTag.classId) {
             CompilerConeAttributes.Exact.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.Exact
             CompilerConeAttributes.NoInfer.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.NoInfer
             CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.ExtensionFunctionType
             CompilerConeAttributes.UnsafeVariance.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.UnsafeVariance
             else -> {
-                val annotationAttributes = mutableListOf<ConeAttribute<*>>()
-                additionalProcessor.invoke(annotationAttributes, classId)
-                if (annotationAttributes.isEmpty()) {
-                    customAnnotations += annotation
+                val attributeFromPlugin = session.extensionService.typeAttributeExtensions.firstNotNullOfOrNull {
+                    it.extractAttributeFromAnnotation(annotation)
+                }
+                if (attributeFromPlugin != null) {
+                    attributes += attributeFromPlugin
                 } else {
-                    attributes += annotationAttributes
+                    customAnnotations += annotation
                 }
             }
         }

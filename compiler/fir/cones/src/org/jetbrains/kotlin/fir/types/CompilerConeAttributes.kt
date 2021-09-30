@@ -89,6 +89,11 @@ object CompilerConeAttributes {
         UnsafeVariance.ANNOTATION_CLASS_ID to UnsafeVariance
     )
 
+    val classIdByCompilerAttribute: Map<ConeAttribute<*>, ClassId> = compilerAttributeByClassId.entries.associateBy(
+        keySelector = { it.value },
+        valueTransform = { it.key }
+    )
+
     val compilerAttributeByFqName: Map<FqName, ConeAttribute<*>> = compilerAttributeByClassId.mapKeys { it.key.asSingleFqName() }
 }
 
