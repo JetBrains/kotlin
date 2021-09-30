@@ -33,19 +33,8 @@ fun box(): String {
 // 1 IFGE
 // 1 IFLE
 
-// JVM_TEMPLATES
-// -- no boxing but lots of StringBuilder calls
 // 0 valueOf
 // 0 Intrinsics.stringPlus
 // 4 StringBuilder.<init>
 // 8 StringBuilder.append
 // 4 StringBuilder.toString
-
-// JVM_IR_TEMPLATES
-// -- perform boxing and call Intrinsics.stringPlus instead
-// -- of having inlined string builder allocation, appends, and toString
-// 4 valueOf
-// 4 Intrinsics.stringPlus
-// 0 StringBuilder.<init>
-// 0 StringBuilder.append
-// 0 StringBuilder.toString

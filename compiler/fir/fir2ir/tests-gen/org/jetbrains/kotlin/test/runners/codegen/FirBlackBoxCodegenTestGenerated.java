@@ -41537,6 +41537,24 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         public void testSurrogatePair() throws Exception {
             runTest("compiler/testData/codegen/box/strings/surrogatePair.kt");
         }
+
+        @Test
+        @TestMetadata("twoArgumentNullableStringOperatorPlus.kt")
+        public void testTwoArgumentNullableStringOperatorPlus() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/twoArgumentNullableStringOperatorPlus.kt");
+        }
+
+        @Test
+        @TestMetadata("twoArgumentNullableStringPlus.kt")
+        public void testTwoArgumentNullableStringPlus() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/twoArgumentNullableStringPlus.kt");
+        }
+
+        @Test
+        @TestMetadata("twoArgumentStringTemplate.kt")
+        public void testTwoArgumentStringTemplate() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/twoArgumentStringTemplate.kt");
+        }
     }
 
     @Nested

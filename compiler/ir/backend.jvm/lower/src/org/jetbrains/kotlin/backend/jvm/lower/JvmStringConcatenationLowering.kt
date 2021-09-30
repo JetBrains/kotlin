@@ -147,13 +147,6 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
                 arguments.size == 1 ->
                     lowerInlineClassArgument(arguments[0]) ?: callToString(arguments[0].unwrapImplicitNotNull())
 
-                arguments.size == 2 && arguments[0].type.isStringClassType() ->
-                    irCall(backendContext.ir.symbols.intrinsicStringPlus).apply {
-                        putValueArgument(0, lowerInlineClassArgument(arguments[0]) ?: arguments[0].unwrapImplicitNotNull())
-                        // Unwrapping IMPLICIT_NOTNULL is not strictly necessary on 2nd argument (parameter type is `Any?`)
-                        putValueArgument(1, lowerInlineClassArgument(arguments[1]) ?: arguments[1])
-                    }
-
                 arguments.size < MAX_STRING_CONCAT_DEPTH -> {
                     irCall(toStringFunction).apply {
                         dispatchReceiver = appendWindow(arguments, irCall(constructor))
