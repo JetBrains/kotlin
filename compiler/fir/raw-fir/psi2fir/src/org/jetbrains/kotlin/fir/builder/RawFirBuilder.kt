@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -172,8 +173,12 @@ open class RawFirBuilder(
 
         open fun convertProperty(
             property: KtProperty, ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
-            ownerRegularClassTypeParametersCount: Int?,
-        ): FirProperty = property.toFirProperty(ownerRegularOrAnonymousObjectSymbol, ownerRegularClassTypeParametersCount)
+            ownerRegularClassTypeParametersCount: Int?
+        ): FirProperty = property.toFirProperty(
+            ownerRegularOrAnonymousObjectSymbol,
+            ownerRegularClassTypeParametersCount,
+            context
+        )
 
         open fun convertValueParameter(
             valueParameter: KtParameter,
@@ -571,7 +576,7 @@ open class RawFirBuilder(
                     type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
                     visibility,
                     symbol,
-                )
+                ).also { it.initContainingClassAttr() }
                 setter = if (isMutable) FirDefaultPropertySetter(
                     defaultAccessorSource,
                     baseModuleData,
@@ -579,7 +584,7 @@ open class RawFirBuilder(
                     type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
                     visibility,
                     symbol,
-                ) else null
+                ).also { it.initContainingClassAttr() } else null
                 extractAnnotationsTo(this)
 
                 dispatchReceiverType = currentDispatchReceiverType()
@@ -1439,9 +1444,10 @@ open class RawFirBuilder(
             }
         }
 
-        private fun KtProperty.toFirProperty(
+        private fun <T> KtProperty.toFirProperty(
             ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
             ownerRegularClassTypeParametersCount: Int?,
+            context: Context<T>
         ): FirProperty {
             val propertyType = typeReference.toFirOrImplicitType()
             val propertyName = nameAsSafeName
@@ -1497,7 +1503,8 @@ open class RawFirBuilder(
                             ownerRegularOrAnonymousObjectSymbol = null,
                             ownerRegularClassTypeParametersCount = null,
                             isExtension = false,
-                            receiver = extractDelegateExpression()
+                            receiver = extractDelegateExpression(),
+                            context = context
                         )
                     }
                 } else {
@@ -1556,6 +1563,7 @@ open class RawFirBuilder(
                                 baseModuleData,
                                 ownerRegularOrAnonymousObjectSymbol,
                                 ownerRegularClassTypeParametersCount,
+                                context,
                                 isExtension = receiverTypeReference != null,
                                 receiver = extractDelegateExpression()
                             )
@@ -1580,7 +1588,11 @@ open class RawFirBuilder(
         }
 
         override fun visitProperty(property: KtProperty, data: Unit): FirElement {
-            return property.toFirProperty(ownerRegularOrAnonymousObjectSymbol = null, ownerRegularClassTypeParametersCount = null)
+            return property.toFirProperty(
+                ownerRegularOrAnonymousObjectSymbol = null,
+                ownerRegularClassTypeParametersCount = null,
+                context = context
+            )
         }
 
         override fun visitTypeReference(typeReference: KtTypeReference, data: Unit): FirElement {

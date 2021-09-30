@@ -129,7 +129,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             else -> CallableId(context.packageFqName, context.className, name)
         }
 
-    fun currentDispatchReceiverType(): ConeClassLikeType? = context.dispatchReceiverTypesStack.lastOrNull()
+    fun currentDispatchReceiverType(): ConeClassLikeType? = currentDispatchReceiverType(context)
 
     fun callableIdForClassConstructor() =
         if (context.className == FqName.ROOT) CallableId(context.packageFqName, Name.special("<anonymous-init>"))
@@ -1183,8 +1183,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     }
 
     protected fun FirCallableDeclaration.initContainingClassAttr() {
-        val currentDispatchReceiverType = currentDispatchReceiverType() ?: return
-        containingClassForStaticMemberAttr = currentDispatchReceiverType.lookupTag
+        initContainingClassAttr(context)
     }
 
     private fun FirVariable.toQualifiedAccess(): FirQualifiedAccessExpression = buildPropertyAccessExpression {

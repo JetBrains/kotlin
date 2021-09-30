@@ -519,7 +519,8 @@ class DeclarationsConverter(
                                     baseModuleData,
                                     callableIdForName(it.firValueParameter.name),
                                     classWrapper.hasExpect(),
-                                    currentDispatchReceiverType()
+                                    currentDispatchReceiverType(),
+                                    context
                                 )
                             }
                         addDeclarations(properties)
@@ -1106,7 +1107,8 @@ class DeclarationsConverter(
                     classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
                     classWrapper?.classBuilder?.ownerRegularClassTypeParametersCount,
                     isExtension = false,
-                    receiver = receiver
+                    receiver = receiver,
+                    context = context
                 )
             } else {
                 this.isLocal = false
@@ -1173,6 +1175,7 @@ class DeclarationsConverter(
                         baseModuleData,
                         classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
                         classWrapper?.classBuilder?.ownerRegularClassTypeParametersCount,
+                        context,
                         isExtension = receiverType != null,
                         receiver = receiver
                     )

@@ -265,6 +265,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 c.annotationDeserializer.loadPropertyGetterAnnotations(
                     c.containerSource, proto, local.nameResolver, local.typeTable, getterFlags
                 )
+            containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
         }
     }
 
@@ -321,6 +322,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 c.annotationDeserializer.loadPropertySetterAnnotations(
                     c.containerSource, proto, local.nameResolver, local.typeTable, setterFlags
                 )
+            containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
         }
     }
 

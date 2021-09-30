@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.lightTree.fir
 
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.Context
+import org.jetbrains.kotlin.fir.builder.initContainingClassAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -35,11 +37,12 @@ class ValueParameter(
         return isVal || isVar
     }
 
-    fun toFirProperty(
+    fun <T> toFirProperty(
         moduleData: FirModuleData,
         callableId: CallableId,
         isExpect: Boolean,
-        currentDispatchReceiver: ConeClassLikeType?
+        currentDispatchReceiver: ConeClassLikeType?,
+        context: Context<T>
     ): FirProperty {
         val name = this.firValueParameter.name
         var type = this.firValueParameter.returnTypeRef
@@ -83,7 +86,7 @@ class ValueParameter(
                 type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
                 modifiers.getVisibility(),
                 symbol,
-            )
+            ).also { it.initContainingClassAttr(context) }
             setter = if (this.isVar) FirDefaultPropertySetter(
                 defaultAccessorSource,
                 moduleData,
@@ -91,7 +94,7 @@ class ValueParameter(
                 type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
                 modifiers.getVisibility(),
                 symbol,
-            ) else null
+            ).also { it.initContainingClassAttr(context) } else null
         }.apply {
             if (firValueParameter.isVararg) {
                 this.isFromVararg = true
