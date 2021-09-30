@@ -1,11 +1,11 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.extensions.predicate
 
-internal abstract class DeclarationPredicateVisitor<R, D> {
+abstract class DeclarationPredicateVisitor<R, D> {
     abstract fun visitPredicate(predicate: DeclarationPredicate, data: D): R
     open fun visitAny(predicate: DeclarationPredicate.Any, data: D): R {
         return visitPredicate(predicate, data)
