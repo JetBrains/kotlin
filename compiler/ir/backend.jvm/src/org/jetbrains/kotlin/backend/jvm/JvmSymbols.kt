@@ -177,9 +177,6 @@ class JvmSymbols(
     override val throwKotlinNothingValueException: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "throwKotlinNothingValueException" }
 
-    val intrinsicStringPlus: IrFunctionSymbol =
-        intrinsicsClass.functions.single { it.owner.name.asString() == "stringPlus" }
-
     val intrinsicsKotlinClass: IrClassSymbol =
         (intrinsicsClass.owner.declarations.single { it is IrClass && it.name.asString() == "Kotlin" } as IrClass).symbol
 

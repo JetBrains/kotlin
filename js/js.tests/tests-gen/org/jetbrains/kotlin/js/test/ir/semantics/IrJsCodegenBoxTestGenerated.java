@@ -27206,6 +27206,21 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         public void testSurrogatePair() throws Exception {
             runTest("compiler/testData/codegen/box/strings/surrogatePair.kt");
         }
+
+        @TestMetadata("twoArgumentNullableStringOperatorPlus.kt")
+        public void testTwoArgumentNullableStringOperatorPlus() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/twoArgumentNullableStringOperatorPlus.kt");
+        }
+
+        @TestMetadata("twoArgumentNullableStringPlus.kt")
+        public void testTwoArgumentNullableStringPlus() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/twoArgumentNullableStringPlus.kt");
+        }
+
+        @TestMetadata("twoArgumentStringTemplate.kt")
+        public void testTwoArgumentStringTemplate() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/twoArgumentStringTemplate.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/super")

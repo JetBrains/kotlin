@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM
-
 fun f(s: String?, t: String): String {
     return s.plus(t)
 }
@@ -12,6 +10,9 @@ fun h(s: String, t: Any?): String {
     return s + t
 }
 
-// 0 valueOf
-// 0 NEW java/lang/StringBuilder
-// 3 INVOKESTATIC kotlin/jvm/internal/Intrinsics.stringPlus
+// JVM_TEMPLATES
+// 1 INVOKESTATIC kotlin/jvm/internal/Intrinsics.stringPlus
+// - used in 's.plus(t)'
+
+// JVM_IR_TEMPLATES
+// 0 INVOKESTATIC kotlin/jvm/internal/Intrinsics.stringPlus
