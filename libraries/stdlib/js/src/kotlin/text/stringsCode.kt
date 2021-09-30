@@ -61,18 +61,32 @@ public fun String.matches(regex: String): Boolean {
  */
 public actual fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
 
+/**
+ * Returns `true` if this string is equal to [other], optionally ignoring character case.
+ *
+ * Two strings are considered to be equal if they have the same length and the same character at the same index.
+ * If [ignoreCase] is true, the result of `Char.uppercaseChar().lowercaseChar()` on each character is compared.
+ *
+ * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
+ */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean =
-    when {
-        this == null -> other == null
-        !ignoreCase -> this == other
-        other == null -> false
-        else -> {
-            val thisLower = this.lowercase()
-            val otherLower = other.lowercase()
-            thisLower == otherLower || (thisLower.uppercase() == otherLower.uppercase())
+public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean {
+    if (this == null) return other == null
+    if (other == null) return false
+    if (!ignoreCase) return this == other
+
+    if (this.length != other.length) return false
+
+    for (index in 0 until this.length) {
+        val thisChar = this[index]
+        val otherChar = other[index]
+        if (!thisChar.equals(otherChar, ignoreCase)) {
+            return false
         }
     }
+
+    return true
+}
 
 
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")

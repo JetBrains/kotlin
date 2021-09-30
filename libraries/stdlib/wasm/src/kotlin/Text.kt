@@ -429,12 +429,17 @@ actual fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: B
 /**
  * Returns `true` if this string is equal to [other], optionally ignoring character case.
  *
+ * Two strings are considered to be equal if they have the same length and the same character at the same index.
+ * If [ignoreCase] is true, the result of `Char.uppercaseChar().lowercaseChar()` on each character is compared.
+ *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
  */
 actual fun String?.equals(other: String?, ignoreCase: Boolean): Boolean = TODO("Wasm stdlib: Text")
 
 /**
  * Compares two strings lexicographically, optionally ignoring case differences.
+ *
+ * If [ignoreCase] is true, the result of `Char.uppercaseChar().lowercaseChar()` on each character is compared.
  */
 @SinceKotlin("1.2")
 actual fun String.compareTo(other: String, ignoreCase: Boolean): Int = TODO("Wasm stdlib: Text")

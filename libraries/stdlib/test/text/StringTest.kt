@@ -841,6 +841,11 @@ class StringTest {
         assertFalse("sample".equals(null, ignoreCase = true))
         assertTrue(null.equals(null, ignoreCase = true))
         assertTrue(null.equals(null, ignoreCase = false))
+
+        // Tests that characters are compared one by one
+        val s1 = "\uFB00"  // uppercase() == "FF"
+        val s2 = "\u0066\u0066" // "ff"
+        assertFalse(s1.equals(s2, ignoreCase = true))
     }
 
     @Test fun compareToIgnoreCase() {
@@ -898,6 +903,11 @@ class StringTest {
                     }
                 }
             }
+
+        // Tests that characters are compared one by one
+        val s1 = "\uFB00"  // uppercase().lowercase() == "ff"
+        val s2 = "\u0067"  // "g"
+        assertCompareResult(GT, s1, s2, ignoreCase = true)
     }
 
 
