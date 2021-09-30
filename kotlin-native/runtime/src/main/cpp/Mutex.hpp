@@ -18,6 +18,7 @@
 #define RUNTIME_MUTEX_H
 
 #include <cstdint>
+#include <thread>
 
 #include "KAssert.h"
 #include "Memory.h"
@@ -37,7 +38,7 @@ class SpinLock<MutexThreadStateHandling::kIgnore> : private Pinned {
 public:
     void lock() noexcept {
         while (!__sync_bool_compare_and_swap(&atomicInt, 0, 1)) {
-            // TODO: yield.
+            std::this_thread::yield();
         }
     }
 
@@ -63,7 +64,7 @@ public:
 
         kotlin::NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
         while (!__sync_bool_compare_and_swap(&atomicInt, 0, 1)) {
-            // TODO: yield.
+            std::this_thread::yield();
         }
     }
 
