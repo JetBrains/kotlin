@@ -41,9 +41,6 @@ dependencies {
     testImplementation(project(":kotlinx-metadata")) { isTransitive = false }
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
     testApi(intellijCoreDep()) { includeJars("intellij-core")}
-//    testRuntimeOnly(intellijDep()) {
-//        includeJars("idea_rt", rootProject = rootProject)
-//    }
 }
 
 val runCommonizer by tasks.registering(JavaExec::class) {
