@@ -56,7 +56,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
 
     override fun assertValid() {
         if (!isValid) {
-            throw InvalidModuleException("Accessing invalid module descriptor $this")
+            moduleInvalidated()
         }
     }
 
@@ -90,6 +90,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     private val packageFragmentProviderForWholeModuleWithDependencies by lazy {
         val moduleDependencies = dependencies.sure { "Dependencies of module $id were not set before querying module content" }
         val dependenciesDescriptors = moduleDependencies.allDependencies
+        assertValid()
         assert(this in dependenciesDescriptors) { "Module $id is not contained in its own dependencies, this is probably a misconfiguration" }
         dependenciesDescriptors.forEach { dependency ->
             assert(dependency.isInitialized) {
