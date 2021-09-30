@@ -151,7 +151,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     }
 
     @OptIn(ObsoleteTypeKind::class)
-    override fun KotlinTypeMarker.isNotNullTypeVariable(): Boolean = this is NotNullTypeVariable
+    override fun KotlinTypeMarker.isNotNullTypeParameter(): Boolean = this is NotNullTypeParameter
 
     override fun SimpleTypeMarker.isMarkedNullable(): Boolean {
         require(this is SimpleType, this::errorMessage)

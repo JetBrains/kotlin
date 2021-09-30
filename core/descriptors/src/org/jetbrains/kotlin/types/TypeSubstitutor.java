@@ -208,7 +208,7 @@ public class TypeSubstitutor implements TypeSubstitutorMarker {
                 null;
 
         Variance originalProjectionKind = originalProjection.getProjectionKind();
-        if (replacement == null && FlexibleTypesKt.isFlexible(type) && !TypeCapabilitiesKt.isCustomTypeVariable(type)) {
+        if (replacement == null && FlexibleTypesKt.isFlexible(type) && !TypeCapabilitiesKt.isCustomTypeParameter(type)) {
             FlexibleType flexibleType = FlexibleTypesKt.asFlexibleType(type);
             TypeProjection substitutedLower =
                     unsafeSubstitute(
@@ -255,12 +255,12 @@ public class TypeSubstitutor implements TypeSubstitutorMarker {
                 }
             }
             KotlinType substitutedType;
-            CustomTypeVariable typeVariable = TypeCapabilitiesKt.getCustomTypeVariable(type);
+            CustomTypeParameter customTypeParameter = TypeCapabilitiesKt.getCustomTypeParameter(type);
             if (replacement.isStarProjection()) {
                 return replacement;
             }
-            else if (typeVariable != null) {
-                substitutedType = typeVariable.substitutionResult(replacement.getType());
+            else if (customTypeParameter != null) {
+                substitutedType = customTypeParameter.substitutionResult(replacement.getType());
             }
             else {
                 // this is a simple type T or T?: if it's T, we should just take replacement, if T? - we make replacement nullable

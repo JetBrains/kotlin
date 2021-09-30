@@ -96,7 +96,7 @@ private fun checkExpressionArgument(
     val position = if (isReceiver) ReceiverConstraintPositionImpl(expressionArgument) else ArgumentConstraintPositionImpl(expressionArgument)
 
     // Used only for arguments with @NotNull annotation
-    if (expectedType is NotNullTypeVariable && argumentType.isMarkedNullable) {
+    if (expectedType is NotNullTypeParameter && argumentType.isMarkedNullable) {
         diagnosticsHolder.addDiagnostic(ArgumentNullabilityMismatchDiagnostic(expectedType, argumentType, expressionArgument))
     }
 

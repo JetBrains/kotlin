@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.checker.ErrorTypesAreEqualToAnything
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
-import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 fun KotlinType.isFlexible(): Boolean = unwrap() is FlexibleType
@@ -82,7 +81,7 @@ fun KotlinType.upperIfFlexible(): SimpleType = with(unwrap()) {
     }
 }
 
-class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType(lowerBound, upperBound), CustomTypeVariable {
+class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType(lowerBound, upperBound), CustomTypeParameter {
     companion object {
         @JvmField
         var RUN_SLOW_ASSERTIONS = false
@@ -114,7 +113,7 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
             return lowerBound
         }
 
-    override val isTypeVariable: Boolean
+    override val isTypeParameter: Boolean
         get() = lowerBound.constructor.declarationDescriptor is TypeParameterDescriptor
                 && lowerBound.constructor == upperBound.constructor
 

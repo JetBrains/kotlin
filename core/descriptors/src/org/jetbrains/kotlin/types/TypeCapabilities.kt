@@ -18,24 +18,24 @@ package org.jetbrains.kotlin.types
 
 
 // To facilitate laziness, any KotlinType implementation may inherit from this trait,
-// even if it turns out that the type an instance represents is not actually a type variable
-// (i.e. it is not derived from a type parameter), see isTypeVariable
-interface CustomTypeVariable {
-    val isTypeVariable: Boolean
+// even if it turns out that the type an instance represents is not actually a type parameter
+// (i.e. it is not derived from a type parameter), see isTypeParameter
+interface CustomTypeParameter {
+    val isTypeParameter: Boolean
 
-    // Throws an exception when isTypeVariable == false
+    // Throws an exception when isTypeParameter == false
     fun substitutionResult(replacement: KotlinType): KotlinType
 }
 
 // That interface is needed to provide information about definitely not null
 //   type parameters (e.g. from @NotNull annotation) to type system
-interface NotNullTypeVariable : CustomTypeVariable
+interface NotNullTypeParameter : CustomTypeParameter
 
-fun KotlinType.isCustomTypeVariable(): Boolean = (unwrap() as? CustomTypeVariable)?.isTypeVariable ?: false
-fun KotlinType.getCustomTypeVariable(): CustomTypeVariable? =
-        (unwrap() as? CustomTypeVariable)?.let {
-            if (it.isTypeVariable) it else null
-        }
+fun KotlinType.isCustomTypeParameter(): Boolean = (unwrap() as? CustomTypeParameter)?.isTypeParameter ?: false
+fun KotlinType.getCustomTypeParameter(): CustomTypeParameter? =
+    (unwrap() as? CustomTypeParameter)?.let {
+        if (it.isTypeParameter) it else null
+    }
 
 interface SubtypingRepresentatives {
     val subTypeRepresentative: KotlinType
@@ -45,13 +45,13 @@ interface SubtypingRepresentatives {
 }
 
 fun KotlinType.getSubtypeRepresentative(): KotlinType =
-        (unwrap() as? SubtypingRepresentatives)?.subTypeRepresentative ?: this
+    (unwrap() as? SubtypingRepresentatives)?.subTypeRepresentative ?: this
 
 fun KotlinType.getSupertypeRepresentative(): KotlinType =
-        (unwrap() as? SubtypingRepresentatives)?.superTypeRepresentative ?: this
+    (unwrap() as? SubtypingRepresentatives)?.superTypeRepresentative ?: this
 
 fun sameTypeConstructors(first: KotlinType, second: KotlinType): Boolean {
     return (first.unwrap() as? SubtypingRepresentatives)?.sameTypeConstructor(second) ?: false
-           || (second.unwrap() as? SubtypingRepresentatives)?.sameTypeConstructor(first) ?: false
+            || (second.unwrap() as? SubtypingRepresentatives)?.sameTypeConstructor(first) ?: false
 }
 

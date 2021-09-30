@@ -380,7 +380,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     // This kind of types is obsolete (expected to be removed at 1.7) and shouldn't be used further in a new code
     // Now, such types are being replaced with definitely non-nullable types
     @ObsoleteTypeKind
-    fun KotlinTypeMarker.isNotNullTypeVariable(): Boolean = false
+    fun KotlinTypeMarker.isNotNullTypeParameter(): Boolean = false
 
     fun KotlinTypeMarker.hasFlexibleNullability() =
         lowerBoundIfFlexible().isMarkedNullable() != upperBoundIfFlexible().isMarkedNullable()

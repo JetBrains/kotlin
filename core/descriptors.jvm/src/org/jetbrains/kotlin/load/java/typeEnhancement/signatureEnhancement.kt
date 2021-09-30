@@ -254,7 +254,7 @@ private class SignatureParts(
         get() = TypeUtils.getClassDescriptor(this as KotlinType)?.let { DescriptorUtils.getFqName(it) }
 
     override val KotlinTypeMarker.isNotNullTypeParameterCompat: Boolean
-        get() = (this as KotlinType).unwrap() is NotNullTypeParameter
+        get() = (this as KotlinType).unwrap() is NotNullTypeParameterImpl
 
     override fun KotlinTypeMarker.isEqual(other: KotlinTypeMarker): Boolean =
         containerContext.components.kotlinTypeChecker.equalTypes(this as KotlinType, other as KotlinType)

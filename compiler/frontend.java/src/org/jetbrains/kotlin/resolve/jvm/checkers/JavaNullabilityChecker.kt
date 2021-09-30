@@ -285,7 +285,7 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
             subType: KotlinType,
             superType: KotlinType
         ): Boolean {
-            if (superType !is NotNullTypeVariable || subType is NotNullTypeVariable) return false
+            if (superType !is NotNullTypeParameter || subType is NotNullTypeParameter) return false
             return !AbstractNullabilityChecker.isSubtypeOfAny(
                 createClassicTypeCheckerState(isErrorTypeEqualsToAnything = true),
                 subType

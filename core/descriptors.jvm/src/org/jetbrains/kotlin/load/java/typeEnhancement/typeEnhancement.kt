@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
-import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 
@@ -166,7 +165,7 @@ class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings
         if (javaResolverSettings.correctNullabilityForNotNullTypeParameter)
             enhancedType.makeSimpleTypeDefinitelyNotNullOrNotNull(useCorrectedNullabilityForTypeParameters = true)
         else
-            NotNullTypeParameter(enhancedType)
+            NotNullTypeParameterImpl(enhancedType)
 }
 
 private fun List<Annotations>.compositeAnnotationsOrSingle() = when (size) {
@@ -224,9 +223,9 @@ private object EnhancedTypeAnnotationDescriptor : AnnotationDescriptor {
     override fun toString() = "[EnhancedType]"
 }
 
-internal class NotNullTypeParameter(override val delegate: SimpleType) : NotNullTypeVariable, DelegatingSimpleType() {
+internal class NotNullTypeParameterImpl(override val delegate: SimpleType) : NotNullTypeParameter, DelegatingSimpleType() {
 
-    override val isTypeVariable: Boolean
+    override val isTypeParameter: Boolean
         get() = true
 
     override fun substitutionResult(replacement: KotlinType): KotlinType {
@@ -250,13 +249,13 @@ internal class NotNullTypeParameter(override val delegate: SimpleType) : NotNull
         val result = makeNullableAsSpecified(false)
         if (!this.isTypeParameter()) return result
 
-        return NotNullTypeParameter(result)
+        return NotNullTypeParameterImpl(result)
     }
 
-    override fun replaceAnnotations(newAnnotations: Annotations) = NotNullTypeParameter(delegate.replaceAnnotations(newAnnotations))
+    override fun replaceAnnotations(newAnnotations: Annotations) = NotNullTypeParameterImpl(delegate.replaceAnnotations(newAnnotations))
     override fun makeNullableAsSpecified(newNullability: Boolean) =
         if (newNullability) delegate.makeNullableAsSpecified(true) else this
 
     @TypeRefinement
-    override fun replaceDelegate(delegate: SimpleType) = NotNullTypeParameter(delegate)
+    override fun replaceDelegate(delegate: SimpleType) = NotNullTypeParameterImpl(delegate)
 }

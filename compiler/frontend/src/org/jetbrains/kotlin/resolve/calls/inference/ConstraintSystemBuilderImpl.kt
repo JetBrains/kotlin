@@ -44,8 +44,6 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.defaultProjections
 import org.jetbrains.kotlin.types.typeUtil.isDefaultBound
 import org.jetbrains.kotlin.utils.addToStdlib.cast
-import java.lang.IllegalArgumentException
-import java.lang.IllegalStateException
 import java.util.*
 
 open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystemBuilderImpl.Mode.INFERENCE) : ConstraintSystem.Builder {
@@ -310,9 +308,9 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
         //   Foo >: T!
         // both Foo and Foo? transform to Foo! here
         if (parameterType.isFlexible()) {
-            val customTypeVariable = parameterType.getCustomTypeVariable()
-            if (customTypeVariable != null) {
-                newConstrainingType = customTypeVariable.substitutionResult(constrainingType)
+            val customTypeParameter = parameterType.getCustomTypeParameter()
+            if (customTypeParameter != null) {
+                newConstrainingType = customTypeParameter.substitutionResult(constrainingType)
             }
         }
 

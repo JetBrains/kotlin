@@ -156,7 +156,7 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
         if (type.isDefinitelyNotNullType) {
             replacement = replacement.makeDefinitelyNotNullOrNotNull()
         }
-        if (type is CustomTypeVariable) {
+        if (type is CustomTypeParameter) {
             replacement = type.substitutionResult(replacement).unwrap()
         }
 
