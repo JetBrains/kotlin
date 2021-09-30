@@ -225,13 +225,9 @@ public inline operator fun Char.plus(other: String): String = this.toString() + 
 /**
  * Returns `true` if this character is equal to the [other] character, optionally ignoring character case.
  *
+ * Two characters are considered equal ignoring case if `Char.uppercaseChar().lowercaseChar()` on each character produces the same result.
+ *
  * @param ignoreCase `true` to ignore character case when comparing characters. By default `false`.
- *
- * Two characters are considered the same ignoring case if at least one of the following is `true`:
- *   - The two characters are the same (as compared by the == operator)
- *   - Applying the method [uppercaseChar] to each character produces the same result
- *   - Applying the method [lowercaseChar] to each character produces the same result
- *
  * @sample samples.text.Chars.equals
  */
 public fun Char.equals(other: Char, ignoreCase: Boolean = false): Boolean {

@@ -244,6 +244,11 @@ public inline fun String.match(regex: String): Array<String>? = asDynamic().matc
 @kotlin.internal.InlineOnly
 internal inline fun String.nativeReplace(pattern: RegExp, replacement: String): String = asDynamic().replace(pattern, replacement)
 
+/**
+ * Compares two strings lexicographically, optionally ignoring case differences.
+ *
+ * If [ignoreCase] is true, the result of `Char.uppercaseChar().lowercaseChar()` on each character is compared.
+ */
 @SinceKotlin("1.2")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.compareTo(other: String, ignoreCase: Boolean = false): Int {
@@ -252,24 +257,23 @@ public actual fun String.compareTo(other: String, ignoreCase: Boolean = false): 
         val n2 = other.length
         val min = minOf(n1, n2)
         if (min == 0) return n1 - n2
-        var start = 0
-        while (true) {
-            val end = minOf(start + 16, min)
-            var s1 = this.substring(start, end)
-            var s2 = other.substring(start, end)
-            if (s1 != s2) {
-                s1 = s1.uppercase()
-                s2 = s2.uppercase()
-                if (s1 != s2) {
-                    s1 = s1.lowercase()
-                    s2 = s2.lowercase()
-                    if (s1 != s2) {
-                        return s1.compareTo(s2)
+        for (index in 0 until min) {
+            var thisChar = this[index]
+            var otherChar = other[index]
+
+            if (thisChar != otherChar) {
+                thisChar = thisChar.uppercaseChar()
+                otherChar = otherChar.uppercaseChar()
+
+                if (thisChar != otherChar) {
+                    thisChar = thisChar.lowercaseChar()
+                    otherChar = otherChar.lowercaseChar()
+
+                    if (thisChar != otherChar) {
+                        return thisChar.compareTo(otherChar)
                     }
                 }
             }
-            if (end == min) break
-            start = end
         }
         return n1 - n2
     } else {
