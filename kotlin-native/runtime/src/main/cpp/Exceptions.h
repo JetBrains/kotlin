@@ -28,6 +28,8 @@ void ThrowException(KRef exception);
 
 void SetKonanTerminateHandler();
 
+void HandleCurrentExceptionForCInterop();
+
 RUNTIME_NOTHROW OBJ_GETTER(Kotlin_getExceptionObject, void* holder);
 
 // The functions below are implemented in Kotlin (at package kotlin.native.internal).

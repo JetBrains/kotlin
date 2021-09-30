@@ -466,7 +466,7 @@ private class ExportedElement(val kind: ElementKind,
                     "result", cfunction[0], Direction.KOTLIN_TO_C, builder)
             builder.append("  return $result;\n")
         }
-        builder.append("   } catch (ExceptionObjHolder& e) { std::terminate(); } \n")
+        builder.append("   } catch (...) { HandleCurrentExceptionForCInterop(); } \n")
 
         builder.append("}\n")
 
@@ -927,6 +927,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |void Kotlin_initRuntimeIfNeeded();
         |void Kotlin_mm_switchThreadStateRunnable() RUNTIME_NOTHROW;
         |void Kotlin_mm_switchThreadStateNative() RUNTIME_NOTHROW;
+        |void HandleCurrentExceptionForCInterop();
         |
         |KObjHeader* CreateStringFromCString(const char*, KObjHeader**);
         |char* CreateCStringFromString(const KObjHeader*);
@@ -959,13 +960,6 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |  KObjHeader* obj_;
         |
         |  KObjHeader** frame() { return reinterpret_cast<KObjHeader**>(&frame_); }
-        |};
-        |
-        |class ExceptionObjHolder {
-        |public:
-        |    virtual ~ExceptionObjHolder() = default;
-        |
-        |    KObjHeader* GetExceptionObject() noexcept;
         |};
         |
         |class ScopedRunnableState {
