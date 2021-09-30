@@ -359,6 +359,7 @@ private fun RegExp.findNext(input: String, from: Int, nextPattern: RegExp): Matc
     }
 }
 
+// The same code from K/N Regex.kt
 private fun substituteGroupRefs(match: MatchResult, replacement: String): String {
     var index = 0
     val result = StringBuilder(replacement.length)

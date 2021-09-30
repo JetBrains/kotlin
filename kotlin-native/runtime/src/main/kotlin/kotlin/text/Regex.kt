@@ -220,38 +220,6 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
         return matchResult
     }
 
-    private fun processReplacement(match: MatchResult, replacement: String): String {
-        val result = StringBuilder(replacement.length)
-        var escaped = false
-        var backReference = false
-        for (ch in replacement) {
-            when {
-                escaped -> {
-                    result.append(ch)
-                    escaped = false
-                }
-                backReference -> {
-                    if (ch !in '0'..'9') {
-                        throw IllegalArgumentException("Incorrect back reference: $ch.")
-                    }
-                    val group = ch - '0'
-                    result.append(match.groupValues[group])
-                    // We don't catch IndexOutOfBoundException here because
-                    // it's a correct exception in case of a wrong group number.
-                    // TODO: But we can rethrow it with more informative message.
-                    backReference = false
-                }
-                ch == '\\' -> escaped = true
-                ch == '$' -> backReference = true
-                else -> result.append(ch)
-            }
-        }
-        if (backReference || escaped) {
-            throw IllegalArgumentException("Unexpected end of replacement.")
-        }
-        return result.toString()
-    }
-
     /**
      * Replaces all occurrences of this regular expression in the specified [input] string with specified [replacement] expression.
      *
@@ -272,7 +240,7 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
      * @throws RuntimeException if [replacement] expression is malformed, or capturing group with specified `name` or `index` does not exist
      */
     actual fun replace(input: CharSequence, replacement: String): String
-            = replace(input) { match -> processReplacement(match, replacement) }
+            = replace(input) { match -> substituteGroupRefs(match, replacement) }
 
     /**
      * Replaces all occurrences of this regular expression in the specified [input] string with the result of
@@ -324,7 +292,7 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
         val length = input.length
         val result = StringBuilder(length)
         result.append(input, 0, match.range.start)
-        result.append(processReplacement(match, replacement))
+        result.append(substituteGroupRefs(match, replacement))
         if (match.range.endInclusive + 1 < length) {
             result.append(input, match.range.endInclusive + 1, length)
         }
@@ -402,4 +370,59 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
      * and may match strings differently.
      */
     override fun toString(): String = nativePattern.toString()
+}
+
+// The same code from K/JS regex.kt
+private fun substituteGroupRefs(match: MatchResult, replacement: String): String {
+    var index = 0
+    val result = StringBuilder(replacement.length)
+
+    while (index < replacement.length) {
+        val char = replacement[index++]
+        if (char == '\\') {
+            if (index == replacement.length)
+                throw IllegalArgumentException("The Char to be escaped is missing")
+
+            result.append(replacement[index++])
+        } else if (char == '$') {
+            if (index == replacement.length)
+                throw IllegalArgumentException("Capturing group index is missing")
+
+            if (replacement[index] == '{')
+                throw IllegalArgumentException("Named capturing group reference currently is not supported")
+
+            if (replacement[index] !in '0'..'9')
+                throw IllegalArgumentException("Invalid capturing group reference")
+
+            val endIndex = replacement.readGroupIndex(index, match.groupValues.size)
+            val groupIndex = replacement.substring(index, endIndex).toInt()
+
+            if (groupIndex >= match.groupValues.size)
+                throw IndexOutOfBoundsException("Group with index $groupIndex does not exist")
+
+            result.append(match.groupValues[groupIndex])
+            index = endIndex
+        } else {
+            result.append(char)
+        }
+    }
+    return result.toString()
+}
+
+private fun String.readGroupIndex(startIndex: Int, groupCount: Int): Int {
+    // at least one digit after '$' is always captured
+    var index = startIndex + 1
+    var groupIndex = this[startIndex] - '0'
+
+    // capture the largest valid group index
+    while (index < length && this[index] in '0'..'9') {
+        val newGroupIndex = (groupIndex * 10) + (this[index] - '0')
+        if (newGroupIndex in 0 until groupCount) {
+            groupIndex = newGroupIndex
+            index++
+        } else {
+            break
+        }
+    }
+    return index
 }
