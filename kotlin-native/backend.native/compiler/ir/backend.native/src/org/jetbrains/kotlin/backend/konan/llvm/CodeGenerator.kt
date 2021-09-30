@@ -475,6 +475,9 @@ internal abstract class FunctionGenerationContext(
     private val entryBb = basicBlockInFunction("entry", startLocation)
     protected val cleanupLandingpad = basicBlockInFunction("cleanup_landingpad", endLocation)
 
+    private var needLeaveFrameInUnwindEpilogue: Boolean = false
+    private var setCurrentFrameIsCalled: Boolean = false
+
     val stackLocalsManager = StackLocalsManagerImpl(this, stackLocalsInitBb)
 
     data class FunctionInvokeInformation(
@@ -894,7 +897,13 @@ internal abstract class FunctionGenerationContext(
         // Type of `landingpad` instruction result (depends on personality function):
         val landingpadType = structType(int8TypePtr, int32Type)
 
-        return LLVMBuildLandingPad(builder, landingpadType, personalityFunction, numClauses, name)!!
+        val landingpad = LLVMBuildLandingPad(builder, landingpadType, personalityFunction, numClauses, name)!!
+
+        call(context.llvm.setCurrentFrameFunction, listOf(slotsPhi!!))
+        setCurrentFrameIsCalled = true
+        handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
+
+        return landingpad
     }
 
     fun extractElement(vector: LLVMValueRef, index: LLVMValueRef, name: String = ""): LLVMValueRef {
@@ -1410,12 +1419,16 @@ internal abstract class FunctionGenerationContext(
     }
 
     internal fun epilogue() {
+        needLeaveFrameInUnwindEpilogue = irFunction?.annotations?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true
+                || forwardingForeignExceptionsTerminatedWith != null
+                || irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE
+
         appendingTo(prologueBb) {
-            val slots = if (needSlotsPhi)
+            val slots = if (needSlotsPhi || needLeaveFrameInUnwindEpilogue)
                 LLVMBuildArrayAlloca(builder, kObjHeaderPtr, Int32(slotCount).llvm, "")!!
             else
                 kNullObjHeaderPtrPtr
-            if (needSlots) {
+            if (needSlots || needLeaveFrameInUnwindEpilogue) {
                 check(!forbidRuntime) { "Attempt to start a frame where runtime usage is forbidden" }
                 // Zero-init slots.
                 val slotsMem = bitcast(kInt8Ptr, slots)
@@ -1459,8 +1472,10 @@ internal abstract class FunctionGenerationContext(
             if (needStateSwitch) {
                 switchThreadState(Runnable)
             }
-            if (needSlots) {
+            if (needSlots || needLeaveFrameInUnwindEpilogue) {
                 call(context.llvm.enterFrameFunction, listOf(slotsPhi!!, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))
+            } else {
+                check(!setCurrentFrameIsCalled)
             }
             resetDebugLocation()
             br(entryBb)
@@ -1468,9 +1483,8 @@ internal abstract class FunctionGenerationContext(
 
         processReturns()
 
-        val shouldHaveCleanupLandingpad = forwardingForeignExceptionsTerminatedWith != null ||
-                needSlots ||
-                !stackLocalsManager.isEmpty() ||
+        val shouldHaveCleanupLandingpad = needLeaveFrameInUnwindEpilogue ||
+                (!stackLocalsManager.isEmpty() && context.memoryModel != MemoryModel.EXPERIMENTAL) ||
                 (context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable)
 
         if (shouldHaveCleanupLandingpad) {
@@ -1695,14 +1709,15 @@ internal abstract class FunctionGenerationContext(
             return slotCount > frameOverlaySlotCount || localAllocs > 0
         }
 
-
     private fun releaseVars() {
-        if (needSlots) {
+        if (needLeaveFrameInUnwindEpilogue || needSlots) {
             check(!forbidRuntime) { "Attempt to leave a frame where runtime usage is forbidden" }
             call(context.llvm.leaveFrameFunction,
                     listOf(slotsPhi!!, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))
         }
-        stackLocalsManager.clean(refsOnly = true) // Only bother about not leaving any dangling references.
+        if (!stackLocalsManager.isEmpty() && context.memoryModel != MemoryModel.EXPERIMENTAL) {
+            stackLocalsManager.clean(refsOnly = true) // Only bother about not leaving any dangling references.
+        }
     }
 }
 
