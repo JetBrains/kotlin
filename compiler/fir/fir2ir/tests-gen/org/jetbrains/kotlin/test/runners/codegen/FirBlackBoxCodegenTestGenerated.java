@@ -23124,6 +23124,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("anonFakeOverride.kt")
+            public void testAnonFakeOverride() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/serializationRegressions/anonFakeOverride.kt");
+            }
+
+            @Test
             @TestMetadata("deepGenericDelegatedProperty.kt")
             public void testDeepGenericDelegatedProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/ir/serializationRegressions/deepGenericDelegatedProperty.kt");
