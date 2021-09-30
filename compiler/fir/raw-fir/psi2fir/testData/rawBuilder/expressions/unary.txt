@@ -36,7 +36,7 @@ FILE: unary.kt
         }
 
         public? final? [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
-            public? get(): Int
+            [ContainingClassKey=X] public? get(): Int
 
     }
     public? final? fun test2(x: X): R|kotlin/Unit| {
@@ -79,7 +79,7 @@ FILE: unary.kt
         }
 
         public? final? [IsFromPrimaryConstructor=true] val arr: Array<Int> = R|<local>/arr|
-            public? get(): Array<Int>
+            [ContainingClassKey=Y] public? get(): Array<Int>
 
     }
     public? final? fun test4(y: Y): R|kotlin/Unit| {

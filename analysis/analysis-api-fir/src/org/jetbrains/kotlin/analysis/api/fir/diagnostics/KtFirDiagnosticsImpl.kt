@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -230,6 +231,14 @@ internal class ValOrVarOnSecondaryConstructorParameterImpl(
     override val firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ValOrVarOnSecondaryConstructorParameter(), KtAbstractFirDiagnostic<KtParameter>
+
+internal class InvisibleSetterImpl(
+    override val property: KtVariableSymbol,
+    override val visibility: Visibility,
+    override val callableId: CallableId,
+    override val firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.InvisibleSetter(), KtAbstractFirDiagnostic<PsiElement>
 
 internal class InvisibleReferenceImpl(
     override val reference: KtSymbol,

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -201,6 +202,13 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
     abstract class ValOrVarOnSecondaryConstructorParameter : KtFirDiagnostic<KtParameter>() {
         override val diagnosticClass get() = ValOrVarOnSecondaryConstructorParameter::class
         abstract val valOrVar: KtKeywordToken
+    }
+
+    abstract class InvisibleSetter : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InvisibleSetter::class
+        abstract val property: KtVariableSymbol
+        abstract val visibility: Visibility
+        abstract val callableId: CallableId
     }
 
     abstract class InvisibleReference : KtFirDiagnostic<PsiElement>() {

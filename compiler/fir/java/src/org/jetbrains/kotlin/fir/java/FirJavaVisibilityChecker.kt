@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
 @NoMutableState
@@ -37,19 +39,25 @@ object FirJavaVisibilityChecker : FirVisibilityChecker() {
                     val ownerLookupTag = symbol.getOwnerLookupTag() ?: return false
                     if (canSeeProtectedMemberOf(
                             containingDeclarations, dispatchReceiver, ownerLookupTag, session,
-                            isVariableOrNamedFunction = symbol is FirVariableSymbol || symbol is FirNamedFunctionSymbol
+                            isVariableOrNamedFunction = symbol is FirVariableSymbol || symbol is FirNamedFunctionSymbol || symbol is FirPropertyAccessorSymbol,
+                            isSyntheticProperty = symbol.fir is FirSyntheticPropertyAccessor
                         )
                     ) return true
 
                     // FE1.0 allows calling public setters with property assignment syntax if the getter is protected.
                     if (!isCallToPropertySetter || symbol !is FirSyntheticPropertySymbol) return false
-                    val setterVisibility = symbol.setterSymbol?.visibility
-                    setterVisibility != null && setterVisibility == Visibilities.Public
+                    symbol.setterSymbol?.visibility == Visibilities.Public
                 }
             }
 
             JavaVisibilities.PackageVisibility -> {
-                symbol.packageFqName() == useSiteFile.packageFqName
+                if (symbol.packageFqName() == useSiteFile.packageFqName) {
+                    true
+                } else if (symbol.fir is FirSyntheticPropertyAccessor) {
+                    symbol.getOwnerLookupTag()?.classId?.packageFqName == useSiteFile.packageFqName
+                } else {
+                    false
+                }
             }
 
             else -> true

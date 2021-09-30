@@ -22,8 +22,7 @@ class B : A() {
         b.bar = b.bar + ""
 
         a.<!INVISIBLE_REFERENCE!>foo<!>
-        // TODO: should be INVISIBLE_SETTER
-        a.bar = a.bar + ""
+        <!INVISIBLE_SETTER!>a.bar<!> = a.bar + ""
 
         if (a is B) {
             a.foo
@@ -33,13 +32,12 @@ class B : A() {
         if (d.x is B) {
             d.x.abc // Ok
             d.x.<!INVISIBLE_REFERENCE!>foo<!>
-            // TODO: should be INVISIBLE_SETTER
-            d.x.bar = d.x.bar + ""
+            <!INVISIBLE_SETTER!>d.x.bar<!> = d.x.bar + ""
         }
     }
 }
 
 fun baz(a: A) {
     a.<!INVISIBLE_REFERENCE!>foo<!>
-    a.bar = a.bar + ""
+    <!INVISIBLE_SETTER!>a.bar<!> = a.bar + ""
 }

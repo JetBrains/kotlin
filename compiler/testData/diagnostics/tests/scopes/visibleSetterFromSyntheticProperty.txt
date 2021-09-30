@@ -1,0 +1,13 @@
+package
+
+public fun Java.test(/*0*/ name: kotlin.String): kotlin.Unit
+
+public abstract class Java {
+    public constructor Java()
+    private final var _name: kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun getName(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open fun setName(/*0*/ name: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

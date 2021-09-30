@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
@@ -340,6 +341,7 @@ private object FirToKtConversionCreator {
         FirModuleData::class,
         ExpectActualCompatibility.Incompatible::class,
         DeprecationInfo::class,
+        CallableId::class
     )
 
     private val KType.kClass: KClass<*>

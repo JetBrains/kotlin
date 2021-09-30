@@ -26,10 +26,10 @@ FILE: annotated.kt
         }
 
         public? final? [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
-            public? get(): Int
+            [ContainingClassKey=Two] public? get(): Int
 
         public? final? [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
-            public? get(): Int
+            [ContainingClassKey=Two] public? get(): Int
 
         public final operator fun component1(): Int
 

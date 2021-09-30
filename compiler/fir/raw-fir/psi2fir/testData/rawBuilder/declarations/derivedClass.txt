@@ -5,7 +5,7 @@ FILE: derivedClass.kt
         }
 
         public? final? [IsFromPrimaryConstructor=true] val x: T = R|<local>/x|
-            public? get(): T
+            [ContainingClassKey=Base] public? get(): T
 
     }
     public? final? class Derived<T : Any> : Base<T> {

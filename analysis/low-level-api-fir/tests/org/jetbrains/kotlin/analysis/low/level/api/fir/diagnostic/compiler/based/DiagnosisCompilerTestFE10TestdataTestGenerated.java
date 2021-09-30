@@ -25481,6 +25481,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 runTest("compiler/testData/diagnostics/tests/scopes/VisibilityInheritModifier.kt");
             }
 
+            @Test
+            @TestMetadata("visibleSetterFromSyntheticProperty.kt")
+            public void testVisibleSetterFromSyntheticProperty() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/scopes/visibleSetterFromSyntheticProperty.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/scopes/classHeader")
             @TestDataPath("$PROJECT_ROOT")
@@ -25918,6 +25924,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 @TestMetadata("protectedCallOnSubClass.kt")
                 public void testProtectedCallOnSubClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/scopes/protectedVisibility/protectedCallOnSubClass.kt");
+                }
+
+                @Test
+                @TestMetadata("protectedPropertyInPrimaryConstructor.kt")
+                public void testProtectedPropertyInPrimaryConstructor() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/scopes/protectedVisibility/protectedPropertyInPrimaryConstructor.kt");
                 }
 
                 @Test

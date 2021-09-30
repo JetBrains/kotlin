@@ -15,7 +15,7 @@ class Derived : Base() {
         x.<!INVISIBLE_REFERENCE!>bar<!>()
 
         x.<!INVISIBLE_REFERENCE!>x<!> = x.<!INVISIBLE_REFERENCE!>x<!> + 1
-        x.y = x.y + 1
+        <!INVISIBLE_SETTER!>x.y<!> = x.y + 1
 
         if (x is Derived) {
             x.foo()

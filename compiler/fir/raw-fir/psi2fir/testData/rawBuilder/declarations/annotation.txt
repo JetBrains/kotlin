@@ -17,7 +17,7 @@ FILE: annotation.kt
         }
 
         @base() public? final? [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
-            public? get(): Int
+            [ContainingClassKey=correct] public? get(): Int
 
         @base() public? [ContainingClassKey=correct] constructor(): R|correct| {
             this<R|correct|>(IntegerLiteral(0))

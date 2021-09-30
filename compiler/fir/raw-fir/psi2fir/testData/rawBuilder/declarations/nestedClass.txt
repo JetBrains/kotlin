@@ -5,7 +5,7 @@ FILE: nestedClass.kt
         }
 
         public? final? [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
-            public? get(): String
+            [ContainingClassKey=Base] public? get(): String
 
     }
     public? final? class Outer : R|kotlin/Any| {

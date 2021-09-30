@@ -19,7 +19,7 @@ FILE: enums2.kt
         }
 
         public? final? [IsFromPrimaryConstructor=true] val x: Some = R|<local>/x|
-            public? get(): Some
+            [ContainingClassKey=SomeEnum] public? get(): Some
 
         public final static [ContainingClassKey=SomeEnum] enum entry FIRST: R|SomeEnum| = object : R|SomeEnum| {
             private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {

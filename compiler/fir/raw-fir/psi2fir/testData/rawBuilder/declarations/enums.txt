@@ -20,10 +20,10 @@ FILE: enums.kt
         }
 
         public? final? [IsFromPrimaryConstructor=true] val m: Double = R|<local>/m|
-            public? get(): Double
+            [ContainingClassKey=Planet] public? get(): Double
 
         internal final? [IsFromPrimaryConstructor=true] val r: Double = R|<local>/r|
-            internal get(): Double
+            [ContainingClassKey=Planet] internal get(): Double
 
         public final static [ContainingClassKey=Planet] enum entry MERCURY: R|Planet| = object : R|Planet| {
             private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
@@ -86,7 +86,7 @@ FILE: enums.kt
         }
 
         public? final? [IsFromPrimaryConstructor=true] val signature: String = R|<local>/signature|
-            public? get(): String
+            [ContainingClassKey=PseudoInsn] public? get(): String
 
         public final static [ContainingClassKey=PseudoInsn] enum entry FIX_STACK_BEFORE_JUMP: R|PseudoInsn| = object : R|PseudoInsn| {
             private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {

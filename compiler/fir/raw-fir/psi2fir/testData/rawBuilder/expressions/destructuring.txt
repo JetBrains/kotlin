@@ -5,13 +5,13 @@ FILE: destructuring.kt
         }
 
         public? final? [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
-            public? get(): Int
+            [ContainingClassKey=Some] public? get(): Int
 
         public? final? [IsFromPrimaryConstructor=true] val second: Double = R|<local>/second|
-            public? get(): Double
+            [ContainingClassKey=Some] public? get(): Double
 
         public? final? [IsFromPrimaryConstructor=true] val third: String = R|<local>/third|
-            public? get(): String
+            [ContainingClassKey=Some] public? get(): String
 
         public final operator fun component1(): Int
 

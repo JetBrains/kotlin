@@ -6,7 +6,7 @@ FILE: locals.kt
             }
 
             public? final? [IsFromPrimaryConstructor=true] val pp: Int = R|<local>/pp|
-                public? get(): Int
+                [ContainingClassKey=Local] public? get(): Int
 
             public? final? fun diff(): <implicit> {
                 ^diff pp#.minus#(p#)

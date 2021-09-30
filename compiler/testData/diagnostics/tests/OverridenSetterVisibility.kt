@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 public interface ITest {
     public var prop : Int
         get() = 12
