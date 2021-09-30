@@ -163,12 +163,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         // that has a name composed as '<IDE module name>Classes`, where the IDE module name is the default source set name:
         val expectedClassesTaskName = "${kotlinCompilation.defaultSourceSetName}Classes"
         project.tasks.run {
-            var shouldCreateTask = false
-            try {
-                named(expectedClassesTaskName)
-            } catch (e: UnknownDomainObjectException) {
-                shouldCreateTask = true
-            }
+            val shouldCreateTask = expectedClassesTaskName !in names
             if (shouldCreateTask) {
                 project.registerTask(expectedClassesTaskName, IDEClassesTask::class.java) {
                     it.dependsOn(getByName(kotlinCompilation.compileAllTaskName))
