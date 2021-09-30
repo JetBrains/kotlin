@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// !DIAGNOSTICS: -OPT_IN_IS_NOT_ENABLED -DEPRECATION -OPT_IN_USAGE_ERROR
+// !DIAGNOSTICS: -OPT_IN_IS_NOT_ENABLED -OPT_IN_USAGE_ERROR
 // IGNORE_BACKEND: WASM
 
 import kotlin.experimental.ExperimentalTypeInference
@@ -11,7 +11,7 @@ fun foo(): MutableMap<CharSequence, *> = mutableMapOf<CharSequence, String>()
 
 fun <E> MutableMap<E, *>.swap(x: MutableMap<E, *>) {}
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <K : V, V : CharSequence> build7(@BuilderInference builderAction: MutableMap<K, V>.() -> MutableMap<String, V>) = mutableMapOf<String, V>()
 
 fun <K> id(x: K): K = x
