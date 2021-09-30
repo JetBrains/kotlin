@@ -1,0 +1,22 @@
+FILE: variableExplicit.kt
+    public final fun <T> R|kotlin/Int.Companion|.buildSeq(size: R|kotlin/Int|, init: R|kotlin/collections/CollectionLiteralBuilder<kotlin/Int, T>.() -> kotlin/Unit| = fun R|kotlin/collections/CollectionLiteralBuilder<kotlin/Int, T>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        ^ Unit
+    }
+    ): R|kotlin/Int| {
+        ^buildSeq R|kotlin/TODO|()
+    }
+    public final fun <T> R|kotlin/Double.Companion|.buildSeq(size: R|kotlin/Int|, init: R|kotlin/collections/CollectionLiteralBuilder<kotlin/Double, T>.() -> kotlin/Unit| = fun R|kotlin/collections/CollectionLiteralBuilder<kotlin/Double, T>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        ^ Unit
+    }
+    ): R|kotlin/Double| {
+        ^buildSeq R|kotlin/TODO|()
+    }
+    public final fun main(): R|kotlin/Unit| {
+        lval a: R|kotlin/Int| = Q|kotlin/Int|.R|/buildSeq|<R|kotlin/Int|>(Int(3), <L> = buildSeq@fun R|kotlin/collections/CollectionLiteralBuilder<kotlin/Int, kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/CollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(1))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/CollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(2))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/CollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(3))
+        }
+        )
+        lval b: R|kotlin/collections/Set<kotlin/Int>| = ERROR_EXPR(Collection literal has no builder for Set in the current scope)
+    }

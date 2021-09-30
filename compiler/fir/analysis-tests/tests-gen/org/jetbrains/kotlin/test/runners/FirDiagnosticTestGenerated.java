@@ -1121,6 +1121,52 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
         }
 
         @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiteral")
+        @TestDataPath("$PROJECT_ROOT")
+        public class CollectionLiteral {
+            @Test
+            public void testAllFilesPresentInCollectionLiteral() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/collectionLiteral"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("functionAmbiguity.kt")
+            public void testFunctionAmbiguity() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionAmbiguity.kt");
+            }
+
+            @Test
+            @TestMetadata("functionExplicit.kt")
+            public void testFunctionExplicit() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionExplicit.kt");
+            }
+
+            @Test
+            @TestMetadata("functionVariable.kt")
+            public void testFunctionVariable() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionVariable.kt");
+            }
+
+            @Test
+            @TestMetadata("functionVariableWithUpperBound.kt")
+            public void testFunctionVariableWithUpperBound() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionVariableWithUpperBound.kt");
+            }
+
+            @Test
+            @TestMetadata("variableExplicit.kt")
+            public void testVariableExplicit() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/variableExplicit.kt");
+            }
+
+            @Test
+            @TestMetadata("variableImplicit.kt")
+            public void testVariableImplicit() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/variableImplicit.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/constVal")
         @TestDataPath("$PROJECT_ROOT")
         public class ConstVal {

@@ -1,0 +1,20 @@
+FILE: functionAmbiguity.kt
+    public final fun <T> R|kotlin/Int.Companion|.buildSeq(size: R|kotlin/Int|, init: R|kotlin/collections/CollectionLiteralBuilder<kotlin/Int, T>.() -> kotlin/Unit| = fun R|kotlin/collections/CollectionLiteralBuilder<kotlin/Int, T>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        ^ Unit
+    }
+    ): R|kotlin/Int| {
+        ^buildSeq R|kotlin/TODO|()
+    }
+    public final fun <T> R|kotlin/Double.Companion|.buildSeq(size: R|kotlin/Int|, init: R|kotlin/collections/CollectionLiteralBuilder<kotlin/Double, T>.() -> kotlin/Unit| = fun R|kotlin/collections/CollectionLiteralBuilder<kotlin/Double, T>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        ^ Unit
+    }
+    ): R|kotlin/Double| {
+        ^buildSeq R|kotlin/TODO|()
+    }
+    public final fun fOver(a: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun fOver(a: R|kotlin/Double|): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        <Ambiguity: fOver, [/fOver, /fOver]>#(CollectionLiteral R|it(kotlin/Int & kotlin/Double)| [Int(1), Int(2), Int(3), ] )
+    }

@@ -964,6 +964,49 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         }
     }
 
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiteral")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CollectionLiteral extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCollectionLiteral() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/collectionLiteral"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("functionAmbiguity.kt")
+        public void testFunctionAmbiguity() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionAmbiguity.kt");
+        }
+
+        @TestMetadata("functionExplicit.kt")
+        public void testFunctionExplicit() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionExplicit.kt");
+        }
+
+        @TestMetadata("functionVariable.kt")
+        public void testFunctionVariable() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionVariable.kt");
+        }
+
+        @TestMetadata("functionVariableWithUpperBound.kt")
+        public void testFunctionVariableWithUpperBound() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionVariableWithUpperBound.kt");
+        }
+
+        @TestMetadata("variableExplicit.kt")
+        public void testVariableExplicit() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/variableExplicit.kt");
+        }
+
+        @TestMetadata("variableImplicit.kt")
+        public void testVariableImplicit() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/variableImplicit.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/constVal")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
