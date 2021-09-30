@@ -93,8 +93,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                     )
                 }
             }
-        // Do not optimize casts for values of primitive types because it can affect their identity and thus change behavior.
-        !argument.type.isPrimitiveType() && argument.type.isSubtypeOfClass(type.erasedUpperBound.symbol) ->
+        argument.type.isInlineClassType() && argument.type.isSubtypeOfClass(type.erasedUpperBound.symbol) ->
             argument
         else ->
             builder.irAs(argument, type)
