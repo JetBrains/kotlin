@@ -373,6 +373,12 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     }
 
     @Test
+    @TestMetadata("samConstructorCall.kt")
+    public void testSamConstructorCall() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/samConstructorCall.kt");
+    }
+
+    @Test
     @TestMetadata("simpleCallWithNonMatchingArgs.kt")
     public void testSimpleCallWithNonMatchingArgs() throws Exception {
         runTest("analysis/analysis-api/testData/analysisSession/resolveCall/simpleCallWithNonMatchingArgs.kt");
