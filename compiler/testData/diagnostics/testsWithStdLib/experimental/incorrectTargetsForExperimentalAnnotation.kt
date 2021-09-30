@@ -146,3 +146,4 @@ class Z(b: B) : Y(b) {
     override fun f() {}
 }
 
+class WithSetter(@set:E6 var withSetter: String)

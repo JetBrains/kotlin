@@ -29,7 +29,7 @@ object FirOptInMarkedDeclarationChecker : FirAnnotatedDeclarationChecker() {
                     reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "getter", context)
                 }
                 if (useSiteTarget == SETTER_PARAMETER ||
-                    (useSiteTarget != PROPERTY && declaration is FirValueParameter &&
+                    (useSiteTarget != PROPERTY && useSiteTarget != PROPERTY_SETTER && declaration is FirValueParameter &&
                             KotlinTarget.VALUE_PARAMETER in annotationClass.getAllowedAnnotationTargets())
                 ) {
                     reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "parameter", context)
