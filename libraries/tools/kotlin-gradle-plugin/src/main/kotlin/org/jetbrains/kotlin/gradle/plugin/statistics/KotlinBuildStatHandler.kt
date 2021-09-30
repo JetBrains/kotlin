@@ -127,13 +127,14 @@ class KotlinBuildStatHandler {
                         }
                     }
                 }
+                val taskNames = project.tasks.names
 
                 sessionLogger.report(NumericalMetrics.NUMBER_OF_SUBPROJECTS, 1)
                 sessionLogger.report(BooleanMetrics.KOTLIN_KTS_USED, project.buildscript.sourceFile?.name?.endsWith(".kts") ?: false)
-                sessionLogger.report(NumericalMetrics.GRADLE_NUMBER_OF_TASKS, project.tasks.names.size.toLong())
+                sessionLogger.report(NumericalMetrics.GRADLE_NUMBER_OF_TASKS, taskNames.size.toLong())
                 sessionLogger.report(
                     NumericalMetrics.GRADLE_NUMBER_OF_UNCONFIGURED_TASKS,
-                    project.tasks.names.count { name ->
+                    taskNames.count { name ->
                         try {
                             project.tasks.named(name).javaClass.name.contains("TaskCreatingProvider")
                         } catch (_: Exception) {
