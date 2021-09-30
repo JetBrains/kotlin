@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -120,7 +121,7 @@ open class FirApplySupertypesTransformer(
     }
 
     private fun applyResolvedSupertypesToClass(firClass: FirClass) {
-        if (firClass.superTypeRefs.any { it !is FirResolvedTypeRef }) {
+        if (firClass.superTypeRefs.any { it !is FirResolvedTypeRef || it is FirImplicitBuiltinTypeRef }) {
             val supertypeRefs = getResolvedSupertypeRefs(firClass)
 
             // TODO: Replace with an immutable version or transformer

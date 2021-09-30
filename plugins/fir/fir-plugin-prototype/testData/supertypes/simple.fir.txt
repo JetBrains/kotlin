@@ -1,18 +1,53 @@
 FILE: simple.kt
-    @R|org/jetbrains/kotlin/fir/plugin/C|() public final class A : R|kotlin/Any| {
-        public constructor(): R|A| {
+    public abstract interface MyInterface : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/D|() public abstract class AbstractClass : R|kotlin/Any|, R|foo/MyInterface| {
+        public constructor(): R|foo/AbstractClass| {
             super<R|kotlin/Any|>()
         }
 
-        public final class MyNested : <ERROR TYPE REF: Symbol not found for NestedClass> {
-            public constructor(): R|A.MyNested| {
-                super<<ERROR TYPE REF: Symbol not found for NestedClass>>()
-            }
-
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/D|() public final class FinalClassWithOverride : R|kotlin/Any|, R|foo/MyInterface| {
+        public constructor(): R|foo/FinalClassWithOverride| {
+            super<R|kotlin/Any|>()
         }
 
-        public final fun test(): R|kotlin/Unit| {
-            R|/A.MyNested.MyNested|().<Unresolved name: foo>#()
+        public final override fun foo(): R|kotlin/Unit| {
         }
 
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/D|() public final class FinalClassWithoutOverride : R|kotlin/Any|, R|foo/MyInterface| {
+        public constructor(): R|foo/FinalClassWithoutOverride| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class NotAnnotatedWithOverride : R|kotlin/Any| {
+        public constructor(): R|foo/NotAnnotatedWithOverride| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/D|() public final class AnnotatedClassWithExplicitInheritance : R|foo/MyInterface| {
+        public constructor(): R|foo/AnnotatedClassWithExplicitInheritance| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun test_1(x: R|foo/AbstractClass|): R|kotlin/Unit| {
+        R|<local>/x|.R|foo/MyInterface.foo|()
+    }
+    public final fun test_2(x: R|foo/FinalClassWithOverride|): R|kotlin/Unit| {
+        R|<local>/x|.R|foo/FinalClassWithOverride.foo|()
+    }
+    public final fun test_3(x: R|foo/FinalClassWithoutOverride|): R|kotlin/Unit| {
+        R|<local>/x|.R|foo/MyInterface.foo|()
     }
