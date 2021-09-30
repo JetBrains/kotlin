@@ -434,7 +434,8 @@ private class ExportedElement(val kind: ElementKind,
                 mapIndexed { index, it -> "${owner.translateType(it)} arg${index}" }.joinToString(", ")}) {\n")
         // TODO: do we really need that in every function?
         builder.append("  Kotlin_initRuntimeIfNeeded();\n")
-        builder.append("  ScopedRunnableState stateGuard;\n");
+        builder.append("  ScopedRunnableState stateGuard;\n")
+        builder.append("  FrameOverlay* frame = getCurrentFrame();")
         val args = ArrayList(cfunction.drop(1).mapIndexed { index, pair ->
             translateArgument("arg$index", pair, Direction.C_TO_KOTLIN, builder)
         })
@@ -466,7 +467,10 @@ private class ExportedElement(val kind: ElementKind,
                     "result", cfunction[0], Direction.KOTLIN_TO_C, builder)
             builder.append("  return $result;\n")
         }
-        builder.append("   } catch (...) { HandleCurrentExceptionForCInterop(); } \n")
+        builder.append("   } catch (...) {")
+        builder.append("       SetCurrentFrame(reinterpret_cast<KObjHeader**>(frame));\n")
+        builder.append("       HandleCurrentExceptionForCInterop();\n")
+        builder.append("   } \n")
 
         builder.append("}\n")
 
@@ -911,6 +915,9 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |struct KTypeInfo;
         |typedef struct KTypeInfo KTypeInfo;
         |
+        |struct FrameOverlay;
+        |typedef struct FrameOverlay FrameOverlay;
+        |
         |#define RUNTIME_NOTHROW __attribute__((nothrow))
         |#define RUNTIME_USED __attribute__((used))
         |#define RUNTIME_NORETURN __attribute__((noreturn))
@@ -924,6 +931,8 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |${prefix}_KBoolean IsInstance(const KObjHeader*, const KTypeInfo*) RUNTIME_NOTHROW;
         |void EnterFrame(KObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
         |void LeaveFrame(KObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
+        |void SetCurrentFrame(KObjHeader** start) RUNTIME_NOTHROW;
+        |FrameOverlay* getCurrentFrame() RUNTIME_NOTHROW;
         |void Kotlin_initRuntimeIfNeeded();
         |void Kotlin_mm_switchThreadStateRunnable() RUNTIME_NOTHROW;
         |void Kotlin_mm_switchThreadStateNative() RUNTIME_NOTHROW;
