@@ -4714,6 +4714,22 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/bytecodeText/outerClass")
+    @TestDataPath("$PROJECT_ROOT")
+    public class OuterClass {
+        @Test
+        public void testAllFilesPresentInOuterClass() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/outerClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @Test
+        @TestMetadata("classInClinit.kt")
+        public void testClassInClinit() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/outerClass/classInClinit.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/bytecodeText/parameterlessMain")
     @TestDataPath("$PROJECT_ROOT")
     public class ParameterlessMain {

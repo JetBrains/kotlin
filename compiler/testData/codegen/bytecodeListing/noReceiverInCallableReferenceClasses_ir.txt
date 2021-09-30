@@ -10,7 +10,7 @@ public final class A {
 @kotlin.Metadata
 synthetic final class NoReceiverInCallableReferenceClassesKt$A_bar$1 {
     // source: 'noReceiverInCallableReferenceClasses.kt'
-    enclosing method NoReceiverInCallableReferenceClassesKt.<clinit>()V
+    enclosing class NoReceiverInCallableReferenceClassesKt
     public final static field INSTANCE: NoReceiverInCallableReferenceClassesKt$A_bar$1
     inner (anonymous) class NoReceiverInCallableReferenceClassesKt$A_bar$1
     static method <clinit>(): void
@@ -21,7 +21,7 @@ synthetic final class NoReceiverInCallableReferenceClassesKt$A_bar$1 {
 @kotlin.Metadata
 synthetic final class NoReceiverInCallableReferenceClassesKt$A_foo$1 {
     // source: 'noReceiverInCallableReferenceClasses.kt'
-    enclosing method NoReceiverInCallableReferenceClassesKt.<clinit>()V
+    enclosing class NoReceiverInCallableReferenceClassesKt
     public final static field INSTANCE: NoReceiverInCallableReferenceClassesKt$A_foo$1
     inner (anonymous) class NoReceiverInCallableReferenceClassesKt$A_foo$1
     static method <clinit>(): void
@@ -33,7 +33,7 @@ synthetic final class NoReceiverInCallableReferenceClassesKt$A_foo$1 {
 @kotlin.Metadata
 synthetic final class NoReceiverInCallableReferenceClassesKt$aBar$1 {
     // source: 'noReceiverInCallableReferenceClasses.kt'
-    enclosing method NoReceiverInCallableReferenceClassesKt.<clinit>()V
+    enclosing class NoReceiverInCallableReferenceClassesKt
     inner (anonymous) class NoReceiverInCallableReferenceClassesKt$aBar$1
     method <init>(p0: java.lang.Object): void
     public @org.jetbrains.annotations.Nullable method get(): java.lang.Object
@@ -42,7 +42,7 @@ synthetic final class NoReceiverInCallableReferenceClassesKt$aBar$1 {
 @kotlin.Metadata
 synthetic final class NoReceiverInCallableReferenceClassesKt$aFoo$1 {
     // source: 'noReceiverInCallableReferenceClasses.kt'
-    enclosing method NoReceiverInCallableReferenceClassesKt.<clinit>()V
+    enclosing class NoReceiverInCallableReferenceClassesKt
     inner (anonymous) class NoReceiverInCallableReferenceClassesKt$aFoo$1
     method <init>(p0: java.lang.Object): void
     public synthetic bridge method invoke(): java.lang.Object
