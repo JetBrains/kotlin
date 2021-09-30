@@ -462,7 +462,13 @@ internal abstract class AbstractKotlinPlugin(
                                 .call(mavenResolver)!!
                             mavenPom::class
                                 .functions
-                                .first { it.name == "withXml" }
+                                .first { func ->
+                                    // On older Gradle versions there were two 'withXml' method - one with 'Closure' and one with 'Action'
+                                    func.name == "withXml" &&
+                                            func.parameters.any {
+                                                it.type.toString() == "org.gradle.api.Action<org.gradle.api.XmlProvider!>!"
+                                            }
+                                }
                                 .call(mavenPom, Action<XmlProvider> { xml ->
                                     if (shouldRewritePoms.get()) {
                                         pomRewriter.rewritePomMppDependenciesToActualTargetModules(xml)
