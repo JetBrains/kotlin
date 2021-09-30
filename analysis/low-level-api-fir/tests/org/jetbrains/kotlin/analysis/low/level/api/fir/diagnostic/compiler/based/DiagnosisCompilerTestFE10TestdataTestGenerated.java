@@ -8356,6 +8356,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("kt44843.kt")
+            public void testKt44843() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegation/kt44843.kt");
+            }
+
+            @Test
             @TestMetadata("kt8154.kt")
             public void testKt8154() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/delegation/kt8154.kt");
@@ -13753,6 +13759,18 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("kt46727.kt")
+                public void testKt46727() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/kt46727.kt");
+                }
+
+                @Test
+                @TestMetadata("kt46727Warnings.kt")
+                public void testKt46727Warnings() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/kt46727Warnings.kt");
+                }
+
+                @Test
                 @TestMetadata("memberScopeOfCaptured.kt")
                 public void testMemberScopeOfCaptured() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/memberScopeOfCaptured.kt");
@@ -15796,6 +15814,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("kt21177Warning.kt")
+            public void testKt21177Warning() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/kt21177Warning.kt");
+            }
+
+            @Test
             @TestMetadata("kt4869.kt")
             public void testKt4869() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inline/kt4869.kt");
@@ -15922,9 +15946,33 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("superCall.kt")
+            public void testSuperCall() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/superCall.kt");
+            }
+
+            @Test
             @TestMetadata("superCallDepecation.kt")
             public void testSuperCallDepecation() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inline/superCallDepecation.kt");
+            }
+
+            @Test
+            @TestMetadata("superCallDepecationWarning.kt")
+            public void testSuperCallDepecationWarning() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/superCallDepecationWarning.kt");
+            }
+
+            @Test
+            @TestMetadata("superCallFromMultipleSubclasses.kt")
+            public void testSuperCallFromMultipleSubclasses() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/superCallFromMultipleSubclasses.kt");
+            }
+
+            @Test
+            @TestMetadata("superProperty.kt")
+            public void testSuperProperty() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/superProperty.kt");
             }
 
             @Test
