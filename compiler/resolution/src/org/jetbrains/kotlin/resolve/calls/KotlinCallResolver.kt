@@ -197,7 +197,7 @@ class KotlinCallResolver(
             callableReferenceArgumentResolver.callableReferenceOverloadConflictResolver.chooseMaximallySpecificCandidates(
                 refinedCandidates as Collection<CallableReferenceResolutionCandidate>,
                 CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                discriminateGenerics = true
+                discriminateGenerics = false
             )
         } else {
             overloadingConflictResolver.chooseMaximallySpecificCandidates(

@@ -1,0 +1,21 @@
+package
+
+public fun box(): kotlin.String
+public fun </*0*/ T> foo(/*0*/ a: A, /*1*/ t: T): kotlin.Unit
+public fun </*0*/ T> foo(/*0*/ b: B, /*1*/ t: T): kotlin.Unit
+public fun foo(/*0*/ i: kotlin.Int): kotlin.Unit
+public fun take(/*0*/ arg: kotlin.Any): kotlin.Unit
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B {
+    public constructor B()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
