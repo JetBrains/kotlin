@@ -8,6 +8,6 @@ KtFirSamConstructorSymbol:
   receiverType: null
   symbolKind: SAM_CONSTRUCTOR
   valueParameters: [
-    KtFirValueParameterSymbol(block)
+    KtFirValueParameterSymbol(function)
   ]
   deprecationStatus: null

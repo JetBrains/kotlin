@@ -40,7 +40,7 @@ abstract class FirSamResolver {
     abstract fun getSamConstructor(firRegularClass: FirRegularClass): FirSimpleFunction?
 }
 
-private val SAM_PARAMETER_NAME = Name.identifier("block")
+private val SAM_PARAMETER_NAME = Name.identifier("function")
 
 class FirSamResolverImpl(
     private val session: FirSession,
