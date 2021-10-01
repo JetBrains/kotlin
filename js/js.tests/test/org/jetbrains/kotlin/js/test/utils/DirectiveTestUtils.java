@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata;
+import org.jetbrains.kotlin.test.TargetBackend;
 
 import java.util.*;
 
@@ -358,9 +359,13 @@ public class DirectiveTestUtils {
             DECLARES_VARIABLE
     );
 
-    public static void processDirectives(@NotNull JsNode ast, @NotNull String sourceCode) throws Exception {
+    public static void processDirectives(
+            @NotNull JsNode ast,
+            @NotNull String sourceCode,
+            @NotNull TargetBackend targetBackend
+    ) throws Exception {
         for (DirectiveHandler handler : DIRECTIVE_HANDLERS) {
-            handler.process(ast, sourceCode);
+            handler.process(ast, sourceCode, targetBackend);
         }
     }
 
@@ -457,10 +462,29 @@ public class DirectiveTestUtils {
     }
 
     private abstract static class DirectiveHandler {
+
+        private final static String TARGET_BACKENDS = "TARGET_BACKENDS";
+
+        private final static String IGNORED_BACKENDS = "IGNORED_BACKENDS";
+
         @NotNull private final String directive;
 
         DirectiveHandler(@NotNull String directive) {
             this.directive = "// " + directive + ": ";
+        }
+
+        private static boolean containsBackend(
+                @NotNull TargetBackend targetBackend,
+                @NotNull String backendsParameterName,
+                @NotNull ArgumentsHelper arguments,
+                boolean ifNotSpecified
+        ) {
+            String backendsArg = arguments.findNamedArgument(backendsParameterName);
+            if (backendsArg != null) {
+                List<String> backends = Arrays.asList(backendsArg.split(";"));
+                return backends.contains(targetBackend.name());
+            }
+            return ifNotSpecified;
         }
 
         /**
@@ -471,10 +495,15 @@ public class DirectiveTestUtils {
          *
          * @see ArgumentsHelper for arguments format
          */
-        void process(@NotNull JsNode ast, @NotNull String sourceCode) throws Exception {
+        void process(@NotNull JsNode ast, @NotNull String sourceCode, @NotNull TargetBackend targetBackend) throws Exception {
             List<String> directiveEntries = findLinesWithPrefixesRemoved(sourceCode, directive);
             for (String directiveEntry : directiveEntries) {
-                processEntry(ast, new ArgumentsHelper(directiveEntry));
+                ArgumentsHelper arguments = new ArgumentsHelper(directiveEntry);
+                if (!containsBackend(targetBackend, TARGET_BACKENDS, arguments, true) ||
+                    containsBackend(targetBackend, IGNORED_BACKENDS, arguments, false)) {
+                    continue;
+                }
+                processEntry(ast, arguments);
             }
         }
 
