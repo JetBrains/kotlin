@@ -1,7 +1,5 @@
 // !LANGUAGE: -ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
-//  ^ generates 'GETFIELD B.x : I' instead of 'GETFIELD BB.x : I'
 // WITH_RUNTIME
 
 interface A { val x: Int }
