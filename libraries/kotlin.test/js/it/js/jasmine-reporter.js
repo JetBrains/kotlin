@@ -19,4 +19,4 @@ jasmine.getEnv().addReporter({
             tester.pending(name);
         }
     }
-});
+})
