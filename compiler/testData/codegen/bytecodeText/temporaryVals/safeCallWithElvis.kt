@@ -9,8 +9,8 @@ fun test(a: Any?) =
 // 0 valueOf
 
 // JVM_IR_TEMPLATES
-// 1 DUP
-// 1 IFNULL
+// 2 DUP
+// 2 IFNULL
 // 0 ACONST_NULL
 // 0 IFNONNULL
 

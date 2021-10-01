@@ -6,8 +6,8 @@ fun test(na: A?) =
     na?.b?.c?.s
 
 // JVM_IR_TEMPLATES
-// 1 DUP
-// 1 IFNULL
+// 3 DUP
+// 3 IFNULL
 // 0 IFNONNULL
 // 1 ACONST_NULL
 

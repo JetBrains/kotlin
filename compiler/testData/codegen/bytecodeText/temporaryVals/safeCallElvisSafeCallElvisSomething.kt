@@ -3,7 +3,7 @@ fun test(a: Any?, b: Any?, c: String) =
 
 // JVM_IR_TEMPLATES
 // 2 IFNULL
-// 0 IFNONNULL
+// 1 IFNONNULL
 // 0 ACONST_NULL
 
 // JVM_TEMPLATES

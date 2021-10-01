@@ -26249,6 +26249,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/safeCall/safeCallEqPrimitive.kt");
         }
 
+        @TestMetadata("safeCallIOnUninitializedNonNullValue.kt")
+        public void testSafeCallIOnUninitializedNonNullValue() throws Exception {
+            runTest("compiler/testData/codegen/box/safeCall/safeCallIOnUninitializedNonNullValue.kt");
+        }
+
         @TestMetadata("safeCallNotEqPrimitive.kt")
         public void testSafeCallNotEqPrimitive() throws Exception {
             runTest("compiler/testData/codegen/box/safeCall/safeCallNotEqPrimitive.kt");

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isTrivial
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -83,6 +84,7 @@ class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) : FileLowe
     //              c
     //      }
     // which can be further simplified depending on the nullability of subexpressions in 'a?.foo() ?: b?.bar()?.qux() ?: c'.
+    // We should perform such simplification carefully, since a value of a non-null type can be uninitialized at runtime.
     // In bytecode this produces a chain of temporary STORE-LOAD and IFNULL checks that can be optimized to a compact sequence
     // of stack operations and IFNULL checks.
 
@@ -119,7 +121,7 @@ class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) : FileLowe
         IrConstImpl.boolean(startOffset, endOffset, context.irBuiltIns.booleanType, false)
 
     private fun irValNotNull(startOffset: Int, endOffset: Int, irVariable: IrVariable): IrExpression =
-        if (irVariable.type.isJvmNullable())
+        if (irVariable.type.isJvmNullable() || irVariable.initializer?.isTrivial() != true)
             IrGetValueImpl(startOffset, endOffset, irVariable.symbol).irEqEqNull().irNot()
         else
             irTrue(startOffset, endOffset)
