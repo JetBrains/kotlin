@@ -4,7 +4,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.gradle.plugin.konan.KonanCompilerRunner
+import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliCompilerRunner
 import org.jetbrains.kotlin.gradle.plugin.konan.konanHome
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -79,6 +79,6 @@ open class KonanCacheTask: DefaultTask() {
             "-Xadd-cache=${originalKlib?.absolutePath}",
             "-Xcache-directory=${cacheDirectory.absolutePath}"
         ) + additionalCacheFlags + cachedLibraries.map { "-Xcached-library=${it.key},${it.value}" }
-        KonanCompilerRunner(project, konanHome = konanHome).run(args)
+        KonanCliCompilerRunner(project, konanHome = konanHome).run(args)
     }
 }
