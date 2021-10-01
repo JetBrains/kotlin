@@ -55,6 +55,24 @@ val jsRuntimeVariant by configurations.creating {
     extendsFrom(jsApiVariant)
 }
 
+val wasmApiVariant by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named("kotlin-api"))
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.wasm)
+    }
+}
+val wasmRuntimeVariant by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named("kotlin-runtime"))
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.wasm)
+    }
+    extendsFrom(wasmApiVariant)
+}
+
 val nativeApiVariant by configurations.creating {
     isCanBeConsumed = true
     isCanBeResolved = false
@@ -76,6 +94,7 @@ val commonVariant by configurations.creating {
 dependencies {
     jvmApi(project(":kotlin-stdlib"))
     jsApiVariant("$group:kotlin-test-js:$version")
+    wasmApiVariant("$group:kotlin-test-wasm:$version")
     commonVariant("$group:kotlin-test-common:$version")
     commonVariant("$group:kotlin-test-annotations-common:$version")
 }
@@ -114,6 +133,8 @@ val rootComponent = componentFactory.adhoc("root").apply {
     }
     addVariantsFromConfiguration(jsApiVariant) { mapToOptional() }
     addVariantsFromConfiguration(jsRuntimeVariant) { mapToOptional() }
+    addVariantsFromConfiguration(wasmApiVariant) { mapToOptional() }
+    addVariantsFromConfiguration(wasmRuntimeVariant) { mapToOptional() }
     addVariantsFromConfiguration(nativeApiVariant) { mapToOptional() }
     addVariantsFromConfiguration(commonVariant) { mapToOptional() }
 }
@@ -236,6 +257,38 @@ val jsComponent = componentFactory.adhoc("js").apply {
     }
 }
 
+val (wasmApi, wasmRuntime) = listOf("api", "runtime").map { usage ->
+    configurations.create("wasm${usage.capitalize()}") {
+        isCanBeConsumed = true
+        isCanBeResolved = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named("kotlin-$usage"))
+            attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+        }
+    }
+}
+wasmRuntime.extendsFrom(wasmApi)
+
+dependencies {
+    wasmApi(project(":kotlin-stdlib-wasm"))
+}
+
+artifacts {
+    val wasmJar = tasks.getByPath(":kotlin-test:kotlin-test-wasm:jsJar")
+    add(wasmApi.name, wasmJar)
+    add(wasmRuntime.name, wasmJar)
+}
+
+val wasmComponent = componentFactory.adhoc("wasm").apply {
+    addVariantsFromConfiguration(wasmApi) {
+        mapToMavenScope("compile")
+    }
+    addVariantsFromConfiguration(wasmRuntime) {
+        mapToMavenScope("runtime")
+    }
+}
+
+
 val commonMetadata by configurations.creating {
     isCanBeConsumed = true
     isCanBeResolved = false
@@ -305,6 +358,12 @@ publishing {
             from(jsComponent)
             artifact(tasks.getByPath(":kotlin-test:kotlin-test-js:sourcesJar") as Jar)
             configureKotlinPomAttributes(project, "Kotlin Test for JS")
+        }
+        create("wasm", MavenPublication::class) {
+            artifactId = "kotlin-test-wasm"
+            from(wasmComponent)
+            // TODO: artifact(tasks.getByPath(":kotlin-test:kotlin-test-wasm:jsSourcesJar"))
+            configureKotlinPomAttributes(project, "Kotlin Test for WASM")
         }
         create("common", MavenPublication::class) {
             artifactId = "kotlin-test-common"
