@@ -11,6 +11,11 @@ FILE: classWithGeneratedMembersAndNestedClass.kt
 
         }
 
+        public final fun materialize(): R|Foo|
+
+        public final class Nested : R|kotlin/Any| {
+        }
+
     }
     public final class Bar : R|kotlin/Any| {
         public constructor(): R|Bar| {

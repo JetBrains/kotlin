@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
+/*
+ * Generates `dummyClassName(value: ClassName): String` function for each class annotated with @A
+ */
 class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     private val predicateBasedProvider = session.predicateBasedProvider
     private val matchedClasses by lazy {

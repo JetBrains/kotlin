@@ -1,4 +1,6 @@
 FILE: topLevelCallables.kt
+    package foo
+
     @R|org/jetbrains/kotlin/fir/plugin/A|() public final class MySuperClass : R|kotlin/Any| {
         public constructor(): R|foo/MySuperClass| {
             super<R|kotlin/Any|>()
@@ -12,3 +14,7 @@ FILE: topLevelCallables.kt
     }
     public final fun takeString(s: R|kotlin/String|): R|kotlin/Unit| {
     }
+FILE: ### GENERATED DECLARATIONS ###
+    package foo
+
+    public final fun dummyMySuperClass(value: R|foo/MySuperClass|): R|kotlin/String|

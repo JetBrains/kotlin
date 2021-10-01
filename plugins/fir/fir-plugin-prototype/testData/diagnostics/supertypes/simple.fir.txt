@@ -1,4 +1,6 @@
 FILE: simple.kt
+    package foo
+
     public abstract interface MyInterface : R|kotlin/Any| {
         public abstract fun foo(): R|kotlin/Unit|
 

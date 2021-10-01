@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.name.Name
  *  - testClassName() functions for all classes annotated with @B
  *  - NestedClassName nested classes for all classes annotated with @B
  *  - function `materialize: ClassName` in those nested classes
+ *
+ * If there are no annotated classes then AllOpenGenerated class is not generated
  */
 class AllOpenClassGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
@@ -78,6 +80,7 @@ class AllOpenClassGenerator(session: FirSession) : FirDeclarationGenerationExten
 
     private fun generateAllOpenGeneratedClass(classId: ClassId): FirClassLikeSymbol<*>? {
         if (classId != GENERATED_CLASS_ID) return null
+        if (matchedClasses.isEmpty()) return null
         return buildClass(classId).symbol
     }
 
@@ -152,7 +155,7 @@ class AllOpenClassGenerator(session: FirSession) : FirDeclarationGenerationExten
     }
 
     override fun getTopLevelClassIds(): Set<ClassId> {
-        return setOf(GENERATED_CLASS_ID)
+        return if (matchedClasses.isEmpty()) emptySet() else setOf(GENERATED_CLASS_ID)
     }
 
     override fun hasPackage(packageFqName: FqName): Boolean {
