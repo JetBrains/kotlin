@@ -16183,6 +16183,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/ir/kt41765.kt");
         }
 
+        @TestMetadata("lambdaWithLoop.kt")
+        public void testLambdaWithLoop() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/lambdaWithLoop.kt");
+        }
+
         @TestMetadata("objectClass.kt")
         public void testObjectClass() throws Exception {
             runTest("compiler/testData/codegen/box/ir/objectClass.kt");

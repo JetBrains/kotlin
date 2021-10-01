@@ -22805,6 +22805,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("lambdaWithLoop.kt")
+        public void testLambdaWithLoop() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/lambdaWithLoop.kt");
+        }
+
+        @Test
         @TestMetadata("objectClass.kt")
         public void testObjectClass() throws Exception {
             runTest("compiler/testData/codegen/box/ir/objectClass.kt");
