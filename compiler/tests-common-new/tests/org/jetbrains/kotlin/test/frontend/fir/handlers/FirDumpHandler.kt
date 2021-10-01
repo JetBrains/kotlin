@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.backend.createFilesWithGeneratedDeclarations
 import org.jetbrains.kotlin.fir.builder.buildPackageDirective
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildFile
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.generatedMembers
+import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -42,28 +45,9 @@ class FirDumpHandler(
         val builderForModule = dumper.builderForModule(module)
         val firFiles = info.firFiles
 
-        val symbolProvider = info.session.symbolProvider
-        val declarationGenerators = info.session.extensionService.declarationGenerators
-        val topLevelClasses = declarationGenerators.flatMap { it.getTopLevelClassIds() }.groupBy { it.packageFqName }
-        val topLevelCallables = declarationGenerators.flatMap { it.getTopLevelCallableIds() }.groupBy { it.packageName }
-
         val allFiles = buildList {
             addAll(firFiles.values)
-            for (packageFqName in (topLevelClasses.keys + topLevelCallables.keys)) {
-                this += buildFile {
-                    origin = FirDeclarationOrigin.Synthetic
-                    moduleData = info.session.moduleData
-                    packageDirective = buildPackageDirective {
-                        this.packageFqName = packageFqName
-                    }
-                    name = "### GENERATED DECLARATIONS ###"
-                    declarations += topLevelCallables.getOrDefault(packageFqName, emptyList())
-                        .flatMap { symbolProvider.getTopLevelCallableSymbols(packageFqName, it.callableName) }
-                        .map { it.fir }
-                    declarations += topLevelClasses.getOrDefault(packageFqName, emptyList())
-                        .mapNotNull { symbolProvider.getClassLikeSymbolByClassId(it)?.fir }
-                }
-            }
+            addAll(info.session.createFilesWithGeneratedDeclarations())
         }
 
         val renderer = FirRendererWithGeneratedDeclarations(info.session, builderForModule)
@@ -92,30 +76,8 @@ class FirDumpHandler(
         override fun renderClassDeclarations(regularClass: FirRegularClass) {
             val allDeclarations = buildList {
                 addAll(regularClass.declarations)
-
-                @OptIn(SymbolInternals::class)
-                fun addGeneratedDeclaration(symbol: FirBasedSymbol<*>) {
-                    val declaration = symbol.fir
-                    if (declaration.origin.generated) {
-                        add(declaration)
-                    }
-                }
-
-                val scope = session.declaredMemberScope(regularClass)
-                for (callableName in scope.getCallableNames()) {
-                    scope.processFunctionsByName(callableName) {
-                        addGeneratedDeclaration(it)
-                    }
-                    scope.processPropertiesByName(callableName) {
-                        addGeneratedDeclaration(it)
-                    }
-                }
-
-                for (classifierName in scope.getClassifierNames()) {
-                    scope.processClassifiersByName(classifierName) {
-                        addGeneratedDeclaration(it)
-                    }
-                }
+                addAll(regularClass.generatedMembers(session))
+                addAll(regularClass.generatedNestedClassifiers(session))
             }
             allDeclarations.renderDeclarations()
         }

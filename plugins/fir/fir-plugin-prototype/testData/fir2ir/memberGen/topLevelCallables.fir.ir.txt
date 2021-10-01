@@ -31,3 +31,6 @@ FILE fqName:foo fileName:/topLevelCallables.kt
   FUN name:takeString visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
     VALUE_PARAMETER name:s index:0 type:kotlin.String
     BLOCK_BODY
+FILE fqName:foo fileName:__GENERATED DECLARATIONS__.kt
+  FUN name:dummyMySuperClass visibility:public modality:FINAL <> (value:foo.MySuperClass) returnType:kotlin.String
+    VALUE_PARAMETER name:value index:0 type:foo.MySuperClass

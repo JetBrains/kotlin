@@ -15,13 +15,16 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.declarations.utils.primaryConstructor
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
+import org.jetbrains.kotlin.fir.extensions.declarationGenerators
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.generatedMembers
+import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.fir.signaturer.FirMangler
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.PsiIrFileEntry
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
@@ -40,6 +43,8 @@ class Fir2IrConverter(
     private val components: Fir2IrComponents
 ) : Fir2IrComponents by components {
 
+    private val generatorExtensions = session.extensionService.declarationGenerators
+
     fun processLocalClassAndNestedClasses(regularClass: FirRegularClass, parent: IrDeclarationParent) {
         val irClass = registerClassAndNestedClasses(regularClass, parent)
         processClassAndNestedClassHeaders(regularClass)
@@ -57,8 +62,30 @@ class Fir2IrConverter(
     }
 
     fun registerFileAndClasses(file: FirFile, moduleFragment: IrModuleFragment) {
+        val fileEntry = when (file.origin) {
+            FirDeclarationOrigin.Source -> PsiIrFileEntry(file.psi as KtFile)
+            FirDeclarationOrigin.Synthetic -> object : IrFileEntry {
+                override val name = file.name
+                override val maxOffset = UNDEFINED_OFFSET
+
+                override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo =
+                    SourceRangeInfo(
+                        "",
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET
+                    )
+
+                override fun getLineNumber(offset: Int) = UNDEFINED_OFFSET
+                override fun getColumnNumber(offset: Int) = UNDEFINED_OFFSET
+            }
+            else -> error("Unsupported file origin: ${file.origin}")
+        }
         val irFile = IrFileImpl(
-            PsiIrFileEntry(file.psi as KtFile),
+            fileEntry,
             moduleDescriptor.getPackage(file.packageFqName).fragments.first(),
             moduleFragment
         )
@@ -130,14 +157,20 @@ class Fir2IrConverter(
         regularClass: FirRegularClass,
         irClass: IrClass = classifierStorage.getCachedIrClass(regularClass)!!
     ): IrClass {
-        val irConstructor = regularClass.primaryConstructor?.let {
-            declarationStorage.getOrCreateIrConstructor(it, irClass, isLocal = regularClass.isLocal)
+        val allDeclarations = mutableListOf<FirDeclaration>().apply {
+            addAll(regularClass.declarations.toMutableList())
+            if (generatorExtensions.isNotEmpty()) {
+                addAll(regularClass.generatedMembers(session))
+                addAll(regularClass.generatedNestedClassifiers(session))
+            }
+        }
+        val irConstructor = (allDeclarations.firstOrNull { it is FirConstructor && it.isPrimary })?.let {
+            declarationStorage.getOrCreateIrConstructor(it as FirConstructor, irClass, isLocal = regularClass.isLocal)
         }
         if (irConstructor != null) {
             irClass.declarations += irConstructor
         }
-        val allDeclarations = regularClass.declarations.toMutableList()
-        for (declaration in syntheticPropertiesLast(regularClass.declarations)) {
+        for (declaration in syntheticPropertiesLast(allDeclarations)) {
             val irDeclaration = processMemberDeclaration(declaration, regularClass, irClass) ?: continue
             irClass.declarations += irDeclaration
         }
@@ -186,6 +219,13 @@ class Fir2IrConverter(
                 registerClassAndNestedClasses(it, irClass)
             }
         }
+        if (generatorExtensions.isNotEmpty()) {
+            regularClass.generatedNestedClassifiers(session).forEach {
+                if (it is FirRegularClass) {
+                    registerClassAndNestedClasses(it, irClass)
+                }
+            }
+        }
         return irClass
     }
 
@@ -194,6 +234,13 @@ class Fir2IrConverter(
         regularClass.declarations.forEach {
             if (it is FirRegularClass) {
                 processClassAndNestedClassHeaders(it)
+            }
+        }
+        if (generatorExtensions.isNotEmpty()) {
+            regularClass.generatedNestedClassifiers(session).forEach {
+                if (it is FirRegularClass) {
+                    processClassAndNestedClassHeaders(it)
+                }
             }
         }
     }
@@ -294,7 +341,12 @@ class Fir2IrConverter(
             components.callGenerator = callGenerator
 
             val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, irBuiltIns)
-            for (firFile in firFiles) {
+
+            val allFirFiles = buildList {
+                addAll(firFiles)
+                addAll(session.createFilesWithGeneratedDeclarations())
+            }
+            for (firFile in allFirFiles) {
                 converter.registerFileAndClasses(firFile, irModuleFragment)
             }
             val irProviders =
@@ -306,14 +358,14 @@ class Fir2IrConverter(
             // Necessary call to generate built-in IR classes
             externalDependenciesGenerator.generateUnboundSymbolsAsDependencies()
             classifierStorage.preCacheBuiltinClasses()
-            for (firFile in firFiles) {
+            for (firFile in allFirFiles) {
                 converter.processClassHeaders(firFile)
             }
-            for (firFile in firFiles) {
+            for (firFile in allFirFiles) {
                 converter.processFileAndClassMembers(firFile)
             }
 
-            for (firFile in firFiles) {
+            for (firFile in allFirFiles) {
                 firFile.accept(fir2irVisitor, null)
             }
 

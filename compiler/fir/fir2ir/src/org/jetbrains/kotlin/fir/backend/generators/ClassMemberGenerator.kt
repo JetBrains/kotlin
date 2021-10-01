@@ -12,12 +12,15 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFromEnumClass
-import org.jetbrains.kotlin.fir.declarations.utils.primaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.extensions.declarationGenerators
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.generatedMembers
+import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -48,7 +51,15 @@ internal class ClassMemberGenerator(
     fun convertClassContent(irClass: IrClass, klass: FirClass) {
         declarationStorage.enterScope(irClass)
         conversionScope.withClass(irClass) {
-            val primaryConstructor = klass.primaryConstructor
+            val allDeclarations = buildList {
+                addAll(klass.declarations)
+                if (session.extensionService.declarationGenerators.isNotEmpty()) {
+                    addAll(klass.generatedMembers(session))
+                    addAll(klass.generatedNestedClassifiers(session))
+                }
+            }
+
+            val primaryConstructor = allDeclarations.firstOrNull { it is FirConstructor && it.isPrimary } as FirConstructor?
             val irPrimaryConstructor = primaryConstructor?.let { declarationStorage.getCachedIrConstructor(it)!! }
             if (irPrimaryConstructor != null) {
                 with(declarationStorage) {
@@ -60,7 +71,7 @@ internal class ClassMemberGenerator(
             fakeOverrideGenerator.bindOverriddenSymbols(irClass.declarations)
             components.delegatedMemberGenerator.bindDelegatedMembersOverriddenSymbols(irClass)
 
-            klass.declarations.forEach { declaration ->
+            allDeclarations.forEach { declaration ->
                 when {
                     declaration is FirTypeAlias -> {
                     }

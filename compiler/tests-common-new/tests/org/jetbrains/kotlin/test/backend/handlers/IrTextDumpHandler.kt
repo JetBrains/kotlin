@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -46,9 +47,9 @@ class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServ
                 defaultExtension else "fir.$defaultExtension"
         }
 
-        fun List<IrFile>.groupWithTestFiles(module: TestModule): List<Pair<TestFile, IrFile>> = mapNotNull { irFile ->
+        fun List<IrFile>.groupWithTestFiles(module: TestModule): List<Pair<TestFile?, IrFile>> = mapNotNull { irFile ->
             val name = irFile.fileEntry.name.removePrefix("/")
-            val testFile = module.files.firstOrNull { it.name == name } ?: return@mapNotNull null
+            val testFile = module.files.firstOrNull { it.name == name }
             testFile to irFile
         }
     }
@@ -66,8 +67,11 @@ class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServ
         val testFileToIrFile = irFiles.groupWithTestFiles(module)
         val builder = baseDumper.builderForModule(module)
         for ((testFile, irFile) in testFileToIrFile) {
-            if (EXTERNAL_FILE in testFile.directives) continue
-            val actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, normalizeNames = true)
+            if (testFile?.directives?.contains(EXTERNAL_FILE) == true) continue
+            var actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, normalizeNames = true)
+            if (actualDump.isEmpty()) {
+                actualDump = irFile.dumpTreesFromLineNumber(lineNumber = UNDEFINED_OFFSET, normalizeNames = true)
+            }
             builder.append(actualDump)
         }
         compareDumpsOfExternalClasses(module, info)

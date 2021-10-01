@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildPrimaryConstructor
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
+@OptIn(SymbolInternals::class)
 fun FirDeclarationGenerationExtension.buildMaterializeFunction(
     matchedClassSymbol: FirClassLikeSymbol<*>,
     callableId: CallableId
@@ -50,6 +52,10 @@ fun FirDeclarationGenerationExtension.buildMaterializeFunction(
         }
         name = callableId.callableName
         symbol = FirNamedFunctionSymbol(callableId)
+        dispatchReceiverType = callableId.classId?.let {
+            val firClass = session.symbolProvider.getClassLikeSymbolByClassId(it)?.fir as? FirClass
+            firClass?.defaultType()
+        }
     }
 }
 
