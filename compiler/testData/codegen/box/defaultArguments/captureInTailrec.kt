@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: WASM
-
 // KT-46225
 
 class C
