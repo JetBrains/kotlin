@@ -24,16 +24,30 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.js.inline.util.CollectUtilsKt.collectNamedFunctions;
 
 public class AstSearchUtil {
     @NotNull
-    public static JsFunction getFunction(@NotNull JsNode searchRoot, String name) {
+    public static JsFunction getFunction(@NotNull JsNode searchRoot, @NotNull String name) {
         JsFunction function = findByIdent(collectNamedFunctions(searchRoot), name);
         assert function != null: "Function `" + name + "` was not found";
         return function;
+    }
+
+    @NotNull
+    public static List<JsFunction> getFunctions(@NotNull JsNode searchRoot, @NotNull String name) {
+        Map<JsName, JsFunction> functions = collectNamedFunctions(searchRoot);
+        assert !functions.isEmpty() : "Function `" + name + "` was not found";
+        return functions
+                .entrySet()
+                .stream()
+                .filter(e -> e.getKey().getIdent().equals(name))
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
     }
 
     @NotNull

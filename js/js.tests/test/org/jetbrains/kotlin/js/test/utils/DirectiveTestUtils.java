@@ -316,17 +316,21 @@ public class DirectiveTestUtils {
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
             String functionName = arguments.getNamedArgument("function");
             String varName = arguments.getNamedArgument("name");
-            JsFunction function = AstSearchUtil.getFunction(ast, functionName);
+            List<JsFunction> functions = AstSearchUtil.getFunctions(ast, functionName);
             boolean[] varDeclared = new boolean[1];
-            function.accept(new RecursiveJsVisitor() {
-                @Override
-                public void visit(@NotNull JsVars.JsVar x) {
-                    super.visit(x);
-                    if (x.getName().getIdent().equals(varName)) {
-                        varDeclared[0] = true;
+            for (JsFunction function : functions) {
+                function.accept(new RecursiveJsVisitor() {
+                    @Override
+                    public void visit(@NotNull JsVars.JsVar x) {
+                        super.visit(x);
+                        if (x.getName().getIdent().equals(varName)) {
+                            varDeclared[0] = true;
+                        }
                     }
-                }
-            });
+                });
+                if (varDeclared[0])
+                    break;
+            }
 
             assertTrue("Function " + functionName + " does not declare variable " + varName, varDeclared[0]);
         }
