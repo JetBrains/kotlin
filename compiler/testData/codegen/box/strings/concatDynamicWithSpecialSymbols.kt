@@ -1,6 +1,5 @@
 // Will be executed on JDK 9, 11, 15
 // IGNORE_BACKEND: ANDROID
-// IGNORE_BACKEND: WASM
 fun test(z: Int): String {
     val result = "" + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() +
             z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() +

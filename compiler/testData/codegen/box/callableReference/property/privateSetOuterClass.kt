@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: BINDING_RECEIVERS
 class A {
     var value: String = "fail1"
         private set

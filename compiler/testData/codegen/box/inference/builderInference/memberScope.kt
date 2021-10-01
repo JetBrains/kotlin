@@ -2,7 +2,6 @@
 // !DIAGNOSTICS: -DEPRECATION -OPT_IN_IS_NOT_ENABLED
 // WITH_RUNTIME
 // IGNORE_BACKEND_FIR: JVM_IR
-// IGNORE_BACKEND: WASM
 
 import kotlin.experimental.ExperimentalTypeInference
 

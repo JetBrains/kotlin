@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 
 fun doCall(block: Any  ):Int {
     (block as () -> Unit)()

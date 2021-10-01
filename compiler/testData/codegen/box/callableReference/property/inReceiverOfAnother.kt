@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: BINDING_RECEIVERS
 var x = "OK"
 
 class C(init: () -> String) {

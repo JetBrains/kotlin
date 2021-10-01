@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: UNKNOWN
 // Enable for JVM backend when KT-8120 gets fixed
 // IGNORE_BACKEND: JVM

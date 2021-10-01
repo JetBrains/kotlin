@@ -1,6 +1,5 @@
 // !LANGUAGE: +NewInference
 // WITH_RUNTIME
-// IGNORE_BACKEND: WASM
 // Issue: KT-36371
 
 import kotlin.experimental.ExperimentalTypeInference

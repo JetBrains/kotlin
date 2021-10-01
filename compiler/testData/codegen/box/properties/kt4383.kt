@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: UNIT_ISSUES
 import kotlin.reflect.KProperty
 
 class D {

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: BINDING_RECEIVERS
 // !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 inline class Z(val x: Int)

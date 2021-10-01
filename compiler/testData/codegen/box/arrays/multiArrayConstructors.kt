@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: WASM_NULL_CAST
 // WITH_RUNTIME
 
 import kotlin.test.assertEquals

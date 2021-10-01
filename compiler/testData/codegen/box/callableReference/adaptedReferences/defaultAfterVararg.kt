@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: IGNORED_IN_JS
 // !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
 
 fun foo(vararg a: String, result: String = "OK"): String =

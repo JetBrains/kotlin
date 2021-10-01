@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: NULL_REF_CAST
 fun String?.foo() = this ?: "OK"
 
 fun foo(i: Int?): String {
