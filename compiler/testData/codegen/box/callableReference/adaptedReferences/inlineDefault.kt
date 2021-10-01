@@ -1,4 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
+// IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_TEXT
 // !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
 // WITH_RUNTIME

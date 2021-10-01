@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 // SKIP_TXT
-// DONT_TARGET_EXACT_BACKEND: WASM
+// IGNORE_BACKEND: WASM
 // !LANGUAGE: -StrictOnlyInputTypesChecks
 
 import kotlin.experimental.ExperimentalTypeInference

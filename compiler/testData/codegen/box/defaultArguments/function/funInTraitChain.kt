@@ -1,4 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
+// IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: BRIDGE_ISSUES
 interface Foo {
     fun foo(a: Double = 1.0): Double

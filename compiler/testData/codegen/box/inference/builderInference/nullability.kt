@@ -1,7 +1,7 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
 // !DIAGNOSTICS: -DEPRECATION -OPT_IN_IS_NOT_ENABLED
 // WITH_RUNTIME
-// DONT_TARGET_EXACT_BACKEND: WASM
+// IGNORE_BACKEND: WASM
 
 // FILE: main.kt
 import kotlin.experimental.ExperimentalTypeInference
