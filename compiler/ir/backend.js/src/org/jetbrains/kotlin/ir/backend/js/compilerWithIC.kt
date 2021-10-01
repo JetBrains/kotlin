@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformerTmp
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.generateWrappedModuleBody
 import org.jetbrains.kotlin.ir.backend.js.utils.serialization.JsIrAstDeserializer
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -88,7 +89,7 @@ fun compileWithIC(
 
     jsPhases.invokeToplevel(PhaseConfig(jsPhases), context, allModules)
 
-    val transformer = IrModuleToJsTransformer(
+    val transformer = IrModuleToJsTransformerTmp(
         context,
         mainArguments,
         fullJs = generateFullJs,

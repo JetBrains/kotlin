@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.utils.serialization
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrClassModel
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrIcClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
@@ -88,7 +89,7 @@ class JsIrAstSerializer: JsAstSerializerBase() {
         return fragmentBuilder.build()
     }
 
-    private fun serialize(name: JsName, classModel: JsIrClassModel): IrClassModel {
+    private fun serialize(name: JsName, classModel: JsIrIcClassModel): IrClassModel {
         val builder = IrClassModel.newBuilder()
         builder.nameId = serialize(name)
         classModel.superClasses.forEach { builder.addSuperClasses(serialize(it)) }

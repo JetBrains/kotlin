@@ -19,7 +19,7 @@ class JsIrProgramFragment(val packageFqn: String) {
     val importedModules = mutableListOf<JsImportedModule>()
     val imports = mutableMapOf<String, JsExpression>()
     var dts: String? = null
-    val classes = mutableMapOf<JsName, JsIrClassModel>()
+    val classes = mutableMapOf<JsName, JsIrIcClassModel>()
     val initializers = JsGlobalBlock()
     var mainFunction: JsStatement? = null
     var testFunInvocation: JsStatement? = null
@@ -50,10 +50,10 @@ class Merger(
                     importStatements.putIfAbsent(declaration, JsVars(JsVars.JsVar(importName, rename(importExpression))))
                 }
 
-                val classModels = mutableMapOf<JsName, JsIrClassModel>() + f.classes
+                val classModels = mutableMapOf<JsName, JsIrIcClassModel>() + f.classes
                 f.classes.clear()
                 classModels.entries.forEach { (name, model) ->
-                    f.classes[rename(name)] = JsIrClassModel(model.superClasses.map { rename(it) }).also {
+                    f.classes[rename(name)] = JsIrIcClassModel(model.superClasses.map { rename(it) }).also {
                         it.preDeclarationBlock.statements += model.preDeclarationBlock.statements
                         it.postDeclarationBlock.statements += model.postDeclarationBlock.statements
                         rename(it.preDeclarationBlock)
@@ -115,7 +115,7 @@ class Merger(
 
         moduleBody.addWithComment("block: pre-declaration", preDeclarationBlock)
 
-        val classModels = mutableMapOf<JsName, JsIrClassModel>()
+        val classModels = mutableMapOf<JsName, JsIrIcClassModel>()
         val initializerBlock = JsGlobalBlock()
         fragments.forEach {
             it.forEach {
@@ -197,7 +197,7 @@ class Merger(
 
 
     private fun processClassModels(
-        classModelMap: Map<JsName, JsIrClassModel>,
+        classModelMap: Map<JsName, JsIrIcClassModel>,
         preDeclarationBlock: JsBlock,
         postDeclarationBlock: JsBlock
     ) {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.utils.serialization
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrClassModel
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrIcClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -83,8 +84,8 @@ class JsIrAstDeserializer : JsAstDeserializerBase() {
         return fragment
     }
 
-    private fun deserialize(proto: IrClassModel): Pair<JsName, JsIrClassModel> {
-        return deserializeName(proto.nameId) to JsIrClassModel(proto.superClassesList.map { deserializeName(it) }).apply {
+    private fun deserialize(proto: IrClassModel): Pair<JsName, JsIrIcClassModel> {
+        return deserializeName(proto.nameId) to JsIrIcClassModel(proto.superClassesList.map { deserializeName(it) }).apply {
             if (proto.hasPreDeclarationBlock()) {
                 preDeclarationBlock.statements += deserializeGlobalBlock(proto.preDeclarationBlock).statements
             }
