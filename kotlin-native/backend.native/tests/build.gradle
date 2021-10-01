@@ -215,6 +215,7 @@ task sanity {
     dependsOn(tasksOf(CoverageTest))
     dependsOn(tasksOf(FileCheckTest))
     dependsOn(":kotlin-native:Interop:Indexer:check")
+    dependsOn(":kotlin-native:Interop:StubGenerator:check")
 }
 
 // Collect reports in one json.
