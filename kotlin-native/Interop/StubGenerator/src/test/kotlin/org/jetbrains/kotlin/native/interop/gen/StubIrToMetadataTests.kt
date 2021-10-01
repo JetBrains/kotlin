@@ -51,16 +51,6 @@ class StubIrToMetadataTests {
             properties: List<PropertyStub> = emptyList()
     ) = SimpleStubContainer(functions = functions, properties = properties)
             .let { ModuleMetadataEmitter(fqName, it).emit() }
-            .also(this::checkUniqIdPresence)
-
-    private fun checkUniqIdPresence(metadata: KmModuleFragment) {
-        metadata.classes.forEach { assertNotNull(it.uniqId) }
-        metadata.pkg?.let { pkg ->
-            pkg.functions.forEach { assertNotNull(it.uniqId) }
-            pkg.properties.forEach { assertNotNull(it.uniqId) }
-            pkg.typeAliases.forEach { assertNotNull(it.uniqId) }
-        }
-    }
 
     @Test
     fun `single simple function`() {
