@@ -8191,6 +8191,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/fromJava.kt");
                 }
 
+                @TestMetadata("kt48732_genericSignature.kt")
+                public void testKt48732_genericSignature() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/kt48732_genericSignature.kt");
+                }
+
                 @TestMetadata("lambdaParameterUsed.kt")
                 public void testLambdaParameterUsed() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/lambdaParameterUsed.kt");

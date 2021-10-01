@@ -380,9 +380,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private val functionSuperClass =
             samSuperType?.classOrNull
                 ?: if (irFunctionReference.isSuspend)
-                    context.ir.symbols.getJvmSuspendFunctionClass(argumentTypes.size)
+                    context.irBuiltIns.suspendFunctionN(argumentTypes.size).symbol
                 else
-                    context.ir.symbols.getJvmFunctionClass(argumentTypes.size)
+                    context.irBuiltIns.functionN(argumentTypes.size).symbol
         private val superMethod =
             functionSuperClass.owner.getSingleAbstractMethod()
                 ?: throw AssertionError("Not a SAM class: ${functionSuperClass.owner.render()}")
@@ -444,9 +444,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 superType,
                 if (samSuperType == null)
                     functionSuperClass.typeWith(parameterTypes)
-                else null,
-                if (irFunctionReference.isSuspend)
-                    context.ir.symbols.suspendFunctionInterface.defaultType
                 else null,
                 if (needToGenerateSamEqualsHashCodeMethods)
                     context.ir.symbols.functionAdapter.defaultType

@@ -10465,6 +10465,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 }
 
                 @Test
+                @TestMetadata("kt48732_genericSignature.kt")
+                public void testKt48732_genericSignature() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/kt48732_genericSignature.kt");
+                }
+
+                @Test
                 @TestMetadata("lambdaParameterUsed.kt")
                 public void testLambdaParameterUsed() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/lambdaParameterUsed.kt");
