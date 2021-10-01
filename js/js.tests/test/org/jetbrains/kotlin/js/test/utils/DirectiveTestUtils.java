@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata;
 import org.jetbrains.kotlin.test.TargetBackend;
+import org.junit.runners.model.MultipleFailureException;
 
 import java.util.*;
 
@@ -364,9 +365,11 @@ public class DirectiveTestUtils {
             @NotNull String sourceCode,
             @NotNull TargetBackend targetBackend
     ) throws Exception {
+        List<Throwable> assertionErrors = new ArrayList<>();
         for (DirectiveHandler handler : DIRECTIVE_HANDLERS) {
-            handler.process(ast, sourceCode, targetBackend);
+            handler.process(ast, sourceCode, targetBackend, assertionErrors);
         }
+        MultipleFailureException.assertEmpty(assertionErrors);
     }
 
     public static void checkFunctionContainsNoCalls(JsNode node, String functionName, @NotNull Set<String> exceptFunctionNames)
@@ -495,7 +498,10 @@ public class DirectiveTestUtils {
          *
          * @see ArgumentsHelper for arguments format
          */
-        void process(@NotNull JsNode ast, @NotNull String sourceCode, @NotNull TargetBackend targetBackend) throws Exception {
+        void process(@NotNull JsNode ast, @NotNull String sourceCode,
+                @NotNull TargetBackend targetBackend,
+                List<Throwable> assertionErrors
+        ) throws Exception {
             List<String> directiveEntries = findLinesWithPrefixesRemoved(sourceCode, directive);
             for (String directiveEntry : directiveEntries) {
                 ArgumentsHelper arguments = new ArgumentsHelper(directiveEntry);
@@ -503,11 +509,20 @@ public class DirectiveTestUtils {
                     containsBackend(targetBackend, IGNORED_BACKENDS, arguments, false)) {
                     continue;
                 }
-                processEntry(ast, arguments);
+                try {
+                    processEntry(ast, arguments);
+                } catch (AssertionError e) {
+                    assertionErrors.add(e);
+                }
             }
         }
 
         abstract void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception;
+
+        @Override
+        public String toString() {
+            return getName();
+        }
 
         @NotNull
         String getName() {
