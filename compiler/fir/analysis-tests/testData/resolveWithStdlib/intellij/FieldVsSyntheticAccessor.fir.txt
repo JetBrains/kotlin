@@ -1,4 +1,6 @@
 FILE: User.kt
+    package test
+
     public final class User : R|BaseClass| {
         public constructor(): R|test/User| {
             super<R|BaseClass|>()

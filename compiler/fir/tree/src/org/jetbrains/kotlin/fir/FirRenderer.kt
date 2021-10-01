@@ -42,7 +42,7 @@ fun FirElement.renderWithType(mode: FirRenderer.RenderMode = FirRenderer.RenderM
 fun FirElement.render(mode: FirRenderer.RenderMode = FirRenderer.RenderMode.Normal): String =
     buildString { this@render.accept(FirRenderer(this, mode)) }
 
-class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderMode.Normal) : FirVisitorVoid() {
+open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = RenderMode.Normal) : FirVisitorVoid() {
     companion object {
         private val visibilitiesToRenderEffectiveSet = setOf(
             Visibilities.Private, Visibilities.PrivateToThis, Visibilities.Internal,
@@ -442,7 +442,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
 
-    private fun List<FirDeclaration>.renderDeclarations() {
+    protected fun List<FirDeclaration>.renderDeclarations() {
         renderInBraces {
             for (declaration in this) {
                 declaration.accept(this@FirRenderer)
@@ -470,6 +470,10 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         regularClass.annotations.renderAnnotations()
         visitMemberDeclaration(regularClass)
         renderSupertypes(regularClass)
+        renderClassDeclarations(regularClass)
+    }
+
+    protected open fun renderClassDeclarations(regularClass: FirRegularClass) {
         regularClass.declarations.renderDeclarations()
     }
 
@@ -1432,7 +1436,10 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
 
     override fun visitPackageDirective(packageDirective: FirPackageDirective) {
         if (mode.renderPackageDirective) {
-            println("package ${packageDirective.packageFqName.asString()}")
+            if (!packageDirective.packageFqName.isRoot) {
+                println("package ${packageDirective.packageFqName.asString()}")
+                println()
+            }
         }
     }
 }

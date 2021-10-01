@@ -1,4 +1,6 @@
 FILE: typeParameterVsNested.kt
+    package test
+
     public abstract interface Some : R|kotlin/Any| {
         public open fun test(): R|kotlin/Int| {
             ^test Int(10)

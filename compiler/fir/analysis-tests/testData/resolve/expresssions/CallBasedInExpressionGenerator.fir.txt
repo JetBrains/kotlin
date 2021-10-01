@@ -1,4 +1,6 @@
 FILE: CallBasedInExpressionGenerator.kt
+    package org.jetbrains.kotlin.codegen.range.inExpression
+
     public abstract interface ExpressionCodegen : R|kotlin/Any| {
     }
     public abstract interface KtSimpleNameExpression : R|kotlin/Any| {

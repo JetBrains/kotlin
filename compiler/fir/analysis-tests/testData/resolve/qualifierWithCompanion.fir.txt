@@ -1,4 +1,6 @@
 FILE: qualifierWithCompanion.kt
+    package my
+
     public final class A : R|kotlin/Any| {
         public constructor(): R|my/A| {
             super<R|kotlin/Any|>()

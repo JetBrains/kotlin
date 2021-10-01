@@ -1,4 +1,6 @@
 FILE: TestCase1.kt
+    package testsCase1
+
     public final class Case : R|kotlin/Any| {
         public constructor(): R|testsCase1/Case| {
             super<R|kotlin/Any|>()

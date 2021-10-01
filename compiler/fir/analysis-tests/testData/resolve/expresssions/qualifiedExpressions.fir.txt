@@ -1,4 +1,6 @@
 FILE: qualifiedExpressions.kt
+    package a.b
+
     public final class C : R|kotlin/Any| {
         public constructor(): R|a/b/C| {
             super<R|kotlin/Any|>()

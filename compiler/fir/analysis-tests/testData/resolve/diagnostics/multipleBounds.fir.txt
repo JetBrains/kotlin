@@ -1,4 +1,6 @@
 FILE: multipleBounds.kt
+    package Jet87
+
     public open class A : R|kotlin/Any| {
         public constructor(): R|Jet87/A| {
             super<R|kotlin/Any|>()
