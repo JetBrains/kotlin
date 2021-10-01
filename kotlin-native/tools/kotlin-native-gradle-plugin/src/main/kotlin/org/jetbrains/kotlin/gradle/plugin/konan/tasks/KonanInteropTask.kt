@@ -37,7 +37,7 @@ import javax.inject.Inject
 open class KonanInteropTask @Inject constructor(@Internal val workerExecutor: WorkerExecutor) : KonanBuildingTask(), KonanInteropSpec {
 
     @get:Internal
-    override val toolRunner: KonanToolRunner = KonanInteropRunner(project, project.konanExtension.jvmArgs)
+    override val toolRunner: KonanToolRunner = KonanCliInteropRunner(project, project.konanExtension.jvmArgs)
 
     override fun init(config: KonanBuildingConfig<*>, destinationDir: File, artifactName: String, target: KonanTarget) {
         super.init(config, destinationDir, artifactName, target)
