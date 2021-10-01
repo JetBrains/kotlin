@@ -4,7 +4,6 @@ import kotlinx.metadata.KmAnnotationArgument
 import kotlinx.metadata.KmClassifier
 import kotlinx.metadata.KmModuleFragment
 import kotlinx.metadata.klib.compileTimeValue
-import kotlinx.metadata.klib.uniqId
 import org.jetbrains.kotlin.native.interop.indexer.FunctionDecl
 import org.jetbrains.kotlin.native.interop.indexer.IntegerConstantDef
 import org.jetbrains.kotlin.native.interop.indexer.IntegerType
@@ -45,12 +44,37 @@ class StubIrToMetadataTests {
         )
     }
 
+    private fun createFakeBridgeBuilderResult(
+            fqName: String,
+            namesToBeDeclared: List<String>
+    ): BridgeBuilderResult {
+        val nativeBridges = object : NativeBridges {
+            override fun isSupported(nativeBacked: NativeBacked): Boolean = true
+            override val kotlinLines: Sequence<String> = emptySequence()
+            override val nativeLines: Sequence<String> = emptySequence()
+        }
+        val kotlinFile = object : KotlinFile(fqName, namesToBeDeclared) {
+            override val mappingBridgeGenerator: MappingBridgeGenerator
+                get() = error("Not needed for tests.")
+        }
+        return BridgeBuilderResult(
+                kotlinFile = kotlinFile,
+                nativeBridges = nativeBridges,
+                propertyAccessorBridgeBodies = emptyMap(),
+                functionBridgeBodies = emptyMap(),
+                excludedStubs = emptySet()
+        )
+    }
+
     private fun createMetadata(
             fqName: String,
             functions: List<FunctionStub> = emptyList(),
             properties: List<PropertyStub> = emptyList()
-    ) = SimpleStubContainer(functions = functions, properties = properties)
-            .let { ModuleMetadataEmitter(fqName, it).emit() }
+    ): KmModuleFragment {
+        val stubContainer = SimpleStubContainer(functions = functions, properties = properties)
+        val bridgeBuilderResult = createFakeBridgeBuilderResult(fqName, stubContainer.computeNamesToBeDeclared(fqName))
+        return ModuleMetadataEmitter(fqName, stubContainer, bridgeBuilderResult).emit()
+    }
 
     @Test
     fun `single simple function`() {
