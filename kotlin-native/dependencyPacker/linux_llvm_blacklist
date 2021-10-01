@@ -1,6 +1,0 @@
-# Unused large files
-lib/liblldb.so
-lib/liblldb.so.8
-lib/libLTO.so
-lib/libLTO.so.8
-lib/python2.7/site-packages/lldb/_lldb.so
