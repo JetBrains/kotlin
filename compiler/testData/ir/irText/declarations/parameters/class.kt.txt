@@ -31,4 +31,3 @@ class Test<T0 : Any?> {
   }
 
 }
-

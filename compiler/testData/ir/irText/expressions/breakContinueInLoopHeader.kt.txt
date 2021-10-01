@@ -6,7 +6,7 @@ fun test1(c: Boolean?) {
         EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> break
         else -> tmp0_elvis_lhs
       }
-    }) 
+    })
   }
 }
 
@@ -18,7 +18,7 @@ fun test2(c: Boolean?) {
         EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> continue
         else -> tmp0_elvis_lhs
       }
-    }) 
+    })
   }
 }
 
@@ -80,4 +80,3 @@ fun test5() {
     }
   }
 }
-

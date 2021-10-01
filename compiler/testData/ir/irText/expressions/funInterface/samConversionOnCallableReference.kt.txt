@@ -1,5 +1,5 @@
 fun interface KRunnable {
-  abstract fun run() 
+  abstract fun run()
 
 }
 
@@ -40,4 +40,3 @@ fun testSamConversionOnAdapted() {
     ::foo1 /*-> KRunnable */
   })
 }
-

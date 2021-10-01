@@ -1,5 +1,5 @@
 interface IFooStr {
-  abstract fun foo(x: String) 
+  abstract fun foo(x: String)
 
 }
 
@@ -33,4 +33,3 @@ class Test1 : CFoo<String>, IFooStr, IBar {
     override get
 
 }
-

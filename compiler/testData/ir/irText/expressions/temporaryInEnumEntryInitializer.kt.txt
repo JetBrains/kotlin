@@ -26,4 +26,3 @@ enum class En : Enum<En> {
   fun valueOf(value: String): En /* Synthetic body for ENUM_VALUEOF */
 
 }
-

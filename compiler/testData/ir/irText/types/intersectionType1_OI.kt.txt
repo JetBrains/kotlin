@@ -24,4 +24,3 @@ fun test() {
   val a2: Array<In<String>> = arrayOf<In<String>>(elements = [In<String>()])
   foo<Int>(a = a1, b = a2) /*~> Unit */
 }
-

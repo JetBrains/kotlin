@@ -6,4 +6,3 @@ fun test2(x: Any) {
   x as Function1<String, String> /*~> Unit */
   C<@FlexibleNullability String?>(jxx = x /*as Function1<String, String> */ /*-> @FlexibleNullability J<@FlexibleNullability String?, @FlexibleNullability String?>? */) /*~> Unit */
 }
-

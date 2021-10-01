@@ -83,7 +83,7 @@ val test_varWithAccessors: KMutableProperty0<Int>
   field = ::varWithAccessors
   get
 
-val delegatedVal: Int /* by */ 
+val delegatedVal: Int /* by */
   field = Delegate
   get(): Int {
     return #delegatedVal$delegate.getValue(thisRef = null, kProp = ::delegatedVal)
@@ -93,7 +93,7 @@ val test_delegatedVal: KProperty0<Int>
   field = ::delegatedVal
   get
 
-var delegatedVar: Int /* by */ 
+var delegatedVar: Int /* by */
   field = Delegate
   get(): Int {
     return #delegatedVar$delegate.getValue(thisRef = null, kProp = ::delegatedVar)
@@ -129,4 +129,3 @@ val test_varWithPrivateSet: KProperty1<C, Int>
 val test_varWithProtectedSet: KProperty1<C, Int>
   field = C::varWithProtectedSet
   get
-

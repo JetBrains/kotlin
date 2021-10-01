@@ -46,4 +46,3 @@ var test4: @FlexibleNullability Any? /* by */
   set(<set-?>: @FlexibleNullability Any?) {
     #test4$delegate.setValue<@FlexibleNullability Any?>(thisRef = null, property = ::test4, value = <set-?>)
   }
-

@@ -42,4 +42,3 @@ fun Outer<Int>.test(): Inner<Int> {
     <no name provided>()
   }
 }
-

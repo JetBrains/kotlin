@@ -95,4 +95,3 @@ fun testArrayPostfix() {
     tmp5
   }
 }
-

@@ -34,4 +34,3 @@ val test1: Function1<Int, C>
 val test2: Function1<Int, Nested>
   field = Nested::<init>
   get
-

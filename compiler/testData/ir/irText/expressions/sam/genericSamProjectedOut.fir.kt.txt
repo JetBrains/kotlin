@@ -12,4 +12,3 @@ fun test(a: SomeJavaClass<out String>) {
   }
  /*-> @FlexibleNullability Hello<@FlexibleNullability String?>? */)
 }
-

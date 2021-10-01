@@ -1,5 +1,5 @@
 fun interface KRunnable {
-  abstract fun invoke() 
+  abstract fun invoke()
 
 }
 
@@ -7,4 +7,3 @@ fun test(a: Any?) {
   a as Function0<Unit> /*~> Unit */
   a /*as Function0<Unit> */ /*-> KRunnable */.invoke()
 }
-

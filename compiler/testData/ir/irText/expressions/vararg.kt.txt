@@ -9,4 +9,3 @@ val test2: Array<String>
 val test3: Array<String>
   field = arrayOf<String>(elements = ["0", *<get-test2>(), *<get-test1>(), "4"])
   get
-

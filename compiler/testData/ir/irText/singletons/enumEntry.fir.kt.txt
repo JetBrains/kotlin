@@ -36,4 +36,3 @@ open enum class Z : Enum<Z> {
   fun valueOf(value: String): Z /* Synthetic body for ENUM_VALUEOF */
 
 }
-

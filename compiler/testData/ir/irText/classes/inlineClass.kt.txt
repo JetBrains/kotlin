@@ -29,4 +29,3 @@ inline class Test {
   }
 
 }
-

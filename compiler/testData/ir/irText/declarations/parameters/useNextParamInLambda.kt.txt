@@ -25,4 +25,3 @@ fun box(): String {
   }
 ))
 }
-

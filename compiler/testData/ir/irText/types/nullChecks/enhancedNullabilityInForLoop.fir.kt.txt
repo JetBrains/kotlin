@@ -66,7 +66,7 @@ fun testForInArrayUse(j: J) {
 }
 
 interface K {
-  abstract fun arrayOfNotNull(): Array<P> 
+  abstract fun arrayOfNotNull(): Array<P>
 
 }
 
@@ -125,4 +125,3 @@ data class P {
   }
 
 }
-

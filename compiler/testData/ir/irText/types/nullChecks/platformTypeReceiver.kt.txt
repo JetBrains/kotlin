@@ -5,4 +5,3 @@ fun test1(): Boolean {
 fun test2(): Boolean {
   return boolNull() /*!! Boolean */.equals(other = null)
 }
-

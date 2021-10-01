@@ -33,4 +33,3 @@ fun testLocalVarUse() {
   val nns: String = notNullString() /*!! String */
   use(s = nns)
 }
-

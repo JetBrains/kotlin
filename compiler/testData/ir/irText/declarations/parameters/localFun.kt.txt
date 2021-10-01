@@ -12,4 +12,3 @@ fun <TT : Any?> outer() {
   }
 
 }
-

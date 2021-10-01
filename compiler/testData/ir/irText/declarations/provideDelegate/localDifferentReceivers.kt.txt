@@ -35,4 +35,3 @@ fun box(): String {
   val testOK: String = <get-testO>().plus(other = <get-testK>())
   return testOK
 }
-

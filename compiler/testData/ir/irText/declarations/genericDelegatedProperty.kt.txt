@@ -23,7 +23,7 @@ object Delegate {
 
 }
 
-var <T : Any?> C<T>.genericDelegatedProperty: Int /* by */ 
+var <T : Any?> C<T>.genericDelegatedProperty: Int /* by */
   field = Delegate
   get(): Int {
     return #genericDelegatedProperty$delegate.getValue(thisRef = <this>, kProp = ::genericDelegatedProperty/*<T>()*/)
@@ -31,4 +31,3 @@ var <T : Any?> C<T>.genericDelegatedProperty: Int /* by */
   set(<set-?>: Int) {
     return #genericDelegatedProperty$delegate.setValue(thisRef = <this>, kProp = ::genericDelegatedProperty/*<T>()*/, newValue = <set-?>)
   }
-

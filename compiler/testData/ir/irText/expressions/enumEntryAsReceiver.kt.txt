@@ -38,4 +38,3 @@ abstract enum class X : Enum<X> {
 fun box(): String {
   return X.B.<get-value>().invoke()
 }
-

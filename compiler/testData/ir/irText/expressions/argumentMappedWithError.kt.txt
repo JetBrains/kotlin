@@ -9,4 +9,3 @@ fun main(args: Array<String>) {
   val x: Int = 0
   foo(arg = x.convert<Number>())
 }
-

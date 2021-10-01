@@ -39,4 +39,3 @@ val test3: Int
 val test4: Int
   field = (A, 1).<get-barExt>()
   get
-

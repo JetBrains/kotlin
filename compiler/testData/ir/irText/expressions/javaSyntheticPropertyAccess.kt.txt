@@ -14,4 +14,3 @@ fun test(j: J) {
     tmp2_receiver.setFoo(x = tmp2_receiver.getFoo().plus(other = 1))
   }
 }
-

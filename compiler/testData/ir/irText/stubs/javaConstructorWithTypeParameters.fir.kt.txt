@@ -13,4 +13,3 @@ fun test3(j1: J1<Any>): J2<@FlexibleNullability Int?, Any> {
 fun test4(j1: J1<Any>): J2<@FlexibleNullability Int?, Any> {
   return j1.J2<@FlexibleNullability Int?, @FlexibleNullability Int?>(x2 = 1)
 }
-

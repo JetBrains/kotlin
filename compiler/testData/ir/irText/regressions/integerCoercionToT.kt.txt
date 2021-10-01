@@ -39,4 +39,3 @@ class IdType : CPointed {
 fun foo(value: IdType, cv: CInt32VarX<Int>) {
   cv.<set-value><Int>(value = value.<get-value>())
 }
-

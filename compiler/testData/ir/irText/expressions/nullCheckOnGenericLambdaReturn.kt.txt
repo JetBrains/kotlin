@@ -45,4 +45,3 @@ fun test4(): String {
   }
 ) /*!! String */
 }
-

@@ -11,4 +11,3 @@ var testAugmented: Int
   set(value: Int) {
     #testAugmented = #testAugmented.plus(other = value)
   }
-

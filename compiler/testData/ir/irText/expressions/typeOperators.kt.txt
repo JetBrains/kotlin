@@ -17,4 +17,3 @@ fun test3(x: Any): IThing {
 fun test4(x: Any): IThing? {
   return x as? IThing
 }
-

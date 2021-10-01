@@ -21,4 +21,3 @@ fun JavaClass.testPlatformCompareToKotlin(): Int {
 fun JavaClass.testKotlinCompareToPlatform(): Int {
   return 0.0.compareTo(other = <this>.null0() /*!! @FlexibleNullability Double */)
 }
-

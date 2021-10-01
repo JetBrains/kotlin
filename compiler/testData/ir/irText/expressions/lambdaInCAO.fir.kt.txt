@@ -36,4 +36,3 @@ fun test3(a: Any) {
   <array>.set(index = <index0>, value = <unary>.inc())
   <unary> /*~> Unit */
 }
-

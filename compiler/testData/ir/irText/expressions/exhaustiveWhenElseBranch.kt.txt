@@ -115,4 +115,3 @@ fun testLambdaResultExpression_throws(a: A) {
   }
 .invoke() /*~> Unit */
 }
-

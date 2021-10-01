@@ -29,4 +29,3 @@ fun testProperty() {
     <set-p>(<set-?> = <get-p>().rem(other = 5))
   }
 }
-

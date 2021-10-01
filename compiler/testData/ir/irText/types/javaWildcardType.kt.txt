@@ -1,8 +1,8 @@
 interface K {
-  abstract fun kf1(): Collection<out CharSequence> 
-  abstract fun kf2(): Collection<CharSequence> 
-  abstract fun kg1(c: Collection<out CharSequence>) 
-  abstract fun kg2(c: Collection<CharSequence>) 
+  abstract fun kf1(): Collection<out CharSequence>
+  abstract fun kf2(): Collection<CharSequence>
+  abstract fun kg1(c: Collection<out CharSequence>)
+  abstract fun kg2(c: Collection<CharSequence>)
 
 }
 
@@ -48,4 +48,3 @@ class C : J, K {
   }
 
 }
-

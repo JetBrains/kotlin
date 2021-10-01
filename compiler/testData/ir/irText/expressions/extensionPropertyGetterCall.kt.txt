@@ -6,4 +6,3 @@ val String.okext: String
 fun String.test5(): String {
   return <this>.<get-okext>()
 }
-

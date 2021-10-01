@@ -39,7 +39,7 @@ import java.io.File
 
 class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
     companion object {
-        const val DUMP_EXTENSION = "txt"
+        const val DUMP_EXTENSION = "ir.txt"
 
         fun computeDumpExtension(module: TestModule, defaultExtension: String): String {
             return if (module.frontendKind == FrontendKinds.ClassicFrontend || FIR_IDENTICAL in module.directives)

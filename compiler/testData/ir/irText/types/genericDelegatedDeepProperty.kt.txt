@@ -17,17 +17,17 @@ class Value<T : Any?, IT : IR<T>> {
 }
 
 interface IDelegate1<T1 : Any?, R1 : Any?> {
-  abstract operator fun getValue(t: T1, p: KProperty<*>): R1 
+  abstract operator fun getValue(t: T1, p: KProperty<*>): R1
 
 }
 
 interface IDelegate2<T2 : Any?, R2 : Any?> {
-  abstract operator fun getValue(t: T2, p: KProperty<*>): R2 
+  abstract operator fun getValue(t: T2, p: KProperty<*>): R2
 
 }
 
 interface IR<R : Any?> {
-  abstract fun foo(): R 
+  abstract fun foo(): R
 
 }
 
@@ -65,7 +65,7 @@ class P<P1 : Any?, P2 : Any?> {
 
 }
 
-val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */ 
+val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
   field = { // BLOCK
     local class <no name provided> : IDelegate1<Value<Any?, CR<Any?>>, P<Any?, Any?>> {
       constructor() /* primary */ {
@@ -82,7 +82,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
         return t.foo() /*as Any? */
       }
 
-      private val Value<Any?, CR<Any?>>.deepO: Any? /* by */ 
+      private val Value<Any?, CR<Any?>>.deepO: Any? /* by */
         field = { // BLOCK
           local class <no name provided> : IDelegate1<Value<Any?, CR<Any?>>, Any?> {
             constructor() /* primary */ {
@@ -111,7 +111,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
           return <this>.#deepO$delegate.getValue(t = <this>, p = <no name provided>::deepO) /*as Any? */
         }
 
-      private val Value<Any?, CR<Any?>>.deepK: Any? /* by */ 
+      private val Value<Any?, CR<Any?>>.deepK: Any? /* by */
         field = { // BLOCK
           local class <no name provided> : IDelegate1<Value<Any?, CR<Any?>>, Any?> {
             constructor() /* primary */ {
@@ -143,4 +143,3 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
   get(): P<T, T> {
     return #additionalText$delegate.getValue(t = <this>, p = ::additionalText/*<T>()*/)
   }
-

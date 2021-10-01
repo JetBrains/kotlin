@@ -13,4 +13,3 @@ fun test() {
   val b: Int = tmp0_container /*!! J */.component2()
   // }
 }
-

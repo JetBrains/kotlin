@@ -38,4 +38,3 @@ typealias OI = Inner
 fun test(): Inner {
   return Outer().Inner()
 }
-

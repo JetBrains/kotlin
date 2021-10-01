@@ -9,17 +9,17 @@ interface Inv<T : Any?> {
 }
 
 interface Z {
-  abstract fun <T : Any?> create(x: In<T>, y: In<T>): Inv<T> 
+  abstract fun <T : Any?> create(x: In<T>, y: In<T>): Inv<T>
 
 }
 
 interface IA {
-  abstract fun foo() 
+  abstract fun foo()
 
 }
 
 interface IB {
-  abstract fun bar() 
+  abstract fun bar()
 
 }
 
@@ -30,4 +30,3 @@ fun test(a: In<IA>, b: In<IB>, z: Z) {
   t /*as IA */.foo()
   t /*as IB */.bar()
 }
-

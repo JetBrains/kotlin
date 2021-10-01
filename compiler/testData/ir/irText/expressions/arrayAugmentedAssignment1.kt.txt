@@ -45,4 +45,3 @@ fun testMember(c: C) {
     tmp2
   } /*~> Unit */
 }
-

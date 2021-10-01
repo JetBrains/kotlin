@@ -9,7 +9,6 @@ abstract class C {
 
   }
 
-  abstract fun dispatchResumeWithException(exception: Throwable, continuation: Continuation<*>): Boolean 
+  abstract fun dispatchResumeWithException(exception: Throwable, continuation: Continuation<*>): Boolean
 
 }
-

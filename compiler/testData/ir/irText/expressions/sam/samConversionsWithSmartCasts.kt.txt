@@ -64,4 +64,3 @@ fun test8(a: Function0<Unit>) {
 fun test9() {
   J().run1(r = ::test9 /*-> @FlexibleNullability Runnable? */)
 }
-

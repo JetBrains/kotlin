@@ -47,4 +47,3 @@ fun box(): String {
   }
   return obj.foo()
 }
-

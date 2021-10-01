@@ -38,4 +38,3 @@ fun testCtor(): Any {
     ::<init>
   })
 }
-

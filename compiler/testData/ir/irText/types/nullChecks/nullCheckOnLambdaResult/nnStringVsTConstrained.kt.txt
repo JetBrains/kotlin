@@ -8,4 +8,3 @@ fun testWithNullCheck(xs: Array<String>) {
   }
 ) /*~> Unit */
 }
-

@@ -16,4 +16,3 @@ object Definitions {
     get
 
 }
-

@@ -6,7 +6,7 @@ fun outer() {
 
     }
 
-    abstract fun afun() 
+    abstract fun afun()
     abstract val aval: Int
       abstract get
 
@@ -38,4 +38,3 @@ fun outer() {
   }
 
 }
-

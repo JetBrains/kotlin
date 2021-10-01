@@ -85,4 +85,3 @@ fun test4() {
   val y: P = <destruct>.component2() /*!! P */
   use(x = x, y = y)
 }
-

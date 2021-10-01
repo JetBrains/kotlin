@@ -59,4 +59,3 @@ fun testObject() {
     Obj::foo
   })
 }
-

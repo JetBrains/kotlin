@@ -13,4 +13,3 @@ val test3: ErrorType
 val test4: ErrorType
   field = error("") /* ErrorExpression */
   get
-

@@ -5,7 +5,7 @@ abstract class AbstractClass {
 
   }
 
-  abstract fun abstractFun() 
+  abstract fun abstractFun()
   abstract val abstractVal: Int
     abstract get
 
@@ -16,7 +16,7 @@ abstract class AbstractClass {
 }
 
 interface Interface {
-  abstract fun abstractFun() 
+  abstract fun abstractFun()
   abstract val abstractVal: Int
     abstract get
 
@@ -25,4 +25,3 @@ interface Interface {
     abstract set
 
 }
-

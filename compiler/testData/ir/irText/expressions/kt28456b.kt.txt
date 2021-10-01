@@ -35,4 +35,3 @@ fun testCompoundAssignment(a: A) {
     tmp0_array.set(i = tmp1_index0, v = tmp0_array.get(i = tmp1_index0).plus(other = 10))
   }
 }
-

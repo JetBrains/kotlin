@@ -25,4 +25,3 @@ class Test : Base {
   }
 
 }
-

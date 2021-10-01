@@ -1,5 +1,5 @@
 fun interface Foo {
-  abstract fun invoke(): String 
+  abstract fun invoke(): String
 
 }
 
@@ -13,4 +13,3 @@ fun test(): String {
   }
  /*-> Foo */)
 }
-

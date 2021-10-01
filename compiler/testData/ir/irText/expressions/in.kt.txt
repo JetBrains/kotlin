@@ -13,4 +13,3 @@ fun <T : Any?> test3(a: T, x: Collection<T>): Boolean {
 fun <T : Any?> test4(a: T, x: Collection<T>): Boolean {
   return x.contains(element = a).not()
 }
-

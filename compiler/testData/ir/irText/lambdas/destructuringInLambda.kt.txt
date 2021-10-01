@@ -62,5 +62,3 @@ var fn: Function1<A, Int>
 
   get
   set
-
-

@@ -11,4 +11,3 @@ fun test2(b: Boolean) {
     else -> return Unit
   } /*~> Unit */
 }
-

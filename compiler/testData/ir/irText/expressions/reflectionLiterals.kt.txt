@@ -40,4 +40,3 @@ val test5: KFunction0<Unit>
 val test6: KFunction0<Unit>
   field = ::bar
   get
-

@@ -3,7 +3,7 @@ interface K {
 }
 
 interface I : K {
-  abstract fun ff() 
+  abstract fun ff()
 
 }
 
@@ -58,4 +58,3 @@ fun testFlexible2(a: A, b: B) {
   }
   v /*!! K */ /*as I */.ff()
 }
-

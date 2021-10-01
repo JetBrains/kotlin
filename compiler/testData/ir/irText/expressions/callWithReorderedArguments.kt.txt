@@ -29,4 +29,3 @@ fun test() {
     foo(a = tmp2_a, b = 1)
   }
 }
-

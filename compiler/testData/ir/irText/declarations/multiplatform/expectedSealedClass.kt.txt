@@ -4,7 +4,7 @@ expect sealed class Ops {
 }
 
 expect class Add : Ops {
-  expect constructor() /* primary */ 
+  expect constructor() /* primary */
 
 }
 
@@ -25,4 +25,3 @@ class Add : Ops {
   }
 
 }
-

@@ -37,4 +37,3 @@ class Test : J {
     private get
 
 }
-

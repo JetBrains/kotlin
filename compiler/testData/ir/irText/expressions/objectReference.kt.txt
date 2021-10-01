@@ -90,4 +90,3 @@ fun Z.test() {
   Z.<set-counter>(<set-?> = 1)
   Z.foo()
 }
-

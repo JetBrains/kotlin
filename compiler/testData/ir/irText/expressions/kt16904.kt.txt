@@ -57,4 +57,3 @@ class Test2 : J {
   }
 
 }
-

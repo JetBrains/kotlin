@@ -55,4 +55,3 @@ fun testInnerClassConstructorCapturingOuter(): Any {
     Outer()::<init>
   })
 }
-

@@ -1,5 +1,5 @@
 fun interface IFoo {
-  abstract fun foo(i: Int) 
+  abstract fun foo(i: Int)
 
 }
 
@@ -39,4 +39,3 @@ fun testAdaptedCR() {
     ::withVarargOfInt /*-> IFoo */
   }])
 }
-

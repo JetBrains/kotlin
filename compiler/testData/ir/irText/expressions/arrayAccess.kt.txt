@@ -9,4 +9,3 @@ fun foo(): Int {
 fun test(a: IntArray): Int {
   return a.get(index = 0).plus(other = a.get(index = <get-p>())).plus(other = a.get(index = foo()))
 }
-

@@ -5,4 +5,3 @@ fun with1(receiver: Any?, block: @ExtensionFunctionType Function1<Any?, Unit>) {
 fun with2(receiver: Any?, block: @ExtensionFunctionType Function1<Any?, Unit>) {
   return block.invoke(p1 = receiver)
 }
-

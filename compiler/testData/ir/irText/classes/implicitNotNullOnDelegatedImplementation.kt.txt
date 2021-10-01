@@ -1,5 +1,5 @@
 interface IFoo {
-  abstract fun foo(): String 
+  abstract fun foo(): String
 
 }
 
@@ -116,4 +116,3 @@ class TestK4 : IFoo {
   }
 
 }
-

@@ -152,15 +152,15 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
       CALL 'public final fun foo (x: kotlin.String): kotlin.Unit [fake_override] declared in <root>.Derived' type=kotlin.Unit origin=null
         $this: GET_VAR 'd: <root>.Derived declared in <root>.test' type=<root>.Derived origin=null
         x: CONST String type=kotlin.String value=""
-      CALL 'public final fun foo (y: kotlin.String): kotlin.Unit declared in <root>.Base' type=kotlin.Unit origin=null
+      CALL 'public final fun foo (x: kotlin.String): kotlin.Unit [fake_override] declared in <root>.Derived' type=kotlin.Unit origin=null
         $this: GET_VAR 'd: <root>.Derived declared in <root>.test' type=<root>.Derived origin=null
-        y: CONST String type=kotlin.String value=""
+        x: CONST String type=kotlin.String value=""
       CALL 'public final fun foo (x: kotlin.String): kotlin.Unit [fake_override] declared in <root>.Derived' type=kotlin.Unit origin=null
         $this: GET_VAR 'd2: <root>.Derived2 declared in <root>.test' type=<root>.Derived2 origin=null
         x: CONST String type=kotlin.String value=""
-      CALL 'public final fun foo (y: kotlin.String): kotlin.Unit declared in <root>.Base' type=kotlin.Unit origin=null
+      CALL 'public final fun foo (x: kotlin.String): kotlin.Unit [fake_override] declared in <root>.Derived' type=kotlin.Unit origin=null
         $this: GET_VAR 'd2: <root>.Derived2 declared in <root>.test' type=<root>.Derived2 origin=null
-        y: CONST String type=kotlin.String value=""
+        x: CONST String type=kotlin.String value=""
   CLASS CLASS name:BaseXY modality:OPEN visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseXY<X of <root>.BaseXY, Y of <root>.BaseXY>
     TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?]
@@ -380,13 +380,13 @@ FILE fqName:<root> fileName:/clashingFakeOverrideSignatures.kt
           CALL 'public final fun foo (x: kotlin.String): kotlin.Unit [fake_override] declared in <root>.outerFun.LocalDerived' type=kotlin.Unit origin=null
             $this: GET_VAR 'd: <root>.outerFun.LocalDerived declared in <root>.outerFun.test' type=<root>.outerFun.LocalDerived origin=null
             x: CONST String type=kotlin.String value=""
-          CALL 'public final fun foo (y: kotlin.String): kotlin.Unit declared in <root>.outerFun.LocalBase' type=kotlin.Unit origin=null
+          CALL 'public final fun foo (y: kotlin.String): kotlin.Unit [fake_override] declared in <root>.outerFun.LocalDerived' type=kotlin.Unit origin=null
             $this: GET_VAR 'd: <root>.outerFun.LocalDerived declared in <root>.outerFun.test' type=<root>.outerFun.LocalDerived origin=null
             y: CONST String type=kotlin.String value=""
           CALL 'public final fun foo (x: kotlin.String): kotlin.Unit [fake_override] declared in <root>.outerFun.LocalDerived' type=kotlin.Unit origin=null
             $this: GET_VAR 'd2: <root>.outerFun.LocalDerived2 declared in <root>.outerFun.test' type=<root>.outerFun.LocalDerived2 origin=null
             x: CONST String type=kotlin.String value=""
-          CALL 'public final fun foo (y: kotlin.String): kotlin.Unit declared in <root>.outerFun.LocalBase' type=kotlin.Unit origin=null
+          CALL 'public final fun foo (y: kotlin.String): kotlin.Unit [fake_override] declared in <root>.outerFun.LocalDerived' type=kotlin.Unit origin=null
             $this: GET_VAR 'd2: <root>.outerFun.LocalDerived2 declared in <root>.outerFun.test' type=<root>.outerFun.LocalDerived2 origin=null
             y: CONST String type=kotlin.String value=""
   CLASS CLASS name:Outer modality:OPEN visibility:public superTypes:[kotlin.Any]

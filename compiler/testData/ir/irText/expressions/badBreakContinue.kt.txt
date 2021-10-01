@@ -26,4 +26,3 @@ fun test4() {
   while (error("") /* ErrorExpression */) { // BLOCK
   }
 }
-

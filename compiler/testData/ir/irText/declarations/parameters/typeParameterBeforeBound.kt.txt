@@ -15,4 +15,3 @@ var <T : U, U : Any?> Test1<T, U>.test3: Unit
   }
   set(value: Unit) {
   }
-

@@ -24,4 +24,3 @@ fun test(x: I1) {
   val c2: String = tmp0_container.component2()
   // }
 }
-

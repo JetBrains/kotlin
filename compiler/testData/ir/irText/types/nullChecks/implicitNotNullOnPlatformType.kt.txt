@@ -40,4 +40,3 @@ fun testContains(m: MySet) {
   m.contains(element = super.#STRING /*!! String */) /*~> Unit */
   m.contains(element = "abc") /*~> Unit */
 }
-

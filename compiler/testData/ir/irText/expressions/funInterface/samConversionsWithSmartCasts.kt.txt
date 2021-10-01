@@ -1,5 +1,5 @@
 fun interface KRunnable {
-  abstract fun run() 
+  abstract fun run()
 
 }
 
@@ -75,4 +75,3 @@ fun test8(a: Function0<Unit>) {
 fun test9() {
   run1(r = ::test9 /*-> KRunnable */)
 }
-

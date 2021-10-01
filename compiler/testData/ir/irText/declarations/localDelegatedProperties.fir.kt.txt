@@ -27,4 +27,3 @@ fun test2() {
   <unary> /*~> Unit */
   <set-x>(<set-?> = <get-x>().plus(other = 1))
 }
-

@@ -20,4 +20,3 @@ fun testExt() {
 fun C.testMemberExt() {
   (<this>, s() /*!! String */).memberExtension()
 }
-

@@ -35,7 +35,7 @@ class C {
     field = 1
     get
 
-  val test7: Int /* by */ 
+  val test7: Int /* by */
     field = lazy<Int>(initializer = local fun <anonymous>(): Int {
       return 42
     }
@@ -44,7 +44,7 @@ class C {
       return <this>.#test7$delegate.getValue<Int>(thisRef = <this>, property = C::test7)
     }
 
-  var test8: Int /* by */ 
+  var test8: Int /* by */
     field = hashMapOf<String, Int>()
     get(): Int {
       return <this>.#test8$delegate.getValue<Int, Int>(thisRef = <this>, property = C::test8)
@@ -54,4 +54,3 @@ class C {
     }
 
 }
-

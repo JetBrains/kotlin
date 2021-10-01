@@ -1,5 +1,5 @@
 fun interface IFoo {
-  abstract fun foo(i: Int) 
+  abstract fun foo(i: Int)
 
 }
 
@@ -109,4 +109,3 @@ fun test6(a: Any) {
     tmp0_array.set(i = tmp1_index0 /*as IFoo */, newValue = tmp0_array.get(i = tmp1_index0 /*as IFoo */).plus(other = 1))
   }
 }
-

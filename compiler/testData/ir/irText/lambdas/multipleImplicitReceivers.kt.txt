@@ -43,4 +43,3 @@ fun test(fooImpl: IFoo, invokeImpl: IInvoke) {
   }
 ) /*~> Unit */
 }
-
