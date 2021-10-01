@@ -90,10 +90,14 @@ private object CurrentXcode : Xcode {
     }
 
     private fun xcrun(vararg args: String): String = try {
-            Command("/usr/bin/xcrun", *args).getOutputLines().first()
-        } catch(e: KonanExternalToolFailure) {
-            throw MissingXcodeException("An error occurred during an xcrun execution. Make sure that Xcode and its command line tools are properly installed.", e)
-        }
+        Command("/usr/bin/xcrun", *args).getOutputLines().first()
+    } catch (e: KonanExternalToolFailure) {
+        val message = """
+                An error occurred during an xcrun execution. Make sure that Xcode and its command line tools are properly installed.
+                Failed command: /usr/bin/xcrun ${args.joinToString(" ")}
+            """.trimIndent()
+        throw MissingXcodeException(message, e)
+    }
 
-    private fun getSdkPath(sdk: String) = xcrun("--sdk",  sdk, "--show-sdk-path")
+    private fun getSdkPath(sdk: String) = xcrun("--sdk", sdk, "--show-sdk-path")
 }
