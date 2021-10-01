@@ -621,7 +621,8 @@ private val typeOperatorLoweringPhase = makeBodyLoweringPhase(
     prerequisite = setOf(
         bridgesConstructionPhase,
         removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
-        singleAbstractMethodPhase, errorExpressionLoweringPhase
+        singleAbstractMethodPhase, errorExpressionLoweringPhase,
+        interopCallableReferenceLoweringPhase
     )
 )
 
