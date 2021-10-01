@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: KOTLIN_TEST_LIB
 // WITH_RUNTIME
 import kotlin.test.*
 

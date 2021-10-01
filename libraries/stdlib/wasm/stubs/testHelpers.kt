@@ -5,6 +5,7 @@
 
 package kotlin.test
 
+import kotlin.internal.InlineOnly
 import kotlin.internal.OnlyInputTypes
 
 public fun assert(x: Boolean) {
@@ -20,3 +21,16 @@ public fun <@OnlyInputTypes T> assertEquals(expected: T, actual: T, message: Str
 public fun <@OnlyInputTypes T> assertNotEquals(illegal: T, actual: T, message: String? = null) {
     if (illegal == actual) throw AssertionError("assertNotEquals failed: illegal:$illegal, actual:$actual, message=$message")
 }
+
+@InlineOnly
+public inline fun <reified T : Throwable> assertFailsWith(message: String? = null, block: () -> Unit): T {
+    var throwable: Throwable? = null
+    try {
+        block()
+    } catch (e: Throwable) {
+        throwable = e
+    }
+    return throwable as? T ?: throw AssertionError("assertFailsWith failed: $message")
+}
+
+public fun assertTrue(x: Boolean) = assert(x)

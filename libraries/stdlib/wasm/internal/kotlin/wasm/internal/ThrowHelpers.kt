@@ -21,6 +21,10 @@ internal fun THROW_IAE(): Nothing {
     throw IllegalArgumentException()
 }
 
+internal fun throwNoBranchMatchedException(): Nothing {
+    throw NoWhenBranchMatchedException()
+}
+
 @PublishedApi
 internal fun throwUninitializedPropertyAccessException(name: String): Nothing {
     throw UninitializedPropertyAccessException("lateinit property $name has not been initialized")

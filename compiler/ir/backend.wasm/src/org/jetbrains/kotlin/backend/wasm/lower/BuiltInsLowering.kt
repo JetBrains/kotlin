@@ -102,13 +102,11 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 return irCall(call, newSymbol)
             }
 
-            // TODO: Implement
             irBuiltins.noWhenBranchMatchedExceptionSymbol ->
-                return builder.irCall(symbols.wasmUnreachable, irBuiltins.nothingType)
+                return builder.irCall(symbols.throwNoBranchMatchedException, irBuiltins.nothingType)
 
-            // TODO: Implement
             irBuiltins.illegalArgumentExceptionSymbol ->
-                return builder.irCall(symbols.wasmUnreachable, irBuiltins.nothingType)
+                return builder.irCall(symbols.throwIAE, irBuiltins.nothingType)
 
             irBuiltins.dataClassArrayMemberHashCodeSymbol -> {
                 // TODO: Implement
