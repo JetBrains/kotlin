@@ -56,7 +56,7 @@ private val expectDeclarationsRemovingPhase = makeWasmModulePhase(
 )
 
 private val stringConstructorLowering = makeWasmModulePhase(
-    ::SimpleStringConcatenationLowering,
+    ::StringConcatenationLowering,
     name = "StringConcatenation",
     description = "String concatenation lowering"
 )

@@ -53,8 +53,8 @@ class WasmSymbols(
         getIrClass(FqName("kotlin.wasm.internal.DefaultConstructorMarker"))
     override val throwKotlinNothingValueException: IrSimpleFunctionSymbol
         get() = TODO()
-    override val stringBuilder
-        get() = TODO()
+    override val stringBuilder =
+        getIrClass(FqName("kotlin.text.StringBuilder"))
     override val coroutineImpl
         get() = TODO()
     override val coroutineSuspendedGetter
