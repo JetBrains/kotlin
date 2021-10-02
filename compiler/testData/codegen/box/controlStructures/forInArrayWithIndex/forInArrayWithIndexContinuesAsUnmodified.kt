@@ -1,4 +1,3 @@
-// WASM_MUTE_REASON: IGNORED_IN_JS
 // KJS_WITH_FULL_RUNTIME
 // See https://youtrack.jetbrains.com/issue/KT-22424
 // IGNORE_BACKEND: JS
