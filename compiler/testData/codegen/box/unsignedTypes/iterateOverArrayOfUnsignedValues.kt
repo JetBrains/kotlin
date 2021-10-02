@@ -1,7 +1,6 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: UNSIGNED_ARRAYS
 // WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
 
 fun box(): String {
     var sum = 0u

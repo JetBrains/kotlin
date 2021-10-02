@@ -1,4 +1,3 @@
-// KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 
 class CountingSequence<out T>(private val s: Sequence<T>) : Sequence<T> {

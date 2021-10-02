@@ -1,6 +1,5 @@
 // !LANGUAGE: +NewInference
 // WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
 
 fun test(foo: MutableList<String>?): List<String> {
     val bar = foo ?: listOf()

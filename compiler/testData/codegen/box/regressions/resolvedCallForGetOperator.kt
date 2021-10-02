@@ -1,4 +1,3 @@
-// KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 
 val targetNameLists: Map<String, String> = mapOf("1"         to "OK")

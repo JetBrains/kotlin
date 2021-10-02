@@ -1,5 +1,4 @@
 // !LANGUAGE: +NewInference
-// KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 // ISSUE: KT-32462
 

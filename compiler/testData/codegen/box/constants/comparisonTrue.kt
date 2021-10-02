@@ -1,7 +1,6 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_GENERATED
 // WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
 fun foo(): Array<Boolean> {
     return arrayOf(
         19 < 20.0,

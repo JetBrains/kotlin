@@ -2,7 +2,6 @@
 // WASM_MUTE_REASON: UNSIGNED_ARRAYS
 // !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
 
 fun box(): String {
     testForInUIntArrayWithUpcactToAny()

@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: JVM
 // WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
 
 fun box(): String {
     // These should all be empty progressions

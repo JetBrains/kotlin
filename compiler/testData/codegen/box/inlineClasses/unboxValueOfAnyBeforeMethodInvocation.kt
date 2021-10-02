@@ -1,4 +1,3 @@
-// KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 
 inline class NullableInt(private val holder: Any?) {

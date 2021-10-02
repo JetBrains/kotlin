@@ -2,7 +2,6 @@
 // WASM_MUTE_REASON: STDLIB_TEXT
 // !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
 // WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
 
 inline fun foo(mkString: () -> String): String =
         mkString()

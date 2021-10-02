@@ -1,4 +1,3 @@
-// KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 
 fun foo(l: List<String>, vararg values: Any): Boolean =

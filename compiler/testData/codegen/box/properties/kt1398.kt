@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_TEXT
-// KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 
 open class Base(val bar: String)

@@ -1,5 +1,4 @@
 // WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
 // WITH_COROUTINES
 
 import helpers.*

@@ -1,5 +1,4 @@
 // WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
 
 fun takeUByte(u: UByte) = u.toByte()
 fun takeUShort(u: UShort) = u.toShort()

@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_GENERATED
-// KJS_WITH_FULL_RUNTIME
 //WITH_RUNTIME
 
 fun foo(x: String, ys: List<String>) =

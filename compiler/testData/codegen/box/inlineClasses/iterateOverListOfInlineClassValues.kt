@@ -1,4 +1,3 @@
-// KJS_WITH_FULL_RUNTIME
 // !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 

@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: JVM
 // WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
 
 operator fun ClosedRange<Float>.iterator() =
     object : Iterator<Float> {

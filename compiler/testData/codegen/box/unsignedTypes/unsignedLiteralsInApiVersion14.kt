@@ -1,5 +1,4 @@
 // !API_VERSION: 1.4
-// KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 
 val x = 0u

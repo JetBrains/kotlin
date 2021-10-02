@@ -1,6 +1,5 @@
 // !LANGUAGE: +NewInference
 // WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
 
 class Inv<T>
 fun <T> bar(x: Inv<T>.() -> Unit) = x

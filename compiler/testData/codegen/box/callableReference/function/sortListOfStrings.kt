@@ -1,7 +1,6 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: SAM_CONVERSIONS
 // WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
 // SKIP_DCE_DRIVEN
 
 fun sort(list: MutableList<String>, comparator: (String, String) -> Int) {

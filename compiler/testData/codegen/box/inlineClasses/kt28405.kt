@@ -2,7 +2,6 @@
 // WASM_MUTE_REASON: STDLIB_TEXT
 // !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
 
 import kotlin.test.*
 

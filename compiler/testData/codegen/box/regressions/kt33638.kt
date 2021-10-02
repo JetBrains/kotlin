@@ -1,6 +1,5 @@
 // !LANGUAGE: +NewInference
 // WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
 
 class Holder(val list: List<String>?)
 

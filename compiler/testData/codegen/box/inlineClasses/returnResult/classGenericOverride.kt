@@ -1,5 +1,4 @@
 // WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: FAKE_OVERRIDE_ISSUES
 // On wasm this will produce conflicting return types, foo will return Any but we will try to interpret it as String.

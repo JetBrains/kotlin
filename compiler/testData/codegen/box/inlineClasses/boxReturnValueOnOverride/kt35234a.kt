@@ -1,7 +1,6 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_TEXT
 // WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
 
 inline class NumberInlineClass(val value: Double)
 

@@ -1,4 +1,3 @@
-// KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 //KT-1800 error/NonExistentClass generated on runtime
 package i

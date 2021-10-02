@@ -1,4 +1,3 @@
-// KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 
 fun contains(set: Set<Any>, x: Int): Boolean = when {

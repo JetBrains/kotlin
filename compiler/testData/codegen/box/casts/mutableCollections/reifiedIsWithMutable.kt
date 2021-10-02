@@ -1,4 +1,3 @@
-// KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 
 class Itr : Iterator<String> by ArrayList<String>().iterator()

@@ -1,4 +1,3 @@
-// KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 fun foo() {
     val array = Array(0, { IntArray(0) } )

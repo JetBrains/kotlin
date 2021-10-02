@@ -1,6 +1,5 @@
 // !LANGUAGE: +UseCorrectExecutionOrderForVarargArguments
 // WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
 
 fun foo(vararg x: Unit, y: Any) {}
 

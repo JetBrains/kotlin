@@ -1,5 +1,4 @@
 // WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
 // CHECK_CASES_COUNT: function=foo count=9
 // CHECK_IF_COUNT: function=foo count=0
 
