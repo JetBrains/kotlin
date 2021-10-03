@@ -40,7 +40,7 @@ class Paint(cpp: SkPaint, managed: Boolean) : ManagedType(cpp) {
     * pointer passed to C++ -> kotlin.cpp.ptr
     * sk_sp passed to C++ -> sk_ref_sp(kotlin.cpp.ptr)
     * constructor call -> allocate Cpp; Wrapper(cpp, managed = true)
-    * garbage collection -> if (managed==true): calls __destroy__() for CPluaPlusClass or unref() for SkiaRefCnt
+    * garbage collection -> if (managed==true): calls __destroy__() for CPlusPlusClass or unref() for SkiaRefCnt
 
 
 Implementation details
