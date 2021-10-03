@@ -79,6 +79,6 @@ Limitations
 * LVReference is mapped to CPointer<T>? which is incorrect (should be notNull). This may cause segmentation fault in case of null would be sent as a parameter. TBD
 * const overload not supported and cause compilation error. That is, two class methods with the same signature (`const` and `non-const`) can't be compiled. The same for function parameters: if two functions differ only in `const*` modifier of parameter, this will cause "conflicting overloads" error. TBD.
 * C++ lambda type is not supported yet.
-* Member pointer, member reference, rvalue reference and some other types are not wupported.
+* Member pointer, member reference, rvalue reference and some other types are not supported.
 * Inheritance is not implemented yet. C++-style callbacks (overriding virtual method in Kotlin) may be implemented via plain C bridge (this can be done by hand as a workaround). TBD.
 
