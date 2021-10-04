@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.findSuperDeclaration
 import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.lower.findInterfaceImplementation
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -78,6 +80,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // TODO in cases where LambdaMetafactory is unusable directly due to problems with the implementation function,
         //      we can still avoid generating an entire class by converting the function reference into a lambda first;
         //      see `InlineCallableReferenceToLambdaPhase`
+
         val implFun = reference.symbol.owner
 
         // Don't generate references to intrinsic functions as invokedynamic (no such method exists at run-time).
@@ -95,6 +98,18 @@ internal class LambdaMetafactoryArgumentsBuilder(
             // Kotlin generates constructor accessors differently from Java.
             // TODO more precise accessibility check (see SyntheticAccessorLowering::isAccessible)
             return null
+        }
+
+        // It's possible to reference through a child class a method declared in a package-private base Java class.
+        // In this case the corresponding method might be inaccessible in the context where it's referenced (see KT-48954).
+        // For now, just prohibit referencing methods from package-private Java classes through indy (without precise accessibility check).
+        // TODO wrap into lambda?
+        if (implFun is IrSimpleFunction) {
+            val baseFun = findSuperDeclaration(implFun, false, context.state.jvmDefaultMode)
+            val baseFunClass = baseFun.parent as? IrClass
+            if (baseFunClass != null && baseFunClass.visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY) {
+                return null
+            }
         }
 
         val implFunParent = implFun.parent

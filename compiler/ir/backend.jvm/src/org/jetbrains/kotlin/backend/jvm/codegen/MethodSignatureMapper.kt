@@ -428,29 +428,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     fun mapCalleeToAsmMethod(function: IrSimpleFunction, isSuperCall: Boolean = false): Method =
         mapAsmMethod(findSuperDeclaration(function, isSuperCall))
 
-    // Copied from KotlinTypeMapper.findSuperDeclaration.
-    internal fun findSuperDeclaration(function: IrSimpleFunction, isSuperCall: Boolean): IrSimpleFunction {
-        var current = function
-        while (current.isFakeOverride) {
-            // TODO: probably isJvmInterface instead of isInterface, here and in KotlinTypeMapper
-            val classCallable = current.overriddenSymbols.firstOrNull { !it.owner.parentAsClass.isInterface }?.owner
-            if (classCallable != null) {
-                current = classCallable
-                continue
-            }
-            if (isSuperCall && !current.parentAsClass.isInterface &&
-                current.resolveFakeOverride()?.run {
-                    isMethodOfAny() || !isCompiledToJvmDefault(context.state.jvmDefaultMode)
-                } == true
-            ) {
-                return current
-            }
-
-            current = current.overriddenSymbols.firstOrNull()?.owner
-                ?: error("Fake override should have at least one overridden descriptor: ${current.render()}")
-        }
-        return current
-    }
+    private fun findSuperDeclaration(function: IrSimpleFunction, isSuperCall: Boolean): IrSimpleFunction =
+        findSuperDeclaration(function, isSuperCall, context.state.jvmDefaultMode)
 
     private fun getJvmMethodNameIfSpecial(irFunction: IrSimpleFunction): String? {
         if (irFunction.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT) {

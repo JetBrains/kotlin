@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.*
+import org.jetbrains.kotlin.backend.jvm.ir.findSuperDeclaration
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -106,7 +107,7 @@ object JvmInvokeDynamic : IntrinsicMethod() {
             is IrSimpleFunction -> {
                 // Note that if the given function is a fake override, we emit a method handle with explicit super class.
                 // This has the same binary compatibility guarantees as in Java.
-                codegen.methodSignatureMapper.findSuperDeclaration(irFun0, false)
+                findSuperDeclaration(irFun0, false, codegen.state.jvmDefaultMode)
             }
             else ->
                 throw java.lang.AssertionError("Simple function or constructor expected: ${irFun0.render()}")
