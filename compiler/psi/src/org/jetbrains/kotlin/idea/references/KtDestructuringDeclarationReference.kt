@@ -11,10 +11,11 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
+import org.jetbrains.kotlin.idea.references.KtMultiReference
 
 abstract class KtDestructuringDeclarationReference(
     element: KtDestructuringDeclarationEntry
-) : AbstractKtReference<KtDestructuringDeclarationEntry>(element) {
+) : KtMultiReference<KtDestructuringDeclarationEntry>(element) {
 
     override fun getRangeInElement() = TextRange(0, element.textLength)
 
