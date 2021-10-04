@@ -307,13 +307,18 @@ class ConstraintInjector(
         override fun addEqualityConstraint(typeVariable: TypeConstructorMarker, type: KotlinTypeMarker) =
             addConstraint(typeVariable, type, EQUALITY, false)
 
-        private fun isCapturedTypeFromSubtyping(type: KotlinTypeMarker) =
-            when ((type as? CapturedTypeMarker)?.captureStatus()) {
-                null, CaptureStatus.FROM_EXPRESSION -> false
+        private fun isCapturedTypeFromSubtyping(type: KotlinTypeMarker): Boolean {
+            val capturedType = type as? CapturedTypeMarker ?: return false
+
+            if (capturedType.isOldCapturedType()) return false
+
+            return when (capturedType.captureStatus()) {
+                CaptureStatus.FROM_EXPRESSION -> false
                 CaptureStatus.FOR_SUBTYPING -> true
                 CaptureStatus.FOR_INCORPORATION ->
                     error("Captured type for incorporation shouldn't escape from incorporation: $type\n" + renderBaseConstraint())
             }
+        }
 
         private fun addConstraint(
             typeVariableConstructor: TypeConstructorMarker,
