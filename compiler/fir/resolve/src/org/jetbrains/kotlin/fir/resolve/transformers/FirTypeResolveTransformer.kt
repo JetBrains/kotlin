@@ -12,8 +12,14 @@ import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
+import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
+import org.jetbrains.kotlin.fir.scopes.getNestedClassifierScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
+import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
+import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 
@@ -36,12 +42,12 @@ fun <F : FirClassLikeDeclaration> F.runTypeResolvePhaseForLocalClass(
 
 open class FirTypeResolveTransformer(
     final override val session: FirSession,
-    scopeSession: ScopeSession,
+    private val scopeSession: ScopeSession,
     initialScopes: List<FirScope> = emptyList()
-) : FirAbstractTreeTransformerWithSuperTypes(
-    phase = FirResolvePhase.TYPES,
-    scopeSession
-) {
+) : FirAbstractTreeTransformer<Any?>(FirResolvePhase.TYPES) {
+    private val classDeclarationsStack = ArrayDeque<FirRegularClass>()
+    private val scopes = mutableListOf<FirScope>()
+    private val towerScope = FirCompositeScope(scopes.asReversed())
 
     init {
         scopes.addAll(initialScopes.asReversed())
@@ -60,7 +66,7 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
-        return withClassDeclarationCleanup(regularClass) {
+        withClassDeclarationCleanup(classDeclarationsStack, regularClass) {
             withScopeCleanup {
                 regularClass.addTypeParametersScope()
                 regularClass.typeParameters.forEach {
@@ -69,12 +75,12 @@ open class FirTypeResolveTransformer(
                 unboundCyclesInTypeParametersSupertypes(regularClass)
             }
 
-            resolveNestedClassesSupertypes(regularClass, data)
+            return resolveClassContent(regularClass, data)
         }
     }
 
     override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): FirStatement {
-        return resolveNestedClassesSupertypes(anonymousObject, data)
+        return resolveClassContent(anonymousObject, data)
     }
 
     override fun transformConstructor(constructor: FirConstructor, data: Any?): FirConstructor {
@@ -207,5 +213,62 @@ open class FirTypeResolveTransformer(
 
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): FirStatement {
         return transformAnnotation(annotationCall, data)
+    }
+
+    private inline fun <T> withScopeCleanup(crossinline l: () -> T): T {
+        val sizeBefore = scopes.size
+        val result = l()
+        val size = scopes.size
+        assert(size >= sizeBefore)
+        repeat(size - sizeBefore) {
+            scopes.removeAt(scopes.lastIndex)
+        }
+        return result
+    }
+
+    private fun resolveClassContent(
+        firClass: FirClass,
+        data: Any?
+    ): FirStatement {
+        return withScopeCleanup {
+            // Otherwise annotations may try to resolve
+            // themselves as inner classes of the `firClass`
+            // if their names match
+            firClass.transformAnnotations(this, null)
+
+            // ? Is it Ok to use original file session here ?
+            val superTypes = lookupSuperTypes(
+                firClass,
+                lookupInterfaces = false,
+                deep = true,
+                substituteTypes = true,
+                useSiteSession = session
+            ).asReversed()
+            for (superType in superTypes) {
+                superType.lookupTag.getNestedClassifierScope(session, scopeSession)?.let { nestedClassifierScope ->
+                    val scope = nestedClassifierScope.wrapNestedClassifierScopeWithSubstitutionForSuperType(superType, session)
+                    scopes.add(scope)
+                }
+            }
+            if (firClass is FirRegularClass) {
+                firClass.addTypeParametersScope()
+                val companionObject = firClass.companionObject
+                if (companionObject != null) {
+                    session.nestedClassifierScope(companionObject)?.let(scopes::add)
+                }
+            }
+
+            session.nestedClassifierScope(firClass)?.let(scopes::add)
+
+            // Note that annotations are still visited here
+            // again, although there's no need in it
+            transformElement(firClass, data) as FirClass
+        }
+    }
+
+    private fun FirMemberDeclaration.addTypeParametersScope() {
+        if (typeParameters.isNotEmpty()) {
+            scopes.add(FirMemberTypeParameterScope(this))
+        }
     }
 }

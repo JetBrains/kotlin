@@ -11,10 +11,13 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
-import org.jetbrains.kotlin.fir.resolve.transformers.createSubstitutionForSupertype
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
@@ -205,4 +208,13 @@ private fun ConeClassLikeType?.isClassBasedType(
         is FirAnonymousObjectSymbol -> true
         is FirRegularClassSymbol -> symbol.fir.classKind == ClassKind.CLASS
     }
+}
+
+fun createSubstitutionForSupertype(superType: ConeLookupTagBasedType, session: FirSession): ConeSubstitutor {
+    val klass = superType.lookupTag.toSymbol(session)?.fir as? FirRegularClass ?: return ConeSubstitutor.Empty
+    val arguments = superType.typeArguments.map {
+        it as? ConeKotlinType ?: ConeClassErrorType(ConeSimpleDiagnostic("illegal projection usage", DiagnosticKind.IllegalProjectionUsage))
+    }
+    val mapping = klass.typeParameters.map { it.symbol }.zip(arguments).toMap()
+    return ConeSubstitutorByMap(mapping, session)
 }
