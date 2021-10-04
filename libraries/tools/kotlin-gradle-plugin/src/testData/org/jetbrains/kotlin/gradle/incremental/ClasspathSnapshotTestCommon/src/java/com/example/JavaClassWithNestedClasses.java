@@ -4,6 +4,10 @@ public class JavaClassWithNestedClasses {
 
     public class InnerClass {
 
+        public int publicField = 0;
+
+        private int privateField = 0;
+
         public void publicMethod() {
             System.out.println("I'm in a public method");
         }

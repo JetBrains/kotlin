@@ -16,7 +16,8 @@ import java.io.File
 abstract class ClasspathSnapshotTestCommon {
 
     companion object {
-        val testDataDir = File("libraries/tools/kotlin-gradle-plugin/src/testData/kotlin.incremental.useClasspathSnapshot")
+        val testDataDir =
+            File("libraries/tools/kotlin-gradle-plugin/src/testData/org/jetbrains/kotlin/gradle/incremental/ClasspathSnapshotTestCommon")
     }
 
     @get:Rule
@@ -146,29 +147,28 @@ abstract class ClasspathSnapshotTestCommon {
 
     class SimpleKotlinClass(tmpDir: TemporaryFolder) : ChangeableTestSourceFile(
         KotlinSourceFile(
-            baseDir = File(testDataDir, "src/original"),
-            relativePath = "com/example/SimpleKotlinClass.kt",
-            preCompiledClassFile = ClassFile(File(testDataDir, "classes/original"), "com/example/SimpleKotlinClass.class")
+            baseDir = File(testDataDir, "src/kotlin"), relativePath = "com/example/SimpleKotlinClass.kt",
+            preCompiledClassFile = ClassFile(File(testDataDir, "classes/kotlin/original"), "com/example/SimpleKotlinClass.class")
         ), tmpDir
     ) {
 
         override fun changePublicMethodSignature() = replace(
             "publicMethod()", "changedPublicMethod()",
             preCompiledKotlinClassFile = ClassFile(
-                File(testDataDir, "classes/changedPublicMethodSignature"), "com/example/SimpleKotlinClass.class"
+                File(testDataDir, "classes/kotlin/changedPublicMethodSignature"), "com/example/SimpleKotlinClass.class"
             )
         )
 
         override fun changeMethodImplementation() = replace(
             "I'm in a public method", "This method implementation has changed!",
             preCompiledKotlinClassFile = ClassFile(
-                File(testDataDir, "classes/changedMethodImplementation"), "com/example/SimpleKotlinClass.class"
+                File(testDataDir, "classes/kotlin/changedMethodImplementation"), "com/example/SimpleKotlinClass.class"
             )
         )
     }
 
     class SimpleJavaClass(tmpDir: TemporaryFolder) : ChangeableTestSourceFile(
-        SourceFile(File(testDataDir, "src/original"), "com/example/SimpleJavaClass.java"), tmpDir
+        SourceFile(File(testDataDir, "src/java"), "com/example/SimpleJavaClass.java"), tmpDir
     ) {
 
         override fun changePublicMethodSignature() = replace("publicMethod()", "changedPublicMethod()")
@@ -177,10 +177,10 @@ abstract class ClasspathSnapshotTestCommon {
     }
 
     class JavaClassWithNestedClasses(tmpDir: TemporaryFolder) : ChangeableTestSourceFile(
-        SourceFile(File(testDataDir, "src/original"), "com/example/JavaClassWithNestedClasses.java"), tmpDir
+        SourceFile(File(testDataDir, "src/java"), "com/example/JavaClassWithNestedClasses.java"), tmpDir
     ) {
 
-        /** The source file contains multiple classes, select the one we are mostly interested in. */
+        /** The source file contains multiple classes, select the one that we want to test. */
         val nestedClassToTest = "com/example/JavaClassWithNestedClasses\$InnerClass"
 
         override fun changePublicMethodSignature() = replace("publicMethod()", "changedPublicMethod()")

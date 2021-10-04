@@ -26,8 +26,11 @@ abstract class ClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
 
     @Test
     fun `test ClassSnapshotter's result against expected snapshot`() {
-        val expectedSnapshot = File("${testSourceFile.sourceFile.asFile().path.substringBeforeLast('.')}-expected-snapshot.json").readText()
-        assertEquals(expectedSnapshot, testClassSnapshot.toGson())
+        assertEquals(getExpectedSnapshotFile().readText(), testClassSnapshot.toGson())
+    }
+
+    private fun getExpectedSnapshotFile() = testSourceFile.sourceFile.asFile().path.let {
+        File(it.substringBeforeLast("src") + "expected-snapshot" + it.substringAfterLast("src").substringBeforeLast('.') + ".json")
     }
 
     @Test
@@ -69,19 +72,17 @@ class JavaClassWithNestedClassesClasspathSnapshotterTest : ClasspathSnapshotTest
     }
 
     private fun TestSourceFile.compileAndSnapshotNestedClass(): ClassSnapshot {
-        return compileAndSnapshotAll()[5].also {
-            assertEquals(
-                testSourceFile.nestedClassToTest,
-                (it as RegularJavaClassSnapshot).serializedJavaClass.classId.asString().replace('.', '$')
-            )
+        return compileAndSnapshotAll().single {
+            if (it is RegularJavaClassSnapshot) {
+                it.serializedJavaClass.classId.asString().replace('.', '$') == testSourceFile.nestedClassToTest
+            } else false
         }
     }
 
     @Test
     fun `test ClassSnapshotter's result against expected snapshot`() {
-        val expectedSnapshot =
-            File("${testDataDir.path}/src/original/${testSourceFile.nestedClassToTest}-expected-snapshot.json").readText()
-        assertEquals(expectedSnapshot, testClassSnapshot.toGson())
+        val expectedSnapshotFile = File("${testDataDir.path}/expected-snapshot/java/${testSourceFile.nestedClassToTest}.json")
+        assertEquals(expectedSnapshotFile.readText(), testClassSnapshot.toGson())
     }
 
     @Test

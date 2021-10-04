@@ -149,7 +149,7 @@
           "bitField0_": 13,
           "flags_": 32786,
           "oldFlags_": 6,
-          "name_": 6,
+          "name_": 10,
           "returnType_": {
             "unknownFields": {
               "bytes": [],
@@ -186,7 +186,7 @@
               "memoizedHashCode": 0
             },
             "flexibleUpperBoundId_": 0,
-            "className_": 7,
+            "className_": 8,
             "typeParameter_": 0,
             "typeParameterName_": 0,
             "typeAliasName_": 0,
@@ -324,6 +324,408 @@
           "bitField0_": 13,
           "flags_": 32790,
           "oldFlags_": 6,
+          "name_": 12,
+          "returnType_": {
+            "unknownFields": {
+              "bytes": [],
+              "hash": 0
+            },
+            "bitField0_": 16,
+            "argument_": [],
+            "nullable_": false,
+            "flexibleTypeCapabilitiesId_": 0,
+            "flexibleUpperBound_": {
+              "unknownFields": {
+                "bytes": [],
+                "hash": 0
+              },
+              "bitField0_": 0,
+              "argument_": [],
+              "nullable_": false,
+              "flexibleTypeCapabilitiesId_": 0,
+              "flexibleUpperBoundId_": 0,
+              "className_": 0,
+              "typeParameter_": 0,
+              "typeParameterName_": 0,
+              "typeAliasName_": 0,
+              "outerTypeId_": 0,
+              "abbreviatedTypeId_": 0,
+              "flags_": 0,
+              "memoizedIsInitialized": -1,
+              "memoizedSerializedSize": -1,
+              "extensions": {
+                "fields": {},
+                "isImmutable": false,
+                "hasLazyField": false
+              },
+              "memoizedHashCode": 0
+            },
+            "flexibleUpperBoundId_": 0,
+            "className_": 8,
+            "typeParameter_": 0,
+            "typeParameterName_": 0,
+            "typeAliasName_": 0,
+            "outerType_": {
+              "unknownFields": {
+                "bytes": [],
+                "hash": 0
+              },
+              "bitField0_": 0,
+              "argument_": [],
+              "nullable_": false,
+              "flexibleTypeCapabilitiesId_": 0,
+              "flexibleUpperBoundId_": 0,
+              "className_": 0,
+              "typeParameter_": 0,
+              "typeParameterName_": 0,
+              "typeAliasName_": 0,
+              "outerTypeId_": 0,
+              "abbreviatedTypeId_": 0,
+              "flags_": 0,
+              "memoizedIsInitialized": -1,
+              "memoizedSerializedSize": -1,
+              "extensions": {
+                "fields": {},
+                "isImmutable": false,
+                "hasLazyField": false
+              },
+              "memoizedHashCode": 0
+            },
+            "outerTypeId_": 0,
+            "abbreviatedType_": {
+              "unknownFields": {
+                "bytes": [],
+                "hash": 0
+              },
+              "bitField0_": 0,
+              "argument_": [],
+              "nullable_": false,
+              "flexibleTypeCapabilitiesId_": 0,
+              "flexibleUpperBoundId_": 0,
+              "className_": 0,
+              "typeParameter_": 0,
+              "typeParameterName_": 0,
+              "typeAliasName_": 0,
+              "outerTypeId_": 0,
+              "abbreviatedTypeId_": 0,
+              "flags_": 0,
+              "memoizedIsInitialized": -1,
+              "memoizedSerializedSize": -1,
+              "extensions": {
+                "fields": {},
+                "isImmutable": false,
+                "hasLazyField": false
+              },
+              "memoizedHashCode": 0
+            },
+            "abbreviatedTypeId_": 0,
+            "flags_": 0,
+            "memoizedIsInitialized": 1,
+            "memoizedSerializedSize": -1,
+            "extensions": {
+              "fields": {},
+              "isImmutable": true,
+              "hasLazyField": false
+            },
+            "memoizedHashCode": 0
+          },
+          "returnTypeId_": 0,
+          "typeParameter_": [],
+          "receiverType_": {
+            "unknownFields": {
+              "bytes": [],
+              "hash": 0
+            },
+            "bitField0_": 0,
+            "argument_": [],
+            "nullable_": false,
+            "flexibleTypeCapabilitiesId_": 0,
+            "flexibleUpperBoundId_": 0,
+            "className_": 0,
+            "typeParameter_": 0,
+            "typeParameterName_": 0,
+            "typeAliasName_": 0,
+            "outerTypeId_": 0,
+            "abbreviatedTypeId_": 0,
+            "flags_": 0,
+            "memoizedIsInitialized": -1,
+            "memoizedSerializedSize": -1,
+            "extensions": {
+              "fields": {},
+              "isImmutable": false,
+              "hasLazyField": false
+            },
+            "memoizedHashCode": 0
+          },
+          "receiverTypeId_": 0,
+          "valueParameter_": [],
+          "typeTable_": {
+            "unknownFields": {
+              "bytes": [],
+              "hash": 0
+            },
+            "bitField0_": 0,
+            "type_": [],
+            "firstNullable_": -1,
+            "memoizedIsInitialized": -1,
+            "memoizedSerializedSize": -1,
+            "memoizedHashCode": 0
+          },
+          "versionRequirement_": [],
+          "contract_": {
+            "unknownFields": {
+              "bytes": [],
+              "hash": 0
+            },
+            "effect_": [],
+            "memoizedIsInitialized": -1,
+            "memoizedSerializedSize": -1,
+            "memoizedHashCode": 0
+          },
+          "memoizedIsInitialized": 1,
+          "memoizedSerializedSize": -1,
+          "extensions": {
+            "fields": {},
+            "isImmutable": true,
+            "hasLazyField": false
+          },
+          "memoizedHashCode": 0
+        }
+      ],
+      "property_": [
+        {
+          "unknownFields": {
+            "bytes": [],
+            "hash": 0
+          },
+          "bitField0_": 13,
+          "flags_": 258,
+          "oldFlags_": 2054,
+          "name_": 6,
+          "returnType_": {
+            "unknownFields": {
+              "bytes": [],
+              "hash": 0
+            },
+            "bitField0_": 16,
+            "argument_": [],
+            "nullable_": false,
+            "flexibleTypeCapabilitiesId_": 0,
+            "flexibleUpperBound_": {
+              "unknownFields": {
+                "bytes": [],
+                "hash": 0
+              },
+              "bitField0_": 0,
+              "argument_": [],
+              "nullable_": false,
+              "flexibleTypeCapabilitiesId_": 0,
+              "flexibleUpperBoundId_": 0,
+              "className_": 0,
+              "typeParameter_": 0,
+              "typeParameterName_": 0,
+              "typeAliasName_": 0,
+              "outerTypeId_": 0,
+              "abbreviatedTypeId_": 0,
+              "flags_": 0,
+              "memoizedIsInitialized": -1,
+              "memoizedSerializedSize": -1,
+              "extensions": {
+                "fields": {},
+                "isImmutable": false,
+                "hasLazyField": false
+              },
+              "memoizedHashCode": 0
+            },
+            "flexibleUpperBoundId_": 0,
+            "className_": 7,
+            "typeParameter_": 0,
+            "typeParameterName_": 0,
+            "typeAliasName_": 0,
+            "outerType_": {
+              "unknownFields": {
+                "bytes": [],
+                "hash": 0
+              },
+              "bitField0_": 0,
+              "argument_": [],
+              "nullable_": false,
+              "flexibleTypeCapabilitiesId_": 0,
+              "flexibleUpperBoundId_": 0,
+              "className_": 0,
+              "typeParameter_": 0,
+              "typeParameterName_": 0,
+              "typeAliasName_": 0,
+              "outerTypeId_": 0,
+              "abbreviatedTypeId_": 0,
+              "flags_": 0,
+              "memoizedIsInitialized": -1,
+              "memoizedSerializedSize": -1,
+              "extensions": {
+                "fields": {},
+                "isImmutable": false,
+                "hasLazyField": false
+              },
+              "memoizedHashCode": 0
+            },
+            "outerTypeId_": 0,
+            "abbreviatedType_": {
+              "unknownFields": {
+                "bytes": [],
+                "hash": 0
+              },
+              "bitField0_": 0,
+              "argument_": [],
+              "nullable_": false,
+              "flexibleTypeCapabilitiesId_": 0,
+              "flexibleUpperBoundId_": 0,
+              "className_": 0,
+              "typeParameter_": 0,
+              "typeParameterName_": 0,
+              "typeAliasName_": 0,
+              "outerTypeId_": 0,
+              "abbreviatedTypeId_": 0,
+              "flags_": 0,
+              "memoizedIsInitialized": -1,
+              "memoizedSerializedSize": -1,
+              "extensions": {
+                "fields": {},
+                "isImmutable": false,
+                "hasLazyField": false
+              },
+              "memoizedHashCode": 0
+            },
+            "abbreviatedTypeId_": 0,
+            "flags_": 0,
+            "memoizedIsInitialized": 1,
+            "memoizedSerializedSize": -1,
+            "extensions": {
+              "fields": {},
+              "isImmutable": true,
+              "hasLazyField": false
+            },
+            "memoizedHashCode": 0
+          },
+          "returnTypeId_": 0,
+          "typeParameter_": [],
+          "receiverType_": {
+            "unknownFields": {
+              "bytes": [],
+              "hash": 0
+            },
+            "bitField0_": 0,
+            "argument_": [],
+            "nullable_": false,
+            "flexibleTypeCapabilitiesId_": 0,
+            "flexibleUpperBoundId_": 0,
+            "className_": 0,
+            "typeParameter_": 0,
+            "typeParameterName_": 0,
+            "typeAliasName_": 0,
+            "outerTypeId_": 0,
+            "abbreviatedTypeId_": 0,
+            "flags_": 0,
+            "memoizedIsInitialized": -1,
+            "memoizedSerializedSize": -1,
+            "extensions": {
+              "fields": {},
+              "isImmutable": false,
+              "hasLazyField": false
+            },
+            "memoizedHashCode": 0
+          },
+          "receiverTypeId_": 0,
+          "setterValueParameter_": {
+            "unknownFields": {
+              "bytes": [],
+              "hash": 0
+            },
+            "bitField0_": 0,
+            "flags_": 0,
+            "name_": 0,
+            "type_": {
+              "unknownFields": {
+                "bytes": [],
+                "hash": 0
+              },
+              "bitField0_": 0,
+              "argument_": [],
+              "nullable_": false,
+              "flexibleTypeCapabilitiesId_": 0,
+              "flexibleUpperBoundId_": 0,
+              "className_": 0,
+              "typeParameter_": 0,
+              "typeParameterName_": 0,
+              "typeAliasName_": 0,
+              "outerTypeId_": 0,
+              "abbreviatedTypeId_": 0,
+              "flags_": 0,
+              "memoizedIsInitialized": -1,
+              "memoizedSerializedSize": -1,
+              "extensions": {
+                "fields": {},
+                "isImmutable": false,
+                "hasLazyField": false
+              },
+              "memoizedHashCode": 0
+            },
+            "typeId_": 0,
+            "varargElementType_": {
+              "unknownFields": {
+                "bytes": [],
+                "hash": 0
+              },
+              "bitField0_": 0,
+              "argument_": [],
+              "nullable_": false,
+              "flexibleTypeCapabilitiesId_": 0,
+              "flexibleUpperBoundId_": 0,
+              "className_": 0,
+              "typeParameter_": 0,
+              "typeParameterName_": 0,
+              "typeAliasName_": 0,
+              "outerTypeId_": 0,
+              "abbreviatedTypeId_": 0,
+              "flags_": 0,
+              "memoizedIsInitialized": -1,
+              "memoizedSerializedSize": -1,
+              "extensions": {
+                "fields": {},
+                "isImmutable": false,
+                "hasLazyField": false
+              },
+              "memoizedHashCode": 0
+            },
+            "varargElementTypeId_": 0,
+            "memoizedIsInitialized": -1,
+            "memoizedSerializedSize": -1,
+            "extensions": {
+              "fields": {},
+              "isImmutable": false,
+              "hasLazyField": false
+            },
+            "memoizedHashCode": 0
+          },
+          "getterFlags_": 0,
+          "setterFlags_": 0,
+          "versionRequirement_": [],
+          "memoizedIsInitialized": 1,
+          "memoizedSerializedSize": -1,
+          "extensions": {
+            "fields": {},
+            "isImmutable": true,
+            "hasLazyField": false
+          },
+          "memoizedHashCode": 0
+        },
+        {
+          "unknownFields": {
+            "bytes": [],
+            "hash": 0
+          },
+          "bitField0_": 13,
+          "flags_": 262,
+          "oldFlags_": 2054,
           "name_": 9,
           "returnType_": {
             "unknownFields": {
@@ -458,30 +860,80 @@
             "memoizedHashCode": 0
           },
           "receiverTypeId_": 0,
-          "valueParameter_": [],
-          "typeTable_": {
+          "setterValueParameter_": {
             "unknownFields": {
               "bytes": [],
               "hash": 0
             },
             "bitField0_": 0,
-            "type_": [],
-            "firstNullable_": -1,
-            "memoizedIsInitialized": -1,
-            "memoizedSerializedSize": -1,
-            "memoizedHashCode": 0
-          },
-          "versionRequirement_": [],
-          "contract_": {
-            "unknownFields": {
-              "bytes": [],
-              "hash": 0
+            "flags_": 0,
+            "name_": 0,
+            "type_": {
+              "unknownFields": {
+                "bytes": [],
+                "hash": 0
+              },
+              "bitField0_": 0,
+              "argument_": [],
+              "nullable_": false,
+              "flexibleTypeCapabilitiesId_": 0,
+              "flexibleUpperBoundId_": 0,
+              "className_": 0,
+              "typeParameter_": 0,
+              "typeParameterName_": 0,
+              "typeAliasName_": 0,
+              "outerTypeId_": 0,
+              "abbreviatedTypeId_": 0,
+              "flags_": 0,
+              "memoizedIsInitialized": -1,
+              "memoizedSerializedSize": -1,
+              "extensions": {
+                "fields": {},
+                "isImmutable": false,
+                "hasLazyField": false
+              },
+              "memoizedHashCode": 0
             },
-            "effect_": [],
+            "typeId_": 0,
+            "varargElementType_": {
+              "unknownFields": {
+                "bytes": [],
+                "hash": 0
+              },
+              "bitField0_": 0,
+              "argument_": [],
+              "nullable_": false,
+              "flexibleTypeCapabilitiesId_": 0,
+              "flexibleUpperBoundId_": 0,
+              "className_": 0,
+              "typeParameter_": 0,
+              "typeParameterName_": 0,
+              "typeAliasName_": 0,
+              "outerTypeId_": 0,
+              "abbreviatedTypeId_": 0,
+              "flags_": 0,
+              "memoizedIsInitialized": -1,
+              "memoizedSerializedSize": -1,
+              "extensions": {
+                "fields": {},
+                "isImmutable": false,
+                "hasLazyField": false
+              },
+              "memoizedHashCode": 0
+            },
+            "varargElementTypeId_": 0,
             "memoizedIsInitialized": -1,
             "memoizedSerializedSize": -1,
+            "extensions": {
+              "fields": {},
+              "isImmutable": false,
+              "hasLazyField": false
+            },
             "memoizedHashCode": 0
           },
+          "getterFlags_": 0,
+          "setterFlags_": 0,
+          "versionRequirement_": [],
           "memoizedIsInitialized": 1,
           "memoizedSerializedSize": -1,
           "extensions": {
@@ -492,7 +944,6 @@
           "memoizedHashCode": 0
         }
       ],
-      "property_": [],
       "typeAlias_": [],
       "enumEntry_": [],
       "sealedSubclassFqName_": [],
@@ -569,8 +1020,11 @@
         "java",
         "lang",
         "Object",
-        "privateMethod",
+        "privateField",
         "kotlin",
+        "Int",
+        "publicField",
+        "privateMethod",
         "Unit",
         "publicMethod"
       ],
@@ -683,6 +1137,19 @@
           "bitField0_": 7,
           "parentQualifiedName_": 6,
           "shortName_": 8,
+          "kind_": "CLASS",
+          "memoizedIsInitialized": 1,
+          "memoizedSerializedSize": -1,
+          "memoizedHashCode": 0
+        },
+        {
+          "unknownFields": {
+            "bytes": [],
+            "hash": 0
+          },
+          "bitField0_": 7,
+          "parentQualifiedName_": 6,
+          "shortName_": 11,
           "kind_": "CLASS",
           "memoizedIsInitialized": 1,
           "memoizedSerializedSize": -1,
