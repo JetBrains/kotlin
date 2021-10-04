@@ -36,7 +36,7 @@ object FirClassVarianceChecker : FirClassChecker() {
                 }
             }
 
-            if (member is FirTypeParameterRefsOwner) {
+            if (member is FirTypeParameterRefsOwner && member !is FirClass) {
                 checkTypeParameters(member.typeParameters, Variance.IN_VARIANCE, context, reporter)
             }
 

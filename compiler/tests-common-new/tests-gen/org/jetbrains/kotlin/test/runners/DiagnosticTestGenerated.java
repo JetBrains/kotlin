@@ -11551,6 +11551,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("noTypeVarianceConflictInNestedClass.kt")
+                public void testNoTypeVarianceConflictInNestedClass() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/generics/innerClasses/noTypeVarianceConflictInNestedClass.kt");
+                }
+
+                @Test
                 @TestMetadata("outerArgumentsRequired.kt")
                 public void testOuterArgumentsRequired() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/generics/innerClasses/outerArgumentsRequired.kt");
