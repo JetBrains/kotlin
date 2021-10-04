@@ -13,8 +13,8 @@ fun test1(x: ClassLevel1?) {
 // TESTCASE NUMBER: 2
 fun case_2(x: Any?) {
     (x as ClassLevel1?)!!
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel1?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel1?")!>x<!><!UNSAFE_CALL!>.<!>test1()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel1")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel1")!>x<!>.test1()
 }
 
 // TESTCASE NUMBER: 3

@@ -14,8 +14,8 @@ fun case_1(x: Any?) {
 // TESTCASE NUMBER: 2
 fun case_2(x: Any?) {
     (x as Nothing?)!!
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!><!UNRESOLVED_REFERENCE{LT}!>inv<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!><!UNSAFE_CALL{LT}!>.<!><!UNRESOLVED_REFERENCE{LT}!>inv<!>()
 }
 
 // TESTCASE NUMBER: 3
@@ -45,8 +45,8 @@ fun case_5(x: Any?) {
 // TESTCASE NUMBER: 6
 fun case_6(x: Any?) {
     (x as String?)!!
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.String?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>length
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.String")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.String")!>x<!><!UNSAFE_CALL{LT}!>.<!>length
 }
 
 // TESTCASE NUMBER: 7
