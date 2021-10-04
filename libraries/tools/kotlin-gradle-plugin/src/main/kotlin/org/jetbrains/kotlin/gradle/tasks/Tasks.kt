@@ -213,6 +213,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
     private val layout = project.layout
 
+    @get:Inject
+    internal abstract val fileSystemOperations: FileSystemOperations
+
     @get:Internal
     protected val objects: ObjectFactory = project.objects
 
@@ -339,7 +342,14 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
             val outputsBackup: TaskOutputsBackup? =
                 if (isIncrementalCompilationEnabled() && inputChanges.isIncremental)
                     buildMetrics.measure(BuildTime.BACKUP_OUTPUT) {
-                        TaskOutputsBackup(allOutputFiles())
+                        TaskOutputsBackup(
+                            fileSystemOperations,
+                            layout.buildDirectory,
+                            layout.buildDirectory.dir("snapshot/kotlin/$name"),
+                            allOutputFiles()
+                        ).also {
+                            it.createSnapshot()
+                        }
                     }
                 else null
 

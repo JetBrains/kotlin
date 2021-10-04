@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.GradleException
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.provider.MapProperty
+import org.gradle.api.file.*
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider
 import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
 import java.io.File
+import javax.inject.Inject
 
 /**
  * Uses Gradle worker api to run kotlin compilation.
@@ -36,43 +37,54 @@ internal class GradleCompilerRunnerWithWorkers(
     ): WorkQueue {
 
         val workQueue = workerExecutor.noIsolation()
-        workQueue.submit(GradleKotlinCompilerWorkAction::class.java) {
-            it.compilerWorkArguments.set(workArgs)
+        workQueue.submit(GradleKotlinCompilerWorkAction::class.java) { params ->
+            params.compilerWorkArguments.set(workArgs)
             if (taskOutputsBackup != null) {
-                it.taskOutputs.from(taskOutputsBackup.outputs)
-                it.taskOutputsSnapshot.set(taskOutputsBackup.previousOutputs)
-                it.metricsReporter.set(buildMetrics)
-            } else {
-                // MapProperty has empty value by default: https://github.com/gradle/gradle/issues/7485
-                it.taskOutputsSnapshot.set(null as Map<File, Array<Byte>>?)
+                params.taskOutputs.from(taskOutputsBackup.outputs)
+                params.buildDir.set(taskOutputsBackup.buildDirectory)
+                params.snapshotsDir.set(taskOutputsBackup.snapshotsDir)
+                params.metricsReporter.set(buildMetrics)
             }
         }
         return workQueue
     }
 
-    internal abstract class GradleKotlinCompilerWorkAction
-        : WorkAction<GradleKotlinCompilerWorkParameters> {
+    internal abstract class GradleKotlinCompilerWorkAction @Inject constructor(
+        private val fileSystemOperations: FileSystemOperations
+    ) : WorkAction<GradleKotlinCompilerWorkParameters> {
+
+        private val logger = Logging.getLogger("kotlin-compile-worker")
 
         override fun execute() {
+            val taskOutputsBackup = if (parameters.snapshotsDir.isPresent) {
+                TaskOutputsBackup(
+                    fileSystemOperations,
+                    parameters.buildDir,
+                    parameters.snapshotsDir,
+                    parameters.taskOutputs
+                )
+            } else {
+                null
+            }
+
             try {
                 GradleKotlinCompilerWork(
                     parameters.compilerWorkArguments.get()
                 ).run()
             } catch (e: GradleException) {
-                if (parameters.taskOutputsSnapshot.isPresent) {
-                    val taskOutputsBackup = TaskOutputsBackup(
-                        parameters.taskOutputs,
-                        parameters.taskOutputsSnapshot.get()
-                    )
-                    // Currently, metrics are not reported as in the worker we are getting new instance of [BuildMetricsReporter]
-                    // [BuildDataRecorder] knows nothing about this new instance. Possibly could be fixed in the future by migrating
-                    // [BuildMetricsReporter] to be shared Gradle service.
+                // Currently, metrics are not reported as in the worker we are getting new instance of [BuildMetricsReporter]
+                // [BuildDataRecorder] knows nothing about this new instance. Possibly could be fixed in the future by migrating
+                // [BuildMetricsReporter] to be shared Gradle service.
+                if (taskOutputsBackup != null) {
                     parameters.metricsReporter.get().measure(BuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
+                        logger.info("Restoring task outputs to pre-compilation state")
                         taskOutputsBackup.restoreOutputs()
                     }
                 }
 
                 throw e
+            } finally {
+                taskOutputsBackup?.deleteSnapshot()
             }
         }
     }
@@ -80,7 +92,8 @@ internal class GradleCompilerRunnerWithWorkers(
     internal interface GradleKotlinCompilerWorkParameters : WorkParameters {
         val compilerWorkArguments: Property<GradleKotlinCompilerWorkArguments>
         val taskOutputs: ConfigurableFileCollection
-        val taskOutputsSnapshot: MapProperty<File, Array<Byte>>
+        val snapshotsDir: DirectoryProperty
+        val buildDir: DirectoryProperty
         val metricsReporter: Property<BuildMetricsReporter>
     }
 }
