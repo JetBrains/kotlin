@@ -427,6 +427,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     }
 
     @Test
+    @TestMetadata("RetentionValue.kt")
+    public void testRetentionValue() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/RetentionValue.kt");
+    }
+
+    @Test
     @TestMetadata("SamAdapter.kt")
     public void testSamAdapter() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/SamAdapter.kt");
