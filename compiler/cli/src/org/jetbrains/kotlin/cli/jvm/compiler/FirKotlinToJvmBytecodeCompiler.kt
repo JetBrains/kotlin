@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -100,7 +101,8 @@ object FirKotlinToJvmBytecodeCompiler {
                 performanceManager,
                 targetIds,
                 incrementalComponents,
-                extendedAnalysisMode
+                extendedAnalysisMode,
+                (projectEnvironment as? PsiBasedProjectEnvironment)?.project?.let { IrGenerationExtension.getInstances(it) } ?: emptyList()
             )
             val generationState = context.compileModule() ?: return false
             outputs[module] = generationState
@@ -134,7 +136,7 @@ object FirKotlinToJvmBytecodeCompiler {
         performanceManager?.notifyIRTranslationStarted()
 
         val extensions = JvmGeneratorExtensionsImpl(moduleConfiguration)
-        val fir2IrResult = firResult.session.convertToIr(firResult.scopeSession, firResult.fir, extensions)
+        val fir2IrResult = firResult.session.convertToIr(firResult.scopeSession, firResult.fir, extensions, irGenerationExtensions)
 
         performanceManager?.notifyIRTranslationFinished()
 
@@ -341,7 +343,8 @@ object FirKotlinToJvmBytecodeCompiler {
         val performanceManager: CommonCompilerPerformanceManager?,
         val targetIds: List<TargetId>?,
         val incrementalComponents: IncrementalCompilationComponents?,
-        val extendedAnalysisMode: Boolean
+        val extendedAnalysisMode: Boolean,
+        val irGenerationExtensions: Collection<IrGenerationExtension>
     )
 
     private fun findMainClass(firResult: FirResult): FqName? {

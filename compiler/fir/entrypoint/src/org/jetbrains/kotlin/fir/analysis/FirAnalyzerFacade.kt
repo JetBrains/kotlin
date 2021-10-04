@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis
 
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
@@ -45,6 +46,7 @@ class FirAnalyzerFacade(
     val languageVersionSettings: LanguageVersionSettings,
     val ktFiles: Collection<KtFile> = emptyList(), // may be empty if light tree mode enabled
     val originalFiles: Collection<File> = emptyList(), // may be empty if light tree mode disabled
+    val irGeneratorExtensions: Collection<IrGenerationExtension>,
     val useLightTree: Boolean = false,
     val enablePluginPhases: Boolean = false,
 ) : AbstractFirAnalyzerFacade() {
@@ -113,7 +115,8 @@ class FirAnalyzerFacade(
             languageVersionSettings, signaturer,
             extensions, FirJvmKotlinMangler(session), IrFactoryImpl,
             FirJvmVisibilityConverter,
-            Fir2IrJvmSpecialAnnotationSymbolProvider()
+            Fir2IrJvmSpecialAnnotationSymbolProvider(),
+            irGeneratorExtensions
         )
     }
 }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.TestsCompiletimeError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -105,7 +106,13 @@ object GenerationUtils {
         val session = createSessionForTests(project, scope, librariesScope, "main", getPackagePartProvider = packagePartProvider)
 
         // TODO: add running checkers and check that it's safe to compile
-        val firAnalyzerFacade = FirAnalyzerFacade(session, configuration.languageVersionSettings, files)
+        val firAnalyzerFacade = FirAnalyzerFacade(
+            session,
+            configuration.languageVersionSettings,
+            files,
+            emptyList(),
+            IrGenerationExtension.getInstances(project)
+        )
         val extensions = JvmGeneratorExtensionsImpl(configuration)
         val (moduleFragment, symbolTable, components) = firAnalyzerFacade.convertToIr(extensions)
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext

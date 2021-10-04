@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
@@ -22,7 +23,12 @@ import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 
-fun FirSession.convertToIr(scopeSession: ScopeSession, firFiles: List<FirFile>, extensions: GeneratorExtensions): Fir2IrResult {
+fun FirSession.convertToIr(
+    scopeSession: ScopeSession,
+    firFiles: List<FirFile>,
+    extensions: GeneratorExtensions,
+    irGeneratorExtensions: Collection<IrGenerationExtension>
+): Fir2IrResult {
     val signaturer = JvmIdSignatureDescriptor(JvmDescriptorMangler(null))
 
     val commonFirFiles = moduleData.dependsOnDependencies
@@ -35,6 +41,7 @@ fun FirSession.convertToIr(scopeSession: ScopeSession, firFiles: List<FirFile>, 
         languageVersionSettings, signaturer,
         extensions, FirJvmKotlinMangler(this), IrFactoryImpl,
         FirJvmVisibilityConverter,
-        Fir2IrJvmSpecialAnnotationSymbolProvider()
+        Fir2IrJvmSpecialAnnotationSymbolProvider(),
+        irGeneratorExtensions
     )
 }

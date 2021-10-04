@@ -11,13 +11,13 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.moduleData
@@ -116,6 +116,7 @@ class FirFrontendFacade(
             languageVersionSettings,
             ktFiles,
             originalFiles,
+            IrGenerationExtension.getInstances(project),
             lightTreeEnabled,
             enablePluginPhases
         )
