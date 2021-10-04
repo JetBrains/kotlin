@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.*
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isNull
+import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.*
+import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker
 import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
@@ -142,6 +144,16 @@ class DiagnosticReporterByTrackingStrategy(
             SmartCastDiagnostic::class.java -> reportSmartCast(diagnostic as SmartCastDiagnostic)
             UnstableSmartCastDiagnosticError::class.java,
             UnstableSmartCastResolutionError::class.java -> reportUnstableSmartCast(diagnostic as UnstableSmartCast)
+            VisibilityErrorOnArgument::class.java -> {
+                diagnostic as VisibilityErrorOnArgument
+                val invisibleMember = diagnostic.invisibleMember
+                val argumentExpression =
+                    diagnostic.argument.psiCallArgument.valueArgument.getArgumentExpression()?.lastBlockStatementOrThis()
+
+                if (argumentExpression != null) {
+                    trace.report(INVISIBLE_MEMBER.on(argumentExpression, invisibleMember, invisibleMember.visibility, invisibleMember))
+                }
+            }
             TooManyArguments::class.java -> {
                 trace.reportTrailingLambdaErrorOr(callArgument.psiExpression) { expr ->
                     TOO_MANY_ARGUMENTS.on(expr, (diagnostic as TooManyArguments).descriptor)

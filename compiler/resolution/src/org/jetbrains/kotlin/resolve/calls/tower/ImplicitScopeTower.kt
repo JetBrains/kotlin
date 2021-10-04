@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.model.DiagnosticReporter
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.*
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -108,6 +109,15 @@ abstract class ResolutionDiagnostic(candidateApplicability: CandidateApplicabili
 class VisibilityError(val invisibleMember: DeclarationDescriptorWithVisibility) : ResolutionDiagnostic(RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCall(this)
+    }
+}
+
+class VisibilityErrorOnArgument(
+    val argument: KotlinCallArgument,
+    val invisibleMember: DeclarationDescriptorWithVisibility
+) : ResolutionDiagnostic(RUNTIME_ERROR) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCallArgument(argument, this)
     }
 }
 
