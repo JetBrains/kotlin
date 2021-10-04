@@ -94,6 +94,13 @@ public class DirectiveTestUtils {
         }
     };
 
+    private static final DirectiveHandler FUNCTION_EXISTS = new DirectiveHandler("CHECK_FUNCTION_EXISTS") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            AstSearchUtil.getFunction(ast, arguments.getFirst());
+        }
+    };
+
     private static final DirectiveHandler FUNCTION_CALLED_IN_SCOPE = new DirectiveHandler("CHECK_CALLED_IN_SCOPE") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
@@ -345,6 +352,7 @@ public class DirectiveTestUtils {
             PROPERTY_NOT_WRITTEN_TO,
             PROPERTY_READ_COUNT,
             PROPERTY_WRITE_COUNT,
+            FUNCTION_EXISTS,
             FUNCTION_CALLED_IN_SCOPE,
             FUNCTION_NOT_CALLED_IN_SCOPE,
             FUNCTIONS_HAVE_SAME_LINES,
