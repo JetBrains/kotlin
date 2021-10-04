@@ -332,7 +332,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val REPEATED_MODIFIER by error<PsiElement> {
             parameter<KtModifierKeywordToken>("modifier")
         }
-        val REDUNDANT_MODIFIER by error<PsiElement> {
+        val REDUNDANT_MODIFIER by warning<PsiElement> {
             parameter<KtModifierKeywordToken>("redundantModifier")
             parameter<KtModifierKeywordToken>("conflictingModifier")
         }
@@ -340,7 +340,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<KtModifierKeywordToken>("deprecatedModifier")
             parameter<KtModifierKeywordToken>("actualModifier")
         }
-        val DEPRECATED_MODIFIER_PAIR by error<PsiElement> {
+        val DEPRECATED_MODIFIER_PAIR by warning<PsiElement> {
             parameter<KtModifierKeywordToken>("deprecatedModifier")
             parameter<KtModifierKeywordToken>("conflictingModifier")
         }
