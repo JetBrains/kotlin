@@ -46,7 +46,19 @@ public class MessageUtil {
         String path = virtualFile != null ? virtualFileToPath(virtualFile) : defaultValue;
         PsiDiagnosticUtils.LineAndColumn start = range.getStart();
         PsiDiagnosticUtils.LineAndColumn end = range.getEnd();
-        return CompilerMessageLocationWithRange.create(path, start.getLine(), start.getColumn(), end.getLine(), end.getColumn(), start.getLineContent());
+        return createMessageLocation(path, start.getLineContent(), start.getLine(), start.getColumn(), end.getLine(), end.getColumn());
+    }
+
+    @Nullable
+    public static CompilerMessageLocationWithRange createMessageLocation(
+            @Nullable String path,
+            @Nullable String lineContent,
+            int line,
+            int column,
+            int endLine,
+            int endColumn
+    ) {
+        return CompilerMessageLocationWithRange.create(path, line, column, endLine, endColumn, lineContent);
     }
 
     @NotNull

@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDefaultErrorMessages
+import java.io.Closeable
+import java.io.File
+import java.io.InputStreamReader
 
 object FirDiagnosticsCompilerResultsReporter {
     fun reportDiagnostics(diagnostics: Collection<KtDiagnostic>, reporter: MessageCollector): Boolean {
@@ -24,6 +26,38 @@ object FirDiagnosticsCompilerResultsReporter {
             hasErrors = reportDiagnostic(diagnostic, reporter) || hasErrors
         }
         reportSpecialErrors(diagnostics)
+        return hasErrors
+    }
+
+    fun reportToCollector(diagnosticsReporter: BaseDiagnosticReporter, messageCollector: MessageCollector): Boolean {
+        var hasErrors = false
+        for (filePath in diagnosticsReporter.diagnosticsByFilePath.keys) {
+            for (diagnostic in diagnosticsReporter.diagnosticsByFilePath[filePath].orEmpty().sortedWith(SingleFileDiagnosticComparator)) {
+                var filePositionFinder: SequentialFilePositionFinder? = null
+                try {
+                    when {
+                        diagnostic is KtPsiDiagnostic -> diagnostic.element.location(diagnostic)
+                        else -> {
+                            if (filePositionFinder == null) {
+                                filePositionFinder = SequentialFilePositionFinder(filePath)
+                            }
+                            // NOTE: SequentialPositionFinder relies on the ascending order of the input offsets, so the code relies
+                            // on the the appropriate sorting above
+                            // Also the end offset is ignored, as it is irrelevant for the CLI reporting
+                            val position =
+                                filePositionFinder.findNextPosition(DiagnosticUtils.firstRange(diagnostic.textRanges).startOffset)
+                            MessageUtil.createMessageLocation(filePath, position.lineContent, position.line, position.column, -1, -1)
+                        }
+                    }?.let { location ->
+                        reportDiagnostic(diagnostic, location, messageCollector)
+                        hasErrors = hasErrors || diagnostic.severity == Severity.ERROR
+                    }
+                } finally {
+                    filePositionFinder?.close()
+                }
+            }
+        }
+//        reportSpecialErrors(diagnostics)
         return hasErrors
     }
 
@@ -40,13 +74,21 @@ object FirDiagnosticsCompilerResultsReporter {
 
     private fun reportDiagnostic(diagnostic: KtDiagnostic, reporter: MessageCollector): Boolean {
         if (!diagnostic.isValid) return false
-        diagnostic.location()?.let { location ->
-            val severity = AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity)
-            // TODO: support multiple maps with messages
-            val renderer = FirDefaultErrorMessages.getRendererForDiagnostic(diagnostic)
-            reporter.report(severity, renderer.render(diagnostic), location)
+        diagnostic.location()?.let {
+            reportDiagnostic(diagnostic, it, reporter)
         }
         return diagnostic.severity == Severity.ERROR
+    }
+
+    private fun reportDiagnostic(
+        diagnostic: KtDiagnostic,
+        location: CompilerMessageSourceLocation,
+        reporter: MessageCollector
+    ) {
+        val severity = AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity)
+        // TODO: support multiple maps with messages
+        val renderer = FirDefaultErrorMessages.getRendererForDiagnostic(diagnostic)
+        reporter.report(severity, renderer.render(diagnostic), location)
     }
 
     private fun KtDiagnostic.location(): CompilerMessageSourceLocation? = when (val element = element) {
@@ -76,7 +118,7 @@ object FirDiagnosticsCompilerResultsReporter {
         override fun compare(o1: KtDiagnostic, o2: KtDiagnostic): Int {
             val element1 = o1.element
             val element2 = o1.element
-            // TODO: support light tree
+            // TODO: support light tree (likely obsolete, processing LT files in other code path)
             if (element1 !is KtPsiSourceElement || element2 !is KtPsiSourceElement) return 0
 
             val file1 = element1.psi.containingFile
@@ -91,6 +133,90 @@ object FirDiagnosticsCompilerResultsReporter {
             return if (range1 != range2) {
                 DiagnosticUtils.TEXT_RANGE_COMPARATOR.compare(range1, range2)
             } else o1.factory.name.compareTo(o2.factory.name)
+        }
+    }
+
+    private object SingleFileDiagnosticComparator : Comparator<KtDiagnostic> {
+        override fun compare(o1: KtDiagnostic, o2: KtDiagnostic): Int {
+            val range1 = DiagnosticUtils.firstRange(o1.textRanges)
+            val range2 = DiagnosticUtils.firstRange(o2.textRanges)
+
+            return if (range1 != range2) {
+                DiagnosticUtils.TEXT_RANGE_COMPARATOR.compare(range1, range2)
+            } else o1.factory.name.compareTo(o2.factory.name)
+        }
+    }
+
+    class SequentialFilePositionFinder(private val filePath: String?) : Closeable {
+
+        // TODO: verify if returning NONE on invalid files is the desired behavior (instead of throwing IOError)
+        private var reader: InputStreamReader? = filePath?.let(::File)?.takeIf { it.isFile }?.reader(/* TODO: select proper charset */)
+
+        private var currentLineContent: String? = null
+        private val buffer = CharArray(255)
+        private var bufLength = -1
+        private var bufPos = 0
+        private var endOfStream = false
+        private var skipNextLf = false
+
+        private var charsRead = 0
+        private var currentLine = 0
+
+        // assuming that if called multiple times, calls should be sorted by ascending offset
+        @Synchronized
+        fun findNextPosition(offset: Int, withLineContents: Boolean = true): PsiDiagnosticUtils.LineAndColumn {
+            if (offset < 0 || reader == null) return PsiDiagnosticUtils.LineAndColumn.NONE
+
+            assert(offset >= charsRead)
+
+            while (true) {
+                if (currentLineContent == null) {
+                    currentLineContent = readNextLine()
+                }
+
+                val col = offset - (charsRead - currentLineContent!!.length - 1)/* beginning of line offset */ + 1 /* col is 1-based */
+                if (col <= currentLineContent!!.length) {
+                    return PsiDiagnosticUtils.LineAndColumn(currentLine, col, if (withLineContents) currentLineContent else null)
+                }
+
+                if (endOfStream) return PsiDiagnosticUtils.LineAndColumn.NONE
+
+                currentLineContent = null
+            }
+        }
+
+        private fun readNextLine() = buildString {
+            while (true) {
+                if (bufPos >= bufLength) {
+                    bufLength = reader!!.read(buffer)
+                    bufPos = 0
+                    if (bufLength < 0) {
+                        endOfStream = true
+                        break
+                    }
+                } else {
+                    val c = buffer[bufPos++]
+                    charsRead++
+                    when {
+                        c == '\n' && skipNextLf -> {
+                            skipNextLf = false
+                        }
+                        c == '\n' || c == '\r' -> {
+                            currentLine++
+                            skipNextLf = c == '\r'
+                            break
+                        }
+                        else -> {
+                            append(c)
+                            skipNextLf = false
+                        }
+                    }
+                }
+            }
+        }
+
+        override fun close() {
+            reader?.close()
         }
     }
 }

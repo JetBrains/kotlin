@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
@@ -60,7 +60,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
-import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import java.io.File
@@ -244,16 +243,16 @@ object FirKotlinToJvmBytecodeCompiler {
         val commonRawFir = commonSession?.buildFirFromKtFiles(commonKtFiles)
         val rawFir = session.buildFirFromKtFiles(ktFiles)
 
-        val allKtDiagnostics = mutableListOf<KtDiagnostic>()
+        val diagnosticsReporter = DiagnosticReporterFactory.createReporter()
         commonSession?.apply {
             val (commonScopeSession, commonFir) = runResolution(commonRawFir!!)
-            runCheckers(commonScopeSession, commonFir).values.flattenTo(allKtDiagnostics)
+            runCheckers(commonScopeSession, commonFir, diagnosticsReporter)
         }
 
         val (scopeSession, fir) = session.runResolution(rawFir)
-        session.runCheckers(scopeSession, fir).values.flattenTo(allKtDiagnostics)
+        session.runCheckers(scopeSession, fir, diagnosticsReporter)
 
-        val hasErrors = FirDiagnosticsCompilerResultsReporter.reportDiagnostics(allKtDiagnostics, messageCollector)
+        val hasErrors = FirDiagnosticsCompilerResultsReporter.reportToCollector(diagnosticsReporter, messageCollector)
 
         return if (syntaxErrors || hasErrors) null else FirResult(session, scopeSession, fir)
     }

@@ -9,14 +9,16 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 
 class DiagnosticReporterWithSuppress : BaseDiagnosticReporter() {
-    private val _diagnostics: MutableList<KtDiagnostic> = mutableListOf()
+    private val _diagnosticsByFilePath: MutableMap<String?, MutableList<KtDiagnostic>> = mutableMapOf()
     override val diagnostics: List<KtDiagnostic>
-        get() = _diagnostics
+        get() = _diagnosticsByFilePath.flatMap { it.value }
+    override val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>
+        get() = _diagnosticsByFilePath
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic == null) return
         if (!context.isDiagnosticSuppressed(diagnostic)) {
-            _diagnostics += diagnostic
+            _diagnosticsByFilePath.getOrPut(context.containingFilePath) { mutableListOf() }.add(diagnostic)
         }
     }
 }
