@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.analyse
 import org.jetbrains.kotlin.analysis.api.fir.test.framework.AbstractHLApiSingleFileTest
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
@@ -27,7 +26,7 @@ abstract class AbstractHasCommonSubtypeTest : AbstractHLApiSingleFileTest() {
         val errors = mutableListOf<String>()
         val originalText = ktFile.text
         val actualTextBuilder = StringBuilder()
-        analyse(ktFile) {
+        analyseForTest(ktFile) {
             val visitor = object : KtTreeVisitorVoid() {
                 override fun visitElement(element: PsiElement) {
                     if (element.firstChild == null) {

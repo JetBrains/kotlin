@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
-import org.jetbrains.kotlin.analysis.api.fir.analyseOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.api.fir.test.framework.AbstractHLApiSingleFileTest
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer

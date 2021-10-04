@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.fir.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.api.fir.test.framework.AbstractHLApiSingleModuleTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.parentsOfType
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.analyse
 import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
@@ -26,7 +24,7 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractHLApiSingleMo
         val declaration = testServices.expressionMarkerProvider.getElementOfTypAtCaret<KtDeclaration>(ktFiles.first())
 
         val actual = executeOnPooledThreadInReadAction {
-            analyse(ktFiles.first()) {
+            analyseForTest(declaration) {
                 val symbol = declaration.getSymbol() as KtCallableSymbol
                 val allOverriddenSymbols = symbol.getAllOverriddenSymbols().map { renderSignature(it) }
                 val directlyOverriddenSymbols = symbol.getDirectlyOverriddenSymbols().map { renderSignature(it) }

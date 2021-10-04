@@ -23,7 +23,7 @@ class TestKtModuleProvider(
 
     internal fun getModuleInfoByKtFile(ktFile: KtFile): TestKtSourceModule =
         cache.values.first { moduleSourceInfo ->
-            ktFile in moduleSourceInfo.ktFiles
+            (if (ktFile.isPhysical) ktFile else ktFile.originalFile) in moduleSourceInfo.ktFiles
         }
 
     internal fun getModule(moduleName: String): TestKtSourceModule =

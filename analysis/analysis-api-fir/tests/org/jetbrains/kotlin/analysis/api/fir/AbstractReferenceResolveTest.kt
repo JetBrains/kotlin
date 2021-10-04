@@ -7,17 +7,18 @@ package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
-import org.jetbrains.kotlin.analysis.api.fir.test.framework.AbstractHLApiSingleModuleTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.expressionMarkerProvider
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.analyse
 import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.components.RendererModifier
+import org.jetbrains.kotlin.analysis.api.fir.test.framework.AbstractHLApiSingleModuleTest
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.expressionMarkerProvider
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -45,11 +46,12 @@ abstract class AbstractReferenceResolveTest : AbstractHLApiSingleModuleTest() {
             testServices.assertions.fail { "No references at caret found" }
         }
 
-        val resolvedTo = analyse(mainKtFile) {
-            val symbols = ktReferences.flatMap { it.resolveToSymbols() }
-            checkReferenceResultForValidity(module, testServices, symbols)
-            renderResolvedTo(symbols)
-        }
+        val resolvedTo =
+            analyseForTest(PsiTreeUtil.findElementOfClassAtOffset(mainKtFile, caretPosition, KtDeclaration::class.java, false) ?: mainKtFile) {
+                val symbols = ktReferences.flatMap { it.resolveToSymbols() }
+                checkReferenceResultForValidity(module, testServices, symbols)
+                renderResolvedTo(symbols)
+            }
 
         if (Directives.UNRESOLVED_REFERENCE in module.directives) {
             return

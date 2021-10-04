@@ -8,13 +8,19 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.analyse
+import org.jetbrains.kotlin.analysis.api.analyseInDependedAnalysisSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.ModuleRegistrarPreAnalysisHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.TestKtModuleProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.projectModuleProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalKtFile
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.bind
@@ -33,10 +39,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.concurrent.ExecutionException
 import kotlin.io.path.nameWithoutExtension
 
 abstract class AbstractLowLevelApiTest : TestWithDisposable() {
     private lateinit var testInfo: KotlinTestInfo
+    private var useDependedAnalysisSession: Boolean = false
 
     @OptIn(TestInfrastructureInternals::class)
     private val configure: TestConfigurationBuilder.() -> Unit = {
@@ -102,11 +110,24 @@ abstract class AbstractLowLevelApiTest : TestWithDisposable() {
 
         registerApplicationServices()
 
-        doTestByFileStructure(
-            moduleInfo.testFilesToKtFiles.filter { (testFile, _) -> !testFile.isAdditional }.values.toList(),
-            moduleStructure,
-            testServices
-        )
+        val ktFiles = moduleInfo.testFilesToKtFiles.filterKeys { testFile -> !testFile.isAdditional }.values.toList()
+
+        doTestByFileStructure(ktFiles, moduleStructure, testServices)
+        useDependedAnalysisSession = true
+        try {
+            doTestByFileStructure(ktFiles.map {
+                val fakeFile = it.copy() as KtFile
+                fakeFile.originalKtFile = it
+                fakeFile
+            }, moduleStructure, testServices)
+        } catch (e: SkipDependedModeException) {
+            // Skip the test if needed
+        } catch (e: ExecutionException) {
+            if (e.cause !is SkipDependedModeException)
+                throw Exception("Test succeeded in normal analysis mode but failed in depended analysis mode.", e)
+        } catch (e: Exception) {
+            throw Exception("Test succeeded in normal analysis mode but failed in depended analysis mode.", e)
+        }
     }
 
     private fun registerApplicationServices() {
@@ -130,5 +151,32 @@ abstract class AbstractLowLevelApiTest : TestWithDisposable() {
             tags = testInfo.tags
         )
     }
+
+    protected inline fun <R> analyseOnPooledThreadInReadAction(context: KtElement, crossinline action: KtAnalysisSession.() -> R): R =
+        executeOnPooledThreadInReadAction {
+            analyseForTest(context) { action() }
+        }
+
+    protected inline fun <T> runReadAction(crossinline runnable: () -> T): T {
+        return ApplicationManager.getApplication().runReadAction(Computable { runnable() })
+    }
+
+    protected inline fun <R> executeOnPooledThreadInReadAction(crossinline action: () -> R): R =
+        ApplicationManager.getApplication().executeOnPooledThread<R> { runReadAction(action) }.get()
+
+
+    protected fun <R> analyseForTest(contextElement: KtElement, action: KtAnalysisSession.() -> R): R {
+        return if (useDependedAnalysisSession) {
+            // Depended mode does not support analysing a KtFile. See org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir#getResolveStateForDependentCopy
+            if (contextElement is KtFile) throw SkipDependedModeException()
+
+            require(!contextElement.isPhysical)
+            analyseInDependedAnalysisSession(contextElement.containingKtFile.originalKtFile!!, contextElement, action)
+        } else {
+            analyse(contextElement, action)
+        }
+    }
+
+    private class SkipDependedModeException : Exception()
 }
 

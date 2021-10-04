@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.analyse
 import org.jetbrains.kotlin.analysis.api.calls.KtCall
 import org.jetbrains.kotlin.analysis.api.calls.KtDelegatedConstructorCallKind
 import org.jetbrains.kotlin.analysis.api.calls.KtErrorCallTarget
 import org.jetbrains.kotlin.analysis.api.calls.KtSuccessCallTarget
-import org.jetbrains.kotlin.analysis.api.fir.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.api.fir.test.framework.AbstractHLApiSingleModuleTest
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirSubstitutor
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -36,7 +34,7 @@ abstract class AbstractResolveCallTest : AbstractHLApiSingleModuleTest() {
         val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
 
         val actual = executeOnPooledThreadInReadAction {
-            analyse(ktFile) {
+            analyseForTest(expression) {
                 resolveCall(expression)?.stringRepresentation()
             }
         } ?: "null"

@@ -5,28 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir
 
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.Computable
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.DuplicatedFirSourceElementsException
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.analyse
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import java.io.File
-
-
-inline fun <T> runReadAction(crossinline runnable: () -> T): T {
-    return ApplicationManager.getApplication().runReadAction(Computable { runnable() })
-}
-
-fun <R> executeOnPooledThreadInReadAction(action: () -> R): R =
-    ApplicationManager.getApplication().executeOnPooledThread<R> { runReadAction(action) }.get()
-
-inline fun <R> analyseOnPooledThreadInReadAction(context: KtElement, crossinline action: KtAnalysisSession.() -> R): R =
-    executeOnPooledThreadInReadAction {
-        analyse(context) { action() }
-    }
-
 
 /**
  * Temporary

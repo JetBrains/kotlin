@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.fir.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.api.fir.test.framework.AbstractHLApiSingleFileTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.expressionMarkerProvider
-import org.jetbrains.kotlin.analysis.api.analyse
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtValueArgument
@@ -26,11 +24,11 @@ abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractHLApiSingleFil
             else -> null
         } ?: testServices.assertions.fail { "Unsupported expression: $element" }
         val constantValue = executeOnPooledThreadInReadAction {
-            analyse(expression) { expression.evaluate() }
+            analyseForTest(expression) { expression.evaluate() }
         }
         val actual = buildString {
             appendLine("expression: ${expression.text}")
-            appendLine("constant_value: ${analyse(ktFile) { constantValue?.stringRepresentation() }}")
+            appendLine("constant_value: ${analyseForTest(expression) { constantValue?.stringRepresentation() }}")
             appendLine("constant: ${(constantValue as? KtLiteralConstantValue<*>)?.toConst()}")
         }
         testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)

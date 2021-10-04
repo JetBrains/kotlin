@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.fir.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.api.fir.test.framework.AbstractHLApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.expressionMarkerProvider
-import org.jetbrains.kotlin.analysis.api.analyse
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
@@ -20,7 +18,7 @@ abstract class AbstractExpectedExpressionTypeTest : AbstractHLApiSingleFileTest(
         val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypAtCaret(ktFile) as KtExpression
 
         val actualExpectedTypeText: String? = executeOnPooledThreadInReadAction {
-            analyse(ktFile) {
+            analyseForTest(expressionAtCaret) {
                 expressionAtCaret.getExpectedType()?.asStringForDebugging()
             }
         }
