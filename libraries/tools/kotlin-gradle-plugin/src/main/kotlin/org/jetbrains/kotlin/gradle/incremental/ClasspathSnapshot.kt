@@ -43,7 +43,41 @@ class KotlinClassSnapshot(val classInfo: KotlinClassInfo) : ClassSnapshot()
 sealed class JavaClassSnapshot : ClassSnapshot()
 
 /** [JavaClassSnapshot] of a typical Java class. */
-class RegularJavaClassSnapshot(val serializedJavaClass: SerializedJavaClass) : JavaClassSnapshot()
+class RegularJavaClassSnapshot(
+
+    /** [AbiSnapshot] of the class excluding its fields and methods. */
+    val classAbiExcludingMembers: AbiSnapshot,
+
+    /** [AbiSnapshot]s of the class's fields. */
+    val fieldsAbi: List<AbiSnapshot>,
+
+    /** [AbiSnapshot]s of the class's methods. */
+    val methodsAbi: List<AbiSnapshot>
+
+) : JavaClassSnapshot()
+
+/** The ABI snapshot of a Java element (e.g., class, field, or method). */
+open class AbiSnapshot(
+
+    /** The name of the Java element. It is part of the Java element's ABI. */
+    val name: String,
+
+    /** The hash of the Java element's ABI. */
+    val abiHash: Long
+)
+
+/** TEST-ONLY: An [AbiSnapshot] that is used for testing only and must not be used in production code. */
+class AbiSnapshotForTests(
+    name: String,
+    abiHash: Long,
+
+    /** The Java element's ABI, captured in a [String]. */
+    @Suppress("unused") val abiValue: String
+
+) : AbiSnapshot(name, abiHash)
+
+/** [JavaClassSnapshot] of a typical Java class which uses protos internally. */
+class ProtoBasedJavaClassSnapshot(val serializedJavaClass: SerializedJavaClass) : JavaClassSnapshot()
 
 /**
  * [JavaClassSnapshot] of a Java class where there is nothing to capture.
@@ -58,4 +92,4 @@ object EmptyJavaClassSnapshot : JavaClassSnapshot()
  * the snapshot instead, so that at least it's still correct when used as an input of the `KotlinCompile` task (when the class contents have
  * changed, this snapshot will also change).
  */
-class ContentHashJavaClassSnapshot(val contentHash: ByteArray) : JavaClassSnapshot()
+class ContentHashJavaClassSnapshot(val contentHash: Long) : JavaClassSnapshot()

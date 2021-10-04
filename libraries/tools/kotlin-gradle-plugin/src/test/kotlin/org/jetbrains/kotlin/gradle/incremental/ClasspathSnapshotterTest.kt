@@ -3,14 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("SpellCheckingInspection")
-
 package org.jetbrains.kotlin.gradle.incremental
 
+import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.readBytes
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import java.io.File
 
 abstract class ClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
@@ -56,8 +57,61 @@ class KotlinClassesClasspathSnapshotterTest : ClasspathSnapshotterTest() {
     override val testSourceFile = SimpleKotlinClass(tmpDir)
 }
 
-class JavaClassesClasspathSnapshotterTest : ClasspathSnapshotterTest() {
-    override val testSourceFile = SimpleJavaClass(tmpDir)
+@RunWith(Parameterized::class)
+class JavaClassesClasspathSnapshotterTest(private val protoBased: Boolean) : ClasspathSnapshotTestCommon() {
+
+    companion object {
+        @Parameterized.Parameters(name = "protoBased={0}")
+        @JvmStatic
+        fun parameters() = listOf(true, false)
+    }
+
+    private val testSourceFile = SimpleJavaClass(tmpDir)
+
+    private lateinit var testClassSnapshot: ClassSnapshot
+
+    @Before
+    fun setUp() {
+        testClassSnapshot = testSourceFile.compile().snapshot()
+    }
+
+    private fun ClassFile.snapshot(): ClassSnapshot {
+        return if (protoBased) {
+            ClassSnapshotter.snapshot(listOf(ClassFileWithContents(this, readBytes()))).single()
+        } else {
+            JavaClassSnapshotter.snapshot(classContents = readBytes(), calledByUnitTests = true)
+        }
+    }
+
+    @Test
+    fun `test ClassSnapshotter's result against expected snapshot`() {
+        assertEquals(getExpectedSnapshotFile().readText(), testClassSnapshot.toGson())
+    }
+
+    private fun getExpectedSnapshotFile() = testSourceFile.sourceFile.asFile().path.let {
+        File(
+            it.substringBeforeLast("src") + "expected-snapshot" + it.substringAfterLast("src")
+                .substringBeforeLast('.') + "-protoBased=$protoBased.json"
+        )
+    }
+
+    @Test
+    fun `test ClassSnapshotter extracts ABI info from a class`() {
+        // Change public method signature
+        val updatedSnapshot = testSourceFile.changePublicMethodSignature().compile().snapshot()
+
+        // The snapshot must change
+        assertNotEquals(testClassSnapshot.toGson(), updatedSnapshot.toGson())
+    }
+
+    @Test
+    fun `test ClassSnapshotter does not extract non-ABI info from a class`() {
+        // Change method implementation
+        val updatedSnapshot = testSourceFile.changeMethodImplementation().compile().snapshot()
+
+        // The snapshot must not change
+        assertEquals(testClassSnapshot.toGson(), updatedSnapshot.toGson())
+    }
 }
 
 class JavaClassWithNestedClassesClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
@@ -73,7 +127,7 @@ class JavaClassWithNestedClassesClasspathSnapshotterTest : ClasspathSnapshotTest
 
     private fun TestSourceFile.compileAndSnapshotNestedClass(): ClassSnapshot {
         return compileAndSnapshotAll().single {
-            if (it is RegularJavaClassSnapshot) {
+            if (it is ProtoBasedJavaClassSnapshot) {
                 it.serializedJavaClass.classId.asString().replace('.', '$') == testSourceFile.nestedClassToTest
             } else false
         }

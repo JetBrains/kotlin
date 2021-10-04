@@ -147,6 +147,9 @@ object ClasspathChangesComputer {
                     incrementalJvmCache.markDirty(previousSnapshot.classInfo.className)
                 }
                 is RegularJavaClassSnapshot -> {
+                    TODO("Not yet implemented")
+                }
+                is ProtoBasedJavaClassSnapshot -> {
                     incrementalJvmCache.saveJavaClassProto(
                         source = null,
                         serializedJavaClass = previousSnapshot.serializedJavaClass,
@@ -181,6 +184,9 @@ object ClasspathChangesComputer {
                     )
                 }
                 is RegularJavaClassSnapshot -> {
+                    TODO("Not yet implemented")
+                }
+                is ProtoBasedJavaClassSnapshot -> {
                     incrementalJvmCache.saveJavaClassProto(
                         source = null,
                         serializedJavaClass = currentSnapshot.serializedJavaClass,

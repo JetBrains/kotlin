@@ -14,7 +14,6 @@ import java.security.MessageDigest
 import java.util.zip.ZipInputStream
 
 /** Computes a [ClasspathEntrySnapshot] of a classpath entry (directory or jar). */
-@Suppress("SpellCheckingInspection")
 object ClasspathEntrySnapshotter {
 
     private val DEFAULT_CLASS_FILTER = { unixStyleRelativePath: String, isDirectory: Boolean ->
@@ -66,7 +65,6 @@ object ClasspathEntrySnapshotter {
 }
 
 /** Creates [ClassSnapshot]s of classes. */
-@Suppress("SpellCheckingInspection")
 object ClassSnapshotter {
 
     /**
@@ -130,7 +128,7 @@ object ClassSnapshotter {
             val classFileWithContents = classNameToClassFile[regularClasses[index]]!!
             if (descriptor != null) {
                 try {
-                    RegularJavaClassSnapshot(descriptor.toSerializedJavaClass())
+                    ProtoBasedJavaClassSnapshot(descriptor.toSerializedJavaClass())
                 } catch (e: Throwable) {
                     if (isKnownExceptionWhenReadingDescriptor(e)) {
                         ContentHashJavaClassSnapshot(classFileWithContents.contents.md5())
@@ -299,5 +297,3 @@ private fun <K, V> List<K>.zipToMap(other: List<V>): LinkedHashMap<K, V> {
     }
     return map
 }
-
-private fun ByteArray.md5(): ByteArray = MessageDigest.getInstance("MD5").digest(this)
