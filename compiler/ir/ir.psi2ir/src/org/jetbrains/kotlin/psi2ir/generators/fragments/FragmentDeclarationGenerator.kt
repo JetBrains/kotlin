@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.psi.KtBlockCodeFragment
 import org.jetbrains.kotlin.psi2ir.generators.Generator
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.createBodyGenerator
+import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.types.KotlinType
 
 open class FragmentDeclarationGenerator(
@@ -91,31 +92,50 @@ open class FragmentDeclarationGenerator(
     private fun generateFragmentValueParameterDeclarations(irFunction: IrSimpleFunction) {
         val functionDescriptor = irFunction.descriptor
         functionDescriptor.valueParameters.forEachIndexed { index, valueParameterDescriptor ->
-            irFunction.valueParameters += declareParameter(valueParameterDescriptor).apply {
-                context.fragmentContext!!.capturedDescriptorToFragmentParameterMap[fragmentInfo.parameters[index]] = this.symbol
+            val parameterInfo = fragmentInfo.parameters[index]
+            irFunction.valueParameters += declareParameter(valueParameterDescriptor, parameterInfo).apply {
+                context.fragmentContext!!.capturedDescriptorToFragmentParameterMap[parameterInfo.descriptor] = this.symbol
             }
         }
     }
 
-    private fun declareParameter(descriptor: ValueParameterDescriptor): IrValueParameter {
-        // Parameter must be _assignable_:
-        // These parameters model the captured variables of the fragment. The captured
-        // _values_ are extracted from the call stack of the JVM being debugged, and supplied
-        // to the fragment evaluator via these parameters. Any modifications by the fragment
-        // are written directly to the parameter, and then extracted from the stack frame
-        // of the interpreter/JVM evaluating the fragment and written back into the call
-        // stack of the JVM being debugged.
+    private fun declareParameter(descriptor: ValueParameterDescriptor, parameterInfo: EvaluatorFragmentParameterInfo): IrValueParameter {
+        // Parameter must be _assignable_ if written by the fragment:
+        // These parameters model the captured variables of the fragment. The
+        // captured _values_ are extracted from the call stack of the JVM being
+        // debugged, and supplied to the fragment evaluator via these
+        // parameters.
+        //
+        // If the parameter is modified by the fragment, the parameter is boxed
+        // in a `Ref`, and the value extracted from that box upon return from
+        // the fragment, then written back into the stack frame of the JVM
+        // being debugged.
+        //
+        // The promotion to `Ref` and the replacement of loads/stores with the
+        // appropriate getfield/putfield API of the `Ref` is done _after_
+        // psi2ir, so for now we must mark the parameter as assignable for the
+        // of IR generation. The replacement is delayed because the JVM
+        // specific infrastructure (i.e. "SharedVariableContext") is not yet
+        // instantiated: PSI2IR is kept backend agnostic.
         return context.symbolTable.declareValueParameter(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            IrDeclarationOrigin.DEFINED,
+            if (shouldPromoteToSharedVariable(parameterInfo)) IrDeclarationOrigin.SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT else IrDeclarationOrigin.DEFINED,
             descriptor,
             descriptor.type.toIrType(),
-            (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType(),
+            descriptor.varargElementType?.toIrType(),
             null,
-            isAssignable = true
+            isAssignable = parameterInfo.isLValue
         )
     }
+
+    private fun shouldPromoteToSharedVariable(parameterInfo: EvaluatorFragmentParameterInfo) =
+        parameterInfo.isLValue ||
+                BindingContextUtils.isBoxedLocalCapturedInClosure(
+                    context.bindingContext,
+                    parameterInfo.descriptor
+                )
+
 
     private fun KotlinType.toIrType() = context.typeTranslator.translateType(this)
 
