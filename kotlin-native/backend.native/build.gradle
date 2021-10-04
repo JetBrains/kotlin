@@ -64,6 +64,19 @@ kotlinNativeInterop {
 
         pkg 'org.jetbrains.kotlin.backend.konan.files'
     }
+
+
+    env {
+        linker 'clang++'
+        linkOutputs ":kotlin-native:common:${hostName}Env"
+
+        headers fileTree('../common/src/env/headers') {
+            include '**/*.h'
+            include '**/*.hpp'
+        }
+
+        pkg 'org.jetbrains.kotlin.backend.konan.env'
+    }
 }
 
 
@@ -128,6 +141,7 @@ dependencies {
 
     compilerApi kotlinNativeInterop['llvm'].configuration
     compilerApi kotlinNativeInterop['files'].configuration
+    compilerApi kotlinNativeInterop['env'].configuration
 
 
     cli_bcApi sourceSets.compiler.output
@@ -142,6 +156,7 @@ jar {
     from sourceSets.cli_bc.output,
             sourceSets.compiler.output,
             sourceSets.filesInteropStubs.output,
+            sourceSets.envInteropStubs.output,
             sourceSets.llvmInteropStubs.output
 
     dependsOn ':kotlin-native:runtime:hostRuntime', 'external_jars'

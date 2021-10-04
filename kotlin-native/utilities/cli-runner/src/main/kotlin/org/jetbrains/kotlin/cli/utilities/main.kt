@@ -8,6 +8,8 @@ import org.jetbrains.kotlin.native.interop.gen.defFileDependencies
 import org.jetbrains.kotlin.cli.bc.main as konancMain
 import org.jetbrains.kotlin.cli.klib.main as klibMain
 import org.jetbrains.kotlin.cli.bc.mainNoExitWithGradleRenderer as konancMainForGradle
+import org.jetbrains.kotlin.backend.konan.env.setEnv
+import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 
 private fun mainImpl(args: Array<String>, konancMain: (Array<String>) -> Unit) {
     val utilityName = args[0]
@@ -59,5 +61,11 @@ private fun mainImpl(args: Array<String>, konancMain: (Array<String>) -> Unit) {
 
 fun main(args: Array<String>) = mainImpl(args, ::konancMain)
 
-fun daemonMain(args: Array<String>) = mainImpl(args, ::konancMainForGradle)
+private fun setupClangEnv() {
+    setEnv("LIBCLANG_DISABLE_CRASH_RECOVERY", "1")
+}
 
+fun daemonMain(args: Array<String>) = usingNativeMemoryAllocator {
+    setupClangEnv() // For in-process invocation have to setup proper environment manually.
+    mainImpl(args, ::konancMainForGradle)
+}

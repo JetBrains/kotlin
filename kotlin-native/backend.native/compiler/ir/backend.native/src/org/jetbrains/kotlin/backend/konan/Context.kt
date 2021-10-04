@@ -50,12 +50,11 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.util.disposeNativeMemoryAllocator
 import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
+import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 
 internal class InlineFunctionOriginInfo(val irFile: IrFile, val startOffset: Int, val endOffset: Int)
 
@@ -381,14 +380,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         }
         tryDisposeLLVMContext()
         llvmDisposed = true
-    }
-
-    private var nativeMemFreed = false
-
-    fun freeNativeMem() {
-        if (nativeMemFreed) return
-        disposeNativeMemoryAllocator()
-        nativeMemFreed = true
     }
 
     val cStubsManager = CStubsManager(config.target)

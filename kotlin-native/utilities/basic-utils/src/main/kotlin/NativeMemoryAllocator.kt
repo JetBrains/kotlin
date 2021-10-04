@@ -7,14 +7,50 @@ package org.jetbrains.kotlin.konan.util
 
 import sun.misc.Unsafe
 
-private val allocatorHolder = ThreadLocal<NativeMemoryAllocator>()
-val nativeMemoryAllocator: NativeMemoryAllocator
-    get() = allocatorHolder.get() ?: NativeMemoryAllocator().also { allocatorHolder.set(it) }
+class ThreadSafeDisposableHelper<T>(create: () -> T, private val dispose: (T) -> Unit) {
+    private val create_ = create
 
-fun disposeNativeMemoryAllocator() {
-    allocatorHolder.get()?.freeAll()
-    allocatorHolder.remove()
+    var holder: T? = null
+        private set
+
+    private var counter = 0
+    private val lock = Any()
+
+    fun create() {
+        synchronized(lock) {
+            if (counter++ == 0) {
+                check(holder == null)
+                holder = create_()
+            }
+        }
+    }
+
+    fun dispose() {
+        synchronized(lock) {
+            if (--counter == 0) {
+                dispose(holder!!)
+                holder = null
+            }
+        }
+    }
+
+    inline fun <R> usingDisposable(block: () -> R): R {
+        create()
+        return try {
+            block()
+        } finally {
+            dispose()
+        }
+    }
 }
+
+@PublishedApi
+internal val allocatorDisposeHelper = ThreadSafeDisposableHelper({ NativeMemoryAllocator() }, { it.freeAll() })
+
+inline fun <R> usingNativeMemoryAllocator(block: () -> R) = allocatorDisposeHelper.usingDisposable(block)
+
+val nativeMemoryAllocator: NativeMemoryAllocator
+    get() = allocatorDisposeHelper.holder ?: error("Native memory allocator hasn't been created")
 
 // 256 buckets for sizes <= 2048 padded to 8
 // 256 buckets for sizes <= 64KB padded to 256
@@ -32,15 +68,23 @@ private const val ChunkHeaderSize = 2 * Int.SIZE_BYTES // chunk size + alignment
 private const val RawChunkSize: Long = 4L * 1024 * 1024
 
 class NativeMemoryAllocator {
+    companion object {
+        fun init() = allocatorDisposeHelper.create()
+        fun dispose() = allocatorDisposeHelper.dispose()
+    }
+
     private fun alignUp(x: Long, align: Int) = (x + align - 1) and (align - 1).toLong().inv()
     private fun alignUp(x: Int, align: Int) = (x + align - 1) and (align - 1).inv()
 
     private val smallChunks = LongArray(ChunkBucketSize)
     private val mediumChunks = LongArray(ChunkBucketSize)
     private val bigChunks = LongArray(ChunkBucketSize)
+    private val lock = Any()
+
+    fun alloc(size: Long, align: Int) = synchronized(lock) { allocNoLock(size, align) }
 
     // Chunk layout: [chunk size,...padding...,diff to start,aligned data start,.....data.....]
-    fun alloc(size: Long, align: Int): Long {
+    private fun allocNoLock(size: Long, align: Int): Long {
         val totalChunkSize = ChunkHeaderSize + size + align
         val ptr = ChunkHeaderSize + when {
             totalChunkSize <= MaxSmallSize -> allocFromFreeList(totalChunkSize.toInt(), SmallChunksSizeAlignment, smallChunks)
@@ -91,7 +135,9 @@ class NativeMemoryAllocator {
         return (rawChunks.last() + rawOffset).also { rawOffset += size }
     }
 
-    fun free(mem: Long) {
+    fun free(mem: Long) = synchronized(lock) { freeNoLock(mem) }
+
+    private fun freeNoLock(mem: Long) {
         val chunkStart = mem - ChunkHeaderSize - unsafe.getInt(mem - Int.SIZE_BYTES)
         val chunkSize = unsafe.getInt(chunkStart)
         when {
@@ -102,7 +148,7 @@ class NativeMemoryAllocator {
         }
     }
 
-    fun freeAll() {
+    internal fun freeAll() {
         for (i in 0 until ChunkBucketSize) {
             smallChunks[i] = 0L
             mediumChunks[i] = 0L
