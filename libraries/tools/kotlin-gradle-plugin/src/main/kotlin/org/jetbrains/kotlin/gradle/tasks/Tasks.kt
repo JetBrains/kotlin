@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.*
 import org.gradle.api.invocation.Gradle
-import org.gradle.api.attributes.Attribute
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.model.ReplacedBy
@@ -53,15 +53,14 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.targets.js.ir.isProduceUnzippedKlib
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
-import java.util.LinkedHashSet
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
@@ -844,7 +843,7 @@ abstract class KotlinCompile @Inject constructor(
     private fun getClasspathChanges(inputChanges: InputChanges): ClasspathChanges {
         val fileChanges = inputChanges.getFileChanges(classpathSnapshotProperties.classpathSnapshot).toList()
         return if (fileChanges.isEmpty()) {
-            ClasspathChanges.Available(LinkedHashSet(), LinkedHashSet())
+            ClasspathChanges.Available(emptySet(), emptySet())
         } else {
             val previousClasspathEntrySnapshotFiles = getPreviousClasspathEntrySnapshotFiles()
             if (previousClasspathEntrySnapshotFiles.isEmpty()) {

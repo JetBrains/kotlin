@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.io.File
-import javax.tools.ToolProvider
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class JavaClassNameTest {
 
@@ -73,15 +72,7 @@ class JavaClassNameTest {
         }
         val classesDir = tmpDir.newFolder()
 
-        val compiler = ToolProvider.getSystemJavaCompiler()
-        compiler.getStandardFileManager(null, null, null).use { fileManager ->
-            val compilationTask = compiler.getTask(
-                null, fileManager, null,
-                listOf("-d", classesDir.path), null,
-                fileManager.getJavaFileObjectsFromFiles(listOf(sourceFile))
-            )
-            assertTrue(compilationTask.call(), "Failed to compile '$className'")
-        }
+        KotlinTestUtils.compileJavaFiles(listOf(sourceFile), listOf("-d", classesDir.path))
 
         return classesDir.walk().filter { it.isFile }
             .sortedBy { it.path.substringBefore(".class") }

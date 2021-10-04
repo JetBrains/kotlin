@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.incremental
 
-import org.junit.Assert.*
+import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.readBytes
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 abstract class ClasspathSnapshotSerializerTest : ClasspathSnapshotTestCommon() {
@@ -32,23 +33,12 @@ class JavaClassesClasspathSnapshotSerializerTest : ClasspathSnapshotSerializerTe
 
     @Test
     override fun `test ClassSnapshotDataSerializer`() {
-        val originalSnapshot = testSourceFile.compileAndSnapshot()
+        val originalSnapshot = testSourceFile.compile().let {
+            ClassSnapshotter.snapshot(listOf(ClassFileWithContents(it, it.readBytes())), includeDebugInfoInSnapshot = false)
+        }.single()
         val serializedSnapshot = ClassSnapshotDataSerializer.toByteArray(originalSnapshot)
         val deserializedSnapshot = ClassSnapshotDataSerializer.fromByteArray(serializedSnapshot)
 
-        // The deserialized object does not exactly match the original object as they contain fields called `memoizedSerializedSize` which
-        // are not part of the serialized data and their values seem to be generated separately. Therefore, we remove these fields from the
-        // check below.
-        assertNotEquals(originalSnapshot.toGson(), deserializedSnapshot.toGson())
-        assertEquals(
-            originalSnapshot.toGson().stripLinesContainingText("memoizedSerializedSize"),
-            deserializedSnapshot.toGson().stripLinesContainingText("memoizedSerializedSize")
-        )
-        // Add another check to confirm that those fields are not part of the serialized data.
-        assertArrayEquals(serializedSnapshot, ClassSnapshotDataSerializer.toByteArray(deserializedSnapshot))
-    }
-
-    private fun String.stripLinesContainingText(text: String): String {
-        return lines().filterNot { it.contains(text, ignoreCase = true) }.joinToString("\n")
+        assertEquals(originalSnapshot.toGson(), deserializedSnapshot.toGson())
     }
 }

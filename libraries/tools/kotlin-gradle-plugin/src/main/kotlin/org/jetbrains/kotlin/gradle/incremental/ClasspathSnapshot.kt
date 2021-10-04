@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.incremental
 
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.SerializedJavaClass
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 /** Snapshot of a classpath. It consists of a list of [ClasspathEntrySnapshot]s. */
 class ClasspathSnapshot(val classpathEntrySnapshots: List<ClasspathEntrySnapshot>)
@@ -37,13 +39,63 @@ class ClasspathEntrySnapshot(
 sealed class ClassSnapshot
 
 /** [ClassSnapshot] of a Kotlin class. */
-class KotlinClassSnapshot(val classInfo: KotlinClassInfo) : ClassSnapshot()
+class KotlinClassSnapshot(
+    val classInfo: KotlinClassInfo,
+    val supertypes: List<JvmClassName>
+) : ClassSnapshot()
 
 /** [ClassSnapshot] of a Java class. */
 sealed class JavaClassSnapshot : ClassSnapshot()
 
 /** [JavaClassSnapshot] of a typical Java class. */
-class RegularJavaClassSnapshot(val serializedJavaClass: SerializedJavaClass) : JavaClassSnapshot()
+class RegularJavaClassSnapshot(
+
+    /** [ClassId] of the class. It is part of the class's ABI ([classAbiExcludingMembers]). */
+    val classId: ClassId,
+
+    /** The superclass and interfaces of the class. It is part of the class's ABI ([classAbiExcludingMembers]). */
+    val supertypes: List<JvmClassName>,
+
+    /** [AbiSnapshot] of the class excluding its fields and methods. */
+    val classAbiExcludingMembers: AbiSnapshot,
+
+    /** [AbiSnapshot]s of the class's fields. */
+    val fieldsAbi: List<AbiSnapshot>,
+
+    /** [AbiSnapshot]s of the class's methods. */
+    val methodsAbi: List<AbiSnapshot>
+
+) : JavaClassSnapshot() {
+
+    val className by lazy {
+        JvmClassName.byClassId(classId).also {
+            check(it == JvmClassName.byInternalName(classAbiExcludingMembers.name))
+        }
+    }
+}
+
+/** The ABI snapshot of a Java element (e.g., class, field, or method). */
+open class AbiSnapshot(
+
+    /** The name of the Java element. It is part of the Java element's ABI. */
+    val name: String,
+
+    /** The hash of the Java element's ABI. */
+    val abiHash: Long
+)
+
+/** TEST-ONLY: An [AbiSnapshot] that is used for testing only and must not be used in production code. */
+class AbiSnapshotForTests(
+    name: String,
+    abiHash: Long,
+
+    /** The Java element's ABI, captured in a [String]. */
+    @Suppress("unused") val abiValue: String
+
+) : AbiSnapshot(name, abiHash)
+
+/** [JavaClassSnapshot] of a typical Java class which uses protos internally. */
+class ProtoBasedJavaClassSnapshot(val serializedJavaClass: SerializedJavaClass) : JavaClassSnapshot()
 
 /**
  * [JavaClassSnapshot] of a Java class where there is nothing to capture.
@@ -58,4 +110,4 @@ object EmptyJavaClassSnapshot : JavaClassSnapshot()
  * the snapshot instead, so that at least it's still correct when used as an input of the `KotlinCompile` task (when the class contents have
  * changed, this snapshot will also change).
  */
-class ContentHashJavaClassSnapshot(val contentHash: ByteArray) : JavaClassSnapshot()
+class ContentHashJavaClassSnapshot(val contentHash: Long) : JavaClassSnapshot()
