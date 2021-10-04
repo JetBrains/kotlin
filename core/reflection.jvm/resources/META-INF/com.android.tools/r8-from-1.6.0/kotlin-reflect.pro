@@ -26,4 +26,3 @@
 
 # Don't note on internal APIs, as there is some class relocating that shrinkers may unnecessarily find suspicious.
 -dontwarn kotlin.reflect.jvm.internal.**
-
