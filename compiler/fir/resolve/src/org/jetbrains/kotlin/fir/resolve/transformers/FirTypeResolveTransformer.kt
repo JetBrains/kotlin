@@ -195,17 +195,6 @@ open class FirTypeResolveTransformer(
         return block
     }
 
-    override fun transformDelegatedConstructorCall(
-        delegatedConstructorCall: FirDelegatedConstructorCall,
-        data: Any?
-    ): FirStatement {
-        delegatedConstructorCall.replaceConstructedTypeRef(
-            delegatedConstructorCall.constructedTypeRef.transform<FirTypeRef, Any?>(this, data)
-        )
-        delegatedConstructorCall.transformCalleeReference(this, data)
-        return delegatedConstructorCall
-    }
-
     override fun transformAnnotation(annotation: FirAnnotation, data: Any?): FirStatement {
         annotation.transformAnnotationTypeRef(this, data)
         return annotation
@@ -230,12 +219,22 @@ open class FirTypeResolveTransformer(
         firClass: FirClass,
         data: Any?
     ): FirStatement {
-        return withScopeCleanup {
-            // Otherwise annotations may try to resolve
-            // themselves as inner classes of the `firClass`
-            // if their names match
+
+        withScopeCleanup {
             firClass.transformAnnotations(this, null)
 
+            if (firClass is FirRegularClass) {
+                firClass.addTypeParametersScope()
+            }
+
+            // ConstructedTypeRef should be resolved only with type parameters, but not with nested classes and classes from supertypes
+            for (constructor in firClass.declarations.filterIsInstance<FirConstructor>()) {
+                constructor.delegatedConstructor?.let(this::resolveConstructedTypeRefForDelegatedConstructorCall)
+            }
+
+        }
+
+        return withScopeCleanup {
             // ? Is it Ok to use original file session here ?
             val superTypes = lookupSuperTypes(
                 firClass,
@@ -262,8 +261,18 @@ open class FirTypeResolveTransformer(
 
             // Note that annotations are still visited here
             // again, although there's no need in it
-            transformElement(firClass, data) as FirClass
+            transformElement(firClass, data)
         }
+    }
+
+    private fun resolveConstructedTypeRefForDelegatedConstructorCall(
+        delegatedConstructorCall: FirDelegatedConstructorCall
+    ) {
+        delegatedConstructorCall.replaceConstructedTypeRef(
+            delegatedConstructorCall.constructedTypeRef.transform<FirTypeRef, Any?>(this, null)
+        )
+
+        delegatedConstructorCall.transformCalleeReference(this, null)
     }
 
     private fun FirMemberDeclaration.addTypeParametersScope() {

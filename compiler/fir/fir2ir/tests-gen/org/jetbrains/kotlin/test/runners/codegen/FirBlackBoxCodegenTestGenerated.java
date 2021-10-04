@@ -12542,6 +12542,22 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/correctFrontendCode")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CorrectFrontendCode {
+        @Test
+        public void testAllFilesPresentInCorrectFrontendCode() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/correctFrontendCode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("privateNestedClassInSuper.kt")
+        public void testPrivateNestedClassInSuper() throws Exception {
+            runTest("compiler/testData/codegen/box/correctFrontendCode/privateNestedClassInSuper.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/dataClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class DataClasses {
