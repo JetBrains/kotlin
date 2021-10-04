@@ -5,22 +5,13 @@
 
 package kotlinx.validation
 
-import org.gradle.api.Action
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.SourceSetContainer
-import org.gradle.api.tasks.Sync
-import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import java.io.File
+import org.gradle.api.*
+import org.gradle.api.plugins.*
+import org.gradle.api.provider.*
+import org.gradle.api.tasks.*
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.*
+import java.io.*
 
 const val API_DIR = "api"
 
@@ -45,67 +36,96 @@ class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
     }
 
     private fun configureProject(project: Project, extension: ApiValidationExtension) {
-        project.pluginManager.withPlugin("kotlin") {
-            if (project.name in extension.ignoredProjects) return@withPlugin
-            project.sourceSets.all { sourceSet ->
-                if (sourceSet.name != SourceSet.MAIN_SOURCE_SET_NAME) {
-                    return@all
-                }
-                project.configureApiTasks(sourceSet, extension, TargetConfig(project))
+        configureKotlinPlugin(project, extension)
+        configureAndroidPlugin(project, extension)
+        configureMultiplatformPlugin(project, extension)
+    }
+
+    private fun configurePlugin(
+        name: String,
+        project: Project,
+        extension: ApiValidationExtension,
+        action: Action<AppliedPlugin>
+    ) = project.pluginManager.withPlugin(name) {
+        if (project.name in extension.ignoredProjects) return@withPlugin
+        action.execute(it)
+    }
+
+    private fun configureMultiplatformPlugin(
+        project: Project,
+        extension: ApiValidationExtension
+    ) = configurePlugin("kotlin-multiplatform", project, extension) {
+        if (project.name in extension.ignoredProjects) return@configurePlugin
+        val kotlin = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
+
+        // Create common tasks for multiplatform
+        val commonApiDump = project.tasks.register("apiDump") {
+            it.group = "other"
+            it.description = "Task that collects all target specific dump tasks"
+        }
+
+        val commonApiCheck: TaskProvider<Task>? = project.tasks.register("apiCheck") {
+            it.group = "verification"
+            it.description = "Shortcut task that depends on all specific check tasks"
+        }.apply { project.tasks.named("check") { it.dependsOn(this) } }
+
+        val jvmTargetCountProvider = project.provider {
+            kotlin.targets.count {
+                it.platformType in arrayOf(
+                    KotlinPlatformType.jvm,
+                    KotlinPlatformType.androidJvm
+                )
             }
         }
 
-        project.pluginManager.withPlugin("kotlin-android") {
-            if (project.name in extension.ignoredProjects) return@withPlugin
-            val androidExtension = project.extensions.getByName("kotlin") as KotlinAndroidProjectExtension
-            androidExtension.target.compilations.matching {
-                it.compilationName == "release"
-            }.all {
-                project.configureKotlinCompilation(it, extension, useOutput = true)
-            }
+        val dirConfig = jvmTargetCountProvider.map {
+            if (it == 1) DirConfig.COMMON else DirConfig.TARGET_DIR
         }
 
-        project.pluginManager.withPlugin("kotlin-multiplatform") {
-            if (project.name in extension.ignoredProjects) return@withPlugin
-            val kotlin = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
-
-
-            // Create common tasks for multiplatform
-            val commonApiDump = project.tasks.register("apiDump") {
-                it.group = "other"
-                it.description = "Task that collects all target specific dump tasks"
-            }
-
-            val commonApiCheck: TaskProvider<Task>? = project.tasks.register("apiCheck") {
-                it.group = "verification"
-                it.description = "Shortcut task that depends on all specific check tasks"
-            }.apply { project.tasks.named("check") { it.dependsOn(this) } }
-
-            val jvmTargetCountProvider = project.provider {
-                kotlin.targets.count {
-                    it.platformType in arrayOf(KotlinPlatformType.jvm,
-                                               KotlinPlatformType.androidJvm)
+        kotlin.targets.matching {
+            it.platformType == KotlinPlatformType.jvm || it.platformType == KotlinPlatformType.androidJvm
+        }.all { target ->
+            val targetConfig = TargetConfig(project, target.name, dirConfig)
+            if (target.platformType == KotlinPlatformType.jvm) {
+                target.compilations.matching { it.name == "main" }.all {
+                    project.configureKotlinCompilation(it, extension, targetConfig, commonApiDump, commonApiCheck)
+                }
+            } else if (target.platformType == KotlinPlatformType.androidJvm) {
+                target.compilations.matching { it.name == "release" }.all {
+                    project.configureKotlinCompilation(
+                        it,
+                        extension,
+                        targetConfig,
+                        commonApiDump,
+                        commonApiCheck,
+                        useOutput = true
+                    )
                 }
             }
+        }
+    }
 
-            val dirConfig = jvmTargetCountProvider.map {
-                if (it == 1) DirConfig.COMMON else DirConfig.TARGET_DIR
-            }
+    private fun configureAndroidPlugin(
+        project: Project,
+        extension: ApiValidationExtension
+    ) = configurePlugin("kotlin-android", project, extension) {
+        val androidExtension = project.extensions.getByName("kotlin") as KotlinAndroidProjectExtension
+        androidExtension.target.compilations.matching {
+            it.compilationName == "release"
+        }.all {
+            project.configureKotlinCompilation(it, extension, useOutput = true)
+        }
+    }
 
-            kotlin.targets.matching {
-                it.platformType == KotlinPlatformType.jvm || it.platformType == KotlinPlatformType.androidJvm
-            }.all { target ->
-                val targetConfig = TargetConfig(project, target.name, dirConfig)
-                if (target.platformType == KotlinPlatformType.jvm) {
-                    target.compilations.matching { it.name == "main" }.all {
-                        project.configureKotlinCompilation(it, extension, targetConfig, commonApiDump, commonApiCheck)
-                    }
-                } else if (target.platformType == KotlinPlatformType.androidJvm) {
-                    target.compilations.matching { it.name == "release" }.all {
-                        project.configureKotlinCompilation(it, extension, targetConfig, commonApiDump, commonApiCheck, useOutput = true)
-                    }
-                }
+    private fun configureKotlinPlugin(
+        project: Project,
+        extension: ApiValidationExtension
+    ) = configurePlugin("kotlin", project, extension) {
+        project.sourceSets.all { sourceSet ->
+            if (sourceSet.name != SourceSet.MAIN_SOURCE_SET_NAME) {
+                return@all
             }
+            project.configureApiTasks(sourceSet, extension, TargetConfig(project))
         }
     }
 }
@@ -125,18 +145,25 @@ private class TargetConfig constructor(
 
     val apiDir
         get() = dirConfig?.map { dirConfig ->
-            when {
-                dirConfig == DirConfig.COMMON -> API_DIR
-
+            when (dirConfig) {
+                DirConfig.COMMON -> API_DIR
                 else -> "$API_DIR/$targetName"
             }
         } ?: API_DIR_PROVIDER
-
 }
 
-
-enum class DirConfig {
+private enum class DirConfig {
+    /**
+     * `api` directory for .api files.
+     * Used in single target projects
+     */
     COMMON,
+    /**
+     * Target-based directory, used in multitarget setups.
+     * E.g. for the project with targets jvm and android,
+     * the resulting paths will be
+     * `/api/jvm/project.api` and `/api/android/project.api`
+     */
     TARGET_DIR,
 }
 
@@ -156,7 +183,7 @@ private fun Project.configureKotlinCompilation(
         // Do not enable task for empty umbrella modules
         isEnabled =
             apiCheckEnabled(extension) && compilation.allKotlinSourceSets.any { it.kotlin.srcDirs.any { it.exists() } }
-        // 'group' is not specified deliberately so it will be hidden from ./gradlew tasks
+        // 'group' is not specified deliberately, so it will be hidden from ./gradlew tasks
         description =
             "Builds Kotlin API for 'main' compilations of $projectName. Complementary task and shouldn't be called manually"
         if (useOutput) {
@@ -213,7 +240,7 @@ private fun Project.configureCheckTasks(
     val projectName = project.name
     val apiCheckDir = targetConfig.apiDir.map {
         projectDir.resolve(it).also { r ->
-            logger.lifecycle("Configuring api for ${targetConfig.targetName} to $r")
+            logger.debug("Configuring api for ${targetConfig.targetName ?: "jvm"} to $r")
         }
     }
     val apiCheck = task<ApiCompareCompareTask>(targetConfig.apiTaskName("Check")) {

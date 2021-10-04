@@ -50,6 +50,8 @@ The plugin provides two tasks:
   in project `api` subfolder. This task is automatically inserted into `check` pipeline, so both `build` and `check`
   tasks will start checking public API upon their execution.
 
+> For projects with multiple JVM targets, multiple subfolders will be created, e.g. `api/jvm` and `api/android`
+
 ### Optional parameters
 
 Binary compatibility validator can be additionally configured with the following DSL:
@@ -145,7 +147,7 @@ When starting to validate your library public API, we recommend the following wo
 
 ### Classes
 
-A class is considered to be effectively public if all of the following conditions are met:
+A class is considered to be effectively public if all the following conditions are met:
 
  - it has public or protected JVM access (`ACC_PUBLIC` or `ACC_PROTECTED`)
  - it has one of the following visibilities in Kotlin:
@@ -163,7 +165,7 @@ A class is considered to be effectively public if all of the following condition
 ### Members
 
 A member of the class (i.e. a field or a method) is considered to be effectively public
-if all of the following conditions are met:
+if all the following conditions are met:
 
  - it has public or protected JVM access (`ACC_PUBLIC` or `ACC_PROTECTED`)
  - it has one of the following visibilities in Kotlin:
