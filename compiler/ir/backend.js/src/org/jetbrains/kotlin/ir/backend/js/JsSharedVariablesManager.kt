@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 
 class JsSharedVariablesManager(context: JsIrBackendContext) : SharedVariablesManager {
@@ -59,7 +60,7 @@ class JsSharedVariablesManager(context: JsIrBackendContext) : SharedVariablesMan
 
     override fun defineSharedValue(originalDeclaration: IrVariable, sharedVariableDeclaration: IrVariable) = sharedVariableDeclaration
 
-    override fun getSharedValue(sharedVariableSymbol: IrVariableSymbol, originalGet: IrGetValue): IrExpression {
+    override fun getSharedValue(sharedVariableSymbol: IrValueSymbol, originalGet: IrGetValue): IrExpression {
 
         return IrCallImpl(
             originalGet.startOffset,
@@ -83,7 +84,7 @@ class JsSharedVariablesManager(context: JsIrBackendContext) : SharedVariablesMan
         }
     }
 
-    override fun setSharedValue(sharedVariableSymbol: IrVariableSymbol, originalSet: IrSetValue): IrExpression {
+    override fun setSharedValue(sharedVariableSymbol: IrValueSymbol, originalSet: IrSetValue): IrExpression {
         return IrCallImpl(
             originalSet.startOffset,
             originalSet.endOffset,

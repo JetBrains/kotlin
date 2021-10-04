@@ -83,6 +83,8 @@ interface IrDeclarationOrigin {
     object CONTINUATION : IrDeclarationOriginImpl("CONTINUATION", isSynthetic = true)
     object LOWERED_SUSPEND_FUNCTION : IrDeclarationOriginImpl("LOWERED_SUSPEND_FUNCTION", isSynthetic = true)
 
+    object SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT : IrDeclarationOriginImpl("SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT", isSynthetic = true)
+
     val isSynthetic: Boolean get() = false
 }
 

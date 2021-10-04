@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.constructors
@@ -74,7 +74,7 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
         )
     }
 
-    override fun getSharedValue(sharedVariableSymbol: IrVariableSymbol, originalGet: IrGetValue) =
+    override fun getSharedValue(sharedVariableSymbol: IrValueSymbol, originalGet: IrGetValue) =
             IrCallImpl(originalGet.startOffset, originalGet.endOffset,
                     originalGet.type, elementProperty.getter!!.symbol,
                     elementProperty.getter!!.typeParameters.size, elementProperty.getter!!.valueParameters.size).apply {
@@ -84,7 +84,7 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
                 )
             }
 
-    override fun setSharedValue(sharedVariableSymbol: IrVariableSymbol, originalSet: IrSetValue) =
+    override fun setSharedValue(sharedVariableSymbol: IrValueSymbol, originalSet: IrSetValue) =
             IrCallImpl(originalSet.startOffset, originalSet.endOffset, context.irBuiltIns.unitType,
                     elementProperty.setter!!.symbol, elementProperty.setter!!.typeParameters.size,
                     elementProperty.setter!!.valueParameters.size).apply {

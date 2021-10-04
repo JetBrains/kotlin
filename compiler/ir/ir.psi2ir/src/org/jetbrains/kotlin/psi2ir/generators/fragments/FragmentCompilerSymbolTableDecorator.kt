@@ -31,10 +31,10 @@ class FragmentCompilerSymbolTableDecorator(
         if (descriptor !is ReceiverParameterDescriptor) return super.referenceValueParameter(descriptor)
 
         val finderPredicate = when (val receiverValue = descriptor.value) {
-            is ExtensionReceiver -> { targetDescriptor: DeclarationDescriptor ->
+            is ExtensionReceiver -> { (targetDescriptor, _): EvaluatorFragmentParameterInfo ->
                 receiverValue == (targetDescriptor as? ReceiverParameterDescriptor)?.value
             }
-            is ThisClassReceiver -> { targetDescriptor: DeclarationDescriptor ->
+            is ThisClassReceiver -> { (targetDescriptor, _): EvaluatorFragmentParameterInfo ->
                 receiverValue.classDescriptor == targetDescriptor.original
             }
             else -> TODO("Unimplemented")
@@ -50,7 +50,7 @@ class FragmentCompilerSymbolTableDecorator(
 
     override fun referenceValue(value: ValueDescriptor): IrValueSymbol {
         val parameterPosition =
-            fragmentInfo.parameters.indexOf(value)
+            fragmentInfo.parameters.indexOfFirst { it.descriptor == value }
         if (parameterPosition > -1) {
             return super.referenceValueParameter(fragmentInfo.methodDescriptor.valueParameters[parameterPosition])
         }
