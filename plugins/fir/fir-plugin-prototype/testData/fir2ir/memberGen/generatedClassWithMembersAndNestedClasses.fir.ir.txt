@@ -67,11 +67,20 @@ FILE fqName:foo fileName:__GENERATED DECLARATIONS__.kt
   CLASS GENERATED[AllOpenClassGeneratorKey] CLASS name:AllOpenGenerated modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.AllOpenGenerated
     CONSTRUCTOR GENERATED[AllOpenClassGeneratorKey] visibility:public <> () returnType:foo.AllOpenGenerated [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[AllOpenClassGeneratorKey] CLASS name:AllOpenGenerated modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CLASS GENERATED[AllOpenClassGeneratorKey] CLASS name:NestedFoo modality:FINAL visibility:public superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.AllOpenGenerated.NestedFoo
       CONSTRUCTOR GENERATED[AllOpenClassGeneratorKey] visibility:public <> () returnType:foo.AllOpenGenerated.NestedFoo [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[AllOpenClassGeneratorKey] CLASS name:NestedFoo modality:FINAL visibility:public superTypes:[kotlin.Any]'
       FUN GENERATED[AllOpenClassGeneratorKey] name:materialize visibility:public modality:FINAL <> ($this:foo.AllOpenGenerated.NestedFoo) returnType:bar.Foo
         $this: VALUE_PARAMETER name:<this> type:foo.AllOpenGenerated.NestedFoo
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun materialize (): bar.Foo declared in foo.AllOpenGenerated.NestedFoo'
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in bar.Foo' type=bar.Foo origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
@@ -88,8 +97,14 @@ FILE fqName:foo fileName:__GENERATED DECLARATIONS__.kt
     CLASS GENERATED[AllOpenClassGeneratorKey] CLASS name:NestedBar modality:FINAL visibility:public superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.AllOpenGenerated.NestedBar
       CONSTRUCTOR GENERATED[AllOpenClassGeneratorKey] visibility:public <> () returnType:foo.AllOpenGenerated.NestedBar [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[AllOpenClassGeneratorKey] CLASS name:NestedBar modality:FINAL visibility:public superTypes:[kotlin.Any]'
       FUN GENERATED[AllOpenClassGeneratorKey] name:materialize visibility:public modality:FINAL <> ($this:foo.AllOpenGenerated.NestedBar) returnType:bar.Bar
         $this: VALUE_PARAMETER name:<this> type:foo.AllOpenGenerated.NestedBar
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun materialize (): bar.Bar declared in foo.AllOpenGenerated.NestedBar'
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in bar.Bar' type=bar.Bar origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
