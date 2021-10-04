@@ -14,7 +14,8 @@ inline fun <reified T> boo() = "boo"
 // MODULE: main(#my-libr@ry)
 // FILE: box.kt
 // MODULE_KIND: PLAIN
-// CHECK_CONTAINS_NO_CALLS: box except=assertEquals
+// CHECK_CONTAINS_NO_CALLS: box except=assertEquals TARGET_BACKENDS=JS
+// CHECK_CONTAINS_NO_CALLS: box except=assertEquals$default IGNORED_BACKENDS=JS
 
 fun box(): String {
     assertEquals("foo", foo())

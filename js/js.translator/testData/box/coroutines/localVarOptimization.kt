@@ -1,9 +1,10 @@
 // EXPECTED_REACHABLE_NODES: 1401
-// DECLARES_VARIABLE: function=doResume name=k
-// PROPERTY_READ_COUNT: name=local$o count=1
-// PROPERTY_WRITE_COUNT: name=local$o count=2
-
-// Unmute when JS_IR supports release coroutines
+// DECLARES_VARIABLE: function=doResume name=k TARGET_BACKENDS=JS
+// DECLARES_VARIABLE: function=doResume_0_k$ name=k IGNORED_BACKENDS=JS
+// PROPERTY_READ_COUNT: name=local$o count=1 TARGET_BACKENDS=JS
+// PROPERTY_READ_COUNT: name=_o0 count=1 IGNORED_BACKENDS=JS
+// PROPERTY_WRITE_COUNT: name=local$o count=2 TARGET_BACKENDS=JS
+// PROPERTY_WRITE_COUNT: name=_o0 count=1 IGNORED_BACKENDS=JS
 
 import kotlin.coroutines.*
 

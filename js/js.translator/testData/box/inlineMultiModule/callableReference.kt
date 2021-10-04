@@ -13,7 +13,10 @@ public fun <T, R> apply(x: T, fn: (T)->R): R =
 
 import utils.*
 
-// CHECK_CONTAINS_NO_CALLS: test except=imul
+// CHECK_CONTAINS_NO_CALLS: test except=imul TARGET_BACKENDS=JS
+
+// FIXME: Not inlined on IR BE
+// CHECK_CONTAINS_NO_CALLS: test except=multiplyBy2 IGNORED_BACKENDS=JS
 
 internal inline fun multiplyBy2(x: Int): Int = x * 2
 

@@ -3,7 +3,9 @@ package foo
 
 // CHECK_NOT_CALLED: testLabelInline
 // CHECK_LABELS_COUNT: function=testLabel name=loop count=1
-// CHECK_LABELS_COUNT: function=testLabel name=loop_0 count=2
+// CHECK_LABELS_COUNT: function=testLabel name=loop_0 count=2 TARGET_BACKENDS=JS
+// CHECK_LABELS_COUNT: function=testLabel name=loop_0 count=1 IGNORED_BACKENDS=JS
+// CHECK_LABELS_COUNT: function=testLabel name=loop_1 count=1 IGNORED_BACKENDS=JS
 
 inline fun testLabelInline(): Int {
     var a = 0

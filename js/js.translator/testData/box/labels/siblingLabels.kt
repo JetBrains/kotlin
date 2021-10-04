@@ -1,7 +1,9 @@
 // EXPECTED_REACHABLE_NODES: 1283
 package foo
 
-// CHECK_LABELS_COUNT: function=test name=loop count=2
+// CHECK_LABELS_COUNT: function=test name=loop count=2 TARGET_BACKENDS=JS
+// CHECK_LABELS_COUNT: function=test name=loop count=1 IGNORED_BACKENDS=JS
+// CHECK_LABELS_COUNT: function=test name=loop_0 count=1 IGNORED_BACKENDS=JS
 
 fun test() {
     var i = 0

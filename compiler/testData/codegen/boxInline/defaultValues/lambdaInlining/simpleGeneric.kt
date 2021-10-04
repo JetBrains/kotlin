@@ -11,7 +11,8 @@ inline fun <T : A> inlineFun(capturedParam: T, lambda: () -> T = { capturedParam
 }
 
 // FILE: 2.kt
-// CHECK_CONTAINS_NO_CALLS: box
+// CHECK_CONTAINS_NO_CALLS: box TARGET_BACKENDS=JS
+// CHECK_CONTAINS_NO_CALLS: box except=_get_value__0_k$ IGNORED_BACKENDS=JS
 
 import test.*
 

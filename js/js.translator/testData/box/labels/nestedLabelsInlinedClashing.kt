@@ -1,7 +1,7 @@
 // EXPECTED_REACHABLE_NODES: 1285
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: test
+// CHECK_CONTAINS_NO_CALLS: test except=Unit_getInstance
 // CHECK_LABELS_COUNT: function=test name=loop count=1
 // CHECK_LABELS_COUNT: function=test name=loop_0 count=1
 // CHECK_LABELS_COUNT: function=test name=loop_1 count=1

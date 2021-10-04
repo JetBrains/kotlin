@@ -22,7 +22,7 @@ inline fun Baz.call(a: Int) = "Baz.call($a)"
 // MODULE: main(lib)
 // FILE: main.kt
 
-// CHECK_CONTAINS_NO_CALLS: box except=equals
+// CHECK_CONTAINS_NO_CALLS: box except=equals TARGET_BACKENDS=JS
 
 fun box(): String {
     var result = call(1)

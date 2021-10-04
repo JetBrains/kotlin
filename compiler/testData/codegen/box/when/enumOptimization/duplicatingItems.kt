@@ -1,6 +1,8 @@
 // WITH_RUNTIME
-// CHECK_CASES_COUNT: function=bar count=3
-// CHECK_IF_COUNT: function=bar count=0
+// CHECK_CASES_COUNT: function=bar count=3 TARGET_BACKENDS=JS
+// CHECK_CASES_COUNT: function=bar count=0 IGNORED_BACKENDS=JS
+// CHECK_IF_COUNT: function=bar count=0 TARGET_BACKENDS=JS
+// CHECK_IF_COUNT: function=bar count=2 IGNORED_BACKENDS=JS
 
 import kotlin.test.assertEquals
 

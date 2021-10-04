@@ -2,7 +2,9 @@
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: test except=imul
-// CHECK_VARS_COUNT: function=test count=0
+
+// FIXME: The IR backend generates a lot of redundant vars
+// CHECK_VARS_COUNT: function=test count=0 TARGET_BACKENDS=JS
 
 // A copy of stdlib run function.
 // Copied to not to depend on run implementation.

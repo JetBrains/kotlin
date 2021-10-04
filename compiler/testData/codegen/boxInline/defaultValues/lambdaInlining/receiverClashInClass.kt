@@ -13,8 +13,8 @@ class A(val value: String) {
 }
 
 // FILE: 2.kt
-// CHECK_CALLED_IN_SCOPE: function=A$inlineFun$lambda scope=box
-// CHECK_CALLED_IN_SCOPE: function=A$inlineFun$lambda_0 scope=box
+// CHECK_CALLED_IN_SCOPE: function=A$inlineFun$lambda scope=box TARGET_BACKENDS=JS
+// CHECK_CALLED_IN_SCOPE: function=A$inlineFun$lambda_0 scope=box TARGET_BACKENDS=JS
 import test.*
 
 fun box(): String {

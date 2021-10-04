@@ -1,7 +1,7 @@
 // EXPECTED_REACHABLE_NODES: 1283
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: test
+// CHECK_CONTAINS_NO_CALLS: test except=Unit_getInstance
 
 // A copy of stdlib run function.
 // Copied to not to depend on run implementation.

@@ -1,7 +1,9 @@
 // KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
-// CHECK_CASES_COUNT: function=foo count=4
-// CHECK_IF_COUNT: function=foo count=1
+// CHECK_CASES_COUNT: function=foo count=4 TARGET_BACKENDS=JS
+// CHECK_CASES_COUNT: function=foo count=0 IGNORED_BACKENDS=JS
+// CHECK_IF_COUNT: function=foo count=1 TARGET_BACKENDS=JS
+// CHECK_IF_COUNT: function=foo count=0 IGNORED_BACKENDS=JS
 
 var log = ""
 

@@ -3,7 +3,7 @@
 // CHECK_CONTAINS_NO_CALLS: testRangeToFunction
 // CHECK_CONTAINS_NO_CALLS: testUntil
 // CHECK_CONTAINS_NO_CALLS: testDownTo
-// CHECK_CONTAINS_NO_CALLS: testStep
+// CHECK_CONTAINS_NO_CALLS: testStep TARGET_BACKENDS=JS
 // CHECK_CONTAINS_NO_CALLS: testEmptyRange
 // CHECK_CONTAINS_NO_CALLS: testRangeToParams except=from;to
 
