@@ -252,7 +252,7 @@ class CompatibilityWarning(val candidate: CallableDescriptor) : KotlinCallDiagno
 }
 
 class CompatibilityWarningOnArgument(
-    val argument: CallableReferenceKotlinCallArgument,
+    val argument: KotlinCallArgument,
     val candidate: CallableDescriptor
 ) : KotlinCallDiagnostic(RESOLVED) {
     override fun report(reporter: DiagnosticReporter) {
