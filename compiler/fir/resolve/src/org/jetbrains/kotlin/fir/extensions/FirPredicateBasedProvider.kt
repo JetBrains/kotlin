@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.extensions.predicate.*
 import org.jetbrains.kotlin.fir.resolve.fqName
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 abstract class FirPredicateBasedProvider : FirSessionComponent {
     companion object {
@@ -23,8 +24,8 @@ abstract class FirPredicateBasedProvider : FirSessionComponent {
         }
     }
 
-    abstract fun getSymbolsByPredicate(predicate: DeclarationPredicate): List<FirAnnotatedDeclaration>
-    abstract fun getOwnersOfDeclaration(declaration: FirAnnotatedDeclaration): List<FirAnnotatedDeclaration>?
+    abstract fun getSymbolsByPredicate(predicate: DeclarationPredicate): List<FirBasedSymbol<*>>
+    abstract fun getOwnersOfDeclaration(declaration: FirAnnotatedDeclaration): List<FirBasedSymbol<*>>?
     abstract fun fileHasPluginAnnotations(file: FirFile): Boolean
     abstract fun matches(predicate: DeclarationPredicate, declaration: FirAnnotatedDeclaration): Boolean
 
@@ -38,13 +39,13 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
     private val registeredPluginAnnotations = session.registeredPluginAnnotations
     private val cache = Cache()
 
-    override fun getSymbolsByPredicate(predicate: DeclarationPredicate): List<FirAnnotatedDeclaration> {
+    override fun getSymbolsByPredicate(predicate: DeclarationPredicate): List<FirBasedSymbol<*>> {
         val annotations = registeredPluginAnnotations.getAnnotationsForPredicate(predicate)
         if (annotations.isEmpty()) return emptyList()
         val declarations = annotations.flatMapTo(mutableSetOf()) {
             cache.declarationByAnnotation[it] + cache.declarationsUnderAnnotated[it]
         }
-        return declarations.filter { matches(predicate, it) }
+        return declarations.filter { matches(predicate, it) }.map { it.symbol }
     }
 
     override fun fileHasPluginAnnotations(file: FirFile): Boolean {
@@ -65,8 +66,8 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
         cache.filesWithPluginAnnotations += file
     }
 
-    override fun getOwnersOfDeclaration(declaration: FirAnnotatedDeclaration): List<FirAnnotatedDeclaration>? {
-        return cache.ownersForDeclaration[declaration]
+    override fun getOwnersOfDeclaration(declaration: FirAnnotatedDeclaration): List<FirBasedSymbol<*>>? {
+        return cache.ownersForDeclaration[declaration]?.map { it.symbol }
     }
 
     private fun registerOwnersDeclarations(declaration: FirAnnotatedDeclaration, owners: PersistentList<FirAnnotatedDeclaration>) {

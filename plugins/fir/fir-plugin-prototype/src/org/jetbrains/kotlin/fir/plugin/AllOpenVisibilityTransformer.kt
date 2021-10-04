@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.extensions.predicate.hasOrUnder
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.transform
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.ClassId
@@ -48,15 +49,15 @@ class AllOpenVisibilityTransformer(session: FirSession) : FirStatusTransformerEx
         return status.transform(visibility = visibility)
     }
 
-    private fun findVisibility(declaration: FirDeclaration, owners: List<FirAnnotatedDeclaration>): Visibility? {
-        (declaration as? FirAnnotatedDeclaration)?.visibilityFromAnnotation()?.let { return it }
+    private fun findVisibility(declaration: FirDeclaration, owners: List<FirBasedSymbol<*>>): Visibility? {
+        declaration.symbol.visibilityFromAnnotation()?.let { return it }
         for (owner in owners) {
             owner.visibilityFromAnnotation()?.let { return it }
         }
         return null
     }
 
-    private fun FirAnnotatedDeclaration.visibilityFromAnnotation(): Visibility? {
+    private fun FirBasedSymbol<*>.visibilityFromAnnotation(): Visibility? {
         val annotation = annotations.firstOrNull {
             it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == AllPublicClassId
         } as? FirAnnotationCall ?: return null
