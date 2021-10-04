@@ -7,4 +7,8 @@ package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 
-object AllOpenPluginKey : FirPluginKey()
+object AllOpenPluginKey : FirPluginKey() {
+    override fun toString(): String {
+        return "AllOpenPlugin"
+    }
+}

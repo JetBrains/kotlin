@@ -492,7 +492,10 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
 fun FirClass.irOrigin(firProvider: FirProvider): IrDeclarationOrigin = when {
     firProvider.getFirClassifierContainerFileIfAny(symbol) != null -> IrDeclarationOrigin.DEFINED
     isJava -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
-    else -> IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+    else -> when (val origin = origin) {
+        is FirDeclarationOrigin.Plugin -> IrPluginDeclarationOrigin(origin.key)
+        else -> IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+    }
 }
 
 val IrType.isSamType: Boolean
@@ -597,4 +600,10 @@ fun FirSession.createFilesWithGeneratedDeclarations(): List<FirFile> {
             }
         }
     }
+}
+
+fun FirDeclaration?.computeIrOrigin(predefinedOrigin: IrDeclarationOrigin? = null): IrDeclarationOrigin {
+    return predefinedOrigin
+        ?: (this?.origin as? FirDeclarationOrigin.Plugin)?.let { IrPluginDeclarationOrigin(it.key) }
+        ?: IrDeclarationOrigin.DEFINED
 }

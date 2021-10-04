@@ -72,6 +72,17 @@ class UnderAnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotation
     }
 }
 
+// annotation class AllOpen  // from library
+
+/*
+
+@AllOpen
+annotation class MyOpen
+
+@MyOpen
+class MyClass
+ */
+
 sealed class MetaAnnotated(final override val metaAnnotations: Set<AnnotationFqn>) : DeclarationPredicate() {
     init {
         require(metaAnnotations.isNotEmpty()) {

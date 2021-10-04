@@ -118,7 +118,7 @@ class DelegatedMemberGenerator(
     ): IrSimpleFunction {
         val delegateFunction =
             declarationStorage.createIrFunction(
-                delegateOverride, subClass, origin = IrDeclarationOrigin.DELEGATED_MEMBER,
+                delegateOverride, subClass, predefinedOrigin = IrDeclarationOrigin.DELEGATED_MEMBER,
                 containingClass = firSubClass.symbol.toLookupTag()
             )
         val baseSymbols = mutableListOf<FirNamedFunctionSymbol>()
@@ -188,7 +188,7 @@ class DelegatedMemberGenerator(
     ): IrProperty {
         val delegateProperty =
             declarationStorage.createIrProperty(
-                firDelegateProperty, subClass, origin = IrDeclarationOrigin.DELEGATED_MEMBER,
+                firDelegateProperty, subClass, predefinedOrigin = IrDeclarationOrigin.DELEGATED_MEMBER,
                 containingClass = firSubClass.symbol.toLookupTag()
             )
         // the overridden symbols should be collected only after all fake overrides for all superclases are created and bound to their

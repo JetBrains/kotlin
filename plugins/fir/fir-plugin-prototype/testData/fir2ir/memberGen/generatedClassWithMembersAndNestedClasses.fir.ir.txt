@@ -64,11 +64,13 @@ FILE fqName:bar fileName:/generatedClassWithMembersAndNestedClasses.kt
         $this: CALL 'public final fun materialize (): bar.Bar declared in foo.AllOpenGenerated.NestedBar' type=bar.Bar origin=null
           $this: GET_VAR 'val nestedBar: foo.AllOpenGenerated.NestedBar [val] declared in bar.testNestedClasses' type=foo.AllOpenGenerated.NestedBar origin=null
 FILE fqName:foo fileName:__GENERATED DECLARATIONS__.kt
-  CLASS CLASS name:AllOpenGenerated modality:FINAL visibility:public superTypes:[kotlin.Any]
+  CLASS GENERATED[AllOpenClassGeneratorKey] CLASS name:AllOpenGenerated modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.AllOpenGenerated
-    CLASS CLASS name:NestedFoo modality:FINAL visibility:public superTypes:[kotlin.Any]
+    CONSTRUCTOR GENERATED[AllOpenClassGeneratorKey] visibility:public <> () returnType:foo.AllOpenGenerated [primary]
+    CLASS GENERATED[AllOpenClassGeneratorKey] CLASS name:NestedFoo modality:FINAL visibility:public superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.AllOpenGenerated.NestedFoo
-      FUN name:materialize visibility:public modality:FINAL <> ($this:foo.AllOpenGenerated.NestedFoo) returnType:bar.Foo
+      CONSTRUCTOR GENERATED[AllOpenClassGeneratorKey] visibility:public <> () returnType:foo.AllOpenGenerated.NestedFoo [primary]
+      FUN GENERATED[AllOpenClassGeneratorKey] name:materialize visibility:public modality:FINAL <> ($this:foo.AllOpenGenerated.NestedFoo) returnType:bar.Foo
         $this: VALUE_PARAMETER name:<this> type:foo.AllOpenGenerated.NestedFoo
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
@@ -83,9 +85,10 @@ FILE fqName:foo fileName:__GENERATED DECLARATIONS__.kt
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    CLASS CLASS name:NestedBar modality:FINAL visibility:public superTypes:[kotlin.Any]
+    CLASS GENERATED[AllOpenClassGeneratorKey] CLASS name:NestedBar modality:FINAL visibility:public superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.AllOpenGenerated.NestedBar
-      FUN name:materialize visibility:public modality:FINAL <> ($this:foo.AllOpenGenerated.NestedBar) returnType:bar.Bar
+      CONSTRUCTOR GENERATED[AllOpenClassGeneratorKey] visibility:public <> () returnType:foo.AllOpenGenerated.NestedBar [primary]
+      FUN GENERATED[AllOpenClassGeneratorKey] name:materialize visibility:public modality:FINAL <> ($this:foo.AllOpenGenerated.NestedBar) returnType:bar.Bar
         $this: VALUE_PARAMETER name:<this> type:foo.AllOpenGenerated.NestedBar
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
