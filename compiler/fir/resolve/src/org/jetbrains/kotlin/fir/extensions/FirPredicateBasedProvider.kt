@@ -24,73 +24,34 @@ abstract class FirPredicateBasedProvider : FirSessionComponent {
     }
 
     abstract fun getSymbolsByPredicate(predicate: DeclarationPredicate): List<FirAnnotatedDeclaration>
-
-    abstract fun getSymbolsByPredicate(
-        declarations: Collection<FirAnnotatedDeclaration>,
-        predicate: DeclarationPredicate
-    ): List<FirAnnotatedDeclaration>
-
-    abstract fun getSymbolsWithOwnersByPredicate(
-        predicate: DeclarationPredicate
-    ): List<Pair<FirAnnotatedDeclaration, List<FirAnnotatedDeclaration>>>
-
-    abstract fun getSymbolsWithOwnersByPredicate(
-        declarations: Collection<FirAnnotatedDeclaration>,
-        predicate: DeclarationPredicate
-    ): List<Pair<FirAnnotatedDeclaration, List<FirAnnotatedDeclaration>>>
-
     abstract fun getOwnersOfDeclaration(declaration: FirAnnotatedDeclaration): List<FirAnnotatedDeclaration>?
-
     abstract fun fileHasPluginAnnotations(file: FirFile): Boolean
-
-    abstract fun registerAnnotatedDeclaration(declaration: FirAnnotatedDeclaration, owners: PersistentList<FirAnnotatedDeclaration>)
-    abstract fun registerGeneratedDeclaration(declaration: FirAnnotatedDeclaration, owner: FirAnnotatedDeclaration)
-
     abstract fun matches(predicate: DeclarationPredicate, declaration: FirAnnotatedDeclaration): Boolean
+
     fun matches(predicates: List<DeclarationPredicate>, declaration: FirAnnotatedDeclaration): Boolean {
         return predicates.any { matches(it, declaration) }
     }
 }
 
 @NoMutableState
-private class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredicateBasedProvider() {
+class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredicateBasedProvider() {
     private val registeredPluginAnnotations = session.registeredPluginAnnotations
     private val cache = Cache()
 
     override fun getSymbolsByPredicate(predicate: DeclarationPredicate): List<FirAnnotatedDeclaration> {
         val annotations = registeredPluginAnnotations.getAnnotationsForPredicate(predicate)
         if (annotations.isEmpty()) return emptyList()
-        val declarations = annotations.flatMapTo(mutableSetOf()) { cache.declarationByAnnotation[it] + cache.declarationsUnderAnnotated[it] }
-        return getSymbolsByPredicate(declarations, predicate)
-    }
-
-    override fun getSymbolsByPredicate(
-        declarations: Collection<FirAnnotatedDeclaration>,
-        predicate: DeclarationPredicate
-    ): List<FirAnnotatedDeclaration> {
+        val declarations = annotations.flatMapTo(mutableSetOf()) {
+            cache.declarationByAnnotation[it] + cache.declarationsUnderAnnotated[it]
+        }
         return declarations.filter { matches(predicate, it) }
-    }
-
-    override fun getSymbolsWithOwnersByPredicate(predicate: DeclarationPredicate): List<Pair<FirAnnotatedDeclaration, List<FirAnnotatedDeclaration>>> {
-        return getSymbolsByPredicate(predicate).zipWithParents()
-    }
-
-    override fun getSymbolsWithOwnersByPredicate(
-        declarations: Collection<FirAnnotatedDeclaration>,
-        predicate: DeclarationPredicate
-    ): List<Pair<FirAnnotatedDeclaration, List<FirAnnotatedDeclaration>>> {
-        return getSymbolsByPredicate(declarations, predicate).zipWithParents()
-    }
-
-    private fun List<FirAnnotatedDeclaration>.zipWithParents(): List<Pair<FirAnnotatedDeclaration, List<FirAnnotatedDeclaration>>> {
-        return this.map { it to cache.ownersForDeclaration.getValue(it) }
     }
 
     override fun fileHasPluginAnnotations(file: FirFile): Boolean {
         return file in cache.filesWithPluginAnnotations
     }
 
-    override fun registerAnnotatedDeclaration(declaration: FirAnnotatedDeclaration, owners: PersistentList<FirAnnotatedDeclaration>) {
+    fun registerAnnotatedDeclaration(declaration: FirAnnotatedDeclaration, owners: PersistentList<FirAnnotatedDeclaration>) {
         cache.ownersForDeclaration[declaration] = owners
         registerOwnersDeclarations(declaration, owners)
 
@@ -106,11 +67,6 @@ private class FirPredicateBasedProviderImpl(private val session: FirSession) : F
 
     override fun getOwnersOfDeclaration(declaration: FirAnnotatedDeclaration): List<FirAnnotatedDeclaration>? {
         return cache.ownersForDeclaration[declaration]
-    }
-
-    override fun registerGeneratedDeclaration(declaration: FirAnnotatedDeclaration, owner: FirAnnotatedDeclaration) {
-        val owners = cache.ownersForDeclaration.getValue(owner).add(owner)
-        registerAnnotatedDeclaration(declaration, owners)
     }
 
     private fun registerOwnersDeclarations(declaration: FirAnnotatedDeclaration, owners: PersistentList<FirAnnotatedDeclaration>) {

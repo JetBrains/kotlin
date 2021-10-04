@@ -83,6 +83,8 @@ private class FirAnnotationResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession
 ) : FirAbstractAnnotationResolveTransformer<Multimap<AnnotationFqn, FirRegularClass>, PersistentList<FirAnnotatedDeclaration>>(session, scopeSession) {
+    private val predicateBasedProvider = session.predicateBasedProvider as FirPredicateBasedProviderImpl
+
     var metaAnnotations: Set<AnnotationFqn> = emptySet()
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(
         session,
@@ -138,7 +140,7 @@ private class FirAnnotationResolveTransformer(
         data: Multimap<AnnotationFqn, FirRegularClass>
     ): FirAnnotatedDeclaration {
         return super.transformAnnotatedDeclaration(annotatedDeclaration, data).also {
-            session.predicateBasedProvider.registerAnnotatedDeclaration(annotatedDeclaration, owners)
+            predicateBasedProvider.registerAnnotatedDeclaration(annotatedDeclaration, owners)
         }
     }
 }
