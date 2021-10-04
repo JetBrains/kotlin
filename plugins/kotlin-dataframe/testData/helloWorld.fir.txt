@@ -1,0 +1,3 @@
+FILE: helloWorld.kt
+    public final val s: R|kotlin/String| = String(Hello, world)
+        public get(): R|kotlin/String|
