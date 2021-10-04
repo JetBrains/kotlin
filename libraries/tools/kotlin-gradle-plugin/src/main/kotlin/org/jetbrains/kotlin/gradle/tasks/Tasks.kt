@@ -553,6 +553,9 @@ abstract class KotlinCompile @Inject constructor(
                     compileJavaTaskProvider.map { it.name }
                 )
             }
+            task.moduleName.set(task.project.provider {
+                task.kotlinOptions.moduleName ?: task.parentKotlinOptionsImpl.orNull?.moduleName ?: compilation.moduleName
+            })
 
             if (properties.useClasspathSnapshot) {
                 val classpathSnapshot = task.project.configurations.getByName(classpathSnapshotConfigurationName(task.name))

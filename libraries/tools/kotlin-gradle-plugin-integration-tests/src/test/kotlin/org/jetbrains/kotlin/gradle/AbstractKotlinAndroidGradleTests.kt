@@ -470,6 +470,38 @@ open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
         Assume.assumeTrue("JDK 11 should be available", javaHome.isDirectory)
         return super.defaultBuildOptions().copy(javaHome = javaHome, warningMode = WarningMode.Summary)
     }
+
+    /**
+     * Regression test for KT-49066. It is not really AGP 7.0 specific, but it is not added to the base class to avoid
+     * running it multiple times.
+     */
+    @Test
+    fun testCustomModuleName() {
+        val project = Project("AndroidIncrementalMultiModule")
+        val options = defaultBuildOptions().copy(incremental = true, kotlinDaemonDebugPort = null)
+
+        project.setupWorkingDir().also {
+            project.gradleBuildScript("libAndroid").appendText("""
+
+                android.kotlinOptions {
+                    moduleName = "custom_path"
+                }
+            """.trimIndent())
+        }
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+            assertFileExists("libAndroid/build/tmp/kotlin-classes/debug/META-INF/custom_path.kotlin_module")
+        }
+
+        val libAndroidUtilKt = project.projectDir.getFileByName("libAndroidUtil.kt")
+        libAndroidUtilKt.modify { it.replace("fun libAndroidUtil(): String", "fun libAndroidUtil(): CharSequence") }
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+            val affectedSources = project.projectDir.getFilesByNames("libAndroidUtil.kt", "useLibAndroidUtil.kt")
+            assertCompiledKotlinSources(project.relativize(affectedSources))
+        }
+    }
 }
 
 open class KotlinAndroid34GradleIT : KotlinAndroid3GradleIT() {
