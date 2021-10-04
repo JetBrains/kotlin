@@ -202,8 +202,9 @@ val IrDeclarationContainer.properties: Sequence<IrProperty>
 
 fun IrFunction.addExplicitParametersTo(parametersList: MutableList<IrValueParameter>) {
     parametersList.addIfNotNull(dispatchReceiverParameter)
+    parametersList.addAll(valueParameters.take(contextReceiverParametersCount))
     parametersList.addIfNotNull(extensionReceiverParameter)
-    parametersList.addAll(valueParameters)
+    parametersList.addAll(valueParameters.drop(contextReceiverParametersCount))
 }
 
 private fun Boolean.toInt(): Int = if (this) 1 else 0
