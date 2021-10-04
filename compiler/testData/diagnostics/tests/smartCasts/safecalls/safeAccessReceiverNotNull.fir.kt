@@ -18,7 +18,7 @@ fun kt6840_2(s: String?) {
 
 fun kt1635(s: String?) {
     s?.hashCode()!!
-    s<!UNSAFE_CALL!>.<!>hashCode()
+    s.hashCode()
 }
 
 fun kt2127() {

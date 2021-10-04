@@ -654,16 +654,28 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         // Add `Any` to the set of possible types; the intersection type `T? & Any` will be reduced to `T` after smartcast.
         val (node, unionNode) = graphBuilder.exitCheckNotNullCall(checkNotNullCall, callCompleted)
         node.mergeIncomingFlow()
-        val argument = checkNotNullCall.argument
-        variableStorage.getOrCreateRealVariable(node.previousFlow, argument.symbol, argument)?.let { operandVariable ->
-            node.flow.addTypeStatement(operandVariable typeEq any)
-            logicSystem.approveStatementsInsideFlow(
-                node.flow,
-                operandVariable notEq null,
-                shouldRemoveSynthetics = true,
-                shouldForkFlow = false
-            )
+
+        fun FirExpression.propagateNotNullInfo() {
+            val symbol = this.symbol
+            if (symbol != null) {
+                variableStorage.getOrCreateRealVariable(node.previousFlow, symbol, this)?.let { operandVariable ->
+                    node.flow.addTypeStatement(operandVariable typeEq any)
+                    logicSystem.approveStatementsInsideFlow(
+                        node.flow,
+                        operandVariable notEq null,
+                        shouldRemoveSynthetics = true,
+                        shouldForkFlow = false
+                    )
+                }
+            }
+            when (this) {
+                is FirSafeCallExpression -> this.receiver.propagateNotNullInfo()
+                is FirTypeOperatorCall -> this.argument.propagateNotNullInfo()
+            }
         }
+
+        checkNotNullCall.argument.propagateNotNullInfo()
+
         unionNode?.let { unionFlowFromArguments(it) }
     }
 
