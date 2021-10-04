@@ -1,0 +1,11 @@
+package
+
+public fun box(): kotlin.String
+
+public object X {
+    private constructor X()
+    private final val y: kotlin.Nothing? = null
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
