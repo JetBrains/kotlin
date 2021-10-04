@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.plugin.runners
 
 import org.jetbrains.kotlin.fir.plugin.FirAllOpenComponentRegistrar
+import org.jetbrains.kotlin.fir.plugin.services.IrExtensionRegistrar
 import org.jetbrains.kotlin.fir.plugin.services.PluginAnnotationsProvider
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -22,7 +23,10 @@ fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration() {
         +FIR_DUMP
     }
 
-    useConfigurators(::PluginAnnotationsProvider)
+    useConfigurators(
+        ::PluginAnnotationsProvider,
+        ::IrExtensionRegistrar
+    )
 }
 
 val FirFrontendFacadeWithPlugin: Constructor<FirFrontendFacade>

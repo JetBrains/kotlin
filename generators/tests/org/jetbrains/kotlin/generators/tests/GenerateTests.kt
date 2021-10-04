@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidIrBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
+import org.jetbrains.kotlin.fir.plugin.runners.AbstractAllOpenBlackBoxCodegenTest
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFir2IrAllOpenTest
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirAllOpenDiagnosticTest
 import org.jetbrains.kotlin.generators.TestGroup
@@ -377,6 +378,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFir2IrAllOpenTest> {
                 model("fir2ir")
+            }
+
+            testClass<AbstractAllOpenBlackBoxCodegenTest> {
+                model("box")
             }
         }
     }

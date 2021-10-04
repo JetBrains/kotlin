@@ -10,6 +10,9 @@ dependencies {
     api(project(":compiler:fir:tree"))
     api(project(":compiler:fir:resolve"))
     api(project(":compiler:fir:checkers"))
+    api(project(":compiler:fir:fir2ir"))
+    api(project(":compiler:ir.backend.common"))
+    api(project(":compiler:ir.tree.impl"))
     api(intellijCoreDep()) { includeJars("intellij-core") }
 
     compileOnly(project(":kotlin-reflect-api"))
@@ -25,6 +28,7 @@ dependencies {
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
+    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     testRuntimeOnly(intellijDep()) {
         includeJars("jna", rootProject = rootProject)
