@@ -33,6 +33,10 @@ fun checkUpperBoundViolated(
     isTypeAlias: Boolean = false,
     isIgnoreTypeParameters: Boolean = false
 ) {
+    require(typeArguments == null || typeArgumentRefsAndSources == null) {
+        "Only one of those arguments can be not null"
+    }
+
     val type = typeRef?.coneTypeSafe<ConeKotlinType>() ?: return
 
     val typeArgumentsCount = typeArguments?.size ?: type.typeArguments.size
