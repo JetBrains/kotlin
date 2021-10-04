@@ -11,12 +11,16 @@ bitcode {
     create("files"){
         dependsOn(":kotlin-native:dependencies:update")
     }
+    create("env"){
+        dependsOn(":kotlin-native:dependencies:update")
+    }
 }
 
 val hostName: String by project
 
 val build by tasks.registering {
     dependsOn("${hostName}Files")
+    dependsOn("${hostName}Env")
 }
 
 val clean by tasks.registering {
