@@ -116,6 +116,8 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes, typeSystem
         // TODO: Consider correct application of attributes to ConeIntersectionType
         // Currently, ConeAttributes.union works a bit strange, because it lefts only `other` parts
         is ConeIntersectionType -> this
+        // Attributes for stub types are not supported, and it's not obvious if it should
+        is ConeStubType -> this
         else -> error("Not supported: $this: ${this.render()}")
     } as T
 }
