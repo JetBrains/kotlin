@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -29,7 +28,7 @@ class FirGeneratedClassDeclaredMemberScope(
     val firClass: FirClass,
     needNestedClassifierScope: Boolean
 ) : FirClassDeclaredMemberScope() {
-    private val extensions: List<FirDeclarationGenerationExtension> = firClass.findGeneratedExtensions(useSiteSession)
+    private val extensions: List<FirDeclarationGenerationExtension> = firClass.findGeneratedExtensions(useSiteSession) { needToGenerateAdditionalMembersInClass(it) }
     private val nestedClassifierScope: FirNestedClassifierScope? = runIf(needNestedClassifierScope) {
         useSiteSession.nestedClassifierScope(firClass)
     }
@@ -113,7 +112,7 @@ class FirGeneratedClassNestedClassifierScope(
     klass: FirClass,
     useSiteSession: FirSession
 ) : FirNestedClassifierScope(klass, useSiteSession) {
-    private val extensions = klass.findGeneratedExtensions(useSiteSession)
+    private val extensions = klass.findGeneratedExtensions(useSiteSession) { needToGenerateNestedClassifiersInClass(it) }
 
     private val nestedClassifierCache: FirCache<Name, FirRegularClassSymbol?, Nothing?> =
         useSiteSession.firCachesFactory.createCache { name, _ ->
@@ -146,7 +145,10 @@ class FirGeneratedClassNestedClassifierScope(
 }
 
 
-private fun FirClass.findGeneratedExtensions(useSiteSession: FirSession): List<FirDeclarationGenerationExtension> {
+private inline fun FirClass.findGeneratedExtensions(
+    useSiteSession: FirSession,
+    predicate: FirDeclarationGenerationExtension.(FirClass) -> Boolean
+): List<FirDeclarationGenerationExtension> {
     val origin = origin
     val declarationGenerators = useSiteSession.extensionService.declarationGenerators
     return if (origin is FirDeclarationOrigin.Plugin) {
@@ -154,7 +156,6 @@ private fun FirClass.findGeneratedExtensions(useSiteSession: FirSession): List<F
             require(it.isNotEmpty()) { "Extension for ${origin.key} not found" }
         }
     } else {
-        val predicateBasedProvider = useSiteSession.predicateBasedProvider
-        declarationGenerators.filter { predicateBasedProvider.matches(it.predicate, this) }
+        declarationGenerators.filter { it.predicate(this) }
     }
 }

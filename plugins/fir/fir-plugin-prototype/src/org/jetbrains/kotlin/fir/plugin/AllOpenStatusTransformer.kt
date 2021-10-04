@@ -8,20 +8,22 @@ package org.jetbrains.kotlin.fir.plugin
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
+import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.hasOrUnder
 import org.jetbrains.kotlin.fir.extensions.predicate.metaHasOrUnder
 import org.jetbrains.kotlin.fir.extensions.predicate.or
+import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.transform
 import org.jetbrains.kotlin.name.FqName
 
 class AllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExtension(session) {
     companion object {
         private val ALL_OPEN = FqName("org.jetbrains.kotlin.fir.plugin.AllOpen")
+        private val PREDICATE: DeclarationPredicate = hasOrUnder(ALL_OPEN) or metaHasOrUnder(ALL_OPEN)
     }
 
     override fun transformStatus(status: FirDeclarationStatus, declaration: FirAnnotatedDeclaration): FirDeclarationStatus {
@@ -29,7 +31,13 @@ class AllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExtens
         return status.transform(modality = Modality.OPEN)
     }
 
-    override val predicate: DeclarationPredicate = hasOrUnder(ALL_OPEN) or metaHasOrUnder(ALL_OPEN)
+    override fun needTransformStatus(declaration: FirAnnotatedDeclaration): Boolean {
+        return session.predicateBasedProvider.matches(PREDICATE, declaration)
+    }
+
+    override fun FirDeclarationPredicateRegistrar.registerPredicates() {
+        register(PREDICATE)
+    }
 
     override val key: FirPluginKey
         get() = AllOpenPluginKey

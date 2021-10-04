@@ -21,6 +21,8 @@ abstract class FirSupertypeGenerationExtension(session: FirSession) : FirPredica
 
     final override val extensionType: KClass<out FirExtension> = FirSupertypeGenerationExtension::class
 
+    abstract fun needTransformSupertypes(declaration: FirClassLikeDeclaration): Boolean
+
     abstract fun computeAdditionalSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>

@@ -372,9 +372,8 @@ open class FirSupertypeResolverVisitor(
 
     private fun addSupertypesFromExtensions(klass: FirClassLikeDeclaration, supertypeRefs: MutableList<FirResolvedTypeRef>) {
         if (supertypeGenerationExtensions.isEmpty()) return
-        val provider = session.predicateBasedProvider
         for (extension in supertypeGenerationExtensions) {
-            if (provider.matches(extension.predicate, klass)) {
+            if (extension.needTransformSupertypes(klass)) {
                 supertypeRefs += extension.computeAdditionalSupertypes(klass, supertypeRefs)
             }
         }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -26,6 +27,9 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirPredi
         get() = NAME
 
     final override val extensionType: KClass<out FirExtension> = FirDeclarationGenerationExtension::class
+
+    abstract fun needToGenerateAdditionalMembersInClass(klass: FirClass): Boolean
+    abstract fun needToGenerateNestedClassifiersInClass(klass: FirClass): Boolean
 
     // Can be called on SUPERTYPES stage
     open fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? = null

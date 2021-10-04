@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.fir.plugin
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
+import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.has
+import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
@@ -25,6 +27,8 @@ import org.jetbrains.kotlin.name.Name
 class AllOpenSupertypeGenerator(session: FirSession) : FirSupertypeGenerationExtension(session) {
     companion object {
         private val myInterfaceClassId = ClassId(FqName("foo"), Name.identifier("MyInterface"))
+        private val PREDICATE: DeclarationPredicate = has("D".fqn())
+
     }
 
     override fun computeAdditionalSupertypes(
@@ -42,5 +46,11 @@ class AllOpenSupertypeGenerator(session: FirSession) : FirSupertypeGenerationExt
     override val key: FirPluginKey
         get() = AllOpenPluginKey
 
-    override val predicate: DeclarationPredicate = has("D".fqn())
+    override fun needTransformSupertypes(declaration: FirClassLikeDeclaration): Boolean {
+        return session.predicateBasedProvider.matches(PREDICATE, declaration)
+    }
+
+    override fun FirDeclarationPredicateRegistrar.registerPredicates() {
+        register(PREDICATE)
+    }
 }

@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
+import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.has
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
@@ -30,9 +32,13 @@ import org.jetbrains.kotlin.name.Name
  * Generates `dummyClassName(value: ClassName): String` function for each class annotated with @A
  */
 class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
+    companion object {
+        private val PREDICATE: DeclarationPredicate = has("A".fqn())
+    }
+
     private val predicateBasedProvider = session.predicateBasedProvider
     private val matchedClasses by lazy {
-        predicateBasedProvider.getSymbolsByPredicate(predicate).map { it.symbol }.filterIsInstance<FirRegularClassSymbol>()
+        predicateBasedProvider.getSymbolsByPredicate(PREDICATE).map { it.symbol }.filterIsInstance<FirRegularClassSymbol>()
     }
 
     override fun generateFunctions(callableId: CallableId, owner: FirClassSymbol<*>?): List<FirNamedFunctionSymbol> {
@@ -87,7 +93,15 @@ class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclaration
     override val key: AllOpenPluginKey
         get() = AllOpenPluginKey
 
-    override val predicate: DeclarationPredicate
-        get() = has("A".fqn())
+    override fun needToGenerateAdditionalMembersInClass(klass: FirClass): Boolean {
+        return false
+    }
 
+    override fun needToGenerateNestedClassifiersInClass(klass: FirClass): Boolean {
+        return false
+    }
+
+    override fun FirDeclarationPredicateRegistrar.registerPredicates() {
+        register(PREDICATE)
+    }
 }

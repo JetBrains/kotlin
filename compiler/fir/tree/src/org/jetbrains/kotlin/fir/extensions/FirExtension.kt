@@ -34,9 +34,14 @@ abstract class FirExtension(val session: FirSession) {
 }
 
 abstract class FirPredicateBasedExtension(session: FirSession) : FirExtension(session) {
-    abstract val predicate: DeclarationPredicate
+    abstract fun FirDeclarationPredicateRegistrar.registerPredicates()
 }
 
 data class FirExtensionPointName(val name: Name) {
     constructor(name: String) : this(Name.identifier(name))
+}
+
+abstract class FirDeclarationPredicateRegistrar {
+    abstract fun register(vararg predicates: DeclarationPredicate)
+    abstract fun register(predicates: Collection<DeclarationPredicate>)
 }

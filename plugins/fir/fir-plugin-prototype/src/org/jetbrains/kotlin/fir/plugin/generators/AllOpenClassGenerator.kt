@@ -11,11 +11,10 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
+import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.has
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
@@ -25,8 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -46,6 +43,8 @@ class AllOpenClassGenerator(session: FirSession) : FirDeclarationGenerationExten
         private val FOO_PACKAGE = FqName.topLevel(Name.identifier("foo"))
         private val GENERATED_CLASS_ID = ClassId(FOO_PACKAGE, Name.identifier("AllOpenGenerated"))
         private val MATERIALIZE_NAME = Name.identifier("materialize")
+
+        private val PREDICATE: DeclarationPredicate = has("B".fqn())
     }
 
     object Key : FirPluginKey() {
@@ -56,7 +55,7 @@ class AllOpenClassGenerator(session: FirSession) : FirDeclarationGenerationExten
 
     private val predicateBasedProvider = session.predicateBasedProvider
     private val matchedClasses by lazy {
-        predicateBasedProvider.getSymbolsByPredicate(predicate).map { it.symbol }.filterIsInstance<FirRegularClassSymbol>()
+        predicateBasedProvider.getSymbolsByPredicate(PREDICATE).map { it.symbol }.filterIsInstance<FirRegularClassSymbol>()
     }
     private val classIdsForMatchedClasses: Map<ClassId, FirRegularClassSymbol> by lazy {
         matchedClasses.associateBy {
@@ -165,8 +164,17 @@ class AllOpenClassGenerator(session: FirSession) : FirDeclarationGenerationExten
     override val key: FirPluginKey
         get() = Key
 
-    override val predicate: DeclarationPredicate
-        get() = has("B".fqn())
+    override fun needToGenerateAdditionalMembersInClass(klass: FirClass): Boolean {
+        return false
+    }
+
+    override fun needToGenerateNestedClassifiersInClass(klass: FirClass): Boolean {
+        return false
+    }
+
+    override fun FirDeclarationPredicateRegistrar.registerPredicates() {
+        register(PREDICATE)
+    }
 }
 
 private object MatchedClassAttributeKey : FirDeclarationDataKey()

@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
+import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.has
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
@@ -34,11 +36,13 @@ class AllOpenMembersGenerator(session: FirSession) : FirDeclarationGenerationExt
     companion object {
         private val MATERIALIZE_NAME = Name.identifier("materialize")
         private val NESTED_NAME = Name.identifier("Nested")
+
+        private val PREDICATE: DeclarationPredicate = has("C".fqn())
     }
 
     private val predicateBasedProvider = session.predicateBasedProvider
     private val matchedClasses by lazy {
-        predicateBasedProvider.getSymbolsByPredicate(predicate).map { it.symbol }.filterIsInstance<FirRegularClassSymbol>()
+        predicateBasedProvider.getSymbolsByPredicate(PREDICATE).map { it.symbol }.filterIsInstance<FirRegularClassSymbol>()
     }
 
     override fun generateFunctions(callableId: CallableId, owner: FirClassSymbol<*>?): List<FirNamedFunctionSymbol> {
@@ -87,6 +91,16 @@ class AllOpenMembersGenerator(session: FirSession) : FirDeclarationGenerationExt
 
     override val key: FirPluginKey
         get() = Key
-    override val predicate: DeclarationPredicate
-        get() = has("C".fqn())
+
+    override fun needToGenerateAdditionalMembersInClass(klass: FirClass): Boolean {
+        return session.predicateBasedProvider.matches(PREDICATE, klass)
+    }
+
+    override fun needToGenerateNestedClassifiersInClass(klass: FirClass): Boolean {
+        return session.predicateBasedProvider.matches(PREDICATE, klass)
+    }
+
+    override fun FirDeclarationPredicateRegistrar.registerPredicates() {
+        register(PREDICATE)
+    }
 }

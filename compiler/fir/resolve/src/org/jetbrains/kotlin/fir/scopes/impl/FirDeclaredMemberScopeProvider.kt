@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.resolve.declaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -68,7 +66,7 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
                     existingNames,
                     symbolProvider
                 )
-                if (extensions.any { useSiteSession.predicateBasedProvider.matches(it.predicate, klass) }) {
+                if (extensions.any { it.needToGenerateAdditionalMembersInClass(klass) }) {
                     FirCompositeScope(
                         listOf(baseScope, FirGeneratedClassDeclaredMemberScope(useSiteSession, klass, needNestedClassifierScope = false))
                     )
@@ -88,7 +86,7 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
             FirGeneratedClassNestedClassifierScope(klass, useSiteSession)
         } else {
             val baseScope = FirNestedClassifierScopeImpl(klass, useSiteSession)
-            if (extensions.any { useSiteSession.predicateBasedProvider.matches(it.predicate, klass) }) {
+            if (extensions.any { it.needToGenerateNestedClassifiersInClass(klass) }) {
                 FirCompositeNestedClassifierScope(
                     listOf(baseScope, FirGeneratedClassNestedClassifierScope(klass, useSiteSession)),
                     klass,

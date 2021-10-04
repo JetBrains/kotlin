@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.hasOrUnder
@@ -36,6 +37,8 @@ class AllOpenVisibilityTransformer(session: FirSession) : FirStatusTransformerEx
         private val InternalName = Name.identifier("Internal")
         private val PrivateName = Name.identifier("Private")
         private val ProtectedName = Name.identifier("Protected")
+
+        private val PREDICATE: DeclarationPredicate = hasOrUnder(AllPublicClassId.asSingleFqName())
     }
 
     override fun transformStatus(status: FirDeclarationStatus, declaration: FirAnnotatedDeclaration): FirDeclarationStatus {
@@ -68,7 +71,13 @@ class AllOpenVisibilityTransformer(session: FirSession) : FirStatusTransformerEx
         }
     }
 
-    override val predicate: DeclarationPredicate = hasOrUnder(AllPublicClassId.asSingleFqName())
+    override fun needTransformStatus(declaration: FirAnnotatedDeclaration): Boolean {
+        return session.predicateBasedProvider.matches(PREDICATE, declaration)
+    }
+
+    override fun FirDeclarationPredicateRegistrar.registerPredicates() {
+        register(PREDICATE)
+    }
 
     override val key: FirPluginKey
         get() = AllOpenPluginKey

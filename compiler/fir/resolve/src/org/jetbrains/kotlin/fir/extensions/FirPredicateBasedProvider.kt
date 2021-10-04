@@ -47,6 +47,9 @@ abstract class FirPredicateBasedProvider : FirSessionComponent {
     abstract fun registerGeneratedDeclaration(declaration: FirAnnotatedDeclaration, owner: FirAnnotatedDeclaration)
 
     abstract fun matches(predicate: DeclarationPredicate, declaration: FirAnnotatedDeclaration): Boolean
+    fun matches(predicates: List<DeclarationPredicate>, declaration: FirAnnotatedDeclaration): Boolean {
+        return predicates.any { matches(it, declaration) }
+    }
 }
 
 @NoMutableState

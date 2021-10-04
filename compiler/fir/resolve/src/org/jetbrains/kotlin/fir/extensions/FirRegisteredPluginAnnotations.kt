@@ -68,9 +68,25 @@ private class FirRegisteredPluginAnnotationsImpl(session: FirSession) : FirRegis
 
     @PluginServicesInitialization
     override fun initialize() {
+        val registrar = object : FirDeclarationPredicateRegistrar() {
+            val predicates = mutableListOf<DeclarationPredicate>()
+            override fun register(vararg predicates: DeclarationPredicate) {
+                this.predicates += predicates
+            }
+
+            override fun register(predicates: Collection<DeclarationPredicate>) {
+                this.predicates += predicates
+            }
+        }
+
         for (extension in session.extensionService.getAllExtensions()) {
             if (extension !is FirPredicateBasedExtension) continue
-            val predicate = extension.predicate
+            with(extension) {
+                registrar.registerPredicates()
+            }
+        }
+
+        for (predicate in registrar.predicates) {
             annotations += predicate.annotations
             metaAnnotations += predicate.metaAnnotations
         }
