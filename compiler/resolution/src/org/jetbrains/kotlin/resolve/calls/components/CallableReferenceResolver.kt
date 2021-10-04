@@ -25,9 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjecto
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.*
-import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
-import org.jetbrains.kotlin.resolve.calls.tower.TowerResolver
-import org.jetbrains.kotlin.resolve.calls.tower.isInapplicable
+import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.util.CancellationChecker
@@ -106,10 +104,10 @@ class CallableReferenceResolver(
                     reflectionCandidateType, expectedType, scopeTower.lexicalScope.ownerDescriptor
                 )
             }
-            diagnosticsHolder.addDiagnosticIfNotNull(diagnostic)
-            chosenCandidate.diagnostics.forEach {
+            (chosenCandidate.diagnostics + diagnostic).filterNotNull().forEach {
                 val transformedDiagnostic = when (it) {
                     is CompatibilityWarning -> CompatibilityWarningOnArgument(argument, it.candidate)
+                    is VisibilityError -> VisibilityErrorOnArgument(argument, it.invisibleMember)
                     else -> it
                 }
                 diagnosticsHolder.addDiagnostic(transformedDiagnostic)
