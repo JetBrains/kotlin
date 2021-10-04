@@ -5396,6 +5396,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             public void testTypeParameterUse() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/typeParameterUse.kt");
             }
+
+            @Test
+            @TestMetadata("UsingObject.kt")
+            public void testUsingObject() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/UsingObject.kt");
+            }
         }
 
         @Nested
