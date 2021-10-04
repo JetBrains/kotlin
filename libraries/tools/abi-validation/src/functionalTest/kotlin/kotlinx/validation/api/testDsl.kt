@@ -35,14 +35,14 @@ internal fun BaseKotlinGradleTest.test(fn: BaseKotlinScope.() -> Unit): GradleRu
 }
 
 /**
- * same as [file][FileContainer.file], but prepends "src/main/java" before given `classFileName`
+ * same as [file][FileContainer.file], but prepends "src/${sourceSet}/kotlin" before given `classFileName`
  */
-internal fun FileContainer.kotlin(classFileName: String, fn: AppendableScope.() -> Unit) {
+internal fun FileContainer.kotlin(classFileName: String, sourceSet:String = "main", fn: AppendableScope.() -> Unit) {
     require(classFileName.endsWith(".kt")) {
         "ClassFileName must end with '.kt'"
     }
 
-    val fileName = "src/main/java/$classFileName"
+    val fileName = "src/${sourceSet}/kotlin/$classFileName"
     file(fileName, fn)
 }
 
