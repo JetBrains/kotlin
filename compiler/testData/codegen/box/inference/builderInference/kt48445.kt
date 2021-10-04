@@ -48,7 +48,6 @@ internal class TowerDataElementsForName3() {
     }
 }
 
-// mute due to KT-48633
 //internal class TowerDataElementsForName4() {
 //    @OptIn(ExperimentalStdlibApi::class)
 //    val reversedFilteredLocalScopes = buildList l1@ {

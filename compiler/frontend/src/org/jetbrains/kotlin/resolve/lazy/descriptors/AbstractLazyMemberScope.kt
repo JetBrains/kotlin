@@ -171,7 +171,7 @@ protected constructor(
                 propertyDeclaration,
                 trace,
                 c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(propertyDeclaration),
-                InferenceSession.default
+                c.inferenceSession ?: InferenceSession.default
             )
             result.add(propertyDescriptor)
         }
@@ -184,7 +184,7 @@ protected constructor(
                 entry,
                 trace,
                 c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(entry),
-                InferenceSession.default
+                c.inferenceSession ?: InferenceSession.default
             )
             result.add(propertyDescriptor)
         }
