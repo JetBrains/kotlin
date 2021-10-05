@@ -30,6 +30,7 @@ fun KGPBaseTest.project(
     gradleVersion: GradleVersion,
     buildOptions: KGPBaseTest.BuildOptions = defaultBuildOptions,
     forceOutput: Boolean = false,
+    enableBuildScan: Boolean = false,
     addHeapDumpOptions: Boolean = true,
     enableGradleDebug: Boolean = false,
     projectPathAdditionalSuffix: String = "",
@@ -60,7 +61,8 @@ fun KGPBaseTest.project(
         projectPath,
         gradleVersion,
         enableGradleDebug,
-        forceOutput
+        forceOutput,
+        enableBuildScan
     )
 
     if (buildJdk != null) testProject.setupNonDefaultJdk(buildJdk)
@@ -77,13 +79,17 @@ fun TestProject.build(
     forceOutput: Boolean = this.forceOutput,
     enableGradleDebug: Boolean = this.enableGradleDebug,
     enableBuildCacheDebug: Boolean = false,
+    enableBuildScan: Boolean = this.enableBuildScan,
     buildOptions: KGPBaseTest.BuildOptions = this.buildOptions,
     assertions: BuildResult.() -> Unit = {}
 ) {
+    if (enableBuildScan) agreeToBuildScanService()
+
     val allBuildArguments = commonBuildSetup(
         buildArguments.toList(),
         buildOptions,
         enableBuildCacheDebug,
+        enableBuildScan,
         gradleVersion
     )
     val gradleRunnerForBuild = gradleRunner
@@ -92,6 +98,7 @@ fun TestProject.build(
         .withArguments(allBuildArguments)
     withBuildSummary(allBuildArguments) {
         val buildResult = gradleRunnerForBuild.build()
+        if (enableBuildScan) buildResult.printBuildScanUrl()
         assertions(buildResult)
     }
 }
@@ -104,13 +111,17 @@ fun TestProject.buildAndFail(
     forceOutput: Boolean = this.forceOutput,
     enableGradleDebug: Boolean = this.enableGradleDebug,
     enableBuildCacheDebug: Boolean = false,
+    enableBuildScan: Boolean = this.enableBuildScan,
     buildOptions: KGPBaseTest.BuildOptions = this.buildOptions,
     assertions: BuildResult.() -> Unit = {}
 ) {
+    if (enableBuildScan) agreeToBuildScanService()
+
     val allBuildArguments = commonBuildSetup(
         buildArguments.toList(),
         buildOptions,
         enableBuildCacheDebug,
+        enableBuildScan,
         gradleVersion
     )
     val gradleRunnerForBuild = gradleRunner
@@ -119,6 +130,7 @@ fun TestProject.buildAndFail(
         .withArguments(allBuildArguments)
     withBuildSummary(allBuildArguments) {
         val buildResult = gradleRunnerForBuild.buildAndFail()
+        if (enableBuildScan) buildResult.printBuildScanUrl()
         assertions(buildResult)
     }
 
@@ -152,7 +164,8 @@ class TestProject(
     val projectPath: Path,
     val gradleVersion: GradleVersion,
     val enableGradleDebug: Boolean,
-    val forceOutput: Boolean
+    val forceOutput: Boolean,
+    val enableBuildScan: Boolean
 ) {
     val rootBuildGradle: Path get() = projectPath.resolve("build.gradle")
     val settingsGradle: Path get() = projectPath.resolve("settings.gradle")
@@ -173,15 +186,18 @@ private fun commonBuildSetup(
     buildArguments: List<String>,
     buildOptions: KGPBaseTest.BuildOptions,
     enableBuildCacheDebug: Boolean,
+    enableBuildScan: Boolean,
     gradleVersion: GradleVersion
 ): List<String> {
     val buildOptionsArguments = buildOptions.toArguments(gradleVersion)
     val buildCacheDebugOption = if (enableBuildCacheDebug) "-Dorg.gradle.caching.debug=true" else null
+    val buildScanOption = if (enableBuildScan) "--scan" else null
     return buildOptionsArguments +
             buildArguments +
             listOfNotNull(
                 "--full-stacktrace",
-                buildCacheDebugOption
+                buildCacheDebugOption,
+                buildScanOption
             )
 }
 
@@ -252,6 +268,30 @@ private fun Path.addDefaultBuildFiles() {
             }
         }
     }
+}
+
+@OptIn(ExperimentalPathApi::class)
+private fun TestProject.agreeToBuildScanService() {
+    settingsGradle.appendText(
+        """
+            
+        gradleEnterprise {
+            buildScan {
+                termsOfServiceUrl = "https://gradle.com/terms-of-service"
+                termsOfServiceAgree = "yes"
+            }
+        }
+            
+        """.trimIndent()
+    )
+}
+
+private fun BuildResult.printBuildScanUrl() {
+    val buildScanUrl = output
+        .lineSequence()
+        .first { it.contains("https://gradle.com/s/") }
+        .replaceBefore("https://gradle", "")
+    println("Build scan url: $buildScanUrl")
 }
 
 private fun TestProject.setupNonDefaultJdk(pathToJdk: File) {

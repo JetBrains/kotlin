@@ -14,6 +14,7 @@ internal val DEFAULT_GROOVY_SETTINGS_FILE =
         repositories {
             mavenLocal()
             mavenCentral()
+            gradlePluginPortal()
         }
 
         plugins {
