@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeAliasSymbol
-import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.api.types.KtFlexibleType
+import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
 
 public abstract class KtTypeInfoProvider : KtAnalysisSessionComponent() {
@@ -33,6 +36,9 @@ public interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
 
     /** Returns true if the type is explicitly marked as nullable. This means it's safe to assign `null` to a variable with this type. */
     public val KtType.isMarkedNullable: Boolean get() = this.nullability == KtTypeNullability.NULLABLE
+
+    /** Returns true if the type is a platform flexible type and may or may not be marked nullable. */
+    public val KtType.hasFlexibleNullability: Boolean get() = this is KtFlexibleType && this.upperBound.isMarkedNullable != this.lowerBound.isMarkedNullable
 
     public val KtType.isUnit: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.UNIT)
     public val KtType.isInt: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.INT)
