@@ -207,8 +207,8 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               if (%changed !== 0 || !%composer.skipping) {
                 val foo = ComposableSingletons%TestKt.lambda-1
                 val bar = ComposableSingletons%TestKt.lambda-2
-                B(foo, %composer, 0)
-                B(bar, %composer, 0)
+                B(foo, %composer, 0b0110)
+                B(bar, %composer, 0b0110)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -256,7 +256,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(A)<B>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
-                B(ComposableSingletons%TestKt.lambda-1, %composer, 0)
+                B(ComposableSingletons%TestKt.lambda-1, %composer, 0b0110)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -405,38 +405,38 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
             }
         """,
         """
-        @Composable
-        fun TestLambda(content: Function0<Unit>, %composer: Composer?, %changed: Int) {
-          %composer = %composer.startRestartGroup(<>)
-          sourceInformation(%composer, "C(TestLambda):Test.kt")
-          val %dirty = %changed
-          if (%changed and 0b1110 === 0) {
-            %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
-          }
-          if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
-            content()
-          } else {
-            %composer.skipToGroupEnd()
-          }
-          %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-            TestLambda(content, %composer, %changed or 0b0001)
-          }
-        }
-        @Composable
-        fun Test(%composer: Composer?, %changed: Int) {
-          %composer = %composer.startRestartGroup(<>)
-          sourceInformation(%composer, "C(Test)<TestLa...>:Test.kt")
-          if (%changed !== 0 || !%composer.skipping) {
-            TestLambda({
-              println("Doesn't capture")
-            }, %composer, 0)
-          } else {
-            %composer.skipToGroupEnd()
-          }
-          %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-            Test(%composer, %changed or 0b0001)
-          }
-        }
+            @Composable
+            fun TestLambda(content: Function0<Unit>, %composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(TestLambda):Test.kt")
+              val %dirty = %changed
+              if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                content()
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                TestLambda(content, %composer, %changed or 0b0001)
+              }
+            }
+            @Composable
+            fun Test(%composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test)<TestLa...>:Test.kt")
+              if (%changed !== 0 || !%composer.skipping) {
+                TestLambda({
+                  println("Doesn't capture")
+                }, %composer, 0b0110)
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(%composer, %changed or 0b0001)
+              }
+            }
     """
     )
 

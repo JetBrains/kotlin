@@ -2,6 +2,7 @@ package androidx.compose.compiler.plugins.kotlin.analysis
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice
@@ -18,6 +19,8 @@ object ComposeWritableSlices {
     val IS_COMPOSABLE_CALL: WritableSlice<IrAttributeContainer, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IS_SYNTHETIC_COMPOSABLE_CALL: WritableSlice<IrFunctionAccessExpression, Boolean> =
+        BasicWritableSlice(RewritePolicy.DO_NOTHING)
+    val IS_STATIC_FUNCTION_EXPRESSION: WritableSlice<IrExpression, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IS_COMPOSABLE_SINGLETON: WritableSlice<IrAttributeContainer, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
