@@ -12,5 +12,5 @@ abstract class AbstractKotlinMangler<D : Any> : KotlinMangler<D> {
     override val String.hashMangle get() = cityHash64()
 
     abstract fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<D>
-    abstract fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<D>
+    abstract fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<D>
 }

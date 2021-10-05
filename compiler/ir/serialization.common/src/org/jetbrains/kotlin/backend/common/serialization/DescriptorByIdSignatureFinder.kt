@@ -163,7 +163,7 @@ class DescriptorByIdSignatureFinder(
                 // We don't compute id for typealiases and classes.
                 candidate is ClassDescriptor || candidate is TypeAliasDescriptor
             } else {
-                val candidateHash = with(mangler) { candidate.signatureMangle() }
+                val candidateHash = with(mangler) { candidate.signatureMangle(compatibleMode = false) }
                 candidateHash == id
             }
         }

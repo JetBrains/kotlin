@@ -52,13 +52,13 @@ class ManglerChecker(vararg _manglers: KotlinMangler<IrDeclaration>) : IrElement
     private fun KotlinMangler<IrDeclaration>.isExportCheck(declaration: IrDeclaration) =
         !declaration.shouldBeSkipped() && declaration.isExported(false)
     private fun KotlinMangler<IrDeclaration>.stringMangle(declaration: IrDeclaration) =
-        declaration.mangleString()
+        declaration.mangleString(compatibleMode = false)
 
     private fun KotlinMangler<IrDeclaration>.signatureMangle(declaration: IrDeclaration) =
-        declaration.signatureString()
+        declaration.signatureString(compatibleMode = false)
 
     private fun KotlinMangler<IrDeclaration>.fqnMangle(declaration: IrDeclaration) =
-        declaration.fqnString()
+        declaration.fqnString(compatibleMode = false)
 
     private fun <T : Any, R> Iterable<T>.checkAllEqual(init: R, op: T.() -> R, onError: (T, R, T, R) -> Unit): R {
         var prev: T? = null
