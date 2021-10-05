@@ -782,7 +782,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             fun C(items: List<String>, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(C)<X(item...>:Test.kt")
-              X(items, ComposableSingletons%TestKt.lambda-1, %composer, 0b1000)
+              X(items, ComposableSingletons%TestKt.lambda-1, %composer, 0b00111000)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 C(items, %composer, %changed or 0b0001)
               }
