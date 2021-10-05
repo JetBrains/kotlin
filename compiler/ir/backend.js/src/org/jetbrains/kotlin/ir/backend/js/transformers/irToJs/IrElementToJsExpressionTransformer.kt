@@ -192,8 +192,10 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitCall(expression: IrCall, context: JsGenerationContext): JsExpression {
         if (context.checkIfJsCode(expression.symbol)) {
-            val statements = translateJsCodeIntoStatementList(expression.getValueArgument(0) ?: error("JsCode is expected"))
-                ?: error("Cannot compute js code for ${expression.render()}")
+            val statements = translateJsCodeIntoStatementList(
+                expression.getValueArgument(0) ?: error("JsCode is expected"),
+                context.staticContext.backendContext
+            ) ?: error("Cannot compute js code for ${expression.render()}")
 
             if (statements.isEmpty()) return JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(3)) // TODO: report warning or even error
 
