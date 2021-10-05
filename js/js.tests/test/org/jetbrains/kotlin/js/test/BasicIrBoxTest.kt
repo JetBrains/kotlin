@@ -249,7 +249,8 @@ abstract class BasicIrBoxTest(
                 irFactory = IrFactoryImpl,
                 outputKlibPath = klibPath,
                 nopack = true,
-                jsOutputName = null
+                jsOutputName = null,
+                abiVersion = abiVersion
             )
         }
 
