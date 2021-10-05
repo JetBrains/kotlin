@@ -241,6 +241,10 @@ private class SwiftSuspendBridge : AbstractSuspendBridge {
         completionHandler(KotlinUnit(), nil)
     }
 
+    override func nullableUnit(value: KotlinInt, completionHandler: @escaping (KotlinUnit?, Error?) -> Void) {
+        completionHandler(KotlinUnit(), nil)
+    }
+
     override func nothingAsInt(value: KotlinInt, completionHandler: @escaping (KotlinNothing?, Error?) -> Void) {
         completionHandler(nil, E())
     }
@@ -249,8 +253,8 @@ private class SwiftSuspendBridge : AbstractSuspendBridge {
         completionHandler(nil, E())
     }
 
-    override func nothingAsUnit(value: KotlinInt, completionHandler: @escaping (KotlinNothing?, Error?) -> Void) {
-        completionHandler(nil, E())
+    override func nothingAsUnit(value: KotlinInt, completionHandler: @escaping (Error?) -> Void) {
+        completionHandler(E())
     }
 }
 
@@ -268,34 +272,28 @@ private func testBridges() throws {
 }
 
 private func testImplicitThrows1() throws {
-    var result: KotlinUnit? = nil
     var error: Error? = nil
     var completionCalled = 0
 
-    CoroutinesKt.throwCancellationException { _result, _error in
+    CoroutinesKt.throwCancellationException { _error in
         completionCalled += 1
-        result = _result
         error = _error
     }
 
     try assertEquals(actual: completionCalled, expected: 1)
-    try assertNil(result)
     try assertTrue(error?.kotlinException is KotlinCancellationException)
 }
 
 private func testImplicitThrows2() throws {
-    var result: KotlinUnit? = nil
     var error: Error? = nil
     var completionCalled = 0
 
-    ThrowCancellationExceptionImpl().throwCancellationException { _result, _error in
+    ThrowCancellationExceptionImpl().throwCancellationException { _error in
         completionCalled += 1
-        result = _result
         error = _error
     }
 
     try assertEquals(actual: completionCalled, expected: 1)
-    try assertNil(result)
     try assertTrue(error?.kotlinException is KotlinCancellationException)
 }
 

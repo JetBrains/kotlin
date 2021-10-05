@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -657,12 +658,18 @@ internal class ObjCExportTranslatorImpl(
 
                     MethodBridgeValueParameter.SuspendCompletion -> {
                         val resultType = when (val it = mapReferenceType(method.returnType!!, objCExportScope)) {
-                            is ObjCNonNullReferenceType -> ObjCNullableReferenceType(it, isNullableResult = false)
+                            is ObjCNonNullReferenceType -> {
+                                if (baseMethod.returnType!!.isUnit()) {
+                                    null
+                                } else {
+                                    ObjCNullableReferenceType(it, isNullableResult = false)
+                                }
+                            }
                             is ObjCNullableReferenceType -> ObjCNullableReferenceType(it.nonNullType, isNullableResult = true)
                         }
                         ObjCBlockPointerType(
                                 returnType = ObjCVoidType,
-                                parameterTypes = listOf(
+                                parameterTypes = listOfNotNull(
                                         resultType,
                                         ObjCNullableReferenceType(ObjCClassType("NSError"))
                                 )

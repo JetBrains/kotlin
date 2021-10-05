@@ -38,8 +38,8 @@ private class ThrowsThrowableAsErrorSuspendImpl : ThrowsThrowableAsErrorSuspend 
         self.throwable = throwable
     }
 
-    func throwError(completionHandler: @escaping (KotlinUnit?, Error?) -> Void) {
-        completionHandler(nil, throwable.asError())
+    func throwError(completionHandler: @escaping (Error?) -> Void) {
+        completionHandler(throwable.asError())
     }
 }
 

@@ -96,6 +96,7 @@ interface SuspendBridge<T> {
 
     suspend fun unit(value: T): Unit
     suspend fun unitAsAny(value: T): Any?
+    suspend fun nullableUnit(value: T): Unit?
 
     @Throws(Throwable::class) suspend fun nothing(value: T): Nothing
     @Throws(Throwable::class) suspend fun nothingAsInt(value: T): Int
@@ -107,6 +108,7 @@ abstract class AbstractSuspendBridge : SuspendBridge<Int> {
     override suspend fun intAsAny(value: Int): Int = TODO()
 
     override suspend fun unitAsAny(value: Int): Unit = TODO()
+    override suspend fun nullableUnit(value: Int): Unit? = TODO()
 
     override suspend fun nothingAsInt(value: Int): Nothing = TODO()
     override suspend fun nothingAsAny(value: Int): Nothing = TODO()
@@ -117,20 +119,22 @@ private suspend fun callSuspendBridgeImpl(bridge: SuspendBridge<Int>) {
     assertEquals(1, bridge.intAsAny(1))
 
     assertSame(Unit, bridge.unitAsAny(2))
+    assertSame(Unit, bridge.nullableUnit(3))
 
-    assertFailsWith<ObjCErrorException> { bridge.nothingAsInt(3) }
-    assertFailsWith<ObjCErrorException> { bridge.nothingAsAny(4) }
-    assertFailsWith<ObjCErrorException> { bridge.nothingAsUnit(5) }
+    assertFailsWith<ObjCErrorException> { bridge.nothingAsInt(4) }
+    assertFailsWith<ObjCErrorException> { bridge.nothingAsAny(5) }
+    assertFailsWith<ObjCErrorException> { bridge.nothingAsUnit(6) }
 }
 
 private suspend fun callAbstractSuspendBridgeImpl(bridge: AbstractSuspendBridge) {
-    assertEquals(6, bridge.intAsAny(6))
+    assertEquals(7, bridge.intAsAny(7))
 
-    assertSame(Unit, bridge.unitAsAny(7))
+    assertSame(Unit, bridge.unitAsAny(8))
+    assertSame(Unit, bridge.nullableUnit(9))
 
-    assertFailsWith<ObjCErrorException> { bridge.nothingAsInt(8) }
-    assertFailsWith<ObjCErrorException> { bridge.nothingAsAny(9) }
-    assertFailsWith<ObjCErrorException> { bridge.nothingAsUnit(10) }
+    assertFailsWith<ObjCErrorException> { bridge.nothingAsInt(10) }
+    assertFailsWith<ObjCErrorException> { bridge.nothingAsAny(11) }
+    assertFailsWith<ObjCErrorException> { bridge.nothingAsUnit(12) }
 }
 
 @Throws(Throwable::class)

@@ -245,6 +245,10 @@ internal class ObjCExportCodeGenerator(
         return irFunction?.name?.asString()
     }
 
+    internal val unitContinuationToRetainedCompletionConverter: LLVMValueRef by lazy {
+        generateUnitContinuationToRetainedCompletionConverter(blockGenerator)
+    }
+
     fun FunctionGenerationContext.genSendMessage(
             returnType: LlvmParamType,
             parameterTypes: List<LlvmParamType>,
@@ -771,6 +775,20 @@ private fun ObjCExportCodeGenerator.generateContinuationToRetainedCompletionConv
     }
 }
 
+private fun ObjCExportCodeGenerator.generateUnitContinuationToRetainedCompletionConverter(
+        blockGenerator: BlockGenerator
+): LLVMValueRef = with(blockGenerator) {
+    generateWrapKotlinObjectToRetainedBlock(
+            BlockType(numberOfParameters = 1, returnsVoid = true),
+            convertName = "convertUnitContinuation",
+            invokeName = "invokeUnitCompletion"
+    ) { continuation, arguments ->
+        check(arguments.size == 1)
+        callFromBridge(context.llvm.Kotlin_ObjCExport_resumeUnitContinuation, listOf(continuation) + arguments)
+        ret(null)
+    }
+}
+
 // TODO: find out what to use instead here and in the dependent code
 private val ObjCExportBlockCodeGenerator.mappedFunctionNClasses get() =
     // failed attempt to migrate to descriptor-less IrBuiltIns
@@ -975,9 +993,14 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
             }
 
             MethodBridgeValueParameter.SuspendCompletion -> {
+                val function = if (baseMethod!!.returnType.isUnit()) {
+                    context.llvm.Kotlin_ObjCExport_createUnitContinuationArgument
+                } else {
+                    context.llvm.Kotlin_ObjCExport_createContinuationArgument
+                }
                 callFromBridge(
-                        context.llvm.Kotlin_ObjCExport_createContinuationArgument,
-                        listOf(parameter, generateExceptionTypeInfoArray(baseMethod!!)),
+                        function,
+                        listOf(parameter, generateExceptionTypeInfoArray(baseMethod)),
                         Lifetime.ARGUMENT
                 ).also {
                     continuation = it
@@ -1190,7 +1213,13 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                             listOf(continuation),
                             Lifetime.ARGUMENT
                     )
-                    val retainedCompletion = callFromBridge(continuationToRetainedCompletionConverter, listOf(intercepted))
+
+                    val converter = if (baseIrFunction.returnType.isUnit()) {
+                        unitContinuationToRetainedCompletionConverter
+                    } else {
+                        continuationToRetainedCompletionConverter
+                    }
+                    val retainedCompletion = callFromBridge(converter, listOf(intercepted))
                     callFromBridge(objcAutorelease, listOf(retainedCompletion)) // TODO: use stack-allocated block here instead.
                 }
             }
