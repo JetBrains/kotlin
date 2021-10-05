@@ -260,10 +260,11 @@ internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrMod
     }
 }
 
-internal fun IrField.toFieldInfo() =
-        ClassLayoutBuilder.FieldInfo(name.asString(), type,
-                correspondingPropertySymbol?.owner?.isConst ?: false,
-                initializer?.expression is IrConst<*>, this)
+internal fun IrField.toFieldInfo(): ClassLayoutBuilder.FieldInfo {
+    val isConst = correspondingPropertySymbol?.owner?.isConst ?: false
+    require(!isConst || initializer?.expression is IrConst<*>) { "A const val field ${render()} must have constant initializer" }
+    return ClassLayoutBuilder.FieldInfo(name.asString(), type, isConst, this)
+}
 
 internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
     val vtableEntries: List<OverriddenFunctionInfo> by lazy {
@@ -399,7 +400,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         return context.getLayoutBuilder(superFunction.parentAsClass).itablePlace(superFunction)
     }
 
-    class FieldInfo(val name: String, val type: IrType, val isConst: Boolean, val hasConstInitializer: Boolean, val irField: IrField?) {
+    class FieldInfo(val name: String, val type: IrType, val isConst: Boolean, val irField: IrField?) {
         var index = -1
     }
 
