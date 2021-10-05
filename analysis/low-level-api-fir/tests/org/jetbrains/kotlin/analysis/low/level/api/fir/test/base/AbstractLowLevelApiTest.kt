@@ -46,6 +46,7 @@ import kotlin.io.path.nameWithoutExtension
 abstract class AbstractLowLevelApiTest : TestWithDisposable() {
     private lateinit var testInfo: KotlinTestInfo
     private var useDependedAnalysisSession: Boolean = false
+    open protected val enableTestInDependedMode: Boolean = true
 
     @OptIn(TestInfrastructureInternals::class)
     private val configure: TestConfigurationBuilder.() -> Unit = {
@@ -114,7 +115,11 @@ abstract class AbstractLowLevelApiTest : TestWithDisposable() {
         val ktFiles = moduleInfo.testFilesToKtFiles.filterKeys { testFile -> !testFile.isAdditional }.values.toList()
 
         doTestByFileStructure(ktFiles, moduleStructure, testServices)
-        if (ktFiles.any { InTextDirectivesUtils.isDirectiveDefined(it.text, DISABLE_DEPENDED_MODE_DIRECTIVE) }) return
+        if (!enableTestInDependedMode || ktFiles.any {
+                InTextDirectivesUtils.isDirectiveDefined(it.text, DISABLE_DEPENDED_MODE_DIRECTIVE)
+            }) {
+            return
+        }
         try {
             useDependedAnalysisSession = true
             doTestByFileStructure(ktFiles.map {

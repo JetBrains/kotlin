@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
+import org.jetbrains.kotlin.fir.FirRenderer
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -38,4 +38,6 @@ abstract class AbstractFirOnAirResolveTest : AbstractLowLevelApiSingleFileTest()
             KotlinTestUtils.assertEqualsToFile(testDataFileSibling(".txt"), rendered)
         }
     }
+
+    override val enableTestInDependedMode: Boolean get() = false
 }
