@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model
 
-import org.jetbrains.kotlin.fir.checkers.generator.*
+import org.jetbrains.kotlin.fir.checkers.generator.collectClassNamesTo
+import org.jetbrains.kotlin.fir.checkers.generator.inBracketsWithIndent
+import org.jetbrains.kotlin.fir.checkers.generator.printImports
 import org.jetbrains.kotlin.fir.tree.generator.printer.printCopyright
 import org.jetbrains.kotlin.fir.tree.generator.printer.printGeneratedMessage
 import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
@@ -39,6 +41,9 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
             for (group in diagnosticList.groups) {
                 printDiagnosticGroup(group.name, group.diagnostics)
                 println()
+            }
+            inBracketsWithIndent("init") {
+                println("RootDiagnosticRendererFactory.registerFactory(${diagnosticList.objectName}DefaultMessages)")
             }
         }
     }
@@ -136,6 +141,7 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
         for (deprecationDiagnostic in diagnosticList.allDiagnostics.filterIsInstance<DeprecationDiagnosticData>()) {
             add("org.jetbrains.kotlin.config.LanguageFeature.${deprecationDiagnostic.featureForError.name}")
         }
+        add("org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory")
     }
 
 

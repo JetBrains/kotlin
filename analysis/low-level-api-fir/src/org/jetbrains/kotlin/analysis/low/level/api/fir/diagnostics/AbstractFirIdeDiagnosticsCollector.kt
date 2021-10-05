@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.module
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
 import org.jetbrains.kotlin.fir.analysis.checkers.*
@@ -16,10 +17,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.components.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmExpressionCheckers
-import org.jetbrains.kotlin.fir.analysis.jvm.diagnostics.FirJvmDefaultErrorMessages
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
@@ -43,7 +42,6 @@ private object CheckersFactory {
     ): List<AbstractDiagnosticCollectorComponent> {
         val module = session.moduleData.module
         val platform = module.platform.componentPlatforms.first()
-        installPlatformSpecificErrorMessages(platform)
         val declarationCheckers = createDeclarationCheckers(useExtendedCheckers, platform)
         val expressionCheckers = createExpressionCheckers(useExtendedCheckers, platform)
         val typeCheckers = createTypeCheckers(useExtendedCheckers)
@@ -87,14 +85,6 @@ private object CheckersFactory {
                     else -> {
                     }
                 }
-            }
-        }
-    }
-
-    private fun installPlatformSpecificErrorMessages(platform: SimplePlatform) {
-        when (platform) {
-            is JvmPlatform -> FirJvmDefaultErrorMessages.installJvmErrorMessages()
-            else -> {
             }
         }
     }

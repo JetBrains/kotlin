@@ -10,10 +10,10 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
-import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 
 internal interface KtAbstractFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI>, ValidityTokenOwner {
     val firDiagnostic: KtPsiDiagnostic
@@ -25,7 +25,7 @@ internal interface KtAbstractFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithP
         get() = withValidityAssertion {
             val diagnostic = firDiagnostic as KtDiagnostic
 
-            val firDiagnosticRenderer = FirDefaultErrorMessages.getRendererForDiagnostic(diagnostic)
+            val firDiagnosticRenderer = RootDiagnosticRendererFactory(diagnostic)
             return firDiagnosticRenderer.render(diagnostic)
         }
 

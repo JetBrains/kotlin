@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
-import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
 import org.jetbrains.kotlin.fir.types.contains
@@ -20,39 +21,39 @@ internal class LLDiagnosticParameterChecker(testServices: TestServices) : FirAna
         val diagnostics = info.firAnalyzerFacade.runCheckers().values.flatten()
 
         for (diagnostic in diagnostics) {
-            checkDiagnosticIsSuitableForFirIde(diagnostic)
+            checkDiagnosticIsSuitableForFirIde(diagnostic as KtPsiDiagnostic)
         }
     }
 
-    private fun checkDiagnosticIsSuitableForFirIde(diagnostic: FirDiagnostic) {
+    private fun checkDiagnosticIsSuitableForFirIde(diagnostic: KtPsiDiagnostic) {
         val parameters = diagnostic.allParameters()
         for (parameter in parameters) {
             checkDiagnosticParameter(diagnostic, parameter)
         }
     }
 
-    private fun checkDiagnosticParameter(diagnostic: FirDiagnostic, parameter: Any?) {
+    private fun checkDiagnosticParameter(diagnostic: KtPsiDiagnostic, parameter: Any?) {
         when (parameter) {
-            is ConeKotlinType -> checkType(parameter, diagnostic)
+            is ConeKotlinType -> checkType(parameter, diagnostic as KtDiagnostic)
         }
     }
 
-    private fun checkType(parameter: ConeKotlinType, diagnostic: FirDiagnostic) {
+    private fun checkType(parameter: ConeKotlinType, diagnostic: KtDiagnostic) {
         val containsTypeVariableType = parameter.contains { it is ConeTypeVariableType }
         if (containsTypeVariableType) {
-            val rendered = FirDefaultErrorMessages.getRendererForDiagnostic(diagnostic).render(diagnostic)
+            val rendered = RootDiagnosticRendererFactory(diagnostic).render(diagnostic)
             testServices.assertions.fail {
                 "ConeTypeVariableType should not be exposed from diagnostic. But it was for ${diagnostic.factoryName} $rendered"
             }
         }
     }
 
-    private fun FirDiagnostic.allParameters(): List<Any?> = when (this) {
-        is FirPsiDiagnosticWithParameters1<*> -> listOf(a)
-        is FirPsiDiagnosticWithParameters2<*, *> -> listOf(a, b)
-        is FirPsiDiagnosticWithParameters3<*, *, *> -> listOf(a, b, c)
-        is FirPsiDiagnosticWithParameters4<*, *, *, *> -> listOf(a, b, c, d)
-        is FirPsiSimpleDiagnostic -> emptyList()
+    private fun KtPsiDiagnostic.allParameters(): List<Any?> = when (this) {
+        is KtPsiDiagnosticWithParameters1<*> -> listOf(a)
+        is KtPsiDiagnosticWithParameters2<*, *> -> listOf(a, b)
+        is KtPsiDiagnosticWithParameters3<*, *, *> -> listOf(a, b, c)
+        is KtPsiDiagnosticWithParameters4<*, *, *, *> -> listOf(a, b, c, d)
+        is KtPsiSimpleDiagnostic -> emptyList()
         else -> error("Unexpected diagnostic $this")
     }
 

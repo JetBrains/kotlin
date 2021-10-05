@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDefaultErrorMessages
+import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import java.io.Closeable
 import java.io.File
 import java.io.InputStreamReader
@@ -86,8 +86,7 @@ object FirDiagnosticsCompilerResultsReporter {
         reporter: MessageCollector
     ) {
         val severity = AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity)
-        // TODO: support multiple maps with messages
-        val renderer = FirDefaultErrorMessages.getRendererForDiagnostic(diagnostic)
+        val renderer = RootDiagnosticRendererFactory(diagnostic)
         reporter.report(severity, renderer.render(diagnostic), location)
     }
 

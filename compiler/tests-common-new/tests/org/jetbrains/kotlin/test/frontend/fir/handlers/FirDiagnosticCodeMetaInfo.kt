@@ -9,8 +9,8 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
 import org.jetbrains.kotlin.codeMetaInfo.renderConfigurations.AbstractCodeMetaInfoRenderConfiguration
 import org.jetbrains.kotlin.diagnostics.AbstractKtDiagnosticWithParametersRenderer
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 
 object FirMetaInfoUtils {
     val renderDiagnosticNoArgs = FirDiagnosticCodeMetaRenderConfiguration().apply { renderParams = false }
@@ -63,7 +63,7 @@ class FirDiagnosticCodeMetaRenderConfiguration(
         val diagnostic = codeMetaInfo.diagnostic
 
         @Suppress("UNCHECKED_CAST")
-        val renderer = FirDefaultErrorMessages.getRendererForDiagnostic(diagnostic)
+        val renderer = RootDiagnosticRendererFactory(diagnostic)
         if (renderer is AbstractKtDiagnosticWithParametersRenderer) {
             renderer.renderParameters(diagnostic).mapTo(params, Any?::toString)
         }

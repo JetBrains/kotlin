@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.CLASS_KIND
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.RENDER_POSITION_VARIANCE
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
@@ -524,1265 +522,1326 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.NOT_RENDERED
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.NULLABLE_STRING
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.VISIBILITY
+import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 
 @Suppress("unused")
-class FirDefaultErrorMessages {
-    companion object {
-        fun getRendererForDiagnostic(diagnostic: KtDiagnostic): KtDiagnosticRenderer {
-            val factory = diagnostic.factory
-            @Suppress("UNCHECKED_CAST")
-            return (MAP[factory] ?: factory.ktRenderer)
-        }
+object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
-        // * - The old FE reports these diagnostics with additional parameters
-        // & - New diagnostic that has no analogues in the old FE
-        // + - Better message required
-        // # - The new diagnostic differs from the old FE's one
-        val MAP = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
-            // Meta-errors
-            map.put(UNSUPPORTED, "Unsupported [{0}]", TO_STRING)
-            map.put(UNSUPPORTED_FEATURE, "{0}", LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.UNSUPPORTED))
+    // * - The old FE reports these diagnostics with additional parameters
+    // & - New diagnostic that has no analogues in the old FE
+    // + - Better message required
+    // # - The new diagnostic differs from the old FE's one
+    override val MAP = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
+        // Meta-errors
+        map.put(UNSUPPORTED, "Unsupported [{0}]", TO_STRING)
+        map.put(UNSUPPORTED_FEATURE, "{0}", LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.UNSUPPORTED))
 
-            // Miscellaneous
-            map.put(SYNTAX, "Syntax error")
-            map.put(OTHER_ERROR, "Unknown (other) error")
+        // Miscellaneous
+        map.put(SYNTAX, "Syntax error")
+        map.put(OTHER_ERROR, "Unknown (other) error")
 
-            // General syntax
-            map.put(ILLEGAL_CONST_EXPRESSION, "Illegal const expression")
-            map.put(ILLEGAL_UNDERSCORE, "Illegal underscore")
+        // General syntax
+        map.put(ILLEGAL_CONST_EXPRESSION, "Illegal const expression")
+        map.put(ILLEGAL_UNDERSCORE, "Illegal underscore")
 //            map.put(EXPRESSION_REQUIRED, ...) // &
-            map.put(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP, "'break' and 'continue' are only allowed inside a loop")
-            map.put(NOT_A_LOOP_LABEL, "The label does not denote a loop") // *
-            map.put(BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY, "'break' or 'continue' jumps across a function or a class boundary")
-            map.put(VARIABLE_EXPECTED, "Variable expected")
-            map.put(DELEGATION_IN_INTERFACE, "Interfaces cannot use delegation")
-            map.put(DELEGATION_NOT_TO_INTERFACE, "Only interfaces can be delegated to")
-            map.put(NESTED_CLASS_NOT_ALLOWED, "{0} is not allowed here", TO_STRING)
-            map.put(VAL_OR_VAR_ON_LOOP_PARAMETER, "''{0}'' on loop parameter is not allowed", TO_STRING)
-            map.put(VAL_OR_VAR_ON_FUN_PARAMETER, "''{0}'' on function parameter is not allowed", TO_STRING)
-            map.put(VAL_OR_VAR_ON_CATCH_PARAMETER, "''{0}'' on catch parameter is not allowed", TO_STRING)
-            map.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, "''{0}'' on secondary constructor parameter is not allowed", TO_STRING)
-            map.put(DEPRECATION, "''{0}'' is deprecated. {1}", SYMBOL, STRING)
-            map.put(DEPRECATION_ERROR, "''{0}'' is deprecated. {1}", SYMBOL, STRING)
+        map.put(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP, "'break' and 'continue' are only allowed inside a loop")
+        map.put(NOT_A_LOOP_LABEL, "The label does not denote a loop") // *
+        map.put(BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY, "'break' or 'continue' jumps across a function or a class boundary")
+        map.put(VARIABLE_EXPECTED, "Variable expected")
+        map.put(DELEGATION_IN_INTERFACE, "Interfaces cannot use delegation")
+        map.put(DELEGATION_NOT_TO_INTERFACE, "Only interfaces can be delegated to")
+        map.put(NESTED_CLASS_NOT_ALLOWED, "{0} is not allowed here", TO_STRING)
+        map.put(VAL_OR_VAR_ON_LOOP_PARAMETER, "''{0}'' on loop parameter is not allowed", TO_STRING)
+        map.put(VAL_OR_VAR_ON_FUN_PARAMETER, "''{0}'' on function parameter is not allowed", TO_STRING)
+        map.put(VAL_OR_VAR_ON_CATCH_PARAMETER, "''{0}'' on catch parameter is not allowed", TO_STRING)
+        map.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, "''{0}'' on secondary constructor parameter is not allowed", TO_STRING)
+        map.put(DEPRECATION, "''{0}'' is deprecated. {1}", SYMBOL, STRING)
+        map.put(DEPRECATION_ERROR, "''{0}'' is deprecated. {1}", SYMBOL, STRING)
 
-            // Unresolved
-            map.put(INVISIBLE_REFERENCE, "Symbol {0} is invisible", SYMBOL)
-            map.put(INVISIBLE_SETTER, "Cannot access ''{0}'': it is {1} in {2}", VARIABLE_NAME, VISIBILITY, NAME_OF_CONTAINING_DECLARATION_OR_FILE)
-            map.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", NULLABLE_STRING)
-            map.put(UNRESOLVED_LABEL, "Unresolved label")
-            map.put(DESERIALIZATION_ERROR, "Deserialization error")
-            map.put(ERROR_FROM_JAVA_RESOLUTION, "Java resolution error")
+        // Unresolved
+        map.put(INVISIBLE_REFERENCE, "Symbol {0} is invisible", SYMBOL)
+        map.put(
+            INVISIBLE_SETTER,
+            "Cannot access ''{0}'': it is {1} in {2}",
+            VARIABLE_NAME,
+            VISIBILITY,
+            NAME_OF_CONTAINING_DECLARATION_OR_FILE
+        )
+        map.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", NULLABLE_STRING)
+        map.put(UNRESOLVED_LABEL, "Unresolved label")
+        map.put(DESERIALIZATION_ERROR, "Deserialization error")
+        map.put(ERROR_FROM_JAVA_RESOLUTION, "Java resolution error")
 //            map.put(UNKNOWN_CALLABLE_KIND, ...) // &
 //            map.put(MISSING_STDLIB_CLASS, ...) // &
-            map.put(NO_THIS, "'this' is not defined in this context")
+        map.put(NO_THIS, "'this' is not defined in this context")
 
-            // Super
-            map.put(SUPER_IS_NOT_AN_EXPRESSION, "Super cannot be a callee")
-            map.put(SUPER_NOT_AVAILABLE, "No supertypes are accessible in this context")
-            map.put(ABSTRACT_SUPER_CALL, "Abstract member cannot be accessed directly")
-            map.put(
-                INSTANCE_ACCESS_BEFORE_SUPER_CALL,
-                "Cannot access ''{0}'' before superclass constructor has been called",
-                TO_STRING
-            )
-            map.put(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, "Cannot create an instance of an abstract class")
-            map.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", TO_STRING, FUNCTION_PARAMETERS)
-            map.put(
-                FUNCTION_EXPECTED,
-                "Expression ''{0}'' of type {1} cannot be invoked as a function. The function 'invoke()' is not found", TO_STRING, RENDER_TYPE
-            )
-            map.put(
-                RESOLUTION_TO_CLASSIFIER,
-                "Constructor of inner class {0} can be called only with receiver of containing class",
-                SYMBOL
-            )
-            map.put(ILLEGAL_SELECTOR, "The expression cannot be a selector (occur after a dot)")
-            map.put(NO_RECEIVER_ALLOWED, "No receiver can be passed to this function or property")
+        // Super
+        map.put(SUPER_IS_NOT_AN_EXPRESSION, "Super cannot be a callee")
+        map.put(SUPER_NOT_AVAILABLE, "No supertypes are accessible in this context")
+        map.put(ABSTRACT_SUPER_CALL, "Abstract member cannot be accessed directly")
+        map.put(
+            INSTANCE_ACCESS_BEFORE_SUPER_CALL,
+            "Cannot access ''{0}'' before superclass constructor has been called",
+            TO_STRING
+        )
+        map.put(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, "Cannot create an instance of an abstract class")
+        map.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", TO_STRING, FUNCTION_PARAMETERS)
+        map.put(
+            FUNCTION_EXPECTED,
+            "Expression ''{0}'' of type {1} cannot be invoked as a function. The function 'invoke()' is not found", TO_STRING, RENDER_TYPE
+        )
+        map.put(
+            RESOLUTION_TO_CLASSIFIER,
+            "Constructor of inner class {0} can be called only with receiver of containing class",
+            SYMBOL
+        )
+        map.put(ILLEGAL_SELECTOR, "The expression cannot be a selector (occur after a dot)")
+        map.put(NO_RECEIVER_ALLOWED, "No receiver can be passed to this function or property")
 
-            // Supertypes
-            map.put(NOT_A_SUPERTYPE, "Not an immediate supertype")
-            map.put(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, "Type arguments do not need to be specified in a 'super' qualifier")
-            map.put(SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE, "Superclass is not accessible from interface")
-            map.put(
-                QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE,
-                "Explicitly qualified supertype is extended by another supertype ''{0}''",
-                SYMBOL
-            )
-            map.put(SUPERTYPE_INITIALIZED_IN_INTERFACE, "Interfaces cannot initialize supertypes")
-            map.put(INTERFACE_WITH_SUPERCLASS, "An interface cannot inherit from a class")
-            map.put(FINAL_SUPERTYPE, "This type is final, so it cannot be inherited from")
-            map.put(CLASS_CANNOT_BE_EXTENDED_DIRECTLY, "Class {0} cannot be extended directly", SYMBOL)
-            map.put(SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE, "Extension function type is not allowed as supertypes")
-            map.put(SINGLETON_IN_SUPERTYPE, "Cannot inherit from a singleton")
-            map.put(NULLABLE_SUPERTYPE, "A supertype cannot be nullable")
-            map.put(MANY_CLASSES_IN_SUPERTYPE_LIST, "Only one class may appear in a supertype list")
-            map.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice")
-            map.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes")
-            map.put(SEALED_SUPERTYPE, "This type is sealed, so it can be inherited by only its own nested classes or objects")
-            map.put(SEALED_SUPERTYPE_IN_LOCAL_CLASS, "{0} cannot extend a sealed {1}", STRING, CLASS_KIND)
-            map.put(SEALED_INHERITOR_IN_DIFFERENT_PACKAGE, "A class can only inherit from a sealed class or interface declared in the same package")
-            map.put(SEALED_INHERITOR_IN_DIFFERENT_MODULE, "Inheritance of sealed classes or interfaces from different module is prohibited")
-            map.put(CLASS_INHERITS_JAVA_SEALED_CLASS, "Inheritance of Java sealed classes is prohibited")
+        // Supertypes
+        map.put(NOT_A_SUPERTYPE, "Not an immediate supertype")
+        map.put(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, "Type arguments do not need to be specified in a 'super' qualifier")
+        map.put(SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE, "Superclass is not accessible from interface")
+        map.put(
+            QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE,
+            "Explicitly qualified supertype is extended by another supertype ''{0}''",
+            SYMBOL
+        )
+        map.put(SUPERTYPE_INITIALIZED_IN_INTERFACE, "Interfaces cannot initialize supertypes")
+        map.put(INTERFACE_WITH_SUPERCLASS, "An interface cannot inherit from a class")
+        map.put(FINAL_SUPERTYPE, "This type is final, so it cannot be inherited from")
+        map.put(CLASS_CANNOT_BE_EXTENDED_DIRECTLY, "Class {0} cannot be extended directly", SYMBOL)
+        map.put(SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE, "Extension function type is not allowed as supertypes")
+        map.put(SINGLETON_IN_SUPERTYPE, "Cannot inherit from a singleton")
+        map.put(NULLABLE_SUPERTYPE, "A supertype cannot be nullable")
+        map.put(MANY_CLASSES_IN_SUPERTYPE_LIST, "Only one class may appear in a supertype list")
+        map.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice")
+        map.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes")
+        map.put(SEALED_SUPERTYPE, "This type is sealed, so it can be inherited by only its own nested classes or objects")
+        map.put(SEALED_SUPERTYPE_IN_LOCAL_CLASS, "{0} cannot extend a sealed {1}", STRING, CLASS_KIND)
+        map.put(SEALED_INHERITOR_IN_DIFFERENT_PACKAGE, "A class can only inherit from a sealed class or interface declared in the same package")
+        map.put(SEALED_INHERITOR_IN_DIFFERENT_MODULE, "Inheritance of sealed classes or interfaces from different module is prohibited")
+        map.put(CLASS_INHERITS_JAVA_SEALED_CLASS, "Inheritance of Java sealed classes is prohibited")
 
-            map.put(SUPERTYPE_NOT_A_CLASS_OR_INTERFACE, "Supertype is not a class or interface", TO_STRING)
-            map.put(CYCLIC_INHERITANCE_HIERARCHY, "There's a cycle in the inheritance hierarchy for this type")
-            map.put(
-                EXPANDED_TYPE_CANNOT_BE_INHERITED,
-                "Type alias expands to {0}, which is not a class, an interface, or an object",
-                RENDER_TYPE
-            )
-            map.put(PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE, "Projections are not allowed for immediate arguments of a supertype")
-            map.put(
-                INCONSISTENT_TYPE_PARAMETER_VALUES,
-                "Type parameter {0} of ''{1}'' has inconsistent values: {2}",
-                SYMBOL,
-                SYMBOL,
-                RENDER_COLLECTION_OF_TYPES
-            )
-            map.put(
-                INCONSISTENT_TYPE_PARAMETER_BOUNDS,
-                "Type parameter {0} of ''{1}'' has inconsistent bounds: {2}",
-                SYMBOL,
-                SYMBOL,
-                RENDER_COLLECTION_OF_TYPES
-            )
-            map.put(AMBIGUOUS_SUPER, "Many supertypes available, please specify the one you mean in angle brackets, e.g. 'super<Foo>'", NOT_RENDERED)
+        map.put(SUPERTYPE_NOT_A_CLASS_OR_INTERFACE, "Supertype is not a class or interface", TO_STRING)
+        map.put(CYCLIC_INHERITANCE_HIERARCHY, "There's a cycle in the inheritance hierarchy for this type")
+        map.put(
+            EXPANDED_TYPE_CANNOT_BE_INHERITED,
+            "Type alias expands to {0}, which is not a class, an interface, or an object",
+            RENDER_TYPE
+        )
+        map.put(PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE, "Projections are not allowed for immediate arguments of a supertype")
+        map.put(
+            INCONSISTENT_TYPE_PARAMETER_VALUES,
+            "Type parameter {0} of ''{1}'' has inconsistent values: {2}",
+            SYMBOL,
+            SYMBOL,
+            RENDER_COLLECTION_OF_TYPES
+        )
+        map.put(
+            INCONSISTENT_TYPE_PARAMETER_BOUNDS,
+            "Type parameter {0} of ''{1}'' has inconsistent bounds: {2}",
+            SYMBOL,
+            SYMBOL,
+            RENDER_COLLECTION_OF_TYPES
+        )
+        map.put(AMBIGUOUS_SUPER, "Many supertypes available, please specify the one you mean in angle brackets, e.g. 'super<Foo>'", NOT_RENDERED)
 
-            // Constructor problems
-            map.put(CONSTRUCTOR_IN_OBJECT, "Constructors are not allowed for objects")
-            map.put(CONSTRUCTOR_IN_INTERFACE, "An interface may not have a constructor")
-            map.put(NON_PRIVATE_CONSTRUCTOR_IN_ENUM, "Constructor must be private in enum class")
-            map.put(NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED, "Constructor must be private or protected in sealed class")
-            map.put(CYCLIC_CONSTRUCTOR_DELEGATION_CALL, "There's a cycle in the delegation calls chain")
-            map.put(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED, "Primary constructor call expected")
-            map.put(SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR, "Supertype initialization is impossible without primary constructor")
-            map.put(DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR, "Call to super is not allowed in enum constructor")
-            map.put(PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS, "Primary constructor required for data class")
-            map.put(
-                EXPLICIT_DELEGATION_CALL_REQUIRED,
-                "Explicit 'this' or 'super' call is required. There is no constructor in superclass that can be called without arguments"
-            )
-            map.put(SEALED_CLASS_CONSTRUCTOR_CALL, "Sealed types cannot be instantiated")
-            map.put(DATA_CLASS_WITHOUT_PARAMETERS, "Data class must have at least one primary constructor parameter")
-            map.put(DATA_CLASS_VARARG_PARAMETER, "Primary constructor vararg parameters are forbidden for data classes")
-            map.put(DATA_CLASS_NOT_PROPERTY_PARAMETER, "Data class primary constructor must have only property (val / var) parameters")
+        // Constructor problems
+        map.put(CONSTRUCTOR_IN_OBJECT, "Constructors are not allowed for objects")
+        map.put(CONSTRUCTOR_IN_INTERFACE, "An interface may not have a constructor")
+        map.put(NON_PRIVATE_CONSTRUCTOR_IN_ENUM, "Constructor must be private in enum class")
+        map.put(NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED, "Constructor must be private or protected in sealed class")
+        map.put(CYCLIC_CONSTRUCTOR_DELEGATION_CALL, "There's a cycle in the delegation calls chain")
+        map.put(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED, "Primary constructor call expected")
+        map.put(SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR, "Supertype initialization is impossible without primary constructor")
+        map.put(DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR, "Call to super is not allowed in enum constructor")
+        map.put(PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS, "Primary constructor required for data class")
+        map.put(
+            EXPLICIT_DELEGATION_CALL_REQUIRED,
+            "Explicit 'this' or 'super' call is required. There is no constructor in superclass that can be called without arguments"
+        )
+        map.put(SEALED_CLASS_CONSTRUCTOR_CALL, "Sealed types cannot be instantiated")
+        map.put(DATA_CLASS_WITHOUT_PARAMETERS, "Data class must have at least one primary constructor parameter")
+        map.put(DATA_CLASS_VARARG_PARAMETER, "Primary constructor vararg parameters are forbidden for data classes")
+        map.put(DATA_CLASS_NOT_PROPERTY_PARAMETER, "Data class primary constructor must have only property (val / var) parameters")
 
-            // Annotations
-            map.put(ANNOTATION_USED_AS_ANNOTATION_ARGUMENT, "An annotation can't be used as the annotations argument")
-            map.put(ANNOTATION_CLASS_MEMBER, "Members are not allowed in annotation class")
-            map.put(ANNOTATION_ARGUMENT_MUST_BE_CONST, "An annotation argument must be a compile-time constant")
-            map.put(
-                ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT,
-                "Default value of annotation parameter must be a compile-time constant"
-            )
-            map.put(LOCAL_ANNOTATION_CLASS_ERROR, "Annotation class cannot be local")
-            map.put(MISSING_VAL_ON_ANNOTATION_PARAMETER, "'val' keyword is missing on annotation parameter")
-            map.put(NULLABLE_TYPE_OF_ANNOTATION_MEMBER, "An annotation parameter cannot be nullable")
-            map.put(INVALID_TYPE_OF_ANNOTATION_MEMBER, "Invalid type of annotation member")
-            map.put(VAR_ANNOTATION_PARAMETER, "An annotation parameter cannot be 'var'")
-            map.put(ANNOTATION_CLASS_CONSTRUCTOR_CALL, "Annotation class cannot be instantiated")
-            map.put(NOT_AN_ANNOTATION_CLASS, "Illegal annotation class: {0}", NULLABLE_STRING)
-            map.put(SUPERTYPES_FOR_ANNOTATION_CLASS, "Annotation class cannot have supertypes")
-            map.put(
-                ILLEGAL_KOTLIN_VERSION_STRING_VALUE,
-                "Invalid value in version annotation (should be 'major.minor' or 'major.minor.patch')"
-            )
-            map.put(NEWER_VERSION_IN_SINCE_KOTLIN, "The version is greater than the specified API version {0}", NULLABLE_STRING)
-            map.put(
-                DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS,
-                "Values of DeprecatedSinceKotlin annotation should be ordered so 'warningSince' <= 'errorSince' <= 'hiddenSince' if specified"
-            )
-            map.put(
-                DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS,
-                "DeprecatedSinceKotlin annotation should have at least one argument"
-            )
-            map.put(
-                DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED,
-                " DeprecatedSinceKotlin annotation can be used only together with Deprecated annotation"
-            )
-            map.put(
-                DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL,
-                "DeprecatedSinceKotlin annotation can be used only with unspecified deprecation level of Deprecated annotation"
-            )
-            map.put(
-                DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE,
-                "DeprecatedSinceKotlin annotation cannot be used outside 'kotlin' subpackages"
-            )
-            map.put(
-                OVERRIDE_DEPRECATION,
-                "This declaration overrides deprecated member but not marked as deprecated itself. Please add @Deprecated annotation or suppress",
-                EMPTY,
-                EMPTY
-            )
-            map.put(ANNOTATION_ON_SUPERCLASS, "Annotations on superclass are meaningless")
-            map.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING)
-            map.put(INAPPLICABLE_TARGET_ON_PROPERTY, "''@{0}:'' annotations could be applied only to property declarations", TO_STRING)
-            map.put(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, "''@{0}:'' annotations could be applied only to mutable properties", TO_STRING)
-            map.put(INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE, "'@delegate:' annotations could be applied only to delegated properties")
-            map.put(
-                INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD,
-                "'@field:' annotations could be applied only to properties with backing fields"
-            )
-            map.put(INAPPLICABLE_PARAM_TARGET, "'@param:' annotations could be applied only to primary constructor parameters")
-            map.put(REDUNDANT_ANNOTATION_TARGET, "Redundant annotation target ''{0}''", TO_STRING)
-            map.put(INAPPLICABLE_FILE_TARGET, "'@file:' annotations can only be applied before package declaration")
-            map.put(
-                WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET,
-                "This annotation is not applicable to target ''{0}'' and use site target ''@{1}''",
-                TO_STRING,
-                TO_STRING
-            )
-            map.put(REPEATED_ANNOTATION, "This annotation is not repeatable")
-            map.put(REPEATED_ANNOTATION_WARNING, "This annotation is not repeatable")
+        // Annotations
+        map.put(ANNOTATION_USED_AS_ANNOTATION_ARGUMENT, "An annotation can't be used as the annotations argument")
+        map.put(ANNOTATION_CLASS_MEMBER, "Members are not allowed in annotation class")
+        map.put(ANNOTATION_ARGUMENT_MUST_BE_CONST, "An annotation argument must be a compile-time constant")
+        map.put(
+            ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT,
+            "Default value of annotation parameter must be a compile-time constant"
+        )
+        map.put(LOCAL_ANNOTATION_CLASS_ERROR, "Annotation class cannot be local")
+        map.put(MISSING_VAL_ON_ANNOTATION_PARAMETER, "'val' keyword is missing on annotation parameter")
+        map.put(NULLABLE_TYPE_OF_ANNOTATION_MEMBER, "An annotation parameter cannot be nullable")
+        map.put(INVALID_TYPE_OF_ANNOTATION_MEMBER, "Invalid type of annotation member")
+        map.put(VAR_ANNOTATION_PARAMETER, "An annotation parameter cannot be 'var'")
+        map.put(ANNOTATION_CLASS_CONSTRUCTOR_CALL, "Annotation class cannot be instantiated")
+        map.put(NOT_AN_ANNOTATION_CLASS, "Illegal annotation class: {0}", NULLABLE_STRING)
+        map.put(SUPERTYPES_FOR_ANNOTATION_CLASS, "Annotation class cannot have supertypes")
+        map.put(
+            ILLEGAL_KOTLIN_VERSION_STRING_VALUE,
+            "Invalid value in version annotation (should be 'major.minor' or 'major.minor.patch')"
+        )
+        map.put(NEWER_VERSION_IN_SINCE_KOTLIN, "The version is greater than the specified API version {0}", NULLABLE_STRING)
+        map.put(
+            DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS,
+            "Values of DeprecatedSinceKotlin annotation should be ordered so 'warningSince' <= 'errorSince' <= 'hiddenSince' if specified"
+        )
+        map.put(
+            DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS,
+            "DeprecatedSinceKotlin annotation should have at least one argument"
+        )
+        map.put(
+            DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED,
+            " DeprecatedSinceKotlin annotation can be used only together with Deprecated annotation"
+        )
+        map.put(
+            DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL,
+            "DeprecatedSinceKotlin annotation can be used only with unspecified deprecation level of Deprecated annotation"
+        )
+        map.put(
+            DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE,
+            "DeprecatedSinceKotlin annotation cannot be used outside 'kotlin' subpackages"
+        )
+        map.put(
+            OVERRIDE_DEPRECATION,
+            "This declaration overrides deprecated member but not marked as deprecated itself. Please add @Deprecated annotation or suppress",
+            EMPTY,
+            EMPTY
+        )
+        map.put(ANNOTATION_ON_SUPERCLASS, "Annotations on superclass are meaningless")
+        map.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING)
+        map.put(INAPPLICABLE_TARGET_ON_PROPERTY, "''@{0}:'' annotations could be applied only to property declarations", TO_STRING)
+        map.put(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, "''@{0}:'' annotations could be applied only to mutable properties", TO_STRING)
+        map.put(INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE, "'@delegate:' annotations could be applied only to delegated properties")
+        map.put(
+            INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD,
+            "'@field:' annotations could be applied only to properties with backing fields"
+        )
+        map.put(INAPPLICABLE_PARAM_TARGET, "'@param:' annotations could be applied only to primary constructor parameters")
+        map.put(REDUNDANT_ANNOTATION_TARGET, "Redundant annotation target ''{0}''", TO_STRING)
+        map.put(INAPPLICABLE_FILE_TARGET, "'@file:' annotations can only be applied before package declaration")
+        map.put(
+            WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET,
+            "This annotation is not applicable to target ''{0}'' and use site target ''@{1}''",
+            TO_STRING,
+            TO_STRING
+        )
+        map.put(REPEATED_ANNOTATION, "This annotation is not repeatable")
+        map.put(REPEATED_ANNOTATION_WARNING, "This annotation is not repeatable")
 
-            // OptIn
-            map.put(OPT_IN_USAGE, "{1}", TO_STRING, STRING)
-            map.put(OPT_IN_USAGE_ERROR, "{1}", TO_STRING, STRING)
+        // OptIn
+        map.put(OPT_IN_USAGE, "{1}", TO_STRING, STRING)
+        map.put(OPT_IN_USAGE_ERROR, "{1}", TO_STRING, STRING)
 
-            map.put(OPT_IN_OVERRIDE, "{1}", TO_STRING, STRING)
-            map.put(OPT_IN_OVERRIDE_ERROR, "{1}", TO_STRING, STRING)
+        map.put(OPT_IN_OVERRIDE, "{1}", TO_STRING, STRING)
+        map.put(OPT_IN_OVERRIDE_ERROR, "{1}", TO_STRING, STRING)
 
-            map.put(OPT_IN_IS_NOT_ENABLED, "This annotation should be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'")
-            map.put(OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION, "This class can only be used as an annotation")
-            map.put(
-                OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN,
-                "This class can only be used as an annotation or as an argument to @OptIn"
-            )
-            map.put(OPT_IN_WITHOUT_ARGUMENTS, "@OptIn without any arguments has no effect")
-            map.put(
-                OPT_IN_ARGUMENT_IS_NOT_MARKER,
-                "Annotation ''{0}'' is not an opt-in requirement marker, therefore its usage in @OptIn is ignored",
-                TO_STRING
-            )
-            map.put(
-                OPT_IN_MARKER_WITH_WRONG_TARGET,
-                "Opt-in requirement marker annotation cannot be used on the following code elements: {0}. Please remove these targets",
-                STRING
-            )
-            map.put(
-                OPT_IN_MARKER_WITH_WRONG_RETENTION,
-                "Opt-in requirement marker annotation cannot be used with SOURCE retention. Please replace retention with BINARY"
-            )
-            map.put(OPT_IN_MARKER_ON_WRONG_TARGET, "Opt-in requirement marker annotation cannot be used on {0}", STRING)
-            map.put(
-                OPT_IN_MARKER_ON_OVERRIDE,
-                "Opt-in requirement marker annotation on override requires the same marker on base declaration"
-            )
-            map.put(
-                OPT_IN_MARKER_ON_OVERRIDE_WARNING,
-                "Opt-in requirement marker annotation on override makes no sense without the same marker on base declaration"
-            )
+        map.put(OPT_IN_IS_NOT_ENABLED, "This annotation should be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'")
+        map.put(OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION, "This class can only be used as an annotation")
+        map.put(
+            OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN,
+            "This class can only be used as an annotation or as an argument to @OptIn"
+        )
+        map.put(OPT_IN_WITHOUT_ARGUMENTS, "@OptIn without any arguments has no effect")
+        map.put(
+            OPT_IN_ARGUMENT_IS_NOT_MARKER,
+            "Annotation ''{0}'' is not an opt-in requirement marker, therefore its usage in @OptIn is ignored",
+            TO_STRING
+        )
+        map.put(
+            OPT_IN_MARKER_WITH_WRONG_TARGET,
+            "Opt-in requirement marker annotation cannot be used on the following code elements: {0}. Please remove these targets",
+            STRING
+        )
+        map.put(
+            OPT_IN_MARKER_WITH_WRONG_RETENTION,
+            "Opt-in requirement marker annotation cannot be used with SOURCE retention. Please replace retention with BINARY"
+        )
+        map.put(OPT_IN_MARKER_ON_WRONG_TARGET, "Opt-in requirement marker annotation cannot be used on {0}", STRING)
+        map.put(
+            OPT_IN_MARKER_ON_OVERRIDE,
+            "Opt-in requirement marker annotation on override requires the same marker on base declaration"
+        )
+        map.put(
+            OPT_IN_MARKER_ON_OVERRIDE_WARNING,
+            "Opt-in requirement marker annotation on override makes no sense without the same marker on base declaration"
+        )
 
-            // Exposed visibility group // #
-            map.put(
-                EXPOSED_TYPEALIAS_EXPANDED_TYPE,
-                "{0} typealias exposes {2} in expanded type ''{1}''",
-                TO_STRING,
-                DECLARATION_NAME,
-                TO_STRING
-            )
-            map.put(
-                EXPOSED_FUNCTION_RETURN_TYPE,
-                "{0} function exposes its {2} return type ''{1}''",
-                TO_STRING,
-                DECLARATION_NAME,
-                TO_STRING
-            )
-            map.put(EXPOSED_RECEIVER_TYPE, "{0} member exposes its {2} receiver type ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
-            map.put(EXPOSED_PROPERTY_TYPE, "{0} property exposes its {2} type ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
-            map.put(EXPOSED_PARAMETER_TYPE, "{0} function exposes its {2} parameter type ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
-            map.put(EXPOSED_SUPER_INTERFACE, "{0} sub-interface exposes its {2} supertype ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
-            map.put(EXPOSED_SUPER_CLASS, "{0} subclass exposes its {2} supertype ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
-            map.put(
-                EXPOSED_TYPE_PARAMETER_BOUND,
-                "{0} generic exposes its {2} parameter bound type ''{1}''",
-                TO_STRING,
-                DECLARATION_NAME,
-                TO_STRING
-            )
+        // Exposed visibility group // #
+        map.put(
+            EXPOSED_TYPEALIAS_EXPANDED_TYPE,
+            "{0} typealias exposes {2} in expanded type ''{1}''",
+            TO_STRING,
+            DECLARATION_NAME,
+            TO_STRING
+        )
+        map.put(
+            EXPOSED_FUNCTION_RETURN_TYPE,
+            "{0} function exposes its {2} return type ''{1}''",
+            TO_STRING,
+            DECLARATION_NAME,
+            TO_STRING
+        )
+        map.put(EXPOSED_RECEIVER_TYPE, "{0} member exposes its {2} receiver type ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
+        map.put(EXPOSED_PROPERTY_TYPE, "{0} property exposes its {2} type ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
+        map.put(EXPOSED_PARAMETER_TYPE, "{0} function exposes its {2} parameter type ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
+        map.put(EXPOSED_SUPER_INTERFACE, "{0} sub-interface exposes its {2} supertype ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
+        map.put(EXPOSED_SUPER_CLASS, "{0} subclass exposes its {2} supertype ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
+        map.put(
+            EXPOSED_TYPE_PARAMETER_BOUND,
+            "{0} generic exposes its {2} parameter bound type ''{1}''",
+            TO_STRING,
+            DECLARATION_NAME,
+            TO_STRING
+        )
 
-            // Modifiers
-            map.put(INAPPLICABLE_INFIX_MODIFIER, "''infix'' modifier is inapplicable on this function")
-            map.put(REPEATED_MODIFIER, "Repeated ''{0}''", TO_STRING)
-            map.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING)
-            map.put(DEPRECATED_MODIFIER, "Modifier ''{0}'' is deprecated, use ''{1}'' instead", TO_STRING, TO_STRING)
-            map.put(DEPRECATED_MODIFIER_PAIR, "Modifier ''{0}'' is deprecated in presence of ''{1}''", TO_STRING, TO_STRING)
-            map.put(DEPRECATED_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is deprecated for ''{1}''", TO_STRING, STRING)
-            map.put(REDUNDANT_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is redundant for ''{1}''", TO_STRING, STRING)
-            map.put(NO_EXPLICIT_VISIBILITY_IN_API_MODE, "Visibility must be specified in explicit API mode");
-            map.put(NO_EXPLICIT_RETURN_TYPE_IN_API_MODE, "Return type must be specified in explicit API mode");
-            map.put(NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING, "Visibility must be specified in explicit API mode");
-            map.put(NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING, "Return type must be specified in explicit API mode");
+        // Modifiers
+        map.put(INAPPLICABLE_INFIX_MODIFIER, "''infix'' modifier is inapplicable on this function")
+        map.put(REPEATED_MODIFIER, "Repeated ''{0}''", TO_STRING)
+        map.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING)
+        map.put(DEPRECATED_MODIFIER, "Modifier ''{0}'' is deprecated, use ''{1}'' instead", TO_STRING, TO_STRING)
+        map.put(DEPRECATED_MODIFIER_PAIR, "Modifier ''{0}'' is deprecated in presence of ''{1}''", TO_STRING, TO_STRING)
+        map.put(DEPRECATED_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is deprecated for ''{1}''", TO_STRING, STRING)
+        map.put(REDUNDANT_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is redundant for ''{1}''", TO_STRING, STRING)
+        map.put(NO_EXPLICIT_VISIBILITY_IN_API_MODE, "Visibility must be specified in explicit API mode");
+        map.put(NO_EXPLICIT_RETURN_TYPE_IN_API_MODE, "Return type must be specified in explicit API mode");
+        map.put(NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING, "Visibility must be specified in explicit API mode");
+        map.put(NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING, "Return type must be specified in explicit API mode");
 
-            map.put(INCOMPATIBLE_MODIFIERS, "Modifier ''{0}'' is incompatible with ''{1}''", TO_STRING, TO_STRING)
-            map.put(REDUNDANT_OPEN_IN_INTERFACE, "Modifier 'open' is redundant for abstract interface members")
-            map.put(WRONG_MODIFIER_TARGET, "Modifier ''{0}'' is not applicable to ''{1}''", TO_STRING, STRING)
-            map.put(INFIX_MODIFIER_REQUIRED, "''infix'' modifier is required on ''{0}''", TO_STRING)
-            map.put(WRONG_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is not applicable inside ''{1}''", TO_STRING, STRING)
-            map.put(DEPRECATED_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is deprecated inside ''{1}''", TO_STRING, STRING)
-            map.put(INAPPLICABLE_OPERATOR_MODIFIER, "''operator'' modifier is inapplicable on this function: {0}", STRING)
+        map.put(INCOMPATIBLE_MODIFIERS, "Modifier ''{0}'' is incompatible with ''{1}''", TO_STRING, TO_STRING)
+        map.put(REDUNDANT_OPEN_IN_INTERFACE, "Modifier 'open' is redundant for abstract interface members")
+        map.put(WRONG_MODIFIER_TARGET, "Modifier ''{0}'' is not applicable to ''{1}''", TO_STRING, STRING)
+        map.put(INFIX_MODIFIER_REQUIRED, "''infix'' modifier is required on ''{0}''", TO_STRING)
+        map.put(WRONG_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is not applicable inside ''{1}''", TO_STRING, STRING)
+        map.put(DEPRECATED_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is deprecated inside ''{1}''", TO_STRING, STRING)
+        map.put(INAPPLICABLE_OPERATOR_MODIFIER, "''operator'' modifier is inapplicable on this function: {0}", STRING)
 
-            // Classes and interfaces
-            map.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, and thus must be initialized here")
+        // Classes and interfaces
+        map.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, and thus must be initialized here")
 
-            // Applicability
-            map.put(NONE_APPLICABLE, "None of the following functions are applicable: {0}", SYMBOLS)
-            map.put(INAPPLICABLE_CANDIDATE, "Inapplicable candidate(s): {0}", SYMBOL)
-            map.put(INAPPLICABLE_LATEINIT_MODIFIER, "''lateinit'' modifier {0}", TO_STRING)
-            map.put(VARARG_OUTSIDE_PARENTHESES, "Passing value as a vararg is only allowed inside a parenthesized argument list")
-            map.put(NAMED_ARGUMENTS_NOT_ALLOWED, "Named arguments are not allowed for {0}", TO_STRING)
-            map.put(NON_VARARG_SPREAD, "The spread operator (*foo) may only be applied in a vararg position")
-            map.put(TOO_MANY_ARGUMENTS, "Too many arguments for {0}", FQ_NAMES_IN_TYPES)
-            map.put(ARGUMENT_PASSED_TWICE, "An argument is already passed for this parameter")
-            map.put(NO_VALUE_FOR_PARAMETER, "No value passed for parameter ''{0}''", DECLARATION_NAME)
-            map.put(NAMED_PARAMETER_NOT_FOUND, "Cannot find a parameter with this name: {0}", TO_STRING)
-            map.put(MANY_LAMBDA_EXPRESSION_ARGUMENTS, "Only one lambda expression is allowed outside a parenthesized argument list")
-            map.put(SPREAD_OF_NULLABLE, "The spread operator (*foo) may not be applied to an argument of nullable type")
-            map.put(ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION, "Assigning single elements to varargs in named form is forbidden")
-            map.put(ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION, "Assigning single elements to varargs in named form is forbidden")
-            map.put(REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION, "Redundant spread (*) operator");
-            map.put(REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION, "Redundant spread (*) operator");
+        // Applicability
+        map.put(NONE_APPLICABLE, "None of the following functions are applicable: {0}", SYMBOLS)
+        map.put(INAPPLICABLE_CANDIDATE, "Inapplicable candidate(s): {0}", SYMBOL)
+        map.put(INAPPLICABLE_LATEINIT_MODIFIER, "''lateinit'' modifier {0}", TO_STRING)
+        map.put(VARARG_OUTSIDE_PARENTHESES, "Passing value as a vararg is only allowed inside a parenthesized argument list")
+        map.put(NAMED_ARGUMENTS_NOT_ALLOWED, "Named arguments are not allowed for {0}", TO_STRING)
+        map.put(NON_VARARG_SPREAD, "The spread operator (*foo) may only be applied in a vararg position")
+        map.put(TOO_MANY_ARGUMENTS, "Too many arguments for {0}", FQ_NAMES_IN_TYPES)
+        map.put(ARGUMENT_PASSED_TWICE, "An argument is already passed for this parameter")
+        map.put(NO_VALUE_FOR_PARAMETER, "No value passed for parameter ''{0}''", DECLARATION_NAME)
+        map.put(NAMED_PARAMETER_NOT_FOUND, "Cannot find a parameter with this name: {0}", TO_STRING)
+        map.put(MANY_LAMBDA_EXPRESSION_ARGUMENTS, "Only one lambda expression is allowed outside a parenthesized argument list")
+        map.put(SPREAD_OF_NULLABLE, "The spread operator (*foo) may not be applied to an argument of nullable type")
+        map.put(
+            ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION,
+            "Assigning single elements to varargs in named form is forbidden"
+        )
+        map.put(
+            ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION,
+            "Assigning single elements to varargs in named form is forbidden"
+        )
+        map.put(REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION, "Redundant spread (*) operator")
+        map.put(REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION, "Redundant spread (*) operator")
 
-            map.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", TO_STRING, TO_STRING, NOT_RENDERED)
-            map.put(THROWABLE_TYPE_MISMATCH, "Throwable type mismatch: actual type is {0}", TO_STRING, NOT_RENDERED)
-            map.put(CONDITION_TYPE_MISMATCH, "Condition type mismatch: inferred type is {0} but Boolean was expected", TO_STRING, NOT_RENDERED)
-            map.put(
-                ARGUMENT_TYPE_MISMATCH,
-                "Argument type mismatch: actual type is {1} but {0} was expected",
-                RENDER_TYPE,
-                RENDER_TYPE,
-                NOT_RENDERED
-            )
-            map.put(ASSIGNMENT_TYPE_MISMATCH, "Assignment type mismatch: actual type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
-            map.put(
-                RESULT_TYPE_MISMATCH,
-                "Function return type mismatch: actual type is {1} but {0} was expected",
-                RENDER_TYPE,
-                RENDER_TYPE,
-            )
+        map.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", TO_STRING, TO_STRING, NOT_RENDERED)
+        map.put(THROWABLE_TYPE_MISMATCH, "Throwable type mismatch: actual type is {0}", TO_STRING, NOT_RENDERED)
+        map.put(CONDITION_TYPE_MISMATCH, "Condition type mismatch: inferred type is {0} but Boolean was expected", TO_STRING, NOT_RENDERED)
+        map.put(
+            ARGUMENT_TYPE_MISMATCH,
+            "Argument type mismatch: actual type is {1} but {0} was expected",
+            RENDER_TYPE,
+            RENDER_TYPE,
+            NOT_RENDERED
+        )
+        map.put(
+            ASSIGNMENT_TYPE_MISMATCH,
+            "Assignment type mismatch: actual type is {1} but {0} was expected",
+            RENDER_TYPE,
+            RENDER_TYPE,
+            NOT_RENDERED
+        )
+        map.put(
+            RESULT_TYPE_MISMATCH,
+            "Function return type mismatch: actual type is {1} but {0} was expected",
+            RENDER_TYPE,
+            RENDER_TYPE,
+        )
 
-            // Ambiguity
-            map.put(OVERLOAD_RESOLUTION_AMBIGUITY, "Overload resolution ambiguity between candidates: {0}", SYMBOLS)
-            map.put(ASSIGN_OPERATOR_AMBIGUITY, "Ambiguity between assign operator candidates: {0}", SYMBOLS)
-            map.put(ITERATOR_AMBIGUITY, "Method ''iterator()'' is ambiguous for this expression: {0}", SYMBOLS)
-            map.put(HAS_NEXT_FUNCTION_AMBIGUITY, "Method ''hasNext()'' is ambiguous for this expression: {0}", SYMBOLS)
-            map.put(NEXT_AMBIGUITY, "Method ''next()'' is ambiguous for this expression: {0}", SYMBOLS)
-            map.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, "Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: {0}", SYMBOLS)
+        // Ambiguity
+        map.put(OVERLOAD_RESOLUTION_AMBIGUITY, "Overload resolution ambiguity between candidates: {0}", SYMBOLS)
+        map.put(ASSIGN_OPERATOR_AMBIGUITY, "Ambiguity between assign operator candidates: {0}", SYMBOLS)
+        map.put(ITERATOR_AMBIGUITY, "Method ''iterator()'' is ambiguous for this expression: {0}", SYMBOLS)
+        map.put(HAS_NEXT_FUNCTION_AMBIGUITY, "Method ''hasNext()'' is ambiguous for this expression: {0}", SYMBOLS)
+        map.put(NEXT_AMBIGUITY, "Method ''next()'' is ambiguous for this expression: {0}", SYMBOLS)
+        map.put(
+            UNRESOLVED_REFERENCE_WRONG_RECEIVER,
+            "Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: {0}",
+            SYMBOLS
+        )
 
-            // Types & type parameters
-            map.put(RECURSION_IN_IMPLICIT_TYPES, "Recursion in implicit types")
-            map.put(INFERENCE_ERROR, "Inference error")
-            map.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties")
-            map.put(UPPER_BOUND_VIOLATED, "Type argument is not within its bounds: should be subtype of ''{0}''", RENDER_TYPE, RENDER_TYPE)
-            map.put(
-                UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION,
-                "Type argument is not within its bounds: should be subtype of ''{0}''",
-                RENDER_TYPE,
-                RENDER_TYPE
-            )
+        // Types & type parameters
+        map.put(RECURSION_IN_IMPLICIT_TYPES, "Recursion in implicit types")
+        map.put(INFERENCE_ERROR, "Inference error")
+        map.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties")
+        map.put(UPPER_BOUND_VIOLATED, "Type argument is not within its bounds: should be subtype of ''{0}''", RENDER_TYPE, RENDER_TYPE)
+        map.put(
+            UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION,
+            "Type argument is not within its bounds: should be subtype of ''{0}''",
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
 
-            map.put(TYPE_ARGUMENTS_NOT_ALLOWED, "Type arguments are not allowed for type parameters") // *
-            map.put(
-                WRONG_NUMBER_OF_TYPE_ARGUMENTS,
-                "{0,choice,0#No type arguments|1#One type argument|1<{0,number,integer} type arguments} expected for {1}",
-                null,
-                RENDER_CLASS_OR_OBJECT_NAME
-            )
-            map.put(
-                OUTER_CLASS_ARGUMENTS_REQUIRED,
-                "Type arguments should be specified for an outer {0}. Use full class name to specify them",
-                RENDER_CLASS_OR_OBJECT_NAME
-            )
-            map.put(TYPE_PARAMETERS_IN_OBJECT, "Type parameters are not allowed for objects")
-            map.put(TYPE_PARAMETERS_IN_ANONYMOUS_OBJECT, "Type parameters for anonymous objects are deprecated")
+        map.put(TYPE_ARGUMENTS_NOT_ALLOWED, "Type arguments are not allowed for type parameters") // *
+        map.put(
+            WRONG_NUMBER_OF_TYPE_ARGUMENTS,
+            "{0,choice,0#No type arguments|1#One type argument|1<{0,number,integer} type arguments} expected for {1}",
+            null,
+            RENDER_CLASS_OR_OBJECT_NAME
+        )
+        map.put(
+            OUTER_CLASS_ARGUMENTS_REQUIRED,
+            "Type arguments should be specified for an outer {0}. Use full class name to specify them",
+            RENDER_CLASS_OR_OBJECT_NAME
+        )
+        map.put(TYPE_PARAMETERS_IN_OBJECT, "Type parameters are not allowed for objects")
+        map.put(TYPE_PARAMETERS_IN_ANONYMOUS_OBJECT, "Type parameters for anonymous objects are deprecated")
 
 //            map.put(ILLEGAL_PROJECTION_USAGE, ...) // &
-            map.put(TYPE_PARAMETERS_IN_ENUM, "Enum class cannot have type parameters")
-            map.put(
-                CONFLICTING_PROJECTION,
-                "Projection is conflicting with variance of the corresponding type parameter of {0}. Remove the projection or replace it with ''*''",
-                RENDER_TYPE
-            )
-            map.put(
-                CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION,
-                "Conflicting projection in type alias expansion in intermediate type '{0}'",
-                RENDER_TYPE
-            )
-            map.put(
-                REDUNDANT_PROJECTION,
-                "Projection is redundant: the corresponding type parameter of {0} has the same variance",
-                RENDER_TYPE
-            )
-            map.put(
-                VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED,
-                "Variance annotations are only allowed for type parameters of classes and interfaces"
-            )
-            map.put(CATCH_PARAMETER_WITH_DEFAULT_VALUE, "Catch clause parameter may not have a default value")
-            map.put(REIFIED_TYPE_IN_CATCH_CLAUSE, "Reified type is forbidden for catch parameter")
-            map.put(TYPE_PARAMETER_IN_CATCH_CLAUSE, "Type parameter is forbidden for catch parameter")
-
-            map.put(
-                KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE,
-                "Declaration has an inconsistent return type. " +
-                        "Please add upper bound Any for type parameter ''{0}'' or specify return type explicitly",
-                SYMBOL
-            )
-
-            map.put(TYPE_PARAMETER_AS_REIFIED, "Cannot use ''{0}'' as reified type parameter. Use a class instead", SYMBOL)
-            map.put(
-                TYPE_PARAMETER_AS_REIFIED_ARRAY,
-                "Cannot use ''{0}'' as reified type parameter, since the array type parameter is not reified.",
-                SYMBOL
-            )
-            map.put(
-                REIFIED_TYPE_FORBIDDEN_SUBSTITUTION,
-                "Cannot use ''{0}'' as reified type parameter",
-                RENDER_TYPE
-            )
-            map.put(
-                FINAL_UPPER_BOUND,
-                "''{0}'' is a final type, and thus a value of the type parameter is predetermined",
-                RENDER_TYPE
-            )
-            map.put(UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE, "Extension function type can not be used as an upper bound")
-            map.put(INCOMPATIBLE_TYPES, "Incompatible types: {0} and {1}", RENDER_TYPE, RENDER_TYPE)
-            map.put(INCOMPATIBLE_TYPES_WARNING, "Potentially incompatible types: {0} and {1}", RENDER_TYPE, RENDER_TYPE)
-            map.put(
-                SMARTCAST_IMPOSSIBLE,
-                "Smart cast to ''{0}'' is impossible, because ''{1}'' is a {2}",
-                RENDER_TYPE,
-                FIR,
-                TO_STRING,
-                NOT_RENDERED
-            )
-
-            map.put(
-                TYPE_VARIANCE_CONFLICT,
-                "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in type {3}",
-                SYMBOL, RENDER_POSITION_VARIANCE, RENDER_POSITION_VARIANCE, RENDER_TYPE
-            )
-            map.put(
-                TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE,
-                "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in abbreviated type {3}",
-                SYMBOL, RENDER_POSITION_VARIANCE, RENDER_POSITION_VARIANCE, RENDER_TYPE
-            )
-
-            map.put(
-                BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER,
-                "Type parameter cannot have any other bounds if it's bounded by another type parameter"
-            )
-
-            map.put(ONLY_ONE_CLASS_BOUND_ALLOWED, "Only one of the upper bounds can be a class")
-            map.put(REPEATED_BOUND, "Type parameter already has this bound")
-
-            map.put(
-                CONFLICTING_UPPER_BOUNDS,
-                "Upper bounds of {0} have empty intersection",
-                SYMBOL
-            )
-
-            map.put(
-                NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER,
-                "{0} does not refer to a type parameter of {1}",
-                TO_STRING,
-                DECLARATION_NAME
-            )
-
-            map.put(BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED, "Bounds are not allowed on type alias parameters")
-
-            map.put(REIFIED_TYPE_PARAMETER_NO_INLINE, "Only type parameters of inline functions can be reified")
-
-            map.put(TYPE_PARAMETERS_NOT_ALLOWED, "Type parameters are not allowed here")
-
-            map.put(TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER, "Type parameter of a property must be used in its receiver type")
-
-            map.put(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY, "A 'return' expression required in a function with a block body ('{...}')")
-
-            map.put(RETURN_TYPE_MISMATCH, "Return type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED, NOT_RENDERED)
-
-            map.put(CYCLIC_GENERIC_UPPER_BOUND, "Type parameter has cyclic upper bounds")
-
-            map.put(DEPRECATED_TYPE_PARAMETER_SYNTAX, "Type parameters must be placed before the name of the function")
-
-            map.put(
-                MISPLACED_TYPE_PARAMETER_CONSTRAINTS,
-                "If a type parameter has multiple constraints, they all need to be placed in the 'where' clause"
-            )
-
-            map.put(DYNAMIC_UPPER_BOUND, "Dynamic type can not be used as an upper bound")
-
-            // Reflection
-            map.put(
-                EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED,
-                "''{0}'' is a member and an extension at the same time. References to such elements are not allowed",
-                DECLARATION_NAME
-            )
-            map.put(CALLABLE_REFERENCE_LHS_NOT_A_CLASS, "Left-hand side of a callable reference cannot be a type parameter")
-            map.put(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR, "Annotation class cannot be instantiated")
-
-            map.put(CLASS_LITERAL_LHS_NOT_A_CLASS, "Only classes are allowed on the left hand side of a class literal")
-            map.put(NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, "Type in a class literal must not be nullable")
-            map.put(
-                EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS,
-                "Expression in a class literal has a nullable type ''{0}'', use !! to make the type non-nullable",
-                RENDER_TYPE
-            )
-
-            // Inline and value classes
-            map.put(INLINE_CLASS_NOT_TOP_LEVEL, "Inline classes cannot be local or inner")
-            map.put(INLINE_CLASS_NOT_FINAL, "Inline classes can be only final")
-            map.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS, "Primary constructor is required for inline class")
-            map.put(INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, "Inline class must have exactly one primary constructor parameter")
-            map.put(
-                INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
-                "Value class primary constructor must have only final read-only (val) property parameter"
-            )
-            map.put(PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS, "Inline class cannot have properties with backing fields")
-            map.put(DELEGATED_PROPERTY_INSIDE_INLINE_CLASS, "Inline class cannot have delegated properties")
-            map.put(INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE, "Inline class cannot have value parameter of type ''{0}''", TO_STRING)
-            map.put(INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION, "Inline class cannot implement an interface by delegation")
-            map.put(INLINE_CLASS_CANNOT_EXTEND_CLASSES, "Inline class cannot extend classes")
-            map.put(INLINE_CLASS_CANNOT_BE_RECURSIVE, "Inline class cannot be recursive")
-            map.put(DECLARATION_CANT_BE_INLINED, "'inline' modifier is not allowed on virtual members. Only private or final members can be inlined")
-            map.put(OVERRIDE_BY_INLINE, "Override by an inline function")
-            map.put(REIFIED_TYPE_PARAMETER_IN_OVERRIDE, "Override by a function with reified type parameter")
-            map.put(INLINE_PROPERTY_WITH_BACKING_FIELD, "Inline property cannot have backing field")
-            map.put(NON_INTERNAL_PUBLISHED_API, "@PublishedApi annotation is only applicable for internal declaration")
-            map.put(
-                INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE,
-                "Invalid default value for inline parameter: ''{0}''. Only lambdas, anonymous functions, and callable references are supported",
-                FIR,
-                DECLARATION_NAME
-            )
-            map.put(RESERVED_MEMBER_INSIDE_INLINE_CLASS, "Member with the name ''{0}'' is reserved for future releases", TO_STRING)
-            map.put(
-                SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS,
-                "Secondary constructors with bodies are reserved for for future releases"
-            )
-            map.put(INNER_CLASS_INSIDE_INLINE_CLASS, "Inline class cannot have inner classes")
-            map.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be Cloneable")
-
-            // Overrides
-            map.put(NOTHING_TO_OVERRIDE, "''{0}'' overrides nothing", DECLARATION_NAME)
-
-            map.put(
-                CANNOT_OVERRIDE_INVISIBLE_MEMBER,
-                "''{0}'' has no access to ''{1}'', so it cannot override it",
-                FQ_NAMES_IN_TYPES,
-                FQ_NAMES_IN_TYPES
-            )
-
-            map.put(OVERRIDING_FINAL_MEMBER, "''{0}'' in ''{1}'' is final and cannot be overridden", DECLARATION_NAME, TO_STRING)
-
-            map.put(
-                CANNOT_WEAKEN_ACCESS_PRIVILEGE,
-                "Cannot weaken access privilege ''{0}'' for ''{1}'' in ''{2}''",
-                VISIBILITY,
-                DECLARATION_NAME,
-                TO_STRING
-            )
-            map.put(
-                CANNOT_CHANGE_ACCESS_PRIVILEGE,
-                "Cannot change access privilege ''{0}'' for ''{1}'' in ''{2}''",
-                VISIBILITY,
-                DECLARATION_NAME,
-                TO_STRING
-            )
-
-            map.put(
-                ABSTRACT_MEMBER_NOT_IMPLEMENTED,
-                "{0} is not abstract and does not implement abstract member {1}",
-                RENDER_CLASS_OR_OBJECT,
-                DECLARATION_NAME
-            )
-            map.put(
-                ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED,
-                "{0} is not abstract and does not implement abstract base class member {1}",
-                RENDER_CLASS_OR_OBJECT,
-                DECLARATION_NAME
-            )
-            map.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has anonymous type. Please specify type explicitly", NOT_RENDERED)
-            map.put(
-                MANY_IMPL_MEMBER_NOT_IMPLEMENTED,
-                "{0} must override {1} because it inherits many implementations of it",
-                RENDER_CLASS_OR_OBJECT,
-                DECLARATION_NAME
-            )
-            map.put(
-                MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED,
-                "{0} must override {1} because it inherits multiple interface methods of it",
-                RENDER_CLASS_OR_OBJECT,
-                DECLARATION_NAME
-            )
-
-            map.put(
-                RETURN_TYPE_MISMATCH_ON_OVERRIDE,
-                "Return type of ''{0}'' is not a subtype of the return type of the overridden member ''{1}''",
-                DECLARATION_NAME,
-                DECLARATION_NAME
-            )
-            map.put(
-                PROPERTY_TYPE_MISMATCH_ON_OVERRIDE,
-                "Type of ''{0}'' is not a subtype of the overridden property ''{1}''",
-                DECLARATION_NAME,
-                DECLARATION_NAME
-            )
-            map.put(
-                VAR_TYPE_MISMATCH_ON_OVERRIDE,
-                "Type of ''{0}'' doesn''t match the type of the overridden var-property ''{1}''",
-                DECLARATION_NAME,
-                DECLARATION_NAME
-            )
-
-            map.put(
-                VAR_OVERRIDDEN_BY_VAL,
-                "Var-property {0} cannot be overridden by val-property {1}",
-                FQ_NAMES_IN_TYPES,
-                FQ_NAMES_IN_TYPES
-            )
-            map.put(NON_FINAL_MEMBER_IN_FINAL_CLASS, "'open' has no effect in a final class")
-            map.put(NON_FINAL_MEMBER_IN_OBJECT, "'open' has no effect in an object")
-            map.put(
-                VIRTUAL_MEMBER_HIDDEN, "''{0}'' hides member of supertype ''{1}'' and needs ''override'' modifier", DECLARATION_NAME,
-                DECLARATION_NAME
-            )
-            map.put(
-                DATA_CLASS_OVERRIDE_CONFLICT,
-                "Function ''{0}'' generated for the data class conflicts with member of supertype ''{1}''",
-                FQ_NAMES_IN_TYPES,
-                FQ_NAMES_IN_TYPES
-            )
-
-            map.put(
-                GENERIC_THROWABLE_SUBCLASS,
-                "Subclass of 'Throwable' may not have type parameters"
-            )
-            map.put(
-                INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS,
-                "Inner class of generic class extending 'Throwable' is prohibited"
-            )
-
-            map.put(
-                RETURN_TYPE_MISMATCH_ON_INHERITANCE,
-                "''{0}'' clashes with ''{1}'': return types are incompatible",
-                DECLARATION_NAME,
-                DECLARATION_NAME
-            )
-
-            map.put(
-                PROPERTY_TYPE_MISMATCH_ON_INHERITANCE,
-                "''{0}'' clashes with ''{1}'': property types are incompatible",
-                DECLARATION_NAME,
-                DECLARATION_NAME
-            )
-
-            map.put(
-                VAR_TYPE_MISMATCH_ON_INHERITANCE,
-                "''{0}'' clashes with ''{1}'': property types do not match",
-                DECLARATION_NAME,
-                DECLARATION_NAME
-            )
-
-            map.put(
-                RETURN_TYPE_MISMATCH_BY_DELEGATION,
-                "Type of ''{0}'' is not a subtype of overridden by delegation ''{1}''",
-                DECLARATION_NAME,
-                DECLARATION_NAME
-            )
-
-            map.put(
-                PROPERTY_TYPE_MISMATCH_BY_DELEGATION,
-                "Type of property ''{0}'' is not a subtype of overridden by delegation ''{1}''",
-                DECLARATION_NAME,
-                DECLARATION_NAME
-            )
-
-            map.put(
-                VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION,
-                "Val-property ''{0}'' implicitly overrides a var-property ''{1}'' by delegation",
-                DECLARATION_NAME,
-                DECLARATION_NAME
-            )
-
-            map.put(
-                CONFLICTING_INHERITED_MEMBERS,
-                "{0} inherits conflicting members: {1}",
-                commaSeparated(DECLARATION_NAME)
-            )
-
-            // Redeclarations
-            map.put(MANY_COMPANION_OBJECTS, "Only one companion object is allowed per class")
-            map.put(CONFLICTING_OVERLOADS, "Conflicting overloads: {0}", SYMBOLS) // *
-            map.put(REDECLARATION, "Conflicting declarations: {0}", SYMBOLS) // *
-            map.put(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, "An interface may not implement a method of 'Any'") // &
-
-            // Invalid local declarations
-            map.put(
-                LOCAL_OBJECT_NOT_ALLOWED,
-                "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead",
-                TO_STRING
-            ) // +
-            map.put(
-                LOCAL_INTERFACE_NOT_ALLOWED,
-                "''{0}'' is an interface so it cannot be local. Try to use anonymous object or abstract class instead",
-                TO_STRING
-            )
-
-            // Functions
-            map.put(
-                ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS,
-                "Abstract function ''{0}'' in non-abstract class ''{1}''",
-                DECLARATION_NAME,
-                DECLARATION_NAME
-            )
-            map.put(ABSTRACT_FUNCTION_WITH_BODY, "A function ''{0}'' with body cannot be abstract", DECLARATION_NAME)
-            map.put(NON_ABSTRACT_FUNCTION_WITH_NO_BODY, "Function ''{0}'' without a body must be abstract", DECLARATION_NAME)
-            map.put(PRIVATE_FUNCTION_WITH_NO_BODY, "Function ''{0}'' without body cannot be private", DECLARATION_NAME)
-            map.put(NON_MEMBER_FUNCTION_NO_BODY, "Function ''{0}'' must have a body", DECLARATION_NAME)
-
-            map.put(FUNCTION_DECLARATION_WITH_NO_NAME, "Function declaration must have a name")
-
-            map.put(
-                ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE,
-                "An anonymous function is not allowed to specify default values for its parameters"
-            )
-            map.put(USELESS_VARARG_ON_PARAMETER, "Vararg on this parameter is useless")
-            map.put(
-                FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS,
-                "Fun interface must have exactly one abstract function"
-            )
-            map.put(FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES, "Fun interface can not have abstract properties")
-            map.put(FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS, "Fun interface can not have abstract metod with type parameters")
-            map.put(FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE, "Fun interface abstract method can not have default value")
-            map.put(FUN_INTERFACE_WITH_SUSPEND_FUNCTION, "Fun interface abstract method can not be suspend")
-
-            map.put(MULTIPLE_VARARG_PARAMETERS, "Multiple vararg-parameters are prohibited")
-            map.put(FORBIDDEN_VARARG_PARAMETER_TYPE, "Forbidden vararg parameter type: {0}", RENDER_TYPE)
-            map.put(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION, "A type annotation is required on a value parameter")
-            map.put(CANNOT_INFER_PARAMETER_TYPE, "cannot infer a type for this parameter. Please specify it explicitly.")
-            map.put(NO_TAIL_CALLS_FOUND, "A function is marked as tail-recursive but no tail calls are found.")
-            map.put(TAILREC_ON_VIRTUAL_MEMBER_ERROR, "Tailrec is not allowed on open members");
-            map.put(NON_TAIL_RECURSIVE_CALL, "Recursive call is not a tail call");
-            map.put(TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED, "Tail recursion optimization inside try/catch/finally is not supported");
-
-            // Fun interfaces
-            map.put(FUN_INTERFACE_CONSTRUCTOR_REFERENCE, "Functional/SAM interface constructor references are prohibited")
-
-            // Properties & accessors
-            map.put(
-                ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS,
-                "Abstract property ''{0}'' in non-abstract class ''{1}''",
-                DECLARATION_NAME,
-                DECLARATION_NAME
-            )
-            map.put(PRIVATE_PROPERTY_IN_INTERFACE, "Abstract property in an interface cannot be private")
-
-            map.put(ABSTRACT_PROPERTY_WITH_INITIALIZER, "Property with initializer cannot be abstract")
-            map.put(PROPERTY_INITIALIZER_IN_INTERFACE, "Property initializers are not allowed in interfaces")
-            map.put(
-                PROPERTY_WITH_NO_TYPE_NO_INITIALIZER,
-                "This property must either have a type annotation, be initialized or be delegated"
-            )
-
-            map.put(VARIABLE_WITH_NO_TYPE_NO_INITIALIZER, "This variable must either have a type annotation or be initialized")
-
-            map.put(INITIALIZATION_BEFORE_DECLARATION, "Variable cannot be initialized before declaration", SYMBOL)
-
-            map.put(MUST_BE_INITIALIZED, "Property must be initialized")
-            map.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, "Property must be initialized or be abstract")
-            map.put(EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, "Extension property must have accessors or be abstract")
-            map.put(UNNECESSARY_LATEINIT, "Lateinit is unnecessary: definitely initialized in constructors")
-
-            map.put(BACKING_FIELD_IN_INTERFACE, "Property in an interface cannot have a backing field")
-            map.put(EXTENSION_PROPERTY_WITH_BACKING_FIELD, "Extension property cannot be initialized because it has no backing field")
-            map.put(PROPERTY_INITIALIZER_NO_BACKING_FIELD, "Initializer is not allowed here because this property has no backing field")
-
-            map.put(ABSTRACT_DELEGATED_PROPERTY, "Delegated property cannot be abstract")
-            map.put(DELEGATED_PROPERTY_IN_INTERFACE, "Delegated properties are not allowed in interfaces")
-
-            map.put(ABSTRACT_PROPERTY_WITH_GETTER, "Property with getter implementation cannot be abstract")
-            map.put(ABSTRACT_PROPERTY_WITH_SETTER, "Property with setter implementation cannot be abstract")
-            map.put(PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY, "Private setters are not allowed for abstract properties")
-            map.put(PRIVATE_SETTER_FOR_OPEN_PROPERTY, "Private setters are not allowed for open properties")
-            map.put(VAL_WITH_SETTER, "A 'val'-property cannot have a setter")
-            map.put(
-                WRONG_SETTER_PARAMETER_TYPE,
-                "Setter parameter type must be equal to the type of the property, i.e. ''{0}''",
-                RENDER_TYPE,
-                RENDER_TYPE
-            )
-            map.put(INITIALIZER_TYPE_MISMATCH, "Initializer type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
-            map.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility")
-            map.put(
-                SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY,
-                "Setter visibility must be the same or less permissive than property visibility"
-            )
-            map.put(WRONG_SETTER_RETURN_TYPE, "Setter return type must be Unit")
-            map.put(
-                WRONG_GETTER_RETURN_TYPE,
-                "Getter return type must be equal to the type of the property, i.e. ''{0}''",
-                RENDER_TYPE,
-                RENDER_TYPE
-            )
-            map.put(ACCESSOR_FOR_DELEGATED_PROPERTY, "Delegated property cannot have accessors with non-default implementations")
-            map.put(
-                PROPERTY_INITIALIZER_WITH_EXPLICIT_FIELD_DECLARATION,
-                "Property initializers are not allowed for properties with an explicit backing field declaration"
-            )
-            map.put(
-                PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER,
-                "Property backing field declaration must have an initializer"
-            )
-            map.put(
-                LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER,
-                "Lateinit backing field cannot have an initializer"
-            )
-            map.put(
-                LATEINIT_FIELD_IN_VAL_PROPERTY,
-                "Only mutable properties can have a mutable backing field. Consider changing ''val'' to ''var''"
-            )
-            map.put(
-                LATEINIT_NULLABLE_BACKING_FIELD,
-                "Lateinit modifier is not allowed on backing fields of a type with nullable upper bound"
-            )
-            map.put(
-                BACKING_FIELD_FOR_DELEGATED_PROPERTY,
-                "Delegated properties can't have explicit backing field declarations"
-            )
-            map.put(
-                PROPERTY_MUST_HAVE_GETTER,
-                "This property needs a custom getter, because it's type is not a supertype of the backing field's type"
-            )
-            map.put(
-                PROPERTY_MUST_HAVE_SETTER,
-                "This property needs a custom setter, because it's type is not a subtype of the backing field's type"
-            )
-            map.put(
-                EXPLICIT_BACKING_FIELD_IN_INTERFACE,
-                "Backing fields are not allowed inside interfaces"
-            )
-            map.put(
-                EXPLICIT_BACKING_FIELD_IN_ABSTRACT_PROPERTY,
-                "Abstract property cannot have a backing field"
-            )
-            map.put(
-                EXPLICIT_BACKING_FIELD_IN_EXTENSION,
-                "Extension properties cannot have a backing field"
-            )
-            map.put(
-                REDUNDANT_EXPLICIT_BACKING_FIELD,
-                "There's no need in an explicit backing field declaration if it has the same type as the property"
-            )
-            map.put(ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS, "This property cannot be declared abstract")
-            map.put(LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING, "Type parameters for local variables are deprecated")
-            map.put(LOCAL_VARIABLE_WITH_TYPE_PARAMETERS, "Local variables are not allowed to have type parameters")
-
-            map.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' are only allowed on top level or in objects")
-            map.put(CONST_VAL_WITH_GETTER, "Const 'val' should not have a getter")
-            map.put(CONST_VAL_WITH_DELEGATE, "Const 'val' should not have a delegate")
-            map.put(TYPE_CANT_BE_USED_FOR_CONST_VAL, "Const ''val'' has type ''{0}''. Only primitives and String are allowed", RENDER_TYPE)
-            map.put(CONST_VAL_WITHOUT_INITIALIZER, "Const 'val' should have an initializer")
-            map.put(CONST_VAL_WITH_NON_CONST_INITIALIZER, "Const 'val' initializer should be a constant value")
-
-            // Multi-platform projects
-            map.put(EXPECTED_DECLARATION_WITH_BODY, "Expected declaration must not have a body")
-            map.put(EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL, "Explicit delegation call for constructor of an expected class is not allowed")
-            map.put(EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, "Expected class constructor cannot have a property parameter")
-            map.put(EXPECTED_ENUM_CONSTRUCTOR, "Expected enum class cannot have a constructor")
-            map.put(EXPECTED_ENUM_ENTRY_WITH_BODY, "Expected enum entry cannot have a body")
-            map.put(EXPECTED_PROPERTY_INITIALIZER, "Expected property cannot have an initializer")
-            map.put(EXPECTED_DELEGATED_PROPERTY, "Expected property cannot be delegated")
-            map.put(EXPECTED_LATEINIT_PROPERTY, "Expected property cannot be lateinit")
-            map.put(EXPECTED_PRIVATE_DECLARATION, "Expected declaration cannot be private")
-            map.put(SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS, "Expected classes cannot initialize supertypes")
-            map.put(EXPECTED_PRIVATE_DECLARATION, "Expected declaration cannot be private")
-            map.put(IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS, "Implementation by delegation in expected classes is prohibited")
-            map.put(ACTUAL_TYPE_ALIAS_NOT_TO_CLASS, "Right-hand side of actual type alias should be a class, not another type alias")
-            map.put(ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE, "Aliased class should not have type parameters with declaration-site variance")
-            map.put(ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE, "Right-hand side of actual type alias cannot contain use-site variance or star projections")
-            map.put(ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION, "Type arguments in the right-hand side of actual type alias should be its type parameters in the same order, e.g. 'actual typealias Foo<A, B> = Bar<A, B>'")
-            map.put(ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS, "Actual function cannot have default argument values, they should be declared in the expected function")
-            map.put(ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE, "Parameter ''{0}'' has conflicting values in the expected and actual annotation", SYMBOL)
-            map.put(EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND, "Expected function source is not found, therefore it's impossible to generate default argument values declared there. Please add the corresponding file to compilation sources")
-            map.put(NO_ACTUAL_FOR_EXPECT, "Expected {0} has no actual declaration in module {1}{2}", SYMBOL, MODULE_DATA, FirPlatformIncompatibilityDiagnosticRenderer.TEXT)
-            map.put(ACTUAL_WITHOUT_EXPECT, "{0} has no corresponding expected declaration{1}", SYMBOL, FirPlatformIncompatibilityDiagnosticRenderer.TEXT)
-            map.put(AMBIGUOUS_ACTUALS, "{0} has several compatible actual declarations in modules {1}", SYMBOL, SYMBOLS)
-            map.put(AMBIGUOUS_EXPECTS, "{0} has several compatible expect declarations in modules {1}", SYMBOL, COLLECTION(MODULE_DATA))
-            map.put(NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, "Actual class ''{0}'' has no corresponding members for expected class members:{1}", SYMBOL, FirIncompatibleExpectedActualClassScopesRenderer.TEXT)
-            map.put(ACTUAL_MISSING, "Declaration must be marked with 'actual'")
-
-            // Destructuring declaration
-            map.put(INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION, "Initializer required for destructuring declaration")
-            map.put(
-                COMPONENT_FUNCTION_MISSING,
-                "Destructuring declaration initializer of type {1} must have a ''{0}()'' function",
-                TO_STRING,
-                RENDER_TYPE
-            )
-            map.put(
-                COMPONENT_FUNCTION_AMBIGUITY,
-                "Function ''{0}''() is ambiguous for this expression: {1}",
-                TO_STRING,
-                AMBIGUOUS_CALLS
-            )
-            map.put(
-                COMPONENT_FUNCTION_ON_NULLABLE,
-                "Not nullable value required to call ''{0}()'' function of destructuring declaration initializer",
-                TO_STRING
-            )
-            map.put(
-                COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH,
-                "''{0}()'' function returns ''{1}'', but ''{2}'' is expected",
-                TO_STRING,
-                RENDER_TYPE,
-                RENDER_TYPE
-            )
-
-            // Control flow diagnostics
-            map.put(UNINITIALIZED_VARIABLE, "Variable ''{0}'' must be initialized", VARIABLE_NAME)
-            map.put(UNINITIALIZED_PARAMETER, "Parameter ''{0}'' is uninitialized here", VARIABLE_NAME)
-            map.put(UNINITIALIZED_ENUM_ENTRY, "Enum entry ''{0}'' is uninitialized here", VARIABLE_NAME)
-            map.put(UNINITIALIZED_ENUM_COMPANION, "Companion object of enum class ''{0}'' is uninitialized here", SYMBOL)
-            map.put(VAL_REASSIGNMENT, "Val cannot be reassigned", VARIABLE_NAME)
-            map.put(VAL_REASSIGNMENT_VIA_BACKING_FIELD, "Reassignment of read-only property via backing field", VARIABLE_NAME)
-            map.put(
-                CAPTURED_VAL_INITIALIZATION,
-                "Captured values initialization is forbidden due to possible reassignment",
-                VARIABLE_NAME
-            )
-            map.put(
-                CAPTURED_MEMBER_VAL_INITIALIZATION,
-                "Captured member values initialization is forbidden due to possible reassignment",
-                VARIABLE_NAME
-            )
-            map.put(
-                SETTER_PROJECTED_OUT,
-                "Setter for ''{0}'' is removed by type projection",
-                VARIABLE_NAME
-            )
-            map.put(
-                WRONG_INVOCATION_KIND,
-                "{2} wrong invocation kind: given {3} case, but {4} case is possible",
-                SYMBOL,
-                TO_STRING,
-                TO_STRING
-            )
-            map.put(LEAKED_IN_PLACE_LAMBDA, "Leaked in-place lambda: {2}", SYMBOL)
-            map.put(FirErrors.WRONG_IMPLIES_CONDITION, "Wrong implies condition")
-            map.put(UNREACHABLE_CODE, "Unreachable code", NOT_RENDERED, NOT_RENDERED)
-            map.put(SENSELESS_COMPARISON, "Condition ''{0}'' is always ''{1}''", FIR, TO_STRING)
-            map.put(SENSELESS_NULL_IN_WHEN, "Expression under 'when' is never equal to null")
-
-            // Nullability
-            map.put(
-                UNSAFE_CALL,
-                "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type {0}",
-                RENDER_TYPE,
-                NOT_RENDERED,
-            )
-            map.put(
-                UNSAFE_IMPLICIT_INVOKE_CALL,
-                "Reference has a nullable type ''{0}'', use explicit \"?.invoke\" to make a function-like call instead.",
-                RENDER_TYPE
-            )
-            map.put(
-                UNSAFE_INFIX_CALL,
-                "Infix call corresponds to a dot-qualified call ''{0}.{1}({2})'' which is not allowed on a nullable receiver ''{0}''. " +
-                        "Use ''?.''-qualified call instead",
-                FIR,
-                TO_STRING,
-                FIR,
-            )
-            map.put(
-                UNSAFE_OPERATOR_CALL,
-                "Operator call corresponds to a dot-qualified call ''{0}.{1}({2})'' which is not allowed on a nullable receiver ''{0}''. ",
-                FIR,
-                TO_STRING,
-                FIR,
-            )
-            map.put(UNNECESSARY_NOT_NULL_ASSERTION, "Unnecessary non-null assertion (!!) on a non-null receiver of type {0}", RENDER_TYPE)
-            map.put(NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION, "Non-null assertion (!!) is called on a lambda expression")
-            map.put(NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE, "Non-null assertion (!!) is called on a callable reference expression")
-            map.put(UNNECESSARY_SAFE_CALL, "Unnecessary safe call on a non-null receiver of type {0}", RENDER_TYPE)
-            map.put(UNEXPECTED_SAFE_CALL, "Safe-call is not allowed here")
-            map.put(USELESS_ELVIS, "Elvis operator (?:) always returns the left operand of non-nullable type {0}", RENDER_TYPE)
-            map.put(USELESS_ELVIS_RIGHT_IS_NULL, "Right operand of elvis operator (?:) is useless if it is null")
-
-            // Casts and is-checks
-            map.put(USELESS_CAST, "No cast needed")
-            map.put(USELESS_IS_CHECK, "Check for instance is always ''{0}''", TO_STRING)
-            map.put(IS_ENUM_ENTRY, "'is' over enum entry is not allowed, use comparison instead")
-            map.put(ENUM_ENTRY_AS_TYPE, "Use of enum entry names as types is not allowed, use enum type instead")
-
-            // When expressions
-            map.put(EXPECTED_CONDITION, "Expected condition of type Boolean")
-            map.put(NO_ELSE_IN_WHEN, "''when'' expression must be exhaustive, add necessary {0}", WHEN_MISSING_CASES)
-            map.put(INVALID_IF_AS_EXPRESSION, "'if' must have both main and 'else' branches if used as an expression")
-            map.put(
-                NON_EXHAUSTIVE_WHEN_STATEMENT,
-                "Non exhaustive ''when'' statements on {0} will be prohibited in 1.7, add {1}",
-                TO_STRING,
-                WHEN_MISSING_CASES
-            )
-            map.put(COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT, "Deprecated syntax. Use '||' instead of commas in when-condition for 'when' without argument")
-            map.put(DUPLICATE_LABEL_IN_WHEN, "Duplicate label in when")
-            map.put(
-                CONFUSING_BRANCH_CONDITION,
-                "The logical expressions may be understood ambiguously in when with subject branches. Please wrap it with parenthesis"
-            )
-
-            // Context tracking
-            map.put(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION, "Type parameter ''{0}'' is not an expression", SYMBOL)
-            map.put(
-                TYPE_PARAMETER_ON_LHS_OF_DOT,
-                "Type parameter ''{0}'' cannot have or inherit a companion object, so it cannot be on the left hand side of dot",
-                SYMBOL
-            )
-            map.put(
-                NO_COMPANION_OBJECT,
-                "Classifier ''{0}'' does not have a companion object, and thus must be initialized here",
-                SYMBOL
-            )
-            map.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, "Expression expected, but a package name found")
-
-            // Function contracts
-            map.put(ERROR_IN_CONTRACT_DESCRIPTION, "Error in contract description", TO_STRING)
-
-            // Conventions
-            map.put(NO_GET_METHOD, "No get method providing array access")
-            map.put(NO_SET_METHOD, "No set method providing array access")
-            map.put(
-                DELEGATE_SPECIAL_FUNCTION_MISSING,
-                "Type ''{1}'' has no method ''{0}'' and thus it cannot serve as a {2}",
-                TO_STRING,
-                RENDER_TYPE,
-                TO_STRING
-            )
-            map.put(
-                DELEGATE_SPECIAL_FUNCTION_AMBIGUITY,
-                "Overload resolution ambiguity on method ''{0}'': {1}",
-                TO_STRING,
-                SYMBOLS
-            )
-            map.put(
-                DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE,
-                "Property delegate must have a ''{0}'' method. None of the following functions is suitable: {1}",
-                TO_STRING,
-                SYMBOLS
-            )
-            map.put(
-                DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH,
-                "The ''{0}'' function of property delegate is expected to return ''{1}'', but returns ''{2}''",
-                TO_STRING,
-                RENDER_TYPE,
-                RENDER_TYPE,
-            )
-            map.put(
-                UNDERSCORE_IS_RESERVED,
-                "Names _, __, ___, ..., are reserved in Kotlin"
-            )
-            map.put(
-                UNDERSCORE_USAGE_WITHOUT_BACKTICKS,
-                "Names _, __, ___, ... can be used only in back-ticks (`_`, `__`, `___`, ...)"
-            )
-            map.put(
-                RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER,
-                "Referencing to an underscore-named parameter is deprecated. It will be an error in a future release."
-            )
-            map.put(
-                INVALID_CHARACTERS,
-                "Name {0}",
-                STRING
-            )
-            map.put(
-                DANGEROUS_CHARACTERS,
-                "Name contains characters which can cause problems on Windows: {0}",
-                STRING
-            )
-            map.put(
-                EQUALITY_NOT_APPLICABLE,
-                "Operator ''{0}'' cannot be applied to ''{1}'' and ''{2}''",
-                TO_STRING,
-                RENDER_TYPE,
-                RENDER_TYPE
-            )
-            map.put(
-                EQUALITY_NOT_APPLICABLE_WARNING,
-                "Comparing with ''{0}'' may not be intended because ''{1}'' and ''{2}'' are incompatible types",
-                TO_STRING,
-                RENDER_TYPE,
-                RENDER_TYPE
-            )
-            map.put(
-                INCOMPATIBLE_ENUM_COMPARISON_ERROR,
-                "Comparison of incompatible enums ''{0}'' and ''{1}'' is always unsuccessful",
-                RENDER_TYPE,
-                RENDER_TYPE
-            )
-            map.put(INC_DEC_SHOULD_NOT_RETURN_UNIT, "Functions inc(), dec() shouldn't return Unit to be used by operators ++, --")
-            map.put(
-                ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT,
-                "Function ''{0}'' should return Unit to be used by corresponding operator ''{1}''",
-                SYMBOL,
-                TO_STRING
-            )
-            map.put(
-                PROPERTY_AS_OPERATOR,
-                "Property ''{0}'' cannot be used as an operator.",
-                SYMBOL
-            )
-            map.put(
-                DSL_SCOPE_VIOLATION,
-                "''{0}'' can''t be called in this context by implicit receiver. " +
-                        "Use the explicit one if necessary",
-                SYMBOL
-            )
-
-            // Type alias
-            map.put(TOPLEVEL_TYPEALIASES_ONLY, "Nested and local type aliases are not supported")
-            map.put(RECURSIVE_TYPEALIAS_EXPANSION, "Recursive type alias in expansion")
-            map.put(
-                TYPEALIAS_SHOULD_EXPAND_TO_CLASS,
-                "Type alias expands to {0}, which is not a class, an interface, or an object",
-                RENDER_TYPE
-            )
-
-            // Returns
-            map.put(RETURN_NOT_ALLOWED, "'return' is not allowed here")
-            map.put(NOT_A_FUNCTION_LABEL, "Target label does not denote a function")
-            map.put(
-                RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY,
-                "Returns are not allowed for functions with expression body. Use block body in '{...}'"
-            )
-            map.put(ANONYMOUS_INITIALIZER_IN_INTERFACE, "Anonymous initializers are not allowed in interfaces")
-
-            // Inline
-            map.put(
-                USAGE_IS_NOT_INLINABLE,
-                "Illegal usage of inline-parameter ''{0}''. Add ''noinline'' modifier to the parameter declaration",
-                SYMBOL
-            )
-            map.put(
-                NON_LOCAL_RETURN_NOT_ALLOWED,
-                "Can''t inline ''{0}'' here: it may contain non-local returns. Add ''crossinline'' modifier to parameter declaration ''{0}''",
-                SYMBOL
-            )
-            map.put(RECURSION_IN_INLINE, "Inline function ''{0}'' cannot be recursive", SYMBOL)
-            map.put(NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, "Public-API inline function cannot access non-public-API ''{1}''", SYMBOL, SYMBOL)
-            map.put(
-                PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE,
-                "Protected constructor call from public-API inline function is deprecated",
-                SYMBOL,
-                SYMBOL
-            )
-            map.put(
-                PROTECTED_CALL_FROM_PUBLIC_INLINE,
-                "Protected function call from public-API inline function is deprecated",
-                SYMBOL,
-                SYMBOL
-            )
-            map.put(
-                PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR,
-                "Protected function call from public-API inline function is prohibited",
-                SYMBOL,
-                SYMBOL
-            )
-            map.put(
-                PRIVATE_CLASS_MEMBER_FROM_INLINE,
-                "Non-private inline function cannot access members of private classes: ''{1}''",
-                SYMBOL,
-                SYMBOL
-            )
-            map.put(NOT_YET_SUPPORTED_IN_INLINE, "{0} are not yet supported in inline functions", STRING)
-            map.put(
-                NOTHING_TO_INLINE,
-                "Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of functional types"
-            )
-            map.put(
-                NULLABLE_INLINE_PARAMETER,
-                "Inline-parameter ''{0}'' of ''{1}'' must not be nullable. Add ''noinline'' modifier to the parameter declaration or make its type not nullable",
-                SYMBOL,
-                SYMBOL
-            )
-
-            map.put(SUPER_CALL_FROM_PUBLIC_INLINE, "Accessing super members from public-API inline function is deprecated", SYMBOL)
-
-            map.put(ILLEGAL_INLINE_PARAMETER_MODIFIER, "Modifier is allowed only for function parameters of an inline function")
-
-            map.put(
-                INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED,
-                "Suspend inline lambda parameters of non-suspend function type are not supported. Add 'noinline' or 'crossinline' modifier."
-            )
-
-            map.put(
-                REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE,
-                "Redundant 'suspend' modifier: lambda parameters of suspend function type uses existing continuation."
-            )
-
-            //imports
-            map.put(
-                CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON,
-                "Cannot import-on-demand from object ''{0}''",
-                TO_STRING
-            )
-            map.put(PACKAGE_CANNOT_BE_IMPORTED, "Packages cannot be imported")
-            map.put(
-                CANNOT_BE_IMPORTED,
-                "Cannot import ''{0}'', functions and properties can be imported only from packages or objects",
-                TO_STRING
-            )
-            map.put(
-                CONFLICTING_IMPORT,
-                "Conflicting import, imported name ''{0}'' is ambiguous",
-                TO_STRING
-            )
-            map.put(OPERATOR_RENAMED_ON_IMPORT, "Operator renamed to a different operator on import")
-
-            // Suspend
-            map.put(
-                ILLEGAL_SUSPEND_FUNCTION_CALL,
-                "Suspend function ''{0}'' should be called only from a coroutine or another suspend function",
-                SYMBOL
-            )
-            map.put(
-                ILLEGAL_SUSPEND_PROPERTY_ACCESS,
-                "Suspend property ''{0}'' should be accessed only from a coroutine or suspend function",
-                SYMBOL
-            )
-            map.put(NON_LOCAL_SUSPENSION_POINT, "Suspension functions can be called only within coroutine body")
-            map.put(
-                ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL,
-                "Restricted suspending functions can only invoke member or extension suspending functions on their restricted coroutine scope"
-            )
-            map.put(
-                NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND,
-                "''suspend'' function can only be called in a form of modifier of a lambda: suspend { ... }"
-            )
-            map.put(
-                MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND,
-                "Calls having a form of ''suspend {}'' are deprecated because ''suspend'' in the context will have a meaning of a modifier. Add empty argument list to the call: ''suspend() { ... }''"
-            )
-            map.put(RETURN_FOR_BUILT_IN_SUSPEND, "Using implicit label for this lambda is prohibited")
-
-            // Label
-            map.put(REDUNDANT_LABEL_WARNING, "Label is redundant, because it can not be referenced in either ''break'', ''continue'', or ''return'' expression")
-
-            // Extended checkers group
-            map.put(REDUNDANT_VISIBILITY_MODIFIER, "Redundant visibility modifier")
-            map.put(REDUNDANT_MODALITY_MODIFIER, "Redundant modality modifier")
-            map.put(REDUNDANT_RETURN_UNIT_TYPE, "Redundant return 'unit' type")
-            map.put(REDUNDANT_EXPLICIT_TYPE, "Redundant explicit type")
-            map.put(REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE, "Redundant string template")
-            map.put(CAN_BE_VAL, "'var' can be 'val'")
-            map.put(CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT, "Assignment can be replaced with operator assignment")
-            map.put(REDUNDANT_CALL_OF_CONVERSION_METHOD, "Redundant call of conversion method")
-            map.put(ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS, "Replace '==' with 'Arrays.equals'")
-            map.put(EMPTY_RANGE, "Range is empty")
-            map.put(REDUNDANT_SETTER_PARAMETER_TYPE, "Redundant setter parameter type")
-            map.put(UNUSED_VARIABLE, "Variable is unused")
-            map.put(ASSIGNED_VALUE_IS_NEVER_READ, "Assigned value is never read")
-            map.put(VARIABLE_INITIALIZER_IS_REDUNDANT, "Initializer is redundant")
-            map.put(VARIABLE_NEVER_READ, "Variable is never read")
-        }
+        map.put(TYPE_PARAMETERS_IN_ENUM, "Enum class cannot have type parameters")
+        map.put(
+            CONFLICTING_PROJECTION,
+            "Projection is conflicting with variance of the corresponding type parameter of {0}. Remove the projection or replace it with ''*''",
+            RENDER_TYPE
+        )
+        map.put(
+            CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION,
+            "Conflicting projection in type alias expansion in intermediate type '{0}'",
+            RENDER_TYPE
+        )
+        map.put(
+            REDUNDANT_PROJECTION,
+            "Projection is redundant: the corresponding type parameter of {0} has the same variance",
+            RENDER_TYPE
+        )
+        map.put(
+            VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED,
+            "Variance annotations are only allowed for type parameters of classes and interfaces"
+        )
+        map.put(CATCH_PARAMETER_WITH_DEFAULT_VALUE, "Catch clause parameter may not have a default value")
+        map.put(REIFIED_TYPE_IN_CATCH_CLAUSE, "Reified type is forbidden for catch parameter")
+        map.put(TYPE_PARAMETER_IN_CATCH_CLAUSE, "Type parameter is forbidden for catch parameter")
+
+        map.put(
+            KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE,
+            "Declaration has an inconsistent return type. " +
+                    "Please add upper bound Any for type parameter ''{0}'' or specify return type explicitly",
+            SYMBOL
+        )
+
+        map.put(TYPE_PARAMETER_AS_REIFIED, "Cannot use ''{0}'' as reified type parameter. Use a class instead", SYMBOL)
+        map.put(
+            TYPE_PARAMETER_AS_REIFIED_ARRAY,
+            "Cannot use ''{0}'' as reified type parameter, since the array type parameter is not reified.",
+            SYMBOL
+        )
+        map.put(
+            REIFIED_TYPE_FORBIDDEN_SUBSTITUTION,
+            "Cannot use ''{0}'' as reified type parameter",
+            RENDER_TYPE
+        )
+        map.put(
+            FINAL_UPPER_BOUND,
+            "''{0}'' is a final type, and thus a value of the type parameter is predetermined",
+            RENDER_TYPE
+        )
+        map.put(UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE, "Extension function type can not be used as an upper bound")
+        map.put(INCOMPATIBLE_TYPES, "Incompatible types: {0} and {1}", RENDER_TYPE, RENDER_TYPE)
+        map.put(INCOMPATIBLE_TYPES_WARNING, "Potentially incompatible types: {0} and {1}", RENDER_TYPE, RENDER_TYPE)
+        map.put(
+            SMARTCAST_IMPOSSIBLE,
+            "Smart cast to ''{0}'' is impossible, because ''{1}'' is a {2}",
+            RENDER_TYPE,
+            FIR,
+            TO_STRING,
+            NOT_RENDERED
+        )
+
+        map.put(
+            TYPE_VARIANCE_CONFLICT,
+            "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in type {3}",
+            SYMBOL, RENDER_POSITION_VARIANCE, RENDER_POSITION_VARIANCE, RENDER_TYPE
+        )
+        map.put(
+            TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE,
+            "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in abbreviated type {3}",
+            SYMBOL, RENDER_POSITION_VARIANCE, RENDER_POSITION_VARIANCE, RENDER_TYPE
+        )
+
+        map.put(
+            BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER,
+            "Type parameter cannot have any other bounds if it's bounded by another type parameter"
+        )
+
+        map.put(ONLY_ONE_CLASS_BOUND_ALLOWED, "Only one of the upper bounds can be a class")
+        map.put(REPEATED_BOUND, "Type parameter already has this bound")
+
+        map.put(
+            CONFLICTING_UPPER_BOUNDS,
+            "Upper bounds of {0} have empty intersection",
+            SYMBOL
+        )
+
+        map.put(
+            NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER,
+            "{0} does not refer to a type parameter of {1}",
+            TO_STRING,
+            DECLARATION_NAME
+        )
+
+        map.put(BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED, "Bounds are not allowed on type alias parameters")
+
+        map.put(REIFIED_TYPE_PARAMETER_NO_INLINE, "Only type parameters of inline functions can be reified")
+
+        map.put(TYPE_PARAMETERS_NOT_ALLOWED, "Type parameters are not allowed here")
+
+        map.put(TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER, "Type parameter of a property must be used in its receiver type")
+
+        map.put(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY, "A 'return' expression required in a function with a block body ('{...}')")
+
+        map.put(
+            RETURN_TYPE_MISMATCH,
+            "Return type mismatch: expected {0}, actual {1}",
+            RENDER_TYPE,
+            RENDER_TYPE,
+            NOT_RENDERED,
+            NOT_RENDERED
+        )
+
+        map.put(CYCLIC_GENERIC_UPPER_BOUND, "Type parameter has cyclic upper bounds")
+
+        map.put(DEPRECATED_TYPE_PARAMETER_SYNTAX, "Type parameters must be placed before the name of the function")
+
+        map.put(
+            MISPLACED_TYPE_PARAMETER_CONSTRAINTS,
+            "If a type parameter has multiple constraints, they all need to be placed in the 'where' clause"
+        )
+
+        map.put(DYNAMIC_UPPER_BOUND, "Dynamic type can not be used as an upper bound")
+
+        // Reflection
+        map.put(
+            EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED,
+            "''{0}'' is a member and an extension at the same time. References to such elements are not allowed",
+            DECLARATION_NAME
+        )
+        map.put(CALLABLE_REFERENCE_LHS_NOT_A_CLASS, "Left-hand side of a callable reference cannot be a type parameter")
+        map.put(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR, "Annotation class cannot be instantiated")
+
+        map.put(CLASS_LITERAL_LHS_NOT_A_CLASS, "Only classes are allowed on the left hand side of a class literal")
+        map.put(NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, "Type in a class literal must not be nullable")
+        map.put(
+            EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS,
+            "Expression in a class literal has a nullable type ''{0}'', use !! to make the type non-nullable",
+            RENDER_TYPE
+        )
+
+        // Inline and value classes
+        map.put(INLINE_CLASS_NOT_TOP_LEVEL, "Inline classes cannot be local or inner")
+        map.put(INLINE_CLASS_NOT_FINAL, "Inline classes can be only final")
+        map.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS, "Primary constructor is required for inline class")
+        map.put(INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, "Inline class must have exactly one primary constructor parameter")
+        map.put(
+            INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
+            "Value class primary constructor must have only final read-only (val) property parameter"
+        )
+        map.put(PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS, "Inline class cannot have properties with backing fields")
+        map.put(DELEGATED_PROPERTY_INSIDE_INLINE_CLASS, "Inline class cannot have delegated properties")
+        map.put(INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE, "Inline class cannot have value parameter of type ''{0}''", TO_STRING)
+        map.put(INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION, "Inline class cannot implement an interface by delegation")
+        map.put(INLINE_CLASS_CANNOT_EXTEND_CLASSES, "Inline class cannot extend classes")
+        map.put(INLINE_CLASS_CANNOT_BE_RECURSIVE, "Inline class cannot be recursive")
+        map.put(
+            DECLARATION_CANT_BE_INLINED,
+            "'inline' modifier is not allowed on virtual members. Only private or final members can be inlined"
+        )
+        map.put(OVERRIDE_BY_INLINE, "Override by an inline function")
+        map.put(REIFIED_TYPE_PARAMETER_IN_OVERRIDE, "Override by a function with reified type parameter")
+        map.put(INLINE_PROPERTY_WITH_BACKING_FIELD, "Inline property cannot have backing field")
+        map.put(NON_INTERNAL_PUBLISHED_API, "@PublishedApi annotation is only applicable for internal declaration")
+        map.put(
+            INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE,
+            "Invalid default value for inline parameter: ''{0}''. Only lambdas, anonymous functions, and callable references are supported",
+            FIR,
+            DECLARATION_NAME
+        )
+        map.put(RESERVED_MEMBER_INSIDE_INLINE_CLASS, "Member with the name ''{0}'' is reserved for future releases", TO_STRING)
+        map.put(
+            SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS,
+            "Secondary constructors with bodies are reserved for for future releases"
+        )
+        map.put(INNER_CLASS_INSIDE_INLINE_CLASS, "Inline class cannot have inner classes")
+        map.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be Cloneable")
+
+        // Overrides
+        map.put(NOTHING_TO_OVERRIDE, "''{0}'' overrides nothing", DECLARATION_NAME)
+
+        map.put(
+            CANNOT_OVERRIDE_INVISIBLE_MEMBER,
+            "''{0}'' has no access to ''{1}'', so it cannot override it",
+            FQ_NAMES_IN_TYPES,
+            FQ_NAMES_IN_TYPES
+        )
+
+        map.put(OVERRIDING_FINAL_MEMBER, "''{0}'' in ''{1}'' is final and cannot be overridden", DECLARATION_NAME, TO_STRING)
+
+        map.put(
+            CANNOT_WEAKEN_ACCESS_PRIVILEGE,
+            "Cannot weaken access privilege ''{0}'' for ''{1}'' in ''{2}''",
+            VISIBILITY,
+            DECLARATION_NAME,
+            TO_STRING
+        )
+        map.put(
+            CANNOT_CHANGE_ACCESS_PRIVILEGE,
+            "Cannot change access privilege ''{0}'' for ''{1}'' in ''{2}''",
+            VISIBILITY,
+            DECLARATION_NAME,
+            TO_STRING
+        )
+
+        map.put(
+            ABSTRACT_MEMBER_NOT_IMPLEMENTED,
+            "{0} is not abstract and does not implement abstract member {1}",
+            RENDER_CLASS_OR_OBJECT,
+            DECLARATION_NAME
+        )
+        map.put(
+            ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED,
+            "{0} is not abstract and does not implement abstract base class member {1}",
+            RENDER_CLASS_OR_OBJECT,
+            DECLARATION_NAME
+        )
+        map.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has anonymous type. Please specify type explicitly", NOT_RENDERED)
+        map.put(
+            MANY_IMPL_MEMBER_NOT_IMPLEMENTED,
+            "{0} must override {1} because it inherits many implementations of it",
+            RENDER_CLASS_OR_OBJECT,
+            DECLARATION_NAME
+        )
+        map.put(
+            MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED,
+            "{0} must override {1} because it inherits multiple interface methods of it",
+            RENDER_CLASS_OR_OBJECT,
+            DECLARATION_NAME
+        )
+
+        map.put(
+            RETURN_TYPE_MISMATCH_ON_OVERRIDE,
+            "Return type of ''{0}'' is not a subtype of the return type of the overridden member ''{1}''",
+            DECLARATION_NAME,
+            DECLARATION_NAME
+        )
+        map.put(
+            PROPERTY_TYPE_MISMATCH_ON_OVERRIDE,
+            "Type of ''{0}'' is not a subtype of the overridden property ''{1}''",
+            DECLARATION_NAME,
+            DECLARATION_NAME
+        )
+        map.put(
+            VAR_TYPE_MISMATCH_ON_OVERRIDE,
+            "Type of ''{0}'' doesn''t match the type of the overridden var-property ''{1}''",
+            DECLARATION_NAME,
+            DECLARATION_NAME
+        )
+
+        map.put(
+            VAR_OVERRIDDEN_BY_VAL,
+            "Var-property {0} cannot be overridden by val-property {1}",
+            FQ_NAMES_IN_TYPES,
+            FQ_NAMES_IN_TYPES
+        )
+        map.put(NON_FINAL_MEMBER_IN_FINAL_CLASS, "'open' has no effect in a final class")
+        map.put(NON_FINAL_MEMBER_IN_OBJECT, "'open' has no effect in an object")
+        map.put(
+            VIRTUAL_MEMBER_HIDDEN, "''{0}'' hides member of supertype ''{1}'' and needs ''override'' modifier", DECLARATION_NAME,
+            DECLARATION_NAME
+        )
+        map.put(
+            DATA_CLASS_OVERRIDE_CONFLICT,
+            "Function ''{0}'' generated for the data class conflicts with member of supertype ''{1}''",
+            FQ_NAMES_IN_TYPES,
+            FQ_NAMES_IN_TYPES
+        )
+
+        map.put(
+            GENERIC_THROWABLE_SUBCLASS,
+            "Subclass of 'Throwable' may not have type parameters"
+        )
+        map.put(
+            INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS,
+            "Inner class of generic class extending 'Throwable' is prohibited"
+        )
+
+        map.put(
+            RETURN_TYPE_MISMATCH_ON_INHERITANCE,
+            "''{0}'' clashes with ''{1}'': return types are incompatible",
+            DECLARATION_NAME,
+            DECLARATION_NAME
+        )
+
+        map.put(
+            PROPERTY_TYPE_MISMATCH_ON_INHERITANCE,
+            "''{0}'' clashes with ''{1}'': property types are incompatible",
+            DECLARATION_NAME,
+            DECLARATION_NAME
+        )
+
+        map.put(
+            VAR_TYPE_MISMATCH_ON_INHERITANCE,
+            "''{0}'' clashes with ''{1}'': property types do not match",
+            DECLARATION_NAME,
+            DECLARATION_NAME
+        )
+
+        map.put(
+            RETURN_TYPE_MISMATCH_BY_DELEGATION,
+            "Type of ''{0}'' is not a subtype of overridden by delegation ''{1}''",
+            DECLARATION_NAME,
+            DECLARATION_NAME
+        )
+
+        map.put(
+            PROPERTY_TYPE_MISMATCH_BY_DELEGATION,
+            "Type of property ''{0}'' is not a subtype of overridden by delegation ''{1}''",
+            DECLARATION_NAME,
+            DECLARATION_NAME
+        )
+
+        map.put(
+            VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION,
+            "Val-property ''{0}'' implicitly overrides a var-property ''{1}'' by delegation",
+            DECLARATION_NAME,
+            DECLARATION_NAME
+        )
+
+        map.put(
+            CONFLICTING_INHERITED_MEMBERS,
+            "{0} inherits conflicting members: {1}",
+            commaSeparated(DECLARATION_NAME)
+        )
+
+        // Redeclarations
+        map.put(MANY_COMPANION_OBJECTS, "Only one companion object is allowed per class")
+        map.put(CONFLICTING_OVERLOADS, "Conflicting overloads: {0}", SYMBOLS) // *
+        map.put(REDECLARATION, "Conflicting declarations: {0}", SYMBOLS) // *
+        map.put(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, "An interface may not implement a method of 'Any'") // &
+
+        // Invalid local declarations
+        map.put(
+            LOCAL_OBJECT_NOT_ALLOWED,
+            "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead",
+            TO_STRING
+        ) // +
+        map.put(
+            LOCAL_INTERFACE_NOT_ALLOWED,
+            "''{0}'' is an interface so it cannot be local. Try to use anonymous object or abstract class instead",
+            TO_STRING
+        )
+
+        // Functions
+        map.put(
+            ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS,
+            "Abstract function ''{0}'' in non-abstract class ''{1}''",
+            DECLARATION_NAME,
+            DECLARATION_NAME
+        )
+        map.put(ABSTRACT_FUNCTION_WITH_BODY, "A function ''{0}'' with body cannot be abstract", DECLARATION_NAME)
+        map.put(NON_ABSTRACT_FUNCTION_WITH_NO_BODY, "Function ''{0}'' without a body must be abstract", DECLARATION_NAME)
+        map.put(PRIVATE_FUNCTION_WITH_NO_BODY, "Function ''{0}'' without body cannot be private", DECLARATION_NAME)
+        map.put(NON_MEMBER_FUNCTION_NO_BODY, "Function ''{0}'' must have a body", DECLARATION_NAME)
+
+        map.put(FUNCTION_DECLARATION_WITH_NO_NAME, "Function declaration must have a name")
+
+        map.put(
+            ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE,
+            "An anonymous function is not allowed to specify default values for its parameters"
+        )
+        map.put(USELESS_VARARG_ON_PARAMETER, "Vararg on this parameter is useless")
+        map.put(
+            FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS,
+            "Fun interface must have exactly one abstract function"
+        )
+        map.put(FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES, "Fun interface can not have abstract properties")
+        map.put(FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS, "Fun interface can not have abstract metod with type parameters")
+        map.put(FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE, "Fun interface abstract method can not have default value")
+        map.put(FUN_INTERFACE_WITH_SUSPEND_FUNCTION, "Fun interface abstract method can not be suspend")
+
+        map.put(MULTIPLE_VARARG_PARAMETERS, "Multiple vararg-parameters are prohibited")
+        map.put(FORBIDDEN_VARARG_PARAMETER_TYPE, "Forbidden vararg parameter type: {0}", RENDER_TYPE)
+        map.put(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION, "A type annotation is required on a value parameter")
+        map.put(CANNOT_INFER_PARAMETER_TYPE, "cannot infer a type for this parameter. Please specify it explicitly.")
+        map.put(NO_TAIL_CALLS_FOUND, "A function is marked as tail-recursive but no tail calls are found.")
+        map.put(TAILREC_ON_VIRTUAL_MEMBER_ERROR, "Tailrec is not allowed on open members")
+        map.put(NON_TAIL_RECURSIVE_CALL, "Recursive call is not a tail call")
+        map.put(TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED, "Tail recursion optimization inside try/catch/finally is not supported")
+
+        // Fun interfaces
+        map.put(FUN_INTERFACE_CONSTRUCTOR_REFERENCE, "Functional/SAM interface constructor references are prohibited")
+
+        // Properties & accessors
+        map.put(
+            ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS,
+            "Abstract property ''{0}'' in non-abstract class ''{1}''",
+            DECLARATION_NAME,
+            DECLARATION_NAME
+        )
+        map.put(PRIVATE_PROPERTY_IN_INTERFACE, "Abstract property in an interface cannot be private")
+
+        map.put(ABSTRACT_PROPERTY_WITH_INITIALIZER, "Property with initializer cannot be abstract")
+        map.put(PROPERTY_INITIALIZER_IN_INTERFACE, "Property initializers are not allowed in interfaces")
+        map.put(
+            PROPERTY_WITH_NO_TYPE_NO_INITIALIZER,
+            "This property must either have a type annotation, be initialized or be delegated"
+        )
+
+        map.put(VARIABLE_WITH_NO_TYPE_NO_INITIALIZER, "This variable must either have a type annotation or be initialized")
+
+        map.put(INITIALIZATION_BEFORE_DECLARATION, "Variable cannot be initialized before declaration", SYMBOL)
+
+        map.put(MUST_BE_INITIALIZED, "Property must be initialized")
+        map.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, "Property must be initialized or be abstract")
+        map.put(EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, "Extension property must have accessors or be abstract")
+        map.put(UNNECESSARY_LATEINIT, "Lateinit is unnecessary: definitely initialized in constructors")
+
+        map.put(BACKING_FIELD_IN_INTERFACE, "Property in an interface cannot have a backing field")
+        map.put(EXTENSION_PROPERTY_WITH_BACKING_FIELD, "Extension property cannot be initialized because it has no backing field")
+        map.put(PROPERTY_INITIALIZER_NO_BACKING_FIELD, "Initializer is not allowed here because this property has no backing field")
+
+        map.put(ABSTRACT_DELEGATED_PROPERTY, "Delegated property cannot be abstract")
+        map.put(DELEGATED_PROPERTY_IN_INTERFACE, "Delegated properties are not allowed in interfaces")
+
+        map.put(ABSTRACT_PROPERTY_WITH_GETTER, "Property with getter implementation cannot be abstract")
+        map.put(ABSTRACT_PROPERTY_WITH_SETTER, "Property with setter implementation cannot be abstract")
+        map.put(PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY, "Private setters are not allowed for abstract properties")
+        map.put(PRIVATE_SETTER_FOR_OPEN_PROPERTY, "Private setters are not allowed for open properties")
+        map.put(VAL_WITH_SETTER, "A 'val'-property cannot have a setter")
+        map.put(
+            WRONG_SETTER_PARAMETER_TYPE,
+            "Setter parameter type must be equal to the type of the property, i.e. ''{0}''",
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+        map.put(INITIALIZER_TYPE_MISMATCH, "Initializer type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
+        map.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility")
+        map.put(
+            SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY,
+            "Setter visibility must be the same or less permissive than property visibility"
+        )
+        map.put(WRONG_SETTER_RETURN_TYPE, "Setter return type must be Unit")
+        map.put(
+            WRONG_GETTER_RETURN_TYPE,
+            "Getter return type must be equal to the type of the property, i.e. ''{0}''",
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+        map.put(ACCESSOR_FOR_DELEGATED_PROPERTY, "Delegated property cannot have accessors with non-default implementations")
+        map.put(
+            PROPERTY_INITIALIZER_WITH_EXPLICIT_FIELD_DECLARATION,
+            "Property initializers are not allowed for properties with an explicit backing field declaration"
+        )
+        map.put(
+            PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER,
+            "Property backing field declaration must have an initializer"
+        )
+        map.put(
+            LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER,
+            "Lateinit backing field cannot have an initializer"
+        )
+        map.put(
+            LATEINIT_FIELD_IN_VAL_PROPERTY,
+            "Only mutable properties can have a mutable backing field. Consider changing ''val'' to ''var''"
+        )
+        map.put(
+            LATEINIT_NULLABLE_BACKING_FIELD,
+            "Lateinit modifier is not allowed on backing fields of a type with nullable upper bound"
+        )
+        map.put(
+            BACKING_FIELD_FOR_DELEGATED_PROPERTY,
+            "Delegated properties can't have explicit backing field declarations"
+        )
+        map.put(
+            PROPERTY_MUST_HAVE_GETTER,
+            "This property needs a custom getter, because it's type is not a supertype of the backing field's type"
+        )
+        map.put(
+            PROPERTY_MUST_HAVE_SETTER,
+            "This property needs a custom setter, because it's type is not a subtype of the backing field's type"
+        )
+        map.put(
+            EXPLICIT_BACKING_FIELD_IN_INTERFACE,
+            "Backing fields are not allowed inside interfaces"
+        )
+        map.put(
+            EXPLICIT_BACKING_FIELD_IN_ABSTRACT_PROPERTY,
+            "Abstract property cannot have a backing field"
+        )
+        map.put(
+            EXPLICIT_BACKING_FIELD_IN_EXTENSION,
+            "Extension properties cannot have a backing field"
+        )
+        map.put(
+            REDUNDANT_EXPLICIT_BACKING_FIELD,
+            "There's no need in an explicit backing field declaration if it has the same type as the property"
+        )
+        map.put(ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS, "This property cannot be declared abstract")
+        map.put(LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING, "Type parameters for local variables are deprecated")
+        map.put(LOCAL_VARIABLE_WITH_TYPE_PARAMETERS, "Local variables are not allowed to have type parameters")
+
+        map.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' are only allowed on top level or in objects")
+        map.put(CONST_VAL_WITH_GETTER, "Const 'val' should not have a getter")
+        map.put(CONST_VAL_WITH_DELEGATE, "Const 'val' should not have a delegate")
+        map.put(TYPE_CANT_BE_USED_FOR_CONST_VAL, "Const ''val'' has type ''{0}''. Only primitives and String are allowed", RENDER_TYPE)
+        map.put(CONST_VAL_WITHOUT_INITIALIZER, "Const 'val' should have an initializer")
+        map.put(CONST_VAL_WITH_NON_CONST_INITIALIZER, "Const 'val' initializer should be a constant value")
+
+        // Multi-platform projects
+        map.put(EXPECTED_DECLARATION_WITH_BODY, "Expected declaration must not have a body")
+        map.put(EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL, "Explicit delegation call for constructor of an expected class is not allowed")
+        map.put(EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, "Expected class constructor cannot have a property parameter")
+        map.put(EXPECTED_ENUM_CONSTRUCTOR, "Expected enum class cannot have a constructor")
+        map.put(EXPECTED_ENUM_ENTRY_WITH_BODY, "Expected enum entry cannot have a body")
+        map.put(EXPECTED_PROPERTY_INITIALIZER, "Expected property cannot have an initializer")
+        map.put(EXPECTED_DELEGATED_PROPERTY, "Expected property cannot be delegated")
+        map.put(EXPECTED_LATEINIT_PROPERTY, "Expected property cannot be lateinit")
+        map.put(EXPECTED_PRIVATE_DECLARATION, "Expected declaration cannot be private")
+        map.put(SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS, "Expected classes cannot initialize supertypes")
+        map.put(EXPECTED_PRIVATE_DECLARATION, "Expected declaration cannot be private")
+        map.put(IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS, "Implementation by delegation in expected classes is prohibited")
+        map.put(ACTUAL_TYPE_ALIAS_NOT_TO_CLASS, "Right-hand side of actual type alias should be a class, not another type alias")
+        map.put(
+            ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE,
+            "Aliased class should not have type parameters with declaration-site variance"
+        )
+        map.put(
+            ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE,
+            "Right-hand side of actual type alias cannot contain use-site variance or star projections"
+        )
+        map.put(
+            ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION,
+            "Type arguments in the right-hand side of actual type alias should be its type parameters in the same order, e.g. 'actual typealias Foo<A, B> = Bar<A, B>'"
+        )
+        map.put(
+            ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS,
+            "Actual function cannot have default argument values, they should be declared in the expected function"
+        )
+        map.put(
+            ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE,
+            "Parameter ''{0}'' has conflicting values in the expected and actual annotation",
+            SYMBOL
+        )
+        map.put(
+            EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND,
+            "Expected function source is not found, therefore it's impossible to generate default argument values declared there. Please add the corresponding file to compilation sources"
+        )
+        map.put(
+            NO_ACTUAL_FOR_EXPECT,
+            "Expected {0} has no actual declaration in module {1}{2}",
+            SYMBOL,
+            MODULE_DATA,
+            FirPlatformIncompatibilityDiagnosticRenderer.TEXT
+        )
+        map.put(
+            ACTUAL_WITHOUT_EXPECT,
+            "{0} has no corresponding expected declaration{1}",
+            SYMBOL,
+            FirPlatformIncompatibilityDiagnosticRenderer.TEXT
+        )
+        map.put(AMBIGUOUS_ACTUALS, "{0} has several compatible actual declarations in modules {1}", SYMBOL, SYMBOLS)
+        map.put(AMBIGUOUS_EXPECTS, "{0} has several compatible expect declarations in modules {1}", SYMBOL, COLLECTION(MODULE_DATA))
+        map.put(
+            NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS,
+            "Actual class ''{0}'' has no corresponding members for expected class members:{1}",
+            SYMBOL,
+            FirIncompatibleExpectedActualClassScopesRenderer.TEXT
+        )
+        map.put(ACTUAL_MISSING, "Declaration must be marked with 'actual'")
+
+        // Destructuring declaration
+        map.put(INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION, "Initializer required for destructuring declaration")
+        map.put(
+            COMPONENT_FUNCTION_MISSING,
+            "Destructuring declaration initializer of type {1} must have a ''{0}()'' function",
+            TO_STRING,
+            RENDER_TYPE
+        )
+        map.put(
+            COMPONENT_FUNCTION_AMBIGUITY,
+            "Function ''{0}''() is ambiguous for this expression: {1}",
+            TO_STRING,
+            AMBIGUOUS_CALLS
+        )
+        map.put(
+            COMPONENT_FUNCTION_ON_NULLABLE,
+            "Not nullable value required to call ''{0}()'' function of destructuring declaration initializer",
+            TO_STRING
+        )
+        map.put(
+            COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH,
+            "''{0}()'' function returns ''{1}'', but ''{2}'' is expected",
+            TO_STRING,
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+
+        // Control flow diagnostics
+        map.put(UNINITIALIZED_VARIABLE, "Variable ''{0}'' must be initialized", VARIABLE_NAME)
+        map.put(UNINITIALIZED_PARAMETER, "Parameter ''{0}'' is uninitialized here", VARIABLE_NAME)
+        map.put(UNINITIALIZED_ENUM_ENTRY, "Enum entry ''{0}'' is uninitialized here", VARIABLE_NAME)
+        map.put(UNINITIALIZED_ENUM_COMPANION, "Companion object of enum class ''{0}'' is uninitialized here", SYMBOL)
+        map.put(VAL_REASSIGNMENT, "Val cannot be reassigned", VARIABLE_NAME)
+        map.put(VAL_REASSIGNMENT_VIA_BACKING_FIELD, "Reassignment of read-only property via backing field", VARIABLE_NAME)
+        map.put(
+            CAPTURED_VAL_INITIALIZATION,
+            "Captured values initialization is forbidden due to possible reassignment",
+            VARIABLE_NAME
+        )
+        map.put(
+            CAPTURED_MEMBER_VAL_INITIALIZATION,
+            "Captured member values initialization is forbidden due to possible reassignment",
+            VARIABLE_NAME
+        )
+        map.put(
+            SETTER_PROJECTED_OUT,
+            "Setter for ''{0}'' is removed by type projection",
+            VARIABLE_NAME
+        )
+        map.put(
+            WRONG_INVOCATION_KIND,
+            "{2} wrong invocation kind: given {3} case, but {4} case is possible",
+            SYMBOL,
+            TO_STRING,
+            TO_STRING
+        )
+        map.put(LEAKED_IN_PLACE_LAMBDA, "Leaked in-place lambda: {2}", SYMBOL)
+        map.put(FirErrors.WRONG_IMPLIES_CONDITION, "Wrong implies condition")
+        map.put(UNREACHABLE_CODE, "Unreachable code", NOT_RENDERED, NOT_RENDERED)
+        map.put(SENSELESS_COMPARISON, "Condition ''{0}'' is always ''{1}''", FIR, TO_STRING)
+        map.put(SENSELESS_NULL_IN_WHEN, "Expression under 'when' is never equal to null")
+
+        // Nullability
+        map.put(
+            UNSAFE_CALL,
+            "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type {0}",
+            RENDER_TYPE,
+            NOT_RENDERED,
+        )
+        map.put(
+            UNSAFE_IMPLICIT_INVOKE_CALL,
+            "Reference has a nullable type ''{0}'', use explicit \"?.invoke\" to make a function-like call instead.",
+            RENDER_TYPE
+        )
+        map.put(
+            UNSAFE_INFIX_CALL,
+            "Infix call corresponds to a dot-qualified call ''{0}.{1}({2})'' which is not allowed on a nullable receiver ''{0}''. " +
+                    "Use ''?.''-qualified call instead",
+            FIR,
+            TO_STRING,
+            FIR,
+        )
+        map.put(
+            UNSAFE_OPERATOR_CALL,
+            "Operator call corresponds to a dot-qualified call ''{0}.{1}({2})'' which is not allowed on a nullable receiver ''{0}''. ",
+            FIR,
+            TO_STRING,
+            FIR,
+        )
+        map.put(UNNECESSARY_NOT_NULL_ASSERTION, "Unnecessary non-null assertion (!!) on a non-null receiver of type {0}", RENDER_TYPE)
+        map.put(NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION, "Non-null assertion (!!) is called on a lambda expression")
+        map.put(NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE, "Non-null assertion (!!) is called on a callable reference expression")
+        map.put(UNNECESSARY_SAFE_CALL, "Unnecessary safe call on a non-null receiver of type {0}", RENDER_TYPE)
+        map.put(UNEXPECTED_SAFE_CALL, "Safe-call is not allowed here")
+        map.put(USELESS_ELVIS, "Elvis operator (?:) always returns the left operand of non-nullable type {0}", RENDER_TYPE)
+        map.put(USELESS_ELVIS_RIGHT_IS_NULL, "Right operand of elvis operator (?:) is useless if it is null")
+
+        // Casts and is-checks
+        map.put(USELESS_CAST, "No cast needed")
+        map.put(USELESS_IS_CHECK, "Check for instance is always ''{0}''", TO_STRING)
+        map.put(IS_ENUM_ENTRY, "'is' over enum entry is not allowed, use comparison instead")
+        map.put(ENUM_ENTRY_AS_TYPE, "Use of enum entry names as types is not allowed, use enum type instead")
+
+        // When expressions
+        map.put(EXPECTED_CONDITION, "Expected condition of type Boolean")
+        map.put(NO_ELSE_IN_WHEN, "''when'' expression must be exhaustive, add necessary {0}", WHEN_MISSING_CASES)
+        map.put(INVALID_IF_AS_EXPRESSION, "'if' must have both main and 'else' branches if used as an expression")
+        map.put(
+            NON_EXHAUSTIVE_WHEN_STATEMENT,
+            "Non exhaustive ''when'' statements on {0} will be prohibited in 1.7, add {1}",
+            TO_STRING,
+            WHEN_MISSING_CASES
+        )
+        map.put(COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT, "Deprecated syntax. Use '||' instead of commas in when-condition for 'when' without argument")
+        map.put(DUPLICATE_LABEL_IN_WHEN, "Duplicate label in when")
+        map.put(
+            CONFUSING_BRANCH_CONDITION,
+            "The logical expressions may be understood ambiguously in when with subject branches. Please wrap it with parenthesis"
+        )
+
+        // Context tracking
+        map.put(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION, "Type parameter ''{0}'' is not an expression", SYMBOL)
+        map.put(
+            TYPE_PARAMETER_ON_LHS_OF_DOT,
+            "Type parameter ''{0}'' cannot have or inherit a companion object, so it cannot be on the left hand side of dot",
+            SYMBOL
+        )
+        map.put(
+            NO_COMPANION_OBJECT,
+            "Classifier ''{0}'' does not have a companion object, and thus must be initialized here",
+            SYMBOL
+        )
+        map.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, "Expression expected, but a package name found")
+
+        // Function contracts
+        map.put(ERROR_IN_CONTRACT_DESCRIPTION, "Error in contract description", TO_STRING)
+
+        // Conventions
+        map.put(NO_GET_METHOD, "No get method providing array access")
+        map.put(NO_SET_METHOD, "No set method providing array access")
+        map.put(
+            DELEGATE_SPECIAL_FUNCTION_MISSING,
+            "Type ''{1}'' has no method ''{0}'' and thus it cannot serve as a {2}",
+            TO_STRING,
+            RENDER_TYPE,
+            TO_STRING
+        )
+        map.put(
+            DELEGATE_SPECIAL_FUNCTION_AMBIGUITY,
+            "Overload resolution ambiguity on method ''{0}'': {1}",
+            TO_STRING,
+            SYMBOLS
+        )
+        map.put(
+            DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE,
+            "Property delegate must have a ''{0}'' method. None of the following functions is suitable: {1}",
+            TO_STRING,
+            SYMBOLS
+        )
+        map.put(
+            DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH,
+            "The ''{0}'' function of property delegate is expected to return ''{1}'', but returns ''{2}''",
+            TO_STRING,
+            RENDER_TYPE,
+            RENDER_TYPE,
+        )
+        map.put(
+            UNDERSCORE_IS_RESERVED,
+            "Names _, __, ___, ..., are reserved in Kotlin"
+        )
+        map.put(
+            UNDERSCORE_USAGE_WITHOUT_BACKTICKS,
+            "Names _, __, ___, ... can be used only in back-ticks (`_`, `__`, `___`, ...)"
+        )
+        map.put(
+            RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER,
+            "Referencing to an underscore-named parameter is deprecated. It will be an error in a future release."
+        )
+        map.put(
+            INVALID_CHARACTERS,
+            "Name {0}",
+            STRING
+        )
+        map.put(
+            DANGEROUS_CHARACTERS,
+            "Name contains characters which can cause problems on Windows: {0}",
+            STRING
+        )
+        map.put(
+            EQUALITY_NOT_APPLICABLE,
+            "Operator ''{0}'' cannot be applied to ''{1}'' and ''{2}''",
+            TO_STRING,
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+        map.put(
+            EQUALITY_NOT_APPLICABLE_WARNING,
+            "Comparing with ''{0}'' may not be intended because ''{1}'' and ''{2}'' are incompatible types",
+            TO_STRING,
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+        map.put(
+            INCOMPATIBLE_ENUM_COMPARISON_ERROR,
+            "Comparison of incompatible enums ''{0}'' and ''{1}'' is always unsuccessful",
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+        map.put(INC_DEC_SHOULD_NOT_RETURN_UNIT, "Functions inc(), dec() shouldn't return Unit to be used by operators ++, --")
+        map.put(
+            ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT,
+            "Function ''{0}'' should return Unit to be used by corresponding operator ''{1}''",
+            SYMBOL,
+            TO_STRING
+        )
+        map.put(
+            PROPERTY_AS_OPERATOR,
+            "Property ''{0}'' cannot be used as an operator.",
+            SYMBOL
+        )
+        map.put(
+            DSL_SCOPE_VIOLATION,
+            "''{0}'' can''t be called in this context by implicit receiver. " +
+                    "Use the explicit one if necessary",
+            SYMBOL
+        )
+
+        // Type alias
+        map.put(TOPLEVEL_TYPEALIASES_ONLY, "Nested and local type aliases are not supported")
+        map.put(RECURSIVE_TYPEALIAS_EXPANSION, "Recursive type alias in expansion")
+        map.put(
+            TYPEALIAS_SHOULD_EXPAND_TO_CLASS,
+            "Type alias expands to {0}, which is not a class, an interface, or an object",
+            RENDER_TYPE
+        )
+
+        // Returns
+        map.put(RETURN_NOT_ALLOWED, "'return' is not allowed here")
+        map.put(NOT_A_FUNCTION_LABEL, "Target label does not denote a function")
+        map.put(
+            RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY,
+            "Returns are not allowed for functions with expression body. Use block body in '{...}'"
+        )
+        map.put(ANONYMOUS_INITIALIZER_IN_INTERFACE, "Anonymous initializers are not allowed in interfaces")
+
+        // Inline
+        map.put(
+            USAGE_IS_NOT_INLINABLE,
+            "Illegal usage of inline-parameter ''{0}''. Add ''noinline'' modifier to the parameter declaration",
+            SYMBOL
+        )
+        map.put(
+            NON_LOCAL_RETURN_NOT_ALLOWED,
+            "Can''t inline ''{0}'' here: it may contain non-local returns. Add ''crossinline'' modifier to parameter declaration ''{0}''",
+            SYMBOL
+        )
+        map.put(RECURSION_IN_INLINE, "Inline function ''{0}'' cannot be recursive", SYMBOL)
+        map.put(NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, "Public-API inline function cannot access non-public-API ''{1}''", SYMBOL, SYMBOL)
+        map.put(
+            PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE,
+            "Protected constructor call from public-API inline function is deprecated",
+            SYMBOL,
+            SYMBOL
+        )
+        map.put(
+            PROTECTED_CALL_FROM_PUBLIC_INLINE,
+            "Protected function call from public-API inline function is deprecated",
+            SYMBOL,
+            SYMBOL
+        )
+        map.put(
+            PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR,
+            "Protected function call from public-API inline function is prohibited",
+            SYMBOL,
+            SYMBOL
+        )
+        map.put(
+            PRIVATE_CLASS_MEMBER_FROM_INLINE,
+            "Non-private inline function cannot access members of private classes: ''{1}''",
+            SYMBOL,
+            SYMBOL
+        )
+        map.put(NOT_YET_SUPPORTED_IN_INLINE, "{0} are not yet supported in inline functions", STRING)
+        map.put(
+            NOTHING_TO_INLINE,
+            "Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of functional types"
+        )
+        map.put(
+            NULLABLE_INLINE_PARAMETER,
+            "Inline-parameter ''{0}'' of ''{1}'' must not be nullable. Add ''noinline'' modifier to the parameter declaration or make its type not nullable",
+            SYMBOL,
+            SYMBOL
+        )
+
+        map.put(SUPER_CALL_FROM_PUBLIC_INLINE, "Accessing super members from public-API inline function is deprecated", SYMBOL)
+
+        map.put(ILLEGAL_INLINE_PARAMETER_MODIFIER, "Modifier is allowed only for function parameters of an inline function")
+
+        map.put(
+            INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED,
+            "Suspend inline lambda parameters of non-suspend function type are not supported. Add 'noinline' or 'crossinline' modifier."
+        )
+
+        map.put(
+            REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE,
+            "Redundant 'suspend' modifier: lambda parameters of suspend function type uses existing continuation."
+        )
+
+        //imports
+        map.put(
+            CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON,
+            "Cannot import-on-demand from object ''{0}''",
+            TO_STRING
+        )
+        map.put(PACKAGE_CANNOT_BE_IMPORTED, "Packages cannot be imported")
+        map.put(
+            CANNOT_BE_IMPORTED,
+            "Cannot import ''{0}'', functions and properties can be imported only from packages or objects",
+            TO_STRING
+        )
+        map.put(
+            CONFLICTING_IMPORT,
+            "Conflicting import, imported name ''{0}'' is ambiguous",
+            TO_STRING
+        )
+        map.put(OPERATOR_RENAMED_ON_IMPORT, "Operator renamed to a different operator on import")
+
+        // Suspend
+        map.put(
+            ILLEGAL_SUSPEND_FUNCTION_CALL,
+            "Suspend function ''{0}'' should be called only from a coroutine or another suspend function",
+            SYMBOL
+        )
+        map.put(
+            ILLEGAL_SUSPEND_PROPERTY_ACCESS,
+            "Suspend property ''{0}'' should be accessed only from a coroutine or suspend function",
+            SYMBOL
+        )
+        map.put(NON_LOCAL_SUSPENSION_POINT, "Suspension functions can be called only within coroutine body")
+        map.put(
+            ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL,
+            "Restricted suspending functions can only invoke member or extension suspending functions on their restricted coroutine scope"
+        )
+        map.put(
+            NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND,
+            "''suspend'' function can only be called in a form of modifier of a lambda: suspend { ... }"
+        )
+        map.put(
+            MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND,
+            "Calls having a form of ''suspend {}'' are deprecated because ''suspend'' in the context will have a meaning of a modifier. Add empty argument list to the call: ''suspend() { ... }''"
+        )
+        map.put(RETURN_FOR_BUILT_IN_SUSPEND, "Using implicit label for this lambda is prohibited")
+
+        // Label
+        map.put(REDUNDANT_LABEL_WARNING, "Label is redundant, because it can not be referenced in either ''break'', ''continue'', or ''return'' expression")
+
+        // Extended checkers group
+        map.put(REDUNDANT_VISIBILITY_MODIFIER, "Redundant visibility modifier")
+        map.put(REDUNDANT_MODALITY_MODIFIER, "Redundant modality modifier")
+        map.put(REDUNDANT_RETURN_UNIT_TYPE, "Redundant return 'unit' type")
+        map.put(REDUNDANT_EXPLICIT_TYPE, "Redundant explicit type")
+        map.put(REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE, "Redundant string template")
+        map.put(CAN_BE_VAL, "'var' can be 'val'")
+        map.put(CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT, "Assignment can be replaced with operator assignment")
+        map.put(REDUNDANT_CALL_OF_CONVERSION_METHOD, "Redundant call of conversion method")
+        map.put(ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS, "Replace '==' with 'Arrays.equals'")
+        map.put(EMPTY_RANGE, "Range is empty")
+        map.put(REDUNDANT_SETTER_PARAMETER_TYPE, "Redundant setter parameter type")
+        map.put(UNUSED_VARIABLE, "Variable is unused")
+        map.put(ASSIGNED_VALUE_IS_NEVER_READ, "Assigned value is never read")
+        map.put(VARIABLE_INITIALIZER_IS_REDUNDANT, "Initializer is redundant")
+        map.put(VARIABLE_NEVER_READ, "Variable is never read")
     }
 }
