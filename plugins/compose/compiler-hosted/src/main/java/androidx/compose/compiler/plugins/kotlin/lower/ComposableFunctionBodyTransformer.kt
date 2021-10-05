@@ -2105,6 +2105,39 @@ class ComposableFunctionBodyTransformer(
         )
     }
 
+    private fun IrBlock.withReplaceableGroupStatements(scope: Scope.BlockScope): IrExpression {
+        currentFunctionScope.metrics.recordGroup()
+        scope.realizeGroup(::irEndReplaceableGroup)
+        return when {
+            // if the scope ends with a return call, then it will get properly ended if we
+            // just push the end call on the scope because of the way returns get transformed in
+            // this class. As a result, here we can safely just "prepend" the start call
+            endsWithReturnOrJump() -> IrBlockImpl(
+                startOffset,
+                endOffset,
+                type,
+                origin,
+                listOf(irStartReplaceableGroup(this, scope)) + statements
+            )
+            // otherwise, we want to push an end call for any early returns/jumps, but also add
+            // an end call to the end of the group
+            else -> IrBlockImpl(
+                startOffset,
+                endOffset,
+                type,
+                origin,
+                listOf(
+                    irStartReplaceableGroup(
+                        this,
+                        scope,
+                        startOffset = startOffset,
+                        endOffset = endOffset
+                    )
+                ) + statements + listOf(irEndReplaceableGroup(startOffset, endOffset))
+            )
+        }
+    }
+
     private fun IrExpression.asReplaceableGroup(scope: Scope.BlockScope): IrExpression {
         currentFunctionScope.metrics.recordGroup()
         // if the scope has no composable calls, then the only important thing is that a
@@ -2521,6 +2554,10 @@ class ComposableFunctionBodyTransformer(
                 } else {
                     error("Expected transformed loop to be an IrBlock")
                 }
+            }
+            IrStatementOrigin.FOR_LOOP_INNER_WHILE -> {
+                val result = super.visitBlock(expression)
+                result
             }
             else -> super.visitBlock(expression)
         }
@@ -3194,7 +3231,12 @@ class ComposableFunctionBodyTransformer(
 
             loop.body = loop.body?.transform(this, null)
             if (loopScope.needsGroupPerIteration && loopScope.hasComposableCalls) {
-                loop.body = loop.body?.asReplaceableGroup(loopScope)
+                val current = loop.body
+                if (current is IrBlock) {
+                    loop.body = current.withReplaceableGroupStatements(loopScope)
+                } else {
+                    loop.body = current?.asReplaceableGroup(loopScope)
+                }
             }
         }
         return if (!loopScope.needsGroupPerIteration && loopScope.hasComposableCalls) {
