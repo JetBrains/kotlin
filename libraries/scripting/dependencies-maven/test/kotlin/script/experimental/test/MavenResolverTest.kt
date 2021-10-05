@@ -50,8 +50,10 @@ class MavenResolverTest : ResolversTestBase() {
         })
     }
 
+    private val resolvedKotlinVersion = "1.5.31"
+
     fun testResolveSimple() {
-        resolveAndCheck("org.jetbrains.kotlin:kotlin-annotations-jvm:1.3.50") { files ->
+        resolveAndCheck("org.jetbrains.kotlin:kotlin-annotations-jvm:$resolvedKotlinVersion") { files ->
             files.any { it.name.startsWith("kotlin-annotations-jvm") }
         }
     }
@@ -64,7 +66,7 @@ class MavenResolverTest : ResolversTestBase() {
         listOf(compileOnly, compileRuntime).forEach { scopes ->
             resolveAndCheck(
                 // Need a minimal library with an extra runtime dependency
-                "org.jetbrains.kotlin:kotlin-util-io:1.5.31",
+                "org.jetbrains.kotlin:kotlin-util-io:$resolvedKotlinVersion",
                 buildOptions(DependenciesResolverOptionsName.SCOPE to scopes)
             ) { files ->
                 resolvedFilesCount[scopes] = files.count()
@@ -106,7 +108,7 @@ class MavenResolverTest : ResolversTestBase() {
     }
 
     fun testResolveVersionsRange() {
-        resolveAndCheck("org.jetbrains.kotlin:kotlin-annotations-jvm:(1.3.40,1.3.60)")
+        resolveAndCheck("org.jetbrains.kotlin:kotlin-annotations-jvm:(1.3.40,$resolvedKotlinVersion)")
     }
 
     fun testResolveDifferentType() {
