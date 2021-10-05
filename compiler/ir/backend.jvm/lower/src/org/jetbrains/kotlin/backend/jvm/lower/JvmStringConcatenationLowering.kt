@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -74,6 +72,7 @@ private fun JvmIrBuilder.lowerInlineClassArgument(expression: IrExpression): IrE
     if (InlineClassAbi.unboxType(expression.type) == null)
         return null
     val toStringFunction = expression.type.classOrNull?.owner?.toStringFunction
+        ?.let { (it as? IrAttributeContainer)?.attributeOwnerId as? IrFunction ?: it }
         ?: return null
     val toStringReplacement = backendContext.inlineClassReplacements.getReplacementFunction(toStringFunction)
         ?: return null

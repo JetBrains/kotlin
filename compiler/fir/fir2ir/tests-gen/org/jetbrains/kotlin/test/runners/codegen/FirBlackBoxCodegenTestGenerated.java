@@ -19165,6 +19165,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("inlineToString.kt")
+        public void testInlineToString() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineToString.kt");
+        }
+
+        @Test
         @TestMetadata("iterateOverArrayOfInlineClassValues.kt")
         public void testIterateOverArrayOfInlineClassValues() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/iterateOverArrayOfInlineClassValues.kt");
