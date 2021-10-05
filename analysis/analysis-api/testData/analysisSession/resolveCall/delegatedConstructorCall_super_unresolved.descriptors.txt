@@ -1,0 +1,4 @@
+KtDelegatedConstructorCall:
+argumentMapping = { s -> (p1: kotlin.Int) }
+targetFunction = ERR<Unresolved call, [<constructor>(p1: kotlin.Int): Base]>
+kind = SUPER_CALL
