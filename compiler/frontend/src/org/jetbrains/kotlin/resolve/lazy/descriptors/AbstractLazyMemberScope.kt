@@ -212,6 +212,15 @@ protected constructor(
         }.toList()
     }
 
+    protected open fun collectDescriptorsFromDestructingDeclaration(
+        result: MutableSet<DeclarationDescriptor>,
+        declaration: KtDestructuringDeclaration,
+        nameFilter: (Name) -> Boolean,
+        location: LookupLocation,
+    ) {
+        // MultiDeclarations are not supported on global level by default
+    }
+
     protected fun computeDescriptorsFromDeclaredElements(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean,
@@ -258,7 +267,7 @@ protected constructor(
                     }
                 }
                 is KtDestructuringDeclaration -> {
-                    // MultiDeclarations are not supported on global level
+                    collectDescriptorsFromDestructingDeclaration(result, declaration, nameFilter, location)
                 }
                 else -> throw IllegalArgumentException("Unsupported declaration kind: " + declaration)
             }

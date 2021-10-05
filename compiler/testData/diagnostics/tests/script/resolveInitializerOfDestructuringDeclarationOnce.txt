@@ -2,7 +2,10 @@ package
 
 public final class ResolveInitializerOfDestructuringDeclarationOnce : kotlin.script.templates.standard.ScriptTemplateWithArgs {
     public constructor ResolveInitializerOfDestructuringDeclarationOnce(/*0*/ args: kotlin.Array<kotlin.String>)
+    public final val a: kotlin.Unit
     public final override /*1*/ /*fake_override*/ val args: kotlin.Array<kotlin.String>
+    public final val b: kotlin.Unit
+    public final val c: kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

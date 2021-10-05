@@ -9,6 +9,9 @@ import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty
+import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.declaredMembers
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
@@ -44,6 +47,31 @@ class ScriptCompilerTest : TestCase() {
 
         assertEquals(1, nestedClasses.size)
         assertEquals("Clazz", nestedClasses[0].simpleName)
+    }
+
+    fun testDestructingDeclarations() {
+        val res = compileToClass(
+            """
+                val c = 3
+                val (a, b) = 1 to 2
+                val (_, d, _) = listOf('1', '2', '3')
+            """.trimIndent().toScriptSource()
+        )
+
+        val kClass = res.valueOrThrow()
+        val scriptInstance = kClass.createInstance()
+        val members = kClass.declaredMembers
+        val namesToMembers = members.associateBy { it.name }
+
+        fun prop(name: String) = namesToMembers[name]!! as KProperty<*>
+        fun propValue(name: String) = prop(name).call(scriptInstance)
+        fun propType(name: String) = prop(name).returnType.classifier as KClass<*>
+
+        assertEquals(1, propValue("a"))
+        assertEquals(Int::class, propType("b"))
+        assertEquals(3, propValue("c"))
+        assertEquals(Char::class, propType("d"))
+        assertNull(namesToMembers["_"])
     }
 
     fun compile(
