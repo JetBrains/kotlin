@@ -1,4 +1,4 @@
-// CURIOUS_ABOUT writeToParcel
+// CURIOUS_ABOUT: writeToParcel
 // WITH_RUNTIME
 
 import kotlinx.parcelize.*

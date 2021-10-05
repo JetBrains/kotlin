@@ -1,4 +1,4 @@
-// CURIOUS_ABOUT writeToParcel, createFromParcel
+// CURIOUS_ABOUT: writeToParcel, createFromParcel
 // RENDER_ANNOTATIONS
 // WITH_RUNTIME
 

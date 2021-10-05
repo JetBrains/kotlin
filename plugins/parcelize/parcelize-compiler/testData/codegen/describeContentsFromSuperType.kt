@@ -1,4 +1,4 @@
-// CURIOUS_ABOUT describeContents
+// CURIOUS_ABOUT: describeContents
 // WITH_RUNTIME
 
 import kotlinx.parcelize.*

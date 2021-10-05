@@ -1,4 +1,4 @@
-// CURIOUS_ABOUT newArray
+// CURIOUS_ABOUT: newArray
 // WITH_RUNTIME
 
 import kotlinx.parcelize.*

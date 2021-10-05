@@ -1,8 +1,10 @@
-// CURIOUS_ABOUT writeToParcel, createFromParcel
+// CURIOUS_ABOUT: writeToParcel, createFromParcel
 // WITH_RUNTIME
-
-// The JVM backend doesn't support ShortArray
-// IGNORE_BACKEND: JVM
+// TARGET_BACKEND: JVM_IR
+/*
+ * Serializing of short arrays is not properly supported in old frontend, so this
+ *   test is on only for JVM IR backend
+ */
 
 import kotlinx.parcelize.*
 import android.os.Parcelable

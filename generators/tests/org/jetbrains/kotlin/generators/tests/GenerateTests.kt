@@ -28,13 +28,14 @@ import org.jetbrains.kotlin.kapt3.test.AbstractIrKotlinKaptContextTest
 import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
 import org.jetbrains.kotlin.lombok.AbstractLombokCompileTest
 import org.jetbrains.kotlin.noarg.*
-import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeBoxTest
-import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeBytecodeListingTest
-import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeIrBoxTest
-import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeIrBytecodeListingTest
+import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeBoxTest
+import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeBytecodeListingTest
+import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeIrBoxTest
+import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeIrBytecodeListingTest
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverScriptTest
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverTest
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlinx.serialization.AbstractSerializationIrBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnosticTest
@@ -144,24 +145,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractParcelIrBytecodeListingTest> {
                 model("parcel/codegen", targetBackend = TargetBackend.JVM_IR)
-            }
-        }
-
-        testGroup("plugins/parcelize/parcelize-compiler/tests-gen", "plugins/parcelize/parcelize-compiler/testData") {
-            testClass<AbstractParcelizeBoxTest> {
-                model("box", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractParcelizeIrBoxTest> {
-                model("box", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractParcelizeBytecodeListingTest> {
-                model("codegen", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractParcelizeIrBytecodeListingTest> {
-                model("codegen", targetBackend = TargetBackend.JVM_IR)
             }
         }
 
@@ -371,5 +354,25 @@ fun main(args: Array<String>) {
         }
     }
 */
+    }
+
+    generateTestGroupSuiteWithJUnit5 {
+        testGroup("plugins/parcelize/parcelize-compiler/tests-gen", "plugins/parcelize/parcelize-compiler/testData") {
+            testClass<AbstractParcelizeBoxTest> {
+                model("box")
+            }
+
+            testClass<AbstractParcelizeIrBoxTest> {
+                model("box")
+            }
+
+            testClass<AbstractParcelizeBytecodeListingTest> {
+                model("codegen")
+            }
+
+            testClass<AbstractParcelizeIrBytecodeListingTest> {
+                model("codegen")
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-// CURIOUS_ABOUT writeToParcel, createFromParcel, <clinit>
+// CURIOUS_ABOUT: writeToParcel, createFromParcel, <clinit>
 // WITH_RUNTIME
 //FILE: test.kt
 package test

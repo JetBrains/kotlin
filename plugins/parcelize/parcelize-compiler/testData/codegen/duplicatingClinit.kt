@@ -1,4 +1,4 @@
-// CURIOUS_ABOUT <clinit>
+// CURIOUS_ABOUT: <clinit>
 // WITH_RUNTIME
 
 import kotlinx.parcelize.*

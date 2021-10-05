@@ -1,4 +1,4 @@
-// CURIOUS_ABOUT writeToParcel, createFromParcel
+// CURIOUS_ABOUT: writeToParcel, createFromParcel
 // WITH_RUNTIME
 
 // Test to ensure that we are using the correct class loader
