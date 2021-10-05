@@ -17,3 +17,16 @@
 package org.jetbrains.kotlin.descriptors
 
 class InvalidModuleException(message: String) : IllegalStateException(message)
+
+interface InvalidModuleNotifier {
+    fun notifyModuleInvalidated(moduleDescriptor: ModuleDescriptor)
+}
+
+fun ModuleDescriptor.moduleInvalidated() {
+    val capability = getCapability(INVALID_MODULE_NOTIFIER_CAPABILITY)
+    capability?.notifyModuleInvalidated(this) ?: run {
+        throw InvalidModuleException("Accessing invalid module descriptor $this")
+    }
+}
+
+val INVALID_MODULE_NOTIFIER_CAPABILITY = ModuleCapability<InvalidModuleNotifier>("InvalidModuleNotifier")
