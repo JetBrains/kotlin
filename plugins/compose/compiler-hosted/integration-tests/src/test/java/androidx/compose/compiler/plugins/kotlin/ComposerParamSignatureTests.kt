@@ -138,6 +138,36 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     }
 
     @Test
+    fun testForLoopIssue1(): Unit = codegen(
+        """
+            @Composable
+            fun Test(text: String, callback: @Composable () -> Unit) {
+                for (char in text) {
+                    if (char == '}') {
+                        callback()
+                        continue
+                    }
+                }
+            }
+        """
+    )
+
+    @Test
+    fun testForLoopIssue2(): Unit = codegen(
+        """
+            @Composable
+            fun Test(text: List<String>, callback: @Composable () -> Unit) {
+                for ((i, value) in text.withIndex()) {
+                    if (value == "" || i == 0) {
+                        callback()
+                        continue
+                    }
+                }
+            }
+        """
+    )
+
+    @Test
     fun test32Params(): Unit = codegen(
         """
         @Composable
