@@ -5,13 +5,8 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
-import org.jetbrains.kotlin.analysis.api.fir.AbstractReferenceResolveTest
+import org.jetbrains.kotlin.analysis.api.fir.AbstractFirReferenceResolveTest
 import org.jetbrains.kotlin.analysis.api.fir.components.*
-import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFileScopeTest
-import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractMemberScopeByFqNameTest
-import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractSymbolByFqNameTest
-import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractSymbolByPsiTest
-import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractSymbolByReferenceTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractDiagnosticTraversalCounterTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractFirContextCollectionTest
@@ -20,6 +15,15 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractFileStructureTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractInnerDeclarationsResolvePhaseTest
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.analysis.api.fir.components.AbstractFirExpectedExpressionTypeTest
+import org.jetbrains.kotlin.analysis.api.fir.components.AbstractFirHLExpressionTypeTest
+import org.jetbrains.kotlin.analysis.api.fir.components.AbstractFirOverriddenDeclarationProviderTest
+import org.jetbrains.kotlin.analysis.api.fir.components.AbstractFirRendererTest
+import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirFileScopeTest
+import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirMemberScopeByFqNameTest
+import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractFirSymbolByFqNameTest
+import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractFirSymbolByPsiTest
+import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractFirSymbolByReferenceTest
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration
 import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
@@ -33,51 +37,51 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("analysis/analysis-api-fir/tests", "analysis/analysis-api/testData") {
-            testClass<AbstractResolveCallTest> {
+            testClass<AbstractFirResolveCallTest> {
                 model("analysisSession/resolveCall")
             }
 
-            testClass<AbstractMemberScopeByFqNameTest> {
+            testClass<AbstractFirMemberScopeByFqNameTest> {
                 model("memberScopeByFqName")
             }
 
-            testClass<AbstractFileScopeTest> {
+            testClass<AbstractFirFileScopeTest> {
                 model("fileScopeTest", extension = "kt")
             }
 
-            testClass<AbstractSymbolByPsiTest> {
+            testClass<AbstractFirSymbolByPsiTest> {
                 model("symbols/symbolByPsi")
             }
 
-            testClass<AbstractSymbolByFqNameTest> {
+            testClass<AbstractFirSymbolByFqNameTest> {
                 model("symbols/symbolByFqName")
             }
 
-            testClass<AbstractSymbolByReferenceTest> {
+            testClass<AbstractFirSymbolByReferenceTest> {
                 model("symbols/symbolByReference")
             }
 
-            testClass<AbstractCompileTimeConstantEvaluatorTest> {
+            testClass<AbstractFirCompileTimeConstantEvaluatorTest> {
                 model("components/compileTimeConstantEvaluator")
             }
 
-            testClass<AbstractExpectedExpressionTypeTest> {
+            testClass<AbstractFirExpectedExpressionTypeTest> {
                 model("components/expectedExpressionType")
             }
 
-            testClass<AbstractOverriddenDeclarationProviderTest> {
+            testClass<AbstractFirOverriddenDeclarationProviderTest> {
                 model("components/overridenDeclarations")
             }
 
-            testClass<AbstractHLExpressionTypeTest> {
+            testClass<AbstractFirHLExpressionTypeTest> {
                 model("components/expressionType")
             }
 
-            testClass<AbstractRendererTest> {
+            testClass<AbstractFirRendererTest> {
                 model("components/declarationRenderer")
             }
 
-            testClass<AbstractReferenceResolveTest> {
+            testClass<AbstractFirReferenceResolveTest> {
                 model("referenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
             }
 
@@ -85,11 +89,11 @@ fun main(args: Array<String>) {
                 model("components/importOptimizer", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
             }
 
-            testClass<AbstractHasCommonSubtypeTest> {
+            testClass<AbstractFirHasCommonSubtypeTest> {
                 model("components/hasCommonSubtype")
             }
 
-            testClass<AbstractGetSuperTypesTest> {
+            testClass<AbstractFirGetSuperTypesTest> {
                 model("components/getSuperTypes")
             }
         }

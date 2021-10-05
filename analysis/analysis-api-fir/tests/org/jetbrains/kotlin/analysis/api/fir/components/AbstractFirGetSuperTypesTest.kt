@@ -1,0 +1,52 @@
+/*
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.api.fir.components
+
+import org.jetbrains.kotlin.analysis.api.analyse
+import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
+import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleFileTest
+import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
+
+abstract class AbstractFirGetSuperTypesTest : AbstractHLApiSingleFileTest() {
+    override val configurator: FrontendApiTestConfiguratorService
+        get() = FirFrontendApiTestConfiguratorService
+
+    override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
+        val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
+
+        val actual = executeOnPooledThreadInReadAction {
+            analyse(expression) {
+                val expectedType = expression.getExpectedType() ?: error("expect to get type of expression '${expression.text}'")
+                val directSuperTypes = expectedType.getDirectSuperTypes()
+                val approximatedDirectSuperTypes = expectedType.getDirectSuperTypes(shouldApproximate = true)
+                val allSuperTypes = expectedType.getAllSuperTypes()
+                val approximatedAllSuperTypes = expectedType.getAllSuperTypes(shouldApproximate = true)
+
+                buildString {
+                    fun List<KtType>.print(name: String) {
+                        appendLine(name)
+                        for (type in this) {
+                            appendLine(type.render(KtTypeRendererOptions.DEFAULT))
+                        }
+                        appendLine()
+                    }
+                    directSuperTypes.print("[direct super types]")
+                    approximatedDirectSuperTypes.print("[approximated direct super types]")
+                    allSuperTypes.print("[all super types]")
+                    approximatedAllSuperTypes.print("[approximated all super types]")
+                }
+            }
+        }
+        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
+    }
+}

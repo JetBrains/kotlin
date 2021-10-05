@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
+import org.jetbrains.kotlin.analysis.api.impl.barebone.parentOfType
 import org.jetbrains.kotlin.fir.FirFakeSourceElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.parentOfType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType

@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirClassInitializerSymbol
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
@@ -390,7 +392,10 @@ internal class KtSymbolByFirBuilder private constructor(
 
         fun buildSubstitutor(substitutor: ConeSubstitutor): KtSubstitutor {
             if (substitutor == ConeSubstitutor.Empty) return KtSubstitutor.Empty(token)
-            return KtFirSubstitutor(substitutor, this@KtSymbolByFirBuilder, token)
+            return when (substitutor) {
+                is ConeSubstitutorByMap -> KtFirMapBackedSubstitutor(substitutor, this@KtSymbolByFirBuilder, token)
+                else -> KtFirGenericSubstitutor(substitutor, this@KtSymbolByFirBuilder, token)
+            }
         }
     }
 

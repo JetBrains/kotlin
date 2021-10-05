@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.analysis.api.impl.barebone.test.projectModuleProvider
 import org.jetbrains.kotlin.test.services.*
 
 class ModuleRegistrarPreAnalysisHandler(

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.low.level.api.fir.annotations.InternalForInline
+import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.InternalForInline
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider

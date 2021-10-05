@@ -12,6 +12,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.*
+import org.jetbrains.kotlin.analysis.api.impl.barebone.parentOfType
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.cfg.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -20,8 +22,6 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
-import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.Lock
 import kotlin.reflect.KProperty
@@ -136,14 +136,3 @@ fun KtElement.getElementTextInContext(): String {
 }
 
 private const val ELEMENT_TAG = "ELEMENT"
-
-inline fun <reified T : PsiElement> PsiElement.parentOfType(withSelf: Boolean = false): T? {
-    return PsiTreeUtil.getParentOfType(this, T::class.java, !withSelf)
-}
-
-fun <T : PsiElement> PsiElement.parentsOfType(clazz: Class<out T>, withSelf: Boolean = true): Sequence<T> {
-    return (if (withSelf) parentsWithSelf else parents).filterIsInstance(clazz)
-}
-
-inline fun <reified T : PsiElement> PsiElement.parentsOfType(withSelf: Boolean = true): Sequence<T> =
-    parentsOfType(T::class.java, withSelf)

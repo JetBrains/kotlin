@@ -13,6 +13,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.impl.barebone.test.projectModuleProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.FirIdeResolveStateService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.PackagePartProviderFactory
