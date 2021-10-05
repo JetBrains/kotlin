@@ -1071,7 +1071,10 @@ abstract class AbstractComposeLowering(
             is IrGetEnumValue -> true
             // Getting a companion object or top level object can be considered static if the
             // type of that object is Stable. (`Modifier` for instance is a common example)
-            is IrGetObjectValue -> symbol.owner.superTypes.any { stabilityOf(it).knownStable() }
+            is IrGetObjectValue -> {
+                if (symbol.owner.isCompanion) true
+                else symbol.owner.superTypes.any { stabilityOf(it).knownStable() }
+            }
             is IrConstructorCall -> isStatic()
             is IrCall -> isStatic()
             is IrGetValue -> {
@@ -1085,6 +1088,8 @@ abstract class AbstractComposeLowering(
                     else -> false
                 }
             }
+            is IrFunctionExpression ->
+                context.irTrace[ComposeWritableSlices.IS_STATIC_FUNCTION_EXPRESSION, this] ?: false
             else -> false
         }
     }
@@ -1190,6 +1195,9 @@ abstract class AbstractComposeLowering(
                     // function behaves similar to a remember call in that the result will
                     // _always_ be the same and the resulting type is _always_ stable, so
                     // thus it is static.
+                    return true
+                }
+                if (context.irTrace[ComposeWritableSlices.IS_COMPOSABLE_SINGLETON, this] == true) {
                     return true
                 }
                 // normal function call. If the function is marked as Stable and the result

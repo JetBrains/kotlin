@@ -765,7 +765,7 @@ class ComposerLambdaMemoization(
                 memoized = true,
                 singleton = true
             )
-            return expression
+            return expression.markAsStatic(true)
         }
 
         // If the function captures any unstable values or var declarations, do not memoize
@@ -873,6 +873,19 @@ class ComposerLambdaMemoization(
             // call
             context.irTrace.record(
                 ComposeWritableSlices.IS_SYNTHETIC_COMPOSABLE_CALL,
+                this,
+                true
+            )
+        }
+        return this
+    }
+
+    private fun <T : IrExpression> T.markAsStatic(mark: Boolean): T {
+        if (mark) {
+            // Mark it so the ComposableCallTransformer will insert the correct code around this
+            // call
+            context.irTrace.record(
+                ComposeWritableSlices.IS_STATIC_FUNCTION_EXPRESSION,
                 this,
                 true
             )
