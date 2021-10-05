@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.utils.ArrayMap
-import org.jetbrains.kotlin.fir.utils.AttributeArrayOwner
-import org.jetbrains.kotlin.fir.utils.NullableArrayMapAccessor
-import org.jetbrains.kotlin.fir.utils.TypeRegistry
+import org.jetbrains.kotlin.util.ArrayMap
+import org.jetbrains.kotlin.util.AttributeArrayOwner
+import org.jetbrains.kotlin.util.NullableArrayMapAccessor
+import org.jetbrains.kotlin.util.TypeRegistry
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty

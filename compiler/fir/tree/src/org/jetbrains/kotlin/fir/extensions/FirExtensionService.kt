@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.extensions
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.NoMutableState
-import org.jetbrains.kotlin.fir.utils.ArrayMapAccessor
-import org.jetbrains.kotlin.fir.utils.ComponentArrayOwner
-import org.jetbrains.kotlin.fir.utils.TypeRegistry
+import org.jetbrains.kotlin.util.ArrayMapAccessor
+import org.jetbrains.kotlin.util.ComponentArrayOwner
+import org.jetbrains.kotlin.util.TypeRegistry
 import kotlin.reflect.KClass
 
 @RequiresOptIn

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.utils.AttributeArrayOwner
-import org.jetbrains.kotlin.fir.utils.TypeRegistry
+import org.jetbrains.kotlin.util.AttributeArrayOwner
+import org.jetbrains.kotlin.util.TypeRegistry
 import org.jetbrains.kotlin.types.model.AnnotationMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.properties.ReadOnlyProperty
