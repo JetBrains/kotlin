@@ -147,7 +147,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/parcelize/parcelize-compiler/tests", "plugins/parcelize/parcelize-compiler/testData") {
+        testGroup("plugins/parcelize/parcelize-compiler/tests-gen", "plugins/parcelize/parcelize-compiler/testData") {
             testClass<AbstractParcelizeBoxTest> {
                 model("box", targetBackend = TargetBackend.JVM)
             }
