@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import org.jetbrains.kotlin.utils.SmartSet
@@ -88,7 +89,7 @@ class JvmSignatureClashDetector(
                 realMethodsCount == 0 && (fakeOverridesCount > 1 || specialOverridesCount > 1) ->
                     if (irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
                         reportJvmSignatureClash(
-                            KtErrorsJvm.CONFLICTING_INHERITED_JVM_DECLARATIONS,
+                            JvmBackendErrors.CONFLICTING_INHERITED_JVM_DECLARATIONS,
                             listOf(irClass),
                             conflictingJvmDeclarationsData
                         )
@@ -101,7 +102,7 @@ class JvmSignatureClashDetector(
                         methods.any { DescriptorVisibilities.isPrivate(it.visibility) }
                     ) {
                         reportJvmSignatureClash(
-                            KtErrorsJvm.CONFLICTING_JVM_DECLARATIONS,
+                            JvmBackendErrors.CONFLICTING_JVM_DECLARATIONS,
                             methods,
                             conflictingJvmDeclarationsData
                         )
@@ -111,7 +112,7 @@ class JvmSignatureClashDetector(
                 else ->
                     if (irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
                         reportJvmSignatureClash(
-                            KtErrorsJvm.ACCIDENTAL_OVERRIDE,
+                            JvmBackendErrors.ACCIDENTAL_OVERRIDE,
                             methods.filter { !it.isFakeOverride && !it.isSpecialOverride() },
                             conflictingJvmDeclarationsData
                         )
@@ -129,7 +130,7 @@ class JvmSignatureClashDetector(
                 type.internalName, classOrigin, predefinedSignature,
                 methods.map { it.getJvmDeclarationOrigin() } + JvmDeclarationOrigin(JvmDeclarationOriginKind.OTHER, null, null)
             )
-            reportJvmSignatureClash(KtErrorsJvm.ACCIDENTAL_OVERRIDE, methods, conflictingJvmDeclarationsData)
+            reportJvmSignatureClash(JvmBackendErrors.ACCIDENTAL_OVERRIDE, methods, conflictingJvmDeclarationsData)
         }
     }
 
@@ -137,7 +138,7 @@ class JvmSignatureClashDetector(
         for ((rawSignature, fields) in fieldsBySignature) {
             if (fields.size <= 1) continue
             val conflictingJvmDeclarationsData = getConflictingJvmDeclarationsData(classOrigin, rawSignature, fields)
-            reportJvmSignatureClash(KtErrorsJvm.CONFLICTING_JVM_DECLARATIONS, fields, conflictingJvmDeclarationsData)
+            reportJvmSignatureClash(JvmBackendErrors.CONFLICTING_JVM_DECLARATIONS, fields, conflictingJvmDeclarationsData)
         }
     }
 
@@ -147,7 +148,7 @@ class JvmSignatureClashDetector(
         conflictingJvmDeclarationsData: ConflictingJvmDeclarationsData
     ) {
         for (irDeclaration in irDeclarations) {
-            context.ktDiagnosticReporter.at(irDeclaration)
+            context.ktDiagnosticReporter.atFirstValidFrom(irDeclaration, irClass, containingIrFile = irDeclaration.file)
                 .report(diagnosticFactory1, conflictingJvmDeclarationsData)
         }
     }

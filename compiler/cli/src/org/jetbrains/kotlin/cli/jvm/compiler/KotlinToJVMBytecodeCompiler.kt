@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.toLogger
 import org.jetbrains.kotlin.cli.jvm.config.*
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
@@ -332,6 +334,8 @@ object KotlinToJVMBytecodeCompiler {
         codegenFactory: CodegenFactory,
         backendInput: CodegenFactory.BackendInput,
     ): GenerationState {
+        val diagnosticsReporter = DiagnosticReporterFactory.createReporter()
+
         val state = GenerationState.Builder(
             environment.project,
             ClassBuilderFactories.BINARIES,
@@ -343,6 +347,7 @@ object KotlinToJVMBytecodeCompiler {
             .codegenFactory(codegenFactory)
             .withModule(module)
             .onIndependentPartCompilationEnd(createOutputFilesFlushingCallbackIfPossible(configuration))
+            .diagnosticReporter(diagnosticsReporter)
             .build()
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -370,6 +375,7 @@ object KotlinToJVMBytecodeCompiler {
             ),
             environment.messageCollector
         )
+        FirDiagnosticsCompilerResultsReporter.reportToCollector(diagnosticsReporter, environment.messageCollector)
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
         return state

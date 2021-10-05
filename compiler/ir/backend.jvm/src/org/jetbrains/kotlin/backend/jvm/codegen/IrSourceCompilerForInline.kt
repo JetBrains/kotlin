@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.inlineScopeVisibility
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
-import org.jetbrains.kotlin.diagnostics.KtErrors
 import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -28,7 +27,7 @@ import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.psi.doNotAnalyze
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
@@ -130,7 +129,7 @@ class IrSourceCompilerForInline(
     override fun reportSuspensionPointInsideMonitor(stackTraceElement: String) {
         codegen.context.ktDiagnosticReporter
             .at(callElement.symbol.owner as IrDeclaration)
-            .report(KtErrors.SUSPENSION_POINT_INSIDE_MONITOR, stackTraceElement)
+            .report(JvmBackendErrors.SUSPENSION_POINT_INSIDE_MONITOR, stackTraceElement)
     }
 }
 

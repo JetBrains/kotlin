@@ -5,64 +5,40 @@
 
 package org.jetbrains.kotlin
 
+import org.jetbrains.kotlin.backend.common.psi.PsiSourceManager
 import org.jetbrains.kotlin.backend.common.sourceElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.file
 
 class KtDiagnosticReporterWithImplicitIrBasedContext(
-    val diagnosticReporter: DiagnosticReporter,
-    val languageVersionSettings: LanguageVersionSettings
-) : DiagnosticReporter()  {
-    override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) = diagnosticReporter.report(diagnostic, context)
+    diagnosticReporter: DiagnosticReporter,
+    languageVersionSettings: LanguageVersionSettings
+) : KtDiagnosticReporterWithContext(diagnosticReporter, languageVersionSettings) {
 
-    fun at(irElement: IrElement, containingIrFile: IrFile): DiagnosticContextOverIr =
-        DiagnosticContextOverIr(irElement, containingIrFile)
+    fun at(irElement: IrElement, containingIrFile: IrFile): DiagnosticContextImpl =
+        at(
+            PsiSourceManager.findPsiElement(irElement, containingIrFile)?.let(::KtRealPsiSourceElement)
+                ?: irElement.sourceElement(),
+            containingIrFile.path
+        )
 
-    fun at(irElement: IrElement, containingIrDeclaration: IrDeclaration): DiagnosticContextOverIr =
-        DiagnosticContextOverIr(irElement, containingIrDeclaration)
-
-    fun at(irDeclaration: IrDeclaration): DiagnosticContextOverIr =
-        DiagnosticContextOverIr(irDeclaration, irDeclaration)
-
-    @Suppress("UNUSED_PARAMETER")
-    inner class DiagnosticContextOverIr(irElement: IrElement, containingIrFile: IrFile) : DiagnosticContext {
-
-        constructor(irElement: IrElement, containingIrDeclaration: IrDeclaration): this(irElement, containingIrDeclaration.file)
-
-        val sourceElement = irElement.sourceElement()
-
-        override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean {
-            return false
-//            TODO("Not yet implemented")
-        }
-
-        override val languageVersionSettings: LanguageVersionSettings
-            get() = this@KtDiagnosticReporterWithImplicitIrBasedContext.languageVersionSettings
-
-        override val containingFilePath: String = containingIrFile.path
-
-        @OptIn(InternalDiagnosticFactoryMethod::class)
-        fun report(
-            factory: KtDiagnosticFactory0,
-            positioningStrategy: AbstractSourceElementPositioningStrategy? = null
-        ) {
-            sourceElement?.let { report(factory.on(it, positioningStrategy), this) }
-        }
-
-        @OptIn(InternalDiagnosticFactoryMethod::class)
-        fun <A : Any> report(
-            factory: KtDiagnosticFactory1<A>,
-            a: A,
-            positioningStrategy: AbstractSourceElementPositioningStrategy? = null
-        ) {
-            sourceElement?.let { report(factory.on(it, a, positioningStrategy), this) }
-        }
+    fun atFirstValidFrom(vararg irElements: IrElement, containingIrFile: IrFile): DiagnosticContextImpl {
+        require(irElements.isNotEmpty())
+        val sourceElement =
+            irElements.firstNotNullOfOrNull { PsiSourceManager.findPsiElement(it, containingIrFile) }?.let(::KtRealPsiSourceElement)
+                ?: (irElements.find { it.startOffset >= 0 } ?: irElements.first()).sourceElement()
+        return at(sourceElement, containingIrFile.path)
     }
+
+    fun at(irElement: IrElement, containingIrDeclaration: IrDeclaration): DiagnosticContextImpl =
+        at(irElement, containingIrDeclaration.file)
+
+    fun at(irDeclaration: IrDeclaration): DiagnosticContextImpl =
+        at(irDeclaration, irDeclaration)
 }
 
