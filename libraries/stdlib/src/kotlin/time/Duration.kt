@@ -760,30 +760,37 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         toLong(unit).coerceIn(Int.MIN_VALUE.toLong(), Int.MAX_VALUE.toLong()).toInt()
 
     /** The value of this duration expressed as a [Double] number of days. */
+    @ExperimentalTime
     @Deprecated("Use inWholeDays property instead or convert toDouble(DAYS) if a double value is required.", ReplaceWith("toDouble(DurationUnit.DAYS)"))
     public val inDays: Double get() = toDouble(DurationUnit.DAYS)
 
     /** The value of this duration expressed as a [Double] number of hours. */
+    @ExperimentalTime
     @Deprecated("Use inWholeHours property instead or convert toDouble(HOURS) if a double value is required.", ReplaceWith("toDouble(DurationUnit.HOURS)"))
     public val inHours: Double get() = toDouble(DurationUnit.HOURS)
 
     /** The value of this duration expressed as a [Double] number of minutes. */
+    @ExperimentalTime
     @Deprecated("Use inWholeMinutes property instead or convert toDouble(MINUTES) if a double value is required.", ReplaceWith("toDouble(DurationUnit.MINUTES)"))
     public val inMinutes: Double get() = toDouble(DurationUnit.MINUTES)
 
     /** The value of this duration expressed as a [Double] number of seconds. */
+    @ExperimentalTime
     @Deprecated("Use inWholeSeconds property instead or convert toDouble(SECONDS) if a double value is required.", ReplaceWith("toDouble(DurationUnit.SECONDS)"))
     public val inSeconds: Double get() = toDouble(DurationUnit.SECONDS)
 
     /** The value of this duration expressed as a [Double] number of milliseconds. */
+    @ExperimentalTime
     @Deprecated("Use inWholeMilliseconds property instead or convert toDouble(MILLISECONDS) if a double value is required.", ReplaceWith("toDouble(DurationUnit.MILLISECONDS)"))
     public val inMilliseconds: Double get() = toDouble(DurationUnit.MILLISECONDS)
 
     /** The value of this duration expressed as a [Double] number of microseconds. */
+    @ExperimentalTime
     @Deprecated("Use inWholeMicroseconds property instead or convert toDouble(MICROSECONDS) if a double value is required.", ReplaceWith("toDouble(DurationUnit.MICROSECONDS)"))
     public val inMicroseconds: Double get() = toDouble(DurationUnit.MICROSECONDS)
 
     /** The value of this duration expressed as a [Double] number of nanoseconds. */
+    @ExperimentalTime
     @Deprecated("Use inWholeNanoseconds property instead or convert toDouble(NANOSECONDS) if a double value is required.", ReplaceWith("toDouble(DurationUnit.NANOSECONDS)"))
     public val inNanoseconds: Double get() = toDouble(DurationUnit.NANOSECONDS)
 
@@ -871,6 +878,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      *
      * The range of durations that can be expressed as a `Long` number of nanoseconds is approximately ±292 years.
      */
+    @ExperimentalTime
     @Deprecated("Use inWholeNanoseconds property instead.", ReplaceWith("this.inWholeNanoseconds"))
     public fun toLongNanoseconds(): Long = inWholeNanoseconds
 
@@ -881,6 +889,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      *
      * The range of durations that can be expressed as a `Long` number of milliseconds is approximately ±292 million years.
      */
+    @ExperimentalTime
     @Deprecated("Use inWholeMilliseconds property instead.", ReplaceWith("this.inWholeMilliseconds"))
     public fun toLongMilliseconds(): Long = inWholeMilliseconds
 
