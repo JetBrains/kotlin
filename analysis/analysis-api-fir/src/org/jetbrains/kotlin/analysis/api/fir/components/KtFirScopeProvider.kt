@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.analysis.api.fir.scopes.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.SimpleKtCompositeScope
 import org.jetbrains.kotlin.analysis.api.scopes.*
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
@@ -122,7 +123,7 @@ internal class KtFirScopeProvider(
 
 
     override fun getCompositeScope(subScopes: List<KtScope>): KtCompositeScope = withValidityAssertion {
-        KtFirCompositeScope(subScopes, token)
+        SimpleKtCompositeScope(subScopes, token)
     }
 
     override fun getTypeScope(type: KtType): KtScope? {

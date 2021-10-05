@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
 class JavaForKotlinOverridePropertyDescriptor(
     ownerDescriptor: ClassDescriptor,
-    getterMethod: SimpleFunctionDescriptor,
-    setterMethod: SimpleFunctionDescriptor?,
-    overriddenProperty: PropertyDescriptor
+    val getterMethod: SimpleFunctionDescriptor,
+    val setterMethod: SimpleFunctionDescriptor?,
+    val overriddenProperty: PropertyDescriptor
 ) : JavaPropertyDescriptor(
     ownerDescriptor,
     Annotations.EMPTY,

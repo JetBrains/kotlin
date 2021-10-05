@@ -16,7 +16,7 @@ abstract class TestWithDisposable {
     protected val disposable: Disposable get() = _disposable!!
 
     @BeforeEach
-    private fun intiDisposable(testInfo: TestInfo) {
+    private fun initDisposable(testInfo: TestInfo) {
         _disposable = Disposer.newDisposable("disposable for ${testInfo.displayName}")
     }
 

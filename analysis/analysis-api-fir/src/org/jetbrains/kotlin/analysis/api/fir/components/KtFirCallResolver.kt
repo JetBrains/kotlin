@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.calls.*
-import org.jetbrains.kotlin.analysis.api.components.KtCallResolver
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
@@ -17,13 +16,13 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayTypeToArrayOfCall
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKtCallResolver
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
@@ -41,17 +40,15 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper
 import org.jetbrains.kotlin.idea.references.readWriteAccessWithFullExpressionWithPossibleResolve
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findAssignment
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.concurrent.ConcurrentHashMap
 
 internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
-) : KtCallResolver(), KtFirAnalysisSessionComponent {
+) : AbstractKtCallResolver(), KtFirAnalysisSessionComponent {
     private val diagnosticCache = mutableListOf<FirDiagnostic>()
     private val cache: ConcurrentHashMap<KtElement, KtCall?> = ConcurrentHashMap()
 
@@ -361,13 +358,4 @@ internal class KtFirCallResolver(
 
     private fun KtAnalysisSession.getPrimaryConstructor(symbolWithMembers: KtSymbolWithMembers): KtConstructorSymbol? =
         symbolWithMembers.getDeclaredMemberScope().getConstructors().firstOrNull { it.isPrimary }
-
-    companion object {
-        private val kotlinFunctionInvokeCallableIds = (0..23).flatMapTo(hashSetOf()) { arity ->
-            listOf(
-                CallableId(StandardNames.getFunctionClassId(arity), OperatorNameConventions.INVOKE),
-                CallableId(StandardNames.getSuspendFunctionClassId(arity), OperatorNameConventions.INVOKE)
-            )
-        }
-    }
 }

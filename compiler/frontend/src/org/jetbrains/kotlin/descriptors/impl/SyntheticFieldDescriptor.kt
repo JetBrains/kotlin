@@ -19,25 +19,23 @@ package org.jetbrains.kotlin.descriptors.impl
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.resolve.source.toSourceElement
 
 class SyntheticFieldDescriptor private constructor(
     val propertyDescriptor: PropertyDescriptor,
     accessorDescriptor: PropertyAccessorDescriptor,
-    property: KtProperty
+    sourceElement: SourceElement
 ) : LocalVariableDescriptor(
     accessorDescriptor, Annotations.EMPTY, SyntheticFieldDescriptor.NAME,
     propertyDescriptor.type, propertyDescriptor.isVar, false, false,
-    property.toSourceElement()
+    sourceElement
 ) {
-
     constructor(
         accessorDescriptor: PropertyAccessorDescriptor,
-        property: KtProperty
-    ) : this(accessorDescriptor.correspondingProperty, accessorDescriptor, property)
+        sourceElement: SourceElement
+    ) : this(accessorDescriptor.correspondingProperty, accessorDescriptor, sourceElement)
 
     override fun getDispatchReceiverParameter() = null
 

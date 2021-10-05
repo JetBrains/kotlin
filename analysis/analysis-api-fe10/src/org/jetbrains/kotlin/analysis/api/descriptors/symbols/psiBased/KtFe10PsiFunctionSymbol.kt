@@ -1,0 +1,119 @@
+/*
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
+
+import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeAndAnnotations
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.*
+import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
+import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
+import org.jetbrains.kotlin.resolve.BindingContext
+
+internal class KtFe10PsiFunctionSymbol(
+    override val psi: KtNamedFunction,
+    override val analysisSession: KtFe10AnalysisSession
+) : KtFunctionSymbol(), KtFe10PsiSymbol<KtNamedFunction, FunctionDescriptor> {
+    override val descriptor: FunctionDescriptor? by cached {
+        val bindingContext = analysisSession.analyze(psi, KtFe10AnalysisSession.AnalysisMode.PARTIAL)
+        bindingContext[BindingContext.FUNCTION, psi]
+    }
+
+    override val isSuspend: Boolean
+        get() = withValidityAssertion { psi.hasModifier(KtTokens.SUSPEND_KEYWORD) }
+
+    override val isOperator: Boolean
+        get() = withValidityAssertion { psi.hasModifier(KtTokens.OPERATOR_KEYWORD) }
+
+    override val isExternal: Boolean
+        get() = withValidityAssertion { psi.hasModifier(KtTokens.EXTERNAL_KEYWORD) }
+
+    override val isInline: Boolean
+        get() = withValidityAssertion { psi.hasModifier(KtTokens.INLINE_KEYWORD) }
+
+    override val isOverride: Boolean
+        get() = withValidityAssertion { psi.hasModifier(KtTokens.OVERRIDE_KEYWORD) }
+
+    override val isInfix: Boolean
+        get() = withValidityAssertion { psi.hasModifier(KtTokens.INFIX_KEYWORD) }
+
+    override val isStatic: Boolean
+        get() = withValidityAssertion { false }
+
+    override val valueParameters: List<KtValueParameterSymbol>
+        get() = withValidityAssertion { psi.valueParameters.map { KtFe10PsiValueParameterSymbol(it, analysisSession) } }
+
+    override val hasStableParameterNames: Boolean
+        get() = withValidityAssertion { true }
+
+    override val callableIdIfNonLocal: CallableId?
+        get() = withValidityAssertion { psi.callableId }
+
+    override val annotatedType: KtTypeAndAnnotations
+        get() = withValidityAssertion { descriptor?.returnType?.toKtTypeAndAnnotations(analysisSession) ?: createErrorTypeAndAnnotations() }
+
+    override val receiverType: KtTypeAndAnnotations?
+        get() = withValidityAssertion {
+            return if (psi.isExtensionDeclaration()) {
+                descriptor?.extensionReceiverParameter?.type?.toKtTypeAndAnnotations(analysisSession) ?: createErrorTypeAndAnnotations()
+            } else {
+                null
+            }
+        }
+
+    override val isExtension: Boolean
+        get() = withValidityAssertion { psi.isExtensionDeclaration() }
+
+    override val symbolKind: KtSymbolKind
+        get() = withValidityAssertion { psi.ktSymbolKind }
+
+    override val name: Name
+        get() = withValidityAssertion { psi.nameAsSafeName }
+
+    override val dispatchType: KtType?
+        get() = withValidityAssertion {
+            val containingClass = psi.containingClassOrObject
+            if (containingClass == null || containingClass is KtObjectDeclaration) {
+                return null
+            }
+
+            return descriptor?.dispatchReceiverParameter?.type?.toKtType(analysisSession) ?: createErrorType()
+        }
+
+    override val typeParameters: List<KtTypeParameterSymbol>
+        get() = withValidityAssertion { psi.typeParameters.map { KtFe10PsiTypeParameterSymbol(it, analysisSession) } }
+
+    override val modality: Modality
+        get() = withValidityAssertion { psi.ktModality ?: descriptor?.modality ?: Modality.FINAL }
+
+    override val visibility: Visibility
+        get() = withValidityAssertion { psi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
+
+    override fun createPointer(): KtSymbolPointer<KtFunctionSymbol> = withValidityAssertion {
+        return KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
+    }
+}
