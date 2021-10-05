@@ -42,7 +42,6 @@ class MavenResolverTest : ResolversTestBase() {
         if (!checkBody(files)) {
             Assert.fail("Unexpected resolving results:\n  ${files.joinToString("\n  ")}")
         }
-        files.forEach { it.delete() }
     }
 
     private fun buildOptions(vararg options: Pair<DependenciesResolverOptionsName, String>): ExternalDependenciesResolver.Options {
