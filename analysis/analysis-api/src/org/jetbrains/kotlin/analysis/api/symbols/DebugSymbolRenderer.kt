@@ -48,7 +48,7 @@ public object DebugSymbolRenderer {
     }
 
     private fun StringBuilder.renderImpl(symbol: KtSymbol) {
-        val klass = symbol::class
+        val klass = getSymbolClass(symbol)
         appendLine("${klass.simpleName}:")
         klass.members.filterIsInstance<KProperty<*>>().sortedBy { it.name }.forEach { property ->
             if (property.name in ignoredPropertyNames) return@forEach
@@ -67,7 +67,11 @@ public object DebugSymbolRenderer {
         null -> "null"
         is String -> value
         is Boolean -> value.toString()
-        is Long -> value.toString()
+        is Number -> value.toString()
+        is UByte -> value.toString()
+        is UShort -> value.toString()
+        is UInt -> value.toString()
+        is ULong -> value.toString()
         is Name -> value.asString()
         is FqName -> value.asString()
         is ClassId -> value.asString()
@@ -93,7 +97,8 @@ public object DebugSymbolRenderer {
                 is KtPropertySetterSymbol -> "<setter>"
                 else -> TODO(value::class.toString())
             }
-            "${value::class.simpleName!!}($symbolTag)"
+            val symbolKind = getSymbolClass(value).simpleName!!
+            "$symbolKind($symbolTag)"
         }
         is KtLiteralConstantValue<*> -> renderValue(value.value)
         is KtEnumEntryConstantValue -> "KtEnumEntryConstantValue(${renderValue(value.callableId)})"
@@ -109,7 +114,24 @@ public object DebugSymbolRenderer {
         else -> value::class.simpleName!!
     }
 
-    private val ignoredPropertyNames = setOf("firRef", "psi", "token", "builder")
+    private fun getSymbolClass(symbol: KtSymbol): KClass<*> {
+        var current: Class<in KtSymbol> = symbol.javaClass
+
+        while (true) {
+            val className = current.name
+            if (symbolImplementationPackageNames.none { className.startsWith("$it.") }) {
+                return current.kotlin
+            }
+            current = current.superclass
+        }
+    }
+
+    private val ignoredPropertyNames = setOf("psi", "token")
+
+    private val symbolImplementationPackageNames = listOf(
+        "org.jetbrains.kotlin.analysis.api.fir",
+        "org.jetbrains.kotlin.analysis.api.descriptors",
+    )
 
     private const val INDENT = 2
 }

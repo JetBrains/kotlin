@@ -1,4 +1,4 @@
-KtFirConstructorSymbol:
+KtConstructorSymbol:
   annotatedType: [] A
   annotationClassIds: []
   annotations: []
@@ -16,7 +16,7 @@ KtFirConstructorSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: A

@@ -1,4 +1,4 @@
-KtFirConstructorSymbol:
+KtConstructorSymbol:
   annotatedType: [] java/util/ArrayList<E>
   annotationClassIds: []
   annotations: []
@@ -12,10 +12,10 @@ KtFirConstructorSymbol:
   receiverType: null
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtFirTypeParameterSymbol(E)
+    KtTypeParameterSymbol(E)
   ]
   valueParameters: [
-    KtFirValueParameterSymbol(p0)
+    KtValueParameterSymbol(p0)
   ]
   visibility: Public
   deprecationStatus: null

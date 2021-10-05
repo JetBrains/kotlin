@@ -2,8 +2,8 @@
 @base annotation class derived
 @base class correct {
     constructor(@base x: Int)
-    @base val x: Int
     @base constructor()
+    @base val x: Int
 }
 @base enum class My {
     FIRST,

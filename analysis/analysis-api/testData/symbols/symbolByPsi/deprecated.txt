@@ -1,4 +1,4 @@
-KtFirKotlinPropertySymbol:
+KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: [
     kotlin/Deprecated
@@ -9,7 +9,7 @@ KtFirKotlinPropertySymbol:
   ]
   callableIdIfNonLocal: /i
   dispatchType: null
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -34,13 +34,13 @@ KtFirKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
 
-KtFirKotlinPropertySymbol:
+KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /i2
   dispatchType: null
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -65,13 +65,13 @@ KtFirKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFirKotlinPropertySymbol:
+KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /i3
   dispatchType: null
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -87,7 +87,7 @@ KtFirKotlinPropertySymbol:
   name: i3
   origin: SOURCE
   receiverType: null
-  setter: KtFirPropertySetterSymbol(<setter>)
+  setter: KtPropertySetterSymbol(<setter>)
   symbolKind: TOP_LEVEL
   visibility: Public
   deprecationStatus: null
@@ -96,13 +96,13 @@ KtFirKotlinPropertySymbol:
   javaSetterName: setI3
   setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i3)
 
-KtFirKotlinPropertySymbol:
+KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /i4
   dispatchType: null
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -118,7 +118,7 @@ KtFirKotlinPropertySymbol:
   name: i4
   origin: SOURCE
   receiverType: null
-  setter: KtFirPropertySetterSymbol(<setter>)
+  setter: KtPropertySetterSymbol(<setter>)
   symbolKind: TOP_LEVEL
   visibility: Public
   deprecationStatus: null
@@ -127,7 +127,7 @@ KtFirKotlinPropertySymbol:
   javaSetterName: setI4
   setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i4)
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: [
     kotlin/Deprecated
@@ -157,7 +157,7 @@ KtFirFunctionSymbol:
   visibility: Public
   deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use f)
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: [
     kotlin/Deprecated
   ]
@@ -184,7 +184,7 @@ KtFirNamedClassOrObjectSymbol:
   visibility: Public
   deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use MyClass)
 
-KtFirKotlinPropertySymbol:
+KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: [
     kotlin/Deprecated
@@ -195,7 +195,7 @@ KtFirKotlinPropertySymbol:
   ]
   callableIdIfNonLocal: /Foo.i2
   dispatchType: Foo
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -220,7 +220,7 @@ KtFirKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: [
     kotlin/Deprecated
@@ -250,7 +250,7 @@ KtFirFunctionSymbol:
   visibility: Public
   deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use f2)
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: Foo
@@ -272,7 +272,7 @@ KtFirNamedClassOrObjectSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirKotlinPropertySymbol:
+KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: [
     kotlin/Deprecated
@@ -283,7 +283,7 @@ KtFirKotlinPropertySymbol:
   ]
   callableIdIfNonLocal: /j
   dispatchType: null
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -308,7 +308,7 @@ KtFirKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=null)
 
-KtFirKotlinPropertySymbol:
+KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: [
     kotlin/Deprecated
@@ -319,7 +319,7 @@ KtFirKotlinPropertySymbol:
   ]
   callableIdIfNonLocal: /j2
   dispatchType: null
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -344,7 +344,7 @@ KtFirKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
 
-KtFirKotlinPropertySymbol:
+KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: [
     java/lang/Deprecated
@@ -355,7 +355,7 @@ KtFirKotlinPropertySymbol:
   ]
   callableIdIfNonLocal: /j2
   dispatchType: null
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
   hasSetter: false

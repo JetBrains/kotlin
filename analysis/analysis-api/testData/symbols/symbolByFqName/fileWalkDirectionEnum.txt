@@ -1,4 +1,4 @@
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/collections/List<T>
   annotationClassIds: []
   annotations: []
@@ -19,15 +19,15 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: TOP_LEVEL
   typeParameters: [
-    KtFirTypeParameterSymbol(T)
+    KtTypeParameterSymbol(T)
   ]
   valueParameters: [
-    KtFirValueParameterSymbol(element)
+    KtValueParameterSymbol(element)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/collections/List<T>
   annotationClassIds: [
     kotlin/internal/InlineOnly
@@ -53,13 +53,13 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: TOP_LEVEL
   typeParameters: [
-    KtFirTypeParameterSymbol(T)
+    KtTypeParameterSymbol(T)
   ]
   valueParameters: []
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/collections/List<T>
   annotationClassIds: []
   annotations: []
@@ -80,10 +80,10 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: TOP_LEVEL
   typeParameters: [
-    KtFirTypeParameterSymbol(T)
+    KtTypeParameterSymbol(T)
   ]
   valueParameters: [
-    KtFirValueParameterSymbol(elements)
+    KtValueParameterSymbol(elements)
   ]
   visibility: Public
   deprecationStatus: null

@@ -83,6 +83,11 @@ public data class KtDeclarationRendererOptions(
     val forceRenderingOverrideModifier: Boolean = false,
 
     val renderDefaultParameterValue: Boolean = true,
+
+    /**
+     * Sort nested declarations by kind (enum values, then constructors, then properties, then functions) and name.
+     */
+    val sortNestedDeclarations: Boolean = false,
 ) {
     public companion object {
         public val DEFAULT: KtDeclarationRendererOptions = KtDeclarationRendererOptions()

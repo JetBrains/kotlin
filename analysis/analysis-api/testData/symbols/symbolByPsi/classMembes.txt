@@ -1,10 +1,10 @@
-KtFirKotlinPropertySymbol:
+KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /A.a
   dispatchType: A
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -29,7 +29,7 @@ KtFirKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
@@ -54,7 +54,7 @@ KtFirFunctionSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: A

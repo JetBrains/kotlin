@@ -1,4 +1,4 @@
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotationClassIds: []
   annotations: []
@@ -20,12 +20,12 @@ KtFirFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(element)
+    KtValueParameterSymbol(element)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: []
   annotations: []
@@ -47,13 +47,13 @@ KtFirFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(index)
-    KtFirValueParameterSymbol(element)
+    KtValueParameterSymbol(index)
+    KtValueParameterSymbol(element)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotationClassIds: []
   annotations: []
@@ -75,13 +75,13 @@ KtFirFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(index)
-    KtFirValueParameterSymbol(elements)
+    KtValueParameterSymbol(index)
+    KtValueParameterSymbol(elements)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotationClassIds: []
   annotations: []
@@ -103,12 +103,12 @@ KtFirFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(elements)
+    KtValueParameterSymbol(elements)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: []
   annotations: []
@@ -133,7 +133,7 @@ KtFirFunctionSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/collections/MutableListIterator<E>
   annotationClassIds: []
   annotations: []
@@ -158,7 +158,7 @@ KtFirFunctionSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/collections/MutableListIterator<E>
   annotationClassIds: []
   annotations: []
@@ -180,12 +180,12 @@ KtFirFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(index)
+    KtValueParameterSymbol(index)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotationClassIds: []
   annotations: []
@@ -207,12 +207,12 @@ KtFirFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(element)
+    KtValueParameterSymbol(element)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotationClassIds: []
   annotations: []
@@ -234,12 +234,12 @@ KtFirFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(elements)
+    KtValueParameterSymbol(elements)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] E
   annotationClassIds: []
   annotations: []
@@ -261,12 +261,12 @@ KtFirFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(index)
+    KtValueParameterSymbol(index)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotationClassIds: []
   annotations: []
@@ -288,12 +288,12 @@ KtFirFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(elements)
+    KtValueParameterSymbol(elements)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] E
   annotationClassIds: []
   annotations: []
@@ -315,13 +315,13 @@ KtFirFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(index)
-    KtFirValueParameterSymbol(element)
+    KtValueParameterSymbol(index)
+    KtValueParameterSymbol(element)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/collections/MutableList<E>
   annotationClassIds: []
   annotations: []
@@ -343,13 +343,13 @@ KtFirFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(fromIndex)
-    KtFirValueParameterSymbol(toIndex)
+    KtValueParameterSymbol(fromIndex)
+    KtValueParameterSymbol(toIndex)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotationClassIds: []
   annotations: []
@@ -371,12 +371,12 @@ KtFirFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(element)
+    KtValueParameterSymbol(element)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotationClassIds: []
   annotations: []
@@ -398,12 +398,12 @@ KtFirFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(elements)
+    KtValueParameterSymbol(elements)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] E
   annotationClassIds: []
   annotations: []
@@ -425,12 +425,12 @@ KtFirFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(index)
+    KtValueParameterSymbol(index)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
@@ -452,12 +452,12 @@ KtFirFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(element)
+    KtValueParameterSymbol(element)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotationClassIds: []
   annotations: []
@@ -482,7 +482,7 @@ KtFirFunctionSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/collections/MutableIterator<E>
   annotationClassIds: []
   annotations: []
@@ -507,7 +507,7 @@ KtFirFunctionSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
@@ -529,12 +529,12 @@ KtFirFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(element)
+    KtValueParameterSymbol(element)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirKotlinPropertySymbol:
+KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
@@ -565,7 +565,7 @@ KtFirKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotationClassIds: []
   annotations: []
@@ -587,12 +587,12 @@ KtFirFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(other)
+    KtValueParameterSymbol(other)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
@@ -617,7 +617,7 @@ KtFirFunctionSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/String
   annotationClassIds: []
   annotations: []

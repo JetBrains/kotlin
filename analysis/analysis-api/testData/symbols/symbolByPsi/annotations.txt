@@ -1,4 +1,4 @@
-KtFirValueParameterSymbol:
+KtValueParameterSymbol:
   annotatedType: [] kotlin/String
   annotationClassIds: []
   annotations: []
@@ -12,7 +12,7 @@ KtFirValueParameterSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirValueParameterSymbol:
+KtValueParameterSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
@@ -26,7 +26,7 @@ KtFirValueParameterSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirConstructorSymbol:
+KtConstructorSymbol:
   annotatedType: [] Anno
   annotationClassIds: []
   annotations: []
@@ -41,13 +41,13 @@ KtFirConstructorSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(param1)
-    KtFirValueParameterSymbol(param2)
+    KtValueParameterSymbol(param1)
+    KtValueParameterSymbol(param2)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: Anno
@@ -69,7 +69,7 @@ KtFirNamedClassOrObjectSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: [
     Anno
@@ -99,7 +99,7 @@ KtFirFunctionSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: [
     Anno
   ]

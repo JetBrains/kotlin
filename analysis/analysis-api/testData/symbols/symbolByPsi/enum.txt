@@ -1,4 +1,4 @@
-KtFirEnumEntrySymbol:
+KtEnumEntrySymbol:
   annotatedType: [] X
   callableIdIfNonLocal: /X.Y
   containingEnumClassIdIfNonLocal: X
@@ -9,7 +9,7 @@ KtFirEnumEntrySymbol:
   symbolKind: CLASS_MEMBER
   deprecationStatus: null
 
-KtFirEnumEntrySymbol:
+KtEnumEntrySymbol:
   annotatedType: [] X
   callableIdIfNonLocal: /X.Z
   containingEnumClassIdIfNonLocal: X
@@ -20,7 +20,7 @@ KtFirEnumEntrySymbol:
   symbolKind: CLASS_MEMBER
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: X

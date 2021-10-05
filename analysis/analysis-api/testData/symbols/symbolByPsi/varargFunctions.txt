@@ -1,4 +1,4 @@
-KtFirValueParameterSymbol:
+KtValueParameterSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
@@ -12,7 +12,7 @@ KtFirValueParameterSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: []
   annotations: []
@@ -34,12 +34,12 @@ KtFirFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(a)
+    KtValueParameterSymbol(a)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirValueParameterSymbol:
+KtValueParameterSymbol:
   annotatedType: [] kotlin/Float?
   annotationClassIds: []
   annotations: []
@@ -53,7 +53,7 @@ KtFirValueParameterSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: []
   annotations: []
@@ -75,12 +75,12 @@ KtFirFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(b)
+    KtValueParameterSymbol(b)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirValueParameterSymbol:
+KtValueParameterSymbol:
   annotatedType: [] kotlin/Any
   annotationClassIds: []
   annotations: []
@@ -94,7 +94,7 @@ KtFirValueParameterSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: []
   annotations: []
@@ -116,12 +116,12 @@ KtFirFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(c)
+    KtValueParameterSymbol(c)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirValueParameterSymbol:
+KtValueParameterSymbol:
   annotatedType: [] ERROR CLASS: Symbol not found for Unresolved
   annotationClassIds: []
   annotations: []
@@ -135,7 +135,7 @@ KtFirValueParameterSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: []
   annotations: []
@@ -157,7 +157,7 @@ KtFirFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(d)
+    KtValueParameterSymbol(d)
   ]
   visibility: Public
   deprecationStatus: null

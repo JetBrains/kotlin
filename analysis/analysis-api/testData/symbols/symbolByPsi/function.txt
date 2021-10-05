@@ -1,4 +1,4 @@
-KtFirValueParameterSymbol:
+KtValueParameterSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
@@ -12,7 +12,7 @@ KtFirValueParameterSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: []
   annotations: []
@@ -34,7 +34,7 @@ KtFirFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(x)
+    KtValueParameterSymbol(x)
   ]
   visibility: Public
   deprecationStatus: null

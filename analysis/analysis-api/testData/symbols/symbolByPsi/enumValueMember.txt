@@ -1,4 +1,4 @@
-KtFirValueParameterSymbol:
+KtValueParameterSymbol:
   annotatedType: [] kotlin/String
   annotationClassIds: []
   annotations: []
@@ -12,7 +12,7 @@ KtFirValueParameterSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirConstructorSymbol:
+KtConstructorSymbol:
   annotatedType: [] Style
   annotationClassIds: []
   annotations: []
@@ -27,12 +27,12 @@ KtFirConstructorSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(value)
+    KtValueParameterSymbol(value)
   ]
   visibility: Private
   deprecationStatus: null
 
-KtFirPropertyGetterSymbol:
+KtPropertyGetterSymbol:
   annotatedType: [] kotlin/String
   annotationClassIds: []
   annotations: []
@@ -52,13 +52,13 @@ KtFirPropertyGetterSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirKotlinPropertySymbol:
+KtKotlinPropertySymbol:
   annotatedType: [] kotlin/String
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: null
   dispatchType: <anonymous>
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -83,7 +83,7 @@ KtFirKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFirEnumEntrySymbol:
+KtEnumEntrySymbol:
   annotatedType: [] Style
   callableIdIfNonLocal: /Style.SHEET
   containingEnumClassIdIfNonLocal: Style
@@ -94,13 +94,13 @@ KtFirEnumEntrySymbol:
   symbolKind: CLASS_MEMBER
   deprecationStatus: null
 
-KtFirKotlinPropertySymbol:
+KtKotlinPropertySymbol:
   annotatedType: [] kotlin/String
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /Style.exitAnimation
   dispatchType: Style
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -125,7 +125,7 @@ KtFirKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: Style

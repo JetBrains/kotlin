@@ -1,4 +1,4 @@
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: kotlin/collections/MutableMap.MutableEntry
@@ -17,8 +17,8 @@ KtFirNamedClassOrObjectSymbol:
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtFirTypeParameterSymbol(K)
-    KtFirTypeParameterSymbol(V)
+    KtTypeParameterSymbol(K)
+    KtTypeParameterSymbol(V)
   ]
   visibility: Public
   deprecationStatus: null

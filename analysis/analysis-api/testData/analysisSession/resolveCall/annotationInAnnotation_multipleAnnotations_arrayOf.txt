@@ -1,4 +1,4 @@
 KtFunctionCall:
 argumentMapping = { Annotation("v1", "v2") -> (vararg elements: Annotation), Annotation(strings = arrayOf("v3", "v4")) -> (vararg elements: Annotation) }
 targetFunction = kotlin/arrayOf(vararg elements: Annotation): kotlin.Array<Annotation>
-substitutor = <map substitutor: {FirTypeParameterSymbol T=Annotation}>
+substitutor = <map substitutor: {T = Annotation}>

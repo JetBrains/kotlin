@@ -1,10 +1,10 @@
-KtFirKotlinPropertySymbol:
+KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /x
   dispatchType: null
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -29,7 +29,7 @@ KtFirKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFirPropertyGetterSymbol:
+KtPropertyGetterSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
@@ -49,13 +49,13 @@ KtFirPropertyGetterSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirKotlinPropertySymbol:
+KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /y
   dispatchType: null
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
   hasGetter: true
   hasSetter: false

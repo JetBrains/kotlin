@@ -1,5 +1,5 @@
 FILE SYMBOL:
-KtFirFileSymbol:
+KtFileSymbol:
   annotationClassIds: []
   annotations: []
   origin: SOURCE
@@ -9,7 +9,7 @@ CALLABLE NAMES:
 [test, testVal]
 
 CALLABLE SYMBOLS:
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
@@ -34,13 +34,13 @@ KtFirFunctionSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirKotlinPropertySymbol:
+KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /testVal
   dispatchType: null
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -69,7 +69,7 @@ CLASSIFIER NAMES:
 [C, I]
 
 CLASSIFIER SYMBOLS:
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: C
@@ -91,7 +91,7 @@ KtFirNamedClassOrObjectSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: I

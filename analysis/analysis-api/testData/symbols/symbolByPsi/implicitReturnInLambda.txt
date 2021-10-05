@@ -1,4 +1,4 @@
-KtFirValueParameterSymbol:
+KtValueParameterSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
@@ -12,7 +12,7 @@ KtFirValueParameterSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirLocalVariableSymbol:
+KtLocalVariableSymbol:
   annotatedType: [] kotlin/Int
   callableIdIfNonLocal: null
   isExtension: false
@@ -23,7 +23,7 @@ KtFirLocalVariableSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirAnonymousFunctionSymbol:
+KtAnonymousFunctionSymbol:
   annotatedType: [] kotlin/Int
   callableIdIfNonLocal: null
   hasStableParameterNames: true
@@ -32,11 +32,11 @@ KtFirAnonymousFunctionSymbol:
   receiverType: null
   symbolKind: LOCAL
   valueParameters: [
-    KtFirValueParameterSymbol(a)
+    KtValueParameterSymbol(a)
   ]
   deprecationStatus: null
 
-KtFirLocalVariableSymbol:
+KtLocalVariableSymbol:
   annotatedType: [] kotlin/Function1<kotlin/Int, kotlin/Int>
   callableIdIfNonLocal: null
   isExtension: false
@@ -47,7 +47,7 @@ KtFirLocalVariableSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirValueParameterSymbol:
+KtValueParameterSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
@@ -61,7 +61,7 @@ KtFirValueParameterSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirLocalVariableSymbol:
+KtLocalVariableSymbol:
   annotatedType: [] kotlin/Int
   callableIdIfNonLocal: null
   isExtension: false
@@ -72,7 +72,7 @@ KtFirLocalVariableSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirAnonymousFunctionSymbol:
+KtAnonymousFunctionSymbol:
   annotatedType: [] kotlin/Int
   callableIdIfNonLocal: null
   hasStableParameterNames: true
@@ -81,11 +81,11 @@ KtFirAnonymousFunctionSymbol:
   receiverType: null
   symbolKind: LOCAL
   valueParameters: [
-    KtFirValueParameterSymbol(a)
+    KtValueParameterSymbol(a)
   ]
   deprecationStatus: null
 
-KtFirLocalVariableSymbol:
+KtLocalVariableSymbol:
   annotatedType: [] kotlin/Function1<kotlin/Int, kotlin/Int>
   callableIdIfNonLocal: null
   isExtension: false
@@ -96,7 +96,7 @@ KtFirLocalVariableSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirLocalVariableSymbol:
+KtLocalVariableSymbol:
   annotatedType: [] kotlin/Int
   callableIdIfNonLocal: null
   isExtension: false
@@ -107,7 +107,7 @@ KtFirLocalVariableSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirAnonymousFunctionSymbol:
+KtAnonymousFunctionSymbol:
   annotatedType: [] kotlin/Int
   callableIdIfNonLocal: null
   hasStableParameterNames: true
@@ -116,11 +116,11 @@ KtFirAnonymousFunctionSymbol:
   receiverType: null
   symbolKind: LOCAL
   valueParameters: [
-    KtFirValueParameterSymbol(it)
+    KtValueParameterSymbol(it)
   ]
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: []
   annotations: []
@@ -145,7 +145,7 @@ KtFirFunctionSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirValueParameterSymbol:
+KtValueParameterSymbol:
   annotatedType: [] kotlin/Function1<kotlin/Int, kotlin/Int>
   annotationClassIds: []
   annotations: []
@@ -159,7 +159,7 @@ KtFirValueParameterSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: []
   annotations: []
@@ -181,7 +181,7 @@ KtFirFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(lmbd)
+    KtValueParameterSymbol(lmbd)
   ]
   visibility: Private
   deprecationStatus: null

@@ -8,9 +8,9 @@ enum class Planet {
     VENERA,
     EARTH,
     constructor(m: Double, r: Double)
+    val g: Double
     val m: Double
     internal val r: Double
-    val g: Double
     abstract fun sayHello()
     companion object {
         const val G: Double

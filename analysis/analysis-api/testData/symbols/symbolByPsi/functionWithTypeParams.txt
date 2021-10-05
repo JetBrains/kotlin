@@ -1,4 +1,4 @@
-KtFirTypeParameterSymbol:
+KtTypeParameterSymbol:
   isReified: false
   name: X
   origin: SOURCE
@@ -8,7 +8,7 @@ KtFirTypeParameterSymbol:
   variance: INVARIANT
   deprecationStatus: null
 
-KtFirValueParameterSymbol:
+KtValueParameterSymbol:
   annotatedType: [] X
   annotationClassIds: []
   annotations: []
@@ -22,7 +22,7 @@ KtFirValueParameterSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: []
   annotations: []
@@ -43,10 +43,10 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: TOP_LEVEL
   typeParameters: [
-    KtFirTypeParameterSymbol(X)
+    KtTypeParameterSymbol(X)
   ]
   valueParameters: [
-    KtFirValueParameterSymbol(x)
+    KtValueParameterSymbol(x)
   ]
   visibility: Public
   deprecationStatus: null

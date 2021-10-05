@@ -1,4 +1,4 @@
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: [
     kotlin/annotation/Target
   ]
@@ -25,7 +25,7 @@ KtFirNamedClassOrObjectSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: [
     kotlin/annotation/Target
   ]
@@ -52,7 +52,7 @@ KtFirNamedClassOrObjectSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: [
     kotlin/annotation/Target
   ]
@@ -79,7 +79,7 @@ KtFirNamedClassOrObjectSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: [
     kotlin/annotation/Target
   ]
@@ -106,7 +106,7 @@ KtFirNamedClassOrObjectSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: I
@@ -128,7 +128,7 @@ KtFirNamedClassOrObjectSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirValueParameterSymbol:
+KtValueParameterSymbol:
   annotatedType: [
     Anno2()
       psi: KtAnnotationEntry
@@ -145,7 +145,7 @@ KtFirValueParameterSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [
     Anno3()
       psi: KtAnnotationEntry
@@ -170,12 +170,12 @@ KtFirFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(arg)
+    KtValueParameterSymbol(arg)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirKotlinPropertySymbol:
+KtKotlinPropertySymbol:
   annotatedType: [
     Anno4()
       psi: KtAnnotationEntry
@@ -184,7 +184,7 @@ KtFirKotlinPropertySymbol:
   annotations: []
   callableIdIfNonLocal: /X.x
   dispatchType: X
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -209,7 +209,7 @@ KtFirKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: X

@@ -1,4 +1,4 @@
-KtFirTypeParameterSymbol:
+KtTypeParameterSymbol:
   isReified: false
   name: T
   origin: SOURCE
@@ -8,7 +8,7 @@ KtFirTypeParameterSymbol:
   variance: INVARIANT
   deprecationStatus: null
 
-KtFirTypeParameterSymbol:
+KtTypeParameterSymbol:
   isReified: false
   name: R
   origin: SOURCE
@@ -18,7 +18,7 @@ KtFirTypeParameterSymbol:
   variance: INVARIANT
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: A
@@ -37,8 +37,8 @@ KtFirNamedClassOrObjectSymbol:
   ]
   symbolKind: TOP_LEVEL
   typeParameters: [
-    KtFirTypeParameterSymbol(T)
-    KtFirTypeParameterSymbol(R)
+    KtTypeParameterSymbol(T)
+    KtTypeParameterSymbol(R)
   ]
   visibility: Public
   deprecationStatus: null

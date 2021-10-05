@@ -1,4 +1,4 @@
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: []
   annotations: []
@@ -23,13 +23,13 @@ KtFirFunctionSymbol:
   visibility: Public
   deprecationStatus: null
 
-KtFirKotlinPropertySymbol:
+KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: null
   dispatchType: <anonymous>
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -54,7 +54,7 @@ KtFirKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFirAnonymousObjectSymbol:
+KtAnonymousObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: null
@@ -67,13 +67,13 @@ KtFirAnonymousObjectSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirKotlinPropertySymbol:
+KtKotlinPropertySymbol:
   annotatedType: [] java/lang/Runnable
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /AnonymousContainer.anonymousObject
   dispatchType: AnonymousContainer
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -98,7 +98,7 @@ KtFirKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: AnonymousContainer

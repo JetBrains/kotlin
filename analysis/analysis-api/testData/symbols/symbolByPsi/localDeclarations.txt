@@ -1,4 +1,4 @@
-KtFirLocalVariableSymbol:
+KtLocalVariableSymbol:
   annotatedType: [] kotlin/Int
   callableIdIfNonLocal: null
   isExtension: false
@@ -9,7 +9,7 @@ KtFirLocalVariableSymbol:
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: []
   annotations: []
@@ -34,7 +34,7 @@ KtFirFunctionSymbol:
   visibility: Local
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: null
@@ -56,7 +56,7 @@ KtFirNamedClassOrObjectSymbol:
   visibility: Local
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: []
   annotations: []

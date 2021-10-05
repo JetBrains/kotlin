@@ -2,4 +2,4 @@ KtVariableWithInvokeFunctionCall:
 target = f: Foo
 argumentMapping = { "" -> (t: kotlin.String) }
 targetFunction = /Foo.invoke(<dispatch receiver>: Foo, t: kotlin.String): kotlin.Unit
-substitutor = <map substitutor: {FirTypeParameterSymbol T=kotlin/String}>
+substitutor = <map substitutor: {T = kotlin/String}>

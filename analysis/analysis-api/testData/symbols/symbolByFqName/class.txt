@@ -1,4 +1,4 @@
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: kotlin/Lazy
@@ -17,7 +17,7 @@ KtFirNamedClassOrObjectSymbol:
   ]
   symbolKind: TOP_LEVEL
   typeParameters: [
-    KtFirTypeParameterSymbol(T)
+    KtTypeParameterSymbol(T)
   ]
   visibility: Public
   deprecationStatus: null

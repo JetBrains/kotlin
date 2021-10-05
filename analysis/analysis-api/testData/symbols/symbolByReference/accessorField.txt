@@ -1,10 +1,10 @@
-KtFirBackingFieldSymbol:
+KtBackingFieldSymbol:
   annotatedType: [] kotlin/Int
   callableIdIfNonLocal: null
   isExtension: false
   name: field
   origin: PROPERTY_BACKING_FIELD
-  owningProperty: KtFirKotlinPropertySymbol(x)
+  owningProperty: KtKotlinPropertySymbol(x)
   receiverType: null
   symbolKind: LOCAL
   deprecationStatus: null

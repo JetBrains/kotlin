@@ -1,4 +1,4 @@
 KtFunctionCall:
 argumentMapping = { {x: Int, y: Int -> 1} -> (function: kotlin.Function2<ft<kotlin.Int, kotlin.Int?>, ft<kotlin.Int, kotlin.Int?>, kotlin.Int>) }
 targetFunction = java/util/Comparator(function: kotlin.Function2<ft<kotlin.Int, kotlin.Int?>, ft<kotlin.Int, kotlin.Int?>, kotlin.Int>): java.util.Comparator<ft<kotlin.Int, kotlin.Int?>>
-substitutor = <map substitutor: {FirTypeParameterSymbol T=ft<kotlin/Int, kotlin/Int?>}>
+substitutor = <map substitutor: {T = ft<kotlin/Int, kotlin/Int?>}>

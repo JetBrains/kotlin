@@ -1,4 +1,4 @@
-KtFirSamConstructorSymbol:
+KtSamConstructorSymbol:
   annotatedType: [] java/lang/Runnable
   callableIdIfNonLocal: java/lang/Runnable
   hasStableParameterNames: true
@@ -8,6 +8,6 @@ KtFirSamConstructorSymbol:
   receiverType: null
   symbolKind: SAM_CONSTRUCTOR
   valueParameters: [
-    KtFirValueParameterSymbol(function)
+    KtValueParameterSymbol(function)
   ]
   deprecationStatus: null

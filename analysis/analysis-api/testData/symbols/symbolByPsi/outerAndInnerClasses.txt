@@ -1,4 +1,4 @@
-KtFirTypeParameterSymbol:
+KtTypeParameterSymbol:
   isReified: false
   name: T
   origin: SOURCE
@@ -8,7 +8,7 @@ KtFirTypeParameterSymbol:
   variance: INVARIANT
   deprecationStatus: null
 
-KtFirTypeParameterSymbol:
+KtTypeParameterSymbol:
   isReified: false
   name: T1
   origin: SOURCE
@@ -18,7 +18,7 @@ KtFirTypeParameterSymbol:
   variance: INVARIANT
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: X.Y
@@ -37,12 +37,12 @@ KtFirNamedClassOrObjectSymbol:
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtFirTypeParameterSymbol(T1)
+    KtTypeParameterSymbol(T1)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirTypeParameterSymbol:
+KtTypeParameterSymbol:
   isReified: false
   name: T2
   origin: SOURCE
@@ -52,7 +52,7 @@ KtFirTypeParameterSymbol:
   variance: INVARIANT
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: X.Z
@@ -71,12 +71,12 @@ KtFirNamedClassOrObjectSymbol:
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtFirTypeParameterSymbol(T2)
+    KtTypeParameterSymbol(T2)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirTypeParameterSymbol:
+KtTypeParameterSymbol:
   isReified: false
   name: T3
   origin: SOURCE
@@ -86,7 +86,7 @@ KtFirTypeParameterSymbol:
   variance: INVARIANT
   deprecationStatus: null
 
-KtFirTypeParameterSymbol:
+KtTypeParameterSymbol:
   isReified: false
   name: T4
   origin: SOURCE
@@ -96,7 +96,7 @@ KtFirTypeParameterSymbol:
   variance: INVARIANT
   deprecationStatus: null
 
-KtFirTypeParameterSymbol:
+KtTypeParameterSymbol:
   isReified: false
   name: T5
   origin: SOURCE
@@ -106,7 +106,7 @@ KtFirTypeParameterSymbol:
   variance: INVARIANT
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: null
@@ -125,12 +125,12 @@ KtFirNamedClassOrObjectSymbol:
   ]
   symbolKind: LOCAL
   typeParameters: [
-    KtFirTypeParameterSymbol(T5)
+    KtTypeParameterSymbol(T5)
   ]
   visibility: Local
   deprecationStatus: null
 
-KtFirTypeParameterSymbol:
+KtTypeParameterSymbol:
   isReified: false
   name: T6
   origin: SOURCE
@@ -140,7 +140,7 @@ KtFirTypeParameterSymbol:
   variance: INVARIANT
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: null
@@ -159,12 +159,12 @@ KtFirNamedClassOrObjectSymbol:
   ]
   symbolKind: LOCAL
   typeParameters: [
-    KtFirTypeParameterSymbol(T6)
+    KtTypeParameterSymbol(T6)
   ]
   visibility: Local
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: null
@@ -183,12 +183,12 @@ KtFirNamedClassOrObjectSymbol:
   ]
   symbolKind: LOCAL
   typeParameters: [
-    KtFirTypeParameterSymbol(T4)
+    KtTypeParameterSymbol(T4)
   ]
   visibility: Local
   deprecationStatus: null
 
-KtFirFunctionSymbol:
+KtFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: []
   annotations: []
@@ -209,13 +209,13 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtFirTypeParameterSymbol(T3)
+    KtTypeParameterSymbol(T3)
   ]
   valueParameters: []
   visibility: Public
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
+KtNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: X
@@ -234,7 +234,7 @@ KtFirNamedClassOrObjectSymbol:
   ]
   symbolKind: TOP_LEVEL
   typeParameters: [
-    KtFirTypeParameterSymbol(T)
+    KtTypeParameterSymbol(T)
   ]
   visibility: Public
   deprecationStatus: null
