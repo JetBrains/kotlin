@@ -1,5 +1,5 @@
 // !LANGUAGE: -NewCapturedReceiverFieldNamingConvention
-// IGNORE_BACKEND: JVM_IR
+// IR_DIFFERENCE
 // LOCAL_VARIABLE_TABLE
 
 fun String.foo(count: Int) {

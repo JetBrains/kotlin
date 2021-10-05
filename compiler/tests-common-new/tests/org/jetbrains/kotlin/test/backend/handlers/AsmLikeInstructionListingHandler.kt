@@ -1,32 +1,40 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.codegen
+package org.jetbrains.kotlin.test.backend.handlers
 
-import org.jetbrains.kotlin.ObsoleteTestInfrastructure
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.codegen.DefaultParameterValueSubstitutor
+import org.jetbrains.kotlin.codegen.getClassFiles
+import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives
+import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.CHECK_ASM_LIKE_INSTRUCTIONS
+import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.CURIOUS_ABOUT
+import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.IR_DIFFERENCE
+import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.LOCAL_VARIABLE_TABLE
+import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.RENDER_ANNOTATIONS
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
+import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.util.Printer
 import org.jetbrains.org.objectweb.asm.util.Textifier
 import org.jetbrains.org.objectweb.asm.util.TraceFieldVisitor
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
-import java.io.File
 
-private val LINE_SEPARATOR = System.getProperty("line.separator")
-
-@ObsoleteTestInfrastructure
-abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
-    private companion object {
-        const val CURIOUS_ABOUT_DIRECTIVE = "// CURIOUS_ABOUT "
-        const val LOCAL_VARIABLE_TABLE_DIRECTIVE = "// LOCAL_VARIABLE_TABLE"
-        const val RENDER_ANNOTATIONS_DIRECTIVE = "// RENDER_ANNOTATIONS"
+class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
+    companion object {
+        const val DUMP_EXTENSION = "asm.txt"
+        const val IR_DUMP_EXTENSION = "asm.ir.txt"
+        const val LINE_SEPARATOR = "\n"
 
         val IGNORED_CLASS_VISIBLE_ANNOTATIONS = setOf(
             "Lkotlin/Metadata;",
@@ -37,102 +45,100 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         )
     }
 
-    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
-        val txtFile = File(wholeFile.parentFile, getExpectedTextFileName(wholeFile))
-        compile(files)
+    override val directiveContainers: List<DirectivesContainer>
+        get() = listOf(AsmLikeInstructionListingDirectives)
 
-        val classes = classFileFactory
-                .getClassFiles()
-                .sortedBy { it.relativePath }
-                .map { file -> ClassNode().also { ClassReader(file.asByteArray()).accept(it, ClassReader.EXPAND_FRAMES) } }
+    private val baseDumper = MultiModuleInfoDumper()
 
-        val testFileLines = wholeFile.readLines()
+    override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
+        if (CHECK_ASM_LIKE_INSTRUCTIONS !in module.directives) return
+        val builder = baseDumper.builderForModule(module)
+        val classes = info.classFileFactory
+            .getClassFiles()
+            .sortedBy { it.relativePath }
+            .map { file -> ClassNode().also { ClassReader(file.asByteArray()).accept(it, ClassReader.EXPAND_FRAMES) } }
 
-        val printBytecodeForTheseMethods = testFileLines
-                .filter { it.startsWith(CURIOUS_ABOUT_DIRECTIVE) }
-                .map { it.substring(CURIOUS_ABOUT_DIRECTIVE.length) }
-                .flatMap { it.split(',').map { it.trim() } }
+        val printBytecodeForTheseMethods = module.directives[CURIOUS_ABOUT]
+        val showLocalVariables = LOCAL_VARIABLE_TABLE in module.directives
+        val renderAnnotations = RENDER_ANNOTATIONS in module.directives
 
-        val showLocalVariables = testFileLines.any { it.trim() == LOCAL_VARIABLE_TABLE_DIRECTIVE }
-        val renderAnnotations = testFileLines.any { it.trim() == RENDER_ANNOTATIONS_DIRECTIVE }
-
-        KotlinTestUtils.assertEqualsToFile(txtFile, classes.joinToString(LINE_SEPARATOR.repeat(2)) {
-            renderClassNode(it, printBytecodeForTheseMethods, showLocalVariables, renderAnnotations)
-        })
+        classes.forEachIndexed { index, classNode ->
+            builder.renderClassNode(classNode, printBytecodeForTheseMethods, showLocalVariables, renderAnnotations)
+            builder.appendLine()
+            if (index != classes.indices.last) {
+                builder.appendLine()
+            }
+        }
     }
 
-    protected open fun getExpectedTextFileName(wholeFile: File): String = wholeFile.nameWithoutExtension + ".txt"
-
-    private fun renderClassNode(
+    private fun StringBuilder.renderClassNode(
         clazz: ClassNode,
         showBytecodeForTheseMethods: List<String>,
         showLocalVariables: Boolean,
         renderAnnotations: Boolean
-    ): String {
+    ) {
         val fields = (clazz.fields ?: emptyList()).sortedBy { it.name }
         val methods = (clazz.methods ?: emptyList()).sortedBy { it.name }
 
         val superTypes = (listOf(clazz.superName) + clazz.interfaces).filterNotNull()
 
-        return buildString {
-            if (renderAnnotations) {
-                clazz.signature?.let {
-                    append(it).append("\n")
-                }
+        if (renderAnnotations) {
+            clazz.signature?.let {
+                appendLine(it)
             }
-            renderVisibilityModifiers(clazz.access)
-            renderModalityModifiers(clazz.access)
-            append(if ((clazz.access and ACC_INTERFACE) != 0) "interface " else "class ")
-            append(clazz.name)
-
-            if (superTypes.isNotEmpty()) {
-                append(" : " + superTypes.joinToString())
-            }
-
-            appendLine(" {")
-
-            if (renderAnnotations) {
-                val textifier = Textifier()
-                val visitor = TraceMethodVisitor(textifier)
-
-                clazz.visibleAnnotations?.forEach {
-                    if (it.desc !in IGNORED_CLASS_VISIBLE_ANNOTATIONS) {
-                        it.accept(visitor.visitAnnotation(it.desc, true))
-                    }
-                }
-                clazz.invisibleAnnotations?.forEach {
-                    it.accept(visitor.visitAnnotation(it.desc, false))
-                }
-
-                clazz.visibleTypeAnnotations?.forEach {
-                    it.accept(visitor.visitTypeAnnotation(it.typeRef, it.typePath, it.desc, true))
-                }
-                clazz.invisibleTypeAnnotations?.forEach {
-                    it.accept(visitor.visitTypeAnnotation(it.typeRef, it.typePath, it.desc, false))
-                }
-
-                textifier.getText().takeIf { it.isNotEmpty() }?.let {
-                    appendLine(textifier.getText().joinToString("").trimEnd())
-                    appendLine("")
-                }
-            }
-
-            fields.joinTo(this, LINE_SEPARATOR.repeat(2)) { renderField(it, renderAnnotations).withMargin() }
-
-            if (fields.isNotEmpty()) {
-                appendLine().appendLine()
-            }
-
-            methods.joinTo(this, LINE_SEPARATOR.repeat(2)) {
-                val showBytecode = showBytecodeForTheseMethods.contains(it.name)
-                renderMethod(it, showBytecode, showLocalVariables, renderAnnotations).withMargin()
-            }
-
-            appendLine().append("}")
         }
+        renderVisibilityModifiers(clazz.access)
+        renderModalityModifiers(clazz.access)
+        append(if ((clazz.access and Opcodes.ACC_INTERFACE) != 0) "interface " else "class ")
+        append(clazz.name)
+
+        if (superTypes.isNotEmpty()) {
+            append(" : " + superTypes.joinToString())
+        }
+
+        appendLine(" {")
+
+        if (renderAnnotations) {
+            val textifier = Textifier()
+            val visitor = TraceMethodVisitor(textifier)
+
+            clazz.visibleAnnotations?.forEach {
+                if (it.desc !in IGNORED_CLASS_VISIBLE_ANNOTATIONS) {
+                    it.accept(visitor.visitAnnotation(it.desc, true))
+                }
+            }
+            clazz.invisibleAnnotations?.forEach {
+                it.accept(visitor.visitAnnotation(it.desc, false))
+            }
+
+            clazz.visibleTypeAnnotations?.forEach {
+                it.accept(visitor.visitTypeAnnotation(it.typeRef, it.typePath, it.desc, true))
+            }
+            clazz.invisibleTypeAnnotations?.forEach {
+                it.accept(visitor.visitTypeAnnotation(it.typeRef, it.typePath, it.desc, false))
+            }
+
+            textifier.getText().takeIf { it.isNotEmpty() }?.let {
+                appendLine(textifier.getText().joinToString("").trimEnd())
+                appendLine("")
+            }
+        }
+
+        fields.joinTo(this, LINE_SEPARATOR.repeat(2)) { renderField(it, renderAnnotations).withMargin() }
+
+        if (fields.isNotEmpty()) {
+            appendLine().appendLine()
+        }
+
+        methods.joinTo(this, LINE_SEPARATOR.repeat(2)) {
+            val showBytecode = showBytecodeForTheseMethods.contains(it.name)
+            renderMethod(it, showBytecode, showLocalVariables, renderAnnotations).withMargin()
+        }
+
+        appendLine().append("}")
     }
 
-    private fun renderField(field: FieldNode, renderAnnotations: Boolean) = buildString {
+    private fun renderField(field: FieldNode, renderAnnotations: Boolean): String = buildString {
         if (renderAnnotations) {
             field.signature?.let {
                 append(it).append("\n")
@@ -171,7 +177,7 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         showBytecode: Boolean,
         showLocalVariables: Boolean,
         renderAnnotations: Boolean
-    ) = buildString {
+    ): String = buildString {
         if (renderAnnotations) {
             method.signature?.let {
                 append(it).append("\n")
@@ -234,7 +240,7 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
             }
         }
 
-        val actualShowBytecode = showBytecode && (method.access and ACC_ABSTRACT) == 0
+        val actualShowBytecode = showBytecode && (method.access and Opcodes.ACC_ABSTRACT) == 0
         val actualShowLocalVariables = showLocalVariables && method.localVariables?.takeIf { it.isNotEmpty() } != null
 
         if (actualShowBytecode || actualShowLocalVariables) {
@@ -262,7 +268,7 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
 
     private fun getParameterName(index: Int, method: MethodNode): String {
         val localVariableIndexOffset = when {
-            (method.access and ACC_STATIC) != 0 -> 0
+            (method.access and Opcodes.ACC_STATIC) != 0 -> 0
             method.isJvmOverloadsGenerated() -> 0
             else -> 1
         }
@@ -326,15 +332,15 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
     }
 
     private fun StringBuilder.renderVisibilityModifiers(access: Int) {
-        if ((access and ACC_PUBLIC) != 0) append("public ")
-        if ((access and ACC_PRIVATE) != 0) append("private ")
-        if ((access and ACC_PROTECTED) != 0) append("protected ")
+        if ((access and Opcodes.ACC_PUBLIC) != 0) append("public ")
+        if ((access and Opcodes.ACC_PRIVATE) != 0) append("private ")
+        if ((access and Opcodes.ACC_PROTECTED) != 0) append("protected ")
     }
 
     private fun StringBuilder.renderModalityModifiers(access: Int) {
-        if ((access and ACC_FINAL) != 0) append("final ")
-        if ((access and ACC_ABSTRACT) != 0) append("abstract ")
-        if ((access and ACC_STATIC) != 0) append("static ")
+        if ((access and Opcodes.ACC_FINAL) != 0) append("final ")
+        if ((access and Opcodes.ACC_ABSTRACT) != 0) append("abstract ")
+        if ((access and Opcodes.ACC_STATIC) != 0) append("static ")
     }
 
     private class LabelMappings {
@@ -346,12 +352,40 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
             return mappings.getOrPut(hashCode) { currentIndex++ }
         }
     }
-}
 
-private fun MethodNode.isJvmOverloadsGenerated(): Boolean {
-    fun AnnotationNode.isJvmOverloadsGenerated() =
-        this.desc == DefaultParameterValueSubstitutor.ANNOTATION_TYPE_DESCRIPTOR_FOR_JVM_OVERLOADS_GENERATED_METHODS
+    private fun MethodNode.isJvmOverloadsGenerated(): Boolean {
+        fun AnnotationNode.isJvmOverloadsGenerated() =
+            this.desc == DefaultParameterValueSubstitutor.ANNOTATION_TYPE_DESCRIPTOR_FOR_JVM_OVERLOADS_GENERATED_METHODS
 
-    return (visibleAnnotations?.any { it.isJvmOverloadsGenerated() } ?: false)
-            || (invisibleAnnotations?.any { it.isJvmOverloadsGenerated() } ?: false)
+        return (visibleAnnotations?.any { it.isJvmOverloadsGenerated() } ?: false)
+                || (invisibleAnnotations?.any { it.isJvmOverloadsGenerated() } ?: false)
+    }
+
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+        if (baseDumper.isEmpty()) return
+
+        val irDifference = IR_DIFFERENCE in testServices.moduleStructure.allDirectives
+
+        val extension = when (irDifference) {
+            false -> DUMP_EXTENSION
+            true -> when (testServices.moduleStructure.modules.first().targetBackend?.isIR) {
+                true -> IR_DUMP_EXTENSION
+                else -> DUMP_EXTENSION
+            }
+        }
+
+        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
+        val file = testDataFile.withExtension(extension)
+        assertions.assertEqualsToFile(file, baseDumper.generateResultingDump())
+
+        if (irDifference) {
+            val noIrDump = testDataFile.withExtension(DUMP_EXTENSION)
+            val irDump = testDataFile.withExtension(IR_DUMP_EXTENSION)
+            if (noIrDump.exists() && irDump.exists()) {
+                assertions.assertFalse(noIrDump.readText().trim() == irDump.readText().trim()) {
+                    "Dumps for IR backend and classic backend are identical. Please remove IR_DIFFERENCE directive and ${irDump.name} file"
+                }
+            }
+        }
+    }
 }

@@ -138,6 +138,14 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             testClass<AbstractIrBytecodeListingTest> {
                 model("codegen/bytecodeListing")
             }
+
+            testClass<AbstractAsmLikeInstructionListingTest> {
+                model("codegen/asmLike")
+            }
+
+            testClass<AbstractIrAsmLikeInstructionListingTest> {
+                model("codegen/asmLike")
+            }
         }
 
         // ---------------------------------------------- FIR tests ----------------------------------------------

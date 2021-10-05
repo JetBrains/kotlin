@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.AbstractAsmLikeInstructionListingTest
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar
 import java.io.File
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractSerializationIrBytecodeListingTest : AbstractAsmLikeInstructionListingTest() {
     private val coreLibraryPath = getSerializationCoreLibraryJar()
 

@@ -1,16 +1,14 @@
 public final class foo/Kotlin : java/lang/Object {
     public void <init>()
 
-    public final void foo(java.lang.String s, int x)
+    public final java.lang.Object foo(java.lang.String s, int x)
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/TypeAnn;([name="return"]) : METHOD_RETURN, null
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnn;([name="2"]) : METHOD_FORMAL_PARAMETER 1, null
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
-    public final void fooArray(java.lang.String[] s, java.lang.Integer[] i)
-      @Lfoo/TypeAnn;([name="3"]) : METHOD_FORMAL_PARAMETER 0, [
-      @Lfoo/TypeAnn;([name="3"]) : METHOD_FORMAL_PARAMETER 1, [
-        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
-        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 1
+    public static java.lang.Object foo$default(foo.Kotlin p0, java.lang.String p1, int p2, int p3, java.lang.Object p4)
 }
 
 public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {

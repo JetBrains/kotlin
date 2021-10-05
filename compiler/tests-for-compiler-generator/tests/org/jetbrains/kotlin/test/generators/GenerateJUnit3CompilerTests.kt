@@ -106,10 +106,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("codegen/kapt", targetBackend = TargetBackend.JVM)
             }
 
-            testClass<AbstractAsmLikeInstructionListingTest> {
-                model("codegen/asmLike", targetBackend = TargetBackend.JVM)
-            }
-
             testClass<AbstractScriptCodegenTest> {
                 model("codegen/script", extension = "kts")
             }
@@ -405,10 +401,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
 
             testClass<AbstractIrLocalVariableTest>(useJunit4 = true) {
                 model("debug/localVariables", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractIrAsmLikeInstructionListingTest> {
-                model("codegen/asmLike", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractIrScriptCodegenTest> {

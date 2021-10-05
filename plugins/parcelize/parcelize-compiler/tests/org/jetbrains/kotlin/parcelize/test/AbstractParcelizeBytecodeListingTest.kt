@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.parcelize.test
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.AbstractAsmLikeInstructionListingTest
 import org.jetbrains.kotlin.parcelize.ParcelizeComponentRegistrar
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractParcelizeBytecodeListingTest : AbstractAsmLikeInstructionListingTest() {
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         ParcelizeComponentRegistrar.registerParcelizeComponents(environment.project)
