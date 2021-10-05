@@ -64,11 +64,12 @@ class MavenResolverTest : ResolversTestBase() {
 
         listOf(compileOnly, compileRuntime).forEach { scopes ->
             resolveAndCheck(
-                "org.uberfire:uberfire-io:7.39.0.Final",
+                // Need a minimal library with an extra runtime dependency
+                "org.jetbrains.kotlin:kotlin-util-io:1.5.31",
                 buildOptions(DependenciesResolverOptionsName.SCOPE to scopes)
             ) { files ->
                 resolvedFilesCount[scopes] = files.count()
-                files.any { it.name.startsWith("uberfire-commons") }
+                true
             }
         }
 
