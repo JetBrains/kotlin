@@ -109,6 +109,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "malloc",
         "memcmp",
         "memmem",
+        "munmap",
         "nextafter",
         "nextafterf",
         "pow",
