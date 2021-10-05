@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.copyTypeParameters
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
 import org.jetbrains.kotlin.backend.jvm.codegen.classFileContainsMethod
+import org.jetbrains.kotlin.backend.jvm.codegen.extensionReceiverName
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.codegen.parentClassId
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
@@ -81,10 +82,7 @@ class MemoizedInlineClassReplacements(
 
                 // Otherwise, mangle functions with mangled parameters, ignoring constructors
                 it is IrSimpleFunction && !it.isFromJava() && (it.hasMangledParameters || mangleReturnTypes && it.hasMangledReturnType) ->
-                    if (it.dispatchReceiverParameter != null)
-                        createMethodReplacement(it)
-                    else
-                        createStaticReplacement(it)
+                    createMethodReplacement(it)
 
                 else ->
                     null
@@ -182,9 +180,11 @@ class MemoizedInlineClassReplacements(
     private fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, function.origin) {
             originalFunctionForMethodReplacement[this] = function
-            require(function.dispatchReceiverParameter != null && function is IrSimpleFunction)
             dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this, index = -1)
-            extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(this, index = -1, name = Name.identifier("\$receiver"))
+            extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(
+                // The function's name will be mangled, so preserve the old receiver name.
+                this, index = -1, name = Name.identifier(function.extensionReceiverName(context.state))
+            )
             valueParameters = function.valueParameters.mapIndexed { index, parameter ->
                 parameter.copyTo(this, index = index, defaultValue = null).also {
                     // Assuming that constructors and non-override functions are always replaced with the unboxed
@@ -207,11 +207,8 @@ class MemoizedInlineClassReplacements(
                 )
             }
             function.extensionReceiverParameter?.let {
-                val baseName =
-                    (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.name?.asStringStripSpecialMarkers()
-                        ?: function.name
                 newValueParameters += it.copyTo(
-                    this, index = newValueParameters.size, name = Name.identifier("\$this\$$baseName"),
+                    this, index = newValueParameters.size, name = Name.identifier(function.extensionReceiverName(context.state)),
                     origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
                 )
             }
