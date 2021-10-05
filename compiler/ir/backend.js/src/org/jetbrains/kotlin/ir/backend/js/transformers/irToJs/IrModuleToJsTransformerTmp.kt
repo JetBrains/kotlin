@@ -77,7 +77,7 @@ class IrModuleToJsTransformerTmp(
 
         files.forEach { StaticMembersLowering(backendContext).lower(it) }
 
-        val serializer = JsIrAstSerializer() { "TODO" }
+        val serializer = JsIrAstSerializer()
 
         val result = mutableMapOf<String, ByteArray>()
         files.forEach { f ->

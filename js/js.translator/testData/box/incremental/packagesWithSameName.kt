@@ -1,4 +1,5 @@
 // EXPECTED_REACHABLE_NODES: 1283
+// SKIP_IR_INCREMENTAL_CHECKS
 // MODULE: lib
 // FILE: a.kt
 package a.p

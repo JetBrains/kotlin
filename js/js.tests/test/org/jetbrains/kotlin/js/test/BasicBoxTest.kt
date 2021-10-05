@@ -176,6 +176,8 @@ abstract class BasicBoxTest(
                 RuntimeDiagnostic.resolve(safeExternalBooleanDiagnosticMatcher.group(1))
             else null
 
+        val skipIcChecks = targetBackend == TargetBackend.JS_IR && SKIP_IR_INCREMENTAL_CHECKS.matcher(fileContent).find()
+
         TestFileFactoryImpl().use { testFactory ->
             val inputFiles = TestFiles.createTestFiles(
                 file.name,
@@ -191,7 +193,7 @@ abstract class BasicBoxTest(
                 return dependenciesSymbols.toSet() + dependenciesSymbols.flatMap { modules[it]!!.allTransitiveDependencies() }
             }
 
-            val checkIC = modules.any { it.value.hasFilesToRecompile }
+            val checkIC = !skipIcChecks && modules.any { it.value.hasFilesToRecompile }
 
             val orderedModules = DFS.topologicalOrder(modules.values) { module -> module.dependenciesSymbols.mapNotNull { modules[it] } }
 
@@ -410,7 +412,7 @@ abstract class BasicBoxTest(
                 if (!skipRegularMode) {
                     runGeneratedCode(allJsFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
 
-                    if (runIrDce) {
+                    if (runIrDce && !checkIC) {
                         runGeneratedCode(dceAllJsFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
                     }
                 }
@@ -650,7 +652,7 @@ abstract class BasicBoxTest(
             customTestModule,
         )
 
-        if (incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
+        if (checkIC && incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
             checkIncrementalCompilation(
                 sourceDirs,
                 module,
@@ -1263,6 +1265,8 @@ abstract class BasicBoxTest(
 
         private val SAFE_EXTERNAL_BOOLEAN = Pattern.compile("^// *SAFE_EXTERNAL_BOOLEAN *$", Pattern.MULTILINE)
         private val SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC = Pattern.compile("^// *SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC: *(.+)$", Pattern.MULTILINE)
+
+        private val SKIP_IR_INCREMENTAL_CHECKS = Pattern.compile("^// *SKIP_IR_INCREMENTAL_CHECKS *$", Pattern.MULTILINE)
 
         @JvmStatic
         protected val runTestInNashorn = getBoolean("kotlin.js.useNashorn")
