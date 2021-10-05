@@ -60,7 +60,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
         scopeCounter = 0
     }
 
-    private inner class PublicIdSigBuilder(private val containerSig: IdSignature? = null) : IdSignatureBuilder<IrDeclaration>(),
+    private inner class PublicIdSigBuilder : IdSignatureBuilder<IrDeclaration>(),
         IrElementVisitorVoid {
 
         override val currentFileSignature: IdSignature.FileSignature?
@@ -115,7 +115,8 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
             setExpected(declaration.isExpect)
         }
 
-        private fun IrDeclarationWithName.hashId(): Long = mangler.run { signatureMangle() }
+        // Note: `false` because `compatibleMode` is not applied to public signatures
+        private fun IrDeclarationWithName.hashId(): Long = mangler.run { signatureMangle(compatibleMode = false) }
 
         override fun visitSimpleFunction(declaration: IrSimpleFunction) {
             val property = declaration.correspondingPropertySymbol
@@ -254,7 +255,7 @@ class IdSignatureSerializer(
                     IdSignature.FileLocalSignature(
                         p,
                         if (declaration.isOverridableFunction()) {
-                            mangler.run { declaration.signatureMangle() }
+                            mangler.run { declaration.signatureMangle(compatibleMode) }
                         } else {
                             ++localIndex
                         },
@@ -266,7 +267,7 @@ class IdSignatureSerializer(
                     IdSignature.FileLocalSignature(
                         composeContainerIdSignature(parent, compatibleMode),
                         if (declaration.isOverridableProperty()) {
-                            mangler.run { declaration.signatureMangle() }
+                            mangler.run { declaration.signatureMangle(compatibleMode) }
                         } else {
                             ++localIndex
                         },

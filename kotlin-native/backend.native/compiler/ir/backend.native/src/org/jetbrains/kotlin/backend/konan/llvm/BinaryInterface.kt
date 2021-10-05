@@ -36,7 +36,7 @@ object KonanBinaryInterface {
 
     private val exportChecker = mangler.getExportChecker(compatibleMode = true)
 
-    val IrFunction.functionName: String get() = mangler.run { signatureString() }
+    val IrFunction.functionName: String get() = mangler.run { signatureString(compatibleMode = true) }
 
     val IrFunction.symbolName: String get() = funSymbolNameImpl()
     val IrField.symbolName: String get() =
@@ -65,7 +65,7 @@ object KonanBinaryInterface {
             return name // no wrapping currently required
         }
 
-        return withPrefix(MangleConstant.FUN_PREFIX, mangler.run { mangleString() })
+        return withPrefix(MangleConstant.FUN_PREFIX, mangler.run { mangleString(compatibleMode = true) })
     }
 
     private fun IrField.fieldSymbolNameImpl(): String {

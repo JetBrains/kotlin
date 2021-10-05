@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
-abstract class IrMangleComputer(protected val builder: StringBuilder, private val mode: MangleMode) :
+abstract class IrMangleComputer(protected val builder: StringBuilder, private val mode: MangleMode, protected val compatibleMode: Boolean) :
     IrElementVisitorVoid, KotlinMangleComputer<IrDeclaration> {
 
     private val typeParameterContainer = ArrayList<IrDeclaration>(4)
@@ -260,10 +260,10 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
 
     override fun visitField(declaration: IrField) {
         val prop = declaration.correspondingPropertySymbol
-        if (prop != null) {
-            visitProperty(prop.owner)
-        } else {
+        if (compatibleMode || prop == null) { // act as used to be (KT-48912)
             declaration.mangleSimpleDeclaration(declaration.name.asString())
+        } else {
+            visitProperty(prop.owner)
         }
     }
 

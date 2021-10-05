@@ -23,14 +23,14 @@ abstract class AbstractJsManglerIr : IrBasedKotlinManglerImpl() {
         override fun IrDeclaration.isPlatformSpecificExported() = false
     }
 
-    private class JsIrManglerComputer(builder: StringBuilder, mode: MangleMode) : IrMangleComputer(builder, mode) {
-        override fun copy(newMode: MangleMode): IrMangleComputer = JsIrManglerComputer(builder, newMode)
+    private class JsIrManglerComputer(builder: StringBuilder, mode: MangleMode, compatibleMode: Boolean) : IrMangleComputer(builder, mode, compatibleMode) {
+        override fun copy(newMode: MangleMode): IrMangleComputer = JsIrManglerComputer(builder, newMode, compatibleMode)
     }
 
     override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<IrDeclaration> = JsIrExportChecker(compatibleMode)
 
-    override fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<IrDeclaration> {
-        return JsIrManglerComputer(StringBuilder(256), mode)
+    override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<IrDeclaration> {
+        return JsIrManglerComputer(StringBuilder(256), mode, compatibleMode)
     }
 }
 
@@ -52,7 +52,7 @@ abstract class AbstractJsDescriptorMangler : DescriptorBasedKotlinManglerImpl() 
 
     override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<DeclarationDescriptor> = exportChecker
 
-    override fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<DeclarationDescriptor> {
+    override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<DeclarationDescriptor> {
         return JsDescriptorManglerComputer(StringBuilder(256), mode)
     }
 }
