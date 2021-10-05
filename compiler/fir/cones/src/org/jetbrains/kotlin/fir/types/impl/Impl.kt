@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.types.ConeAttributes
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.ConeNullability
-import org.jetbrains.kotlin.fir.utils.WeakPair
+import org.jetbrains.kotlin.util.WeakPair
 
 class ConeClassLikeTypeImpl(
     override val lookupTag: ConeClassLikeLookupTag,

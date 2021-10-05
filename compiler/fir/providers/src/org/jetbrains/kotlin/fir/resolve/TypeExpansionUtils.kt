@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.fir.utils.WeakPair
-import org.jetbrains.kotlin.fir.utils.component1
-import org.jetbrains.kotlin.fir.utils.component2
+import org.jetbrains.kotlin.util.WeakPair
+import org.jetbrains.kotlin.util.component1
+import org.jetbrains.kotlin.util.component2
 
 fun ConeClassLikeType.fullyExpandedType(
     useSiteSession: FirSession,

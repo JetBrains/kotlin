@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.types.impl.*
-import org.jetbrains.kotlin.fir.utils.ArrayMapAccessor
-import org.jetbrains.kotlin.fir.utils.ComponentArrayOwner
-import org.jetbrains.kotlin.fir.utils.NullableArrayMapAccessor
-import org.jetbrains.kotlin.fir.utils.TypeRegistry
+import org.jetbrains.kotlin.util.ArrayMapAccessor
+import org.jetbrains.kotlin.util.ComponentArrayOwner
+import org.jetbrains.kotlin.util.NullableArrayMapAccessor
+import org.jetbrains.kotlin.util.TypeRegistry
 import kotlin.reflect.KClass
 
 interface FirSessionComponent
