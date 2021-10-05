@@ -2428,6 +2428,12 @@ linkTest("no_purge_for_dependencies") {
     UtilsKt.dependsOnPlatformLibs(it)
 }
 
+linkTest("lib@name") {
+    useGoldenData = true
+    source = "link/klib_name/prog.kt"
+    lib = "link/klib_name/lib.kt"
+}
+
 task for0(type: KonanLocalTest) {
     useGoldenData = true
     source = "runtime/basic/for0.kt"
