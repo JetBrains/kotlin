@@ -90,7 +90,7 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
               if (%changed !== 0 || !%composer.skipping) {
-                W(ComposableSingletons%TestKt.lambda-1, %composer, 0)
+                W(ComposableSingletons%TestKt.lambda-1, %composer, 0b0110)
               } else {
                 %composer.skipToGroupEnd()
               }

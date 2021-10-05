@@ -2413,7 +2413,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<W>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
-                W(ComposableSingletons%TestKt.lambda-1, %composer, 0)
+                W(ComposableSingletons%TestKt.lambda-1, %composer, 0b0110)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2491,7 +2491,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<Wrap>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
-                Wrap(ComposableSingletons%TestKt.lambda-1, %composer, 0)
+                Wrap(ComposableSingletons%TestKt.lambda-1, %composer, 0b0110)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2508,12 +2508,12 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                   repeat(number) { it: Int ->
                     effects[it] = effect({
                       0
-                    }, %composer, 0)
+                    }, %composer, 0b0110)
                   }
                   %composer.endReplaceableGroup()
                   outside = effect({
                     "0"
-                  }, %composer, 0)
+                  }, %composer, 0b0110)
                 } else {
                   %composer.skipToGroupEnd()
                 }
@@ -3583,7 +3583,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<W>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
-                W(ComposableSingletons%TestKt.lambda-1, %composer, 0)
+                W(ComposableSingletons%TestKt.lambda-1, %composer, 0b0110)
               } else {
                 %composer.skipToGroupEnd()
               }
