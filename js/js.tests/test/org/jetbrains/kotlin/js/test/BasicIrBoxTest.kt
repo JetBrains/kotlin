@@ -118,10 +118,15 @@ abstract class BasicIrBoxTest(
         val runtimeKlibs = if (needsFullIrRuntime) listOf(fullRuntimeKlib, kotlinTestKLib) else listOf(defaultRuntimeKlib)
 
         val transitiveLibraries = config.configuration[JSConfigurationKeys.TRANSITIVE_LIBRARIES]!!.map { File(it).name }
+        val friendsLibraries = (config.configuration[JSConfigurationKeys.FRIEND_PATHS] ?: emptyList()).map { File(it).name }
 
         val allKlibPaths = (runtimeKlibs + transitiveLibraries.map {
             compilationCache[it] ?: error("Can't find compiled module for dependency $it")
         }).map { File(it).absolutePath }.toMutableList()
+
+        val friendPaths = friendsLibraries.map { compilationCache[it] ?: error("Can't find compiled module for friend dep $it") }.map {
+            File(it).canonicalPath
+        }
 
         val klibPath = outputFile.absolutePath.replace("_v5.js", "")
 
@@ -133,7 +138,7 @@ abstract class BasicIrBoxTest(
                 filesToCompile,
                 config.configuration,
                 allKlibPaths,
-                emptyList(),
+                friendPaths,
                 AnalyzerWithCompilerReport(config.configuration),
             )
             generateKLib(
@@ -181,7 +186,7 @@ abstract class BasicIrBoxTest(
                         filesToCompile,
                         config.configuration,
                         allKlibPaths,
-                        emptyList(),
+                        friendPaths,
                         AnalyzerWithCompilerReport(config.configuration),
                         icUseGlobalSignatures = useIc,
                         icUseStdlibCache = useIc,
@@ -193,7 +198,7 @@ abstract class BasicIrBoxTest(
                         MainModule.Klib(klibPath),
                         config.configuration,
                         allKlibPaths,
-                        emptyList(),
+                        friendPaths,
                         icUseGlobalSignatures = useIc,
                         icUseStdlibCache = useIc,
                         icCache = icCache
