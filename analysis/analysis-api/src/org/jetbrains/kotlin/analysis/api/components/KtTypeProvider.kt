@@ -32,6 +32,11 @@ public abstract class KtTypeProvider : KtAnalysisSessionComponent() {
     public abstract fun haveCommonSubtype(a: KtType, b: KtType): Boolean
 
     public abstract fun getImplicitReceiverTypesAtPosition(position: KtElement): List<KtType>
+
+    public abstract fun getDirectSuperTypes(type: KtType, shouldApproximate: Boolean): List<KtType>
+
+    public abstract fun getAllSuperTypes(type: KtType, shouldApproximate: Boolean): List<KtType>
+
 }
 
 public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
@@ -91,6 +96,28 @@ public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
      */
     public fun getImplicitReceiverTypesAtPosition(position: KtElement): List<KtType> =
         analysisSession.typeProvider.getImplicitReceiverTypesAtPosition(position)
+
+    /**
+     * Gets the direct super types of the given type. For example, given `MutableList<String>`, this returns `List<String>` and
+     * `MutableCollection<String>`.
+     *
+     * Note that for flexible types, both direct super types of the upper and lower bounds are returned. If that's not desirable, please
+     * first call [KtFlexibleType.upperBound] or [KtFlexibleType.lowerBound] and then call this method.
+     *
+     * @param shouldApproximate whether to approximate non-denotable types. For example, super type of `List<out String>` is
+     * `Collection<CAPTURED out String>`. With approximation set to true, `Collection<out String>` is returned instead.
+     */
+    public fun KtType.getDirectSuperTypes(shouldApproximate: Boolean = false): List<KtType> =
+        analysisSession.typeProvider.getDirectSuperTypes(this, shouldApproximate)
+
+    /**
+     * Gets all the super types of the given type. The returned result is ordered by a BFS traversal of the class hierarchy, without any
+     * duplicates.
+     *
+     * @param shouldApproximate see [getDirectSuperTypes]
+     */
+    public fun KtType.getAllSuperTypes(shouldApproximate: Boolean = false): List<KtType> =
+        analysisSession.typeProvider.getAllSuperTypes(this, shouldApproximate)
 }
 
 @Suppress("PropertyName")

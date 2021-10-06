@@ -1,0 +1,17 @@
+[direct super types]
+A
+I
+
+[approximated direct super types]
+A
+I
+
+[all super types]
+A
+I
+kotlin.Any
+
+[approximated all super types]
+A
+I
+kotlin.Any

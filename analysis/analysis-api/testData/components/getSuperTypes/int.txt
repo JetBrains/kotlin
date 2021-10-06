@@ -1,0 +1,21 @@
+[direct super types]
+kotlin.Number
+kotlin.Comparable<kotlin.Int>
+java.io.Serializable
+
+[approximated direct super types]
+kotlin.Number
+kotlin.Comparable<kotlin.Int>
+java.io.Serializable
+
+[all super types]
+kotlin.Number
+kotlin.Comparable<kotlin.Int>
+java.io.Serializable
+kotlin.Any
+
+[approximated all super types]
+kotlin.Number
+kotlin.Comparable<kotlin.Int>
+java.io.Serializable
+kotlin.Any

@@ -392,7 +392,7 @@ fun ConeTypeContext.captureFromArgumentsInternal(type: ConeKotlinType, status: C
     }
 }
 
-private fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus): Array<ConeKotlinType>? {
+fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus): Array<ConeKotlinType>? {
     val argumentsCount = type.typeArguments.size
     if (argumentsCount == 0) return null
 

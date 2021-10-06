@@ -1,0 +1,11 @@
+[direct super types]
+kotlin.Any
+
+[approximated direct super types]
+kotlin.Any
+
+[all super types]
+kotlin.Any
+
+[approximated all super types]
+kotlin.Any

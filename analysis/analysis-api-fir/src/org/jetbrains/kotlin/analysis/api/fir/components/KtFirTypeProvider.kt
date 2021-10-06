@@ -20,12 +20,24 @@ import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir.getTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
+import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.isCompatible
+import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClass
+import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -34,6 +46,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtDoubleColonExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.model.CaptureStatus
 
 internal class KtFirTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -109,6 +123,69 @@ internal class KtFirTypeProvider(
     override fun getImplicitReceiverTypesAtPosition(position: KtElement): List<KtType> {
         return analysisSession.firResolveState.getTowerContextProvider()
             .getClosestAvailableParentContext(position)?.implicitReceiverStack?.map { it.type.asKtType() } ?: emptyList()
+    }
+
+    override fun getDirectSuperTypes(type: KtType, shouldApproximate: Boolean): List<KtType> {
+        require(type is KtFirType)
+        return type.coneType.getDirectSuperTypes(shouldApproximate).mapTo(mutableListOf()) { it.asKtType() }
+    }
+
+    private fun ConeKotlinType.getDirectSuperTypes(shouldApproximate: Boolean): Sequence<ConeKotlinType> {
+        return when (this) {
+            // We also need to collect those on `upperBound` due to nullability.
+            is ConeFlexibleType -> lowerBound.getDirectSuperTypes(shouldApproximate) + upperBound.getDirectSuperTypes(shouldApproximate)
+            is ConeDefinitelyNotNullType -> original.getDirectSuperTypes(shouldApproximate).map { ConeDefinitelyNotNullType(it) }
+            is ConeIntersectionType -> intersectedTypes.asSequence().flatMap { it.getDirectSuperTypes(shouldApproximate) }
+            is ConeClassErrorType -> emptySequence()
+            is ConeLookupTagBasedType -> getSubstitutedSuperTypes(shouldApproximate)
+            else -> emptySequence()
+        }.distinct()
+    }
+
+    private fun ConeLookupTagBasedType.getSubstitutedSuperTypes(shouldApproximate: Boolean): Sequence<ConeKotlinType> {
+        val session = analysisSession.firResolveState.rootModuleSession
+        val symbol = lookupTag.toSymbol(session)
+        val superTypes = when (symbol) {
+            is FirAnonymousObjectSymbol -> symbol.superConeTypes
+            is FirRegularClassSymbol -> symbol.superConeTypes
+            is FirTypeAliasSymbol -> symbol.fullyExpandedClass(session)?.superConeTypes ?: return emptySequence()
+            is FirTypeParameterSymbol -> symbol.resolvedBounds.map { it.type }
+            else -> return emptySequence()
+        }
+
+        val typeParameterSymbols = symbol.typeParameterSymbols ?: return superTypes.asSequence()
+        val argumentTypes = (session.typeContext.captureArguments(this, CaptureStatus.FROM_EXPRESSION)?.toList()
+            ?: this.typeArguments.mapNotNull { it.type })
+
+        require(typeParameterSymbols.size == argumentTypes.size) {
+            "'${symbol.fir.render(FirRenderer.RenderMode.NoBodies)}' expects '${typeParameterSymbols.size}' type arguments " +
+                    "but type '${this.render()}' has ${argumentTypes.size} type arguments."
+        }
+
+        val substitutor = substitutorByMap(typeParameterSymbols.zip(argumentTypes).toMap(), session)
+        return superTypes.asSequence().map {
+            val type = substitutor.substituteOrSelf(it)
+            if (shouldApproximate) {
+                session.inferenceComponents.approximator.approximateToSuperType(
+                    type,
+                    TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+                ) ?: type
+            } else {
+                type
+            }.withNullability(nullability, session.typeContext)
+        }
+    }
+
+    override fun getAllSuperTypes(type: KtType, shouldApproximate: Boolean): List<KtType> {
+        require(type is KtFirType)
+        val queue = type.coneType.getDirectSuperTypes(shouldApproximate).toCollection(ArrayDeque())
+        return buildSet {
+            while (queue.isNotEmpty()) {
+                val current = queue.removeFirst()
+                if (!add(current)) continue
+                queue.addAll(current.getDirectSuperTypes(shouldApproximate))
+            }
+        }.map { it.asKtType() }
     }
 }
 

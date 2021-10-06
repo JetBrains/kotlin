@@ -1,0 +1,23 @@
+[direct super types]
+kotlin.collections.List<ERROR_TYPE <Unexpected cone type org.jetbrains.kotlin.fir.types.ConeCapturedType>>
+kotlin.collections.MutableCollection<ERROR_TYPE <Unexpected cone type org.jetbrains.kotlin.fir.types.ConeCapturedType>>
+
+[approximated direct super types]
+kotlin.collections.List<kotlin.Any?>
+kotlin.collections.MutableCollection<out kotlin.Any?>
+
+[all super types]
+kotlin.collections.List<ERROR_TYPE <Unexpected cone type org.jetbrains.kotlin.fir.types.ConeCapturedType>>
+kotlin.collections.MutableCollection<ERROR_TYPE <Unexpected cone type org.jetbrains.kotlin.fir.types.ConeCapturedType>>
+kotlin.collections.Collection<ERROR_TYPE <Unexpected cone type org.jetbrains.kotlin.fir.types.ConeCapturedType>>
+kotlin.collections.MutableIterable<ERROR_TYPE <Unexpected cone type org.jetbrains.kotlin.fir.types.ConeCapturedType>>
+kotlin.collections.Iterable<ERROR_TYPE <Unexpected cone type org.jetbrains.kotlin.fir.types.ConeCapturedType>>
+kotlin.Any
+
+[approximated all super types]
+kotlin.collections.List<kotlin.Any?>
+kotlin.collections.MutableCollection<out kotlin.Any?>
+kotlin.collections.Collection<kotlin.Any?>
+kotlin.collections.MutableIterable<kotlin.Any?>
+kotlin.collections.Iterable<kotlin.Any?>
+kotlin.Any
