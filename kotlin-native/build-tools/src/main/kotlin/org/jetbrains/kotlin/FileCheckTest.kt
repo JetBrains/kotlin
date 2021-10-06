@@ -42,6 +42,13 @@ open class FileCheckTest : DefaultTask() {
     @get:Internal
     lateinit var llvmIr: File
 
+    /**
+     * Optional cinterop task dependency.
+     */
+    @Optional
+    @Input
+    var interop: String? = null
+
     @TaskAction
     fun run() {
         runFileCheck(annotatedSource.toPath(), llvmIr.toPath())
@@ -53,6 +60,13 @@ open class FileCheckTest : DefaultTask() {
     @Input
     @Optional
     var checkPrefix: String? = null
+
+    /**
+     * Should we generate framework instead of an executable?
+     * This option is useful for, well, checking framework-specific code.
+     */
+    @Input
+    var generateFramework: Boolean = false
 
     /**
      * Check that [inputFile] matches [annotatedFile] with FileCheck.
