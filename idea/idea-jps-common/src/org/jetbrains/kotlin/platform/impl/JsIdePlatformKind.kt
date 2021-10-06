@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.js.isJs
 
-object JsIdePlatformKind : IdePlatformKind<JsIdePlatformKind>() {
+object JsIdePlatformKind : IdePlatformKind() {
     override fun supportsTargetPlatform(platform: TargetPlatform): Boolean = platform.isJs()
 
     override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
@@ -55,7 +55,7 @@ object JsIdePlatformKind : IdePlatformKind<JsIdePlatformKind>() {
     }
 }
 
-val IdePlatformKind<*>?.isJavaScript
+val IdePlatformKind?.isJavaScript
     get() = this is JsIdePlatformKind
 
 @Deprecated(

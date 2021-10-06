@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.platform.konan.isNative
 
-object NativeIdePlatformKind : IdePlatformKind<NativeIdePlatformKind>() {
+object NativeIdePlatformKind : IdePlatformKind() {
     override fun supportsTargetPlatform(platform: TargetPlatform): Boolean = platform.isNative()
 
     override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
@@ -59,7 +59,7 @@ object NativeIdePlatformKind : IdePlatformKind<NativeIdePlatformKind>() {
 // These are fake compiler arguments for Kotlin/Native - only for usage within IDEA plugin:
 class FakeK2NativeCompilerArguments : CommonCompilerArguments()
 
-val IdePlatformKind<*>?.isKotlinNative
+val IdePlatformKind?.isKotlinNative
     get() = this is NativeIdePlatformKind
 
 @Deprecated(
