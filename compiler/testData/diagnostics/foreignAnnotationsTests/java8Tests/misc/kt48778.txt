@@ -1,0 +1,11 @@
+package
+
+public fun usingMethod(/*0*/ java: Java<kotlin.String?>): kotlin.String
+public fun usingProperty(/*0*/ java: Java<kotlin.String?>): kotlin.String
+
+public interface Java</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @org.checkerframework.checker.nullness.qual.NonNull public abstract fun getFoo(): @org.checkerframework.checker.nullness.qual.NonNull T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
