@@ -304,7 +304,7 @@ class LocalNameGenerator(parentScope: NameScope) : IrElementVisitorVoid {
     val localLoopNames = NameTable<IrLoop>()
     val localReturnableBlockNames = NameTable<IrReturnableBlock>()
 
-    private val breakableDeque: Deque<IrExpression> = LinkedList()
+    private val jumpableDeque: Deque<IrExpression> = LinkedList()
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
@@ -319,11 +319,20 @@ class LocalNameGenerator(parentScope: NameScope) : IrElementVisitorVoid {
 
     override fun visitBreak(jump: IrBreak) {
         val loop = jump.loop
-        if (loop.label == null && loop != breakableDeque.firstOrNull()) {
+        if (loop.label == null && loop != jumpableDeque.firstOrNull()) {
             persistLoopName(SYNTHETIC_LOOP_LABEL, loop)
         }
 
         super.visitBreak(jump)
+    }
+
+    override fun visitContinue(jump: IrContinue) {
+        val loop = jump.loop
+        if (loop.label == null && loop != jumpableDeque.firstOrNull()) {
+            persistLoopName(SYNTHETIC_LOOP_LABEL, loop)
+        }
+
+        super.visitContinue(jump)
     }
 
     override fun visitReturn(expression: IrReturn) {
@@ -336,19 +345,19 @@ class LocalNameGenerator(parentScope: NameScope) : IrElementVisitorVoid {
     }
 
     override fun visitWhen(expression: IrWhen) {
-        breakableDeque.push(expression)
+        jumpableDeque.push(expression)
 
         super.visitWhen(expression)
 
-        breakableDeque.pop()
+        jumpableDeque.pop()
     }
 
     override fun visitLoop(loop: IrLoop) {
-        breakableDeque.push(loop)
+        jumpableDeque.push(loop)
 
         super.visitLoop(loop)
 
-        breakableDeque.pop()
+        jumpableDeque.pop()
 
         val label = loop.label
 
@@ -384,5 +393,5 @@ fun sanitizeName(name: String): String {
     return builder.toString()
 }
 
-private const val SYNTHETIC_LOOP_LABEL = "\$l\$break"
+private const val SYNTHETIC_LOOP_LABEL = "\$l\$loop"
 private const val SYNTHETIC_BLOCK_LABEL = "\$l\$block"
