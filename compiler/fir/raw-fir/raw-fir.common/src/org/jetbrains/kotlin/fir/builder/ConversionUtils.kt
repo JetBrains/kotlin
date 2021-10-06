@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.builder
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildLegacyRawContractDescription
@@ -474,6 +475,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     }
     if (isVar && (setter == null || setter is FirDefaultPropertyAccessor)) {
         val annotations = setter?.annotations
+        val parameterAnnotations = setter?.valueParameters?.firstOrNull()?.annotations
         setter = buildPropertyAccessor {
             this.source = fakeSource
             this.moduleData = moduleData
@@ -493,6 +495,9 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                 isCrossinline = false
                 isNoinline = false
                 isVararg = false
+                if (parameterAnnotations != null) {
+                    this.annotations.addAll(parameterAnnotations)
+                }
             }
             valueParameters += parameter
             symbol = FirPropertyAccessorSymbol()
@@ -579,6 +584,19 @@ fun FirQualifiedAccess.wrapWithSafeCall(receiver: FirExpression, source: FirSour
         this.source = source
     }
 }
+
+fun List<FirAnnotationCall>.filterUseSiteTarget(target: AnnotationUseSiteTarget): List<FirAnnotationCall> =
+    mapNotNull {
+        if (it.useSiteTarget != target) null
+        else buildAnnotationCall {
+            source = it.source?.fakeElement(FirFakeSourceElementKind.FromUseSiteTarget)
+            useSiteTarget = it.useSiteTarget
+            annotationTypeRef = it.annotationTypeRef
+            argumentList = it.argumentList
+            calleeReference = it.calleeReference
+            argumentMapping = it.argumentMapping
+        }
+    }
 
 fun <T> FirCallableDeclaration.initContainingClassAttr(context: Context<T>) {
     containingClassForStaticMemberAttr = currentDispatchReceiverType(context)?.lookupTag ?: return

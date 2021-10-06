@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
@@ -44,7 +45,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.types.ConstantValueKind
-import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -183,8 +183,9 @@ open class RawFirBuilder(
         open fun convertValueParameter(
             valueParameter: KtParameter,
             defaultTypeRef: FirTypeRef? = null,
-            valueParameterDeclaration: ValueParameterDeclaration = ValueParameterDeclaration.OTHER
-        ): FirValueParameter = valueParameter.toFirValueParameter(defaultTypeRef, valueParameterDeclaration)
+            valueParameterDeclaration: ValueParameterDeclaration = ValueParameterDeclaration.OTHER,
+            additionalAnnotations: List<FirAnnotation> = emptyList()
+        ): FirValueParameter = valueParameter.toFirValueParameter(defaultTypeRef, valueParameterDeclaration, additionalAnnotations)
 
         private fun KtTypeReference?.toFirOrImplicitType(): FirTypeRef =
             convertSafe() ?: buildImplicitTypeRef {
@@ -365,6 +366,8 @@ open class RawFirBuilder(
             propertyTypeRef: FirTypeRef,
             propertySymbol: FirPropertySymbol,
             isGetter: Boolean,
+            accessorAnnotationsFromProperty: List<FirAnnotation>,
+            parameterAnnotationsFromProperty: List<FirAnnotation>,
         ): FirPropertyAccessor? {
             val accessorVisibility =
                 if (this?.visibility != null && this.visibility != Visibilities.Unknown) this.visibility else property.visibility
@@ -395,8 +398,11 @@ open class RawFirBuilder(
                         this.isGetter = isGetter
                         this.status = status
                         extractAnnotationsTo(this)
+                        annotations += accessorAnnotationsFromProperty
                         this@RawFirBuilder.context.firFunctionTargets += accessorTarget
-                        extractValueParametersTo(this, propertyTypeRefToUse)
+                        extractValueParametersTo(
+                            this, ValueParameterDeclaration.OTHER, propertyTypeRefToUse, parameterAnnotationsFromProperty
+                        )
                         if (!isGetter && valueParameters.isEmpty()) {
                             valueParameters += buildDefaultSetterValueParameter {
                                 this.source = source.fakeElement(FirFakeSourceElementKind.DefaultAccessor)
@@ -404,6 +410,7 @@ open class RawFirBuilder(
                                 origin = FirDeclarationOrigin.Source
                                 returnTypeRef = propertyTypeRefToUse
                                 symbol = FirValueParameterSymbol(DEFAULT_VALUE_PARAMETER)
+                                annotations += parameterAnnotationsFromProperty
                             }
                         }
                         symbol = FirPropertyAccessorSymbol()
@@ -433,12 +440,14 @@ open class RawFirBuilder(
                             propertyTypeRefToUse,
                             accessorVisibility,
                             propertySymbol,
-                            isGetter
+                            isGetter,
+                            parameterAnnotations = parameterAnnotationsFromProperty
                         )
                         .also {
                             if (this != null) {
                                 it.extractAnnotationsFrom(this)
                             }
+                            it.annotations += accessorAnnotationsFromProperty
                             it.status = status
                             it.initContainingClassAttr()
                         }
@@ -512,8 +521,9 @@ open class RawFirBuilder(
         }
 
         private fun KtParameter.toFirValueParameter(
-            defaultTypeRef: FirTypeRef? = null,
-            valueParameterDeclaration: ValueParameterDeclaration = ValueParameterDeclaration.OTHER
+            defaultTypeRef: FirTypeRef?,
+            valueParameterDeclaration: ValueParameterDeclaration,
+            additionalAnnotations: List<FirAnnotation>
         ): FirValueParameter {
             val name = convertValueParameterName(nameAsSafeName, nameIdentifier?.node?.text, valueParameterDeclaration)
             return buildValueParameter {
@@ -533,7 +543,18 @@ open class RawFirBuilder(
                 isCrossinline = hasModifier(CROSSINLINE_KEYWORD)
                 isNoinline = hasModifier(NOINLINE_KEYWORD)
                 isVararg = isVarArg
-                extractAnnotationsTo(this)
+                val isFromPrimaryConstructor = valueParameterDeclaration == ValueParameterDeclaration.PRIMARY_CONSTRUCTOR
+                for (annotationEntry in annotationEntries) {
+                    annotationEntry.convert<FirAnnotation>().takeIf {
+                        !isFromPrimaryConstructor || it.useSiteTarget == null ||
+                                it.useSiteTarget == CONSTRUCTOR_PARAMETER ||
+                                it.useSiteTarget == RECEIVER ||
+                                it.useSiteTarget == FILE
+                    }?.let {
+                        this.annotations += it
+                    }
+                }
+                annotations += additionalAnnotations
             }
         }
 
@@ -549,6 +570,10 @@ open class RawFirBuilder(
             }
             val propertySource = toFirSourceElement(FirFakeSourceElementKind.PropertyFromParameter)
             val propertyName = nameAsSafeName
+            val parameterAnnotations = mutableListOf<FirAnnotationCall>()
+            for (annotationEntry in annotationEntries) {
+                parameterAnnotations += annotationEntry.convert<FirAnnotationCall>()
+            }
             return buildProperty {
                 source = propertySource
                 moduleData = baseModuleData
@@ -576,7 +601,10 @@ open class RawFirBuilder(
                     type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
                     visibility,
                     symbol,
-                ).also { it.initContainingClassAttr() }
+                ).also { getter ->
+                    getter.initContainingClassAttr()
+                    getter.annotations += parameterAnnotations.filterUseSiteTarget(PROPERTY_GETTER)
+                }
                 setter = if (isMutable) FirDefaultPropertySetter(
                     defaultAccessorSource,
                     baseModuleData,
@@ -584,8 +612,16 @@ open class RawFirBuilder(
                     type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
                     visibility,
                     symbol,
-                ).also { it.initContainingClassAttr() } else null
-                extractAnnotationsTo(this)
+                    parameterAnnotations = parameterAnnotations.filterUseSiteTarget(SETTER_PARAMETER)
+                ).also { setter ->
+                    setter.initContainingClassAttr()
+                    setter.annotations += parameterAnnotations.filterUseSiteTarget(PROPERTY_SETTER)
+                } else null
+                annotations += parameterAnnotations.filter {
+                    it.useSiteTarget == null || it.useSiteTarget == PROPERTY ||
+                            it.useSiteTarget == FIELD ||
+                            it.useSiteTarget == PROPERTY_DELEGATE_FIELD
+                }
 
                 dispatchReceiverType = currentDispatchReceiverType()
             }.apply {
@@ -678,10 +714,14 @@ open class RawFirBuilder(
 
         private fun KtDeclarationWithBody.extractValueParametersTo(
             container: FirFunctionBuilder,
+            valueParameterDeclaration: ValueParameterDeclaration,
             defaultTypeRef: FirTypeRef? = null,
+            additionalAnnotations: List<FirAnnotation> = emptyList(),
         ) {
             for (valueParameter in valueParameters) {
-                container.valueParameters += convertValueParameter(valueParameter, defaultTypeRef)
+                container.valueParameters += convertValueParameter(
+                    valueParameter, defaultTypeRef, valueParameterDeclaration, additionalAnnotations = additionalAnnotations
+                )
             }
         }
 
@@ -852,7 +892,7 @@ open class RawFirBuilder(
                 delegatedConstructor = firDelegatedCall
                 typeParameters += constructorTypeParametersFromConstructedClass(ownerTypeParameters)
                 this@toFirConstructor?.extractAnnotationsTo(this)
-                this@toFirConstructor?.extractValueParametersTo(this)
+                this@toFirConstructor?.extractValueParametersTo(this, ValueParameterDeclaration.PRIMARY_CONSTRUCTOR)
                 this.body = body
             }.apply {
                 containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
@@ -1401,7 +1441,7 @@ open class RawFirBuilder(
                 this@RawFirBuilder.context.firFunctionTargets += target
                 extractAnnotationsTo(this)
                 typeParameters += constructorTypeParametersFromConstructedClass(ownerTypeParameters)
-                extractValueParametersTo(this)
+                extractValueParametersTo(this, ValueParameterDeclaration.OTHER)
 
 
                 val (body, _) = buildFirBody()
@@ -1478,6 +1518,10 @@ open class RawFirBuilder(
 
                 initializer = propertyInitializer
 
+                val propertyAnnotations = mutableListOf<FirAnnotationCall>()
+                for (annotationEntry in annotationEntries) {
+                    propertyAnnotations += annotationEntry.convert<FirAnnotationCall>()
+                }
                 if (this@toFirProperty.isLocal) {
                     isLocal = true
                     symbol = FirPropertySymbol(propertyName)
@@ -1529,13 +1573,17 @@ open class RawFirBuilder(
                             this@toFirProperty,
                             propertyType,
                             propertySymbol = symbol,
-                            isGetter = true
+                            isGetter = true,
+                            accessorAnnotationsFromProperty = propertyAnnotations.filterUseSiteTarget(PROPERTY_GETTER),
+                            parameterAnnotationsFromProperty = emptyList()
                         )
                         setter = this@toFirProperty.setter.toFirPropertyAccessor(
                             this@toFirProperty,
                             propertyType,
                             propertySymbol = symbol,
-                            isGetter = false
+                            isGetter = false,
+                            accessorAnnotationsFromProperty = propertyAnnotations.filterUseSiteTarget(PROPERTY_SETTER),
+                            parameterAnnotationsFromProperty = propertyAnnotations.filterUseSiteTarget(SETTER_PARAMETER)
                         )
 
                         status = FirDeclarationStatusImpl(visibility, modality).apply {
@@ -1575,7 +1623,10 @@ open class RawFirBuilder(
                         }
                     }
                 }
-                extractAnnotationsTo(this)
+                annotations += if (isLocal) propertyAnnotations else propertyAnnotations.filter {
+                    it.useSiteTarget != PROPERTY_GETTER &&
+                            (!isVar || it.useSiteTarget != SETTER_PARAMETER && it.useSiteTarget != PROPERTY_SETTER)
+                }
             }.also {
                 if (!isLocal) {
                     fillDanglingConstraintsTo(it)

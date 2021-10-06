@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -56,11 +58,9 @@ class DeclarationsConverter(
     session: FirSession,
     private val baseScopeProvider: FirScopeProvider,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
-    offset: Int = 0,
+    @set:PrivateForInline override var offset: Int = 0,
     context: Context<LighterASTNode> = Context()
 ) : BaseConverter(session, tree, context) {
-    @set:PrivateForInline
-    override var offset: Int = offset
 
     @OptIn(PrivateForInline::class)
     inline fun <R> withOffset(newOffset: Int, block: () -> R): R {
@@ -99,7 +99,7 @@ class DeclarationsConverter(
                 IMPORT_LIST -> importList += convertImportDirectives(it)
                 CLASS -> firDeclarationList += convertClass(it)
                 FUN -> firDeclarationList += convertFunctionDeclaration(it) as FirDeclaration
-                PROPERTY -> firDeclarationList += convertPropertyDeclaration(it)
+                KtNodeTypes.PROPERTY -> firDeclarationList += convertPropertyDeclaration(it)
                 TYPEALIAS -> firDeclarationList += convertTypeAlias(it)
                 OBJECT_DECLARATION -> firDeclarationList += convertClass(it)
                 SCRIPT -> {
@@ -132,7 +132,7 @@ class DeclarationsConverter(
             when (node.tokenType) {
                 CLASS, OBJECT_DECLARATION -> container += convertClass(node) as FirStatement
                 FUN -> container += convertFunctionDeclaration(node)
-                PROPERTY -> container += convertPropertyDeclaration(node) as FirStatement
+                KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node) as FirStatement
                 DESTRUCTURING_DECLARATION -> container += convertDestructingDeclaration(node).toFirDestructingDeclaration(baseModuleData)
                 TYPEALIAS -> container += convertTypeAlias(node) as FirStatement
                 CLASS_INITIALIZER -> container += convertAnonymousInitializer(node) as FirStatement
@@ -299,7 +299,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseAnnotationOrList
      */
-    fun convertAnnotation(annotationNode: LighterASTNode): List<FirAnnotation> {
+    fun convertAnnotation(annotationNode: LighterASTNode): List<FirAnnotationCall> {
         var annotationTarget: AnnotationUseSiteTarget? = null
         return annotationNode.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
@@ -316,15 +316,15 @@ class DeclarationsConverter(
         lateinit var annotationTarget: AnnotationUseSiteTarget
         annotationUseSiteTarget.forEachChildren {
             when (it.tokenType) {
-                FIELD_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.FIELD
-                FILE_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.FILE
+                FIELD_KEYWORD -> annotationTarget = FIELD
+                FILE_KEYWORD -> annotationTarget = FILE
                 PROPERTY_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY
-                GET_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY_GETTER
-                SET_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY_SETTER
-                RECEIVER_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.RECEIVER
-                PARAM_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
-                SETPARAM_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.SETTER_PARAMETER
-                DELEGATE_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
+                GET_KEYWORD -> annotationTarget = PROPERTY_GETTER
+                SET_KEYWORD -> annotationTarget = PROPERTY_SETTER
+                RECEIVER_KEYWORD -> annotationTarget = RECEIVER
+                PARAM_KEYWORD -> annotationTarget = CONSTRUCTOR_PARAMETER
+                SETPARAM_KEYWORD -> annotationTarget = SETTER_PARAMETER
+                DELEGATE_KEYWORD -> annotationTarget = PROPERTY_DELEGATE_FIELD
             }
         }
 
@@ -338,7 +338,7 @@ class DeclarationsConverter(
     fun convertAnnotationEntry(
         unescapedAnnotation: LighterASTNode,
         defaultAnnotationUseSiteTarget: AnnotationUseSiteTarget? = null
-    ): FirAnnotation {
+    ): FirAnnotationCall {
         var annotationUseSiteTarget: AnnotationUseSiteTarget? = null
         lateinit var constructorCalleePair: Pair<FirTypeRef, List<FirExpression>>
         unescapedAnnotation.forEachChildren {
@@ -766,7 +766,7 @@ class DeclarationsConverter(
                 ENUM_ENTRY -> container += convertEnumEntry(node, classWrapper)
                 CLASS -> container += convertClass(node)
                 FUN -> container += convertFunctionDeclaration(node) as FirDeclaration
-                PROPERTY -> container += convertPropertyDeclaration(node, classWrapper)
+                KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node, classWrapper)
                 TYPEALIAS -> container += convertTypeAlias(node)
                 OBJECT_DECLARATION -> container += convertClass(node)
                 CLASS_INITIALIZER -> container += convertAnonymousInitializer(node) //anonymousInitializer
@@ -797,7 +797,7 @@ class DeclarationsConverter(
         primaryConstructor?.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
-                VALUE_PARAMETER_LIST -> valueParameters += convertValueParameters(it)
+                VALUE_PARAMETER_LIST -> valueParameters += convertValueParameters(it, ValueParameterDeclaration.PRIMARY_CONSTRUCTOR)
             }
         }
 
@@ -1150,6 +1150,7 @@ class DeclarationsConverter(
                             symbol,
                         ).also {
                             it.status = defaultAccessorStatus()
+                            it.annotations += modifiers.annotations.filterUseSiteTarget(PROPERTY_GETTER)
                             it.initContainingClassAttr()
                         }
                     // NOTE: We still need the setter even for a val property so we can report errors (e.g., VAL_WITH_SETTER).
@@ -1160,9 +1161,12 @@ class DeclarationsConverter(
                                 moduleData,
                                 FirDeclarationOrigin.Source,
                                 returnType.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
-                                propertyVisibility, symbol,
+                                propertyVisibility,
+                                symbol,
+                                parameterAnnotations = modifiers.annotations.filterUseSiteTarget(SETTER_PARAMETER)
                             ).also {
                                 it.status = defaultAccessorStatus()
+                                it.annotations += modifiers.annotations.filterUseSiteTarget(PROPERTY_SETTER)
                                 it.initContainingClassAttr()
                             }
                         } else null
@@ -1190,7 +1194,10 @@ class DeclarationsConverter(
                     )
                 }
             }
-            annotations += modifiers.annotations
+            annotations += if (isLocal) modifiers.annotations else modifiers.annotations.filter {
+                it.useSiteTarget != PROPERTY_GETTER &&
+                        (!isVar || it.useSiteTarget != SETTER_PARAMETER && it.useSiteTarget != PROPERTY_SETTER)
+            }
         }.also {
             fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
         }
@@ -1287,7 +1294,9 @@ class DeclarationsConverter(
                 SET_KEYWORD -> isGetter = false
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
                 TYPE_REFERENCE -> returnType = convertType(it)
-                VALUE_PARAMETER_LIST -> firValueParameters = convertSetterParameter(it, propertyTypeRefToUse)
+                VALUE_PARAMETER_LIST -> firValueParameters = convertSetterParameter(
+                    it, propertyTypeRefToUse, propertyModifiers.annotations.filterUseSiteTarget(SETTER_PARAMETER)
+                )
                 CONTRACT_EFFECT_LIST -> outerContractDescription = obtainContractDescription(it)
                 BLOCK -> block = it
                 else -> if (it.isExpression()) expression = it
@@ -1305,6 +1314,10 @@ class DeclarationsConverter(
                 isExternal = propertyModifiers.hasExternal() || modifiers.hasExternal()
             }
         val sourceElement = getterOrSetter.toFirSourceElement()
+        val accessorAdditionalAnnotations = propertyModifiers.annotations.filterUseSiteTarget(
+            if (isGetter) PROPERTY_GETTER
+            else PROPERTY_SETTER
+        )
         if (block == null && expression == null) {
             return FirDefaultPropertyAccessor
                 .createGetterOrSetter(
@@ -1318,6 +1331,7 @@ class DeclarationsConverter(
                 )
                 .also { accessor ->
                     accessor.annotations += modifiers.annotations
+                    accessor.annotations += accessorAdditionalAnnotations
                     accessor.status = status
                     accessor.initContainingClassAttr()
                 }
@@ -1333,6 +1347,7 @@ class DeclarationsConverter(
             this.status = status
             context.firFunctionTargets += target
             annotations += modifiers.annotations
+            annotations += accessorAdditionalAnnotations
 
             if (!isGetter) {
                 valueParameters += firValueParameters
@@ -1398,7 +1413,7 @@ class DeclarationsConverter(
         } else {
             FirDefaultPropertyBackingField(
                 moduleData = baseModuleData,
-                annotations = modifiers.annotations,
+                annotations = mutableListOf(),
                 returnTypeRef = propertyReturnType.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
                 isVar = isVar,
                 propertySymbol = propertySymbol,
@@ -1420,7 +1435,7 @@ class DeclarationsConverter(
         }
     }
 
-    private fun obtainContractDescription(rawContractDescription: LighterASTNode): FirContractDescription? =
+    private fun obtainContractDescription(rawContractDescription: LighterASTNode): FirContractDescription =
         buildRawContractDescription {
             source = rawContractDescription.toFirSourceElement()
             extractRawEffects(rawContractDescription, rawEffects)
@@ -1452,7 +1467,11 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parsePropertyGetterOrSetter
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.toFirValueParameter
      */
-    private fun convertSetterParameter(setterParameter: LighterASTNode, propertyTypeRef: FirTypeRef): FirValueParameter {
+    private fun convertSetterParameter(
+        setterParameter: LighterASTNode,
+        propertyTypeRef: FirTypeRef,
+        additionalAnnotations: List<FirAnnotation>
+    ): FirValueParameter {
         var modifiers = Modifier()
         lateinit var firValueParameter: FirValueParameter
         setterParameter.forEachChildren {
@@ -1473,7 +1492,8 @@ class DeclarationsConverter(
             isCrossinline = modifiers.hasCrossinline() || firValueParameter.isCrossinline
             isNoinline = modifiers.hasNoinline() || firValueParameter.isNoinline
             isVararg = modifiers.hasVararg() || firValueParameter.isVararg
-            annotations += modifiers.annotations + firValueParameter.annotations
+            annotations += firValueParameter.annotations
+            annotations += additionalAnnotations
         }
     }
 
@@ -2081,11 +2101,12 @@ class DeclarationsConverter(
      */
     fun convertValueParameters(
         valueParameters: LighterASTNode,
-        valueParameterDeclaration: ValueParameterDeclaration = ValueParameterDeclaration.OTHER
+        valueParameterDeclaration: ValueParameterDeclaration = ValueParameterDeclaration.OTHER,
+        additionalAnnotations: List<FirAnnotation> = emptyList()
     ): List<ValueParameter> {
         return valueParameters.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
-                VALUE_PARAMETER -> container += convertValueParameter(node, valueParameterDeclaration)
+                VALUE_PARAMETER -> container += convertValueParameter(node, valueParameterDeclaration, additionalAnnotations)
             }
         }
     }
@@ -2095,7 +2116,8 @@ class DeclarationsConverter(
      */
     fun convertValueParameter(
         valueParameter: LighterASTNode,
-        valueParameterDeclaration: ValueParameterDeclaration = ValueParameterDeclaration.OTHER
+        valueParameterDeclaration: ValueParameterDeclaration = ValueParameterDeclaration.OTHER,
+        additionalAnnotations: List<FirAnnotation> = emptyList()
     ): ValueParameter {
         var modifiers = Modifier()
         var isVal = false
@@ -2128,7 +2150,14 @@ class DeclarationsConverter(
             isCrossinline = modifiers.hasCrossinline()
             isNoinline = modifiers.hasNoinline()
             isVararg = modifiers.hasVararg()
-            annotations += modifiers.annotations
+            val isFromPrimaryConstructor = valueParameterDeclaration == ValueParameterDeclaration.PRIMARY_CONSTRUCTOR
+            annotations += modifiers.annotations.filter {
+                !isFromPrimaryConstructor || it.useSiteTarget == null ||
+                        it.useSiteTarget == CONSTRUCTOR_PARAMETER ||
+                        it.useSiteTarget == RECEIVER ||
+                        it.useSiteTarget == FILE
+            }
+            annotations += additionalAnnotations
         }
         return ValueParameter(isVal, isVar, modifiers, firValueParameter, destructuringDeclaration)
     }

@@ -1,15 +1,7 @@
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
-  annotationClassIds: [
-    kotlin/jvm/JvmName
-    kotlin/jvm/JvmName
-  ]
-  annotations: [
-    kotlin/jvm/JvmName(name = getMyI)
-      psi: KtAnnotationEntry
-    kotlin/jvm/JvmName(name = setMyI)
-      psi: KtAnnotationEntry
-  ]
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: /Foo.i
   dispatchType: Foo
   getter: KtFirPropertyGetterSymbol(<getter>)

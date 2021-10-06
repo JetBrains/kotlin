@@ -180,6 +180,9 @@ sealed class FirFakeSourceElementKind : FirSourceElementKind() {
     // for the implicit field storing the delegated object for class delegation
     // with a fake source that refers to the KtExpression that creates the delegate
     object ClassDelegationField : FirFakeSourceElementKind()
+
+    // for annotation moved to another element due to annotation use-site target
+    object FromUseSiteTarget : FirFakeSourceElementKind()
 }
 
 sealed class FirSourceElement {

@@ -46,12 +46,12 @@ annotation class fieldOrPropAnn
 annotation class getSetAndParamAnn
 
 public class B(<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@param:fieldOrPropAnn<!> @fieldOrPropAnn val x: Int,
-               @property:fieldOrPropAnn <!REPEATED_ANNOTATION, REPEATED_ANNOTATION!>@fieldOrPropAnn<!> val y: Int) {
+               @property:fieldOrPropAnn <!REPEATED_ANNOTATION!>@fieldOrPropAnn<!> val y: Int) {
     @fieldOrPropAnn @field:fieldOrPropAnn
     val z: Int = 42
 
     <!WRONG_ANNOTATION_TARGET!>@getSetAndParamAnn<!>
-    <!REPEATED_ANNOTATION!>@setparam:getSetAndParamAnn<!>
+    @setparam:getSetAndParamAnn
     var w: Int
         @getSetAndParamAnn <!REPEATED_ANNOTATION!>@get:getSetAndParamAnn<!> get() = 0
         // See KT-15470: fake INAPPLICABLE_TARGET_ON_PROPERTY

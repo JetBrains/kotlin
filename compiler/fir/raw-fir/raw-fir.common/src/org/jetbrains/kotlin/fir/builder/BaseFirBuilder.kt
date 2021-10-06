@@ -1261,6 +1261,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     enum class ValueParameterDeclaration {
         OTHER,
         LAMBDA,
-        CATCH
+        CATCH,
+        PRIMARY_CONSTRUCTOR,
     }
 }

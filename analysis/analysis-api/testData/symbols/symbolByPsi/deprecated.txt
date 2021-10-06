@@ -36,13 +36,8 @@ KtFirKotlinPropertySymbol:
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
-  annotationClassIds: [
-    kotlin/Deprecated
-  ]
-  annotations: [
-    kotlin/Deprecated(message = don't use getter of i2)
-      psi: KtAnnotationEntry
-  ]
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: /i2
   dispatchType: null
   getter: KtFirPropertyGetterSymbol(<getter>)
@@ -72,13 +67,8 @@ KtFirKotlinPropertySymbol:
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
-  annotationClassIds: [
-    kotlin/Deprecated
-  ]
-  annotations: [
-    kotlin/Deprecated(message = don't use getter of i3)
-      psi: KtAnnotationEntry
-  ]
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: /i3
   dispatchType: null
   getter: KtFirPropertyGetterSymbol(<getter>)
@@ -108,16 +98,8 @@ KtFirKotlinPropertySymbol:
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
-  annotationClassIds: [
-    kotlin/Deprecated
-    kotlin/Deprecated
-  ]
-  annotations: [
-    kotlin/Deprecated(message = don't use getter of i4)
-      psi: KtAnnotationEntry
-    kotlin/Deprecated(message = don't use getter of i4)
-      psi: KtAnnotationEntry
-  ]
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: /i4
   dispatchType: null
   getter: KtFirPropertyGetterSymbol(<getter>)

@@ -77,10 +77,6 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        if (declaration is FirValueParameter && declaration.source?.hasValOrVar() == true) {
-            // This will be checked later as property
-            return
-        }
         val actualTargets = getActualTargetList(declaration)
         val applicableTargets = annotation.getAllowedAnnotationTargets(context.session)
         val useSiteTarget = annotation.useSiteTarget
@@ -114,6 +110,7 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
                 context
             )
         } else {
+            if (declaration is FirProperty && declaration.source?.kind == FirFakeSourceElementKind.PropertyFromParameter) return
             reporter.reportOn(
                 annotation.source,
                 FirErrors.WRONG_ANNOTATION_TARGET,
@@ -130,6 +127,7 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
+        if (annotation.source?.kind == FirFakeSourceElementKind.FromUseSiteTarget) return
         when (target) {
             AnnotationUseSiteTarget.PROPERTY,
             AnnotationUseSiteTarget.PROPERTY_GETTER -> {
@@ -156,7 +154,9 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
                 annotated is FirValueParameter -> {
                     val container = context.containingDeclarations.lastOrNull()
                     if (container is FirConstructor && container.isPrimary) {
-                        reporter.reportOn(annotation.source, FirErrors.REDUNDANT_ANNOTATION_TARGET, target.renderName, context)
+                        if (annotated.source?.hasValOrVar() != true) {
+                            reporter.reportOn(annotation.source, FirErrors.REDUNDANT_ANNOTATION_TARGET, target.renderName, context)
+                        }
                     } else {
                         reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_PARAM_TARGET, context)
                     }

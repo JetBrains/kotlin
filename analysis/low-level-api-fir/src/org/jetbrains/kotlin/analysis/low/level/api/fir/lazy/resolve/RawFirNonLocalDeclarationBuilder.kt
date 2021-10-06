@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 
@@ -98,14 +99,16 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         override fun convertValueParameter(
             valueParameter: KtParameter,
             defaultTypeRef: FirTypeRef?,
-            valueParameterDeclaration: ValueParameterDeclaration
+            valueParameterDeclaration: ValueParameterDeclaration,
+            additionalAnnotations: List<FirAnnotation>
         ): FirValueParameter {
             val replacementParameter = replacementApplier?.tryReplace(valueParameter) ?: valueParameter
             check(replacementParameter is KtParameter)
             return super.convertValueParameter(
                 valueParameter = replacementParameter,
                 defaultTypeRef = defaultTypeRef,
-                valueParameterDeclaration = valueParameterDeclaration
+                valueParameterDeclaration = valueParameterDeclaration,
+                additionalAnnotations = additionalAnnotations
             )
         }
     }

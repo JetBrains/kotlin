@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +ProhibitRepeatedUseSiteTargetAnnotations
+// !LANGUAGE: -ProhibitRepeatedUseSiteTargetAnnotations
 
 // Ann is not repeatable
 annotation class Ann(val x: Int)
@@ -17,6 +17,6 @@ var c = " "
     set(@Ann(20) x) {}
 
 <!REPEATED_ANNOTATION!>@get:Ann(10)<!>
-<!REPEATED_ANNOTATION, REPEATED_ANNOTATION!>@get:Ann(20)<!>
+<!REPEATED_ANNOTATION!>@get:Ann(20)<!>
 val d: String
     @Ann(30) <!REPEATED_ANNOTATION!>@Ann(40)<!> get() = "foo"

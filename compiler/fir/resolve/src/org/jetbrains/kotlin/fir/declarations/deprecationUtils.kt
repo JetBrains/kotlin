@@ -69,8 +69,12 @@ fun getDeprecationsFromAccessors(
     currentVersion: ApiVersion
 ): DeprecationsPerUseSite {
     val perUseSite = buildMap<AnnotationUseSiteTarget, DeprecationInfo> {
-        setter?.getDeprecationInfos(currentVersion)?.all?.let { put(AnnotationUseSiteTarget.PROPERTY_SETTER, it) }
-        getter?.getDeprecationInfos(currentVersion)?.all?.let { put(AnnotationUseSiteTarget.PROPERTY_GETTER, it) }
+        val setterDeprecations = setter?.getDeprecationInfos(currentVersion)
+        setterDeprecations?.all?.let { put(AnnotationUseSiteTarget.PROPERTY_SETTER, it) }
+        setterDeprecations?.bySpecificSite?.let { putAll(it) }
+        val getterDeprecations = getter?.getDeprecationInfos(currentVersion)
+        getterDeprecations?.all?.let { put(AnnotationUseSiteTarget.PROPERTY_GETTER, it) }
+        getterDeprecations?.bySpecificSite?.let { putAll(it) }
     }
     return if (perUseSite.isEmpty()) EmptyDeprecationsPerUseSite else DeprecationsPerUseSite(null, perUseSite)
 }

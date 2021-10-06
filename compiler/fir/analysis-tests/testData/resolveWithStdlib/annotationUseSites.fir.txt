@@ -6,12 +6,12 @@ FILE: test.kt
 
     }
     public final data class KotlinResult : R|kotlin/Any| {
-        @R|KotlinMessage|() public constructor(@PROPERTY_GETTER:R|KotlinMessage|() @R|KotlinMessage|() message: R|kotlin/String| = String()): R|KotlinResult| {
+        @R|KotlinMessage|() public constructor(@R|KotlinMessage|() message: R|kotlin/String| = String()): R|KotlinResult| {
             super<R|kotlin/Any|>()
         }
 
-        @PROPERTY_GETTER:R|KotlinMessage|() @R|KotlinMessage|() public final val message: R|kotlin/String| = R|<local>/message|
-            public get(): R|kotlin/String|
+        @R|KotlinMessage|() public final val message: R|kotlin/String| = R|<local>/message|
+            @PROPERTY_GETTER:R|KotlinMessage|() public get(): R|kotlin/String|
 
         public final operator fun component1(): R|kotlin/String|
 
@@ -28,8 +28,8 @@ FILE: test.kt
                 super<R|kotlin/Any|>()
             }
 
-            @PROPERTY_GETTER:R|kotlin/jvm/JvmName|(name = String(getInstance)) public open val INSTANCE: R|kotlin/String|
-                public get(): R|kotlin/String| {
+            public open val INSTANCE: R|kotlin/String|
+                @PROPERTY_GETTER:R|kotlin/jvm/JvmName|(name = String(getInstance)) public get(): R|kotlin/String| {
                     ^ String(Omega)
                 }
 

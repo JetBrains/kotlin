@@ -89,7 +89,7 @@ class D: AB() {
 }
 
 interface Intf {
-    @get:JvmName("getBar") // no error in IDE
-    @set:JvmName("setBar") // no error in IDE
+    <!INAPPLICABLE_JVM_NAME!>@get:JvmName("getBar")<!> // no error in IDE
+    <!INAPPLICABLE_JVM_NAME!>@set:JvmName("setBar")<!> // no error in IDE
     var foo: Int
 }

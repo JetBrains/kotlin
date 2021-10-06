@@ -93,7 +93,9 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
     private fun cacheElement(element: FirElement, cache: MutableMap<KtElement, FirElement>) {
         val psi = element.source
             ?.takeIf {
-                it.kind == FirFakeSourceElementKind.ReferenceInAtomicQualifiedAccess || it is FirRealPsiSourceElement
+                it is FirRealPsiSourceElement ||
+                        it.kind == FirFakeSourceElementKind.ReferenceInAtomicQualifiedAccess ||
+                        it.kind == FirFakeSourceElementKind.FromUseSiteTarget
             }.psi as? KtElement
             ?: return
         cache(psi, element, cache)

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -63,18 +62,15 @@ object FirOptInUsageBaseChecker {
 
     private fun FirAnnotatedDeclaration.loadExperimentalitiesFromAnnotationTo(
         session: FirSession,
-        result: MutableCollection<Experimentality>,
-        fromSetter: Boolean = false
+        result: MutableCollection<Experimentality>
     ) {
         for (annotation in annotations) {
             val annotationType = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()
-            if (annotation.useSiteTarget != AnnotationUseSiteTarget.PROPERTY_SETTER || fromSetter) {
-                result.addIfNotNull(
-                    annotationType?.lookupTag?.toFirRegularClassSymbol(
-                        session
-                    )?.loadExperimentalityForMarkerAnnotation()
-                )
-            }
+            result.addIfNotNull(
+                annotationType?.lookupTag?.toFirRegularClassSymbol(
+                    session
+                )?.loadExperimentalityForMarkerAnnotation()
+            )
         }
     }
 
@@ -157,7 +153,7 @@ object FirOptInUsageBaseChecker {
             parentClassSymbol?.loadExperimentalities(context, result, visited, fromSetter = false, dispatchReceiverType = null)
         }
 
-        fir.loadExperimentalitiesFromAnnotationTo(session, result, fromSetter)
+        fir.loadExperimentalitiesFromAnnotationTo(session, result)
 
         if (fir is FirTypeAlias) {
             fir.expandedTypeRef.coneType.addExperimentalities(context, result, visited)

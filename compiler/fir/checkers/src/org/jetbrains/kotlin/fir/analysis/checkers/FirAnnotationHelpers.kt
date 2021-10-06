@@ -113,7 +113,7 @@ fun checkRepeatedAnnotation(
 ) {
     val duplicated = useSiteTarget in existingTargetsForAnnotation
             || existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) }
-    if (duplicated && !annotation.isRepeatable(context.session) && annotation.source?.kind !is FirFakeSourceElementKind) {
+    if (duplicated && !annotation.isRepeatable(context.session)) {
         reporter.reportOn(annotation.source, FirErrors.REPEATED_ANNOTATION, context)
     }
 }
