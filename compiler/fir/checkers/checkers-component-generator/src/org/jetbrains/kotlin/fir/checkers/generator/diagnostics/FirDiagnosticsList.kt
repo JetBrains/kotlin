@@ -996,7 +996,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     }
 
     val CONTROL_FLOW by object : DiagnosticGroup("Control flow diagnostics") {
-        val UNINITIALIZED_VARIABLE by error<KtSimpleNameExpression> {
+        val UNINITIALIZED_VARIABLE by error<KtExpression> {
             parameter<FirPropertySymbol>("variable")
         }
         val UNINITIALIZED_PARAMETER by error<KtSimpleNameExpression> {

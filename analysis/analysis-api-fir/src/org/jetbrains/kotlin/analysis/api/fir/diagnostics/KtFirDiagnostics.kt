@@ -1957,7 +1957,7 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val expectedType: KtType
     }
 
-    abstract class UninitializedVariable : KtFirDiagnostic<KtSimpleNameExpression>() {
+    abstract class UninitializedVariable : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = UninitializedVariable::class
         abstract val variable: KtVariableSymbol
     }

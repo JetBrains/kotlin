@@ -2361,7 +2361,7 @@ internal class UninitializedVariableImpl(
     override val variable: KtVariableSymbol,
     override val firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.UninitializedVariable(), KtAbstractFirDiagnostic<KtSimpleNameExpression>
+) : KtFirDiagnostic.UninitializedVariable(), KtAbstractFirDiagnostic<KtExpression>
 
 internal class UninitializedParameterImpl(
     override val parameter: KtSymbol,

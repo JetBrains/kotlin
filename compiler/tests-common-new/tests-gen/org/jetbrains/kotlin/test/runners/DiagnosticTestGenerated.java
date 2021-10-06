@@ -5752,6 +5752,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("UninitializedEnumCompanionVals.kt")
+            public void testUninitializedEnumCompanionVals() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/UninitializedEnumCompanionVals.kt");
+            }
+
+            @Test
             @TestMetadata("uninitializedInLocalDeclarations.kt")
             public void testUninitializedInLocalDeclarations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/uninitializedInLocalDeclarations.kt");

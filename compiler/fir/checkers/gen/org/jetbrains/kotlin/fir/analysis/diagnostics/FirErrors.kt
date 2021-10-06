@@ -543,7 +543,7 @@ object FirErrors {
     val COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH by error3<KtExpression, Name, ConeKotlinType, ConeKotlinType>()
 
     // Control flow diagnostics
-    val UNINITIALIZED_VARIABLE by error1<KtSimpleNameExpression, FirPropertySymbol>()
+    val UNINITIALIZED_VARIABLE by error1<KtExpression, FirPropertySymbol>()
     val UNINITIALIZED_PARAMETER by error1<KtSimpleNameExpression, FirValueParameterSymbol>()
     val UNINITIALIZED_ENUM_ENTRY by error1<KtSimpleNameExpression, FirEnumEntrySymbol>()
     val UNINITIALIZED_ENUM_COMPANION by error1<KtSimpleNameExpression, FirRegularClassSymbol>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
