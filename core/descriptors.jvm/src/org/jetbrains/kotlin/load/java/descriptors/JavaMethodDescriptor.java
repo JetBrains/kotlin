@@ -37,6 +37,8 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
     public static final UserDataKey<ValueParameterDescriptor> ORIGINAL_VALUE_PARAMETER_FOR_EXTENSION_RECEIVER =
             new UserDataKey<ValueParameterDescriptor>() {};
 
+    public static final UserDataKey<Boolean> HAS_ERASED_VALUE_PARAMETERS = new UserDataKey<Boolean>() {};
+
     private enum ParameterNamesStatus {
         NON_STABLE_DECLARED(false, false),
         STABLE_DECLARED(true, false),

@@ -191,9 +191,13 @@ class SignatureEnhancement(
             }
         }
 
+        val ignoreDeclarationNullabilityAnnotations =
+            (isJspecifyEnabledInStrictMode(javaTypeEnhancementState)
+                    || memberContext.components.settings.ignoreNullabilityForErasedValueParameters)
+                    && hasErasedValueParameters(this)
         val valueParameterEnhancements = annotationOwnerForMember.valueParameters.map { p ->
             partsForValueParameter(p, memberContext) { it.valueParameters[p.index].type }
-                .enhance(predefinedEnhancementInfo?.parametersInfo?.getOrNull(p.index))
+                .enhance(predefinedEnhancementInfo?.parametersInfo?.getOrNull(p.index), ignoreDeclarationNullabilityAnnotations)
         }
 
         val returnTypeEnhancement =
@@ -275,8 +279,11 @@ class SignatureEnhancement(
 
         private val isForVarargParameter get() = typeContainer.safeAs<ValueParameterDescriptor>()?.varargElementType != null
 
-        fun enhance(predefined: TypeEnhancementInfo? = null): PartEnhancementResult {
-            val qualifiers = computeIndexedQualifiersForOverride()
+        fun enhance(
+            predefined: TypeEnhancementInfo? = null,
+            ignoreDeclarationNullabilityAnnotations: Boolean = false
+        ): PartEnhancementResult {
+            val qualifiers = computeIndexedQualifiersForOverride(ignoreDeclarationNullabilityAnnotations)
 
             val qualifiersWithPredefined: ((Int) -> JavaTypeQualifiers)? = predefined?.let {
                 { index ->
@@ -486,7 +493,7 @@ class SignatureEnhancement(
                 }
             }
 
-        private fun computeIndexedQualifiersForOverride(): (Int) -> JavaTypeQualifiers {
+        private fun computeIndexedQualifiersForOverride(ignoreDeclarationNullabilityAnnotations: Boolean = false): (Int) -> JavaTypeQualifiers {
 
             val indexedFromSupertypes = fromOverridden.map { it.toIndexed() }
             val indexedThisType = fromOverride.toIndexed()
@@ -508,7 +515,8 @@ class SignatureEnhancement(
 
                 // Only the head type constructor is safely co-variant
                 qualifiers.computeQualifiersForOverride(
-                    verticalSlice, defaultQualifiers, isHeadTypeConstructor, typeParameterForArgument, isFromStarProjection
+                    verticalSlice, defaultQualifiers, isHeadTypeConstructor,
+                    typeParameterForArgument, isFromStarProjection, ignoreDeclarationNullabilityAnnotations
                 )
             }
 
@@ -559,7 +567,8 @@ class SignatureEnhancement(
             defaultQualifiersForType: JavaDefaultQualifiers?,
             isHeadTypeConstructor: Boolean,
             typeParameterForArgument: TypeParameterDescriptor?,
-            isFromStarProjection: Boolean
+            isFromStarProjection: Boolean,
+            ignoreDeclarationNullabilityAnnotations: Boolean = false
         ): JavaTypeQualifiers {
             val superQualifiers = fromSupertypes.map { it.extractQualifiers() }
             val mutabilityFromSupertypes = superQualifiers.mapNotNull { it.mutability }.toSet()
@@ -580,7 +589,10 @@ class SignatureEnhancement(
                 nullabilityFromSupertypes.select(ownNullability, isCovariantPosition)
                     // Vararg value parameters effectively have non-nullable type in Kotlin
                     // and having nullable types in Java may lead to impossibility of overriding them in Kotlin
-                    ?.takeUnless { isForVarargParameter && isHeadTypeConstructor && it == NullabilityQualifier.NULLABLE }
+                    ?.takeUnless {
+                        ignoreDeclarationNullabilityAnnotations ||
+                                (isForVarargParameter && isHeadTypeConstructor && it == NullabilityQualifier.NULLABLE)
+                    }
 
             val mutability =
                 mutabilityFromSupertypes
