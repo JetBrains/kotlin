@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
+abstract class IdePlatformKind {
     abstract fun supportsTargetPlatform(platform: TargetPlatform): Boolean
 
     abstract val defaultPlatform: TargetPlatform
@@ -71,7 +71,7 @@ abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
     }
 }
 
-val TargetPlatform.idePlatformKind: IdePlatformKind<*>
+val TargetPlatform.idePlatformKind: IdePlatformKind
     get() = IdePlatformKind.ALL_KINDS.filter { it.supportsTargetPlatform(this) }.let { list ->
         when {
             list.size == 1 -> list.first()

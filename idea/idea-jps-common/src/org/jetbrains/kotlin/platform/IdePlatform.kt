@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.utils.DescriptionAware
     replaceWith = ReplaceWith("TargetPlatform", "org.jetbrains.kotlin.platform.TargetPlatform"),
     level = DeprecationLevel.ERROR
 )
-abstract class IdePlatform<Kind : IdePlatformKind<Kind>, out Arguments : CommonCompilerArguments> : DescriptionAware {
+abstract class IdePlatform<Kind : IdePlatformKind, out Arguments : CommonCompilerArguments> : DescriptionAware {
     abstract val kind: Kind
     abstract val version: TargetPlatformVersion
 
