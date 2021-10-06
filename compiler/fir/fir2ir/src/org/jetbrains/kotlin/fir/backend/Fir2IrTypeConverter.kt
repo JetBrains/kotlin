@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -112,6 +113,7 @@ class Fir2IrTypeConverter(
                         ?: lookupTag.toSymbol(session)?.toSymbol(session, classifierStorage, typeContext) {
                             typeAnnotations += with(annotationGenerator) { it.toIrAnnotations() }
                         }
+                        ?: (lookupTag as? ConeClassLikeLookupTag)?.let(classifierStorage::getIrClassSymbolForNotFoundClass)
                         ?: return createErrorType()
 
                 when {

@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
@@ -24,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
@@ -464,6 +462,29 @@ class Fir2IrClassifierStorage(
         classCache[firClass] = irClass
         // NB: this is needed to prevent recursions in case of self bounds
         (irClass as Fir2IrLazyClass).prepareTypeParameters()
+
+        return symbol
+    }
+
+    fun getIrClassSymbolForNotFoundClass(classLikeLookupTag: ConeClassLikeLookupTag): IrClassSymbol {
+        val classId = classLikeLookupTag.classId
+        val signature = IdSignature.CommonSignature(
+            classId.packageFqName.asString(), classId.relativeClassName.asString(), 0, 0,
+        )
+
+        val parentId = classId.outerClassId
+        val parentClass = parentId?.let { getIrClassSymbolForNotFoundClass(ConeClassLikeLookupTagImpl(it)) }
+        val irParent = parentClass?.owner ?: declarationStorage.getIrExternalPackageFragment(classId.packageFqName)
+
+        val symbol = Fir2IrClassSymbol(signature)
+        symbolTable.declareClass(signature, { symbol }) {
+            irFactory.createClass(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, symbol, classId.shortClassName,
+                ClassKind.CLASS, DescriptorVisibilities.DEFAULT_VISIBILITY, Modality.FINAL,
+            ).apply {
+                parent = irParent
+            }
+        }
 
         return symbol
     }

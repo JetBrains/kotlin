@@ -210,7 +210,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun getIrExternalPackageFragment(fqName: FqName): IrExternalPackageFragment {
+    fun getIrExternalPackageFragment(fqName: FqName): IrExternalPackageFragment {
         return fragmentCache.getOrPut(fqName) {
             return symbolTable.declareExternalPackageFragment(FirPackageFragmentDescriptor(fqName, moduleDescriptor))
         }
