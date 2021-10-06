@@ -224,7 +224,10 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
             irFunction,
             origin = JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION,
             modality = Modality.OPEN,
-            visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY,
+            visibility = if (irFunction.parentAsClass.isJvmInterface)
+                DescriptorVisibilities.PUBLIC
+            else
+                JavaDescriptorVisibilities.PACKAGE_VISIBILITY,
             isFakeOverride = false,
             copyMetadata = false
         )
@@ -344,7 +347,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                     }
                 }
 
-                val newFunction = if (function.isOverridable && !function.parentAsClass.isJvmInterface) {
+                val newFunction = if (function.isOverridable) {
                     // Create static method for the suspend state machine method so that reentering the method
                     // does not lead to virtual dispatch to the wrong method.
                     createStaticSuspendImpl(view).also { result += it }
