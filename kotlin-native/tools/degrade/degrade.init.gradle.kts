@@ -27,8 +27,8 @@ private class Degrade(val rootProject: Project) {
         val failedScripts = mutableListOf<String>()
 
         rootProject.allprojects {
-            tasks.all {
-                val task = this@all
+            tasks.configureEach {
+                val task = this@configureEach
                 val state = taskToLog.getOrPut(task, ::TaskLog)
                 task.logging.addStandardOutputListener { state.stdout.append(it) }
             }
