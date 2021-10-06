@@ -4019,6 +4019,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("annotationUseSites.kt")
+        public void testAnnotationUseSites() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotationUseSites.kt");
+        }
+
+        @Test
         @TestMetadata("arrayFilterCapturedType.kt")
         public void testArrayFilterCapturedType() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/arrayFilterCapturedType.kt");
