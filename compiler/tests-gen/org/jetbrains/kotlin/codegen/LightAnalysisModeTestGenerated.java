@@ -20618,6 +20618,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/kt42967_all.kt");
                 }
 
+                @TestMetadata("suspendSuperCall.kt")
+                public void ignoreSuspendSuperCall() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/suspendSuperCall.kt");
+                }
+
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
                 }

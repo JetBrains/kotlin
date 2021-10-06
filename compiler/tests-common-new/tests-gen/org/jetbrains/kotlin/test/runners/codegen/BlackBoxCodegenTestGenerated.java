@@ -24688,6 +24688,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/suspendFunction.kt");
                 }
 
+                @Test
+                @TestMetadata("suspendSuperCall.kt")
+                public void testSuspendSuperCall() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/suspendSuperCall.kt");
+                }
+
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/delegationBy")
                 @TestDataPath("$PROJECT_ROOT")
