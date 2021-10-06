@@ -22,7 +22,7 @@ class Case1<AT>(val x: AT) {
 
             when (k) {
                 is AT -> {
-                    k checkType { <!NONE_APPLICABLE!>check<!><AT>() }
+                    k checkType { check<AT>() }
                 }
             }
         }
@@ -31,7 +31,7 @@ class Case1<AT>(val x: AT) {
             val k: AT = x!!
 
             if (k is AT) {
-                k checkType { <!NONE_APPLICABLE!>check<!><AT>() }
+                k checkType { check<AT>() }
             }
         }
     }

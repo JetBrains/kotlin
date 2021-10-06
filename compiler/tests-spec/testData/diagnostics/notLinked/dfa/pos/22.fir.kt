@@ -118,7 +118,7 @@ fun case_11(x: Any?) {
 inline fun <reified T, reified K>case_12(x: Any?) {
     if (x is T) {
         if (<!USELESS_IS_CHECK!>x is T<!> is K) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>
         }
     }
 }
@@ -127,7 +127,7 @@ inline fun <reified T, reified K>case_12(x: Any?) {
 inline fun <reified T, reified K>case_13(x: Any?) {
     if (x is T) {
         if (x is K) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!! & K!!")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T & K")!>x<!>
         }
     }
 }
@@ -136,7 +136,7 @@ inline fun <reified T, reified K>case_13(x: Any?) {
 inline fun <reified T, reified K>case_14(x: Any?) {
     if (x is T) {
         if (<!USELESS_IS_CHECK!>x !is T<!>) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>
         }
     }
 }
@@ -145,7 +145,7 @@ inline fun <reified T, reified K>case_14(x: Any?) {
 inline fun <reified T, reified K>case_15(x: Any?) {
     if (x !is T) {
         if (x is T) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>
         }
     }
 }
