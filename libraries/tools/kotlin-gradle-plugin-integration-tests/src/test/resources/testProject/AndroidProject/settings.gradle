@@ -1,1 +1,27 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+        gradlePluginPortal()
+    }
+
+    plugins {
+        id "org.jetbrains.kotlin.jvm" version "$kotlin_version"
+        id "org.jetbrains.kotlin.kapt" version "$kotlin_version"
+        id "org.jetbrains.kotlin.android" version "$kotlin_version"
+    }
+
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "com.android.application" ||
+                    requested.id.id == "com.android.library" ||
+                    requested.id.id == "com.android.feature" ||
+                    requested.id.id == "com.android.test") {
+                useModule("com.android.tools.build:gradle:$android_tools_version")
+            }
+        }
+    }
+}
+
 include ':Android', ':Lib', ':Test'

@@ -102,7 +102,7 @@ class PureAndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
             gradleBuildScript("Lib").apply {
                 writeText(
                     // Remove the Kotlin plugin from the consumer project to check how pure-AGP Kotlin-less consumers resolve the dependency
-                    readText().checkedReplace("apply plugin: 'kotlin-android'", "//").let { text ->
+                    readText().checkedReplace("id 'org.jetbrains.kotlin.android'", "//").let { text ->
                         // If the test case doesn't assume flavors, remove the flavor setup lines:
                         if (useFlavors) text else text.lines().filter { !it.trim().startsWith("flavor") }.joinToString("\n")
                     } + "\n" + """
