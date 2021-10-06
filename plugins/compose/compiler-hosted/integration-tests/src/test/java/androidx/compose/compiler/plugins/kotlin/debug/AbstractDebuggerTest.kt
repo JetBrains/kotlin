@@ -61,7 +61,7 @@ abstract class AbstractDebuggerTest : AbstractCodegenTest() {
 
     override fun setUp() {
         super.setUp()
-        if (proxyPort == -1) throw error("initialize method must be called on AbstractDebuggerTest")
+        if (proxyPort == -1) error("initialize method must be called on AbstractDebuggerTest")
         createMethodEventsForTestClass()
     }
 

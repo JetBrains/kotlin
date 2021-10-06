@@ -27,6 +27,7 @@ import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import androidx.compose.compiler.plugins.kotlin.irTrace
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
@@ -62,7 +63,6 @@ import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -134,7 +134,6 @@ import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.getPrimitiveArrayElementType
 import org.jetbrains.kotlin.ir.util.isCrossinline
 import org.jetbrains.kotlin.ir.util.isFunction
-import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.isNoinline
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.FqName
@@ -829,10 +828,6 @@ abstract class AbstractComposeLowering(
         val getIteratorFunction = subject.type.classOrNull!!.owner.functions
             .single { it.name.asString() == "iterator" }
 
-        if (getIteratorFunction is IrConstructor) {
-            throw AssertionError("Should be IrConstructorCall: ${getIteratorFunction.descriptor}")
-        }
-
         val iteratorType = iteratorSymbol.typeWith(elementType)
         val nextSymbol = iteratorSymbol.owner.functions
             .single { it.descriptor.name.asString() == "next" }
@@ -1093,7 +1088,7 @@ abstract class AbstractComposeLowering(
     fun IrConstructorCall.isStatic(): Boolean {
         // special case constructors of inline classes as static if their underlying
         // value is static.
-        if (type.isInlined()) {
+        if (type.isInlineClassType()) {
             return stabilityOf(type.unboxInlineClass()).knownStable() &&
                 getValueArgument(0)?.isStatic() == true
         }

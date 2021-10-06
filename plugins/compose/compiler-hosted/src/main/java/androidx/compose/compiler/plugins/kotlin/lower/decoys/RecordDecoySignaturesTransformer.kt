@@ -69,7 +69,7 @@ class RecordDecoySignaturesTransformer(
             symbolRemapper.getReferencedFunction(declaration.getComposableForDecoy())
         val sig =
             signatureBuilder.computeSignature(decoyFunction.owner)
-                as? IdSignature.PublicSignature
+                as? IdSignature.CommonSignature
 
         if (sig != null) {
             decoyAnnotation.putValueArgument(
@@ -91,5 +91,5 @@ class RecordDecoySignaturesTransformer(
     }
 
     private fun IrDeclaration.canBeLinkedAgainst(): Boolean =
-        mangler.run { this@canBeLinkedAgainst.isExported() }
+        mangler.run { this@canBeLinkedAgainst.isExported(false) }
 }

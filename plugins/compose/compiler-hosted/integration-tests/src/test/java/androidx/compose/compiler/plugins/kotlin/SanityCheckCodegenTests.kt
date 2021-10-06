@@ -32,4 +32,29 @@ class SanityCheckCodegenTests : AbstractCodegenTest() {
         """
         )
     }
+
+    // Regression test, because we didn't have a test to catch a breakage introduced by
+    // https://github.com/JetBrains/kotlin/commit/ae608ea67fc589c4472657dc0317e97cb67dd158
+    fun testNothings() = ensureSetup {
+        testCompile(
+            """
+                import androidx.compose.runtime.Composable
+
+                @Composable
+                fun NothingToUnit(): Unit {
+                    return error("")
+                }
+
+                @Composable
+                fun NothingToNothing(): Nothing {
+                    return error("")
+                }
+
+                @Composable
+                fun NullableNothing(condition: Boolean): Nothing? {
+                    return (if(condition) error("") else null)
+                }
+        """
+        )
+    }
 }
