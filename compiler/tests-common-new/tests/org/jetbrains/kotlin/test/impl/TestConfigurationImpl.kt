@@ -53,7 +53,7 @@ class TestConfigurationImpl(
     init {
         testServices.register(KotlinTestInfo::class, testInfo)
         val runtimeClassPathProviders = runtimeClasspathProviders.map { it.invoke(testServices) }
-        testServices.register(RuntimeClasspathProviderHolder::class, RuntimeClasspathProviderHolder(runtimeClassPathProviders))
+        testServices.register(RuntimeClasspathProvidersContainer::class, RuntimeClasspathProvidersContainer(runtimeClassPathProviders))
         additionalServices.forEach { testServices.register(it) }
     }
 

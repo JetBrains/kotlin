@@ -184,7 +184,7 @@ class TestConfigurationBuilder {
         compilerConfigurationProvider = provider
     }
 
-    fun useCustomRuntimeClasspathProvider(provider: Constructor<RuntimeClasspathProvider>) {
+    fun useCustomRuntimeClasspathProviders(vararg provider: Constructor<RuntimeClasspathProvider>) {
         runtimeClasspathProviders += provider
     }
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.services
 
 import org.jetbrains.kotlin.fir.utils.ArrayMapAccessor
 import org.jetbrains.kotlin.fir.utils.ComponentArrayOwner
+import org.jetbrains.kotlin.fir.utils.NullableArrayMapAccessor
 import org.jetbrains.kotlin.fir.utils.TypeRegistry
 import kotlin.reflect.KClass
 
@@ -30,6 +31,10 @@ class TestServices : ComponentArrayOwner<TestService, TestService>(){
     companion object : TypeRegistry<TestService, TestService>() {
         inline fun <reified T : TestService> testServiceAccessor(): ArrayMapAccessor<TestService, TestService, T> {
             return generateAccessor(T::class)
+        }
+
+        inline fun <reified T : TestService> nullableTestServiceAccessor(): NullableArrayMapAccessor<TestService, TestService, T> {
+            return generateNullableAccessor(T::class)
         }
     }
 

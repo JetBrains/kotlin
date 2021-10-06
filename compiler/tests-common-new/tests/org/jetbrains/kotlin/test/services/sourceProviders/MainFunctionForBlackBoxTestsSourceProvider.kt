@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.services.sourceProviders
 
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
@@ -36,8 +37,9 @@ class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices) : A
     }
 
     override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
-        val jdkKind = module.directives.singleOrZeroValue(JDK_KIND) ?: return emptyList()
-        if (!jdkKind.requiresSeparateProcess) return emptyList()
+        if (REQUIRES_SEPARATE_PROCESS !in module.directives && module.directives.singleOrZeroValue(JDK_KIND)?.requiresSeparateProcess != true) {
+            return emptyList()
+        }
 
         val fileWithBox = module.files.firstOrNull { containsBoxMethod(it) } ?: return emptyList()
 

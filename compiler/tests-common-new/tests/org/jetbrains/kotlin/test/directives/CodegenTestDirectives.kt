@@ -164,4 +164,11 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
             Please don't forget to remove this directive after debug session is over 
         """.trimIndent()
     )
+
+    val REQUIRES_SEPARATE_PROCESS by directive(
+        description = """
+            Force run `box` method in separate process even if jdk of current process
+            is same as required jdk for test
+        """.trimIndent()
+    )
 }
