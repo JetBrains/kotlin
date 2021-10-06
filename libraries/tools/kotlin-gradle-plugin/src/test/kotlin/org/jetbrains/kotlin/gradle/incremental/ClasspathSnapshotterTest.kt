@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.incremental
 
-import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.readBytes
+import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.snapshot
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
@@ -72,15 +72,7 @@ class JavaClassesClasspathSnapshotterTest(private val protoBased: Boolean) : Cla
 
     @Before
     fun setUp() {
-        testClassSnapshot = testSourceFile.compile().snapshot()
-    }
-
-    private fun ClassFile.snapshot(): ClassSnapshot {
-        return if (protoBased) {
-            ClassSnapshotter.snapshot(listOf(ClassFileWithContents(this, readBytes()))).single()
-        } else {
-            JavaClassSnapshotter.snapshot(classContents = readBytes(), calledByUnitTests = true)
-        }
+        testClassSnapshot = testSourceFile.compile().snapshot(protoBased)
     }
 
     @Test
@@ -98,7 +90,7 @@ class JavaClassesClasspathSnapshotterTest(private val protoBased: Boolean) : Cla
     @Test
     fun `test ClassSnapshotter extracts ABI info from a class`() {
         // Change public method signature
-        val updatedSnapshot = testSourceFile.changePublicMethodSignature().compile().snapshot()
+        val updatedSnapshot = testSourceFile.changePublicMethodSignature().compile().snapshot(protoBased)
 
         // The snapshot must change
         assertNotEquals(testClassSnapshot.toGson(), updatedSnapshot.toGson())
@@ -107,7 +99,7 @@ class JavaClassesClasspathSnapshotterTest(private val protoBased: Boolean) : Cla
     @Test
     fun `test ClassSnapshotter does not extract non-ABI info from a class`() {
         // Change method implementation
-        val updatedSnapshot = testSourceFile.changeMethodImplementation().compile().snapshot()
+        val updatedSnapshot = testSourceFile.changeMethodImplementation().compile().snapshot(protoBased)
 
         // The snapshot must not change
         assertEquals(testClassSnapshot.toGson(), updatedSnapshot.toGson())
