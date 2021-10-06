@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeAbbreviation
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
@@ -143,6 +144,10 @@ abstract class TypeTranslator(
                     val lowerTypeDescriptor =
                         lowerType.constructor.declarationDescriptor as? ClassDescriptor
                             ?: throw AssertionError("No class descriptor for lower type $lowerType of $approximatedType")
+                    annotations = translateTypeAnnotations(upperType, approximatedType)
+                    if (lowerTypeDescriptor is NotFoundClasses.MockClassDescriptor) {
+                        return IrErrorTypeImpl(approximatedType, annotations, variance)
+                    }
                     classifier = symbolTable.referenceClass(lowerTypeDescriptor)
                     arguments = when {
                         approximatedType is RawType ->
@@ -152,7 +157,7 @@ abstract class TypeTranslator(
                         else ->
                             translateTypeArguments(upperType.arguments)
                     }
-                    annotations = translateTypeAnnotations(upperType, approximatedType)
+
                 }
 
                 else ->

@@ -23140,6 +23140,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/javaInterop/superCallOfPrintStackTrace.kt");
         }
 
+        @Test
+        @TestMetadata("unresolvedJavaClassInDifferentFile.kt")
+        public void testUnresolvedJavaClassInDifferentFile() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/unresolvedJavaClassInDifferentFile.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/box/javaInterop/generics")
         @TestDataPath("$PROJECT_ROOT")

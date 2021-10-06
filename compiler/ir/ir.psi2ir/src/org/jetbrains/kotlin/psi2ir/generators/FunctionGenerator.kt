@@ -18,6 +18,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
+import org.jetbrains.kotlin.ir.types.IrErrorType
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.name.Name
@@ -28,7 +32,6 @@ import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
 import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
@@ -67,10 +70,34 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtPureElement): IrSimpleFunction? =
         functionDescriptor.takeIf { it.visibility != DescriptorVisibilities.INVISIBLE_FAKE }
             ?.let {
-                declareSimpleFunctionInner(it, ktElement, IrDeclarationOrigin.FAKE_OVERRIDE).buildWithScope { irFunction ->
-                    generateFunctionParameterDeclarationsAndReturnType(irFunction, ktElement, null)
-                }
+                declareSimpleFunctionInner(it, ktElement, IrDeclarationOrigin.FAKE_OVERRIDE)
+                    .buildWithScope { irFunction ->
+                        generateFunctionParameterDeclarationsAndReturnType(irFunction, ktElement, null)
+                    }
+                    .takeUnless { irFunction ->
+                        irFunction.containsErrorTypesInSignature()
+                    }
             }
+
+    private fun IrSimpleFunction.containsErrorTypesInSignature(): Boolean {
+        if (this.typeParameters.any { it.superTypes.any { it.containsErrorType() } }) return true
+        this.dispatchReceiverParameter?.let {
+            if (it.type.containsErrorType()) return true
+        }
+        this.extensionReceiverParameter?.let {
+            if (it.type.containsErrorType()) return true
+        }
+        if (this.valueParameters.any { it.type.containsErrorType() }) return true
+        if (this.returnType.containsErrorType()) return true
+        return false
+    }
+
+    private fun IrType.containsErrorType(): Boolean =
+        when (this) {
+            is IrErrorType -> true
+            is IrSimpleType -> arguments.any { it is IrTypeProjection && it.type.containsErrorType() }
+            else -> false
+        }
 
     private inline fun declareSimpleFunction(
         ktFunction: KtFunction,
@@ -370,7 +397,12 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         return call.resultingDescriptor.name.asString()
     }
 
-    private fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement, name: Name? = null) =
+    private fun declareParameter(
+        descriptor: ParameterDescriptor,
+        ktElement: KtPureElement?,
+        irOwnerElement: IrElement,
+        name: Name? = null
+    ) =
         context.symbolTable.declareValueParameter(
             ktElement?.pureStartOffset ?: irOwnerElement.startOffset,
             ktElement?.pureEndOffset ?: irOwnerElement.endOffset,
