@@ -21,13 +21,13 @@ fun <V> SLRUMap<V>.getOrPut(value: V, l: List<V>) {
     takeV(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>value<!>)
     takeVList(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>l<!>)
 
-    takeE(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>value<!>)
-    takeEList(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>l<!>)
-    takeE(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>id(value)<!>)
+    takeE(<!TYPE_MISMATCH!>value<!>)
+    takeEList(<!TYPE_MISMATCH!>l<!>)
+    takeE(<!TYPE_MISMATCH!>id(value)<!>)
 
     if (value != null) {
         takeV(value)
-        takeE(value)
+        takeE(<!DEBUG_INFO_SMARTCAST!>value<!>)
         takeE(id(value))
     }
 }
