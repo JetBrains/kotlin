@@ -123,22 +123,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
             }
         }
 
-        val nativeInvokeArity = getKotlinFunctionInvokeArity(call)
-        if (nativeInvokeArity != null) {
-            return irCall(call, symbols.functionNInvokeMethods[nativeInvokeArity])
-        }
-
         return call
-    }
-
-    private fun getKotlinFunctionInvokeArity(call: IrCall): Int? {
-        val simpleFunction = call.symbol.owner as? IrSimpleFunction ?: return null
-        val receiverType = simpleFunction.dispatchReceiverParameter?.type ?: return null
-        if (simpleFunction.isSuspend) return null
-        if (simpleFunction.name == OperatorNameConventions.INVOKE && receiverType.isFunction()) {
-            return simpleFunction.valueParameters.size
-        }
-        return null
     }
 
     override fun lower(irFile: IrFile) {

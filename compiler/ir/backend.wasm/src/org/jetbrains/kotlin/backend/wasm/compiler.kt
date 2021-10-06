@@ -32,7 +32,12 @@ fun compileWasm(
 ): WasmCompilerResult {
     val mainModule = depsDescriptors.mainModule
     val configuration = depsDescriptors.compilerConfiguration
-    val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) = loadIr(depsDescriptors, irFactory, verifySignatures = false)
+    val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) = loadIr(
+        depsDescriptors,
+        irFactory,
+        verifySignatures = false,
+        loadFunctionInterfacesIntoStdlib = true,
+    )
 
     val allModules = when (mainModule) {
         is MainModule.SourceFiles -> dependencyModules + listOf(moduleFragment)

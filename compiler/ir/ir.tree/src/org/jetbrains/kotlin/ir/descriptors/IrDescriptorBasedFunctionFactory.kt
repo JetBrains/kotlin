@@ -83,8 +83,12 @@ abstract class IrAbstractDescriptorBasedFunctionFactory {
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrDescriptorBasedFunctionFactory(
-    private val irBuiltIns: IrBuiltInsOverDescriptors, private val symbolTable: SymbolTable
+    private val irBuiltIns: IrBuiltInsOverDescriptors,
+    private val symbolTable: SymbolTable,
+    getPackageFragment: ((PackageFragmentDescriptor) -> IrPackageFragment)? = null
 ) : IrAbstractDescriptorBasedFunctionFactory() {
+    val getPackageFragment =
+        getPackageFragment ?: symbolTable::declareExternalPackageFragmentIfNotExists
 
     // TODO: Lazieness
 
@@ -230,18 +234,18 @@ class IrDescriptorBasedFunctionFactory(
 
     private val kotlinPackageFragment: IrPackageFragment by lazy {
         irBuiltIns.builtIns.getFunction(0).let {
-            symbolTable.declareExternalPackageFragmentIfNotExists(it.containingDeclaration as PackageFragmentDescriptor)
+            getPackageFragment(it.containingDeclaration as PackageFragmentDescriptor)
         }
     }
     private val kotlinCoroutinesPackageFragment: IrPackageFragment by lazy {
         irBuiltIns.builtIns.getSuspendFunction(0).let {
-            symbolTable.declareExternalPackageFragmentIfNotExists(it.containingDeclaration as PackageFragmentDescriptor)
+            getPackageFragment(it.containingDeclaration as PackageFragmentDescriptor)
         }
     }
 
     private val kotlinReflectPackageFragment: IrPackageFragment by lazy {
         irBuiltIns.kPropertyClass.descriptor.let {
-            symbolTable.declareExternalPackageFragmentIfNotExists(it.containingDeclaration as PackageFragmentDescriptor)
+            getPackageFragment(it.containingDeclaration as PackageFragmentDescriptor)
         }
     }
 

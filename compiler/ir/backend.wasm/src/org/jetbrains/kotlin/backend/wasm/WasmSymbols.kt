@@ -168,18 +168,6 @@ class WasmSymbols(
 
     val kTypeStub = getInternalFunction("kTypeStub")
 
-    private val functionNInterfaces = (0..22).map { arity ->
-        getIrClass(FqName("kotlin.wasm.internal.Function$arity"))
-    }
-
-    val functionNInvokeMethods by lazy {
-        functionNInterfaces.map { interfaceSymbol ->
-            interfaceSymbol.owner.declarations.filterIsInstance<IrSimpleFunction>().single { method ->
-                method.name == OperatorNameConventions.INVOKE
-            }.symbol
-        }
-    }
-
     val arraysCopyInto = findFunctions(collectionsPackage.memberScope, Name.identifier("copyInto"))
         .map { symbolTable.referenceSimpleFunction(it) }
 
@@ -207,9 +195,6 @@ class WasmSymbols(
                 ?: error("Expected extension receiver for ${it.owner.render()}")
         }
     }
-
-    override fun functionN(n: Int): IrClassSymbol =
-        functionNInterfaces[n]
 
     private fun findClass(memberScope: MemberScope, name: Name): ClassDescriptor =
         memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: BIG_ARITY
 // !LANGUAGE: +NewInference
 
 fun foo(

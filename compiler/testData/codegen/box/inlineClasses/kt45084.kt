@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 
 inline class Z(val value: Long)
 

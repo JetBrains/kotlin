@@ -180,12 +180,6 @@ class WasmModuleCodegenContextImpl(
 
 
     override fun referenceInterfaceId(irInterface: IrClassSymbol): WasmSymbol<Int> {
-        // HACK to substitute kotlin.Function5 with kotlin.wasm.internal.Function5
-        val defaultType = irInterface.defaultType
-        if (defaultType.isFunction()) {
-            val n = irInterface.owner.typeParameters.size - 1
-            return wasmFragment.interfaceId.reference(backendContext.wasmSymbols.functionN(n))
-        }
         return wasmFragment.interfaceId.reference(irInterface)
     }
 

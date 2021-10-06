@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -38,13 +39,12 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
+import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.noUnboundLeft
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
@@ -256,7 +256,8 @@ fun loadIr(
     depsDescriptors: ModulesStructure,
     irFactory: IrFactory,
     verifySignatures: Boolean,
-    filesToLoad: Set<String>? = null
+    filesToLoad: Set<String>? = null,
+    loadFunctionInterfacesIntoStdlib: Boolean = false,
 ): IrModuleInfo {
     val project = depsDescriptors.project
     val mainModule = depsDescriptors.mainModule
@@ -268,11 +269,26 @@ fun loadIr(
     val signaturer = IdSignatureDescriptor(JsManglerDesc)
     val symbolTable = SymbolTable(signaturer, irFactory)
 
+    lateinit var stdlibModule: IrModuleFragment
+
+    val createFunctionFactoryCallback =
+        if (loadFunctionInterfacesIntoStdlib) {
+            { packageFragmentDescriptor: PackageFragmentDescriptor ->
+                IrFileImpl(NaiveSourceBasedFileEntryImpl("[K][Suspend]Functions"), packageFragmentDescriptor, stdlibModule)
+                    .also { stdlibModule.files += it }
+            }
+        } else {
+            null
+        }
+
     when (mainModule) {
         is MainModule.SourceFiles -> {
             assert(filesToLoad == null)
             val (psi2IrContext, _) = preparePsi2Ir(depsDescriptors, errorPolicy, symbolTable)
             val irBuiltIns = psi2IrContext.irBuiltIns
+            (irBuiltIns as IrBuiltInsOverDescriptors).functionFactory =
+                IrDescriptorBasedFunctionFactory(irBuiltIns, symbolTable, createFunctionFactoryCallback)
+
             val feContext = psi2IrContext.run {
                 JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
             }
@@ -301,6 +317,7 @@ fun loadIr(
                     }
                 }
             }
+            stdlibModule = deserializedModuleFragments.first()
 
             val moduleFragment = psi2IrContext.generateModuleFragmentWithPlugins(project, mainModule.files, irLinker, messageLogger)
             symbolTable.noUnboundLeft("Unbound symbols left after linker")
@@ -332,6 +349,7 @@ fun loadIr(
             val typeTranslator =
                 TypeTranslatorImpl(symbolTable, depsDescriptors.compilerConfiguration.languageVersionSettings, moduleDescriptor)
             val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
+            irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(irBuiltIns, symbolTable, createFunctionFactoryCallback)
 
             val loweredIcData = if (!depsDescriptors.icUseStdlibCache && !depsDescriptors.icUseStdlibCache) emptyMap() else {
                 val result = mutableMapOf<ModuleDescriptor, SerializedIcData>()
@@ -390,6 +408,7 @@ fun loadIr(
                         }
                     }
                 }
+            stdlibModule = deserializedModuleFragments.first()
 
             val moduleFragment = deserializedModuleFragments.last()
 
