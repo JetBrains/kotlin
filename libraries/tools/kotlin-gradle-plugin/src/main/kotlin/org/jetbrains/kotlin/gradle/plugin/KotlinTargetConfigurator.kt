@@ -71,12 +71,6 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
     protected val createTestCompilation: Boolean
 ) : KotlinTargetConfigurator<KotlinTargetType> {
 
-    private fun Project.registerOutputsForStaleOutputCleanup(kotlinCompilation: KotlinCompilation<*>) {
-        tasks.withType<Delete>().named(LifecycleBasePlugin.CLEAN_TASK_NAME).configure { cleanTask ->
-            cleanTask.delete(kotlinCompilation.output.allOutputs)
-        }
-    }
-
     protected open fun setupCompilationDependencyFiles(compilation: KotlinCompilation<KotlinCommonOptions>) {
         val project = compilation.target.project
 
@@ -91,7 +85,6 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         val main = target.compilations.create(KotlinCompilation.MAIN_COMPILATION_NAME)
 
         target.compilations.all {
-            project.registerOutputsForStaleOutputCleanup(it)
             setupCompilationDependencyFiles(it)
         }
 
