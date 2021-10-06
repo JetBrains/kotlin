@@ -312,7 +312,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion
         ) {
             //language=Groovy
-            rootBuildGradle.append(
+            buildGradle.append(
                 """
                 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
                 
@@ -464,7 +464,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion
         ) {
             //language=groovy
-            rootBuildGradle.append(
+            buildGradle.append(
                 """
                 
                 java {
@@ -498,7 +498,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             useToolchainToCompile(11)
 
             //language=groovy
-            rootBuildGradle.append(
+            buildGradle.append(
                 """
                 
                 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -568,7 +568,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             buildJdk = getJdk11().javaHome
         ) {
             //language=Groovy
-            rootBuildGradle.append(
+            buildGradle.append(
                 """
                 tasks.named("compileKotlin") {
                     doLast {
@@ -659,7 +659,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         jvmTarget: String
     ) {
         //language=Groovy
-        rootBuildGradle.append(
+        buildGradle.append(
             """
             import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
             
@@ -676,7 +676,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         target: JavaVersion
     ) {
         //language=Groovy
-        rootBuildGradle.append(
+        buildGradle.append(
             """
 
             tasks.withType(JavaCompile.class).configureEach {
@@ -693,7 +693,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         jdkVersion: JavaVersion
     ) {
         //language=Groovy
-        rootBuildGradle.append(
+        buildGradle.append(
             """
             import org.gradle.api.JavaVersion
             import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
@@ -714,7 +714,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         jdkVersion: Int
     ) {
         //language=Groovy
-        rootBuildGradle.append(
+        buildGradle.append(
             """
             import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
             
@@ -742,7 +742,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         jdkVersion: Int
     ) {
         //language=Groovy
-        rootBuildGradle.append(
+        buildGradle.append(
             """
             import org.gradle.api.plugins.JavaPluginExtension
             import org.gradle.jvm.toolchain.JavaLanguageVersion

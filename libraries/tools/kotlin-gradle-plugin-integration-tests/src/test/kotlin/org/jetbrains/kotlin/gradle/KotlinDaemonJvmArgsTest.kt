@@ -12,7 +12,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 
 @DaemonsGradlePluginTests
 @DisplayName("Kotlin daemon JVM args")
@@ -92,7 +91,7 @@ class KotlinDaemonJvmArgsTest : KGPBaseTest() {
             )
 
             //language=Groovy
-            rootBuildGradle.append(
+            buildGradle.append(
                 """
                 
                 kotlin {
@@ -125,7 +124,7 @@ class KotlinDaemonJvmArgsTest : KGPBaseTest() {
             )
 
             //language=Groovy
-            rootBuildGradle.append(
+            buildGradle.append(
                 """
                 
                 import org.jetbrains.kotlin.gradle.tasks.CompileUsingKotlinDaemon
@@ -162,7 +161,7 @@ class KotlinDaemonJvmArgsTest : KGPBaseTest() {
             )
 
             //language=Groovy
-            rootBuildGradle.append(
+            buildGradle.append(
                 """
                 
                 kotlin {

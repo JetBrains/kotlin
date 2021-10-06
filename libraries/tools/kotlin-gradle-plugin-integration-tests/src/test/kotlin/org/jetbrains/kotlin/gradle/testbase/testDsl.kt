@@ -57,8 +57,8 @@ fun KGPBaseTest.project(
     val testProject = TestProject(
         gradleRunner,
         projectName,
-        buildOptions,
         projectPath,
+        buildOptions,
         gradleVersion,
         enableGradleDebug,
         forceOutput,
@@ -151,20 +151,15 @@ fun TestProject.enableLocalBuildCache(
     )
 }
 
-class TestProject(
-    val gradleRunner: GradleRunner,
+open class GradleProject(
     val projectName: String,
-    val buildOptions: KGPBaseTest.BuildOptions,
-    val projectPath: Path,
-    val gradleVersion: GradleVersion,
-    val enableGradleDebug: Boolean,
-    val forceOutput: Boolean,
-    val enableBuildScan: Boolean
+    val projectPath: Path
 ) {
-    val rootBuildGradle: Path get() = projectPath.resolve("build.gradle")
+    val buildGradle: Path get() = projectPath.resolve("build.gradle")
+    val buildGradleKts: Path get() = projectPath.resolve("build.gradle.kts")
     val settingsGradle: Path get() = projectPath.resolve("settings.gradle")
+    val settingsGradleKts: Path get() = projectPath.resolve("settings.gradle.kts")
     val gradleProperties: Path get() = projectPath.resolve("gradle.properties")
-    val localProperties: Path get() = projectPath.resolve("local.properties")
 
     fun classesDir(
         sourceSet: String = "main",
@@ -174,6 +169,27 @@ class TestProject(
     fun kotlinClassesDir(
         sourceSet: String = "main"
     ): Path = classesDir(sourceSet, language = "kotlin")
+
+    fun kotlinSourcesDir(
+        sourceSet: String = "main"
+    ): Path = projectPath.resolve("src/$sourceSet/kotlin")
+
+    fun javaSourcesDir(
+        sourceSet: String = "main"
+    ): Path = projectPath.resolve("src/$sourceSet/java")
+}
+
+class TestProject(
+    val gradleRunner: GradleRunner,
+    projectName: String,
+    projectPath: Path,
+    val buildOptions: KGPBaseTest.BuildOptions,
+    val gradleVersion: GradleVersion,
+    val enableGradleDebug: Boolean,
+    val forceOutput: Boolean,
+    val enableBuildScan: Boolean
+) : GradleProject(projectName, projectPath) {
+    fun subProject(name: String) = GradleProject(name, projectPath.resolve(name))
 }
 
 private fun commonBuildSetup(
@@ -264,9 +280,8 @@ private fun Path.addDefaultBuildFiles() {
     }
 }
 
-@OptIn(ExperimentalPathApi::class)
 private fun TestProject.agreeToBuildScanService() {
-    settingsGradle.appendText(
+    settingsGradle.append(
         """
             
         gradleEnterprise {

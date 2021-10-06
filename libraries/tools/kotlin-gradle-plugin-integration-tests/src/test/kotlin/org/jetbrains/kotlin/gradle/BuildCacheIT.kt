@@ -77,7 +77,7 @@ class BuildCacheIT : KGPBaseTest() {
                 assertTasksPackedToCache(":compileKotlin")
             }
 
-            val sourceFile = projectPath.resolve("src/main/kotlin/helloWorld.kt")
+            val sourceFile = kotlinSourcesDir().resolve("helloWorld.kt")
             val originalSource: String = sourceFile.readText()
             val modifiedSource: String = originalSource.replace(" and ", " + ")
             sourceFile.writeText(modifiedSource)
@@ -187,7 +187,7 @@ class BuildCacheIT : KGPBaseTest() {
         }
 
         // Change the return type of foo() from Int to String in foo.kt, and check that fooUsage.kt is recompiled as well:
-        val fooKtSourceFile = secondProject.projectPath.resolve("src/main/kotlin/foo.kt")
+        val fooKtSourceFile = secondProject.kotlinSourcesDir().resolve("foo.kt")
         fooKtSourceFile.modify { it.replace("Int = 1", "String = \"abc\"") }
         secondProject.build("assemble") {
             assertIncrementalCompilation(modifiedFiles = setOf(fooKtSourceFile))
@@ -224,7 +224,7 @@ class BuildCacheIT : KGPBaseTest() {
         }
 
         // Make changes to annotated class and check kapt tasks are re-executed
-        val appClassKtSourceFile = secondProject.projectPath.resolve("app/src/main/kotlin/AppClass.kt")
+        val appClassKtSourceFile = secondProject.subProject("app").kotlinSourcesDir().resolve("AppClass.kt")
         appClassKtSourceFile.modify {
             it.replace("val testVal: String = \"text\"", "val testVal: Int = 1")
         }

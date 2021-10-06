@@ -8,12 +8,9 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.appendText
 
 @DisplayName("Tasks configuration avoidance")
 @SimpleGradlePluginTests
-@OptIn(ExperimentalPathApi::class)
 class ConfigurationAvoidanceIT : KGPBaseTest() {
 
     @DisplayName("Unrelated tasks are not configured")
@@ -24,7 +21,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
             val expensivelyConfiguredTaskName = "expensivelyConfiguredTask"
 
             @Suppress("GroovyAssignabilityCheck")
-            rootBuildGradle.appendText(
+            buildGradle.append(
                 //language=Groovy
                 """
                     
@@ -48,10 +45,9 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         ) {
 
             listOf("Android", "Test").forEach { subproject ->
-                projectPath
-                    .resolve(subproject)
-                    .resolve("build.gradle")
-                    .appendText(
+                subProject(subproject)
+                    .buildGradle
+                    .append(
                         //language=Groovy
                         """
                         
@@ -66,10 +62,9 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
                     )
             }
 
-            projectPath
-                .resolve("Lib")
-                .resolve("build.gradle")
-                .appendText(
+            subProject("Lib")
+                .buildGradle
+                .append(
                     //language=Groovy
                     """
                     

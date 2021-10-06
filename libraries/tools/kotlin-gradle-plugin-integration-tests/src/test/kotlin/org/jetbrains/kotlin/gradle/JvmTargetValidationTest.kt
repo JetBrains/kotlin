@@ -131,7 +131,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
 
             JavaVersion.VERSION_1_8
             //language=Groovy
-            rootBuildGradle.append(
+            buildGradle.append(
                 """
                 
                 tasks
@@ -168,7 +168,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             gradleVersion = gradleVersion
         ) {
             //language=groovy
-            rootBuildGradle.append(
+            buildGradle.append(
                 """
                 
                 java {
@@ -208,7 +208,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 kotlin.jvm.target.validation.mode = error
                 """.trimIndent()
             )
-            projectPath.resolve("src/main/kotlin").toFile().deleteRecursively()
+            kotlinSourcesDir().toFile().deleteRecursively()
 
             buildAndFail("assemble") {
                 assertOutputContains(
@@ -269,7 +269,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 )
             }
 
-            projectPath.resolve("src/main/java/demo").run {
+            javaSourcesDir().resolve("demo").run {
                 createDirectories()
                 resolve("HelloWorld.java").writeText(
                     //language=Java
@@ -297,7 +297,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
         target: JavaVersion
     ) {
         //language=Groovy
-        rootBuildGradle.append(
+        buildGradle.append(
             """
 
             tasks.withType(JavaCompile.class).configureEach {
@@ -313,7 +313,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
         jdkVersion: Int
     ) {
         //language=Groovy
-        rootBuildGradle.append(
+        buildGradle.append(
             """
             import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
             

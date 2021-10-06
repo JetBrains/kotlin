@@ -25,7 +25,7 @@ class JavaUpToDateIT : KGPBaseTest() {
                 )
             }
 
-            projectPath.resolve("src/main/kotlin/foo/MainKotlinClass.kt").modify {
+            kotlinSourcesDir().resolve("foo/MainKotlinClass.kt").modify {
                 it.replace(
                     "fun number(): Int = 0",
                     "fun number(): Int = 1"
@@ -52,7 +52,7 @@ class JavaUpToDateIT : KGPBaseTest() {
                 )
             }
 
-            projectPath.resolve("src/main/kotlin/foo/MainKotlinClass.kt").modify { "\n$it" }
+            kotlinSourcesDir().resolve("foo/MainKotlinClass.kt").modify { "\n$it" }
 
             build("build") {
                 assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
@@ -74,7 +74,7 @@ class JavaUpToDateIT : KGPBaseTest() {
                 )
             }
 
-            projectPath.resolve("src/main/kotlin/foo/MainKotlinClass.kt").modify {
+            kotlinSourcesDir().resolve("foo/MainKotlinClass.kt").modify {
                 it.replace(
                     "private fun privateMethod() = 0",
                     "private fun privateMethod() = \"0\""

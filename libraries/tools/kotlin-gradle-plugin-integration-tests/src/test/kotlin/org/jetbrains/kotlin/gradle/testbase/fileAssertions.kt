@@ -11,7 +11,7 @@ import java.nio.file.Path
 /**
  * Asserts file under [file] path exists and is a regular file.
  */
-fun TestProject.assertFileExists(
+fun GradleProject.assertFileExists(
     file: Path
 ) {
     assert(Files.exists(file)) {
@@ -26,7 +26,7 @@ fun TestProject.assertFileExists(
 /**
  * Asserts file under [pathToFile] relative to the test project exists and is a regular file.
  */
-fun TestProject.assertFileInProjectExists(
+fun GradleProject.assertFileInProjectExists(
     pathToFile: String
 ) {
     assertFileExists(projectPath.resolve(pathToFile))
@@ -35,7 +35,7 @@ fun TestProject.assertFileInProjectExists(
 /**
  * Asserts file under [pathToFile] relative to the test project does not exist.
  */
-fun TestProject.assertFileNotExists(
+fun GradleProject.assertFileNotExists(
     pathToFile: String
 ) {
     val filePath = projectPath.resolve(pathToFile)
@@ -47,7 +47,7 @@ fun TestProject.assertFileNotExists(
 /**
  * Asserts directory under [pathToDir] relative to the test project exists and is a directory.
  */
-fun TestProject.assertDirectoryExists(
+fun GradleProject.assertDirectoryExists(
     pathToDir: String
 ) {
     val dirPath = projectPath.resolve(pathToDir)

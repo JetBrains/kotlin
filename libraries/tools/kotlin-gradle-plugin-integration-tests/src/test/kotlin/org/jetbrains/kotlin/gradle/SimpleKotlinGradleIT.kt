@@ -121,7 +121,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         project("kotlinProject", gradleVersion) {
             // Change the build directory in the end of the build script:
             val customBuildDirName = "customBuild"
-            appendToBuildFile(
+            buildGradle.append(
                 "buildDir = '$customBuildDirName'"
             )
 
