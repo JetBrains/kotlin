@@ -481,6 +481,7 @@ class LazyJavaClassMemberScope(
                 )
                 setSignatureChange()
                 setPreserveSourceElement()
+                putUserData(JavaMethodDescriptor.HAS_ERASED_VALUE_PARAMETERS, true)
             }.build()
         }
     }

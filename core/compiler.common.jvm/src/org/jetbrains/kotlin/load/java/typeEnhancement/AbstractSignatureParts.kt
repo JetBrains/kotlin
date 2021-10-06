@@ -161,7 +161,9 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         }
 
     fun KotlinTypeMarker.computeIndexedQualifiers(
-        overrides: Iterable<KotlinTypeMarker>, predefined: TypeEnhancementInfo?
+        overrides: Iterable<KotlinTypeMarker>,
+        predefined: TypeEnhancementInfo?,
+        ignoreDeclarationNullabilityAnnotations: Boolean = false
     ): IndexedJavaTypeQualifiers {
         val indexedThisType = toIndexed()
         val indexedFromSupertypes = overrides.map { it.toIndexed() }
@@ -178,7 +180,12 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         val computedResult = Array(treeSize) { index ->
             val qualifiers = indexedThisType[index].extractQualifiersFromAnnotations()
             val superQualifiers = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type?.extractQualifiers() }
-            qualifiers.computeQualifiersForOverride(superQualifiers, index == 0 && isCovariant, index == 0 && containerIsVarargParameter)
+            qualifiers.computeQualifiersForOverride(
+                superQualifiers,
+                index == 0 && isCovariant,
+                index == 0 && containerIsVarargParameter,
+                ignoreDeclarationNullabilityAnnotations
+            )
         }
         return { index -> predefined?.map?.get(index) ?: computedResult.getOrElse(index) { JavaTypeQualifiers.NONE } }
     }
