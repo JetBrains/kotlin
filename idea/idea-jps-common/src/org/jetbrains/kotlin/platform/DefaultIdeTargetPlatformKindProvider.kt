@@ -29,6 +29,6 @@ fun TargetPlatform?.orDefault(): TargetPlatform {
     return this ?: DefaultIdeTargetPlatformKindProvider.defaultPlatform
 }
 
-fun IdePlatformKind<*>?.orDefault(): IdePlatformKind<*> {
+fun IdePlatformKind?.orDefault(): IdePlatformKind {
     return this ?: DefaultIdeTargetPlatformKindProvider.defaultPlatform.idePlatformKind
 }

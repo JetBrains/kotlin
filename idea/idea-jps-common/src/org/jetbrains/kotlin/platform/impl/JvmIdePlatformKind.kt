@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 
-object JvmIdePlatformKind : IdePlatformKind<JvmIdePlatformKind>() {
+object JvmIdePlatformKind : IdePlatformKind() {
     override fun supportsTargetPlatform(platform: TargetPlatform): Boolean = platform.isJvm()
 
     override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
@@ -66,7 +66,7 @@ object JvmIdePlatformKind : IdePlatformKind<JvmIdePlatformKind>() {
     }
 }
 
-val IdePlatformKind<*>?.isJvm
+val IdePlatformKind?.isJvm
     get() = this is JvmIdePlatformKind
 
 @Deprecated(
