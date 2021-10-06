@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
-import org.jetbrains.kotlin.fir.declarations.utils.hasBody
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -33,17 +32,6 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
 
         val source = declaration.source ?: return
         if (source.kind is FirFakeSourceElementKind) return
-
-        if (declaration is FirProperty) {
-            fun checkPropertyAccessor(propertyAccessor: FirPropertyAccessor?) {
-                if (propertyAccessor != null && !propertyAccessor.hasBody) {
-                    check(propertyAccessor, context, reporter)
-                }
-            }
-
-            checkPropertyAccessor(declaration.getter)
-            checkPropertyAccessor(declaration.setter)
-        }
 
         source.getModifierList()?.let { checkModifiers(it, declaration, context, reporter) }
     }

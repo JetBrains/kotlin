@@ -120,18 +120,20 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
                     )
                 }
         }
-        declaration.valueParameters.forEachIndexed { i, valueParameter ->
-            if (i < declaration.valueParameters.size) {
-                val (restricting, restrictingVisibility) = valueParameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()
-                    ?.findVisibilityExposure(context, functionVisibility) ?: return@forEachIndexed
-                reporter.reportOn(
-                    valueParameter.source,
-                    FirErrors.EXPOSED_PARAMETER_TYPE,
-                    functionVisibility,
-                    restricting,
-                    restrictingVisibility,
-                    context
-                )
+        if (declaration !is FirPropertyAccessor) {
+            declaration.valueParameters.forEachIndexed { i, valueParameter ->
+                if (i < declaration.valueParameters.size) {
+                    val (restricting, restrictingVisibility) = valueParameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()
+                        ?.findVisibilityExposure(context, functionVisibility) ?: return@forEachIndexed
+                    reporter.reportOn(
+                        valueParameter.source,
+                        FirErrors.EXPOSED_PARAMETER_TYPE,
+                        functionVisibility,
+                        restricting,
+                        restrictingVisibility,
+                        context
+                    )
+                }
             }
         }
         checkMemberReceiver(declaration.receiverTypeRef, declaration as? FirCallableDeclaration, reporter, context)

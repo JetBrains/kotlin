@@ -314,6 +314,7 @@ class FirFakeSourceElement(psi: PsiElement, override val kind: FirFakeSourceElem
 }
 
 fun FirSourceElement.fakeElement(newKind: FirFakeSourceElementKind): FirSourceElement {
+    if (kind == newKind) return this
     return when (this) {
         is FirLightSourceElement -> FirLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, newKind)
         is FirPsiSourceElement -> FirFakeSourceElement(psi, newKind)

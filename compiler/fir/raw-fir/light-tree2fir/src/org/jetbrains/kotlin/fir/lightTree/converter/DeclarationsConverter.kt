@@ -1142,7 +1142,12 @@ class DeclarationsConverter(
                     }
                     this.getter = convertedAccessors.find { it.isGetter }
                         ?: FirDefaultPropertyGetter(
-                            property.toFirSourceElement(FirFakeSourceElementKind.DefaultAccessor), moduleData, FirDeclarationOrigin.Source, returnType, propertyVisibility, symbol,
+                            property.toFirSourceElement(FirFakeSourceElementKind.DefaultAccessor),
+                            moduleData,
+                            FirDeclarationOrigin.Source,
+                            returnType.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
+                            propertyVisibility,
+                            symbol,
                         ).also {
                             it.status = defaultAccessorStatus()
                             it.initContainingClassAttr()
@@ -1154,7 +1159,7 @@ class DeclarationsConverter(
                                 property.toFirSourceElement(FirFakeSourceElementKind.DefaultAccessor),
                                 moduleData,
                                 FirDeclarationOrigin.Source,
-                                returnType,
+                                returnType.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
                                 propertyVisibility, symbol,
                             ).also {
                                 it.status = defaultAccessorStatus()

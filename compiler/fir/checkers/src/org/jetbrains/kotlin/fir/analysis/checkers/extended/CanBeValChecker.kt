@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
-import org.jetbrains.kotlin.fir.FirFakeSourceElement
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PathAwarePropertyInitializationInfo
@@ -40,7 +40,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
 
         for (property in unprocessedProperties) {
             val source = property.source
-            if (source is FirFakeSourceElement) continue
+            if (source?.kind is FirFakeSourceElementKind) continue
             if (source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) continue
             propertiesCharacteristics[property] = EventOccurrencesRange.ZERO
         }

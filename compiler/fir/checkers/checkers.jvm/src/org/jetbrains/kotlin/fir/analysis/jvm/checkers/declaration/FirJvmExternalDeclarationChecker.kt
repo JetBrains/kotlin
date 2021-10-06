@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (declaration is FirPropertyAccessor) return
         checkInternal(declaration, null, null, context, reporter)
     }
 

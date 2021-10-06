@@ -127,11 +127,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Nothing?) {
-        if (propertyAccessor !is FirDefaultPropertyAccessor) {
-            val property = context.containingDeclarations.last() as FirProperty
-            withAnnotationContainer(propertyAccessor) {
-                visitWithDeclarationAndReceiver(propertyAccessor, property.name, property.receiverTypeRef)
-            }
+        val property = context.containingDeclarations.last() as FirProperty
+        withAnnotationContainer(propertyAccessor) {
+            visitWithDeclarationAndReceiver(propertyAccessor, property.name, property.receiverTypeRef)
         }
     }
 

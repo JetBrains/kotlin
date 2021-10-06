@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElement
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 
 object EmptyRangeChecker : FirFunctionCallChecker() {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (expression.source is FirFakeSourceElement) return
+        if (expression.source?.kind is FirFakeSourceElementKind) return
         val left = expression.rangeLeft ?: return
         val right = expression.rangeRight ?: return
 
