@@ -191,6 +191,16 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
                 println("  -- $index ${iface.owner.fqNameWhenAvailable}")
             }
 
+            println("Interfaces implementations: ")
+            for ((interfaceImpl, index: Int) in interfaceImplementationIds) {
+                println(
+                    "  -- $index" +
+                            " Interface: ${interfaceImpl.irInterface.owner.fqNameWhenAvailable}" +
+                            " Class: ${interfaceImpl.irClass.owner.fqNameWhenAvailable}"
+                )
+            }
+
+
             println("Virtual functions: ")
             for ((index, vf: IrSimpleFunctionSymbol) in virtualFunctions.withIndex()) {
                 println("  -- $index ${vf.owner.fqNameWhenAvailable}")
