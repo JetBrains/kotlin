@@ -137,11 +137,6 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
         )
 
         MAP.put(
-            SerializationErrors.SERIALIZER_PARAM_DEFAULT_VALUE,
-            "Parameter annotated with @MetaSerializable.Serializer can not have default value",
-        )
-
-        MAP.put(
             SerializationErrors.SERIALIZABLE_AND_META_ANNOTATION,
             "Class ''{0}'' should not be annotations with both Serializable and meta-serializable annotations. " +
                     "Serializer parameter of meta-serializable annotation will be ignored",

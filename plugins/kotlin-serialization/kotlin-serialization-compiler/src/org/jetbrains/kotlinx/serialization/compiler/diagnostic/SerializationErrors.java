@@ -44,7 +44,6 @@ public interface SerializationErrors {
 
     DiagnosticFactory0<PsiElement> MULTIPLE_SERIALIZER_PARAMS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, KotlinType> SERIALIZER_PARAM_WRONG_TYPE = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory0<PsiElement> SERIALIZER_PARAM_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, KotlinType> SERIALIZABLE_AND_META_ANNOTATION = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<PsiElement, KotlinType> MULTIPLE_META_ANNOTATIONS = DiagnosticFactory1.create(WARNING);
 

@@ -94,9 +94,6 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         if (!isKClassWithKSerializer(type)) {
             context.trace.report(SerializationErrors.SERIALIZER_PARAM_WRONG_TYPE.on(serializerPropertyElement, type))
         }
-        if (serializerProperty.declaresDefaultValue) {
-            context.trace.report(SerializationErrors.SERIALIZER_PARAM_DEFAULT_VALUE.on(serializerPropertyElement))
-        }
     }
 
     private fun checkInheritedAnnotations(descriptor: ClassDescriptor, declaration: KtDeclaration, trace: BindingTrace) {

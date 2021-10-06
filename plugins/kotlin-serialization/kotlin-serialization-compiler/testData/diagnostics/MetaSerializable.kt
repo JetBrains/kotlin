@@ -30,14 +30,6 @@ annotation class MySerializableWrongParamType(
 //    <-!SERIALIZER_PARAM_WRONG_TYPE!->@MetaSerializable.Serializer val param: String<!->,
 )
 
-// serializer param default value
-
-//@MetaSerializable
-@Target(AnnotationTarget.CLASS)
-annotation class MySerializableDefaultValue(
-//    <-!SERIALIZER_PARAM_DEFAULT_VALUE!->@MetaSerializable.Serializer val param1: KClass<out KSerializer<*>> = KSerializer::class<!->,
-)
-
 // multiple annotations
 
 //@MetaSerializable

@@ -497,7 +497,7 @@ interface IrBuilderExtension {
         propertyParent: IrClass,
         fieldName: Name = propertyDescriptor.name,
     ): IrProperty {
-        val irProperty = propertyParent.searchForDeclaration<IrProperty>(propertyDescriptor) ?: run {
+        val irProperty = propertyParent.searchForDeclaration(propertyDescriptor) ?: run {
             with(propertyDescriptor) {
                 propertyParent.factory.createProperty(
                     propertyParent.startOffset, propertyParent.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, IrPropertySymbolImpl(propertyDescriptor),
@@ -519,6 +519,10 @@ interface IrBuilderExtension {
         }?.apply { parent = propertyParent }
         return irProperty
     }
+
+    fun IrType.kClassToJClassIfNeeded(): IrType = this
+
+    fun kClassExprToJClassIfNeeded(startOffset: Int, endOffset: Int, irExpression: IrExpression): IrExpression = irExpression
 
     private fun IrClass.generatePropertyBackingFieldIfNeeded(
         propertyDescriptor: PropertyDescriptor,
@@ -568,7 +572,10 @@ interface IrBuilderExtension {
         }
 
         irAccessor.body = when (isGetter) {
-            true -> generateDefaultGetterBody(descriptor as PropertyGetterDescriptor, irAccessor)
+            true -> {
+                irAccessor.returnType = irAccessor.returnType.kClassToJClassIfNeeded()
+                generateDefaultGetterBody(descriptor as PropertyGetterDescriptor, irAccessor)
+            }
             false -> generateDefaultSetterBody(descriptor as PropertySetterDescriptor, irAccessor)
         }
 
@@ -597,7 +604,9 @@ interface IrBuilderExtension {
                     irProperty.backingField?.symbol ?: error("Property expected to have backing field"),
                     property.type.toIrType(),
                     receiver
-                )
+                ).let {
+                    if (property.type.toIrType().isKClass()) kClassExprToJClassIfNeeded(startOffset, endOffset, it) else it
+                }
             )
         )
         return irBody
@@ -1104,7 +1113,7 @@ interface IrBuilderExtension {
     }
 
     fun collectSerialInfoAnnotations(irClass: IrClass): List<IrConstructorCall> {
-        if (!(irClass.isInterface || irClass.descriptor.hasSerializableAnnotation)) return emptyList()
+        if (!(irClass.isInterface || irClass.descriptor.hasSerializableOrMetaAnnotation)) return emptyList()
         val annotationByFq: MutableMap<FqName, IrConstructorCall> = irClass.annotations.associateBy { it.symbol.owner.parentAsClass.descriptor.fqNameSafe }.toMutableMap()
         for (clazz in irClass.getAllSuperclasses()) {
             val annotations = clazz.annotations

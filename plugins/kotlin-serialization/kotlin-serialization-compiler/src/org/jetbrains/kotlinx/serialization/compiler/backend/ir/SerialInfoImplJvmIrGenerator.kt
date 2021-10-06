@@ -10,9 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
@@ -20,8 +18,11 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -35,7 +36,6 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 // This doesn't support annotation arguments of type KClass and Array<KClass> because the codegen doesn't compute JVM signatures for
 // such cases correctly (because inheriting from annotation classes is prohibited in Kotlin).
 // Currently it results in an "accidental override" error where a method with return type KClass conflicts with the one with Class.
-// TODO: support annotation properties of types KClass<...> and Array<KClass<...>>.
 class SerialInfoImplJvmIrGenerator(
     private val context: SerializationPluginContext,
     private val moduleFragment: IrModuleFragment,
@@ -45,7 +45,7 @@ class SerialInfoImplJvmIrGenerator(
 
     private val jvmNameClass get() = context.referenceClass(DescriptorUtils.JVM_NAME)!!.owner
 
-    private val javaLangClass = createClass(createPackage("java.lang"), "Class")
+    private val javaLangClass = createClass(createPackage("java.lang"), "Class", ClassKind.CLASS)
     private val javaLangType = javaLangClass.starProjectedType
 
     private val implGenerated = mutableSetOf<IrClass>()
@@ -88,13 +88,12 @@ class SerialInfoImplJvmIrGenerator(
             // and to avoid having useless bridges for it generated in BridgeLowering.
             // Unfortunately, this results in an extra `@JvmName` annotation in the bytecode, but it shouldn't matter very much.
             getter.annotations += jvmName(property.name.asString())
-            getter.returnType = property.descriptor.returnType!!.toIrType().kClassToJClassIfNeeded()
 
             val field = property.backingField!!
             field.visibility = DescriptorVisibilities.PRIVATE
             field.origin = SERIALIZABLE_PLUGIN_ORIGIN
 
-            val parameter = ctor.addValueParameter(property.name.asString(), getter.returnType)
+            val parameter = ctor.addValueParameter(property.name.asString(), field.type)
             ctorBody.statements += IrSetFieldImpl(
                 startOffset, endOffset, field.symbol,
                 IrGetValueImpl(startOffset, endOffset, irClass.thisReceiver!!.symbol),
@@ -112,11 +111,47 @@ class SerialInfoImplJvmIrGenerator(
             putValueArgument(0, IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, name))
         }
 
-    private fun IrType.kClassToJClassIfNeeded(): IrType = when {
+    override fun IrType.kClassToJClassIfNeeded(): IrType = when {
         this.isKClass() -> javaLangType
         this.isKClassArray() -> compilerContext.irBuiltIns.arrayClass.typeWith(javaLangType)
         else -> this
     }
+
+    override fun kClassExprToJClassIfNeeded(startOffset: Int, endOffset: Int, irExpression: IrExpression): IrExpression {
+        val getterSymbol = kClassJava.owner.getter!!.symbol
+        return IrCallImpl(
+            startOffset, endOffset,
+            javaLangClass.starProjectedType,
+            getterSymbol,
+            typeArgumentsCount = getterSymbol.owner.typeParameters.size,
+            valueArgumentsCount = 0,
+            origin = IrStatementOrigin.GET_PROPERTY
+        ).apply {
+            this.extensionReceiver = irExpression
+        }
+    }
+
+    private val jvmName: IrClassSymbol = createClass(createPackage("kotlin.jvm"), "JvmName", ClassKind.ANNOTATION_CLASS) { klass ->
+        klass.addConstructor().apply {
+            addValueParameter("name", context.irBuiltIns.stringType)
+        }
+    }
+
+    private val kClassJava: IrPropertySymbol =
+        IrFactoryImpl.buildProperty {
+            name = Name.identifier("java")
+        }.apply {
+            parent = createClass(createPackage("kotlin.jvm"), "JvmClassMappingKt", ClassKind.CLASS).owner
+            addGetter().apply {
+                annotations = listOf(
+                    IrConstructorCallImpl.fromSymbolOwner(jvmName.typeWith(), jvmName.constructors.single()).apply {
+                        putValueArgument(0, IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, "getJavaClass"))
+                    }
+                )
+                addExtensionReceiver(context.irBuiltIns.kClassClass.starProjectedType)
+                returnType = javaLangClass.starProjectedType
+            }
+        }.symbol
 
     private fun IrType.isKClassArray() =
         this is IrSimpleType && isArray() && arguments.single().typeOrNull?.isKClass() == true
@@ -130,12 +165,15 @@ class SerialInfoImplJvmIrGenerator(
     private fun createClass(
         irPackage: IrPackageFragment,
         shortName: String,
+        classKind: ClassKind,
+        block: (IrClass) -> Unit = {}
     ): IrClassSymbol = IrFactoryImpl.buildClass {
         name = Name.identifier(shortName)
-        kind = ClassKind.CLASS
+        kind = classKind
         modality = Modality.FINAL
     }.apply {
         parent = irPackage
         createImplicitParameterDeclarationWithWrappedDescriptor()
+        block(this)
     }.symbol
 }
