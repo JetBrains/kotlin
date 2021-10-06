@@ -22,9 +22,10 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
 
-abstract class FakeOverrideBuilderStrategy {
+abstract class FakeOverrideBuilderStrategy(private val friendModules: Map<String, Collection<String>>) {
+
     open fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember =
-        buildFakeOverrideMember(superType, member, clazz)
+        buildFakeOverrideMember(superType, member, clazz, friendModules)
 
     fun linkFakeOverride(fakeOverride: IrOverridableMember, compatibilityMode: Boolean) {
         when (fakeOverride) {
@@ -38,7 +39,7 @@ abstract class FakeOverrideBuilderStrategy {
     protected abstract fun linkPropertyFakeOverride(declaration: IrFakeOverrideProperty, compatibilityMode: Boolean)
 }
 
-private fun IrOverridableMember.isPrivateToThisModule(thisClass: IrClass, memberClass: IrClass): Boolean {
+private fun IrOverridableMember.isPrivateToThisModule(thisClass: IrClass, memberClass: IrClass, friendModules: Map<String, Collection<String>>): Boolean {
     if (visibility != DescriptorVisibilities.INTERNAL) return false
     val thisModule = thisClass.fileOrNull?.module
     val memberModule = memberClass.fileOrNull?.module
@@ -48,18 +49,31 @@ private fun IrOverridableMember.isPrivateToThisModule(thisClass: IrClass, member
 
     if (thisModule == null || memberModule == null) return false
 
-    return !isInFriendModules(thisModule, memberModule)
+    return !isInFriendModules(thisModule, memberModule, friendModules)
 }
 
-@Suppress("UNUSED_PARAMETER")
-private fun isInFriendModules(thisModule: IrModuleFragment, friendModule: IrModuleFragment): Boolean {
-    // TODO: check if [friendModule] is a friend of [thisModule]
-    // See: KT-47192
+private fun isInFriendModules(
+    fromModule: IrModuleFragment,
+    toModule: IrModuleFragment,
+    friendModules: Map<String, Collection<String>>
+): Boolean {
 
-    return false
+    if (friendModules.isEmpty()) return false
+
+    val fromModuleName = fromModule.name.asStringStripSpecialMarkers()
+
+    val fromFriends = friendModules[fromModuleName] ?: return false
+
+    val toModuleName = toModule.name.asStringStripSpecialMarkers()
+
+    return toModuleName in fromFriends
 }
 
 fun buildFakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember {
+    return buildFakeOverrideMember(superType, member, clazz, emptyMap())
+}
+
+fun buildFakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass, friendModules: Map<String, Collection<String>>): IrOverridableMember {
     require(superType is IrSimpleType) { "superType is $superType, expected IrSimpleType" }
     val classifier = superType.classifier
     require(classifier is IrClassSymbol) { "superType classifier is not IrClassSymbol: $classifier" }
@@ -83,7 +97,7 @@ fun buildFakeOverrideMember(superType: IrType, member: IrOverridableMember, claz
     val copier = DeepCopyIrTreeWithSymbolsForFakeOverrides(substitutionMap)
     val deepCopyFakeOverride = copier.copy(member, clazz) as IrOverridableMember
     deepCopyFakeOverride.parent = clazz
-    if (deepCopyFakeOverride.isPrivateToThisModule(clazz, classifier.owner))
+    if (deepCopyFakeOverride.isPrivateToThisModule(clazz, classifier.owner, friendModules))
         deepCopyFakeOverride.visibility = DescriptorVisibilities.INVISIBLE_FAKE
 
     return deepCopyFakeOverride

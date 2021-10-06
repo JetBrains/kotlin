@@ -277,6 +277,8 @@ fun loadIr(
                 JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
             }
             val moduleFragmentToUniqueName = mutableMapOf<IrModuleFragment, String>()
+            val friendModules =
+                mapOf(psi2IrContext.moduleDescriptor.name.asString() to depsDescriptors.friendDependencies.map { it.library.uniqueName })
             val irLinker =
                 JsIrLinker(
                     psi2IrContext.moduleDescriptor,
@@ -285,7 +287,8 @@ fun loadIr(
                     symbolTable,
                     feContext,
                     null,
-                    depsDescriptors.loweredIcData
+                    depsDescriptors.loweredIcData,
+                    friendModules
                 )
             val deserializedModuleFragments = sortDependencies(allDependencies, depsDescriptors.descriptors).map { klib ->
                 irLinker.deserializeIrModuleHeader(
@@ -345,6 +348,8 @@ fun loadIr(
                 result
             }
 
+            val friendModules = mapOf(mainModuleLib.uniqueName to depsDescriptors.friendDependencies.map { it.library.uniqueName })
+
             val irLinker =
                 JsIrLinker(
                     null,
@@ -353,7 +358,8 @@ fun loadIr(
                     symbolTable,
                     null,
                     null,
-                    loweredIcData
+                    loweredIcData,
+                    friendModules
                 )
 
             val moduleFragmentToUniqueName = mutableMapOf<IrModuleFragment, String>()

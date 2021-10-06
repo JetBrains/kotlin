@@ -68,11 +68,12 @@ class FakeOverrideBuilder(
     val symbolTable: SymbolTable,
     mangler: KotlinMangler.IrMangler,
     typeSystem: IrTypeSystemContext,
+    friendModules: Map<String, Collection<String>>,
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
     private val fakeOverrideDeclarationTable: DeclarationTable = FakeOverrideDeclarationTable(mangler) { builder, table ->
         IdSignatureSerializer(builder, table)
     }
-) : FakeOverrideBuilderStrategy() {
+) : FakeOverrideBuilderStrategy(friendModules) {
     private val haveFakeOverrides = mutableSetOf<IrClass>()
 
     private val irOverridingUtil = IrOverridingUtil(typeSystem, this)

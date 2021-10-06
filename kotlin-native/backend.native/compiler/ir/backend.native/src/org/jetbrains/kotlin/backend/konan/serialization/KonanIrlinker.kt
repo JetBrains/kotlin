@@ -23,11 +23,9 @@ import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinaryNameAndType
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.backend.common.serialization.linkerissues.UserVisibleIrModulesSupport
-import org.jetbrains.kotlin.backend.konan.CachedLibraries
 import org.jetbrains.kotlin.backend.common.serialization.encodings.FunctionFlags
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.InlineFunctionOriginInfo
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
@@ -43,13 +41,10 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.getPublicSignature
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -60,13 +55,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
+import sun.misc.Unsafe
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoField
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction as ProtoFunction
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as ProtoProperty
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoField
-import sun.misc.Unsafe
 
 private val unsafe = with(Unsafe::class.java.getDeclaredField("theUnsafe")) {
     isAccessible = true
@@ -313,13 +308,14 @@ internal class KonanIrLinker(
         messageLogger: IrMessageLogger,
         builtIns: IrBuiltIns,
         symbolTable: SymbolTable,
+        friendModules: Map<String, Collection<String>>,
         private val forwardModuleDescriptor: ModuleDescriptor?,
         private val stubGenerator: DeclarationStubGenerator,
         private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
         exportedDependencies: List<ModuleDescriptor>,
         private val cachedLibraries: CachedLibraries,
         private val lazyIrForCaches: Boolean,
-        override val userVisibleIrModulesSupport: UserVisibleIrModulesSupport
+        override val userVisibleIrModulesSupport: UserVisibleIrModulesSupport,
 ) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, exportedDependencies) {
 
     companion object {
@@ -335,7 +331,7 @@ internal class KonanIrLinker(
 
     private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let { KonanForwardDeclarationModuleDeserializer(it) }
     override val fakeOverrideBuilder: FakeOverrideBuilder =
-        FakeOverrideBuilder(this, symbolTable, KonanManglerIr, IrTypeSystemContextImpl(builtIns), KonanFakeOverrideClassFilter)
+        FakeOverrideBuilder(this, symbolTable, KonanManglerIr, IrTypeSystemContextImpl(builtIns), friendModules, KonanFakeOverrideClassFilter)
 
     val nonCachedLibraryModuleDeserializers = mutableMapOf<ModuleDescriptor, KonanModuleDeserializer>()
     val cachedLibraryModuleDeserializers = mutableMapOf<ModuleDescriptor, KonanCachedLibraryModuleDeserializer>()
@@ -656,7 +652,7 @@ internal class KonanIrLinker(
                             override fun tryReferencingPropertyByLocalSignature(parent: IrDeclaration, idSignature: IdSignature) =
                                     if (idSignature.isPubliclyVisible) null else symbolDeserializer.referencePropertyByLocalSignature(idSignature)
                         },
-                        symbolTable, KonanManglerIr, IrTypeSystemContextImpl(builtIns), KonanFakeOverrideClassFilter)
+                        symbolTable, KonanManglerIr, IrTypeSystemContextImpl(builtIns), emptyMap(), KonanFakeOverrideClassFilter)
 
                 val declarationDeserializer = IrDeclarationDeserializer(
                         builtIns,
