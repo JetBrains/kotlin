@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFull
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.impl.createCurrentScopeList
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 open class FirBodyResolveTransformer(
@@ -77,6 +75,13 @@ open class FirBodyResolveTransformer(
                 )
             }
         }
+
+        resolvedTypeRef.coneType.forEachType {
+            it.type.attributes.customAnnotations.forEach { typeArgumentAnnotation ->
+                typeArgumentAnnotation.accept(this, data)
+            }
+        }
+
         return resolvedTypeRef.transformAnnotations(this, data)
     }
 

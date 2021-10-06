@@ -5,7 +5,7 @@
 annotation class Ann(val x: Int)
 
 // TESTCASE NUMBER: 1
-fun foo(i: Inv<@Ann(unresolved_reference) String>) {}
+fun foo(i: Inv<@Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) String>) {}
 
 // TESTCASE NUMBER: 2
 fun test(vararg a: @Ann(unresolved_reference) Any) {}

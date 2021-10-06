@@ -20,14 +20,14 @@ annotation class TypeAnnWithArg(val arg: String)
 fun badArgs(a: List<@TypeAnnWithArg(<!NAMED_PARAMETER_NOT_FOUND!>unresolved<!> = ""<!NO_VALUE_FOR_PARAMETER!>)<!> Int>) {}
 fun badArgsWithProjection(a: Array<out @TypeAnnWithArg(<!NAMED_PARAMETER_NOT_FOUND!>unresolved<!> = ""<!NO_VALUE_FOR_PARAMETER!>)<!> Int>) {}
 
-typealias BadArgsInTypeAlias = List<@<!NO_VALUE_FOR_PARAMETER!>TypeAnnWithArg<!> Int>
+typealias BadArgsInTypeAlias = List<<!NO_VALUE_FOR_PARAMETER!>@TypeAnnWithArg<!> Int>
 fun badArgsInTypeAlias(a: BadArgsInTypeAlias) {}
 
 typealias T<X> = List<X>
-fun badArgsInTypeAliasInstance(a: T<@TypeAnnWithArg(arg = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>123<!>) Int>) {}
+fun badArgsInTypeAliasInstance(a: T<@TypeAnnWithArg(arg = <!ARGUMENT_TYPE_MISMATCH!>123<!>) Int>) {}
 
-typealias BadArgsInTypeParameter<<!WRONG_ANNOTATION_TARGET!>@TypeAnnWithArg(arg = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>123<!>)<!> X> = List<X>
+typealias BadArgsInTypeParameter<<!WRONG_ANNOTATION_TARGET!>@TypeAnnWithArg(arg = <!ARGUMENT_TYPE_MISMATCH!>123<!>)<!> X> = List<X>
 
-typealias BadArgsInRecursive = List<Map<List<@<!NO_VALUE_FOR_PARAMETER!>TypeAnnWithArg<!> Int>, @<!NO_VALUE_FOR_PARAMETER!>TypeAnnWithArg<!> String>>
+typealias BadArgsInRecursive = List<Map<List<<!NO_VALUE_FOR_PARAMETER!>@TypeAnnWithArg<!> Int>, <!NO_VALUE_FOR_PARAMETER!>@TypeAnnWithArg<!> String>>
 
-typealias BadArgsMultiple = Map<@<!NO_VALUE_FOR_PARAMETER!>TypeAnnWithArg<!> Int, @TypeAnnWithArg(arg = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>123<!>) Int>
+typealias BadArgsMultiple = Map<<!NO_VALUE_FOR_PARAMETER!>@TypeAnnWithArg<!> Int, @TypeAnnWithArg(arg = <!ARGUMENT_TYPE_MISMATCH!>123<!>) Int>

@@ -27,3 +27,18 @@ annotation class TypeAnn
 val onType: (@TypeAnn A).(@Ann a: @TypeAnn A, @TypeAnn A)->@TypeAnn A? = { null }
 
 fun (@TypeAnn A).extFun(@Ann a: @TypeAnn A): @TypeAnn A? = null
+
+@Target(AnnotationTarget.TYPE)
+annotation class TypeAnnWithArg(val arg: String)
+
+fun badArgs(a: (@TypeAnnWithArg(<!NAMED_PARAMETER_NOT_FOUND!>unresolved<!> = ""<!NO_VALUE_FOR_PARAMETER!>)<!> Int) -> Unit) {}
+
+typealias BadArgsInTypeAlias = (<!NO_VALUE_FOR_PARAMETER!>@TypeAnnWithArg<!> Int) -> Unit
+fun badArgsInTypeAlias(a: BadArgsInTypeAlias) {}
+
+typealias T<X> = (X) -> Unit
+fun badArgsInTypeAliasInstance(a: T<@TypeAnnWithArg(arg = <!ARGUMENT_TYPE_MISMATCH!>123<!>) Int>) {}
+
+typealias BadArgsInRecursive = (((<!NO_VALUE_FOR_PARAMETER!>@TypeAnnWithArg<!> Int) -> Unit) -> <!NO_VALUE_FOR_PARAMETER!>@TypeAnnWithArg<!> String) -> Unit
+
+typealias BadArgsMultiple = (<!NO_VALUE_FOR_PARAMETER!>@TypeAnnWithArg<!> Int, @TypeAnnWithArg(arg = <!ARGUMENT_TYPE_MISMATCH!>123<!>) Int) -> Unit

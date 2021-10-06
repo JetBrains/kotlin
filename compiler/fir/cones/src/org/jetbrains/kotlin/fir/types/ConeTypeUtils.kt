@@ -18,16 +18,30 @@ val ConeKotlinType.isMarkedNullable: Boolean get() = nullability == ConeNullabil
 
 val ConeKotlinType.classId: ClassId? get() = this.safeAs<ConeClassLikeType>()?.lookupTag?.classId
 
-fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean): Boolean {
-    return contains(predicate, null)
+/**
+ * Recursively visits each [ConeKotlinType] inside (including itself) and performs the given action.
+ */
+fun ConeKotlinType.forEachType(action: (ConeKotlinType) -> Unit) {
+    action(this)
+
+    return when (this) {
+        is ConeFlexibleType -> {
+            lowerBound.forEachType(action)
+            upperBound.forEachType(action)
+        }
+        is ConeDefinitelyNotNullType -> original.forEachType(action)
+        is ConeIntersectionType -> intersectedTypes.forEach { it.forEachType(action) }
+        else -> typeArguments.forEach { if (it is ConeKotlinTypeProjection) it.type.forEachType(action) }
+    }
 }
 
-private fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean, visited: SmartSet<ConeKotlinType>?): Boolean {
-    if (visited?.contains(this) == true) return false
-    if (predicate(this)) return true
+fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean): Boolean {
+    return contains(predicate, SmartSet.create())
+}
 
-    @Suppress("NAME_SHADOWING")
-    val visited = visited ?: SmartSet.create()
+private fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean, visited: SmartSet<ConeKotlinType>): Boolean {
+    if (this in visited) return false
+    if (predicate(this)) return true
     visited += this
 
     return when (this) {
@@ -74,6 +88,7 @@ val ConeKotlinType.isArrayType: Boolean
         return isBuiltinType(StandardClassIds.Array, false) ||
                 StandardClassIds.primitiveArrayTypeByElementType.values.any { isBuiltinType(it, false) }
     }
+
 // Same as [KotlinBuiltIns#isNonPrimitiveArray]
 val ConeKotlinType.isNonPrimitiveArray: Boolean
     get() = this is ConeClassLikeType && lookupTag.classId == StandardClassIds.Array

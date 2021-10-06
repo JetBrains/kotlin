@@ -2,6 +2,9 @@ package
 
 public val inVal: (x: kotlin.Int) -> kotlin.Unit
 public val onType: (@TypeAnn A).(a: @TypeAnn A, @TypeAnn A) -> @TypeAnn A?
+public fun badArgs(/*0*/ a: (@TypeAnnWithArg kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public fun badArgsInTypeAlias(/*0*/ a: BadArgsInTypeAlias /* = (@TypeAnnWithArg kotlin.Int) -> kotlin.Unit */): kotlin.Unit
+public fun badArgsInTypeAliasInstance(/*0*/ a: T<@TypeAnnWithArg(arg = 123) kotlin.Int> /* = (@TypeAnnWithArg(arg = 123) kotlin.Int) -> kotlin.Unit */): kotlin.Unit
 public fun f(/*0*/ @Ann x: kotlin.Int): kotlin.Unit
 public fun inParam(/*0*/ fn: (x: kotlin.Int) -> kotlin.Unit): kotlin.Unit
 public fun inParamNested(/*0*/ fn1: (fn2: (n: kotlin.Int) -> kotlin.Unit) -> kotlin.Unit): kotlin.Unit
@@ -30,3 +33,15 @@ public final annotation class Ann : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class TypeAnnWithArg : kotlin.Annotation {
+    public constructor TypeAnnWithArg(/*0*/ arg: kotlin.String)
+    public final val arg: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias BadArgsInRecursive = (((@TypeAnnWithArg kotlin.Int) -> kotlin.Unit) -> @TypeAnnWithArg kotlin.String) -> kotlin.Unit
+public typealias BadArgsInTypeAlias = (@TypeAnnWithArg kotlin.Int) -> kotlin.Unit
+public typealias BadArgsMultiple = (@TypeAnnWithArg kotlin.Int, @TypeAnnWithArg(arg = 123) kotlin.Int) -> kotlin.Unit
+public typealias T</*0*/ X> = (X) -> kotlin.Unit
