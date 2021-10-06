@@ -534,7 +534,12 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            build("assembleDebug", "-Pagp_version=${TestVersions.AGP.AGP_42}")
+            build(
+                "assembleDebug",
+                buildOptions = defaultBuildOptions.copy(
+                    androidVersion = TestVersions.AGP.AGP_42
+                )
+            )
         }
     }
 

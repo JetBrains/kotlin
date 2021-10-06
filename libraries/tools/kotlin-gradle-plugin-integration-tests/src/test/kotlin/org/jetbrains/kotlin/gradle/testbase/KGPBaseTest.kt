@@ -18,7 +18,6 @@ import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import java.nio.file.Path
-import java.util.*
 import java.util.stream.Stream
 import kotlin.streams.asStream
 
@@ -46,7 +45,8 @@ abstract class KGPBaseTest {
         val maxWorkers: Int = (Runtime.getRuntime().availableProcessors() / 4 - 1).coerceAtLeast(2),
         val fileSystemWatchEnabled: Boolean = false,
         val buildCacheEnabled: Boolean = false,
-        val kaptOptions: KaptOptions? = null
+        val kaptOptions: KaptOptions? = null,
+        val androidVersion: String? = null
     ) {
         data class KaptOptions(
             val verbose: Boolean = false,
@@ -111,6 +111,10 @@ abstract class KGPBaseTest {
                 kaptOptions.classLoadersCacheSize?.let { cacheSize ->
                     arguments.add("-Pkapt.classloaders.cache.size=$cacheSize")
                 }
+            }
+
+            if (androidVersion != null) {
+                arguments.add("-Pandroid_tools_version=${androidVersion}")
             }
 
             return arguments.toList()

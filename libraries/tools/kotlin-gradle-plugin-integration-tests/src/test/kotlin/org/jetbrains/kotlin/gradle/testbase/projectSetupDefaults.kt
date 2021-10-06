@@ -14,12 +14,30 @@ internal val DEFAULT_GROOVY_SETTINGS_FILE =
         repositories {
             mavenLocal()
             mavenCentral()
+            google()
             gradlePluginPortal()
         }
 
         plugins {
             id "org.jetbrains.kotlin.jvm" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.kapt" version "${'$'}kotlin_version"
+            id "org.jetbrains.kotlin.android" version "${'$'}kotlin_version"
+        }
+        
+        resolutionStrategy {
+            eachPlugin {
+                if (requested.id.id == "com.android.application" ||
+                    requested.id.id == "com.android.library" ||
+                    requested.id.id == "com.android.test" ||
+                    requested.id.id == "com.android.dynamic-feature" ||
+                    requested.id.id == "com.android.asset-pack" ||
+                    requested.id.id == "com.android.asset-pack-bundle" ||
+                    requested.id.id == "com.android.lint" ||
+                    requested.id.id == "com.android.instantapp" ||
+                    requested.id.id == "com.android.feature") {
+                    useModule("com.android.tools.build:gradle:${'$'}android_tools_version")
+                }
+            }
         }
     }
     """.trimIndent()

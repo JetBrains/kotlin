@@ -22,6 +22,10 @@ interface TestVersions {
     }
 
     object AGP {
+        const val AGP_34 = "3.4.3"
+        const val AGP_36 = "3.6.4"
+        const val AGP_41 = "4.1.3"
         const val AGP_42 = "4.2.2"
+        const val AGP_70 = "7.0.2"
     }
 }
