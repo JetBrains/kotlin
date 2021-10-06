@@ -7782,6 +7782,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/fakeOverride/function.kt");
         }
 
+        @TestMetadata("internalFromFriendModule.kt")
+        public void testInternalFromFriendModule() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/internalFromFriendModule.kt");
+        }
+
         @TestMetadata("privateFakeOverrides0.kt")
         public void testPrivateFakeOverrides0() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/privateFakeOverrides0.kt");
