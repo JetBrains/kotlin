@@ -392,7 +392,7 @@ fun ConeTypeContext.captureFromArgumentsInternal(type: ConeKotlinType, status: C
     }
 }
 
-private fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus): Array<ConeTypeProjection>? {
+private fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus): Array<ConeKotlinType>? {
     val argumentsCount = type.typeArguments.size
     if (argumentsCount == 0) return null
 
@@ -401,9 +401,10 @@ private fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: Captu
 
     if (type.typeArguments.all { it !is ConeStarProjection && it.kind == ProjectionKind.INVARIANT }) return null
 
-    val newArguments = Array(argumentsCount) { index ->
+    val newArguments: Array<ConeKotlinType> = Array(argumentsCount) { index ->
         val argument = type.typeArguments[index]
-        if (argument !is ConeStarProjection && argument.kind == ProjectionKind.INVARIANT) return@Array argument
+        if (argument !is ConeStarProjection && argument.kind == ProjectionKind.INVARIANT)
+            return@Array argument.type!! // only star projection can return null, but it's guarded above
 
         val lowerType = if (argument !is ConeStarProjection && argument.getVariance() == TypeVariance.IN) {
             (argument as ConeKotlinTypeProjection).type
@@ -414,9 +415,9 @@ private fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: Captu
         ConeCapturedType(status, lowerType, argument, typeConstructor.getParameter(index))
     }
 
-    val substitution = (0 until argumentsCount).map { index ->
-        (typeConstructor.getParameter(index) as ConeTypeParameterLookupTag).symbol to (newArguments[index] as ConeKotlinType)
-    }.toMap()
+    val substitution = (0 until argumentsCount).associate { index ->
+        (typeConstructor.getParameter(index) as ConeTypeParameterLookupTag).symbol to (newArguments[index])
+    }
     val substitutor = substitutorByMap(substitution, session)
 
     for (index in 0 until argumentsCount) {
@@ -520,7 +521,7 @@ private fun ConeTypeContext.captureArgumentsForIntersectionType(type: ConeKotlin
     return capturedArgumentsByTypes
 }
 
-private class CapturedArguments(val capturedArguments: Array<ConeTypeProjection>, private val originalType: ConeKotlinType) {
+private class CapturedArguments(val capturedArguments: Array<out ConeTypeProjection>, private val originalType: ConeKotlinType) {
     fun isSuitableForType(type: ConeKotlinType, context: ConeTypeContext): Boolean {
         val areArgumentsMatched = type.typeArguments.withIndex().all { (i, typeArgumentsType) ->
             originalType.typeArguments.size > i && typeArgumentsType == originalType.typeArguments[i]
