@@ -308,6 +308,9 @@ class KotlinMetadataTargetConfigurator :
             if (!isHostSpecific) {
                 val metadataContent = project.filesWithUnpackedArchives(this@apply.output.allOutputs, setOf("klib"))
                 allMetadataJar.configure { it.from(metadataContent) { spec -> spec.into(this@apply.defaultSourceSet.name) } }
+                if (this is KotlinSharedNativeCompilation) {
+                    project.includeCommonizedCInteropMetadata(allMetadataJar, this)
+                }
             } else {
                 if (platformCompilations.filterIsInstance<KotlinNativeCompilation>().none { it.konanTarget.enabledOnCurrentHost }) {
                     // Then we don't have any platform module to put this compiled source set to, so disable the compilation task:
