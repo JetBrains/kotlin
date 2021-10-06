@@ -45,13 +45,15 @@ fun Candidate.preprocessLambdaArgument(
             anonymousFunction,
             returnTypeVariable,
             context.bodyResolveComponents,
-            this
-        ) ?: extraLambdaInfo(expectedType, anonymousFunction, csBuilder, context.session, this)
+            this,
+            duringCompletion || sink == null
+        ) ?: extractLambdaInfo(expectedType, anonymousFunction, csBuilder, context.session, this)
 
     if (expectedType != null) {
         // TODO: add SAM conversion processing
+        val parameters = resolvedArgument.parameters
         val lambdaType = createFunctionalType(
-            resolvedArgument.parameters,
+            if (resolvedArgument.coerceFirstParameterToExtensionReceiver) parameters.drop(1) else parameters,
             resolvedArgument.receiver,
             resolvedArgument.returnType,
             isSuspend = resolvedArgument.isSuspend
@@ -86,7 +88,7 @@ fun Candidate.preprocessCallableReference(
     postponedAtoms += ResolvedCallableReferenceAtom(argument, expectedType, lhs, context.session)
 }
 
-private fun extraLambdaInfo(
+private fun extractLambdaInfo(
     expectedType: ConeKotlinType?,
     argument: FirAnonymousFunction,
     csBuilder: ConstraintSystemBuilder,
@@ -123,6 +125,7 @@ private fun extraLambdaInfo(
         parameters,
         returnType,
         typeVariable.takeIf { newTypeVariableUsed },
-        candidate
+        candidate,
+        coerceFirstParameterToExtensionReceiver = false
     )
 }

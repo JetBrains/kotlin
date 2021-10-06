@@ -241,7 +241,8 @@ fun extractLambdaInfoFromFunctionalType(
     argument: FirAnonymousFunction,
     returnTypeVariable: ConeTypeVariableForLambdaReturnType?,
     components: BodyResolveComponents,
-    candidate: Candidate?
+    candidate: Candidate?,
+    duringCompletion: Boolean,
 ): ResolvedLambdaAtom? {
     val session = components.session
     if (expectedType == null) return null
@@ -252,7 +253,8 @@ fun extractLambdaInfoFromFunctionalType(
             argument,
             returnTypeVariable,
             components,
-            candidate
+            candidate,
+            duringCompletion
         )
     }
     if (!expectedType.isBuiltinFunctionalType(session)) return null
@@ -270,13 +272,31 @@ fun extractLambdaInfoFromFunctionalType(
     // For lambdas, the existence of the receiver is always implied by the expected type, and a value parameter
     // can never fill its role.
     val receiverType = if (argument.isLambda) expectedType.receiverType(session) else argument.receiverType
-    val expectedParameters = expectedType.valueParameterTypesIncludingReceiver(session).let {
-        if (receiverType != null && expectedType.isExtensionFunctionType(session)) it.drop(1) else it
+    val valueParametersTypesIncludingReceiver = expectedType.valueParameterTypesIncludingReceiver(session)
+    val isExtensionFunctionType = expectedType.isExtensionFunctionType(session)
+    val expectedParameters = valueParametersTypesIncludingReceiver.let {
+        if (receiverType != null && isExtensionFunctionType) it.drop(1) else it
     }
-    val parameters = if (argument.isLambda && argument.valueParameters.isEmpty() && expectedParameters.size < 2) {
+
+    var coerceFirstParameterToExtensionReceiver = false
+    val argumentValueParameters = argument.valueParameters
+    val parameters = if (argument.isLambda && argumentValueParameters.isEmpty() && expectedParameters.size < 2) {
         expectedParameters // Infer existence of a parameter named `it` of an appropriate type.
     } else {
-        argument.valueParameters.mapIndexed { index, parameter ->
+        if (duringCompletion &&
+            argument.isLambda &&
+            isExtensionFunctionType &&
+            valueParametersTypesIncludingReceiver.size == argumentValueParameters.size
+        ) {
+            // (T, ...) -> V can be converter to T.(...) -> V
+            val firstValueParameter = argumentValueParameters.firstOrNull()
+            val extensionParameter = valueParametersTypesIncludingReceiver.firstOrNull()
+            if (firstValueParameter?.returnTypeRef?.coneTypeSafe<ConeKotlinType>() == extensionParameter?.type) {
+                coerceFirstParameterToExtensionReceiver = true
+            }
+        }
+
+        argumentValueParameters.mapIndexed { index, parameter ->
             parameter.returnTypeRef.coneTypeSafe()
                 ?: expectedParameters.getOrNull(index)
                 ?: ConeClassErrorType(
@@ -293,6 +313,7 @@ fun extractLambdaInfoFromFunctionalType(
         parameters,
         returnType,
         typeVariableForLambdaReturnType = returnTypeVariable,
-        candidate
+        candidate,
+        coerceFirstParameterToExtensionReceiver
     )
 }
