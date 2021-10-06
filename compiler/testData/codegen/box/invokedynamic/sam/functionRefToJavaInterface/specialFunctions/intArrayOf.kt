@@ -6,20 +6,14 @@
 // JVM_IR_TEMPLATES
 // 1 java/lang/invoke/LambdaMetafactory
 
-// FILE: voidReturnTypeAsObject.kt
-var t = "Failed"
-
-fun ok(s: String) { t = s }
-
+// FILE: intArrayOf.kt
 fun box(): String {
-    val r = Sam(::ok).get("OK")
-    if (r != Unit) {
-        return "Failed: $r"
-    }
-    return t
+    val sam = Sam(::intArrayOf)
+    val arr = sam.get(intArrayOf('O'.toInt(), 'K'.toInt()))
+    return "${arr[0].toChar()}${arr[1].toChar()}"
 }
 
 // FILE: Sam.java
 public interface Sam {
-    Object get(String s);
+    int[] get(int[] s);
 }

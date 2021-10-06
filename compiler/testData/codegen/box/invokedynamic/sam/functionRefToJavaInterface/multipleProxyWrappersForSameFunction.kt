@@ -4,14 +4,19 @@
 
 // CHECK_BYTECODE_TEXT
 // JVM_IR_TEMPLATES
-// 1 java/lang/invoke/LambdaMetafactory
+// 4 java/lang/invoke/LambdaMetafactory
 
 // FILE: voidReturnTypeAsObject.kt
+
 var t = "Failed"
 
 fun ok(s: String) { t = s }
 
 fun box(): String {
+    Sam(::ok).get("1")
+    Sam(::ok).get("2")
+    Sam(::ok).get("3")
+
     val r = Sam(::ok).get("OK")
     if (r != Unit) {
         return "Failed: $r"

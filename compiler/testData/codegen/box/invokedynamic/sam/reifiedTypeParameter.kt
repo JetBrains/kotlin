@@ -6,13 +6,17 @@
 
 // CHECK_BYTECODE_TEXT
 // JVM_IR_TEMPLATES
-// 1 java/lang/invoke/LambdaMetafactory
+// 0 java/lang/invoke/LambdaMetafactory
 
-// FILE: inlineOnly.kt
+// FILE: reifiedTypeParameter.kt
+
+inline fun <reified T> f(x: T) =
+    println("${T::class.simpleName}($x)")
+
 fun call(c: Consumer<String>) = c.accept("")
 
 fun box(): String {
-    call(::println) // 'println' is @InlineOnly
+    call(::f) // `f` has a reified type parameter and thus isn't callable directly
     return "OK"
 }
 

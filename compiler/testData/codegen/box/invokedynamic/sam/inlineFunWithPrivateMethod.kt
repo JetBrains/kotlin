@@ -8,11 +8,15 @@
 // JVM_IR_TEMPLATES
 // 1 java/lang/invoke/LambdaMetafactory
 
-// FILE: inlineOnly.kt
+// FILE: inlineFunWithPrivateMethod.kt
+
+private inline fun g(x: String) = println(x)
+
 fun call(c: Consumer<String>) = c.accept("")
 
 fun box(): String {
-    call(::println) // 'println' is @InlineOnly
+    val obj = { call(::g) } // `g` is inaccessible in this scope
+    obj()
     return "OK"
 }
 

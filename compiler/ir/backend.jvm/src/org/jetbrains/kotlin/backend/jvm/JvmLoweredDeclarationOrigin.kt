@@ -37,7 +37,7 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object INTERFACE_COMPANION_PRIVATE_INSTANCE : IrDeclarationOriginImpl("INTERFACE_COMPANION_PRIVATE_INSTANCE", isSynthetic = true)
     object POLYMORPHIC_SIGNATURE_INSTANTIATION : IrDeclarationOriginImpl("POLYMORPHIC_SIGNATURE_INSTANTIATION", isSynthetic = true)
     object ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER : IrDeclarationOriginImpl("ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER", isSynthetic = true)
-    object OBJECT_SUPER_CONSTRUCTOR_PARAMETER : IrDeclarationOriginImpl("OBJECT_SUPER_CONSTURCTOR_PARAMETER", isSynthetic = true)
+    object OBJECT_SUPER_CONSTRUCTOR_PARAMETER : IrDeclarationOriginImpl("OBJECT_SUPER_CONSTRUCTOR_PARAMETER", isSynthetic = true)
     object CONTINUATION_CLASS : IrDeclarationOriginImpl("CONTINUATION_CLASS")
     object SUSPEND_LAMBDA : IrDeclarationOriginImpl("SUSPEND_LAMBDA")
     object FOR_INLINE_STATE_MACHINE_TEMPLATE : IrDeclarationOriginImpl("FOR_INLINE_TEMPLATE")
@@ -48,4 +48,5 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object ABSTRACT_BRIDGE_STUB : IrDeclarationOriginImpl("ABSTRACT_BRIDGE_STUB")
     object INVOVEDYNAMIC_CALL_TARGET : IrDeclarationOriginImpl("INVOVEDYNAMIC_CALL_TARGET")
     object INLINE_LAMBDA : IrDeclarationOriginImpl("INLINE_LAMBDA")
+    object PROXY_FUN_FOR_INDY_SAM_CONVESION : IrDeclarationOriginImpl("PROXY_FUN_FOR_INDY_SAM_CONVESION")
 }

@@ -5,7 +5,7 @@
 
 // CHECK_BYTECODE_TEXT
 // JVM_IR_TEMPLATES
-// 0 java/lang/invoke/LambdaMetafactory
+// 1 java/lang/invoke/LambdaMetafactory
 
 // IGNORE_BACKEND_FIR: JVM_IR
 //  ^ OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates: [kotlin/collections/plus, kotlin/collections/plus]

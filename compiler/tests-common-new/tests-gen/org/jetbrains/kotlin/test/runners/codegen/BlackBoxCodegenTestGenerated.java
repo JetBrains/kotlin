@@ -22096,6 +22096,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("inlineFunWithPrivateMethod.kt")
+            public void testInlineFunWithPrivateMethod() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineFunWithPrivateMethod.kt");
+            }
+
+            @Test
             @TestMetadata("inlineOnly.kt")
             public void testInlineOnly() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineOnly.kt");
@@ -22141,6 +22147,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("primitiveVsWrapperInSam.kt")
             public void testPrimitiveVsWrapperInSam() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/primitiveVsWrapperInSam.kt");
+            }
+
+            @Test
+            @TestMetadata("reifiedTypeParameter.kt")
+            public void testReifiedTypeParameter() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/reifiedTypeParameter.kt");
             }
 
             @Test
@@ -22343,6 +22355,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @Test
+                @TestMetadata("genericBoundInnerConstructorRef.kt")
+                public void testGenericBoundInnerConstructorRef() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/genericBoundInnerConstructorRef.kt");
+                }
+
+                @Test
+                @TestMetadata("genericInnerConstructorRef.kt")
+                public void testGenericInnerConstructorRef() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/genericInnerConstructorRef.kt");
+                }
+
+                @Test
                 @TestMetadata("innerConstructorRef.kt")
                 public void testInnerConstructorRef() throws Exception {
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/innerConstructorRef.kt");
@@ -22394,6 +22418,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 @TestMetadata("multifileClassMemberFromStdlib.kt")
                 public void testMultifileClassMemberFromStdlib() throws Exception {
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/multifileClassMemberFromStdlib.kt");
+                }
+
+                @Test
+                @TestMetadata("multipleProxyWrappersForSameFunction.kt")
+                public void testMultipleProxyWrappersForSameFunction() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/multipleProxyWrappersForSameFunction.kt");
                 }
 
                 @Test
@@ -22481,6 +22511,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     @TestMetadata("enumValues.kt")
                     public void testEnumValues() throws Exception {
                         runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/specialFunctions/enumValues.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("intArrayOf.kt")
+                    public void testIntArrayOf() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/specialFunctions/intArrayOf.kt");
                     }
 
                     @Test
