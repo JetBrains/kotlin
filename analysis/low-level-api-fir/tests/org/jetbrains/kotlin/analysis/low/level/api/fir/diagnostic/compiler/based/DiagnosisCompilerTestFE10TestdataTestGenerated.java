@@ -24084,6 +24084,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("LocalClassReferenceChain.kt")
+            public void testLocalClassReferenceChain() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/regressions/LocalClassReferenceChain.kt");
+            }
+
+            @Test
             @TestMetadata("noThis.kt")
             public void testNoThis() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/regressions/noThis.kt");

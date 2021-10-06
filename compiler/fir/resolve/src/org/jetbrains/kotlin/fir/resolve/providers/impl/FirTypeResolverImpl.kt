@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -68,19 +69,21 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 val qualifierResolver = session.qualifierResolver
                 var resolvedSymbol: FirBasedSymbol<*>? = null
                 var substitutor: ConeSubstitutor? = null
-                scope.processClassifiersByNameWithSubstitution(typeRef.qualifier.first().name) { symbol, substitutorFromScope ->
+                val qualifier = typeRef.qualifier
+                scope.processClassifiersByNameWithSubstitution(qualifier.first().name) { symbol, substitutorFromScope ->
                     if (resolvedSymbol != null) return@processClassifiersByNameWithSubstitution
                     resolvedSymbol = when (symbol) {
                         is FirClassLikeSymbol<*> -> {
-                            if (typeRef.qualifier.size == 1) {
+                            if (qualifier.size == 1) {
                                 symbol
                             } else {
-                                qualifierResolver.resolveSymbolWithPrefix(typeRef.qualifier, symbol.classId)
-                                    ?: qualifierResolver.resolveEnumEntrySymbol(typeRef.qualifier, symbol.classId)
+                                resolveLocalClassChain(symbol, qualifier)
+                                    ?: qualifierResolver.resolveSymbolWithPrefix(qualifier, symbol.classId)
+                                    ?: qualifierResolver.resolveEnumEntrySymbol(qualifier, symbol.classId)
                             }
                         }
                         is FirTypeParameterSymbol -> {
-                            assert(typeRef.qualifier.size == 1)
+                            assert(qualifier.size == 1)
                             symbol
                         }
                         else -> error("!")
@@ -89,7 +92,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 }
 
                 // TODO: Imports
-                val resultSymbol: FirBasedSymbol<*>? = resolvedSymbol ?: qualifierResolver.resolveSymbol(typeRef.qualifier)
+                val resultSymbol: FirBasedSymbol<*>? = resolvedSymbol ?: qualifierResolver.resolveSymbol(qualifier)
                 resultSymbol to substitutor
             }
 
@@ -99,6 +102,31 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
             else -> null to null
         }
+    }
+
+    private fun resolveLocalClassChain(symbol: FirClassLikeSymbol<*>, qualifier: List<FirQualifierPart>): FirRegularClassSymbol? {
+        if (symbol !is FirRegularClassSymbol || !symbol.isLocal) {
+            return null
+        }
+
+        fun resolveLocalClassChain(classSymbol: FirRegularClassSymbol, qualifierIndex: Int): FirRegularClassSymbol? {
+            if (qualifierIndex == qualifier.size) {
+                return classSymbol
+            }
+
+            val qualifierName = qualifier[qualifierIndex].name
+            for (declarationSymbol in classSymbol.declarationSymbols) {
+                if (declarationSymbol is FirRegularClassSymbol) {
+                    if (declarationSymbol.toLookupTag().name == qualifierName) {
+                        return resolveLocalClassChain(declarationSymbol, qualifierIndex + 1)
+                    }
+                }
+            }
+
+            return null
+        }
+
+        return resolveLocalClassChain(symbol, 1)
     }
 
     @OptIn(SymbolInternals::class)
