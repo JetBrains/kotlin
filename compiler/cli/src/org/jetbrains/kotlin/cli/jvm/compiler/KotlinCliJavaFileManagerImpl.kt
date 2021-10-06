@@ -199,7 +199,14 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         if (!found) {
             found = singleJavaFileRootsIndex.findJavaSourceClasses(packageFqName).isNotEmpty()
         }
-        return if (found) PsiPackageImpl(myPsiManager, packageName) else null
+
+        if (!found) return null
+
+        return object : PsiPackageImpl(myPsiManager, packageName) {
+            // Do not check validness for packages we just made sure are actually present
+            // It might be important for source roots that have non-trivial package prefix
+            override fun isValid() = true
+        }
     }
 
     private fun findVirtualFileGivenPackage(
