@@ -189,7 +189,7 @@ class BuildCacheIT : KGPBaseTest() {
         // Change the return type of foo() from Int to String in foo.kt, and check that fooUsage.kt is recompiled as well:
         val fooKtSourceFile = secondProject.projectPath.resolve("src/main/kotlin/foo.kt")
         fooKtSourceFile.modify { it.replace("Int = 1", "String = \"abc\"") }
-        secondProject.build("assemble", forceOutput = true) {
+        secondProject.build("assemble") {
             assertIncrementalCompilation(modifiedFiles = setOf(fooKtSourceFile))
         }
 

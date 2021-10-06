@@ -116,7 +116,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             enableLocalBuildCache(buildCache)
             useToolchainExtension(11)
 
-            build("assemble", forceOutput = true, enableBuildCacheDebug = true)
+            build("assemble")
         }
 
         project(
@@ -129,7 +129,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             enableLocalBuildCache(buildCache)
             useToolchainExtension(11)
 
-            build("assemble", enableBuildCacheDebug = true) {
+            build("assemble") {
                 assertTasksFromCache(":compileKotlin")
             }
         }
@@ -146,7 +146,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true)
         ) {
             enableLocalBuildCache(buildCache)
-            enableBuildCacheDebug()
             if (shouldUseToolchain(gradleVersion)) {
                 useToolchainExtension(11)
             } else {
@@ -166,7 +165,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true)
         ) {
             enableLocalBuildCache(buildCache)
-            enableBuildCacheDebug()
             build("assemble") {
                 assertTasksExecuted(":compileKotlin")
             }

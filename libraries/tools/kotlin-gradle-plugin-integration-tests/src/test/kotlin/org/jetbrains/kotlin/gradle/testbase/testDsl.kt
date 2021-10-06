@@ -151,12 +151,6 @@ fun TestProject.enableLocalBuildCache(
     )
 }
 
-fun TestProject.enableBuildCacheDebug() {
-    gradleProperties.append(
-        "org.gradle.caching.debug=true"
-    )
-}
-
 class TestProject(
     val gradleRunner: GradleRunner,
     val projectName: String,
