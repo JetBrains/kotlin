@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
@@ -157,7 +158,11 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
             replacement = replacement.makeDefinitelyNotNullOrNotNull()
         }
         if (type is CustomTypeParameter) {
-            replacement = type.substitutionResult(replacement).unwrap()
+            replacement = type.substitutionResult(replacement).unwrap().run {
+                if (type is NotNullTypeVariable && replacement.constructor is TypeVariableTypeConstructor) {
+                    makeDefinitelyNotNullOrNotNull()
+                } else this
+            }
         }
 
         return replacement
