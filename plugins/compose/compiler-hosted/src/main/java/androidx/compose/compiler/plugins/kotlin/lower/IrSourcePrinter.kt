@@ -561,6 +561,9 @@ class IrSourcePrinterVisitor(
             IrTypeOperator.SAM_CONVERSION -> {
                 expression.argument.print()
             }
+            IrTypeOperator.IMPLICIT_NOTNULL -> {
+                expression.argument.print()
+            }
             else -> error("Unknown type operator: ${expression.operator}")
         }
     }
