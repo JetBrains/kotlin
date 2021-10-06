@@ -56,22 +56,22 @@ internal interface DecoyTransformBase {
 
     fun IrFunction.getSignatureId(): Long {
         val signature = symbol.signature
-            ?: signatureBuilder.composeSignatureForDeclaration(this)
+            ?: signatureBuilder.composeSignatureForDeclaration(this, false)
 
         return signature.getSignatureId()
     }
 
     private fun IdSignature.getSignatureId(): Long {
         return when (this) {
-            is IdSignature.PublicSignature -> id!!
             is IdSignature.AccessorSignature -> accessorSignature.id!!
             is IdSignature.FileLocalSignature -> id
             is IdSignature.ScopeLocalDeclaration -> id.toLong()
             is IdSignature.SpecialFakeOverrideSignature -> memberSignature.getSignatureId()
-            is IdSignature.GlobalFileLocalSignature -> TODO()
             is IdSignature.LoweredDeclarationSignature -> TODO()
             is IdSignature.FileSignature -> TODO()
-            is IdSignature.GlobalScopeLocalDeclaration -> TODO()
+            is IdSignature.CommonSignature -> id!!
+            is IdSignature.CompositeSignature -> this.getSignatureId()
+            is IdSignature.LocalSignature -> this.getSignatureId()
         }
     }
 
@@ -111,7 +111,7 @@ internal interface DecoyTransformBase {
             "Could not find local implementation for $implementationName"
         }
         // top-level
-        val idSig = IdSignature.PublicSignature(
+        val idSig = IdSignature.CommonSignature(
             packageFqName = signature[0],
             declarationFqName = signature[1],
             id = signature[2].toLongOrNull(),

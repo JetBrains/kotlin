@@ -120,7 +120,7 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
                 val composableLambda = @Composable {}
                 acceptSuspend <!TYPE_MISMATCH!>@Composable {}<!>
                 acceptComposableSuspend @Composable {}
-                acceptComposableSuspend(<!UNSUPPORTED_FEATURE!>composableLambda<!>)
+                acceptComposableSuspend(composableLambda)
                 acceptSuspend(<!COMPOSABLE_SUSPEND_FUN, TYPE_MISMATCH!>@Composable suspend fun() { }<!>)
             }
         """
