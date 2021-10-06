@@ -41753,6 +41753,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("trimOptimization.kt")
+        public void testTrimOptimization() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/trimOptimization.kt");
+        }
+
+        @Test
         @TestMetadata("twoArgumentNullableStringOperatorPlus.kt")
         public void testTwoArgumentNullableStringOperatorPlus() throws Exception {
             runTest("compiler/testData/codegen/box/strings/twoArgumentNullableStringOperatorPlus.kt");

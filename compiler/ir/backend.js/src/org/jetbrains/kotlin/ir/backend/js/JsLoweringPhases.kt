@@ -423,6 +423,12 @@ private val foldConstantLoweringPhase = makeBodyLoweringPhase(
     prerequisite = setOf(propertyAccessorInlinerLoweringPhase)
 )
 
+private val computeStringTrimPhase = makeJsModulePhase(
+    ::StringTrimLowering,
+    name = "StringTrimLowering",
+    description = "Compute trimIndent and trimMargin operations on constant strings"
+).toModuleLowering()
+
 private val localDelegatedPropertiesLoweringPhase = makeBodyLoweringPhase(
     { LocalDelegatedPropertiesLowering() },
     name = "LocalDelegatedPropertiesLowering",
@@ -816,6 +822,7 @@ private val loweringList = listOf<Lowering>(
     copyPropertyAccessorBodiesLoweringPass,
     booleanPropertyInExternalLowering,
     foldConstantLoweringPhase,
+    computeStringTrimPhase,
     privateMembersLoweringPhase,
     privateMemberUsagesLoweringPhase,
     exportedDefaultParameterStubPhase,
