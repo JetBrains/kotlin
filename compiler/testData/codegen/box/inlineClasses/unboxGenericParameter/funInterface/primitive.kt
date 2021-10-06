@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: SAM_CONVERSIONS
 // !LANGUAGE: +InlineClasses
 
 fun <T1> underlying(a: IC): T1 = bar(a) { it.value as T1 }

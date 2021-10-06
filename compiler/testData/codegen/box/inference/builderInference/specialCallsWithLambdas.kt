@@ -1,5 +1,4 @@
 // WITH_RUNTIME
-// IGNORE_BACKEND: WASM
 
 import kotlin.experimental.ExperimentalTypeInference
 

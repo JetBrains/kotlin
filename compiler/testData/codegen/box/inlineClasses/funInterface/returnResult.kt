@@ -1,6 +1,5 @@
 // WITH_RUNTIME
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: WASM
 
 fun interface ResultHandler<T> {
     @Suppress("RESULT_CLASS_IN_RETURN_TYPE")

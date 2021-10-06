@@ -206,7 +206,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         newDeclarations: MutableList<IrDeclaration>
     ): IrBlockBody {
         val invokeFun = lambdaClass.declarations.filterIsInstance<IrSimpleFunction>().single { it.name.asString() == "invoke" }
-        val superInvokeFun = invokeFun.overriddenSymbols.single { it.owner.isSuspend == invokeFun.isSuspend }.owner
+        val superInvokeFun = invokeFun.overriddenSymbols.first { it.owner.isSuspend == invokeFun.isSuspend }.owner
         val lambdaName = Name.identifier("${lambdaClass.name.asString()}\$lambda")
 
         val superClass = superInvokeFun.parentAsClass

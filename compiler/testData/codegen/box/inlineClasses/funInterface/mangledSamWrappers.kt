@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: WASM
 // !LANGUAGE: +InlineClasses
 inline class A(val value: String)
 

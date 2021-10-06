@@ -1,5 +1,4 @@
 // WITH_RUNTIME
-// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: JVM
 
 inline class Result<T>(val isSuccess: Boolean)

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.lower.SingleAbstractMethodLowering
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.render
 
-class JsSingleAbstractMethodLowering(context: JsIrBackendContext) : SingleAbstractMethodLowering(context), BodyLoweringPass {
+class JsSingleAbstractMethodLowering(context: CommonBackendContext) : SingleAbstractMethodLowering(context), BodyLoweringPass {
 
     override fun getWrapperVisibility(expression: IrTypeOperatorCall, scopes: List<ScopeWithIr>): DescriptorVisibility =
         DescriptorVisibilities.LOCAL

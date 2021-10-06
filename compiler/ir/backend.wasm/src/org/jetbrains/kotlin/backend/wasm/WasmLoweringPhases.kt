@@ -186,10 +186,17 @@ private val propertyReferenceLowering = makeWasmModulePhase(
 )
 
 private val callableReferencePhase = makeWasmModulePhase(
-    ::WasmCallableReferenceLowering,
+    ::CallableReferenceLowering,
     name = "WasmCallableReferenceLowering",
     description = "Handle callable references"
 )
+
+private val singleAbstractMethodPhase = makeWasmModulePhase(
+    ::JsSingleAbstractMethodLowering,
+    name = "SingleAbstractMethod",
+    description = "Replace SAM conversions with instances of interface-implementing classes"
+)
+
 
 private val localDelegatedPropertiesLoweringPhase = makeWasmModulePhase(
     { LocalDelegatedPropertiesLowering() },
@@ -455,6 +462,7 @@ val wasmPhases = NamedCompilerPhase(
             sharedVariablesLoweringPhase then
             propertyReferenceLowering then
             callableReferencePhase then
+            singleAbstractMethodPhase then
             localDelegatedPropertiesLoweringPhase then
             localDeclarationsLoweringPhase then
             localClassExtractionPhase then

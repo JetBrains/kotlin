@@ -274,7 +274,7 @@ fun loadIr(
     val createFunctionFactoryCallback =
         if (loadFunctionInterfacesIntoStdlib) {
             { packageFragmentDescriptor: PackageFragmentDescriptor ->
-                IrFileImpl(NaiveSourceBasedFileEntryImpl("[K][Suspend]Functions"), packageFragmentDescriptor, stdlibModule)
+                IrFileImpl(NaiveSourceBasedFileEntryImpl("${packageFragmentDescriptor.fqName}-[K][Suspend]Functions"), packageFragmentDescriptor, stdlibModule)
                     .also { stdlibModule.files += it }
             }
         } else {

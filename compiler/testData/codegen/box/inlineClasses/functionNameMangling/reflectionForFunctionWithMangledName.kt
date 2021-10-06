@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: BRIDGE_ISSUES
 // !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 import kotlin.test.*

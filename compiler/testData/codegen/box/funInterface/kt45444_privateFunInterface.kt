@@ -1,6 +1,4 @@
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: SAM_CONVERSIONS
 
 private fun interface Listener {
     fun onChanged(): String

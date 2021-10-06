@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -120,8 +118,19 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         private val superClass = if (isSuspendLambda) context.ir.symbols.coroutineImpl.owner.defaultType else context.irBuiltIns.anyType
         private var boundReceiverField: IrField? = null
 
-        private val superFunctionInterface = reference.type.classOrNull?.owner ?: error("Expected functional type")
+        private val referenceType = reference.type as IrSimpleType
+
+        private val superFunctionInterface: IrClass = referenceType.classOrNull?.owner ?: error("Expected functional type")
         private val isKReference = superFunctionInterface.name.identifier[0] == 'K'
+
+        // If we implement KFunctionN we also need FunctionN
+        private val secondFunctionInterface: IrClass? = if (isKReference) {
+            val arity = referenceType.arguments.size - 1
+            if (function.isSuspend)
+                context.ir.symbols.suspendFunctionN(arity).owner
+            else
+                context.ir.symbols.functionN(arity).owner
+        } else null
 
         private fun StringBuilder.collectNamesForLambda(d: IrDeclarationWithName) {
             val parent = d.parent
@@ -167,7 +176,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 origin = if (isKReference || !isLambda) FUNCTION_REFERENCE_IMPL else LAMBDA_IMPL
                 name = makeContextDependentName()
             }.apply {
-                superTypes = listOf(superClass, reference.type)
+                superTypes = listOfNotNull(superClass, referenceType, secondFunctionInterface?.symbol?.typeWithArguments(referenceType.arguments))
 //                if (samSuperType == null)
 //                    superTypes += functionSuperClass.typeWith(parameterTypes)
 //                if (irFunctionReference.isSuspend) superTypes += context.ir.symbols.suspendFunctionInterface.defaultType
@@ -241,7 +250,14 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 isSuspend = superMethod.isSuspend
                 isOperator = superMethod.isOperator
             }.apply {
-                overriddenSymbols = listOf(superMethod.symbol)
+                val secondSuperMethods: List<IrSimpleFunction>? =
+                    secondFunctionInterface?.declarations?.filterIsInstance<IrSimpleFunction>()
+                val secondSuperMethod = secondSuperMethods?.single { it.name.asString() == "invoke" }
+
+                overriddenSymbols = listOfNotNull(
+                    superMethod.symbol,
+                    secondSuperMethod?.symbol
+                )
                 dispatchReceiverParameter = buildReceiverParameter(this, clazz.origin, clazz.defaultType, startOffset, endOffset)
 
                 if (isLambda) createLambdaInvokeMethod() else createFunctionReferenceInvokeMethod()
@@ -391,7 +407,10 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         private fun createNameProperty(clazz: IrClass) {
             if (!isKReference) return
 
-            val superProperty = superFunctionInterface.declarations.filterIsInstance<IrProperty>().single()
+            val superProperty = superFunctionInterface.declarations
+                .filterIsInstance<IrProperty>()
+                .single { it.name == Name.identifier("name") }  // In K/Wasm interfaces can have fake overridden properties from Any
+
             val supperGetter = superProperty.getter ?: error("Expected getter for KFunction.name property")
 
             val nameProperty = clazz.addProperty() {

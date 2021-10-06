@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 
 fun interface Action {
     fun run()
