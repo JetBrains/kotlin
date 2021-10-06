@@ -91,12 +91,15 @@ internal fun Context.psiToIr(
                 get() = generatorContext.irBuiltIns
         }
 
+        val friendModules = emptyMap<String, Collection<String>>() // TODO: provide friend modules
+
         KonanIrLinker(
                 moduleDescriptor,
                 translationContext,
                 messageLogger,
                 generatorContext.irBuiltIns,
                 symbolTable,
+                friendModules,
                 forwardDeclarationsModuleDescriptor,
                 stubGenerator,
                 irProviderForCEnumsAndCStructs,

@@ -457,7 +457,7 @@ val IrFunction.allParametersCount: Int
 // This is essentially the same as FakeOverrideBuilder,
 // but it bypasses SymbolTable.
 // TODO: merge it with FakeOverrideBuilder.
-private class FakeOverrideBuilderForLowerings : FakeOverrideBuilderStrategy() {
+private class FakeOverrideBuilderForLowerings : FakeOverrideBuilderStrategy(emptyMap()) {
 
     override fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction, compatibilityMode: Boolean) {
         declaration.acquireSymbol(IrSimpleFunctionSymbolImpl())
