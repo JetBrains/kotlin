@@ -361,6 +361,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xruntime-logs", valueDescription = "<tag1=level1,tag2=level2,...>", description = "Enable logging for runtime with tags.")
     var runtimeLogs: String? = null
 
+    @Argument(value = "-Xmeaningful-bridge-names", description = "(Unstable) Produce meaningful names for reverse bridges. Useful only for compiler tests.")
+    var meaningfulBridgeNames: Boolean = false
+
     @Argument(value = "-Xlazy-ir-for-caches", valueDescription = "{disable|enable}", description = "Use lazy IR for cached libraries")
     var lazyIrForCaches: String? = null
 

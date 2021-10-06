@@ -391,6 +391,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 })
                 putIfNotNull(RUNTIME_LOGS, arguments.runtimeLogs)
                 putIfNotNull(BUNDLE_ID, parseBundleId(arguments, outputKind, configuration))
+                put(MEANINGFUL_BRIDGE_NAMES, arguments.meaningfulBridgeNames)
             }
         }
     }

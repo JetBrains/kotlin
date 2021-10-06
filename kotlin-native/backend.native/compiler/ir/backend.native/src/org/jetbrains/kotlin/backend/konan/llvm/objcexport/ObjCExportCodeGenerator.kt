@@ -238,6 +238,13 @@ internal class ObjCExportCodeGenerator(
         generateContinuationToRetainedCompletionConverter(blockGenerator)
     }
 
+    fun meaningfulBridgeNameOrNull(irFunction: IrFunction?): String? {
+        if (!context.config.configuration.getBoolean(KonanConfigKeys.MEANINGFUL_BRIDGE_NAMES)) {
+            return null
+        }
+        return irFunction?.name?.asString()
+    }
+
     fun FunctionGenerationContext.genSendMessage(
             returnType: LlvmParamType,
             parameterTypes: List<LlvmParamType>,
@@ -863,10 +870,12 @@ private fun ObjCExportFunctionGenerationContextBuilder.setupBridgeDebugInfo() {
 private inline fun ObjCExportCodeGenerator.generateObjCImpBy(
         methodBridge: MethodBridge,
         debugInfo: Boolean = false,
+        suffix: String? = null,
         genBody: ObjCExportFunctionGenerationContext.() -> Unit
 ): LLVMValueRef {
     val functionType = objCFunctionType(context, methodBridge)
-    val result = functionGenerator(functionType, "objc2kotlin") {
+    val functionName = "objc2kotlin" + (suffix?.let { "_$it" } ?: "")
+    val result = functionGenerator(functionType, functionName) {
         if (debugInfo) {
             this.setupBridgeDebugInfo()
         }
@@ -926,7 +935,11 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
                 resultLifetime: Lifetime,
                 exceptionHandler: ExceptionHandler
         ) -> LLVMValueRef?
-): LLVMValueRef = generateObjCImpBy(methodBridge, debugInfo = isDirect /* see below */) {
+): LLVMValueRef = generateObjCImpBy(
+        methodBridge,
+        debugInfo = isDirect /* see below */,
+        suffix = meaningfulBridgeNameOrNull(baseMethod)
+) {
     // Considering direct calls inlinable above. If such a call is inlined into a bridge with no debug information,
     // lldb will not decode the inlined frame even if the callee has debug information.
     // So generate dummy debug information for bridge in this case.
