@@ -2549,7 +2549,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               sourceInformation(%composer, "C(Test)P(0:InlineClass)<A()>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
-                %dirty = %dirty or if (%composer.changed(value.value)) 0b0100 else 0b0010
+                %dirty = %dirty or if (%composer.changed(<unsafe-coerce>(value))) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 used(value)
@@ -3437,7 +3437,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               sourceInformation(%composer, "C(Test)P(0:c#runtime.tests.LocalInlineClass):Test.kt#992ot2")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
-                %dirty = %dirty or if (%composer.changed(value.value)) 0b0100 else 0b0010
+                %dirty = %dirty or if (%composer.changed(<unsafe-coerce>(value))) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 used(value)
