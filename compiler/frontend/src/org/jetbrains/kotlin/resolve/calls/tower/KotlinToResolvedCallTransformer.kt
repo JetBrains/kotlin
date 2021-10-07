@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
@@ -60,6 +61,7 @@ class KotlinToResolvedCallTransformer(
     private val smartCastManager: SmartCastManager,
     private val typeApproximator: TypeApproximator,
     private val missingSupertypesResolver: MissingSupertypesResolver,
+    private val candidateInterceptor: CandidateInterceptor,
 ) {
     companion object {
         private val REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
@@ -181,6 +183,16 @@ class KotlinToResolvedCallTransformer(
         diagnostics: Collection<KotlinCallDiagnostic>,
     ): NewAbstractResolvedCall<D> {
         val psiKotlinCall = completedCallAtom.atom.psiKotlinCall
+
+        completedCallAtom.setCandidateDescriptor(
+            candidateInterceptor.interceptResolvedCallAtomCandidate(
+                completedCallAtom.candidateDescriptor,
+                completedCallAtom,
+                trace,
+                resultSubstitutor,
+                diagnostics
+            )
+        )
 
         return if (psiKotlinCall is PSIKotlinCallForInvoke) {
             val diagnosticsForVariableCall = if (completedCallAtom.candidateDescriptor is FunctionDescriptor) emptyList() else diagnostics
