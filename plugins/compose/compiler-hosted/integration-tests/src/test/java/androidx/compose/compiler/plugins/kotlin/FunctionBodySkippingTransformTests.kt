@@ -124,24 +124,12 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
     @Test
     fun testBasicText(): Unit = comparisonPropagation(
         """
-            import androidx.compose.runtime.Stable
-            import androidx.compose.runtime.Immutable
-
-            class TextLayoutResult
-            @Immutable
-            class TextStyle(val foo: Int = 0) {
-                companion object {
-                    @Stable
-                    val Default = TextStyle()
-                }
-            }
-            inline class TextOverflow(val value: Int) {
-                companion object {
-                    val Clip = TextOverflow(1)
-                }
-            }
         """,
         """
+            import androidx.compose.ui.text.style.TextOverflow
+            import androidx.compose.ui.text.TextStyle
+            import androidx.compose.ui.text.TextLayoutResult
+
             @Composable
             fun BasicText(
                 style: TextStyle = TextStyle.Default,
@@ -157,7 +145,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
             @Composable
             fun BasicText(style: TextStyle?, onTextLayout: Function1<TextLayoutResult, Unit>?, overflow: TextOverflow, %composer: Composer?, %changed: Int, %default: Int) {
               %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(BasicText)P(2!,1:TextOverflow):Test.kt")
+              sourceInformation(%composer, "C(BasicText)P(2!,1:c#ui.text.style.TextOverflow):Test.kt")
               val %dirty = %changed
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
@@ -172,7 +160,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               if (%default and 0b0100 !== 0) {
                 %dirty = %dirty or 0b000110000000
               } else if (%changed and 0b001110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(overflow.value)) 0b000100000000 else 0b10000000
+                %dirty = %dirty or if (%composer.changed(<unsafe-coerce>(overflow))) 0b000100000000 else 0b10000000
               }
               if (%dirty and 0b001011011011 xor 0b10010010 !== 0 || !%composer.skipping) {
                 if (%default and 0b0001 !== 0) {
@@ -193,6 +181,47 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 BasicText(style, onTextLayout, overflow, %composer, %changed or 0b0001, %default)
+              }
+            }
+        """
+    )
+
+    @Test
+    fun testArrangement(): Unit = comparisonPropagation(
+        """
+        """,
+        """
+            import androidx.compose.foundation.layout.Arrangement
+            import androidx.compose.foundation.layout.Arrangement.Vertical
+
+            @Composable
+            fun A(
+                arrangement: Vertical = Arrangement.Top
+            ) {
+                used(arrangement)
+            }
+        """,
+        """
+            @Composable
+            fun A(arrangement: Vertical?, %composer: Composer?, %changed: Int, %default: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(A):Test.kt")
+              val %dirty = %changed
+              if (%default and 0b0001 !== 0) {
+                %dirty = %dirty or 0b0110
+              } else if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(arrangement)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                if (%default and 0b0001 !== 0) {
+                  arrangement = Arrangement.Top
+                }
+                used(arrangement)
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                A(arrangement, %composer, %changed or 0b0001, %default)
               }
             }
         """
@@ -323,7 +352,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                 %dirty = %dirty or if (%composer.changed(colors)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
-                Text("hello world", null, colors.getColor(%composer, 0b1110 and %dirty), <unsafe-coerce>(0L), null, null, null, <unsafe-coerce>(0L), null, null, <unsafe-coerce>(0L), <unsafe-coerce>(0), false, 0, null, null, %composer, 0b0110, 0b01000000, 0b1111111111111010)
+                Text("hello world", null, colors.getColor(%composer, 0b1110 and %dirty), <unsafe-coerce>(0L), null, null, null, <unsafe-coerce>(0L), null, null, <unsafe-coerce>(0L), <unsafe-coerce>(0), false, 0, null, null, %composer, 0b0110, 0, 0b1111111111111010)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -1627,7 +1656,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               if (%default and 0b0010 !== 0) {
                 %dirty = %dirty or 0b00110000
               } else if (%changed and 0b01110000 === 0) {
-                %dirty = %dirty or if (%composer.changed(color.value)) 0b00100000 else 0b00010000
+                %dirty = %dirty or if (%composer.changed(<unsafe-coerce>(color))) 0b00100000 else 0b00010000
               }
               if (%dirty and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
                 if (%default and 0b0010 !== 0) {
@@ -3032,7 +3061,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               if (%default and 0b0010 !== 0) {
                 %dirty = %dirty or 0b00110000
               } else if (%changed and 0b01110000 === 0) {
-                %dirty = %dirty or if (%composer.changed(paddingStart.value)) 0b00100000 else 0b00010000
+                %dirty = %dirty or if (%composer.changed(<unsafe-coerce>(paddingStart))) 0b00100000 else 0b00010000
               }
               if (%default and 0b0100 !== 0) {
                 %dirty = %dirty or 0b000110000000
