@@ -101,9 +101,7 @@ object ClasspathChangesComputer {
     /** Returns `true` if this snapshot file contains a duplicate class with another snapshot file in the given list. */
     @Suppress("unused", "UNUSED_PARAMETER")
     private fun File.containsDuplicatesWith(otherSnapshotFiles: List<File>): Boolean {
-        // TODO: Implement and optimize this method
-        // Existing approach (with `kotlin.incremental.useClasspathSnapshot=false`) doesn't seem to handle duplicate classes, so it is
-        // probably not a regression that we are not handling duplicate classes here yet.
+        // FIXME: Implement and optimize this method
         return false
     }
 

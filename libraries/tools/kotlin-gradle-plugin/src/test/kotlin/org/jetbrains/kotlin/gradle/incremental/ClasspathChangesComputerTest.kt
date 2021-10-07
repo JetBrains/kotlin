@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.gradle.incremental
 
 import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.compileAll
 import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.snapshot
+import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.snapshotAll
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import java.io.File
 import kotlin.test.fail
 
@@ -98,7 +101,7 @@ class KotlinClassesClasspathChangesComputerTest : ClasspathChangesComputerTest()
                 LookupSymbol(name = "modifiedTopLevelFunction", scope = "com.example"),
                 LookupSymbol(name = "addedTopLevelFunction", scope = "com.example"),
                 LookupSymbol(name = "removedTopLevelFunction", scope = "com.example"),
-                LookupSymbol(name = "movedTopLevelFunction", scope = "com.example"),
+                LookupSymbol(name = "movedTopLevelFunction", scope = "com.example")
             ),
             fqNames = setOf(
                 "com.example.ModifiedClassUnchangedMembers",
@@ -111,14 +114,48 @@ class KotlinClassesClasspathChangesComputerTest : ClasspathChangesComputerTest()
     }
 }
 
-class JavaClassesClasspathChangesComputerTest : ClasspathChangesComputerTest() {
+@RunWith(Parameterized::class)
+class JavaClassesClasspathChangesComputerTest(private val protoBased: Boolean) : ClasspathChangesComputerTest() {
+
+    companion object {
+        @Parameterized.Parameters(name = "protoBased={0}")
+        @JvmStatic
+        fun parameters() = listOf(true, false)
+    }
+
+    private fun computeClasspathChanges(
+        currentClasspathSnapshot: ClasspathSnapshot,
+        previousClasspathSnapshot: ClasspathSnapshot
+    ): Changes {
+        return if (protoBased) {
+            ClasspathChangesComputer.compute(currentClasspathSnapshot, previousClasspathSnapshot).normalize()
+        } else {
+            @Suppress("UNCHECKED_CAST")
+            JavaClassChangesComputer.compute(
+                currentClasspathSnapshot.classpathEntrySnapshots.flatMap { it.classSnapshots.values } as List<RegularJavaClassSnapshot>,
+                previousClasspathSnapshot.classpathEntrySnapshots.flatMap { it.classSnapshots.values } as List<RegularJavaClassSnapshot>
+            ).normalize()
+        }
+    }
+
+    private fun computeClassChanges(currentClassSnapshots: List<ClassSnapshot>, previousClassSnapshots: List<ClassSnapshot>): Changes {
+        return if (protoBased) {
+            ClasspathChangesComputer.compute(currentClassSnapshots, previousClassSnapshots).normalize()
+        } else {
+            @Suppress("UNCHECKED_CAST")
+            JavaClassChangesComputer.compute(
+                currentClassSnapshots as List<RegularJavaClassSnapshot>,
+                previousClassSnapshots as List<RegularJavaClassSnapshot>
+            ).normalize()
+        }
+    }
 
     @Test
     override fun testAbiChange_changePublicMethodSignature() {
         val sourceFile = SimpleJavaClass(tmpDir)
-        val previousSnapshot = sourceFile.compileAndSnapshot()
-        val currentSnapshot = sourceFile.changePublicMethodSignature().compileAndSnapshot()
-        val changes = ClasspathChangesComputer.compute(listOf(currentSnapshot), listOf(previousSnapshot)).normalize()
+        val previousSnapshot = sourceFile.compile().snapshot(protoBased)
+        val currentSnapshot = sourceFile.changePublicMethodSignature().compile().snapshot(protoBased)
+        val changes = computeClassChanges(listOf(currentSnapshot), listOf(previousSnapshot))
 
         Changes(
             lookupSymbols = setOf(
@@ -133,9 +170,9 @@ class JavaClassesClasspathChangesComputerTest : ClasspathChangesComputerTest() {
     @Test
     override fun testNonAbiChange_changeMethodImplementation() {
         val sourceFile = SimpleJavaClass(tmpDir)
-        val previousSnapshot = sourceFile.compileAndSnapshot()
-        val currentSnapshot = sourceFile.changeMethodImplementation().compileAndSnapshot()
-        val changes = ClasspathChangesComputer.compute(listOf(currentSnapshot), listOf(previousSnapshot)).normalize()
+        val previousSnapshot = sourceFile.compile().snapshot(protoBased)
+        val currentSnapshot = sourceFile.changeMethodImplementation().compile().snapshot(protoBased)
+        val changes = computeClassChanges(listOf(currentSnapshot), listOf(previousSnapshot))
 
         Changes(emptySet(), emptySet()).assertEquals(changes)
     }
@@ -143,9 +180,9 @@ class JavaClassesClasspathChangesComputerTest : ClasspathChangesComputerTest() {
     @Test
     override fun testVariousAbiChanges() {
         val classpathSourceDir = File(testDataDir, "../ClasspathChangesComputerTest/testVariousAbiChanges/src/java").canonicalFile
-        val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir)
-        val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir)
-        val changes = ClasspathChangesComputer.compute(currentSnapshot, previousSnapshot).normalize()
+        val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir, protoBased)
+        val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir, protoBased)
+        val changes = computeClasspathChanges(currentSnapshot, previousSnapshot)
 
         Changes(
             lookupSymbols = setOf(
@@ -169,7 +206,7 @@ class JavaClassesClasspathChangesComputerTest : ClasspathChangesComputerTest() {
                 LookupSymbol(name = "someMethod", scope = "com.example.AddedClass"),
 
                 // RemovedClass
-                LookupSymbol(name = "RemovedClass", scope = "com.example"),
+                LookupSymbol(name = "RemovedClass", scope = "com.example")
             ),
             fqNames = setOf(
                 "com.example.ModifiedClassUnchangedMembers",
@@ -181,11 +218,13 @@ class JavaClassesClasspathChangesComputerTest : ClasspathChangesComputerTest() {
     }
 }
 
-private fun snapshotClasspath(classpathSourceDir: File, tmpDir: TemporaryFolder): ClasspathSnapshot {
+private fun snapshotClasspath(classpathSourceDir: File, tmpDir: TemporaryFolder, protoBased: Boolean = true): ClasspathSnapshot {
     val classpathEntrySnapshots = classpathSourceDir.listFiles()!!.map { classpathEntrySourceDir ->
         val classFiles = compileAll(classpathEntrySourceDir, tmpDir)
+        val relativePaths = classFiles.map { it.unixStyleRelativePath }
+        val classSnapshots = classFiles.snapshotAll(protoBased)
         ClasspathEntrySnapshot(
-            classSnapshots = classFiles.associateTo(LinkedHashMap()) { it.unixStyleRelativePath to it.snapshot() }
+            classSnapshots = relativePaths.zip(classSnapshots).toMap(LinkedHashMap())
         )
     }
     return ClasspathSnapshot(classpathEntrySnapshots)
@@ -199,17 +238,25 @@ private fun ClasspathChanges.normalize(): Changes {
     return Changes(lookupSymbols, fqNames.map { it.asString() }.toSet())
 }
 
-private fun Changes.assertEquals(actual: Changes) {
-    assertSetEquals(expected = this.lookupSymbols, actual = actual.lookupSymbols)
-    assertSetEquals(expected = this.fqNames, actual = actual.fqNames)
+private fun SymbolChanges.normalize(): Changes {
+    return Changes(lookupSymbols, fqNames.map { it.asString() }.toSet())
 }
 
-private fun assertSetEquals(expected: Set<*>, actual: Set<*>) {
-    if (expected != actual) {
-        fail(
-            "Two sets differ:\n" +
-                    "Elements in expected set but not in actual set: ${expected - actual}\n" +
-                    "Elements in actual set but not in expected set: ${actual - expected}"
-        )
+private fun Changes.assertEquals(actual: Changes) {
+    listOfNotNull(
+        compare(expected = this.lookupSymbols, actual = actual.lookupSymbols),
+        compare(expected = this.fqNames, actual = actual.fqNames)
+    ).also {
+        if (it.isNotEmpty()) {
+            fail(it.joinToString("\n"))
+        }
     }
+}
+
+private fun compare(expected: Set<*>, actual: Set<*>): String? {
+    return if (expected != actual) {
+        "Two sets differ:\n" +
+                "Elements in expected set but not in actual set: ${expected - actual}\n" +
+                "Elements in actual set but not in expected set: ${actual - expected}"
+    } else null
 }

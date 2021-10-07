@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.util.compileSources
 import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
 import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.SourceFile.JavaSourceFile
 import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.compile
+import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.snapshotAll
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
@@ -87,11 +88,7 @@ abstract class ClasspathSnapshotTestCommon {
         fun compileAndSnapshot() = compile().snapshot()
 
         /** Compiles this source file and returns the snapshots of all generated .class files. */
-        fun compileAndSnapshotAll(): List<ClassSnapshot> {
-            val classFiles = compileAll()
-            val classFilesWithContents = classFiles.map { ClassFileWithContents(it, it.readBytes()) }
-            return ClassSnapshotter.snapshot(classFilesWithContents)
-        }
+        fun compileAndSnapshotAll(): List<ClassSnapshot> = compileAll().snapshotAll()
     }
 
     object Util {
@@ -186,11 +183,14 @@ abstract class ClasspathSnapshotTestCommon {
 
         fun ClassFile.readBytes() = asFile().readBytes()
 
-        fun ClassFile.snapshot(protoBased: Boolean = true): ClassSnapshot {
+        fun ClassFile.snapshot(protoBased: Boolean = true): ClassSnapshot = listOf(this).snapshotAll(protoBased).single()
+
+        fun List<ClassFile>.snapshotAll(protoBased: Boolean = true): List<ClassSnapshot> {
+            val classFilesWithContents = this.map { ClassFileWithContents(it, it.readBytes()) }
             return if (protoBased) {
-                ClassSnapshotter.snapshot(listOf(ClassFileWithContents(this, readBytes()))).single()
+                ClassSnapshotter.snapshot(classFilesWithContents)
             } else {
-                JavaClassSnapshotter.snapshot(classContents = readBytes(), calledByUnitTests = true)
+                classFilesWithContents.map { JavaClassSnapshotter.snapshot(it.contents, calledByUnitTests = true) }
             }
         }
     }
