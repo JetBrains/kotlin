@@ -110,6 +110,53 @@ NO_INLINE KStdVector<void*> kotlin::GetCurrentStackTrace(int extraSkipFrames) no
 #endif // !KONAN_NO_BACKTRACE
 }
 
+#if ! KONAN_NO_BACKTRACE
+#include <cstdarg>
+#include <cstring>
+#include "cpp_support/Span.hpp"
+#include "Format.h"
+
+#if __has_include("dlfcn.h")
+#include <dlfcn.h>
+#endif
+
+__attribute__((format(printf, 6, 7)))
+static size_t snprintf_with_addr(char* buf, size_t size, size_t frame, const void* addr, bool is_inline, const char *format, ...) {
+    std_support::span<char> buffer{buf, size};
+    const char* image = "???";
+    char symbol[512];
+    strcpy(symbol, "0x0");
+    ptrdiff_t symbol_offset = reinterpret_cast<ptrdiff_t>(addr);
+
+#if __has_include("dlfcn.h")
+    Dl_info info;
+    memset(&info, 0, sizeof(info));
+    dladdr(addr, &info);
+
+    if (info.dli_fname) {
+        const char* tmp = strrchr(info.dli_fname, '/');
+        if (tmp == nullptr) {
+            image = info.dli_fname;
+        } else {
+            image = tmp + 1;
+        }
+    }
+#endif
+
+    AddressToSymbol(addr, symbol, sizeof(symbol), symbol_offset);
+
+    buffer = FormatToSpan(buffer, "%-4zd%-35s %-18p %s + %td ", frame, image, addr, symbol, symbol_offset);
+    if (is_inline) {
+        buffer = FormatToSpan(buffer, "[inlined] ");
+    }
+    std::va_list args;
+    va_start(args, format);
+    buffer = VFormatToSpan(buffer, format, args);
+    va_end(args);
+    return size - buffer.size();
+}
+#endif // ! KONAN_NO_BACKTRACE
+
 KStdVector<KStdString> kotlin::GetStackTraceStrings(void* const* stackTrace, size_t stackTraceSize) noexcept {
 #if KONAN_NO_BACKTRACE
     KStdVector<KStdString> strings;
@@ -119,36 +166,12 @@ KStdVector<KStdString> kotlin::GetStackTraceStrings(void* const* stackTrace, siz
     KStdVector<KStdString> strings;
     strings.reserve(stackTraceSize);
     if (stackTraceSize > 0) {
-#ifndef USE_GCC_UNWIND
-        char** symbols = backtrace_symbols(stackTrace, static_cast<int>(stackTraceSize));
-        RuntimeCheck(symbols != nullptr, "Not enough memory to retrieve the stacktrace");
-#endif
-
         SourceInfo buffer[10]; // outside of the loop to avoid calling constructors and destructors each time
         for (size_t index = 0; index < stackTraceSize; ++index) {
             KNativePtr address = stackTrace[index];
             if (!address || reinterpret_cast<uintptr_t>(address) == 1) continue;
             int frames_or_overflow = getSourceInfo(address, buffer, std::size(buffer));
             int frames = std::min<int>(frames_or_overflow, std::size(buffer));
-#if USE_GCC_UNWIND
-            char symbol_[512];
-            if (!AddressToSymbol(address, symbol_, sizeof(symbol_))) {
-                // Make empty string:
-                symbol_[0] = '\0';
-            }
-            const char* symbol = symbol_;
-#else
-            const char* symbol = symbols[index];
-            // On MacOs symbol name contain index, executable file containing symbol and address
-            // but it doesn't contain them on other platforms
-            // So we skip first three tokens to make things work similar on all platforms
-            for (int it = 0; it < 3; it++) {
-                while (*symbol != '\0' && *symbol != ' ') symbol++;
-                while (*symbol == ' ') symbol++;
-            }
-            // probably, this can't happen, but let's print at least something
-            if (*symbol == '\0') symbol = symbols[index];
-#endif
             bool isSomethingPrinted = false;
             char line[1024];
             for (int frame = 0; frame < frames; frame++) {
@@ -156,37 +179,33 @@ KStdVector<KStdString> kotlin::GetStackTraceStrings(void* const* stackTrace, siz
                 if (!sourceInfo.getFileName().empty()) {
                     bool is_last = frame == frames - 1;
                     if (is_last && frames_or_overflow != frames) {
-                        konan::snprintf(line, sizeof(line) - 1, "%-4zd %-18p %s (some inlined frames skipped)", strings.size(), address, symbol);
+                        snprintf_with_addr(line, sizeof(line) - 1, strings.size(), address, false, "[some inlined frames skipped]");
                         strings.push_back(line);
                     }
-                    const char* inline_tag = is_last ? "" : "[inlined] ";
                     if (sourceInfo.lineNumber != -1) {
                         if (sourceInfo.column != -1) {
-                            konan::snprintf(
-                                     line, sizeof(line) - 1, "%-4zd %-18p %s %s(%s:%d:%d)", strings.size(), address, symbol, inline_tag,
+                            snprintf_with_addr(
+                                    line, sizeof(line) - 1, strings.size(), address, !is_last, "(%s:%d:%d)",
                                     sourceInfo.getFileName().c_str(), sourceInfo.lineNumber, sourceInfo.column);
                         } else {
-                            konan::snprintf(
-                                    line, sizeof(line) - 1, "%-4zd %-18p %s %s(%s:%d)", strings.size(), address, symbol, inline_tag,
+                            snprintf_with_addr(
+                                    line, sizeof(line) - 1, strings.size(), address, !is_last, "(%s:%d)",
                                     sourceInfo.getFileName().c_str(), sourceInfo.lineNumber);
                         }
                     } else {
-                        konan::snprintf(line, sizeof(line) - 1, "%-4zd %-18p %s %s(%s:<unknown>)", strings.size(), address, symbol, inline_tag,
-                                        sourceInfo.getFileName().c_str());
+                        snprintf_with_addr(
+                                line, sizeof(line) - 1, strings.size(), address, !is_last, "(%s:<unknown>)",
+                                sourceInfo.getFileName().c_str());
                     }
                     isSomethingPrinted = true;
                     strings.push_back(line);
                 }
             }
             if (!isSomethingPrinted) {
-                konan::snprintf(line, sizeof(line) - 1, "%-4zd %-18p %s", strings.size(), address, symbol);
+                snprintf_with_addr(line, sizeof(line) - 1,  strings.size(), address, false, "%s", "");
                 strings.push_back(line);
             }
         }
-        // Not konan::free. Used to free memory allocated in backtrace_symbols where malloc is used.
-#ifndef USE_GCC_UNWIND
-        free(symbols);
-#endif
     }
     return strings;
 #endif // !KONAN_NO_BACKTRACE

@@ -347,7 +347,8 @@ extern "C" RUNTIME_NOTHROW RUNTIME_NODEBUG void Kotlin_mm_checkStateAtExternalFu
 
     char buf[200];
     if (callee == nullptr) {
-        if (AddressToSymbol(calleePtr, buf, sizeof(buf))) {
+        ptrdiff_t unused;
+        if (AddressToSymbol(calleePtr, buf, sizeof(buf), unused)) {
             callee = buf;
         } else {
             callee = "unknown function";
