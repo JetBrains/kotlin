@@ -125,10 +125,6 @@ internal class LambdaMetafactoryArgumentsBuilder(
             abiHazard = true
         }
 
-        // TODO in cases where LambdaMetafactory is unusable directly due to problems with the implementation function,
-        //      we can still avoid generating an entire class by converting the function reference into a lambda first;
-        //      see `InlineCallableReferenceToLambdaPhase`
-
         val implFun = reference.symbol.owner
 
         if (implFun.typeParameters.any { it.isReified }) {
