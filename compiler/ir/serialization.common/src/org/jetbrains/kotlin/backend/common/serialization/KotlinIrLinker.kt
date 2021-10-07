@@ -15,13 +15,11 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
@@ -252,6 +250,30 @@ abstract class KotlinIrLinker(
         }
     }
 
+    private inline fun <
+            reified D : IrDeclaration,
+            reified ES : IrDelegatingSymbol<AS, D, *>,
+            reified AS : IrBindableSymbol<*, D>
+            > finalizeExpectActual(expectSymbol: ES, actualSymbol: IrSymbol, noinline actualizer: (e: D, a: D) -> Unit) {
+        require(actualSymbol is AS)
+        val expectDeclaration = expectSymbol.owner
+        val actualDeclaration = actualSymbol.owner
+        actualizer(expectDeclaration, actualDeclaration)
+        expectSymbol.delegate = actualSymbol
+    }
+
+    private fun actualizeIrFunction(e: IrFunction, a: IrFunction) {
+        for (i in 0 until e.valueParameters.size) {
+            val evp = e.valueParameters[i]
+            val avp = a.valueParameters[i]
+            val defaultValue = evp.defaultValue
+            if (avp.defaultValue == null && defaultValue != null) {
+                avp.defaultValue = defaultValue.patchDeclarationParents(a)
+                evp.defaultValue = null
+            }
+        }
+    }
+
     // The issue here is that an expect can not trigger its actual deserialization by reachability
     // because the expect can not see the actual higher in the module dependency dag.
     // So we force deserialization of actuals for all deserialized expect symbols here.
@@ -263,15 +285,15 @@ abstract class KotlinIrLinker(
             if (expectSymbol != null && actualSymbol != null) {
                 when (expectSymbol) {
                     is IrDelegatingClassSymbolImpl ->
-                        expectSymbol.delegate = actualSymbol as IrClassSymbol
+                        finalizeExpectActual(expectSymbol, actualSymbol) { _, _ -> }
                     is IrDelegatingEnumEntrySymbolImpl ->
-                        expectSymbol.delegate = actualSymbol as IrEnumEntrySymbol
+                        finalizeExpectActual(expectSymbol, actualSymbol) { _, _ -> }
                     is IrDelegatingSimpleFunctionSymbolImpl ->
-                        expectSymbol.delegate = actualSymbol as IrSimpleFunctionSymbol
+                        finalizeExpectActual(expectSymbol, actualSymbol) { e, a -> actualizeIrFunction(e, a) }
                     is IrDelegatingConstructorSymbolImpl ->
-                        expectSymbol.delegate = actualSymbol as IrConstructorSymbol
+                        finalizeExpectActual(expectSymbol, actualSymbol) { e, a -> actualizeIrFunction(e, a) }
                     is IrDelegatingPropertySymbolImpl ->
-                        expectSymbol.delegate = actualSymbol as IrPropertySymbol
+                        finalizeExpectActual(expectSymbol, actualSymbol) { _, _ -> }
                     else -> error("Unexpected expect symbol kind during actualization: $expectSymbol")
                 }
             }
