@@ -14220,6 +14220,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/multiModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
 
+            @TestMetadata("defaultArgument.kt")
+            public void testDefaultArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/defaultArgument.kt");
+            }
+
             @TestMetadata("expectActualLink.kt")
             public void testExpectActualLink() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualLink.kt");

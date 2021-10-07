@@ -17471,6 +17471,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
             }
 
+            @TestMetadata("defaultArgument.kt")
+            public void testDefaultArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/defaultArgument.kt");
+            }
+
             @TestMetadata("expectActualLink.kt")
             public void testExpectActualLink() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualLink.kt");
