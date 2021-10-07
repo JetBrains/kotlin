@@ -221,6 +221,9 @@ class JvmBackendContext(
     override val doWhileCounterLoopOrigin: IrStatementOrigin
         get() = JvmLoweredStatementOrigin.DO_WHILE_COUNTER_LOOP
 
+    override val optimizeNullChecksUsingKotlinNullability: Boolean
+        get() = false
+
     inner class JvmIr(
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable

@@ -64,4 +64,7 @@ interface CommonBackendContext : BackendContext, LoggingContext {
 
     val optimizeLoopsOverUnsignedArrays: Boolean
         get() = false
+
+    val optimizeNullChecksUsingKotlinNullability: Boolean
+        get() = true
 }
