@@ -28,7 +28,7 @@ import kotlin.test.assertTrue
 fun KGPBaseTest.project(
     projectName: String,
     gradleVersion: GradleVersion,
-    buildOptions: KGPBaseTest.BuildOptions = defaultBuildOptions,
+    buildOptions: BuildOptions = defaultBuildOptions,
     forceOutput: Boolean = false,
     enableBuildScan: Boolean = false,
     addHeapDumpOptions: Boolean = true,
@@ -80,7 +80,7 @@ fun TestProject.build(
     enableGradleDebug: Boolean = this.enableGradleDebug,
     enableBuildCacheDebug: Boolean = false,
     enableBuildScan: Boolean = this.enableBuildScan,
-    buildOptions: KGPBaseTest.BuildOptions = this.buildOptions,
+    buildOptions: BuildOptions = this.buildOptions,
     assertions: BuildResult.() -> Unit = {}
 ) {
     if (enableBuildScan) agreeToBuildScanService()
@@ -112,7 +112,7 @@ fun TestProject.buildAndFail(
     enableGradleDebug: Boolean = this.enableGradleDebug,
     enableBuildCacheDebug: Boolean = false,
     enableBuildScan: Boolean = this.enableBuildScan,
-    buildOptions: KGPBaseTest.BuildOptions = this.buildOptions,
+    buildOptions: BuildOptions = this.buildOptions,
     assertions: BuildResult.() -> Unit = {}
 ) {
     if (enableBuildScan) agreeToBuildScanService()
@@ -183,7 +183,7 @@ class TestProject(
     val gradleRunner: GradleRunner,
     projectName: String,
     projectPath: Path,
-    val buildOptions: KGPBaseTest.BuildOptions,
+    val buildOptions: BuildOptions,
     val gradleVersion: GradleVersion,
     val enableGradleDebug: Boolean,
     val forceOutput: Boolean,
@@ -194,7 +194,7 @@ class TestProject(
 
 private fun commonBuildSetup(
     buildArguments: List<String>,
-    buildOptions: KGPBaseTest.BuildOptions,
+    buildOptions: BuildOptions,
     enableBuildCacheDebug: Boolean,
     enableBuildScan: Boolean,
     gradleVersion: GradleVersion
