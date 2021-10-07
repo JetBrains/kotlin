@@ -103,6 +103,12 @@ public class SymbolByPsiTestGenerated extends AbstractSymbolByPsiTest {
     }
 
     @Test
+    @TestMetadata("forLoopVariable.kt")
+    public void testForLoopVariable() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/forLoopVariable.kt");
+    }
+
+    @Test
     @TestMetadata("function.kt")
     public void testFunction() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/function.kt");

@@ -31,7 +31,7 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
         else -> error("Cannot build symbol for ${psi::class}")
     }
 
-    public abstract fun getParameterSymbol(psi: KtParameter): KtValueParameterSymbol
+    public abstract fun getParameterSymbol(psi: KtParameter): KtVariableLikeSymbol
     public abstract fun getFileSymbol(psi: KtFile): KtFileSymbol
     public abstract fun getFunctionLikeSymbol(psi: KtNamedFunction): KtFunctionLikeSymbol
     public abstract fun getConstructorSymbol(psi: KtConstructor<*>): KtConstructorSymbol
@@ -60,12 +60,20 @@ public interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
         analysisSession.symbolProvider.getSymbol(this)
 
     /**
-     * Creates [KtValueParameterSymbol] by [KtParameter]
+     * Creates [KtVariableLikeSymbol] by [KtParameter].
+     *
+     * Unfortunately, [KtParameter] in PSI stands for many things, and not all of them are represented by a single type of symbol,
+     * so this function does not work for all possible [KtParameter]s.
      *
      * If [KtParameter.isFunctionTypeParameter] is `true`, i.e., if the given [KtParameter] is used as a function type parameter,
      * it is not possible to create [KtValueParameterSymbol], hence an error will be raised.
+     *
+     * If [KtParameter.isLoopParameter] is `true`, i.e. if the given [KtParameter] is a loop variable in `for` expression, then the function
+     * returns [KtLocalVariableSymbol].
+     *
+     * Otherwise, returns [KtValueParameterSymbol].
      */
-    public fun KtParameter.getParameterSymbol(): KtValueParameterSymbol =
+    public fun KtParameter.getParameterSymbol(): KtVariableLikeSymbol =
         analysisSession.symbolProvider.getParameterSymbol(this)
 
     /**
