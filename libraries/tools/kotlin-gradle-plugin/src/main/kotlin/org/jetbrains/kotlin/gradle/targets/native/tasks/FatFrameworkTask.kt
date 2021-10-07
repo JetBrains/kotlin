@@ -82,7 +82,7 @@ open class FatFrameworkTask : DefaultTask() {
     var baseName: String = project.name
 
     /**
-     * A parent directory for the fat framework..
+     * A parent directory for the fat framework.
      */
     @OutputDirectory
     var destinationDir: File = project.buildDir.resolve("fat-framework")
@@ -98,7 +98,8 @@ open class FatFrameworkTask : DefaultTask() {
 
     private val archToFramework: MutableMap<Architecture, Framework> = mutableMapOf()
 
-    private val fatFrameworkName: String
+    @get:Internal
+    val fatFrameworkName: String
         get() = baseName.asValidFrameworkName()
 
     private val fatFramework: IosFrameworkFiles
