@@ -53,4 +53,7 @@ interface CommonBackendContext : BackendContext, LoggingContext {
 
     val preferJavaLikeCounterLoop: Boolean
         get() = false
+
+    val optimizeNullChecksUsingKotlinNullability: Boolean
+        get() = true
 }

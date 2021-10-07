@@ -146,9 +146,9 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
                 is IrGetClass ->
                     false
                 is IrCall ->
-                    if (!type.isNullable()) false else null
+                    if (context.optimizeNullChecksUsingKotlinNullability && !type.isNullable()) false else null
                 is IrGetField ->
-                    if (!type.isNullable()) false else null
+                    if (context.optimizeNullChecksUsingKotlinNullability && !type.isNullable()) false else null
                 is IrBlock -> {
                     val singleExpr = statements.singleOrNull()
                     if (singleExpr is IrExpression && singleExpr.type == type)
