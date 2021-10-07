@@ -28,9 +28,7 @@ import androidx.compose.compiler.plugins.kotlin.irTrace
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
-import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
@@ -56,7 +54,10 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
@@ -71,6 +72,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
@@ -86,7 +88,6 @@ import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -116,6 +117,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.isNullable
@@ -130,12 +132,10 @@ import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.getPrimitiveArrayElementType
-import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.isCrossinline
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.isNoinline
-import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -181,6 +181,7 @@ abstract class AbstractComposeLowering(
 
     fun stabilityOf(expr: IrExpression) = stabilityInferencer.stabilityOf(expr)
     fun stabilityOf(type: IrType) = stabilityInferencer.stabilityOf(type)
+    fun stabilityOf(cls: IrClass) = stabilityInferencer.stabilityOf(cls)
 
     fun IrAnnotationContainer.hasStableMarker(): Boolean = with(stabilityInferencer) {
         hasStableMarker()
@@ -298,15 +299,10 @@ abstract class AbstractComposeLowering(
         val classSymbol = type.classOrNull ?: return this
         val klass = classSymbol.owner
         if (klass.isInline) {
-            val primaryValueParameter = klass
-                .primaryConstructor
-                ?.valueParameters
-                ?.get(0) ?: error("Expected a value parameter")
-            val fieldGetter = klass.getPropertyGetter(primaryValueParameter.name.identifier)
-                ?: error("Expected a getter")
-            return irCall(
-                symbol = fieldGetter,
-                dispatchReceiver = this
+            return coerceInlineClasses(
+                this,
+                type,
+                type.unboxInlineClass()
             ).unboxValueIfInline()
         }
         return this
@@ -1073,7 +1069,7 @@ abstract class AbstractComposeLowering(
             // type of that object is Stable. (`Modifier` for instance is a common example)
             is IrGetObjectValue -> {
                 if (symbol.owner.isCompanion) true
-                else symbol.owner.superTypes.any { stabilityOf(it).knownStable() }
+                else stabilityOf(symbol.owner).knownStable()
             }
             is IrConstructorCall -> isStatic()
             is IrCall -> isStatic()
@@ -1225,6 +1221,44 @@ abstract class AbstractComposeLowering(
             Name.identifier(sanitized)
         } else name
     }
+
+    fun coerceInlineClasses(argument: IrExpression, from: IrType, to: IrType) =
+        IrCallImpl.fromSymbolOwner(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            to,
+            unsafeCoerceIntrinsic!!
+        ).apply {
+            putTypeArgument(0, from)
+            putTypeArgument(1, to)
+            putValueArgument(0, argument)
+        }
+
+    fun IrExpression.coerceToUnboxed() =
+        coerceInlineClasses(this, this.type, this.type.unboxInlineClass())
+
+    // Construct a reference to the JVM specific <unsafe-coerce> intrinsic.
+    // This code should be kept in sync with the declaration in JvmSymbols.kt.
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    private val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol? by lazy {
+        if (context.platform.isJvm()) {
+            context.irFactory.buildFun {
+                name = Name.special("<unsafe-coerce>")
+                origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+            }.apply {
+                parent = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(
+                    context.moduleDescriptor,
+                    FqName("kotlin.jvm.internal")
+                )
+                val src = addTypeParameter("T", context.irBuiltIns.anyNType)
+                val dst = addTypeParameter("R", context.irBuiltIns.anyNType)
+                addValueParameter("v", src.defaultType)
+                returnType = dst.defaultType
+            }.symbol
+        } else {
+            null
+        }
+    }
 }
 
 private val unsafeSymbolsRegex = "[ <>]".toRegex()
@@ -1248,15 +1282,6 @@ fun ValueParameterDescriptor.isComposerParam(): Boolean =
 
 fun IrPluginContext.function(arity: Int): IrClassSymbol =
     referenceClass(FqName("kotlin.Function$arity"))!!
-
-object COMPOSE_STATEMENT_ORIGIN : IrStatementOriginImpl("COMPOSE_STATEMENT_ORIGIN")
-
-@ObsoleteDescriptorBasedAPI
-val KotlinType.isFunctionOrKFunctionType: Boolean
-    get() {
-        val kind = constructor.declarationDescriptor?.getFunctionalClassKind()
-        return kind == FunctionClassKind.Function || kind == FunctionClassKind.KFunction
-    }
 
 @ObsoleteDescriptorBasedAPI
 val DeclarationDescriptorWithSource.startOffset: Int? get() =
