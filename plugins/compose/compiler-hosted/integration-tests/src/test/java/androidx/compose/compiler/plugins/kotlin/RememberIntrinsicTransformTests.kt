@@ -788,7 +788,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
               sourceInformation(%composer, "C(Test)P(0:InlineInt):Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
-                %dirty = %dirty or if (%composer.changed(inlineInt.value)) 0b0100 else 0b0010
+                %dirty = %dirty or if (%composer.changed(<unsafe-coerce>(inlineInt))) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 val a = InlineInt(123)

@@ -103,7 +103,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
               } else if (%changed and 0b1110 === 0) {
-                %dirty = %dirty or if (%composer.changed(foo.value)) 0b0100 else 0b0010
+                %dirty = %dirty or if (%composer.changed(<unsafe-coerce>(foo))) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 if (%default and 0b0001 !== 0) {
