@@ -22499,9 +22499,39 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("genericFunRef.kt")
+                public void testGenericFunRef() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/genericFunRef.kt");
+                }
+
+                @Test
                 @TestMetadata("genericInnerConstructorRef.kt")
                 public void testGenericInnerConstructorRef() throws Exception {
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/genericInnerConstructorRef.kt");
+                }
+
+                @Test
+                @TestMetadata("highOrderFunRef.kt")
+                public void testHighOrderFunRef() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/highOrderFunRef.kt");
+                }
+
+                @Test
+                @TestMetadata("inlineFunRef.kt")
+                public void testInlineFunRef() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/inlineFunRef.kt");
+                }
+
+                @Test
+                @TestMetadata("inlineFunWithReifiedTypeParameterRef.kt")
+                public void testInlineFunWithReifiedTypeParameterRef() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/inlineFunWithReifiedTypeParameterRef.kt");
+                }
+
+                @Test
+                @TestMetadata("inlineHighOrderFunRef.kt")
+                public void testInlineHighOrderFunRef() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/inlineHighOrderFunRef.kt");
                 }
 
                 @Test

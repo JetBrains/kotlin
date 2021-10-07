@@ -332,7 +332,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
 
         val proxyFun = context.irFactory.buildFun {
-            name = Name.identifier("\$proxy")
+            name = Name.identifier("${targetFun.name.asString()}__proxy")
             returnType = targetFun.returnType
             visibility = DescriptorVisibilities.LOCAL
             modality = Modality.FINAL
@@ -393,6 +393,10 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                         valueParameter
                     )
                 )
+            }
+
+            for (typeParameterIndex in targetFun.typeParameters.indices) {
+                targetCall.putTypeArgument(typeParameterIndex, reference.getTypeArgument(typeParameterIndex))
             }
 
             val proxyFunBody = IrBlockBodyImpl(startOffset, endOffset).also { proxyFun.body = it }

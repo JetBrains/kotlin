@@ -18720,9 +18720,34 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/genericBoundInnerConstructorRef.kt");
                 }
 
+                @TestMetadata("genericFunRef.kt")
+                public void testGenericFunRef() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/genericFunRef.kt");
+                }
+
                 @TestMetadata("genericInnerConstructorRef.kt")
                 public void testGenericInnerConstructorRef() throws Exception {
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/genericInnerConstructorRef.kt");
+                }
+
+                @TestMetadata("highOrderFunRef.kt")
+                public void testHighOrderFunRef() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/highOrderFunRef.kt");
+                }
+
+                @TestMetadata("inlineFunRef.kt")
+                public void testInlineFunRef() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/inlineFunRef.kt");
+                }
+
+                @TestMetadata("inlineFunWithReifiedTypeParameterRef.kt")
+                public void testInlineFunWithReifiedTypeParameterRef() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/inlineFunWithReifiedTypeParameterRef.kt");
+                }
+
+                @TestMetadata("inlineHighOrderFunRef.kt")
+                public void testInlineHighOrderFunRef() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/inlineHighOrderFunRef.kt");
                 }
 
                 @TestMetadata("innerConstructorRef.kt")

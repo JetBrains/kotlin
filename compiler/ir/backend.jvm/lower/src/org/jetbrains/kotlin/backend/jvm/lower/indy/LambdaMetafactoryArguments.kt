@@ -132,8 +132,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         val implFun = reference.symbol.owner
 
         if (implFun.typeParameters.any { it.isReified }) {
-            // TODO support reified type parameters in proxy wrappers somehow?
-            abiHazard = true
+            functionHazard = true
         }
 
         // Don't generate references to intrinsic functions as invokedynamic (no such method exists at run-time).
