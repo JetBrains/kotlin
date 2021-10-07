@@ -84,6 +84,7 @@ abstract class ResolvedCallAtom : ResolvedAtom() {
     abstract val argumentsWithSuspendConversion: Map<KotlinCallArgument, UnwrappedType>
     abstract val argumentsWithUnitConversion: Map<KotlinCallArgument, UnwrappedType>
     abstract val argumentsWithConstantConversion: Map<KotlinCallArgument, IntegerValueTypeConstant>
+    abstract fun setCandidateDescriptor(newCandidateDescriptor: CallableDescriptor)
 }
 
 class SamConversionDescription(
