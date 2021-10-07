@@ -73,13 +73,13 @@ open class Kapt3WorkersIT : Kapt3IT() {
         }
     }
 
-    @Test
-    fun testSimpleWithJdk10() {
-        val javaHome = File(System.getProperty("jdk10Home")!!)
-        Assume.assumeTrue("JDK 10 isn't available", javaHome.isDirectory)
+    fun doTestSimpleWithCustomJdk(jdkVersion: Int, minumalGradleVersion: String = GradleVersionRequired.OLDEST_SUPPORTED) {
+        val javaHome = File(System.getProperty("jdk${jdkVersion}Home")!!)
+        Assume.assumeTrue("JDK $jdkVersion isn't available", javaHome.isDirectory)
         val options = defaultBuildOptions().copy(javaHome = javaHome)
 
-        val project = Project("simple", directoryPrefix = "kapt2")
+        val project =
+            Project("simple", directoryPrefix = "kapt2", gradleVersionRequirement = GradleVersionRequired.AtLeast(minumalGradleVersion))
         project.build("build", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
@@ -90,15 +90,17 @@ open class Kapt3WorkersIT : Kapt3IT() {
 
     @Test
     fun testSimpleWithJdk11() {
-        val javaHome = File(System.getProperty("jdk11Home")!!)
-        Assume.assumeTrue("JDK 11 isn't available", javaHome.isDirectory)
-        val options = defaultBuildOptions().copy(javaHome = javaHome)
+        doTestSimpleWithCustomJdk(11)
+    }
 
-        val project = Project("simple", directoryPrefix = "kapt2")
-        project.build("build", options = options) {
-            assertSuccessful()
-            assertKaptSuccessful()
-        }
+    @Test
+    fun testSimpleWithJdk10() {
+        doTestSimpleWithCustomJdk(10)
+    }
+
+    @Test
+    fun testSimpleWithJdk16() {
+        doTestSimpleWithCustomJdk(16, "7.0")
     }
 }
 
