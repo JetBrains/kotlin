@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.analyse
+import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.api.fir.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.api.fir.test.framework.AbstractHLApiSingleFileTest
 import org.jetbrains.kotlin.analysis.api.types.KtType
@@ -31,7 +32,7 @@ abstract class AbstractGetSuperTypesTest : AbstractHLApiSingleFileTest() {
                     fun List<KtType>.print(name: String) {
                         appendLine(name)
                         for (type in this) {
-                            appendLine(type.render())
+                            appendLine(type.render(KtTypeRendererOptions.DEFAULT))
                         }
                         appendLine()
                     }

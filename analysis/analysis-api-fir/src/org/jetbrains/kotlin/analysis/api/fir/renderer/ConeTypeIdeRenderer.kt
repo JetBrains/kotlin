@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.renderer
 
+import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.containingClassForLocal
@@ -20,8 +22,6 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
-import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.renderer.render
@@ -85,6 +85,11 @@ internal class ConeTypeIdeRenderer(
             is ConeFlexibleType -> {
                 renderAnnotationList(annotations)
                 append(renderFlexibleType(renderType(type.lowerBound), renderType(type.upperBound)))
+            }
+            is ConeCapturedType -> {
+                renderAnnotationList(annotations)
+                append(type.render())
+                renderNullability(type.type)
             }
             else -> appendError("Unexpected cone type ${type::class.qualifiedName}")
         }

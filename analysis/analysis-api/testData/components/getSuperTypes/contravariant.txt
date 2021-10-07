@@ -1,17 +1,17 @@
 [direct super types]
-kotlin.collections.List<ERROR_TYPE <Unexpected cone type org.jetbrains.kotlin.fir.types.ConeCapturedType>>
-kotlin.collections.MutableCollection<ERROR_TYPE <Unexpected cone type org.jetbrains.kotlin.fir.types.ConeCapturedType>>
+kotlin.collections.List<CapturedType(in kotlin/String)>
+kotlin.collections.MutableCollection<CapturedType(in kotlin/String)>
 
 [approximated direct super types]
 kotlin.collections.List<kotlin.Any?>
 kotlin.collections.MutableCollection<in kotlin.String>
 
 [all super types]
-kotlin.collections.List<ERROR_TYPE <Unexpected cone type org.jetbrains.kotlin.fir.types.ConeCapturedType>>
-kotlin.collections.MutableCollection<ERROR_TYPE <Unexpected cone type org.jetbrains.kotlin.fir.types.ConeCapturedType>>
-kotlin.collections.Collection<ERROR_TYPE <Unexpected cone type org.jetbrains.kotlin.fir.types.ConeCapturedType>>
-kotlin.collections.MutableIterable<ERROR_TYPE <Unexpected cone type org.jetbrains.kotlin.fir.types.ConeCapturedType>>
-kotlin.collections.Iterable<ERROR_TYPE <Unexpected cone type org.jetbrains.kotlin.fir.types.ConeCapturedType>>
+kotlin.collections.List<CapturedType(in kotlin/String)>
+kotlin.collections.MutableCollection<CapturedType(in kotlin/String)>
+kotlin.collections.Collection<CapturedType(in kotlin/String)>
+kotlin.collections.MutableIterable<CapturedType(in kotlin/String)>
+kotlin.collections.Iterable<CapturedType(in kotlin/String)>
 kotlin.Any
 
 [approximated all super types]
