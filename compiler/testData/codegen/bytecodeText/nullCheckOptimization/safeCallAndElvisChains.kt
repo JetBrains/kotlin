@@ -14,5 +14,5 @@ class A(val x: String) {
 
 // JVM_IR_TEMPLATES
 // 0 IFNULL
-// 4 IFNONNULL
-// 0 ACONST_NULL
+// 8 IFNONNULL
+// 4 ACONST_NULL

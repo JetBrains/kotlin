@@ -214,6 +214,9 @@ class JvmBackendContext(
     override val preferJavaLikeCounterLoop: Boolean
         get() = true
 
+    override val optimizeNullChecksUsingKotlinNullability: Boolean
+        get() = false
+
     inner class JvmIr(
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable
