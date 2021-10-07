@@ -21,24 +21,24 @@ private class Degrade(val rootProject: Project) {
         }
     }
 
+    private fun setupTaskLog(task: Task): TaskLog {
+        val log = TaskLog()
+        task.logging.addStandardOutputListener { log.stdout.append(it) }
+        return log
+    }
+
     fun register() {
-        val taskToLog = mutableMapOf<Task, TaskLog>()
-        val allScripts = mutableListOf<String>()
-        val failedScripts = mutableListOf<String>()
-
-        rootProject.allprojects {
-            tasks.all {
-                val task = this@all
-                val state = taskToLog.getOrPut(task, ::TaskLog)
-                task.logging.addStandardOutputListener { state.stdout.append(it) }
-            }
-        }
-
         rootProject.gradle.addListener(object : BuildAdapter(), TaskExecutionListener {
+            val taskToLog = mutableMapOf<Task, TaskLog>()
+            val allScripts = mutableListOf<String>()
+            val failedScripts = mutableListOf<String>()
+
+            @Synchronized
             override fun beforeExecute(task: Task) {
-                taskToLog.getOrPut(task, ::TaskLog).clear()
+                taskToLog.getOrPut(task) { setupTaskLog(task) }.clear()
             }
 
+            @Synchronized
             override fun afterExecute(task: Task, state: TaskState) {
                 val log = taskToLog[task] ?: return
                 val script = generateScriptForTask(task, log) ?: return
@@ -48,6 +48,7 @@ private class Degrade(val rootProject: Project) {
                 }
             }
 
+            @Synchronized
             override fun buildFinished(result: BuildResult) {
                 try {
                     generateAggregateScript("rerun-all.sh", allScripts)
