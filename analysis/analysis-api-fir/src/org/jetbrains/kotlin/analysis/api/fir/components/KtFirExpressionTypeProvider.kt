@@ -96,7 +96,7 @@ internal class KtFirExpressionTypeProvider(
             ?: getExpectedTypeByVariableAssignment(unwrapped)
             ?: getExpectedTypeByPropertyDeclaration(unwrapped)
             ?: getExpectedTypeByFunctionExpressionBody(unwrapped)
-        return expectedType.takeIf { it !is KtClassErrorType }
+        return expectedType
     }
 
     private fun getExpectedTypeByTypeCast(expression: PsiElement): KtType? {
