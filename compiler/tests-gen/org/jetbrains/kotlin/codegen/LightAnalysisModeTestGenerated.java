@@ -13349,6 +13349,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Fir extends AbstractLightAnalysisModeTest {
+        @TestMetadata("flexibleIntegerLiterals.kt")
+        public void ignoreFlexibleIntegerLiterals() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/flexibleIntegerLiterals.kt");
+        }
+
         @TestMetadata("SuspendExtension.kt")
         public void ignoreSuspendExtension() throws Exception {
             runTest("compiler/testData/codegen/box/fir/SuspendExtension.kt");

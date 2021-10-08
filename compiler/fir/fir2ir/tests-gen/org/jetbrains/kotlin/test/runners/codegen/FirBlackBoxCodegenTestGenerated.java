@@ -16337,6 +16337,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("flexibleIntegerLiterals.kt")
+        public void testFlexibleIntegerLiterals() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/flexibleIntegerLiterals.kt");
+        }
+
+        @Test
         @TestMetadata("implicitNothingInDelegate.kt")
         public void testImplicitNothingInDelegate() throws Exception {
             runTest("compiler/testData/codegen/box/fir/implicitNothingInDelegate.kt");
