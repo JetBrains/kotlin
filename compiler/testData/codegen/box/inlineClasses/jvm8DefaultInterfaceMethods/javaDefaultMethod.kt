@@ -1,7 +1,9 @@
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
+// WITH_RUNTIME
 // FILE: javaDefaultMethod.kt
-inline class K(val k: String) : J {
+@JvmInline
+value class K(val k: String) : J {
     override fun get2() = k
 }
 

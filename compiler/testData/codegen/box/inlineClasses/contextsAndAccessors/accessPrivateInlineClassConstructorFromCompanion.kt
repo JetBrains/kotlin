@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Composed(val s: String) {
+@JvmInline
+value class Composed(val s: String) {
     private constructor(s1: String, s2: String) : this(s1 + s2)
 
     companion object {

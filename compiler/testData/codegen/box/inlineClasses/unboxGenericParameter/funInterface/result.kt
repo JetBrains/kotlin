@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: SAM_CONVERSIONS
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
 fun <T> foo(a: Result<T>): T = bar(a) {

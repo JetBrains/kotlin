@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class IC(val x: Int)
+@JvmInline
+value class IC(val x: Int)
 
 abstract class A<T> {
     var t: T? = null

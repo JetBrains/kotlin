@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Z(val data: Int)
+@JvmInline
+value class Z(val data: Int)
 
 fun box(): String {
     if (Z(0) != Z(0)) throw AssertionError()

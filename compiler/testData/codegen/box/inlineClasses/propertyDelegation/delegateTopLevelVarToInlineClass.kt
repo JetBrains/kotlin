@@ -1,9 +1,10 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 var setterInvoked = 0
 var backing = 42
 
-inline class Delegate(val ignored: Int) {
+@JvmInline
+value class Delegate(val ignored: Int) {
 
     operator fun getValue(thisRef: Any?, prop: Any?) =
         backing

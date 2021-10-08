@@ -1,6 +1,8 @@
-// !LANGUAGE: +InlineClasses -MangleClassMembersReturningInlineClasses
+// WITH_RUNTIME
+// !LANGUAGE: -MangleClassMembersReturningInlineClasses
 
-inline class S(val x: String)
+@JvmInline
+value class S(val x: String)
 
 class Test {
     fun getO() = S("O")

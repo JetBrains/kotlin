@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Composed(val s: String) {
+@JvmInline
+value class Composed(val s: String) {
 
     constructor(s: String, x: Int) : this(s.subSequence(0, x).toString())
 

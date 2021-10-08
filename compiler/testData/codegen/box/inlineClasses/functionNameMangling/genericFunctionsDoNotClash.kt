@@ -1,7 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class S1(val s1: String)
-inline class S2(val s2: String)
+@JvmInline
+value class S1(val s1: String)
+@JvmInline
+value class S2(val s2: String)
 
 object X1
 object X2

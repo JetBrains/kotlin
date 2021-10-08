@@ -9,10 +9,14 @@ public class JavaClass {
 
 // FILE: test.kt
 
-inline class IcInt(val i: Int)
-inline class IcLong(val l: Long)
-inline class IcAny(val a: Any?)
-inline class IcOverIc(val o: IcInt)
+@JvmInline
+value class IcInt(val i: Int)
+@JvmInline
+value class IcLong(val l: Long)
+@JvmInline
+value class IcAny(val a: Any?)
+@JvmInline
+value class IcOverIc(val o: IcInt)
 
 fun box(): String {
     val i = IcInt(1)

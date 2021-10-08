@@ -11,11 +11,13 @@ interface IFooBar {
 
 interface IFooBar2 : IFooBar
 
-inline class Test1(val k: String): IFooBar {
+@JvmInline
+value class Test1(val k: String): IFooBar {
     override fun bar(): String = k
 }
 
-inline class Test2(val k: String): IFooBar2 {
+@JvmInline
+value class Test2(val k: String): IFooBar2 {
     override fun bar(): String = k
 }
 

@@ -1,8 +1,10 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Id(val id: String)
+@JvmInline
+value class Id(val id: String)
 
-inline class Name(val name: String)
+@JvmInline
+value class Name(val name: String)
 
 interface IA {
     fun fromInterface(id: Id)

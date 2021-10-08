@@ -1,8 +1,10 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Inner(val result: String)
+@JvmInline
+value class Inner(val result: String)
 
-inline class A(val inner: Inner = Inner("OK"))
+@JvmInline
+value class A(val inner: Inner = Inner("OK"))
 
 fun box(): String {
     return A().inner.result

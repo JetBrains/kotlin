@@ -1,8 +1,8 @@
-// !LANGUAGE: +InlineClasses
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 
-inline class R(private val r: Int) {
+@JvmInline
+value class R(private val r: Int) {
     fun test() = ok()
 
     companion object {

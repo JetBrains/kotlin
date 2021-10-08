@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Str(val string: String)
+@JvmInline
+value class Str(val string: String)
 
 class C {
     var s = Str("")

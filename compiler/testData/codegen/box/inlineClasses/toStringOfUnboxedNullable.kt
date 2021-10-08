@@ -1,7 +1,8 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 // IGNORE_BACKEND: JVM
 // IGNORE_LIGHT_ANALYSIS
-inline class IC(val x: String)
+@JvmInline
+value class IC(val x: String)
 
 fun IC?.foo() = toString() // `IC?` unboxed into `String?`
 fun IC?.bar() = "$this"

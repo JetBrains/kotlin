@@ -1,8 +1,10 @@
 // WITH_RUNTIME
 
-inline class Z(val x: Int)
+@JvmInline
+value class Z(val x: Int)
 
-inline class ZArray(val storage: IntArray) : List<Z> {
+@JvmInline
+value class ZArray(val storage: IntArray) : List<Z> {
     override val size: Int
         get() = storage.size
 

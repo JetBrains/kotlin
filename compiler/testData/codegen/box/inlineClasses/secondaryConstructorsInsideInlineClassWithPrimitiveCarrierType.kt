@@ -1,8 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 var global = "wrong"
 
-inline class Foo(val x: Int) {
+@JvmInline
+value class Foo(val x: Int) {
     constructor(y: String) : this(y.length)
 
     constructor(z: Long) : this(z.toInt() + 1)

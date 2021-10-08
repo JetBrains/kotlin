@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 class Foo {
     companion object {
@@ -9,7 +9,8 @@ class Foo {
 
 var setterInvoked = 0
 
-inline class Delegate(val ignored: Int) {
+@JvmInline
+value class Delegate(val ignored: Int) {
 
     operator fun getValue(thisRef: Any?, prop: Any?) = Foo.a
 

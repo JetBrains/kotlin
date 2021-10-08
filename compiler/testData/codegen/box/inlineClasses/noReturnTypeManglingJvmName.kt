@@ -2,7 +2,8 @@
 // WITH_RUNTIME
 // TARGET_BACKEND: JVM
 
-inline class S(val x: String)
+@JvmInline
+value class S(val x: String)
 
 class Test {
     @Suppress("INAPPLICABLE_JVM_NAME")

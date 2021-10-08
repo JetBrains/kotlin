@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 interface IFoo1<out T> {
     fun foo(): T
 }
@@ -6,7 +8,8 @@ interface IFoo2<out T> {
     fun foo(): T
 }
 
-inline class X(val x: String)
+@JvmInline
+value class X(val x: String)
 
 class Test : IFoo1<X>, IFoo2<X> {
     override fun foo(): X = X("OK")

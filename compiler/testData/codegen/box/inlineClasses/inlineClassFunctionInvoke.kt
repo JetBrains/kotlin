@@ -1,11 +1,13 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
-inline class Z(val int: Int)
+@JvmInline
+value class Z(val int: Int)
 
-inline class Str(val string: String)
+@JvmInline
+value class Str(val string: String)
 
-inline class NStr(val string: String?)
+@JvmInline
+value class NStr(val string: String?)
 
 fun fooZ(x: Z) = x
 

@@ -1,20 +1,22 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 import kotlin.test.assertEquals
 
-inline class Z(private val x: Int) {
+@JvmInline
+value class Z(private val x: Int) {
     companion object {
         val xref = Z::x
     }
 }
 
-inline class L(private val x: Long) {
+@JvmInline
+value class L(private val x: Long) {
     companion object {
         val xref = L::x
     }
 }
 
-inline class S(private val x: String) {
+@JvmInline
+value class S(private val x: String) {
     companion object {
         val xref = S::x
     }

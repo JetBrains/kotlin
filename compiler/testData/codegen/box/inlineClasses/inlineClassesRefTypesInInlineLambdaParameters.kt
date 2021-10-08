@@ -1,7 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Str(val string: String)
-inline class Obj(val obj: Any)
+@JvmInline
+value class Str(val string: String)
+@JvmInline
+value class Obj(val obj: Any)
 
 inline fun <T, R> s0(x: T, fn: (Int, T) -> R) = fn(0, x)
 

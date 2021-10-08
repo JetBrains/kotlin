@@ -1,10 +1,11 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 interface A {
     fun f(x: String) = x
 }
 
-inline class B(val y: String) : A {
+@JvmInline
+value class B(val y: String) : A {
     override fun f(x: String) = super.f(x + y)
 }
 

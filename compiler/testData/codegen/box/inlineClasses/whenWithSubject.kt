@@ -1,4 +1,7 @@
-inline class InlineLong(val value: Long)
+// WITH_RUNTIME
+
+@JvmInline
+value class InlineLong(val value: Long)
 inline val Number.toInlineLong get() = InlineLong(this.toLong())
 
 fun box(): String {

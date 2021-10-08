@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class A(val i: Int) {
+@JvmInline
+value class A(val i: Int) {
     fun foo(s: String = "OK") = s
 }
 

@@ -1,4 +1,7 @@
-inline class R(val x: Any)
+// WITH_RUNTIME
+
+@JvmInline
+value class R(val x: Any)
 
 fun useR(r: R) {
     if (r.x as String != "OK") throw AssertionError("$r")

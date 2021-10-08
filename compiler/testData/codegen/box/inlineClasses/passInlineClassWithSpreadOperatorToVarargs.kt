@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class UInt(val value: Int)
+@JvmInline
+value class UInt(val value: Int)
 
 fun <T> last(vararg e: T): T = e[e.size - 1]
 fun <T> first(vararg e: T): T = e[0]

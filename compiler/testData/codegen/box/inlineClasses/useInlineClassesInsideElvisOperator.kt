@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class UInt(private val u: Int) {
+@JvmInline
+value class UInt(private val u: Int) {
     fun asResult() = u
 }
 

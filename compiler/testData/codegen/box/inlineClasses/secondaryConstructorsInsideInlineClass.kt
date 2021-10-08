@@ -1,10 +1,11 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 @file:Suppress("SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS")
 
 var global = "wrong"
 
-inline class Foo(val x: String) {
+@JvmInline
+value class Foo(val x: String) {
     constructor(y: Int) : this(y.toString())
     constructor(z: Long) : this(z.toInt() + 1)
     constructor(other: Char) : this(other.toInt().toString()) {

@@ -1,6 +1,8 @@
+// WITH_RUNTIME
 // FILE: 1.kt
 
-inline class A(val x: String)
+@JvmInline
+value class A(val x: String)
 
 fun accessProperty(y: B): A {
     y.a = A("OK")

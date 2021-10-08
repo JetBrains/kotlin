@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Direction(private val direction: Int) {
+@JvmInline
+value class Direction(private val direction: Int) {
     fun dx() = dx[direction]
     fun dy() = dy[direction]
 

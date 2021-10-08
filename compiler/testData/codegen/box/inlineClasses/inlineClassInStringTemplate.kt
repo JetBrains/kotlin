@@ -1,9 +1,9 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
 import kotlin.test.*
 
-inline class Z(val value: Int)
+@JvmInline
+value class Z(val value: Int)
 
 fun test1_1(z: Z) = "$z"
 fun test1_2(z: Z) = "$z$z"

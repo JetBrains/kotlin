@@ -1,10 +1,10 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: BRIDGE_ISSUES
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 import kotlin.test.*
 
-inline class S(val string: String)
+@JvmInline
+value class S(val string: String)
 
 fun foo(s: S) = s
 

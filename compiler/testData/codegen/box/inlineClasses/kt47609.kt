@@ -1,8 +1,11 @@
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
+// WITH_RUNTIME
+
 annotation class Ann(val value: String)
 
-inline class C<T>(val x: String)
+@JvmInline
+value class C<T>(val x: String)
 
 @Ann("OK")
 val <T> C<T>.value: String

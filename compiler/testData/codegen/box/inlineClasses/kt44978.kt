@@ -1,7 +1,8 @@
 // IGNORE_BACKEND: JVM
 // WITH_RUNTIME
 
-inline class StringArray(val values: Array<String>)
+@JvmInline
+value class StringArray(val values: Array<String>)
 
 fun foo(a1: StringArray, a2: StringArray): String {
     var result = ""

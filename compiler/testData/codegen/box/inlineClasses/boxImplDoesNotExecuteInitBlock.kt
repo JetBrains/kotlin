@@ -1,5 +1,7 @@
+// WITH_RUNTIME
 
-inline class IC(val i: Int) {
+@JvmInline
+value class IC(val i: Int) {
     init {
         counter += i
     }

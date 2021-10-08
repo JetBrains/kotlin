@@ -1,8 +1,9 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
-inline class Foo(val arg: Int)
-inline class AsAny(val arg: Any)
+@JvmInline
+value class Foo(val arg: Int)
+@JvmInline
+value class AsAny(val arg: Any)
 
 fun box(): String {
     val arr = arrayOf(Foo(1), Foo(2))

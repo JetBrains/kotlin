@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Foo(val value: Int)
+@JvmInline
+value class Foo(val value: Int)
 
 fun <T> id(x: T): T = x
 inline fun <T> inlinedId(x: T): T = x

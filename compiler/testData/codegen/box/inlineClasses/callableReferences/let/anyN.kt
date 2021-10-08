@@ -1,4 +1,7 @@
-inline class Value(val value: Any?)
+// WITH_RUNTIME
+
+@JvmInline
+value class Value(val value: Any?)
 
 object Foo {
     fun foo(value: Value) {

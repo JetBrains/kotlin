@@ -1,6 +1,8 @@
 // IGNORE_BACKEND: WASM
+// WITH_RUNTIME
 
-inline class Z(val value: Long)
+@JvmInline
+value class Z(val value: Long)
 
 fun f(g: (
     z: Z,

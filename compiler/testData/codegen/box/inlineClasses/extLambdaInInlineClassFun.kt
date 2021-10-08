@@ -1,8 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 fun <T> T.runExt(fn: T.() -> String) = fn()
 
-inline class R(private val r: Int) {
+@JvmInline
+value class R(private val r: Int) {
     fun test() = runExt { "OK" }
 }
 

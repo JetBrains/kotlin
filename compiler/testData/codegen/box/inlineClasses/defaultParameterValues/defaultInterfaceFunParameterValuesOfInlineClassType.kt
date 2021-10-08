@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Z(val z: Int)
+@JvmInline
+value class Z(val z: Int)
 
 interface ITest {
     fun testDefault(z: Z = Z(42)) = z.z

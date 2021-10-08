@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class UInt(val s: Int)
+@JvmInline
+value class UInt(val s: Int)
 
 fun test(a1: Any, a2: UInt?, a3: Any?, a4: Any?): Int {
     val b1 = a1 as UInt

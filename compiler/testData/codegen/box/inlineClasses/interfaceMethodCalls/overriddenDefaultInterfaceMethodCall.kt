@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 interface IBase {
     fun foo() = "BAD"
@@ -8,11 +8,14 @@ interface IFoo : IBase {
     override fun foo() = "OK"
 }
 
-inline class Z(val x: Int) : IFoo
+@JvmInline
+value class Z(val x: Int) : IFoo
 
-inline class L(val x: Long) : IFoo
+@JvmInline
+value class L(val x: Long) : IFoo
 
-inline class S(val x: String) : IFoo
+@JvmInline
+value class S(val x: String) : IFoo
 
 fun box(): String {
     if (Z(42).foo() != "OK") throw AssertionError()

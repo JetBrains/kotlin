@@ -1,6 +1,6 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
-inline class Z(val x: Int)
+@JvmInline
+value class Z(val x: Int)
 
 var topLevel = Z(42)
 

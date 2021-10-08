@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 // !JVM_DEFAULT_MODE: all
 // TARGET_BACKEND: JVM
@@ -10,7 +10,8 @@ interface Path {
     fun Int.extension(maxDepth: Int = 42)
 }
 
-inline class RealPath(val x: Int) : Path {
+@JvmInline
+value class RealPath(val x: Int) : Path {
     override fun dispatch(maxDepth: Int) = Unit
 
     fun childrenDispatch(recursively: Boolean): Unit =

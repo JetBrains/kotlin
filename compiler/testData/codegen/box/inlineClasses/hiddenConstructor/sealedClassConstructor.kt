@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class S(val string: String)
+@JvmInline
+value class S(val string: String)
 
 sealed class Sealed(val x: S)
 

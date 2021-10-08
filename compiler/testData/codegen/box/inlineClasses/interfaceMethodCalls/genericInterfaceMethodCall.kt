@@ -1,10 +1,11 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 interface IFoo<T> {
     fun foo(x: T): String
 }
 
-inline class Z(val x: Int) : IFoo<Z> {
+@JvmInline
+value class Z(val x: Int) : IFoo<Z> {
     override fun foo(x: Z) = "OK"
 }
 

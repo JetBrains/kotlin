@@ -2,9 +2,12 @@
 // WASM_MUTE_REASON: IGNORED_IN_JS
 // IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6, NATIVE
 // WITH_REFLECT
+// WITH_RUNTIME
+
 import kotlin.test.*
 
-inline class Z(val s: String)
+@JvmInline
+value class Z(val s: String)
 
 fun box(): String {
     val a = Z("a")

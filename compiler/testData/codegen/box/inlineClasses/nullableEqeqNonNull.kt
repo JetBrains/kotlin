@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Z(val value: Int)
+@JvmInline
+value class Z(val value: Int)
 
 fun eq(a: Z?, b: Z) = a == b
 

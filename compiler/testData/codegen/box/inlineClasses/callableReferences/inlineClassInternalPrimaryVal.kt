@@ -1,10 +1,12 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 import kotlin.test.assertEquals
 
-inline class Z(internal val x: Int)
-inline class L(internal val x: Long)
-inline class S(internal val x: String)
+@JvmInline
+value class Z(internal val x: Int)
+@JvmInline
+value class L(internal val x: Long)
+@JvmInline
+value class S(internal val x: String)
 
 fun box(): String {
     assertEquals(42, Z::x.get(Z(42)))

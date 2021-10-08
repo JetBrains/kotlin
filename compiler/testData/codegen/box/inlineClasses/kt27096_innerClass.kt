@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 class Outer<X>(val x: X) {
     inner class Inner<Y>(val y: Y) {
@@ -13,9 +13,12 @@ class Outer<X>(val x: X) {
     }
 }
 
-inline class Z1<X, Y>(val x: Outer<X>.Inner<Y>)
-inline class Z2<X, Y>(val z: Z1<X, Y>)
-inline class ZN<X, Y>(val z: Z1<X, Y>?)
+@JvmInline
+value class Z1<X, Y>(val x: Outer<X>.Inner<Y>)
+@JvmInline
+value class Z2<X, Y>(val z: Z1<X, Y>)
+@JvmInline
+value class ZN<X, Y>(val z: Z1<X, Y>?)
 
 fun <X, Y> wrap1(xy : Outer<X>.Inner<Y>): Z1<X, Y>? = if (xy.hasNull) null else Z1(xy)
 fun <X, Y> wrap2(xy : Outer<X>.Inner<Y>): Z2<X, Y>? = if (xy.hasNull) null else Z2(Z1(xy))

@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Result<T>(val a: Any?) {
+@JvmInline
+value class Result<T>(val a: Any?) {
     fun getOrThrow(): T = a as T
 }
 

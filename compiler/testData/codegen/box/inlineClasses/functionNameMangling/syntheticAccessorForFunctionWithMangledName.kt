@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class S(val string: String)
+@JvmInline
+value class S(val string: String)
 
 class Outer {
     private fun foo(s: S) = s.string

@@ -1,4 +1,7 @@
-inline class Z(val x: Int)
+// WITH_RUNTIME
+
+@JvmInline
+value class Z(val x: Int)
 
 class A {
     fun foo() = Z(42)

@@ -1,8 +1,10 @@
 // TARGET_BACKEND: JVM
+// WITH_RUNTIME
 
 // FILE: a.kt
 
-inline class IC(val v: Int) {
+@JvmInline
+value class IC(val v: Int) {
     fun <T> getT(): T? = null
 }
 

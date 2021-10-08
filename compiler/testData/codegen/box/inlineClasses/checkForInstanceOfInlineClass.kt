@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class UInt(val u: Int) {
+@JvmInline
+value class UInt(val u: Int) {
     override fun toString(): String {
         return "UInt: $u"
     }

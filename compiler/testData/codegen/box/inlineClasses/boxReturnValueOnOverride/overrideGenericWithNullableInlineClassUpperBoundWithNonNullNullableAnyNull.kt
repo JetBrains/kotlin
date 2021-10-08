@@ -1,7 +1,9 @@
 // IGNORE_BACKEND: JS_IR
+// WITH_RUNTIME
 // IGNORE_BACKEND: JS_IR_ES6
 
-inline class X(val x: Any?)
+@JvmInline
+value class X(val x: Any?)
 
 interface IFoo<out T : X?> {
     fun foo(): T

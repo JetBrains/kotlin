@@ -1,10 +1,11 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 interface Base {
     fun result(): Int
 }
 
-inline class Inlined(val x: Int) : Base {
+@JvmInline
+value class Inlined(val x: Int) : Base {
     override fun result(): Int = x
 }
 

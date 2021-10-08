@@ -1,12 +1,14 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class AsAny(val a: Any?) {
+@JvmInline
+value class AsAny(val a: Any?) {
     fun myEq(other: Any?): Boolean {
         return other is AsAny && other.a == a
     }
 }
 
-inline class AsInt(val a: Int) {
+@JvmInline
+value class AsInt(val a: Int) {
     fun myEq(other: Any?): Boolean {
         return other is AsInt && other.a == a
     }

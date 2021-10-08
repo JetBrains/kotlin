@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 interface GFoo<out T> {
     fun foo(): T
 }
@@ -8,7 +10,8 @@ interface IBar {
 
 interface SFooBar : GFoo<IBar>
 
-inline class X(val x: String) : IBar {
+@JvmInline
+value class X(val x: String) : IBar {
     override fun bar(): String = x
 }
 

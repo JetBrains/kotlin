@@ -1,7 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class UInt(val value: Int)
-inline class ULong(val value: Long)
+@JvmInline
+value class UInt(val value: Int)
+@JvmInline
+value class ULong(val value: Long)
 
 fun foo(u: UInt, f: (UInt) -> ULong): ULong = f(u)
 inline fun inlinedFoo(u: UInt, f: (UInt) -> ULong): ULong = f(u)

@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: SAM_CONVERSIONS
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 fun <T> underlying(a: IC): T = bar(a) {
     it.value as T
@@ -30,7 +30,8 @@ fun <T> IC.extensionValue(): T = value as T
 
 fun <T> normalValue(ic: IC): T = ic.value as T
 
-inline class IC(val value: String) {
+@JvmInline
+value class IC(val value: String) {
     fun <T> dispatchValue(): T = value as T
 }
 

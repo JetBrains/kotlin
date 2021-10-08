@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class IC(val x: String) {
+@JvmInline
+value class IC(val x: String) {
     private fun privateFun() = x
     override fun toString() = privateFun()
 }

@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Foo(val x: Int) : Comparable<Foo> {
+@JvmInline
+value class Foo(val x: Int) : Comparable<Foo> {
     override fun compareTo(other: Foo): Int {
         return 10
     }

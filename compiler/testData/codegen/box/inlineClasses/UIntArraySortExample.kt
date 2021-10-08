@@ -1,7 +1,8 @@
 // KJS_WITH_FULL_RUNTIME
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class UInt(private val value: Int) : Comparable<UInt> {
+@JvmInline
+value class UInt(private val value: Int) : Comparable<UInt> {
     companion object {
         private const val INT_MASK = 0xffffffffL
     }
@@ -21,7 +22,8 @@ inline class UInt(private val value: Int) : Comparable<UInt> {
         value xor Int.MIN_VALUE
 }
 
-inline class UIntArray(private val intArray: IntArray) {
+@JvmInline
+value class UIntArray(private val intArray: IntArray) {
     val size: Int get() = intArray.size
 
     operator fun get(index: Int): UInt = UInt(intArray[index])
@@ -33,7 +35,8 @@ inline class UIntArray(private val intArray: IntArray) {
     operator fun iterator(): UIntIterator = UIntIterator(intArray.iterator())
 }
 
-inline class UIntIterator(private val intIterator: IntIterator) : Iterator<UInt> {
+@JvmInline
+value class UIntIterator(private val intIterator: IntIterator) : Iterator<UInt> {
     override fun next(): UInt {
         return UInt(intIterator.next())
     }

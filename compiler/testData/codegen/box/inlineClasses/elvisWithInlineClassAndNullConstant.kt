@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class UInt(private val data: Int) {
+@JvmInline
+value class UInt(private val data: Int) {
     fun result(): String = if (data == 1) "OK" else "fail"
 }
 

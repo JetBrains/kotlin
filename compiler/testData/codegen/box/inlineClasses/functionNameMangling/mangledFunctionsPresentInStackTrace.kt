@@ -1,12 +1,12 @@
 
-// !LANGUAGE: +InlineClasses
 // IGNORE_BACKEND: JS, JS_IR, WASM
 // IGNORE_BACKEND: JS_IR_ES6
 // FULL_JDK
 // WITH_RUNTIME
 // WASM_MUTE_REASON: IGNORED_IN_JS
 
-inline class Id(val id: String)
+@JvmInline
+value class Id(val id: String)
 
 fun throws() {
     throw RuntimeException()

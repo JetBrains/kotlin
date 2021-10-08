@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class S(val string: String)
+@JvmInline
+value class S(val string: String)
 
 class Outer private constructor(val s: S) {
     class Nested {

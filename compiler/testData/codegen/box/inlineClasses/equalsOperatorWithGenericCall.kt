@@ -1,6 +1,11 @@
-inline class IcAny(val x: Any?)
-inline class IcInt(val x: Int)
-inline class IcLong(val x: Long)
+// WITH_RUNTIME
+
+@JvmInline
+value class IcAny(val x: Any?)
+@JvmInline
+value class IcInt(val x: Int)
+@JvmInline
+value class IcLong(val x: Long)
 
 fun <T> id(x: T) = x
 

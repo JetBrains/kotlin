@@ -1,8 +1,8 @@
 // KJS_WITH_FULL_RUNTIME
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
-inline class Foo(val arg: String)
+@JvmInline
+value class Foo(val arg: String)
 
 fun box(): String {
     val ls = listOf(Foo("abc"), Foo("def"))

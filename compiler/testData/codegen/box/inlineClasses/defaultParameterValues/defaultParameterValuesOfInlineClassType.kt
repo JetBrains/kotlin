@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Z(val z: Int)
+@JvmInline
+value class Z(val z: Int)
 
 fun test(z: Z = Z(42)) = z.z
 

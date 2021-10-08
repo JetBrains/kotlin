@@ -1,8 +1,11 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Z(val x: Int = 1234)
-inline class L(val x: Long = 1234L)
-inline class S(val x: String = "foobar")
+@JvmInline
+value class Z(val x: Int = 1234)
+@JvmInline
+value class L(val x: Long = 1234L)
+@JvmInline
+value class S(val x: String = "foobar")
 
 fun box(): String {
     if (Z().x != 1234) throw AssertionError()

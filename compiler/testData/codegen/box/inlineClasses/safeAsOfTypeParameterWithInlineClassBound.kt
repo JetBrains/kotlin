@@ -1,7 +1,9 @@
 // IGNORE_BACKEND: JVM
+// WITH_RUNTIME
 
 interface X
-inline class Z(val value: Int) : X
+@JvmInline
+value class Z(val value: Int) : X
 
 fun <T> test(t: T) where T : X, T : Z = t as? Int
 

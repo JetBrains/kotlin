@@ -1,10 +1,12 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class UInt(private val value: Int) {
+@JvmInline
+value class UInt(private val value: Int) {
     fun asInt() = value
 }
 
-inline class UIntArray(private val intArray: IntArray) {
+@JvmInline
+value class UIntArray(private val intArray: IntArray) {
     operator fun get(index: Int): UInt = UInt(intArray[index])
 
     operator fun set(index: Int, value: UInt) {

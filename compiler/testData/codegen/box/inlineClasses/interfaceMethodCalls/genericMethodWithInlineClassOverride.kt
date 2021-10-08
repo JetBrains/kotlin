@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class A(val s: String)
+@JvmInline
+value class A(val s: String)
 
 abstract class B<T> {
     abstract fun f(x: T): T

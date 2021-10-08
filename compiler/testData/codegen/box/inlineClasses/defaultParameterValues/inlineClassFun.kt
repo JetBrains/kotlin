@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Z(val x: Int) {
+@JvmInline
+value class Z(val x: Int) {
     fun test(y: Int = 42) = x + y
 }
 

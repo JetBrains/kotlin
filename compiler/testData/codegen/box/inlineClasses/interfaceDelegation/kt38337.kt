@@ -1,7 +1,8 @@
 // KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 
-inline class Wrapper(val id: Int)
+@JvmInline
+value class Wrapper(val id: Int)
 
 class DMap(private val map: Map<Wrapper, String>) :
         Map<Wrapper, String> by map

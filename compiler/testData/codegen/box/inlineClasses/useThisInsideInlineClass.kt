@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class UInt(val a: Int) {
+@JvmInline
+value class UInt(val a: Int) {
     fun test() {
         takeNullable(this)
         takeAnyInside(this)

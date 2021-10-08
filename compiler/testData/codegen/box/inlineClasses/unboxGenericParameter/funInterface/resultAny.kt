@@ -1,9 +1,9 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: SAM_CONVERSIONS
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
-inline class IC(val value: Any)
+@JvmInline
+value class IC(val value: Any)
 
 fun <T> foo(a: Result<T>, ic: IC): Pair<T, Any> = bar(a, ic) { a, ic ->
     a.getOrThrow() to ic.value

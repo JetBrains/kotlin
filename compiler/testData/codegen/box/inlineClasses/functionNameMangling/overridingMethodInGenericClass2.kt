@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 abstract class GenericBase<T> {
     abstract fun foo(x: T): T
@@ -8,7 +8,8 @@ interface IFoo {
     fun foo(x: String): String
 }
 
-inline class Str(val str: String)
+@JvmInline
+value class Str(val str: String)
 
 class Derived : GenericBase<Str>(), IFoo {
     override fun foo(x: Str): Str = x

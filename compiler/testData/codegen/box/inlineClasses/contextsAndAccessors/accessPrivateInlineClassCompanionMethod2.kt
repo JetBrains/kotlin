@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class R(private val r: Long) {
+@JvmInline
+value class R(private val r: Long) {
     fun test() = ok()
 
     companion object {

@@ -4,7 +4,8 @@
 // WITH_RUNTIME
 // KT-44529
 
-inline class InlineDouble3(val values: DoubleArray) {
+@JvmInline
+value class InlineDouble3(val values: DoubleArray) {
     operator fun iterator(): DoubleIterator = IteratorImpl(values)
 }
 

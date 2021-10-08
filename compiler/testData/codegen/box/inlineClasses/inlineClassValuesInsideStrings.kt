@@ -1,10 +1,12 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Augmented(val x: Int) {
+@JvmInline
+value class Augmented(val x: Int) {
     override fun toString(): String = (x + 1).toString()
 }
 
-inline class AsAny(val a: Any) {
+@JvmInline
+value class AsAny(val a: Any) {
     override fun toString(): String = "AsAny: $a"
 }
 

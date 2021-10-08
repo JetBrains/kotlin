@@ -1,4 +1,7 @@
-inline class X(val x: Any?)
+// WITH_RUNTIME
+
+@JvmInline
+value class X(val x: Any?)
 
 fun useX(x: X): String = if (x.x == null) "OK" else "fail: $x"
 

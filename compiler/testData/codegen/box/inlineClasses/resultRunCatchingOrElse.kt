@@ -1,7 +1,10 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: TYPE_ISSUES
+// WITH_RUNTIME
 
-inline class Result<out T>(val value: Any?) {
+
+@JvmInline
+value class Result<out T>(val value: Any?) {
     fun exceptionOrNull(): Throwable? =
         when (value) {
             is Failure -> value.exception

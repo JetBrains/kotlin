@@ -1,7 +1,8 @@
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FILE: 1.kt
-inline class C(val x: String)
+@JvmInline
+value class C(val x: String)
 
 // FILE: 2.kt
 @file:JvmMultifileClass

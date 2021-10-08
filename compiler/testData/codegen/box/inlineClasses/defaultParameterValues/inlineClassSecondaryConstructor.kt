@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Z(val x: Int) {
+@JvmInline
+value class Z(val x: Int) {
     constructor(x: Long = 42L) : this(x.toInt())
 }
 

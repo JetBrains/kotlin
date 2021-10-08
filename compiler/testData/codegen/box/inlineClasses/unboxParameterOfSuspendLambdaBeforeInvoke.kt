@@ -9,13 +9,16 @@ import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
-inline class BoxAny(val value: Any?) {
+@JvmInline
+value class BoxAny(val value: Any?) {
     val intValue: Int get() = value as Int
 }
 
-inline class BoxInt(val value: Int)
+@JvmInline
+value class BoxInt(val value: Int)
 
-inline class BoxLong(val value: Long)
+@JvmInline
+value class BoxLong(val value: Long)
 
 class EmptyContinuation<T> : Continuation<T> {
     override val context: CoroutineContext

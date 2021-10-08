@@ -1,7 +1,10 @@
+// WITH_RUNTIME
+
 @Target(AnnotationTarget.PROPERTY)
 annotation class Anno
 
-inline class Z(val s: String)
+@JvmInline
+value class Z(val s: String)
 
 class A {
     @Anno
