@@ -214,7 +214,7 @@ class HierarchicalModuleCommonizationTest : AbstractInlineSourcesCommonizationTe
 
         result.assertCommonized("(a, b)") {
             name = "shared"
-            source("expect class Shared expect constructor()")
+            source("expect class Shared()")
         }
     }
 }

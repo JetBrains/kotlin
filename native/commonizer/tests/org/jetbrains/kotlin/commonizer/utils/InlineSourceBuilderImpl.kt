@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.commonizer.utils
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
@@ -24,11 +25,14 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -79,7 +83,7 @@ class InlineSourceBuilderImpl(private val disposable: Disposable) : InlineSource
             .map { psiFactory.createFile(it.name, KtTestUtil.doLoadFile(it)) }
             .toList()
 
-        return CommonResolverForModuleFactory.analyzeFiles(
+        val analysisResult = CommonResolverForModuleFactory.analyzeFiles(
             files = psiFiles,
             moduleName = Name.special("<${module.name}>"),
             dependOnBuiltIns = true,
@@ -89,7 +93,40 @@ class InlineSourceBuilderImpl(private val disposable: Disposable) : InlineSource
             dependenciesContainer = DependenciesContainerImpl(module.dependencies),
         ) { content ->
             environment.createPackagePartProvider(content.moduleContentScope)
-        }.moduleDescriptor
+        }
+
+        val errorDiagnostics = analysisResult.bindingContext.diagnostics.noSuppression().filter { it.severity == Severity.ERROR }
+        check(errorDiagnostics.isEmpty()) {
+            val diagnosticInfos = errorDiagnostics.map { diagnostic ->
+                DiagnosticInfo(diagnostic.psiElement, diagnostic.factoryName)
+            }
+            val diagnosticDescriptions = diagnosticInfos.joinToString(System.lineSeparator()) { info ->
+                "[${info.diagnosticFactoryName}] reported on '${info.psiElementText}' " +
+                        "in file ${info.fileName} [${info.psiElementStartOffset}, ${info.psiElementEndOffset}]"
+            }
+            """No errors expected in test sources, but found:
+                |${diagnosticDescriptions}
+            """.trimMargin()
+        }
+
+        return analysisResult.moduleDescriptor
+    }
+
+    private class DiagnosticInfo(
+        val element: PsiElement,
+        val diagnosticFactoryName: String,
+    ) {
+        val psiElementText: String
+            get() = element.text
+
+        val psiElementStartOffset: Int
+            get() = element.startOffset
+
+        val psiElementEndOffset: Int
+            get() = element.endOffset
+
+        val fileName: String
+            get() = element.containingFile.name
     }
 
     private inner class DependenciesContainerImpl(

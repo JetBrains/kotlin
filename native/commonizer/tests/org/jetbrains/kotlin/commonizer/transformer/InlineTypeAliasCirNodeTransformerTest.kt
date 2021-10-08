@@ -22,7 +22,7 @@ class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase()
             source(
                 """
                 package dep
-                class ClassA
+                open class ClassA
                 class ClassB: ClassA()
                 """.trimIndent()
             )
@@ -112,7 +112,7 @@ class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase()
             source(
                 """
                 package dep
-                class ClassA
+                open class ClassA
                 class ClassB: ClassA()
                 """.trimIndent()
             )

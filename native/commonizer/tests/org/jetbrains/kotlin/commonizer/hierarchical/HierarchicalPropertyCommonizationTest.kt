@@ -97,7 +97,7 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
 
         result.assertCommonized(
             "(a, b)", """
-                expect class AB expect constructor()
+                expect class AB()
                 expect val x: AB
         """.trimIndent()
         )
@@ -124,7 +124,7 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
 
         result.assertCommonized(
             "(a, b)", """
-                expect class AB expect constructor()
+                expect class AB()
                 expect val x: AB
         """.trimIndent()
         )
@@ -144,14 +144,14 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
                 "b", """
                     class AB
                     typealias TA = AB
-                    val x: TA = TA
+                    val x: TA = TA()
                 """.trimIndent()
             )
         }
 
         result.assertCommonized(
             "(a, b)", """
-                expect class AB expect constructor()
+                expect class AB()
                 expect val x: AB
         """.trimIndent()
         )
@@ -181,7 +181,7 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
 
         result.assertCommonized(
             "(a, b)", """
-                expect class AB expect constructor()
+                expect class AB()
                 typealias TA_AB = AB
                 expect val x: TA_AB
         """.trimIndent()
@@ -211,7 +211,7 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
 
         result.assertCommonized(
             "(a, b)", """
-                expect class AB expect constructor()
+                expect class AB()
                 typealias TA_AB = AB
                 expect val x: TA_AB
         """.trimIndent()

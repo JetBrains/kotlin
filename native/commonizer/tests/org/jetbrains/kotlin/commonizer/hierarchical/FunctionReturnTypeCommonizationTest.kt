@@ -18,7 +18,7 @@ class FunctionReturnTypeCommonizationTest : AbstractInlineSourcesCommonizationTe
                 class A { // NOTE: Class
                     class B
                 }
-                fun x(): A.B = TODO()
+                fun x(): A.B = null!!
             """
             )
 
@@ -27,7 +27,7 @@ class FunctionReturnTypeCommonizationTest : AbstractInlineSourcesCommonizationTe
                 interface A { // NOTE: Interface
                     class B
                 }
-                fun x(): A.B = TODO()
+                fun x(): A.B = null!!
                 """
             )
         }
@@ -52,7 +52,7 @@ class FunctionReturnTypeCommonizationTest : AbstractInlineSourcesCommonizationTe
                 interface A { 
                     class B
                 }
-                fun x(): A.B = TODO()
+                fun x(): A.B = null!!
             """
             )
 
@@ -61,7 +61,7 @@ class FunctionReturnTypeCommonizationTest : AbstractInlineSourcesCommonizationTe
                 interface A { 
                     class B
                 }
-                fun x(): A.B = TODO()
+                fun x(): A.B = null!!
                 """
             )
         }
@@ -75,7 +75,7 @@ class FunctionReturnTypeCommonizationTest : AbstractInlineSourcesCommonizationTe
         result.assertCommonized(
             "(a,b)", """
                 expect interface A { 
-                    expect class B expect constructor()
+                    class B()
                 }
                 expect fun x(): A.B
             """

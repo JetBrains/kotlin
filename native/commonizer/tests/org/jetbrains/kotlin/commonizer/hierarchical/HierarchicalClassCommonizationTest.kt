@@ -20,10 +20,10 @@ class HierarchicalClassCommonizationTest : AbstractInlineSourcesCommonizationTes
             simpleSingleSourceTarget("e", "class X")
         }
 
-        result.assertCommonized("(a,b)", "expect class X expect constructor()")
-        result.assertCommonized("(c,d)", "expect class X expect constructor()")
-        result.assertCommonized("(a,b)", "expect class X expect constructor()")
-        result.assertCommonized("((a,b), (c,d), e)", "expect class X expect constructor()")
+        result.assertCommonized("(a,b)", "expect class X()")
+        result.assertCommonized("(c,d)", "expect class X()")
+        result.assertCommonized("(a,b)", "expect class X()")
+        result.assertCommonized("((a,b), (c,d), e)", "expect class X()")
     }
 
     fun `test sample class`() {
@@ -72,26 +72,26 @@ class HierarchicalClassCommonizationTest : AbstractInlineSourcesCommonizationTes
 
         result.assertCommonized(
             "(a,b)", """
-               expect class X expect constructor() {
-                    expect val ab: Int
-                    expect val abcd: Int
+               expect class X() {
+                    val ab: Int
+                    val abcd: Int
                } 
                 """
         )
 
         result.assertCommonized(
             "(c,d)", """
-               expect class X expect constructor() {
-                    expect val cd: Int
-                    expect val abcd: Int
+               expect class X() {
+                    val cd: Int
+                    val abcd: Int
                } 
                 """
         )
 
         result.assertCommonized(
             "((a,b), (c,d))", """
-               expect class X expect constructor() {
-                    expect val abcd: Int
+               expect class X() {
+                    val abcd: Int
                } 
                 """
         )

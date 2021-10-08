@@ -13,8 +13,8 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
     fun `test two nullable functions`() {
         val result = commonize {
             outputTarget("(a, b)")
-            simpleSingleSourceTarget("a", "fun x(): Any?")
-            simpleSingleSourceTarget("b", "fun x(): Any?")
+            simpleSingleSourceTarget("a", "fun x(): Any? = Unit")
+            simpleSingleSourceTarget("b", "fun x(): Any? = Unit")
         }
 
         result.assertCommonized("(a, b)", "expect fun x(): Any?")
@@ -23,8 +23,8 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
     fun `test two non-nullable functions`() {
         val result = commonize {
             outputTarget("(a, b)")
-            simpleSingleSourceTarget("a", "fun x(): Any")
-            simpleSingleSourceTarget("b", "fun x(): Any")
+            simpleSingleSourceTarget("a", "fun x(): Any = Unit")
+            simpleSingleSourceTarget("b", "fun x(): Any = Unit")
         }
 
         result.assertCommonized("(a, b)", "expect fun x(): Any")
@@ -33,8 +33,8 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
     fun `test nullable and non-nullable function`() {
         val result = commonize {
             outputTarget("(a, b)")
-            simpleSingleSourceTarget("a", "fun x(): Any?")
-            simpleSingleSourceTarget("b", "fun x(): Any")
+            simpleSingleSourceTarget("a", "fun x(): Any? = null")
+            simpleSingleSourceTarget("b", "fun x(): Any = null!!")
         }
 
         result.assertCommonized("(a, b)", "expect fun x(): Any?")
@@ -96,14 +96,14 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
             simpleSingleSourceTarget(
                 "a", """
                     typealias X = Any?
-                    fun x(): X
+                    fun x(): X = null!!
                 """.trimIndent()
             )
 
             simpleSingleSourceTarget(
                 "b", """
                     typealias X = Any
-                    fun x(): X
+                    fun x(): X = null!!
                 """.trimIndent()
             )
         }
@@ -124,7 +124,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
                     typealias Z = Any
                     typealias Y = Z?
                     typealias X = Y
-                    fun x(): X
+                    fun x(): X = null!!
                 """.trimIndent()
             )
 
@@ -133,7 +133,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
                     typealias Z = Any
                     typealias Y = Z
                     typealias X = Y
-                    fun x(): X
+                    fun x(): X = null!!
                 """.trimIndent()
             )
         }
@@ -167,7 +167,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
                     typealias Z = Any
                     typealias Y = Z
                     typealias X = Y
-                    val x: X = Any
+                    val x: X = Unit
                 """.trimIndent()
             )
         }
@@ -211,7 +211,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
             simpleSingleSourceTarget(
                 "a", """
                 class X {
-                    val x: Any?
+                    val x: Any? = Unit
                 }
             """.trimIndent()
             )
@@ -219,7 +219,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
             simpleSingleSourceTarget(
                 "b", """
                 class X {
-                    val x: Any
+                    val x: Any = Unit
                 }
             """.trimIndent()
             )
@@ -227,7 +227,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
             simpleSingleSourceTarget(
                 "c", """
                 class X {
-                    val x: Any
+                    val x: Any = Unit
                 }
             """.trimIndent()
             )
@@ -235,14 +235,14 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
             simpleSingleSourceTarget(
                 "d", """
                 class X {
-                    val x: Any
+                    val x: Any = Unit
                 }
             """.trimIndent()
             )
         }
 
         result.assertCommonized("(a, b)", """expect class X()""")
-        result.assertCommonized("(c, d)", """expect class X() { expect val x: Any }""")
+        result.assertCommonized("(c, d)", """expect class X() { val x: Any }""")
         result.assertCommonized("(a, b, c, d)", """expect class X()""")
     }
 
@@ -253,7 +253,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
             simpleSingleSourceTarget(
                 "a", """
                 class X {
-                    fun x(): Any?
+                    fun x(): Any? = null!!
                 }
             """.trimIndent()
             )
@@ -261,7 +261,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
             simpleSingleSourceTarget(
                 "b", """
                 class X {
-                    fun x(): Any
+                    fun x(): Any = null!!
                 }
             """.trimIndent()
             )
@@ -269,7 +269,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
             simpleSingleSourceTarget(
                 "c", """
                 class X {
-                   fun x(): Any
+                   fun x(): Any = null!!
                 }
             """.trimIndent()
             )
@@ -277,14 +277,14 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
             simpleSingleSourceTarget(
                 "d", """
                 class X {
-                    fun x(): Any
+                    fun x(): Any = null!!
                 }
             """.trimIndent()
             )
         }
 
         result.assertCommonized("(a, b)", """expect class X()""")
-        result.assertCommonized("(c, d)", """expect class X() { expect fun x(): Any }""")
+        result.assertCommonized("(c, d)", """expect class X() { fun x(): Any }""")
         result.assertCommonized("(a, b, c, d)", """expect class X()""")
     }
 }

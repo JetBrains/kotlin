@@ -42,26 +42,26 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
             simpleSingleSourceTarget(
                 "a", """
                 interface ABCD
-                fun x(): ABCD = TODO()
+                fun x(): ABCD = null!!
             """
             )
             simpleSingleSourceTarget(
                 "b", """
                 interface ABCD
-                fun x(): ABCD = TODO()
+                fun x(): ABCD = null!!
                 """
             )
             simpleSingleSourceTarget(
                 "c", """
                 interface ABCD
-                fun x(): ABCD = TODO()
+                fun x(): ABCD = null!!
                 """
             )
 
             simpleSingleSourceTarget(
                 "d", """
                 interface ABCD
-                fun x(): ABCD = TODO()
+                fun x(): ABCD = null!!
                 """
             )
         }
@@ -92,10 +92,10 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
             registerDependency("a", "b", "c", "d", "(a, b)", "(c, d)", "(a, b, c, d)") { source("interface ABCD") }
-            simpleSingleSourceTarget("a", "fun x(): ABCD = TODO()")
-            simpleSingleSourceTarget("b", "fun x(): ABCD = TODO()")
-            simpleSingleSourceTarget("c", "fun x(): ABCD = TODO()")
-            simpleSingleSourceTarget("d", "fun x(): ABCD = TODO()")
+            simpleSingleSourceTarget("a", "fun x(): ABCD = null!!")
+            simpleSingleSourceTarget("b", "fun x(): ABCD = null!!")
+            simpleSingleSourceTarget("c", "fun x(): ABCD = null!!")
+            simpleSingleSourceTarget("d", "fun x(): ABCD = null!!")
         }
 
         result.assertCommonized("(c, d)", "expect fun x(): ABCD")
@@ -109,10 +109,10 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
             registerDependency("a", "b", "c", "d") { source("interface ABCD") }
             registerDependency("(a, b)") { source("interface ABCD") }
             registerDependency("(c,d)") { source("interface ABCD") }
-            simpleSingleSourceTarget("a", "fun x(): ABCD = TODO()")
-            simpleSingleSourceTarget("b", "fun x(): ABCD = TODO()")
-            simpleSingleSourceTarget("c", "fun x(): ABCD = TODO()")
-            simpleSingleSourceTarget("d", "fun x(): ABCD = TODO()")
+            simpleSingleSourceTarget("a", "fun x(): ABCD = null!!")
+            simpleSingleSourceTarget("b", "fun x(): ABCD = null!!")
+            simpleSingleSourceTarget("c", "fun x(): ABCD = null!!")
+            simpleSingleSourceTarget("d", "fun x(): ABCD = null!!")
         }
 
         result.assertCommonized("(c, d)", "expect fun x(): ABCD")
@@ -127,9 +127,9 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
             outputTarget("(a, b)", "(a, b, c)")
             registerDependency("(a, b, c)") { source("interface ABCD") }
             registerDependency("a", "b", "c", "(a, b)") { source("interface ABCD") }
-            simpleSingleSourceTarget("a", "fun x(): ABCD = TODO()")
-            simpleSingleSourceTarget("b", "fun x(): ABCD = TODO()")
-            simpleSingleSourceTarget("c", "fun x(): ABCD = TODO()")
+            simpleSingleSourceTarget("a", "fun x(): ABCD = null!!")
+            simpleSingleSourceTarget("b", "fun x(): ABCD = null!!")
+            simpleSingleSourceTarget("c", "fun x(): ABCD = null!!")
         }
 
         result.assertCommonized("(a, b)", "expect fun x(): ABCD")

@@ -626,8 +626,8 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
     fun `test function with pure number types parameter`() {
         val result = commonize {
             outputTarget("(a, b)")
-            simpleSingleSourceTarget("a", "fun x(p: Int)")
-            simpleSingleSourceTarget("b", "fun x(p: Long)")
+            simpleSingleSourceTarget("a", "fun x(p: Int) {}")
+            simpleSingleSourceTarget("b", "fun x(p: Long) {}")
         }
 
         /*
@@ -649,14 +649,14 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
                 "a", """
                     typealias A = Int
                     typealias X = A
-                    fun x(p: X)
+                    fun x(p: X) {}
                 """.trimIndent()
             )
             simpleSingleSourceTarget(
                 "b", """
                     typealias B = Long
                     typealias X = B
-                    fun x(p: X)
+                    fun x(p: X) {}
                 """.trimIndent()
             )
         }
@@ -674,8 +674,8 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         val result = commonize {
             outputTarget("(a, b)")
             registerDependency("a", "b", "(a, b)") { unsignedIntegers() }
-            simpleSingleSourceTarget("a", "val x: UInt = TODO()")
-            simpleSingleSourceTarget("b", "val x: ULong = TODO()")
+            simpleSingleSourceTarget("a", "val x: UInt = null!!")
+            simpleSingleSourceTarget("b", "val x: ULong = null!!")
         }
 
         /*
@@ -693,13 +693,13 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
             simpleSingleSourceTarget(
                 "a", """
                     typealias X = UShort
-                    val x: X = TODO()
+                    val x: X = null!!
                 """.trimIndent()
             )
             simpleSingleSourceTarget(
                 "b", """
                     typealias X = ULong
-                    val x: X = TODO()
+                    val x: X = null!!
                 """.trimIndent()
             )
         }
