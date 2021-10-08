@@ -25262,6 +25262,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("samPriorityVsGeneric.kt")
+            public void testSamPriorityVsGeneric() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/samConversions/samPriorityVsGeneric.kt");
+            }
+
+            @Test
+            @TestMetadata("samPriorityVsGenericCompatibilityDisabled.kt")
+            public void testSamPriorityVsGenericCompatibilityDisabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/samConversions/samPriorityVsGenericCompatibilityDisabled.kt");
+            }
+
+            @Test
             @TestMetadata("sameCandidatesFromKotlinAndJavaInOneScope.kt")
             public void testSameCandidatesFromKotlinAndJavaInOneScope() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/samConversions/sameCandidatesFromKotlinAndJavaInOneScope.kt");

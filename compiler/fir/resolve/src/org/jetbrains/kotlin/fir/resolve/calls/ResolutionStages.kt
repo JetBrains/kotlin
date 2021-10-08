@@ -5,26 +5,27 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirVisibilityChecker
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.matchingParameterFunctionType
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.isTypeMismatchDueToNullability
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -351,10 +352,40 @@ internal object CheckArguments : CheckerStage() {
                 context = context
             )
         }
-        if (candidate.system.hasContradiction && callInfo.arguments.isNotEmpty()) {
-            sink.yieldDiagnostic(InapplicableCandidate)
+
+        when {
+            candidate.system.hasContradiction && callInfo.arguments.isNotEmpty() -> {
+                sink.yieldDiagnostic(InapplicableCandidate)
+            }
+            candidate.usesSAM && !candidate.isJavaApplicableCandidate() -> {
+                sink.markCandidateForCompatibilityResolve(context)
+            }
         }
     }
+}
+
+private fun Candidate.isJavaApplicableCandidate(): Boolean {
+    val symbol = symbol as? FirNamedFunctionSymbol ?: return false
+    if (symbol.origin == FirDeclarationOrigin.Enhancement) return true
+    if (originScope !is FirTypeScope) return false
+
+    var result = false
+
+    originScope.processOverriddenFunctions(symbol) {
+        if (it.origin == FirDeclarationOrigin.Enhancement) {
+            result = true
+            ProcessorAction.STOP
+        } else {
+            ProcessorAction.NEXT
+        }
+    }
+
+    return result
+}
+
+private fun CheckerSink.markCandidateForCompatibilityResolve(context: ResolutionContext) {
+    if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.DisableCompatibilityModeForNewInference)) return
+    reportDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
 }
 
 internal object EagerResolveOfCallableReferences : CheckerStage() {
@@ -368,7 +399,7 @@ internal object EagerResolveOfCallableReferences : CheckerStage() {
                     sink.yieldDiagnostic(InapplicableCandidate)
                 } else when (applicability) {
                     CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY ->
-                        candidate.addDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
+                        sink.reportDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
                     else -> {
                     }
                 }
