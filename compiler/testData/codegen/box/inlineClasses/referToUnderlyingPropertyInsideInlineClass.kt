@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class UInt(val value: Int) {
+@JvmInline
+value class UInt(val value: Int) {
     operator fun plus(other: UInt) = UInt(value + other.value)
     fun otherValue(other: UInt) = other.value
 }

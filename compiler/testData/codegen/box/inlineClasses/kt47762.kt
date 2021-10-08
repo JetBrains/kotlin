@@ -1,4 +1,7 @@
-inline class A(val a: Int = 1) {
+// WITH_RUNTIME
+
+@JvmInline
+value class A(val a: Int = 1) {
     companion object {
         val a: Int = 2
     }

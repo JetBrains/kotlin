@@ -1,7 +1,7 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
-inline class Z(val x: Int) {
+@JvmInline
+value class Z(val x: Int) {
     @Suppress("INNER_CLASS_INSIDE_INLINE_CLASS")
     inner class Inner(val y: Int) {
         val xx = x

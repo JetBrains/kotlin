@@ -1,4 +1,3 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
 fun <T> eval(fn: () -> T) = fn()

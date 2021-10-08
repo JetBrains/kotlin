@@ -1,12 +1,14 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Name(private val value: String) {
+@JvmInline
+value class Name(private val value: String) {
     fun asValue(): String = value
 }
 
 fun concat(a: Name, b: Name) = a.asValue() + b.asValue()
 
-inline class UInt(private val value: Int) {
+@JvmInline
+value class UInt(private val value: Int) {
     fun asValue(): Int = value
 }
 

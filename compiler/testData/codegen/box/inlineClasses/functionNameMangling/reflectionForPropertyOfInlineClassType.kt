@@ -1,8 +1,8 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 import kotlin.test.*
 
-inline class S(val string: String)
+@JvmInline
+value class S(val string: String)
 
 var prop = S("")
 

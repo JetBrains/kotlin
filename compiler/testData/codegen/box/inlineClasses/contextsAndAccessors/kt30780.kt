@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Test(val x: Int) {
+@JvmInline
+value class Test(val x: Int) {
     private companion object {
         private const val CONSTANT = "OK"
     }

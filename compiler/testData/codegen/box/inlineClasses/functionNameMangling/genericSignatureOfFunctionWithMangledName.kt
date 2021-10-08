@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 
@@ -6,8 +6,10 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.javaMethod
 import kotlin.test.*
 
-inline class InlineClass1(val s: String)
-inline class InlineClass2(val n: Number)
+@JvmInline
+value class InlineClass1(val s: String)
+@JvmInline
+value class InlineClass2(val n: Number)
 
 fun <T : InlineClass1, U : InlineClass2> foo(t: T, u: U) {}
 

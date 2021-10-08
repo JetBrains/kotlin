@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 class Foo {
     var a: Int = 42
@@ -7,7 +7,8 @@ class Foo {
 
 var setterInvoked = 0
 
-inline class Delegate(val default: Int) {
+@JvmInline
+value class Delegate(val default: Int) {
 
     operator fun getValue(thisRef: Any?, prop: Any?) =
         (thisRef as? Foo)?.a ?: default

@@ -1,9 +1,13 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Z(val int: Int)
-inline class L(val long: Long)
-inline class Str(val string: String)
-inline class Obj(val obj: Any)
+@JvmInline
+value class Z(val int: Int)
+@JvmInline
+value class L(val long: Long)
+@JvmInline
+value class Str(val string: String)
+@JvmInline
+value class Obj(val obj: Any)
 
 inline fun <R> withDefaultZ(fn: (Z) -> R, x: Z = Z(42)) = fn(x)
 inline fun <R> withDefaultL(fn: (L) -> R, x: L = L(42L)) = fn(x)

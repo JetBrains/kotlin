@@ -1,5 +1,7 @@
+// WITH_RUNTIME
 
-inline class X(val x: String)
+@JvmInline
+value class X(val x: String)
 
 interface IFoo1<T> {
     fun foo(x: T): X

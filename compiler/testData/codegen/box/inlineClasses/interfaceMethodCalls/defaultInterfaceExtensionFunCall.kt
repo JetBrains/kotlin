@@ -1,19 +1,22 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 interface IFoo {
     fun Long.foo() = bar()
     fun bar(): String
 }
 
-inline class Z(val x: Int) : IFoo {
+@JvmInline
+value class Z(val x: Int) : IFoo {
     override fun bar(): String = "OK"
 }
 
-inline class L(val x: Long) : IFoo {
+@JvmInline
+value class L(val x: Long) : IFoo {
     override fun bar(): String = "OK"
 }
 
-inline class S(val x: String) : IFoo {
+@JvmInline
+value class S(val x: String) : IFoo {
     override fun bar(): String = "OK"
 }
 

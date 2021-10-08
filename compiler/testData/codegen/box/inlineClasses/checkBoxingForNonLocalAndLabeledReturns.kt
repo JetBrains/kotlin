@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class ULong(val l: Long)
+@JvmInline
+value class ULong(val l: Long)
 
 fun nonLocal(): ULong? {
     val u1 = ULong(1)

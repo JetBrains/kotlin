@@ -1,7 +1,7 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
-inline class Ucn(private val i: UInt)
+@JvmInline
+value class Ucn(private val i: UInt)
 
 class PPInput(private val s: ByteArray) {
     fun peek(n: UInt = 0u): Ucn? =

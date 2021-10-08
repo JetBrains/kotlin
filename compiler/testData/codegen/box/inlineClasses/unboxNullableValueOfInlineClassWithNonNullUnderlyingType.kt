@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 class BoxT<T>(val boxed: T)
 class BoxAny(val boxed: Any?)
@@ -6,11 +6,14 @@ class BoxFoo(val boxed: IFoo?)
 
 interface IFoo
 
-inline class Str(val value: String) : IFoo
+@JvmInline
+value class Str(val value: String) : IFoo
 
-inline class Str2(val value: Str): IFoo
+@JvmInline
+value class Str2(val value: Str): IFoo
 
-inline class StrArr(val value: Array<String>): IFoo
+@JvmInline
+value class StrArr(val value: Array<String>): IFoo
 
 fun boxToTypeParameter(x: Str?) = BoxT(x)
 fun boxToNullableAny(x: Str?) = BoxAny(x)

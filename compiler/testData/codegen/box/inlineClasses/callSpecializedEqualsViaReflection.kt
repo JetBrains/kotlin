@@ -2,9 +2,12 @@
 // FULL_JDK
 // TARGET_BACKEND: JVM
 
+// WITH_RUNTIME
+
 import java.lang.reflect.InvocationTargetException
 
-inline class Simple(val x: String) {
+@JvmInline
+value class Simple(val x: String) {
     fun somethingWeird() {}
 }
 

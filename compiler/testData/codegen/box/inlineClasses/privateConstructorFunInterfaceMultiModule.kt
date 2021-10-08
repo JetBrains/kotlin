@@ -1,7 +1,9 @@
 // MODULE: lib
+// WITH_RUNTIME
 // FILE: lib.kt
 
-inline class Z private constructor(private val value: Any?) {
+@JvmInline
+value class Z private constructor(private val value: Any?) {
     fun result(): String = value as String
 
     companion object {

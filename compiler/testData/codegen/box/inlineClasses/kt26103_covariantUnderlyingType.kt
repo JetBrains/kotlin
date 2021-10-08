@@ -1,15 +1,22 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
-inline class GList<T>(val xs: List<T>)
-inline class GSList<T>(val ss: List<String>)
-inline class SList(val ss: List<String>)
-inline class IList(val ints: List<Int>)
-inline class GIList<T>(val ints: List<Int>)
+@JvmInline
+value class GList<T>(val xs: List<T>)
+@JvmInline
+value class GSList<T>(val ss: List<String>)
+@JvmInline
+value class SList(val ss: List<String>)
+@JvmInline
+value class IList(val ints: List<Int>)
+@JvmInline
+value class GIList<T>(val ints: List<Int>)
 
-inline class II(val i: Int)
-inline class IIList(val iis: List<II>)
-inline class GIIList<T>(val iis: List<II>)
+@JvmInline
+value class II(val i: Int)
+@JvmInline
+value class IIList(val iis: List<II>)
+@JvmInline
+value class GIIList<T>(val iis: List<II>)
 
 fun testGList(gl: GList<String>) {
     if (gl.xs[0] != "OK") throw AssertionError()

@@ -1,4 +1,7 @@
-inline class I(val i: Int)
+// WITH_RUNTIME
+
+@JvmInline
+value class I(val i: Int)
 
 abstract class A {
     abstract fun f(i: I): String

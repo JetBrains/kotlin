@@ -1,7 +1,8 @@
 // WITH_RUNTIME
 
 
-inline class Result<T>(val isSuccess: Boolean)
+@JvmInline
+value class Result<T>(val isSuccess: Boolean)
 
 fun interface ResultHandler<T> {
     fun onResult(result: Result<T>)

@@ -1,7 +1,7 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
-inline class A(val b: String) {
+@JvmInline
+value class A(val b: String) {
     override fun toString(): String =
         buildString { append(b) }
 }

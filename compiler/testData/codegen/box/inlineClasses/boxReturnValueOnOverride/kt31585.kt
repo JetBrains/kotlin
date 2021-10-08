@@ -1,6 +1,7 @@
 // WITH_RUNTIME
 
-inline class FieldValue(val value: String)
+@JvmInline
+value class FieldValue(val value: String)
 
 enum class RequestFields {
     ENUM_ONE

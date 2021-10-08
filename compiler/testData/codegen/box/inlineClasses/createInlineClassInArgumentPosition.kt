@@ -1,12 +1,14 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class AsInt(val value: Int) {
+@JvmInline
+value class AsInt(val value: Int) {
     override fun toString(): String {
         return "asInt: ${value.toString()}"
     }
 }
 
-inline class AsAny(val value: Any) {
+@JvmInline
+value class AsAny(val value: Any) {
     override fun toString(): String {
         return "asAny: ${value.toString()}"
     }

@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class R(private val r: Int) {
+@JvmInline
+value class R(private val r: Int) {
     fun test() = object {
         override fun toString() = ok()
     }.toString()

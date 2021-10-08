@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class S(val string: String)
+@JvmInline
+value class S(val string: String)
 
 class Outer(val s1: S) {
     inner class Inner(val s2: S) {

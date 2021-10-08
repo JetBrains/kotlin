@@ -1,12 +1,15 @@
 // WITH_RUNTIME
 
-inline class Z(val x: Int)
+@JvmInline
+value class Z(val x: Int)
 
-inline class Z2(val x: Z)
+@JvmInline
+value class Z2(val x: Z)
 
 fun z2(x: Int) = Z2(Z(x))
 
-inline class ZMutableCollection(private val ms: MutableCollection<Z>) : MutableCollection<Z> {
+@JvmInline
+value class ZMutableCollection(private val ms: MutableCollection<Z>) : MutableCollection<Z> {
     override fun add(element: Z): Boolean = ms.add(element)
     override fun addAll(elements: Collection<Z>): Boolean = ms.addAll(elements)
     override fun clear() { ms.clear() }
@@ -20,7 +23,8 @@ inline class ZMutableCollection(private val ms: MutableCollection<Z>) : MutableC
     override fun isEmpty(): Boolean = ms.isEmpty()
 }
 
-inline class Z2MutableCollection(private val ms: MutableCollection<Z2>) : MutableCollection<Z2> {
+@JvmInline
+value class Z2MutableCollection(private val ms: MutableCollection<Z2>) : MutableCollection<Z2> {
     override fun add(element: Z2): Boolean = ms.add(element)
     override fun addAll(elements: Collection<Z2>): Boolean = ms.addAll(elements)
     override fun clear() { ms.clear() }

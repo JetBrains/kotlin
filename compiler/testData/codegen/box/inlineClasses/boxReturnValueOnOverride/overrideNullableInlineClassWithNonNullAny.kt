@@ -1,4 +1,7 @@
-inline class X(val x: Any)
+// WITH_RUNTIME
+
+@JvmInline
+value class X(val x: Any)
 
 interface IFoo {
     fun foo(): X?

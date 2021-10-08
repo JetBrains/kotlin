@@ -1,7 +1,8 @@
 // WITH_RUNTIME
 import kotlin.test.assertEquals
 
-inline class S(val x: String)
+@JvmInline
+value class S(val x: String)
 
 interface IFoo<T> {
     fun memberFun(s1: S, s2: String): String

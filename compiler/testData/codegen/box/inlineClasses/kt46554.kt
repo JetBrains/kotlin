@@ -1,6 +1,9 @@
+// WITH_RUNTIME
+
 var result = "Fail"
 
-inline class A(val value: String) {
+@JvmInline
+value class A(val value: String) {
     constructor() : this("OK")
 
     init {

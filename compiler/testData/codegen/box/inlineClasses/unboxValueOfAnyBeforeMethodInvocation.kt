@@ -1,6 +1,7 @@
 // WITH_RUNTIME
 
-inline class NullableInt(private val holder: Any?) {
+@JvmInline
+value class NullableInt(private val holder: Any?) {
     val intValue: Int get() = holder as Int
 }
 

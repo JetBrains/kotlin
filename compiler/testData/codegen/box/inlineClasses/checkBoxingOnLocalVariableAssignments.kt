@@ -1,9 +1,13 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class InlineNotNullPrimitive(val x: Int)
-inline class InlineNullablePrimitive(val x: Int?)
-inline class InlineNotNullReference(val a: Any)
-inline class InlineNullableReference(val a: Any?)
+@JvmInline
+value class InlineNotNullPrimitive(val x: Int)
+@JvmInline
+value class InlineNullablePrimitive(val x: Int?)
+@JvmInline
+value class InlineNotNullReference(val a: Any)
+@JvmInline
+value class InlineNullableReference(val a: Any?)
 
 fun test1(a: InlineNotNullPrimitive) {
     val a0 = a

@@ -7,7 +7,8 @@ interface IOk {
     fun ok(): String = "OK"
 }
 
-inline class InlineClass(val s: String) : IOk
+@JvmInline
+value class InlineClass(val s: String) : IOk
 
 fun test(x: InlineClass?) = x?.ok() ?: "Failed"
 

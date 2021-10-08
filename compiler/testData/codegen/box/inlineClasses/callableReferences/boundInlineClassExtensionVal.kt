@@ -1,9 +1,11 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
-inline class Z(val x: Int)
-inline class L(val x: Long)
-inline class S(val x: String)
+@JvmInline
+value class Z(val x: Int)
+@JvmInline
+value class L(val x: Long)
+@JvmInline
+value class S(val x: String)
 
 val Z.xx get() = x
 val L.xx get() = x

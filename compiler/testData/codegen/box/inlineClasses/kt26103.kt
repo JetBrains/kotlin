@@ -1,11 +1,14 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
-inline class Bar(val y: Int)
+@JvmInline
+value class Bar(val y: Int)
 
-inline class Foo<T>(val x: Int)
-inline class Foo2<T>(val x: Foo<T>)
-inline class Foo3<T>(val x: Bar)
+@JvmInline
+value class Foo<T>(val x: Int)
+@JvmInline
+value class Foo2<T>(val x: Foo<T>)
+@JvmInline
+value class Foo3<T>(val x: Bar)
 
 fun testValueParameter(z: Foo<Any>) = z.x
 fun testValueParameter2(z: Foo2<Any>) = z.x.x

@@ -1,7 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Inner(val w: String)
-inline class A(val x: Inner)
+@JvmInline
+value class Inner(val w: String)
+@JvmInline
+value class A(val x: Inner)
 
 fun isNullVacuousLeft(s: A) = s == null
 fun isNullVacuousRight(s: A) = null == s

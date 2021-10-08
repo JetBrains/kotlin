@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Foo(val c: Char) {
+@JvmInline
+value class Foo(val c: Char) {
     companion object {
         val prop = "O"
         const val constVal = 1

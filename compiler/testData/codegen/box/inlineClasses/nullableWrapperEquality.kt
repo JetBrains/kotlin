@@ -1,8 +1,11 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Z1(val x: String)
-inline class ZN(val z: Z1?)
-inline class ZN2(val z: ZN)
+@JvmInline
+value class Z1(val x: String)
+@JvmInline
+value class ZN(val z: Z1?)
+@JvmInline
+value class ZN2(val z: ZN)
 
 fun zap(b: Boolean): ZN2? = if (b) null else ZN2(ZN(null))
 

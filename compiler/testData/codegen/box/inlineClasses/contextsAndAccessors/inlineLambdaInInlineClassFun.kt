@@ -1,8 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 inline fun runInline(fn: () -> String) = fn()
 
-inline class R(private val r: Int) {
+@JvmInline
+value class R(private val r: Int) {
     fun test() = runInline { "OK" }
 }
 

@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class UIntArray(private val intArray: IntArray) {
+@JvmInline
+value class UIntArray(private val intArray: IntArray) {
     val size get() = intArray.size
 }
 

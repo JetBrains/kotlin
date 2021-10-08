@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Foo(val s: Any) {
+@JvmInline
+value class Foo(val s: Any) {
     fun isString(): Boolean = s is String
 }
 

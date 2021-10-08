@@ -1,7 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class InlineNotNullPrimitive(val x: Int)
-inline class InlineNotNullReference(val y: String)
+@JvmInline
+value class InlineNotNullPrimitive(val x: Int)
+@JvmInline
+value class InlineNotNullReference(val y: String)
 
 fun <T> testNotNullPrimitive(a: Any, b: T, c: InlineNotNullPrimitive, d: InlineNotNullPrimitive?) {}
 fun <T> testNotNullReference(a: Any, b: T, c: InlineNotNullReference, d: InlineNotNullReference?) {}

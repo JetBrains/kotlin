@@ -1,4 +1,7 @@
-inline class Z(val s: String) {
+// WITH_RUNTIME
+
+@JvmInline
+value class Z(val s: String) {
     val Int.s: Int get() = 42
 }
 

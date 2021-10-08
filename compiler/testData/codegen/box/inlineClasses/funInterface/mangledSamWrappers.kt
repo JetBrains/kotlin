@@ -1,6 +1,7 @@
 // IGNORE_BACKEND: JVM
-// !LANGUAGE: +InlineClasses
-inline class A(val value: String)
+// WITH_RUNTIME
+@JvmInline
+value class A(val value: String)
 
 fun interface B {
     fun f(x: A): A

@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 interface IFoo {
     fun getO(): String
@@ -7,7 +7,8 @@ interface IFoo {
     val ok: String get() = getO() + k
 }
 
-inline class InlineFooImpl(val s: String): IFoo {
+@JvmInline
+value class InlineFooImpl(val s: String): IFoo {
     override fun getO(): String = s
     override val k: String get() = "K"
 }

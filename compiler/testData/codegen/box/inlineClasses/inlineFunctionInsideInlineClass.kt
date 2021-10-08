@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Foo(val x: Int) {
+@JvmInline
+value class Foo(val x: Int) {
     inline fun inc(): Foo = Foo(x + 1)
 }
 

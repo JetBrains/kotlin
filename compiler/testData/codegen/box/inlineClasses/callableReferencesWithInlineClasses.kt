@@ -1,7 +1,8 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 // WITH_REFLECT
 
-inline class Foo(val x: String) {
+@JvmInline
+value class Foo(val x: String) {
     fun bar(f: Foo, i: Int): Foo = Foo(x + f.x + i)
 }
 

@@ -1,7 +1,8 @@
 // WITH_RUNTIME
 // IGNORE_BACKEND: NATIVE
 
-inline class SnekDirection(val direction: Int) {
+@JvmInline
+value class SnekDirection(val direction: Int) {
     companion object {
         val Up = SnekDirection(0)
     }

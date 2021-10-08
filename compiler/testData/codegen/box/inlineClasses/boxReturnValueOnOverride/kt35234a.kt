@@ -2,7 +2,8 @@
 // WASM_MUTE_REASON: STDLIB_TEXT
 // WITH_RUNTIME
 
-inline class NumberInlineClass(val value: Double)
+@JvmInline
+value class NumberInlineClass(val value: Double)
 
 interface TypeAdapter<FROM, TO> {
     fun decode(string: FROM): TO

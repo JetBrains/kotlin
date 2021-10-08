@@ -2,7 +2,8 @@
 
 import kotlin.test.assertEquals
 
-inline class S(val xs: Array<String>)
+@JvmInline
+value class S(val xs: Array<String>)
 
 interface IFoo {
     var S.extVar: String

@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class A(val a: String)
+@JvmInline
+value class A(val a: String)
 
 fun isEqualNA(x: A?, y: A) = x == y
 fun isEqualAN(x: A, y: A?) = x == y

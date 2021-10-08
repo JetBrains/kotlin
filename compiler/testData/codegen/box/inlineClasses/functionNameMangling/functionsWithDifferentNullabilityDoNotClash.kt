@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Id(val id: String)
+@JvmInline
+value class Id(val id: String)
 
 fun test(id: Id) {
     if (id.id != "OK") throw AssertionError()

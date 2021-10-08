@@ -2,11 +2,12 @@
 // WASM_MUTE_REASON: IGNORED_IN_JS
 // IGNORE_BACKEND: JS, JS_IR, NATIVE, JVM
 // IGNORE_BACKEND: JS_IR_ES6
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 @file:Suppress("SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS")
 
-inline class Foo(val x: String) {
+@JvmInline
+value class Foo(val x: String) {
     constructor(y: Int) : this("OK") {
         if (y == 0) return throw java.lang.IllegalArgumentException()
         if (y == 1) return

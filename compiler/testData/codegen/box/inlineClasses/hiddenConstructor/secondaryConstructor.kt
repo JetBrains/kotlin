@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class S(val string: String)
+@JvmInline
+value class S(val string: String)
 
 class Test(val s: S) {
     constructor(x: String, s: S) : this(S(x + s.string))

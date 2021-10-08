@@ -1,7 +1,7 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
-inline class Ucn(private val i: UInt)
+@JvmInline
+value class Ucn(private val i: UInt)
 
 interface Input<T> {
     fun foo(n: Int = 0): T

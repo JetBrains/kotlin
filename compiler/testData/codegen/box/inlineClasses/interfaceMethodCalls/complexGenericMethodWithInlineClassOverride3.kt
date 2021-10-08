@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class A(val s: String)
+@JvmInline
+value class A(val s: String)
 
 interface B<T> {
     fun f(x: T): T

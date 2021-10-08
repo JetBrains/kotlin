@@ -1,11 +1,11 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_GENERATED
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
 data class RGBA(val rgba: Int)
 
-inline class RgbaArray(val array: IntArray) {
+@JvmInline
+value class RgbaArray(val array: IntArray) {
     val size: Int get() = array.size
 
     fun fill(value: RGBA, start: Int = 0, end: Int = this.size): Unit = array.fill(value.rgba, start, end)

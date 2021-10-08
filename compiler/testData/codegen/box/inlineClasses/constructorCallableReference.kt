@@ -9,7 +9,8 @@ interface I {
     }
 }
 
-inline class IC(val ok: String = "OK") : I
+@JvmInline
+value class IC(val ok: String = "OK") : I
 
 fun box(): String {
     return I.default.ok

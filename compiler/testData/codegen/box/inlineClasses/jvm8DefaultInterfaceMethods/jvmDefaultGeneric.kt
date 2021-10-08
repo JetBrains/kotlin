@@ -9,7 +9,8 @@ interface IOk {
     fun ok(): String = "OK"
 }
 
-inline class InlineClass(val s: String) : IOk
+@JvmInline
+value class InlineClass(val s: String) : IOk
 
 fun test(cell: Cell<InlineClass>): String = cell.x.ok()
 

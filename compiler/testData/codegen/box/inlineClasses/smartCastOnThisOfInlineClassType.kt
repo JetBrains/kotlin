@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 interface IBase {
     fun testDefault1() = if (this is B) this.foo() else "fail"
@@ -10,7 +10,8 @@ interface IFoo : IBase {
     fun testDefault2() = if (this is B) this.foo() else "fail"
 }
 
-inline class B(val x: String) : IFoo {
+@JvmInline
+value class B(val x: String) : IFoo {
     override fun foo() = x
 }
 

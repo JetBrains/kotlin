@@ -8,7 +8,8 @@ interface IFooMutableList {
     fun foo(): MutableList<String>
 }
 
-inline class AL(val t: MutableList<String>) : MutableList<String> {
+@JvmInline
+value class AL(val t: MutableList<String>) : MutableList<String> {
     override val size: Int get() = t.size
     override fun get(index: Int): String = t.get(index)
     override fun set(index: Int, element: String): String = t.set(index, element)

@@ -1,7 +1,8 @@
 
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class A(val x: String = "")
+@JvmInline
+value class A(val x: String = "")
 
 var i = 0
 

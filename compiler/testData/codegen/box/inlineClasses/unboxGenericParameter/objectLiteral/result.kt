@@ -1,4 +1,3 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
 fun <T> foo(a: Result<T>): T = bar(a, object : IFace<Result<T>, T> {

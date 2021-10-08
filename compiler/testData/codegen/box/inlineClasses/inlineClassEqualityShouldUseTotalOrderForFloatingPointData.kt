@@ -1,8 +1,10 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class InlineFloat(val data: Float)
+@JvmInline
+value class InlineFloat(val data: Float)
 
-inline class InlineDouble(val data: Double)
+@JvmInline
+value class InlineDouble(val data: Double)
 
 fun box(): String {
     if (InlineFloat(0.0f) == InlineFloat(-0.0f)) throw AssertionError()

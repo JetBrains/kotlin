@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Props(val intArray: IntArray) {
+@JvmInline
+value class Props(val intArray: IntArray) {
     val size get() = intArray.size
 
     fun foo(): Int {

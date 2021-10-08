@@ -1,7 +1,7 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
-inline class Foo<T>(val x: Int)
+@JvmInline
+value class Foo<T>(val x: Int)
 
 class Bar(val y: Foo<Any>)
 

@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class UInt(val value: Int)
+@JvmInline
+value class UInt(val value: Int)
 
 fun <T> takeVarargs(vararg e: T): T {
     return e[e.size - 1]

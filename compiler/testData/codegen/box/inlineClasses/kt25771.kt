@@ -1,7 +1,8 @@
 
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Result<out T>(val value: Any?) {
+@JvmInline
+value class Result<out T>(val value: Any?) {
     val isFailure: Boolean get() = value is Failure
 
     public companion object {

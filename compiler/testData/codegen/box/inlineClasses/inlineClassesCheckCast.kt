@@ -1,7 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class AsAny<T>(val x: Any?)
-inline class AsInt(val x: Int)
+@JvmInline
+value class AsAny<T>(val x: Any?)
+@JvmInline
+value class AsInt(val x: Int)
 
 inline fun <reified T> Any?.checkcast(): T = this as T
 

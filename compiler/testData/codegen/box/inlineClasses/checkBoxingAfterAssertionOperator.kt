@@ -1,12 +1,15 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class WithPrimitive(val a: Int)
+@JvmInline
+value class WithPrimitive(val a: Int)
 fun takeWithPrimitive(a: WithPrimitive) {}
 
-inline class WithReference(val a: Any)
+@JvmInline
+value class WithReference(val a: Any)
 fun takeWithReference(a: WithReference) {}
 
-inline class WithNullableReference(val a: Any?)
+@JvmInline
+value class WithNullableReference(val a: Any?)
 fun takeWithNullableReference(a: WithNullableReference) {}
 
 fun foo(a: WithPrimitive?, b: WithPrimitive) {

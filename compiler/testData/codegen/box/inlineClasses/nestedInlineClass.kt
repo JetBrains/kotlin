@@ -1,19 +1,23 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 class C {
-    inline class IC1(val s: String)
+    @JvmInline
+    value class IC1(val s: String)
 
     companion object {
-        inline class IC2(val s: String)
+        @JvmInline
+        value class IC2(val s: String)
     }
 }
 
 object O {
-    inline class IC3(val s: String)
+    @JvmInline
+    value class IC3(val s: String)
 }
 
 interface I {
-    inline class IC4(val s: String)
+    @JvmInline
+    value class IC4(val s: String)
 }
 
 fun box(): String {

@@ -1,4 +1,7 @@
-inline class ResultOrClosed(val x: Any?)
+// WITH_RUNTIME
+
+@JvmInline
+value class ResultOrClosed(val x: Any?)
 
 interface A<T> {
     fun foo(): T

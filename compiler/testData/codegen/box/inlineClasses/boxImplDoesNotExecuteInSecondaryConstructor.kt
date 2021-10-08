@@ -1,4 +1,7 @@
-inline class IC private constructor(val i: Int) {
+// WITH_RUNTIME
+
+@JvmInline
+value class IC private constructor(val i: Int) {
     @Suppress("SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS")
     constructor() : this(0) {
         counter += 1

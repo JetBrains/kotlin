@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class IC(val s: String)
+@JvmInline
+value class IC(val s: String)
 
 interface IFoo<T> {
     fun foo(x: T, s: String = "K"): String

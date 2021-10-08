@@ -1,9 +1,11 @@
+// WITH_RUNTIME
 
 interface IFoo {
     fun foo(): String
 }
 
-inline class ICFoo(val t: IFoo): IFoo {
+@JvmInline
+value class ICFoo(val t: IFoo): IFoo {
     override fun foo(): String = t.foo()
 }
 

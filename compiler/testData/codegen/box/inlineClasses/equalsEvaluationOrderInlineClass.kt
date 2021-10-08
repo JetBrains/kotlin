@@ -1,8 +1,10 @@
 
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Inner(val x: Int)
-inline class A(val x: Inner)
+@JvmInline
+value class Inner(val x: Int)
+@JvmInline
+value class A(val x: Inner)
 
 var i = 0
 

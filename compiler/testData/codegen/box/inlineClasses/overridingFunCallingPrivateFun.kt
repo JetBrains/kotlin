@@ -1,10 +1,11 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
 interface IFoo {
     fun foo(): String
 }
 
-inline class IC(val x: String) : IFoo {
+@JvmInline
+value class IC(val x: String) : IFoo {
     private fun privateFun() = x
     override fun foo() = privateFun()
 }

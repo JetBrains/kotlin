@@ -1,9 +1,10 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
-inline class A(val a: Any)
+@JvmInline
+value class A(val a: Any)
 
-inline class NA(val b: Any?)
+@JvmInline
+value class NA(val b: Any?)
 
 fun box(): String {
     val ns1 = NA(A("abc"))

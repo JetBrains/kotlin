@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
+// WITH_RUNTIME
 
-inline class Foo(val x: Int) {
+@JvmInline
+value class Foo(val x: Int) {
     fun empty() = ""
     fun withParam(a: String) = a
     fun withInlineClassParam(f: Foo) = f.toString()

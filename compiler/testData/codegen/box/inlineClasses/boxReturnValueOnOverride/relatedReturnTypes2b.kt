@@ -1,10 +1,13 @@
+// WITH_RUNTIME
+
 interface IBase
 
 interface IQ : IBase {
     fun ok(): String
 }
 
-inline class X(val t: IQ): IQ {
+@JvmInline
+value class X(val t: IQ): IQ {
     override fun ok(): String = t.ok()
 }
 

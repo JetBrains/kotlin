@@ -5,7 +5,8 @@ interface IFoo {
     fun foo(s: String): String
 }
 
-inline class Z(val x: Int) : IFoo {
+@JvmInline
+value class Z(val x: Int) : IFoo {
     override fun foo(s: String): String = x.toString() + s
 }
 

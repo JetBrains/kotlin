@@ -1,11 +1,14 @@
-// !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 
-inline class X(val x: String)
-inline class Y(val y: Number)
+@JvmInline
+value class X(val x: String)
+@JvmInline
+value class Y(val y: Number)
 
-inline class NX(val x: String?)
-inline class NY(val y: Number?)
+@JvmInline
+value class NX(val x: String?)
+@JvmInline
+value class NY(val y: Number?)
 
 fun testNotNull(x: X?, y: Y?) {
     val xs = listOf<Any?>(x)
