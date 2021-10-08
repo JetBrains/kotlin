@@ -515,12 +515,12 @@ val wasmPhases = NamedCompilerPhase(
             addContinuationToNonLocalSuspendFunctionsLoweringPhase then
             addContinuationToFunctionCallsLoweringPhase then
 
-            stringConstructorLowering then
             tryCatchCanonicalization then
             returnableBlockLoweringPhase then
 
             forLoopsLoweringPhase then
             propertyAccessorInlinerLoweringPhase then
+            stringConstructorLowering then
 
             defaultArgumentStubGeneratorPhase then
             defaultArgumentPatchOverridesPhase then
