@@ -487,12 +487,12 @@ val wasmPhases = NamedCompilerPhase(
 //            TODO: Requires stdlib
 //            suspendFunctionsLoweringPhase then
 
-            stringConstructorLowering then
             tryCatchCanonicalization then
             returnableBlockLoweringPhase then
 
             forLoopsLoweringPhase then
             propertyAccessorInlinerLoweringPhase then
+            stringConstructorLowering then
 
             defaultArgumentStubGeneratorPhase then
             defaultArgumentPatchOverridesPhase then
