@@ -1407,17 +1407,17 @@ class ComposableFunctionBodyTransformer(
                 // over time. In the future, we may want to make an optimization where whether or
                 // not the call site had a spread or not and only create groups if it did.
 
-                // composer.startReplaceableGroup(values.size)
+                // composer.startMovableGroup(<>, values.size)
                 val irGetParamSize = irMethodCall(
                     irGet(param),
                     param.type.classOrNull!!.getPropertyGetter("size")!!.owner
                 )
                 // TODO(lmr): verify this works with default vararg expressions!
                 skipPreamble.statements.add(
-                    irStartReplaceableGroup(
+                    irStartMovableGroup(
                         param,
+                        irGetParamSize,
                         defaultScope,
-                        irGetParamSize
                     )
                 )
 
@@ -1445,8 +1445,8 @@ class ComposableFunctionBodyTransformer(
                     }
                 )
 
-                // composer.endReplaceableGroup()
-                skipPreamble.statements.add(irEndReplaceableGroup())
+                // composer.endMovableGroup()
+                skipPreamble.statements.add(irEndMovableGroup())
 
                 // if (dirty and 0b0110 === 0) {
                 //   dirty = dirty or 0b0010
@@ -1479,6 +1479,7 @@ class ComposableFunctionBodyTransformer(
             // otherwise, we wrap the whole thing in an if expression with a skip
             scope.hasDefaultsGroup = true
             scope.metrics.recordGroup()
+            bodyPreamble.statements.add(irStartDefaults(sourceElement))
             bodyPreamble.statements.add(
                 irIfThenElse(
                     // this prevents us from re-executing the defaults if this function is getting
@@ -1489,22 +1490,17 @@ class ComposableFunctionBodyTransformer(
                         irDefaultsInvalid()
                     ),
                     // set all of the default temp vars
-                    thenPart = irBlock(
-                        statements = listOf(
-                            irStartDefaults(sourceElement),
-                            *setDefaults.statements.toTypedArray(),
-                            irEndDefaults()
-                        )
-                    ),
+                    thenPart = setDefaults,
                     // composer.skipCurrentGroup()
                     elsePart = irBlock(
                         statements = listOf(
-                            irSkipCurrentGroup(),
+                            irSkipToGroupEnd(UNDEFINED_OFFSET, UNDEFINED_OFFSET),
                             *skipDefaults.statements.toTypedArray()
                         )
                     )
                 )
             )
+            bodyPreamble.statements.add(irEndDefaults())
         }
 
         return mightSkip
