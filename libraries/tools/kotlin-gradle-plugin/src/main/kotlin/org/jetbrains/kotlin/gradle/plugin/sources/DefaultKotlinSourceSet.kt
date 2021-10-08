@@ -186,7 +186,7 @@ class DefaultKotlinSourceSet(
                 is MetadataDependencyResolution.ChooseVisibleSourceSets -> {
                     val filesBySourceSet = resolution.getMetadataFilesBySourceSet(
                         baseDir,
-                        doProcessFiles = true
+                        createFiles = true
                     ).filter { it.value.any { it.exists() } }
 
                     MetadataDependencyTransformation(

@@ -528,8 +528,7 @@ internal fun createTransformedMetadataClasspath(
                     if (resolutions == null) {
                         add(artifact.file)
                     } else {
-                        val chooseVisibleSourceSets =
-                            resolutions.filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
+                        val chooseVisibleSourceSets = resolutions.filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
 
                         if (chooseVisibleSourceSets.isNotEmpty()) {
                             // Wrap the list into a FileCollection, as some older Gradle version failed to resolve the classpath
