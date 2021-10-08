@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: WASM
+// WASM_MUTE_REASON: COROUTINES
+
 // WITH_RUNTIME
 // !LANGUAGE: -StrictOnlyInputTypesChecks
 
