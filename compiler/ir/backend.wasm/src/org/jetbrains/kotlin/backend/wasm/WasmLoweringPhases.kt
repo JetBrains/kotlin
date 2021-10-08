@@ -49,6 +49,12 @@ private val validateIrAfterLowering = makeCustomWasmModulePhase(
     description = "Validate IR after lowering"
 )
 
+private val generateTests = makeCustomWasmModulePhase(
+    { context, module -> generateWasmTests(context, module) },
+    name = "GenerateTests",
+    description = "Generates code to execute kotlin.test cases"
+)
+
 private val expectDeclarationsRemovingPhase = makeWasmModulePhase(
     ::ExpectDeclarationsRemoveLowering,
     name = "ExpectDeclarationsRemoving",
@@ -77,14 +83,6 @@ private val lateinitUsageLoweringPhase = makeWasmModulePhase(
     ::LateinitUsageLowering,
     name = "LateinitUsage",
     description = "Insert checks for lateinit field references"
-)
-
-
-// TODO make all lambda-related stuff work with IrFunctionExpression and drop this phase
-private val provisionalFunctionExpressionPhase = makeWasmModulePhase(
-    { ProvisionalFunctionExpressionLowering() },
-    name = "FunctionExpression",
-    description = "Transform IrFunctionExpression to a local function reference"
 )
 
 private val functionInliningPhase = makeCustomWasmModulePhase(
@@ -443,6 +441,7 @@ val wasmPhases = NamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
     lower = validateIrBeforeLowering then
+            generateTests then
             excludeDeclarationsFromCodegenPhase then
             expectDeclarationsRemovingPhase then
 
@@ -450,7 +449,6 @@ val wasmPhases = NamedCompilerPhase(
             // arrayConstructorPhase then
 
             functionInliningPhase then
-            provisionalFunctionExpressionPhase then
             lateinitNullableFieldsPhase then
             lateinitDeclarationLoweringPhase then
             lateinitUsageLoweringPhase then

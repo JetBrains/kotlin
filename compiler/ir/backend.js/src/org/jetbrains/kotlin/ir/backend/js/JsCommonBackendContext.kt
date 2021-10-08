@@ -19,6 +19,11 @@ interface JsCommonBackendContext : CommonBackendContext {
 
     val es6mode: Boolean
         get() = false
+
+    val suiteFun: IrSimpleFunctionSymbol?
+    val testFun: IrSimpleFunctionSymbol?
+
+    fun createTestContainerFun(module: IrModuleFragment): IrSimpleFunction
 }
 
 interface InlineClassesUtils {
