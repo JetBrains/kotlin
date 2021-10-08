@@ -87,6 +87,8 @@ internal abstract class IrCarrierDeserializer {
 
     abstract fun deserializeSuperType(proto: Int): IrType
 
+    abstract fun deserializeSealedSubclass(proto: Long): IrClassSymbol
+
     abstract fun deserializeType(proto: Int): IrType
 
     abstract fun deserializeClass(proto: Long): IrClassSymbol
@@ -138,7 +140,8 @@ internal abstract class IrCarrierDeserializer {
             deserializeModality(proto.flags),
             proto.typeParametersList.map { deserializeTypeParameter(it) },
             proto.superTypesList.map { deserializeSuperType(it) },
-            if (proto.hasInlineClassRepresentation()) deserializeInlineClassRepresentation(proto.inlineClassRepresentation) else null
+            if (proto.hasInlineClassRepresentation()) deserializeInlineClassRepresentation(proto.inlineClassRepresentation) else null,
+            proto.sealedSubclassesList.map { deserializeSealedSubclass(it) }
         )
     }
 

@@ -1327,6 +1327,10 @@ open class IrFileSerializer(
             clazz.superTypes.forEach {
                 proto.addSuperType(serializeIrType(it))
             }
+
+            clazz.sealedSubclasses.forEach {
+                proto.addSealedSubclass(serializeIrSymbol(it))
+            }
         }
 
         return proto.build()

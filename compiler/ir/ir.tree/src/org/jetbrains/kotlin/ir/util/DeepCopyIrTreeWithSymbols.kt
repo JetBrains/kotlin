@@ -156,6 +156,9 @@ open class DeepCopyIrTreeWithSymbols(
             superTypes = declaration.superTypes.map {
                 it.remapType()
             }
+            sealedSubclasses = declaration.sealedSubclasses.map {
+                symbolRemapper.getReferencedClass(it)
+            }
             thisReceiver = declaration.thisReceiver?.transform()
             inlineClassRepresentation = declaration.inlineClassRepresentation?.mapUnderlyingType { it.remapType() as IrSimpleType }
             declaration.transformDeclarationsTo(this)

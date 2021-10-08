@@ -165,6 +165,12 @@ class BytecodeListingTextCollectingVisitor(
         }
     }
 
+    override fun visitPermittedSubclass(permittedSubclass: String?) {
+        if (permittedSubclass != null) {
+            declarationsInsideClass.add(Declaration("permittedSubclass: $permittedSubclass"))
+        }
+    }
+
     override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
         if (!filter.shouldWriteMethod(access, name, desc)) {
             return null

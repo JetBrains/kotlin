@@ -51,6 +51,8 @@ abstract class IrClass :
 
     abstract var inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>?
 
+    abstract var sealedSubclasses: List<IrClassSymbol>
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)
 

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.codegen.addRecordComponent
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.writeKotlinMetadata
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -130,6 +131,14 @@ class ClassCodegen private constructor(
         if (generated) return
         generated = true
 
+        // Generate PermittedSubclasses attribute for sealed class.
+        if (state.languageVersionSettings.supportsFeature(LanguageFeature.JvmPermittedSubclassesAttributeForSealed) &&
+            irClass.modality == Modality.SEALED &&
+            state.target >= JvmTarget.JVM_17
+        ) {
+            generatePermittedSubclasses()
+        }
+
         // Generating a method node may cause the addition of a field with an initializer if an inline function
         // call uses `assert` and the JVM assertions mode is enabled. To avoid concurrent modification errors,
         // there is a very specific generation order.
@@ -186,6 +195,15 @@ class ClassCodegen private constructor(
 
         visitor.done()
         jvmSignatureClashDetector.reportErrors(classOrigin)
+    }
+
+    private fun generatePermittedSubclasses() {
+        val sealedSubclasses = irClass.sealedSubclasses
+        if (sealedSubclasses.isEmpty()) return
+        val classVisitor = visitor.visitor
+        for (sealedSubclassSymbol in sealedSubclasses) {
+            classVisitor.visitPermittedSubclass(typeMapper.mapClass(sealedSubclassSymbol.owner).internalName)
+        }
     }
 
     private fun addReifiedParametersFromSignature() {

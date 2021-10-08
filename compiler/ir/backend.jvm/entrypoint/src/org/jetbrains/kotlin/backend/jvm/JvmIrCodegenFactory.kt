@@ -55,7 +55,7 @@ open class JvmIrCodegenFactory(
         val irProviders: List<IrProvider>,
         val extensions: JvmGeneratorExtensionsImpl,
         val backendExtension: JvmBackendExtension,
-        val notifyCodegenStart: () -> Unit,
+        val notifyCodegenStart: () -> Unit
     ) : CodegenFactory.BackendInput
 
     override fun convertToIr(input: CodegenFactory.IrConversionInput): JvmIrBackendInput {
@@ -215,7 +215,7 @@ open class JvmIrCodegenFactory(
         val phaseConfig = customPhaseConfig ?: PhaseConfig(jvmPhases)
         val context = JvmBackendContext(
             state, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig, extensions, backendExtension, irSerializer,
-            notifyCodegenStart
+            notifyCodegenStart,
         )
         /* JvmBackendContext creates new unbound symbols, have to resolve them. */
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
@@ -241,7 +241,8 @@ open class JvmIrCodegenFactory(
         generateModule(
             state,
             JvmIrBackendInput(
-                irModuleFragment, symbolTable, phaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart
+                irModuleFragment, symbolTable, phaseConfig, irProviders, extensions, backendExtension,
+                notifyCodegenStart
             )
         )
     }

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -100,6 +101,10 @@ class Fir2IrLazyClass(
 
     override var superTypes: List<IrType> by lazyVar(lock) {
         fir.superTypeRefs.map { it.toIrType(typeConverter) }
+    }
+
+    override var sealedSubclasses: List<IrClassSymbol> by lazyVar(lock) {
+        TODO()
     }
 
     override var thisReceiver: IrValueParameter? by lazyVar(lock) {

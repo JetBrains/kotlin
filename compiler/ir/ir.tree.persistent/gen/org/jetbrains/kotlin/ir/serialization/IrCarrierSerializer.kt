@@ -73,6 +73,8 @@ internal abstract class IrCarrierSerializer {
 
     abstract fun serializeSuperType(value: IrType): Int
 
+    abstract fun serializeSealedSubclass(value: IrClassSymbol): Long
+
     abstract fun serializeType(value: IrType): Int
 
     abstract fun serializeClass(value: IrClassSymbol): Long
@@ -122,6 +124,7 @@ internal abstract class IrCarrierSerializer {
         proto.addAllTypeParameters(carrier.typeParametersSymbolField.map { serializeTypeParameter(it) })
         proto.addAllSuperTypes(carrier.superTypesField.map { serializeSuperType(it) })
         carrier.inlineClassRepresentationField?.let { proto.setInlineClassRepresentation(serializeInlineClassRepresentation(it)) }
+        proto.addAllSealedSubclasses(carrier.sealedSubclassesField.map { serializeSealedSubclass(it) })
         return proto.build().toByteArray()
     }
 

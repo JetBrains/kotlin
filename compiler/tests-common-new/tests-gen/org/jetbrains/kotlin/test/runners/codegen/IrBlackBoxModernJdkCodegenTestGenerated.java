@@ -247,6 +247,12 @@ public class IrBlackBoxModernJdkCodegenTestGenerated extends AbstractIrBlackBoxC
             }
 
             @Test
+            @TestMetadata("javaExhaustiveWhenOnKotlinSealedClass.kt")
+            public void testJavaExhaustiveWhenOnKotlinSealedClass() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed/javaExhaustiveWhenOnKotlinSealedClass.kt");
+            }
+
+            @Test
             @TestMetadata("javaRecordsViaKotlinReflection.kt")
             public void testJavaRecordsViaKotlinReflection() throws Exception {
                 runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed/javaRecordsViaKotlinReflection.kt");
@@ -262,6 +268,12 @@ public class IrBlackBoxModernJdkCodegenTestGenerated extends AbstractIrBlackBoxC
             @TestMetadata("javaSealedInterface.kt")
             public void testJavaSealedInterface() throws Exception {
                 runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed/javaSealedInterface.kt");
+            }
+
+            @Test
+            @TestMetadata("permittedSubclassesOfSealedKotlinClass.kt")
+            public void testPermittedSubclassesOfSealedKotlinClass() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed/permittedSubclassesOfSealedKotlinClass.kt");
             }
 
             @Test

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
@@ -29,6 +30,7 @@ internal interface ClassCarrier : DeclarationCarrier{
     val typeParametersSymbolField: List<IrTypeParameterSymbol>
     val superTypesField: List<IrType>
     val inlineClassRepresentationField: InlineClassRepresentation<IrSimpleType>?
+    val sealedSubclassesField: List<IrClassSymbol>
 
     override fun clone(): ClassCarrier {
         return ClassCarrierImpl(
@@ -41,7 +43,8 @@ internal interface ClassCarrier : DeclarationCarrier{
             modalityField,
             typeParametersSymbolField,
             superTypesField,
-            inlineClassRepresentationField
+            inlineClassRepresentationField,
+            sealedSubclassesField
         )
     }
 }
@@ -56,7 +59,8 @@ internal class ClassCarrierImpl(
     override val modalityField: Modality,
     override val typeParametersSymbolField: List<IrTypeParameterSymbol>,
     override val superTypesField: List<IrType>,
-    override val inlineClassRepresentationField: InlineClassRepresentation<IrSimpleType>?
+    override val inlineClassRepresentationField: InlineClassRepresentation<IrSimpleType>?,
+    override val sealedSubclassesField: List<IrClassSymbol>
 ) : ClassCarrier {
 
     override val thisReceiverField: IrValueParameter?

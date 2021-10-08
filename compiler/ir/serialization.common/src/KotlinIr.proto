@@ -558,6 +558,7 @@ message IrClass {
   repeated IrDeclaration declaration = 5;
   repeated int32 super_type = 6 [packed=true];
   optional IrInlineClassRepresentation inline_class_representation = 7;
+  repeated int64 sealed_subclass = 8 [packed=true];
 }
 
 message IrTypeAlias {

@@ -137,6 +137,27 @@ public final class PirClassCarrier extends
             break;
           }
           case 72: {
+            if (!((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
+              sealedSubclasses_ = new java.util.ArrayList<java.lang.Long>();
+              mutable_bitField0_ |= 0x00000100;
+            }
+            sealedSubclasses_.add(input.readInt64());
+            break;
+          }
+          case 74: {
+            int length = input.readRawVarint32();
+            int limit = input.pushLimit(length);
+            if (!((mutable_bitField0_ & 0x00000100) == 0x00000100) && input.getBytesUntilLimit() > 0) {
+              sealedSubclasses_ = new java.util.ArrayList<java.lang.Long>();
+              mutable_bitField0_ |= 0x00000100;
+            }
+            while (input.getBytesUntilLimit() > 0) {
+              sealedSubclasses_.add(input.readInt64());
+            }
+            input.popLimit(limit);
+            break;
+          }
+          case 80: {
             bitField0_ |= 0x00000020;
             flags_ = input.readInt64();
             break;
@@ -157,6 +178,9 @@ public final class PirClassCarrier extends
       }
       if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
         superTypes_ = java.util.Collections.unmodifiableList(superTypes_);
+      }
+      if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
+        sealedSubclasses_ = java.util.Collections.unmodifiableList(sealedSubclasses_);
       }
       try {
         unknownFieldsCodedOutput.flush();
@@ -338,16 +362,38 @@ public final class PirClassCarrier extends
     return inlineClassRepresentation_;
   }
 
-  public static final int FLAGS_FIELD_NUMBER = 9;
+  public static final int SEALEDSUBCLASSES_FIELD_NUMBER = 9;
+  private java.util.List<java.lang.Long> sealedSubclasses_;
+  /**
+   * <code>repeated int64 sealedSubclasses = 9;</code>
+   */
+  public java.util.List<java.lang.Long>
+      getSealedSubclassesList() {
+    return sealedSubclasses_;
+  }
+  /**
+   * <code>repeated int64 sealedSubclasses = 9;</code>
+   */
+  public int getSealedSubclassesCount() {
+    return sealedSubclasses_.size();
+  }
+  /**
+   * <code>repeated int64 sealedSubclasses = 9;</code>
+   */
+  public long getSealedSubclasses(int index) {
+    return sealedSubclasses_.get(index);
+  }
+
+  public static final int FLAGS_FIELD_NUMBER = 10;
   private long flags_;
   /**
-   * <code>optional int64 flags = 9 [default = 0];</code>
+   * <code>optional int64 flags = 10 [default = 0];</code>
    */
   public boolean hasFlags() {
     return ((bitField0_ & 0x00000020) == 0x00000020);
   }
   /**
-   * <code>optional int64 flags = 9 [default = 0];</code>
+   * <code>optional int64 flags = 10 [default = 0];</code>
    */
   public long getFlags() {
     return flags_;
@@ -362,6 +408,7 @@ public final class PirClassCarrier extends
     typeParameters_ = java.util.Collections.emptyList();
     superTypes_ = java.util.Collections.emptyList();
     inlineClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance();
+    sealedSubclasses_ = java.util.Collections.emptyList();
     flags_ = 0L;
   }
   private byte memoizedIsInitialized = -1;
@@ -417,8 +464,11 @@ public final class PirClassCarrier extends
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       output.writeMessage(8, inlineClassRepresentation_);
     }
+    for (int i = 0; i < sealedSubclasses_.size(); i++) {
+      output.writeInt64(9, sealedSubclasses_.get(i));
+    }
     if (((bitField0_ & 0x00000020) == 0x00000020)) {
-      output.writeInt64(9, flags_);
+      output.writeInt64(10, flags_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -471,9 +521,18 @@ public final class PirClassCarrier extends
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(8, inlineClassRepresentation_);
     }
+    {
+      int dataSize = 0;
+      for (int i = 0; i < sealedSubclasses_.size(); i++) {
+        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt64SizeNoTag(sealedSubclasses_.get(i));
+      }
+      size += dataSize;
+      size += 1 * getSealedSubclassesList().size();
+    }
     if (((bitField0_ & 0x00000020) == 0x00000020)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt64Size(9, flags_);
+        .computeInt64Size(10, flags_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -585,8 +644,10 @@ public final class PirClassCarrier extends
       bitField0_ = (bitField0_ & ~0x00000040);
       inlineClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000080);
-      flags_ = 0L;
+      sealedSubclasses_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000100);
+      flags_ = 0L;
+      bitField0_ = (bitField0_ & ~0x00000200);
       return this;
     }
 
@@ -645,7 +706,12 @@ public final class PirClassCarrier extends
         to_bitField0_ |= 0x00000010;
       }
       result.inlineClassRepresentation_ = inlineClassRepresentation_;
-      if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
+      if (((bitField0_ & 0x00000100) == 0x00000100)) {
+        sealedSubclasses_ = java.util.Collections.unmodifiableList(sealedSubclasses_);
+        bitField0_ = (bitField0_ & ~0x00000100);
+      }
+      result.sealedSubclasses_ = sealedSubclasses_;
+      if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
         to_bitField0_ |= 0x00000020;
       }
       result.flags_ = flags_;
@@ -699,6 +765,16 @@ public final class PirClassCarrier extends
       }
       if (other.hasInlineClassRepresentation()) {
         mergeInlineClassRepresentation(other.getInlineClassRepresentation());
+      }
+      if (!other.sealedSubclasses_.isEmpty()) {
+        if (sealedSubclasses_.isEmpty()) {
+          sealedSubclasses_ = other.sealedSubclasses_;
+          bitField0_ = (bitField0_ & ~0x00000100);
+        } else {
+          ensureSealedSubclassesIsMutable();
+          sealedSubclasses_.addAll(other.sealedSubclasses_);
+        }
+        
       }
       if (other.hasFlags()) {
         setFlags(other.getFlags());
@@ -1192,33 +1268,99 @@ public final class PirClassCarrier extends
       return this;
     }
 
-    private long flags_ ;
-    /**
-     * <code>optional int64 flags = 9 [default = 0];</code>
-     */
-    public boolean hasFlags() {
-      return ((bitField0_ & 0x00000100) == 0x00000100);
+    private java.util.List<java.lang.Long> sealedSubclasses_ = java.util.Collections.emptyList();
+    private void ensureSealedSubclassesIsMutable() {
+      if (!((bitField0_ & 0x00000100) == 0x00000100)) {
+        sealedSubclasses_ = new java.util.ArrayList<java.lang.Long>(sealedSubclasses_);
+        bitField0_ |= 0x00000100;
+       }
     }
     /**
-     * <code>optional int64 flags = 9 [default = 0];</code>
+     * <code>repeated int64 sealedSubclasses = 9;</code>
+     */
+    public java.util.List<java.lang.Long>
+        getSealedSubclassesList() {
+      return java.util.Collections.unmodifiableList(sealedSubclasses_);
+    }
+    /**
+     * <code>repeated int64 sealedSubclasses = 9;</code>
+     */
+    public int getSealedSubclassesCount() {
+      return sealedSubclasses_.size();
+    }
+    /**
+     * <code>repeated int64 sealedSubclasses = 9;</code>
+     */
+    public long getSealedSubclasses(int index) {
+      return sealedSubclasses_.get(index);
+    }
+    /**
+     * <code>repeated int64 sealedSubclasses = 9;</code>
+     */
+    public Builder setSealedSubclasses(
+        int index, long value) {
+      ensureSealedSubclassesIsMutable();
+      sealedSubclasses_.set(index, value);
+      
+      return this;
+    }
+    /**
+     * <code>repeated int64 sealedSubclasses = 9;</code>
+     */
+    public Builder addSealedSubclasses(long value) {
+      ensureSealedSubclassesIsMutable();
+      sealedSubclasses_.add(value);
+      
+      return this;
+    }
+    /**
+     * <code>repeated int64 sealedSubclasses = 9;</code>
+     */
+    public Builder addAllSealedSubclasses(
+        java.lang.Iterable<? extends java.lang.Long> values) {
+      ensureSealedSubclassesIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, sealedSubclasses_);
+      
+      return this;
+    }
+    /**
+     * <code>repeated int64 sealedSubclasses = 9;</code>
+     */
+    public Builder clearSealedSubclasses() {
+      sealedSubclasses_ = java.util.Collections.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000100);
+      
+      return this;
+    }
+
+    private long flags_ ;
+    /**
+     * <code>optional int64 flags = 10 [default = 0];</code>
+     */
+    public boolean hasFlags() {
+      return ((bitField0_ & 0x00000200) == 0x00000200);
+    }
+    /**
+     * <code>optional int64 flags = 10 [default = 0];</code>
      */
     public long getFlags() {
       return flags_;
     }
     /**
-     * <code>optional int64 flags = 9 [default = 0];</code>
+     * <code>optional int64 flags = 10 [default = 0];</code>
      */
     public Builder setFlags(long value) {
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000200;
       flags_ = value;
       
       return this;
     }
     /**
-     * <code>optional int64 flags = 9 [default = 0];</code>
+     * <code>optional int64 flags = 10 [default = 0];</code>
      */
     public Builder clearFlags() {
-      bitField0_ = (bitField0_ & ~0x00000100);
+      bitField0_ = (bitField0_ & ~0x00000200);
       flags_ = 0L;
       
       return this;

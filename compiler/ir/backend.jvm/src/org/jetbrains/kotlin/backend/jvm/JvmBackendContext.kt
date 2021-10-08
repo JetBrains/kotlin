@@ -48,7 +48,7 @@ class JvmBackendContext(
     val generatorExtensions: JvmGeneratorExtensions,
     val backendExtension: JvmBackendExtension,
     val irSerializer: JvmIrSerializer?,
-    val notifyCodegenStart: () -> Unit,
+    val notifyCodegenStart: () -> Unit
 ) : CommonBackendContext {
     // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
     // annotated with @JvmPackageName, the correct name is recorded here.

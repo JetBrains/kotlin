@@ -2191,6 +2191,12 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         }
 
         @Test
+        @TestMetadata("permittedSubclasses_1_7.kt")
+        public void testPermittedSubclasses_1_7() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sealed/permittedSubclasses_1_7.kt");
+        }
+
+        @Test
         @TestMetadata("sealedClassConstructor_1_4.kt")
         public void testSealedClassConstructor_1_4() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/sealed/sealedClassConstructor_1_4.kt");

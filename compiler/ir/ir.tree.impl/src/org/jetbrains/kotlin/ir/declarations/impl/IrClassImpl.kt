@@ -29,7 +29,7 @@ open class IrClassImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
-    override val symbol: IrClassSymbol,
+    final override val symbol: IrClassSymbol,
     override val name: Name,
     override val kind: ClassKind,
     override var visibility: DescriptorVisibility,
@@ -70,4 +70,6 @@ open class IrClassImpl(
     override var metadata: MetadataSource? = null
 
     override var attributeOwnerId: IrAttributeContainer = this
+
+    override var sealedSubclasses: List<IrClassSymbol> = emptyList()
 }

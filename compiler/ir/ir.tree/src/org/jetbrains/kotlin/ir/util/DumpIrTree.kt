@@ -111,6 +111,7 @@ class DumpIrTreeVisitor(
     override fun visitClass(declaration: IrClass, data: String) {
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
+            declaration.sealedSubclasses.dumpItems("sealedSubclasses") { it.dump() }
             declaration.thisReceiver?.accept(this, "\$this")
             declaration.typeParameters.dumpElements()
             declaration.declarations.ordered().dumpElements()

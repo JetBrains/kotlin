@@ -348,6 +348,8 @@ class IrDeclarationDeserializer(
                         else -> computeMissingInlineClassRepresentationForCompatibility(this)
                     }
 
+                    sealedSubclasses = proto.sealedSubclassList.map { deserializeIrSymbol(it) as IrClassSymbol }
+
                     fakeOverrideBuilder.enqueueClass(this, signature, compatibilityMode)
                 }
             }

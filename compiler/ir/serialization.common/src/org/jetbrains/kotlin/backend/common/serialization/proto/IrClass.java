@@ -134,6 +134,27 @@ public final class IrClass extends
             bitField0_ |= 0x00000008;
             break;
           }
+          case 64: {
+            if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+              sealedSubclass_ = new java.util.ArrayList<java.lang.Long>();
+              mutable_bitField0_ |= 0x00000080;
+            }
+            sealedSubclass_.add(input.readInt64());
+            break;
+          }
+          case 66: {
+            int length = input.readRawVarint32();
+            int limit = input.pushLimit(length);
+            if (!((mutable_bitField0_ & 0x00000080) == 0x00000080) && input.getBytesUntilLimit() > 0) {
+              sealedSubclass_ = new java.util.ArrayList<java.lang.Long>();
+              mutable_bitField0_ |= 0x00000080;
+            }
+            while (input.getBytesUntilLimit() > 0) {
+              sealedSubclass_.add(input.readInt64());
+            }
+            input.popLimit(limit);
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -150,6 +171,9 @@ public final class IrClass extends
       }
       if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
         superType_ = java.util.Collections.unmodifiableList(superType_);
+      }
+      if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+        sealedSubclass_ = java.util.Collections.unmodifiableList(sealedSubclass_);
       }
       try {
         unknownFieldsCodedOutput.flush();
@@ -330,6 +354,29 @@ public final class IrClass extends
     return inlineClassRepresentation_;
   }
 
+  public static final int SEALED_SUBCLASS_FIELD_NUMBER = 8;
+  private java.util.List<java.lang.Long> sealedSubclass_;
+  /**
+   * <code>repeated int64 sealed_subclass = 8 [packed = true];</code>
+   */
+  public java.util.List<java.lang.Long>
+      getSealedSubclassList() {
+    return sealedSubclass_;
+  }
+  /**
+   * <code>repeated int64 sealed_subclass = 8 [packed = true];</code>
+   */
+  public int getSealedSubclassCount() {
+    return sealedSubclass_.size();
+  }
+  /**
+   * <code>repeated int64 sealed_subclass = 8 [packed = true];</code>
+   */
+  public long getSealedSubclass(int index) {
+    return sealedSubclass_.get(index);
+  }
+  private int sealedSubclassMemoizedSerializedSize = -1;
+
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
     name_ = 0;
@@ -338,6 +385,7 @@ public final class IrClass extends
     declaration_ = java.util.Collections.emptyList();
     superType_ = java.util.Collections.emptyList();
     inlineClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance();
+    sealedSubclass_ = java.util.Collections.emptyList();
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -413,6 +461,13 @@ public final class IrClass extends
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       output.writeMessage(7, inlineClassRepresentation_);
     }
+    if (getSealedSubclassList().size() > 0) {
+      output.writeRawVarint32(66);
+      output.writeRawVarint32(sealedSubclassMemoizedSerializedSize);
+    }
+    for (int i = 0; i < sealedSubclass_.size(); i++) {
+      output.writeInt64NoTag(sealedSubclass_.get(i));
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -459,6 +514,20 @@ public final class IrClass extends
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(7, inlineClassRepresentation_);
+    }
+    {
+      int dataSize = 0;
+      for (int i = 0; i < sealedSubclass_.size(); i++) {
+        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt64SizeNoTag(sealedSubclass_.get(i));
+      }
+      size += dataSize;
+      if (!getSealedSubclassList().isEmpty()) {
+        size += 1;
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(dataSize);
+      }
+      sealedSubclassMemoizedSerializedSize = dataSize;
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -568,6 +637,8 @@ public final class IrClass extends
       bitField0_ = (bitField0_ & ~0x00000020);
       inlineClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000040);
+      sealedSubclass_ = java.util.Collections.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000080);
       return this;
     }
 
@@ -622,6 +693,11 @@ public final class IrClass extends
         to_bitField0_ |= 0x00000008;
       }
       result.inlineClassRepresentation_ = inlineClassRepresentation_;
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+        sealedSubclass_ = java.util.Collections.unmodifiableList(sealedSubclass_);
+        bitField0_ = (bitField0_ & ~0x00000080);
+      }
+      result.sealedSubclass_ = sealedSubclass_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -669,6 +745,16 @@ public final class IrClass extends
       }
       if (other.hasInlineClassRepresentation()) {
         mergeInlineClassRepresentation(other.getInlineClassRepresentation());
+      }
+      if (!other.sealedSubclass_.isEmpty()) {
+        if (sealedSubclass_.isEmpty()) {
+          sealedSubclass_ = other.sealedSubclass_;
+          bitField0_ = (bitField0_ & ~0x00000080);
+        } else {
+          ensureSealedSubclassIsMutable();
+          sealedSubclass_.addAll(other.sealedSubclass_);
+        }
+        
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -1259,6 +1345,72 @@ public final class IrClass extends
       inlineClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance();
 
       bitField0_ = (bitField0_ & ~0x00000040);
+      return this;
+    }
+
+    private java.util.List<java.lang.Long> sealedSubclass_ = java.util.Collections.emptyList();
+    private void ensureSealedSubclassIsMutable() {
+      if (!((bitField0_ & 0x00000080) == 0x00000080)) {
+        sealedSubclass_ = new java.util.ArrayList<java.lang.Long>(sealedSubclass_);
+        bitField0_ |= 0x00000080;
+       }
+    }
+    /**
+     * <code>repeated int64 sealed_subclass = 8 [packed = true];</code>
+     */
+    public java.util.List<java.lang.Long>
+        getSealedSubclassList() {
+      return java.util.Collections.unmodifiableList(sealedSubclass_);
+    }
+    /**
+     * <code>repeated int64 sealed_subclass = 8 [packed = true];</code>
+     */
+    public int getSealedSubclassCount() {
+      return sealedSubclass_.size();
+    }
+    /**
+     * <code>repeated int64 sealed_subclass = 8 [packed = true];</code>
+     */
+    public long getSealedSubclass(int index) {
+      return sealedSubclass_.get(index);
+    }
+    /**
+     * <code>repeated int64 sealed_subclass = 8 [packed = true];</code>
+     */
+    public Builder setSealedSubclass(
+        int index, long value) {
+      ensureSealedSubclassIsMutable();
+      sealedSubclass_.set(index, value);
+      
+      return this;
+    }
+    /**
+     * <code>repeated int64 sealed_subclass = 8 [packed = true];</code>
+     */
+    public Builder addSealedSubclass(long value) {
+      ensureSealedSubclassIsMutable();
+      sealedSubclass_.add(value);
+      
+      return this;
+    }
+    /**
+     * <code>repeated int64 sealed_subclass = 8 [packed = true];</code>
+     */
+    public Builder addAllSealedSubclass(
+        java.lang.Iterable<? extends java.lang.Long> values) {
+      ensureSealedSubclassIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, sealedSubclass_);
+      
+      return this;
+    }
+    /**
+     * <code>repeated int64 sealed_subclass = 8 [packed = true];</code>
+     */
+    public Builder clearSealedSubclass() {
+      sealedSubclass_ = java.util.Collections.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000080);
+      
       return this;
     }
 
