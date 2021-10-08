@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.computeInlineClassRepresentation
+import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
-import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
@@ -104,7 +102,11 @@ class Fir2IrLazyClass(
     }
 
     override var sealedSubclasses: List<IrClassSymbol> by lazyVar(lock) {
-        TODO()
+        if (fir.isSealed) {
+            fir.getIrSymbolsForSealedSubclasses(components)
+        } else {
+            emptyList()
+        }
     }
 
     override var thisReceiver: IrValueParameter? by lazyVar(lock) {

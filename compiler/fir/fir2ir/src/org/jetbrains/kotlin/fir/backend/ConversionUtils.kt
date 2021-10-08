@@ -561,3 +561,11 @@ fun Fir2IrComponents.computeInlineClassRepresentation(klass: FirRegularClass): I
         underlyingType as? IrSimpleType ?: error("Inline class underlying type is not a simple type: ${klass.render()}")
     )
 }
+
+fun FirRegularClass.getIrSymbolsForSealedSubclasses(components: Fir2IrComponents): List<IrClassSymbol> {
+    val session = components.session
+    val symbolProvider = session.symbolProvider
+    return getSealedClassInheritors(session).mapNotNull {
+        symbolProvider.getClassLikeSymbolByClassId(it)?.toSymbol(session, components.classifierStorage)
+    }.filterIsInstance<IrClassSymbol>()
+}
