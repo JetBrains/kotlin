@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.SanitizerKind
 import java.io.File
 import javax.inject.Inject
+import kotlinBuildProperties
+import isNativeRuntimeDebugInfoEnabled
 
 open class CompileToBitcode @Inject constructor(
         @Internal val srcRoot: File,
@@ -85,7 +87,9 @@ open class CompileToBitcode @Inject constructor(
     @get:Input
     val compilerFlags: List<String>
         get() {
-            val commonFlags = listOf("-gdwarf-2", "-c", "-emit-llvm") + headersDirs.map { "-I$it" }
+            val commonFlags = listOfNotNull(
+                    "-gdwarf-2".takeIf { project.kotlinBuildProperties.isNativeRuntimeDebugInfoEnabled },
+                    "-c", "-emit-llvm") + headersDirs.map { "-I$it" }
             val sanitizerFlags = when (sanitizer) {
                 null -> listOf()
                 SanitizerKind.ADDRESS -> listOf("-fsanitize=address")
