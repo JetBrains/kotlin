@@ -1,18 +1,18 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
-apply plugin: 'kotlin2js'
+plugins {
+    id "org.jetbrains.kotlin.js"
+}
 
 repositories {
     mavenLocal()
     mavenCentral()
+}
+
+kotlin {
+    js {
+        nodejs()
+    }
 }
 
 dependencies {
@@ -20,18 +20,18 @@ dependencies {
     testImplementation "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
 }
 
-task jarSources(type: Jar) {
-    from sourceSets.main.allSource
-            classifier = 'source'
-}
-artifacts {
-    implementation jarSources
+def jsUseIrBackend = project.findProperty("kotlin.js.useIrBackend")?.toBoolean() == true
+
+tasks.named("compileKotlinJs", Kotlin2JsCompile) {
+    it.kotlinOptions.outputFile = "${buildDir}/kotlin2js/main/module.js"
+    if (jsUseIrBackend) {
+        it.kotlinOptions.freeCompilerArgs += ["-Xir-produce-klib-dir", "-Xir-only"]
+    }
 }
 
-compileKotlin2Js.kotlinOptions.outputFile = "${buildDir}/kotlin2js/main/module.js"
-compileTestKotlin2Js.kotlinOptions.outputFile = "${buildDir}/kotlin2js/test/module-tests.js"
-
-if (project.findProperty("kotlin.js.useIrBackend")?.toBoolean() == true) {
-    compileKotlin2Js.kotlinOptions.freeCompilerArgs += ["-Xir-produce-klib-dir", "-Xir-only"]
-    compileTestKotlin2Js.kotlinOptions.freeCompilerArgs += ["-Xir-produce-js"]
+tasks.named("compileTestKotlinJs", Kotlin2JsCompile) {
+    it.kotlinOptions.outputFile = "${buildDir}/kotlin2js/test/module-tests.js"
+    if (jsUseIrBackend) {
+        it.kotlinOptions.freeCompilerArgs += ["-Xir-produce-js"]
+    }
 }

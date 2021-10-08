@@ -1035,7 +1035,6 @@ class NewMultiplatformIT : BaseGradleIT() {
     @Test
     fun testNonMppConsumersOfLibraryPublishedWithNoMetadataOptIn() {
         val repoDir = with(transformNativeTestProject("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
-            projectDir.resolve("settings.gradle").modify { it.replace("enableFeaturePreview", "// enableFeaturePreview") }
             build(
                 "publish"
             ) { assertSuccessful() }
