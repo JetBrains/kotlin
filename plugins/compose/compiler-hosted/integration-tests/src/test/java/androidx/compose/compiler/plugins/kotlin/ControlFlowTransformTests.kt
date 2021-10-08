@@ -184,6 +184,55 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     )
 
     @Test
+    fun testInlineReturnLabel(): Unit = controlFlow(
+        """
+            @Composable
+            @NonRestartableComposable
+            fun CustomTextBroken(condition: Boolean) {
+                FakeBox {
+                    if (condition) {
+                        return@FakeBox
+                    }
+                    A()
+                }
+            }
+            @Composable
+            inline fun FakeBox(content: @Composable () -> Unit) {
+                content()
+            }
+        """,
+        """
+            @Composable
+            @NonRestartableComposable
+            fun CustomTextBroken(condition: Boolean, %composer: Composer?, %changed: Int) {
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "C(CustomTextBroken)<FakeBo...>:Test.kt")
+              FakeBox({ %composer: Composer?, %changed: Int ->
+                %composer.startReplaceableGroup(<>)
+                sourceInformation(%composer, "C<A()>:Test.kt")
+                if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  if (condition) {
+                    %composer.endReplaceableGroup()
+                  }
+                  A(%composer, 0)
+                } else {
+                  %composer.skipToGroupEnd()
+                }
+                %composer.endReplaceableGroup()
+              }, %composer, 0)
+              %composer.endReplaceableGroup()
+            }
+            @Composable
+            fun FakeBox(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "C(FakeBox)<conten...>:Test.kt")
+              content(%composer, 0b1110 and %changed)
+              %composer.endReplaceableGroup()
+            }
+        """
+    )
+
+    @Test
     fun testIfElseWithCallsInConditions(): Unit = controlFlow(
         """
             @NonRestartableComposable @Composable
