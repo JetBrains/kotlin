@@ -640,19 +640,19 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                 %dirty = %dirty or if (%default and 0b0001 === 0 && %composer.changed(a)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                %composer.startDefaults()
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
-                  %composer.startDefaults()
                   if (%default and 0b0001 !== 0) {
                     a = newInt()
                     %dirty = %dirty and 0b1110.inv()
                   }
-                  %composer.endDefaults()
                 } else {
-                  %composer.skipCurrentGroup()
+                  %composer.skipToGroupEnd()
                   if (%default and 0b0001 !== 0) {
                     %dirty = %dirty and 0b1110.inv()
                   }
                 }
+                %composer.endDefaults()
                 print(a)
               } else {
                 %composer.skipToGroupEnd()
@@ -787,8 +787,8 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                 %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changed(shape)) 0b00100000 else 0b00010000
               }
               if (%dirty and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
+                %composer.startDefaults()
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
-                  %composer.startDefaults()
                   if (%default and 0b0001 !== 0) {
                     modifier = Companion
                   }
@@ -796,13 +796,13 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                     shape = RectangleShape
                     %dirty = %dirty and 0b01110000.inv()
                   }
-                  %composer.endDefaults()
                 } else {
-                  %composer.skipCurrentGroup()
+                  %composer.skipToGroupEnd()
                   if (%default and 0b0010 !== 0) {
                     %dirty = %dirty and 0b01110000.inv()
                   }
                 }
+                %composer.endDefaults()
                 used(modifier)
                 used(shape)
               } else {
@@ -1014,13 +1014,13 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(B):Test.kt")
               val %dirty = %changed
-              %composer.startReplaceableGroup(values.size)
+              %composer.startMovableGroup(<>, values.size)
               val tmp0_iterator = values.iterator()
               while (tmp0_iterator.hasNext()) {
                 val value = tmp0_iterator.next()
                 %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0
               }
-              %composer.endReplaceableGroup()
+              %composer.endMovableGroup()
               if (%dirty and 0b1110 === 0) {
                 %dirty = %dirty or 0b0010
               }
@@ -1054,13 +1054,13 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(B):Test.kt")
               val %dirty = %changed
-              %composer.startReplaceableGroup(values.size)
+              %composer.startMovableGroup(<>, values.size)
               val tmp0_iterator = values.iterator()
               while (tmp0_iterator.hasNext()) {
                 val value = tmp0_iterator.next()
                 %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0
               }
-              %composer.endReplaceableGroup()
+              %composer.endMovableGroup()
               if (%dirty and 0b1110 === 0) {
                 %dirty = %dirty or 0b0010
               }
@@ -1073,7 +1073,6 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                 B(*values, %composer, %changed or 0b0001)
               }
             }
-
         """
     )
 
@@ -1182,8 +1181,8 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                 %dirty = %dirty or if (%composer.changed(c)) 0b000100000000 else 0b10000000
               }
               if (%dirty and 0b001011011011 xor 0b10010010 !== 0 || !%composer.skipping) {
+                %composer.startDefaults()
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
-                  %composer.startDefaults()
                   if (%default and 0b0001 !== 0) {
                     a = 0
                   }
@@ -1194,13 +1193,13 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                   if (%default and 0b0100 !== 0) {
                     c = 0
                   }
-                  %composer.endDefaults()
                 } else {
-                  %composer.skipCurrentGroup()
+                  %composer.skipToGroupEnd()
                   if (%default and 0b0010 !== 0) {
                     %dirty = %dirty and 0b01110000.inv()
                   }
                 }
+                %composer.endDefaults()
                 used(a)
                 used(b)
                 used(c)
@@ -1448,8 +1447,8 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                 %dirty = %dirty or 0b00010000
               }
               if (%default.inv() and 0b0010 !== 0 || %dirty and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
+                %composer.startDefaults()
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
-                  %composer.startDefaults()
                   if (%default and 0b0001 !== 0) {
                     a = 0
                   }
@@ -1458,13 +1457,13 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                     )
                     %dirty = %dirty and 0b01110000.inv()
                   }
-                  %composer.endDefaults()
                 } else {
-                  %composer.skipCurrentGroup()
+                  %composer.skipToGroupEnd()
                   if (%default and 0b0010 !== 0) {
                     %dirty = %dirty and 0b01110000.inv()
                   }
                 }
+                %composer.endDefaults()
                 used(a)
                 used(b)
               } else {
@@ -1519,20 +1518,20 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               sourceInformation(%composer, "C(CanSkip):Test.kt")
               val %dirty = %changed
               if (%default.inv() and 0b0001 !== 0 || %dirty and 0b0001 !== 0 || !%composer.skipping) {
+                %composer.startDefaults()
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
-                  %composer.startDefaults()
                   if (%default and 0b0001 !== 0) {
                     b = Foo(
                     )
                     %dirty = %dirty and 0b01110000.inv()
                   }
-                  %composer.endDefaults()
                 } else {
-                  %composer.skipCurrentGroup()
+                  %composer.skipToGroupEnd()
                   if (%default and 0b0001 !== 0) {
                     %dirty = %dirty and 0b01110000.inv()
                   }
                 }
+                %composer.endDefaults()
                 print("Hello World")
               } else {
                 %composer.skipToGroupEnd()
@@ -1882,19 +1881,19 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                 %dirty = %dirty or if (%default and 0b0001 === 0 && %composer.changed(x)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                %composer.startDefaults()
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
-                  %composer.startDefaults()
                   if (%default and 0b0001 !== 0) {
                     x = I(%composer, 0)
                     %dirty = %dirty and 0b1110.inv()
                   }
-                  %composer.endDefaults()
                 } else {
-                  %composer.skipCurrentGroup()
+                  %composer.skipToGroupEnd()
                   if (%default and 0b0001 !== 0) {
                     %dirty = %dirty and 0b1110.inv()
                   }
                 }
+                %composer.endDefaults()
                 A(x, %composer, 0b1110 and %dirty)
               } else {
                 %composer.skipToGroupEnd()
@@ -1953,19 +1952,19 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                 %dirty = %dirty or if (%default and 0b0001 === 0 && %composer.changed(x)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                %composer.startDefaults()
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
-                  %composer.startDefaults()
                   if (%default and 0b0001 !== 0) {
                     x = Foo()
                     %dirty = %dirty and 0b1110.inv()
                   }
-                  %composer.endDefaults()
                 } else {
-                  %composer.skipCurrentGroup()
+                  %composer.skipToGroupEnd()
                   if (%default and 0b0001 !== 0) {
                     %dirty = %dirty and 0b1110.inv()
                   }
                 }
+                %composer.endDefaults()
                 A(x, %composer, 0b1110 and %dirty)
               } else {
                 %composer.skipToGroupEnd()
@@ -2017,8 +2016,8 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                 %dirty = %dirty or 0b0010000000000000
               }
               if (%default.inv() and 0b00010000 !== 0 || %dirty and 0b1011011011011011 xor 0b0010010010010010 !== 0 || !%composer.skipping) {
+                %composer.startDefaults()
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
-                  %composer.startDefaults()
                   if (%default and 0b0100 !== 0) {
                     c = 0
                   }
@@ -2030,9 +2029,8 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                     e = emptyList()
                     %dirty = %dirty and 0b1110000000000000.inv()
                   }
-                  %composer.endDefaults()
                 } else {
-                  %composer.skipCurrentGroup()
+                  %composer.skipToGroupEnd()
                   if (%default and 0b1000 !== 0) {
                     %dirty = %dirty and 0b0001110000000000.inv()
                   }
@@ -2040,6 +2038,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                     %dirty = %dirty and 0b1110000000000000.inv()
                   }
                 }
+                %composer.endDefaults()
                 A(a, b, c, d, e, %composer, 0b1000000000000000 or 0b1110 and %dirty or 0b01110000 and %dirty or 0b001110000000 and %dirty or 0b0001110000000000 and %dirty)
               } else {
                 %composer.skipToGroupEnd()
@@ -2949,8 +2948,8 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                 %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changed(mightChange)) 0b00100000 else 0b00010000
               }
               if (%dirty and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
+                %composer.startDefaults()
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
-                  %composer.startDefaults()
                   if (%default and 0b0001 !== 0) {
                     wontChange = 123
                   }
@@ -2958,13 +2957,13 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                     mightChange = LocalColor.current
                     %dirty = %dirty and 0b01110000.inv()
                   }
-                  %composer.endDefaults()
                 } else {
-                  %composer.skipCurrentGroup()
+                  %composer.skipToGroupEnd()
                   if (%default and 0b0010 !== 0) {
                     %dirty = %dirty and 0b01110000.inv()
                   }
                 }
+                %composer.endDefaults()
                 A(wontChange, %composer, 0b1110 and %dirty)
                 A(mightChange, %composer, 0b1110 and %dirty shr 0b0011)
               } else {
@@ -3283,6 +3282,66 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                 } else {
                   %composer.skipToGroupEnd()
                 }
+              }
+            }
+        """
+    )
+
+    @Test
+    fun testArrayDefaultArgWithState(): Unit = comparisonPropagation(
+        """
+        """,
+        """
+            import androidx.compose.runtime.MutableState
+
+            @Composable
+            fun VarargComposable(state: MutableState<Int>, vararg values: String = Array(1) { "value " + it }) {
+                state.value
+            }
+        """,
+        """
+            @Composable
+            fun VarargComposable(state: MutableState<Int>, values: Array<out String>?, %composer: Composer?, %changed: Int, %default: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(VarargComposable):Test.kt")
+              val %dirty = %changed
+              if (%default and 0b0001 !== 0) {
+                %dirty = %dirty or 0b0110
+              } else if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(state)) 0b0100 else 0b0010
+              }
+              %composer.startMovableGroup(<>, values.size)
+              val tmp0_iterator = values.iterator()
+              while (tmp0_iterator.hasNext()) {
+                val value = tmp0_iterator.next()
+                %dirty = %dirty or if (%composer.changed(value)) 0b00100000 else 0
+              }
+              %composer.endMovableGroup()
+              if (%dirty and 0b01110000 === 0) {
+                %dirty = %dirty or 0b00010000
+              }
+              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                %composer.startDefaults()
+                if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
+                  if (%default and 0b0010 !== 0) {
+                    values = Array(1) { it: Int ->
+                      "value " + it
+                    }
+                    %dirty = %dirty and 0b01110000.inv()
+                  }
+                } else {
+                  %composer.skipToGroupEnd()
+                  if (%default and 0b0010 !== 0) {
+                    %dirty = %dirty and 0b01110000.inv()
+                  }
+                }
+                %composer.endDefaults()
+                state.value
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                VarargComposable(state, *values, %composer, %changed or 0b0001, %default)
               }
             }
         """
