@@ -123,7 +123,7 @@ class JsIrBackendContext(
 
     private val testContainerFuns = mutableMapOf<IrModuleFragment, IrSimpleFunction>()
 
-    fun createTestContainerFun(module: IrModuleFragment): IrSimpleFunction {
+    override fun createTestContainerFun(module: IrModuleFragment): IrSimpleFunction {
         return testContainerFuns.getOrPut(module) {
             val file = syntheticFile("tests", module)
             irFactory.addFunction(file) {
@@ -325,8 +325,8 @@ class JsIrBackendContext(
     val throwISEsymbol = symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_ISE"))).single())
     val throwIAEsymbol = symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_IAE"))).single())
 
-    val suiteFun = getFunctions(FqName("kotlin.test.suite")).singleOrNull()?.let { symbolTable.referenceSimpleFunction(it) }
-    val testFun = getFunctions(FqName("kotlin.test.test")).singleOrNull()?.let { symbolTable.referenceSimpleFunction(it) }
+    override val suiteFun = getFunctions(FqName("kotlin.test.suite")).singleOrNull()?.let { symbolTable.referenceSimpleFunction(it) }
+    override val testFun = getFunctions(FqName("kotlin.test.test")).singleOrNull()?.let { symbolTable.referenceSimpleFunction(it) }
 
     val primitiveClassProperties by lazy2 {
         primitiveClassesObject.owner.declarations.filterIsInstance<IrProperty>()

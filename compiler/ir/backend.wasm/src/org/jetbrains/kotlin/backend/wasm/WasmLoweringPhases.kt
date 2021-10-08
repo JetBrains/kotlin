@@ -53,6 +53,12 @@ private val validateIrAfterLowering = makeCustomWasmModulePhase(
     description = "Validate IR after lowering"
 )
 
+private val generateTests = makeCustomWasmModulePhase(
+    { context, module -> generateWasmTests(context, module) },
+    name = "GenerateTests",
+    description = "Generates code to execute kotlin.test cases"
+)
+
 private val expectDeclarationsRemovingPhase = makeWasmModulePhase(
     ::ExpectDeclarationsRemoveLowering,
     name = "ExpectDeclarationsRemoving",
@@ -469,6 +475,7 @@ val wasmPhases = NamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
     lower = validateIrBeforeLowering then
+            generateTests then
             excludeDeclarationsFromCodegenPhase then
             expectDeclarationsRemovingPhase then
 

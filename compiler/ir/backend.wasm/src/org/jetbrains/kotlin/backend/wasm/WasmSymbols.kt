@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import java.lang.IllegalArgumentException
 
 class WasmSymbols(
     context: WasmBackendContext,
@@ -39,7 +40,8 @@ class WasmSymbols(
         context.module.getPackage(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME)
     private val builtInsPackage: PackageViewDescriptor =
         context.module.getPackage(StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
-
+    private val kotlinTestPackage: PackageViewDescriptor =
+        context.module.getPackage(FqName("kotlin.test"))
 
     override val throwNullPointerException = getInternalFunction("THROW_NPE")
     override val throwISE = getInternalFunction("THROW_ISE")
@@ -131,6 +133,10 @@ class WasmSymbols(
 
     val stringGetLiteral = getFunction("stringLiteral", builtInsPackage)
 
+    val testFun = maybeGetFunction("test", kotlinTestPackage)
+    val suiteFun = maybeGetFunction("suite", kotlinTestPackage)
+    val startUnitTests = maybeGetFunction("startUnitTests", kotlinTestPackage)
+
     val wasmClassId = getInternalFunction("wasmClassId")
     val wasmInterfaceId = getInternalFunction("wasmInterfaceId")
 
@@ -211,9 +217,16 @@ class WasmSymbols(
         findProperty(context.module.getPackage(fqName.parent()).memberScope, fqName.shortName()).single()
 
     private fun getFunction(name: String, ownerPackage: PackageViewDescriptor): IrSimpleFunctionSymbol {
-        val tmp = findFunctions(ownerPackage.memberScope, Name.identifier(name)).single()
-        return symbolTable.referenceSimpleFunction(tmp)
+        return maybeGetFunction(name, ownerPackage) ?: throw IllegalArgumentException("Function $name not found")
     }
+
+    private fun maybeGetFunction(name: String, ownerPackage: PackageViewDescriptor): IrSimpleFunctionSymbol? {
+        val tmp = findFunctions(ownerPackage.memberScope, Name.identifier(name))
+        if (tmp.isEmpty())
+            return null
+        return symbolTable.referenceSimpleFunction(tmp.single())
+    }
+
 
     private fun getInternalFunction(name: String) = getFunction(name, wasmInternalPackage)
 

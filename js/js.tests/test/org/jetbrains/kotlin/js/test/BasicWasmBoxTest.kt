@@ -192,6 +192,8 @@ abstract class BasicWasmBoxTest(
             
             const ${sanitizeName(config.moduleId)} = wasmInstance.exports;
 
+            wasmInstance.exports.startUnitTests?.();
+
             const actualResult = importStringFromWasm(wasmInstance.exports.$testFunction());
             if (actualResult !== "OK")
                 throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;

@@ -17,14 +17,14 @@ import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsCommonCoroutineSymbols
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
@@ -118,5 +118,55 @@ class WasmBackendContext(
     override fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean) {
         /*TODO*/
         print(message)
+    }
+
+    //
+    // Unit test support, mostly borrowed from the JS implementation
+    //
+
+    override val suiteFun: IrSimpleFunctionSymbol?
+        get() = wasmSymbols.suiteFun
+    override val testFun: IrSimpleFunctionSymbol?
+        get() = wasmSymbols.testFun
+
+    private fun syntheticFile(name: String, module: IrModuleFragment): IrFile {
+        return IrFileImpl(object : IrFileEntry {
+            override val name = "<$name>"
+            override val maxOffset = UNDEFINED_OFFSET
+
+            override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int) =
+                SourceRangeInfo(
+                    "",
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET
+                )
+
+            override fun getLineNumber(offset: Int) = UNDEFINED_OFFSET
+            override fun getColumnNumber(offset: Int) = UNDEFINED_OFFSET
+        }, internalPackageFragmentDescriptor, module).also {
+            module.files += it
+        }
+    }
+
+    private val testContainerFuns = mutableMapOf<IrModuleFragment, IrSimpleFunction>()
+
+    val testEntryPoints: Collection<IrSimpleFunction>
+        get() = testContainerFuns.values
+
+    override fun createTestContainerFun(module: IrModuleFragment): IrSimpleFunction {
+        return testContainerFuns.getOrPut(module) {
+            val file = syntheticFile("tests", module)
+            irFactory.addFunction(file) {
+                name = Name.identifier("testContainer")
+                returnType = irBuiltIns.unitType
+                origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+            }.apply {
+                body = irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
+            }
+        }
     }
 }
