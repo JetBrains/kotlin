@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
-import org.gradle.internal.impldep.org.junit.platform.commons.support.AnnotationSupport.findAnnotation
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.test.WithMuteInDatabase
 import org.junit.jupiter.api.Tag
@@ -34,9 +33,31 @@ abstract class KGPBaseTest {
         override fun provideArguments(
             context: ExtensionContext
         ): Stream<out Arguments> {
-            val versionsAnnotation = findAnnotation(context.testMethod, GradleTestVersions::class.java).orElseThrow {
-                IllegalStateException("Define allowed Gradle versions via '@GradleTestVersions'.")
+            var nextSuperclass: Class<*>? = context.testClass.get().superclass
+            val superClassSequence = if (nextSuperclass != null) {
+                generateSequence {
+                    val currentSuperclass = nextSuperclass
+                    nextSuperclass = nextSuperclass?.superclass
+                    currentSuperclass
+                }
+            } else {
+                emptySequence()
             }
+
+            val versionsAnnotation = sequenceOf(
+                context.testMethod.get(),
+                context.testClass.get()
+            )
+                .plus(superClassSequence)
+                .mapNotNull { declaration ->
+                    declaration.annotations.firstOrNull { it is GradleTestVersions }
+                }
+                .firstOrNull() as GradleTestVersions?
+                ?: context.testMethod.get().annotations
+                    .mapNotNull { annotation ->
+                        annotation.annotationClass.annotations.firstOrNull { it is GradleTestVersions }
+                    }
+                    .first() as GradleTestVersions
 
             val minGradleVersion = GradleVersion.version(versionsAnnotation.minVersion)
             val maxGradleVersion = GradleVersion.version(versionsAnnotation.maxVersion)
@@ -56,7 +77,7 @@ abstract class KGPBaseTest {
         }
     }
 
-    @Target(AnnotationTarget.FUNCTION, AnnotationTarget.ANNOTATION_CLASS)
+    @Target(AnnotationTarget.FUNCTION, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
     @Retention(AnnotationRetention.RUNTIME)
     annotation class GradleTestVersions(
         val minVersion: String = TestVersions.Gradle.MIN_SUPPORTED,
