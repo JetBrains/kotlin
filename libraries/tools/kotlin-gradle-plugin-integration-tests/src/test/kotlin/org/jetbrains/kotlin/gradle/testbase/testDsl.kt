@@ -281,7 +281,8 @@ private fun Path.addDefaultBuildFiles() {
 }
 
 private fun TestProject.agreeToBuildScanService() {
-    settingsGradle.append(
+    val settingsFile = if (Files.exists(settingsGradle)) settingsGradle else settingsGradleKts
+    settingsFile.append(
         """
             
         gradleEnterprise {
