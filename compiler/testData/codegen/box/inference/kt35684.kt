@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: WASM
+// WASM_MUTE_REASON: COROUTINES
+
 // !LANGUAGE: +NewInference
 // !OPT_IN: kotlin.RequiresOptIn
 // WITH_RUNTIME

@@ -3,6 +3,8 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // IGNORE_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND: WASM
+// WASM_MUTE_REASON: COROUTINES
 
 fun useSuspendVararg(vararg sfn: suspend () -> Unit) {}
 

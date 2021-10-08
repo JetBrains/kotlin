@@ -1,6 +1,8 @@
 // !LANGUAGE: +SuspendConversion
 // IGNORE_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND: WASM
+// WASM_MUTE_REASON: COROUTINES
 
 fun interface SuspendRunnable {
     suspend fun invoke()

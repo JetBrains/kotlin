@@ -1,6 +1,8 @@
 // !LANGUAGE: +SuspendConversion
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // IGNORE_BACKEND: JVM
+// IGNORE_BACKEND: WASM
+// WASM_MUTE_REASON: COROUTINES
 
 var foo1 = false
 var foo2 = false

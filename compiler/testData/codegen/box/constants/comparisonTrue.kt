@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_GENERATED
 // WITH_RUNTIME
 fun foo(): Array<Boolean> {
     return arrayOf(
