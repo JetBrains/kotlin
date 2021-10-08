@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.frontend.di.configureIncrementalCompilation
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.AbstractJavaClassFinder
 import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer
@@ -61,6 +62,7 @@ fun createContainerForLazyResolveWithJava(
     targetEnvironment: TargetEnvironment,
     lookupTracker: LookupTracker,
     expectActualTracker: ExpectActualTracker,
+    inlineConstTracker: InlineConstTracker,
     packagePartProvider: PackagePartProvider,
     languageVersionSettings: LanguageVersionSettings,
     useBuiltInsProvider: Boolean,
@@ -74,7 +76,7 @@ fun createContainerForLazyResolveWithJava(
         sealedInheritorsProvider
     )
 
-    configureIncrementalCompilation(lookupTracker, expectActualTracker)
+    configureIncrementalCompilation(lookupTracker, expectActualTracker, inlineConstTracker)
     configureStandardResolveComponents()
 
     useInstance(moduleContentScope)

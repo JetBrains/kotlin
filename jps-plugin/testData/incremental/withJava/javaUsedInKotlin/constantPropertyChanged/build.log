@@ -11,11 +11,11 @@ Compiling files:
   src/JavaClass.java
 End of files
 Cleaning output files:
+  out/production/module/KotlinUsageClass.class
   out/production/module/META-INF/module.kotlin_module
-  out/production/module/UsageKt.class
 End of files
 Compiling files:
-  src/usage.kt
+  src/KotlinUsageClass.kt
 End of files
 Exit code: OK
 ------------------------------------------

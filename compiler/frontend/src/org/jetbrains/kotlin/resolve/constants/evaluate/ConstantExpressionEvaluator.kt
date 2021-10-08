@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.*
@@ -55,7 +58,8 @@ import java.util.*
 class ConstantExpressionEvaluator(
     internal val module: ModuleDescriptor,
     internal val languageVersionSettings: LanguageVersionSettings,
-    project: Project
+    project: Project,
+    internal val inlineConstTracker: InlineConstTracker = InlineConstTracker.DoNothing
 ) {
     private val moduleAnnotationsResolver = ModuleAnnotationsResolver.getInstance(project)
 
@@ -382,6 +386,11 @@ private class ConstantExpressionEvaluatorVisitor(
     private val builtIns = constantExpressionEvaluator.module.builtIns
     private val defaultValueForDontCreateIntegerLiteralType =
         languageVersionSettings.supportsFeature(ApproximateIntegerLiteralTypesInReceiverPosition)
+    private val inlineConstTracker =
+        if (constantExpressionEvaluator.inlineConstTracker is InlineConstTracker.DoNothing)
+            null
+        else
+            constantExpressionEvaluator.inlineConstTracker
 
     fun evaluate(expression: KtExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
         val recordedCompileTimeConstant = ConstantExpressionEvaluator.getPossiblyErrorConstant(expression, trace.bindingContext)
@@ -798,6 +807,14 @@ private class ConstantExpressionEvaluatorVisitor(
             return EnumValue(enumClassId, enumDescriptor.name).wrap()
         }
 
+        val variableDescriptor = enumDescriptor as? VariableDescriptor
+        if (variableDescriptor != null
+            && isPropertyCompileTimeConstant(variableDescriptor)
+            && !variableDescriptor.containingDeclaration.isCompanionObject()
+        ) {
+            reportInlineConst(expression, variableDescriptor)
+        }
+
         val resolvedCall = expression.getResolvedCall(trace.bindingContext)
         if (resolvedCall != null) {
             val callableDescriptor = resolvedCall.resultingDescriptor
@@ -825,6 +842,23 @@ private class ConstantExpressionEvaluatorVisitor(
             }
         }
         return null
+    }
+
+    private fun reportInlineConst(expression: KtSimpleNameExpression, variableDescriptor: VariableDescriptor) {
+        if (inlineConstTracker == null) return
+        val filePath = expression.containingFile.virtualFile?.path ?: return
+        val name = expression.getReferencedName()
+        val constType = variableDescriptor.type.toString()
+
+        // Transformation of fqName to the form "package.Outer$Inner"
+        val containingPackage = variableDescriptor.containingPackage()?.toString() ?: return
+        val fqName = variableDescriptor.containingDeclaration.fqNameSafe.asString()
+        val owner = if (fqName.startsWith("$containingPackage.")) {
+            containingPackage + "." + fqName.substring(containingPackage.length + 1).replace(".", "$")
+        } else {
+            fqName.replace(".", "$")
+        }
+        inlineConstTracker.report(filePath, owner, name, constType)
     }
 
     // TODO: Should be replaced with descriptor.isConst

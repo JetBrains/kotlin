@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
@@ -126,9 +127,10 @@ fun StorageComponentContainer.configureStandardResolveComponents() {
     useImpl<AnnotationResolverImpl>()
 }
 
-fun StorageComponentContainer.configureIncrementalCompilation(lookupTracker: LookupTracker, expectActualTracker: ExpectActualTracker) {
+fun StorageComponentContainer.configureIncrementalCompilation(lookupTracker: LookupTracker, expectActualTracker: ExpectActualTracker, inlineConstTracker: InlineConstTracker) {
     useInstance(lookupTracker)
     useInstance(expectActualTracker)
+    useInstance(inlineConstTracker)
 }
 
 fun createContainerForBodyResolve(
@@ -152,6 +154,7 @@ fun createContainerForBodyResolve(
     useImpl<BodyResolver>()
     useInstance(moduleStructureOracle)
     useInstance(controlFlowInformationProviderFactory)
+    useInstance(InlineConstTracker.DoNothing)
 }
 
 fun createContainerForLazyBodyResolve(
@@ -177,6 +180,7 @@ fun createContainerForLazyBodyResolve(
     useImpl<BasicAbsentDescriptorHandler>()
     useInstance(moduleStructureOracle)
     useInstance(controlFlowInformationProviderFactory)
+    useInstance(InlineConstTracker.DoNothing)
 
     // All containers except common inject ExpectedActualDeclarationChecker, so for common we do that
     // explicitly.
@@ -201,6 +205,7 @@ fun createContainerForLazyLocalClassifierAnalyzer(
     useInstance(localClassDescriptorHolder)
     useInstance(lookupTracker)
     useInstance(ExpectActualTracker.DoNothing)
+    useInstance(InlineConstTracker.DoNothing)
 
     useImpl<LazyTopDownAnalyzer>()
 
@@ -233,6 +238,7 @@ fun createContainerForLazyResolve(
     configureStandardResolveComponents()
 
     useInstance(declarationProviderFactory)
+    useInstance(InlineConstTracker.DoNothing)
 
 
     targetEnvironment.configure(this)

@@ -1295,6 +1295,11 @@ public class IncrementalJvmOldBackendCompilerRunnerTestGenerated extends Abstrac
                 runTest("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantChanged/");
             }
 
+            @TestMetadata("constantPropertyChanged")
+            public void testConstantPropertyChanged() throws Exception {
+                runTest("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantPropertyChanged/");
+            }
+
             @TestMetadata("constantUnchanged")
             public void testConstantUnchanged() throws Exception {
                 runTest("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantUnchanged/");
@@ -1456,6 +1461,19 @@ public class IncrementalJvmOldBackendCompilerRunnerTestGenerated extends Abstrac
 
                 public void testAllFilesPresentInConstantChanged() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantChanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, true);
+                }
+            }
+
+            @TestMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantPropertyChanged")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ConstantPropertyChanged extends AbstractIncrementalJvmOldBackendCompilerRunnerTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInConstantPropertyChanged() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantPropertyChanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, true);
                 }
             }
 

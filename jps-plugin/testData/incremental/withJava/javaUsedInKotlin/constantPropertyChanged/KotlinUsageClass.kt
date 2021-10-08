@@ -1,5 +1,5 @@
 import JavaClass.Inner.InnerInner.CONST
 
-fun main() {
+class KotlinUsageClass {
     val myKotlinConst = CONST
 }
