@@ -99,6 +99,10 @@ fun main(args: Array<String>) {
             testClass<AbstractFirGetSuperTypesTest> {
                 model("components/getSuperTypes")
             }
+
+            testClass<AbstractPsiTypeProviderTest> {
+                model("components/psiTypeProvider")
+            }
         }
 
         testGroup("analysis/analysis-api-fe10/tests", "analysis/analysis-api/testData") {
