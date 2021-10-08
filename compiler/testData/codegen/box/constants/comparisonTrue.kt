@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: WASM
+// WASM_MUTE_REASON: FLAKY
+
 // WITH_RUNTIME
 fun foo(): Array<Boolean> {
     return arrayOf(
