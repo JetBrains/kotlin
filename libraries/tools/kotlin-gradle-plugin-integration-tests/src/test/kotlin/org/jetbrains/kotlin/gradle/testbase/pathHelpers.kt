@@ -18,3 +18,12 @@ internal fun Path.findInPath(name: String): Path? = Files
     .walk(this)
     .asSequence()
     .find { it.fileName.toString() == name }
+
+/**
+ * Create a temporary directory that will be cleaned up on normal JVM termination, but will be left on non-zero exit status.
+ *
+ * Prefer using JUnit5 `@TempDir` over this method when possible.
+ */
+internal fun createTempDir(prefix: String): Path = Files
+    .createTempDirectory(prefix)
+    .apply { toFile().deleteOnExit() }
