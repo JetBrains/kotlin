@@ -22,6 +22,8 @@ internal val DEFAULT_GROOVY_SETTINGS_FILE =
             id "org.jetbrains.kotlin.jvm" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.kapt" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.android" version "${'$'}kotlin_version"
+            id "org.jetbrains.kotlin.js" version "${'$'}kotlin_version"
+            id "org.jetbrains.kotlin.multiplatform" version "${'$'}kotlin_version"
         }
         
         resolutionStrategy {
