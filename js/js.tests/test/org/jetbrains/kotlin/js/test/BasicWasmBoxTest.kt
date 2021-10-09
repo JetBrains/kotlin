@@ -47,11 +47,6 @@ abstract class BasicWasmBoxTest(
 
     private val spiderMonkey by lazy { SpiderMonkeyEngine() }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun doTestWithCoroutinesPackageReplacement(filePath: String, coroutinesPackage: String) {
-        TODO("TestWithCoroutinesPackageReplacement are not supported")
-    }
-
     fun doTest(filePath: String) {
         val file = File(filePath)
 
@@ -211,6 +206,25 @@ abstract class BasicWasmBoxTest(
                 throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;
             """.trimIndent()
 
+        directory.mkdirs()
+
+        File(directory, "index.html").writeText(
+            """
+            <!DOCTYPE html>
+            <html lang="en">
+            <body>
+            <script src="index.js" type="module"></script>
+            </body>
+            </html>
+            """.trimIndent()
+        )
+        File(directory, "index.js").writeText(
+            compilerResult.js + "\n" + browserRunner
+        )
+        File(directory, "index.wasm").writeBytes(
+            compilerResult.wasm
+        )
+    }
 
     private fun createConfig(languageVersionSettings: LanguageVersionSettings?): JsConfig {
         val configuration = environment.configuration.copy()
