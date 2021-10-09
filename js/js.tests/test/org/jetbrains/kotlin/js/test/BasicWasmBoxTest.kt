@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
+import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.wasmPhases
 import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
@@ -64,6 +65,7 @@ abstract class BasicWasmBoxTest(
             val outputWatFile = outputFileBase + ".wat"
             val outputWasmFile = outputFileBase + ".wasm"
             val outputJsFile = outputFileBase + ".js"
+            val outputBrowserDir = outputFileBase + ".browser"
             val languageVersionSettings = inputFiles.mapNotNull { it.languageVersionSettings }.firstOrNull()
 
             val kotlinFiles = mutableListOf<String>()
@@ -92,6 +94,7 @@ abstract class BasicWasmBoxTest(
                 File(outputWatFile),
                 File(outputWasmFile),
                 File(outputJsFile),
+                File(outputBrowserDir),
                 config,
                 testPackage,
                 TEST_FUNCTION
@@ -124,6 +127,7 @@ abstract class BasicWasmBoxTest(
         outputWatFile: File,
         outputWasmFile: File,
         outputJsFile: File,
+        outputBrowserDir: File,
         config: JsConfig,
         testPackage: String?,
         testFunction: String
@@ -189,7 +193,23 @@ abstract class BasicWasmBoxTest(
         """.trimIndent()
 
         outputJsFile.write(compilerResult.js + "\n" + testRunner)
+
+        if (debugMode >= 2) {
+            createDirectoryToRunInBrowser(outputBrowserDir, compilerResult)
+        }
     }
+
+    private fun createDirectoryToRunInBrowser(directory: File, compilerResult: WasmCompilerResult) {
+        val browserRunner =
+            """
+            const response = await fetch("index.wasm");
+            const wasmBinary = await response.arrayBuffer();
+            wasmInstance = (await WebAssembly.instantiate(wasmBinary, { runtime, js_code })).instance;
+            
+            const actualResult = importStringFromWasm(wasmInstance.exports.box());
+            if (actualResult !== "OK")
+                throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;
+            """.trimIndent()
 
 
     private fun createConfig(languageVersionSettings: LanguageVersionSettings?): JsConfig {
