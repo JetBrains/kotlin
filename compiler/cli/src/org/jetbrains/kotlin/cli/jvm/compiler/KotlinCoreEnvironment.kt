@@ -650,6 +650,7 @@ class KotlinCoreEnvironment private constructor(
             CandidateInterceptor.registerExtensionPoint(project)
             DescriptorSerializerPlugin.registerExtensionPoint(project)
             FirExtensionRegistrarAdapter.registerExtensionPoint(project)
+            TypeAttributeTranslators.registerExtensionPoint(project)
         }
 
         internal fun registerExtensionsFromPlugins(project: MockProject, configuration: CompilerConfiguration) {

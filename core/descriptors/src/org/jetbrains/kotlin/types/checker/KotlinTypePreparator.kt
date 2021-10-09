@@ -28,7 +28,7 @@ abstract class KotlinTypePreparator : AbstractTypePreparator() {
                 }
                 return NewCapturedType(
                     CaptureStatus.FOR_SUBTYPING, constructor.newTypeConstructor!!,
-                    lowerType, type.annotations, type.isMarkedNullable
+                    lowerType, type.attributes, type.isMarkedNullable
                 )
             }
 

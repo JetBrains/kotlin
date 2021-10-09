@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
 import org.jetbrains.kotlin.descriptors.impl.VariableDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.extensions.TypeAttributeTranslators
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -69,7 +70,8 @@ class TypeResolver(
     private val identifierChecker: IdentifierChecker,
     private val platformToKotlinClassMapper: PlatformToKotlinClassMapper,
     private val languageVersionSettings: LanguageVersionSettings,
-    private val upperBoundChecker: UpperBoundChecker
+    private val upperBoundChecker: UpperBoundChecker,
+    private val typeAttributeTranslators: TypeAttributeTranslators
 ) {
     private val isNonParenthesizedAnnotationsOnFunctionalTypesEnabled =
         languageVersionSettings.getFeatureSupport(LanguageFeature.NonParenthesizedAnnotationsOnFunctionalTypes) == LanguageFeature.State.ENABLED
@@ -519,7 +521,7 @@ class TypeResolver(
             ErrorUtils.createErrorType("?")
         else
             KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-                annotations,
+                typeAttributeTranslators.toAttributes(annotations),
                 typeParameter.typeConstructor,
                 listOf(),
                 false,
@@ -600,7 +602,8 @@ class TypeResolver(
                     " but ${collectedArgumentAsTypeProjections.size} instead of ${parameters.size} found in ${element.text}"
         }
 
-        val resultingType = KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)
+        val resultingType =
+            KotlinTypeFactory.simpleNotNullType(typeAttributeTranslators.toAttributes(annotations), classDescriptor, arguments)
 
         // We create flexible types by convention here
         // This is not intended to be used in normal users' environments, only for tests and debugger etc
@@ -697,7 +700,12 @@ class TypeResolver(
         }
 
         return if (c.abbreviated) {
-            val abbreviatedType = KotlinTypeFactory.simpleType(annotations, descriptor.typeConstructor, arguments, false)
+            val abbreviatedType = KotlinTypeFactory.simpleType(
+                typeAttributeTranslators.toAttributes(annotations),
+                descriptor.typeConstructor,
+                arguments,
+                false
+            )
             type(abbreviatedType)
         } else {
             val typeAliasExpansion = TypeAliasExpansion.create(null, descriptor, arguments)

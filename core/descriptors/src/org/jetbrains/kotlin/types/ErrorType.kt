@@ -30,10 +30,15 @@ open class ErrorType @JvmOverloads internal constructor(
     override val annotations: Annotations
         get() = Annotations.EMPTY
 
+    override val attributes: TypeAttributes
+        get() = TypeAttributes.Empty
+
     override fun toString(): String =
             constructor.toString() + if (arguments.isEmpty()) "" else arguments.joinToString(", ", "<", ">", -1, "...", null)
 
     override fun replaceAnnotations(newAnnotations: Annotations): SimpleType = this
+
+    override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType = this
 
     override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType =
             ErrorType(constructor, memberScope, arguments, newNullability)

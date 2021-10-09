@@ -54,6 +54,12 @@ public class TypeUtils {
 
         @NotNull
         @Override
+        public SimpleType replaceAttributes(@NotNull TypeAttributes newAttributes) {
+            throw new IllegalStateException(name);
+        }
+
+        @NotNull
+        @Override
         public SimpleType makeNullableAsSpecified(boolean newNullability) {
             throw new IllegalStateException(name);
         }

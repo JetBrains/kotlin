@@ -57,6 +57,10 @@ class RawTypeImpl private constructor(lowerBound: SimpleType, upperBound: Simple
     override fun replaceAnnotations(newAnnotations: Annotations) =
         RawTypeImpl(lowerBound.replaceAnnotations(newAnnotations), upperBound.replaceAnnotations(newAnnotations))
 
+    override fun replaceAttributes(newAttributes: TypeAttributes) =
+        RawTypeImpl(lowerBound.replaceAttributes(newAttributes), upperBound.replaceAttributes(newAttributes))
+
+
     override fun makeNullableAsSpecified(newNullability: Boolean) =
         RawTypeImpl(lowerBound.makeNullableAsSpecified(newNullability), upperBound.makeNullableAsSpecified(newNullability))
 

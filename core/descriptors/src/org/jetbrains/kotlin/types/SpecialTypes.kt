@@ -35,6 +35,7 @@ abstract class DelegatingSimpleType : SimpleType() {
     override val arguments: List<TypeProjection> get() = delegate.arguments
     override val isMarkedNullable: Boolean get() = delegate.isMarkedNullable
     override val memberScope: MemberScope get() = delegate.memberScope
+    override val attributes: TypeAttributes get() = delegate.attributes
 
     @TypeRefinement
     abstract fun replaceDelegate(delegate: SimpleType): DelegatingSimpleType
@@ -47,11 +48,14 @@ abstract class DelegatingSimpleType : SimpleType() {
 class AbbreviatedType(override val delegate: SimpleType, val abbreviation: SimpleType) : DelegatingSimpleType() {
     val expandedType: SimpleType get() = delegate
 
-    override fun replaceAnnotations(newAnnotations: Annotations)
-            = AbbreviatedType(delegate.replaceAnnotations(newAnnotations), abbreviation)
+    override fun replaceAnnotations(newAnnotations: Annotations) =
+        AbbreviatedType(delegate.replaceAnnotations(newAnnotations), abbreviation)
 
-    override fun makeNullableAsSpecified(newNullability: Boolean)
-            = AbbreviatedType(delegate.makeNullableAsSpecified(newNullability), abbreviation.makeNullableAsSpecified(newNullability))
+    override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType =
+        AbbreviatedType(delegate.replaceAttributes(newAttributes), abbreviation)
+
+    override fun makeNullableAsSpecified(newNullability: Boolean) =
+        AbbreviatedType(delegate.makeNullableAsSpecified(newNullability), abbreviation.makeNullableAsSpecified(newNullability))
 
     @TypeRefinement
     override fun replaceDelegate(delegate: SimpleType) = AbbreviatedType(delegate, abbreviation)
@@ -171,6 +175,9 @@ class DefinitelyNotNullType private constructor(
     override fun replaceAnnotations(newAnnotations: Annotations): DefinitelyNotNullType =
         DefinitelyNotNullType(delegate.replaceAnnotations(newAnnotations), useCorrectedNullabilityForTypeParameters)
 
+    override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType =
+        DefinitelyNotNullType(delegate.replaceAttributes(newAttributes), useCorrectedNullabilityForTypeParameters)
+
     override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType =
         if (newNullability) delegate.makeNullableAsSpecified(newNullability) else this
 
@@ -189,7 +196,7 @@ fun SimpleType.makeSimpleTypeDefinitelyNotNullOrNotNull(useCorrectedNullabilityF
         ?: makeNullableAsSpecified(false)
 
 fun NewCapturedType.withNotNullProjection() =
-    NewCapturedType(captureStatus, constructor, lowerType, annotations, isMarkedNullable, isProjectionNotNull = true)
+    NewCapturedType(captureStatus, constructor, lowerType, attributes, isMarkedNullable, isProjectionNotNull = true)
 
 fun UnwrappedType.makeDefinitelyNotNullOrNotNull(useCorrectedNullabilityForTypeParameters: Boolean = false): UnwrappedType =
     DefinitelyNotNullType.makeDefinitelyNotNull(this, useCorrectedNullabilityForTypeParameters)

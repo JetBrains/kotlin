@@ -61,7 +61,12 @@ abstract class AbstractStubType(val originalTypeVariable: TypeConstructor, overr
     override val annotations: Annotations
         get() = Annotations.EMPTY
 
+    override val attributes: TypeAttributes
+        get() = TypeAttributes.Empty
+
     override fun replaceAnnotations(newAnnotations: Annotations): SimpleType = this
+
+    override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType = this
 
     override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType {
         return if (newNullability == isMarkedNullable) this else materialize(newNullability)
