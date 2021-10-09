@@ -32,16 +32,8 @@ object JavaClassChangesComputer {
 
         val changes = SymbolChangesCollector()
         with(changes) {
-            addedClasses.forEach { jvmClassName ->
-                addClass(jvmClassName)
-
-                addClassMember(SAM_LOOKUP_NAME.asString(), jvmClassName)
-                addClassMembers(currentClasses[jvmClassName]!!.fieldsAbi.map { it.name }, jvmClassName)
-                addClassMembers(currentClasses[jvmClassName]!!.methodsAbi.map { it.name }, jvmClassName)
-            }
-            removedClasses.forEach {
-                addClass(it)
-            }
+            addedClasses.forEach { addClass(it) }
+            removedClasses.forEach { addClass(it) }
             unchangedOrModifiedClasses.forEach {
                 collectClassChanges(currentClasses[it]!!, previousClasses[it]!!, changes)
             }
