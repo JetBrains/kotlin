@@ -128,6 +128,9 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
     override fun replaceAnnotations(newAnnotations: Annotations): UnwrappedType =
         KotlinTypeFactory.flexibleType(lowerBound.replaceAnnotations(newAnnotations), upperBound.replaceAnnotations(newAnnotations))
 
+    override fun replaceAttributes(newAttributes: TypeAttributes): UnwrappedType =
+        KotlinTypeFactory.flexibleType(lowerBound.replaceAttributes(newAttributes), upperBound.replaceAttributes(newAttributes))
+
     override fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String {
         if (options.debugMode) {
             return "(${renderer.renderType(lowerBound)}..${renderer.renderType(upperBound)})"

@@ -199,7 +199,7 @@ class NewCapturedType(
     val captureStatus: CaptureStatus,
     override val constructor: NewCapturedTypeConstructor,
     val lowerType: UnwrappedType?, // todo check lower type for nullable captured types
-    override val annotations: Annotations = Annotations.EMPTY,
+    override val attributes: TypeAttributes = TypeAttributes.Empty,
     override val isMarkedNullable: Boolean = false,
     val isProjectionNotNull: Boolean = false
 ) : SimpleType(), CapturedTypeMarker {
@@ -213,10 +213,13 @@ class NewCapturedType(
         get() = ErrorUtils.createErrorScope("No member resolution should be done on captured type!", true)
 
     override fun replaceAnnotations(newAnnotations: Annotations) =
-        NewCapturedType(captureStatus, constructor, lowerType, newAnnotations, isMarkedNullable)
+        NewCapturedType(captureStatus, constructor, lowerType, newAnnotations.toAttributes(), isMarkedNullable)
+
+    override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType =
+        NewCapturedType(captureStatus, constructor, lowerType, newAttributes, isMarkedNullable)
 
     override fun makeNullableAsSpecified(newNullability: Boolean) =
-        NewCapturedType(captureStatus, constructor, lowerType, annotations, newNullability)
+        NewCapturedType(captureStatus, constructor, lowerType, attributes, newNullability)
 
     @TypeRefinement
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) =
@@ -224,7 +227,7 @@ class NewCapturedType(
             captureStatus,
             constructor.refine(kotlinTypeRefiner),
             lowerType?.let { kotlinTypeRefiner.refineType(it).unwrap() },
-            annotations,
+            attributes,
             isMarkedNullable
         )
 }

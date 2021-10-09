@@ -56,6 +56,8 @@ class TypeTemplate(
 ) {
     override fun replaceAnnotations(newAnnotations: Annotations) = this
 
+    override fun replaceAttributes(newAttributes: TypeAttributes) = this
+
     override fun makeNullableAsSpecified(newNullability: Boolean) = TypeTemplate(typeVariable, builderInferenceData, newNullability)
 
     override val delegate: SimpleType

@@ -486,7 +486,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker {
         require(this is NewCapturedType, this::errorMessage)
 
-        return NewCapturedType(captureStatus, constructor, lowerType, annotations, isMarkedNullable, isProjectionNotNull = true)
+        return NewCapturedType(captureStatus, constructor, lowerType, attributes, isMarkedNullable, isProjectionNotNull = true)
     }
 
     override fun CapturedTypeMarker.isProjectionNotNull(): Boolean {
