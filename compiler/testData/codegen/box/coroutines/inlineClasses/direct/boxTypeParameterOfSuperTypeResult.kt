@@ -1,6 +1,5 @@
 // WITH_RUNTIME
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: JS_IR
 
 import kotlin.coroutines.*
 

@@ -1,6 +1,5 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// IGNORE_BACKEND: JS_IR
 // FILE: 1.kt
 inline fun <T, R> (suspend () -> T).map(crossinline transform: suspend (T) -> R): suspend () -> R =
     { transform(this()) }

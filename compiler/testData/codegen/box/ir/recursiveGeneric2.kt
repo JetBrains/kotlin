@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 
 interface A<T1, T2>
 interface B<T>

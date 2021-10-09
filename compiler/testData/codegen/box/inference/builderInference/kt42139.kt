@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 // !LANGUAGE: +UnrestrictedBuilderInference
 // WITH_RUNTIME
 // IGNORE_BACKEND_FIR: JVM_IR

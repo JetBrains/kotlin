@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: BRIDGE_ISSUES
-
 // CHECK_BYTECODE_TEXT
 // 0 java/lang/invoke/LambdaMetafactory
 

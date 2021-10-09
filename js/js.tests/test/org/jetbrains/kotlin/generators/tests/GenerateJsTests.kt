@@ -101,9 +101,6 @@ fun main(args: Array<String>) {
                         // TODO: ArrayList
                         "ranges/stepped/unsigned",
 
-                        // TODO: Support coroutines
-                        "coroutines", "parametersMetadata",
-
                         // TODO: Support delegated properties
                         "delegatedProperty",
 
