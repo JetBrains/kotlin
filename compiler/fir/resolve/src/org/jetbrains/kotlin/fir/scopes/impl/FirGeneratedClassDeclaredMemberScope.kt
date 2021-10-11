@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
@@ -56,11 +57,15 @@ class FirGeneratedClassDeclaredMemberScope(
     // ------------------------------------------ generators ------------------------------------------
 
     private fun generateMemberFunctions(name: Name): List<FirNamedFunctionSymbol> {
-        return extensions.flatMap { it.generateFunctions(CallableId(firClass.classId, name), firClass.symbol) }
+        return extensions
+            .flatMap { it.generateFunctions(CallableId(firClass.classId, name), firClass.symbol) }
+            .onEach { it.fir.validate() }
     }
 
     private fun generateMemberProperties(name: Name): List<FirPropertySymbol> {
-        return extensions.flatMap { it.generateProperties(CallableId(firClass.classId, name), firClass.symbol) }
+        return extensions
+            .flatMap { it.generateProperties(CallableId(firClass.classId, name), firClass.symbol) }
+            .onEach { it.fir.validate() }
     }
 
     private fun generateConstructors(): List<FirConstructorSymbol> {
@@ -70,7 +75,7 @@ class FirGeneratedClassDeclaredMemberScope(
         } else {
             CallableId(classId.asSingleFqName().parent(), classId.shortClassName)
         }
-        return extensions.flatMap { it.generateConstructors(callableId) }
+        return extensions.flatMap { it.generateConstructors(callableId) }.onEach {  }
     }
 
     // ------------------------------------------ scope methods ------------------------------------------
