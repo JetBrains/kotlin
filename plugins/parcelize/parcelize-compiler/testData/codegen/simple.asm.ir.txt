@@ -14,7 +14,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
           LDC (parcel)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
         LABEL (L1)
-          NEW
+          NEW (User)
           DUP
           ALOAD (1)
           INVOKEVIRTUAL (android/os/Parcel, readString, ()Ljava/lang/String;)
@@ -73,10 +73,10 @@ public final class User : java/lang/Object, android/os/Parcelable {
     private final java.lang.String lastName
 
     static void <clinit>() {
-          NEW
+          NEW (User$Creator)
           DUP
           INVOKESPECIAL (User$Creator, <init>, ()V)
-          CHECKCAST
+          CHECKCAST (android/os/Parcelable$Creator)
           PUTSTATIC (User, CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
