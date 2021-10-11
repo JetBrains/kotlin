@@ -145,14 +145,21 @@ fun JavaCompile.configureTaskToolchain(
 fun Project.updateJvmTarget(
     jvmTarget: String
 ) {
-    tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions.jvmTarget = jvmTarget
-    }
+    // Java 9 tasks are exceptions that are configured in configureJava9Compilation
+    tasks
+        .withType<KotlinCompile>()
+        .matching { it.name != "compileJava9Kotlin" }
+        .configureEach {
+            kotlinOptions.jvmTarget = jvmTarget
+        }
 
-    tasks.withType<JavaCompile>().configureEach {
-        sourceCompatibility = jvmTarget
-        targetCompatibility = jvmTarget
-    }
+    tasks
+        .withType<JavaCompile>()
+        .matching { it.name != "compileJava9Java" }
+        .configureEach {
+            sourceCompatibility = jvmTarget
+            targetCompatibility = jvmTarget
+        }
 }
 
 private fun Project.getToolchainCompilerFor(
