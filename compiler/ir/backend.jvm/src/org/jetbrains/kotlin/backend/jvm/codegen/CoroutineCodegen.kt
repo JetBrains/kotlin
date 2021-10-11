@@ -130,7 +130,7 @@ private fun IrFunction.isBridgeToSuspendImplMethod(): Boolean =
 
 private fun IrFunction.isStaticInlineClassReplacementDelegatingCall(): Boolean =
     this is IrAttributeContainer && !isStaticInlineClassReplacement &&
-            parentAsClass.declarations.find { it is IrAttributeContainer && it.attributeOwnerId == attributeOwnerId && it !== this }
+            (parent as? IrClass)?.declarations?.find { it is IrAttributeContainer && it.attributeOwnerId == attributeOwnerId && it !== this }
                 ?.isStaticInlineClassReplacement == true
 
 private val BRIDGE_ORIGINS = setOf(
