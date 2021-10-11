@@ -36,23 +36,23 @@ task jvmJar {
 
 // Build all default libraries.
 targetList.each { target ->
-    task("${target}EndorsedLibraries", type: Copy) {
+    task("${target}EndorsedLibraries") {
         endorsedLibrariesList.each { library ->
             dependsOn "$library.projectName:${target}${library.taskName}"
-        }
 
-        destinationDir project.buildDir
+            dependsOn task("${target}${library.name}EndorsedLibraries", type: Copy) {
 
-        endorsedLibrariesList.each { library ->
-            from(library.project.file("build/${target}${library.taskName}")) {
-                include('**')
-                into(library.name)
-                eachFile {
-                    if (name == 'manifest') {
-                        def existingManifest = file("$destinationDir/$path")
-                        if (existingManifest.exists()) {
-                            UtilsKt.mergeManifestsByTargets(project, file, existingManifest)
-                            exclude()
+                destinationDir project.file("${project.buildDir}/${library.name}")
+
+                from(library.project.file("build/${target}${library.taskName}")) {
+                    include('**')
+                    eachFile {
+                        if (name == 'manifest') {
+                            def existingManifest = file("$destinationDir/$path")
+                            if (existingManifest.exists()) {
+                                UtilsKt.mergeManifestsByTargets(project, file, existingManifest)
+                                exclude()
+                            }
                         }
                     }
                 }
@@ -61,17 +61,26 @@ targetList.each { target ->
     }
 
     if (target in cacheableTargetNames) {
-        def cacheTask = task("${target}Cache")
+        def cacheTask = task("${target}Cache", type: Copy) {
+            destinationDir project.file("${project.buildDir}/cache/$target")
+
+            endorsedLibrariesList.each { library ->
+                from(library.project.file("build/cache/$target")) {
+                    include('**')
+                }
+            }
+        }
 
         endorsedLibrariesList.each { library ->
             def dist = UtilsKt.getKotlinNativeDist(project)
             task("${target}${library.taskName}Cache", type: KonanCacheTask) {
                 it.target = target
-                originalKlib = file("${project.buildDir}/${library.name}")
-                cacheRoot = file("$dist/klib/cache")
+                originalKlib = library.project.file("build/${target}${library.taskName}")
+                cacheRoot = library.project.file("build/cache/$target").path
                 compilerDistributionPath.set(distDir)
+                cachedLibrary = "${dist}/klib/common/stdlib,${dist}/klib/cache/stdlib-cache"
 
-                dependsOn "${target}EndorsedLibraries"
+                dependsOn "$library.projectName:${target}${library.taskName}"
                 dependsOn ":kotlin-native:${target}CrossDistRuntime"
                 dependsOn ":kotlin-native:${target}StdlibCache"
 

@@ -324,12 +324,11 @@ task distCompiler(type: Copy) {
 }
 
 task distDef(type: Copy) {
-
-    destinationDir distDir
+    destinationDir project.file("$distDir/konan/platformDef/")
 
     platformManager.targetValues.each { target ->
         from(project(":kotlin-native:platformLibs").file("src/platform/${target.family.name().toLowerCase()}")) {
-            into("konan/platformDef/${target.visibleName}")
+            into target.visibleName
             include '**/*.def'
             if (target in targetsWithoutZlib) {
                 exclude '**/zlib.def'
@@ -367,16 +366,20 @@ def stdlibDefaultComponent = "$stdlib/default"
 def endorsedLibs = 'klib/common/endorsedLibraries'
 def endorsedLibsBase = 'klib/common'
 
-task crossDistRuntime(type: Copy) {
+task crossDistRuntime {
     dependsOn.addAll(targetList.collect { "${it}CrossDistRuntime" })
 }
 
-task crossDistEndorsedLibraries(type: Copy) {
+task crossDistEndorsedLibraries {
     dependsOn.addAll(targetList.collect { "${it}CrossDistEndorsedLibraries" })
 }
 
 task crossDistPlatformLibs {
     dependsOn.addAll(targetList.collect { "${it}PlatformLibs" })
+}
+
+task crossDistStdlib {
+    dependsOn.addAll(targetList.collect { "${it}CrossDistStdlib" })
 }
 
 task crossDistStdlibCache {
@@ -387,16 +390,35 @@ task crossDistEndorsedCache {
     dependsOn.addAll(targetList.findAll { it in cacheableTargetNames }.collect { "${it}EndorsedCache" })
 }
 
+def endorsedLibsCopyTask = task("crossDistEndorsedLibrariesCopy", type: Copy) {
+    destinationDir project.file("$distDir/$endorsedLibsBase")
+
+    from(project(':kotlin-native:endorsedLibraries').file("build")) {
+        include('**')
+        exclude('cache')
+    }
+}
+
 targetList.each { target ->
-    task("${target}CrossDistRuntime", type: Copy) {
-        dependsOn ":kotlin-native:runtime:${target}Runtime"
+    task("${target}CopyStdlibRuntimeBitcode", type: Copy) {
         dependsOn ":kotlin-native:backend.native:${target}Stdlib"
 
-        destinationDir distDir
+        destinationDir project(':kotlin-native:runtime')
+                .file("build/${target}Stdlib/default")
+
+        from(project(':kotlin-native:runtime').file("build/bitcode/main/$target")) {
+            include("runtime.bc")
+            into("targets/$target/native")
+        }
+    }
+
+    task ("${target}CrossDistStdlib", type: Copy) {
+        destinationDir project.file("$distDir/$stdlib")
+
+        dependsOn ":kotlin-native:${target}CopyStdlibRuntimeBitcode"
 
         from(project(':kotlin-native:runtime').file("build/${target}Stdlib")) {
             include('**')
-            into(stdlib)
             eachFile {
                 if (name == 'manifest') {
                     def existingManifest = file("$destinationDir/$path")
@@ -407,17 +429,31 @@ targetList.each { target ->
                 }
             }
         }
-        from(project(':kotlin-native:runtime').file("build/bitcode/main/$target")) {
-            include("runtime.bc")
-            into("$stdlibDefaultComponent/targets/$target/native")
-        }
+
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
+    task("${target}CrossDistBitcodeCopy", type: Copy) {
+        dependsOn ":kotlin-native:runtime:${target}Runtime"
+
+        destinationDir project.file("$distDir/konan/targets/")
+
         from(project(':kotlin-native:runtime').file("build/bitcode/main/$target")) {
             include("*.bc")
             exclude("runtime.bc")
-            into("konan/targets/$target/native")
+            into("$target/native")
         }
+    }
+
+    task("${target}CrossDistRuntime", type: Copy) {
+        dependsOn ":kotlin-native:runtime:${target}Runtime"
+        dependsOn ":kotlin-native:${target}CrossDistStdlib"
+        dependsOn "${target}CrossDistBitcodeCopy"
+
+        destinationDir project.file("$distDir/$stdlibDefaultComponent")
+
         if (target == 'wasm32') {
-            into("$stdlibDefaultComponent/targets/wasm32/included") {
+            into("targets/wasm32/included") {
                 from(project(':kotlin-native:runtime').file('src/main/js'))
                 from(project(':kotlin-native:runtime').file('src/launcher/js'))
                 from(project(':kotlin-native:Interop:JsRuntime').file('src/main/js'))
@@ -433,30 +469,42 @@ targetList.each { target ->
     }
 
     if (target in cacheableTargetNames) {
-        task "${target}StdlibCache" {
+        task ("${target}StdlibCache", type: Copy) {
+            dependsOn "${target}CrossDistStdlib"
             dependsOn ":kotlin-native:platformLibs:${target}StdlibCache"
+
+            destinationDir project.file("$distDir/klib/cache")
+
+            from("${project(":kotlin-native:runtime").buildDir}/cache/$target") {
+                include('**')
+            }
         }
 
-        task "${target}EndorsedCache" {
+        task ("${target}EndorsedCache", type: Copy) {
+            dependsOn "${target}CrossDistStdlib"
             dependsOn ":kotlin-native:endorsedLibraries:${target}Cache"
+
+            destinationDir project.file("$distDir/klib/cache")
+
+            from("${project(':kotlin-native:endorsedLibraries').buildDir}/cache/$target") {
+                include('**')
+            }
         }
     }
 
     task("${target}CrossDist") {
-        dependsOn "${target}CrossDistRuntime", "distCompiler", "${target}CrossDistEndorsedLibraries"
+        dependsOn "${target}CrossDistRuntime", "distCompiler"
+        dependsOn "${target}CrossDistEndorsedLibraries"
         if (target in cacheableTargetNames) {
             dependsOn "${target}StdlibCache", "${target}EndorsedCache"
         }
     }
 
-    task("${target}CrossDistEndorsedLibraries", type: Copy) {
-        dependsOn ":kotlin-native:endorsedLibraries:${target}EndorsedLibraries"
-
-        destinationDir distDir
-        from(project(':kotlin-native:endorsedLibraries').file("build")) {
-            include('**')
-            into("$endorsedLibsBase")
-        }
+    task("${target}CrossDistEndorsedLibraries") {
+        def endorsedLibsBuildTask = ":kotlin-native:endorsedLibraries:${target}EndorsedLibraries"
+        dependsOn endorsedLibsBuildTask
+        dependsOn endorsedLibsCopyTask
+        endorsedLibsCopyTask.mustRunAfter(endorsedLibsBuildTask)
     }
 }
 
@@ -479,6 +527,7 @@ task crossDist {
             "crossDistRuntime",
             "crossDistEndorsedLibraries",
             "distDef",
+            "crossDistStdlib",
             "crossDistStdlibCache",
             "crossDistEndorsedCache"
 }

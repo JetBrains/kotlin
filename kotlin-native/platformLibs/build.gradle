@@ -58,8 +58,9 @@ rootProject.project("kotlin-native").ext.platformManager.enabled.each { target -
     if (target in cacheableTargets) {
         tasks.register("${targetName}StdlibCache", KonanCacheTask) {
             it.target = targetName
-            it.originalKlib = file("$konanHome/klib/common/stdlib")
-            it.cacheRoot = file("$konanHome/klib/cache")
+            def runtimeBuild = project(":kotlin-native:runtime").buildDir
+            it.originalKlib = project.file("$runtimeBuild/${target}Stdlib")
+            it.cacheRoot = project.file("$runtimeBuild/cache/$target").path
 
             it.dependsOn ":kotlin-native:${targetName}CrossDistRuntime"
         }

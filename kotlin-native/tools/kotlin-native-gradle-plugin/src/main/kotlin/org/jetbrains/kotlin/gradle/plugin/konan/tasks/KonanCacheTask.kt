@@ -20,8 +20,8 @@ open class KonanCacheTask: DefaultTask() {
     lateinit var originalKlib: File
 
     // Taken into account by the [cacheFile] property.
-    @Internal
-    lateinit var cacheRoot: File
+    @Input
+    lateinit var cacheRoot: String
 
     @get:Input
     lateinit var target: String
@@ -29,7 +29,10 @@ open class KonanCacheTask: DefaultTask() {
     @get:Internal
     // TODO: Reuse NativeCacheKind from Big Kotlin plugin when it is available.
     val cacheDirectory: File
-        get() = cacheRoot.resolve("$target-g$cacheKind")
+        get() = File(cacheRoot).apply {
+            if (!exists()) mkdir()
+            resolve("$target-g$cacheKind")
+        }
 
     @get:OutputDirectory
     protected val cacheFile: File
@@ -49,6 +52,10 @@ open class KonanCacheTask: DefaultTask() {
         set(project.provider { project.kotlinNativeDist })
     }
 
+    @Input
+    @Optional
+    var cachedLibrary: String? = null
+
     @TaskAction
     fun compile() {
         // Compiler doesn't create a cache if the cacheFile already exists. So we need to remove it manually.
@@ -66,7 +73,7 @@ open class KonanCacheTask: DefaultTask() {
             "-produce", cacheKind.outputKind.name.toLowerCase(),
             "-Xadd-cache=${originalKlib.absolutePath}",
             "-Xcache-directory=${cacheDirectory.absolutePath}"
-        ) + additionalCacheFlags
+        ) + additionalCacheFlags + (cachedLibrary?.let { "-Xcached-library=$it" } ?: "")
         KonanCompilerRunner(project, konanHome = konanHome).run(args)
     }
 }
