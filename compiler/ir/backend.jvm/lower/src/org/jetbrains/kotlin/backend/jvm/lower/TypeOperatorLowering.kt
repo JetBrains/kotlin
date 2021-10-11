@@ -275,7 +275,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
         val dynamicCallArguments = ArrayList<IrExpression>()
 
         val irDynamicCallTarget = context.irFactory.buildFun {
-            origin = JvmLoweredDeclarationOrigin.INVOVEDYNAMIC_CALL_TARGET
+            origin = JvmLoweredDeclarationOrigin.INVOKEDYNAMIC_CALL_TARGET
             name = samMethod.name
             returnType = erasedSamType
         }.apply {

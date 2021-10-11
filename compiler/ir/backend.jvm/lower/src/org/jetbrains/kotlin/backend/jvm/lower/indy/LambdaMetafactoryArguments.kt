@@ -382,7 +382,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
     private val adaptableFunctionOrigins = setOf(
         IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
-        JvmLoweredDeclarationOrigin.PROXY_FUN_FOR_INDY_SAM_CONVESION
+        JvmLoweredDeclarationOrigin.PROXY_FUN_FOR_INDY_SAM_CONVERSION
     )
 
     private fun adaptLambdaSignature(

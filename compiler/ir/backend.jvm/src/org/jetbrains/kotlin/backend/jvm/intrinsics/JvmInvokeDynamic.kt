@@ -32,7 +32,7 @@ object JvmInvokeDynamic : IntrinsicMethod() {
             ?: fail("'dynamicCall' is expected to be a call")
         val dynamicCallee = dynamicCall.symbol.owner
         if (dynamicCallee.parent != codegen.context.ir.symbols.kotlinJvmInternalInvokeDynamicPackage ||
-            dynamicCallee.origin != JvmLoweredDeclarationOrigin.INVOVEDYNAMIC_CALL_TARGET
+            dynamicCallee.origin != JvmLoweredDeclarationOrigin.INVOKEDYNAMIC_CALL_TARGET
         )
             fail("Unexpected dynamicCallee: '${dynamicCallee.render()}'")
 

@@ -2091,6 +2091,12 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         }
 
         @Test
+        @TestMetadata("indySamConversionViaProxyFun.kt")
+        public void testIndySamConversionViaProxyFun() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/indySamConversionViaProxyFun.kt");
+        }
+
+        @Test
         @TestMetadata("kt16650.kt")
         public void testKt16650() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/sam/kt16650.kt");

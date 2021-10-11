@@ -46,7 +46,7 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object COMPANION_PROPERTY_BACKING_FIELD : IrDeclarationOriginImpl("COMPANION_PROPERTY_BACKING_FIELD")
     object FIELD_FOR_STATIC_CALLABLE_REFERENCE_INSTANCE : IrDeclarationOriginImpl("FIELD_FOR_STATIC_CALLABLE_REFERENCE_INSTANCE")
     object ABSTRACT_BRIDGE_STUB : IrDeclarationOriginImpl("ABSTRACT_BRIDGE_STUB")
-    object INVOVEDYNAMIC_CALL_TARGET : IrDeclarationOriginImpl("INVOVEDYNAMIC_CALL_TARGET")
+    object INVOKEDYNAMIC_CALL_TARGET : IrDeclarationOriginImpl("INVOKEDYNAMIC_CALL_TARGET")
     object INLINE_LAMBDA : IrDeclarationOriginImpl("INLINE_LAMBDA")
-    object PROXY_FUN_FOR_INDY_SAM_CONVESION : IrDeclarationOriginImpl("PROXY_FUN_FOR_INDY_SAM_CONVESION")
+    object PROXY_FUN_FOR_INDY_SAM_CONVERSION : IrDeclarationOriginImpl("PROXY_FUN_FOR_INDY_SAM_CONVERSION", isSynthetic = true)
 }

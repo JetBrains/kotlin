@@ -338,7 +338,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             modality = Modality.FINAL
             isSuspend = false
             isInline = false
-            origin = JvmLoweredDeclarationOrigin.PROXY_FUN_FOR_INDY_SAM_CONVESION
+            origin = JvmLoweredDeclarationOrigin.PROXY_FUN_FOR_INDY_SAM_CONVERSION
         }.also { proxyFun ->
             proxyFun.parent = currentDeclarationParent
                 ?: throw AssertionError("No declaration parent when processing $reference")
