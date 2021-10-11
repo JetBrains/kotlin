@@ -6,7 +6,8 @@
 
 import java.lang.reflect.InvocationTargetException
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Simple(val x: String) {
     fun somethingWeird() {}
 }

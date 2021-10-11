@@ -6,13 +6,17 @@ package root
 
 import kotlin.reflect.KClass
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class IcInt(val x: Int)
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class IcLong(val l: Long)
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class IcAny(val a: Any?)
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class IcOverIc(val o: IcLong)
 
 fun check(c: KClass<*>, s: String) {

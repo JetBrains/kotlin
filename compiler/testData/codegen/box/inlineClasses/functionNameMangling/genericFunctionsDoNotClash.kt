@@ -1,8 +1,10 @@
 // WITH_RUNTIME
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class S1(val s1: String)
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class S2(val s2: String)
 
 object X1

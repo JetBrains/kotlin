@@ -8,7 +8,8 @@ interface IFooMutableList {
     fun foo(): MutableList<String>
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class AL(val t: MutableList<String>) : MutableList<String> {
     override val size: Int get() = t.size
     override fun get(index: Int): String = t.get(index)

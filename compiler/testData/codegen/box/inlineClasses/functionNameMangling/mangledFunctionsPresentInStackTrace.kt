@@ -5,7 +5,8 @@
 // WITH_RUNTIME
 // WASM_MUTE_REASON: IGNORED_IN_JS
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Id(val id: String)
 
 fun throws() {

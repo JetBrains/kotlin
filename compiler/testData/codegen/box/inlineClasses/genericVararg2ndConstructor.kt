@@ -1,7 +1,8 @@
 // WITH_RUNTIME
 // KT-41771
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Polynomial<T : Any>(val coefficients: List<T>) {
     constructor(vararg coefficients: T) : this(coefficients.toList())
 }

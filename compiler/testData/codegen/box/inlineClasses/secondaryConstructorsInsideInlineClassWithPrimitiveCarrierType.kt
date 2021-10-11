@@ -2,7 +2,8 @@
 
 var global = "wrong"
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Foo(val x: Int) {
     constructor(y: String) : this(y.length)
 

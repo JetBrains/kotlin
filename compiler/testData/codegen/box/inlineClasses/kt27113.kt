@@ -8,7 +8,8 @@ class CharacterLiteral(private val prefix: NamelessString, private val s: Namele
     override fun toString(): String = "$prefix'$s'"
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class NamelessString(val b: ByteArray) {
     override fun toString(): String = String(b)
 }

@@ -4,7 +4,8 @@ var setterInvoked = 0
 
 var backing = 42
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class DelegateStr(val ignored: String) {
 
     operator fun getValue(thisRef: Any?, prop: Any?) =
@@ -16,7 +17,8 @@ value class DelegateStr(val ignored: String) {
     }
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class DelegateInt(val ignored: Int) {
 
     operator fun getValue(thisRef: Any?, prop: Any?) =
@@ -28,7 +30,8 @@ value class DelegateInt(val ignored: Int) {
     }
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class DelegateLong(val ignored: Long) {
 
     operator fun getValue(thisRef: Any?, prop: Any?) =

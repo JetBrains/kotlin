@@ -8,7 +8,8 @@ class Foo {
 var provideDelegateInvoked = 0
 var setterInvoked = 0
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class DelegateFactory(val default: Int) {
     operator fun provideDelegate(thisRef: Any?, prop: Any?): Delegate {
         provideDelegateInvoked++
@@ -16,7 +17,8 @@ value class DelegateFactory(val default: Int) {
     }
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Delegate(val default: Int) {
 
     operator fun getValue(thisRef: Any?, prop: Any?) =

@@ -1,8 +1,10 @@
 // WITH_RUNTIME
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Inner(val w: String)
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class A(val x: Inner)
 
 fun isNotNullVacuousLeft(s: A) = s != null

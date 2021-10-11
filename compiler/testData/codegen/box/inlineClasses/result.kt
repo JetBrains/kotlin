@@ -6,7 +6,8 @@
 // FILE: result.kt
 package kotlin
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Result(val value: Any?)
 
 // FILE: box.kt

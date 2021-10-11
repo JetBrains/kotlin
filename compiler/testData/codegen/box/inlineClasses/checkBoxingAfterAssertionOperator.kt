@@ -1,14 +1,17 @@
 // WITH_RUNTIME
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class WithPrimitive(val a: Int)
 fun takeWithPrimitive(a: WithPrimitive) {}
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class WithReference(val a: Any)
 fun takeWithReference(a: WithReference) {}
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class WithNullableReference(val a: Any?)
 fun takeWithNullableReference(a: WithNullableReference) {}
 

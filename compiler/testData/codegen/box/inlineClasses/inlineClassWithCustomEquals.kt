@@ -5,7 +5,8 @@
 
 @file:Suppress("RESERVED_MEMBER_INSIDE_INLINE_CLASS")
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Z(val data: Int) {
     override fun equals(other: Any?): Boolean =
         other is Z &&

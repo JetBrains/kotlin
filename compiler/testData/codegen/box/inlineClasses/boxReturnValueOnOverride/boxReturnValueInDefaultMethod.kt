@@ -6,7 +6,8 @@ interface X<T> {
     fun next(): T = this + 1
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class A(val value: Int) : X<A> {
     override operator fun plus(n: Int) = A(value + n)
 }

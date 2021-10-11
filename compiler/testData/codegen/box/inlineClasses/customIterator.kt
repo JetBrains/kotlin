@@ -4,7 +4,8 @@
 // WITH_RUNTIME
 // KT-44529
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class InlineDouble3(val values: DoubleArray) {
     operator fun iterator(): DoubleIterator = IteratorImpl(values)
 }

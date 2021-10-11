@@ -1,7 +1,8 @@
 // WITH_RUNTIME
 import kotlin.test.*
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class S(val string: String)
 
 var prop = S("")

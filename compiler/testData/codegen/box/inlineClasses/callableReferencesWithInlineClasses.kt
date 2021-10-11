@@ -1,7 +1,8 @@
 // WITH_RUNTIME
 // WITH_REFLECT
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Foo(val x: String) {
     fun bar(f: Foo, i: Int): Foo = Foo(x + f.x + i)
 }

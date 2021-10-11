@@ -1,10 +1,12 @@
 // WITH_RUNTIME
 // TARGET_BACKEND: JVM
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class MyUInt(val x: Int)
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class MyUIntArray(private val storage: IntArray) : Collection<MyUInt> {
     public override val size: Int get() = storage.size
 

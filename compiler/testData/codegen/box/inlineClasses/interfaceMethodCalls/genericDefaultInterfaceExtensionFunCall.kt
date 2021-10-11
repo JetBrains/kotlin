@@ -5,17 +5,20 @@ interface IFoo<T : IFoo<T>> {
     fun bar(): String
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Z(val x: Int) : IFoo<Z> {
     override fun bar(): String = "OK"
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class L(val x: Long) : IFoo<L> {
     override fun bar(): String = "OK"
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class S(val x: String) : IFoo<S> {
     override fun bar(): String = x
 }

@@ -4,7 +4,8 @@
 
 data class RGBA(val rgba: Int)
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class RgbaArray(val array: IntArray) {
     val size: Int get() = array.size
 

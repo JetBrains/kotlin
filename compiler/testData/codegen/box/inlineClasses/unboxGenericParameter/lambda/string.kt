@@ -24,7 +24,8 @@ fun <T> IC.extensionValue(): T = value as T
 
 fun <T> normalValue(ic: IC): T = ic.value as T
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class IC(val value: String) {
     fun <T> dispatchValue(): T = value as T
 }

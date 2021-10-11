@@ -1,6 +1,7 @@
 // IGNORE_BACKEND: JVM
 // WITH_RUNTIME
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class A(val value: String)
 
 fun interface B {

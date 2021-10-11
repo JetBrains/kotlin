@@ -9,7 +9,8 @@ interface IOk {
     fun ok(): String = "OK"
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class InlineClass(val s: String) : IOk
 
 fun test(cell: Cell<InlineClass>): String = cell.x.ok()

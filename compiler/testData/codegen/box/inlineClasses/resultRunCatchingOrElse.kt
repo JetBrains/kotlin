@@ -3,7 +3,8 @@
 // WITH_RUNTIME
 
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Result<out T>(val value: Any?) {
     fun exceptionOrNull(): Throwable? =
         when (value) {

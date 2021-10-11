@@ -1,11 +1,13 @@
 // WITH_RUNTIME
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class UInt(private val value: Int) {
     fun asInt() = value
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class UIntArray(private val intArray: IntArray) {
     operator fun get(index: Int): UInt = UInt(intArray[index])
 

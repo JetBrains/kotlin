@@ -8,7 +8,8 @@ interface IFoo2<out T> {
     fun foo(): T
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class X(val x: String)
 
 class Test : IFoo1<X>, IFoo2<X> {

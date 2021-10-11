@@ -2,7 +2,8 @@
 
 import kotlin.test.*
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Z(val value: Int)
 
 fun test1_1(z: Z) = "$z"

@@ -1,6 +1,7 @@
 // WITH_RUNTIME
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class InlinedComparable(val x: Int) : Comparable<InlinedComparable> {
     override fun compareTo(other: InlinedComparable): Int {
         return x.compareTo(other.x)
@@ -13,7 +14,8 @@ interface Base<T> {
     fun Base<T>.foo(a: Base<T>, b: T): Base<T>
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class InlinedBase(val x: Int) : Base<InlinedBase> {
     override fun Base<InlinedBase>.foo(a: Base<InlinedBase>, b: InlinedBase): Base<InlinedBase> {
         return if (a is InlinedBase) InlinedBase(a.x + b.x) else this

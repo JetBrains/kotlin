@@ -1,6 +1,7 @@
 // WITH_RUNTIME
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Foo(val x: Int) : Comparable<Foo> {
     override fun compareTo(other: Foo): Int {
         return 10

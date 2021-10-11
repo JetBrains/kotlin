@@ -5,7 +5,8 @@ interface IFoo {
     fun foo(s: String): String
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Z(val x: Int) : IFoo {
     override fun foo(s: String): String = x.toString() + s
 }

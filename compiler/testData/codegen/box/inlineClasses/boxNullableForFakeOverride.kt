@@ -4,7 +4,8 @@ abstract class C<T> {
     fun foo(v: T?, x: (T) -> Any?) = v?.let { x(it) }
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class V(val value: Any?)
 
 class D : C<V>()

@@ -2,7 +2,8 @@
 // JVM_TARGET: 1.8
 // WITH_RUNTIME
 // FILE: javaDefaultMethod.kt
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class K(val k: String) : J {
     override fun get2() = k
 }

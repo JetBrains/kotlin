@@ -4,15 +4,18 @@
 
 import kotlin.test.*
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class TestUIntArrayW(val x: UIntArray)
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class InlineCharArray(val x: CharArray) {
     override fun toString(): String = x.contentToString()
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class TestInlineCharArrayW(val x: InlineCharArray)
 
 fun box(): String {

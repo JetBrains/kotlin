@@ -10,7 +10,8 @@ interface IBar {
 
 interface SFooBar : GFoo<IBar>
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class X(val x: String) : IBar {
     override fun bar(): String = x
 }

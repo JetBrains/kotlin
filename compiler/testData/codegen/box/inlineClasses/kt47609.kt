@@ -4,7 +4,8 @@
 
 annotation class Ann(val value: String)
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class C<T>(val x: String)
 
 @Ann("OK")

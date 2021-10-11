@@ -2,7 +2,8 @@
 
 var result = "Fail"
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class A(val value: String) {
     constructor() : this("OK")
 

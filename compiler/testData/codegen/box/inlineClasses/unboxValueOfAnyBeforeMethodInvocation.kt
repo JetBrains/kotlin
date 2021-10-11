@@ -1,6 +1,7 @@
 // WITH_RUNTIME
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class NullableInt(private val holder: Any?) {
     val intValue: Int get() = holder as Int
 }

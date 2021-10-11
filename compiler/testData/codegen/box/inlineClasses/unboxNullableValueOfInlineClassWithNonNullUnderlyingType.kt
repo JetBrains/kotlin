@@ -6,13 +6,16 @@ class BoxFoo(val boxed: IFoo?)
 
 interface IFoo
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Str(val value: String) : IFoo
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Str2(val value: Str): IFoo
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class StrArr(val value: Array<String>): IFoo
 
 fun boxToTypeParameter(x: Str?) = BoxT(x)

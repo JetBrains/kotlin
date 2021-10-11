@@ -9,7 +9,8 @@ interface Path {
     fun Int.extension(maxDepth: Int = 42)
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class RealPath(val x: Int) : Path {
     override fun dispatch(maxDepth: Int) = Unit
 

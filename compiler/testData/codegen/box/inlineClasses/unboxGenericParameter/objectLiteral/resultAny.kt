@@ -1,6 +1,7 @@
 // WITH_RUNTIME
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class IC(val value: Any)
 
 fun <T> foo(a: Result<T>, ic: IC): Pair<T, Any> = bar(a, ic, object : IFace<Result<T>, IC, Pair<T, Any>> {

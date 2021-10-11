@@ -6,7 +6,8 @@ class BoxFoo(val boxed: IFoo?)
 
 interface IFoo
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class I32(val value: Int): IFoo
 
 fun boxToTypeParameter(x: I32?) = BoxT(x)

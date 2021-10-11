@@ -1,22 +1,26 @@
 // WITH_RUNTIME
 
 class C {
-    @JvmInline
+    @Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
     value class IC1(val s: String)
 
     companion object {
-        @JvmInline
+        @Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
         value class IC2(val s: String)
     }
 }
 
 object O {
-    @JvmInline
+    @Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
     value class IC3(val s: String)
 }
 
 interface I {
-    @JvmInline
+    @Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
     value class IC4(val s: String)
 }
 

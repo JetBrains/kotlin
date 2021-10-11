@@ -6,9 +6,11 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.javaMethod
 import kotlin.test.*
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class InlineClass1(val s: String)
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class InlineClass2(val n: Number)
 
 fun <T : InlineClass1, U : InlineClass2> foo(t: T, u: U) {}

@@ -6,7 +6,8 @@ interface K2 : J {
     override fun get2() = "Kotlin"
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class K(val k: String) : K2 {
     override fun get2() = k
 }

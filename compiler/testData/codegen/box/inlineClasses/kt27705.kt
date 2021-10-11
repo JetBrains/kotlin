@@ -1,6 +1,7 @@
 // WITH_RUNTIME
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Z(val x: Int) {
     @Suppress("INNER_CLASS_INSIDE_INLINE_CLASS")
     inner class Inner(val y: Int) {

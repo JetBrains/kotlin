@@ -3,7 +3,8 @@
 interface IQ1
 interface IQ2
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class X(val x: Any): IQ1, IQ2
 
 interface IFoo1 {

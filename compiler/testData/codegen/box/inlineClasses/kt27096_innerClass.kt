@@ -13,11 +13,14 @@ class Outer<X>(val x: X) {
     }
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Z1<X, Y>(val x: Outer<X>.Inner<Y>)
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Z2<X, Y>(val z: Z1<X, Y>)
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class ZN<X, Y>(val z: Z1<X, Y>?)
 
 fun <X, Y> wrap1(xy : Outer<X>.Inner<Y>): Z1<X, Y>? = if (xy.hasNull) null else Z1(xy)

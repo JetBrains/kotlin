@@ -5,7 +5,8 @@ interface IFoo<T> {
     fun T.bar(): String = "K"
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class L(val x: Long) : IFoo<L>
 
 fun box(): String {

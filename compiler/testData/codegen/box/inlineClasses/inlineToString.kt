@@ -7,7 +7,8 @@ open class Expando {
     val expansion: Expansion = Expansion()
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Expansion(val map: MutableMap<String, Any?> = mutableMapOf()) {
     override inline fun toString(): String = "OK"
 }

@@ -1,7 +1,8 @@
 
 // WITH_RUNTIME
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Result<out T>(val value: Any?) {
     val isFailure: Boolean get() = value is Failure
 

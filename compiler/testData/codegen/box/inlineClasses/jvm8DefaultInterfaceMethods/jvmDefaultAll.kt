@@ -11,12 +11,14 @@ interface IFooBar {
 
 interface IFooBar2 : IFooBar
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Test1(val k: String): IFooBar {
     override fun bar(): String = k
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Test2(val k: String): IFooBar2 {
     override fun bar(): String = k
 }

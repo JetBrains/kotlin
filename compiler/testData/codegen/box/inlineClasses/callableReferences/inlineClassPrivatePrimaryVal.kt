@@ -1,21 +1,24 @@
 // WITH_RUNTIME
 import kotlin.test.assertEquals
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Z(private val x: Int) {
     companion object {
         val xref = Z::x
     }
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class L(private val x: Long) {
     companion object {
         val xref = L::x
     }
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class S(private val x: String) {
     companion object {
         val xref = S::x

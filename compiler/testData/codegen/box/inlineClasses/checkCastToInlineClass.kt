@@ -1,6 +1,7 @@
 // WITH_RUNTIME
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class UInt(val s: Int)
 
 fun test(a1: Any, a2: UInt?, a3: Any?, a4: Any?): Int {

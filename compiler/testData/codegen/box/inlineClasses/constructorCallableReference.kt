@@ -9,7 +9,8 @@ interface I {
     }
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class IC(val ok: String = "OK") : I
 
 fun box(): String {

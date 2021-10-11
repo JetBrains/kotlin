@@ -28,7 +28,8 @@ fun <T, R> bar(value: T, f: IFace<T, R>): R {
     return f.call(value)
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class IC(val value: Any) {
     fun <T> dispatchValue(): T = value as T
 }

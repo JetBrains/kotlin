@@ -1,7 +1,8 @@
 // WITH_RUNTIME
 import kotlin.test.assertEquals
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Z(val x: Int)
 
 class Outer(val z1: Z) {

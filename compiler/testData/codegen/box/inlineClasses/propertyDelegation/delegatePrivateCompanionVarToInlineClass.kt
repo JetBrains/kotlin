@@ -12,7 +12,8 @@ class Foo {
 
 var setterInvoked = 0
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class Delegate(val ignored: Int) {
 
     operator fun getValue(thisRef: Any?, prop: Any?) = Foo.a

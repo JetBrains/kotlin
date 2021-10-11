@@ -2,7 +2,8 @@
 // WITH_RUNTIME
 
 // FILE: test.kt
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class R(private val r: Int) {
 
     companion object {

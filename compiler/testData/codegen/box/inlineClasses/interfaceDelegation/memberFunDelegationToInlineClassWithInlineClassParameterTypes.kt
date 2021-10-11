@@ -1,7 +1,8 @@
 // WITH_RUNTIME
 import kotlin.test.assertEquals
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class S(val x: String)
 
 interface IFoo<T> {
@@ -13,7 +14,8 @@ interface IFoo<T> {
     fun <X> T.genericMemberExtFun(x: X): String
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class FooImpl(val xs: Array<String>) : IFoo<S> {
     override fun memberFun(s1: S, s2: String): String = xs[0] + s1.x + s2
     override fun memberFunT(x1: S, x2: String): String = xs[0] + x1.x + x2

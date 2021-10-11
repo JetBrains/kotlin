@@ -1,13 +1,15 @@
 // WITH_RUNTIME
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class AsInt(val value: Int) {
     override fun toString(): String {
         return "asInt: ${value.toString()}"
     }
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class AsAny(val value: Any) {
     override fun toString(): String {
         return "asAny: ${value.toString()}"

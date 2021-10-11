@@ -10,7 +10,8 @@ interface IFoo : IBase {
     fun testDefault2() = if (this is B) this.foo() else "fail"
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class B(val x: String) : IFoo {
     override fun foo() = x
 }

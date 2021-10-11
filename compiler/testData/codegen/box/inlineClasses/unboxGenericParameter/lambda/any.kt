@@ -24,7 +24,8 @@ fun <T, R> bar(value: T, f: (T) -> R): R {
     return f(value)
 }
 
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class IC(val value: Any) {
     fun <T> dispatchValue(): T = value as T
 }

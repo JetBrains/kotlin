@@ -1,7 +1,8 @@
 // WITH_RUNTIME
 // IGNORE_BACKEND: JVM
 // IGNORE_LIGHT_ANALYSIS
-@JvmInline
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
 value class IC(val x: String)
 
 fun IC?.foo() = toString() // `IC?` unboxed into `String?`
