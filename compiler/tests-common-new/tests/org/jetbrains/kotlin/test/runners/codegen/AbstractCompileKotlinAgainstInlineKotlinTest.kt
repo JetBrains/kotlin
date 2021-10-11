@@ -24,25 +24,25 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackend
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
+import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.SplittingModuleTransformerForBoxTests
 
 
 @OptIn(TestInfrastructureInternals::class)
-abstract class AbstractCompileKotlinAgainstInlineKotlinTestBase<I : ResultingArtifact.BackendInput<I>>(
+abstract class AbstractCompileKotlinAgainstInlineKotlinTestBase<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>>(
+    val targetFrontend: FrontendKind<R>,
     targetBackend: TargetBackend
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
-    abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, I>>
+    abstract val frontendFacade: Constructor<FrontendFacade<R>>
+    abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>
     abstract val backendFacade: Constructor<BackendFacade<I, BinaryArtifacts.Jvm>>
 
     override fun TestConfigurationBuilder.configuration() {
-        commonConfigurationForCodegenTest(
-            FrontendKinds.ClassicFrontend,
-            ::ClassicFrontendFacade,
-            frontendToBackendConverter,
-            backendFacade
-        )
+        commonConfigurationForCodegenTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
         useInlineHandlers()
         configureCommonHandlersForBoxTest()
         useModuleStructureTransformers(
@@ -53,7 +53,13 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTestBase<I : ResultingArt
 }
 
 open class AbstractCompileKotlinAgainstInlineKotlinTest :
-    AbstractCompileKotlinAgainstInlineKotlinTestBase<ClassicBackendInput>(TargetBackend.JVM) {
+    AbstractCompileKotlinAgainstInlineKotlinTestBase<ClassicFrontendOutputArtifact, ClassicBackendInput>(
+        FrontendKinds.ClassicFrontend,
+        TargetBackend.JVM
+    ) {
+    override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
+        get() = ::ClassicFrontendFacade
+
     override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, ClassicBackendInput>>
         get() = ::ClassicFrontend2ClassicBackendConverter
 
@@ -62,7 +68,13 @@ open class AbstractCompileKotlinAgainstInlineKotlinTest :
 }
 
 open class AbstractIrCompileKotlinAgainstInlineKotlinTest :
-    AbstractCompileKotlinAgainstInlineKotlinTestBase<IrBackendInput>(TargetBackend.JVM_IR) {
+    AbstractCompileKotlinAgainstInlineKotlinTestBase<ClassicFrontendOutputArtifact, IrBackendInput>(
+        FrontendKinds.ClassicFrontend,
+        TargetBackend.JVM_IR
+    ) {
+    override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
+        get() = ::ClassicFrontendFacade
+
     override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
         get() = ::ClassicFrontend2IrConverter
 
@@ -70,17 +82,37 @@ open class AbstractIrCompileKotlinAgainstInlineKotlinTest :
         get() = ::JvmIrBackendFacade
 }
 
+private fun TestConfigurationBuilder.configureForSerialization() {
+    defaultDirectives {
+        SERIALIZE_IR.with(JvmSerializeIrMode.INLINE)
+    }
+
+    configureIrHandlersStep {
+        useHandlers(::IrInlineBodiesHandler)
+    }
+}
+
 open class AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest : AbstractIrCompileKotlinAgainstInlineKotlinTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.apply {
-            defaultDirectives {
-                SERIALIZE_IR.with(JvmSerializeIrMode.INLINE)
-            }
+        builder.configureForSerialization()
+    }
+}
 
-            configureIrHandlersStep {
-                useHandlers(::IrInlineBodiesHandler)
-            }
-        }
+open class AbstractFirSerializeCompileKotlinAgainstInlineKotlinTest :
+    AbstractCompileKotlinAgainstInlineKotlinTestBase<FirOutputArtifact, IrBackendInput>(FrontendKinds.FIR, TargetBackend.JVM_IR_SERIALIZE) {
+
+    override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
+        get() = ::FirFrontendFacade
+
+    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
+        get() = ::Fir2IrResultsConverter
+
+    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
+        get() = ::JvmIrBackendFacade
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureForSerialization()
     }
 }
