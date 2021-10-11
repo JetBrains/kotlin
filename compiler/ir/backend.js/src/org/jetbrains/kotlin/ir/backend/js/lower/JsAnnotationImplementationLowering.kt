@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.AnnotationImplementationTransformer
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -30,7 +31,7 @@ class JsAnnotationImplementationTransformer(val jsContext: JsIrBackendContext) :
     DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? =
-        if (declaration is IrClass && declaration.isAnnotationClass) listOf(visitClassNew(declaration))
+        if (declaration is IrClass && declaration.isAnnotationClass) listOf(visitClassNew(declaration) as IrClass)
         else null
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
@@ -38,12 +39,13 @@ class JsAnnotationImplementationTransformer(val jsContext: JsIrBackendContext) :
         return expression
     }
 
-    override fun visitClassNew(declaration: IrClass): IrClass {
-        if (!declaration.isAnnotationClass) return declaration
-        context.irFactory.stageController.unrestrictDeclarationListsAccess {
-            implementGeneratedFunctions(declaration, declaration)
+    override fun visitClassNew(declaration: IrClass): IrStatement {
+        if (declaration.isAnnotationClass) {
+            context.irFactory.stageController.unrestrictDeclarationListsAccess {
+                implementGeneratedFunctions(declaration, declaration)
+            }
         }
-        return declaration
+        return super.visitClassNew(declaration)
     }
 
     private val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol> =

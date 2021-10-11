@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.addFakeOverrides
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -43,6 +45,22 @@ class AnnotationImplementationLowering(
 
 abstract class AnnotationImplementationTransformer(val context: BackendContext, val irFile: IrFile?) : IrElementTransformerVoidWithContext() {
     internal val implementations: MutableMap<IrClass, IrClass> = mutableMapOf()
+
+
+    override fun visitClassNew(declaration: IrClass): IrStatement {
+        declaration.takeIf { declaration.isAnnotationClass }?.constructors?.singleOrNull()?.apply {
+            // Compatibility hack. Now, frontend generates constructor body for annotations
+            // but, if one gets annotation from pre-1.6.20 klib, it would have none, so we need to generate it's body
+            if (body == null) {
+                body = context.createIrBuilder(symbol)
+                    .irBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET) {
+                        +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
+                        +IrInstanceInitializerCallImpl(startOffset, endOffset, declaration.symbol, context.irBuiltIns.unitType)
+                    }
+            }
+        }
+        return super.visitClassNew(declaration)
+    }
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
         val constructedClass = expression.type.classOrNull?.owner ?: return super.visitConstructorCall(expression)
