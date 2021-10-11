@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.has
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.plugin.AllOpenPluginKey
+import org.jetbrains.kotlin.fir.plugin.SomePluginKey
 import org.jetbrains.kotlin.fir.plugin.fqn
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.Name
 /*
  * Generates `dummyClassName(value: ClassName): String` function for each class annotated with @A
  */
-class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
+class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
         private val PREDICATE: DeclarationPredicate = has("A".fqn())
     }
@@ -90,8 +90,8 @@ class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclaration
         }
     }
 
-    override val key: AllOpenPluginKey
-        get() = AllOpenPluginKey
+    override val key: SomePluginKey
+        get() = SomePluginKey
 
     override fun needToGenerateAdditionalMembersInClass(klass: FirClass): Boolean {
         return false

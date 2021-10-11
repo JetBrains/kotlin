@@ -26,7 +26,7 @@ object SignedNumberCallChecker : FirFunctionCallChecker() {
             val actualSign = argument.typeRef.coneType.attributes.numberSign
             if (expectedSign != actualSign) {
                 withSuppressedDiagnostics(argument, context) {
-                    reporter.reportOn(argument.source, AllOpenErrors.ILLEGAL_NUMBER_SIGN, expectedSign.asString(), actualSign.asString(), it)
+                    reporter.reportOn(argument.source, PluginErrors.ILLEGAL_NUMBER_SIGN, expectedSign.asString(), actualSign.asString(), it)
                 }
             }
         }

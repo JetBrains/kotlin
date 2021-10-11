@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class AllOpenVisibilityTransformer(session: FirSession) : FirStatusTransformerExtension(session) {
+class AllPublicVisibilityTransformer(session: FirSession) : FirStatusTransformerExtension(session) {
     companion object {
         private val AllPublicClassId = ClassId(FqName("org.jetbrains.kotlin.fir.plugin"), Name.identifier("AllPublic"))
         private val VisibilityClassId = ClassId(FqName("org.jetbrains.kotlin.fir.plugin"), Name.identifier("Visibility"))
@@ -81,5 +81,5 @@ class AllOpenVisibilityTransformer(session: FirSession) : FirStatusTransformerEx
     }
 
     override val key: FirPluginKey
-        get() = AllOpenPluginKey
+        get() = SomePluginKey
 }

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.Name
  *  - member fun materialize(): ClassName
  *  - nested class Nested with default constructor
  */
-class AllOpenMembersGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
+class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
         private val MATERIALIZE_NAME = Name.identifier("materialize")
         private val NESTED_NAME = Name.identifier("Nested")

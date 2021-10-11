@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.plugin.checkers.DummyNameChecker
 import org.jetbrains.kotlin.fir.plugin.checkers.SignedNumberCallChecker
 
-class AllOpenAdditionalCheckers(session: FirSession) : FirAdditionalCheckersExtension(session) {
+class PluginAdditionalCheckers(session: FirSession) : FirAdditionalCheckersExtension(session) {
     override val key: FirPluginKey
-        get() = AllOpenPluginKey
+        get() = SomePluginKey
 
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
         override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>

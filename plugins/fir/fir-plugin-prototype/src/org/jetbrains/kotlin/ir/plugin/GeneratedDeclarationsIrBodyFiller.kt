@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.plugin
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.fir.backend.IrPluginDeclarationOrigin
-import org.jetbrains.kotlin.fir.plugin.generators.AllOpenClassGenerator
+import org.jetbrains.kotlin.fir.plugin.generators.ExternalClassGenerator
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -41,7 +41,7 @@ private class Transformer(val context: IrPluginContext) : IrElementVisitorVoid {
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         val origin = declaration.origin
-        if (origin !is IrPluginDeclarationOrigin || origin.pluginKey != AllOpenClassGenerator.Key) return
+        if (origin !is IrPluginDeclarationOrigin || origin.pluginKey != ExternalClassGenerator.Key) return
         require(declaration.body == null)
         val constructedType = declaration.returnType as? IrSimpleType ?: return
         val constructedClassSymbol = constructedType.classifier
@@ -62,7 +62,7 @@ private class Transformer(val context: IrPluginContext) : IrElementVisitorVoid {
 
     override fun visitConstructor(declaration: IrConstructor) {
         val origin = declaration.origin
-        if (origin !is IrPluginDeclarationOrigin || origin.pluginKey != AllOpenClassGenerator.Key) return
+        if (origin !is IrPluginDeclarationOrigin || origin.pluginKey != ExternalClassGenerator.Key) return
         require(declaration.body == null)
         val type = declaration.returnType as? IrSimpleType ?: return
 

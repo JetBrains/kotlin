@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.name.Name
  *
  * If there are no annotated classes then AllOpenGenerated class is not generated
  */
-class AllOpenClassGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
+class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
         private val FOO_PACKAGE = FqName.topLevel(Name.identifier("foo"))
         private val GENERATED_CLASS_ID = ClassId(FOO_PACKAGE, Name.identifier("AllOpenGenerated"))

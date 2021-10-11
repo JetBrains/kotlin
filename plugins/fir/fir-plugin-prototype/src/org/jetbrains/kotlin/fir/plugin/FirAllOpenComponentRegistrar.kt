@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.fir.plugin.types.FirNumberSignAttributeExtension
 class FirAllOpenComponentRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::AllOpenStatusTransformer
-        +::AllOpenVisibilityTransformer
-        +::AllOpenSupertypeGenerator
-        +::AllOpenAdditionalCheckers
+        +::AllPublicVisibilityTransformer
+        +::SomeAdditionalSupertypeGenerator
+        +::PluginAdditionalCheckers
         +::FirNumberSignAttributeExtension
 
         // Declaration generators
-        +::AllOpenTopLevelDeclarationsGenerator
-        +::AllOpenClassGenerator
-        +::AllOpenMembersGenerator
+        +::TopLevelDeclarationsGenerator
+        +::ExternalClassGenerator
+        +::AdditionalMembersGenerator
     }
 }

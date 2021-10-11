@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.SourceElementPositioningStr
 import org.jetbrains.kotlin.fir.analysis.diagnostics.error2
 import org.jetbrains.kotlin.fir.analysis.diagnostics.warning1
 
-object AllOpenErrors {
+object PluginErrors {
     val FUNCTION_WITH_DUMMY_NAME by warning1<PsiElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val ILLEGAL_NUMBER_SIGN by error2<PsiElement, String, String>()
 }

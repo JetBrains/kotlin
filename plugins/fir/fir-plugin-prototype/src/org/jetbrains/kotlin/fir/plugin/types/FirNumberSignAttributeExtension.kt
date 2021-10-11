@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.extensions.FirTypeAttributeExtension
-import org.jetbrains.kotlin.fir.plugin.AllOpenPluginKey
+import org.jetbrains.kotlin.fir.plugin.SomePluginKey
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.ConeAttribute
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -31,7 +31,7 @@ class FirNumberSignAttributeExtension(session: FirSession) : FirTypeAttributeExt
     }
 
     override val key: FirPluginKey
-        get() = AllOpenPluginKey
+        get() = SomePluginKey
 
     override fun extractAttributeFromAnnotation(annotation: FirAnnotation): ConeAttribute<*>? {
         val sign = when (annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId) {

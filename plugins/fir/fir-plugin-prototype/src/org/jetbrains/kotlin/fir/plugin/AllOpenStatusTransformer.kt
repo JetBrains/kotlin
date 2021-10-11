@@ -40,5 +40,5 @@ class AllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExtens
     }
 
     override val key: FirPluginKey
-        get() = AllOpenPluginKey
+        get() = SomePluginKey
 }

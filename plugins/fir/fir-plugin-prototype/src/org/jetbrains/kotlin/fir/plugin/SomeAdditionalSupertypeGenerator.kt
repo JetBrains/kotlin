@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 /*
  * Adds MyInterface supertype for all classes annotated with @D
  */
-class AllOpenSupertypeGenerator(session: FirSession) : FirSupertypeGenerationExtension(session) {
+class SomeAdditionalSupertypeGenerator(session: FirSession) : FirSupertypeGenerationExtension(session) {
     companion object {
         private val myInterfaceClassId = ClassId(FqName("foo"), Name.identifier("MyInterface"))
         private val PREDICATE: DeclarationPredicate = has("D".fqn())
@@ -44,7 +44,7 @@ class AllOpenSupertypeGenerator(session: FirSession) : FirSupertypeGenerationExt
     }
 
     override val key: FirPluginKey
-        get() = AllOpenPluginKey
+        get() = SomePluginKey
 
     override fun needTransformSupertypes(declaration: FirClassLikeDeclaration): Boolean {
         return session.predicateBasedProvider.matches(PREDICATE, declaration)
