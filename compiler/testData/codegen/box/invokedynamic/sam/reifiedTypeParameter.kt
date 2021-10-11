@@ -9,19 +9,19 @@
 // 1 java/lang/invoke/LambdaMetafactory
 
 // FILE: reifiedTypeParameter.kt
+class OK
 
 inline fun <reified T> f(x: T) =
-    println("${T::class.simpleName}($x)")
+    T::class.simpleName
 
-fun call(c: Consumer<String>) = c.accept("")
+fun call(c: Consumer<OK>) = c.accept(OK())
 
 fun box(): String {
-    call(::f) // `f` has a reified type parameter and thus isn't callable directly
-    return "OK"
+    return call(::f) // `f` has a reified type parameter and thus isn't callable directly
 }
 
 // FILE: Consumer.java
 
 public interface Consumer<T> {
-    void accept(T t);
+    String accept(T t);
 }
