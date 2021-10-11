@@ -121,21 +121,9 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             addIfNotNull(intrinsics.jsCode) { _, _ -> error("Should not be called") }
 
-            add(intrinsics.jsGetContinuation) { _, context: JsGenerationContext ->
-                context.continuation
-            }
+            add(intrinsics.jsGetContinuation) { _, _ -> error("getContinuation should be lowered") }
 
-            add(backendContext.ir.symbols.returnIfSuspended) { call, context ->
-                val args = translateCallArguments(call, context)
-                args[0]
-            }
-
-            add(intrinsics.jsCoroutineContext) { _, context: JsGenerationContext ->
-                val contextGetter = backendContext.coroutineGetContext
-                val getterName = context.getNameForStaticFunction(contextGetter.owner)
-                val continuation = context.continuation
-                JsInvocation(JsNameRef(getterName, continuation))
-            }
+            add(intrinsics.jsCoroutineContext) { _, _ -> error("coroutineContext should be lowered") }
 
             add(intrinsics.jsArrayLength) { call, context ->
                 val args = translateCallArguments(call, context)

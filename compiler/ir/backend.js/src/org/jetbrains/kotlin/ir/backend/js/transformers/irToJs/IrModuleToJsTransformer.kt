@@ -349,12 +349,16 @@ class IrModuleToJsTransformer(
         return statements
     }
 
-    private fun generateMainArguments(mainFunction: IrSimpleFunction, rootContext: JsGenerationContext): List<JsExpression> {
+    private fun generateMainArguments(
+        generateArgv: Boolean,
+        generateContinuation: Boolean,
+        rootContext: JsGenerationContext
+    ): List<JsExpression> {
         val mainArguments = this.mainArguments!!
         val mainArgumentsArray =
-            if (mainFunction.valueParameters.isNotEmpty()) JsArrayLiteral(mainArguments.map { JsStringLiteral(it) }) else null
+            if (generateArgv) JsArrayLiteral(mainArguments.map { JsStringLiteral(it) }) else null
 
-        val continuation = if (mainFunction.isSuspend) {
+        val continuation = if (generateContinuation) {
             backendContext.coroutineEmptyContinuation.owner
                 .let { it.getter!! }
                 .let { rootContext.getNameForStaticFunction(it) }
@@ -365,11 +369,14 @@ class IrModuleToJsTransformer(
     }
 
     private fun generateCallToMain(modules: Iterable<IrModuleFragment>, rootContext: JsGenerationContext): List<JsStatement> {
+        // TODO: Generate calls to main as IR->IR lowering
         if (mainArguments == null) return emptyList() // in case `NO_MAIN` and `main(..)` exists
-        val mainFunction = JsMainFunctionDetector.getMainFunctionOrNull(modules.last())
+        val mainFunction = JsMainFunctionDetector(backendContext).getMainFunctionOrNull(modules.last())
         return mainFunction?.let {
             val jsName = rootContext.getNameForStaticFunction(it)
-            listOf(JsInvocation(jsName.makeRef(), generateMainArguments(it, rootContext)).makeStmt())
+            val generateArgv = it.valueParameters.firstOrNull()?.isStringArrayParameter() ?: false
+            val generateContinuation = it.isLoweredSuspendFunction(backendContext)
+            listOf(JsInvocation(jsName.makeRef(), generateMainArguments(generateArgv, generateContinuation, rootContext)).makeStmt())
         } ?: emptyList()
     }
 

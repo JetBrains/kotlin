@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.irCall
-import org.jetbrains.kotlin.ir.util.isFunction
-import org.jetbrains.kotlin.ir.util.isNullConst
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -120,6 +117,11 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 return builder.irCall(symbols.anyNtoString).apply {
                     putValueArgument(0, call.getValueArgument(0))
                 }
+            }
+            in symbols.startCoroutineUninterceptedOrReturnIntrinsics -> {
+                val arity = symbols.startCoroutineUninterceptedOrReturnIntrinsics.indexOf(symbol)
+                val newSymbol = irBuiltins.suspendFunctionN(arity).getSimpleFunction("invoke")!!
+                return irCall(call, newSymbol, argumentsAsReceivers = true)
             }
         }
 

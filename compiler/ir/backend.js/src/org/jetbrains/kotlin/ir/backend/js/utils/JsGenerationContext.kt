@@ -49,17 +49,6 @@ class JsGenerationContext(
         )
     }
 
-    val continuation
-        get() = if (isCoroutineDoResume()) {
-            JsThisRef()
-        } else {
-            if (currentFunction!!.isSuspend) {
-                JsNameRef(Namer.CONTINUATION)
-            } else {
-                JsNameRef(this.getNameForValueDeclaration(currentFunction.valueParameters.last()))
-            }
-        }
-
     fun getNameForValueDeclaration(declaration: IrDeclarationWithName): JsName {
         val name = localNames!!.variableNames.names[declaration]
             ?: error("Variable name is not found ${declaration.name}")
@@ -74,13 +63,6 @@ class JsGenerationContext(
     fun getNameForReturnableBlock(block: IrReturnableBlock): JsName? {
         val name = localNames!!.localReturnableBlockNames.names[block] ?: return null
         return JsName(name)
-    }
-
-    private fun isCoroutineDoResume(): Boolean {
-        val overriddenSymbols = (currentFunction as? IrSimpleFunction)?.overriddenSymbols ?: return false
-        return overriddenSymbols.any {
-            it.owner.name.asString() == "doResume" && it.owner.parent == staticContext.coroutineImplDeclaration
-        }
     }
 
     fun checkIfJsCode(symbol: IrFunctionSymbol): Boolean = symbol == staticContext.backendContext.intrinsics.jsCode

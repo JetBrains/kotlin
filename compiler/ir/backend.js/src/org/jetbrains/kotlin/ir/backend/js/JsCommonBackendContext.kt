@@ -5,21 +5,118 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.atMostOne
+import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.getPropertyGetter
+import org.jetbrains.kotlin.ir.util.getPropertySetter
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 interface JsCommonBackendContext : CommonBackendContext {
     override val mapping: JsMapping
 
     val inlineClassesUtils: InlineClassesUtils
 
+    val coroutineSymbols: JsCommonCoroutineSymbols
+
+    val catchAllThrowableType: IrType
+        get() = irBuiltIns.throwableType
+
     val es6mode: Boolean
         get() = false
 }
+
+// TODO: investigate if it could be removed
+internal fun <T> BackendContext.lazy2(fn: () -> T) = lazy { irFactory.stageController.withInitialIr(fn) }
+
+class JsCommonCoroutineSymbols(
+    symbolTable: SymbolTable,
+    module: ModuleDescriptor,
+    val context: JsCommonBackendContext
+) {
+    val coroutinePackage = module.getPackage(COROUTINE_PACKAGE_FQNAME)
+    val coroutineIntrinsicsPackage = module.getPackage(COROUTINE_INTRINSICS_PACKAGE_FQNAME)
+
+    val coroutineImpl =
+        symbolTable.referenceClass(findClass(coroutinePackage.memberScope, COROUTINE_IMPL_NAME))
+
+    val coroutineImplLabelPropertyGetter by context.lazy2 { coroutineImpl.getPropertyGetter("state")!!.owner }
+    val coroutineImplLabelPropertySetter by context.lazy2 { coroutineImpl.getPropertySetter("state")!!.owner }
+    val coroutineImplResultSymbolGetter by context.lazy2 { coroutineImpl.getPropertyGetter("result")!!.owner }
+    val coroutineImplResultSymbolSetter by context.lazy2 { coroutineImpl.getPropertySetter("result")!!.owner }
+    val coroutineImplExceptionPropertyGetter by context.lazy2 { coroutineImpl.getPropertyGetter("exception")!!.owner }
+    val coroutineImplExceptionPropertySetter by context.lazy2 { coroutineImpl.getPropertySetter("exception")!!.owner }
+    val coroutineImplExceptionStatePropertyGetter by context.lazy2 { coroutineImpl.getPropertyGetter("exceptionState")!!.owner }
+    val coroutineImplExceptionStatePropertySetter by context.lazy2 { coroutineImpl.getPropertySetter("exceptionState")!!.owner }
+
+    val continuationClass = symbolTable.referenceClass(
+        coroutinePackage.memberScope.getContributedClassifier(
+            CONTINUATION_NAME,
+            NoLookupLocation.FROM_BACKEND
+        ) as ClassDescriptor
+    )
+
+    val coroutineSuspendedGetter = symbolTable.referenceSimpleFunction(
+        coroutineIntrinsicsPackage.memberScope.getContributedVariables(
+            COROUTINE_SUSPENDED_NAME,
+            NoLookupLocation.FROM_BACKEND
+        ).filterNot { it.isExpect }.single().getter!!
+    )
+
+    val coroutineGetContext: IrSimpleFunctionSymbol
+        get() {
+            val contextGetter =
+                continuationClass.owner.declarations.filterIsInstance<IrSimpleFunction>()
+                    .atMostOne { it.name == CONTINUATION_CONTEXT_GETTER_NAME }
+                    ?: continuationClass.owner.declarations.filterIsInstance<IrProperty>()
+                        .atMostOne { it.name == CONTINUATION_CONTEXT_PROPERTY_NAME }?.getter!!
+            return contextGetter.symbol
+        }
+
+    val coroutineContextProperty: PropertyDescriptor
+        get() {
+            val vars = coroutinePackage.memberScope.getContributedVariables(
+                COROUTINE_CONTEXT_NAME,
+                NoLookupLocation.FROM_BACKEND
+            )
+            return vars.single()
+        }
+
+    companion object {
+        private val INTRINSICS_PACKAGE_NAME = Name.identifier("intrinsics")
+        private val COROUTINE_SUSPENDED_NAME = Name.identifier("COROUTINE_SUSPENDED")
+        private val COROUTINE_CONTEXT_NAME = Name.identifier("coroutineContext")
+        private val COROUTINE_IMPL_NAME = Name.identifier("CoroutineImpl")
+        private val CONTINUATION_NAME = Name.identifier("Continuation")
+        private val CONTINUATION_CONTEXT_GETTER_NAME = Name.special("<get-context>")
+        private val CONTINUATION_CONTEXT_PROPERTY_NAME = Name.identifier("context")
+        private val COROUTINE_PACKAGE_FQNAME = FqName.fromSegments(listOf("kotlin", "coroutines"))
+        private val COROUTINE_INTRINSICS_PACKAGE_FQNAME = COROUTINE_PACKAGE_FQNAME.child(INTRINSICS_PACKAGE_NAME)
+    }
+}
+
+internal fun findClass(memberScope: MemberScope, name: Name): ClassDescriptor =
+    memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+
+internal fun findFunctions(memberScope: MemberScope, name: Name): List<SimpleFunctionDescriptor> =
+    memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).toList()
 
 interface InlineClassesUtils {
     fun isTypeInlined(type: IrType): Boolean

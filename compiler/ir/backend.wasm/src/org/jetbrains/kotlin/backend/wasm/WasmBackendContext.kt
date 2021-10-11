@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsCommonCoroutineSymbols
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -56,6 +57,9 @@ class WasmBackendContext(
     }
 
     override val mapping = JsMapping(irFactory)
+
+    override val coroutineSymbols =
+        JsCommonCoroutineSymbols(symbolTable, module,this)
 
     val innerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
 

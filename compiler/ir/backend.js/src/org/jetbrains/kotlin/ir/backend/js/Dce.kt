@@ -94,9 +94,10 @@ private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackend
         rootDeclarations += dceRuntimeDiagnostic.unreachableDeclarationMethod(context).owner
     }
 
-    JsMainFunctionDetector.getMainFunctionOrNull(modules.last())?.let { mainFunction ->
+    // TODO: Generate calls to main as IR->IR lowering and reference coroutineEmptyContinuation directly
+    JsMainFunctionDetector(context).getMainFunctionOrNull(modules.last())?.let { mainFunction ->
         rootDeclarations += mainFunction
-        if (mainFunction.isSuspend) {
+        if (mainFunction.isLoweredSuspendFunction(context)) {
             rootDeclarations += context.coroutineEmptyContinuation.owner
         }
     }

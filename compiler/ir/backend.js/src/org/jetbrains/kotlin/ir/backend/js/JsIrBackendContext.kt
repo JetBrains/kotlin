@@ -144,23 +144,11 @@ class JsIrBackendContext(
     companion object {
         val KOTLIN_PACKAGE_FQN = FqName.fromSegments(listOf("kotlin"))
 
-        private val INTRINSICS_PACKAGE_NAME = Name.identifier("intrinsics")
-        private val COROUTINE_SUSPENDED_NAME = Name.identifier("COROUTINE_SUSPENDED")
-        private val COROUTINE_CONTEXT_NAME = Name.identifier("coroutineContext")
-        private val COROUTINE_IMPL_NAME = Name.identifier("CoroutineImpl")
-        private val CONTINUATION_NAME = Name.identifier("Continuation")
 
         // TODO: what is more clear way reference this getter?
-        private val CONTINUATION_CONTEXT_GETTER_NAME = Name.special("<get-context>")
-
-        private val CONTINUATION_CONTEXT_PROPERTY_NAME = Name.identifier("context")
         private val REFLECT_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("reflect"))
         private val JS_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("js"))
         private val JS_INTERNAL_PACKAGE_FQNAME = JS_PACKAGE_FQNAME.child(Name.identifier("internal"))
-        private val COROUTINE_PACKAGE_FQNAME_12 = FqName.fromSegments(listOf("kotlin", "coroutines", "experimental"))
-        private val COROUTINE_PACKAGE_FQNAME_13 = FqName.fromSegments(listOf("kotlin", "coroutines"))
-        private val COROUTINE_PACKAGE_FQNAME = COROUTINE_PACKAGE_FQNAME_13
-        private val COROUTINE_INTRINSICS_PACKAGE_FQNAME = COROUTINE_PACKAGE_FQNAME.child(INTRINSICS_PACKAGE_NAME)
 
         // TODO: due to name clash those weird suffix is required, remove it once `MemberNameGenerator` is implemented
         private val COROUTINE_SUSPEND_OR_RETURN_JS_NAME = "suspendCoroutineUninterceptedOrReturnJS"
@@ -171,11 +159,12 @@ class JsIrBackendContext(
 
     private val internalPackage = module.getPackage(JS_PACKAGE_FQNAME)
 
-    private val coroutinePackage = module.getPackage(COROUTINE_PACKAGE_FQNAME)
-    private val coroutineIntrinsicsPackage = module.getPackage(COROUTINE_INTRINSICS_PACKAGE_FQNAME)
 
     val dynamicType: IrDynamicType = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
     val intrinsics = JsIntrinsics(irBuiltIns, this)
+
+    override val catchAllThrowableType: IrType
+        get() = dynamicType
 
     override val sharedVariablesManager = JsSharedVariablesManager(this)
 
@@ -192,6 +181,9 @@ class JsIrBackendContext(
     }
 
     fun getOperatorByName(name: Name, type: IrSimpleType) = operatorMap[name]?.get(type.classifier)
+
+    override val coroutineSymbols =
+        JsCommonCoroutineSymbols(symbolTable, module, this)
 
     override val ir = object : Ir<JsIrBackendContext>(this, irModuleFragment) {
         override val symbols = object : Symbols<JsIrBackendContext>(this@JsIrBackendContext, irBuiltIns, symbolTable) {
@@ -220,14 +212,9 @@ class JsIrBackendContext(
             override val stringBuilder
                 get() = TODO("not implemented")
             override val coroutineImpl =
-                symbolTable.referenceClass(findClass(coroutinePackage.memberScope, COROUTINE_IMPL_NAME))
+                coroutineSymbols.coroutineImpl
             override val coroutineSuspendedGetter =
-                symbolTable.referenceSimpleFunction(
-                    coroutineIntrinsicsPackage.memberScope.getContributedVariables(
-                        COROUTINE_SUSPENDED_NAME,
-                        NoLookupLocation.FROM_BACKEND
-                    ).filterNot { it.isExpect }.single().getter!!
-                )
+                coroutineSymbols.coroutineSuspendedGetter
 
             private val _arraysContentEquals = getFunctions(FqName("kotlin.collections.contentEquals")).mapNotNull {
                 if (it.extensionReceiverParameter != null && it.extensionReceiverParameter!!.type.isNullable())
@@ -241,7 +228,7 @@ class JsIrBackendContext(
 
             override val getContinuation = symbolTable.referenceSimpleFunction(getJsInternalFunction("getContinuation"))
 
-            override val coroutineContextGetter = symbolTable.referenceSimpleFunction(context.coroutineContextProperty.getter!!)
+            override val coroutineContextGetter = symbolTable.referenceSimpleFunction(context.coroutineSymbols.coroutineContextProperty.getter!!)
 
             override val suspendCoroutineUninterceptedOrReturn =
                 symbolTable.referenceSimpleFunction(getJsInternalFunction(COROUTINE_SUSPEND_OR_RETURN_JS_NAME))
@@ -308,31 +295,10 @@ class JsIrBackendContext(
         getIrClass(JS_INTERNAL_PACKAGE_FQNAME.child(Name.identifier("${it.identifier}CompanionObject")))
     }
 
-    val coroutineImpl = ir.symbols.coroutineImpl
-    val continuationClass = symbolTable.referenceClass(
-        coroutinePackage.memberScope.getContributedClassifier(
-            CONTINUATION_NAME,
-            NoLookupLocation.FROM_BACKEND
-        ) as ClassDescriptor
-    )
 
 
     // Top-level functions forced to be loaded
 
-    val coroutineSuspendOrReturn = ir.symbols.suspendCoroutineUninterceptedOrReturn
-    val coroutineSuspendGetter = ir.symbols.coroutineSuspendedGetter
-    val coroutineGetContext: IrSimpleFunctionSymbol
-        get() {
-            val contextGetter =
-                continuationClass.owner.declarations.filterIsInstance<IrSimpleFunction>()
-                    .atMostOne { it.name == CONTINUATION_CONTEXT_GETTER_NAME }
-                    ?: continuationClass.owner.declarations.filterIsInstance<IrProperty>()
-                        .atMostOne { it.name == CONTINUATION_CONTEXT_PROPERTY_NAME }?.getter!!
-            return contextGetter.symbol
-        }
-
-    val coroutineGetContextJs
-        get() = ir.symbols.coroutineGetContext
 
     val coroutineEmptyContinuation = symbolTable.referenceProperty(
         getProperty(
@@ -348,14 +314,6 @@ class JsIrBackendContext(
         )
     )
 
-    val coroutineContextProperty: PropertyDescriptor
-        get() {
-            val vars = coroutinePackage.memberScope.getContributedVariables(
-                COROUTINE_CONTEXT_NAME,
-                NoLookupLocation.FROM_BACKEND
-            )
-            return vars.single()
-        }
 
     val newThrowableSymbol = symbolTable.referenceSimpleFunction(getJsInternalFunction("newThrowable"))
     val extendThrowableSymbol = symbolTable.referenceSimpleFunction(getJsInternalFunction("extendThrowable"))
@@ -367,15 +325,6 @@ class JsIrBackendContext(
 
     val suiteFun = getFunctions(FqName("kotlin.test.suite")).singleOrNull()?.let { symbolTable.referenceSimpleFunction(it) }
     val testFun = getFunctions(FqName("kotlin.test.test")).singleOrNull()?.let { symbolTable.referenceSimpleFunction(it) }
-
-    val coroutineImplLabelPropertyGetter by lazy2 { ir.symbols.coroutineImpl.getPropertyGetter("state")!!.owner }
-    val coroutineImplLabelPropertySetter by lazy2 { ir.symbols.coroutineImpl.getPropertySetter("state")!!.owner }
-    val coroutineImplResultSymbolGetter by lazy2 { ir.symbols.coroutineImpl.getPropertyGetter("result")!!.owner }
-    val coroutineImplResultSymbolSetter by lazy2 { ir.symbols.coroutineImpl.getPropertySetter("result")!!.owner }
-    val coroutineImplExceptionPropertyGetter by lazy2 { ir.symbols.coroutineImpl.getPropertyGetter("exception")!!.owner }
-    val coroutineImplExceptionPropertySetter by lazy2 { ir.symbols.coroutineImpl.getPropertySetter("exception")!!.owner }
-    val coroutineImplExceptionStatePropertyGetter by lazy2 { ir.symbols.coroutineImpl.getPropertyGetter("exceptionState")!!.owner }
-    val coroutineImplExceptionStatePropertySetter by lazy2 { ir.symbols.coroutineImpl.getPropertySetter("exceptionState")!!.owner }
 
     val primitiveClassProperties by lazy2 {
         primitiveClassesObject.owner.declarations.filterIsInstance<IrProperty>()
@@ -407,12 +356,6 @@ class JsIrBackendContext(
         }.toMap()
     }
 
-    private fun findClass(memberScope: MemberScope, name: Name): ClassDescriptor =
-        memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
-
-    private fun findFunctions(memberScope: MemberScope, name: Name): List<SimpleFunctionDescriptor> =
-        memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).toList()
-
     private fun findProperty(memberScope: MemberScope, name: Name): List<PropertyDescriptor> =
         memberScope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND).toList()
 
@@ -442,7 +385,4 @@ class JsIrBackendContext(
         /*TODO*/
         print(message)
     }
-
-    // TODO: investigate if it could be removed
-    fun <T> lazy2(fn: () -> T) = lazy { irFactory.stageController.withInitialIr(fn) }
 }

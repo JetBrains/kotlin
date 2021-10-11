@@ -76,9 +76,7 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
 
     declaration.extensionReceiverParameter?.let { function.addParameter(functionContext.getNameForValueDeclaration(it)) }
     functionParams.forEach { function.addParameter(it) }
-    if (declaration.isSuspend) {
-        function.addParameter(JsName(Namer.CONTINUATION)) // TODO: Use namer?
-    }
+    check(!declaration.isSuspend) { "All Suspend functions should be lowered" }
 
     return function
 }
@@ -336,9 +334,8 @@ fun translateCallArguments(
         .dropLastWhile { it == null }
         .map { it ?: JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1)) }
 
-    return if (expression.symbol.isSuspend) {
-        arguments + context.continuation
-    } else arguments
+    check(!expression.symbol.isSuspend) { "Suspend functions should be lowered" }
+    return arguments
 }
 
 private fun IrMemberAccessExpression<*>.validWithNullArgs() =

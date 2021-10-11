@@ -14,8 +14,9 @@ internal fun <T> getContinuation(): Continuation<T> { throw Exception("Implement
 // Do we really need this intrinsic in JS?
 
 @PublishedApi
+@Suppress("UNCHECKED_CAST")
 internal suspend fun <T> returnIfSuspended(@Suppress("UNUSED_PARAMETER") argument: Any?): T {
-    throw Exception("Implemented as intrinsic")
+    return argument as T
 }
 
 @PublishedApi

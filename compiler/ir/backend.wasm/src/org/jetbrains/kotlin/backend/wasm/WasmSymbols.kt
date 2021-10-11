@@ -55,24 +55,20 @@ class WasmSymbols(
         get() = TODO()
     override val stringBuilder =
         getIrClass(FqName("kotlin.text.StringBuilder"))
-    override val coroutineImpl
-        get() = TODO()
-    override val coroutineSuspendedGetter
-        get() = TODO()
-    override val getContinuation
-        get() = TODO()
-    override val coroutineContextGetter by lazy {
-        context.irFactory.addFunction(context.getExcludedPackageFragment(FqName("kotlin.excluded"))) {
-            name = Name.identifier("coroutineContextGetter\$Stub")
-        }.symbol
-    }
-
-    override val suspendCoroutineUninterceptedOrReturn
-        get() = TODO()
-    override val coroutineGetContext
-        get() = TODO()
-    override val returnIfSuspended
-        get() = TODO()
+    override val coroutineImpl =
+        context.coroutineSymbols.coroutineImpl
+    override val coroutineSuspendedGetter =
+        context.coroutineSymbols.coroutineSuspendedGetter
+    override val getContinuation =
+        getInternalFunction("getContinuation")
+    override val coroutineContextGetter =
+        symbolTable.referenceSimpleFunction(context.coroutineSymbols.coroutineContextProperty.getter!!)
+    override val suspendCoroutineUninterceptedOrReturn =
+        getInternalFunction("suspendCoroutineUninterceptedOrReturn")
+    override val coroutineGetContext =
+        getInternalFunction("getCoroutineContext")
+    override val returnIfSuspended =
+        getInternalFunction("returnIfSuspended")
 
     override val functionAdapter: IrClassSymbol
         get() = TODO()
@@ -152,6 +148,9 @@ class WasmSymbols(
 
     val exportString = getInternalFunction("exportString")
     val unsafeGetScratchRawMemory = getInternalFunction("unsafeGetScratchRawMemory")
+
+    val startCoroutineUninterceptedOrReturnIntrinsics =
+        (0..2).map { getInternalFunction("startCoroutineUninterceptedOrReturnIntrinsic$it") }
 
     // KProperty implementations
     val kLocalDelegatedPropertyImpl: IrClassSymbol = this.getInternalClass("KLocalDelegatedPropertyImpl")

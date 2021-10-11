@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorI
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.wasm.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.*
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToFunctionCallsLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.WrapInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -78,14 +81,6 @@ private val lateinitUsageLoweringPhase = makeWasmModulePhase(
     ::LateinitUsageLowering,
     name = "LateinitUsage",
     description = "Insert checks for lateinit field references"
-)
-
-
-// TODO make all lambda-related stuff work with IrFunctionExpression and drop this phase
-private val provisionalFunctionExpressionPhase = makeWasmModulePhase(
-    { ProvisionalFunctionExpressionLowering() },
-    name = "FunctionExpression",
-    description = "Transform IrFunctionExpression to a local function reference"
 )
 
 private val wrapInlineDeclarationsWithReifiedTypeParametersPhase = makeWasmModulePhase(
@@ -245,6 +240,27 @@ private val innerClassConstructorCallsLoweringPhase = makeWasmModulePhase(
     { context -> InnerClassConstructorCallsLowering(context, context.innerClassesSupport) },
     name = "InnerClassConstructorCallsLowering",
     description = "Replace inner class constructor invocation"
+)
+
+private val suspendFunctionsLoweringPhase = makeWasmModulePhase(
+    ::JsSuspendFunctionsLowering,
+    name = "SuspendFunctionsLowering",
+    description = "Transform suspend functions into CoroutineImpl instance and build state machine"
+)
+
+private val addContinuationToNonLocalSuspendFunctionsLoweringPhase = makeWasmModulePhase(
+    ::AddContinuationToNonLocalSuspendFunctionsLowering,
+    name = "AddContinuationToNonLocalSuspendFunctionsLowering",
+    description = "Add explicit continuation as last parameter of suspend functions"
+)
+
+private val addContinuationToFunctionCallsLoweringPhase = makeWasmModulePhase(
+    ::AddContinuationToFunctionCallsLowering,
+    name = "AddContinuationToFunctionCallsLowering",
+    description = "Replace suspend function calls with calls with continuation",
+    prerequisite = setOf(
+        addContinuationToNonLocalSuspendFunctionsLoweringPhase,
+    )
 )
 
 private val defaultArgumentStubGeneratorPhase = makeWasmModulePhase(
@@ -461,7 +477,6 @@ val wasmPhases = NamedCompilerPhase(
             wrapInlineDeclarationsWithReifiedTypeParametersPhase then
 
             functionInliningPhase then
-            provisionalFunctionExpressionPhase then
             lateinitNullableFieldsPhase then
             lateinitDeclarationLoweringPhase then
             lateinitUsageLoweringPhase then
@@ -483,8 +498,6 @@ val wasmPhases = NamedCompilerPhase(
             propertiesLoweringPhase then
             primaryConstructorLoweringPhase then
             delegateToPrimaryConstructorLoweringPhase then
-            initializersLoweringPhase then
-            initializersCleanupLoweringPhase then
             // Common prefix ends
 
             enumEntryInstancesLoweringPhase then
@@ -495,8 +508,12 @@ val wasmPhases = NamedCompilerPhase(
             enumUsageLoweringPhase then
             enumEntryRemovalLoweringPhase then
 
-//            TODO: Requires stdlib
-//            suspendFunctionsLoweringPhase then
+            suspendFunctionsLoweringPhase then
+            initializersLoweringPhase then
+            initializersCleanupLoweringPhase then
+
+            addContinuationToNonLocalSuspendFunctionsLoweringPhase then
+            addContinuationToFunctionCallsLoweringPhase then
 
             stringConstructorLowering then
             tryCatchCanonicalization then
