@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.gradle.incremental
 
 import com.google.gson.GsonBuilder
 import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.compileAll
-import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.readBytes
 import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.snapshot
-import org.jetbrains.kotlin.gradle.util.compileSources
 import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
 import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.SourceFile.JavaSourceFile
 import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.compile
 import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.snapshotAll
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
@@ -94,15 +93,15 @@ abstract class ClasspathSnapshotTestCommon {
     object Util {
 
         /** Compiles the source files in the given directory and returns all generated .class files. */
-        fun compileAll(srcDir: File, tmpDir: TemporaryFolder): List<ClassFile> {
-            return compileKotlin(srcDir, tmpDir) + compileJava(srcDir, tmpDir)
+        fun compileAll(srcDir: File, classpath: List<File>, tmpDir: TemporaryFolder): List<ClassFile> {
+            return compileKotlin(srcDir, classpath, tmpDir) + compileJava(srcDir, classpath, tmpDir)
         }
 
-        private fun compileKotlin(srcDir: File, tmpDir: TemporaryFolder): List<ClassFile> {
+        private fun compileKotlin(srcDir: File, classpath: List<File>, tmpDir: TemporaryFolder): List<ClassFile> {
             val preCompiledKotlinClassesDir = srcDir.path.let {
                 File(it.substringBeforeLast("src") + "classes" + it.substringAfterLast("src"))
             }
-            preCompileKotlinFilesIfNecessary(srcDir, preCompiledKotlinClassesDir, tmpDir)
+            preCompileKotlinFilesIfNecessary(srcDir, preCompiledKotlinClassesDir, classpath, tmpDir)
             return getClassFilesInDir(preCompiledKotlinClassesDir)
         }
 
@@ -117,12 +116,13 @@ abstract class ClasspathSnapshotTestCommon {
         private fun preCompileKotlinFilesIfNecessary(
             srcDir: File,
             preCompiledKotlinClassesDir: File,
+            classpath: List<File>,
             tmpDir: TemporaryFolder,
             preCompile: Boolean = false // Set to `true` to pre-compile Kotlin class files locally (DO NOT check in with preCompile = true)
         ) {
             if (preCompile) {
                 if (!preCompiledKotlinClassesDirs.contains(preCompiledKotlinClassesDir)) {
-                    val classFiles = doCompileKotlin(srcDir, tmpDir)
+                    val classFiles = doCompileKotlin(srcDir, classpath, tmpDir)
                     preCompiledKotlinClassesDir.deleteRecursively()
                     for (classFile in classFiles) {
                         File(preCompiledKotlinClassesDir, classFile.unixStyleRelativePath).apply {
@@ -138,34 +138,41 @@ abstract class ClasspathSnapshotTestCommon {
         fun SourceFile.compile(tmpDir: TemporaryFolder): List<ClassFile> {
             return if (this is KotlinSourceFile) {
                 preCompiledClassFiles.forEach {
-                    preCompileKotlinFilesIfNecessary(baseDir, it.classRoot, tmpDir)
+                    preCompileKotlinFilesIfNecessary(baseDir, it.classRoot, classpath = emptyList(), tmpDir)
                 }
                 preCompiledClassFiles
             } else {
                 val srcDir = tmpDir.newFolder()
                 asFile().copyTo(File(srcDir, unixStyleRelativePath))
-                compileAll(srcDir, tmpDir)
+                compileAll(srcDir, classpath = emptyList(), tmpDir)
             }
         }
 
-        private fun doCompileKotlin(srcDir: File, tmpDir: TemporaryFolder): List<ClassFile> {
+        private fun doCompileKotlin(srcDir: File, classpath: List<File>, tmpDir: TemporaryFolder): List<ClassFile> {
             if (srcDir.walk().none { it.path.endsWith(".kt") }) {
                 return emptyList()
             }
 
             val classesDir = tmpDir.newFolder()
-            org.jetbrains.kotlin.test.MockLibraryUtil.compileKotlin(srcDir.path, classesDir)
+            org.jetbrains.kotlin.test.MockLibraryUtil.compileKotlin(
+                srcDir.path,
+                classesDir,
+                extraClasspath = classpath.map { it.path }.toTypedArray()
+            )
             return getClassFilesInDir(classesDir)
         }
 
-        private fun compileJava(srcDir: File, tmpDir: TemporaryFolder): List<ClassFile> {
-            val javaSourceFiles = srcDir.walk().toList().filter { it.path.endsWith(".java") }
-            if (javaSourceFiles.isEmpty()) {
+        private fun compileJava(srcDir: File, classpath: List<File>, tmpDir: TemporaryFolder): List<ClassFile> {
+            val javaFiles = srcDir.walk().toList().filter { it.path.endsWith(".java") }
+            if (javaFiles.isEmpty()) {
                 return emptyList()
             }
 
             val classesDir = tmpDir.newFolder()
-            compileSources(javaSourceFiles, classesDir)
+            val classpathOption =
+                if (classpath.isNotEmpty()) listOf("-classpath", classpath.joinToString(File.pathSeparator)) else emptyList()
+
+            KotlinTestUtils.compileJavaFiles(javaFiles, listOf("-d", classesDir.path) + classpathOption)
             return getClassFilesInDir(classesDir)
         }
 
@@ -181,6 +188,7 @@ abstract class ClasspathSnapshotTestCommon {
         @Suppress("MemberVisibilityCanBePrivate")
         fun ClassFile.asFile() = File(classRoot, unixStyleRelativePath)
 
+        @Suppress("MemberVisibilityCanBePrivate")
         fun ClassFile.readBytes() = asFile().readBytes()
 
         fun ClassFile.snapshot(protoBased: Boolean = true): ClassSnapshot = listOf(this).snapshotAll(protoBased).single()

@@ -34,6 +34,9 @@ abstract class ClasspathChangesComputerTest : ClasspathSnapshotTestCommon() {
 
     @Test
     abstract fun testVariousAbiChanges()
+
+    @Test
+    abstract fun testImpactAnalysis()
 }
 
 class KotlinClassesClasspathChangesComputerTest : ClasspathChangesComputerTest() {
@@ -47,9 +50,9 @@ class KotlinClassesClasspathChangesComputerTest : ClasspathChangesComputerTest()
 
         Changes(
             lookupSymbols = setOf(
-                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SimpleKotlinClass"),
                 LookupSymbol(name = "changedPublicMethod", scope = "com.example.SimpleKotlinClass"),
-                LookupSymbol(name = "publicMethod", scope = "com.example.SimpleKotlinClass")
+                LookupSymbol(name = "publicMethod", scope = "com.example.SimpleKotlinClass"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SimpleKotlinClass")
             ),
             fqNames = setOf("com.example.SimpleKotlinClass")
         ).assertEquals(changes)
@@ -78,13 +81,13 @@ class KotlinClassesClasspathChangesComputerTest : ClasspathChangesComputerTest()
                 LookupSymbol(name = "ModifiedClassUnchangedMembers", scope = "com.example"),
 
                 // ModifiedClassChangedMembers
-                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = "modifiedProperty", scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = "addedProperty", scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = "removedProperty", scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = "modifiedFunction", scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = "addedFunction", scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = "removedFunction", scope = "com.example.ModifiedClassChangedMembers"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.ModifiedClassChangedMembers"),
 
                 // AddedClass
                 LookupSymbol(name = "AddedClass", scope = "com.example"),
@@ -93,7 +96,6 @@ class KotlinClassesClasspathChangesComputerTest : ClasspathChangesComputerTest()
                 LookupSymbol(name = "RemovedClass", scope = "com.example"),
 
                 // Top-level properties and functions
-                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example"),
                 LookupSymbol(name = "modifiedTopLevelProperty", scope = "com.example"),
                 LookupSymbol(name = "addedTopLevelProperty", scope = "com.example"),
                 LookupSymbol(name = "removedTopLevelProperty", scope = "com.example"),
@@ -101,7 +103,8 @@ class KotlinClassesClasspathChangesComputerTest : ClasspathChangesComputerTest()
                 LookupSymbol(name = "modifiedTopLevelFunction", scope = "com.example"),
                 LookupSymbol(name = "addedTopLevelFunction", scope = "com.example"),
                 LookupSymbol(name = "removedTopLevelFunction", scope = "com.example"),
-                LookupSymbol(name = "movedTopLevelFunction", scope = "com.example")
+                LookupSymbol(name = "movedTopLevelFunction", scope = "com.example"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example")
             ),
             fqNames = setOf(
                 "com.example.ModifiedClassUnchangedMembers",
@@ -109,6 +112,33 @@ class KotlinClassesClasspathChangesComputerTest : ClasspathChangesComputerTest()
                 "com.example.AddedClass",
                 "com.example.RemovedClass",
                 "com.example"
+            )
+        ).assertEquals(changes)
+    }
+
+    @Test
+    override fun testImpactAnalysis() {
+        val classpathSourceDir = File(testDataDir, "../ClasspathChangesComputerTest/testImpactAnalysis/src/kotlin").canonicalFile
+        val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir)
+        val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir)
+        val changes = ClasspathChangesComputer.compute(currentSnapshot, previousSnapshot).normalize()
+
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "someProperty", scope = "com.example.ChangedSuperClass"),
+                LookupSymbol(name = "someProperty", scope = "com.example.SubClassSameModule"),
+                LookupSymbol(name = "someProperty", scope = "com.example.SubClassDifferentModule"),
+                LookupSymbol(name = "someFunction", scope = "com.example.ChangedSuperClass"),
+                LookupSymbol(name = "someFunction", scope = "com.example.SubClassSameModule"),
+                LookupSymbol(name = "someFunction", scope = "com.example.SubClassDifferentModule"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.ChangedSuperClass"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SubClassSameModule"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SubClassDifferentModule")
+            ),
+            fqNames = setOf(
+                "com.example.ChangedSuperClass",
+                "com.example.SubClassSameModule",
+                "com.example.SubClassDifferentModule"
             )
         ).assertEquals(changes)
     }
@@ -159,9 +189,9 @@ class JavaClassesClasspathChangesComputerTest(private val protoBased: Boolean) :
 
         Changes(
             lookupSymbols = setOf(
-                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SimpleJavaClass"),
                 LookupSymbol(name = "changedPublicMethod", scope = "com.example.SimpleJavaClass"),
-                LookupSymbol(name = "publicMethod", scope = "com.example.SimpleJavaClass")
+                LookupSymbol(name = "publicMethod", scope = "com.example.SimpleJavaClass"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SimpleJavaClass")
             ),
             fqNames = setOf("com.example.SimpleJavaClass")
         ).assertEquals(changes)
@@ -190,13 +220,13 @@ class JavaClassesClasspathChangesComputerTest(private val protoBased: Boolean) :
                 LookupSymbol(name = "ModifiedClassUnchangedMembers", scope = "com.example"),
 
                 // ModifiedClassChangedMembers
-                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = "modifiedField", scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = "addedField", scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = "removedField", scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = "modifiedMethod", scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = "addedMethod", scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = "removedMethod", scope = "com.example.ModifiedClassChangedMembers"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.ModifiedClassChangedMembers"),
 
                 // AddedClass
                 LookupSymbol(name = "AddedClass", scope = "com.example"),
@@ -206,10 +236,10 @@ class JavaClassesClasspathChangesComputerTest(private val protoBased: Boolean) :
             ) + if (protoBased) {
                 setOf(
                     // AddedClass
-                    LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.AddedClass"),
                     LookupSymbol(name = "someField", scope = "com.example.AddedClass"),
                     LookupSymbol(name = "<init>", scope = "com.example.AddedClass"),
-                    LookupSymbol(name = "someMethod", scope = "com.example.AddedClass")
+                    LookupSymbol(name = "someMethod", scope = "com.example.AddedClass"),
+                    LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.AddedClass")
                 )
             } else {
                 emptySet()
@@ -222,11 +252,53 @@ class JavaClassesClasspathChangesComputerTest(private val protoBased: Boolean) :
             )
         ).assertEquals(changes)
     }
+
+    @Test
+    override fun testImpactAnalysis() {
+        val classpathSourceDir = File(testDataDir, "../ClasspathChangesComputerTest/testImpactAnalysis/src/java").canonicalFile
+        val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir, protoBased)
+        val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir, protoBased)
+        val changes = computeClasspathChanges(currentSnapshot, previousSnapshot)
+
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "someField", scope = "com.example.ChangedSuperClass"),
+                LookupSymbol(name = "someMethod", scope = "com.example.ChangedSuperClass"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.ChangedSuperClass")
+            ) + if (protoBased) {
+                setOf(
+                    LookupSymbol(name = "someField", scope = "com.example.SubClassSameModule"),
+                    LookupSymbol(name = "someField", scope = "com.example.SubClassDifferentModule"),
+                    LookupSymbol(name = "someMethod", scope = "com.example.SubClassSameModule"),
+                    LookupSymbol(name = "someMethod", scope = "com.example.SubClassDifferentModule"),
+                    LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SubClassSameModule"),
+                    LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SubClassDifferentModule")
+                )
+            } else {
+                emptySet()
+            },
+            fqNames = setOf(
+                "com.example.ChangedSuperClass"
+            ) + if (protoBased) {
+                setOf(
+                    "com.example.SubClassSameModule",
+                    "com.example.SubClassDifferentModule"
+                )
+            } else {
+                emptySet()
+            }
+        ).assertEquals(changes)
+    }
 }
 
 private fun snapshotClasspath(classpathSourceDir: File, tmpDir: TemporaryFolder, protoBased: Boolean = true): ClasspathSnapshot {
-    val classpathEntrySnapshots = classpathSourceDir.listFiles()!!.map { classpathEntrySourceDir ->
-        val classFiles = compileAll(classpathEntrySourceDir, tmpDir)
+    val classpath = mutableListOf<File>()
+    val classpathEntrySnapshots = classpathSourceDir.listFiles()!!.sortedBy { it.name }.map { classpathEntrySourceDir ->
+        val classFiles = compileAll(classpathEntrySourceDir, classpath, tmpDir)
+        classFiles.firstOrNull()?.let {
+            classpath.add(it.classRoot)
+        }
+
         val relativePaths = classFiles.map { it.unixStyleRelativePath }
         val classSnapshots = classFiles.snapshotAll(protoBased)
         ClasspathEntrySnapshot(
