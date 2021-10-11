@@ -6639,6 +6639,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("genericLambdaOnStringCompanion.kt")
+        public void testGenericLambdaOnStringCompanion() throws Exception {
+            runTest("compiler/testData/codegen/box/companion/genericLambdaOnStringCompanion.kt");
+        }
+
+        @Test
         @TestMetadata("inlineFunctionCompanionPropertyAccess.kt")
         public void testInlineFunctionCompanionPropertyAccess() throws Exception {
             runTest("compiler/testData/codegen/box/companion/inlineFunctionCompanionPropertyAccess.kt");

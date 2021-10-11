@@ -4423,6 +4423,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/companion/delegatedPropertyOnCompanion.kt");
         }
 
+        @TestMetadata("genericLambdaOnStringCompanion.kt")
+        public void testGenericLambdaOnStringCompanion() throws Exception {
+            runTest("compiler/testData/codegen/box/companion/genericLambdaOnStringCompanion.kt");
+        }
+
         @TestMetadata("inlineFunctionCompanionPropertyAccess.kt")
         public void testInlineFunctionCompanionPropertyAccess() throws Exception {
             runTest("compiler/testData/codegen/box/companion/inlineFunctionCompanionPropertyAccess.kt");
