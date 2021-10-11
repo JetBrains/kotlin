@@ -1,16 +1,19 @@
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 // IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
-// IGNORE_BACKEND: JS_IR
 
 import kotlin.contracts.*
+
+var x = ""
+
+fun baz(s: String) { x += s }
 
 class A {
     val value = "Some value"
 
     init {
         foo {
-            println(value)
+            baz(value)
         }
     }
 }
@@ -23,6 +26,7 @@ fun foo(block: () -> Unit) {
 }
 
 fun box(): String {
-    A()
+    val a = A()
+    if (x != a.value) return "FAIL: $x"
     return "OK"
 }
