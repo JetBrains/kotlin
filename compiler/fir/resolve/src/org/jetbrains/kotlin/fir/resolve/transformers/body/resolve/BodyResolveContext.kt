@@ -333,6 +333,7 @@ class BodyResolveContext(
     ): BodyResolveContext =
         BodyResolveContext(returnTypeCalculator, dataFlowAnalyzerContext, targetedLocalClasses, outerLocalClassForNested).apply {
             file = this@BodyResolveContext.file
+            fileImportsScope += this@BodyResolveContext.fileImportsScope
             towerDataContextForAnonymousFunctions.putAll(this@BodyResolveContext.towerDataContextForAnonymousFunctions)
             towerDataContextForCallableReferences.putAll(this@BodyResolveContext.towerDataContextForCallableReferences)
             containers = this@BodyResolveContext.containers

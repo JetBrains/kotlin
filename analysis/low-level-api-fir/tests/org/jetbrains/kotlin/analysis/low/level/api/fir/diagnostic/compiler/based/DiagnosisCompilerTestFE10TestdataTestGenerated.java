@@ -36736,6 +36736,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("forEachInLocalClass.kt")
+            public void testForEachInLocalClass() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/forEachInLocalClass.kt");
+            }
+
+            @Test
             @TestMetadata("hidesMembers.kt")
             public void testHidesMembers() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/hidesMembers.kt");
