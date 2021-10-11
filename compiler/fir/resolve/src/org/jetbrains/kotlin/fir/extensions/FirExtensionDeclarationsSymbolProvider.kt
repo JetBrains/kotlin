@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.validate
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -53,8 +54,12 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
     // ------------------------------------------ generators ------------------------------------------
 
     private fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
-        // TODO: what we should do if multiple extensions want to generate class with same classId?
-        return extensions.firstNotNullOfOrNull { it.generateClassLikeDeclaration(classId) }?.also { it.fir.validate() }
+        val generatedClasses = extensions.mapNotNull { it.generateClassLikeDeclaration(classId) }.onEach { it.fir.validate() }
+        return when (generatedClasses.size) {
+            0 -> null
+            1 -> generatedClasses.first()
+            else -> error("Multiple plugins generated classes with same classId $classId\n${generatedClasses.joinToString("\n") { it.fir.render() }}")
+        }
     }
 
     private fun generateTopLevelFunctions(callableId: CallableId): List<FirNamedFunctionSymbol> {
