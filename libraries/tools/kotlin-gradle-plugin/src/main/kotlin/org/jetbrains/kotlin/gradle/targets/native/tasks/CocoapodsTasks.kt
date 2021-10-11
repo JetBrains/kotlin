@@ -160,7 +160,7 @@ open class PodspecTask : DefaultTask() {
                 |                "$gradleCommand" -p "${'$'}REPO_ROOT" ${'$'}KOTLIN_PROJECT_PATH:$SYNC_TASK_NAME \
                 |                    -P${KotlinCocoapodsPlugin.PLATFORM_PROPERTY}=${'$'}PLATFORM_NAME \
                 |                    -P${KotlinCocoapodsPlugin.ARCHS_PROPERTY}="${'$'}ARCHS" \
-                |                    -P${KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY}=${'$'}CONFIGURATION
+                |                    -P${KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY}="${'$'}CONFIGURATION"
                 |            SCRIPT
                 |        }
                 |    ]
