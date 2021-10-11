@@ -316,7 +316,14 @@ class CallAndReferenceGenerator(
             val calleeReference = variableAssignment.calleeReference
             val symbol =
                 calleeReference.toSymbolForCall(session, classifierStorage, declarationStorage, conversionScope, preferGetter = false)
-            val origin = IrStatementOrigin.EQ
+            val origin = if (variableAssignment.source?.kind is FirFakeSourceElementKind.DesugaredIncrementOrDecrement) {
+                if ((variableAssignment.rValue as? FirFunctionCall)?.calleeReference?.name?.asString() == "inc")
+                    IrStatementOrigin.PREFIX_INCR
+                else
+                    IrStatementOrigin.PREFIX_DECR
+            } else {
+                IrStatementOrigin.EQ
+            }
             return variableAssignment.convertWithOffsets { startOffset, endOffset ->
                 val assignedValue = visitor.convertToIrExpression(variableAssignment.rValue)
                 when (symbol) {
