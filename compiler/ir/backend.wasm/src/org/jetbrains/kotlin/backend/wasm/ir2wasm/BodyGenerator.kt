@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
+import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -175,9 +176,16 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
     override fun visitGetValue(expression: IrGetValue) {
         val valueSymbol = expression.symbol
-        body.buildGetLocal(context.referenceLocal(valueSymbol))
-
         val valueDeclaration = valueSymbol.owner
+        body.buildGetLocal(
+            // Handle cases when IrClass::thisReceiver is referenced instead
+            // of the value parameter of current function
+            if (valueDeclaration.isDispatchReceiver)
+                context.referenceLocal(0)
+            else
+                context.referenceLocal(valueSymbol)
+        )
+
         if (valueSymbol.owner is IrValueParameter) {
             val parent = valueDeclaration.parent
             if (parent is IrFunction && parent.isExported(backendContext)) {
