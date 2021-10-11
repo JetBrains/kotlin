@@ -91,6 +91,12 @@ public class HLExpressionTypeTestGenerated extends AbstractHLExpressionTypeTest 
     }
 
     @Test
+    @TestMetadata("resolvedSuper.kt")
+    public void testResolvedSuper() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionType/resolvedSuper.kt");
+    }
+
+    @Test
     @TestMetadata("returnExpression.kt")
     public void testReturnExpression() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionType/returnExpression.kt");
@@ -100,6 +106,24 @@ public class HLExpressionTypeTestGenerated extends AbstractHLExpressionTypeTest 
     @TestMetadata("stringLiteral.kt")
     public void testStringLiteral() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionType/stringLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedSuper_multipleSuperTypes.kt")
+    public void testUnresolvedSuper_multipleSuperTypes() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionType/unresolvedSuper_multipleSuperTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedSuper_noSuperType.kt")
+    public void testUnresolvedSuper_noSuperType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionType/unresolvedSuper_noSuperType.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedSuper_singleSuperType.kt")
+    public void testUnresolvedSuper_singleSuperType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionType/unresolvedSuper_singleSuperType.kt");
     }
 
     @Test
