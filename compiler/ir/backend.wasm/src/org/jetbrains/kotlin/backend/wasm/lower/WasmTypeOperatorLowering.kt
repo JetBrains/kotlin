@@ -13,16 +13,15 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.erasedUpperBound
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.getRuntimeClass
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -98,8 +97,11 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     private fun IrType.isInlined(): Boolean =
         context.inlineClassesUtils.isTypeInlined(this)
 
-    private val IrType.erasedType: IrType
-        get() = this.getRuntimeClass?.defaultType ?: builtIns.anyType
+    private val IrType.eraseToClassOrInterface: IrClass
+        get() = this.erasedUpperBound ?: builtIns.anyClass.owner
+
+    private val IrType.eraseToClass: IrClass
+        get() = this.getRuntimeClass ?: builtIns.anyClass.owner
 
     private fun generateTypeCheck(
         valueProvider: () -> IrExpression,
@@ -112,7 +114,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         // Inlined values have no type information on runtime.
         // But since they are final we can compute type checks on compile time.
         if (fromType.isInlined()) {
-            val result = fromType.erasedType.isSubtypeOf(toType.erasedType, context.typeSystem)
+            val result = fromType.eraseToClassOrInterface.isSubclassOf(toType.eraseToClassOrInterface)
             return builder.irBoolean(result)
         }
 
@@ -188,11 +190,15 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             }
         }
 
-        if (fromType.erasedType.isSubtypeOf(toType.erasedType, context.typeSystem)) {
+        if (fromType.eraseToClassOrInterface.isSubclassOf(toType.eraseToClassOrInterface)) {
             return value
         }
         if (toType.isNothing()) {
-            return value
+            // Casting to nothing is unreachable...
+            return builder.irComposite(resultType = context.irBuiltIns.nothingType) {
+                +value  // ... but we have to evaluate an argument
+                +irCall(symbols.wasmUnreachable)
+            }
         }
 
         return builder.irCall(symbols.wasmRefCast, type = toType).apply {
@@ -208,7 +214,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         val toType = expression.typeOperand
         val fromType = expression.argument.type
 
-        if (fromType.erasedType.isSubtypeOf(expression.type.erasedType, context.typeSystem)) {
+        if (fromType.eraseToClassOrInterface.isSubclassOf(expression.type.eraseToClassOrInterface)) {
             return narrowType(fromType, expression.type, expression.argument)
         }
 
@@ -272,12 +278,12 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
 
     private fun generateIsSubClass(argument: IrExpression, toType: IrType): IrExpression {
         val fromType = argument.type
-        val fromTypeErased = fromType.erasedType
-        val toTypeErased = toType.erasedType
-        if (fromTypeErased.isSubtypeOfClass(toTypeErased.classOrNull!!)) {
+        val fromTypeErased = fromType.eraseToClass
+        val toTypeErased = toType.eraseToClass
+        if (fromTypeErased.isSubclassOf(toTypeErased)) {
             return builder.irTrue()
         }
-        if (!toTypeErased.isSubtypeOfClass(fromTypeErased.classOrNull!!)) {
+        if (!toTypeErased.isSubclassOf(fromTypeErased)) {
             return builder.irFalse()
         }
 
