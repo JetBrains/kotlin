@@ -102,11 +102,11 @@ class FirUnstableSmartcastTypeScope(
     }
 
     override fun getCallableNames(): Set<Name> {
-        return scopes.flatMapTo(hashSetOf()) { it.getContainingCallableNamesIfPresent() }
+        return scopes.flatMapTo(hashSetOf()) { it.getCallableNames() }
     }
 
     override fun getClassifierNames(): Set<Name> {
-        return scopes.flatMapTo(hashSetOf()) { it.getContainingClassifierNamesIfPresent() }
+        return scopes.flatMapTo(hashSetOf()) { it.getClassifierNames() }
     }
 
     override val scopeOwnerLookupNames: List<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {

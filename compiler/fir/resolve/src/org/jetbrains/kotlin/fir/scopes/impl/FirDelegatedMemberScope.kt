@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
@@ -31,7 +31,7 @@ class FirDelegatedMemberScope(
     private val session: FirSession,
     private val scopeSession: ScopeSession,
     private val containingClass: FirClass,
-    private val declaredMemberScope: FirScope,
+    private val declaredMemberScope: FirContainingNamesAwareScope,
     private val delegateFields: List<FirField>,
 ) : FirContainingNamesAwareScope() {
     private val dispatchReceiverType = containingClass.defaultType()
@@ -175,7 +175,7 @@ class FirDelegatedMemberScope(
     @OptIn(ExperimentalStdlibApi::class)
     private val callableNamesLazy: Set<Name> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildSet {
-            addAll(declaredMemberScope.getContainingCallableNamesIfPresent())
+            addAll(declaredMemberScope.getCallableNames())
 
             delegateFields.flatMapTo(this) {
                 buildScope(it)?.getCallableNames() ?: emptySet()
@@ -186,7 +186,7 @@ class FirDelegatedMemberScope(
     @OptIn(ExperimentalStdlibApi::class)
     private val classifierNamesLazy: Set<Name> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildSet {
-            addAll(declaredMemberScope.getContainingClassifierNamesIfPresent())
+            addAll(declaredMemberScope.getClassifierNames())
 
             delegateFields.flatMapTo(this) {
                 buildScope(it)?.getClassifierNames() ?: emptySet()

@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
-class FirCompositeScope(val scopes: Iterable<FirScope>) : FirContainingNamesAwareScope() {
-
+class FirCompositeScope(val scopes: Iterable<FirScope>) : FirScope() {
     override fun processClassifiersByNameWithSubstitution(
         name: Name,
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
@@ -64,15 +63,41 @@ class FirCompositeScope(val scopes: Iterable<FirScope>) : FirContainingNamesAwar
         processComposite(FirScope::processDeclaredConstructors, processor)
     }
 
+    override val scopeOwnerLookupNames: List<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        scopes.flatMap { it.scopeOwnerLookupNames }
+    }
+}
+
+class FirNameAwareCompositeScope(val scopes: Iterable<FirContainingNamesAwareScope>) : FirContainingNamesAwareScope() {
+    private val delegate = FirCompositeScope(scopes)
+
+    override fun processClassifiersByNameWithSubstitution(
+        name: Name,
+        processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
+    ) {
+        delegate.processClassifiersByNameWithSubstitution(name, processor)
+    }
+
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+        delegate.processFunctionsByName(name, processor)
+    }
+
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        delegate.processPropertiesByName(name, processor)
+    }
+
+    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
+        delegate.processDeclaredConstructors(processor)
+    }
+
+    override val scopeOwnerLookupNames: List<String>
+        get() = delegate.scopeOwnerLookupNames
+
     override fun getCallableNames(): Set<Name> {
-        return scopes.flatMapTo(hashSetOf()) { it.getContainingCallableNamesIfPresent() }
+        return scopes.flatMapTo(hashSetOf()) { it.getCallableNames() }
     }
 
     override fun getClassifierNames(): Set<Name> {
-        return scopes.flatMapTo(hashSetOf()) { it.getContainingClassifierNamesIfPresent() }
-    }
-
-    override val scopeOwnerLookupNames: List<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        scopes.flatMap { it.scopeOwnerLookupNames }
+        return scopes.flatMapTo(hashSetOf()) { it.getClassifierNames() }
     }
 }

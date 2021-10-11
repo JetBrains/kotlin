@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.resolve.declaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.FirNameAwareCompositeScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -67,7 +68,7 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
                     symbolProvider
                 )
                 if (extensions.any { it.needToGenerateAdditionalMembersInClass(klass) }) {
-                    FirCompositeScope(
+                    FirNameAwareCompositeScope(
                         listOf(baseScope, FirGeneratedClassDeclaredMemberScope(useSiteSession, klass, needNestedClassifierScope = false))
                     )
                 } else {

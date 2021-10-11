@@ -10,15 +10,12 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.getContainingCallableNamesIfPresent
-import org.jetbrains.kotlin.fir.scopes.getContainingClassifierNamesIfPresent
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
-class FirStaticScope(private val delegateScope: FirScope) : FirContainingNamesAwareScope() {
+class FirStaticScope(private val delegateScope: FirContainingNamesAwareScope) : FirContainingNamesAwareScope() {
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         delegateScope.processClassifiersByNameWithSubstitution(name, processor)
     }
@@ -41,10 +38,10 @@ class FirStaticScope(private val delegateScope: FirScope) : FirContainingNamesAw
 
 
     override fun getCallableNames(): Set<Name> {
-        return delegateScope.getContainingCallableNamesIfPresent()
+        return delegateScope.getCallableNames()
     }
 
     override fun getClassifierNames(): Set<Name> {
-        return delegateScope.getContainingClassifierNamesIfPresent()
+        return delegateScope.getClassifierNames()
     }
 }

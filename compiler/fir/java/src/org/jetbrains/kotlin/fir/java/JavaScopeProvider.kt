@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.scopes.*
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.*
@@ -68,7 +68,7 @@ object JavaScopeProvider : FirScopeProvider() {
         }
     }
 
-    private fun buildDeclaredMemberScope(useSiteSession: FirSession, regularClass: FirRegularClass): FirScope {
+    private fun buildDeclaredMemberScope(useSiteSession: FirSession, regularClass: FirRegularClass): FirContainingNamesAwareScope {
         return if (regularClass is FirJavaClass) useSiteSession.declaredMemberScopeWithLazyNestedScope(
             regularClass,
             existingNames = regularClass.existingNestedClassifierNames,
@@ -112,9 +112,9 @@ object JavaScopeProvider : FirScopeProvider() {
         klass: FirClass,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
-    ): FirScope? {
+    ): FirContainingNamesAwareScope? {
         val scope = getStaticMemberScopeForCallables(klass, useSiteSession, scopeSession, hashSetOf()) ?: return null
-        return FirOnlyCallablesScope(FirStaticScope(scope))
+        return FirNameAwareOnlyCallablesScope(FirStaticScope(scope))
     }
 
     private fun getStaticMemberScopeForCallables(
@@ -193,7 +193,11 @@ object JavaScopeProvider : FirScopeProvider() {
         return result
     }
 
-    override fun getNestedClassifierScope(klass: FirClass, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
+    override fun getNestedClassifierScope(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession
+    ): FirContainingNamesAwareScope? {
         return lazyNestedClassifierScope(
             klass.classId,
             (klass as FirJavaClass).existingNestedClassifierNames,

@@ -41,7 +41,7 @@ class JavaClassUseSiteMemberScope(
     klass: FirJavaClass,
     session: FirSession,
     superTypesScope: FirTypeScope,
-    declaredMemberScope: FirScope
+    declaredMemberScope: FirContainingNamesAwareScope
 ) : AbstractFirUseSiteMemberScope(
     session,
     JavaOverrideChecker(session, klass.javaTypeParameterStack),
@@ -55,13 +55,13 @@ class JavaClassUseSiteMemberScope(
     private val canUseSpecialGetters: Boolean by lazy { !klass.hasKotlinSuper(session) }
 
     private val callableNamesCached by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        declaredMemberScope.getContainingCallableNamesIfPresent() + superTypesScope.getCallableNames()
+        declaredMemberScope.getCallableNames() + superTypesScope.getCallableNames()
     }
 
     override fun getCallableNames(): Set<Name> = callableNamesCached
 
     override fun getClassifierNames(): Set<Name> {
-        return declaredMemberScope.getContainingClassifierNamesIfPresent() + superTypesScope.getClassifierNames()
+        return declaredMemberScope.getClassifierNames() + superTypesScope.getClassifierNames()
     }
 
     private fun generateAccessorSymbol(

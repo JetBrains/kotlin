@@ -15,12 +15,6 @@ abstract class FirContainingNamesAwareScope : FirScope() {
     abstract fun getClassifierNames(): Set<Name>
 }
 
-fun FirScope.getContainingCallableNamesIfPresent(): Set<Name> =
-    if (this is FirContainingNamesAwareScope) getCallableNames() else emptySet()
-
-fun FirScope.getContainingClassifierNamesIfPresent(): Set<Name> =
-    if (this is FirContainingNamesAwareScope) getClassifierNames() else emptySet()
-
 fun FirContainingNamesAwareScope.processAllFunctions(processor: (FirNamedFunctionSymbol) -> Unit) {
     for (name in getCallableNames()) {
         processFunctionsByName(name, processor)

@@ -20,15 +20,17 @@ import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 class FirKotlinScopeProvider(
     val declaredMemberScopeDecorator: (
         klass: FirClass,
-        declaredMemberScope: FirScope,
+        declaredMemberScope: FirContainingNamesAwareScope,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
-    ) -> FirScope = { _, declaredMemberScope, _, _ -> declaredMemberScope }
+    ) -> FirContainingNamesAwareScope = { _, declaredMemberScope, _, _ -> declaredMemberScope }
 ) : FirScopeProvider(), FirSessionComponent {
     override fun getUseSiteMemberScope(
         klass: FirClass,
@@ -68,14 +70,18 @@ class FirKotlinScopeProvider(
         klass: FirClass,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
-    ): FirScope? {
+    ): FirContainingNamesAwareScope? {
         return when (klass.classKind) {
-            ClassKind.ENUM_CLASS -> FirOnlyCallablesScope(FirStaticScope(useSiteSession.declaredMemberScope(klass)))
+            ClassKind.ENUM_CLASS -> FirNameAwareOnlyCallablesScope(FirStaticScope(useSiteSession.declaredMemberScope(klass)))
             else -> null
         }
     }
 
-    override fun getNestedClassifierScope(klass: FirClass, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
+    override fun getNestedClassifierScope(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession
+    ): FirContainingNamesAwareScope? {
         return useSiteSession.nestedClassifierScope(klass)
     }
 }

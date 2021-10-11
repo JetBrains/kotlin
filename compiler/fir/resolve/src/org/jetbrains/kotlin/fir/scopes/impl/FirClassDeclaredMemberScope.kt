@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.getContainingClassifierNamesIfPresent
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -26,7 +24,7 @@ class FirClassDeclaredMemberScopeImpl(
     existingNames: List<Name>? = null,
     symbolProvider: FirSymbolProvider? = null
 ) : FirClassDeclaredMemberScope() {
-    private val nestedClassifierScope: FirScope? = if (useLazyNestedClassifierScope) {
+    private val nestedClassifierScope: FirContainingNamesAwareScope? = if (useLazyNestedClassifierScope) {
         lazyNestedClassifierScope(klass.symbol.classId, existingNames!!, symbolProvider!!)
     } else {
         useSiteSession.nestedClassifierScope(klass)
@@ -85,6 +83,6 @@ class FirClassDeclaredMemberScopeImpl(
     }
 
     override fun getClassifierNames(): Set<Name> {
-        return nestedClassifierScope?.getContainingClassifierNamesIfPresent().orEmpty()
+        return nestedClassifierScope?.getClassifierNames().orEmpty()
     }
 }

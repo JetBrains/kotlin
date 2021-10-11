@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.moduleVisibilityChecker
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedForCalls
-import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
@@ -60,7 +60,7 @@ abstract class FirAbstractImportingScope(
             is FirClassSymbol<*> -> this
         }
 
-    private fun FirClassSymbol<*>.getStaticsScope(): FirScope? =
+    private fun FirClassSymbol<*>.getStaticsScope(): FirContainingNamesAwareScope? =
         if (fir.classKind == ClassKind.OBJECT) {
             FirObjectImportedCallableScope(
                 classId, fir.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
@@ -69,7 +69,7 @@ abstract class FirAbstractImportingScope(
             fir.scopeProvider.getStaticScope(fir, session, scopeSession)
         }
 
-    fun getStaticsScope(classId: ClassId): FirScope? =
+    fun getStaticsScope(classId: ClassId): FirContainingNamesAwareScope? =
         provider.getClassLikeSymbolByClassId(classId)?.fullyExpandedSymbol?.getStaticsScope()
 
     protected fun findSingleClassifierSymbolByName(name: Name?, imports: List<FirResolvedImport>): FirClassLikeSymbol<*>? {

@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.fir.java.scopes
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.getContainingCallableNamesIfPresent
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.isStatic
@@ -18,9 +16,9 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JavaClassStaticUseSiteScope internal constructor(
     session: FirSession,
-    private val declaredMemberScope: FirScope,
-    private val superClassScope: FirScope,
-    private val superTypesScopes: List<FirScope>,
+    private val declaredMemberScope: FirContainingNamesAwareScope,
+    private val superClassScope: FirContainingNamesAwareScope,
+    private val superTypesScopes: List<FirContainingNamesAwareScope>,
     javaTypeParameterStack: JavaTypeParameterStack,
 ) : FirContainingNamesAwareScope() {
     private val functions = hashMapOf<Name, Collection<FirNamedFunctionSymbol>>()
@@ -84,9 +82,9 @@ class JavaClassStaticUseSiteScope internal constructor(
     @OptIn(ExperimentalStdlibApi::class)
     override fun getCallableNames(): Set<Name> {
         return buildSet {
-            addAll(declaredMemberScope.getContainingCallableNamesIfPresent())
+            addAll(declaredMemberScope.getCallableNames())
             for (superTypesScope in superTypesScopes) {
-                addAll(superTypesScope.getContainingCallableNamesIfPresent())
+                addAll(superTypesScope.getCallableNames())
             }
         }
     }
@@ -94,9 +92,9 @@ class JavaClassStaticUseSiteScope internal constructor(
     @OptIn(ExperimentalStdlibApi::class)
     override fun getClassifierNames(): Set<Name> {
         return buildSet {
-            addAll(declaredMemberScope.getContainingCallableNamesIfPresent())
+            addAll(declaredMemberScope.getClassifierNames())
             for (superTypesScope in superTypesScopes) {
-                addAll(superTypesScope.getContainingCallableNamesIfPresent())
+                addAll(superTypesScope.getClassifierNames())
             }
         }
     }

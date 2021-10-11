@@ -87,7 +87,6 @@ internal class KtFirScopeProvider(
         val firScope = symbol.withFirForScope { fir ->
             fir.scopeProvider.getStaticScope(fir, analysisSession.rootModuleSession, ScopeSession())
         } ?: return KtFirEmptyMemberScope(symbol)
-        check(firScope is FirContainingNamesAwareScope)
         return KtFirDelegatingScopeImpl(firScope, builder, token)
     }
 

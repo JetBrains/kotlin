@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
@@ -15,7 +18,7 @@ abstract class AbstractFirUseSiteMemberScope(
     session: FirSession,
     overrideChecker: FirOverrideChecker,
     protected val superTypesScope: FirTypeScope,
-    protected val declaredMemberScope: FirScope
+    protected val declaredMemberScope: FirContainingNamesAwareScope
 ) : AbstractFirOverrideScope(session, overrideChecker) {
 
     private val functions = hashMapOf<Name, Collection<FirNamedFunctionSymbol>>()
@@ -23,7 +26,7 @@ abstract class AbstractFirUseSiteMemberScope(
     protected val directOverriddenProperties = hashMapOf<FirPropertySymbol, MutableList<FirPropertySymbol>>()
 
     private val callableNamesCached by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        declaredMemberScope.getContainingCallableNamesIfPresent() + superTypesScope.getCallableNames()
+        declaredMemberScope.getCallableNames() + superTypesScope.getCallableNames()
     }
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
@@ -97,6 +100,6 @@ abstract class AbstractFirUseSiteMemberScope(
     override fun getCallableNames(): Set<Name> = callableNamesCached
 
     override fun getClassifierNames(): Set<Name> {
-        return declaredMemberScope.getContainingClassifierNamesIfPresent() + superTypesScope.getClassifierNames()
+        return declaredMemberScope.getClassifierNames() + superTypesScope.getClassifierNames()
     }
 }

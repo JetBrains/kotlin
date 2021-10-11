@@ -7,15 +7,9 @@ package org.jetbrains.kotlin.analysis.api.fir.scopes
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
-import org.jetbrains.kotlin.fir.scopes.getContainingCallableNamesIfPresent
-import org.jetbrains.kotlin.fir.scopes.getContainingClassifierNamesIfPresent
-import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
 import org.jetbrains.kotlin.analysis.api.scopes.Import
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.scopes.KtStarImportingScope
@@ -25,6 +19,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
+import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirStarImportingScope(
@@ -67,7 +64,7 @@ internal class KtFirStarImportingScope(
                         declarationProvider.getPropertyNamesInPackage(import.packageFqName)
             } else { //member
                 val classId = import.resolvedClassId ?: error("Class id should not be null as relativeClassName is not null")
-                firScope.getStaticsScope(classId)?.getContainingCallableNamesIfPresent().orEmpty()
+                firScope.getStaticsScope(classId)?.getCallableNames().orEmpty()
             }
         }
     }
@@ -79,7 +76,7 @@ internal class KtFirStarImportingScope(
                         declarationProvider.getTypeAliasNamesInPackage(import.packageFqName)
             } else {
                 val classId = import.resolvedClassId ?: error("Class id should not be null as relativeClassName is not null")
-                firScope.getStaticsScope(classId)?.getContainingClassifierNamesIfPresent().orEmpty()
+                firScope.getStaticsScope(classId)?.getClassifierNames().orEmpty()
             }
         }
     }

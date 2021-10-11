@@ -12,20 +12,19 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.scopes.jvm.JvmMappedScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
-
 fun wrapScopeWithJvmMapped(
     klass: FirClass,
-    declaredMemberScope: FirScope,
+    declaredMemberScope: FirContainingNamesAwareScope,
     useSiteSession: FirSession,
     scopeSession: ScopeSession
-): FirScope {
+): FirContainingNamesAwareScope {
     val classId = klass.classId
     val kotlinUnsafeFqName = classId.asSingleFqName().toUnsafe()
     val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(kotlinUnsafeFqName)
