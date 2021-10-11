@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.hasValOrVar
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.hasValOrVar
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isData
-import org.jetbrains.kotlin.fir.declarations.utils.primaryConstructor
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 
 object FirDataClassPrimaryConstructorChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -22,14 +22,14 @@ object FirDataClassPrimaryConstructorChecker : FirRegularClassChecker() {
             return
         }
 
-        val primaryConstructor = declaration.primaryConstructor
+        val primaryConstructor = declaration.primaryConstructorIfAny(context.session)
 
         if (primaryConstructor == null || primaryConstructor.source.let { it == null || it.kind is FirFakeSourceElementKind }) {
             reporter.reportOn(declaration.source, FirErrors.PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS, context)
             return
         }
 
-        val valueParameters = primaryConstructor.valueParameters
+        val valueParameters = primaryConstructor.valueParameterSymbols
         if (valueParameters.isEmpty()) {
             reporter.reportOn(primaryConstructor.source, FirErrors.DATA_CLASS_WITHOUT_PARAMETERS, context)
         }
@@ -37,7 +37,7 @@ object FirDataClassPrimaryConstructorChecker : FirRegularClassChecker() {
             if (parameter.isVararg) {
                 reporter.reportOn(parameter.source, FirErrors.DATA_CLASS_VARARG_PARAMETER, context)
             }
-            if (!parameter.hasValOrVar) {
+            if (parameter.source?.hasValOrVar() != true) {
                 reporter.reportOn(parameter.source, FirErrors.DATA_CLASS_NOT_PROPERTY_PARAMETER, context)
             }
         }

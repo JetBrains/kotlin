@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.primaryConstructor
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
@@ -406,7 +406,7 @@ class BodyResolveContext(
     ): T {
         val labelName = (owner as? FirRegularClass)?.name
             ?: if (owner.classKind == ClassKind.ENUM_ENTRY) {
-                owner.primaryConstructor?.symbol?.callableId?.className?.shortName()
+                owner.primaryConstructorIfAny(holder.session)?.callableId?.className?.shortName()
             } else null
         val type = owner.defaultType()
         val towerElementsForClass = holder.collectTowerDataElementsForClass(owner, type)

@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
-import org.jetbrains.kotlin.fir.declarations.utils.primaryConstructor
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
@@ -36,12 +36,12 @@ object FirPrimaryConstructorSuperTypeChecker : FirRegularClassChecker() {
             return
         }
 
-        val primaryConstructor = declaration.primaryConstructor
+        val primaryConstructorSymbol = declaration.primaryConstructorIfAny(context.session)
 
-        if (primaryConstructor == null) {
+        if (primaryConstructorSymbol == null) {
             checkSupertypeInitializedWithoutPrimaryConstructor(declaration, reporter, context)
         } else {
-            checkSuperTypeNotInitialized(primaryConstructor, declaration, context, reporter)
+            checkSuperTypeNotInitialized(primaryConstructorSymbol, declaration, context, reporter)
         }
     }
 
@@ -55,13 +55,13 @@ object FirPrimaryConstructorSuperTypeChecker : FirRegularClassChecker() {
      *  ```
      */
     private fun checkSuperTypeNotInitialized(
-        primaryConstructor: FirConstructor,
+        primaryConstructorSymbol: FirConstructorSymbol,
         regularClass: FirRegularClass,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
         val containingClass = context.containingDeclarations.lastIsInstanceOrNull<FirRegularClass>()
-        val delegatedConstructorCall = primaryConstructor.delegatedConstructor ?: return
+        val delegatedConstructorCall = primaryConstructorSymbol.resolvedDelegatedConstructorCall ?: return
         // No need to check implicit call to the constructor of `kotlin.Any`.
         val constructedTypeRef = delegatedConstructorCall.constructedTypeRef
         if (constructedTypeRef is FirImplicitAnyTypeRef) return

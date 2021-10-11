@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.contains
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.BlockExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 
@@ -40,7 +42,13 @@ object FirMemberPropertiesChecker : FirClassChecker() {
 
         // If all member properties have its own initializer, we don't need to collect property initialization info at all.
         if (memberPropertySymbols.any { !it.hasInitializer }) {
-            collectPropertyInitialization(declaration, memberPropertySymbols, initializedInConstructor, initializedInInitOrOtherProperty)
+            collectPropertyInitialization(
+                declaration,
+                context.session,
+                memberPropertySymbols,
+                initializedInConstructor,
+                initializedInInitOrOtherProperty
+            )
         }
 
         val deadEnds = declaration.collectDeadEndDeclarations()
@@ -60,6 +68,7 @@ object FirMemberPropertiesChecker : FirClassChecker() {
 
     private fun collectPropertyInitialization(
         klass: FirClass,
+        session: FirSession,
         memberPropertySymbols: Set<FirPropertySymbol>,
         initializedInConstructor: MutableMap<FirPropertySymbol, EventOccurrencesRange>,
         initializedInInitOrOtherProperty: MutableMap<FirPropertySymbol, EventOccurrencesRange>
@@ -86,13 +95,13 @@ object FirMemberPropertiesChecker : FirClassChecker() {
 
         // To handle the delegated constructor call, we need a cache from constructor to (analyzed) property init info.
         val constructorToData =
-            mutableMapOf<FirConstructor, PropertyInitializationInfo>().withDefault { PropertyInitializationInfo.EMPTY }
+            mutableMapOf<FirConstructorSymbol, PropertyInitializationInfo>().withDefault { PropertyInitializationInfo.EMPTY }
 
         fun collectInfoFromGraph(
             graph: ControlFlowGraph,
             map: MutableMap<FirPropertySymbol, EventOccurrencesRange>,
             acc: (EventOccurrencesRange, EventOccurrencesRange) -> EventOccurrencesRange,
-            delegatedConstructor: FirConstructor? = null,
+            delegatedConstructor: FirConstructorSymbol? = null,
         ) {
             val delegatedInfo = delegatedConstructor?.let { constructorToData.getValue(it) } ?: PropertyInitializationInfo.EMPTY
 
@@ -104,7 +113,7 @@ object FirMemberPropertiesChecker : FirClassChecker() {
             val info = delegatedInfo.plus(infoAtExitNode)
 
             if (graph.declaration is FirConstructor) {
-                constructorToData.putIfAbsent(graph.declaration as FirConstructor, info)
+                constructorToData.putIfAbsent((graph.declaration as FirConstructor).symbol, info)
             }
 
             for (propertySymbol in memberPropertySymbols) {
@@ -122,13 +131,15 @@ object FirMemberPropertiesChecker : FirClassChecker() {
             }
         }
 
-        val constructorGraphs = klass.constructorsSortedByDelegation.mapNotNull { it.controlFlowGraphReference?.controlFlowGraph }
+        val constructorGraphs = klass.constructorsSortedByDelegation(session).mapNotNull {
+            it.resolvedControlFlowGraphReference?.controlFlowGraph
+        }
         for (graph in constructorGraphs) {
             collectInfoFromGraph(
                 graph,
                 initializedInConstructor,
                 EventOccurrencesRange::or,
-                (graph.declaration as? FirConstructor)?.delegatedThisConstructor
+                (graph.declaration as? FirConstructor)?.symbol?.delegatedThisConstructor
             )
         }
 

@@ -75,7 +75,7 @@ object FirJvmRecordChecker : FirRegularClassChecker() {
             return
         }
 
-        declaration.primaryConstructor?.valueParameters?.let { params ->
+        declaration.primaryConstructorIfAny(context.session)?.valueParameterSymbols?.let { params ->
             if (params.isEmpty()) {
                 reporter.reportOn(annotationSource, FirJvmErrors.JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS, context)
                 return

@@ -127,7 +127,7 @@ class Fir2IrVisitor(
         } else if (initializer is FirAnonymousObjectExpression) {
             // Otherwise, this is a default-ish enum entry, which doesn't need its own synthetic class.
             // During raw FIR building, we put the delegated constructor call inside an anonymous object.
-            val delegatedConstructor = initializer.anonymousObject.primaryConstructor?.delegatedConstructor
+            val delegatedConstructor = initializer.anonymousObject.primaryConstructorIfAny(session)?.fir?.delegatedConstructor
             if (delegatedConstructor != null) {
                 with(memberGenerator) {
                     irEnumEntry.initializerExpression = irFactory.createExpressionBody(

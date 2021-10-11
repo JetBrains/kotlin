@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.resolved
-import org.jetbrains.kotlin.fir.declarations.utils.primaryConstructor
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -42,7 +42,7 @@ internal fun mapAnnotationParameters(annotation: FirAnnotation, session: FirSess
     if (annotation !is FirAnnotationCall) return emptyMap()
     val annotationCone = annotation.annotationTypeRef.coneType as? ConeClassLikeType ?: return emptyMap()
 
-    val annotationPrimaryCtor = (annotationCone.lookupTag.toSymbol(session)?.fir as? FirRegularClass)?.primaryConstructor
+    val annotationPrimaryCtor = (annotationCone.lookupTag.toSymbol(session)?.fir as? FirRegularClass)?.primaryConstructorIfAny(session)?.fir
     val annotationCtorParameterNames = annotationPrimaryCtor?.valueParameters?.map { it.name }
 
     val resultMap = mutableMapOf<String, FirExpression>()

@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.fir.symbols.impl
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
@@ -29,6 +32,12 @@ sealed class FirFunctionSymbol<D : FirFunction>(
                 is FirPropertyAccessorSymbol -> fir.contractDescription
                 else -> null
             } as? FirResolvedContractDescription
+        }
+
+    val resolvedControlFlowGraphReference: FirControlFlowGraphReference?
+        get() {
+            ensureResolved(FirResolvePhase.BODY_RESOLVE)
+            return fir.controlFlowGraphReference
         }
 }
 
@@ -52,6 +61,25 @@ class FirConstructorSymbol(
 ) : FirFunctionSymbol<FirConstructor>(callableId) {
     val isPrimary: Boolean
         get() = fir.isPrimary
+
+    val resolvedDelegatedConstructor: FirConstructorSymbol?
+        get() {
+            val delegatedConstructorCall = resolvedDelegatedConstructorCall ?: return null
+            return (delegatedConstructorCall.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirConstructorSymbol
+        }
+
+    val resolvedDelegatedConstructorCall: FirDelegatedConstructorCall?
+        get() {
+            if (fir.delegatedConstructor == null) return null
+            ensureResolved(FirResolvePhase.BODY_RESOLVE)
+            return fir.delegatedConstructor
+        }
+
+    val delegatedConstructorCallIsThis: Boolean
+        get() = fir.delegatedConstructor?.isThis ?: false
+
+    val delegatedConstructorCallIsSuper: Boolean
+        get() = fir.delegatedConstructor?.isSuper ?: false
 }
 
 open class FirAccessorSymbol(

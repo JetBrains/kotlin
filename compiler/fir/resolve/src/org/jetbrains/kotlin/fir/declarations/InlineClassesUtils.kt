@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.primaryConstructor
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -31,9 +30,9 @@ internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: F
         ?.toSymbol(session) as? FirRegularClassSymbol
         ?: return null
     symbol.ensureResolved(FirResolvePhase.STATUS)
-    return symbol.fir.getInlineClassUnderlyingParameter()?.returnTypeRef?.coneType
+    return symbol.fir.getInlineClassUnderlyingParameter(session)?.returnTypeRef?.coneType
 }
 
 // TODO: implement inlineClassRepresentation in FirRegularClass instead.
-fun FirRegularClass.getInlineClassUnderlyingParameter(): FirValueParameter? =
-    if (isInline) primaryConstructor?.valueParameters?.singleOrNull() else null
+fun FirRegularClass.getInlineClassUnderlyingParameter(session: FirSession): FirValueParameter? =
+    if (isInline) primaryConstructorIfAny(session)?.fir?.valueParameters?.singleOrNull() else null

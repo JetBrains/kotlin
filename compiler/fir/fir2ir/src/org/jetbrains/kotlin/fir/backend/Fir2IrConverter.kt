@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.fir.backend.generators.DataClassMembersGenerator
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
-import org.jetbrains.kotlin.fir.declarations.utils.primaryConstructor
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
@@ -129,9 +128,9 @@ class Fir2IrConverter(
         anonymousObject: FirAnonymousObject,
         irClass: IrClass = classifierStorage.getCachedIrClass(anonymousObject)!!
     ): IrClass {
-        anonymousObject.primaryConstructor?.let {
+        anonymousObject.primaryConstructorIfAny(session)?.let {
             irClass.declarations += declarationStorage.createIrConstructor(
-                it, irClass, isLocal = true
+                it.fir, irClass, isLocal = true
             )
         }
         val processedCallableNames = mutableSetOf<Name>()

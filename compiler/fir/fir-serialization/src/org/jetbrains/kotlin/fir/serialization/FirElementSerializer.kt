@@ -186,7 +186,7 @@ class FirElementSerializer private constructor(
             builder.typeTable = typeTableProto
         }
 
-        val representation = (klass as? FirRegularClass)?.getInlineClassUnderlyingParameter()
+        val representation = (klass as? FirRegularClass)?.getInlineClassUnderlyingParameter(session)
         if (representation != null) {
             builder.inlineClassUnderlyingPropertyName = getSimpleNameIndex(representation.name)
 
