@@ -130,3 +130,5 @@ fun invokeFunForLambda(call: IrCall) =
         .declarations
         .filterIsInstance<IrSimpleFunction>()
         .single { it.name.asString() == "invoke" }
+
+fun IrFunction.isInlineFunWithReifiedParameter() = isInline && typeParameters.any { it.isReified }

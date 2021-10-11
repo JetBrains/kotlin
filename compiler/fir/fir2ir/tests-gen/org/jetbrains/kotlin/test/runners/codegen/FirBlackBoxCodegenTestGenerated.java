@@ -39653,6 +39653,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("callableReferenceInlinedFun.kt")
+        public void testCallableReferenceInlinedFun() throws Exception {
+            runTest("compiler/testData/codegen/box/reified/callableReferenceInlinedFun.kt");
+        }
+
+        @Test
         @TestMetadata("checkcast.kt")
         public void testCheckcast() throws Exception {
             runTest("compiler/testData/codegen/box/reified/checkcast.kt");

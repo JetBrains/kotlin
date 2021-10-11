@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.wasm.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.WrapInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 
@@ -87,6 +88,12 @@ private val provisionalFunctionExpressionPhase = makeWasmModulePhase(
     description = "Transform IrFunctionExpression to a local function reference"
 )
 
+private val wrapInlineDeclarationsWithReifiedTypeParametersPhase = makeWasmModulePhase(
+    ::WrapInlineDeclarationsWithReifiedTypeParametersLowering,
+    name = "WrapInlineDeclarationsWithReifiedTypeParametersPhase",
+    description = "Wrap inline declarations with reified type parameters"
+)
+
 private val functionInliningPhase = makeCustomWasmModulePhase(
     { context, module ->
         FunctionInlining(context).inline(module)
@@ -94,7 +101,10 @@ private val functionInliningPhase = makeCustomWasmModulePhase(
     },
     name = "FunctionInliningPhase",
     description = "Perform function inlining",
-    prerequisite = setOf(expectDeclarationsRemovingPhase)
+    prerequisite = setOf(
+        expectDeclarationsRemovingPhase,
+        wrapInlineDeclarationsWithReifiedTypeParametersPhase
+    )
 )
 
 private val removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase = makeWasmModulePhase(
@@ -448,6 +458,7 @@ val wasmPhases = NamedCompilerPhase(
 
             // TODO: Need some helpers from stdlib
             // arrayConstructorPhase then
+            wrapInlineDeclarationsWithReifiedTypeParametersPhase then
 
             functionInliningPhase then
             provisionalFunctionExpressionPhase then

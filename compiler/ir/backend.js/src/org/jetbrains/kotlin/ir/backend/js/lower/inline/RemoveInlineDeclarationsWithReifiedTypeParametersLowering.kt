@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.utils.isInlineFunWithReifiedParameter
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
@@ -17,8 +18,6 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 class RemoveInlineDeclarationsWithReifiedTypeParametersLowering: DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        fun IrFunction.isInlineFunWithReifiedParameter() = isInline && typeParameters.any { it.isReified }
-
         if (declaration is IrFunction && declaration.isInlineFunWithReifiedParameter() ||
             declaration is IrProperty && declaration.getter?.isInlineFunWithReifiedParameter() == true
         ) {

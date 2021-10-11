@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendArityStoreLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.inline.CopyInlineFunctionBodyLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.inline.SyntheticAccessorLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.inline.jsRecordExtractedLocalClasses
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
@@ -245,6 +242,12 @@ private val syntheticAccessorLoweringPhase = makeBodyLoweringPhase(
     description = "Wrap top level inline function to access through them from inline functions"
 )
 
+private val wrapInlineDeclarationsWithReifiedTypeParametersLowering = makeBodyLoweringPhase(
+    ::WrapInlineDeclarationsWithReifiedTypeParametersLowering,
+    name = "WrapInlineDeclarationsWithReifiedTypeParametersLowering",
+    description = "Wrap inline declarations with reified type parameters"
+)
+
 private val functionInliningPhase = makeBodyLoweringPhase(
     ::FunctionInlining,
     name = "FunctionInliningPhase",
@@ -252,7 +255,7 @@ private val functionInliningPhase = makeBodyLoweringPhase(
     prerequisite = setOf(
         expectDeclarationsRemovingPhase, sharedVariablesLoweringPhase,
         localClassesInInlineLambdasPhase, localClassesExtractionFromInlineFunctionsPhase,
-        syntheticAccessorLoweringPhase
+        syntheticAccessorLoweringPhase, wrapInlineDeclarationsWithReifiedTypeParametersLowering
     )
 )
 
@@ -359,7 +362,8 @@ private val enumEntryRemovalLoweringPhase = makeDeclarationTransformerPhase(
 private val callableReferenceLowering = makeBodyLoweringPhase(
     ::CallableReferenceLowering,
     name = "CallableReferenceLowering",
-    description = "Build a lambda/callable reference class"
+    description = "Build a lambda/callable reference class",
+    prerequisite = setOf(functionInliningPhase, wrapInlineDeclarationsWithReifiedTypeParametersLowering)
 )
 
 private val returnableBlockLoweringPhase = makeBodyLoweringPhase(
@@ -767,6 +771,7 @@ private val loweringList = listOf<Lowering>(
     localClassesInInlineFunctionsPhase,
     localClassesExtractionFromInlineFunctionsPhase,
     syntheticAccessorLoweringPhase,
+    wrapInlineDeclarationsWithReifiedTypeParametersLowering,
     functionInliningPhase,
     copyInlineFunctionBodyLoweringPhase,
     removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
