@@ -128,8 +128,8 @@ open class PodspecTask : DefaultTask() {
             "|    spec.dependency '${pod.name}'$versionSuffix"
         }.joinToString(separator = "\n")
 
-        val frameworkDir = project.cocoapodsBuildDirs.framework.relativeTo(outputFile.parentFile).path
-        val vendoredFramework = if (publishing.get()) "${frameworkName.get()}.xcframework" else "$frameworkDir/${frameworkName.get()}.framework"
+        val frameworkDir = project.cocoapodsBuildDirs.framework.relativeTo(outputFile.parentFile)
+        val vendoredFramework = if (publishing.get()) "${frameworkName.get()}.xcframework" else frameworkDir.resolve("${frameworkName.get()}.framework").invariantSeparatorsPath
         val vendoredFrameworks = if (extraSpecAttributes.get().containsKey("vendored_frameworks")) "" else "|    spec.vendored_frameworks      = '$vendoredFramework'"
 
         val libraries = if (extraSpecAttributes.get().containsKey("libraries")) "" else "|    spec.libraries                = 'c++'"
@@ -142,7 +142,7 @@ open class PodspecTask : DefaultTask() {
                 |    }
             """.trimMargin()
 
-        val gradleCommand = "\$REPO_ROOT/${gradleWrapper.toRelativeString(project.projectDir)}"
+        val gradleCommand = "\$REPO_ROOT/${gradleWrapper.relativeTo(project.projectDir).invariantSeparatorsPath}"
         val scriptPhase = if (publishing.get() || extraSpecAttributes.get().containsKey("script_phases")) "" else
             """ |
                 |    spec.script_phases = [
