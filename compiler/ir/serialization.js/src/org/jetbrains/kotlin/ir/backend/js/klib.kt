@@ -274,8 +274,11 @@ fun loadIr(
     val createFunctionFactoryCallback =
         if (loadFunctionInterfacesIntoStdlib) {
             { packageFragmentDescriptor: PackageFragmentDescriptor ->
-                IrFileImpl(NaiveSourceBasedFileEntryImpl("${packageFragmentDescriptor.fqName}-[K][Suspend]Functions"), packageFragmentDescriptor, stdlibModule)
-                    .also { stdlibModule.files += it }
+                IrFileImpl(
+                    NaiveSourceBasedFileEntryImpl("${packageFragmentDescriptor.fqName}-[K][Suspend]Functions"),
+                    packageFragmentDescriptor,
+                    stdlibModule
+                ).also { stdlibModule.files += it }
             }
         } else {
             null
@@ -287,7 +290,7 @@ fun loadIr(
             val (psi2IrContext, _) = preparePsi2Ir(depsDescriptors, errorPolicy, symbolTable)
             val irBuiltIns = psi2IrContext.irBuiltIns
             (irBuiltIns as IrBuiltInsOverDescriptors).functionFactory =
-                IrDescriptorBasedFunctionFactory(irBuiltIns, symbolTable, createFunctionFactoryCallback)
+                IrDescriptorBasedFunctionFactory(irBuiltIns, symbolTable, createFunctionFactoryCallback, true)
 
             val feContext = psi2IrContext.run {
                 JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
@@ -349,7 +352,7 @@ fun loadIr(
             val typeTranslator =
                 TypeTranslatorImpl(symbolTable, depsDescriptors.compilerConfiguration.languageVersionSettings, moduleDescriptor)
             val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-            irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(irBuiltIns, symbolTable, createFunctionFactoryCallback)
+            irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(irBuiltIns, symbolTable, createFunctionFactoryCallback, true)
 
             val loweredIcData = if (!depsDescriptors.icUseStdlibCache && !depsDescriptors.icUseStdlibCache) emptyMap() else {
                 val result = mutableMapOf<ModuleDescriptor, SerializedIcData>()

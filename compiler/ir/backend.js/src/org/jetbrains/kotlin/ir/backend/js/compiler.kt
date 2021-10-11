@@ -78,7 +78,8 @@ fun compile(
     }
 
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
-        loadIr(depsDescriptors, irFactory, verifySignatures, filesToLower)
+        loadIr(depsDescriptors, irFactory, verifySignatures, filesToLower, loadFunctionInterfacesIntoStdlib = true)
+
     val mainModule = depsDescriptors.mainModule
     val configuration = depsDescriptors.compilerConfiguration
 

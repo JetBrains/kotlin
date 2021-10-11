@@ -85,7 +85,9 @@ abstract class IrAbstractDescriptorBasedFunctionFactory {
 class IrDescriptorBasedFunctionFactory(
     private val irBuiltIns: IrBuiltInsOverDescriptors,
     private val symbolTable: SymbolTable,
-    getPackageFragment: ((PackageFragmentDescriptor) -> IrPackageFragment)? = null
+    getPackageFragment: ((PackageFragmentDescriptor) -> IrPackageFragment)? = null,
+    // Needed for JS and Wasm backends to "preload" interfaces that can referenced during lowerings
+    private val referenceFunctionsWhenKFunctionAreReferenced: Boolean = false,
 ) : IrAbstractDescriptorBasedFunctionFactory() {
     val getPackageFragment =
         getPackageFragment ?: symbolTable::declareExternalPackageFragmentIfNotExists
@@ -139,6 +141,9 @@ class IrDescriptorBasedFunctionFactory(
     }
 
     override fun kFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
+        if (referenceFunctionsWhenKFunctionAreReferenced)
+            functionN(arity)
+
         return kFunctionNMap.getOrPut(arity) {
             symbolTable.declarator { symbol ->
                 val descriptor = symbol.descriptor as FunctionClassDescriptor
@@ -149,6 +154,9 @@ class IrDescriptorBasedFunctionFactory(
     }
 
     override fun kSuspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
+        if (referenceFunctionsWhenKFunctionAreReferenced)
+            suspendFunctionN(arity)
+
         return kSuspendFunctionNMap.getOrPut(arity) {
             symbolTable.declarator { symbol ->
                 val descriptor = symbol.descriptor as FunctionClassDescriptor

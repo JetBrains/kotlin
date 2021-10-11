@@ -15,7 +15,7 @@ internal fun <T> getContinuation(): Continuation<T> { throw Exception("Implement
 
 @PublishedApi
 @Suppress("UNCHECKED_CAST")
-internal suspend fun <T> returnIfSuspended(@Suppress("UNUSED_PARAMETER") argument: Any?): T {
+internal suspend fun <T> returnIfSuspended(argument: Any?): T {
     return argument as T
 }
 

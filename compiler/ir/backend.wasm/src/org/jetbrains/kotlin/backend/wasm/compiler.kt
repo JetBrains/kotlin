@@ -52,15 +52,6 @@ fun compileWasm(
         ExternalDependenciesGenerator(symbolTable, listOf(deserializer)).generateUnboundSymbolsAsDependencies()
     }
 
-    // Preloading function interfaces that will potentially be referenced by IR lowering.
-    // TODO: Do a smart preload based on what references we have in IR and support big arity
-    repeat(22) {
-        irBuiltIns.functionN(it)
-        irBuiltIns.kFunctionN(it)
-        irBuiltIns.kSuspendFunctionN(it)
-        irBuiltIns.suspendFunctionN(it)
-    }
-
     val irFiles = allModules.flatMap { it.files }
     moduleFragment.files.clear()
     moduleFragment.files += irFiles

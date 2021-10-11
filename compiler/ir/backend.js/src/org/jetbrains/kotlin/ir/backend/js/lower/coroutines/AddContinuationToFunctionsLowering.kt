@@ -91,7 +91,7 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: JsCommonBackendC
         updateFrom(this@createSuspendFunctionStub)
         isSuspend = false
         name = this@createSuspendFunctionStub.name
-        origin = this@createSuspendFunctionStub.origin
+        origin = IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION
         returnType = loweredSuspendFunctionReturnType(this@createSuspendFunctionStub, context.irBuiltIns)
     }.also { function ->
         function.parent = parent
