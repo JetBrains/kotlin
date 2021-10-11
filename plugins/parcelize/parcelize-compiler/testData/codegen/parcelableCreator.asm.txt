@@ -83,9 +83,8 @@ public final class ParcelableCreatorKt : java/lang/Object {
           ICONST_0
           ISTORE (0)
         LABEL (L1)
-          LDC (LA;)
-        LABEL (L2)
         LINENUMBER (30)
+          LDC (LA;)
           LDC (CREATOR)
           INVOKEVIRTUAL (java/lang/Class, getDeclaredField, (Ljava/lang/String;)Ljava/lang/reflect/Field;)
           ACONST_NULL
@@ -93,41 +92,41 @@ public final class ParcelableCreatorKt : java/lang/Object {
           ASTORE (1)
           ALOAD (1)
           INSTANCEOF
-          IFEQ (L3)
+          IFEQ (L2)
           ALOAD (1)
           CHECKCAST
-          GOTO (L4)
-        LABEL (L3)
+          GOTO (L3)
+        LABEL (L2)
           ACONST_NULL
-        LABEL (L4)
-          ASTORE (2)
-          ALOAD (2)
-          IFNONNULL (L5)
-        LABEL (L6)
+        LABEL (L3)
+          DUP
+          IFNONNULL (L4)
+          POP
+        LABEL (L5)
         LINENUMBER (31)
           NEW
           DUP
+          NEW
+          DUP
+          INVOKESPECIAL (java/lang/StringBuilder, <init>, ()V)
           LDC (Could not access CREATOR field in class )
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/String;)Ljava/lang/StringBuilder;)
           LDC (LA;)
           INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
           INVOKEINTERFACE (kotlin/reflect/KClass, getSimpleName, ()Ljava/lang/String;)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, stringPlus, (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;)
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/Object;)Ljava/lang/StringBuilder;)
+          INVOKEVIRTUAL (java/lang/StringBuilder, toString, ()Ljava/lang/String;)
           INVOKESPECIAL (java/lang/IllegalArgumentException, <init>, (Ljava/lang/String;)V)
           ATHROW
-        LABEL (L5)
-        LINENUMBER (30)
-          NOP
-        LABEL (L7)
-        LINENUMBER (31)
-          NOP
-        LABEL (L8)
+        LABEL (L4)
+          POP
+        LABEL (L6)
         LINENUMBER (18)
           ICONST_0
           ISTORE (0)
-        LABEL (L9)
-          LDC (LB;)
-        LABEL (L10)
+        LABEL (L7)
         LINENUMBER (32)
+          LDC (LB;)
           LDC (CREATOR)
           INVOKEVIRTUAL (java/lang/Class, getDeclaredField, (Ljava/lang/String;)Ljava/lang/reflect/Field;)
           ACONST_NULL
@@ -135,41 +134,41 @@ public final class ParcelableCreatorKt : java/lang/Object {
           ASTORE (1)
           ALOAD (1)
           INSTANCEOF
-          IFEQ (L11)
+          IFEQ (L8)
           ALOAD (1)
           CHECKCAST
-          GOTO (L12)
-        LABEL (L11)
+          GOTO (L9)
+        LABEL (L8)
           ACONST_NULL
-        LABEL (L12)
-          ASTORE (2)
-          ALOAD (2)
-          IFNONNULL (L13)
-        LABEL (L14)
+        LABEL (L9)
+          DUP
+          IFNONNULL (L10)
+          POP
+        LABEL (L11)
         LINENUMBER (33)
           NEW
           DUP
+          NEW
+          DUP
+          INVOKESPECIAL (java/lang/StringBuilder, <init>, ()V)
           LDC (Could not access CREATOR field in class )
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/String;)Ljava/lang/StringBuilder;)
           LDC (LB;)
           INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
           INVOKEINTERFACE (kotlin/reflect/KClass, getSimpleName, ()Ljava/lang/String;)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, stringPlus, (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;)
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/Object;)Ljava/lang/StringBuilder;)
+          INVOKEVIRTUAL (java/lang/StringBuilder, toString, ()Ljava/lang/String;)
           INVOKESPECIAL (java/lang/IllegalArgumentException, <init>, (Ljava/lang/String;)V)
           ATHROW
-        LABEL (L13)
-        LINENUMBER (32)
-          NOP
-        LABEL (L15)
-        LINENUMBER (33)
-          NOP
-        LABEL (L16)
+        LABEL (L10)
+          POP
+        LABEL (L12)
         LINENUMBER (19)
           ICONST_0
           ISTORE (0)
-        LABEL (L17)
-          LDC (LC;)
-        LABEL (L18)
+        LABEL (L13)
         LINENUMBER (34)
+          LDC (LC;)
           LDC (CREATOR)
           INVOKEVIRTUAL (java/lang/Class, getDeclaredField, (Ljava/lang/String;)Ljava/lang/reflect/Field;)
           ACONST_NULL
@@ -177,34 +176,35 @@ public final class ParcelableCreatorKt : java/lang/Object {
           ASTORE (1)
           ALOAD (1)
           INSTANCEOF
-          IFEQ (L19)
+          IFEQ (L14)
           ALOAD (1)
           CHECKCAST
-          GOTO (L20)
-        LABEL (L19)
+          GOTO (L15)
+        LABEL (L14)
           ACONST_NULL
-        LABEL (L20)
-          ASTORE (2)
-          ALOAD (2)
-          IFNONNULL (L21)
-        LABEL (L22)
+        LABEL (L15)
+          DUP
+          IFNONNULL (L16)
+          POP
+        LABEL (L17)
         LINENUMBER (35)
           NEW
           DUP
+          NEW
+          DUP
+          INVOKESPECIAL (java/lang/StringBuilder, <init>, ()V)
           LDC (Could not access CREATOR field in class )
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/String;)Ljava/lang/StringBuilder;)
           LDC (LC;)
           INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
           INVOKEINTERFACE (kotlin/reflect/KClass, getSimpleName, ()Ljava/lang/String;)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, stringPlus, (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;)
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/Object;)Ljava/lang/StringBuilder;)
+          INVOKEVIRTUAL (java/lang/StringBuilder, toString, ()Ljava/lang/String;)
           INVOKESPECIAL (java/lang/IllegalArgumentException, <init>, (Ljava/lang/String;)V)
           ATHROW
-        LABEL (L21)
-        LINENUMBER (34)
-          NOP
-        LABEL (L23)
-        LINENUMBER (35)
-          NOP
-        LABEL (L24)
+        LABEL (L16)
+          POP
+        LABEL (L18)
         LINENUMBER (20)
           RETURN
     }
@@ -217,13 +217,71 @@ public final class ParcelableCreatorKt : java/lang/Object {
           ICONST_0
           ISTORE (1)
         LABEL (L1)
+        LINENUMBER (36)
           ICONST_4
           LDC (T)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, reifiedOperationMarker, (ILjava/lang/String;)V)
           LDC (Landroid/os/Parcelable;)
           CHECKCAST
+          LDC (CREATOR)
+          INVOKEVIRTUAL (java/lang/Class, getDeclaredField, (Ljava/lang/String;)Ljava/lang/reflect/Field;)
+          ACONST_NULL
+          INVOKEVIRTUAL (java/lang/reflect/Field, get, (Ljava/lang/Object;)Ljava/lang/Object;)
+          ASTORE (2)
+          ALOAD (2)
+          INSTANCEOF
+          IFEQ (L2)
+          ALOAD (2)
+          CHECKCAST
+          GOTO (L3)
         LABEL (L2)
-        LINENUMBER (36)
+          ACONST_NULL
+        LABEL (L3)
+          DUP
+          IFNULL (L4)
+          CHECKCAST
+          GOTO (L5)
+        LABEL (L4)
+          POP
+        LABEL (L6)
+        LINENUMBER (37)
+          NEW
+          DUP
+          NEW
+          DUP
+          INVOKESPECIAL (java/lang/StringBuilder, <init>, ()V)
+          LDC (Could not access CREATOR field in class )
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/String;)Ljava/lang/StringBuilder;)
+          ICONST_4
+          LDC (T)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, reifiedOperationMarker, (ILjava/lang/String;)V)
+          LDC (Landroid/os/Parcelable;)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          INVOKEINTERFACE (kotlin/reflect/KClass, getSimpleName, ()Ljava/lang/String;)
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/Object;)Ljava/lang/StringBuilder;)
+          INVOKEVIRTUAL (java/lang/StringBuilder, toString, ()Ljava/lang/String;)
+          INVOKESPECIAL (java/lang/IllegalArgumentException, <init>, (Ljava/lang/String;)V)
+          ATHROW
+        LABEL (L5)
+          POP
+        LABEL (L7)
+        LINENUMBER (24)
+          RETURN
+        LABEL (L8)
+    }
+
+    public final static void test3() {
+        LABEL (L0)
+        LINENUMBER (27)
+          ICONST_0
+          ISTORE (0)
+        LABEL (L1)
+        LINENUMBER (38)
+          ICONST_0
+          ISTORE (1)
+        LABEL (L2)
+        LINENUMBER (39)
+          LDC (LA;)
           LDC (CREATOR)
           INVOKEVIRTUAL (java/lang/Class, getDeclaredField, (Ljava/lang/String;)Ljava/lang/reflect/Field;)
           ACONST_NULL
@@ -238,89 +296,31 @@ public final class ParcelableCreatorKt : java/lang/Object {
         LABEL (L3)
           ACONST_NULL
         LABEL (L4)
-          ASTORE (3)
-          ALOAD (3)
+          DUP
           IFNONNULL (L5)
-        LABEL (L6)
-        LINENUMBER (37)
-          NEW
-          DUP
-          LDC (Could not access CREATOR field in class )
-          ICONST_4
-          LDC (T)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, reifiedOperationMarker, (ILjava/lang/String;)V)
-          LDC (Landroid/os/Parcelable;)
-          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
-          INVOKEINTERFACE (kotlin/reflect/KClass, getSimpleName, ()Ljava/lang/String;)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, stringPlus, (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;)
-          INVOKESPECIAL (java/lang/IllegalArgumentException, <init>, (Ljava/lang/String;)V)
-          ATHROW
-        LABEL (L5)
-        LINENUMBER (36)
-          ALOAD (3)
-          CHECKCAST
-        LABEL (L7)
-        LINENUMBER (37)
-          NOP
-        LABEL (L8)
           POP
-        LABEL (L9)
-        LINENUMBER (24)
-          RETURN
-        LABEL (L10)
-    }
-
-    public final static void test3() {
-        LABEL (L0)
-        LINENUMBER (27)
-          ICONST_0
-          ISTORE (0)
-        LABEL (L1)
-        LINENUMBER (38)
-          ICONST_0
-          ISTORE (1)
-        LABEL (L2)
-          LDC (LA;)
-        LABEL (L3)
-        LINENUMBER (39)
-          LDC (CREATOR)
-          INVOKEVIRTUAL (java/lang/Class, getDeclaredField, (Ljava/lang/String;)Ljava/lang/reflect/Field;)
-          ACONST_NULL
-          INVOKEVIRTUAL (java/lang/reflect/Field, get, (Ljava/lang/Object;)Ljava/lang/Object;)
-          ASTORE (2)
-          ALOAD (2)
-          INSTANCEOF
-          IFEQ (L4)
-          ALOAD (2)
-          CHECKCAST
-          GOTO (L5)
-        LABEL (L4)
-          ACONST_NULL
-        LABEL (L5)
-          ASTORE (3)
-          ALOAD (3)
-          IFNONNULL (L6)
-        LABEL (L7)
+        LABEL (L6)
         LINENUMBER (40)
           NEW
           DUP
+          NEW
+          DUP
+          INVOKESPECIAL (java/lang/StringBuilder, <init>, ()V)
           LDC (Could not access CREATOR field in class )
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/String;)Ljava/lang/StringBuilder;)
           LDC (LA;)
           INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
           INVOKEINTERFACE (kotlin/reflect/KClass, getSimpleName, ()Ljava/lang/String;)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, stringPlus, (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;)
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/Object;)Ljava/lang/StringBuilder;)
+          INVOKEVIRTUAL (java/lang/StringBuilder, toString, ()Ljava/lang/String;)
           INVOKESPECIAL (java/lang/IllegalArgumentException, <init>, (Ljava/lang/String;)V)
           ATHROW
-        LABEL (L6)
-        LINENUMBER (39)
-          NOP
-        LABEL (L8)
-        LINENUMBER (40)
-          NOP
-        LABEL (L9)
+        LABEL (L5)
+          POP
+        LABEL (L7)
         LINENUMBER (41)
           NOP
-        LABEL (L10)
+        LABEL (L8)
         LINENUMBER (28)
           RETURN
     }
