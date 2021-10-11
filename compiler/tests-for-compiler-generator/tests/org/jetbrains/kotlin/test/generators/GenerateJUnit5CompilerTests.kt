@@ -237,6 +237,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             testClass<AbstractFirLocalVariableTest> {
                 model("debug/localVariables")
             }
+
+            testClass<AbstractFirSerializeCompileKotlinAgainstInlineKotlinTest> {
+                model("codegen/boxInline")
+            }
         }
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/fir/fir2ir/testData") {
