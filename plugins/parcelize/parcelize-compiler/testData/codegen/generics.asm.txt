@@ -10,7 +10,7 @@ public final class Box$Creator : java/lang/Object, android/os/Parcelable$Creator
           ALOAD (1)
           LDC (in)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          NEW
+          NEW (Box)
           DUP
           ALOAD (1)
           LDC (LBox;)

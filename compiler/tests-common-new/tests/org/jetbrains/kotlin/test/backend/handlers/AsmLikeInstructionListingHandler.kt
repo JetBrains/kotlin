@@ -285,7 +285,7 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
         return buildString {
             append("Local variables:")
             for (variable in localVariables) {
-                appendLine().append((variable.index.toString() + " " + variable.name + ": " + variable.desc).withMargin())
+                appendLine().append(("${variable.index} ${variable.name}: ${variable.desc}").withMargin())
             }
         }
     }
@@ -302,12 +302,12 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
 
     private fun StringBuilder.renderInstruction(node: AbstractInsnNode, labelMappings: LabelMappings) {
         if (node is LabelNode) {
-            appendLine("LABEL (L" + labelMappings[node.label] + ")")
+            appendLine("LABEL (L${labelMappings[node.label]})")
             return
         }
 
         if (node is LineNumberNode) {
-            appendLine("LINENUMBER (" + node.line + ")")
+            appendLine("LINENUMBER (${node.line})")
             return
         }
 
@@ -316,15 +316,32 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
         append("  ").append(Printer.OPCODES[node.opcode] ?: error("Invalid opcode ${node.opcode}"))
 
         when (node) {
-            is FieldInsnNode -> append(" (" + node.owner + ", " + node.name + ", " + node.desc + ")")
-            is JumpInsnNode -> append(" (L" + labelMappings[node.label.label] + ")")
-            is IntInsnNode -> append(" (" + node.operand + ")")
-            is MethodInsnNode -> append(" (" + node.owner + ", "+ node.name + ", " + node.desc + ")")
-            is VarInsnNode -> append(" (" + node.`var` + ")")
-            is LdcInsnNode -> append(" (" + node.cst + ")")
+            is FieldInsnNode -> append(" (${node.owner}, ${node.name}, ${node.desc})")
+            is JumpInsnNode -> append(" (L${labelMappings[node.label.label]})")
+            is IntInsnNode -> append(" (${node.operand})")
+            is MethodInsnNode -> append(" (${node.owner}, ${node.name}, ${node.desc})")
+            is VarInsnNode -> append(" (${node.`var`})")
+            is LdcInsnNode -> append(" (${node.cst})")
+            is TypeInsnNode -> append(" (${node.desc})")
+            is IincInsnNode -> append(" (${node.`var`}, ${node.incr})")
+            is MultiANewArrayInsnNode -> append(" (${node.desc}, ${node.dims})")
+            is InvokeDynamicInsnNode -> append(" (${node.name}, ${node.desc}, ${node.bsm}, ${node.bsmArgs.joinToString()})")
         }
 
         appendLine()
+
+        if (node is TableSwitchInsnNode || node is LookupSwitchInsnNode) {
+            val (cases, default) = if (node is LookupSwitchInsnNode) {
+                node.keys.zip(node.labels) to node.dflt
+            } else {
+                (node as TableSwitchInsnNode).min.rangeTo(node.max).zip(node.labels) to node.dflt
+            }
+
+            for ((key, labelNode) in cases) {
+                appendLine("    $key: L${labelMappings[labelNode.label]}")
+            }
+            appendLine("    default: L${labelMappings[default.label]}")
+        }
     }
 
     private fun String.withMargin(margin: String = "    "): String {

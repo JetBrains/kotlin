@@ -6,7 +6,7 @@ public final class A$Creator : java/lang/Object, android/os/Parcelable$Creator {
           ALOAD (1)
           LDC (parcel)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          NEW
+          NEW (A)
           DUP
           ALOAD (1)
           LDC (LA;)

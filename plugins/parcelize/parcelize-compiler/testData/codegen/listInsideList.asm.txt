@@ -43,7 +43,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
           ALOAD (1)
           SWAP
           INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
-          CHECKCAST
+          CHECKCAST (java/util/List)
           DUP_X1
           INVOKEINTERFACE (java/util/Collection, size, ()I)
           INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
@@ -56,7 +56,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
           ALOAD (1)
           SWAP
           INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
-          CHECKCAST
+          CHECKCAST (java/util/ArrayList)
           DUP_X1
           INVOKEINTERFACE (java/util/Collection, size, ()I)
           INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
@@ -69,7 +69,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
           ALOAD (1)
           SWAP
           INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
-          CHECKCAST
+          CHECKCAST (java/lang/String)
           INVOKEVIRTUAL (android/os/Parcel, writeString, (Ljava/lang/String;)V)
           GOTO (L5)
         LABEL (L6)

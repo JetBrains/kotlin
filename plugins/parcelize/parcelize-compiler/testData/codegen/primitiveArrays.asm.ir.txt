@@ -119,7 +119,7 @@ public final class Test$Creator : java/lang/Object, android/os/Parcelable$Creato
           ASTORE (23)
           ASTORE (24)
           ASTORE (25)
-          NEW
+          NEW (Test)
           DUP
           ALOAD (25)
           ALOAD (24)

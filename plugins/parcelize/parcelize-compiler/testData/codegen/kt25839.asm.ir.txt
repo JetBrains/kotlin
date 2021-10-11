@@ -9,7 +9,7 @@ public final class test/SomeClass$Creator : java/lang/Object, android/os/Parcela
           ALOAD (1)
           INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
           POP
-          NEW
+          NEW (test/SomeClass)
           DUP
           INVOKESPECIAL (test/SomeClass, <init>, ()V)
           ARETURN

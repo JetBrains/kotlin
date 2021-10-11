@@ -6,13 +6,13 @@ public final class Test$Creator : java/lang/Object, android/os/Parcelable$Creato
           ALOAD (1)
           LDC (in)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          NEW
+          NEW (Test)
           DUP
           ALOAD (1)
           LDC (LValue;)
           INVOKEVIRTUAL (java/lang/Class, getClassLoader, ()Ljava/lang/ClassLoader;)
           INVOKEVIRTUAL (android/os/Parcel, readValue, (Ljava/lang/ClassLoader;)Ljava/lang/Object;)
-          CHECKCAST
+          CHECKCAST (Value)
           INVOKESPECIAL (Test, <init>, (LValue;)V)
           ARETURN
         LABEL (L1)
@@ -38,7 +38,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
     private final Value value
 
     static void <clinit>() {
-          NEW
+          NEW (Test$Creator)
           DUP
           INVOKESPECIAL (Test$Creator, <init>, ()V)
           PUTSTATIC (Test, CREATOR, Landroid/os/Parcelable$Creator;)

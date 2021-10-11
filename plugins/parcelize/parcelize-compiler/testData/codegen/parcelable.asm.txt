@@ -6,7 +6,7 @@ public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Cr
           ALOAD (1)
           LDC (in)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          NEW
+          NEW (test/Foo)
           DUP
           ALOAD (1)
           LDC (Ltest/Foo;)
@@ -37,7 +37,7 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
     private final android.os.Parcelable parcelable
 
     static void <clinit>() {
-          NEW
+          NEW (test/Foo$Creator)
           DUP
           INVOKESPECIAL (test/Foo$Creator, <init>, ()V)
           PUTSTATIC (test/Foo, CREATOR, Landroid/os/Parcelable$Creator;)

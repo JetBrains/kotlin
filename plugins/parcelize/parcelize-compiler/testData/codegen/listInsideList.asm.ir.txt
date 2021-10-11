@@ -44,7 +44,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
           IFEQ (L2)
           ALOAD (4)
           INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
-          CHECKCAST
+          CHECKCAST (java/util/List)
           ASTORE (5)
           ALOAD (1)
           ALOAD (5)
@@ -60,7 +60,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
           ALOAD (1)
           ALOAD (6)
           INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
-          CHECKCAST
+          CHECKCAST (java/util/List)
           INVOKEVIRTUAL (android/os/Parcel, writeStringList, (Ljava/util/List;)V)
           GOTO (L3)
         LABEL (L2)

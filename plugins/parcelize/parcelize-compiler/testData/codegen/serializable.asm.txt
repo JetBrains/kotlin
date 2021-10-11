@@ -18,14 +18,14 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
           ALOAD (1)
           LDC (in)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          NEW
+          NEW (User)
           DUP
           ALOAD (1)
           INVOKEVIRTUAL (android/os/Parcel, readSerializable, ()Ljava/io/Serializable;)
-          CHECKCAST
+          CHECKCAST (SerializableSimple)
           ALOAD (1)
           INVOKEVIRTUAL (android/os/Parcel, readSerializable, ()Ljava/io/Serializable;)
-          CHECKCAST
+          CHECKCAST (SerializableSimple)
           INVOKESPECIAL (User, <init>, (LSerializableSimple;LSerializableSimple;)V)
           ARETURN
         LABEL (L1)
@@ -53,7 +53,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
     private final SerializableSimple nullable
 
     static void <clinit>() {
-          NEW
+          NEW (User$Creator)
           DUP
           INVOKESPECIAL (User$Creator, <init>, ()V)
           PUTSTATIC (User, CREATOR, Landroid/os/Parcelable$Creator;)
