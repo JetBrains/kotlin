@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.psi2ir.generators.isUnchanging
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -316,14 +317,8 @@ class CallAndReferenceGenerator(
             val calleeReference = variableAssignment.calleeReference
             val symbol =
                 calleeReference.toSymbolForCall(session, classifierStorage, declarationStorage, conversionScope, preferGetter = false)
-            val origin = if (variableAssignment.source?.kind is FirFakeSourceElementKind.DesugaredIncrementOrDecrement) {
-                if ((variableAssignment.rValue as? FirFunctionCall)?.calleeReference?.name?.asString() == "inc")
-                    IrStatementOrigin.PREFIX_INCR
-                else
-                    IrStatementOrigin.PREFIX_DECR
-            } else {
-                IrStatementOrigin.EQ
-            }
+            val origin = getIrStatementOrigin(variableAssignment)
+
             return variableAssignment.convertWithOffsets { startOffset, endOffset ->
                 val assignedValue = visitor.convertToIrExpression(variableAssignment.rValue)
                 when (symbol) {
@@ -389,6 +384,34 @@ class CallAndReferenceGenerator(
                         "from file ${conversionScope.containingFileIfAny()?.name ?: "???"} to BE IR", e
             )
         }
+    }
+
+    private fun getIrStatementOrigin(variableAssignment: FirVariableAssignment): IrStatementOriginImpl {
+        val rValue = variableAssignment.rValue
+        if (rValue is FirFunctionCall) {
+            val resolvedSymbol = rValue.calleeReference.toResolvedCallableSymbol()
+            val callableId = resolvedSymbol?.callableId
+            if (callableId?.classId == StandardClassIds.Int &&
+                variableAssignment.calleeReference.toResolvedCallableSymbol() == rValue.explicitReceiver?.toResolvedCallableSymbol()
+            ) {
+                val callableName = callableId.callableName.asString()
+                if (callableName == "inc") {
+                    return IrStatementOrigin.PREFIX_INCR
+                } else if (callableName == "dec") {
+                    return IrStatementOrigin.PREFIX_DECR
+                } else {
+                    val argument = ((rValue.arguments.singleOrNull() as? FirConstExpression<*>)?.value as? Long)
+                    if (argument != null) {
+                        if (callableName == "plus" && argument >= -128 && argument <= 127) {
+                            return IrStatementOrigin.PREFIX_INCR
+                        } else if (callableName == "minus" && argument >= -127 && argument <= 128) {
+                            return IrStatementOrigin.PREFIX_DECR
+                        }
+                    }
+                }
+            }
+        }
+        return IrStatementOrigin.EQ
     }
 
     fun convertToIrConstructorCall(annotation: FirAnnotation): IrExpression {
