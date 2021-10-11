@@ -394,7 +394,7 @@ open class JvmTypeAliasExtensionVisitor @JvmOverloads constructor(
  */
 open class JvmValueParameterExtensionVisitor @JvmOverloads constructor(
     private val delegate: JvmValueParameterExtensionVisitor? = null
-) : KmTypeAliasExtensionVisitor {
+) : KmValueParameterExtensionVisitor {
     final override val type: KmExtensionType
         get() = TYPE
 
