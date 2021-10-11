@@ -1,2 +1,2 @@
 KtType: Local
-PsiType: PsiType:Object
+PsiType: PsiType:Local

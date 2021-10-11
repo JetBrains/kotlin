@@ -30,14 +30,14 @@ internal class KtFe10PsiTypeProvider(override val analysisSession: KtFe10Analysi
 
     private val typeMapper by lazy { KtFe10JvmTypeMapperContext(analysisSession.resolveSession) }
 
-    override fun asPsiType(type: KtType, context: PsiElement, mode: TypeMappingMode): PsiType? = withValidityAssertion {
+    override fun asPsiType(type: KtType, useSitePosition: PsiElement, mode: TypeMappingMode): PsiType? = withValidityAssertion {
         val kotlinType = (type as KtFe10Type).type
 
         if (kotlinType.isError || kotlinType.arguments.any { !it.isStarProjection && it.type.isError }) {
             return null
         }
 
-        return asPsiType(simplifyType(kotlinType), context, mode)
+        return asPsiType(simplifyType(kotlinType), useSitePosition, mode)
     }
 
     private fun simplifyType(type: UnwrappedType): KotlinType {

@@ -31,7 +31,7 @@ dependencies {
     testApi(project(":kotlin-test:kotlin-test-junit"))
     testApi(toolsJar())
     testApiJUnit5()
-    testRuntimeOnly(project(":analysis:symbol-light-classes"))
+    testApi(project(":analysis:symbol-light-classes"))
 
     testRuntimeOnly(intellijDep()) {
         includeJars(

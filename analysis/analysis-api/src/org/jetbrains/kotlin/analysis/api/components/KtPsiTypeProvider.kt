@@ -11,21 +11,29 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 
 public abstract class KtPsiTypeProvider : KtAnalysisSessionComponent() {
-    public abstract fun asPsiType(type: KtType, context: PsiElement, mode: TypeMappingMode): PsiType?
+    public abstract fun asPsiType(type: KtType, useSitePosition: PsiElement, mode: TypeMappingMode): PsiType?
 }
 
 public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
     /**
-     * Converts the given [KtType] to [PsiType].
+     * Converts the given [KtType] to [PsiType] under [useSitePosition] context.
+     *
+     * [useSitePosition] is used as the parent of the resulting [PsiType],
+     * which is in turn used to resolve [PsiType].
+     *
+     * [useSitePosition] is also used to determine if the given [KtType] needs to be approximated.
+     * For example, if the given type is local yet available in the same scope of use site, we can
+     * still use such local type. Otherwise, e.g., exposed to public as a return type, the resulting
+     * type will be approximated accordingly.
      *
      * Returns `null` if the conversion encounters any erroneous cases, e.g., errors in type arguments.
      * A client can handle such case in its own way. For instance,
      *   * UAST will return `UastErrorType` as a default error type.
-     *   * LC will return `NonExistentClass` from the [context].
+     *   * LC will return `NonExistentClass` created from the [useSitePosition].
      */
     public fun KtType.asPsiType(
-        context: PsiElement,
+        useSitePosition: PsiElement,
         mode: TypeMappingMode = TypeMappingMode.DEFAULT,
     ): PsiType? =
-        analysisSession.psiTypeProvider.asPsiType(this, context, mode)
+        analysisSession.psiTypeProvider.asPsiType(this, useSitePosition, mode)
 }

@@ -1,2 +1,2 @@
 KtType: () -> Local
-PsiType: PsiType:Function0<? extends Object>
+PsiType: PsiType:Function0<? extends Local>
