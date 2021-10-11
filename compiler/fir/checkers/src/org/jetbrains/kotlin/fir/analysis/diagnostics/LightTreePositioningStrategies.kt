@@ -148,6 +148,43 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val DECLARATION_START_TO_NAME: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+
+        private fun FlyweightCapableTreeStructure<LighterASTNode>.firstNonCommentNonAnnotationLeaf(node: LighterASTNode): LighterASTNode? {
+            val childrenArray = getChildrenArray(node).filterNotNull()
+            // this is leaf
+            if (childrenArray.isEmpty()) return node
+            for (child in childrenArray) {
+                val childTokenType = child.tokenType ?: return null
+                if (childTokenType in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET || childTokenType == KtNodeTypes.ANNOTATION_ENTRY) {
+                    continue
+                }
+                return firstNonCommentNonAnnotationLeaf(child) ?: continue
+            }
+            return null
+        }
+
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val startNode = tree.firstNonCommentNonAnnotationLeaf(node) ?: node
+            val nameIdentifier = tree.nameIdentifier(node)
+            return if (nameIdentifier != null) {
+                markRange(startNode, nameIdentifier, startOffset, endOffset, tree, node)
+            } else {
+                val endNode = when (node.tokenType) {
+                    KtNodeTypes.PRIMARY_CONSTRUCTOR, KtNodeTypes.SECONDARY_CONSTRUCTOR -> tree.constructorKeyword(node)
+                    KtNodeTypes.OBJECT_DECLARATION -> tree.objectKeyword(node)
+                    else -> return DEFAULT.mark(node, startOffset, endOffset, tree)
+                }
+                markRange(startNode, endNode ?: node, startOffset, endOffset, tree, node)
+            }
+        }
+    }
+
     val DECLARATION_NAME: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
@@ -1081,6 +1118,12 @@ fun LighterASTNode.isExpression(): Boolean {
         in EXPRESSIONS_SET -> true
         else -> false
     }
+}
+
+fun FlyweightCapableTreeStructure<LighterASTNode>.getChildrenArray(node: LighterASTNode): Array<LighterASTNode?> {
+    val childrenRef = Ref<Array<LighterASTNode?>>()
+    getChildren(node, childrenRef)
+    return childrenRef.get() ?: emptyArray()
 }
 
 /**

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // SKIP_TXT
 
 <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>annotation class A<!>

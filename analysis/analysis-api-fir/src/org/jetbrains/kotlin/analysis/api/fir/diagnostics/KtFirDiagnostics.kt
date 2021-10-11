@@ -867,6 +867,22 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val message: String
     }
 
+    abstract class NoExplicitVisibilityInApiMode : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = NoExplicitVisibilityInApiMode::class
+    }
+
+    abstract class NoExplicitVisibilityInApiModeWarning : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = NoExplicitVisibilityInApiModeWarning::class
+    }
+
+    abstract class NoExplicitReturnTypeInApiMode : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = NoExplicitReturnTypeInApiMode::class
+    }
+
+    abstract class NoExplicitReturnTypeInApiModeWarning : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = NoExplicitReturnTypeInApiModeWarning::class
+    }
+
     abstract class InlineClassNotTopLevel : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = InlineClassNotTopLevel::class
     }

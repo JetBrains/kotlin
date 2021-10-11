@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // SKIP_TXT
 
 public class Foo(<!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>val bar<!>: Int, private var bar2: String, internal var bar3: Long, public var bar4: Int) {

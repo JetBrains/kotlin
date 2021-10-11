@@ -1199,6 +1199,30 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NO_EXPLICIT_VISIBILITY_IN_API_MODE) { firDiagnostic ->
+        NoExplicitVisibilityInApiModeImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING) { firDiagnostic ->
+        NoExplicitVisibilityInApiModeWarningImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.NO_EXPLICIT_RETURN_TYPE_IN_API_MODE) { firDiagnostic ->
+        NoExplicitReturnTypeInApiModeImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING) { firDiagnostic ->
+        NoExplicitReturnTypeInApiModeWarningImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INLINE_CLASS_NOT_TOP_LEVEL) { firDiagnostic ->
         InlineClassNotTopLevelImpl(
             firDiagnostic as FirPsiDiagnostic,

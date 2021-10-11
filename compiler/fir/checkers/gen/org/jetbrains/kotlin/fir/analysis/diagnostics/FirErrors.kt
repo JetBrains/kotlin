@@ -284,6 +284,10 @@ object FirErrors {
     val WRONG_MODIFIER_CONTAINING_DECLARATION by error2<PsiElement, KtModifierKeywordToken, String>()
     val DEPRECATED_MODIFIER_CONTAINING_DECLARATION by warning2<PsiElement, KtModifierKeywordToken, String>()
     val INAPPLICABLE_OPERATOR_MODIFIER by error1<PsiElement, String>(SourceElementPositioningStrategies.OPERATOR_MODIFIER)
+    val NO_EXPLICIT_VISIBILITY_IN_API_MODE by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_START_TO_NAME)
+    val NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING by warning0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_START_TO_NAME)
+    val NO_EXPLICIT_RETURN_TYPE_IN_API_MODE by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING by warning0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
 
     // Inline classes
     val INLINE_CLASS_NOT_TOP_LEVEL by error0<KtDeclaration>(SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER)

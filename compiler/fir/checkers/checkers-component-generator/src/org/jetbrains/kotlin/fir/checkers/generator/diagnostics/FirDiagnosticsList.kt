@@ -381,6 +381,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INAPPLICABLE_OPERATOR_MODIFIER by error<PsiElement>(PositioningStrategy.OPERATOR_MODIFIER) {
             parameter<String>("message")
         }
+
+        val NO_EXPLICIT_VISIBILITY_IN_API_MODE by error<KtDeclaration>(PositioningStrategy.DECLARATION_START_TO_NAME)
+        val NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING by warning<KtDeclaration>(PositioningStrategy.DECLARATION_START_TO_NAME)
+
+        val NO_EXPLICIT_RETURN_TYPE_IN_API_MODE by error<KtDeclaration>(PositioningStrategy.DECLARATION_NAME)
+        val NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING by warning<KtDeclaration>(PositioningStrategy.DECLARATION_NAME)
     }
 
     val INLINE_CLASSES by object : DiagnosticGroup("Inline classes") {

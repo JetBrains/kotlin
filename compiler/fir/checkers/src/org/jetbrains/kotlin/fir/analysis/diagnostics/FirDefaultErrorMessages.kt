@@ -308,6 +308,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_ACTUAL_CLASS_M
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_ACTUAL_FOR_EXPECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_COMPANION_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_ELSE_IN_WHEN
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_EXPLICIT_RETURN_TYPE_IN_API_MODE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_EXPLICIT_VISIBILITY_IN_API_MODE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_GET_METHOD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_RECEIVER_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY
@@ -799,6 +803,11 @@ class FirDefaultErrorMessages {
             map.put(DEPRECATED_MODIFIER_PAIR, "Modifier ''{0}'' is deprecated in presence of ''{1}''", TO_STRING, TO_STRING)
             map.put(DEPRECATED_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is deprecated for ''{1}''", TO_STRING, STRING)
             map.put(REDUNDANT_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is redundant for ''{1}''", TO_STRING, STRING)
+            map.put(NO_EXPLICIT_VISIBILITY_IN_API_MODE, "Visibility must be specified in explicit API mode");
+            map.put(NO_EXPLICIT_RETURN_TYPE_IN_API_MODE, "Return type must be specified in explicit API mode");
+            map.put(NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING, "Visibility must be specified in explicit API mode");
+            map.put(NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING, "Return type must be specified in explicit API mode");
+
             map.put(INCOMPATIBLE_MODIFIERS, "Modifier ''{0}'' is incompatible with ''{1}''", TO_STRING, TO_STRING)
             map.put(REDUNDANT_OPEN_IN_INTERFACE, "Modifier 'open' is redundant for abstract interface members")
             map.put(WRONG_MODIFIER_TARGET, "Modifier ''{0}'' is not applicable to ''{1}''", TO_STRING, STRING)

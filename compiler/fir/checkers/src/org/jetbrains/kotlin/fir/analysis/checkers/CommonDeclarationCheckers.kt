@@ -29,6 +29,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirExpectActualDeclarationChecker,
             FirInvalidAndDangerousCharactersChecker,
             FirAmbiguousAnonymousTypeChecker,
+            FirExplicitApiDeclarationChecker,
         )
 
     override val functionCheckers: Set<FirFunctionChecker>

@@ -1036,6 +1036,26 @@ internal class InapplicableOperatorModifierImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.InapplicableOperatorModifier(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class NoExplicitVisibilityInApiModeImpl(
+    override val firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NoExplicitVisibilityInApiMode(), KtAbstractFirDiagnostic<KtDeclaration>
+
+internal class NoExplicitVisibilityInApiModeWarningImpl(
+    override val firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NoExplicitVisibilityInApiModeWarning(), KtAbstractFirDiagnostic<KtDeclaration>
+
+internal class NoExplicitReturnTypeInApiModeImpl(
+    override val firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NoExplicitReturnTypeInApiMode(), KtAbstractFirDiagnostic<KtDeclaration>
+
+internal class NoExplicitReturnTypeInApiModeWarningImpl(
+    override val firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NoExplicitReturnTypeInApiModeWarning(), KtAbstractFirDiagnostic<KtDeclaration>
+
 internal class InlineClassNotTopLevelImpl(
     override val firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
