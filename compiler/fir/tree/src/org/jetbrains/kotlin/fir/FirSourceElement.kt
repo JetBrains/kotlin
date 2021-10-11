@@ -197,6 +197,12 @@ sealed class FirSourceElement {
     abstract val kind: FirSourceElementKind
     abstract val lighterASTNode: LighterASTNode
     abstract val treeStructure: FlyweightCapableTreeStructure<LighterASTNode>
+
+    /** Implementation must compute the hashcode from the source element. */
+    abstract override fun hashCode(): Int
+
+    /** Elements of the same source should be considered equal. */
+    abstract override fun equals(other: Any?): Boolean
 }
 
 // NB: in certain situations, psi.node could be null
