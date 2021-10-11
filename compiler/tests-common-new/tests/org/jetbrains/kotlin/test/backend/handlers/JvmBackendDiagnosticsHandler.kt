@@ -5,14 +5,17 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticReporter
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticReporter
 import org.jetbrains.kotlin.test.frontend.classic.handlers.withNewInferenceModeEnabled
+import org.jetbrains.kotlin.test.frontend.fir.handlers.toMetaInfos
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.dependencyProvider
+import org.jetbrains.kotlin.test.services.globalMetadataInfoHandler
 
 class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     private val reporter = ClassicDiagnosticReporter(testServices)
@@ -28,6 +31,16 @@ class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifa
             val ktFile = diagnostic.psiFile as? KtFile ?: continue
             val testFile = ktFileToTestFileMap[ktFile] ?: continue
             reporter.reportDiagnostic(diagnostic, module, testFile, configuration, withNewInferenceModeEnabled)
+        }
+        val ktDiagnosticReporter = generationState.diagnosticReporter as BaseDiagnosticReporter
+        val globalMetadataInfoHandler = testServices.globalMetadataInfoHandler
+        for ((testFile, ktFile) in testFileToKtFileMap.entries) {
+            val ktDiagnostics = ktDiagnosticReporter.diagnosticsByFilePath[ktFile.virtualFilePath] ?: continue
+            ktDiagnostics.forEach {
+                val metaInfos =
+                    it.toMetaInfos(testFile, globalMetadataInfoHandler, false, false)
+                globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfos)
+            }
         }
     }
 

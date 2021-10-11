@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.BackendKinds
@@ -43,6 +44,7 @@ class ClassicFrontend2IrConverter(
         ).codegenFactory(codegenFactory)
             .isIrBackend(true)
             .ignoreErrors(CodegenTestDirectives.IGNORE_ERRORS in module.directives)
+            .diagnosticReporter(DiagnosticReporterFactory.createReporter())
             .build()
 
         return IrBackendInput(state, codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationState(state)))

@@ -95,32 +95,16 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 // SYNTAX errors will be reported later
                 if (diagnostic.factory == FirErrors.SYNTAX) return@flatMap emptyList()
                 if (!diagnostic.isValid) return@flatMap emptyList()
-                diagnostic.toMetaInfos(file, lightTreeEnabled, lightTreeComparingModeEnabled)
+                diagnostic.toMetaInfos(
+                    file,
+                    globalMetadataInfoHandler,
+                    lightTreeEnabled,
+                    lightTreeComparingModeEnabled
+                )
             }
             globalMetadataInfoHandler.addMetadataInfosForFile(file, diagnosticsMetadataInfos)
             collectSyntaxDiagnostics(file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
             collectDebugInfoDiagnostics(file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
-        }
-    }
-
-    private fun KtDiagnostic.toMetaInfos(
-        file: TestFile,
-        lightTreeEnabled: Boolean,
-        lightTreeComparingModeEnabled: Boolean,
-        forceRenderArguments: Boolean = false
-    ): List<FirDiagnosticCodeMetaInfo> {
-        val ranges = factory.defaultPositioningStrategy.markDiagnostic(this)
-        return ranges.map { range ->
-            val metaInfo = FirDiagnosticCodeMetaInfo(this, FirMetaInfoUtils.renderDiagnosticNoArgs, range)
-            val shouldRenderArguments = forceRenderArguments || globalMetadataInfoHandler.getExistingMetaInfosForActualMetadata(file, metaInfo)
-                .any { it.description != null }
-            if (shouldRenderArguments) {
-                metaInfo.replaceRenderConfiguration(FirMetaInfoUtils.renderDiagnosticWithArgs)
-            }
-            if (lightTreeComparingModeEnabled) {
-                metaInfo.attributes += if (lightTreeEnabled) PsiLightTreeMetaInfoProcessor.LT else PsiLightTreeMetaInfoProcessor.PSI
-            }
-            metaInfo
         }
     }
 
@@ -134,12 +118,22 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         val metaInfos = if (firFile.psi != null) {
             AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).flatMap {
                 FirErrors.SYNTAX.on(KtRealPsiSourceElement(it), positioningStrategy = null)
-                    .toMetaInfos(testFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+                    .toMetaInfos(
+                        testFile,
+                        globalMetadataInfoHandler1 = globalMetadataInfoHandler,
+                        lightTreeEnabled,
+                        lightTreeComparingModeEnabled
+                    )
             }
         } else {
             collectLightTreeSyntaxErrors(firFile).flatMap { sourceElement ->
                 FirErrors.SYNTAX.on(sourceElement, positioningStrategy = null)
-                    .toMetaInfos(testFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+                    .toMetaInfos(
+                        testFile,
+                        globalMetadataInfoHandler1 = globalMetadataInfoHandler,
+                        lightTreeEnabled,
+                        lightTreeComparingModeEnabled
+                    )
             }
         }
 
@@ -195,7 +189,13 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         }.let(firFile::accept)
         globalMetadataInfoHandler.addMetadataInfosForFile(
             testFile,
-            result.flatMap { it.toMetaInfos(testFile, lightTreeEnabled, lightTreeComparingModeEnabled, forceRenderArguments = true) }
+            result.flatMap { it.toMetaInfos(
+                testFile,
+                globalMetadataInfoHandler,
+                lightTreeEnabled,
+                lightTreeComparingModeEnabled,
+                forceRenderArguments = true
+            ) }
         )
     }
 
@@ -342,5 +342,24 @@ class PsiLightTreeMetaInfoProcessor(testServices: TestServices) : AbstractTwoAtt
     override fun firstAttributeEnabled(module: TestModule): Boolean {
         return FirDiagnosticsDirectives.USE_LIGHT_TREE !in module.directives
     }
+}
+
+fun KtDiagnostic.toMetaInfos(
+    file: TestFile,
+    globalMetadataInfoHandler1: GlobalMetadataInfoHandler,
+    lightTreeEnabled: Boolean,
+    lightTreeComparingModeEnabled: Boolean,
+    forceRenderArguments: Boolean = false
+): List<FirDiagnosticCodeMetaInfo> = textRanges.map { range ->
+    val metaInfo = FirDiagnosticCodeMetaInfo(this, FirMetaInfoUtils.renderDiagnosticNoArgs, range)
+    val shouldRenderArguments = forceRenderArguments || globalMetadataInfoHandler1.getExistingMetaInfosForActualMetadata(file, metaInfo)
+        .any { it.description != null }
+    if (shouldRenderArguments) {
+        metaInfo.replaceRenderConfiguration(FirMetaInfoUtils.renderDiagnosticWithArgs)
+    }
+    if (lightTreeComparingModeEnabled) {
+        metaInfo.attributes += if (lightTreeEnabled) PsiLightTreeMetaInfoProcessor.LT else PsiLightTreeMetaInfoProcessor.PSI
+    }
+    metaInfo
 }
 
