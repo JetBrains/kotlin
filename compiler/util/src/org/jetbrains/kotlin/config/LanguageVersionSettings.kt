@@ -198,7 +198,6 @@ enum class LanguageFeature(
     TypeEnhancementImprovementsInStrictMode(KOTLIN_1_6),
     ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor(KOTLIN_1_6, kind = BUG_FIX),
     PrivateInFileEffectiveVisibility(KOTLIN_1_6, kind = BUG_FIX),
-    ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_6, kind = BUG_FIX),
     ProhibitSelfCallsInNestedObjects(KOTLIN_1_6, kind = BUG_FIX),
     ProperCheckAnnotationsTargetInTypeUsePositions(KOTLIN_1_6, kind = BUG_FIX),
 
@@ -234,6 +233,7 @@ enum class LanguageFeature(
     AbstractClassMemberNotImplementedWithIntermediateAbstractClass(KOTLIN_1_7, kind = BUG_FIX),
     RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_7),
     JvmPermittedSubclassesAttributeForSealed(KOTLIN_1_7),
+    ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_7, kind = BUG_FIX),
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),
