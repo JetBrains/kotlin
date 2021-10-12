@@ -36,8 +36,8 @@ class KotlinNativeOutputLibrary : KotlinNativeLibraryArtifact {
         }
 
         config.targets.forEach { target ->
-            val librariesConfigurationName = project.registerLibsDependencies(target, name, config.includeDeps)
-            val includeConfigurationName = project.registerIncludeDependencies(target, name, config.includeDeps)
+            val librariesConfigurationName = project.registerLibsDependencies(target, name, config.exportDeps)
+            val exportConfigurationName = project.registerExportDependencies(target, name, config.exportDeps)
             config.modes.forEach { buildType ->
                 val targetTask = project.registerTask<KotlinNativeLinkArtifactTask>(
                     lowerCamelCaseName("assemble", buildType.visibleName, kind.taskNameClassifier, name, target.presetName),
@@ -54,7 +54,7 @@ class KotlinNativeOutputLibrary : KotlinNativeLibraryArtifact {
                     task.binaryOptions = config.binaryOptions
 
                     task.librariesConfiguration = librariesConfigurationName
-                    task.includeLibrariesConfiguration = includeConfigurationName
+                    task.exportLibrariesConfiguration = exportConfigurationName
 
                     task.languageSettings(config.languageSettingsFn)
                     task.kotlinOptions(config.kotlinOptionsFn)
