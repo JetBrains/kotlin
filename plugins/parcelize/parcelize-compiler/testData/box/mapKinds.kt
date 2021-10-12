@@ -42,6 +42,4 @@ fun box() = parcelTest { parcel ->
     assert(first == first2)
     assert((first.c as HashMap<*, *>).size == 1)
     assert((first2.e as TreeMap<*, *>).size == 1)
-    assert(first2.f is SortedMap<*, *>)
-    assert(first2.g is NavigableMap<*, *>)
 }

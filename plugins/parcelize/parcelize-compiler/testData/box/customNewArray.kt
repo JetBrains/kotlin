@@ -17,6 +17,7 @@ data class User(val firstName: String, val secondName: String, val age: Int) : P
 
         override fun create(parcel: Parcel) = User(parcel.readString(), parcel.readString(), 0)
 
+        @Suppress("UNCHECKED_CAST")
         override fun newArray(size: Int) = arrayOfNulls<User>(size) as Array<User>
     }
 }

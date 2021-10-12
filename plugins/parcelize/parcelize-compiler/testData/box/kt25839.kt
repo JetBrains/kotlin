@@ -11,7 +11,7 @@ import android.os.Parcelable
 class User : Parcelable
 
 @Parcelize
-class User2() : Parcelable
+class <!PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY!>User2<!>() : Parcelable
 
 fun box() = parcelTest { parcel ->
     val user = User()

@@ -12,6 +12,7 @@ class JHelp(var j1: String) {
     val j2 = 9
 }
 
+@Suppress("DEPRECATED_ANNOTATION")
 @Parcelize
 class J(val j: @RawValue JHelp) : Parcelable
 
