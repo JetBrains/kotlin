@@ -45,6 +45,9 @@ sealed class JavaClassSnapshot : ClassSnapshot()
 /** [JavaClassSnapshot] of a typical Java class. */
 class RegularJavaClassSnapshot(
 
+    /** The superclass and interfaces of the class. It is part of the class's ABI ([classAbiExcludingMembers]). */
+    val supertypes: List<String>,
+
     /** [AbiSnapshot] of the class excluding its fields and methods. */
     val classAbiExcludingMembers: AbiSnapshot,
 

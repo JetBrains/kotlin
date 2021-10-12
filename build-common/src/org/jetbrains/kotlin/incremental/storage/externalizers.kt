@@ -349,8 +349,8 @@ open class GenericCollectionExternalizer<T, C : Collection<T>>(
 class ListExternalizer<T>(elementExternalizer: DataExternalizer<T>) :
     GenericCollectionExternalizer<T, List<T>>(elementExternalizer, { size -> ArrayList(size) })
 
-class LinkedHashSetExternalizer<T>(elementExternalizer: DataExternalizer<T>) :
-    GenericCollectionExternalizer<T, LinkedHashSet<T>>(elementExternalizer, { size -> LinkedHashSet(size) })
+class SetExternalizer<T>(elementExternalizer: DataExternalizer<T>) :
+    GenericCollectionExternalizer<T, Set<T>>(elementExternalizer, { size -> LinkedHashSet(size) })
 
 class LinkedHashMapExternalizer<K, V>(
     private val keyExternalizer: DataExternalizer<K>,

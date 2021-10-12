@@ -189,10 +189,13 @@ class JavaClassesClasspathChangesComputerTest(private val protoBased: Boolean) :
 
         Changes(
             lookupSymbols = setOf(
-                LookupSymbol(name = "changedPublicMethod", scope = "com.example.SimpleJavaClass"),
                 LookupSymbol(name = "publicMethod", scope = "com.example.SimpleJavaClass"),
                 LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SimpleJavaClass")
-            ),
+            ) + if (protoBased) {
+                setOf(LookupSymbol(name = "changedPublicMethod", scope = "com.example.SimpleJavaClass"))
+            } else {
+                emptySet()
+            },
             fqNames = setOf("com.example.SimpleJavaClass")
         ).assertEquals(changes)
     }
@@ -221,21 +224,21 @@ class JavaClassesClasspathChangesComputerTest(private val protoBased: Boolean) :
 
                 // ModifiedClassChangedMembers
                 LookupSymbol(name = "modifiedField", scope = "com.example.ModifiedClassChangedMembers"),
-                LookupSymbol(name = "addedField", scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = "removedField", scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = "modifiedMethod", scope = "com.example.ModifiedClassChangedMembers"),
-                LookupSymbol(name = "addedMethod", scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = "removedMethod", scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.ModifiedClassChangedMembers"),
-
-                // AddedClass
-                LookupSymbol(name = "AddedClass", scope = "com.example"),
 
                 // RemovedClass
                 LookupSymbol(name = "RemovedClass", scope = "com.example")
             ) + if (protoBased) {
                 setOf(
+                    // ModifiedClassChangedMembers
+                    LookupSymbol(name = "addedField", scope = "com.example.ModifiedClassChangedMembers"),
+                    LookupSymbol(name = "addedMethod", scope = "com.example.ModifiedClassChangedMembers"),
+
                     // AddedClass
+                    LookupSymbol(name = "AddedClass", scope = "com.example"),
                     LookupSymbol(name = "someField", scope = "com.example.AddedClass"),
                     LookupSymbol(name = "<init>", scope = "com.example.AddedClass"),
                     LookupSymbol(name = "someMethod", scope = "com.example.AddedClass"),
@@ -247,9 +250,12 @@ class JavaClassesClasspathChangesComputerTest(private val protoBased: Boolean) :
             fqNames = setOf(
                 "com.example.ModifiedClassUnchangedMembers",
                 "com.example.ModifiedClassChangedMembers",
-                "com.example.AddedClass",
-                "com.example.RemovedClass",
-            )
+                "com.example.RemovedClass"
+            ) + if (protoBased) {
+                setOf("com.example.AddedClass")
+            } else {
+                emptySet()
+            }
         ).assertEquals(changes)
     }
 
@@ -263,30 +269,20 @@ class JavaClassesClasspathChangesComputerTest(private val protoBased: Boolean) :
         Changes(
             lookupSymbols = setOf(
                 LookupSymbol(name = "someField", scope = "com.example.ChangedSuperClass"),
+                LookupSymbol(name = "someField", scope = "com.example.SubClassSameModule"),
+                LookupSymbol(name = "someField", scope = "com.example.SubClassDifferentModule"),
                 LookupSymbol(name = "someMethod", scope = "com.example.ChangedSuperClass"),
-                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.ChangedSuperClass")
-            ) + if (protoBased) {
-                setOf(
-                    LookupSymbol(name = "someField", scope = "com.example.SubClassSameModule"),
-                    LookupSymbol(name = "someField", scope = "com.example.SubClassDifferentModule"),
-                    LookupSymbol(name = "someMethod", scope = "com.example.SubClassSameModule"),
-                    LookupSymbol(name = "someMethod", scope = "com.example.SubClassDifferentModule"),
-                    LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SubClassSameModule"),
-                    LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SubClassDifferentModule")
-                )
-            } else {
-                emptySet()
-            },
+                LookupSymbol(name = "someMethod", scope = "com.example.SubClassSameModule"),
+                LookupSymbol(name = "someMethod", scope = "com.example.SubClassDifferentModule"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.ChangedSuperClass"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SubClassSameModule"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SubClassDifferentModule")
+            ),
             fqNames = setOf(
-                "com.example.ChangedSuperClass"
-            ) + if (protoBased) {
-                setOf(
-                    "com.example.SubClassSameModule",
-                    "com.example.SubClassDifferentModule"
-                )
-            } else {
-                emptySet()
-            }
+                "com.example.ChangedSuperClass",
+                "com.example.SubClassSameModule",
+                "com.example.SubClassDifferentModule"
+            )
         ).assertEquals(changes)
     }
 }
@@ -316,9 +312,7 @@ private fun ClasspathChanges.normalize(): Changes {
     return Changes(lookupSymbols, fqNames.map { it.asString() }.toSet())
 }
 
-private fun SymbolChanges.normalize(): Changes {
-    return Changes(lookupSymbols, fqNames.map { it.asString() }.toSet())
-}
+private fun ChangeSet.normalize(): Changes = toClasspathChanges().normalize()
 
 private fun Changes.assertEquals(actual: Changes) {
     listOfNotNull(

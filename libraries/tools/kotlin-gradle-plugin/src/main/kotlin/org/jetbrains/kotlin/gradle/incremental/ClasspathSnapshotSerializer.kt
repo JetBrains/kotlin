@@ -117,6 +117,7 @@ object JavaClassSnapshotExternalizer : DataExternalizer<JavaClassSnapshot> {
 object RegularJavaClassSnapshotExternalizer : DataExternalizer<RegularJavaClassSnapshot> {
 
     override fun save(output: DataOutput, snapshot: RegularJavaClassSnapshot) {
+        ListExternalizer(StringExternalizer).save(output, snapshot.supertypes)
         AbiSnapshotExternalizer.save(output, snapshot.classAbiExcludingMembers)
         ListExternalizer(AbiSnapshotExternalizer).save(output, snapshot.fieldsAbi)
         ListExternalizer(AbiSnapshotExternalizer).save(output, snapshot.methodsAbi)
@@ -124,6 +125,7 @@ object RegularJavaClassSnapshotExternalizer : DataExternalizer<RegularJavaClassS
 
     override fun read(input: DataInput): RegularJavaClassSnapshot {
         return RegularJavaClassSnapshot(
+            supertypes = ListExternalizer(StringExternalizer).read(input),
             classAbiExcludingMembers = AbiSnapshotExternalizer.read(input),
             fieldsAbi = ListExternalizer(AbiSnapshotExternalizer).read(input),
             methodsAbi = ListExternalizer(AbiSnapshotExternalizer).read(input)

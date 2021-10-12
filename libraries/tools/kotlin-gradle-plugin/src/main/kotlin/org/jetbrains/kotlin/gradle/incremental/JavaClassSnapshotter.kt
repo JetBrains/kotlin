@@ -46,13 +46,16 @@ object JavaClassSnapshotter {
         abiClass.fields.sortWith(compareBy({ it.name }, { it.desc }))
         abiClass.methods.sortWith(compareBy({ it.name }, { it.desc }))
 
+        val supertypes = listOf(abiClass.superName) + abiClass.interfaces.toList()
+
         val fieldsAbi = abiClass.fields.map { snapshotJavaElement(it, it.name, calledByUnitTests) }
         val methodsAbi = abiClass.methods.map { snapshotJavaElement(it, it.name, calledByUnitTests) }
+
         abiClass.fields.clear()
         abiClass.methods.clear()
         val classAbiExcludingMembers = abiClass.let { snapshotJavaElement(it, it.name, calledByUnitTests) }
 
-        return RegularJavaClassSnapshot(classAbiExcludingMembers, fieldsAbi, methodsAbi)
+        return RegularJavaClassSnapshot(supertypes, classAbiExcludingMembers, fieldsAbi, methodsAbi)
     }
 
     private fun Int.isPrivate() = (this and Opcodes.ACC_PRIVATE) != 0

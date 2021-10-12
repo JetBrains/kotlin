@@ -212,8 +212,8 @@ object ClasspathChangesComputer {
         workingDir.deleteRecursively()
 
         return ClasspathChanges.Available(
-            lookupSymbols = LinkedHashSet(dirtyData.dirtyLookupSymbols),
-            fqNames = LinkedHashSet(dirtyData.dirtyClassesFqNames)
+            lookupSymbols = dirtyData.dirtyLookupSymbols.toSet(),
+            fqNames = dirtyData.dirtyClassesFqNames.toSet()
         )
     }
 
