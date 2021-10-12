@@ -245,18 +245,31 @@ class JpsCompatiblePluginTasks(
                     .map { it.trim() }
                     .filter { it.isNotEmpty() }
 
-                fun addOrReplaceOptionValue(name: String, value: Any?) {
-                    val optionsWithoutNewValue = options.filter { !it.startsWith("-D$name=") }
-                    options = if (value == null) optionsWithoutNewValue else (optionsWithoutNewValue + listOf("-D$name=$value"))
+                fun addOptionIfAbsent(name: String) {
+                    if (options.none { it == name }) {
+                        options = options + name
+                    }
                 }
 
-                if (options.none { it == "-ea" }) {
-                    options = options + "-ea"
+                fun addOrReplaceOptionValue(name: String, value: Any?, prefix: String = "-D") {
+                    val optionsWithoutNewValue = options.filter { !it.startsWith("$prefix$name=") }
+                    options = if (value == null) optionsWithoutNewValue else (optionsWithoutNewValue + listOf("$prefix$name=$value"))
                 }
 
+                addOptionIfAbsent("-ea")
+                addOptionIfAbsent("-XX:+HeapDumpOnOutOfMemoryError")
+                addOptionIfAbsent("-Xmx1600m")
+                addOptionIfAbsent("-XX:+UseCodeCacheFlushing")
+
+                addOrReplaceOptionValue("ReservedCodeCacheSize", "128m", prefix = "-XX:")
+                addOrReplaceOptionValue("jna.nosys", "true")
+                addOrReplaceOptionValue("idea.platform.prefix", "Idea")
+                addOrReplaceOptionValue("idea.is.unit.test", "true")
+                addOrReplaceOptionValue("idea.ignore.disabled.plugins", "true")
                 addOrReplaceOptionValue("idea.home.path", platformDirProjectRelative)
                 addOrReplaceOptionValue("use.jps", "true")
                 addOrReplaceOptionValue("kotlinVersion", project.rootProject.extra["kotlinVersion"].toString())
+                addOrReplaceOptionValue("java.awt.headless", "true")
 
                 val isAndroidStudioBunch = project.findProperty("versions.androidStudioRelease") != null
                 addOrReplaceOptionValue("idea.platform.prefix", if (isAndroidStudioBunch) "AndroidStudio" else null)
