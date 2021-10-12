@@ -332,6 +332,27 @@ internal class ResolutionToClassifierImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ResolutionToClassifier(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class SuperIsNotAnExpressionImpl(
+    override val firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.SuperIsNotAnExpression(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class SuperNotAvailableImpl(
+    override val firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.SuperNotAvailable(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class AbstractSuperCallImpl(
+    override val firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.AbstractSuperCall(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class InstanceAccessBeforeSuperCallImpl(
+    override val target: String,
+    override val firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.InstanceAccessBeforeSuperCall(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class SuperCallWithDefaultParametersImpl(
     override val name: String,
     override val firDiagnostic: FirPsiDiagnostic,

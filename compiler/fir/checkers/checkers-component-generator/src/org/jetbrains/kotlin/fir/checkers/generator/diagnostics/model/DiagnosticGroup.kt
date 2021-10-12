@@ -81,10 +81,12 @@ abstract class AbstractDiagnosticGroup @PrivateForInline constructor(val name: S
     @OptIn(PrivateForInline::class)
     operator fun plus(other: AbstractDiagnosticGroup): AbstractDiagnosticGroup {
         require(name == other.name)
+
+        val combinedDiagnostics = this.diagnostics + other.diagnostics
+
         return object : AbstractDiagnosticGroup(name, "#Stub") {
             init {
-                _diagnostics.addAll(this.diagnostics)
-                _diagnostics.addAll(other.diagnostics)
+                _diagnostics.addAll(combinedDiagnostics)
             }
         }
     }
