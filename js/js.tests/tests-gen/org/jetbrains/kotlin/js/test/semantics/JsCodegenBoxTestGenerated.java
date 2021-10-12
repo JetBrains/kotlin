@@ -10779,6 +10779,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/extensionFunctions/executionOrder.kt");
         }
 
+        @TestMetadata("extensionFunctionAsSupertype.kt")
+        public void testExtensionFunctionAsSupertype() throws Exception {
+            runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsSupertype.kt");
+        }
+
         @TestMetadata("kt1061.kt")
         public void testKt1061() throws Exception {
             runTest("compiler/testData/codegen/box/extensionFunctions/kt1061.kt");

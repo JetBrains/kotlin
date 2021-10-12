@@ -15677,6 +15677,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("extensionFunctionAsSupertype.kt")
+        public void testExtensionFunctionAsSupertype() throws Exception {
+            runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsSupertype.kt");
+        }
+
+        @Test
         @TestMetadata("kt1061.kt")
         public void testKt1061() throws Exception {
             runTest("compiler/testData/codegen/box/extensionFunctions/kt1061.kt");
