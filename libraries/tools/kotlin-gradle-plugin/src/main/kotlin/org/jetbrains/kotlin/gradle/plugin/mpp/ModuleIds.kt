@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.project.model.LocalModuleIdentifier
 import org.jetbrains.kotlin.project.model.MavenModuleIdentifier
 
 internal object ModuleIds {
-    fun fromDependency(dependency: Dependency) = when (dependency) {
+    fun fromDependency(dependency: Dependency): ModuleDependencyIdentifier = when (dependency) {
         is ProjectDependency -> idOfRootModule(dependency.dependencyProject)
         else -> ModuleDependencyIdentifier(dependency.group, dependency.name)
     }
