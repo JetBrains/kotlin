@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.targets.native.tasks.buildKotlinNativeBinaryLinkerArgs
@@ -187,6 +188,16 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
 
         fun FileCollection.klibs() = files.filter { it.extension == "klib" }
 
+        val localKotlinOptions = object : KotlinCommonToolOptions {
+            override var allWarningsAsErrors = kotlinOptions.allWarningsAsErrors
+            override var suppressWarnings = kotlinOptions.suppressWarnings
+            override var verbose = kotlinOptions.verbose
+            override var freeCompilerArgs = kotlinOptions.freeCompilerArgs +
+                    ((languageSettings as? DefaultLanguageSettingsBuilder)?.freeCompilerArgs ?: emptyList())
+        }
+
+        val localBinaryOptions = PropertiesProvider(project).nativeBinaryOptions + binaryOptions
+
         val buildArgs = buildKotlinNativeBinaryLinkerArgs(
             outFile,
             optimized,
@@ -196,13 +207,13 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
             libraries.klibs(),
             languageSettings,
             enableEndorsedLibs,
-            kotlinOptions,
+            localKotlinOptions,
             emptyList(),//todo CompilerPlugins
             processTests,
             entryPoint,
             embedBitcode,
             linkerOptions,
-            binaryOptions,
+            localBinaryOptions,
             isStaticFramework,
             exportLibraries.klibs(),
             includeLibraries.klibs(),
