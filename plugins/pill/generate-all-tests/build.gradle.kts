@@ -13,7 +13,8 @@ val depenencyProjects = arrayOf(
     ":compiler:visualizer",
     ":js:js.tests",
     ":compiler:tests-java8",
-    ":core:descriptors.runtime"
+    ":core:descriptors.runtime",
+    ":generators:analysis-api-generator"
 )
 
 dependencies {
