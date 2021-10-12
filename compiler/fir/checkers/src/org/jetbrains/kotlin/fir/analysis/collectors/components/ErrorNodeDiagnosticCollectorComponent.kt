@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorImport
+import org.jetbrains.kotlin.fir.diagnostics.ConeAmbiguousSuper
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -75,11 +76,10 @@ class ErrorNodeDiagnosticCollectorComponent(
 
     private fun FirExpression?.cannotBeResolved(): Boolean {
         return when (val diagnostic = (this?.typeRef as? FirErrorTypeRef)?.diagnostic) {
-            is ConeUnresolvedNameError, is ConeInstanceAccessBeforeSuperCall -> true
+            is ConeUnresolvedNameError, is ConeInstanceAccessBeforeSuperCall, is ConeAmbiguousSuper -> true
             is ConeSimpleDiagnostic -> diagnostic.kind == DiagnosticKind.NotASupertype ||
                     diagnostic.kind == DiagnosticKind.SuperNotAvailable ||
-                    diagnostic.kind == DiagnosticKind.UnresolvedLabel ||
-                    diagnostic.kind == DiagnosticKind.AmbiguousSuper
+                    diagnostic.kind == DiagnosticKind.UnresolvedLabel
             else -> false
         }
     }

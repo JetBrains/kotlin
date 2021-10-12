@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.diagnostics
 
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 class ConeSimpleDiagnostic(override val reason: String, val kind: DiagnosticKind = DiagnosticKind.Other) : ConeDiagnostic
 
@@ -21,6 +22,11 @@ class ConeUnderscoreIsReserved(source: FirSourceElement) : ConeDiagnosticWithSou
 
 class ConeUnderscoreUsageWithoutBackticks(source: FirSourceElement) : ConeDiagnosticWithSource(source) {
     override val reason: String get() = "Names _, __, ___, ... can be used only in back-ticks (`_`, `__`, `___`, ...)"
+}
+
+class ConeAmbiguousSuper(val candidateTypes: List<ConeKotlinType>) : ConeDiagnostic {
+    override val reason: String
+        get() = "Ambiguous supertype"
 }
 
 enum class DiagnosticKind {
@@ -49,7 +55,6 @@ enum class DiagnosticKind {
     MissingStdlibClass,
     NotASupertype,
     SuperNotAvailable,
-    AmbiguousSuper,
 
     LoopInSupertype,
     RecursiveTypealiasExpansion,

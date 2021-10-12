@@ -500,6 +500,7 @@ internal class InconsistentTypeParameterBoundsImpl(
 ) : KtFirDiagnostic.InconsistentTypeParameterBounds(), KtAbstractFirDiagnostic<PsiElement>
 
 internal class AmbiguousSuperImpl(
+    override val candidates: List<KtType>,
     override val firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.AmbiguousSuper(), KtAbstractFirDiagnostic<KtSuperExpression>

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 fun BodyResolveComponents.findTypesForSuperCandidates(
     superTypeRefs: List<FirTypeRef>,
     containingCall: FirQualifiedAccess,
-): Collection<ConeKotlinType> {
+): List<ConeKotlinType> {
     val supertypes = superTypeRefs.map { (it as FirResolvedTypeRef).type }
     val isMethodOfAny = containingCall is FirFunctionCall && isCallingMethodOfAny(containingCall)
     if (supertypes.size <= 1 && !isMethodOfAny) return supertypes
@@ -61,7 +61,7 @@ private fun isCallingMethodOfAny(callExpression: FirFunctionCall): Boolean =
 private fun BodyResolveComponents.resolveSupertypesForMethodOfAny(
     supertypes: Collection<ConeKotlinType>,
     calleeName: Name
-): Collection<ConeKotlinType> {
+): List<ConeKotlinType> {
     val typesWithConcreteOverride = resolveSupertypesByMembers(supertypes, false) {
         getFunctionMembers(it, calleeName)
     }
@@ -71,13 +71,19 @@ private fun BodyResolveComponents.resolveSupertypesForMethodOfAny(
         listOf(session.builtinTypes.anyType.type)
 }
 
-private fun BodyResolveComponents.resolveSupertypesByCalleeName(supertypes: Collection<ConeKotlinType>, calleeName: Name): Collection<ConeKotlinType> =
+private fun BodyResolveComponents.resolveSupertypesByCalleeName(
+    supertypes: Collection<ConeKotlinType>,
+    calleeName: Name
+): List<ConeKotlinType> =
     resolveSupertypesByMembers(supertypes, true) {
         getFunctionMembers(it, calleeName) +
                 getPropertyMembers(it, calleeName)
     }
 
-private fun BodyResolveComponents.resolveSupertypesByPropertyName(supertypes: Collection<ConeKotlinType>, propertyName: Name): Collection<ConeKotlinType> =
+private fun BodyResolveComponents.resolveSupertypesByPropertyName(
+    supertypes: Collection<ConeKotlinType>,
+    propertyName: Name
+): List<ConeKotlinType> =
     resolveSupertypesByMembers(supertypes, true) {
         getPropertyMembers(it, propertyName)
     }
@@ -86,7 +92,7 @@ private inline fun BodyResolveComponents.resolveSupertypesByMembers(
     supertypes: Collection<ConeKotlinType>,
     allowNonConcreteMembers: Boolean,
     getMembers: (ConeKotlinType) -> Collection<FirCallableDeclaration>
-): Collection<ConeKotlinType> {
+): List<ConeKotlinType> {
     val typesWithConcreteMembers = SmartList<ConeKotlinType>()
     val typesWithNonConcreteMembers = SmartList<ConeKotlinType>()
 

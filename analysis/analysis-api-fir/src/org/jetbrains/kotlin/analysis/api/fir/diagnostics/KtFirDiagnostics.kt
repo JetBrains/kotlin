@@ -425,6 +425,7 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class AmbiguousSuper : KtFirDiagnostic<KtSuperExpression>() {
         override val diagnosticClass get() = AmbiguousSuper::class
+        abstract val candidates: List<KtType>
     }
 
     abstract class ConstructorInObject : KtFirDiagnostic<KtDeclaration>() {

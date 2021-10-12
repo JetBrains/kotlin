@@ -192,7 +192,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirRegularClassSymbol>("type")
             parameter<Collection<ConeKotlinType>>("bounds")
         }
-        val AMBIGUOUS_SUPER by error<KtSuperExpression>()
+        val AMBIGUOUS_SUPER by error<KtSuperExpression> {
+            parameter<List<ConeKotlinType>>("candidates")
+        }
     }
 
     val CONSTRUCTOR_PROBLEMS by object : DiagnosticGroup("Constructor problems") {

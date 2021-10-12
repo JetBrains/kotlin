@@ -636,7 +636,7 @@ class FirDefaultErrorMessages {
                 SYMBOL,
                 RENDER_COLLECTION_OF_TYPES
             )
-            map.put(AMBIGUOUS_SUPER, "Many supertypes available, please specify the one you mean in angle brackets, e.g. 'super<Foo>'")
+            map.put(AMBIGUOUS_SUPER, "Many supertypes available, please specify the one you mean in angle brackets, e.g. 'super<Foo>'", NOT_RENDERED)
 
             // Constructor problems
             map.put(CONSTRUCTOR_IN_OBJECT, "Constructors are not allowed for objects")

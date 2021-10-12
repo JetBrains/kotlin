@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
@@ -266,7 +263,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     }
                     else -> buildErrorTypeRef {
                         source = superReferenceContainer.source
-                        diagnostic = ConeSimpleDiagnostic("Ambiguous supertype", DiagnosticKind.AmbiguousSuper)
+                        diagnostic = ConeAmbiguousSuper(types)
                     }
                 }
                 superReferenceContainer.resultType =

@@ -569,6 +569,9 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.AMBIGUOUS_SUPER) { firDiagnostic ->
         AmbiguousSuperImpl(
+            firDiagnostic.a.map { coneKotlinType ->
+                firSymbolBuilder.typeBuilder.buildKtType(coneKotlinType)
+            },
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
