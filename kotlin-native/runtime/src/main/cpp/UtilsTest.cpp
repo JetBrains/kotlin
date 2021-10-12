@@ -48,3 +48,27 @@ TEST(UtilsTest, PinnedImpl) {
     static_assert(!std::is_move_assignable_v<PinnedImpl>, "Must not be move assignable");
     static_assert(sizeof(PinnedImpl) == sizeof(A), "Must not increase size");
 }
+
+TEST(UtilsTest, BufferAllocatorSmoke) {
+    StackBuffer<int, 2> buffer;
+    auto allocator = buffer.allocator();
+
+    int* array = allocator.allocate(1);
+    EXPECT_NE(array, nullptr);
+    allocator.deallocate(array, 1);
+
+    EXPECT_THROW(allocator.allocate(100), std::bad_array_new_length);
+}
+
+TEST(UtilsTest, BufferAllocatorSeveralAllocations) {
+    StackBuffer<int, 2> buffer;
+    auto allocator = buffer.allocator();
+
+    int* array = allocator.allocate(1);
+    EXPECT_THROW(allocator.allocate(1), std::bad_array_new_length);
+
+    // Expect a successful allocation after a dealloc.
+    allocator.deallocate(array, 1);
+    array = allocator.allocate(1);
+}
+

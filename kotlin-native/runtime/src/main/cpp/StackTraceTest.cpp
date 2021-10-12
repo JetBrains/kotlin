@@ -14,16 +14,31 @@
 #include "Porting.h"
 #include "TestSupport.hpp"
 
+#include <iostream>
+
 using namespace kotlin;
 
 namespace {
 
-NO_INLINE KStdVector<void*> GetStackTrace1(int skipFrames) {
-    return GetCurrentStackTrace(skipFrames);
+template <typename Allocator = KonanAllocator<void*>>
+NO_INLINE StackTrace<Allocator> GetStackTrace1(int skipFrames,
+                                               int maxDepth = std::numeric_limits<int>::max(),
+                                               const Allocator& allocator = Allocator()) {
+    return StackTrace<Allocator>::current(skipFrames, maxDepth, allocator);
 }
 
-NO_INLINE KStdVector<void*> GetStackTrace2(int skipFrames) {
-    return GetStackTrace1(skipFrames);
+template <typename Allocator = KonanAllocator<void*>>
+NO_INLINE StackTrace<Allocator> GetStackTrace2(int skipFrames,
+                                               int maxDepth = std::numeric_limits<int>::max(),
+                                               const Allocator& allocator = Allocator()) {
+    return GetStackTrace1(skipFrames, maxDepth, allocator);
+}
+
+template <typename Allocator = KonanAllocator<void*>>
+NO_INLINE StackTrace<Allocator> GetStackTrace3(int skipFrames,
+                                               int maxDepth = std::numeric_limits<int>::max(),
+                                               const Allocator& allocator = Allocator()) {
+    return GetStackTrace2(skipFrames, maxDepth, allocator);
 }
 
 NO_INLINE void AbortWithStackTrace(int) {
@@ -41,7 +56,7 @@ TEST(StackTraceTest, StackTrace) {
     constexpr int kSkip = 0;
 #endif
     auto stackTrace = GetStackTrace2(kSkip);
-    auto symbolicStackTrace = GetStackTraceStrings(stackTrace.data(), stackTrace.size());
+    auto symbolicStackTrace = GetStackTraceStrings(stackTrace.data());
     ASSERT_GT(symbolicStackTrace.size(), 0ul);
     EXPECT_THAT(symbolicStackTrace[0], testing::HasSubstr("GetStackTrace1"));
 }
@@ -54,9 +69,91 @@ TEST(StackTraceTest, StackTraceWithSkip) {
     constexpr int kSkip = 1;
 #endif
     auto stackTrace = GetStackTrace2(kSkip);
-    auto symbolicStackTrace = GetStackTraceStrings(stackTrace.data(), stackTrace.size());
+    auto symbolicStackTrace = GetStackTraceStrings(stackTrace.data());
     ASSERT_GT(symbolicStackTrace.size(), 0ul);
     EXPECT_THAT(symbolicStackTrace[0], testing::HasSubstr("GetStackTrace2"));
+}
+
+TEST(StackTraceTest, StackTraceWithMaxDepth) {
+    // TODO: Consider incorporating extra skipping to `GetCurrentStackTrace` on windows.
+#if KONAN_WINDOWS
+    constexpr int kSkip = 1;
+#else
+    constexpr int kSkip = 0;
+#endif
+    auto stackTrace = GetStackTrace3(kSkip, 2);
+    auto symbolicStackTrace = GetStackTraceStrings(stackTrace.data());
+    ASSERT_EQ(symbolicStackTrace.size(), 2ul);
+    EXPECT_THAT(symbolicStackTrace[0], testing::HasSubstr("GetStackTrace1"));
+    EXPECT_THAT(symbolicStackTrace[1], testing::HasSubstr("GetStackTrace2"));
+}
+
+TEST(StackTraceTest, StackTraceWithSkipAndMaxDepth) {
+    // TODO: Consider incorporating extra skipping to `GetCurrentStackTrace` on windows.
+#if KONAN_WINDOWS
+    constexpr int kSkip = 2;
+#else
+    constexpr int kSkip = 1;
+#endif
+    auto stackTrace = GetStackTrace3(kSkip, 2);
+    auto symbolicStackTrace = GetStackTraceStrings(stackTrace.data());
+    ASSERT_EQ(symbolicStackTrace.size(), 2ul);
+    EXPECT_THAT(symbolicStackTrace[0], testing::HasSubstr("GetStackTrace2"));
+    EXPECT_THAT(symbolicStackTrace[1], testing::HasSubstr("GetStackTrace3"));
+}
+
+TEST(StackTraceTest, StackAllocatedTrace) {
+    // TODO: Consider incorporating extra skipping to `GetCurrentStackTrace` on windows.
+#if KONAN_WINDOWS
+    constexpr int kSkip = 1;
+#else
+    constexpr int kSkip = 0;
+#endif
+
+    StackBuffer<void*, 1> buffer;
+    auto stackTrace = GetStackTrace2(kSkip, 1, buffer.allocator());
+    auto symbolicStackTrace = GetStackTraceStrings(stackTrace.data());
+    ASSERT_EQ(symbolicStackTrace.size(), 1ul);
+    EXPECT_THAT(symbolicStackTrace[0], testing::HasSubstr("GetStackTrace1"));
+}
+
+TEST(StackTraceTest, StackAllocatedTraceWithSkip) {
+    // TODO: Consider incorporating extra skipping to `GetCurrentStackTrace` on windows.
+#if KONAN_WINDOWS
+    constexpr int kSkip = 2;
+#else
+    constexpr int kSkip = 1;
+#endif
+
+    StackBuffer<void*, 1> buffer;
+    auto stackTrace = GetStackTrace2(kSkip, 1, buffer.allocator());
+    auto symbolicStackTrace = GetStackTraceStrings(stackTrace.data());
+    ASSERT_EQ(symbolicStackTrace.size(), 1ul);
+    EXPECT_THAT(symbolicStackTrace[0], testing::HasSubstr("GetStackTrace2"));
+}
+
+TEST(StackTraceTest, FailedStackAllocatedTrace) {
+    // TODO: Consider incorporating extra skipping to `GetCurrentStackTrace` on windows.
+#if KONAN_WINDOWS
+    constexpr int kSkip = 1;
+#else
+    constexpr int kSkip = 0;
+#endif
+
+    StackBuffer<void*, 1> buffer;
+    EXPECT_THROW(GetStackTrace2(kSkip, 2, buffer.allocator()), std::bad_array_new_length);
+}
+
+TEST(StackTraceTest, FailedStackAllocatedTraceWithSkip) {
+    // TODO: Consider incorporating extra skipping to `GetCurrentStackTrace` on windows.
+#if KONAN_WINDOWS
+    constexpr int kSkip = 2;
+#else
+    constexpr int kSkip = 1;
+#endif
+
+    StackBuffer<void*, 1> buffer;
+    EXPECT_THROW(GetStackTrace2(kSkip, 2, buffer.allocator()), std::bad_array_new_length);
 }
 
 TEST(StackTraceDeathTest, PrintStackTrace) {

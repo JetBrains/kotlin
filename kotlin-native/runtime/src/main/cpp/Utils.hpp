@@ -6,7 +6,11 @@
 #ifndef RUNTIME_UTILS_H
 #define RUNTIME_UTILS_H
 
+#include <array>
+#include <new>
 #include <type_traits>
+
+#include "KAssert.h"
 
 namespace kotlin {
 
@@ -74,6 +78,71 @@ public:
 private:
     T1* variable_;
     T2 oldValue_;
+};
+
+// An adapter that allows allocating STL containers in a preallocated buffer. Useful for stack allocations.
+// TODO: May be make an arena allocator instead?
+template <typename T, size_t Capacity>
+class StackBuffer final : private Pinned {
+    static_assert(std::is_trivially_default_constructible<T>::value);
+
+public:
+    class StackAllocator {
+    public:
+        using value_type = T;
+
+        StackAllocator(const StackAllocator& other) = default;
+        StackAllocator(StackAllocator&& other) noexcept = default;
+
+        StackAllocator& operator=(const StackAllocator& other) = default;
+        StackAllocator& operator=(StackAllocator&& other) noexcept = default;
+
+        bool operator==(const StackAllocator& other) { return buffer_ == other.buffer_; }
+
+        size_t max_size() noexcept { return buffer_->allocated_ ? 0 : Capacity; }
+
+        T* allocate(size_t size) {
+            auto result = buffer_->allocate(size);
+            if (!result) {
+                throw std::bad_array_new_length();
+            }
+            return result;
+        }
+
+        void deallocate(T* ptr, size_t count) noexcept {
+            buffer_->deallocate(ptr, count);
+        }
+
+    private:
+        explicit StackAllocator(StackBuffer<T, Capacity>* buffer) noexcept : buffer_(buffer) {}
+
+        StackBuffer<T, Capacity>* buffer_;
+
+        friend class StackBuffer;
+    };
+
+    StackBuffer() noexcept : allocated_(false) {}
+
+    StackAllocator allocator() {
+        return StackAllocator(this);
+    }
+
+private:
+    T* allocate(size_t size) noexcept {
+        if (allocated_ || size > Capacity) { return nullptr; }
+        allocated_ = true;
+        return buffer_.data();
+    }
+
+    void deallocate(T* ptr, size_t count) noexcept {
+        RuntimeAssert(allocated_ && ptr == buffer_.data(),
+                      "Expected ptr to be allocated in this StackBuffer. ptr: %p, buffer: %p, allocated: %s",
+                      ptr, buffer_.data(), (allocated_) ? "true" : "false");
+        allocated_ = false;
+    }
+
+    std::array<T, Capacity> buffer_;
+    bool allocated_;
 };
 
 } // namespace kotlin
