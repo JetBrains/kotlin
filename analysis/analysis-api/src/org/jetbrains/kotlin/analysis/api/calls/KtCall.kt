@@ -67,12 +67,13 @@ public sealed class KtDeclaredFunctionCall : KtCall() {
  * fun Int.invoke() {}
  */
 public class KtVariableWithInvokeFunctionCall(
-    public val target: KtVariableLikeSymbol,
+    private val _target: KtVariableLikeSymbol,
     private val _argumentMapping: LinkedHashMap<KtExpression, KtValueParameterSymbol>,
     private val _targetFunction: KtCallTarget,
     private val _substitutor: KtSubstitutor,
     override val token: ValidityToken
 ) : KtDeclaredFunctionCall() {
+    public val target: KtVariableLikeSymbol get() = withValidityAssertion { _target }
     override val argumentMapping: LinkedHashMap<KtExpression, KtValueParameterSymbol>
         get() = withValidityAssertion { _argumentMapping }
     override val targetFunction: KtCallTarget

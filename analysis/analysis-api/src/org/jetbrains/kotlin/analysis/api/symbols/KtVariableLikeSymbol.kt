@@ -138,4 +138,15 @@ public abstract class KtValueParameterSymbol : KtVariableLikeSymbol(), KtSymbolW
     public abstract val isVararg: Boolean
 
     abstract override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol>
+
+    /**
+     * The name of the value parameter. For a parameter of `FunctionN.invoke()` functions, the name is taken from the function type
+     * notation, if a name is present. For example:
+     * ```
+     * fun foo(x: (item: Int, String) -> Unit) =
+     *   x(1, "") // or `x.invoke(1, "")`
+     * ```
+     * The names of the value parameters for `invoke()` are "item" and "p2" (its default parameter name).
+     */
+    abstract override val name: Name
 }

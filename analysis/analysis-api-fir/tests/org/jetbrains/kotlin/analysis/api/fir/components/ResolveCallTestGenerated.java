@@ -403,6 +403,42 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     }
 
     @Test
+    @TestMetadata("variableAsFunctionWithParameterName.kt")
+    public void testVariableAsFunctionWithParameterName() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/variableAsFunctionWithParameterName.kt");
+    }
+
+    @Test
+    @TestMetadata("variableAsFunctionWithParameterNameAnnotation.kt")
+    public void testVariableAsFunctionWithParameterNameAnnotation() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/variableAsFunctionWithParameterNameAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("variableAsFunctionWithParameterNameAnnotationConflict.kt")
+    public void testVariableAsFunctionWithParameterNameAnnotationConflict() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/variableAsFunctionWithParameterNameAnnotationConflict.kt");
+    }
+
+    @Test
+    @TestMetadata("variableAsFunctionWithParameterNameGeneric.kt")
+    public void testVariableAsFunctionWithParameterNameGeneric() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/variableAsFunctionWithParameterNameGeneric.kt");
+    }
+
+    @Test
+    @TestMetadata("variableAsFunctionWithParameterNameInNonFunctionType.kt")
+    public void testVariableAsFunctionWithParameterNameInNonFunctionType() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/variableAsFunctionWithParameterNameInNonFunctionType.kt");
+    }
+
+    @Test
+    @TestMetadata("variableAsFunctionWithParameterNameMixed.kt")
+    public void testVariableAsFunctionWithParameterNameMixed() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/variableAsFunctionWithParameterNameMixed.kt");
+    }
+
+    @Test
     @TestMetadata("variableWithExtensionInvoke.kt")
     public void testVariableWithExtensionInvoke() throws Exception {
         runTest("analysis/analysis-api/testData/analysisSession/resolveCall/variableWithExtensionInvoke.kt");

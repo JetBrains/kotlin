@@ -5,16 +5,13 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.canNarrowDownGetterType
-import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
-import org.jetbrains.kotlin.fir.declarations.utils.isFinal
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
@@ -47,11 +44,48 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
     asReversed().flatMap { it.typeArgumentList.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
+
+fun ConeKotlinType.withParameterNameAnnotation(valueParameter: FirValueParameter, context: ConeTypeContext): ConeKotlinType {
+    if (valueParameter.name == SpecialNames.NO_NAME_PROVIDED || valueParameter.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) return this
+    // Existing @ParameterName annotation takes precedence
+    if (attributes.customAnnotations.getAnnotationsByClassId(StandardNames.FqNames.parameterNameClassId).isNotEmpty()) return this
+
+    val fakeSource = valueParameter.source?.fakeElement(FirFakeSourceElementKind.ParameterNameAnnotationCall)
+    val parameterNameAnnotationCall = buildAnnotation {
+        source = fakeSource
+        annotationTypeRef =
+            buildResolvedTypeRef {
+                source = fakeSource
+                type = ConeClassLikeTypeImpl(
+                    ConeClassLikeLookupTagImpl(StandardNames.FqNames.parameterNameClassId),
+                    emptyArray(),
+                    isNullable = false
+                )
+            }
+        argumentMapping = buildAnnotationArgumentMapping {
+            mapping[StandardClassIds.Annotations.ParameterNames.parameterNameName] =
+                buildConstExpression(fakeSource, ConstantValueKind.String, valueParameter.name.asString(), setType = true)
+        }
+    }
+    val attributesWithParameterNameAnnotation =
+        ConeAttributes.create(listOf(CustomAnnotationTypeAttribute(listOf(parameterNameAnnotationCall))))
+    return withCombinedCustomAttributesFrom(attributesWithParameterNameAnnotation, context)
+}
+
+fun ConeKotlinType.withCombinedCustomAttributesFrom(other: ConeKotlinType, context: ConeTypeContext): ConeKotlinType =
+    withCombinedCustomAttributesFrom(other.attributes, context)
+
+private fun ConeKotlinType.withCombinedCustomAttributesFrom(other: ConeAttributes, context: ConeTypeContext): ConeKotlinType {
+    val customAttributesFromOther = other.custom ?: return this
+    val combinedConeAttributes = attributes.add(ConeAttributes.create(listOf(customAttributesFromOther)))
+    return withAttributes(combinedConeAttributes, context)
+}
 
 fun FirFunction.constructFunctionalType(isSuspend: Boolean = false): ConeLookupTagBasedType {
     val receiverTypeRef = when (this) {
@@ -446,9 +480,10 @@ private fun initialTypeOfCandidate(candidate: Candidate, typeRef: FirResolvedTyp
     return candidate.substitutor.substituteOrSelf(typeRef.type)
 }
 
-fun FirCallableDeclaration.getContainingClass(session: FirSession): FirRegularClass? = this.containingClass()?.let { lookupTag ->
-    session.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirRegularClass
-}
+fun FirCallableDeclaration.getContainingClass(session: FirSession): FirRegularClass? =
+    this.containingClass()?.let { lookupTag ->
+        session.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirRegularClass
+    }
 
 fun FirFunction.getAsForbiddenNamedArgumentsTarget(session: FirSession): ForbiddenNamedArgumentsTarget? {
     if (this is FirConstructor && this.isPrimary) {

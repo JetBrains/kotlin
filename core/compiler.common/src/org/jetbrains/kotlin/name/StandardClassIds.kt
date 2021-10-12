@@ -181,6 +181,8 @@ object StandardClassIds {
             val deprecatedSinceKotlinWarningSince = Name.identifier("warningSince")
             val deprecatedSinceKotlinErrorSince = Name.identifier("errorSince")
             val deprecatedSinceKotlinHiddenSince = Name.identifier("hiddenSince")
+
+            val parameterNameName = jvmNameName
         }
     }
 

@@ -1,0 +1,5 @@
+KtFunctionalTypeVariableCall:
+target = val x: kotlin.Function1<@R|kotlin.ParameterName|(name = String(a))  kotlin.Int, kotlin.Unit>
+argumentMapping = { 1 -> (a: @R|kotlin.ParameterName|(name = String(a))  kotlin.Int) }
+targetFunction = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<@R|kotlin.ParameterName|(name = String(a))  kotlin.Int, kotlin.Unit>, a: @R|kotlin.ParameterName|(name = String(a))  kotlin.Int): kotlin.Unit
+substitutor = <empty substitutor>

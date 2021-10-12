@@ -183,6 +183,11 @@ sealed class FirFakeSourceElementKind : FirSourceElementKind() {
 
     // for annotation moved to another element due to annotation use-site target
     object FromUseSiteTarget : FirFakeSourceElementKind()
+
+    // for `@ParameterName` annotation call added to function types with names in the notation
+    // with a fake source that refers to the value parameter in the function type notation
+    // e.g., `(x: Int) -> Unit` becomes `Function1<@ParameterName("x") Int, Unit>`
+    object ParameterNameAnnotationCall : FirFakeSourceElementKind()
 }
 
 sealed class FirSourceElement {

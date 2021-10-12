@@ -91,6 +91,7 @@ private fun KtCall.stringRepresentation(): String {
             append(": ${annotatedType.type.render()}")
         }
         is KtValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${annotatedType.type.render()}"
+        is KtVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${annotatedType.type.render()}"
         is KtSuccessCallTarget -> symbol.stringValue()
         is KtErrorCallTarget -> "ERR<${this.diagnostic.defaultMessage}, [${candidates.joinToString { it.stringValue() }}]>"
         is Boolean -> toString()

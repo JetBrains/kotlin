@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.ThreadSafeMutableState
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
@@ -16,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOuterClassArgumentsRequired
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedQualifierError
@@ -348,7 +345,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
     private fun createFunctionalType(typeRef: FirFunctionTypeRef): ConeClassLikeType {
         val parameters =
             listOfNotNull(typeRef.receiverTypeRef?.coneType) +
-                    typeRef.valueParameters.map { it.returnTypeRef.coneType } +
+                    typeRef.valueParameters.map { it.returnTypeRef.coneType.withParameterNameAnnotation(it, session.typeContext) } +
                     listOf(typeRef.returnTypeRef.coneType)
         val classId = if (typeRef.isSuspend) {
             StandardClassIds.SuspendFunctionN(typeRef.parametersCount)

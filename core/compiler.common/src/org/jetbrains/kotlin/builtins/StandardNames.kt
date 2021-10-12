@@ -113,6 +113,7 @@ object StandardNames {
         @JvmField val replaceWith: FqName = fqName("ReplaceWith")
         @JvmField val extensionFunctionType: FqName = fqName("ExtensionFunctionType")
         @JvmField val parameterName: FqName = fqName("ParameterName")
+        @JvmField val parameterNameClassId: ClassId = ClassId.topLevel(parameterName)
         @JvmField val annotation: FqName = fqName("Annotation")
         @JvmField val target: FqName = annotationName("Target")
         @JvmField val targetClassId: ClassId = ClassId.topLevel(target)
