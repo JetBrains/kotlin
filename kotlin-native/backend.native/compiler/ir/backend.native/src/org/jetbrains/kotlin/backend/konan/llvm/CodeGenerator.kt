@@ -475,7 +475,10 @@ internal abstract class FunctionGenerationContext(
     private val entryBb = basicBlockInFunction("entry", startLocation)
     protected val cleanupLandingpad = basicBlockInFunction("cleanup_landingpad", endLocation)
 
-    private var needLeaveFrameInUnwindEpilogue: Boolean = false
+    private val needLeaveFrameInUnwindEpilogue: Boolean
+        get() = irFunction?.annotations?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true
+                || forwardingForeignExceptionsTerminatedWith != null
+                || irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE
     private var setCurrentFrameIsCalled: Boolean = false
 
     val stackLocalsManager = StackLocalsManagerImpl(this, stackLocalsInitBb)
@@ -1419,9 +1422,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     internal fun epilogue() {
-        needLeaveFrameInUnwindEpilogue = irFunction?.annotations?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true
-                || forwardingForeignExceptionsTerminatedWith != null
-                || irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE
+        val needLeaveFrameInUnwindEpilogue = this.needLeaveFrameInUnwindEpilogue
 
         appendingTo(prologueBb) {
             val slots = if (needSlotsPhi || needLeaveFrameInUnwindEpilogue)
