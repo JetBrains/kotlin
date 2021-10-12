@@ -137,10 +137,11 @@ internal class KotlinRootNpmResolver internal constructor(
 
     fun alreadyResolvedMessage(action: String) = "Cannot $action. NodeJS projects already resolved."
 
-    @Synchronized
     fun addProject(target: Project) {
-        check(state == State.CONFIGURING) { alreadyResolvedMessage("add new project: $target") }
-        projectResolvers[target.path] = KotlinProjectNpmResolver(target, this)
+        synchronized(projectResolvers) {
+            check(state == State.CONFIGURING) { alreadyResolvedMessage("add new project: $target") }
+            projectResolvers[target.path] = KotlinProjectNpmResolver(target, this)
+        }
     }
 
     operator fun get(projectPath: String) = projectResolvers[projectPath] ?: error("$projectPath is not configured for JS usage")
@@ -180,7 +181,7 @@ internal class KotlinRootNpmResolver internal constructor(
      * Don't use directly, use [KotlinNpmResolutionManager.installIfNeeded] instead.
      */
     internal fun prepareInstallation(logger: Logger): Installation {
-        synchronized(this@KotlinRootNpmResolver) {
+        synchronized(projectResolvers) {
             check(state == State.CONFIGURING) {
                 "Projects must be configuring"
             }
@@ -222,7 +223,7 @@ internal class KotlinRootNpmResolver internal constructor(
             services: ServiceRegistry,
             logger: Logger
         ): KotlinRootNpmResolution {
-            synchronized(this@KotlinRootNpmResolver) {
+            synchronized(projectResolvers) {
                 check(state == State.PROJECTS_CLOSED) {
                     "Projects must be closed"
                 }
