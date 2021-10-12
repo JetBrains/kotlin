@@ -711,6 +711,7 @@ tasks {
         dependsOn(":compiler:fir:analysis-tests:test")
         dependsOn(":compiler:fir:analysis-tests:legacy-fir-tests:test")
         dependsOn(":compiler:fir:fir2ir:test")
+        dependsOn(":plugins:fir:fir-plugin-prototype:test")
     }
 
     register("firAllTest") {
