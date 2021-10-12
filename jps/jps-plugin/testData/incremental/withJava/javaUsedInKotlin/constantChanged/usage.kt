@@ -1,4 +1,4 @@
-import JavaClass.Inner.CONST
+import JavaClass.Inner.InnerInner.CONST
 
 fun main() {
     val myKotlinConst = CONST
