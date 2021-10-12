@@ -17,7 +17,7 @@ import kotlin.test.assertEquals
 // TODO: for this test to work, runtime dependency should be updated to (yet unreleased) serialization with @MetaSerializable annotation
 
 //@MetaSerializable
-@Target(AnnotationTarget.CLASS)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
 annotation class MySerializable(
     /*@MetaSerializable.Serializer*/ val with: KClass<out KSerializer<*>> = KSerializer::class,
 )
@@ -29,9 +29,9 @@ annotation class MySerializableWithInfo(
     val kclass: KClass<*>
 )
 
-object MySerializer : KSerializer<Project1> {
+object MySerializer1 : KSerializer<Project1> {
 
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Project", PrimitiveKind.STRING)
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Project1", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: Project1) = encoder.encodeString("${value.name}:${value.language}")
 
@@ -41,7 +41,19 @@ object MySerializer : KSerializer<Project1> {
     }
 }
 
-@MySerializable(MySerializer::class)
+object MySerializer2 : KSerializer<Project2> {
+
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Project2", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: Project2) = encoder.encodeString("${value.name}:${value.language}")
+
+    override fun deserialize(decoder: Decoder): Project2 {
+        val params = decoder.decodeString().split(':')
+        return Project2(params[0], params[1])
+    }
+}
+
+@MySerializable(MySerializer1::class)
 class Project1(val name: String, val language: String)
 
 @MySerializable
@@ -49,6 +61,11 @@ class Project2(val name: String, val language: String)
 
 @MySerializableWithInfo(123, String::class)
 class Project3(val name: String, val language: String)
+
+@MySerializable
+class Wrapper(
+    @MySerializable(with = MySerializer2::class) val project: Project2
+)
 
 fun testCustomSerializer() {
 //    val string = Json.encodeToString(Project1.serializer(), Project1("name", "lang"))
@@ -64,6 +81,14 @@ fun testDefaultSerializer() {
 //    val reconstructed = Json.decodeFromString(Project2.serializer(), string)
 //    assertEquals("name", reconstructed.name)
 //    assertEquals("lang", reconstructed.language)
+}
+
+fun testCustomSerializerOnProperty() {
+//    val string = Json.encodeToString(Wrapper.serializer(), Wrapper(Project2("name", "lang")))
+//    assertEquals("""{"project":"name:lang"}""", string)
+//    val reconstructed = Json.decodeFromString(Wrapper.serializer(), string)
+//    assertEquals("name", reconstructed.project.name)
+//    assertEquals("lang", reconstructed.project.language)
 }
 
 fun testSerializableWithInfo() {
