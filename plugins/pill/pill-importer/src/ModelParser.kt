@@ -17,6 +17,7 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.internal.file.copy.CopySpecInternal
 import org.gradle.api.internal.file.copy.SingleParentCopySpec
+import org.gradle.api.provider.Property
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.findByType
 import org.gradle.language.jvm.tasks.ProcessResources
@@ -201,7 +202,7 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
         val kotlinTasksBySourceSet = project.tasks.names
             .filter { it.startsWith("compile") && it.endsWith("Kotlin") }
             .map { project.tasks.getByName(it) }
-            .associateBy { it.invokeInternal("getSourceSetName") }
+            .associateBy { (it.invokeInternal("getSourceSetName") as Property<*>).get() as String }
 
         val gradleSourceSets = project.sourceSets?.toList() ?: emptyList()
         val sourceSets = mutableListOf<PSourceSet>()
