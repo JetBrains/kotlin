@@ -49,12 +49,12 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
         <set-?>: CONST Int type=kotlin.Int value=0
       VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:@[FlexibleNullability] kotlin.Int? [val]
         CALL 'local final fun <get-x> (): @[FlexibleNullability] kotlin.Int? declared in <root>.test2' type=@[FlexibleNullability] kotlin.Int? origin=GET_LOCAL_PROPERTY
-      CALL 'local final fun <set-x> (<set-?>: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.test2' type=kotlin.Unit origin=EQ
+      CALL 'local final fun <set-x> (<set-?>: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.test2' type=kotlin.Unit origin=POSTFIX_INCR
         <set-?>: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'val tmp_0: @[FlexibleNullability] kotlin.Int? [val] declared in <root>.test2' type=@[FlexibleNullability] kotlin.Int? origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         GET_VAR 'val tmp_0: @[FlexibleNullability] kotlin.Int? [val] declared in <root>.test2' type=@[FlexibleNullability] kotlin.Int? origin=null
-      CALL 'local final fun <set-x> (<set-?>: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.test2' type=kotlin.Unit origin=EQ
+      CALL 'local final fun <set-x> (<set-?>: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.test2' type=kotlin.Unit origin=PLUSEQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'local final fun <get-x> (): @[FlexibleNullability] kotlin.Int? declared in <root>.test2' type=@[FlexibleNullability] kotlin.Int? origin=GET_LOCAL_PROPERTY
           other: CONST Int type=kotlin.Int value=1

@@ -239,7 +239,10 @@ class Fir2IrVisitor(
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Any?): IrElement {
         return anonymousFunction.convertWithOffsets { startOffset, endOffset ->
             val irFunction = declarationStorage.createIrFunction(
-                anonymousFunction, irParent = conversionScope.parent(), predefinedOrigin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA, isLocal = true
+                anonymousFunction,
+                irParent = conversionScope.parent(),
+                predefinedOrigin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
+                isLocal = true
             )
             conversionScope.withFunction(irFunction) {
                 memberGenerator.convertFunctionContent(irFunction, anonymousFunction, containingClass = null)
@@ -567,8 +570,10 @@ class Fir2IrVisitor(
                 return convertToIrExpression(firStatement)
             }
         }
-        val type = if (origin?.isLoop == true) irBuiltIns.unitType
-        else (statements.lastOrNull() as? FirExpression)?.typeRef?.toIrType() ?: irBuiltIns.unitType
+        val type = if (origin?.isLoop == true)
+            irBuiltIns.unitType
+        else
+            (statements.lastOrNull() as? FirExpression)?.typeRef?.toIrType() ?: irBuiltIns.unitType
         return convertWithOffsets { startOffset, endOffset ->
             if (origin == IrStatementOrigin.DO_WHILE_LOOP) {
                 IrCompositeImpl(
@@ -577,11 +582,36 @@ class Fir2IrVisitor(
                 )
             } else {
                 IrBlockImpl(
-                    startOffset, endOffset, type, origin,
+                    startOffset, endOffset, type, getBlockOrigin() ?: origin,
                     mapToIrStatements().filterNotNull()
                 )
             }
         }
+    }
+
+    private fun FirBlock.getBlockOrigin(): IrStatementOrigin? {
+        if (source?.kind !is FirFakeSourceElementKind.DesugaredIncrementOrDecrement) return null
+
+        val isPrefix: Boolean
+        val incrementStatement = when (statements.size) {
+            2 -> {
+                isPrefix = true
+                statements[0]
+            }
+            3 -> {
+                isPrefix = false
+                statements[1]
+            }
+            else -> return null
+        }
+
+        if (incrementStatement !is FirVariableAssignment) return null
+
+        val origin = incrementStatement.getIrAssignmentOrigin(isPrefix)
+        return if (origin == IrStatementOrigin.EQ)
+            null
+        else
+            origin
     }
 
     override fun visitErrorExpression(errorExpression: FirErrorExpression, data: Any?): IrElement {

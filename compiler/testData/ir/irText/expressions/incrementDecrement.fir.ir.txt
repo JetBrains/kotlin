@@ -32,14 +32,14 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
       VAR name:x type:kotlin.Int [var]
         CONST Int type=kotlin.Int value=0
       VAR name:x1 type:kotlin.Int [val]
-        BLOCK type=kotlin.Int origin=null
-          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Unit origin=EQ
+        BLOCK type=kotlin.Int origin=PREFIX_INCR
+          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Unit origin=PREFIX_INCR
             CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Int origin=null
           GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Int origin=null
       VAR name:x2 type:kotlin.Int [val]
-        BLOCK type=kotlin.Int origin=null
-          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Unit origin=EQ
+        BLOCK type=kotlin.Int origin=PREFIX_DECR
+          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Unit origin=PREFIX_DECR
             CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Int origin=null
           GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Int origin=null
@@ -48,18 +48,18 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
       VAR name:x type:kotlin.Int [var]
         CONST Int type=kotlin.Int value=0
       VAR name:x1 type:kotlin.Int [val]
-        BLOCK type=kotlin.Int origin=null
+        BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
             GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
-          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Unit origin=EQ
+          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Unit origin=POSTFIX_INCR
             CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
           GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
       VAR name:x2 type:kotlin.Int [val]
-        BLOCK type=kotlin.Int origin=null
+        BLOCK type=kotlin.Int origin=POSTFIX_DECR
           VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
             GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
-          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Unit origin=EQ
+          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Unit origin=POSTFIX_DECR
             CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
           GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.testVarPostfix' type=kotlin.Int origin=null

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
 fun use(i: Int) {}
 
 fun testPostfixIncr0() {
