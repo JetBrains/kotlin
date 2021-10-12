@@ -73,7 +73,6 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
     private lateinit var platformVersion: String
     private lateinit var platformBaseNumber: String
     private lateinit var intellijCoreDir: File
-    private var isAndroidStudioPlatform: Boolean = false
 
     private fun initEnvironment(project: Project) {
         projectDir = project.projectDir
@@ -82,7 +81,6 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             ?: platformVersion.substringBefore("-", "").takeIf { it.isNotEmpty() }
                     ?: error("Invalid platform version: $platformVersion")
         intellijCoreDir = File(platformDir.parentFile.parentFile.parentFile, "intellij-core")
-        isAndroidStudioPlatform = project.extensions.extraProperties.has("versions.androidStudioRelease")
     }
 
     fun pill() {
@@ -173,14 +171,11 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
         val runConfigurationsDir = File(resourcesDir, "runConfigurations")
         val targetDir = File(projectDir, ".idea/runConfigurations")
         val platformDirProjectRelative = "\$PROJECT_DIR\$/" + platformDir.toRelativeString(projectDir)
-        val additionalIdeaArgs = if (isAndroidStudioPlatform) "-Didea.platform.prefix=AndroidStudio" else ""
 
         targetDir.mkdirs()
 
         fun substitute(text: String): String {
-            return text
-                .replace("\$IDEA_HOME_PATH\$", platformDirProjectRelative)
-                .replace("\$ADDITIONAL_IDEA_ARGS\$", additionalIdeaArgs)
+            return text.replace("\$IDEA_HOME_PATH\$", platformDirProjectRelative)
         }
 
         (runConfigurationsDir.listFiles() ?: emptyArray())
@@ -255,7 +250,6 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
                 }
 
                 addOrReplaceOptionValue("idea.home.path", platformDirProjectRelative)
-                addOrReplaceOptionValue("ideaSdk.androidPlugin.path", "$platformDirProjectRelative/plugins/android/lib")
                 addOrReplaceOptionValue("use.jps", "true")
                 addOrReplaceOptionValue("kotlinVersion", project.rootProject.extra["kotlinVersion"].toString())
 
