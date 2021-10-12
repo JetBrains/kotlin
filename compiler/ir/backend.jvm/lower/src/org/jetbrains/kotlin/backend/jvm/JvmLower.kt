@@ -349,7 +349,7 @@ private val jvmFilePhases = listOf(
     remapObjectFieldAccesses,
 
     anonymousObjectSuperConstructorPhase,
-    jvmStandardLibraryBuiltInsPhase,
+    jvmBuiltInsPhase,
 
     rangeContainsLoweringPhase,
     forLoopsPhase,
