@@ -3,6 +3,9 @@
 // INFER_MAIN_MODULE
 // ES_MODULES
 
+// TODO: Fix tests on Windows
+// DONT_TARGET_EXACT_BACKEND: JS_IR
+
 // MODULE: overriden-external-method-with-same-stable-name-method
 // FILE: lib.kt
 external abstract class Foo {

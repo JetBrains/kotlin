@@ -1880,11 +1880,6 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
                 runTest("js/js.translator/testData/box/esModules/export/overriddenExternalMethodWithSameNameMethod.kt");
             }
 
-            @TestMetadata("overriddenExternalMethodWithSameStableNameMethod.kt")
-            public void testOverriddenExternalMethodWithSameStableNameMethod() throws Exception {
-                runTest("js/js.translator/testData/box/esModules/export/overriddenExternalMethodWithSameStableNameMethod.kt");
-            }
-
             @TestMetadata("reservedModuleName.kt")
             public void testReservedModuleName() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/export/reservedModuleName.kt");

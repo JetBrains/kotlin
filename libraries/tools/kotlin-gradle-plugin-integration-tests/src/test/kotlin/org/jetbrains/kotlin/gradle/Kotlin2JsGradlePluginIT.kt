@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Assert
 import org.junit.Assume.assumeFalse
+import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 import java.io.FileFilter
@@ -126,6 +127,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
     }
 
     @Test
+    @Ignore  // Persistent IR is no longer supported
     fun testJsIrIncrementalInParallel() = with(Project("kotlin-js-browser-project")) {
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
