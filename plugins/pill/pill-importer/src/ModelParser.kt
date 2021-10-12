@@ -269,16 +269,15 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
             method.invoke(kotlinCompileTask) as List<String>
         }
 
-        fun parseBoolean(name: String) = compileArguments.contains("-$name")
-        fun parseString(name: String) = compileArguments.dropWhile { it != "-$name" }.drop(1).firstOrNull()
-
-        val extraArguments = compileArguments.filter { it.startsWith("-X") && !it.startsWith("-Xplugin=") }
+        val extraArguments = getExtraArguments(compileArguments)
 
         val pluginClasspath = mutableListOf<String>()
-
         if (project.plugins.hasPlugin("org.jetbrains.kotlin.plugin.serialization")) {
             pluginClasspath += "\$KOTLIN_BUNDLED\$/lib/kotlinx-serialization-compiler-plugin.jar"
         }
+
+        fun parseBoolean(name: String) = compileArguments.contains("-$name")
+        fun parseString(name: String) = compileArguments.dropWhile { it != "-$name" }.drop(1).firstOrNull()
 
         return PSourceRootKotlinOptions(
             parseBoolean("no-stdlib"),
@@ -314,6 +313,34 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
         return configuration.resolve().map { file ->
             val library = PLibrary(file.name, listOf(file))
             return@map PDependency.ModuleLibrary(library)
+        }
+    }
+
+    private companion object {
+        private val SKIPPED_STANDALONE_ARGUMENTS =
+            listOf("-no-stdlib", "-no-reflect", "-Xfriend-paths=", "-Xbuild-file=", "-Xplugin=")
+
+        private val SKIPPED_ARGUMENTS_WITH_VALUE =
+            listOf("-classpath", "-d", "-module-name", "-api-version", "-language-version", "-jvm-target", "-P")
+
+        private fun getExtraArguments(args: List<String>): List<String> {
+            val result = mutableListOf<String>()
+            var index = 0
+            while (index < args.size) {
+                val arg = args[index]
+
+                if (SKIPPED_STANDALONE_ARGUMENTS.any { arg.startsWith(it) }) {
+                    index += 1
+                    continue
+                } else if (SKIPPED_ARGUMENTS_WITH_VALUE.any { arg.startsWith(it) }) {
+                    index += 2 // Skip also the value
+                    continue
+                }
+
+                result += arg
+                index += 1
+            }
+            return result
         }
     }
 }
