@@ -259,23 +259,33 @@ private fun setupProjectFromTestResources(
 private fun Path.addDefaultBuildFiles() {
     if (Files.exists(resolve("build.gradle"))) {
         val settingsFile = resolve("settings.gradle")
-        if (!Files.exists(settingsFile)) {
-            settingsFile.toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
-        } else {
-            val settingsContent = settingsFile.toFile().readText()
-            if (!settingsContent
-                    .lines()
-                    .first { !it.startsWith("//") }
-                    .startsWith("pluginManagement {")
-            ) {
-                settingsFile.toFile().writeText(
-                    """
+        settingsFile.addPluginManagementToSettings()
+    }
+
+    val buildSrc = resolve("buildSrc")
+    if (Files.exists(buildSrc)) {
+        val settingsFile = buildSrc.resolve("settings.gradle")
+        settingsFile.addPluginManagementToSettings()
+    }
+}
+
+private fun Path.addPluginManagementToSettings() {
+    if (!Files.exists(this)) {
+        toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
+    } else {
+        val settingsContent = toFile().readText()
+        if (!settingsContent
+                .lines()
+                .first { !it.startsWith("//") }
+                .startsWith("pluginManagement {")
+        ) {
+            toFile().writeText(
+                """
                     $DEFAULT_GROOVY_SETTINGS_FILE
                     
                     $settingsContent
                     """.trimIndent()
-                )
-            }
+            )
         }
     }
 }
