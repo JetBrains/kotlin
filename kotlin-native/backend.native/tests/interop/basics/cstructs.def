@@ -39,3 +39,27 @@ struct Complex produceComplex() {
     };
     return complex;
 };
+
+struct WithFlexibleArray {
+    int size;
+    int data[];
+};
+
+struct WithFlexibleArrayWithPadding {
+    int size;
+    char c;
+    long long data[];
+};
+
+void fillArray(struct WithFlexibleArrayWithPadding *flex, int count) {
+    flex->size = count;
+    flex->c = '!';
+    for (int i = 0; i < count; i++) {
+        flex->data[i] = (((long long)i) << 32) | (i * 100);
+    }
+}
+
+struct WithZeroSizedArray {
+    int size;
+    int data[0];
+};
