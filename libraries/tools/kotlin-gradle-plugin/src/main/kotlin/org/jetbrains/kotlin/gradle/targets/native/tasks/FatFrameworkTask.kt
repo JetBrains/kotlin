@@ -24,7 +24,7 @@ import java.io.File
 
 class FrameworkDsymLayout(val rootDir: File) {
     init {
-        require(rootDir.extension == "framework.dSYM")
+        require(rootDir.name.endsWith(".framework.dSYM"))
     }
 
     private val frameworkName = rootDir.name.removeSuffix(".framework.dSYM")
