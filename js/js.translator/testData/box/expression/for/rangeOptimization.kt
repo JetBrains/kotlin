@@ -5,7 +5,7 @@
 // CHECK_CONTAINS_NO_CALLS: testDownTo
 // CHECK_CONTAINS_NO_CALLS: testStep TARGET_BACKENDS=JS
 // CHECK_CONTAINS_NO_CALLS: testEmptyRange
-// CHECK_CONTAINS_NO_CALLS: testRangeToParams except=from;to
+// CHECK_CONTAINS_NO_CALLS: testRangeToParams except=from;to TARGET_BACKENDS=JS
 
 fun testRangeTo(): String {
     var result = ""

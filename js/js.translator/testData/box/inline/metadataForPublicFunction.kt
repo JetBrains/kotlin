@@ -5,7 +5,6 @@ package foo
 // CHECK_CONTAINS_NO_CALLS: test2 except=imul
 // CHECK_CONTAINS_NO_CALLS: test3 except=imul
 // CHECK_CONTAINS_NO_CALLS: test4_buocd8$ except=imul TARGET_BACKENDS=JS
-// CHECK_CONTAINS_NO_CALLS: test4_o4gm63_k$ except=imul IGNORED_BACKENDS=JS
 // CHECK_CONTAINS_NO_CALLS: test5 except=imul;OInner_getInstance
 // CHECK_HAS_INLINE_METADATA: apply TARGET_BACKENDS=JS
 // CHECK_HAS_INLINE_METADATA: applyL_h43q6c$ TARGET_BACKENDS=JS

@@ -4,7 +4,6 @@
 // CHECK_NOT_CALLED_IN_SCOPE: function=component1 scope=test2
 // CHECK_NOT_CALLED_IN_SCOPE: function=component1 scope=test3
 // CHECK_CONTAINS_NO_CALLS: test4 except=toString TARGET_BACKENDS=JS
-// CHECK_CONTAINS_NO_CALLS: test4 except=_get_size__0_k$ IGNORED_BACKENDS=JS
 
 fun test1(a: Sequence<String>): String {
     var s = ""

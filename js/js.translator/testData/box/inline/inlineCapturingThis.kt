@@ -2,7 +2,6 @@
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: test TARGET_BACKENDS=JS
-// CHECK_CONTAINS_NO_CALLS: test_0_k$ except=Unit_getInstance IGNORED_BACKENDS=JS
 
 inline fun block(p: () -> Unit) = p()
 

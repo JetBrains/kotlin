@@ -11,6 +11,5 @@ inline fun foo() = O.bar()
 // MODULE: main(lib)
 // FILE: main.kt
 // CHECK_CONTAINS_NO_CALLS: box except=bar TARGET_BACKENDS=JS
-// CHECK_CONTAINS_NO_CALLS: box except=bar_0_k$;O_getInstance; IGNORED_BACKENDS=JS
 
 fun box() = foo()
