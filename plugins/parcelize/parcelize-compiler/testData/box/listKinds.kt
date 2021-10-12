@@ -50,6 +50,4 @@ fun box() = parcelTest { parcel ->
     assert(first == first2)
     assert((first.d as LinkedList<*>).size == 1)
     assert((first2.h as HashSet<*>).size == 1)
-    assert(first2.j is NavigableSet<*>)
-    assert(first2.k is SortedSet<*>)
 }

@@ -1,6 +1,7 @@
 // WITH_RUNTIME
 
 @file:JvmName("TestKt")
+@file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 package test
 
 import kotlinx.parcelize.*

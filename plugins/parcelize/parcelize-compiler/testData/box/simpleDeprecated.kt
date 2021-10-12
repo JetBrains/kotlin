@@ -9,6 +9,7 @@ import android.os.Parcelable
 
 annotation class SerializableLike
 
+@Suppress("DEPRECATED_ANNOTATION")
 @Parcelize @SerializableLike
 data class User(val firstName: String, val secondName: String, val age: Int) : Parcelable
 
@@ -20,6 +21,7 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
+    @Suppress("UNCHECKED_CAST")
     val creator = User::class.java.getDeclaredField("CREATOR").get(null) as Parcelable.Creator<User>
     val user2 = creator.createFromParcel(parcel)
     assert(user == user2)

@@ -1,3 +1,4 @@
+// !OPT_IN: kotlin.ExperimentalUnsignedTypes
 // WITH_RUNTIME
 // IGNORE_BACKEND: JVM
 

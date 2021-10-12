@@ -46,7 +46,6 @@ abstract class AbstractParcelizeBoxTestBase<R : ResultingArtifact.FrontendOutput
 
     override fun TestConfigurationBuilder.configuration() {
         defaultDirectives {
-            DIAGNOSTICS with "-warnings"
             +REQUIRES_SEPARATE_PROCESS
             +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
         }

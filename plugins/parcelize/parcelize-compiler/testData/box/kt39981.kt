@@ -16,6 +16,6 @@ import android.os.Parcelable
     }
 }
 
-fun box() = parcelTest { parcel ->
+fun box() = parcelTest {
     TestParcel()
 }
