@@ -1,7 +1,5 @@
-// CHECK_CASES_COUNT: function=box count=18 TARGET_BACKENDS=JS
-// CHECK_CASES_COUNT: function=box count=0 IGNORED_BACKENDS=JS
-// CHECK_IF_COUNT: function=box count=3 TARGET_BACKENDS=JS
-// CHECK_IF_COUNT: function=box count=21 IGNORED_BACKENDS=JS
+// CHECK_CASES_COUNT: function=box count=18
+// CHECK_IF_COUNT: function=box count=3
 
 enum class En { A, B, C }
 
