@@ -48,7 +48,6 @@ class JpsCompatiblePluginTasks(
         private val IGNORED_LIBRARIES = listOf(
             // Libraries
             ":kotlin-stdlib-common",
-            ":kotlin-reflect-api",
             ":kotlin-serialization",
             ":kotlin-test:kotlin-test-common",
             ":kotlin-test:kotlin-test-annotations-common",
@@ -63,6 +62,7 @@ class JpsCompatiblePluginTasks(
         )
 
         private val MAPPED_LIBRARIES = mapOf(
+            ":kotlin-reflect-api/main" to ":kotlin-reflect/main",
             ":kotlin-reflect-api/java9" to ":kotlin-reflect/main"
         )
 
