@@ -8,7 +8,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-fun extraSourceSet(name: String, extendMain: Boolean = true): Pair<SourceSet, Configuration> {
+fun extraSourceSet(name: String, extendMain: Boolean = true, jpsKind: String? = null): Pair<SourceSet, Configuration> {
     val sourceSet = sourceSets.create(name) {
         java.srcDir(name)
     }
@@ -18,6 +18,10 @@ fun extraSourceSet(name: String, extendMain: Boolean = true): Pair<SourceSet, Co
         configurations[sourceSet.runtimeOnlyConfigurationName]
             .extendsFrom(configurations.runtimeClasspath.get())
     }
+    if (jpsKind != null) {
+        // For Pill
+        sourceSet.extra["jpsKind"] = jpsKind
+    }
     return sourceSet to api
 }
 
@@ -25,7 +29,7 @@ val (builtinsSourceSet, builtinsApi) = extraSourceSet("builtins", extendMain = f
 val (evaluateSourceSet, evaluateApi) = extraSourceSet("evaluate")
 val (interpreterSourceSet, interpreterApi) = extraSourceSet("interpreter")
 val (protobufSourceSet, protobufApi) = extraSourceSet("protobuf")
-val (protobufCompareSourceSet, protobufCompareApi) = extraSourceSet("protobufCompare")
+val (protobufCompareSourceSet, protobufCompareApi) = extraSourceSet("protobufCompare", jpsKind = SourceSet.TEST_SOURCE_SET_NAME)
 val (wasmSourceSet, wasmApi) = extraSourceSet("wasm")
 
 dependencies {

@@ -19,6 +19,7 @@ import org.gradle.api.internal.file.copy.CopySpecInternal
 import org.gradle.api.internal.file.copy.SingleParentCopySpec
 import org.gradle.api.provider.Property
 import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.findByType
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.pill.model.POrderRoot.*
@@ -349,6 +350,7 @@ private val SourceSet.isTestSourceSet: Boolean
     get() = name == SourceSet.TEST_SOURCE_SET_NAME
             || name.endsWith("Test")
             || name.endsWith("Tests")
+            || (extra.has("jpsKind") && extra.get("jpsKind") == SourceSet.TEST_SOURCE_SET_NAME)
 
 private fun Any.invokeInternal(name: String, instance: Any = this): Any? {
     val method = javaClass.methods.single { it.name.startsWith(name) && it.parameterTypes.isEmpty() }
