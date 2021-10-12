@@ -5076,6 +5076,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("InnerClassOfThrowableOnObject.kt")
+            public void testInnerClassOfThrowableOnObject() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/InnerClassOfThrowableOnObject.kt");
+            }
+
+            @Test
             @TestMetadata("IntersectionWithJavaString.kt")
             public void testIntersectionWithJavaString() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/IntersectionWithJavaString.kt");
