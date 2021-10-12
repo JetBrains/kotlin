@@ -132,7 +132,7 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
 
     override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
         expression.transformChildrenVoid(this)
-        return context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
+        return context.createJvmIrBuilder(currentScope!!, expression).run {
             // When `String.plus(Any?)` is invoked with receiver of platform type String or String with enhanced nullability, this could
             // fail a nullability check (NullPointerException) on the receiver. However, the non-IR backend currently does NOT insert this
             // check (see KT-36625, pending language design decision). To maintain compatibility with the non-IR backend, we remove
@@ -203,7 +203,7 @@ private class JvmDynamicStringConcatenationLowering(val context: JvmBackendConte
 
     override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
         expression.transformChildrenVoid(this)
-        return context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
+        return context.createJvmIrBuilder(currentScope!!, expression).run {
             // When `String.plus(Any?)` is invoked with receiver of platform type String or String with enhanced nullability, this could
             // fail a nullability check (NullPointerException) on the receiver. However, the non-IR backend currently does NOT insert this
             // check (see KT-36625, pending language design decision). To maintain compatibility with the non-IR backend, we remove

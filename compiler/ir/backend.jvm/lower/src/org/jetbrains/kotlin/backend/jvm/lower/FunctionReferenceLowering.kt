@@ -401,24 +401,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
             val proxyFunBody = IrBlockBodyImpl(startOffset, endOffset).also { proxyFun.body = it }
             when {
-                targetFun.isArrayOf() -> {
-                    // Lower arrayOf-like function in place.
-                    // TODO it seems that VarargLowering does a little bit too much.
-                    //  Maybe worth decomposing it into varargs part and arrayOf intrinsics part.
-                    val varargParameter = proxyFun.valueParameters.singleOrNull { it.isVararg }
-                        ?: throw AssertionError(
-                            "Proxy for *arrayOf should have single vararg parameter:\n" +
-                                    proxyFun.valueParameters.joinToString(separator = "\n") { it.dump() }
-                        )
-                    proxyFunBody.statements.add(
-                        IrReturnImpl(
-                            startOffset, endOffset,
-                            context.irBuiltIns.nothingType,
-                            proxyFun.symbol,
-                            IrGetValueImpl(startOffset, endOffset, varargParameter.symbol, null)
-                        )
-                    )
-                }
                 targetFun.returnType.isUnit() -> {
                     proxyFunBody.statements.add(targetCall)
                 }
@@ -510,7 +492,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     ): IrCall {
         val notNullSamType = samType.makeNotNull()
             .removeAnnotations { it.type.classFqName in specialNullabilityAnnotationsFqNames }
-        return context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
+        return context.createJvmIrBuilder(currentScope!!).run {
             // See [org.jetbrains.kotlin.backend.jvm.JvmSymbols::indyLambdaMetafactoryIntrinsic].
             irCall(jvmIndyLambdaMetafactoryIntrinsic, notNullSamType).apply {
                 putTypeArgument(0, notNullSamType)
@@ -655,7 +637,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
         private val receiverField = context.ir.symbols.functionReferenceReceiverField.owner
 
-        fun build(): IrExpression = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
+        fun build(): IrExpression = context.createJvmIrBuilder(currentScope!!).run {
             irBlock(irFunctionReference.startOffset, irFunctionReference.endOffset) {
                 val constructor = createConstructor()
                 val boundReceiverVar =
@@ -892,12 +874,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                         }?.let { putArgument(callee, parameter, it) }
                     }
                 }
-                irExprBody(
-                    if (irFunctionReference.symbol.owner.isArrayOf())
-                        call.transform(VarargLowering(this@FunctionReferenceLowering.context), null)
-                    else
-                        call
-                )
+                irExprBody(call)
             }
         }
 

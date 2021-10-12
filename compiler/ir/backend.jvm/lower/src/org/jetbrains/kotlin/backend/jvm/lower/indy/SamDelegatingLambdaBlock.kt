@@ -77,7 +77,7 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
         parent: IrDeclarationParent
     ): SamDelegatingLambdaBlock {
         lateinit var ref: IrFunctionReference
-        val block = jvmContext.createJvmIrBuilder(scopeSymbol, expression.startOffset, expression.endOffset).run {
+        val block = jvmContext.createJvmIrBuilder(scopeSymbol, expression).run {
             //  {
             //      val tmp = <expression>
             //      fun `<anonymous>`(p1: T1, ..., pN: TN): R =
@@ -106,7 +106,7 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
         lateinit var ref: IrFunctionReference
         lateinit var ifExpr: IrExpression
         lateinit var ifNotNullBlock: IrContainerExpression
-        val block = jvmContext.createJvmIrBuilder(scopeSymbol, expression.startOffset, expression.endOffset).run {
+        val block = jvmContext.createJvmIrBuilder(scopeSymbol, expression).run {
             //  {
             //      val tmp = <expression>
             //      if (tmp == null)
@@ -163,7 +163,7 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
             lambda.dispatchReceiverParameter = null
             lambda.extensionReceiverParameter = null
             lambda.valueParameters = createLambdaValueParameters(superMethod, lambda, typeSubstitutor)
-            lambda.body = jvmContext.createJvmIrBuilder(lambda.symbol, expression.startOffset, expression.endOffset)
+            lambda.body = jvmContext.createJvmIrBuilder(lambda.symbol, expression)
                 .irBlockBody {
                     +irReturn(
                         irCall(invokeFunction).also { invokeCall ->

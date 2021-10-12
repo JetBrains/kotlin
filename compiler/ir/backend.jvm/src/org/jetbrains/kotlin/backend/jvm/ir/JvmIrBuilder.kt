@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.ir
 
+import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
@@ -34,3 +36,16 @@ fun JvmBackendContext.createJvmIrBuilder(
     startOffset: Int = UNDEFINED_OFFSET,
     endOffset: Int = UNDEFINED_OFFSET,
 ): JvmIrBuilder = JvmIrBuilder(this, symbol, startOffset, endOffset)
+
+
+fun JvmBackendContext.createJvmIrBuilder(symbol: IrSymbol, source: IrElement): JvmIrBuilder =
+    JvmIrBuilder(this, symbol, source.startOffset, source.endOffset)
+
+fun JvmBackendContext.createJvmIrBuilder(scopeWithIr: ScopeWithIr): JvmIrBuilder =
+    JvmIrBuilder(this, scopeWithIr.scope.scopeOwnerSymbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+
+fun JvmBackendContext.createJvmIrBuilder(scopeWithIr: ScopeWithIr, startOffset: Int, endOffset: Int): JvmIrBuilder =
+    JvmIrBuilder(this, scopeWithIr.scope.scopeOwnerSymbol, startOffset, endOffset)
+
+fun JvmBackendContext.createJvmIrBuilder(scopeWithIr: ScopeWithIr, source: IrElement): JvmIrBuilder =
+    JvmIrBuilder(this, scopeWithIr.scope.scopeOwnerSymbol, source.startOffset, source.endOffset)
