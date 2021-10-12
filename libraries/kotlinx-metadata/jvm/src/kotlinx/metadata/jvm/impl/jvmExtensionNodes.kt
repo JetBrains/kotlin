@@ -35,6 +35,7 @@ internal class JvmClassExtension : JvmClassExtensionVisitor(), KmClassExtension 
     val localDelegatedProperties: MutableList<KmProperty> = ArrayList(0)
     var moduleName: String? = null
     var anonymousObjectOriginName: String? = null
+    var jvmFlags: Flags = 0
 
     override fun visitLocalDelegatedProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor =
         KmProperty(flags, name, getterFlags, setterFlags).also { localDelegatedProperties.add(it) }
@@ -47,6 +48,10 @@ internal class JvmClassExtension : JvmClassExtensionVisitor(), KmClassExtension 
         this.anonymousObjectOriginName = internalName
     }
 
+    override fun visitJvmFlags(flags: Flags) {
+        this.jvmFlags = flags
+    }
+
     override fun accept(visitor: KmClassExtensionVisitor) {
         require(visitor is JvmClassExtensionVisitor)
         localDelegatedProperties.forEach {
@@ -54,6 +59,7 @@ internal class JvmClassExtension : JvmClassExtensionVisitor(), KmClassExtension 
         }
         moduleName?.let(visitor::visitModuleName)
         anonymousObjectOriginName?.let(visitor::visitAnonymousObjectOriginName)
+        jvmFlags.takeIf { it != 0 }?.let(visitor::visitJvmFlags)
         visitor.visitEnd()
     }
 }

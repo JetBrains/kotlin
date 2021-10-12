@@ -62,6 +62,13 @@ open class JvmClassExtensionVisitor @JvmOverloads constructor(
     }
 
     /**
+     * Visits the JVM-specific flags of the class, consisting of [JvmFlag.Class] flags.
+     */
+    open fun visitJvmFlags(flags: Flags) {
+        delegate?.visitJvmFlags(flags)
+    }
+
+    /**
      * Visits the end of JVM extensions for the class.
      */
     open fun visitEnd() {

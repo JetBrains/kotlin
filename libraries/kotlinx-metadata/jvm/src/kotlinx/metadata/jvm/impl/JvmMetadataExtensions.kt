@@ -31,6 +31,8 @@ internal class JvmMetadataExtensions : MetadataExtensions {
 
         ext.visitModuleName(proto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let(c::get) ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
 
+        proto.getExtensionOrNull(JvmProtoBuf.jvmClassFlags)?.let(ext::visitJvmFlags)
+
         ext.visitEnd()
     }
 
@@ -131,6 +133,12 @@ internal class JvmMetadataExtensions : MetadataExtensions {
             override fun visitModuleName(name: String) {
                 if (name != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
                     proto.setExtension(JvmProtoBuf.classModuleName, c[name])
+                }
+            }
+
+            override fun visitJvmFlags(flags: Flags) {
+                if (flags != 0) {
+                    proto.setExtension(JvmProtoBuf.jvmClassFlags, flags)
                 }
             }
         }
