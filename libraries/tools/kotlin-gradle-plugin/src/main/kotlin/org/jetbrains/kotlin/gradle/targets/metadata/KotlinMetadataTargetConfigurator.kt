@@ -166,8 +166,12 @@ class KotlinMetadataTargetConfigurator :
         target.project.whenEvaluated {
             val publishedCommonSourceSets: Set<KotlinSourceSet> = getCommonSourceSetsForMetadataCompilation(project)
 
-            kotlinExtension.sourceSets.all {
-                setupDependencyTransformationForSourceSet(target.project, it, it in publishedCommonSourceSets)
+            kotlinExtension.sourceSets.all { sourceSet ->
+                KotlinDependencyScope.values().forEach { scope ->
+                    setupDependencyTransformationForSourceSet(target.project, sourceSet, scope)
+                    applyMetadataDependencyTransformationsToRespectiveMetadataConfigurations(target.project, sourceSet, scope)
+                    setupAdditionalExtendsFrom(target.project, sourceSet, sourceSet in publishedCommonSourceSets, scope)
+                }
             }
         }
     }
@@ -338,54 +342,68 @@ class KotlinMetadataTargetConfigurator :
     private fun setupDependencyTransformationForSourceSet(
         project: Project,
         sourceSet: KotlinSourceSet,
-        isSourceSetPublished: Boolean
+        scope: KotlinDependencyScope,
     ) {
-        KotlinDependencyScope.values().forEach { scope ->
-            val granularMetadataTransformation = GranularMetadataTransformation(
-                project,
-                sourceSet,
-                listOf(scope),
-                lazy {
-                    dependsOnClosureWithInterCompilationDependencies(project, sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
-                        .map { checkNotNull(it.dependencyTransformations[scope]) }
-                }
+        val granularMetadataTransformation = GranularMetadataTransformation(
+            project,
+            sourceSet,
+            listOf(scope),
+            lazy {
+                dependsOnClosureWithInterCompilationDependencies(project, sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
+                    .map { checkNotNull(it.dependencyTransformations[scope]) }
+            }
+        )
+
+        (sourceSet as DefaultKotlinSourceSet).dependencyTransformations[scope] = granularMetadataTransformation
+    }
+
+    private fun applyMetadataDependencyTransformationsToRespectiveMetadataConfigurations(
+        project: Project,
+        sourceSet: KotlinSourceSet,
+        scope: KotlinDependencyScope
+    ) {
+        val sourceSetMetadataConfigurationByScope = project.sourceSetMetadataConfigurationByScope(sourceSet, scope)
+
+        val granularMetadataTransformation = (sourceSet as DefaultKotlinSourceSet).dependencyTransformations[scope]!!
+
+        granularMetadataTransformation.applyToConfiguration(sourceSetMetadataConfigurationByScope)
+    }
+
+    private fun setupAdditionalExtendsFrom(
+        project: Project,
+        sourceSet: KotlinSourceSet,
+        isSourceSetPublished: Boolean,
+        scope: KotlinDependencyScope
+    ) {
+        val sourceSetDependencyConfigurationByScope = project.sourceSetDependencyConfigurationByScope(sourceSet, scope)
+        val sourceSetMetadataConfigurationByScope = project.sourceSetMetadataConfigurationByScope(sourceSet, scope)
+
+        // All source set dependencies except for compileOnly agree in versions with all other published runtime dependencies:
+        if (scope != KotlinDependencyScope.COMPILE_ONLY_SCOPE) {
+            if (isSourceSetPublished) {
+                project.addExtendsFromRelation(
+                    ALL_RUNTIME_METADATA_CONFIGURATION_NAME,
+                    sourceSetDependencyConfigurationByScope.name
+                )
+            }
+            project.addExtendsFromRelation(
+                sourceSetMetadataConfigurationByScope.name,
+                ALL_RUNTIME_METADATA_CONFIGURATION_NAME
             )
+        }
 
-            (sourceSet as DefaultKotlinSourceSet).dependencyTransformations[scope] = granularMetadataTransformation
-
-            val sourceSetMetadataConfigurationByScope = project.sourceSetMetadataConfigurationByScope(sourceSet, scope)
-
-            granularMetadataTransformation.applyToConfiguration(sourceSetMetadataConfigurationByScope)
-
-            val sourceSetDependencyConfigurationByScope = project.sourceSetDependencyConfigurationByScope(sourceSet, scope)
-
-            // All source set dependencies except for compileOnly agree in versions with all other published runtime dependencies:
-            if (scope != KotlinDependencyScope.COMPILE_ONLY_SCOPE) {
-                if (isSourceSetPublished) {
-                    project.addExtendsFromRelation(
-                        ALL_RUNTIME_METADATA_CONFIGURATION_NAME,
-                        sourceSetDependencyConfigurationByScope.name
-                    )
-                }
+        // All source set dependencies except for runtimeOnly agree in versions with all other published compile dependencies:
+        if (scope != KotlinDependencyScope.RUNTIME_ONLY_SCOPE) {
+            if (isSourceSetPublished) {
                 project.addExtendsFromRelation(
-                    sourceSetMetadataConfigurationByScope.name,
-                    ALL_RUNTIME_METADATA_CONFIGURATION_NAME
+                    ALL_COMPILE_METADATA_CONFIGURATION_NAME,
+                    sourceSetDependencyConfigurationByScope.name
                 )
             }
-
-            // All source set dependencies except for runtimeOnly agree in versions with all other published compile dependencies:
-            if (scope != KotlinDependencyScope.RUNTIME_ONLY_SCOPE) {
-                if (isSourceSetPublished) {
-                    project.addExtendsFromRelation(
-                        ALL_COMPILE_METADATA_CONFIGURATION_NAME,
-                        sourceSetDependencyConfigurationByScope.name
-                    )
-                }
-                project.addExtendsFromRelation(
-                    sourceSetMetadataConfigurationByScope.name,
-                    ALL_COMPILE_METADATA_CONFIGURATION_NAME
-                )
-            }
+            project.addExtendsFromRelation(
+                sourceSetMetadataConfigurationByScope.name,
+                ALL_COMPILE_METADATA_CONFIGURATION_NAME
+            )
         }
     }
 
