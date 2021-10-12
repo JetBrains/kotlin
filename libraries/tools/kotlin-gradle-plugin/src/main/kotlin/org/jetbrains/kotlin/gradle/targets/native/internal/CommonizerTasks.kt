@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
-import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 
 internal val Project.isCInteropCommonizationEnabled: Boolean get() = PropertiesProvider(this).enableCInteropCommonization
 
@@ -108,13 +107,3 @@ internal val Project.cleanNativeDistributionCommonizerTask: TaskProvider<Delete>
             }
         )
     }
-
-private inline fun <reified T : Task> Project.locateOrRegisterTask(
-    name: String,
-    args: List<Any> = emptyList(),
-    invokeWhenRegistered: (TaskProvider<T>.() -> Unit) = {},
-    noinline configureTask: (T.() -> Unit)? = null
-): TaskProvider<T> {
-    locateTask<T>(name)?.let { return it }
-    return registerTask(name, args, configureTask).also(invokeWhenRegistered)
-}
