@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -161,17 +162,19 @@ fun FirClassifierSymbol<*>.toSymbol(
 }
 
 private fun FirBasedSymbol<*>.toSymbolForCall(
+    dispatchReceiver: FirExpression,
     session: FirSession,
     classifierStorage: Fir2IrClassifierStorage,
     declarationStorage: Fir2IrDeclarationStorage,
     preferGetter: Boolean
 ) = when (this) {
-    is FirCallableSymbol<*> -> unwrapCallRepresentative().toSymbolForCall(declarationStorage, preferGetter)
+    is FirCallableSymbol<*> -> unwrapCallRepresentative().toSymbolForCall(dispatchReceiver, declarationStorage, preferGetter)
     is FirClassifierSymbol<*> -> toSymbol(session, classifierStorage)
     else -> error("Unknown symbol: $this")
 }
 
 fun FirReference.toSymbolForCall(
+    dispatchReceiver: FirExpression,
     session: FirSession,
     classifierStorage: Fir2IrClassifierStorage,
     declarationStorage: Fir2IrDeclarationStorage,
@@ -179,8 +182,10 @@ fun FirReference.toSymbolForCall(
     preferGetter: Boolean = true
 ): IrSymbol? {
     return when (this) {
-        is FirResolvedNamedReference -> resolvedSymbol.toSymbolForCall(session, classifierStorage, declarationStorage, preferGetter)
-        is FirErrorNamedReference -> candidateSymbol?.toSymbolForCall(session, classifierStorage, declarationStorage, preferGetter)
+        is FirResolvedNamedReference ->
+            resolvedSymbol.toSymbolForCall(dispatchReceiver, session, classifierStorage, declarationStorage, preferGetter)
+        is FirErrorNamedReference ->
+            candidateSymbol?.toSymbolForCall(dispatchReceiver, session, classifierStorage, declarationStorage, preferGetter)
         is FirThisReference -> {
             when (val boundSymbol = boundSymbol) {
                 is FirClassSymbol<*> -> classifierStorage.getIrClassSymbol(boundSymbol).owner.thisReceiver?.symbol
@@ -196,9 +201,20 @@ fun FirReference.toSymbolForCall(
     }
 }
 
-private fun FirCallableSymbol<*>.toSymbolForCall(declarationStorage: Fir2IrDeclarationStorage, preferGetter: Boolean): IrSymbol? =
-    when (this) {
-        is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this)
+private fun FirCallableSymbol<*>.toSymbolForCall(
+    dispatchReceiver: FirExpression,
+    declarationStorage: Fir2IrDeclarationStorage,
+    preferGetter: Boolean
+): IrSymbol? {
+    val dispatchReceiverLookupTag = when (dispatchReceiver) {
+        is FirNoReceiverExpression -> null
+        else -> {
+            val session = declarationStorage.session
+            val coneType = dispatchReceiver.typeRef.coneType.lowerBoundIfFlexible()
+            (coneType as? ConeClassLikeType)?.fullyExpandedType(session)?.lookupTag
+        }
+    }
+    return when (this) {
         is FirSimpleSyntheticPropertySymbol -> {
             (fir as? FirSyntheticProperty)?.let { syntheticProperty ->
                 val delegateSymbol = if (preferGetter) {
@@ -207,16 +223,18 @@ private fun FirCallableSymbol<*>.toSymbolForCall(declarationStorage: Fir2IrDecla
                     syntheticProperty.setter?.delegate?.symbol
                         ?: throw AssertionError("Written synthetic property must have a setter")
                 }
-                delegateSymbol.unwrapCallRepresentative().toSymbolForCall(declarationStorage, preferGetter)
+                delegateSymbol.unwrapCallRepresentative().toSymbolForCall(dispatchReceiver, declarationStorage, preferGetter)
             } ?: declarationStorage.getIrPropertySymbol(this)
         }
-        is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(this)
+        is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this, dispatchReceiverLookupTag)
+        is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(this, dispatchReceiverLookupTag)
         is FirFieldSymbol -> declarationStorage.getIrFieldSymbol(this)
         is FirBackingFieldSymbol -> declarationStorage.getIrBackingFieldSymbol(this)
         is FirDelegateFieldSymbol -> declarationStorage.getIrDelegateFieldSymbol(this)
         is FirVariableSymbol<*> -> declarationStorage.getIrValueSymbol(this)
         else -> null
     }
+}
 
 fun FirConstExpression<*>.getIrConstKind(): IrConstKind<*> = when (kind) {
     ConstantValueKind.IntegerLiteral -> {

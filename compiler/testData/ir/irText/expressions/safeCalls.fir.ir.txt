@@ -92,7 +92,7 @@ FILE fqName:<root> fileName:/safeCalls.kt
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
+              then: CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.String' type=kotlin.Int origin=null
                 $this: GET_VAR 'val tmp_1: kotlin.String? [val] declared in <root>.test2' type=kotlin.String? origin=null
   FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.String?, y:kotlin.Any?) returnType:kotlin.Boolean?
     VALUE_PARAMETER name:x index:0 type:kotlin.String?
@@ -110,7 +110,7 @@ FILE fqName:<root> fileName:/safeCalls.kt
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any' type=kotlin.Boolean origin=null
+              then: CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.String' type=kotlin.Boolean origin=null
                 $this: GET_VAR 'val tmp_2: kotlin.String? [val] declared in <root>.test3' type=kotlin.String? origin=null
                 other: GET_VAR 'y: kotlin.Any? declared in <root>.test3' type=kotlin.Any? origin=null
   FUN name:test4 visibility:public modality:FINAL <> (x:<root>.Ref?) returnType:kotlin.Unit

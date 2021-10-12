@@ -141,10 +141,10 @@ FILE fqName:<root> fileName:/kt49203.kt
     VALUE_PARAMETER name:b index:0 type:<root>.B
     BLOCK_BODY
       CALL 'public final fun plusAssign (data: kotlin.String): kotlin.Unit [operator] declared in <root>.X' type=kotlin.Unit origin=null
-        $this: CALL 'public final fun <get-x> (): <root>.X declared in <root>.A' type=<root>.X origin=GET_PROPERTY
+        $this: CALL 'public final fun <get-x> (): <root>.X [fake_override] declared in <root>.B' type=<root>.X origin=GET_PROPERTY
           $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
         data: CONST String type=kotlin.String value="x"
       CALL 'public final fun plusAssign (data: kotlin.String): kotlin.Unit [operator] declared in <root>.X' type=kotlin.Unit origin=null
-        $this: CALL 'public final fun <get-y> (): <root>.X declared in <root>.A' type=<root>.X origin=GET_PROPERTY
+        $this: CALL 'public final fun <get-y> (): <root>.X [fake_override] declared in <root>.B' type=<root>.X origin=GET_PROPERTY
           $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
         data: CONST String type=kotlin.String value="y"

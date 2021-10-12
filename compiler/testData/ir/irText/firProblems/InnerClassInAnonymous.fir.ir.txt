@@ -43,7 +43,7 @@ FILE fqName:<root> fileName:/InnerClassInAnonymous.kt
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='public final fun bar (): kotlin.String declared in <root>.box.<no name provided>.Some'
                     CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
-                      $this: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.box.<no name provided>.Base' type=kotlin.String origin=GET_PROPERTY
+                      $this: CALL 'public final fun <get-s> (): kotlin.String [fake_override] declared in <root>.box.<no name provided>.Some' type=kotlin.String origin=GET_PROPERTY
                         $this: GET_VAR '<this>: <root>.box.<no name provided>.Some declared in <root>.box.<no name provided>.Some.bar' type=<root>.box.<no name provided>.Some origin=null
                       other: CALL 'public final fun <get-end> (): kotlin.String declared in <root>.box.<no name provided>' type=kotlin.String origin=GET_PROPERTY
                         $this: GET_VAR '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=null

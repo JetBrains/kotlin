@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import Derived.foo
 interface Base {
     fun foo() {}

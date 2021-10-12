@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -68,11 +69,12 @@ val IrFunction.isSuspend get() = this is IrSimpleFunction && this.isSuspend
 
 val IrFunction.isReal get() = !(this is IrSimpleFunction && isFakeOverride)
 
-fun IrSimpleFunction.overrides(other: IrSimpleFunction): Boolean {
+fun <S : IrSymbol> IrOverridableDeclaration<S>.overrides(other: IrOverridableDeclaration<S>): Boolean {
     if (this == other) return true
 
     this.overriddenSymbols.forEach {
-        if (it.owner.overrides(other)) {
+        @Suppress("UNCHECKED_CAST")
+        if ((it.owner as IrOverridableDeclaration<S>).overrides(other)) {
             return true
         }
     }
