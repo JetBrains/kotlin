@@ -473,7 +473,7 @@ targetList.each { target ->
             dependsOn "${target}CrossDistStdlib"
             dependsOn ":kotlin-native:platformLibs:${target}StdlibCache"
 
-            destinationDir project.file("$distDir/klib/cache")
+            destinationDir project.file("$distDir/klib/cache/")
 
             from("${project(":kotlin-native:runtime").buildDir}/cache/$target") {
                 include('**')

@@ -31,8 +31,7 @@ open class KonanCacheTask: DefaultTask() {
     val cacheDirectory: File
         get() = File(cacheRoot).apply {
             if (!exists()) mkdir()
-            resolve("$target-g$cacheKind")
-        }
+        }.resolve("$target-g$cacheKind")
 
     @get:OutputDirectory
     protected val cacheFile: File
