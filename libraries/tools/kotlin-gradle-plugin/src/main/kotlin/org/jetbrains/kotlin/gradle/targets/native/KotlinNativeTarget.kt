@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeBinaryTestRun
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRun
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
 import org.jetbrains.kotlin.gradle.targets.native.NativeBinaryTestRunSource
+import org.jetbrains.kotlin.gradle.targets.native.internal.includeCommonizedCInteropMetadata
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -72,11 +73,15 @@ open class KotlinNativeTarget @Inject constructor(
                         project.getMetadataCompilationForSourceSet(it)
                     }
 
-                    metadataCompilations.forEach {
-                        metadataJar.from(project.filesWithUnpackedArchives(it.output.allOutputs, setOf("klib"))) { spec ->
-                            spec.into(it.name)
+                    metadataCompilations.forEach { compilation ->
+                        metadataJar.from(project.filesWithUnpackedArchives(compilation.output.allOutputs, setOf("klib"))) { spec ->
+                            spec.into(compilation.name)
                         }
-                        metadataJar.dependsOn(it.output.classesDirs)
+                        metadataJar.dependsOn(compilation.output.classesDirs)
+
+                        if (compilation is KotlinSharedNativeCompilation) {
+                            project.includeCommonizedCInteropMetadata(metadataJar, compilation)
+                        }
                     }
                 }
                 project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, hostSpecificMetadataJar)
