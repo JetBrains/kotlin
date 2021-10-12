@@ -147,9 +147,10 @@ class JvmSignatureClashDetector(
         irDeclarations: Collection<IrDeclaration>,
         conflictingJvmDeclarationsData: ConflictingJvmDeclarationsData
     ) {
-        for (irDeclaration in irDeclarations) {
+        irDeclarations.mapNotNullTo(LinkedHashSet()) { irDeclaration ->
             context.ktDiagnosticReporter.atFirstValidFrom(irDeclaration, irClass, containingIrFile = irDeclaration.file)
-                .report(diagnosticFactory1, conflictingJvmDeclarationsData)
+        }.forEach {
+            it.report(diagnosticFactory1, conflictingJvmDeclarationsData)
         }
     }
 

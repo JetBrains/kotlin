@@ -67,5 +67,23 @@ open class KtDiagnosticReporterWithContext(
         ) {
             sourceElement?.let { report(factory.on(it, a, positioningStrategy), this) }
         }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is DiagnosticContextImpl) return false
+
+            if (sourceElement != other.sourceElement) return false
+            if (containingFilePath != other.containingFilePath) return false
+            if (languageVersionSettings != other.languageVersionSettings) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = sourceElement?.hashCode() ?: 0
+            result = 31 * result + containingFilePath.hashCode()
+            result = 31 * result + languageVersionSettings.hashCode()
+            return result
+        }
     }
 }
