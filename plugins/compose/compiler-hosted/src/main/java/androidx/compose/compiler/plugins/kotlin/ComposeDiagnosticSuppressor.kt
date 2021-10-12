@@ -31,12 +31,12 @@ open class ComposeDiagnosticSuppressor : DiagnosticSuppressor {
 
     companion object {
         fun registerExtension(
-            @Suppress("UNUSED_PARAMETER") project: Project,
+            project: Project,
             extension: DiagnosticSuppressor
         ) {
             @Suppress("DEPRECATION")
             Extensions.getRootArea().getExtensionPoint(DiagnosticSuppressor.EP_NAME)
-                .registerExtension(extension)
+                .registerExtension(extension, project)
         }
     }
 
