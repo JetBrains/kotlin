@@ -35,9 +35,9 @@ interface KotlinNativeLibraryArtifact {
         return librariesConfigurationName
     }
 
-    fun Project.registerIncludeDependencies(target: KonanTarget, artifactName: String, deps: List<Any>): String {
-        val includeConfigurationName = lowerCamelCaseName(target.presetName, artifactName, "linkInclude")
-        configurations.maybeCreate(includeConfigurationName).apply {
+    fun Project.registerExportDependencies(target: KonanTarget, artifactName: String, deps: List<Any>): String {
+        val exportConfigurationName = lowerCamelCaseName(target.presetName, artifactName, "linkExport")
+        configurations.maybeCreate(exportConfigurationName).apply {
             isVisible = false
             isCanBeConsumed = false
             isCanBeResolved = true
@@ -46,8 +46,8 @@ interface KotlinNativeLibraryArtifact {
             attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.name)
             attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
         }
-        deps.forEach { dependencies.add(includeConfigurationName, it) }
-        return includeConfigurationName
+        deps.forEach { dependencies.add(exportConfigurationName, it) }
+        return exportConfigurationName
     }
 }
 
@@ -58,9 +58,9 @@ class KotlinNativeLibraryConfig {
     var linkerOptions: List<String> = emptyList()
     var artifact: (() -> KotlinNativeLibraryArtifact)? = null
 
-    internal val includeDeps = mutableListOf<Any>()
+    internal val exportDeps = mutableListOf<Any>()
     fun from(vararg project: Any) {
-        includeDeps.addAll(project)
+        exportDeps.addAll(project)
     }
 
     internal var languageSettingsFn: LanguageSettingsBuilder.() -> Unit = {}
@@ -95,7 +95,7 @@ fun Project.nativeLibrary(name: String, configure: KotlinNativeLibraryConfig.() 
         return
     }
 
-    if (config.includeDeps.isEmpty()) {
+    if (config.exportDeps.isEmpty()) {
         logger.error("Native library '${name}' wasn't configured because it requires at least one module for linking")
         return
     }
