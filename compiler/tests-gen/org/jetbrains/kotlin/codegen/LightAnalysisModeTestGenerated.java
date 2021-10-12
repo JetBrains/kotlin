@@ -19122,6 +19122,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/specializedWithCharClass.kt");
                 }
 
+                @TestMetadata("specializedWithReifiedTypeParameter.kt")
+                public void testSpecializedWithReifiedTypeParameter() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/specializedWithReifiedTypeParameter.kt");
+                }
+
+                @TestMetadata("specializedWithString.kt")
+                public void testSpecializedWithString() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/specializedWithString.kt");
+                }
+
                 @TestMetadata("voidReturnTypeAsGeneric.kt")
                 public void testVoidReturnTypeAsGeneric() throws Exception {
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/voidReturnTypeAsGeneric.kt");

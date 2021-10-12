@@ -22959,6 +22959,18 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 }
 
                 @Test
+                @TestMetadata("specializedWithReifiedTypeParameter.kt")
+                public void testSpecializedWithReifiedTypeParameter() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/specializedWithReifiedTypeParameter.kt");
+                }
+
+                @Test
+                @TestMetadata("specializedWithString.kt")
+                public void testSpecializedWithString() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/specializedWithString.kt");
+                }
+
+                @Test
                 @TestMetadata("voidReturnTypeAsGeneric.kt")
                 public void testVoidReturnTypeAsGeneric() throws Exception {
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/voidReturnTypeAsGeneric.kt");
