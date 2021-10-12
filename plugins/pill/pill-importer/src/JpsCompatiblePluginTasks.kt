@@ -27,7 +27,12 @@ import kotlin.collections.HashMap
 
 const val EMBEDDED_CONFIGURATION_NAME = "embedded"
 
-class JpsCompatiblePluginTasks(private val rootProject: Project, private val platformDir: File, private val resourcesDir: File) {
+class JpsCompatiblePluginTasks(
+    private val rootProject: Project,
+    private val platformDir: File,
+    private val resourcesDir: File,
+    private val isIdePluginAttached: Boolean
+) {
     companion object {
         private val DIST_LIBRARIES = listOf(
             ":kotlin-annotations-jvm",
@@ -111,7 +116,7 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
         removeJpsAndPillRunConfigurations()
         removeArtifactConfigurations()
 
-        if (variant.includes.contains(PillExtensionMirror.Variant.BASE)) {
+        if (isIdePluginAttached && variant.includes.contains(PillExtensionMirror.Variant.BASE)) {
             val artifactDependencyMapper = object : ArtifactDependencyMapper {
                 override fun map(dependency: PDependency): List<PDependency> {
                     val result = mutableListOf<PDependency>()
