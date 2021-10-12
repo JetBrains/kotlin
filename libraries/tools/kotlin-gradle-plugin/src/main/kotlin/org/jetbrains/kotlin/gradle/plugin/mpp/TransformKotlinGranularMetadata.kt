@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.TransformKotlinGranularMetadataForFragment
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.*
 import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
@@ -77,18 +78,8 @@ open class TransformKotlinGranularMetadata
     @get:Internal
     @delegate:Transient
     internal val transformation: GranularMetadataTransformation by lazy {
-        GranularMetadataTransformation(
-            project,
-            kotlinSourceSet,
-            listOf(API_SCOPE, IMPLEMENTATION_SCOPE, COMPILE_ONLY_SCOPE),
-            lazy {
-                dependsOnClosureWithInterCompilationDependencies(project, kotlinSourceSet).map {
-                    project.tasks.withType(TransformKotlinGranularMetadata::class.java)
-                        .getByName(KotlinMetadataTargetConfigurator.transformGranularMetadataTaskName(it.name))
-                        .transformation
-                }
-            }
-        )
+        // FIXME(dsavvinov): we actually have dependencyTransformations for each scope separately in sourcesets
+        (kotlinSourceSet as DefaultKotlinSourceSet).dependencyTransformations[listOf(API_SCOPE, IMPLEMENTATION_SCOPE, COMPILE_ONLY_SCOPE)]!!
     }
 
     @get:Internal

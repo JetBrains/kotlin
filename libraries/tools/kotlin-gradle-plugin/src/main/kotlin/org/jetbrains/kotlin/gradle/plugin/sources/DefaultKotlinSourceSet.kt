@@ -122,7 +122,7 @@ class DefaultKotlinSourceSet(
         explicitlyAddedCustomSourceFilesExtensions.addAll(extensions)
     }
 
-    internal val dependencyTransformations: MutableMap<KotlinDependencyScope, GranularMetadataTransformation> = mutableMapOf()
+    internal val dependencyTransformations: MutableMap<List<KotlinDependencyScope>, GranularMetadataTransformation> = mutableMapOf()
 
     private val _requiresVisibilityOf = mutableSetOf<KotlinSourceSet>()
 

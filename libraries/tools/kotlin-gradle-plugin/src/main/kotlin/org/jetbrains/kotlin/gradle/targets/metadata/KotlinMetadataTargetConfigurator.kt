@@ -168,10 +168,22 @@ class KotlinMetadataTargetConfigurator :
 
             kotlinExtension.sourceSets.all { sourceSet ->
                 KotlinDependencyScope.values().forEach { scope ->
-                    setupDependencyTransformationForSourceSet(target.project, sourceSet, scope)
+                    setupDependencyTransformationForSourceSet(target.project, sourceSet, listOf(scope))
                     applyMetadataDependencyTransformationsToRespectiveMetadataConfigurations(target.project, sourceSet, scope)
                     setupAdditionalExtendsFrom(target.project, sourceSet, sourceSet in publishedCommonSourceSets, scope)
                 }
+
+                // setup additional dependency transformation with all compiler-related scopes for compiler classpath
+                // TODO: combine from single-scope transformations instead, should be fine
+                setupDependencyTransformationForSourceSet(
+                    target.project,
+                    sourceSet,
+                    listOf(
+                        KotlinDependencyScope.API_SCOPE,
+                        KotlinDependencyScope.IMPLEMENTATION_SCOPE,
+                        KotlinDependencyScope.COMPILE_ONLY_SCOPE
+                    )
+                )
             }
         }
     }
@@ -342,19 +354,19 @@ class KotlinMetadataTargetConfigurator :
     private fun setupDependencyTransformationForSourceSet(
         project: Project,
         sourceSet: KotlinSourceSet,
-        scope: KotlinDependencyScope,
+        scopes: List<KotlinDependencyScope>,
     ) {
         val granularMetadataTransformation = GranularMetadataTransformation(
             project,
             sourceSet,
-            listOf(scope),
+            scopes,
             lazy {
                 dependsOnClosureWithInterCompilationDependencies(project, sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
-                    .map { checkNotNull(it.dependencyTransformations[scope]) }
+                    .map { checkNotNull(it.dependencyTransformations[scopes]) }
             }
         )
 
-        (sourceSet as DefaultKotlinSourceSet).dependencyTransformations[scope] = granularMetadataTransformation
+        (sourceSet as DefaultKotlinSourceSet).dependencyTransformations[scopes] = granularMetadataTransformation
     }
 
     private fun applyMetadataDependencyTransformationsToRespectiveMetadataConfigurations(
@@ -364,7 +376,7 @@ class KotlinMetadataTargetConfigurator :
     ) {
         val sourceSetMetadataConfigurationByScope = project.sourceSetMetadataConfigurationByScope(sourceSet, scope)
 
-        val granularMetadataTransformation = (sourceSet as DefaultKotlinSourceSet).dependencyTransformations[scope]!!
+        val granularMetadataTransformation = (sourceSet as DefaultKotlinSourceSet).dependencyTransformations[listOf(scope)]!!
 
         granularMetadataTransformation.applyToConfiguration(sourceSetMetadataConfigurationByScope)
     }
