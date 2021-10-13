@@ -1,0 +1,22 @@
+FILE: defaultParameterFromBase.kt
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun foo(arg: R|kotlin/Int|, def: R|kotlin/String| = String()): R|kotlin/Unit| {
+        }
+
+    }
+    public final object Derived : R|Base| {
+        private constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+        public final override fun foo(arg: R|kotlin/Int|, def: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|Derived|.R|/Derived.foo|(Int(42))
+    }

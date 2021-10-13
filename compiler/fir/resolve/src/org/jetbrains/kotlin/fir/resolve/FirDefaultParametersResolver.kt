@@ -8,26 +8,36 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
 
 class FirDefaultParametersResolver : FirSessionComponent {
     fun declaresDefaultValue(
+        session: FirSession,
+        scopeSession: ScopeSession,
         valueParameter: FirValueParameter,
         function: FirFunction,
         originScope: FirScope?,
         index: Int,
     ): Boolean {
         if (valueParameter.defaultValue != null) return true
-        if (originScope !is FirTypeScope) return false
-        val symbol = function.symbol as? FirNamedFunctionSymbol ?: return false
+        if (function !is FirSimpleFunction) return false
+        val symbol = function.symbol
+        val typeScope = when (originScope) {
+            is FirTypeScope -> originScope
+            // imported from object case
+            is FirAbstractImportingScope -> {
+                val containingClass = function.getContainingClass(session) ?: return false
+                containingClass.scopeForClass(ConeSubstitutor.Empty, session, scopeSession)
+            }
+            else -> return false
+        }
         var result = false
 
-        originScope.processOverriddenFunctions(symbol) { overridden ->
+        typeScope.processOverriddenFunctions(symbol) { overridden ->
             if (overridden.fir.valueParameters[index].defaultValue != null) {
                 result = true
                 return@processOverriddenFunctions ProcessorAction.STOP

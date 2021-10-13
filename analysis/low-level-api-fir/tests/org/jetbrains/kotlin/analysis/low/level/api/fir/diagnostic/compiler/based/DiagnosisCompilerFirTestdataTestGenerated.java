@@ -5070,6 +5070,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("defaultParameterFromBase.kt")
+            public void testDefaultParameterFromBase() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/defaultParameterFromBase.kt");
+            }
+
+            @Test
             @TestMetadata("EnumWithToString.kt")
             public void testEnumWithToString() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/EnumWithToString.kt");
