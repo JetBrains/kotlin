@@ -894,7 +894,7 @@ internal abstract class FunctionGenerationContext(
     fun extractValue(aggregate: LLVMValueRef, index: Int, name: String = ""): LLVMValueRef =
             LLVMBuildExtractValue(builder, aggregate, index, name)!!
 
-    fun gxxLandingpad(numClauses: Int, name: String = ""): LLVMValueRef {
+    fun gxxLandingpad(numClauses: Int, name: String = "", switchThreadState: Boolean = false): LLVMValueRef {
         val personalityFunction = context.llvm.gxxPersonalityFunction.llvmValue
 
         // Type of `landingpad` instruction result (depends on personality function):
@@ -902,6 +902,9 @@ internal abstract class FunctionGenerationContext(
 
         val landingpad = LLVMBuildLandingPad(builder, landingpadType, personalityFunction, numClauses, name)!!
 
+        if (switchThreadState) {
+            switchThreadState(Runnable)
+        }
         call(context.llvm.setCurrentFrameFunction, listOf(slotsPhi!!))
         setCurrentFrameIsCalled = true
         handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
@@ -924,16 +927,12 @@ internal abstract class FunctionGenerationContext(
                 foreignExceptionMode == ForeignExceptionMode.Mode.OBJC_WRAP
 
         appendingTo(lpBlock) {
-            val landingpad = gxxLandingpad(2)
+            val landingpad = gxxLandingpad(2, switchThreadState = switchThreadState)
             LLVMAddClause(landingpad, kotlinExceptionRtti.llvm)
             if (wrapExceptionMode) {
                 LLVMAddClause(landingpad, objcNSExceptionRtti.llvm)
             }
             LLVMAddClause(landingpad, LLVMConstNull(kInt8Ptr))
-
-            if (switchThreadState) {
-                switchThreadState(Runnable)
-            }
 
             val fatalForeignExceptionBlock = basicBlock("fatalForeignException", position()?.start)
             val forwardKotlinExceptionBlock = basicBlock("forwardKotlinException", position()?.start)
