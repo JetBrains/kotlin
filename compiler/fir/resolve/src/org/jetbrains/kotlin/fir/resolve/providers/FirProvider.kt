@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -48,3 +49,5 @@ abstract class FirProvider : FirSessionComponent {
 
     abstract fun getClassNamesInPackage(fqName: FqName): Set<Name>
 }
+
+val FirSession.firProvider: FirProvider by FirSession.sessionComponentAccessor()

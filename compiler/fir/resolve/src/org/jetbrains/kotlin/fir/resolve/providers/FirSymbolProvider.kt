@@ -81,3 +81,6 @@ inline fun <reified T : FirBasedSymbol<*>> FirSymbolProvider.getSymbolByTypeRef(
     val lookupTag = typeRef.coneTypeSafe<ConeLookupTagBasedType>()?.lookupTag ?: return null
     return getSymbolByLookupTag(lookupTag) as? T
 }
+
+val FirSession.symbolProvider: FirSymbolProvider by FirSession.sessionComponentAccessor()
+val FirSession.dependenciesSymbolProvider: FirSymbolProvider by FirSession.sessionComponentAccessor<FirDependenciesSymbolProvider>()

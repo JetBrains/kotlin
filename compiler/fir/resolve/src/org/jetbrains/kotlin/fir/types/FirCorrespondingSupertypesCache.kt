@@ -103,3 +103,5 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
         }
     }
 }
+
+val FirSession.correspondingSupertypesCache: FirCorrespondingSupertypesCache by FirSession.sessionComponentAccessor()
