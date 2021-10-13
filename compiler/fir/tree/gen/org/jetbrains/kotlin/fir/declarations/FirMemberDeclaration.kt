@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -14,10 +17,16 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed interface FirMemberDeclaration : FirTypeParameterRefsOwner {
-    override val source: FirSourceElement?
-    override val typeParameters: List<FirTypeParameterRef>
-    val status: FirDeclarationStatus
+sealed class FirMemberDeclaration : FirAnnotatedDeclaration(), FirTypeParameterRefsOwner {
+    abstract override val source: FirSourceElement?
+    abstract override val symbol: FirBasedSymbol<out FirDeclaration>
+    abstract override val moduleData: FirModuleData
+    abstract override val resolvePhase: FirResolvePhase
+    abstract override val origin: FirDeclarationOrigin
+    abstract override val attributes: FirDeclarationAttributes
+    abstract override val annotations: List<FirAnnotation>
+    abstract override val typeParameters: List<FirTypeParameterRef>
+    abstract val status: FirDeclarationStatus
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitMemberDeclaration(this, data)
 
@@ -25,7 +34,11 @@ sealed interface FirMemberDeclaration : FirTypeParameterRefsOwner {
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
         transformer.transformMemberDeclaration(this, data) as E
 
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
+    abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
-    fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
+
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
+
+    abstract fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
 }

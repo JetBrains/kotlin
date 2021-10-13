@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
+import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
+import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -152,11 +152,11 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitExpression(expression: FirExpression)  = visitStatement(expression)
 
-    override fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration)  = visitAnnotatedDeclaration(typedDeclaration)
-
     override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner)  = visitTypeParameterRefsOwner(typeParametersOwner)
 
-    override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration)  = visitTypeParameterRefsOwner(memberDeclaration)
+    override fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration)  = visitMemberDeclaration(typedDeclaration)
+
+    override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration)  = visitTypedDeclaration(callableDeclaration)
 
     override fun visitField(field: FirField)  = visitVariable(field)
 

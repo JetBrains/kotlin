@@ -42,9 +42,9 @@ open class FirConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotationC
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override lateinit var returnTypeRef: FirTypeRef
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     override lateinit var status: FirDeclarationStatus
+    override lateinit var returnTypeRef: FirTypeRef
     override var receiverTypeRef: FirTypeRef? = null
     override var deprecation: DeprecationsPerUseSite? = null
     override var containerSource: DeserializedContainerSource? = null
@@ -62,9 +62,9 @@ open class FirConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotationC
             resolvePhase,
             origin,
             attributes,
-            returnTypeRef,
             typeParameters,
             status,
+            returnTypeRef,
             receiverTypeRef,
             deprecation,
             containerSource,
@@ -105,9 +105,9 @@ inline fun buildConstructorCopy(original: FirConstructor, init: FirConstructorBu
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.typeParameters.addAll(original.typeParameters)
     copyBuilder.status = original.status
+    copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.receiverTypeRef = original.receiverTypeRef
     copyBuilder.deprecation = original.deprecation
     copyBuilder.containerSource = original.containerSource

@@ -19,14 +19,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirTypeAlias : FirClassLikeDeclaration(), FirMemberDeclaration, FirTypeParametersOwner {
+abstract class FirTypeAlias : FirClassLikeDeclaration(), FirTypeParametersOwner {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
-    abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val status: FirDeclarationStatus
+    abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val typeParameters: List<FirTypeParameter>
     abstract val name: Name
     abstract override val symbol: FirTypeAliasSymbol

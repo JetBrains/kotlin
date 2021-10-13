@@ -36,13 +36,13 @@ internal class FirRegularClassImpl(
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
-    override var deprecation: DeprecationsPerUseSite?,
     override val typeParameters: MutableList<FirTypeParameterRef>,
+    override var status: FirDeclarationStatus,
+    override var deprecation: DeprecationsPerUseSite?,
     override val classKind: ClassKind,
     override val declarations: MutableList<FirDeclaration>,
     override val annotations: MutableList<FirAnnotation>,
     override val scopeProvider: FirScopeProvider,
-    override var status: FirDeclarationStatus,
     override val name: Name,
     override val symbol: FirRegularClassSymbol,
     override var companionObject: FirRegularClass?,
@@ -57,18 +57,18 @@ internal class FirRegularClassImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
+        status.accept(visitor, data)
         declarations.forEach { it.accept(visitor, data) }
         annotations.forEach { it.accept(visitor, data) }
-        status.accept(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)
         superTypeRefs.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         transformTypeParameters(transformer, data)
+        transformStatus(transformer, data)
         transformDeclarations(transformer, data)
         transformAnnotations(transformer, data)
-        transformStatus(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         companionObject = declarations.asSequence().filterIsInstance<FirRegularClass>().firstOrNull { it.status.isCompanion }
         transformSuperTypeRefs(transformer, data)
@@ -80,6 +80,11 @@ internal class FirRegularClassImpl(
         return this
     }
 
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
+        status = status.transform(transformer, data)
+        return this
+    }
+
     override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         declarations.transformInplace(transformer, data)
         return this
@@ -87,11 +92,6 @@ internal class FirRegularClassImpl(
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
-        status = status.transform(transformer, data)
         return this
     }
 

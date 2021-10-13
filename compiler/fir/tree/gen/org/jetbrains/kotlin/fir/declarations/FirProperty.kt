@@ -30,8 +30,8 @@ abstract class FirProperty : FirVariable(), FirTypeParametersOwner, FirControlFl
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
-    abstract override val returnTypeRef: FirTypeRef
     abstract override val status: FirDeclarationStatus
+    abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
     abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val containerSource: DeserializedContainerSource?
@@ -76,9 +76,9 @@ abstract class FirProperty : FirVariable(), FirTypeParametersOwner, FirControlFl
 
     abstract fun replaceBodyResolveState(newBodyResolveState: FirPropertyBodyResolveState)
 
-    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirProperty
-
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirProperty
+
+    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirProperty
 
     abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirProperty
 

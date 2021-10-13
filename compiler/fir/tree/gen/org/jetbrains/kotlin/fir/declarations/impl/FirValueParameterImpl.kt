@@ -68,8 +68,8 @@ internal class FirValueParameterImpl(
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        returnTypeRef.accept(visitor, data)
         status.accept(visitor, data)
+        returnTypeRef.accept(visitor, data)
         backingField?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
@@ -77,15 +77,10 @@ internal class FirValueParameterImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
-        transformReturnTypeRef(transformer, data)
         transformStatus(transformer, data)
+        transformReturnTypeRef(transformer, data)
         transformBackingField(transformer, data)
         transformOtherChildren(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
-        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 
@@ -95,6 +90,11 @@ internal class FirValueParameterImpl(
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
         status = status.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
+        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 

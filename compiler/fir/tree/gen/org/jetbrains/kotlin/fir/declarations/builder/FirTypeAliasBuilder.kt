@@ -38,8 +38,8 @@ class FirTypeAliasBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    var deprecation: DeprecationsPerUseSite? = null
     lateinit var status: FirDeclarationStatus
+    var deprecation: DeprecationsPerUseSite? = null
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     lateinit var name: Name
     lateinit var symbol: FirTypeAliasSymbol
@@ -53,8 +53,8 @@ class FirTypeAliasBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder
             resolvePhase,
             origin,
             attributes,
-            deprecation,
             status,
+            deprecation,
             typeParameters,
             name,
             symbol,
@@ -84,8 +84,8 @@ inline fun buildTypeAliasCopy(original: FirTypeAlias, init: FirTypeAliasBuilder.
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.deprecation = original.deprecation
     copyBuilder.status = original.status
+    copyBuilder.deprecation = original.deprecation
     copyBuilder.typeParameters.addAll(original.typeParameters)
     copyBuilder.name = original.name
     copyBuilder.symbol = original.symbol

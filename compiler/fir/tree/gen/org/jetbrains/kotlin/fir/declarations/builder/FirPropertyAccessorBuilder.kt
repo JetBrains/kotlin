@@ -46,8 +46,8 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override lateinit var returnTypeRef: FirTypeRef
     override lateinit var status: FirDeclarationStatus
+    override lateinit var returnTypeRef: FirTypeRef
     override var deprecation: DeprecationsPerUseSite? = null
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeKotlinType? = null
@@ -68,8 +68,8 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
             resolvePhase,
             origin,
             attributes,
-            returnTypeRef,
             status,
+            returnTypeRef,
             deprecation,
             containerSource,
             dispatchReceiverType,
@@ -105,8 +105,8 @@ inline fun buildPropertyAccessorCopy(original: FirPropertyAccessor, init: FirPro
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.status = original.status
+    copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.deprecation = original.deprecation
     copyBuilder.containerSource = original.containerSource
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType

@@ -43,9 +43,9 @@ open class FirFieldBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilde
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    open lateinit var returnTypeRef: FirTypeRef
     open val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     open lateinit var status: FirDeclarationStatus
+    open lateinit var returnTypeRef: FirTypeRef
     open var deprecation: DeprecationsPerUseSite? = null
     open var containerSource: DeserializedContainerSource? = null
     open var dispatchReceiverType: ConeKotlinType? = null
@@ -64,9 +64,9 @@ open class FirFieldBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilde
             resolvePhase,
             origin,
             attributes,
-            returnTypeRef,
             typeParameters,
             status,
+            returnTypeRef,
             deprecation,
             containerSource,
             dispatchReceiverType,

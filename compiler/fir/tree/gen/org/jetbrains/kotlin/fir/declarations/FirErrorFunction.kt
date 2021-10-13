@@ -31,8 +31,8 @@ abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val annotations: List<FirAnnotation>
-    abstract override val returnTypeRef: FirTypeRef
     abstract override val status: FirDeclarationStatus
+    abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
     abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val containerSource: DeserializedContainerSource?
@@ -66,9 +66,9 @@ abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorFunction
 
-    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunction
-
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirErrorFunction
+
+    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunction
 
     abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunction
 

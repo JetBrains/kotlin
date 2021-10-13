@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
+import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
+import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -195,18 +195,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElement(declaration, data)
     }
 
-    open fun transformAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration, data: D): FirAnnotatedDeclaration {
-        return transformElement(annotatedDeclaration, data)
-    }
-
-    open fun transformAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): FirAnonymousInitializer {
-        return transformElement(anonymousInitializer, data)
-    }
-
-    open fun transformTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: D): FirTypedDeclaration {
-        return transformElement(typedDeclaration, data)
-    }
-
     open fun transformTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: D): FirTypeParameterRefsOwner {
         return transformElement(typeParameterRefsOwner, data)
     }
@@ -215,8 +203,20 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElement(typeParametersOwner, data)
     }
 
+    open fun transformAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration, data: D): FirAnnotatedDeclaration {
+        return transformElement(annotatedDeclaration, data)
+    }
+
     open fun transformMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: D): FirMemberDeclaration {
         return transformElement(memberDeclaration, data)
+    }
+
+    open fun transformAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): FirAnonymousInitializer {
+        return transformElement(anonymousInitializer, data)
+    }
+
+    open fun transformTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: D): FirTypedDeclaration {
+        return transformElement(typedDeclaration, data)
     }
 
     open fun transformCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): FirCallableDeclaration {
@@ -723,18 +723,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformDeclaration(declaration, data)
     }
 
-    final override fun visitAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration, data: D): FirAnnotatedDeclaration {
-        return transformAnnotatedDeclaration(annotatedDeclaration, data)
-    }
-
-    final override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): FirAnonymousInitializer {
-        return transformAnonymousInitializer(anonymousInitializer, data)
-    }
-
-    final override fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: D): FirTypedDeclaration {
-        return transformTypedDeclaration(typedDeclaration, data)
-    }
-
     final override fun visitTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: D): FirTypeParameterRefsOwner {
         return transformTypeParameterRefsOwner(typeParameterRefsOwner, data)
     }
@@ -743,8 +731,20 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformTypeParametersOwner(typeParametersOwner, data)
     }
 
+    final override fun visitAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration, data: D): FirAnnotatedDeclaration {
+        return transformAnnotatedDeclaration(annotatedDeclaration, data)
+    }
+
     final override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: D): FirMemberDeclaration {
         return transformMemberDeclaration(memberDeclaration, data)
+    }
+
+    final override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): FirAnonymousInitializer {
+        return transformAnonymousInitializer(anonymousInitializer, data)
+    }
+
+    final override fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: D): FirTypedDeclaration {
+        return transformTypedDeclaration(typedDeclaration, data)
     }
 
     final override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): FirCallableDeclaration {

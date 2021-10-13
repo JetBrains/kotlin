@@ -47,8 +47,8 @@ internal class FirErrorFunctionImpl(
     override val diagnostic: ConeDiagnostic,
     override val symbol: FirErrorFunctionSymbol,
 ) : FirErrorFunction() {
-    override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, null, diagnostic)
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
+    override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, null, diagnostic)
     override val receiverTypeRef: FirTypeRef? get() = null
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val body: FirBlock? get() = null
@@ -60,16 +60,16 @@ internal class FirErrorFunctionImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
-        returnTypeRef.accept(visitor, data)
         status.accept(visitor, data)
+        returnTypeRef.accept(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
         transformAnnotations(transformer, data)
-        transformReturnTypeRef(transformer, data)
         transformStatus(transformer, data)
+        transformReturnTypeRef(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
         return this
@@ -80,13 +80,13 @@ internal class FirErrorFunctionImpl(
         return this
     }
 
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
-        returnTypeRef = returnTypeRef.transform(transformer, data)
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
+        status = status.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
-        status = status.transform(transformer, data)
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
+        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 

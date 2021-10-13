@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -34,8 +35,9 @@ internal class FirAnonymousObjectImpl(
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
-    override var deprecation: DeprecationsPerUseSite?,
     override val typeParameters: MutableList<FirTypeParameterRef>,
+    override var status: FirDeclarationStatus,
+    override var deprecation: DeprecationsPerUseSite?,
     override val classKind: ClassKind,
     override val superTypeRefs: MutableList<FirTypeRef>,
     override val declarations: MutableList<FirDeclaration>,
@@ -51,6 +53,7 @@ internal class FirAnonymousObjectImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
+        status.accept(visitor, data)
         superTypeRefs.forEach { it.accept(visitor, data) }
         declarations.forEach { it.accept(visitor, data) }
         annotations.forEach { it.accept(visitor, data) }
@@ -59,6 +62,7 @@ internal class FirAnonymousObjectImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousObjectImpl {
         transformTypeParameters(transformer, data)
+        transformStatus(transformer, data)
         transformSuperTypeRefs(transformer, data)
         transformDeclarations(transformer, data)
         transformAnnotations(transformer, data)
@@ -68,6 +72,11 @@ internal class FirAnonymousObjectImpl(
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousObjectImpl {
         typeParameters.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirAnonymousObjectImpl {
+        status = status.transform(transformer, data)
         return this
     }
 

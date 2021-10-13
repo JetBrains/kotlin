@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
+import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
+import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -152,11 +152,11 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitExpression(expression: FirExpression, data: D): R  = visitStatement(expression, data)
 
-    override fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: D): R  = visitAnnotatedDeclaration(typedDeclaration, data)
-
     override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): R  = visitTypeParameterRefsOwner(typeParametersOwner, data)
 
-    override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: D): R  = visitTypeParameterRefsOwner(memberDeclaration, data)
+    override fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: D): R  = visitMemberDeclaration(typedDeclaration, data)
+
+    override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): R  = visitTypedDeclaration(callableDeclaration, data)
 
     override fun visitField(field: FirField, data: D): R  = visitVariable(field, data)
 

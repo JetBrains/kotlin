@@ -31,9 +31,9 @@ sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirContro
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val annotations: List<FirAnnotation>
-    abstract override val returnTypeRef: FirTypeRef
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
+    abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
     abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val containerSource: DeserializedContainerSource?
@@ -65,11 +65,11 @@ sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirContro
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunction
 
-    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFunction
-
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirFunction
 
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirFunction
+
+    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFunction
 
     abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFunction
 

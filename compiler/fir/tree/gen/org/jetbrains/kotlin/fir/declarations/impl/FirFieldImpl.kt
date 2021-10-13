@@ -38,9 +38,9 @@ class FirFieldImpl @FirImplementationDetail constructor(
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
-    override var returnTypeRef: FirTypeRef,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     override var status: FirDeclarationStatus,
+    override var returnTypeRef: FirTypeRef,
     override var deprecation: DeprecationsPerUseSite?,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeKotlinType?,
@@ -62,26 +62,21 @@ class FirFieldImpl @FirImplementationDetail constructor(
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        returnTypeRef.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
+        returnTypeRef.accept(visitor, data)
         initializer?.accept(visitor, data)
         backingField?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        transformReturnTypeRef(transformer, data)
         transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
+        transformReturnTypeRef(transformer, data)
         transformInitializer(transformer, data)
         transformBackingField(transformer, data)
         transformOtherChildren(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 
@@ -92,6 +87,11 @@ class FirFieldImpl @FirImplementationDetail constructor(
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         status = status.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFieldImpl {
+        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 

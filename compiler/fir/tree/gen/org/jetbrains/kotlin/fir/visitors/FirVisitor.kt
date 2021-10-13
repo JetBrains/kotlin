@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
+import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
+import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -170,17 +170,17 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitDeclaration(declaration: FirDeclaration, data: D): R  = visitElement(declaration, data)
 
-    open fun visitAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration, data: D): R  = visitElement(annotatedDeclaration, data)
-
-    open fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): R  = visitElement(anonymousInitializer, data)
-
-    open fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: D): R  = visitElement(typedDeclaration, data)
-
     open fun visitTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: D): R  = visitElement(typeParameterRefsOwner, data)
 
     open fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): R  = visitElement(typeParametersOwner, data)
 
+    open fun visitAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration, data: D): R  = visitElement(annotatedDeclaration, data)
+
     open fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: D): R  = visitElement(memberDeclaration, data)
+
+    open fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): R  = visitElement(anonymousInitializer, data)
+
+    open fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: D): R  = visitElement(typedDeclaration, data)
 
     open fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): R  = visitElement(callableDeclaration, data)
 

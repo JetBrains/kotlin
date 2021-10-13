@@ -47,8 +47,8 @@ class FirPropertyBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder,
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    lateinit var returnTypeRef: FirTypeRef
     lateinit var status: FirDeclarationStatus
+    lateinit var returnTypeRef: FirTypeRef
     var receiverTypeRef: FirTypeRef? = null
     var deprecation: DeprecationsPerUseSite? = null
     var containerSource: DeserializedContainerSource? = null
@@ -74,8 +74,8 @@ class FirPropertyBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder,
             resolvePhase,
             origin,
             attributes,
-            returnTypeRef,
             status,
+            returnTypeRef,
             receiverTypeRef,
             deprecation,
             containerSource,
@@ -117,8 +117,8 @@ inline fun buildPropertyCopy(original: FirProperty, init: FirPropertyBuilder.() 
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.status = original.status
+    copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.receiverTypeRef = original.receiverTypeRef
     copyBuilder.deprecation = original.deprecation
     copyBuilder.containerSource = original.containerSource

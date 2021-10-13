@@ -27,8 +27,9 @@ abstract class FirAnonymousObject : FirClass(), FirControlFlowGraphOwner {
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
-    abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val typeParameters: List<FirTypeParameterRef>
+    abstract override val status: FirDeclarationStatus
+    abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val classKind: ClassKind
     abstract override val superTypeRefs: List<FirTypeRef>
     abstract override val declarations: List<FirDeclaration>
@@ -52,6 +53,8 @@ abstract class FirAnonymousObject : FirClass(), FirControlFlowGraphOwner {
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousObject
+
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirAnonymousObject
 
     abstract override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirAnonymousObject
 

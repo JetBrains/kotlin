@@ -38,9 +38,9 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
-    override var returnTypeRef: FirTypeRef,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     override var status: FirDeclarationStatus,
+    override var returnTypeRef: FirTypeRef,
     override var receiverTypeRef: FirTypeRef?,
     override var deprecation: DeprecationsPerUseSite?,
     override val containerSource: DeserializedContainerSource?,
@@ -59,9 +59,9 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        returnTypeRef.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
+        returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
@@ -71,20 +71,15 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
-        transformReturnTypeRef(transformer, data)
         transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
+        transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
         transformAnnotations(transformer, data)
         transformDelegatedConstructor(transformer, data)
         transformBody(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
-        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 
@@ -95,6 +90,11 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
         status = status.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
+        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 

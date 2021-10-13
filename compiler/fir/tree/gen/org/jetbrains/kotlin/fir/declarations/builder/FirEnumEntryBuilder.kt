@@ -41,9 +41,9 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    lateinit var returnTypeRef: FirTypeRef
     val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     lateinit var status: FirDeclarationStatus
+    lateinit var returnTypeRef: FirTypeRef
     var deprecation: DeprecationsPerUseSite? = null
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeKotlinType? = null
@@ -60,9 +60,9 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
             resolvePhase,
             origin,
             attributes,
-            returnTypeRef,
             typeParameters,
             status,
+            returnTypeRef,
             deprecation,
             containerSource,
             dispatchReceiverType,

@@ -45,8 +45,8 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override lateinit var returnTypeRef: FirTypeRef
     override lateinit var status: FirDeclarationStatus
+    override lateinit var returnTypeRef: FirTypeRef
     open var receiverTypeRef: FirTypeRef? = null
     override var deprecation: DeprecationsPerUseSite? = null
     override var containerSource: DeserializedContainerSource? = null
@@ -66,8 +66,8 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
             resolvePhase,
             origin,
             attributes,
-            returnTypeRef,
             status,
+            returnTypeRef,
             receiverTypeRef,
             deprecation,
             containerSource,
@@ -103,8 +103,8 @@ inline fun buildSimpleFunctionCopy(original: FirSimpleFunction, init: FirSimpleF
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.status = original.status
+    copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.receiverTypeRef = original.receiverTypeRef
     copyBuilder.deprecation = original.deprecation
     copyBuilder.containerSource = original.containerSource

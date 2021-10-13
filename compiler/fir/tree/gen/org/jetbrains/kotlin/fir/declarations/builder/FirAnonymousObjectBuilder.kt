@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.FirClassBuilder
@@ -40,8 +41,9 @@ class FirAnonymousObjectBuilder : FirDeclarationBuilder, FirClassBuilder, FirAnn
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override var deprecation: DeprecationsPerUseSite? = null
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
+    override lateinit var status: FirDeclarationStatus
+    override var deprecation: DeprecationsPerUseSite? = null
     override lateinit var classKind: ClassKind
     override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
     override val declarations: MutableList<FirDeclaration> = mutableListOf()
@@ -56,8 +58,9 @@ class FirAnonymousObjectBuilder : FirDeclarationBuilder, FirClassBuilder, FirAnn
             resolvePhase,
             origin,
             attributes,
-            deprecation,
             typeParameters,
+            status,
+            deprecation,
             classKind,
             superTypeRefs,
             declarations,

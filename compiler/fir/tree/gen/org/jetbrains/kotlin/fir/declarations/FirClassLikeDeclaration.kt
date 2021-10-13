@@ -18,13 +18,15 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed class FirClassLikeDeclaration : FirAnnotatedDeclaration(), FirStatement {
+sealed class FirClassLikeDeclaration : FirMemberDeclaration(), FirStatement {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val annotations: List<FirAnnotation>
+    abstract override val typeParameters: List<FirTypeParameterRef>
+    abstract override val status: FirDeclarationStatus
     abstract override val symbol: FirClassLikeSymbol<out FirClassLikeDeclaration>
     abstract val deprecation: DeprecationsPerUseSite?
 
@@ -39,4 +41,8 @@ sealed class FirClassLikeDeclaration : FirAnnotatedDeclaration(), FirStatement {
     abstract fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration
+
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration
+
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration
 }

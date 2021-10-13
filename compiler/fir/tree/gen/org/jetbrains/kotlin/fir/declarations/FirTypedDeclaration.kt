@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed class FirTypedDeclaration : FirAnnotatedDeclaration() {
+sealed class FirTypedDeclaration : FirMemberDeclaration() {
     abstract override val source: FirSourceElement?
     abstract override val symbol: FirBasedSymbol<out FirDeclaration>
     abstract override val moduleData: FirModuleData
@@ -26,6 +26,8 @@ sealed class FirTypedDeclaration : FirAnnotatedDeclaration() {
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val annotations: List<FirAnnotation>
+    abstract override val typeParameters: List<FirTypeParameterRef>
+    abstract override val status: FirDeclarationStatus
     abstract val returnTypeRef: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypedDeclaration(this, data)
@@ -39,6 +41,10 @@ sealed class FirTypedDeclaration : FirAnnotatedDeclaration() {
     abstract fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypedDeclaration
+
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypedDeclaration
+
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirTypedDeclaration
 
     abstract fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirTypedDeclaration
 }

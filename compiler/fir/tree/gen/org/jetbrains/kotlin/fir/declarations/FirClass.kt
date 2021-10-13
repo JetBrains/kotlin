@@ -27,8 +27,9 @@ sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirTypeParamete
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
-    abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val typeParameters: List<FirTypeParameterRef>
+    abstract override val status: FirDeclarationStatus
+    abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val symbol: FirClassSymbol<out FirClass>
     abstract val classKind: ClassKind
     abstract val superTypeRefs: List<FirTypeRef>
@@ -49,6 +50,8 @@ sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirTypeParamete
     abstract fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirClass
+
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirClass
 
     abstract fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirClass
 

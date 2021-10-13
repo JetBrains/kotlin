@@ -37,8 +37,8 @@ interface FirFunctionBuilder : FirDeclarationBuilder, FirAnnotationContainerBuil
     abstract override var origin: FirDeclarationOrigin
     abstract override var attributes: FirDeclarationAttributes
     abstract override val annotations: MutableList<FirAnnotation>
-    abstract var returnTypeRef: FirTypeRef
     abstract var status: FirDeclarationStatus
+    abstract var returnTypeRef: FirTypeRef
     abstract var deprecation: DeprecationsPerUseSite?
     abstract var containerSource: DeserializedContainerSource?
     abstract var dispatchReceiverType: ConeKotlinType?

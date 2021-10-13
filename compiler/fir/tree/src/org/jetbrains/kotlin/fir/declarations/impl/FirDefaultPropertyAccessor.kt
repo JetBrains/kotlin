@@ -40,11 +40,11 @@ abstract class FirDefaultPropertyAccessor(
     resolvePhase = if (effectiveVisibility != null) FirResolvePhase.BODY_RESOLVE else FirResolvePhase.TYPES,
     origin,
     FirDeclarationAttributes(),
-    propertyTypeRef,
     status = if (effectiveVisibility == null)
         FirDeclarationStatusImpl(visibility, modality)
     else
         FirResolvedDeclarationStatusImpl(visibility, modality, effectiveVisibility),
+    propertyTypeRef,
     deprecation = null,
     containerSource = null,
     dispatchReceiverType = null,
