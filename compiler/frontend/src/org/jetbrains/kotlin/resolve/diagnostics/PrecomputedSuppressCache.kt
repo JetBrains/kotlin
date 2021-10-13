@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.diagnostics
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.psi.KtAnnotated
@@ -23,8 +24,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
  *   primary use case of this class is when that binding context is cleared and thus is useless after a certain point.
  */
 class PrecomputedSuppressCache(context: BindingContext, files: List<KtFile>) : KotlinSuppressCache() {
-    val storage: Map<KtAnnotated, List<AnnotationDescriptor>> =
-        mutableMapOf<KtAnnotated, List<AnnotationDescriptor>>().also { storage ->
+    val storage: Map<PsiElement, List<AnnotationDescriptor>> =
+        mutableMapOf<PsiElement, List<AnnotationDescriptor>>().also { storage ->
             val visitor = PrecomputingVisitor(storage, BindingContextSuppressCache(context))
             for (file in files) {
                 file.accept(visitor, null)
@@ -32,7 +33,7 @@ class PrecomputedSuppressCache(context: BindingContext, files: List<KtFile>) : K
         }
 
     private class PrecomputingVisitor(
-        val storage: MutableMap<KtAnnotated, List<AnnotationDescriptor>>,
+        val storage: MutableMap<PsiElement, List<AnnotationDescriptor>>,
         val computer: KotlinSuppressCache,
     ) : KtTreeVisitorVoid() {
         override fun visitKtElement(element: KtElement) {
@@ -55,6 +56,6 @@ class PrecomputedSuppressCache(context: BindingContext, files: List<KtFile>) : K
         }
     }
 
-    override fun getSuppressionAnnotations(annotated: KtAnnotated): List<AnnotationDescriptor> =
+    override fun getSuppressionAnnotations(annotated: PsiElement): List<AnnotationDescriptor> =
         storage[annotated].orEmpty()
 }
