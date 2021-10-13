@@ -16,7 +16,7 @@ sealed class LlvmVariant {
 
     object Dev : LlvmVariant() {
         override fun getKonanPropertiesEntry(): Pair<String, String> =
-                konanPropertiesKey to "\$llvm.${HostManager.hostName}.user"
+                konanPropertiesKey to "\$llvm.${HostManager.hostName}.dev"
 
     }
 
