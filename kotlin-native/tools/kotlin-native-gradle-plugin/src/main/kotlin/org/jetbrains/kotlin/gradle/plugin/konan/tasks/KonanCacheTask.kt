@@ -16,11 +16,11 @@ enum class KonanCacheKind(val outputKind: CompilerOutputKind) {
 }
 
 open class KonanCacheTask: DefaultTask() {
-    @InputDirectory
+    @get:InputDirectory
     lateinit var originalKlib: File
 
     // Taken into account by the [cacheFile] property.
-    @Input
+    @get:Input
     lateinit var cacheRoot: String
 
     @get:Input
@@ -42,17 +42,17 @@ open class KonanCacheTask: DefaultTask() {
             return cacheDirectory.resolve("${klibName}-cache")
         }
 
-    @Input
+    @get:Input
     var cacheKind: KonanCacheKind = KonanCacheKind.STATIC
 
-    @Input
+    @get:Input
     /** Path to a compiler distribution that is used to build this cache. */
     val compilerDistributionPath: Property<File> = project.objects.property(File::class.java).apply {
         set(project.provider { project.kotlinNativeDist })
     }
 
-    @Input
-    @Optional
+    @get:Input
+    @get:Optional
     var cachedLibrary: String? = null
 
     @TaskAction
