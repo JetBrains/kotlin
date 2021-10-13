@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrDynamicType
@@ -438,6 +439,7 @@ fun stabilityOf(expr: IrExpression): Stability {
                 stability
             }
         }
+        is IrLocalDelegatedPropertyReference -> Stability.Stable
         // some default parameters and consts can be wrapped in composite
         is IrComposite -> {
             if (expr.statements.all { it is IrExpression && stabilityOf(it).knownStable() }) {
