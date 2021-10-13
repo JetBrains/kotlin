@@ -10397,9 +10397,9 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/enum/emptyEnumValuesValueOf.kt");
         }
 
-        @TestMetadata("enumCompanionInit.kt")
-        public void testEnumCompanionInit() throws Exception {
-            runTest("compiler/testData/codegen/box/enum/enumCompanionInit.kt");
+        @TestMetadata("enumCompanionInitJsAndWasm.kt")
+        public void testEnumCompanionInitJsAndWasm() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumCompanionInitJsAndWasm.kt");
         }
 
         @TestMetadata("enumConstructorParameterClashWithDefaults.kt")
@@ -10482,9 +10482,9 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/enum/initEntriesInValueOf.kt");
         }
 
-        @TestMetadata("initEnumAfterObjectAccess.kt")
-        public void testInitEnumAfterObjectAccess() throws Exception {
-            runTest("compiler/testData/codegen/box/enum/initEnumAfterObjectAccess.kt");
+        @TestMetadata("initEnumAfterObjectAccessJsAndWasm.kt")
+        public void testInitEnumAfterObjectAccessJsAndWasm() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/initEnumAfterObjectAccessJsAndWasm.kt");
         }
 
         @TestMetadata("inner.kt")

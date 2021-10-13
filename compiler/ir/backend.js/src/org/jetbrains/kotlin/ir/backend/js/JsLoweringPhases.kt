@@ -755,7 +755,8 @@ private val staticMembersLoweringPhase = makeDeclarationTransformerPhase(
 private val objectDeclarationLoweringPhase = makeDeclarationTransformerPhase(
     ::ObjectDeclarationLowering,
     name = "ObjectDeclarationLowering",
-    description = "Create lazy object instance generator functions"
+    description = "Create lazy object instance generator functions",
+    prerequisite = setOf(enumClassCreateInitializerLoweringPhase)
 )
 
 private val invokeStaticInitializersPhase = makeBodyLoweringPhase(

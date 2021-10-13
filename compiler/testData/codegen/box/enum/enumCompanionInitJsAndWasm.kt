@@ -1,8 +1,8 @@
-// DONT_TARGET_EXACT_BACKEND: JS
-// DONT_TARGET_EXACT_BACKEND: JS_IR
-// DONT_TARGET_EXACT_BACKEND: JS_IR_ES6
-// DONT_TARGET_EXACT_BACKEND: WASM
-// IGNORE_BACKEND: NATIVE
+// TARGET_BACKEND: JS
+// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS_IR_ES6
+// TARGET_BACKEND: WASM
+// WITH_RUNTIME
 var result = ""
 
 enum class E(a: String) {
@@ -65,7 +65,7 @@ fun box(): String {
     result += "${y.name};"
     F.foo()
     G.O.foo()
-    if (result != "E.init(x);E.init(y);E.companion.init;X;Y;F.init(x);F.init(y);F.companion.init;F.foo();X;G.O.init;G.O.foo();X;")
+    if (result != "E.init(x);E.init(y);E.companion.init;X;Y;F.init(x);F.init(y);F.companion.init;F.foo();X;G.init(x);G.init(y);G.O.init;G.O.foo();X;")
         return "fail: $result"
 
     return "OK"

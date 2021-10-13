@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ObjectDeclarationLowering(
     val context: JsCommonBackendContext
@@ -33,6 +34,11 @@ class ObjectDeclarationLowering(
 
     private var IrClass.instanceField by context.mapping.objectToInstanceField
     private var IrClass.syntheticPrimaryConstructor by context.mapping.classToSyntheticPrimaryConstructor
+
+    /**
+     * If the object being lowered is nested inside an enum class, we want to also initialize the enum entries when initializing the object.
+     */
+    private var IrClass.initEntryInstancesFun: IrSimpleFunction? by context.mapping.enumClassToInitEntryInstancesFun
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration !is IrClass || declaration.kind != ClassKind.OBJECT || declaration.isEffectivelyExternal())
@@ -54,8 +60,12 @@ class ObjectDeclarationLowering(
 
         val primaryConstructor = declaration.primaryConstructor ?: declaration.syntheticPrimaryConstructor!!
 
+        val initEntryInstancesFun = declaration.parent.safeAs<IrClass>()?.initEntryInstancesFun
+
         getInstanceFun.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             statements += context.createIrBuilder(getInstanceFun.symbol).irBlockBody(getInstanceFun) {
+                if (initEntryInstancesFun != null)
+                    +irCall(initEntryInstancesFun)
                 +irIfThen(
                     irEqualsNull(irGetField(null, instanceField)),
                     // Instance field initialized inside constructor
