@@ -14,7 +14,7 @@ import org.jetbrains.org.objectweb.asm.tree.ClassNode
 /** Computes a [JavaClassSnapshot] of a Java class. */
 object JavaClassSnapshotter {
 
-    fun snapshot(classContents: ByteArray, calledByUnitTests: Boolean = false): JavaClassSnapshot {
+    fun snapshot(classContents: ByteArray, includeDebugInfoInSnapshot: Boolean? = null): JavaClassSnapshot {
         // We will extract ABI information from the given class and store it into the `abiClass` variable.
         // It is acceptable to collect more info than required, but it is incorrect to collect less info than required.
         // There are 2 approaches:
@@ -48,12 +48,12 @@ object JavaClassSnapshotter {
 
         val supertypes = listOf(abiClass.superName) + abiClass.interfaces.toList()
 
-        val fieldsAbi = abiClass.fields.map { snapshotJavaElement(it, it.name, calledByUnitTests) }
-        val methodsAbi = abiClass.methods.map { snapshotJavaElement(it, it.name, calledByUnitTests) }
+        val fieldsAbi = abiClass.fields.map { snapshotJavaElement(it, it.name, includeDebugInfoInSnapshot) }
+        val methodsAbi = abiClass.methods.map { snapshotJavaElement(it, it.name, includeDebugInfoInSnapshot) }
 
         abiClass.fields.clear()
         abiClass.methods.clear()
-        val classAbiExcludingMembers = abiClass.let { snapshotJavaElement(it, it.name, calledByUnitTests) }
+        val classAbiExcludingMembers = abiClass.let { snapshotJavaElement(it, it.name, includeDebugInfoInSnapshot) }
 
         return RegularJavaClassSnapshot(supertypes, classAbiExcludingMembers, fieldsAbi, methodsAbi)
     }
@@ -62,12 +62,12 @@ object JavaClassSnapshotter {
 
     private val gson by lazy { GsonBuilder().setPrettyPrinting().create() }
 
-    private fun snapshotJavaElement(javaElement: Any, javaElementName: String, calledByUnitTests: Boolean): AbiSnapshot {
+    private fun snapshotJavaElement(javaElement: Any, javaElementName: String, includeDebugInfoInSnapshot: Boolean? = null): AbiSnapshot {
         // TODO: Optimize this method later if necessary. Currently we focus on correctness first.
         val abiValue = gson.toJson(javaElement)
         val abiHash = abiValue.toByteArray().md5()
 
-        return if (calledByUnitTests) {
+        return if (includeDebugInfoInSnapshot == true) {
             AbiSnapshotForTests(javaElementName, abiHash, abiValue)
         } else {
             AbiSnapshot(javaElementName, abiHash)

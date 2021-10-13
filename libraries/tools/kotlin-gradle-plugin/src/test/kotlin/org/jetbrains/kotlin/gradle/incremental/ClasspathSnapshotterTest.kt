@@ -119,8 +119,8 @@ class JavaClassWithNestedClassesClasspathSnapshotterTest : ClasspathSnapshotTest
 
     private fun TestSourceFile.compileAndSnapshotNestedClass(): ClassSnapshot {
         return compileAndSnapshotAll().single {
-            if (it is ProtoBasedJavaClassSnapshot) {
-                it.serializedJavaClass.classId.asString().replace('.', '$') == testSourceFile.nestedClassToTest
+            if (it is RegularJavaClassSnapshot) {
+                it.classAbiExcludingMembers.name == testSourceFile.nestedClassToTest
             } else false
         }
     }

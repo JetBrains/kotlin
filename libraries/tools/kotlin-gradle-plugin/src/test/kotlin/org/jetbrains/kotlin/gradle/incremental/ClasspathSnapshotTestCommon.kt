@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.gradle.incremental
 
 import com.google.gson.GsonBuilder
+import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.SourceFile.JavaSourceFile
+import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
+import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.compile
 import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.compileAll
 import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.snapshot
-import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
-import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.SourceFile.JavaSourceFile
-import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.compile
 import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.snapshotAll
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Rule
@@ -191,15 +191,11 @@ abstract class ClasspathSnapshotTestCommon {
         @Suppress("MemberVisibilityCanBePrivate")
         fun ClassFile.readBytes() = asFile().readBytes()
 
-        fun ClassFile.snapshot(protoBased: Boolean = true): ClassSnapshot = listOf(this).snapshotAll(protoBased).single()
+        fun ClassFile.snapshot(protoBased: Boolean? = null): ClassSnapshot = listOf(this).snapshotAll(protoBased).single()
 
-        fun List<ClassFile>.snapshotAll(protoBased: Boolean = true): List<ClassSnapshot> {
+        fun List<ClassFile>.snapshotAll(protoBased: Boolean? = null): List<ClassSnapshot> {
             val classFilesWithContents = this.map { ClassFileWithContents(it, it.readBytes()) }
-            return if (protoBased) {
-                ClassSnapshotter.snapshot(classFilesWithContents)
-            } else {
-                classFilesWithContents.map { JavaClassSnapshotter.snapshot(it.contents, calledByUnitTests = true) }
-            }
+            return ClassSnapshotter.snapshot(classFilesWithContents, protoBased, includeDebugInfoInSnapshot = true)
         }
     }
 

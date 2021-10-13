@@ -97,15 +97,16 @@ class ChangeSet(
     val changedClasses: Set<String>,
 
     /**
-     * Map from a class name to the names of changed fields/methods within that class. The map and sets are preferably ordered but not
-     * required.
+     * Map from a class name to the names of changed fields/methods within that class.
+     *
+     * The map and sets are preferably ordered but not required.
      *
      * The class names must not appear in [changedClasses] to avoid redundancy.
      */
     val changedClassMembers: Map<String, Set<String>>
 ) {
     init {
-        check(changedClasses.intersect(changedClassMembers.keys).isEmpty())
+        check(changedClassMembers.keys.none { it in changedClasses })
     }
 
     class Collector {
@@ -133,7 +134,7 @@ class ChangeSet(
 
     fun isEmpty() = changedClasses.isEmpty() && changedClassMembers.isEmpty()
 
-    fun toClasspathChanges(): ClasspathChanges {
+    fun toClasspathChanges(): ClasspathChanges.Available {
         val lookupSymbols = mutableSetOf<LookupSymbol>()
         val fqNames = mutableSetOf<FqName>()
 
@@ -197,10 +198,13 @@ private object ImpactAnalysis {
         return classNameToSubclasses
     }
 
-    /** Finds subclasses of the given classes. The return set includes both the given classes and their subclasses. */
+    /**
+     * Finds direct and indirect subclasses of the given classes. The return set includes both the given classes and their direct and
+     * indirect subclasses.
+     */
     private fun findSubclassesInclusive(classNames: Set<String>, classNameToSubclasses: Map<String, Set<String>>): Set<String> {
-        val toVisitClasses = classNames.toMutableSet()
         val visitedClasses = mutableSetOf<String>()
+        val toVisitClasses = classNames.toMutableSet()
         while (toVisitClasses.isNotEmpty()) {
             val nextToVisit = mutableSetOf<String>()
             toVisitClasses.forEach {

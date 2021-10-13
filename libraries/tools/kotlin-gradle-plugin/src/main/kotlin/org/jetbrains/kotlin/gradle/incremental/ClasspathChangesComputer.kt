@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.incremental.storage.FileToCanonicalPathConverter
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 import java.util.*
-import kotlin.collections.LinkedHashMap
 
 /** Computes [ClasspathChanges] between two [ClasspathSnapshot]s .*/
 object ClasspathChangesComputer {
@@ -109,7 +108,7 @@ object ClasspathChangesComputer {
         val currentClassSnapshots = currentClasspathSnapshot.getNonDuplicateClassSnapshots()
         val previousClassSnapshots = previousClasspathSnapshot.getNonDuplicateClassSnapshots()
 
-        return compute(currentClassSnapshots, previousClassSnapshots)
+        return computeClassChanges(currentClassSnapshots, previousClassSnapshots)
     }
 
     /**
@@ -117,12 +116,33 @@ object ClasspathChangesComputer {
      *
      * Each list must not contain duplicate classes.
      */
-    fun compute(currentClassSnapshots: List<ClassSnapshot>, previousClassSnapshots: List<ClassSnapshot>): ClasspathChanges {
+    fun computeClassChanges(currentClassSnapshots: List<ClassSnapshot>, previousClassSnapshots: List<ClassSnapshot>): ClasspathChanges {
         if (currentClassSnapshots.any { it is ContentHashJavaClassSnapshot }
             || previousClassSnapshots.any { it is ContentHashJavaClassSnapshot }) {
             return ClasspathChanges.NotAvailable.UnableToCompute
         }
 
+        val (currentAsmBasedSnapshots, currentProtoBasedSnapshots) = currentClassSnapshots.partition { it is RegularJavaClassSnapshot }
+        val (previousAsmBasedSnapshots, previousProtoBasedSnapshots) = previousClassSnapshots.partition { it is RegularJavaClassSnapshot }
+
+        val changeSet1 = computeChangesForProtoBasedSnapshots(currentProtoBasedSnapshots, previousProtoBasedSnapshots)
+
+        @Suppress("UNCHECKED_CAST")
+        val changeSet2 = JavaClassChangesComputer.compute(
+            currentAsmBasedSnapshots as List<RegularJavaClassSnapshot>,
+            previousAsmBasedSnapshots as List<RegularJavaClassSnapshot>
+        ).toClasspathChanges()
+
+        return ClasspathChanges.Available(
+            lookupSymbols = changeSet1.lookupSymbols + changeSet2.lookupSymbols,
+            fqNames = changeSet1.fqNames + changeSet2.fqNames
+        )
+    }
+
+    private fun computeChangesForProtoBasedSnapshots(
+        currentClassSnapshots: List<ClassSnapshot>,
+        previousClassSnapshots: List<ClassSnapshot>
+    ): ClasspathChanges.Available {
         val workingDir =
             FileUtil.createTempDirectory(this::class.java.simpleName, "_WorkingDir_${UUID.randomUUID()}", /* deleteOnExit */ true)
         val incrementalJvmCache = IncrementalJvmCache(workingDir, /* targetOutputDir */ null, FileToCanonicalPathConverter)
@@ -144,9 +164,6 @@ object ClasspathChangesComputer {
                     )
                     incrementalJvmCache.markDirty(previousSnapshot.classInfo.className)
                 }
-                is RegularJavaClassSnapshot -> {
-                    TODO("Not yet implemented")
-                }
                 is ProtoBasedJavaClassSnapshot -> {
                     incrementalJvmCache.saveJavaClassProto(
                         source = null,
@@ -158,7 +175,7 @@ object ClasspathChangesComputer {
                 is EmptyJavaClassSnapshot -> {
                     // Nothing to process as these classes don't impact the result.
                 }
-                is ContentHashJavaClassSnapshot -> {
+                is RegularJavaClassSnapshot, is ContentHashJavaClassSnapshot -> {
                     error("Unexpected type (it should have been handled earlier): ${previousSnapshot.javaClass.name}")
                 }
             }
@@ -181,9 +198,6 @@ object ClasspathChangesComputer {
                         changesCollector = changesCollector
                     )
                 }
-                is RegularJavaClassSnapshot -> {
-                    TODO("Not yet implemented")
-                }
                 is ProtoBasedJavaClassSnapshot -> {
                     incrementalJvmCache.saveJavaClassProto(
                         source = null,
@@ -194,7 +208,7 @@ object ClasspathChangesComputer {
                 is EmptyJavaClassSnapshot -> {
                     // Nothing to process as these classes don't impact the result.
                 }
-                is ContentHashJavaClassSnapshot -> {
+                is RegularJavaClassSnapshot, is ContentHashJavaClassSnapshot -> {
                     error("Unexpected type (it should have been handled earlier): ${currentSnapshot.javaClass.name}")
                 }
             }
