@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.incremental
 
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.DFS
 import java.io.File
 import java.util.zip.ZipInputStream
@@ -126,13 +127,14 @@ object ClassSnapshotter {
 
         // Snapshot the remaining regular classes
         val regularClasses: List<JavaClassName> = classNames.filter { specialClassSnapshots[it] == null }
+        val regularClassIds = computeJavaClassIds(regularClasses)
         val regularClassFiles: List<ClassFileWithContents> = regularClasses.map { classNameToClassFile[it]!! }
 
         val snapshots: List<JavaClassSnapshot> = if (protoBased ?: protoBasedDefaultValue) {
-            snapshotJavaClassesProtoBased(regularClasses, regularClassFiles)
+            snapshotJavaClassesProtoBased(regularClassIds, regularClassFiles)
         } else {
-            regularClassFiles.map {
-                JavaClassSnapshotter.snapshot(it.contents, includeDebugInfoInSnapshot)
+            regularClassIds.mapIndexed { index, classId ->
+                JavaClassSnapshotter.snapshot(classId, regularClassFiles[index].contents, includeDebugInfoInSnapshot)
             }
         }
         val regularClassSnapshots: Map<JavaClassName, JavaClassSnapshot> = regularClasses.zipToMap(snapshots)
@@ -141,10 +143,9 @@ object ClassSnapshotter {
     }
 
     private fun snapshotJavaClassesProtoBased(
-        classNames: List<JavaClassName>,
+        classIds: List<ClassId>,
         classFilesWithContents: List<ClassFileWithContents>
     ): List<JavaClassSnapshot> {
-        val classIds = computeJavaClassIds(classNames)
         val classesContents = classFilesWithContents.map { it.contents }
         val descriptors: List<JavaClassDescriptor?> = JavaClassDescriptorCreator.create(classIds, classesContents)
         val snapshots: List<JavaClassSnapshot> = descriptors.mapIndexed { index, descriptor ->

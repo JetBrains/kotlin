@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.incremental
 
 import com.google.gson.GsonBuilder
 import org.jetbrains.kotlin.incremental.md5
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
@@ -14,7 +16,7 @@ import org.jetbrains.org.objectweb.asm.tree.ClassNode
 /** Computes a [JavaClassSnapshot] of a Java class. */
 object JavaClassSnapshotter {
 
-    fun snapshot(classContents: ByteArray, includeDebugInfoInSnapshot: Boolean? = null): JavaClassSnapshot {
+    fun snapshot(classId: ClassId, classContents: ByteArray, includeDebugInfoInSnapshot: Boolean? = null): JavaClassSnapshot {
         // We will extract ABI information from the given class and store it into the `abiClass` variable.
         // It is acceptable to collect more info than required, but it is incorrect to collect less info than required.
         // There are 2 approaches:
@@ -46,7 +48,7 @@ object JavaClassSnapshotter {
         abiClass.fields.sortWith(compareBy({ it.name }, { it.desc }))
         abiClass.methods.sortWith(compareBy({ it.name }, { it.desc }))
 
-        val supertypes = listOf(abiClass.superName) + abiClass.interfaces.toList()
+        val supertypes = (listOf(abiClass.superName) + abiClass.interfaces.toList()).map { JvmClassName.byInternalName(it) }
 
         val fieldsAbi = abiClass.fields.map { snapshotJavaElement(it, it.name, includeDebugInfoInSnapshot) }
         val methodsAbi = abiClass.methods.map { snapshotJavaElement(it, it.name, includeDebugInfoInSnapshot) }
@@ -55,7 +57,7 @@ object JavaClassSnapshotter {
         abiClass.methods.clear()
         val classAbiExcludingMembers = abiClass.let { snapshotJavaElement(it, it.name, includeDebugInfoInSnapshot) }
 
-        return RegularJavaClassSnapshot(supertypes, classAbiExcludingMembers, fieldsAbi, methodsAbi)
+        return RegularJavaClassSnapshot(classId, supertypes, classAbiExcludingMembers, fieldsAbi, methodsAbi)
     }
 
     private fun Int.isPrivate() = (this and Opcodes.ACC_PRIVATE) != 0

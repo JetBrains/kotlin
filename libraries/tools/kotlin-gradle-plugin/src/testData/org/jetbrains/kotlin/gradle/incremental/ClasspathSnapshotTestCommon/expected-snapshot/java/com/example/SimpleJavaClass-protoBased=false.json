@@ -1,6 +1,21 @@
 {
+  "classId": {
+    "packageFqName": {
+      "fqName": {
+        "fqName": "com.example"
+      }
+    },
+    "relativeClassName": {
+      "fqName": {
+        "fqName": "SimpleJavaClass"
+      }
+    },
+    "local": false
+  },
   "supertypes": [
-    "java/lang/Object"
+    {
+      "internalName": "java/lang/Object"
+    }
   ],
   "classAbiExcludingMembers": {
     "abiValue": "{\n  \"version\": 52,\n  \"access\": 33,\n  \"name\": \"com/example/SimpleJavaClass\",\n  \"superName\": \"java/lang/Object\",\n  \"interfaces\": [],\n  \"sourceFile\": \"SimpleJavaClass.java\",\n  \"innerClasses\": [],\n  \"fields\": [],\n  \"methods\": [],\n  \"api\": 589824\n}",
@@ -25,5 +40,9 @@
       "name": "publicMethod",
       "abiHash": -7202431168536137702
     }
-  ]
+  ],
+  "className$delegate": {
+    "initializer": {},
+    "_value": {}
+  }
 }

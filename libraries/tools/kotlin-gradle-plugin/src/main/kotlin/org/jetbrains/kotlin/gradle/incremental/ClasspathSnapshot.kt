@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.incremental
 
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.SerializedJavaClass
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 /** Snapshot of a classpath. It consists of a list of [ClasspathEntrySnapshot]s. */
 class ClasspathSnapshot(val classpathEntrySnapshots: List<ClasspathEntrySnapshot>)
@@ -45,8 +47,11 @@ sealed class JavaClassSnapshot : ClassSnapshot()
 /** [JavaClassSnapshot] of a typical Java class. */
 class RegularJavaClassSnapshot(
 
+    /** [ClassId] of the class. It is part of the class's ABI ([classAbiExcludingMembers]). */
+    val classId: ClassId,
+
     /** The superclass and interfaces of the class. It is part of the class's ABI ([classAbiExcludingMembers]). */
-    val supertypes: List<String>,
+    val supertypes: List<JvmClassName>,
 
     /** [AbiSnapshot] of the class excluding its fields and methods. */
     val classAbiExcludingMembers: AbiSnapshot,
@@ -57,7 +62,14 @@ class RegularJavaClassSnapshot(
     /** [AbiSnapshot]s of the class's methods. */
     val methodsAbi: List<AbiSnapshot>
 
-) : JavaClassSnapshot()
+) : JavaClassSnapshot() {
+
+    val className by lazy {
+        JvmClassName.byClassId(classId).also {
+            check(it == JvmClassName.byInternalName(classAbiExcludingMembers.name))
+        }
+    }
+}
 
 /** The ABI snapshot of a Java element (e.g., class, field, or method). */
 open class AbiSnapshot(
