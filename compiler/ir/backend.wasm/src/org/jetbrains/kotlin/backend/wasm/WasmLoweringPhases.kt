@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToNonL
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.WrapInlineDeclarationsWithReifiedTypeParametersLowering
+import org.jetbrains.kotlin.ir.backend.wasm.lower.generateMainFunctionCalls
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 
@@ -267,6 +268,12 @@ private val addContinuationToFunctionCallsLoweringPhase = makeWasmModulePhase(
     prerequisite = setOf(
         addContinuationToNonLocalSuspendFunctionsLoweringPhase,
     )
+)
+
+private val addMainFunctionCallsLowering = makeCustomWasmModulePhase(
+    ::generateMainFunctionCalls,
+    name = "GenerateMainFunctionCalls",
+    description = "Generate main function calls into start function",
 )
 
 private val defaultArgumentStubGeneratorPhase = makeWasmModulePhase(
@@ -521,6 +528,7 @@ val wasmPhases = NamedCompilerPhase(
 
             addContinuationToNonLocalSuspendFunctionsLoweringPhase then
             addContinuationToFunctionCallsLoweringPhase then
+            addMainFunctionCallsLowering then
 
             tryCatchCanonicalization then
             returnableBlockLoweringPhase then

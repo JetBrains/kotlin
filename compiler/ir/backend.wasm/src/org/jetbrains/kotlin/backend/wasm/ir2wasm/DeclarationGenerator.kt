@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.lower.wasmSignature
 import org.jetbrains.kotlin.backend.wasm.utils.*
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -158,8 +156,13 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
 
         context.defineFunction(declaration.symbol, function)
 
-        if (declaration == backendContext.startFunction)
-            context.setStartFunction(function)
+        val initPriority = when (declaration) {
+            backendContext.fieldInitFunction -> "0"
+            backendContext.mainCallsWrapperFunction -> "1"
+            else -> null
+        }
+        if (initPriority != null)
+            context.registerInitFunction(function, initPriority)
 
         if (declaration.isExported(backendContext)) {
             context.addExport(

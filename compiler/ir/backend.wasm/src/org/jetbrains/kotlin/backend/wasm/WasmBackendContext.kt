@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsCommonCoroutineSymbols
-import org.jetbrains.kotlin.ir.backend.js.JsMapping
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
@@ -35,8 +33,8 @@ import org.jetbrains.kotlin.name.Name
 class WasmBackendContext(
     val module: ModuleDescriptor,
     override val irBuiltIns: IrBuiltIns,
-    @Suppress("UNUSED_PARAMETER") symbolTable: SymbolTable,
-    @Suppress("UNUSED_PARAMETER") irModuleFragment: IrModuleFragment,
+    symbolTable: SymbolTable,
+    irModuleFragment: IrModuleFragment,
     val additionalExportedDeclarations: Set<FqName>,
     override val configuration: CompilerConfiguration,
 ) : JsCommonBackendContext {
@@ -90,14 +88,16 @@ class WasmBackendContext(
         }
     }
 
-
-    val startFunction = irFactory.buildFun {
-        name = Name.identifier("startFunction")
+    fun createInitFunction(identifier: String): IrSimpleFunction = irFactory.buildFun {
+        name = Name.identifier(identifier)
         returnType = irBuiltIns.unitType
     }.apply {
         body = irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
         internalPackageFragment.addChild(this)
     }
+
+    val fieldInitFunction = createInitFunction("fieldInit")
+    val mainCallsWrapperFunction = createInitFunction("mainCallsWrapper")
 
     override val sharedVariablesManager =
         WasmSharedVariablesManager(this, irBuiltIns, internalPackageFragment)

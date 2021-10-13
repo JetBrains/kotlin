@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
@@ -71,6 +72,10 @@ class WasmSymbols(
         getInternalFunction("getCoroutineContext")
     override val returnIfSuspended =
         getInternalFunction("returnIfSuspended")
+
+    val coroutineEmptyContinuation: IrPropertySymbol = symbolTable.referenceProperty(
+        getProperty(FqName.fromSegments(listOf("kotlin", "wasm", "internal", "EmptyContinuation")))
+    )
 
     override val functionAdapter: IrClassSymbol
         get() = TODO()

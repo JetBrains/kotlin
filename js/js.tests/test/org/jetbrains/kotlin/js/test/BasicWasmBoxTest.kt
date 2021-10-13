@@ -189,9 +189,10 @@ abstract class BasicWasmBoxTest(
             const wasmBinary = read(String.raw`${outputWasmFile.absoluteFile}`, 'binary');
             const wasmModule = new WebAssembly.Module(wasmBinary);
             wasmInstance = new WebAssembly.Instance(wasmModule, { runtime, js_code });
-            
-            const ${sanitizeName(config.moduleId)} = wasmInstance.exports;
+            wasmInstance.exports.__init();
 
+            const ${sanitizeName(config.moduleId)} = wasmInstance.exports;
+            
             wasmInstance.exports.startUnitTests?.();
 
             const actualResult = importStringFromWasm(wasmInstance.exports.$testFunction());
@@ -212,7 +213,9 @@ abstract class BasicWasmBoxTest(
             const response = await fetch("index.wasm");
             const wasmBinary = await response.arrayBuffer();
             wasmInstance = (await WebAssembly.instantiate(wasmBinary, { runtime, js_code })).instance;
-            
+            wasmInstance.exports.__init();
+            wasmInstance.exports.startUnitTests?.();
+
             const actualResult = importStringFromWasm(wasmInstance.exports.box());
             if (actualResult !== "OK")
                 throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;

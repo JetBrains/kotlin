@@ -62,3 +62,9 @@ internal fun <R, P, T> startCoroutineUninterceptedOrReturnIntrinsic2(
 ): Any? {
     implementedAsIntrinsic
 }
+
+@PublishedApi
+@SinceKotlin("1.3")
+internal val EmptyContinuation = Continuation<Any?>(EmptyCoroutineContext) { result ->
+    result.getOrThrow()
+}

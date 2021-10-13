@@ -17,7 +17,7 @@ abstract class AbstractIrCodegenWasmJsInteropWasmTest : BasicWasmBoxTest(
     "codegen/wasmJsInteropJs"
 )
 
-abstract class AbstractKotlinTestBoxWasmTest : BasicWasmBoxTest(
-    "js/js.translator/testData/box/kotlin.test",
-    "codegen/wasmBoxKotlinTest"
+abstract class AbstractJsTranslatorWasmTest : BasicWasmBoxTest(
+    TEST_DATA_DIR_PATH + "box/",
+    "js.translator/wasmBox"
 )

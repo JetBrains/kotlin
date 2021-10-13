@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  */
 class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        val builder = context.createIrBuilder(context.startFunction.symbol)
-        val startFunctionBody = context.startFunction.body as IrBlockBody
+        val builder = context.createIrBuilder(context.fieldInitFunction.symbol)
+        val startFunctionBody = context.fieldInitFunction.body as IrBlockBody
 
         irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {

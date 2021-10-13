@@ -140,7 +140,7 @@ abstract class BasicBoxTest(
 
 
         val actualMainCallParameters = if (CALL_MAIN_PATTERN.matcher(fileContent).find())
-            MainCallParameters.mainWithArguments(listOf("testArg"))
+            MainCallParameters.mainWithArguments(listOf())
         else
             mainCallParameters
 

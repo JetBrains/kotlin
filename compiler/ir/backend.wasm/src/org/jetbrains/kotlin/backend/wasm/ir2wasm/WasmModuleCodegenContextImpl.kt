@@ -81,8 +81,8 @@ class WasmModuleCodegenContextImpl(
         wasmFragment.definedClassITableData.define(irClass, table)
     }
 
-    override fun setStartFunction(wasmFunction: WasmFunction) {
-        wasmFragment.startFunction = wasmFunction
+    override fun registerInitFunction(wasmFunction: WasmFunction, priority: String) {
+        wasmFragment.initFunctions += WasmCompiledModuleFragment.FunWithPriority(wasmFunction, priority)
     }
 
     override fun addExport(wasmExport: WasmExport<*>) {
