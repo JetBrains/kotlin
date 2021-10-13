@@ -11,7 +11,6 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
-import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.*
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.Cocoapods
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import java.io.File
 import java.net.URI
 
@@ -281,9 +279,10 @@ open class CocoapodsExtension(private val project: Project) {
          *
          * @param url url to tar, jar or zip archive.
          * @param flatten does archive contains subdirectory that needs to be expanded
+         * @param isAllowInsecureProtocol enables communication with a repository over an insecure HTTP connection.
          */
         @JvmOverloads
-        fun url(url: String, flatten: Boolean = false): PodLocation = Url(URI(url), flatten)
+        fun url(url: String, flatten: Boolean = false, isAllowInsecureProtocol: Boolean = false): PodLocation = Url(URI(url), flatten, isAllowInsecureProtocol)
 
         /**
          * Path to local pod
@@ -319,7 +318,8 @@ open class CocoapodsExtension(private val project: Project) {
 
             data class Url(
                 @get:Input val url: URI,
-                @get:Input var flatten: Boolean
+                @get:Input var flatten: Boolean,
+                @get:Input var isAllowInsecureProtocol: Boolean
             ) : PodLocation() {
                 override fun getLocalPath(project: Project, podName: String): String {
                     return project.cocoapodsBuildDirs.externalSources("url").resolve(podName).absolutePath

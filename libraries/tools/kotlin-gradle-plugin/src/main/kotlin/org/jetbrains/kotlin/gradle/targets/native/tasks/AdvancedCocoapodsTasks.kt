@@ -117,14 +117,12 @@ open class PodDownloadUrlTask : DownloadCocoapodsTask() {
     @TaskAction
     fun download() {
         val podLocation = podSource.get()
-        val url = podLocation.url.toString()
-        val repoUrl = url.substringBeforeLast("/")
-        val fileName = url.substringAfterLast("/")
+        val fileName = podLocation.url.toString().substringAfterLast("/")
         val fileNameWithoutExtension = fileName.substringBefore(".")
         val extension = fileName.substringAfter(".")
         require(permittedFileExtensions.contains(extension)) { "Unknown file extension" }
 
-        val repo = setupRepo(repoUrl)
+        val repo = setupRepo(podLocation)
         val dependency = createDependency(fileNameWithoutExtension, extension)
         val configuration = project.configurations.detachedConfiguration(dependency)
         val artifact = configuration.singleFile
@@ -132,8 +130,9 @@ open class PodDownloadUrlTask : DownloadCocoapodsTask() {
         project.repositories.remove(repo)
     }
 
-    private fun setupRepo(repoUrl: String): ArtifactRepository {
+    private fun setupRepo(podUrl: CocoapodsDependency.PodLocation.Url): ArtifactRepository {
         return project.repositories.ivy { repo ->
+            val repoUrl = podUrl.url.toString().substringBeforeLast("/")
             repo.setUrl(repoUrl)
             repo.patternLayout {
                 it.artifact("[artifact].[ext]")
@@ -141,6 +140,7 @@ open class PodDownloadUrlTask : DownloadCocoapodsTask() {
             repo.metadataSources {
                 it.artifact()
             }
+            repo.isAllowInsecureProtocol = podUrl.isAllowInsecureProtocol
         }
     }
 
