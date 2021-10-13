@@ -99,7 +99,8 @@ object TypeIntersector {
             } else it
         }
 
-        return intersectTypesWithoutIntersectionType(correctNullability)
+        val resultAttributes = types.map { it.attributes }.reduce { x, y -> x.intersect(y) }
+        return intersectTypesWithoutIntersectionType(correctNullability).replaceAttributes(resultAttributes)
     }
 
     // nullability here is correct
