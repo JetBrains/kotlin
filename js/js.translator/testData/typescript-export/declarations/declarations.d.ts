@@ -51,7 +51,7 @@ declare namespace JS_TESTS {
         function takesO(o: typeof foo.O): number;
         class KT_37829 {
             constructor();
-            readonly Companion: {
+            static readonly Companion: {
                 readonly x: number;
             };
         }

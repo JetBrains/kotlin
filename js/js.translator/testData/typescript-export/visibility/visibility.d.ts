@@ -11,9 +11,9 @@ declare namespace JS_TESTS {
         constructor();
         protected readonly protectedVal: number;
         protected protectedFun(): number;
-        protected readonly protectedNestedObject: {
+        protected static readonly protectedNestedObject: {
         };
-        protected readonly Companion: {
+        protected static readonly Companion: {
             readonly companionObjectProp: number;
         };
         readonly publicVal: number;

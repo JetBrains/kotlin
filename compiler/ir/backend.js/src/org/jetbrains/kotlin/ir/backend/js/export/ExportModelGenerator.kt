@@ -226,7 +226,7 @@ class ExportModelGenerator(
                 type = t,
                 mutable = false,
                 isMember = klass.parent is IrClass,
-                isStatic = true,
+                isStatic = !klass.isInner,
                 isAbstract = false,
                 isProtected = klass.visibility == DescriptorVisibilities.PROTECTED,
                 irGetter = context.mapping.objectToGetInstanceFunction[klass]!!,

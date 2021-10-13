@@ -76,7 +76,8 @@ fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): Strin
             isMember -> (if (isAbstract) "abstract " else "") + (if (!mutable) "readonly " else "")
             else -> if (mutable) "let " else "const "
         }
-        "$prefix$visibility$keyword$name: ${type.toTypeScript(indent)};"
+        val possibleStatic = if (isMember && isStatic) "static " else ""
+        "$prefix$visibility$possibleStatic$keyword$name: ${type.toTypeScript(indent)};"
     }
 
     is ExportedClass -> {
