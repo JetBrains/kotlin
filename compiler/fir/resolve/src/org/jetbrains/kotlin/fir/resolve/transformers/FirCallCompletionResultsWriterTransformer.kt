@@ -251,9 +251,7 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         if (enableArrayOfCallTransformation) {
-            arrayOfCallTransformer.toArrayOfCall(result)?.let {
-                return it
-            }
+            return arrayOfCallTransformer.transformFunctionCall(result, null)
         }
 
         return result

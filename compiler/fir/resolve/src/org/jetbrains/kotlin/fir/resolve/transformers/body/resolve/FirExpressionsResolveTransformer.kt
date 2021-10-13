@@ -380,9 +380,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         dataFlowAnalyzer.exitFunctionCall(completeInference, callCompleted)
         if (callCompleted) {
             if (enableArrayOfCallTransformation) {
-                arrayOfCallTransformer.toArrayOfCall(completeInference)?.let {
-                    return it
-                }
+                return arrayOfCallTransformer.transformFunctionCall(completeInference, null)
             }
         }
         return completeInference

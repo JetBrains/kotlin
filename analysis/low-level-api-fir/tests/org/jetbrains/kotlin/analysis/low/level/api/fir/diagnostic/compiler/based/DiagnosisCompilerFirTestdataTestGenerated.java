@@ -5058,6 +5058,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("arrayOfImports.kt")
+            public void testArrayOfImports() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/arrayOfImports.kt");
+            }
+
+            @Test
             @TestMetadata("DailyAggregatedDoubleFactor.kt")
             public void testDailyAggregatedDoubleFactor() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/DailyAggregatedDoubleFactor.kt");

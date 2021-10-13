@@ -1,0 +1,33 @@
+FILE: arrayOfImports.kt
+    @R|kotlin/Deprecated|(message = String(Use ...), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(String(bar), vararg(imports = <implicitArrayOf>(String(my.package.bar))))) @R|Third|(first = R|/First.First|(<implicitArrayOf>(<getClass>(Q|kotlin/String|))), second = R|/Second.Second|(<implicitArrayOf>(R|/First.First|(<implicitArrayOf>(<getClass>(Q|kotlin/Int|))), R|/First.First|(<implicitArrayOf>(<getClass>(Q|kotlin/Double|)))))) @R|Second|(value = <implicitArrayOf>(<implicitArrayOf>(String()), <implicitArrayOf>(R|/First.First|(<implicitArrayOf>())))) public final fun foo(): R|kotlin/Unit| {
+    }
+    public final annotation class First : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/Array<kotlin/reflect/KClass<*>>|): R|First| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|kotlin/Array<kotlin/reflect/KClass<*>>| = R|<local>/value|
+            public get(): R|kotlin/Array<kotlin/reflect/KClass<*>>|
+
+    }
+    public final annotation class Second : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/Array<First>|): R|Second| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|kotlin/Array<First>| = R|<local>/value|
+            public get(): R|kotlin/Array<First>|
+
+    }
+    public final annotation class Third : R|kotlin/Annotation| {
+        public constructor(first: R|First|, second: R|Second|): R|Third| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val first: R|First| = R|<local>/first|
+            public get(): R|First|
+
+        public final val second: R|Second| = R|<local>/second|
+            public get(): R|Second|
+
+    }
