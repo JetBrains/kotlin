@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
- import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
-import org.jetbrains.kotlin.fir.typeContext
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
@@ -43,7 +41,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         // If one of the type is already `Nothing?`, we skip reporting further comparison. This is to allow comparing with `null`, which has
         // type `Nothing?`
         if (lType.isNullableNothing || rType.isNullableNothing) return
-        val inferenceContext = context.session.inferenceComponents.ctx
+        val inferenceContext = context.session.typeContext
 
         val compatibility = try {
             inferenceContext.isCompatible(lType, rType)

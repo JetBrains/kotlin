@@ -126,7 +126,7 @@ object CheckDispatchReceiver : ResolutionStage() {
             (isCandidateFromUnstableSmartcast || (isReceiverNullable && !explicitReceiverExpression.smartcastType.canBeNull))
         ) {
             val dispatchReceiverType = (candidate.symbol as? FirCallableSymbol<*>)?.dispatchReceiverType?.let {
-                context.session.inferenceComponents.approximator.approximateToSuperType(
+                context.session.typeApproximator.approximateToSuperType(
                     it,
                     TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
                 ) ?: it

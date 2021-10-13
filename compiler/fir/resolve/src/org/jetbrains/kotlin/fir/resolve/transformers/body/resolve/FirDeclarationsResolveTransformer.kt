@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -271,7 +272,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 it.transformSingle(callCompletionResultsWriter, null)
             }
             val declarationCompletionResultsWriter =
-                FirDeclarationCompletionResultsWriter(finalSubstitutor, inferenceComponents.approximator, session.typeContext)
+                FirDeclarationCompletionResultsWriter(finalSubstitutor, session.typeApproximator, session.typeContext)
             property.transformSingle(declarationCompletionResultsWriter, FirDeclarationCompletionResultsWriter.ApproximationData.Default)
         }
     }
@@ -565,7 +566,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     transformer,
                     withExpectedType(
                         returnExpression.resultType.approximatedIfNeededOrSelf(
-                            inferenceComponents.approximator,
+                            session.typeApproximator,
                             simpleFunction?.visibilityForApproximation(),
                             transformer.session.typeContext,
                             simpleFunction?.isInline == true
@@ -761,7 +762,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             session,
             ConeSubstitutor.Empty,
             components.returnTypeCalculator,
-            inferenceComponents.approximator,
+            session.typeApproximator,
             dataFlowAnalyzer,
         )
         lambda.transformSingle(writer, expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.toExpectedType())
@@ -782,7 +783,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 session.builtinTypes.unitType.type
             } else {
                 // Otherwise, compute the common super type of all possible return expressions
-                inferenceComponents.ctx.commonSuperTypeOrNull(
+                session.typeContext.commonSuperTypeOrNull(
                     returnStatements.mapNotNull { (it as? FirExpression)?.resultType?.coneType }
                 ) ?: session.builtinTypes.unitType.type
             }
@@ -920,7 +921,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             transformer,
             withExpectedType(
                 expectedType.approximatedIfNeededOrSelf(
-                    inferenceComponents.approximator,
+                    session.typeApproximator,
                     backingField.visibilityForApproximation(),
                     inferenceComponents.session.typeContext,
                 )
@@ -945,7 +946,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     transformer,
                     withExpectedType(
                         expectedType.approximatedIfNeededOrSelf(
-                            inferenceComponents.approximator,
+                            session.typeApproximator,
                             variable.visibilityForApproximation(),
                             inferenceComponents.session.typeContext,
                         )

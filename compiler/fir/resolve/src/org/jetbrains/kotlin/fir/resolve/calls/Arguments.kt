@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclarati
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -336,7 +335,7 @@ private fun Candidate.captureTypeFromExpressionOrNull(argumentType: ConeKotlinTy
 
     if (argumentType.typeArguments.isEmpty()) return null
 
-    return context.inferenceComponents.ctx.captureFromArguments(
+    return context.session.typeContext.captureFromArguments(
         argumentType, CaptureStatus.FROM_EXPRESSION
     ) as? ConeKotlinType
 }
@@ -535,7 +534,7 @@ fun FirExpression.isFunctional(
             val returnTypeCompatible =
                 expectedReturnType is ConeTypeParameterType ||
                         AbstractTypeChecker.isSubtypeOf(
-                            session.inferenceComponents.ctx.newTypeCheckerState(
+                            session.typeContext.newTypeCheckerState(
                                 errorTypesEqualToAnything = false,
                                 stubTypesEqualToAnything = true
                             ),
@@ -555,7 +554,7 @@ fun FirExpression.isFunctional(
                 val expectedParameterType = expectedParameter.lowerBoundIfFlexible()
                 expectedParameterType is ConeTypeParameterType ||
                         AbstractTypeChecker.isSubtypeOf(
-                            session.inferenceComponents.ctx.newTypeCheckerState(
+                            session.typeContext.newTypeCheckerState(
                                 errorTypesEqualToAnything = false,
                                 stubTypesEqualToAnything = true
                             ),

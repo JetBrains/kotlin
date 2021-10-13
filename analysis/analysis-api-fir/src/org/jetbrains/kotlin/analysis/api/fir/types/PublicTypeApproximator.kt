@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.fir.types
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.typeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 internal object PublicTypeApproximator {
@@ -15,7 +15,7 @@ internal object PublicTypeApproximator {
         type: ConeKotlinType,
         session: FirSession,
     ): ConeKotlinType? {
-        val approximator = session.inferenceComponents.approximator
+        val approximator = session.typeApproximator
         return approximator.approximateToSuperType(type, PublicApproximatorConfiguration)
     }
 

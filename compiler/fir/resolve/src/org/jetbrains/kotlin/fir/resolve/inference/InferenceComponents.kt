@@ -5,21 +5,22 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.types.ConeInferenceContext
-import org.jetbrains.kotlin.fir.types.ConeTypeApproximator
+import org.jetbrains.kotlin.fir.types.typeApproximator
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 
 @NoMutableState
 class InferenceComponents(val session: FirSession) : FirSessionComponent {
-    val ctx: ConeInferenceContext = object : ConeInferenceContext {
-        override val session: FirSession
-            get() = this@InferenceComponents.session
-    }
+    private val typeContext: ConeInferenceContext = session.typeContext
+    private val approximator = session.typeApproximator
 
-    val approximator: ConeTypeApproximator = ConeTypeApproximator(ctx, session.languageVersionSettings)
-    val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle.create(ctx)
+    val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle.create(typeContext)
     private val incorporator = ConstraintIncorporator(approximator, trivialConstraintTypeInferenceOracle, ConeConstraintSystemUtilContext)
     private val injector = ConstraintInjector(
         incorporator,
@@ -34,7 +35,7 @@ class InferenceComponents(val session: FirSession) : FirSessionComponent {
     val constraintSystemFactory = ConstraintSystemFactory()
 
     fun createConstraintSystem(): NewConstraintSystemImpl {
-        return NewConstraintSystemImpl(injector, ctx)
+        return NewConstraintSystemImpl(injector, typeContext)
     }
 
     inner class ConstraintSystemFactory {
@@ -45,3 +46,4 @@ class InferenceComponents(val session: FirSession) : FirSessionComponent {
 }
 
 val FirSession.inferenceComponents: InferenceComponents by FirSession.sessionComponentAccessor()
+

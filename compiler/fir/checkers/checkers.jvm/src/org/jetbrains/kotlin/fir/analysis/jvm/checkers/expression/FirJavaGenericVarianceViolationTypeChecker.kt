@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.argumentMapping
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.originalOrSelf
-import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -76,9 +75,9 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
 
             val lowerBound = expectedType.lowerBound
             val upperBound = expectedType.upperBound
-            val typeCtx = context.session.inferenceComponents.ctx
-            val lowerConstructor = lowerBound.typeConstructor(typeCtx)
-            val upperConstructor = upperBound.typeConstructor(typeCtx)
+            val typeContext = context.session.typeContext
+            val lowerConstructor = lowerBound.typeConstructor(typeContext)
+            val upperConstructor = upperBound.typeConstructor(typeContext)
 
             // Use site variance projection is always the same for flexible types. So there is no need to check if declaration site is the
             // same.
@@ -86,7 +85,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
 
             // If the base class of the argument type is not equal or a sub class of the lower bound, then we simply allow it so that
             // Kotlin immutable collections can be used in place of Java collection types.
-            if (!typeCtx.isTypeConstructorEqualOrSubClassOf(argType, lowerBound)) continue
+            if (!typeContext.isTypeConstructorEqualOrSubClassOf(argType, lowerBound)) continue
 
             // In general, out type projection makes a mutable collection "readonly". A priori such a projected type is not a subtype of a
             // non-projected type because projection has "removed" the ability to write to this collection. But for the purpose of this
@@ -111,15 +110,15 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
             // projection and type capturing and compare the types after such erasure. This way, we won't incorrectly reject any valid code
             // though we may accept some invalid code. But in presence of the unsound flexible types, we are allowing invalid code already.
             val argTypeWithoutOutProjection = argType.removeOutProjection(isCovariant = true)
-            val lowerBoundWithoutCapturing = context.session.inferenceComponents.approximator.approximateToSuperType(
+            val lowerBoundWithoutCapturing = context.session.typeApproximator.approximateToSuperType(
                 lowerBound,
                 TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
             ) ?: lowerBound
 
             if (!AbstractTypeChecker.isSubtypeOf(
-                    typeCtx,
+                    typeContext,
                     argTypeWithoutOutProjection,
-                    lowerBoundWithoutCapturing.withNullability(ConeNullability.NULLABLE, typeCtx)
+                    lowerBoundWithoutCapturing.withNullability(ConeNullability.NULLABLE, typeContext)
                 )
             ) {
                 reporter.reportOn(arg.source, FirJvmErrors.JAVA_TYPE_MISMATCH, expectedType, argType, context)

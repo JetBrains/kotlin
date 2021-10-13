@@ -137,11 +137,11 @@ class FirCallCompleter(
                 if (inferenceSession.shouldRunCompletion(call)) {
                     runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
                     val finalSubstitutor = candidate.system.asReadOnlyStorage()
-                        .buildAbstractResultingSubstitutor(session.inferenceComponents.ctx) as ConeSubstitutor
+                        .buildAbstractResultingSubstitutor(session.typeContext) as ConeSubstitutor
                     val completedCall = call.transformSingle(
                         FirCallCompletionResultsWriterTransformer(
                             session, finalSubstitutor, components.returnTypeCalculator,
-                            session.inferenceComponents.approximator,
+                            session.typeApproximator,
                             components.dataFlowAnalyzer,
                         ),
                         null
@@ -211,7 +211,7 @@ class FirCallCompleter(
     ): FirCallCompletionResultsWriterTransformer {
         return FirCallCompletionResultsWriterTransformer(
             session, substitutor, components.returnTypeCalculator,
-            session.inferenceComponents.approximator,
+            session.typeApproximator,
             components.dataFlowAnalyzer,
             mode
         )
@@ -323,7 +323,7 @@ class FirCallCompleter(
     }
 
     private fun ConeKotlinType.approximateLambdaInputType(): ConeKotlinType =
-        session.inferenceComponents.approximator.approximateToSuperType(
+        session.typeApproximator.approximateToSuperType(
             this, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
         ) ?: this
 }
