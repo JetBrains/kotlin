@@ -38,10 +38,8 @@ task jvmJar {
 targetList.each { target ->
     task("${target}EndorsedLibraries") {
         endorsedLibrariesList.each { library ->
-            dependsOn "$library.projectName:${target}${library.taskName}"
-
             dependsOn task("${target}${library.name}EndorsedLibraries", type: Copy) {
-
+                dependsOn "$library.projectName:${target}${library.taskName}"
                 destinationDir project.file("${project.buildDir}/${library.name}")
 
                 from(library.project.file("build/${target}${library.taskName}")) {
