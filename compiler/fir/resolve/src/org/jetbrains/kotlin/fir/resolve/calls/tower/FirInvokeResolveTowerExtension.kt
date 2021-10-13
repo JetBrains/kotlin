@@ -99,10 +99,10 @@ internal class FirInvokeResolveTowerExtension(
         invokeReceiverInfo: CallInfo,
         towerDataElementsForName: TowerDataElementsForName = TowerDataElementsForName(invokeReceiverInfo.name, components.towerDataContext),
         invokeBuiltinExtensionMode: Boolean,
-        crossinline task: suspend (FirTowerResolveTask) -> Unit
+        crossinline runTask: suspend (FirTowerResolveTask) -> Unit
     ) {
         val collector = CandidateCollector(components, components.resolutionStageRunner)
-        val invokeReceiverProcessor = InvokeReceiverResolveTask(
+        val task = InvokeReceiverResolveTask(
             components,
             manager,
             towerDataElementsForName,
@@ -118,7 +118,7 @@ internal class FirInvokeResolveTowerExtension(
             }
         )
         manager.enqueueResolverTask {
-            task(invokeReceiverProcessor)
+            runTask(task)
         }
     }
 

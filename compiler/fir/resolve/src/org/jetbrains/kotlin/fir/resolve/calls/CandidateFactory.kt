@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerLevel
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -41,6 +42,22 @@ class CandidateFactory private constructor(
     }
 
     constructor(context: ResolutionContext, callInfo: CallInfo) : this(context, buildBaseSystem(context, callInfo))
+
+    fun createCandidate(
+        callInfo: CallInfo,
+        symbol: FirBasedSymbol<*>,
+        explicitReceiverKind: ExplicitReceiverKind,
+        levelContext: TowerLevel.Context,
+    ) = createCandidate(
+        callInfo,
+        symbol,
+        explicitReceiverKind,
+        levelContext.scope,
+        levelContext.dispatchReceiverValue,
+        levelContext.extensionReceiverValue,
+        levelContext.builtInExtensionFunctionReceiverValue,
+        levelContext.objectsByName,
+    )
 
     fun createCandidate(
         callInfo: CallInfo,

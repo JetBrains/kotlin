@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 
 internal class CandidateFactoriesAndCollectors(
     // Common calls
@@ -17,35 +14,42 @@ internal class CandidateFactoriesAndCollectors(
     val resultCollector: CandidateCollector,
 )
 
+internal fun TowerLevel.Processor<FirBasedSymbol<*>>.withSuccess(
+    isSuccess: () -> Boolean
+): TowerLevelHandler.Processor {
+    return object : TowerLevelHandler.Processor {
+        override val isSuccess: Boolean get() = isSuccess()
+
+        override fun consumeSymbol(
+            symbol: FirBasedSymbol<*>,
+            levelContext: TowerLevel.Context
+        ) {
+            this@withSuccess.consumeSymbol(symbol, levelContext)
+        }
+    }
+}
 
 internal class TowerLevelHandler {
 
     // Try to avoid adding additional state here
     private var processResult = ProcessResult.SCOPE_EMPTY
 
+    interface Processor : TowerLevel.Processor<FirBasedSymbol<*>> {
+        val isSuccess: Boolean
+    }
+
     fun handleLevel(
-        collector: CandidateCollector,
-        candidateFactory: CandidateFactory,
         info: CallInfo,
-        explicitReceiverKind: ExplicitReceiverKind,
-        group: TowerGroup,
-        towerLevel: SessionBasedTowerLevel
+        towerLevel: SessionBasedTowerLevel,
+        processor: Processor,
     ): ProcessResult {
         processResult = ProcessResult.SCOPE_EMPTY
-        val processor =
-            TowerScopeLevelProcessor(
-                info,
-                explicitReceiverKind,
-                collector,
-                candidateFactory,
-                group
-            )
 
         when (info.callKind) {
             CallKind.VariableAccess -> {
                 processResult += towerLevel.processPropertiesByName(info, processor)
 
-                if (!collector.isSuccess() && towerLevel is ScopeTowerLevel && towerLevel.extensionReceiver == null) {
+                if (!processor.isSuccess && towerLevel is ScopeTowerLevel && towerLevel.extensionReceiver == null) {
                     processResult += towerLevel.processObjectsByName(info, processor)
                 }
             }
@@ -61,39 +65,5 @@ internal class TowerLevelHandler {
             }
         }
         return processResult
-    }
-}
-
-private class TowerScopeLevelProcessor(
-    val callInfo: CallInfo,
-    val explicitReceiverKind: ExplicitReceiverKind,
-    val resultCollector: CandidateCollector,
-    val candidateFactory: CandidateFactory,
-    val group: TowerGroup
-) : TowerScopeLevel.TowerScopeLevelProcessor<FirBasedSymbol<*>> {
-    override fun consumeCandidate(
-        symbol: FirBasedSymbol<*>,
-        dispatchReceiverValue: ReceiverValue?,
-        extensionReceiverValue: ReceiverValue?,
-        scope: FirScope,
-        builtInExtensionFunctionReceiverValue: ReceiverValue?,
-        objectsByName: Boolean
-    ) {
-        resultCollector.consumeCandidate(
-            group, candidateFactory.createCandidate(
-                callInfo,
-                symbol,
-                explicitReceiverKind,
-                scope,
-                dispatchReceiverValue,
-                extensionReceiverValue,
-                builtInExtensionFunctionReceiverValue,
-                objectsByName
-            ), candidateFactory.context
-        )
-    }
-
-    companion object {
-        val defaultPackage = Name.identifier("kotlin")
     }
 }

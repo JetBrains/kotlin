@@ -88,7 +88,7 @@ internal abstract class FirBaseTowerResolveTask(
     protected fun ReceiverValue.toMemberScopeTowerLevel(
         extensionReceiver: ReceiverValue? = null,
         implicitExtensionInvokeMode: Boolean = false
-    ) = MemberScopeTowerLevel(
+    ) = MemberTowerLevel(
         session, components, this,
         extensionReceiver, implicitExtensionInvokeMode,
         scopeSession = components.scopeSession
@@ -128,15 +128,18 @@ internal abstract class FirBaseTowerResolveTask(
         val finalGroup = interceptTowerGroup(group)
         manager.requestGroup(finalGroup)
 
+        val processor = buildTowerLevelProcessor { symbol, levelData ->
+            collector.consumeCandidate(
+                finalGroup,
+                candidateFactory.createCandidate(callInfo, symbol, explicitReceiverKind, levelData),
+                candidateFactory.context
+            )
+        }.withSuccess {
+            collector.isSuccess()
+        }
 
-        val result = handler.handleLevel(
-            collector,
-            candidateFactory,
-            callInfo,
-            explicitReceiverKind,
-            finalGroup,
-            towerLevel
-        )
+        val result = handler.handleLevel(callInfo, towerLevel, processor)
+
         if (collector.isSuccess()) onSuccessfulLevel(finalGroup)
         return result == ProcessResult.SCOPE_EMPTY
     }
