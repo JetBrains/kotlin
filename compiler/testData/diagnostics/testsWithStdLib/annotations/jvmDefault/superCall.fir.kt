@@ -41,7 +41,7 @@ class <!JVM_DEFAULT_THROUGH_INHERITANCE!>ManySupers<!>: Foo2(), B {
     fun foo() {
         super<Foo2>.test()
         super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>B<!>>.test()
-        <!AMBIGUOUS_SUPER!>super<!>.test()
+        super.test()
     }
 }
 

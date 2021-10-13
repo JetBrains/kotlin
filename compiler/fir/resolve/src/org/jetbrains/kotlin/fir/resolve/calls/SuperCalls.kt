@@ -107,9 +107,19 @@ private inline fun BodyResolveComponents.resolveSupertypesByMembers(
     typesWithConcreteMembers.removeAll { typeWithConcreteMember ->
         typesWithNonConcreteMembers.any { typeWithNonConcreteMember ->
             AbstractTypeChecker.isSubtypeOf(session.typeContext, typeWithNonConcreteMember, typeWithConcreteMember)
+        } || typesWithConcreteMembers.any { otherTypeWithConcreteMember ->
+            // `super` cannot reference a super type that is a super type of another super type. For example,
+            // ```
+            // interface A { fun foo() {} }
+            // interface B : A  { override fun foo() {} }
+            // interface C : B, A
+            // ```
+            // Then, in `C`, one cannot use `super` to reference `A`. In other words, `super<A>` is a compile error and is reported as
+            // `QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE`
+            otherTypeWithConcreteMember != typeWithConcreteMember &&
+                    AbstractTypeChecker.isSubtypeOf(session.typeContext, otherTypeWithConcreteMember, typeWithConcreteMember)
         }
     }
-
     return when {
         typesWithConcreteMembers.isNotEmpty() ->
             typesWithConcreteMembers
