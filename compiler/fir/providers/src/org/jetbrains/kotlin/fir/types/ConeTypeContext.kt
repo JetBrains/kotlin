@@ -406,7 +406,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return false
     }
 
-    override fun KotlinTypeMarker.getAnnotations(): List<AnnotationMarker> {
+    override fun KotlinTypeMarker.getAttributes(): List<AnnotationMarker> {
         require(this is ConeKotlinType)
         return attributes.toList()
     }

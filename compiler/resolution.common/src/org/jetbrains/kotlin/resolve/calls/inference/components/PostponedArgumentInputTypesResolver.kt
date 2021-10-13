@@ -80,7 +80,7 @@ class PostponedArgumentInputTypesResolver(
             }
         }
 
-        val annotations = functionalTypesFromConstraints?.map { it.type.getAnnotations() }?.flatten()?.distinct()
+        val annotations = functionalTypesFromConstraints?.map { it.type.getAttributes() }?.flatten()?.distinct()
 
         val extensionFunctionTypePresentInConstraints = functionalTypesFromConstraints?.any { it.type.isExtensionFunctionType() } == true
 
