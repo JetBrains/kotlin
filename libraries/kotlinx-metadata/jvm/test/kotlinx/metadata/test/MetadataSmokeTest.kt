@@ -9,12 +9,11 @@ import kotlinx.metadata.*
 import kotlinx.metadata.jvm.*
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.junit.Assert.*
 import org.junit.Test
 import java.net.URLClassLoader
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.full.primaryConstructor
-import kotlin.test.assertFailsWith
+import kotlin.test.*
 
 class MetadataSmokeTest {
     private fun Class<*>.readMetadata(): KotlinClassHeader {

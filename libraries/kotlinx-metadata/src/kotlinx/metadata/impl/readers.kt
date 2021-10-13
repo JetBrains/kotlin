@@ -97,7 +97,7 @@ fun ProtoBuf.Class.accept(
         v.visitInlineClassUnderlyingPropertyName(c[inlineClassUnderlyingPropertyName])
     }
     loadInlineClassUnderlyingType(c)?.let { underlyingType ->
-        v.visitInlineClassUnderlyingType(underlyingType.flags)?.let { underlyingType.accept(it, c) }
+        v.visitInlineClassUnderlyingType(underlyingType.typeFlags)?.let { underlyingType.accept(it, c) }
     }
 
     for (versionRequirement in versionRequirementList) {
