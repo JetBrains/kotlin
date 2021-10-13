@@ -1668,4 +1668,23 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
             }
         """
     )
+
+    @Test
+    fun testComposableInlineFieldDelegate_noPropertyRefInit() = validateBytecode(
+        """
+            import kotlin.reflect.KProperty
+
+            class FooInline
+
+            @Composable
+            inline operator fun FooInline.getValue(thisRef: Any?, property: KProperty<*>) = 0
+
+            @Composable fun Test(foo: FooInline): Int {
+                val value by foo
+                return value
+            }
+        """,
+    ) {
+        assertFalse(it.contains("INVOKESTATIC kotlin/jvm/internal/Reflection.property0 (Lkotlin/jvm/internal/PropertyReference0;)Lkotlin/reflect/KProperty0;"))
+    }
 }

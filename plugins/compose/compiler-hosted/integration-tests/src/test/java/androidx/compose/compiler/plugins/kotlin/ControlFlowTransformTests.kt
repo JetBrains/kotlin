@@ -5488,7 +5488,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, "Test (Test.kt:16)")
                 }
-                val c = current
+                val c = <get-current>(%composer, 0)
                 val cl = calculateSometing(%composer, 0)
                 Layout({ %composer: Composer?, %changed: Int ->
                   sourceInformationMarkerStart(%composer, <>, "C<Text("...>:Test.kt")
@@ -5579,7 +5579,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                   if (isTraceInProgress()) {
                     traceEventStart(<>, %changed, -1, "HolderHolder.<get-current> (Test.kt:16)")
                   }
-                  val tmp0 = _currentHolder.current
+                  val tmp0 = _currentHolder.<get-current>(%composer, 0)
                   if (isTraceInProgress()) {
                     traceEventEnd()
                   }
@@ -5611,7 +5611,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, "Test (Test.kt:28)")
                 }
-                val c = holderHolder.current
+                val c = holderHolder.<get-current>(%composer, 0b0110)
                 val cl = calculateSomething(%composer, 0)
                 Layout({ %composer: Composer?, %changed: Int ->
                   sourceInformationMarkerStart(%composer, <>, "C<Text("...>:Test.kt")

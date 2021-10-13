@@ -813,6 +813,9 @@ class ComposableFunctionBodyTransformer(
         if (!returnType.isUnit())
             return false
 
+        if (isComposableDelegatedAccessor())
+            return false
+
         // Do not insert an observe scope if the function hasn't been transformed by the
         // ComposerParamTransformer and has a synthetic "composer param" as its last parameter
         if (composerParam() == null) return false
@@ -847,7 +850,9 @@ class ComposableFunctionBodyTransformer(
         val body = declaration.body!!
 
         val hasExplicitGroups = declaration.hasExplicitGroups
-        val elideGroups = hasExplicitGroups || declaration.hasReadOnlyAnnotation
+        val elideGroups = hasExplicitGroups ||
+            declaration.hasReadOnlyAnnotation ||
+            declaration.isComposableDelegatedAccessor()
 
         val skipPreamble = mutableStatementContainer()
         val bodyPreamble = mutableStatementContainer()
@@ -2860,13 +2865,14 @@ class ComposableFunctionBodyTransformer(
             numChanged = changedParamCount(numRealValueParams, ownerFn.thisParamCount)
         }
 
-        require(
-            numContextParams +
+        val expectedNumParams = numContextParams +
             numRealValueParams +
-                1 + // composer param
-                numChanged +
-                numDefaults == numValueParams
-        )
+            1 + // composer param
+            numChanged +
+            numDefaults
+        require(numValueParams == expectedNumParams) {
+            "Expected $expectedNumParams params for ${ownerFn.name}, but got $numValueParams"
+        }
 
         val composerIndex = numContextParams + numRealValueParams
         val changedArgIndex = composerIndex + 1
