@@ -1130,6 +1130,18 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("findAllBuilders.kt")
+            public void testFindAllBuilders() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/findAllBuilders.kt");
+            }
+
+            @Test
+            @TestMetadata("findAllBuildersModule.kt")
+            public void testFindAllBuildersModule() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/findAllBuildersModule.kt");
+            }
+
+            @Test
             @TestMetadata("functionAmbiguity.kt")
             public void testFunctionAmbiguity() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionAmbiguity.kt");

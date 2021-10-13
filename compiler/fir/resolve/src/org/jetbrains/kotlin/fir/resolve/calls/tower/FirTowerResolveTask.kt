@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultSimpleImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -85,9 +87,10 @@ internal abstract class FirBaseTowerResolveTask(
         extensionReceiver: ReceiverValue? = null,
         extensionsOnly: Boolean = false,
         includeInnerConstructors: Boolean = extensionReceiver != null,
+        consumeBoth: Boolean = false,
     ): ScopeTowerLevel = ScopeTowerLevel(
         session, components, this,
-        extensionReceiver, extensionsOnly, includeInnerConstructors
+        extensionReceiver, extensionsOnly, consumeBoth, includeInnerConstructors
     )
 
     protected fun ReceiverValue.toMemberScopeTowerLevel(
@@ -263,11 +266,14 @@ internal open class FirTowerResolveTask(
     ) {
         enumerateTowerLevels(
             onScope = { scope, group ->
-//                processLevel(scope.toScopeTowerLevel(), info, group)
-                processLevel(scope.toScopeTowerLevel(extensionsOnly = true), info, group)
+                if (scope is FirPackageMemberScope) {
+                    processLevel(scope.toScopeTowerLevel(extensionsOnly = true), info, group)
+                } else if (scope is FirExplicitSimpleImportingScope) {
+                    processLevel(scope.toScopeTowerLevel(consumeBoth = true), info, group)
+                }
             },
             onImplicitReceiver = { _, _ ->
-//                processLevel(receiver.toMemberScopeTowerLevel(), info, group, ExplicitReceiverKind.DISPATCH_RECEIVER)
+//                processLevel(receiver.toMemberScopeTowerLevel(), info, group, ExplicitReceiverKind.EXTENSION_RECEIVER)
             }
         )
     }

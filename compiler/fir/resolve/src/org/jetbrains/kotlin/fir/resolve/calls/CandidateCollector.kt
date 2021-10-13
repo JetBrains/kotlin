@@ -12,15 +12,15 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 
 open class CandidateCollector(
     val components: BodyResolveComponents,
-    private val resolutionStageRunner: ResolutionStageRunner
+    protected val resolutionStageRunner: ResolutionStageRunner
 ) {
-    private val groupNumbers = mutableListOf<TowerGroup>()
-    private val candidates = mutableListOf<Candidate>()
+    protected val groupNumbers = mutableListOf<TowerGroup>()
+    protected val candidates = mutableListOf<Candidate>()
 
     var currentApplicability = CandidateApplicability.HIDDEN
-        private set
+        protected set
 
-    private var bestGroup = TowerGroup.Last
+    protected var bestGroup = TowerGroup.Last
 
     fun newDataSet() {
         groupNumbers.clear()
@@ -47,7 +47,7 @@ open class CandidateCollector(
 
     fun bestCandidates(): List<Candidate> = candidates
 
-    fun shouldStopAtTheLevel(group: TowerGroup): Boolean =
+    open fun shouldStopAtTheLevel(group: TowerGroup): Boolean =
         isSuccess() && bestGroup < group
 
     fun isSuccess(): Boolean {

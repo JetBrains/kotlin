@@ -376,9 +376,14 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     override fun transformCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: ResolutionMode): FirStatement {
         collectionLiteral.transformChildren(transformer, data)
 
+        // check if
+
         val processedCL = when (collectionLiteral.kind) {
             CollectionLiteralKind.SEQ_LITERAL -> collectionLiteralResolver.processSequenceLiteral(collectionLiteral)
             CollectionLiteralKind.DICT_LITERAL -> TODO()
+        }
+        if (processedCL is FirErrorExpression) {
+            return processedCL
         }
 
         return when {

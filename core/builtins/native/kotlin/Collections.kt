@@ -261,9 +261,9 @@ public interface Set<out E> : Collection<E> {
     override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
 
     companion object {
-//        fun <T> build(size: Int, init: CollectionLiteralBuilder<Set<T>, T>.() -> Unit = {}): Set<T> {
-//            return TODO()
-//        }
+        fun <T> build(size: Int, init: CollectionLiteralBuilder<Set<T>, T>.() -> Unit = {}): Set<T> {
+            return TODO()
+        }
     }
 }
 

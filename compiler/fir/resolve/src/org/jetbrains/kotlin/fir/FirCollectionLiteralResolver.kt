@@ -267,7 +267,6 @@ class FirCollectionLiteralResolver(
         builder: Candidate, // replace to fir function
         cl: FirCollectionLiteral
     ): FirFunctionCall {
-        println(builder)
         val adds = cl.expressions.map {
             buildFunctionCall {
                 calleeReference = buildSimpleNamedReference { name = Name.identifier("add") }
@@ -304,9 +303,9 @@ class FirCollectionLiteralResolver(
         }
         val explicitReceiver = buildQualifiedAccessExpression {
             calleeReference = buildSimpleNamedReference {
-                name = (builder.symbol as FirNamedFunctionSymbol)
-                    .fir.receiverTypeRef?.firClassLike(session)?.classId?.relativeClassName?.parent()?.shortName()
-                    ?: error("")
+                val fir = (builder.symbol as FirNamedFunctionSymbol).fir
+                name = fir.receiverTypeRef?.let { it.firClassLike(session)?.classId?.relativeClassName?.parent()?.shortName() }
+                    ?: fir.dispatchReceiverType?.classId?.relativeClassName?.parent()?.shortName() ?: error("")
 //                name = receiverName
             }
         }

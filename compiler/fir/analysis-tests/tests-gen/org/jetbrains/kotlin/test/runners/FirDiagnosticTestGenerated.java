@@ -1154,6 +1154,18 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("genericInArgument.kt")
+            public void testGenericInArgument() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/genericInArgument.kt");
+            }
+
+            @Test
+            @TestMetadata("nestedCollectionLiterals.kt")
+            public void testNestedCollectionLiterals() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/nestedCollectionLiterals.kt");
+            }
+
+            @Test
             @TestMetadata("variableExplicit.kt")
             public void testVariableExplicit() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/variableExplicit.kt");

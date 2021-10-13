@@ -170,7 +170,11 @@ class FirCallResolver(
             transformer.components.containingDeclarations
         )
         towerResolver.reset()
-        val result = towerResolver.runResolver(info, transformer.resolutionContext)
+        val result = towerResolver.runResolver(
+            info,
+            transformer.resolutionContext,
+            CustomCandidateCollector(components, components.resolutionStageRunner)
+        )
         return result.bestCandidates()
     }
 
