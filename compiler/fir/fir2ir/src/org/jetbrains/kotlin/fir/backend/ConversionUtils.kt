@@ -440,7 +440,8 @@ private val nameToOperationConventionOrigin = mutableMapOf(
     OperatorNameConventions.DIV to IrStatementOrigin.DIV,
     OperatorNameConventions.MOD to IrStatementOrigin.PERC,
     OperatorNameConventions.REM to IrStatementOrigin.PERC,
-    OperatorNameConventions.RANGE_TO to IrStatementOrigin.RANGE
+    OperatorNameConventions.RANGE_TO to IrStatementOrigin.RANGE,
+    OperatorNameConventions.CONTAINS to IrStatementOrigin.IN,
 )
 
 internal fun FirReference.statementOrigin(): IrStatementOrigin? {

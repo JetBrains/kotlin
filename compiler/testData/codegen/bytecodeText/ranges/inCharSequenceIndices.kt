@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun testCharSequence(i: Int, cs: CharSequence) = i in cs.indices
 
 fun testLongWithCharSequence(i: Long, cs: CharSequence) = i in cs.indices

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // ULong in range of UInt, uses non-intrinsic 'contains' for non-IR backend
 
 fun ul_ub(x: ULong, a: UByte, b: UByte) = x in a..b

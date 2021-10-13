@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun test1(a: String) = a in "alpha" .. "omega"
 fun test2(a: String) = a !in "alpha" .. "omega"
 fun <T : Comparable<T>> test3(x: T, left: T, right: T) = x in left .. right

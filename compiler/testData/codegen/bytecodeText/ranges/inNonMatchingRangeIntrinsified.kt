@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun inInt(x: Long): Boolean {
     return x in 1..2
 }
