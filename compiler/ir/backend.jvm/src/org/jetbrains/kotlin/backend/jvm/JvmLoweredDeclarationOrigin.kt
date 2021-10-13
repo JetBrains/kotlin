@@ -48,5 +48,6 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object ABSTRACT_BRIDGE_STUB : IrDeclarationOriginImpl("ABSTRACT_BRIDGE_STUB")
     object INVOKEDYNAMIC_CALL_TARGET : IrDeclarationOriginImpl("INVOKEDYNAMIC_CALL_TARGET")
     object INLINE_LAMBDA : IrDeclarationOriginImpl("INLINE_LAMBDA")
-    object PROXY_FUN_FOR_INDY_SAM_CONVERSION : IrDeclarationOriginImpl("PROXY_FUN_FOR_INDY_SAM_CONVERSION", isSynthetic = true)
+    object PROXY_FUN_FOR_METAFACTORY : IrDeclarationOriginImpl("PROXY_FUN_FOR_METAFACTORY")
+    object SYNTHETIC_PROXY_FUN_FOR_METAFACTORY : IrDeclarationOriginImpl("SYNTHETIC_PROXY_FUN_FOR_METAFACTORY", isSynthetic = true)
 }
