@@ -1780,7 +1780,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.generate(declaration: FirDeclaration) {
         when (declaration) {
             is FirAnonymousInitializer -> generate(declaration)
-            is FirMemberDeclaration -> generate(declaration as FirMemberDeclaration)
+            is FirMemberDeclaration -> generate(declaration)
             else -> unsupported(declaration)
         }
     }

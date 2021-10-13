@@ -40,12 +40,12 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun <T> checkActualDeclarationHasExpected(
-        declaration: T,
+    private fun checkActualDeclarationHasExpected(
+        declaration: FirMemberDeclaration,
         context: CheckerContext,
         reporter: DiagnosticReporter,
         checkActual: Boolean = true
-    ) where T : FirDeclaration, T : FirMemberDeclaration {
+    ) {
         val scopeSession = ScopeSession()
         val symbol = declaration.symbol
         val compatibilityToMembersMap = FirExpectActualResolver.findExpectForActual(symbol, context.session, scopeSession) ?: return

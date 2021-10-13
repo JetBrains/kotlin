@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.typeWithStarProjections
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -32,10 +33,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 abstract class FirModuleVisibilityChecker : FirSessionComponent {
-    abstract fun <T> isInFriendModule(declaration: T): Boolean where T : FirMemberDeclaration, T : FirDeclaration
+    abstract fun isInFriendModule(declaration: FirMemberDeclaration): Boolean
 
     class Standard(val session: FirSession) : FirModuleVisibilityChecker() {
-        override fun <T> isInFriendModule(declaration: T): Boolean where T : FirMemberDeclaration, T : FirDeclaration {
+        override fun isInFriendModule(declaration: FirMemberDeclaration): Boolean {
             val useSiteModuleData = session.moduleData
             val declarationModuleData = declaration.moduleData
             return useSiteModuleData == declarationModuleData || declarationModuleData in useSiteModuleData.friendDependencies

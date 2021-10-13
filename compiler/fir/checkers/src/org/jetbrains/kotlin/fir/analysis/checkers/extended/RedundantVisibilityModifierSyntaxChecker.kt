@@ -50,8 +50,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         val explicitVisibility = (visibilityModifier?.tokenType as? KtModifierKeywordToken)?.toVisibilityOrNull()
         val implicitVisibility = element.implicitVisibility(context)
         val containingMemberDeclaration = context.findClosest<FirMemberDeclaration>()
-        require(containingMemberDeclaration is FirDeclaration?)
-        
+
         val isHidden = explicitVisibility.isEffectivelyHiddenBy(containingMemberDeclaration)
 
         if (explicitVisibility != implicitVisibility && !isHidden) {

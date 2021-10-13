@@ -161,7 +161,7 @@ open class FirApplySupertypesTransformer(
 }
 
 private fun FirClassLikeDeclaration.typeParametersScope(): FirScope? {
-    if (this !is FirMemberDeclaration || typeParameters.isEmpty()) return null
+    if (typeParameters.isEmpty()) return null
     return FirMemberTypeParameterScope(this)
 }
 

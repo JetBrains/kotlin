@@ -605,7 +605,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         if (type.typeArguments.isNotEmpty()) return this
 
         val firClass = type.lookupTag.toSymbol(session)?.fir ?: return this
-        if (firClass !is FirTypeParameterRefsOwner || firClass.typeParameters.isEmpty()) return this
+        if (firClass.typeParameters.isEmpty()) return this
 
         val originalType = argument.unwrapSmartcastExpression().typeRef.coneTypeSafe<ConeKotlinType>() ?: return this
         val newType = components.computeRepresentativeTypeForBareType(type, originalType) ?: return buildErrorTypeRef {

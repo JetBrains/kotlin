@@ -20,7 +20,7 @@ fun <F : FirClassLikeDeclaration> F.runAllPhasesForLocalClass(
     firTowerDataContextCollector: FirTowerDataContextCollector?,
     firProviderInterceptor: FirProviderInterceptor?,
 ): F {
-    if (this is FirMemberDeclaration && status is FirResolvedDeclarationStatus) return this
+    if (status is FirResolvedDeclarationStatus) return this
     if (this is FirRegularClass) {
         components.context.storeClassIfNotNested(this)
     }

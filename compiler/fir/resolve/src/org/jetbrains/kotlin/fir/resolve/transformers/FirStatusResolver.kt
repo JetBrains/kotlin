@@ -48,9 +48,9 @@ class FirStatusResolver(
 
     private val extensionStatusTransformers = session.extensionService.statusTransformerExtensions
 
-    private inline fun <T> T.applyExtensionTransformers(
+    private inline fun FirMemberDeclaration.applyExtensionTransformers(
         operation: FirStatusTransformerExtension.(FirDeclarationStatus) -> FirDeclarationStatus
-    ): FirDeclarationStatus where T : FirMemberDeclaration, T : FirAnnotatedDeclaration {
+    ): FirDeclarationStatus {
         if (extensionStatusTransformers.isEmpty()) return status
         val declaration = this
         return extensionStatusTransformers.fold(status) { acc, it ->

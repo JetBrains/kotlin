@@ -24,8 +24,7 @@ private object DanglingTypeConstraintsKey : FirDeclarationDataKey()
 var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
 var FirProperty.isReferredViaField: Boolean? by FirDeclarationDataRegistry.data(IsReferredViaField)
 var FirProperty.fromPrimaryConstructor: Boolean? by FirDeclarationDataRegistry.data(IsFromPrimaryConstructor)
-var FirTypeAlias.sourceElement: SourceElement? by FirDeclarationDataRegistry.data(SourceElementKey)
-var FirRegularClass.sourceElement: SourceElement? by FirDeclarationDataRegistry.data(SourceElementKey)
+var FirClassLikeDeclaration.sourceElement: SourceElement? by FirDeclarationDataRegistry.data(SourceElementKey)
 var FirRegularClass.moduleName: String? by FirDeclarationDataRegistry.data(ModuleNameKey)
 
 /**
@@ -42,8 +41,7 @@ var <T> T.danglingTypeConstraints: List<DanglingTypeConstraint>?
 val FirMemberDeclaration.containerSource: SourceElement?
     get() = when (this) {
         is FirCallableDeclaration -> containerSource
-        is FirRegularClass -> sourceElement
-        is FirTypeAlias -> sourceElement
+        is FirClassLikeDeclaration -> sourceElement
     }
 
 val FirProperty.hasExplicitBackingField: Boolean

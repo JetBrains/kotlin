@@ -247,7 +247,6 @@ fun FirMemberDeclaration.implicitModality(context: CheckerContext): Modality {
         && klass.classKind == ClassKind.INTERFACE
         && tree.visibilityModifier(source.lighterASTNode)?.tokenType != KtTokens.PRIVATE_KEYWORD
     ) {
-        require(this is FirDeclaration)
         return if (this.hasBody()) Modality.OPEN else Modality.ABSTRACT
     }
 

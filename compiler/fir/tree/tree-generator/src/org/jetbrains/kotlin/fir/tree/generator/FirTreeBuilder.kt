@@ -27,13 +27,13 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val statement by element(Expression, annotationContainer)
     val expression by element(Expression, statement)
     val declaration by sealedElement(Declaration)
-    val annotatedDeclaration by sealedElement(Declaration, declaration, annotationContainer)
-    val anonymousInitializer by element(Declaration, declaration, controlFlowGraphOwner)
-    val typedDeclaration by sealedElement(Declaration, annotatedDeclaration)
     val typeParameterRefsOwner by sealedElement(Declaration)
     val typeParametersOwner by sealedElement(Declaration, typeParameterRefsOwner)
-    val memberDeclaration by sealedElement(Declaration, typeParameterRefsOwner)
-    val callableDeclaration by sealedElement(Declaration, typedDeclaration, memberDeclaration)
+    val annotatedDeclaration by sealedElement(Declaration, declaration, annotationContainer)
+    val memberDeclaration by sealedElement(Declaration, annotatedDeclaration, typeParameterRefsOwner)
+    val anonymousInitializer by element(Declaration, declaration, controlFlowGraphOwner)
+    val typedDeclaration by sealedElement(Declaration, memberDeclaration)
+    val callableDeclaration by sealedElement(Declaration, typedDeclaration)
     val typeParameterRef by element(Declaration)
     val typeParameter by element(Declaration, typeParameterRef, annotatedDeclaration)
 
@@ -43,10 +43,10 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val field by element(Declaration, variable)
     val enumEntry by element(Declaration, variable)
 
-    val classLikeDeclaration by sealedElement(Declaration, annotatedDeclaration, statement)
+    val classLikeDeclaration by sealedElement(Declaration, memberDeclaration, statement)
     val klass by sealedElement("Class", Declaration, classLikeDeclaration, statement, typeParameterRefsOwner)
-    val regularClass by element(Declaration, klass, memberDeclaration, controlFlowGraphOwner)
-    val typeAlias by element(Declaration, classLikeDeclaration, memberDeclaration, typeParametersOwner)
+    val regularClass by element(Declaration, klass, controlFlowGraphOwner)
+    val typeAlias by element(Declaration, classLikeDeclaration, typeParametersOwner)
 
     val function by sealedElement(Declaration, callableDeclaration, targetElement, controlFlowGraphOwner, statement)
 

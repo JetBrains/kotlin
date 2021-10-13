@@ -35,7 +35,6 @@ object FirVisibilityQualifierChecker : FirResolvedQualifierChecker() {
     ) {
         val firFile = context.containingDeclarations.firstOrNull() as? FirFile ?: return
         val firClassLikeDeclaration = symbol.fir
-        if (firClassLikeDeclaration !is FirMemberDeclaration) return
 
         if (!context.session.visibilityChecker.isVisible(
                 firClassLikeDeclaration, context.session, firFile, context.containingDeclarations,

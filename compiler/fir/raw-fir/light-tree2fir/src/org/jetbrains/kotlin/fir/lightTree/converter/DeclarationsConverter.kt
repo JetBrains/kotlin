@@ -583,6 +583,7 @@ class DeclarationsConverter(
                     classKind = ClassKind.OBJECT
                     scopeProvider = baseScopeProvider
                     symbol = FirAnonymousObjectSymbol()
+                    status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     context.applyToActualCapturedTypeParameters(false) {
                         typeParameters += buildOuterClassTypeParameterRef { this.symbol = it }
                     }
@@ -702,6 +703,7 @@ class DeclarationsConverter(
                         classKind = ClassKind.ENUM_ENTRY
                         scopeProvider = baseScopeProvider
                         symbol = FirAnonymousObjectSymbol()
+                        status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         val enumClassWrapper = ClassWrapper(
                             enumEntryName, modifiers, ClassKind.ENUM_ENTRY, this,
                             hasPrimaryConstructor = true,

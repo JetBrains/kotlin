@@ -381,7 +381,6 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
                     memberDeclaration.typeParameters.renderTypeParameters()
                 }
             }
-            else -> {}
         }
     }
 
