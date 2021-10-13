@@ -11,15 +11,14 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.ir.builders.primitiveOp1
 import org.jetbrains.kotlin.ir.builders.primitiveOp2
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.isDoubleOrFloatWithoutNullability
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
 
 internal class OperatorExpressionGenerator(
@@ -69,9 +68,13 @@ internal class OperatorExpressionGenerator(
         val (symbol, origin) = getSymbolAndOriginForComparison(operation, comparisonIrType.classifierOrFail)
 
         return primitiveOp2(
-            startOffset, endOffset, symbol!!, irBuiltIns.booleanType, origin,
-            visitor.convertToIrExpression(comparisonExpression.left).asComparisonOperand(comparisonInfo.leftType, comparisonType),
-            visitor.convertToIrExpression(comparisonExpression.right).asComparisonOperand(comparisonInfo.rightType, comparisonType),
+            startOffset,
+            endOffset,
+            symbol!!,
+            irBuiltIns.booleanType,
+            origin,
+            comparisonExpression.left.convertToIrExpression(comparisonInfo, isLeftType = true),
+            comparisonExpression.right.convertToIrExpression(comparisonInfo, isLeftType = false)
         )
     }
 
@@ -108,10 +111,15 @@ internal class OperatorExpressionGenerator(
         val comparisonType = comparisonInfo?.comparisonType
         val eqeqSymbol = comparisonType?.let { typeConverter.classIdToSymbolMap[it.lookupTag.classId] }
             ?.let { irBuiltIns.ieee754equalsFunByOperandType[it] } ?: irBuiltIns.eqeqSymbol
+
         val equalsCall = primitiveOp2(
-            startOffset, endOffset, eqeqSymbol, irBuiltIns.booleanType, origin,
-            visitor.convertToIrExpression(arguments[0]).asComparisonOperand(comparisonInfo?.leftType, comparisonType),
-            visitor.convertToIrExpression(arguments[1]).asComparisonOperand(comparisonInfo?.rightType, comparisonType)
+            startOffset,
+            endOffset,
+            eqeqSymbol,
+            irBuiltIns.booleanType,
+            origin,
+            arguments[0].convertToIrExpression(comparisonInfo, isLeftType = true),
+            arguments[1].convertToIrExpression(comparisonInfo, isLeftType = false)
         )
         return if (operation == FirOperation.EQ) {
             equalsCall
@@ -129,7 +137,10 @@ internal class OperatorExpressionGenerator(
             else -> error("Not an identity operation: $operation")
         }
         val identityCall = primitiveOp2(
-            startOffset, endOffset, irBuiltIns.eqeqeqSymbol, irBuiltIns.booleanType, origin,
+            startOffset, endOffset,
+            irBuiltIns.eqeqeqSymbol,
+            irBuiltIns.booleanType,
+            origin,
             visitor.convertToIrExpression(arguments[0]),
             visitor.convertToIrExpression(arguments[1])
         )
@@ -143,16 +154,43 @@ internal class OperatorExpressionGenerator(
     private fun IrExpression.negate(origin: IrStatementOrigin) =
         primitiveOp1(startOffset, endOffset, irBuiltIns.booleanNotSymbol, irBuiltIns.booleanType, origin, this)
 
+    private fun FirExpression.convertToIrExpression(
+        comparisonInfo: PrimitiveConeNumericComparisonInfo?,
+        isLeftType: Boolean
+    ): IrExpression {
+        return visitor.convertToIrExpression(this).asComparisonOperand(
+            if (isLeftType) comparisonInfo?.leftType else comparisonInfo?.rightType,
+            comparisonInfo?.comparisonType,
+            noImplicitCast = comparisonInfo?.leftType == comparisonInfo?.rightType
+        )
+    }
+
     private fun IrExpression.asComparisonOperand(
         operandType: ConeClassLikeType?,
-        targetType: ConeClassLikeType?
+        targetType: ConeClassLikeType?,
+        noImplicitCast: Boolean
     ): IrExpression {
-        if (targetType == null) return this
+        fun eraseImplicitCast(): IrExpression {
+            return if (noImplicitCast &&
+                this is IrTypeOperatorCall &&
+                this.operator == IrTypeOperator.IMPLICIT_CAST &&
+                !this.type.isDoubleOrFloatWithoutNullability()
+            ) {
+                this.argument
+            } else {
+                this
+            }
+        }
+
+        if (targetType == null) {
+            return eraseImplicitCast()
+        }
+
         if (operandType == null) error("operandType should be non-null if targetType is non-null")
 
         val operandClassId = operandType.lookupTag.classId
         val targetClassId = targetType.lookupTag.classId
-        if (operandClassId == targetClassId) return this
+        if (operandClassId == targetClassId) return eraseImplicitCast()
         val conversionFunction =
             typeConverter.classIdToSymbolMap[operandClassId]?.getSimpleFunction("to${targetType.lookupTag.classId.shortClassName.asString()}")
                 ?: error("No conversion function for $operandType ~> $targetType")

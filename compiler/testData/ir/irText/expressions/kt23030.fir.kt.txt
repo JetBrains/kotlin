@@ -21,7 +21,7 @@ fun testEqualsWithSmartCast(x: Any, y: Any): Boolean {
     when {
       x is Int -> y is Char
       else -> false
-    } -> EQEQ(arg0 = x /*as Int */, arg1 = y /*as Char */)
+    } -> EQEQ(arg0 = x, arg1 = y)
     else -> false
   }
 }
@@ -52,3 +52,4 @@ class C {
   }
 
 }
+
