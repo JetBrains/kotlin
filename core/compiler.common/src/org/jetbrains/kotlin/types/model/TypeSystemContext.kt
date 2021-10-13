@@ -133,6 +133,10 @@ interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeF
      * Used only in FIR
      */
     fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker
+
+    fun unionTypeAttributes(types: List<KotlinTypeMarker>): List<AnnotationMarker> = emptyList()
+
+    fun KotlinTypeMarker.replaceTypeAttributes(newAttributes: List<AnnotationMarker>): KotlinTypeMarker = this
 }
 
 // This interface is only used to declare that implementing class is supposed to be used as a TypeSystemInferenceExtensionContext component
@@ -494,7 +498,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun SimpleTypeMarker.isPrimitiveType(): Boolean
 
-    fun KotlinTypeMarker.getAnnotations(): List<AnnotationMarker>
+    fun KotlinTypeMarker.getAttributes(): List<AnnotationMarker>
 
     fun substitutionSupertypePolicy(type: SimpleTypeMarker): TypeCheckerState.SupertypesPolicy
 

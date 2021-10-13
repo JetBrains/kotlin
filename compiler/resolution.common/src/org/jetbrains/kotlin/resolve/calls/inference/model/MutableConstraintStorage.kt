@@ -139,7 +139,11 @@ class MutableVariableWithConstraints private constructor(
             return false
 
         return when (old.kind) {
-            ConstraintKind.EQUALITY -> true
+            ConstraintKind.EQUALITY -> {
+                with(context) {
+                    old.type.getAttributes() == new.type.getAttributes()
+                }
+            }
             ConstraintKind.LOWER -> new.kind.isLower()
             ConstraintKind.UPPER -> new.kind.isUpper()
         }

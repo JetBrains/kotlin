@@ -533,7 +533,12 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         }
 
         @Suppress("UNCHECKED_CAST")
-        return KotlinTypeFactory.simpleType(resultingAnnotations, constructor, arguments as List<TypeProjection>, nullable)
+        return KotlinTypeFactory.simpleType(
+            DefaultTypeAttributesTranslator.toAttributes(resultingAnnotations),
+            constructor,
+            arguments as List<TypeProjection>,
+            nullable
+        )
     }
 
     override fun createTypeArgument(type: KotlinTypeMarker, variance: TypeVariance): TypeArgumentMarker {
@@ -634,6 +639,22 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return IntegerLiteralTypeConstructor.findCommonSuperType(explicitSupertypes)
     }
 
+    override fun unionTypeAttributes(types: List<KotlinTypeMarker>): List<AnnotationMarker> {
+        @Suppress("UNCHECKED_CAST")
+        types as List<KotlinType>
+        return types.map { it.unwrap().attributes }.reduce { x, y -> x.union(y) }.toList()
+    }
+
+    override fun KotlinTypeMarker.replaceTypeAttributes(newAttributes: List<AnnotationMarker>): KotlinTypeMarker {
+        require(this is KotlinType)
+        val typeAttributes = newAttributes.filterIsInstance<TypeAttribute<*>>()
+        require(typeAttributes.size == newAttributes.size)
+        if (newAttributes.isEmpty()) return this
+        return this.unwrap().replaceAttributes(
+            TypeAttributes.create(typeAttributes)
+        )
+    }
+
     override fun TypeConstructorMarker.isError(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
         return ErrorUtils.isError(declarationDescriptor)
@@ -649,9 +670,9 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return KotlinBuiltIns.isPrimitiveType(this)
     }
 
-    override fun KotlinTypeMarker.getAnnotations(): List<AnnotationMarker> {
+    override fun KotlinTypeMarker.getAttributes(): List<AnnotationMarker> {
         require(this is KotlinType, this::errorMessage)
-        return this.annotations.toList()
+        return this.attributes.toList()
     }
 
     override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? {

@@ -397,7 +397,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun SimpleTypeMarker.isPrimitiveType(): Boolean =
         this is IrSimpleType && irTypePredicates_isPrimitiveType()
 
-    override fun KotlinTypeMarker.getAnnotations(): List<AnnotationMarker> {
+    override fun KotlinTypeMarker.getAttributes(): List<AnnotationMarker> {
         require(this is IrType)
         return this.annotations.map { object : AnnotationMarker, IrElement by it {} }
     }

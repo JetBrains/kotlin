@@ -42,11 +42,6 @@ class TypeAttributes private constructor(attributes: List<TypeAttribute<*>>) : A
         }
 
         val Empty: TypeAttributes = TypeAttributes(emptyList())
-        val WithExtensionFunctionType: TypeAttributes = TypeAttributes(listOf(CompilerTypeAttributes.ExtensionFunctionType))
-
-        private val predefinedAttributes: Map<TypeAttribute<*>, TypeAttributes> = mapOf(
-            CompilerTypeAttributes.EnhancedNullability.predefined()
-        )
 
         private fun TypeAttribute<*>.predefined(): Pair<TypeAttribute<*>, TypeAttributes> = this to TypeAttributes(this)
 
@@ -87,7 +82,7 @@ class TypeAttributes private constructor(attributes: List<TypeAttribute<*>>) : A
     @OptIn(ExperimentalStdlibApi::class)
     operator fun plus(attribute: TypeAttribute<*>): TypeAttributes {
         if (attribute in this) return this
-        if (isEmpty()) return predefinedAttributes[attribute] ?: TypeAttributes(attribute)
+        if (isEmpty()) return TypeAttributes(attribute)
         val newAttributes = buildList {
             addAll(this)
             add(attribute)
