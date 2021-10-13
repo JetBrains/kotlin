@@ -4430,11 +4430,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/constants/comparisonFalse.kt");
         }
 
-        @TestMetadata("comparisonTrue.kt")
-        public void testComparisonTrue() throws Exception {
-            runTest("compiler/testData/codegen/box/constants/comparisonTrue.kt");
-        }
-
         @TestMetadata("constValFromAnotherModuleInConsVal.kt")
         public void testConstValFromAnotherModuleInConsVal() throws Exception {
             runTest("compiler/testData/codegen/box/constants/constValFromAnotherModuleInConsVal.kt");
@@ -23582,11 +23577,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         @TestMetadata("concatDynamicWithConstants.kt")
         public void testConcatDynamicWithConstants() throws Exception {
             runTest("compiler/testData/codegen/box/strings/concatDynamicWithConstants.kt");
-        }
-
-        @TestMetadata("concatDynamicWithSpecialSymbols.kt")
-        public void testConcatDynamicWithSpecialSymbols() throws Exception {
-            runTest("compiler/testData/codegen/box/strings/concatDynamicWithSpecialSymbols.kt");
         }
 
         @TestMetadata("constInStringTemplate.kt")

@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: COROUTINES
-
 // WITH_RUNTIME
 
 import kotlin.experimental.ExperimentalTypeInference
