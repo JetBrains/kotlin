@@ -34,7 +34,7 @@ open class KonanCacheTask: DefaultTask() {
         }.resolve("$target-g$cacheKind")
 
     @get:OutputDirectory
-    protected val cacheFile: File
+    val cacheFile: File
         get() {
             val klibName = originalKlib.let {
                 if (it.isDirectory) it.name else it.nameWithoutExtension
