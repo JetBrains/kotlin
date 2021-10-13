@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.diagnostics
 
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.impl.DiagnosticReporterWithSuppress
-import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorWithSuppress
+import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
 
 object DiagnosticReporterFactory {
-    fun createReporter(disableSuppress: Boolean = false): BaseDiagnosticReporter {
+    fun createReporter(disableSuppress: Boolean = false): BaseDiagnosticsCollector {
         return if (disableSuppress) {
-            SimpleDiagnosticReporter()
+            SimpleDiagnosticsCollector()
         } else {
-            DiagnosticReporterWithSuppress()
+            DiagnosticsCollectorWithSuppress()
         }
     }
 }

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
 
-class SimpleDiagnosticReporter : BaseDiagnosticReporter() {
+class DiagnosticsCollectorWithSuppress : BaseDiagnosticsCollector() {
     private val _diagnosticsByFilePath: MutableMap<String?, MutableList<KtDiagnostic>> = mutableMapOf()
     override val diagnostics: List<KtDiagnostic>
         get() = _diagnosticsByFilePath.flatMap { it.value }
@@ -20,7 +20,7 @@ class SimpleDiagnosticReporter : BaseDiagnosticReporter() {
         private set
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
-        if (diagnostic != null) {
+        if (diagnostic != null && !context.isDiagnosticSuppressed(diagnostic)) {
             _diagnosticsByFilePath.getOrPut(context.containingFilePath) { mutableListOf() }.run {
                 add(diagnostic)
                 if (!hasErrors && diagnostic.severity == Severity.ERROR) {

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticReporter
 import org.jetbrains.kotlin.test.frontend.classic.handlers.withNewInferenceModeEnabled
@@ -32,7 +32,7 @@ class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifa
             val testFile = ktFileToTestFileMap[ktFile] ?: continue
             reporter.reportDiagnostic(diagnostic, module, testFile, configuration, withNewInferenceModeEnabled)
         }
-        val ktDiagnosticReporter = generationState.diagnosticReporter as BaseDiagnosticReporter
+        val ktDiagnosticReporter = generationState.diagnosticReporter as BaseDiagnosticsCollector
         val globalMetadataInfoHandler = testServices.globalMetadataInfoHandler
         for ((testFile, ktFile) in testFileToKtFileMap.entries) {
             val ktDiagnostics = ktDiagnosticReporter.diagnosticsByFilePath[ktFile.virtualFilePath] ?: continue

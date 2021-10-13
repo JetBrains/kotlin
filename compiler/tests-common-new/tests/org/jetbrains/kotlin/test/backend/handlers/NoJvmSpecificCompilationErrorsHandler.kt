@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.TestsCompiletimeError
+import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
@@ -16,6 +18,7 @@ class NoJvmSpecificCompilationErrorsHandler(testServices: TestServices) : JvmBin
         val generationState = info.classFileFactory.generationState
         try {
             AnalyzingUtils.throwExceptionOnErrors(generationState.collectedExtraJvmDiagnostics)
+            FirDiagnosticsCompilerResultsReporter.throwFirstErrorAsException(generationState.diagnosticReporter as BaseDiagnosticsCollector)
         } catch (e: Throwable) {
             throw TestsCompiletimeError(e)
         }

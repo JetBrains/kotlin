@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
@@ -133,7 +133,7 @@ object FirKotlinToJvmBytecodeCompiler {
             performanceManager?.notifyAnalysisFinished()
         }
         if (firResult == null) {
-            FirDiagnosticsCompilerResultsReporter.reportToCollector(diagnosticsReporter, messageCollector)
+            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector)
             return null
         }
 
@@ -153,7 +153,7 @@ object FirKotlinToJvmBytecodeCompiler {
             diagnosticsReporter
         )
 
-        FirDiagnosticsCompilerResultsReporter.reportToCollector(diagnosticsReporter, messageCollector)
+        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector)
 
         performanceManager?.notifyIRGenerationFinished()
         performanceManager?.notifyGenerationFinished()
@@ -168,7 +168,7 @@ object FirKotlinToJvmBytecodeCompiler {
         val fir: List<FirFile>
     )
 
-    private fun CompilationContext.runFrontend(ktFiles: List<KtFile>, diagnosticsReporter: BaseDiagnosticReporter): FirResult? {
+    private fun CompilationContext.runFrontend(ktFiles: List<KtFile>, diagnosticsReporter: BaseDiagnosticsCollector): FirResult? {
         @Suppress("NAME_SHADOWING")
         var ktFiles = ktFiles
         val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
@@ -287,7 +287,7 @@ object FirKotlinToJvmBytecodeCompiler {
         fir2IrResult: Fir2IrResult,
         extensions: JvmGeneratorExtensionsImpl,
         session: FirSession,
-        diagnosticsReporter: BaseDiagnosticReporter
+        diagnosticsReporter: BaseDiagnosticsCollector
     ): GenerationState {
         val (moduleFragment, symbolTable, components) = fir2IrResult
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext

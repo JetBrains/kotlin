@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.diagnostics.impl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 
-abstract class BaseDiagnosticReporter : DiagnosticReporter() {
+abstract class BaseDiagnosticsCollector : DiagnosticReporter() {
     abstract val diagnostics: List<KtDiagnostic>
     abstract val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>
     abstract val hasErrors: Boolean

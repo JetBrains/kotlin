@@ -375,7 +375,7 @@ object KotlinToJVMBytecodeCompiler {
             ),
             environment.messageCollector
         )
-        FirDiagnosticsCompilerResultsReporter.reportToCollector(diagnosticsReporter, environment.messageCollector)
+        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, environment.messageCollector)
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
         return state

@@ -8,12 +8,9 @@ package org.jetbrains.kotlin.cli.common.fir
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageUtil
+import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import java.io.Closeable
 import java.io.File
@@ -29,10 +26,26 @@ object FirDiagnosticsCompilerResultsReporter {
         return hasErrors
     }
 
-    fun reportToCollector(diagnosticsReporter: BaseDiagnosticReporter, messageCollector: MessageCollector): Boolean {
+    fun reportToMessageCollector(diagnosticsCollector: BaseDiagnosticsCollector, messageCollector: MessageCollector): Boolean {
+        return reportByFile(diagnosticsCollector) { diagnostic, location ->
+            reportDiagnosticToMessageCollector(diagnostic, location, messageCollector)
+        }
+    }
+
+    fun throwFirstErrorAsException(
+        diagnosticsCollector: BaseDiagnosticsCollector, messageRenderer: MessageRenderer = MessageRenderer.PLAIN_RELATIVE_PATHS
+    ): Boolean {
+        return reportByFile(diagnosticsCollector) { diagnostic, location ->
+            throwErrorDiagnosticAsException(diagnostic, location, messageRenderer)
+        }
+    }
+
+    fun reportByFile(
+        diagnosticsCollector: BaseDiagnosticsCollector, report: (KtDiagnostic, CompilerMessageSourceLocation) -> Unit
+    ): Boolean {
         var hasErrors = false
-        for (filePath in diagnosticsReporter.diagnosticsByFilePath.keys) {
-            for (diagnostic in diagnosticsReporter.diagnosticsByFilePath[filePath].orEmpty().sortedWith(SingleFileDiagnosticComparator)) {
+        for (filePath in diagnosticsCollector.diagnosticsByFilePath.keys) {
+            for (diagnostic in diagnosticsCollector.diagnosticsByFilePath[filePath].orEmpty().sortedWith(SingleFileDiagnosticComparator)) {
                 var filePositionFinder: SequentialFilePositionFinder? = null
                 try {
                     when {
@@ -49,7 +62,7 @@ object FirDiagnosticsCompilerResultsReporter {
                             MessageUtil.createMessageLocation(filePath, position.lineContent, position.line, position.column, -1, -1)
                         }
                     }?.let { location ->
-                        reportDiagnostic(diagnostic, location, messageCollector)
+                        report(diagnostic, location)
                         hasErrors = hasErrors || diagnostic.severity == Severity.ERROR
                     }
                 } finally {
@@ -75,12 +88,12 @@ object FirDiagnosticsCompilerResultsReporter {
     private fun reportDiagnostic(diagnostic: KtDiagnostic, reporter: MessageCollector): Boolean {
         if (!diagnostic.isValid) return false
         diagnostic.location()?.let {
-            reportDiagnostic(diagnostic, it, reporter)
+            reportDiagnosticToMessageCollector(diagnostic, it, reporter)
         }
         return diagnostic.severity == Severity.ERROR
     }
 
-    private fun reportDiagnostic(
+    private fun reportDiagnosticToMessageCollector(
         diagnostic: KtDiagnostic,
         location: CompilerMessageSourceLocation,
         reporter: MessageCollector
@@ -88,6 +101,19 @@ object FirDiagnosticsCompilerResultsReporter {
         val severity = AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity)
         val renderer = RootDiagnosticRendererFactory(diagnostic)
         reporter.report(severity, renderer.render(diagnostic), location)
+    }
+
+    private fun throwErrorDiagnosticAsException(
+        diagnostic: KtDiagnostic,
+        location: CompilerMessageSourceLocation,
+        messageRenderer: MessageRenderer
+    ) {
+        if (diagnostic.severity == Severity.ERROR) {
+            val severity = AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity)
+            val renderer = RootDiagnosticRendererFactory(diagnostic)
+            val diagnosticText = messageRenderer.render(severity, renderer.render(diagnostic), location)
+            throw IllegalStateException("${diagnostic.factory.name}: $diagnosticText")
+        }
     }
 
     private fun KtDiagnostic.location(): CompilerMessageSourceLocation? = when (val element = element) {
