@@ -5,7 +5,7 @@ import java.time.*
 import java.util.concurrent.*
 
 plugins {
-    id "org.jetbrains.kotlin.js" version "<pluginMarkerVersion>"
+    id "org.jetbrains.kotlin.js"
 }
 
 String nodeJsVersion

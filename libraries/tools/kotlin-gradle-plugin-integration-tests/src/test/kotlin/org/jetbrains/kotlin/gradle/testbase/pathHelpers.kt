@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.extension
+import kotlin.io.path.relativeTo
 import kotlin.streams.asSequence
+import kotlin.streams.toList
 
 /**
  * Find the file with given [name] in current [Path].
@@ -15,9 +18,7 @@ import kotlin.streams.asSequence
  * @return `null` if file is absent in current [Path]
  */
 internal fun Path.findInPath(name: String): Path? = Files
-    .walk(this)
-    .asSequence()
-    .find { it.fileName.toString() == name }
+    .walk(this).use { stream -> stream.asSequence().find { it.fileName.toString() == name } }
 
 /**
  * Create a temporary directory that will be cleaned up on normal JVM termination, but will be left on non-zero exit status.
@@ -27,3 +28,18 @@ internal fun Path.findInPath(name: String): Path? = Files
 internal fun createTempDir(prefix: String): Path = Files
     .createTempDirectory(prefix)
     .apply { toFile().deleteOnExit() }
+
+/**
+ * Returns list of all files whose name ends with [ext] extension. The comparison is case-insensitive.
+ */
+internal fun Path.allFilesWithExtension(ext: String): List<Path> =
+    Files.walk(this).use { stream -> stream.filter { it.extension.equals(ext, ignoreCase = true) }.toList() }
+
+internal val Path.allKotlinFiles
+    get() = allFilesWithExtension("kt")
+
+internal fun Iterable<Path>.relativizeTo(basePath: Path): Iterable<Path> = map {
+    it.relativeTo(basePath)
+}
+
+internal fun String.normalizePath() = replace("\\", "/")

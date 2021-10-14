@@ -5,20 +5,22 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.BaseGradleIT
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.junit.Test
+import org.junit.jupiter.api.DisplayName
 
 
-class CleanDataTaskIT : BaseGradleIT() {
+@SimpleGradlePluginTests
+class CleanDataTaskIT : KGPBaseTest() {
 
-    @Test
-    fun testDownloadedFolderDeletion() {
-        val project = transformProjectWithPluginsDsl("cleanTask")
-
-        project.build("testCleanTask") {
-            assertSuccessful()
+    @DisplayName("nodejs is deleted from Gradle user home")
+    @GradleTest
+    fun testDownloadedFolderDeletion(gradleVersion: GradleVersion) {
+        project("cleanTask", gradleVersion) {
+            build("testCleanTask")
         }
-
     }
 }

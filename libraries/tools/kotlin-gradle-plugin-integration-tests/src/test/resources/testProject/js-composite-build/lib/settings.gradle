@@ -1,8 +1,11 @@
 pluginManagement {
     repositories {
-        mavenLocal()
         gradlePluginPortal()
+
+        mavenLocal()
+
+        mavenCentral()
     }
 }
 
-rootProject.name = "yarn-setup"
+rootProject.name = "lib2"

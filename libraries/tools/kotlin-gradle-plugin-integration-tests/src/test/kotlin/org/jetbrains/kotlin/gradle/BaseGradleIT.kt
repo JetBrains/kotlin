@@ -11,15 +11,16 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
 import org.intellij.lang.annotations.Language
-import org.jdom.Element
-import org.jdom.input.SAXBuilder
-import org.jdom.output.Format
-import org.jdom.output.XMLOutputter
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.testbase.enableCacheRedirector
+import org.jetbrains.kotlin.gradle.testbase.extractJavaCompiledSources
+import org.jetbrains.kotlin.gradle.testbase.extractKotlinCompiledSources
+import org.jetbrains.kotlin.gradle.testbase.prettyPrintXml
+import org.jetbrains.kotlin.gradle.testbase.readAndCleanupTestResults
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.RunnerWithMuteInDatabase
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
 import org.junit.After
@@ -29,6 +30,7 @@ import org.junit.Before
 import org.junit.runner.RunWith
 import java.io.File
 import java.util.regex.Pattern
+import kotlin.io.path.isDirectory
 import kotlin.test.*
 
 val SYSTEM_LINE_SEPARATOR: String = System.getProperty("line.separator")
@@ -372,24 +374,11 @@ abstract class BaseGradleIT {
     }
 
     class CompiledProject(val project: Project, val output: String, val resultCode: Int) {
-        companion object {
-            val kotlinSourcesListRegex = Regex("\\[KOTLIN\\] compile iteration: ([^\\r\\n]*)")
-            val javaSourcesListRegex = Regex("\\[DEBUG\\] \\[[^\\]]*JavaCompiler\\] Compiler arguments: ([^\\r\\n]*)")
-        }
-
-        private fun getCompiledFiles(regex: Regex, output: String) = regex.findAll(output)
-            .asIterable()
-            .flatMap {
-                it.groups[1]!!.value.split(", ")
-                    .map { File(project.projectDir, it).canonicalFile }
-            }
-
-        fun getCompiledKotlinSources(output: String) = getCompiledFiles(kotlinSourcesListRegex, output)
+        fun getCompiledKotlinSources(output: String) =
+            extractKotlinCompiledSources(project.projectDir.toPath(), output).map { sourcePath -> sourcePath.toFile() }
 
         val compiledJavaSources: Iterable<File> by lazy {
-            javaSourcesListRegex.findAll(output).asIterable().flatMap {
-                it.groups[1]!!.value.split(" ").filter { it.endsWith(".java", ignoreCase = true) }.map { File(it).canonicalFile }
-            }
+            extractJavaCompiledSources(output).map { sourcePath -> sourcePath.toFile() }
         }
     }
 
@@ -846,70 +835,19 @@ Finished executing task ':$taskName'|
         vararg testReportNames: String
     ) {
         val projectDir = project.projectDir
-        val testReportDirs = testReportNames.map { projectDir.resolve("build/test-results/$it") }
+        val testReportDirs = testReportNames.map { projectDir.resolve("build/test-results/$it").toPath() }
 
         testReportDirs.forEach {
-            if (!it.isDirectory) {
+            if (!it.isDirectory()) {
                 error("Test report dir $it was not created")
             }
         }
 
-        val actualTestResults = readAndCleanupTestResults(testReportDirs, projectDir)
+        val actualTestResults = readAndCleanupTestResults(testReportDirs, projectDir.toPath())
         val expectedTestResults = prettyPrintXml(resourcesRootFile.resolve(assertionFileName).readText())
 
         assertEquals(expectedTestResults, actualTestResults)
     }
-
-    private fun readAndCleanupTestResults(testReportDirs: List<File>, projectDir: File): String {
-        val files = testReportDirs
-            .flatMap {
-                (it.listFiles() ?: arrayOf()).filter {
-                    it.isFile && it.name.endsWith(".xml")
-                }
-            }
-            .sortedBy {
-                // let containing test suite be first
-                it.name.replace(".xml", ".A.xml")
-            }
-
-        val xmlString = buildString {
-            appendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
-            appendLine("<results>")
-            files.forEach { file ->
-                appendLine(
-                    file.readText()
-                        .trimTrailingWhitespaces()
-                        .replace(projectDir.absolutePath, "/\$PROJECT_DIR$")
-                        .replace(projectDir.name, "\$PROJECT_NAME$")
-                        .replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "")
-                )
-            }
-            appendLine("</results>")
-        }
-
-        val doc = SAXBuilder().build(xmlString.reader())
-        val skipAttrs = setOf("timestamp", "hostname", "time", "message")
-        val skipContentsOf = setOf("failure")
-
-        fun cleanup(e: Element) {
-            if (e.name in skipContentsOf) e.text = "..."
-            e.attributes.forEach {
-                if (it.name in skipAttrs) {
-                    it.value = "..."
-                }
-            }
-
-            e.children.forEach {
-                cleanup(it)
-            }
-        }
-
-        cleanup(doc.rootElement)
-        return XMLOutputter(Format.getPrettyFormat()).outputString(doc)
-    }
-
-    private fun prettyPrintXml(uglyXml: String): String =
-        XMLOutputter(Format.getPrettyFormat()).outputString(SAXBuilder().build(uglyXml.reader()))
 
     private fun Project.createGradleTailParameters(options: BuildOptions, params: Array<out String> = arrayOf()): List<String> =
         params.toMutableList().apply {

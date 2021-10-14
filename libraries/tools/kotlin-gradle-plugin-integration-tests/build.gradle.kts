@@ -66,6 +66,9 @@ val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild ||
             false
         }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.io.path.ExperimentalPathApi"
+}
 
 val cleanTestKitCacheTask = tasks.register<Delete>("cleanTestKitCache") {
     group = "Build"

@@ -321,7 +321,7 @@ private fun BuildResult.printBuildScanUrl() {
 private fun TestProject.setupNonDefaultJdk(pathToJdk: File) {
     gradleProperties.modify {
         """
-        |org.gradle.java.home=${pathToJdk.absolutePath.replace('\\', '/')}
+        |org.gradle.java.home=${pathToJdk.absolutePath.normalizePath()}
         |
         |$it        
         """.trimMargin()
@@ -335,7 +335,7 @@ internal fun Path.enableAndroidSdk() {
         .also { if (!it.exists()) it.createFile() }
         .appendText(
             """
-            sdk.dir=${androidSdk.absolutePath.replace('\\', '/')}
+            sdk.dir=${androidSdk.absolutePath.normalizePath()}
             """.trimIndent()
         )
     acceptAndroidSdkLicenses(androidSdk)

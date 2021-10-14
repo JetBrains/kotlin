@@ -28,16 +28,21 @@ internal val DEFAULT_GROOVY_SETTINGS_FILE =
         
         resolutionStrategy {
             eachPlugin {
-                if (requested.id.id == "com.android.application" ||
-                    requested.id.id == "com.android.library" ||
-                    requested.id.id == "com.android.test" ||
-                    requested.id.id == "com.android.dynamic-feature" ||
-                    requested.id.id == "com.android.asset-pack" ||
-                    requested.id.id == "com.android.asset-pack-bundle" ||
-                    requested.id.id == "com.android.lint" ||
-                    requested.id.id == "com.android.instantapp" ||
-                    requested.id.id == "com.android.feature") {
-                    useModule("com.android.tools.build:gradle:${'$'}android_tools_version")
+                switch (requested.id.id) {
+                    case "com.android.application":
+                    case "com.android.library":
+                    case "com.android.test":
+                    case "com.android.dynamic-feature":
+                    case "com.android.asset-pack":
+                    case "com.android.asset-pack-bundle":
+                    case "com.android.lint":
+                    case "com.android.instantapp":
+                    case "com.android.feature":
+                        useModule("com.android.tools.build:gradle:${'$'}android_tools_version")
+                        break
+                    case "kotlin-dce-js":
+                        useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version")        
+                        break
                 }
             }
         }

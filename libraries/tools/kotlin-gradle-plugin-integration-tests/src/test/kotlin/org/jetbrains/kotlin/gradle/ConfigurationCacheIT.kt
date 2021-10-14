@@ -148,7 +148,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     fun testConfigurationCacheJsPlugin(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-            settingsGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
             testConfigurationCacheOf(
                 ":app:build",
@@ -187,7 +186,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         configure: TestProject.() -> Unit = {}
     ) = project("dukat-integration/both", gradleVersion) {
         buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-        settingsGradleKts.modify(::transformBuildScriptWithPluginsDsl)
         configure(this)
         testConfigurationCacheOf(
             "irGenerateExternalsIntegrated",

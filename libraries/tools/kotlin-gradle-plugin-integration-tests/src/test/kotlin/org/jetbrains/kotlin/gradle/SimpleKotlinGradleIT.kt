@@ -127,7 +127,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
             )
 
             build("build") {
-                assertDirectoryExists("$customBuildDirName/classes")
+                assertDirectoryInProjectExists("$customBuildDirName/classes")
                 assertFileNotExists("build")
             }
         }

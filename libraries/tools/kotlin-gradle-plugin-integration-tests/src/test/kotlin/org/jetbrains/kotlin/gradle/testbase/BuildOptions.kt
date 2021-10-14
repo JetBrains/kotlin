@@ -9,6 +9,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.BaseGradleIT
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 
 data class BuildOptions(
     val logLevel: LogLevel = LogLevel.INFO,
@@ -23,7 +24,8 @@ data class BuildOptions(
     val fileSystemWatchEnabled: Boolean = false,
     val buildCacheEnabled: Boolean = false,
     val kaptOptions: KaptOptions? = null,
-    val androidVersion: String? = null
+    val androidVersion: String? = null,
+    val jsOptions: JsOptions? = null,
 ) {
     data class KaptOptions(
         val verbose: Boolean = false,
@@ -31,6 +33,13 @@ data class BuildOptions(
         val incrementalKapt: Boolean = false,
         val includeCompileClasspath: Boolean = false,
         val classLoadersCacheSize: Int? = null
+    )
+
+    data class JsOptions(
+        val useIrBackend: Boolean? = null,
+        val jsCompilerType: KotlinJsCompilerType? = null,
+        val incrementalJs: Boolean? = null,
+        val incrementalJsKlib: Boolean? = null,
     )
 
     fun toArguments(
@@ -88,6 +97,13 @@ data class BuildOptions(
             kaptOptions.classLoadersCacheSize?.let { cacheSize ->
                 arguments.add("-Pkapt.classloaders.cache.size=$cacheSize")
             }
+        }
+
+        if (jsOptions != null) {
+            jsOptions.incrementalJs?.let { arguments.add("-Pkotlin.incremental.js=$it") }
+            jsOptions.incrementalJsKlib?.let { arguments.add("-Pkotlin.incremental.js.klib=$it") }
+            jsOptions.useIrBackend?.let { arguments.add("-Pkotlin.js.useIrBackend=$it") }
+            jsOptions.jsCompilerType?.let { arguments.add("-Pkotlin.js.compiler=$it") }
         }
 
         if (androidVersion != null) {

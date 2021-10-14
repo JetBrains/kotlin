@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 
 plugins {
-    kotlin("js") version "<pluginMarkerVersion>"
+    kotlin("js")
 }
 
 dependencies {
