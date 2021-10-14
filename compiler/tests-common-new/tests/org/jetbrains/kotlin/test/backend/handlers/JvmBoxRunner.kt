@@ -41,7 +41,7 @@ import java.net.URL
 import java.net.URLClassLoader
 import java.util.concurrent.TimeUnit
 
-class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
+open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     companion object {
         private val BOX_IN_SEPARATE_PROCESS_PORT = System.getProperty("kotlin.test.box.in.separate.process.port")
     }
@@ -208,16 +208,7 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
             listOf(mainFqName)
         }
 
-        val command = listOfNotNull(
-            javaExe.absolutePath,
-            runIf(ATTACH_DEBUGGER in module.directives) { "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005" },
-            "-ea",
-            runIf(ENABLE_JVM_PREVIEW in module.directives) { "--enable-preview" },
-            "-classpath",
-            classPath.joinToString(File.pathSeparator, transform = { File(it.toURI()).absolutePath }),
-        ) + mainClassAndArguments
-
-        val process = ProcessBuilder(command).start()
+        val process = launchSeparateJvmProcess(javaExe, module, classPath, mainClassAndArguments)
         process.waitFor(1, TimeUnit.MINUTES)
         return try {
             when (process.exitValue()) {
@@ -235,6 +226,24 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
         } finally {
             process.outputStream.flush()
         }
+    }
+
+    protected open fun launchSeparateJvmProcess(
+        javaExe: File,
+        module: TestModule,
+        classPath: List<URL>,
+        mainClassAndArguments: List<String>
+    ): Process {
+        val command = listOfNotNull(
+            javaExe.absolutePath,
+            runIf(ATTACH_DEBUGGER in module.directives) { "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005" },
+            "-ea",
+            runIf(ENABLE_JVM_PREVIEW in module.directives) { "--enable-preview" },
+            "-classpath",
+            classPath.joinToString(File.pathSeparator, transform = { File(it.toURI()).absolutePath }),
+        ) + mainClassAndArguments
+
+        return ProcessBuilder(command).start()
     }
 
     private fun invokeBoxInSeparateProcess(

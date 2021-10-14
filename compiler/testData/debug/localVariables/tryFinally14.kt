@@ -1,5 +1,5 @@
+// WITH_RUNTIME
 // FILE: test.kt
-
 fun box(): String {
     try {
         for (i in 0 until 1) {
@@ -16,7 +16,7 @@ fun box(): String {
     return "FAIL"
 }
 
-// LOCAL VARIABLES
+// EXPECTATIONS
 // test.kt:4 box:
 // test.kt:5 box:
 // test.kt:6 box: i:int=0:int

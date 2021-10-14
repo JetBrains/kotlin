@@ -1,3 +1,7 @@
+// The old backend has the local y covering the finally block as well.
+// IGNORE_BACKEND: JVM
+// WITH_RUNTIME
+
 // FILE: test.kt
 fun box() {
     var result = ""
@@ -14,16 +18,13 @@ fun box() {
     }
 }
 
-// The old backend has the local y covering the finally block as well.
-// IGNORE_BACKEND: JVM
-
-// LOCAL VARIABLES
-// test.kt:3 box:
-// test.kt:4 box: result:java.lang.String="":java.lang.String
-// test.kt:5 box: result:java.lang.String="":java.lang.String, x:java.lang.String="A":java.lang.String
-// test.kt:6 box: result:java.lang.String="":java.lang.String, x:java.lang.String="A":java.lang.String
-// test.kt:7 box: result:java.lang.String="":java.lang.String, x:java.lang.String="A":java.lang.String, y:java.lang.String="y":java.lang.String
-// test.kt:8 box: result:java.lang.String="y":java.lang.String, x:java.lang.String="A":java.lang.String, y:java.lang.String="y":java.lang.String
-// test.kt:11 box: result:java.lang.String="y":java.lang.String, x:java.lang.String="A":java.lang.String
-// test.kt:12 box: result:java.lang.String="y":java.lang.String, x:java.lang.String="A":java.lang.String, z:java.lang.String="z":java.lang.String
-// test.kt:15 box: result:java.lang.String="yz":java.lang.String
+// EXPECTATIONS
+// test.kt:7 box:
+// test.kt:8 box: result:java.lang.String="":java.lang.String
+// test.kt:9 box: result:java.lang.String="":java.lang.String, x:java.lang.String="A":java.lang.String
+// test.kt:10 box: result:java.lang.String="":java.lang.String, x:java.lang.String="A":java.lang.String
+// test.kt:11 box: result:java.lang.String="":java.lang.String, x:java.lang.String="A":java.lang.String, y:java.lang.String="y":java.lang.String
+// test.kt:12 box: result:java.lang.String="y":java.lang.String, x:java.lang.String="A":java.lang.String, y:java.lang.String="y":java.lang.String
+// test.kt:15 box: result:java.lang.String="y":java.lang.String, x:java.lang.String="A":java.lang.String
+// test.kt:16 box: result:java.lang.String="y":java.lang.String, x:java.lang.String="A":java.lang.String, z:java.lang.String="z":java.lang.String
+// test.kt:19 box: result:java.lang.String="yz":java.lang.String

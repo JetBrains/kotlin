@@ -1,5 +1,5 @@
-// FILE: test.kt
 // WITH_RUNTIME
+// FILE: test.kt
 class C {
     @kotlin.jvm.JvmOverloads fun foo(firstParam: Int, secondParam: String = "") {
     }
@@ -9,7 +9,7 @@ fun box() {
     C().foo(4)
 }
 
-// LOCAL VARIABLES
+// EXPECTATIONS
 // test.kt:9 box:
 // test.kt:3 <init>:
 // test.kt:9 box:

@@ -41,7 +41,8 @@ dependencies {
             rootProject = rootProject
         )
     }
-    testRuntimeOnly(toolsJar())
+
+    testApi(toolsJar())
 }
 
 val generationRoot = projectDir.resolve("tests-gen")

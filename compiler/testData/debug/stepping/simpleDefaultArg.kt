@@ -9,7 +9,7 @@ fun box(): String {
 }
 
 // FORCE_STEP_INTO
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:8 box
 // test.kt:3 ifoo$default (synthetic)
 // test.kt:4 ifoo

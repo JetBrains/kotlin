@@ -21,7 +21,7 @@ fun box() {
 // The JVM_IR backend optimizes the inner when to a switch and therefore goes directly to the
 // right case without stepping through evaluation of each condition.
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:16 box
 // test.kt:5 foo
 // test.kt:6 foo
@@ -30,18 +30,18 @@ fun box() {
 // test.kt:13 foo
 // test.kt:17 box
 // test.kt:5 foo
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:6 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:7 foo
 // test.kt:4 foo
 // test.kt:13 foo
 // test.kt:18 box
 // test.kt:5 foo
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:6 foo
 // test.kt:7 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:8 foo
 // test.kt:4 foo
 // test.kt:10 foo

@@ -11,7 +11,7 @@ inline fun lookAtMe(f: (String) -> Unit) {
     f(a)
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:4 box
 // test.kt:10 box
 // test.kt:11 box

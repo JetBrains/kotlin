@@ -7,7 +7,7 @@ fun box() {
     foo()
 }
 
-// LOCAL VARIABLES
+// EXPECTATIONS
 // test.kt:7 box:
 // test.kt:4 foo:
 // test.kt:8 box:

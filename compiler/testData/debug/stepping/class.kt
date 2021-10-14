@@ -18,13 +18,13 @@ fun box() {
 // three to be hit both on entry to the constructor and on exit after storing the
 // value of prop.
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:12 box
 // test.kt:3 <init>
 // test.kt:4 <init>
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:3 <init>
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:12 box
 // test.kt:13 box
 // test.kt:4 getProp

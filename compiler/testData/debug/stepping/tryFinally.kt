@@ -39,7 +39,7 @@ fun box() {
 // JVM_IR behavior is consistent with what happens for the
 // try-finally where the value is discarded which seems good.
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:29 box
 // test.kt:4 foo
 // test.kt:5 foo
@@ -51,9 +51,9 @@ fun box() {
 // test.kt:11 foo
 // test.kt:25 mightThrow2
 // test.kt:26 mightThrow2
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:11 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:13 foo
 // test.kt:14 foo
 // test.kt:10 foo
@@ -69,9 +69,9 @@ fun box() {
 // test.kt:10 foo
 // test.kt:11 foo
 // test.kt:25 mightThrow2
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:14 foo
 // test.kt:10 foo
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:12 foo
 // test.kt:13 foo

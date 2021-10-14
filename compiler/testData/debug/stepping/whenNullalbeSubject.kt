@@ -15,7 +15,7 @@ fun box() {
     }
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:4 box
 // test.kt:5 box
 // test.kt:6 box

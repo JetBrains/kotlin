@@ -1,4 +1,4 @@
-// WITH_COROUTINES
+// WITH_RUNTIME
 // FILE: test.kt
 inline fun hasLocal(): Int {
     val x = 41
@@ -18,16 +18,7 @@ suspend fun box() {
     hasLocal()
 }
 
-// LOCAL VARIABLES
-// test.kt:10 box:
-
-// LOCAL VARIABLES JVM_IR
-// test.kt:-1 <init>: $completion:kotlin.coroutines.Continuation=helpers.ResultContinuation
-
-// LOCAL VARIABLES JVM
-// test.kt:-1 <init>:
-
-// LOCAL VARIABLES
+// EXPECTATIONS
 // test.kt:10 box:
 // test.kt:12 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
 // test.kt:8 h: $completion:kotlin.coroutines.Continuation=TestKt$box$1

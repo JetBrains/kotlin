@@ -73,6 +73,22 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("codegen/box")
             }
 
+            testClass<AbstractSteppingTest> {
+                model("debug/stepping")
+            }
+
+            testClass<AbstractIrSteppingTest> {
+                model("debug/stepping")
+            }
+
+            testClass<AbstractLocalVariableTest> {
+                model("debug/localVariables")
+            }
+
+            testClass<AbstractIrLocalVariableTest> {
+                model("debug/localVariables")
+            }
+
             testClass<AbstractBlackBoxCodegenTest>("BlackBoxModernJdkCodegenTestGenerated") {
                 model("codegen/boxModernJdk")
             }

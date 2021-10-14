@@ -17,7 +17,7 @@ fun box() {
     foo(1)
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:15 box
 // test.kt:4 foo
 // test.kt:5 foo

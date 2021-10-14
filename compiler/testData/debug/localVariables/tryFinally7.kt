@@ -1,3 +1,6 @@
+// The old backend has `y` and `j` visible on the finally block.
+// IGNORE_BACKEND: JVM
+// WITH_RUNTIME
 // FILE: test.kt
 
 inline fun f(block: () -> Unit) {
@@ -30,22 +33,19 @@ fun box() {
     val localX = x
 }
 
-// The old backend has `y` and `j` visible on the finally block.
-// IGNORE_BACKEND: JVM
-
-// LOCAL VARIABLES
-// test.kt:29 box:
-// test.kt:10 compute:
-// test.kt:11 compute:
-// test.kt:12 compute: y:int=42:int
-// test.kt:13 compute: y:int=42:int, i:int=0:int
-// test.kt:15 compute:
-// test.kt:16 compute: e:java.lang.Exception=java.lang.RuntimeException
-// test.kt:17 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int
-// test.kt:18 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int, j:int=0:int
-// test.kt:4 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int, j:int=0:int, $i$f$f:int=0:int
-// test.kt:19 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int, j:int=0:int, $i$f$f:int=0:int, $i$a$-f-TestKt$compute$1:int=0:int
-// test.kt:23 compute:
-// test.kt:29 box:
-// test.kt:30 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String
-// test.kt:31 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String, localX:java.lang.String="OK":java.lang.String
+// EXPECTATIONS
+// test.kt:32 box:
+// test.kt:13 compute:
+// test.kt:14 compute:
+// test.kt:15 compute: y:int=42:int
+// test.kt:16 compute: y:int=42:int, i:int=0:int
+// test.kt:18 compute:
+// test.kt:19 compute: e:java.lang.Exception=java.lang.RuntimeException
+// test.kt:20 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int
+// test.kt:21 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int, j:int=0:int
+// test.kt:7 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int, j:int=0:int, $i$f$f:int=0:int
+// test.kt:22 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int, j:int=0:int, $i$f$f:int=0:int, $i$a$-f-TestKt$compute$1:int=0:int
+// test.kt:26 compute:
+// test.kt:32 box:
+// test.kt:33 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String
+// test.kt:34 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String, localX:java.lang.String="OK":java.lang.String
