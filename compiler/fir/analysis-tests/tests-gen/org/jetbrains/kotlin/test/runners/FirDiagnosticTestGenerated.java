@@ -5112,6 +5112,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("typeAliasAmbiguity.kt")
+            public void testTypeAliasAmbiguity() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/typeAliasAmbiguity.kt");
+            }
+
+            @Test
             @TestMetadata("UastPatterns.kt")
             public void testUastPatterns() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/UastPatterns.kt");

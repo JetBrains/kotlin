@@ -1,0 +1,7 @@
+FILE: typeAliasAmbiguity.kt
+    public final typealias ServiceId = R|kotlin/String|
+    public final fun ServiceId(serviceId: R|kotlin/String|): R|ServiceId| {
+        ^ServiceId R|<local>/serviceId|
+    }
+    public final val GaugeSpecTmsIntegrationServiceId: R|ServiceId| = R|/ServiceId|(String(Gauge))
+        public get(): R|ServiceId|

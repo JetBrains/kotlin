@@ -146,6 +146,7 @@ class JvmMappedScope(
                 "Lkotlin/IntArray;II",
                 "Ljava/lang/StringBuffer;",
                 "Ljava/lang/StringBuilder;",
+                "Ljava/lang/String;",
             ).mapTo(this) { arguments -> "java/lang/String.<init>($arguments)V" }
 
             listOf(
