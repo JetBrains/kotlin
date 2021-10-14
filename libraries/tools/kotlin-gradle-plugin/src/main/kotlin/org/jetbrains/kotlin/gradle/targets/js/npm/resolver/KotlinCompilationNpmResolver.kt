@@ -70,10 +70,6 @@ internal class KotlinCompilationNpmResolver(
 
     val projectPath = project.path
 
-    val packageJsonHandlers by lazy {
-        compilation.packageJsonHandlers
-    }
-
     @Transient
     val packageJsonTaskHolder: TaskProvider<KotlinPackageJsonTask>? =
         KotlinPackageJsonTask.create(compilation)
@@ -478,20 +474,25 @@ internal class KotlinCompilationNpmResolver(
             } else emptySet()
 
             val allNpmDependencies = externalNpmDependencies + toolsNpmDependencies + dukatIfNecessary
+            val packageJsonHandlers = if (compilationResolver.compilation != null) {
+                compilationResolver.compilation.packageJsonHandlers
+            } else {
+                compilationResolver.rootResolver.getPackageJsonHandlers(projectPath, compilationResolver.compilationDisambiguatedName)
+            }
 
             val packageJson = packageJson(
                 compilationResolver.npmProject.name,
                 compilationResolver.npmVersion,
                 compilationResolver.npmProject.main,
                 allNpmDependencies,
-                compilationResolver.packageJsonHandlers
+                packageJsonHandlers
             )
 
             compositeDependencies.forEach {
                 packageJson.dependencies[it.name] = it.version
             }
 
-            compilationResolver.packageJsonHandlers.forEach {
+            packageJsonHandlers.forEach {
                 it(packageJson)
             }
 
