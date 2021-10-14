@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
@@ -45,46 +46,67 @@ class ExecutionStrategyJvmIT : ExecutionStrategyIT() {
 abstract class ExecutionStrategyIT : BaseGradleIT() {
     @Test
     fun testDaemon() {
-        doTestExecutionStrategy("daemon", addHeapDumpOptions = false)
+        doTestExecutionStrategy(KotlinCompilerExecutionStrategy.DAEMON, addHeapDumpOptions = false)
+    }
+
+    @Test
+    fun testDaemonViaSystemProperty() {
+        doTestExecutionStrategy(KotlinCompilerExecutionStrategy.DAEMON, addHeapDumpOptions = false, viaSystemProperty = true)
     }
 
     @Test
     fun testInProcess() {
-        doTestExecutionStrategy("in-process")
+        doTestExecutionStrategy(KotlinCompilerExecutionStrategy.IN_PROCESS)
+    }
+
+    @Test
+    fun testInProcessViaSystemProperty() {
+        doTestExecutionStrategy(KotlinCompilerExecutionStrategy.IN_PROCESS, viaSystemProperty = true)
     }
 
     @Test
     fun testOutOfProcess() {
-        doTestExecutionStrategy("out-of-process")
+        doTestExecutionStrategy(KotlinCompilerExecutionStrategy.OUT_OF_PROCESS)
     }
 
-    private fun doTestExecutionStrategy(executionStrategy: String, addHeapDumpOptions: Boolean = true) {
-        val project = Project("kotlinBuiltins", addHeapDumpOptions = addHeapDumpOptions)
-        setupProject(project)
+    @Test
+    fun testOutOfProcessViaSystemProperty() {
+        doTestExecutionStrategy(KotlinCompilerExecutionStrategy.OUT_OF_PROCESS, viaSystemProperty = true)
+    }
 
-        val strategyCLIArg = "-Dkotlin.compiler.execution.strategy=$executionStrategy"
-        val finishMessage = "Finished executing kotlin compiler using $executionStrategy strategy"
+    private fun doTestExecutionStrategy(
+        executionStrategy: KotlinCompilerExecutionStrategy,
+        addHeapDumpOptions: Boolean = true,
+        viaSystemProperty: Boolean = false
+    ) {
+        with(Project("kotlinBuiltins", addHeapDumpOptions = addHeapDumpOptions)) {
+            setupProject(this)
 
-        project.build("build", strategyCLIArg) {
-            assertSuccessful()
-            assertContains(finishMessage)
-            checkOutput()
-            assertNoWarnings()
+            val cliArgPrefix = if (viaSystemProperty) "-D" else "-P"
+            val strategyCLIArg = "${cliArgPrefix}kotlin.compiler.execution.strategy=${executionStrategy.propertyValue}"
+            val finishMessage = "Finished executing kotlin compiler using $executionStrategy strategy"
 
-            if (executionStrategy == "daemon") {
-                checkCompileDaemon()
+            build("build", strategyCLIArg) {
+                assertSuccessful()
+                assertContains(finishMessage)
+                checkOutput()
+                assertNoWarnings()
+
+                if (executionStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
+                    checkCompileDaemon()
+                }
             }
-        }
 
-        val classesKt = project.projectDir.getFileByName("classes.kt")
-        classesKt.modify {
-            it.checkedReplace("class B", "//class B")
-        }
-        project.build("build", strategyCLIArg) {
-            assertSuccessful()
-            assertContains(finishMessage)
-            checkOutputAfterChange()
-            assertNoWarnings()
+            val classesKt = projectDir.getFileByName("classes.kt")
+            classesKt.modify {
+                it.checkedReplace("class B", "//class B")
+            }
+            build("build", strategyCLIArg) {
+                assertSuccessful()
+                assertContains(finishMessage)
+                checkOutputAfterChange()
+                assertNoWarnings()
+            }
         }
     }
 

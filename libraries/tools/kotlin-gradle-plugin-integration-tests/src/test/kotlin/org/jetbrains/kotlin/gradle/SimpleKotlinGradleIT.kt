@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
@@ -19,7 +20,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG),
         ) {
             build("compileDeployKotlin", "build") {
-                assertOutputContains("Finished executing kotlin compiler using daemon strategy")
+                assertOutputContains("Finished executing kotlin compiler using ${KotlinCompilerExecutionStrategy.DAEMON} strategy")
                 assertFileInProjectExists("build/reports/tests/test/classes/demo.TestSource.html")
                 assertTasksExecuted(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
             }

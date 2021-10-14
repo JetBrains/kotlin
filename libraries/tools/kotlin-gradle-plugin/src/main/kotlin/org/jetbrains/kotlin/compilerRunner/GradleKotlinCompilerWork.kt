@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
 import org.jetbrains.kotlin.gradle.report.TaskExecutionProperties.ABI_SNAPSHOT
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.clearLocalState
 import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
 import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
@@ -68,7 +69,8 @@ internal class GradleKotlinCompilerWorkArguments(
     val reportingSettings: ReportingSettings,
     val kotlinScriptExtensions: Array<String>,
     val allWarningsAsErrors: Boolean,
-    val daemonJvmArgs: List<String>?
+    val daemonJvmArgs: List<String>?,
+    val compilerExecutionStrategy: KotlinCompilerExecutionStrategy,
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 0
@@ -104,6 +106,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val metrics = if (reportingSettings.reportMetrics) BuildMetricsReporterImpl() else DoNothingBuildMetricsReporter
     private var icLogLines: List<String> = emptyList()
     private val daemonJvmArgs = config.daemonJvmArgs
+    private val compilerExecutionStrategy = config.compilerExecutionStrategy
 
     private val log: KotlinLogger =
         TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
@@ -155,8 +158,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             kotlinDebug { "$taskPath Kotlin compiler args: ${compilerArgs.joinToString(" ")}" }
         }
 
-        val executionStrategy = kotlinCompilerExecutionStrategy()
-        if (executionStrategy == DAEMON_EXECUTION_STRATEGY) {
+        if (compilerExecutionStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
             val daemonExitCode = compileWithDaemon(messageCollector)
 
             if (daemonExitCode != null) {
@@ -167,7 +169,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         }
 
         val isGradleDaemonUsed = System.getProperty("org.gradle.daemon")?.let(String::toBoolean)
-        return if (executionStrategy == IN_PROCESS_EXECUTION_STRATEGY || isGradleDaemonUsed == false) {
+        return if (compilerExecutionStrategy == KotlinCompilerExecutionStrategy.IN_PROCESS || isGradleDaemonUsed == false) {
             compileInProcess(messageCollector)
         } else {
             compileOutOfProcess()
@@ -242,7 +244,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         } catch (e: RemoteException) {
             log.warn("Unable to clear jar cache after compilation, maybe daemon is already down: $e")
         }
-        log.logFinish(DAEMON_EXECUTION_STRATEGY)
+        log.logFinish(KotlinCompilerExecutionStrategy.DAEMON)
         return exitCode
     }
 
@@ -364,7 +366,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             stream,
             exitCode
         )
-        log.logFinish(IN_PROCESS_EXECUTION_STRATEGY)
+        log.logFinish(KotlinCompilerExecutionStrategy.IN_PROCESS)
         return exitCode
     }
 

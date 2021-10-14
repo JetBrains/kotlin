@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.FieldVisitor
@@ -129,7 +130,7 @@ internal fun runToolInSeparateProcess(
     readErrThread.join()
 
     val exitCode = process.waitFor()
-    logger.logFinish(OUT_OF_PROCESS_EXECUTION_STRATEGY)
+    logger.logFinish(KotlinCompilerExecutionStrategy.OUT_OF_PROCESS)
     return exitCodeFromProcessExitCode(logger, exitCode)
 }
 
@@ -171,7 +172,7 @@ private fun createLoggingMessageCollector(log: KotlinLogger): MessageCollector =
     }
 }
 
-internal fun KotlinLogger.logFinish(strategy: String) {
+internal fun KotlinLogger.logFinish(strategy: KotlinCompilerExecutionStrategy) {
     debug("Finished executing kotlin compiler using $strategy strategy")
 }
 

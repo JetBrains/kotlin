@@ -322,7 +322,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
                     it,
                     null,
                     normalizedKotlinDaemonJvmArguments.orNull,
-                    metrics.get()
+                    metrics.get(),
+                    compilerExecutionStrategy.get(),
                 )
             }
         )
@@ -665,6 +666,7 @@ abstract class KotlinCompile @Inject constructor(
                     toolchain.currentJvmJdkToolsJar.orNull,
                     normalizedKotlinDaemonJvmArguments.orNull,
                     metrics.get(),
+                    compilerExecutionStrategy.get(),
                     workerExecutor
                 )
             })
@@ -993,6 +995,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
                     null,
                     normalizedKotlinDaemonJvmArguments.orNull,
                     metrics.get(),
+                    compilerExecutionStrategy.get(),
                     workerExecutor
                 )
             }
