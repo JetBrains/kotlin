@@ -38,7 +38,7 @@ import kotlin.test.assertTrue
 
 class BuildKotlinToolingMetadataTest {
 
-    private val project = ProjectBuilder.builder().build() as ProjectInternal
+    private val project = ProjectBuilder.builder().build().also{ addBuildEventsListenerRegistryMock(it) } as ProjectInternal
     private val multiplatformExtension get() = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
     private val jsExtension get() = project.extensions.getByType(KotlinJsProjectExtension::class.java)
 

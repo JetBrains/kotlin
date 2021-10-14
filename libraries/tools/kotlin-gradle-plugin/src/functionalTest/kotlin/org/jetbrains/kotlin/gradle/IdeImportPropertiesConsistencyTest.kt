@@ -52,14 +52,14 @@ class IdeImportPropertiesConsistencyTest {
 
     @Test
     fun `test simple project`() {
-        val project = ProjectBuilder.builder().build()
+        val project = createProject()
         project.applyMultiplatformPlugin()
         project.assertPropertiesMatch()
     }
 
     @Test
     fun `test simple project with new hmpp flag`() {
-        val project = ProjectBuilder.builder().build()
+        val project = createProject()
         project.enableHierarchicalStructureByDefault()
         project.applyMultiplatformPlugin()
         project.assertPropertiesMatch()
@@ -67,12 +67,15 @@ class IdeImportPropertiesConsistencyTest {
 
     @Test
     fun `test sub project with new hmpp flag`() {
-        val rootProject = ProjectBuilder.builder().build()
-        val project = ProjectBuilder.builder().withParent(rootProject).build()
+        val rootProject = createProject()
+        val project = ProjectBuilder.builder().withParent(rootProject).build().also { addBuildEventsListenerRegistryMock(it) }
         rootProject.enableHierarchicalStructureByDefault()
         project.applyMultiplatformPlugin()
         project.assertPropertiesMatch()
     }
+
+    private fun createProject() = ProjectBuilder.builder().build()
+        .also { addBuildEventsListenerRegistryMock(it) }
 
     private fun Project.assertPropertiesMatch() {
         val isHmppValueUsedInCli = project.isKotlinGranularMetadataEnabled

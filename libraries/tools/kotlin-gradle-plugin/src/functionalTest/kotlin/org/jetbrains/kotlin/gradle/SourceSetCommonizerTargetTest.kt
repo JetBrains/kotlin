@@ -29,6 +29,7 @@ class SourceSetCommonizerTargetTest {
     @BeforeTest
     fun setup() {
         project = ProjectBuilder.builder().build()
+        addBuildEventsListenerRegistryMock(project)
         project.extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.mpp.enableCompatibilityMetadataVariant", "false")
         project.plugins.apply("kotlin-multiplatform")
         kotlin = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.report
 
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
+import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
@@ -18,6 +19,7 @@ internal fun configureReporting(gradle: Gradle) {
     val buildDataProcessors = ArrayList<BuildExecutionDataProcessor>()
 
     val rootProject = gradle.rootProject
+    val log = rootProject.logger
     val reportingSettings = reportingSettings(rootProject)
     gradle.taskGraph.whenReady { graph ->
         graph.allTasks.asSequence()
@@ -26,13 +28,13 @@ internal fun configureReporting(gradle: Gradle) {
     }
 
     if (reportingSettings.buildReportMode != BuildReportMode.NONE && reportingSettings.buildReportDir != null) {
-        configurePlainTextReportWriter(gradle, reportingSettings)?.let {
+        configurePlainTextReportWriter(rootProject.name, log, reportingSettings)?.let {
             buildDataProcessors.add(it)
         }
     }
 
     if (reportingSettings.metricsOutputFile != null) {
-        buildDataProcessors.add(MetricsWriter(reportingSettings.metricsOutputFile.absoluteFile, rootProject.logger))
+        buildDataProcessors.add(MetricsWriter(reportingSettings.metricsOutputFile.absoluteFile, log))
     }
 
     if (buildDataProcessors.isNotEmpty() && !isConfigurationCacheAvailable(gradle)) {
@@ -62,13 +64,13 @@ private fun reportingSettings(rootProject: Project): ReportingSettings {
 }
 
 private fun configurePlainTextReportWriter(
-    gradle: Gradle,
+    rootProjectName: String,
+    log: Logger,
     reportingSettings: ReportingSettings
 ): BuildExecutionDataProcessor? {
-    val log = gradle.rootProject.logger
     return reportingSettings.buildReportDir?.let { reportDir ->
         val ts = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Calendar.getInstance().time)
-        val reportFile = reportDir.resolve("${gradle.rootProject.name}-build-$ts.txt")
+        val reportFile = reportDir.resolve("${rootProjectName}-build-$ts.txt")
 
         return PlainTextBuildReportWriter(
             outputFile = reportFile,

@@ -24,12 +24,14 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.from
 import kotlin.test.BeforeTest
 import kotlin.test.assertNotNull
 
+
 abstract class MultiplatformExtensionTest {
     protected val project: ProjectInternal = ProjectBuilder.builder().build() as ProjectInternal
     protected lateinit var kotlin: KotlinMultiplatformExtension
 
     @BeforeTest
     open fun setup() {
+        addBuildEventsListenerRegistryMock(project)
         kotlin = project.applyMultiplatformPlugin()
     }
 
