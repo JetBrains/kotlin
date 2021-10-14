@@ -108,49 +108,25 @@ class BuildCacheIT : KGPBaseTest() {
         project("buildCacheSimple", gradleVersion) {
             enableLocalBuildCache(localBuildCacheDir)
 
-            checkKotlinCompileCachingIncrementalBuild(this, this)
+            build("assemble") {
+                assertTasksPackedToCache(":compileKotlin")
+            }
+
+            build("clean", "assemble") {
+                assertTasksFromCache(":compileKotlin")
+            }
+
+            val fooKtSourceFile = kotlinSourcesDir().resolve("foo.kt")
+            fooKtSourceFile.modify { it.replace("Int = 1", "String = \"abc\"") }
+            build("assemble") {
+                assertIncrementalCompilation(modifiedFiles = setOf(fooKtSourceFile))
+            }
+
+            fooKtSourceFile.modify { it.replace("String = \"abc\"", "Int = 1") }
+            build("clean", "assemble") {
+                assertTasksFromCache(":compileKotlin")
+            }
         }
-    }
-
-    // TODO: move it into relocatable build cache tests
-    @DisplayName("Incremental compilation build cache does not break relocated cache")
-    @GradleTest
-    fun testKotlinCompileCachingIncrementalBuildWithRelocation(gradleVersion: GradleVersion) {
-        val firstProject = project("buildCacheSimple", gradleVersion) {
-            enableLocalBuildCache(localBuildCacheDir)
-        }
-
-        val secondProject = project("buildCacheSimple", gradleVersion) {
-            enableLocalBuildCache(localBuildCacheDir)
-        }
-
-        checkKotlinCompileCachingIncrementalBuild(firstProject, secondProject)
-    }
-
-    // TODO: move it into relocatable build cache tests
-    @DisplayName("Kapt incremental compilation works with cache")
-    @GradleTest
-    fun testKaptCachingIncrementalBuildWithoutRelocation(gradleVersion: GradleVersion) {
-        project("kapt2/kaptAvoidance", gradleVersion) {
-            enableLocalBuildCache(localBuildCacheDir)
-
-            checkKaptCachingIncrementalBuild(this, this)
-        }
-    }
-
-    // TODO: move it into build cache relocation tests
-    @DisplayName("Kapt incremental compilation build does not break relocated build cache")
-    @GradleTest
-    fun testKaptCachingIncrementalBuildWithRelocation(gradleVersion: GradleVersion) {
-        val firstProject = project("kapt2/kaptAvoidance", gradleVersion) {
-            enableLocalBuildCache(localBuildCacheDir)
-        }
-
-        val secondProject = project("kapt2/kaptAvoidance", gradleVersion) {
-            enableLocalBuildCache(localBuildCacheDir)
-        }
-
-        checkKaptCachingIncrementalBuild(firstProject, secondProject)
     }
 
     @DisplayName("Debug log level should not break build cache")
@@ -169,75 +145,6 @@ class BuildCacheIT : KGPBaseTest() {
             build("clean", ":assemble") {
                 assertTasksFromCache(":compileKotlin")
             }
-        }
-    }
-
-    private fun checkKotlinCompileCachingIncrementalBuild(
-        firstProject: TestProject,
-        secondProject: TestProject
-    ) {
-        // First build, should be stored into the build cache:
-        firstProject.build("assemble") {
-            assertTasksPackedToCache(":compileKotlin")
-        }
-
-        // A cache hit: a clean build without any changes to the project
-        secondProject.build("clean", "assemble") {
-            assertTasksFromCache(":compileKotlin")
-        }
-
-        // Change the return type of foo() from Int to String in foo.kt, and check that fooUsage.kt is recompiled as well:
-        val fooKtSourceFile = secondProject.kotlinSourcesDir().resolve("foo.kt")
-        fooKtSourceFile.modify { it.replace("Int = 1", "String = \"abc\"") }
-        secondProject.build("assemble") {
-            assertIncrementalCompilation(modifiedFiles = setOf(fooKtSourceFile))
-        }
-
-        // Revert the change to the return type of foo(), and check if we get a cache hit
-        fooKtSourceFile.modify { it.replace("String = \"abc\"", "Int = 1") }
-        secondProject.build("clean", "assemble") {
-            assertTasksFromCache(":compileKotlin")
-        }
-    }
-
-    private fun checkKaptCachingIncrementalBuild(
-        firstProject: TestProject,
-        secondProject: TestProject
-    ) {
-        val options = defaultBuildOptions.copy(
-            kaptOptions = BuildOptions.KaptOptions(
-                verbose = true,
-                useWorkers = false,
-                incrementalKapt = true,
-                includeCompileClasspath = false
-            )
-        )
-
-        // First build, should be stored into the build cache:
-        firstProject.build("clean", ":app:build", buildOptions = options) {
-            assertTasksPackedToCache(":app:kaptGenerateStubsKotlin", ":app:kaptKotlin")
-        }
-
-        // A cache hit: a clean build without any changes to the project
-        secondProject.build("clean", ":app:build", buildOptions = options) {
-            assertTasksFromCache(":app:kaptGenerateStubsKotlin", ":app:kaptKotlin")
-        }
-
-        // Make changes to annotated class and check kapt tasks are re-executed
-        val appClassKtSourceFile = secondProject.subProject("app").kotlinSourcesDir().resolve("AppClass.kt")
-        appClassKtSourceFile.modify {
-            it.replace("val testVal: String = \"text\"", "val testVal: Int = 1")
-        }
-        secondProject.build("build", buildOptions = options) {
-            assertTasksExecuted(":app:kaptGenerateStubsKotlin", ":app:kaptKotlin")
-        }
-
-        // Revert changes and check kapt tasks are from cache
-        appClassKtSourceFile.modify {
-            it.replace("val testVal: Int = 1", "val testVal: String = \"text\"")
-        }
-        secondProject.build("clean", "build", buildOptions = options) {
-            assertTasksFromCache(":app:kaptGenerateStubsKotlin", ":app:kaptKotlin")
         }
     }
 }
