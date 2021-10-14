@@ -14,6 +14,12 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.configurations.MetadataElementsConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.configurations.ResolvableMetadataConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.configurations.SourcesElementsConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.tasks.CompileAllTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.tasks.GeneratePsmTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.tasks.MetadataJarTask
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 import javax.inject.Inject
@@ -22,6 +28,19 @@ import kotlin.reflect.KClass
 abstract class KotlinPm20GradlePlugin @Inject constructor(
     @Inject private val softwareComponentFactory: SoftwareComponentFactory
 ) : Plugin<Project> {
+
+    private val PROTO_CONFIGURATIONS: List<ProtoConfiguration> = listOf(
+        ResolvableMetadataConfiguration,
+        MetadataElementsConfiguration,
+        SourcesElementsConfiguration,
+    )
+
+    private val PROTO_TASKS: List<ProtoTask<*>> = listOf(
+        CompileAllTask,
+        GeneratePsmTask,
+        MetadataJarTask, // needs to be after GeneratePsmTask
+    )
+
     override fun apply(project: Project) {
         checkGradleCompatibility("the Kotlin Multiplatform plugin", GradleVersion.version("6.1"))
 
@@ -31,8 +50,24 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
         createDefaultModules(project)
         customizeKotlinDependencies(project)
         registerDefaultVariantFactories(project)
+
+        registerConfigurationByProtos(project, PROTO_CONFIGURATIONS)
+        registerTasksByProtos(project, PROTO_TASKS)
+
         setupFragmentsMetadata(project)
         setupPublication(project)
+    }
+
+    private fun registerTasksByProtos(project: Project, protoTasks: List<ProtoTask<*>>) {
+        for (proto in protoTasks) {
+            proto.registerTask(project)
+        }
+    }
+
+    private fun registerConfigurationByProtos(project: Project, protoConfigurations: List<ProtoConfiguration>) {
+        for (proto in protoConfigurations) {
+            proto.registerInProject(project)
+        }
     }
 
     private fun registerDefaultVariantFactories(project: Project) {
@@ -72,7 +107,6 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
     private fun setupFragmentsMetadata(project: Project) {
         project.pm20Extension.modules.all { module ->
             configureMetadataResolutionAndBuild(module)
-            configureMetadataExposure(module)
         }
     }
 
@@ -85,8 +119,8 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
     private fun setupPublicationForModule(module: KotlinGradleModule) {
         val project = module.project
 
-        val metadataElements = project.configurations.getByName(metadataElementsConfigurationName(module))
-        val sourceElements = project.configurations.getByName(sourceElementsConfigurationName(module))
+        val metadataElements = module.configuration(MetadataElementsConfiguration)
+        val sourceElements = module.configuration(SourcesElementsConfiguration)
 
         val componentName = rootPublicationComponentName(module)
         val rootSoftwareComponent = softwareComponentFactory.adhoc(componentName).also {
@@ -96,7 +130,6 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
         }
 
         module.ifMadePublic {
-            val metadataDependencyConfiguration = resolvableMetadataConfiguration(module)
             project.pluginManager.withPlugin("maven-publish") {
                 project.extensions.getByType(PublishingExtension::class.java).publications.create(
                     componentName,
@@ -105,7 +138,7 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
                     publication.from(rootSoftwareComponent)
                     publication.versionMapping { versionMapping ->
                         versionMapping.allVariants {
-                            it.fromResolutionOf(metadataDependencyConfiguration)
+                            it.fromResolutionOf(module.configuration(ResolvableMetadataConfiguration))
                         }
                     }
                 }

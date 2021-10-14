@@ -5,32 +5,22 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCommonSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
-import org.jetbrains.kotlin.gradle.targets.metadata.createGenerateProjectStructureMetadataTask
-import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.tasks.CompileAllTask
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.withType
-import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
-import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 import java.util.concurrent.Callable
 
 internal fun configureMetadataResolutionAndBuild(module: KotlinGradleModule) {
     val project = module.project
-    createResolvableMetadataConfigurationForModule(module)
 
     val metadataCompilationRegistry = MetadataCompilationRegistry()
     project.pm20Extension.metadataCompilationRegistryByModuleId[module.moduleIdentifier] =
@@ -38,73 +28,8 @@ internal fun configureMetadataResolutionAndBuild(module: KotlinGradleModule) {
 
     configureMetadataCompilationsAndCreateRegistry(module, metadataCompilationRegistry)
 
-    configureMetadataJarTask(module, metadataCompilationRegistry)
-    generateAndExportProjectStructureMetadata(module)
-}
-
-internal fun configureMetadataExposure(module: KotlinGradleModule) {
-    val project = module.project
-    project.configurations.create(metadataElementsConfigurationName(module)).apply {
-        isCanBeConsumed = false
-        module.ifMadePublic {
-            isCanBeConsumed = true
-        }
-        isCanBeResolved = false
-        project.artifacts.add(name, project.tasks.named(metadataJarName(module)))
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
-        module.fragments.all { fragment ->
-            // FIXME: native api-implementation
-            project.addExtendsFromRelation(name, fragment.apiConfigurationName)
-        }
-        setModuleCapability(this, module)
-    }
-
-    val sourcesArtifactAppendix = dashSeparatedName(module.moduleClassifier, "all", "sources")
-    val sourcesArtifact = sourcesJarTaskNamed(
-        module.disambiguateName("allSourcesJar"),
-        project,
-        lazy { FragmentSourcesProvider().getAllFragmentSourcesAsMap(module).entries.associate { it.key.fragmentName to it.value.get() } },
-        sourcesArtifactAppendix
-    )
-    DocumentationVariantConfigurator().createSourcesElementsConfiguration(
-        project, sourceElementsConfigurationName(module),
-        sourcesArtifact.get(), "sources", ComputedCapability.fromModuleOrNull(module)
-    )
-}
-
-fun metadataElementsConfigurationName(module: KotlinGradleModule) =
-    module.disambiguateName("metadataElements")
-
-fun sourceElementsConfigurationName(module: KotlinGradleModule) =
-    module.disambiguateName("sourceElements")
-
-private fun generateAndExportProjectStructureMetadata(
-    module: KotlinGradleModule
-) {
-    val project = module.project
-    val projectStructureMetadata = project.createGenerateProjectStructureMetadataTask(module)
-    project.tasks.withType<Jar>().named(metadataJarName(module)).configure { jar ->
-        jar.from(projectStructureMetadata.map { it.resultFile }) { spec ->
-            spec.into("META-INF")
-                .rename { MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME }
-        }
-    }
     GlobalProjectStructureMetadataStorage.registerProjectStructureMetadata(project) {
         buildProjectStructureMetadata(module)
-    }
-}
-
-private fun createResolvableMetadataConfigurationForModule(module: KotlinGradleModule) {
-    val project = module.project
-    project.configurations.create(module.resolvableMetadataConfigurationName).apply {
-        isCanBeConsumed = false
-        isCanBeResolved = true
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-        module.fragments.all { fragment ->
-            project.addExtendsFromRelation(name, fragment.apiConfigurationName)
-            project.addExtendsFromRelation(name, fragment.implementationConfigurationName)
-        }
     }
 }
 
@@ -123,10 +48,9 @@ private fun configureMetadataCompilationsAndCreateRegistry(
         metadataResolutionByFragment[fragment] = transformation
         createExtractMetadataTask(project, fragment, transformation)
     }
-    val compileAllTask = project.registerTask<DefaultTask>(lowerCamelCaseName(module.moduleClassifier, "metadataClasses"))
     module.fragments.all { fragment ->
-        createCommonMetadataCompilation(fragment, compileAllTask, metadataCompilationRegistry)
-        createNativeMetadataCompilation(fragment, compileAllTask, metadataCompilationRegistry)
+        createCommonMetadataCompilation(fragment, metadataCompilationRegistry)
+        createNativeMetadataCompilation(fragment, metadataCompilationRegistry)
     }
     metadataCompilationRegistry.withAll { compilation ->
         project.tasks.matching { it.name == compilation.compileKotlinTaskName }.configureEach { task ->
@@ -135,37 +59,8 @@ private fun configureMetadataCompilationsAndCreateRegistry(
     }
 }
 
-private fun configureMetadataJarTask(
-    module: KotlinGradleModule,
-    registry: MetadataCompilationRegistry
-) {
-    val project = module.project
-    val allMetadataJar = project.registerTask<Jar>(metadataJarName(module)) { task ->
-        if (module.moduleClassifier != null) {
-            task.archiveClassifier.set(module.moduleClassifier)
-        }
-        task.archiveAppendix.set("metadata")
-        task.from()
-    }
-    module.fragments.all { fragment ->
-        allMetadataJar.configure { jar ->
-            val metadataOutput = project.files(Callable {
-                val compilationData = registry.byFragment(fragment)
-                project.filesWithUnpackedArchives(compilationData.output.allOutputs, setOf(KLIB_FILE_EXTENSION))
-            })
-            jar.from(metadataOutput) { spec ->
-                spec.into(fragment.fragmentName)
-            }
-        }
-    }
-}
-
-internal fun metadataJarName(module: KotlinGradleModule) =
-    lowerCamelCaseName(module.moduleClassifier, "metadataJar")
-
 private fun createCommonMetadataCompilation(
     fragment: KotlinGradleFragment,
-    compileAllTask: TaskProvider<DefaultTask>,
     metadataCompilationRegistry: MetadataCompilationRegistry
 ) {
     val module = fragment.containingModule
@@ -176,7 +71,7 @@ private fun createCommonMetadataCompilation(
             project,
             fragment,
             module,
-            compileAllTask,
+            module.taskProvider(CompileAllTask),
             metadataCompilationRegistry,
             lazy { resolvedMetadataProviders(fragment) }
         )
@@ -186,7 +81,6 @@ private fun createCommonMetadataCompilation(
 
 private fun createNativeMetadataCompilation(
     fragment: KotlinGradleFragment,
-    compileAllTask: TaskProvider<DefaultTask>,
     metadataCompilationRegistry: MetadataCompilationRegistry
 ) {
     val module = fragment.containingModule
@@ -197,7 +91,7 @@ private fun createNativeMetadataCompilation(
             project,
             fragment,
             module,
-            compileAllTask,
+            module.taskProvider(CompileAllTask),
             metadataCompilationRegistry,
             lazy { resolvedMetadataProviders(fragment) }
         )

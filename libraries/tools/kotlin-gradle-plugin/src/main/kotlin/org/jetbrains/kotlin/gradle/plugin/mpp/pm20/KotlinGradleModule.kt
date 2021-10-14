@@ -67,9 +67,6 @@ open class KotlinGradleModuleInternal(
     override fun toString(): String = "$moduleIdentifier (Gradle)"
 }
 
-internal val KotlinGradleModule.resolvableMetadataConfigurationName: String
-    get() = lowerCamelCaseName(name, "DependenciesMetadata")
-
 internal val KotlinGradleModule.isMain
     get() = moduleIdentifier.moduleClassifier == null
 

@@ -507,10 +507,6 @@ internal class NativeSharedCompilationProcessor(
     override fun run() = Unit
 }
 
-internal fun Project.createGenerateProjectStructureMetadataTask(module: KotlinGradleModule): TaskProvider<GenerateProjectStructureMetadata> =
-    project.registerTask(lowerCamelCaseName("generate", module.moduleClassifier, "ProjectStructureMetadata")) { task ->
-        task.lazyKotlinProjectStructureMetadata = lazy { buildProjectStructureMetadata(module) }
-    }
 
 internal fun Project.createGenerateProjectStructureMetadataTask(): TaskProvider<GenerateProjectStructureMetadata> =
     project.registerTask(lowerCamelCaseName("generateProjectStructureMetadata")) { task ->

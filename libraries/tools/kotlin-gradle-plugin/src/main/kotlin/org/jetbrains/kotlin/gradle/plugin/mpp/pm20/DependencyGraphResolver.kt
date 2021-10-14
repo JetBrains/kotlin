@@ -11,17 +11,14 @@ import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.configurations.ResolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.project.model.*
 
-internal fun resolvableMetadataConfiguration(
-    module: KotlinGradleModule
-) = module.project.configurations.getByName(module.resolvableMetadataConfigurationName)
-
 internal fun configurationToResolveMetadataDependencies(project: Project, requestingModule: KotlinModule): Configuration =
     when (project.topLevelExtension) {
-        is KotlinPm20ProjectExtension -> resolvableMetadataConfiguration(requestingModule as KotlinGradleModule)
+        is KotlinPm20ProjectExtension -> (requestingModule as KotlinGradleModule).configuration(ResolvableMetadataConfiguration)
         else -> resolvableMetadataConfiguration(
             project,
             project.kotlinExtension.sourceSets, // take dependencies from all source sets; TODO introduce consistency scopes?

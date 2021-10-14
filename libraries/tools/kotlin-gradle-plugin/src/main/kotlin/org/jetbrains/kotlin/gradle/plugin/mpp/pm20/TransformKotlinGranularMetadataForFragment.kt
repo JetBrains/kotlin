@@ -11,6 +11,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.ExtractableMetadataFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.configurations.ResolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvider
 import org.jetbrains.kotlin.gradle.utils.getValue
 import java.io.File
@@ -35,7 +36,7 @@ internal open class TransformKotlinGranularMetadataForFragment
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val allSourceSetsMetadataConfiguration: FileCollection by lazy {
-        project.files(resolvableMetadataConfiguration(fragment.containingModule))
+        project.files(fragment.containingModule.configuration(ResolvableMetadataConfiguration))
     }
 
     @Suppress("unused") // Gradle input
