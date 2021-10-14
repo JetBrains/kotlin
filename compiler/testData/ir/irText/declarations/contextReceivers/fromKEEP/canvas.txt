@@ -1,0 +1,117 @@
+FILE fqName:<root> fileName:/canvas.kt
+  CLASS INTERFACE name:Canvas modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Canvas
+    PROPERTY name:suffix visibility:public modality:ABSTRACT [val]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-suffix> visibility:public modality:ABSTRACT <> ($this:<root>.Canvas) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:suffix visibility:public modality:ABSTRACT [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Canvas
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS INTERFACE name:Shape modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Shape
+    FUN name:draw visibility:public modality:ABSTRACT <> ($this:<root>.Shape, <this>:<root>.Canvas) returnType:kotlin.String
+      $this: VALUE_PARAMETER name:<this> type:<root>.Shape
+      VALUE_PARAMETER name:<this> index:0 type:<root>.Canvas
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:Circle modality:FINAL visibility:public superTypes:[<root>.Shape]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Circle
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Circle [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Circle modality:FINAL visibility:public superTypes:[<root>.Shape]'
+    FUN name:draw visibility:public modality:OPEN <> ($this:<root>.Circle, <this>:<root>.Canvas) returnType:kotlin.String
+      overridden:
+        public abstract fun draw (<this>: <root>.Canvas): kotlin.String declared in <root>.Shape
+      $this: VALUE_PARAMETER name:<this> type:<root>.Circle
+      VALUE_PARAMETER name:<this> index:0 type:<root>.Canvas
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun draw (<this>: <root>.Canvas): kotlin.String declared in <root>.Circle'
+          CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
+            $this: CONST String type=kotlin.String value="OK"
+            other: CALL 'public abstract fun <get-suffix> (): kotlin.String declared in <root>.Canvas' type=kotlin.String origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Canvas declared in <root>.Circle.draw' type=<root>.Canvas origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Shape
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Shape
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.Shape
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS OBJECT name:MyCanvas modality:FINAL visibility:public superTypes:[<root>.Canvas]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyCanvas
+    CONSTRUCTOR visibility:private <> () returnType:<root>.MyCanvas [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:MyCanvas modality:FINAL visibility:public superTypes:[<root>.Canvas]'
+    PROPERTY name:suffix visibility:public modality:OPEN [val]
+      overridden:
+        public abstract suffix: kotlin.String [val]
+      FIELD PROPERTY_BACKING_FIELD name:suffix type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value=""
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-suffix> visibility:public modality:OPEN <> ($this:<root>.MyCanvas) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:suffix visibility:public modality:OPEN [val]
+        overridden:
+          public abstract fun <get-suffix> (): kotlin.String declared in <root>.Canvas
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyCanvas
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-suffix> (): kotlin.String declared in <root>.MyCanvas'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:suffix type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.MyCanvas declared in <root>.MyCanvas.<get-suffix>' type=<root>.MyCanvas origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Canvas
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Canvas
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.Canvas
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.String origin=null
+          <T>: <root>.MyCanvas
+          <R>: kotlin.String
+          receiver: GET_OBJECT 'CLASS OBJECT name:MyCanvas modality:FINAL visibility:public superTypes:[<root>.Canvas]' type=<root>.MyCanvas
+          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.MyCanvas, kotlin.String> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.MyCanvas) returnType:kotlin.String
+              $receiver: VALUE_PARAMETER name:$this$with type:<root>.MyCanvas
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
+                  CALL 'public open fun draw (<this>: <root>.Canvas): kotlin.String declared in <root>.Circle' type=kotlin.String origin=null
+                    $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Circle' type=<root>.Circle origin=null
+                    <this>: GET_VAR '$this$with: <root>.MyCanvas declared in <root>.box.<anonymous>' type=<root>.MyCanvas origin=null

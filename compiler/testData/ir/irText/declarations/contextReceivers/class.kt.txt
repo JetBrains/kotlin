@@ -1,0 +1,34 @@
+class Outer {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: Int
+    field = 1
+    get
+
+}
+
+class Inner {
+  private /* final field */ val additionalReceiverField0: Outer
+  constructor(<this>: Outer, arg: Any) /* primary */ {
+    super/*Any*/()
+    <this>.#additionalReceiverField0 = <this>
+    /* <init>() */
+
+  }
+
+  fun bar(): Int {
+    return <this>.#additionalReceiverField0.<get-x>()
+  }
+
+}
+
+fun f(outer: Outer) {
+  with<Outer, Inner>(receiver = outer, block = local fun Outer.<anonymous>(): Inner {
+    return Inner(<this> = $this$with, arg = 3)
+  }
+) /*~> Unit */
+}

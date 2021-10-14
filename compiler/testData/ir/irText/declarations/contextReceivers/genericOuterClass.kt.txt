@@ -1,0 +1,29 @@
+class A<T : Any?> {
+  private /* final field */ val contextReceiverField0: T
+  constructor(<this>: T) /* primary */ {
+    super/*Any*/()
+    <this>.#contextReceiverField0 = <this>
+    /* <init>() */
+
+  }
+
+}
+
+class B<P : Any?> {
+  private /* final field */ val contextReceiverField0: Collection<P>
+  constructor(<this>: Collection<P>) /* primary */ {
+    super/*Any*/()
+    <this>.#contextReceiverField0 = <this>
+    /* <init>() */
+
+  }
+
+}
+
+fun Int.foo() {
+  A<Int>(<this> = <this>) /*~> Unit */
+}
+
+fun Collection<Int>.bar() {
+  B<Int>(<this> = <this>) /*~> Unit */
+}

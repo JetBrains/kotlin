@@ -1,0 +1,152 @@
+FILE fqName:<root> fileName:/lazy.kt
+  CLASS INTERFACE name:Lazy modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Lazy<T of <root>.Lazy>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:test1 visibility:public modality:FINAL <> (<this>:<root>.Lazy<kotlin.Int>, <this>:<root>.Lazy<kotlin.CharSequence>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:<this> index:0 type:<root>.Lazy<kotlin.Int>
+    VALUE_PARAMETER name:<this> index:1 type:<root>.Lazy<kotlin.CharSequence>
+    BLOCK_BODY
+  FUN name:test2 visibility:public modality:FINAL <T> ($receiver:<root>.Lazy<kotlin.Int>, <this>:<root>.Lazy<T of <root>.test2>) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.Lazy<kotlin.Int>
+    VALUE_PARAMETER name:<this> index:0 type:<root>.Lazy<T of <root>.test2>
+    BLOCK_BODY
+  FUN name:test3 visibility:public modality:FINAL <T> ($receiver:<root>.Lazy<kotlin.Int>, <this>:<root>.Lazy<<root>.Lazy<T of <root>.test3>>) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.Lazy<kotlin.Int>
+    VALUE_PARAMETER name:<this> index:0 type:<root>.Lazy<<root>.Lazy<T of <root>.test3>>
+    BLOCK_BODY
+  FUN name:f visibility:public modality:FINAL <T> (lazy1:<root>.Lazy<kotlin.Int>, lazy2:<root>.Lazy<kotlin.CharSequence>, lazyT:<root>.Lazy<T of <root>.f>, lazyLazyT:<root>.Lazy<<root>.Lazy<T of <root>.f>>) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    VALUE_PARAMETER name:lazy1 index:0 type:<root>.Lazy<kotlin.Int>
+    VALUE_PARAMETER name:lazy2 index:1 type:<root>.Lazy<kotlin.CharSequence>
+    VALUE_PARAMETER name:lazyT index:2 type:<root>.Lazy<T of <root>.f>
+    VALUE_PARAMETER name:lazyLazyT index:3 type:<root>.Lazy<<root>.Lazy<T of <root>.f>>
+    BLOCK_BODY
+      CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+        <T>: <root>.Lazy<kotlin.Int>
+        <R>: kotlin.Unit
+        receiver: GET_VAR 'lazy1: <root>.Lazy<kotlin.Int> declared in <root>.f' type=<root>.Lazy<kotlin.Int> origin=null
+        block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.Lazy<kotlin.Int>, kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Lazy<kotlin.Int>) returnType:kotlin.Unit
+            $receiver: VALUE_PARAMETER name:$this$with type:<root>.Lazy<kotlin.Int>
+            BLOCK_BODY
+              CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+                <T>: <root>.Lazy<kotlin.CharSequence>
+                <R>: kotlin.Unit
+                receiver: GET_VAR 'lazy2: <root>.Lazy<kotlin.CharSequence> declared in <root>.f' type=<root>.Lazy<kotlin.CharSequence> origin=null
+                block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.Lazy<kotlin.CharSequence>, kotlin.Unit> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Lazy<kotlin.CharSequence>) returnType:kotlin.Unit
+                    $receiver: VALUE_PARAMETER name:$this$with type:<root>.Lazy<kotlin.CharSequence>
+                    BLOCK_BODY
+                      CALL 'public final fun test1 (<this>: <root>.Lazy<kotlin.Int>, <this>: <root>.Lazy<kotlin.CharSequence>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                        <this>: GET_VAR '$this$with: <root>.Lazy<kotlin.Int> declared in <root>.f.<anonymous>' type=<root>.Lazy<kotlin.Int> origin=null
+                        <this>: GET_VAR '$this$with: <root>.Lazy<kotlin.CharSequence> declared in <root>.f.<anonymous>.<anonymous>' type=<root>.Lazy<kotlin.CharSequence> origin=null
+                      CALL 'public final fun test2 <T> (<this>: <root>.Lazy<T of <root>.test2>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                        <T>: kotlin.CharSequence
+                        $receiver: GET_VAR '$this$with: <root>.Lazy<kotlin.Int> declared in <root>.f.<anonymous>' type=<root>.Lazy<kotlin.Int> origin=null
+                        <this>: GET_VAR '$this$with: <root>.Lazy<kotlin.CharSequence> declared in <root>.f.<anonymous>.<anonymous>' type=<root>.Lazy<kotlin.CharSequence> origin=null
+      CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+        <T>: <root>.Lazy<kotlin.CharSequence>
+        <R>: kotlin.Unit
+        receiver: GET_VAR 'lazy2: <root>.Lazy<kotlin.CharSequence> declared in <root>.f' type=<root>.Lazy<kotlin.CharSequence> origin=null
+        block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.Lazy<kotlin.CharSequence>, kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Lazy<kotlin.CharSequence>) returnType:kotlin.Unit
+            $receiver: VALUE_PARAMETER name:$this$with type:<root>.Lazy<kotlin.CharSequence>
+            BLOCK_BODY
+              CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+                <T>: <root>.Lazy<kotlin.Int>
+                <R>: kotlin.Unit
+                receiver: GET_VAR 'lazy1: <root>.Lazy<kotlin.Int> declared in <root>.f' type=<root>.Lazy<kotlin.Int> origin=null
+                block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.Lazy<kotlin.Int>, kotlin.Unit> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Lazy<kotlin.Int>) returnType:kotlin.Unit
+                    $receiver: VALUE_PARAMETER name:$this$with type:<root>.Lazy<kotlin.Int>
+                    BLOCK_BODY
+                      CALL 'public final fun test1 (<this>: <root>.Lazy<kotlin.Int>, <this>: <root>.Lazy<kotlin.CharSequence>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                        <this>: GET_VAR '$this$with: <root>.Lazy<kotlin.Int> declared in <root>.f.<anonymous>.<anonymous>' type=<root>.Lazy<kotlin.Int> origin=null
+                        <this>: GET_VAR '$this$with: <root>.Lazy<kotlin.CharSequence> declared in <root>.f.<anonymous>' type=<root>.Lazy<kotlin.CharSequence> origin=null
+                      CALL 'public final fun test2 <T> (<this>: <root>.Lazy<T of <root>.test2>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                        <T>: kotlin.Int
+                        $receiver: GET_VAR '$this$with: <root>.Lazy<kotlin.Int> declared in <root>.f.<anonymous>.<anonymous>' type=<root>.Lazy<kotlin.Int> origin=null
+                        <this>: GET_VAR '$this$with: <root>.Lazy<kotlin.Int> declared in <root>.f.<anonymous>.<anonymous>' type=<root>.Lazy<kotlin.Int> origin=null
+      CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+        <T>: <root>.Lazy<T of <root>.f>
+        <R>: kotlin.Unit
+        receiver: GET_VAR 'lazyT: <root>.Lazy<T of <root>.f> declared in <root>.f' type=<root>.Lazy<T of <root>.f> origin=null
+        block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.Lazy<T of <root>.f>, kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Lazy<T of <root>.f>) returnType:kotlin.Unit
+            $receiver: VALUE_PARAMETER name:$this$with type:<root>.Lazy<T of <root>.f>
+            BLOCK_BODY
+              CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+                <T>: <root>.Lazy<kotlin.Int>
+                <R>: kotlin.Unit
+                receiver: GET_VAR 'lazy1: <root>.Lazy<kotlin.Int> declared in <root>.f' type=<root>.Lazy<kotlin.Int> origin=null
+                block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.Lazy<kotlin.Int>, kotlin.Unit> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Lazy<kotlin.Int>) returnType:kotlin.Unit
+                    $receiver: VALUE_PARAMETER name:$this$with type:<root>.Lazy<kotlin.Int>
+                    BLOCK_BODY
+                      CALL 'public final fun test2 <T> (<this>: <root>.Lazy<T of <root>.test2>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                        <T>: kotlin.Int
+                        $receiver: GET_VAR '$this$with: <root>.Lazy<kotlin.Int> declared in <root>.f.<anonymous>.<anonymous>' type=<root>.Lazy<kotlin.Int> origin=null
+                        <this>: GET_VAR '$this$with: <root>.Lazy<kotlin.Int> declared in <root>.f.<anonymous>.<anonymous>' type=<root>.Lazy<kotlin.Int> origin=null
+      CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+        <T>: <root>.Lazy<<root>.Lazy<T of <root>.f>>
+        <R>: kotlin.Unit
+        receiver: GET_VAR 'lazyLazyT: <root>.Lazy<<root>.Lazy<T of <root>.f>> declared in <root>.f' type=<root>.Lazy<<root>.Lazy<T of <root>.f>> origin=null
+        block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.Lazy<<root>.Lazy<T of <root>.f>>, kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Lazy<<root>.Lazy<T of <root>.f>>) returnType:kotlin.Unit
+            $receiver: VALUE_PARAMETER name:$this$with type:<root>.Lazy<<root>.Lazy<T of <root>.f>>
+            BLOCK_BODY
+              CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+                <T>: <root>.Lazy<kotlin.Int>
+                <R>: kotlin.Unit
+                receiver: GET_VAR 'lazy1: <root>.Lazy<kotlin.Int> declared in <root>.f' type=<root>.Lazy<kotlin.Int> origin=null
+                block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.Lazy<kotlin.Int>, kotlin.Unit> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Lazy<kotlin.Int>) returnType:kotlin.Unit
+                    $receiver: VALUE_PARAMETER name:$this$with type:<root>.Lazy<kotlin.Int>
+                    BLOCK_BODY
+                      CALL 'public final fun test2 <T> (<this>: <root>.Lazy<T of <root>.test2>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                        <T>: kotlin.Int
+                        $receiver: GET_VAR '$this$with: <root>.Lazy<kotlin.Int> declared in <root>.f.<anonymous>.<anonymous>' type=<root>.Lazy<kotlin.Int> origin=null
+                        <this>: GET_VAR '$this$with: <root>.Lazy<kotlin.Int> declared in <root>.f.<anonymous>.<anonymous>' type=<root>.Lazy<kotlin.Int> origin=null
+                      CALL 'public final fun test3 <T> (<this>: <root>.Lazy<<root>.Lazy<T of <root>.test3>>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                        <T>: T of <root>.f
+                        $receiver: GET_VAR '$this$with: <root>.Lazy<kotlin.Int> declared in <root>.f.<anonymous>.<anonymous>' type=<root>.Lazy<kotlin.Int> origin=null
+                        <this>: GET_VAR '$this$with: <root>.Lazy<<root>.Lazy<T of <root>.f>> declared in <root>.f.<anonymous>' type=<root>.Lazy<<root>.Lazy<T of <root>.f>> origin=null
+      CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+        <T>: <root>.Lazy<kotlin.Int>
+        <R>: kotlin.Unit
+        receiver: GET_VAR 'lazy1: <root>.Lazy<kotlin.Int> declared in <root>.f' type=<root>.Lazy<kotlin.Int> origin=null
+        block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.Lazy<kotlin.Int>, kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Lazy<kotlin.Int>) returnType:kotlin.Unit
+            $receiver: VALUE_PARAMETER name:$this$with type:<root>.Lazy<kotlin.Int>
+            BLOCK_BODY
+              CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+                <T>: <root>.Lazy<<root>.Lazy<T of <root>.f>>
+                <R>: kotlin.Unit
+                receiver: GET_VAR 'lazyLazyT: <root>.Lazy<<root>.Lazy<T of <root>.f>> declared in <root>.f' type=<root>.Lazy<<root>.Lazy<T of <root>.f>> origin=null
+                block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.Lazy<<root>.Lazy<T of <root>.f>>, kotlin.Unit> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Lazy<<root>.Lazy<T of <root>.f>>) returnType:kotlin.Unit
+                    $receiver: VALUE_PARAMETER name:$this$with type:<root>.Lazy<<root>.Lazy<T of <root>.f>>
+                    BLOCK_BODY
+                      CALL 'public final fun test2 <T> (<this>: <root>.Lazy<T of <root>.test2>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                        <T>: <root>.Lazy<T of <root>.f>
+                        $receiver: GET_VAR '$this$with: <root>.Lazy<kotlin.Int> declared in <root>.f.<anonymous>' type=<root>.Lazy<kotlin.Int> origin=null
+                        <this>: GET_VAR '$this$with: <root>.Lazy<<root>.Lazy<T of <root>.f>> declared in <root>.f.<anonymous>.<anonymous>' type=<root>.Lazy<<root>.Lazy<T of <root>.f>> origin=null
+                      CALL 'public final fun test3 <T> (<this>: <root>.Lazy<<root>.Lazy<T of <root>.test3>>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                        <T>: T of <root>.f
+                        $receiver: GET_VAR '$this$with: <root>.Lazy<kotlin.Int> declared in <root>.f.<anonymous>' type=<root>.Lazy<kotlin.Int> origin=null
+                        <this>: GET_VAR '$this$with: <root>.Lazy<<root>.Lazy<T of <root>.f>> declared in <root>.f.<anonymous>.<anonymous>' type=<root>.Lazy<<root>.Lazy<T of <root>.f>> origin=null

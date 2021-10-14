@@ -1,0 +1,30 @@
+FILE fqName:<root> fileName:/overloading.kt
+  FUN name:foo visibility:public modality:FINAL <> (<this>:kotlin.Int, <this>:kotlin.String) returnType:kotlin.Int
+    VALUE_PARAMETER name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER name:<this> index:1 type:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun foo (<this>: kotlin.Int, <this>: kotlin.String): kotlin.Int declared in <root>'
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+          $this: GET_VAR '<this>: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
+          other: CONST Int type=kotlin.Int value=42
+  FUN name:foo visibility:public modality:FINAL <> (<this>:kotlin.Int) returnType:kotlin.Int
+    VALUE_PARAMETER name:<this> index:0 type:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun foo (<this>: kotlin.Int): kotlin.Int declared in <root>'
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+          $this: GET_VAR '<this>: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
+          other: CONST Int type=kotlin.Int value=42
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.Int origin=null
+          <T>: kotlin.Int
+          <R>: kotlin.Int
+          receiver: CONST Int type=kotlin.Int value=42
+          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.Int) returnType:kotlin.Int
+              $receiver: VALUE_PARAMETER name:$this$with type:kotlin.Int
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.test'
+                  CALL 'public final fun foo (<this>: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                    <this>: GET_VAR '$this$with: kotlin.Int declared in <root>.test.<anonymous>' type=kotlin.Int origin=null

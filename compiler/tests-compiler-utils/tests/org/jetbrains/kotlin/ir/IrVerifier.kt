@@ -115,7 +115,21 @@ class IrVerifier(private val assertions: Assertions) : IrElementVisitorVoid {
 
         }
 
-        val declaredValueParameters = declaration.valueParameters.map { it.descriptor }
+        val expectedContextReceivers = functionDescriptor.contextReceiverParameters
+        val actualContextReceivers =
+            declaration.valueParameters.take(declaration.contextReceiverParametersCount).map { it.descriptor }
+        if (expectedContextReceivers.size != actualContextReceivers.size) {
+            error("$functionDescriptor: Context receivers mismatch: $expectedContextReceivers != $actualContextReceivers")
+        } else {
+            expectedContextReceivers.zip(actualContextReceivers).forEach { (expectedContextReceiver, actualContextReceiver) ->
+                require(expectedContextReceiver == actualContextReceiver) {
+                    "$functionDescriptor: Context receivers mismatch: $expectedContextReceiver != $actualContextReceiver"
+                }
+            }
+        }
+
+        val declaredValueParameters =
+            declaration.valueParameters.drop(declaration.contextReceiverParametersCount).map { it.descriptor }
         val actualValueParameters = functionDescriptor.valueParameters
         if (declaredValueParameters.size != actualValueParameters.size) {
             error("$functionDescriptor: Value parameters mismatch: $declaredValueParameters != $actualValueParameters")

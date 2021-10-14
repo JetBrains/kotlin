@@ -1,0 +1,55 @@
+class A<T : Any?> {
+  constructor(a: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val a: T
+    field = a
+    get
+
+}
+
+class B {
+  constructor(b: Any) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val b: Any
+    field = b
+    get
+
+}
+
+class C {
+  constructor(c: Any) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val c: Any
+    field = c
+    get
+
+}
+
+fun f(<this>: A<Int>, <this>: A<String>, <this>: B) {
+  <this>.<get-a>().toFloat() /*~> Unit */
+  <this>.<get-a>().<get-length>() /*~> Unit */
+  <this>.<get-b>() /*~> Unit */
+}
+
+val C.p: Int
+  get(<this>: B, <this>: A<String>, <this>: A<Int>): Int {
+    <this>.<get-a>().toFloat() /*~> Unit */
+    <this>.<get-a>().<get-length>() /*~> Unit */
+    <this>.<get-b>() /*~> Unit */
+    <this>.<get-c>() /*~> Unit */
+    <this>.<get-c>() /*~> Unit */
+    <this>.<get-c>() /*~> Unit */
+    return 1
+  }

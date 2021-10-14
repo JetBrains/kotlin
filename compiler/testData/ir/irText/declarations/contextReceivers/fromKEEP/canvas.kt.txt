@@ -1,0 +1,43 @@
+interface Canvas {
+  abstract val suffix: String
+    abstract get
+
+}
+
+interface Shape {
+  abstract fun draw(<this>: Canvas): String
+
+}
+
+class Circle : Shape {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun draw(<this>: Canvas): String {
+    return "OK".plus(other = <this>.<get-suffix>())
+  }
+
+}
+
+object MyCanvas : Canvas {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override val suffix: String
+    field = ""
+    override get
+
+}
+
+fun box(): String {
+  return with<MyCanvas, String>(receiver = MyCanvas, block = local fun MyCanvas.<anonymous>(): String {
+    return Circle().draw(<this> = $this$with)
+  }
+)
+}
