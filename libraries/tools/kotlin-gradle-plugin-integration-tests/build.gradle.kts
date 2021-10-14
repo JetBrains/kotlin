@@ -101,7 +101,7 @@ fun Test.advanceGradleVersion() {
 projectTest(
     "test",
     shortenTempRootName = shortenTempRootName,
-    jUnit5Enabled = true
+    jUnitMode = JUnitMode.JUnit5
 ) {
     includeMppAndAndroid(false)
     includeNative(false)
@@ -111,7 +111,7 @@ projectTest(
 projectTest(
     "testAdvanceGradleVersion",
     shortenTempRootName = shortenTempRootName,
-    jUnit5Enabled = true
+    jUnitMode = JUnitMode.JUnit5
 ) {
     advanceGradleVersion()
     includeMppAndAndroid(false)
@@ -124,7 +124,7 @@ if (isTeamcityBuild) {
     projectTest(
         "testNative",
         shortenTempRootName = shortenTempRootName,
-        jUnit5Enabled = true
+        jUnitMode = JUnitMode.JUnit5
     ) {
         includeNative(true)
         finalizedBy(cleanTestKitCacheTask)
@@ -133,7 +133,7 @@ if (isTeamcityBuild) {
     projectTest(
         "testAdvanceGradleVersionNative",
         shortenTempRootName = shortenTempRootName,
-        jUnit5Enabled = true
+        jUnitMode = JUnitMode.JUnit5
     ) {
         advanceGradleVersion()
         includeNative(true)
@@ -143,7 +143,7 @@ if (isTeamcityBuild) {
     projectTest(
         "testMppAndAndroid",
         shortenTempRootName = shortenTempRootName,
-        jUnit5Enabled = true
+        jUnitMode = JUnitMode.JUnit5
     ) {
         includeMppAndAndroid(true)
         finalizedBy(cleanTestKitCacheTask)
@@ -152,7 +152,7 @@ if (isTeamcityBuild) {
     projectTest(
         "testAdvanceGradleVersionMppAndAndroid",
         shortenTempRootName = shortenTempRootName,
-        jUnit5Enabled = true
+        jUnitMode = JUnitMode.JUnit5
     ) {
         advanceGradleVersion()
         includeMppAndAndroid(true)

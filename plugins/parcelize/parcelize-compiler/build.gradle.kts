@@ -75,7 +75,7 @@ sourcesJar()
 
 testsJar()
 
-projectTest(jUnit5Enabled = true) {
+projectTest(jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
     dependsOn(parcelizeRuntimeForTests)
     dependsOn(":dist")

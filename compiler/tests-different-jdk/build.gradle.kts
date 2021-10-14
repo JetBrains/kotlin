@@ -33,7 +33,7 @@ fun Project.codegenTest(
     body: Test.() -> Unit = {}
 ): TaskProvider<Test> = projectTest(
     taskName = "codegenTarget${targetInTestClass}Jvm${jvm}Test",
-    jUnit5Enabled = true
+    jUnitMode = JUnitMode.JUnit5
 ) {
     dependsOn(":dist")
     workingDir = rootDir

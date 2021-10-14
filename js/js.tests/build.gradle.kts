@@ -243,7 +243,7 @@ fun Test.setUpBoxTests() {
 
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
 
-projectTest(parallel = true) {
+projectTest(parallel = true, jUnitMode = JUnitMode.Mix) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = true)
     systemProperty("kotlin.js.ir.pir", "false")
     maxHeapSize = "3g"
@@ -263,7 +263,7 @@ projectTest(parallel = true) {
     configureTestDistribution()
 }
 
-projectTest("jsTest", parallel = true, jUnit5Enabled = true) {
+projectTest("jsTest", parallel = true, jUnitMode = JUnitMode.Mix) {
     // PIR temporary disabled
     systemProperty("kotlin.js.ir.pir", "false")
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false)
@@ -303,7 +303,7 @@ projectTest("jsPirTest", true) {
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true)
 }
 
-projectTest("quickTest", parallel = true, jUnit5Enabled = true) {
+projectTest("quickTest", parallel = true, jUnitMode = JUnitMode.Mix) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false)
     maxHeapSize = "3g"
     systemProperty("kotlin.js.skipMinificationTest", "true")

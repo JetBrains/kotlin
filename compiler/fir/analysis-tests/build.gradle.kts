@@ -56,7 +56,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
-projectTest(jUnit5Enabled = true) {
+projectTest(jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     workingDir = rootDir
     jvmArgs!!.removeIf { it.contains("-Xmx") }

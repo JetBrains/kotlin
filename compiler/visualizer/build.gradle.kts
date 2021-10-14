@@ -40,7 +40,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
-projectTest(parallel = true, jUnit5Enabled = true) {
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     workingDir = rootDir
 
     useJUnitPlatform()
