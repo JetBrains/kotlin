@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
+import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import javax.inject.Inject
 
@@ -32,8 +33,14 @@ constructor(
 ) :
     KotlinTest(),
     RequiresNpmDependencies {
-    private val nodeJs= NodeJsRootPlugin.apply(project.rootProject)
-    private val npmProject = compilation.npmProject
+    @Transient
+    private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+
+    private val npmResolutionManager by project.provider { nodeJs.npmResolutionManager }
+
+    private val nodeExecutable by project.provider { nodeJs.requireConfigured().nodeExecutable }
+
+    private val npmProjectDir by project.provider { compilation.npmProject.dir }
 
     private val projectPath = project.path
 
@@ -144,14 +151,14 @@ constructor(
     }
 
     override fun executeTests() {
-        nodeJs.npmResolutionManager.checkRequiredDependencies(task = this, services = services, logger = logger, projectPath = projectPath)
+        npmResolutionManager.checkRequiredDependencies(task = this, services = services, logger = logger, projectPath = projectPath)
         super.executeTests()
     }
 
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
         val forkOptions = DefaultProcessForkOptions(fileResolver)
-        forkOptions.workingDir = npmProject.dir
-        forkOptions.executable = nodeJs.requireConfigured().nodeExecutable
+        forkOptions.workingDir = npmProjectDir
+        forkOptions.executable = nodeExecutable
 
         val nodeJsArgs = mutableListOf<String>()
 
