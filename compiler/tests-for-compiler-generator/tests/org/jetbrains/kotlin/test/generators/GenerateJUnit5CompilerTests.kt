@@ -223,6 +223,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             testClass<AbstractIrInterpreterAfterPsi2IrTest> {
                 model("ir/interpreter", excludeDirs = listOf("helpers"))
             }
+
+            testClass<AbstractFirSteppingTest> {
+                model("debug/stepping")
+            }
         }
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/fir/fir2ir/testData") {
