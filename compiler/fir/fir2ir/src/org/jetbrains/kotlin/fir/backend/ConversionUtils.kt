@@ -62,6 +62,12 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal fun <T : IrElement> FirElement.convertWithOffsets(
     f: (startOffset: Int, endOffset: Int) -> T
 ): T {
+    return source.convertWithOffsets(f)
+}
+
+internal fun <T : IrElement> FirSourceElement?.convertWithOffsets(
+    f: (startOffset: Int, endOffset: Int) -> T
+): T {
     val psi = psi
     if (psi is PsiCompiledElement || psi == null) return f(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
     val startOffset = psi.startOffsetSkippingComments

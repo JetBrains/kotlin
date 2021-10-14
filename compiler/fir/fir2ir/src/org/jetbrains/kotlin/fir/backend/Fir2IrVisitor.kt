@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
@@ -534,13 +533,13 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun FirBlock.mapToIrStatements(): List<IrStatement?> {
-        return statements.map { it.toIrStatement() }
+    private fun List<FirStatement>.mapToIrStatements(): List<IrStatement?> {
+        return map { it.toIrStatement() }
     }
 
     internal fun convertToIrBlockBody(block: FirBlock): IrBlockBody {
         return block.convertWithOffsets { startOffset, endOffset ->
-            val irStatements = block.mapToIrStatements()
+            val irStatements = block.statements.mapToIrStatements()
             irFactory.createBlockBody(
                 startOffset, endOffset,
                 if (irStatements.isNotEmpty()) {
@@ -563,8 +562,15 @@ class Fir2IrVisitor(
         }
 
     private fun FirBlock.convertToIrExpressionOrBlock(origin: IrStatementOrigin? = null): IrExpression {
-        if (statements.size == 1) {
-            val firStatement = statements.single()
+        return statements.convertToIrExpressionOrBlock(source, origin)
+    }
+
+    private fun List<FirStatement>.convertToIrExpressionOrBlock(
+        source: FirSourceElement?,
+        origin: IrStatementOrigin? = null
+    ): IrExpression {
+        if (size == 1) {
+            val firStatement = single()
             if (firStatement is FirExpression &&
                 (firStatement !is FirBlock || firStatement.source?.kind != FirFakeSourceElementKind.DesugaredForLoop)
             ) {
@@ -574,35 +580,30 @@ class Fir2IrVisitor(
         val type = if (origin?.isLoop == true)
             irBuiltIns.unitType
         else
-            (statements.lastOrNull() as? FirExpression)?.typeRef?.toIrType() ?: irBuiltIns.unitType
-        return convertWithOffsets { startOffset, endOffset ->
+            (lastOrNull() as? FirExpression)?.typeRef?.toIrType() ?: irBuiltIns.unitType
+        return source.convertWithOffsets { startOffset, endOffset ->
+            val itStatements = mapToIrStatements().filterNotNull()
             if (origin == IrStatementOrigin.DO_WHILE_LOOP) {
-                IrCompositeImpl(
-                    startOffset, endOffset, type, origin,
-                    mapToIrStatements().filterNotNull()
-                )
+                IrCompositeImpl(startOffset, endOffset, type, origin, itStatements)
             } else {
-                IrBlockImpl(
-                    startOffset, endOffset, type, getBlockOrigin() ?: origin,
-                    mapToIrStatements().filterNotNull()
-                )
+                IrBlockImpl(startOffset, endOffset, type, getStatementsOrigin() ?: origin, itStatements)
             }
         }
     }
 
-    private fun FirBlock.getBlockOrigin(): IrStatementOrigin? {
-        if (statements.size != 3) return null
+    private fun List<FirStatement>.getStatementsOrigin(): IrStatementOrigin? {
+        if (size != 3) return null
 
-        val statement0 = statements[0]
+        val statement0 = this[0]
         if (statement0 !is FirProperty || !statement0.isLocal) return null
         val unarySymbol = statement0.symbol
         if (unarySymbol.callableId.callableName != SpecialNames.UNARY) return null
 
-        val statement2 = statements[2]
+        val statement2 = this[2]
         if (statement2 !is FirPropertyAccessExpression) return null
         if (statement2.calleeReference.toResolvedCallableSymbol() != unarySymbol) return null
 
-        val incrementStatement = statements[1]
+        val incrementStatement = this[1]
         if (incrementStatement !is FirVariableAssignment) return null
 
         val variable = statement0.initializer?.toResolvedCallableSymbol() ?: return null
@@ -815,19 +816,16 @@ class Fir2IrVisitor(
                      *         ...body...
                      */
                     firLoopBody.convertWithOffsets { innerStartOffset, innerEndOffset ->
-                        val irInnerBody = IrBlockImpl(innerStartOffset, innerEndOffset, irBuiltIns.unitType, origin)
-                        irInnerBody.statements += firLoopBody.statements.first().toIrStatement()
+                        val loopBodyStatements = firLoopBody.statements
+                        val firstStatement = loopBodyStatements.first().toIrStatement()
                             ?: error("Unexpected shape of body of for loop")
-                        if (firLoopBody.statements.size > 1) {
-                            val tmpBlock = buildBlock {
-                                source = firLoopBody.source
-                                for (i in 1 until firLoopBody.statements.size) {
-                                    statements += firLoopBody.statements[i]
-                                }
-                            }
-                            irInnerBody.statements += tmpBlock.convertToIrExpressionOrBlock()
-                        }
-                        irInnerBody
+                        IrBlockImpl(
+                            innerStartOffset,
+                            innerEndOffset,
+                            irBuiltIns.unitType,
+                            origin,
+                            listOf(firstStatement) + loopBodyStatements.drop(1).convertToIrExpressionOrBlock(firLoopBody.source)
+                        )
                     }
                 } else {
                     firLoopBody.convertToIrExpressionOrBlock()
