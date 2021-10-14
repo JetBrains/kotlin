@@ -30,6 +30,7 @@ import org.gradle.api.NonNullApi
 import org.gradle.api.Plugin
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.plugins.PotentialPlugin
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.internal.operations.BuildOperationExecutor
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.internal.reflect.Instantiator
@@ -124,11 +125,17 @@ fun Task.dependsOnPlatformLibs() {
 }
 
 @Suppress("UNCHECKED_CAST")
-val Project.globalTestArgs: List<String>
-    get() = with(findProperty("globalTestArgs")) {
+private fun Project.groovyPropertyArrayToList(property: String): List<String> =
+        with(findProperty(property)) {
             if (this is Array<*>) this.toList() as List<String>
             else this as List<String>
-    }
+        }
+
+val Project.globalBuildArgs: List<String>
+    get() = project.groovyPropertyArrayToList("globalBuildArgs")
+
+val Project.globalTestArgs: List<String>
+    get() = project.groovyPropertyArrayToList("globalTestArgs")
 
 val Project.testTargetSupportsCodeCoverage: Boolean
     get() = this.testTarget.supportsCodeCoverage()
@@ -189,11 +196,17 @@ fun Project.getFilesToCompile(compile: List<String>, exclude: List<String>): Lis
 
 //region Task dependency.
 
-fun Project.findKonanBuildTask(artifact: String, target: KonanTarget): Task =
-    tasks.getByName("compileKonan${artifact.capitalize()}${target.name.capitalize()}")
+fun Project.findKonanBuildTask(artifact: String, target: KonanTarget): TaskProvider<Task> =
+    tasks.named("compileKonan${artifact.capitalize()}${target.name.capitalize()}")
 
 fun Project.dependsOnDist(taskName: String) {
     project.tasks.getByName(taskName).dependsOnDist()
+}
+
+fun TaskProvider<Task>.dependsOnDist() {
+    configure {
+        dependsOnDist()
+    }
 }
 
 fun Task.dependsOnDist() {
@@ -237,10 +250,12 @@ fun Task.sameDependenciesAs(task: Task) {
  */
 fun Task.dependsOnKonanBuildingTask(artifact: String, target: KonanTarget) {
     val buildTask = project.findKonanBuildTask(artifact, target)
-    buildTask.konanOldPluginTaskDependenciesWalker {
-        dependsOnDist()
+    buildTask.configure {
+        konanOldPluginTaskDependenciesWalker {
+            dependsOnDist()
+        }
+        sameDependenciesAs(this)
     }
-    buildTask.sameDependenciesAs(this)
     dependsOn(buildTask)
 }
 

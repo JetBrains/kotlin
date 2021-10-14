@@ -87,7 +87,7 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
 
     @get:Internal
     override val buildTasks: List<Task>
-        get() = listOf(project.findKonanBuildTask(name, project.testTarget))
+        get() = listOf(project.findKonanBuildTask(name, project.testTarget).get())
 
     @Suppress("UnstableApiUsage")
     override fun configure(config: Closure<*>): Task {

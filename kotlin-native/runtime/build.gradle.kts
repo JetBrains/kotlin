@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 plugins {
     id("compile-to-bitcode")
     id("runtime-testing")
+    id("konan")
 }
 
 googletest {
@@ -319,7 +320,7 @@ val hostExperimentalMMMimallocRuntimeTests by tasks.registering {
     dependsOn("${hostName}ExperimentalMMMimallocRuntimeTests")
 }
 
-val assemble by tasks.registering {
+val assemble by tasks.getting {
     dependsOn(tasks.withType(CompileToBitcode::class).matching {
         it.outputGroup == "main"
     })
@@ -331,7 +332,7 @@ val hostAssemble by tasks.registering {
     })
 }
 
-val clean by tasks.registering {
+val clean by tasks.getting {
     doFirst {
         delete(buildDir)
     }
@@ -363,3 +364,84 @@ val generateJsMath by tasks.registering {
         mathJs.appendText(generated.readText())
     }
 }
+
+// region: Stdlib
+
+val commonStdlibSrcDirs = project(":kotlin-stdlib-common")
+        .files(
+                "src/kotlin",
+                "src/generated",
+                "../unsigned/src",
+                "../src"
+        ).files
+val commonBuiltinsSrc = listOf(
+        "Progressions.kt", "ProgressionIterators.kt", "Range.kt", "Ranges.kt", "internal/progressionUtil.kt")
+        .map { "src/kotlin/$it" }
+        .let {
+            project(":core:builtins").files(it).files
+        }
+
+val interopRuntimeCommonSrcDir = project(":kotlin-native:Interop:Runtime").file("src/main/kotlin")
+val interopSrcDir = listOf(
+        interopRuntimeCommonSrcDir,
+        project(":kotlin-native:Interop:Runtime").file("src/native/kotlin"),
+        project(":kotlin-native:Interop:JsRuntime").file("src/main/kotlin")
+)
+
+val testAnnotationCommonSrcDir = project(":kotlin-test:kotlin-test-annotations-common").files("src/main/kotlin").files
+val testCommonSrcDir = project(":kotlin-test:kotlin-test-common").files("src/main/kotlin").files
+
+val stdLibSrcDirs =  interopSrcDir + listOf(
+        project.file("src/main/kotlin"),
+        project(":kotlin-stdlib-common").file("../native-wasm/src/")
+)
+
+val args = listOf("-nopack", "-nostdlib", "-no-default-libs", "-no-endorsed-libs", /* -Werror (TODO: check) */)
+
+lateinit var stdlibBuildTask: TaskProvider<Task>
+
+konanArtifacts {
+    library("stdlib") {
+        baseDir(project.buildDir.resolve("stdlib"))
+        extraOpts(args + project.globalBuildArgs)
+        extraOpts(
+                "-module-name", "stdlib",
+                "-Xmulti-platform",
+                "-opt-in=kotlin.RequiresOptIn",
+                "-opt-in=kotlin.contracts.ExperimentalContracts",
+                "-opt-in=kotlin.ExperimentalMultiplatform",
+                "-opt-in=kotlin.native.internal.InternalForKotlinNative",
+                "-opt-in=kotlin.native.SymbolNameIsDeprecated"
+        )
+        commonStdlibSrcDirs.forEach { extraOpts(it) }
+        srcFiles(commonBuiltinsSrc)
+        testAnnotationCommonSrcDir.forEach { extraOpts(it) }
+        testCommonSrcDir.forEach { extraOpts(it) }
+        extraOpts(interopRuntimeCommonSrcDir)
+        extraOpts(
+                "-Xcommon-sources=${commonStdlibSrcDirs.joinToString(",")}",
+                "-Xcommon-sources=${testAnnotationCommonSrcDir.joinToString(",")}",
+                "-Xcommon-sources=${testCommonSrcDir.joinToString(",")}",
+                "-Xcommon-sources=$interopRuntimeCommonSrcDir",
+        )
+        stdLibSrcDirs.forEach { srcDir(it) }
+    }
+
+    stdlibBuildTask = project.findKonanBuildTask("stdlib", project.platformManager.hostPlatform.target)
+    stdlibBuildTask.configure {
+        dependsOn(":kotlin-native:distCompiler")
+    }
+}
+
+targetList.forEach { target ->
+    tasks.register("${target}Stdlib", Copy::class.java) {
+        require(::stdlibBuildTask.isInitialized)
+        dependsOn(stdlibBuildTask)
+        dependsOn("${target}Runtime")
+
+        destinationDir = project.buildDir.resolve("${target}Stdlib")
+        from(project.buildDir.resolve("stdlib/$target/stdlib"))
+    }
+}
+
+// endregion

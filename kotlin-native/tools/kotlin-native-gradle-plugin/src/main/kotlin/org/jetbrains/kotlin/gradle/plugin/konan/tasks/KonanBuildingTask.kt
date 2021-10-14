@@ -32,7 +32,6 @@ abstract class KonanBuildingTask: KonanArtifactWithLibrariesTask(), KonanBuildin
     internal abstract val toolRunner: KonanToolRunner
 
     override fun init(config: KonanBuildingConfig<*>, destinationDir: File, artifactName: String, target: KonanTarget) {
-        dependsOnDist()
         super.init(config, destinationDir, artifactName, target)
     }
 
