@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/whileDoWhile.kt
         condition: CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
           arg0: GET_VAR 'var x: kotlin.Int [var] declared in <root>.test' type=kotlin.Int origin=null
           arg1: CONST Int type=kotlin.Int value=10
-        body: BLOCK type=kotlin.Int origin=null
+        body: BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
             GET_VAR 'var x: kotlin.Int [var] declared in <root>.test' type=kotlin.Int origin=null
           SET_VAR 'var x: kotlin.Int [var] declared in <root>.test' type=kotlin.Unit origin=POSTFIX_INCR

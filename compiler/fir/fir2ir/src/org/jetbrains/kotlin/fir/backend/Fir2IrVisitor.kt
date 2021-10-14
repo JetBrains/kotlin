@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -590,28 +591,25 @@ class Fir2IrVisitor(
     }
 
     private fun FirBlock.getBlockOrigin(): IrStatementOrigin? {
-        if (source?.kind !is FirFakeSourceElementKind.DesugaredIncrementOrDecrement) return null
+        if (statements.size != 3) return null
 
-        val isPrefix: Boolean
-        val incrementStatement = when (statements.size) {
-            2 -> {
-                isPrefix = true
-                statements[0]
-            }
-            3 -> {
-                isPrefix = false
-                statements[1]
-            }
-            else -> return null
-        }
+        val statement0 = statements[0]
+        if (statement0 !is FirProperty || !statement0.isLocal) return null
+        val unarySymbol = statement0.symbol
+        if (unarySymbol.callableId.callableName != SpecialNames.UNARY) return null
 
+        val statement2 = statements[2]
+        if (statement2 !is FirPropertyAccessExpression) return null
+        if (statement2.calleeReference.toResolvedCallableSymbol() != unarySymbol) return null
+
+        val incrementStatement = statements[1]
         if (incrementStatement !is FirVariableAssignment) return null
 
-        val origin = incrementStatement.getIrAssignmentOrigin(isPrefix)
-        return if (origin == IrStatementOrigin.EQ)
-            null
-        else
-            origin
+        val variable = statement0.initializer?.toResolvedCallableSymbol() ?: return null
+        if (incrementStatement.lValue.toResolvedCallableSymbol() != variable) return null
+
+        val origin = incrementStatement.getIrAssignmentOrigin()
+        return if (origin == IrStatementOrigin.EQ) null else origin
     }
 
     override fun visitErrorExpression(errorExpression: FirErrorExpression, data: Any?): IrElement {
