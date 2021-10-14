@@ -24,6 +24,7 @@ class ResolveKotlinSourceSetsTest {
     @BeforeTest
     fun setup() {
         project = ProjectBuilder.builder().build()
+        addBuildEventsListenerRegistryMock(project)
         project.plugins.apply("kotlin-multiplatform")
         kotlin = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
 

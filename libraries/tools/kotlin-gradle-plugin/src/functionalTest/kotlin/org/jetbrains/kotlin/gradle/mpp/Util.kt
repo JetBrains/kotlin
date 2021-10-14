@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
+import org.jetbrains.kotlin.gradle.addBuildEventsListenerRegistryMock
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
@@ -19,6 +20,8 @@ fun buildProject(
     .builder()
     .apply(configBuilder)
     .build()
+    //temporary solution for BuildEventsListenerRegistry
+    .also { addBuildEventsListenerRegistryMock(it) }
     .apply(configProject)
     .let { it as ProjectInternal }
 
