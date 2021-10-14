@@ -3,10 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.extensions
+package org.jetbrains.kotlin.types.extensions
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.types.*
 
 interface TypeAttributeTranslatorExtension : TypeAttributesTranslator
@@ -16,14 +17,14 @@ class TypeAttributeTranslators(project: Project) {
         getInstances(project) + DefaultTypeAttributesTranslator
 
     fun toAttributes(annotations: Annotations): TypeAttributes {
-        val translated = translators.mapNotNull { translator ->
+        val translated = translators.map { translator ->
             translator.toAttributes(annotations)
         }.flatten()
         return TypeAttributes.create(translated)
     }
 
     fun toAnnotations(attributes: TypeAttributes): Annotations {
-        val translated = translators.mapNotNull { translator ->
+        val translated = translators.map { translator ->
             translator.toAnnotations(attributes)
         }.flatten()
         return Annotations.create(translated)

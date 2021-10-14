@@ -10,6 +10,8 @@ dependencies {
     api(project(":core:util.runtime"))
     api(kotlinStdlib())
     api(project(":kotlin-annotations-jvm"))
+    api(project(":compiler:util"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
 sourceSets {
