@@ -457,6 +457,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
     val enterFrameFunction = importRtFunction("EnterFrame")
     val leaveFrameFunction = importRtFunction("LeaveFrame")
     val setCurrentFrameFunction = importRtFunction("SetCurrentFrame")
+    val checkCurrentFrameFunction = importRtFunction("CheckCurrentFrame")
     val lookupInterfaceTableRecord = importRtFunction("LookupInterfaceTableRecord")
     val isInstanceFunction = importRtFunction("IsInstance")
     val isInstanceOfClassFastFunction = importRtFunction("IsInstanceOfClassFast")

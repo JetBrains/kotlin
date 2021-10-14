@@ -1051,6 +1051,11 @@ internal abstract class FunctionGenerationContext(
         return exception
     }
 
+    fun generateFrameCheck() {
+        assert(slotsPhi != null)
+        call(context.llvm.checkCurrentFrameFunction, listOf(slotsPhi!!))
+    }
+
     inline fun ifThenElse(
             condition: LLVMValueRef,
             thenValue: LLVMValueRef,

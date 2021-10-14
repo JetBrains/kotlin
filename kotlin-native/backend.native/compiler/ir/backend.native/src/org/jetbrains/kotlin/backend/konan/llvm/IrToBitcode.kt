@@ -1213,6 +1213,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 fun genCatchBlock() {
                     using(VariableScope()) {
                         currentCodeContext.genDeclareVariable(catch.catchParameter, exception, null)
+                        functionGenerationContext.generateFrameCheck()
                         evaluateExpressionAndJump(catch.result, success)
                     }
                 }

@@ -3676,6 +3676,11 @@ RUNTIME_NOTHROW FrameOverlay* getCurrentFrame() {
     return currentFrame;
 }
 
+ALWAYS_INLINE RUNTIME_NOTHROW void CheckCurrentFrame(ObjHeader** frame) {
+    FrameOverlay* expectedFrame = reinterpret_cast<FrameOverlay*>(frame);
+    RuntimeAssert(currentFrame == expectedFrame, "Frame is expected to be %p, but current frame is %p", expectedFrame, currentFrame);
+}
+
 RUNTIME_NOTHROW void GC_UnregisterWorker(void* worker) {
 #if USE_CYCLIC_GC
   cyclicRemoveWorker(worker, g_hasCyclicCollector);

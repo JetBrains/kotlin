@@ -250,6 +250,12 @@ extern "C" RUNTIME_NOTHROW FrameOverlay* getCurrentFrame() {
     return threadData->shadowStack().getCurrentFrame();
 }
 
+extern "C" RUNTIME_NOTHROW ALWAYS_INLINE void CheckCurrentFrame(ObjHeader** frame) {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+    return threadData->shadowStack().checkCurrentFrame(reinterpret_cast<FrameOverlay*>(frame));
+}
+
 extern "C" RUNTIME_NOTHROW void AddTLSRecord(MemoryState* memory, void** key, int size) {
     memory->GetThreadData()->tls().AddRecord(key, size);
 }

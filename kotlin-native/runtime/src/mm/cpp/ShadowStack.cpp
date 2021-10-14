@@ -43,3 +43,7 @@ void mm::ShadowStack::SetCurrentFrame(ObjHeader** start) noexcept {
 FrameOverlay* mm::ShadowStack::getCurrentFrame() noexcept {
     return currentFrame_;
 }
+
+void mm::ShadowStack::checkCurrentFrame(FrameOverlay* frame) noexcept {
+    RuntimeAssert(currentFrame_ == frame, "Frame is expected to be %p, but current frame is %p", frame, currentFrame_);
+}

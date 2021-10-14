@@ -246,6 +246,7 @@ void LeaveFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
 // Set current frame in case if exception caught.
 void SetCurrentFrame(ObjHeader** start) RUNTIME_NOTHROW;
 FrameOverlay* getCurrentFrame() RUNTIME_NOTHROW;
+ALWAYS_INLINE void CheckCurrentFrame(ObjHeader** frame) RUNTIME_NOTHROW;
 
 // Clears object subgraph references from memory subsystem, and optionally
 // checks if subgraph referenced by given root is disjoint from the rest of
