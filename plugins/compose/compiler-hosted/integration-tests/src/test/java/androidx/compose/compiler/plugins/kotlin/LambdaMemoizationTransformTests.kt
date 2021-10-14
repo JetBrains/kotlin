@@ -109,6 +109,171 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
         """
     )
 
+    // Fixes b/201252574
+    @Test
+    fun testLocalFunCaptures(): Unit = verifyComposeIrTransform(
+        """
+            import androidx.compose.runtime.NonRestartableComposable
+            import androidx.compose.runtime.Composable
+
+            @NonRestartableComposable
+            @Composable
+            fun Err() {
+                // `x` is not a capture of handler, but is treated as such.
+                fun handler() {
+                    { x: Int -> x }
+                }
+                // Lambda calling handler. To find captures, we need captures of `handler`.
+                {
+                  handler()
+                }
+            }
+        """,
+        """
+            @NonRestartableComposable
+            @Composable
+            fun Err(%composer: Composer?, %changed: Int) {
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "C(Err):Test.kt")
+              fun handler() {
+                { x: Int ->
+                  x
+                }
+              }
+              {
+                handler()
+              }
+              %composer.endReplaceableGroup()
+            }
+        """,
+        """
+        """
+    )
+
+    @Test
+    fun testLocalClassCaptures1(): Unit = verifyComposeIrTransform(
+        """
+            import androidx.compose.runtime.NonRestartableComposable
+            import androidx.compose.runtime.Composable
+
+            @NonRestartableComposable
+            @Composable
+            fun Err(y: Int, z: Int) {
+                class Local {
+                    val w = z
+                    fun something(x: Int): Int { return x + y + w }
+                }
+                {
+                  Local().something(2)
+                }
+            }
+        """,
+        """
+            @NonRestartableComposable
+            @Composable
+            fun Err(y: Int, z: Int, %composer: Composer?, %changed: Int) {
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "C(Err)<{>:Test.kt")
+              class Local {
+                val w: Int = z
+                fun something(x: Int): Int {
+                  return x + y + w
+                }
+              }
+              remember(y, z, {
+                {
+                  Local().something(2)
+                }
+              }, %composer, 0)
+              %composer.endReplaceableGroup()
+            }
+        """,
+        """
+        """
+    )
+
+    @Test
+    fun testLocalClassCaptures2(): Unit = verifyComposeIrTransform(
+        """
+            import androidx.compose.runtime.Composable
+            import androidx.compose.runtime.NonRestartableComposable
+
+            @NonRestartableComposable
+            @Composable
+            fun Example(z: Int) {
+                class Foo(val x: Int) { val y = z }
+                val lambda: () -> Any = {
+                    Foo(1)
+                }
+            }
+        """,
+        """
+            @NonRestartableComposable
+            @Composable
+            fun Example(z: Int, %composer: Composer?, %changed: Int) {
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "C(Example)<{>:Test.kt")
+              class Foo(val x: Int) {
+                val y: Int = z
+              }
+              val lambda = remember(z, {
+                {
+                  Foo(1)
+                }
+              }, %composer, 0)
+              %composer.endReplaceableGroup()
+            }
+        """,
+        """
+        """
+    )
+
+    @Test
+    fun testLocalFunCaptures3(): Unit = verifyComposeIrTransform(
+        """
+            import androidx.compose.animation.AnimatedContent
+            import androidx.compose.animation.ExperimentalAnimationApi
+            import androidx.compose.runtime.Composable
+
+            @OptIn(ExperimentalAnimationApi::class)
+            @Composable
+            fun SimpleAnimatedContentSample() {
+                @Composable fun Foo() {}
+
+                AnimatedContent(1f) {
+                    Foo()
+                }
+            }
+        """,
+        """
+            @OptIn(markerClass = ExperimentalAnimationApi::class)
+            @Composable
+            fun SimpleAnimatedContentSample(%composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(SimpleAnimatedContentSample)<Animat...>:Test.kt")
+              if (%changed !== 0 || !%composer.skipping) {
+                @Composable
+                fun Foo(%composer: Composer?, %changed: Int) {
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C(Foo):Test.kt")
+                  %composer.endReplaceableGroup()
+                }
+                AnimatedContent(1.0f, null, null, null, composableLambda(%composer, <>, false) { it: Float, %composer: Composer?, %changed: Int ->
+                  sourceInformation(%composer, "C<Foo()>:Test.kt")
+                  Foo(%composer, 0)
+                }, %composer, 0b0110000000000110, 0b1110)
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                SimpleAnimatedContentSample(%composer, %changed or 0b0001)
+              }
+            }
+        """,
+        """
+        """
+    )
+
     @Test
     fun testStateDelegateCapture(): Unit = verifyComposeIrTransform(
         """

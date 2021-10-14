@@ -168,6 +168,25 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     )
 
     @Test
+    fun testCaptureIssue23(): Unit = codegen(
+        """
+            import androidx.compose.animation.AnimatedContent
+            import androidx.compose.animation.ExperimentalAnimationApi
+            import androidx.compose.runtime.Composable
+
+            @OptIn(ExperimentalAnimationApi::class)
+            @Composable
+            fun SimpleAnimatedContentSample() {
+                @Composable fun Foo() {}
+
+                AnimatedContent(1f) {
+                    Foo()
+                }
+            }
+        """
+    )
+
+    @Test
     fun test32Params(): Unit = codegen(
         """
         @Composable
