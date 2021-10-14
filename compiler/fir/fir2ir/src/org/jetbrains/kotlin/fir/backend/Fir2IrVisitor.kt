@@ -275,7 +275,16 @@ class Fir2IrVisitor(
                 initializer.resolvedNamedFunctionSymbol()?.callableId?.isIteratorNext() == true &&
                 variable.source.psi?.parent is KtForExpression
         val irVariable = declarationStorage.createIrVariable(
-            variable, conversionScope.parentFromStack(), if (isNextVariable) IrDeclarationOrigin.FOR_LOOP_VARIABLE else null
+            variable, conversionScope.parentFromStack(),
+            if (isNextVariable) {
+                if (variable.name.isSpecial && variable.name == SpecialNames.DESTRUCT) {
+                    IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+                } else {
+                    IrDeclarationOrigin.FOR_LOOP_VARIABLE
+                }
+            } else {
+                null
+            }
         )
         if (initializer != null) {
             irVariable.initializer =
@@ -817,14 +826,27 @@ class Fir2IrVisitor(
                      */
                     firLoopBody.convertWithOffsets { innerStartOffset, innerEndOffset ->
                         val loopBodyStatements = firLoopBody.statements
-                        val firstStatement = loopBodyStatements.first().toIrStatement()
-                            ?: error("Unexpected shape of body of for loop")
+                        if (loopBodyStatements.isEmpty()) {
+                            error("Unexpected shape of body of for loop")
+                        }
+                        val loopVariables = mutableListOf<IrStatement>()
+                        var loopVariableIndex = 0
+                        for (loopBodyStatement in loopBodyStatements) {
+                            if (loopVariableIndex > 0) {
+                                if (loopBodyStatement !is FirProperty || loopBodyStatement.initializer !is FirComponentCall) {
+                                    break
+                                }
+                            }
+                            loopBodyStatement.toIrStatement()?.let { loopVariables.add(it) }
+                            loopVariableIndex++
+                        }
+
                         IrBlockImpl(
                             innerStartOffset,
                             innerEndOffset,
                             irBuiltIns.unitType,
                             origin,
-                            listOf(firstStatement) + loopBodyStatements.drop(1).convertToIrExpressionOrBlock(firLoopBody.source)
+                            loopVariables + loopBodyStatements.drop(loopVariableIndex).convertToIrExpressionOrBlock(firLoopBody.source)
                         )
                     }
                 } else {

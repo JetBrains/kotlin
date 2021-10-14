@@ -6,6 +6,8 @@ fun testForInListUnused() {
     val <iterator>: MutableIterator<@EnhancedNullability P> = listOfNotNull().iterator()
     while (<iterator>.hasNext()) { // BLOCK
       val x: P = <iterator>.next() /*!! P */
+      { // BLOCK
+      }
     }
   }
 }
@@ -15,9 +17,9 @@ fun testForInListDestructured() {
     val <iterator>: MutableIterator<@EnhancedNullability P> = listOfNotNull().iterator()
     while (<iterator>.hasNext()) { // BLOCK
       val <destruct>: P = <iterator>.next() /*!! P */
+      val x: Int = <destruct>.component1()
+      val y: Int = <destruct>.component2()
       { // BLOCK
-        val x: Int = <destruct>.component1()
-        val y: Int = <destruct>.component2()
       }
     }
   }
@@ -35,6 +37,8 @@ fun testForInArrayUnused(j: J) {
     val <iterator>: Iterator<@EnhancedNullability P> = j.arrayOfNotNull().iterator()
     while (<iterator>.hasNext()) { // BLOCK
       val x: P = <iterator>.next() /*!! P */
+      { // BLOCK
+      }
     }
   }
 }
@@ -125,3 +129,4 @@ data class P {
   }
 
 }
+

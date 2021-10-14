@@ -60,8 +60,8 @@ fun test1() {
 
 fun test2() {
   val <destruct>: @FlexibleNullability Q<@EnhancedNullability String, @EnhancedNullability String>? = notNullComponents()
-  val x: String = <destruct>.component1() /*!! String */
-  val y: String = <destruct>.component2() /*!! String */
+  val x: @EnhancedNullability String = <destruct>.component1() /*!! String */
+  val y: @EnhancedNullability String = <destruct>.component2() /*!! String */
   use(x = x, y = y)
 }
 
@@ -74,14 +74,15 @@ fun test2Desugared() {
 
 fun test3() {
   val <destruct>: Q<@EnhancedNullability String, @EnhancedNullability String> = notNullQAndComponents() /*!! Q<@EnhancedNullability String, @EnhancedNullability String> */
-  val x: String = <destruct>.component1() /*!! String */
-  val y: String = <destruct>.component2() /*!! String */
+  val x: @EnhancedNullability String = <destruct>.component1() /*!! String */
+  val y: @EnhancedNullability String = <destruct>.component2() /*!! String */
   use(x = x, y = y)
 }
 
 fun test4() {
   val <destruct>: IndexedValue<@EnhancedNullability P> = listOfNotNull() /*!! @FlexibleNullability List<@EnhancedNullability P> */.withIndex<@EnhancedNullability P>().first<IndexedValue<@EnhancedNullability P>>()
   val x: Int = <destruct>.component1()
-  val y: P = <destruct>.component2() /*!! P */
+  val y: @EnhancedNullability P = <destruct>.component2() /*!! P */
   use(x = x, y = y)
 }
+

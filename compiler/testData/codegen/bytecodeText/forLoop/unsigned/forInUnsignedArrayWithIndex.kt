@@ -1,5 +1,4 @@
 // WITH_RUNTIME
-// IGNORE_BACKEND_FIR: JVM_IR
 
 // IMPORTANT!
 // Please, when your changes cause failures in bytecodeText tests for 'for' loops,

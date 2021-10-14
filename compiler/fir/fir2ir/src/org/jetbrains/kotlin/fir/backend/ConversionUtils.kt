@@ -466,6 +466,8 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? {
                     IrStatementOrigin.FOR_LOOP_ITERATOR
                 source?.elementType == KtNodeTypes.OPERATION_REFERENCE ->
                     nameToOperationConventionOrigin[symbol.callableId.callableName]
+                source?.kind is FirFakeSourceElementKind.DesugaredComponentFunctionCall ->
+                    IrStatementOrigin.COMPONENT_N.withIndex(name.asString().removePrefix("component").toInt())
                 else ->
                     null
             }

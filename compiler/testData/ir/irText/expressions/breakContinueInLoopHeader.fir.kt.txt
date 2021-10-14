@@ -36,6 +36,8 @@ fun test3(ss: List<String>?) {
       }.iterator()
       L2@ while (<iterator>.hasNext()) { // BLOCK
         val s: String = <iterator>.next()
+        { // BLOCK
+        }
       }
     }
   }
@@ -53,6 +55,8 @@ fun test4(ss: List<String>?) {
       }.iterator()
       L2@ while (<iterator>.hasNext()) { // BLOCK
         val s: String = <iterator>.next()
+        { // BLOCK
+        }
       }
     }
   }
@@ -78,3 +82,4 @@ fun test5() {
     }
   }
 }
+
