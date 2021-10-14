@@ -191,6 +191,8 @@ object StandardClassIds {
         val coroutineContext = "coroutineContext".callableId(BASE_COROUTINES_PACKAGE)
 
         val clone = "clone".callableId(Cloneable)
+
+        val not = "not".callableId(Boolean)
     }
 }
 

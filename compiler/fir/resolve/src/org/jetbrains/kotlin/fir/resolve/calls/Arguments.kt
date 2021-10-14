@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.*
-import org.jetbrains.kotlin.fir.resolve.isTypeMismatchDueToNullability
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.returnExpressions
@@ -580,10 +579,6 @@ fun FirExpression.getExpectedType(
     } else {
         parameter.returnTypeRef.coneType
     }
-}
-
-fun ConeKotlinType.varargElementType(): ConeKotlinType {
-    return this.arrayElementType() ?: this
 }
 
 /**

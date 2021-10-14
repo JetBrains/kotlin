@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -477,7 +476,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         private fun renderConstructorSymbol(symbol: FirConstructorSymbol, data: StringBuilder) {
             data.append("constructor ")
             data.append(getSymbolId(symbol))
-            renderListInTriangles(symbol.firUnsafe<FirConstructor>().typeParameters, data)
+            renderListInTriangles(symbol.fir.typeParameters, data)
         }
 
         private fun renderField(field: FirField, data: StringBuilder) {
@@ -698,7 +697,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 is FirNamedFunctionSymbol -> {
                     renderFunctionSymbol(symbol, data)
 
-                    val fir = symbol.firUnsafe<FirFunction>()
+                    val fir = symbol.fir
                     visitValueParameters(fir.valueParameters, data)
                     data.append(": ")
                     fir.returnTypeRef.accept(this, data)

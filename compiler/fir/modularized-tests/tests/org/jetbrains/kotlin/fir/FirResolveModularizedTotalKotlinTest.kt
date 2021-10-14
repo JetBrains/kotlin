@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.fir.analysis.FirCheckersResolveProcessor
+import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
+import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
+import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -25,8 +27,10 @@ import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.createAllCompilerResolveProcessors
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import sun.management.ManagementFactoryHelper
 import java.io.File
 import java.io.FileOutputStream
@@ -313,5 +317,26 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             server, "com.sun.management:type=HotSpotDiagnostic", HotSpotDiagnosticMXBean::class.java
         )
         mxBean.dumpHeap(filePath, true)
+    }
+}
+
+class FirCheckersResolveProcessor(
+    session: FirSession,
+    scopeSession: ScopeSession
+) : FirTransformerBasedResolveProcessor(session, scopeSession) {
+    val diagnosticCollector: AbstractDiagnosticCollector = FirDiagnosticsCollector.create(session, scopeSession)
+
+    override val transformer: FirTransformer<Nothing?> = FirCheckersRunnerTransformer(diagnosticCollector)
+}
+
+class FirCheckersRunnerTransformer(private val diagnosticCollector: AbstractDiagnosticCollector) : FirTransformer<Nothing?>() {
+    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+        return element
+    }
+
+    override fun transformFile(file: FirFile, data: Nothing?): FirFile {
+        val reporter = DiagnosticReporterFactory.createReporter()
+        diagnosticCollector.collectDiagnostics(file, reporter)
+        return file
     }
 }

@@ -23,6 +23,8 @@ dependencies {
     testApi(project(":compiler:fir:fir-deserialization"))
     testApi(project(":compiler:fir:cones"))
     testApi(project(":compiler:fir:resolve"))
+    testApi(project(":compiler:fir:providers"))
+    testApi(project(":compiler:fir:semantics"))
     testApi(project(":compiler:fir:checkers"))
     testApi(project(":compiler:fir:checkers:checkers.jvm"))
     testApi(project(":compiler:fir:java"))

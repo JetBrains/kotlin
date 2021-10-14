@@ -202,6 +202,8 @@ val commonCompilerModules = arrayOf(
 
 val firCompilerCoreModules = arrayOf(
     ":compiler:fir:cones",
+    ":compiler:fir:providers",
+    ":compiler:fir:semantics",
     ":compiler:fir:resolve",
     ":compiler:fir:fir-serialization",
     ":compiler:fir:fir-deserialization",

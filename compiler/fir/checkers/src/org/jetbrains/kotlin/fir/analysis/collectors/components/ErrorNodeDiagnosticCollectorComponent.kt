@@ -127,7 +127,7 @@ class ErrorNodeDiagnosticCollectorComponent(
             // See FirForLoopChecker
             return
         }
-        for (coneDiagnostic in diagnostic.toFirDiagnostics(source, qualifiedAccessSource)) {
+        for (coneDiagnostic in diagnostic.toFirDiagnostics(session, source, qualifiedAccessSource)) {
             reporter.report(coneDiagnostic, context)
         }
     }

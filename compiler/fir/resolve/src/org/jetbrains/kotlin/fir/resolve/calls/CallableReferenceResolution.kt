@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedCallableReferenceTarget
 import org.jetbrains.kotlin.fir.resolve.inference.extractInputOutputTypesFromCallableReferenceExpectedType
-import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
+import org.jetbrains.kotlin.fir.types.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -255,9 +255,6 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
         suspendConversionStrategy
     )
 }
-
-fun ConeKotlinType?.isPotentiallyArray(): Boolean =
-    this != null && (this.arrayElementType() != null || this is ConeTypeVariableType)
 
 private fun varargParameterTypeByExpectedParameter(
     expectedParameterType: ConeKotlinType,

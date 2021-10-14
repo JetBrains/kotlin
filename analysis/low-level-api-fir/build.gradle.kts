@@ -10,6 +10,8 @@ dependencies {
     api(project(":compiler:fir:fir2ir:jvm-backend"))
     api(project(":compiler:ir.serialization.common"))
     api(project(":compiler:fir:resolve"))
+    api(project(":compiler:fir:providers"))
+    api(project(":compiler:fir:semantics"))
     api(project(":compiler:fir:checkers"))
     api(project(":compiler:fir:checkers:checkers.jvm"))
     api(project(":compiler:fir:java"))

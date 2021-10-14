@@ -37,9 +37,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -47,7 +44,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class DataFlowAnalyzerContext<FLOW : Flow>(
     val graphBuilder: ControlFlowGraphBuilder,
-    variableStorage: VariableStorage,
+    variableStorage: VariableStorageImpl,
     flowOnNodes: MutableMap<CFGNode<*>, FLOW>,
     val variablesForWhenConditions: MutableMap<WhenBranchConditionExitNode, DataFlowVariable>,
     val preliminaryLoopVisitor: PreliminaryLoopVisitor
@@ -79,7 +76,7 @@ class DataFlowAnalyzerContext<FLOW : Flow>(
     companion object {
         fun <FLOW : Flow> empty(session: FirSession): DataFlowAnalyzerContext<FLOW> =
             DataFlowAnalyzerContext(
-                ControlFlowGraphBuilder(), VariableStorage(session),
+                ControlFlowGraphBuilder(), VariableStorageImpl(session),
                 mutableMapOf(), mutableMapOf(), PreliminaryLoopVisitor()
             )
     }
@@ -91,8 +88,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     private val context: DataFlowAnalyzerContext<FLOW>
 ) {
     companion object {
-        internal val KOTLIN_BOOLEAN_NOT = CallableId(FqName("kotlin"), FqName("Boolean"), Name.identifier("not"))
-
         fun createFirDataFlowAnalyzer(
             components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
             dataFlowAnalyzerContext: DataFlowAnalyzerContext<PersistentFlow>

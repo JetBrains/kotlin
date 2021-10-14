@@ -1063,7 +1063,7 @@ class IrBuiltInsOverFir(
     }
 
 
-    private fun findFunctions(packageName: FqName, name: Name) =
+    private fun findFunctions(packageName: FqName, name: Name): List<IrSimpleFunctionSymbol> =
         components.session.symbolProvider.getTopLevelFunctionSymbols(packageName, name).mapNotNull { firOpSymbol ->
             components.declarationStorage.getIrFunctionSymbol(firOpSymbol) as? IrSimpleFunctionSymbol
         }

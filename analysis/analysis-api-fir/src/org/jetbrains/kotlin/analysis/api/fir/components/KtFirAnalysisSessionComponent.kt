@@ -49,7 +49,7 @@ internal interface KtFirAnalysisSessionComponent {
         qualifiedAccessSource: FirSourceElement?,
         diagnosticCache: MutableList<FirDiagnostic>
     ): KtDiagnosticWithPsi<*>? {
-        val firDiagnostic = toFirDiagnostics(source, qualifiedAccessSource).firstOrNull() ?: return null
+        val firDiagnostic = toFirDiagnostics(analysisSession.rootModuleSession, source, qualifiedAccessSource).firstOrNull() ?: return null
         diagnosticCache += firDiagnostic
         check(firDiagnostic is FirPsiDiagnostic)
         return firDiagnostic.asKtDiagnostic()

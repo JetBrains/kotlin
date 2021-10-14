@@ -6,15 +6,15 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:fir:cones"))
-    api(project(":compiler:fir:tree"))
-    api(project(":compiler:fir:resolve"))
-    api(project(":compiler:fir:checkers"))
-    api(project(":compiler:fir:fir2ir"))
-    api(project(":compiler:ir.backend.common"))
-    api(project(":compiler:ir.tree.impl"))
-    api(intellijCoreDep()) { includeJars("intellij-core") }
-
+    compileOnly(project(":compiler:fir:cones"))
+    compileOnly(project(":compiler:fir:tree"))
+    compileOnly(project(":compiler:fir:resolve"))
+    compileOnly(project(":compiler:fir:checkers"))
+    compileOnly(project(":compiler:fir:fir2ir"))
+    compileOnly(project(":compiler:ir.backend.common"))
+    compileOnly(project(":compiler:ir.tree.impl"))
+    compileOnly(project(":compiler:fir:entrypoint"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(project(":kotlin-reflect-api"))
 
     testApiJUnit5()
@@ -23,7 +23,6 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(project(":compiler:fir:checkers"))
     testApi(project(":compiler:fir:checkers:checkers.jvm"))
-    testApi(project(":compiler:frontend"))
 
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntimeOnly(project(":kotlin-reflect"))
@@ -31,14 +30,14 @@ dependencies {
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     testRuntimeOnly(intellijDep()) {
-        includeJars("jna", rootProject = rootProject)
+        includeJars(
+            "jna",
+            "jdom",
+            "trove4j",
+            "intellij-deps-fastutil-8.4.1-4",
+            rootProject = rootProject)
     }
 
-    testRuntimeOnly(intellijDep()) { includeJars(
-        "intellij-deps-fastutil-8.4.1-4",
-        "trove4j",
-        "jdom"
-    ) }
     testRuntimeOnly(toolsJar())
 }
 

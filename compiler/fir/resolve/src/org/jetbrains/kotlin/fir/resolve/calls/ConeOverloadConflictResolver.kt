@@ -195,8 +195,6 @@ class ConeOverloadConflictResolver(
     }
 }
 
-object NoSubstitutor : TypeSubstitutorMarker
-
 class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl, val session: FirSession) : SimpleConstraintSystem {
     override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutorMarker = with(context) {
         val csBuilder = system.getBuilder()

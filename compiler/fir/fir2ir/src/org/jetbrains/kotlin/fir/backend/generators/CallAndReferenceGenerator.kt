@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.fir.resolve.FirSamResolverImpl
 import org.jetbrains.kotlin.fir.resolve.calls.getExpectedType
 import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
-import org.jetbrains.kotlin.fir.resolve.inference.isKMutableProperty
+import org.jetbrains.kotlin.fir.types.isBuiltinFunctionalType
+import org.jetbrains.kotlin.fir.types.isKMutableProperty
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap

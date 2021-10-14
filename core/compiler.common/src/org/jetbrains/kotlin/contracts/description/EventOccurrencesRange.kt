@@ -48,3 +48,6 @@ fun EventOccurrencesRange.isDefinitelyVisited(): Boolean =
 
 fun EventOccurrencesRange.canBeRevisited(): Boolean =
     this == EventOccurrencesRange.UNKNOWN || this == EventOccurrencesRange.AT_LEAST_ONCE || this == EventOccurrencesRange.MORE_THAN_ONCE
+
+val EventOccurrencesRange?.isInPlace: Boolean
+    get() = this != null

@@ -95,6 +95,9 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
             }
         }
 
+        // TODO: create separate variable storage and don't modify existing one
+        val variableStorage = dataFlowInfo.variableStorage as VariableStorageImpl
+
         var typeStatements: TypeStatements = flow.approvedTypeStatements
 
         if (effect.value != ConeConstantReference.WILDCARD) {
@@ -104,13 +107,13 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
             if (resultExpression is FirConstExpression<*>) {
                 if (!resultExpression.isApplicableWith(operation)) return false
             } else {
-                val resultVar = dataFlowInfo.variableStorage.getOrCreateVariable(flow, resultExpression)
+                val resultVar = variableStorage.getOrCreateVariable(flow, resultExpression)
                 typeStatements = logicSystem.approveOperationStatement(flow, OperationStatement(resultVar, operation), builtinTypes)
             }
         }
 
         val conditionStatements = effectDeclaration.condition.buildTypeStatements(
-            function, logicSystem, dataFlowInfo.variableStorage, flow, context
+            function, logicSystem, variableStorage, flow, context
         ) ?: return false
 
         for ((realVar, requiredTypeStatement) in conditionStatements) {
@@ -153,7 +156,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
     private fun ConeBooleanExpression.buildTypeStatements(
         function: FirFunction,
         logicSystem: LogicSystem<*>,
-        variableStorage: VariableStorage,
+        variableStorage: VariableStorageImpl,
         flow: Flow,
         context: CheckerContext
     ): MutableTypeStatements? {

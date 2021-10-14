@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.getChild
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaRetur
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
-import org.jetbrains.kotlin.fir.resolve.isTypeMismatchDueToNullability
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -63,13 +63,13 @@ private fun ConeDiagnostic.toFirDiagnostic(
     is ConeAmbiguityError -> when {
         applicability.isSuccess -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, this.candidates.map { it.symbol })
         applicability == CandidateApplicability.UNSAFE_CALL -> {
-            val candidate = candidates.first { it.currentApplicability == CandidateApplicability.UNSAFE_CALL }
+            val candidate = candidates.first { it.applicability == CandidateApplicability.UNSAFE_CALL }
             val unsafeCall = candidate.diagnostics.firstIsInstance<UnsafeCall>()
             mapUnsafeCallError(candidate, unsafeCall, source, qualifiedAccessSource)
         }
         applicability == CandidateApplicability.UNSTABLE_SMARTCAST -> {
             val unstableSmartcast =
-                this.candidates.first { it.currentApplicability == CandidateApplicability.UNSTABLE_SMARTCAST }.diagnostics.firstIsInstance<UnstableSmartCast>()
+                this.candidates.first { it.applicability == CandidateApplicability.UNSTABLE_SMARTCAST }.diagnostics.firstIsInstance<UnstableSmartCast>()
             FirErrors.SMARTCAST_IMPOSSIBLE.createOn(
                 unstableSmartcast.argument.source,
                 unstableSmartcast.targetType,
@@ -115,18 +115,19 @@ private fun ConeDiagnostic.toFirDiagnostic(
 }
 
 fun ConeDiagnostic.toFirDiagnostics(
+    session: FirSession,
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?
 ): List<FirDiagnostic> {
     return when (this) {
-        is ConeInapplicableCandidateError -> mapInapplicableCandidateError(this, source, qualifiedAccessSource)
-        is ConeConstraintSystemHasContradiction -> mapSystemHasContradictionError(this, source, qualifiedAccessSource)
+        is ConeInapplicableCandidateError -> mapInapplicableCandidateError(session, this, source, qualifiedAccessSource)
+        is ConeConstraintSystemHasContradiction -> mapSystemHasContradictionError(session, this, source, qualifiedAccessSource)
         else -> listOfNotNull(toFirDiagnostic(source, qualifiedAccessSource))
     }
 }
 
 private fun mapUnsafeCallError(
-    candidate: Candidate,
+    candidate: AbstractCandidate,
     rootCause: UnsafeCall,
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?,
@@ -175,6 +176,7 @@ private fun mapUnsafeCallError(
 }
 
 private fun mapInapplicableCandidateError(
+    session: FirSession,
     diagnostic: ConeInapplicableCandidateError,
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?,
@@ -190,7 +192,7 @@ private fun mapInapplicableCandidateError(
                 rootCause.forbiddenNamedArgumentsTarget
             )
             is ArgumentTypeMismatch -> {
-                val typeContext = diagnostic.candidate.callInfo.session.typeContext
+                val typeContext = session.typeContext
                 FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
                     rootCause.argument.source ?: source,
                     rootCause.expectedType.removeTypeVariableTypes(typeContext),
@@ -238,6 +240,7 @@ private fun mapInapplicableCandidateError(
 
 @OptIn(ExperimentalStdlibApi::class)
 private fun mapSystemHasContradictionError(
+    session: FirSession,
     diagnostic: ConeConstraintSystemHasContradiction,
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?,
@@ -249,7 +252,7 @@ private fun mapSystemHasContradictionError(
                 error.toDiagnostic(
                     source,
                     qualifiedAccessSource,
-                    diagnostic.candidate.callInfo.session.typeContext,
+                    session.typeContext,
                     errorsToIgnore,
                     diagnostic.candidate,
                 )
@@ -285,7 +288,7 @@ private fun ConstraintSystemError.toDiagnostic(
     qualifiedAccessSource: FirSourceElement?,
     typeContext: ConeTypeContext,
     errorsToIgnore: MutableSet<ConstraintSystemError>,
-    candidate: Candidate,
+    candidate: AbstractCandidate,
 ): FirDiagnostic? {
     return when (this) {
         is NewConstraintError -> {

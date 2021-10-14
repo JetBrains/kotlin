@@ -25,6 +25,8 @@ dependencies {
     api(commonDep("org.jline", "jline"))
     api(project(":compiler:fir:raw-fir:psi2fir"))
     api(project(":compiler:fir:resolve"))
+    api(project(":compiler:fir:providers"))
+    api(project(":compiler:fir:semantics"))
     api(project(":compiler:fir:java"))
     implementation(project(":compiler:fir:entrypoint"))
     api(project(":compiler:fir:fir2ir"))

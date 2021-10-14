@@ -6,7 +6,8 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:fir:resolve"))
+    api(project(":compiler:fir:providers"))
+    api(project(":compiler:fir:semantics"))
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi"))
 

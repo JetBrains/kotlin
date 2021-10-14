@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrInitializer
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionalType
-import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
+import org.jetbrains.kotlin.fir.types.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.mode
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.*
@@ -923,7 +923,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 expectedType.approximatedIfNeededOrSelf(
                     session.typeApproximator,
                     backingField.visibilityForApproximation(),
-                    inferenceComponents.session.typeContext,
+                    session.typeContext,
                 )
             )
         )
@@ -948,7 +948,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                         expectedType.approximatedIfNeededOrSelf(
                             session.typeApproximator,
                             variable.visibilityForApproximation(),
-                            inferenceComponents.session.typeContext,
+                            session.typeContext,
                         )
                     )
                 )

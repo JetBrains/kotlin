@@ -35,6 +35,8 @@ dependencies {
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testApi(project(":compiler:fir:resolve"))
+    testApi(project(":compiler:fir:providers"))
+    testApi(project(":compiler:fir:semantics"))
     testApi(project(":compiler:fir:dump"))
 
     val asyncProfilerClasspath = project.findProperty("fir.bench.async.profiler.classpath") as? String
