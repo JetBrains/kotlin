@@ -43935,6 +43935,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("useSuspendFunResultAsVararg.kt")
+        public void testUseSuspendFunResultAsVararg() throws Exception {
+            runTest("compiler/testData/codegen/box/vararg/useSuspendFunResultAsVararg.kt");
+        }
+
+        @Test
         @TestMetadata("varargInFunParam.kt")
         public void testVarargInFunParam() throws Exception {
             runTest("compiler/testData/codegen/box/vararg/varargInFunParam.kt");
