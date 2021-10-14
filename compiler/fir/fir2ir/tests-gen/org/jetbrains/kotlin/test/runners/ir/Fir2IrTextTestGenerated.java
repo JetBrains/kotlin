@@ -727,6 +727,122 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/ir/irText/declarations/contextReceivers")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ContextReceivers {
+            @Test
+            public void testAllFilesPresentInContextReceivers() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("class.kt")
+            public void testClass() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/class.kt");
+            }
+
+            @Test
+            @TestMetadata("function.kt")
+            public void testFunction() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/function.kt");
+            }
+
+            @Test
+            @TestMetadata("functionalType.kt")
+            public void testFunctionalType() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/functionalType.kt");
+            }
+
+            @Test
+            @TestMetadata("genericOuterClass.kt")
+            public void testGenericOuterClass() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/genericOuterClass.kt");
+            }
+
+            @Test
+            @TestMetadata("lazy.kt")
+            public void testLazy() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/lazy.kt");
+            }
+
+            @Test
+            @TestMetadata("localDeclaration.kt")
+            public void testLocalDeclaration() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/localDeclaration.kt");
+            }
+
+            @Test
+            @TestMetadata("overloadPriority.kt")
+            public void testOverloadPriority() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/overloadPriority.kt");
+            }
+
+            @Test
+            @TestMetadata("overloading.kt")
+            public void testOverloading() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/overloading.kt");
+            }
+
+            @Test
+            @TestMetadata("plusMatrix.kt")
+            public void testPlusMatrix() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/plusMatrix.kt");
+            }
+
+            @Test
+            @TestMetadata("property.kt")
+            public void testProperty() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/property.kt");
+            }
+
+            @Test
+            @TestMetadata("thisWithCustomLabel.kt")
+            public void testThisWithCustomLabel() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/thisWithCustomLabel.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/ir/irText/declarations/contextReceivers/fromKEEP")
+            @TestDataPath("$PROJECT_ROOT")
+            public class FromKEEP {
+                @Test
+                public void testAllFilesPresentInFromKEEP() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/contextReceivers/fromKEEP"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("canvas.kt")
+                public void testCanvas() throws Exception {
+                    runTest("compiler/testData/ir/irText/declarations/contextReceivers/fromKEEP/canvas.kt");
+                }
+
+                @Test
+                @TestMetadata("compareTo.kt")
+                public void testCompareTo() throws Exception {
+                    runTest("compiler/testData/ir/irText/declarations/contextReceivers/fromKEEP/compareTo.kt");
+                }
+
+                @Test
+                @TestMetadata("dp.kt")
+                public void testDp() throws Exception {
+                    runTest("compiler/testData/ir/irText/declarations/contextReceivers/fromKEEP/dp.kt");
+                }
+
+                @Test
+                @TestMetadata("functionalType.kt")
+                public void testFunctionalType() throws Exception {
+                    runTest("compiler/testData/ir/irText/declarations/contextReceivers/fromKEEP/functionalType.kt");
+                }
+
+                @Test
+                @TestMetadata("monoidSum.kt")
+                public void testMonoidSum() throws Exception {
+                    runTest("compiler/testData/ir/irText/declarations/contextReceivers/fromKEEP/monoidSum.kt");
+                }
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/ir/irText/declarations/multiplatform")
         @TestDataPath("$PROJECT_ROOT")
         public class Multiplatform {

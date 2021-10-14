@@ -1,0 +1,22 @@
+interface NumberOperations {
+  abstract fun Number.plus(other: Number): Number
+
+}
+
+class Matrix {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun Matrix.plus(other: Matrix): Matrix {
+  return TODO()
+}
+
+fun NumberOperations.plusMatrix(m1: Matrix, m2: Matrix) {
+  m1.plus(other = m2) /*~> Unit */
+  m2.plus(other = m1) /*~> Unit */
+}

@@ -1,0 +1,47 @@
+interface A {
+  fun f() {
+  }
+
+}
+
+class B : A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun testLocalFunction() {
+  local fun local(<this>: A) {
+    <this>.f()
+  }
+
+  with<B, Unit>(receiver = B(), block = local fun B.<anonymous>() {
+    local(<this> = $this$with)
+  }
+)
+}
+
+fun testLocalClass() {
+  local class Local {
+    private /* final field */ val contextReceiverField0: A
+    constructor(<this>: A) /* primary */ {
+      super/*Any*/()
+      <this>.#contextReceiverField0 = <this>
+      /* <init>() */
+
+    }
+
+    fun local() {
+      <this>.#contextReceiverField0.f()
+    }
+
+  }
+
+  with<B, Unit>(receiver = B(), block = local fun B.<anonymous>() {
+    Local(<this> = $this$with).local()
+  }
+)
+}

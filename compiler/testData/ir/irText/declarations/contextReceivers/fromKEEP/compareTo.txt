@@ -1,0 +1,247 @@
+FILE fqName:<root> fileName:/compareTo.kt
+  CLASS CLASS name:Pair modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?]
+    CONSTRUCTOR visibility:public <> (first:A of <root>.Pair, second:B of <root>.Pair) returnType:<root>.Pair<A of <root>.Pair, B of <root>.Pair> [primary]
+      VALUE_PARAMETER name:first index:0 type:A of <root>.Pair
+      VALUE_PARAMETER name:second index:1 type:B of <root>.Pair
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Pair modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
+    PROPERTY name:first visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:first type:A of <root>.Pair visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'first: A of <root>.Pair declared in <root>.Pair.<init>' type=A of <root>.Pair origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-first> visibility:public modality:FINAL <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>) returnType:A of <root>.Pair
+        correspondingProperty: PROPERTY name:first visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-first> (): A of <root>.Pair declared in <root>.Pair'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:first type:A of <root>.Pair visibility:private [final]' type=A of <root>.Pair origin=null
+              receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.<get-first>' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
+    PROPERTY name:second visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:second type:B of <root>.Pair visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'second: B of <root>.Pair declared in <root>.Pair.<init>' type=B of <root>.Pair origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-second> visibility:public modality:FINAL <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>) returnType:B of <root>.Pair
+        correspondingProperty: PROPERTY name:second visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-second> (): B of <root>.Pair declared in <root>.Pair'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:second type:B of <root>.Pair visibility:private [final]' type=B of <root>.Pair origin=null
+              receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.<get-second>' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>) returnType:A of <root>.Pair [operator]
+      $this: VALUE_PARAMETER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): A of <root>.Pair [operator] declared in <root>.Pair'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:first type:A of <root>.Pair visibility:private [final]' type=A of <root>.Pair origin=null
+            receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.component1' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>) returnType:B of <root>.Pair [operator]
+      $this: VALUE_PARAMETER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component2 (): B of <root>.Pair [operator] declared in <root>.Pair'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:second type:B of <root>.Pair visibility:private [final]' type=B of <root>.Pair origin=null
+            receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.component2' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>, first:A of <root>.Pair, second:B of <root>.Pair) returnType:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
+      VALUE_PARAMETER name:first index:0 type:A of <root>.Pair
+        EXPRESSION_BODY
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:first type:A of <root>.Pair visibility:private [final]' type=A of <root>.Pair origin=null
+            receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.copy' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
+      VALUE_PARAMETER name:second index:1 type:B of <root>.Pair
+        EXPRESSION_BODY
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:second type:B of <root>.Pair visibility:private [final]' type=B of <root>.Pair origin=null
+            receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.copy' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (first: A of <root>.Pair, second: B of <root>.Pair): <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair'
+          CONSTRUCTOR_CALL 'public constructor <init> (first: A of <root>.Pair, second: B of <root>.Pair) [primary] declared in <root>.Pair' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
+            <class: A>: A of <root>.Pair
+            <class: B>: B of <root>.Pair
+            first: GET_VAR 'first: A of <root>.Pair declared in <root>.Pair.copy' type=A of <root>.Pair origin=null
+            second: GET_VAR 'second: B of <root>.Pair declared in <root>.Pair.copy' type=B of <root>.Pair origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Pair'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="Pair("
+            CONST String type=kotlin.String value="first="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:first type:A of <root>.Pair visibility:private [final]' type=A of <root>.Pair origin=null
+              receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.toString' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="second="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:second type:B of <root>.Pair visibility:private [final]' type=B of <root>.Pair origin=null
+              receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.toString' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
+            CONST String type=kotlin.String value=")"
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
+      BLOCK_BODY
+        VAR name:result type:kotlin.Int [var]
+          WHEN type=kotlin.Int origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:first type:A of <root>.Pair visibility:private [final]' type=A of <root>.Pair origin=null
+                  receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.hashCode' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Int type=kotlin.Int value=0
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:first type:A of <root>.Pair visibility:private [final]' type=A of <root>.Pair origin=null
+                  receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.hashCode' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
+        SET_VAR 'var result: kotlin.Int [var] declared in <root>.Pair.hashCode' type=kotlin.Unit origin=EQ
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'var result: kotlin.Int [var] declared in <root>.Pair.hashCode' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value=31
+            other: WHEN type=kotlin.Int origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:second type:B of <root>.Pair visibility:private [final]' type=B of <root>.Pair origin=null
+                    receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.hashCode' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
+                  arg1: CONST Null type=kotlin.Nothing? value=null
+                then: CONST Int type=kotlin.Int value=0
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
+                  $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:second type:B of <root>.Pair visibility:private [final]' type=B of <root>.Pair origin=null
+                    receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.hashCode' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Pair'
+          GET_VAR 'var result: kotlin.Int [var] declared in <root>.Pair.hashCode' type=kotlin.Int origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
+              arg0: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.equals' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
+              arg1: GET_VAR 'other: kotlin.Any? declared in <root>.Pair.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Pair'
+              CONST Boolean type=kotlin.Boolean value=true
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.Pair<A of <root>.Pair, B of <root>.Pair>
+              GET_VAR 'other: kotlin.Any? declared in <root>.Pair.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Pair'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.Pair<A of <root>.Pair, B of <root>.Pair> [val]
+          TYPE_OP type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=CAST typeOperand=<root>.Pair<A of <root>.Pair, B of <root>.Pair>
+            GET_VAR 'other: kotlin.Any? declared in <root>.Pair.equals' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:first type:A of <root>.Pair visibility:private [final]' type=A of <root>.Pair origin=null
+                  receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.equals' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
+                arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:first type:A of <root>.Pair visibility:private [final]' type=A of <root>.Pair origin=null
+                  receiver: GET_VAR 'val tmp_0: <root>.Pair<A of <root>.Pair, B of <root>.Pair> [val] declared in <root>.Pair.equals' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Pair'
+              CONST Boolean type=kotlin.Boolean value=false
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:second type:B of <root>.Pair visibility:private [final]' type=B of <root>.Pair origin=null
+                  receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.equals' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
+                arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:second type:B of <root>.Pair visibility:private [final]' type=B of <root>.Pair origin=null
+                  receiver: GET_VAR 'val tmp_0: <root>.Pair<A of <root>.Pair, B of <root>.Pair> [val] declared in <root>.Pair.equals' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Pair'
+              CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Pair'
+          CONST Boolean type=kotlin.Boolean value=true
+  FUN name:compareTo visibility:public modality:FINAL <T> ($receiver:T of <root>.compareTo, <this>:java.util.Comparator<T of <root>.compareTo>{ kotlin.TypeAliasesKt.Comparator<T of <root>.compareTo> }, other:T of <root>.compareTo) returnType:kotlin.Int [operator,infix]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    $receiver: VALUE_PARAMETER name:<this> type:T of <root>.compareTo
+    VALUE_PARAMETER name:<this> index:0 type:java.util.Comparator<T of <root>.compareTo>{ kotlin.TypeAliasesKt.Comparator<T of <root>.compareTo> }
+    VALUE_PARAMETER name:other index:1 type:T of <root>.compareTo
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun compareTo <T> (<this>: java.util.Comparator<T of <root>.compareTo>{ kotlin.TypeAliasesKt.Comparator<T of <root>.compareTo> }, other: T of <root>.compareTo): kotlin.Int [operator,infix] declared in <root>'
+        CALL 'public abstract fun compare (p0: @[FlexibleNullability] T of java.util.Comparator?, p1: @[FlexibleNullability] T of java.util.Comparator?): kotlin.Int declared in java.util.Comparator' type=kotlin.Int origin=null
+          $this: GET_VAR '<this>: java.util.Comparator<T of <root>.compareTo>{ kotlin.TypeAliasesKt.Comparator<T of <root>.compareTo> } declared in <root>.compareTo' type=java.util.Comparator<T of <root>.compareTo>{ kotlin.TypeAliasesKt.Comparator<T of <root>.compareTo> } origin=null
+          p0: GET_VAR '<this>: T of <root>.compareTo declared in <root>.compareTo' type=T of <root>.compareTo origin=null
+          p1: GET_VAR 'other: T of <root>.compareTo declared in <root>.compareTo' type=T of <root>.compareTo origin=null
+  PROPERTY name:min visibility:public modality:FINAL [val]
+    FUN name:<get-min> visibility:public modality:FINAL <T> ($receiver:<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>>, <this>:java.util.Comparator<T of <root>.<get-min>>{ kotlin.TypeAliasesKt.Comparator<T of <root>.<get-min>> }) returnType:T of <root>.<get-min>
+      correspondingProperty: PROPERTY name:min visibility:public modality:FINAL [val]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>>
+      VALUE_PARAMETER name:<this> index:0 type:java.util.Comparator<T of <root>.<get-min>>{ kotlin.TypeAliasesKt.Comparator<T of <root>.<get-min>> }
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-min> <T> (<this>: java.util.Comparator<T of <root>.<get-min>>{ kotlin.TypeAliasesKt.Comparator<T of <root>.<get-min>> }): T of <root>.<get-min> declared in <root>'
+          WHEN type=T of <root>.<get-min> origin=IF
+            BRANCH
+              if: CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
+                arg0: CALL 'public final fun compareTo <T> (<this>: java.util.Comparator<T of <root>.compareTo>{ kotlin.TypeAliasesKt.Comparator<T of <root>.compareTo> }, other: T of <root>.compareTo): kotlin.Int [operator,infix] declared in <root>' type=kotlin.Int origin=LT
+                  <T>: T of <root>.<get-min>
+                  $receiver: CALL 'public final fun <get-first> (): A of <root>.Pair declared in <root>.Pair' type=T of <root>.<get-min> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> declared in <root>.<get-min>' type=<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> origin=null
+                  <this>: TYPE_OP type=T of <root>.<get-min> origin=IMPLICIT_CAST typeOperand=T of <root>.<get-min>
+                    GET_VAR '<this>: java.util.Comparator<T of <root>.<get-min>>{ kotlin.TypeAliasesKt.Comparator<T of <root>.<get-min>> } declared in <root>.<get-min>' type=java.util.Comparator<T of <root>.<get-min>>{ kotlin.TypeAliasesKt.Comparator<T of <root>.<get-min>> } origin=null
+                  other: CALL 'public final fun <get-second> (): B of <root>.Pair declared in <root>.Pair' type=T of <root>.<get-min> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> declared in <root>.<get-min>' type=<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> origin=null
+                arg1: CONST Int type=kotlin.Int value=0
+              then: CALL 'public final fun <get-first> (): A of <root>.Pair declared in <root>.Pair' type=T of <root>.<get-min> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> declared in <root>.<get-min>' type=<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> origin=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CALL 'public final fun <get-second> (): B of <root>.Pair declared in <root>.Pair' type=T of <root>.<get-min> origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> declared in <root>.<get-min>' type=<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> origin=null
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:comparator type:java.util.Comparator<kotlin.String> [val]
+        TYPE_OP type=java.util.Comparator<kotlin.String> origin=SAM_CONVERSION typeOperand=java.util.Comparator<kotlin.String>
+          FUN_EXPR type=kotlin.Function2<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?, kotlin.Int> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (a:@[FlexibleNullability] kotlin.String?, b:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Int
+              VALUE_PARAMETER name:a index:0 type:@[FlexibleNullability] kotlin.String?
+              VALUE_PARAMETER name:b index:1 type:@[FlexibleNullability] kotlin.String?
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (a: @[FlexibleNullability] kotlin.String?, b: @[FlexibleNullability] kotlin.String?): kotlin.Int declared in <root>.box'
+                  WHEN type=kotlin.Int origin=IF
+                    BRANCH
+                      if: WHEN type=kotlin.Boolean origin=OROR
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                            arg0: GET_VAR 'a: @[FlexibleNullability] kotlin.String? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.String? origin=null
+                            arg1: CONST Null type=kotlin.Nothing? value=null
+                          then: CONST Boolean type=kotlin.Boolean value=true
+                        BRANCH
+                          if: CONST Boolean type=kotlin.Boolean value=true
+                          then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                            arg0: GET_VAR 'b: @[FlexibleNullability] kotlin.String? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.String? origin=null
+                            arg1: CONST Null type=kotlin.Nothing? value=null
+                      then: CONST Int type=kotlin.Int value=0
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: CALL 'public open fun compareTo (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+                        $this: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
+                          $this: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+                            GET_VAR 'a: @[FlexibleNullability] kotlin.String? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.String? origin=null
+                        other: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
+                          $this: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+                            GET_VAR 'b: @[FlexibleNullability] kotlin.String? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.String? origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.String origin=null
+          <T>: java.util.Comparator<kotlin.String>
+          <R>: kotlin.String
+          receiver: GET_VAR 'val comparator: java.util.Comparator<kotlin.String> [val] declared in <root>.box' type=java.util.Comparator<kotlin.String> origin=null
+          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<java.util.Comparator<kotlin.String>, kotlin.String> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:java.util.Comparator<kotlin.String>) returnType:kotlin.String
+              $receiver: VALUE_PARAMETER name:$this$with type:java.util.Comparator<kotlin.String>
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
+                  CALL 'public final fun <get-min> <T> (<this>: java.util.Comparator<T of <root>.<get-min>>{ kotlin.TypeAliasesKt.Comparator<T of <root>.<get-min>> }): T of <root>.<get-min> declared in <root>' type=kotlin.String origin=GET_PROPERTY
+                    <T>: kotlin.String
+                    $receiver: CONSTRUCTOR_CALL 'public constructor <init> (first: A of <root>.Pair, second: B of <root>.Pair) [primary] declared in <root>.Pair' type=<root>.Pair<kotlin.String, kotlin.String> origin=null
+                      <class: A>: kotlin.String
+                      <class: B>: kotlin.String
+                      first: CONST String type=kotlin.String value="OK"
+                      second: CONST String type=kotlin.String value="fail"
+                    <this>: GET_VAR '$this$with: java.util.Comparator<kotlin.String> declared in <root>.box.<anonymous>' type=java.util.Comparator<kotlin.String> origin=null

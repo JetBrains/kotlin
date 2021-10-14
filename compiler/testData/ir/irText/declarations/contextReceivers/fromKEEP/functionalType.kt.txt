@@ -1,0 +1,48 @@
+class Param {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class O {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val o: String
+    field = "O"
+    get
+
+}
+
+class K {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val k: String
+    field = "K"
+    get
+
+}
+
+fun <T : Any?> K.f(<this>: O, g: @ExtensionFunctionType @ContextFunctionTypeParams(count = 1) Function3<O, K, Param, T>): T {
+  return g.invoke(p1 = <this>, p2 = <this>, p3 = Param())
+}
+
+fun box(): String {
+  return with<O, String>(receiver = O(), block = local fun O.<anonymous>(): String {
+    return K().f<String>(<this> = $this$with /*as @ExtensionFunctionType @ContextFunctionTypeParams(count = 1) Function3<O, K, Param, String> */, g = local fun K.<anonymous>(<this>: O, it: Param): String {
+      return $this$with.<get-o>().plus(other = $this$f.<get-k>())
+    }
+)
+  }
+)
+}

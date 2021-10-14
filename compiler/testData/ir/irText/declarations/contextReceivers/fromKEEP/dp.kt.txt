@@ -1,0 +1,32 @@
+class View {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val coefficient: Int
+    field = 42
+    get
+
+}
+
+val Int.dp: Int
+  get(<this>: View): Int {
+    return <this>.<get-coefficient>().times(other = <this>)
+  }
+
+fun box(): String {
+  with<View, Nothing>(receiver = View(), block = local fun View.<anonymous>(): Nothing {
+    when {
+      EQEQ(arg0 = listOf<Int>(elements = [1, 2, 10]).map<Int, Int>(transform = local fun <anonymous>(it: Int): Int {
+        return it.<get-dp>(<this> = $this$with)
+      }
+), arg1 = listOf<Int>(elements = [42, 84, 420])) -> { // BLOCK
+        return "OK"
+      }
+    }
+    return "fail"
+  }
+)
+}

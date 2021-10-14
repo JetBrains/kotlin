@@ -1,0 +1,25 @@
+class A<T : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class B<P : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun Int.foo() {
+  A<Int>() /*~> Unit */
+}
+
+fun Collection<Int>.bar() {
+  B<Int>() /*~> Unit */
+}

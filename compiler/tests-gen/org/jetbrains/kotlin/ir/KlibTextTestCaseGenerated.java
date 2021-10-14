@@ -573,6 +573,87 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             }
         }
 
+        @TestMetadata("compiler/testData/ir/irText/declarations/contextReceivers")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ContextReceivers extends AbstractKlibTextTestCase {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInContextReceivers() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            }
+
+            @TestMetadata("class.kt")
+            public void testClass() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/class.kt");
+            }
+
+            @TestMetadata("function.kt")
+            public void testFunction() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/function.kt");
+            }
+
+            @TestMetadata("functionalType.kt")
+            public void testFunctionalType() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/functionalType.kt");
+            }
+
+            @TestMetadata("genericOuterClass.kt")
+            public void testGenericOuterClass() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/genericOuterClass.kt");
+            }
+
+            @TestMetadata("lazy.kt")
+            public void testLazy() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/lazy.kt");
+            }
+
+            @TestMetadata("localDeclaration.kt")
+            public void testLocalDeclaration() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/localDeclaration.kt");
+            }
+
+            @TestMetadata("overloadPriority.kt")
+            public void testOverloadPriority() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/overloadPriority.kt");
+            }
+
+            @TestMetadata("overloading.kt")
+            public void testOverloading() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/overloading.kt");
+            }
+
+            @TestMetadata("plusMatrix.kt")
+            public void testPlusMatrix() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/plusMatrix.kt");
+            }
+
+            @TestMetadata("property.kt")
+            public void testProperty() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/property.kt");
+            }
+
+            @TestMetadata("thisWithCustomLabel.kt")
+            public void testThisWithCustomLabel() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/thisWithCustomLabel.kt");
+            }
+
+            @TestMetadata("compiler/testData/ir/irText/declarations/contextReceivers/fromKEEP")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class FromKEEP extends AbstractKlibTextTestCase {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInFromKEEP() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/contextReceivers/fromKEEP"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                }
+            }
+        }
+
         @TestMetadata("compiler/testData/ir/irText/declarations/multiplatform")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

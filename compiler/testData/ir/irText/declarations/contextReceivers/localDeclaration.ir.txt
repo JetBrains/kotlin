@@ -1,0 +1,102 @@
+FILE fqName:<root> fileName:/localDeclaration.kt
+  CLASS INTERFACE name:A modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    FUN name:f visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.A
+      BLOCK_BODY
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.A]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+    CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.A]'
+    FUN FAKE_OVERRIDE name:f visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun f (): kotlin.Unit declared in <root>.A
+      $this: VALUE_PARAMETER name:<this> type:<root>.A
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.A
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.A
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.A
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:testLocalFunction visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      FUN LOCAL_FUNCTION name:local visibility:local modality:FINAL <> (<this>:<root>.A) returnType:kotlin.Unit
+        VALUE_PARAMETER name:<this> index:0 type:<root>.A
+        BLOCK_BODY
+          CALL 'public open fun f (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+            $this: GET_VAR '<this>: <root>.A declared in <root>.testLocalFunction.local' type=<root>.A origin=null
+      CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+        <T>: <root>.B
+        <R>: kotlin.Unit
+        receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+        block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.B, kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.B) returnType:kotlin.Unit
+            $receiver: VALUE_PARAMETER name:$this$with type:<root>.B
+            BLOCK_BODY
+              CALL 'local final fun local (<this>: <root>.A): kotlin.Unit declared in <root>.testLocalFunction' type=kotlin.Unit origin=null
+                <this>: GET_VAR '$this$with: <root>.B declared in <root>.testLocalFunction.<anonymous>' type=<root>.B origin=null
+  FUN name:testLocalClass visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[kotlin.Any]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.testLocalClass.Local
+        FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.A visibility:private [final]
+        CONSTRUCTOR visibility:public <> (<this>:<root>.A) returnType:<root>.testLocalClass.Local [primary]
+          VALUE_PARAMETER name:<this> index:0 type:<root>.A
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+            SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.A visibility:private [final]' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.testLocalClass.Local declared in <root>.testLocalClass.Local' type=<root>.testLocalClass.Local origin=null
+              value: GET_VAR '<this>: <root>.A declared in <root>.testLocalClass.Local.<init>' type=<root>.A origin=null
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[kotlin.Any]'
+        FUN name:local visibility:public modality:FINAL <> ($this:<root>.testLocalClass.Local) returnType:kotlin.Unit
+          $this: VALUE_PARAMETER name:<this> type:<root>.testLocalClass.Local
+          BLOCK_BODY
+            CALL 'public open fun f (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+              $this: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.A visibility:private [final]' type=<root>.A origin=null
+                receiver: GET_VAR '<this>: <root>.testLocalClass.Local declared in <root>.testLocalClass.Local.local' type=<root>.testLocalClass.Local origin=null
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+          overridden:
+            public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+          $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+          VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+          overridden:
+            public open fun hashCode (): kotlin.Int declared in kotlin.Any
+          $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+          overridden:
+            public open fun toString (): kotlin.String declared in kotlin.Any
+          $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+        <T>: <root>.B
+        <R>: kotlin.Unit
+        receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+        block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.B, kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.B) returnType:kotlin.Unit
+            $receiver: VALUE_PARAMETER name:$this$with type:<root>.B
+            BLOCK_BODY
+              CALL 'public final fun local (): kotlin.Unit declared in <root>.testLocalClass.Local' type=kotlin.Unit origin=null
+                $this: CONSTRUCTOR_CALL 'public constructor <init> (<this>: <root>.A) [primary] declared in <root>.testLocalClass.Local' type=<root>.testLocalClass.Local origin=null
+                  <this>: GET_VAR '$this$with: <root>.B declared in <root>.testLocalClass.<anonymous>' type=<root>.B origin=null

@@ -1,0 +1,54 @@
+interface Lazy<T : Any?> {
+
+}
+
+fun test1(<this>: Lazy<Int>, <this>: Lazy<CharSequence>) {
+}
+
+fun <T : Any?> Lazy<Int>.test2(<this>: Lazy<T>) {
+}
+
+fun <T : Any?> Lazy<Int>.test3(<this>: Lazy<Lazy<T>>) {
+}
+
+fun <T : Any?> f(lazy1: Lazy<Int>, lazy2: Lazy<CharSequence>, lazyT: Lazy<T>, lazyLazyT: Lazy<Lazy<T>>) {
+  with<Lazy<Int>, Unit>(receiver = lazy1, block = local fun Lazy<Int>.<anonymous>() {
+    with<Lazy<CharSequence>, Unit>(receiver = lazy2, block = local fun Lazy<CharSequence>.<anonymous>() {
+      test1(<this> = $this$with, <this> = $this$with)
+      $this$with.test2<CharSequence>(<this> = $this$with)
+    }
+)
+  }
+)
+  with<Lazy<CharSequence>, Unit>(receiver = lazy2, block = local fun Lazy<CharSequence>.<anonymous>() {
+    with<Lazy<Int>, Unit>(receiver = lazy1, block = local fun Lazy<Int>.<anonymous>() {
+      test1(<this> = $this$with, <this> = $this$with)
+      $this$with.test2<Int>(<this> = $this$with)
+    }
+)
+  }
+)
+  with<Lazy<T>, Unit>(receiver = lazyT, block = local fun Lazy<T>.<anonymous>() {
+    with<Lazy<Int>, Unit>(receiver = lazy1, block = local fun Lazy<Int>.<anonymous>() {
+      $this$with.test2<Int>(<this> = $this$with)
+    }
+)
+  }
+)
+  with<Lazy<Lazy<T>>, Unit>(receiver = lazyLazyT, block = local fun Lazy<Lazy<T>>.<anonymous>() {
+    with<Lazy<Int>, Unit>(receiver = lazy1, block = local fun Lazy<Int>.<anonymous>() {
+      $this$with.test2<Int>(<this> = $this$with)
+      $this$with.test3<T>(<this> = $this$with)
+    }
+)
+  }
+)
+  with<Lazy<Int>, Unit>(receiver = lazy1, block = local fun Lazy<Int>.<anonymous>() {
+    with<Lazy<Lazy<T>>, Unit>(receiver = lazyLazyT, block = local fun Lazy<Lazy<T>>.<anonymous>() {
+      $this$with.test2<Lazy<T>>(<this> = $this$with)
+      $this$with.test3<T>(<this> = $this$with)
+    }
+)
+  }
+)
+}

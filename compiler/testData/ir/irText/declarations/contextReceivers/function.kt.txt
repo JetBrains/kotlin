@@ -1,0 +1,23 @@
+class C {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val c: Int
+    field = 42
+    get
+
+}
+
+fun foo(<this>: C) {
+  <this>.<get-c>() /*~> Unit */
+}
+
+fun bar(c: C) {
+  with<C, Unit>(receiver = c, block = local fun C.<anonymous>() {
+    foo(<this> = $this$with)
+  }
+)
+}
