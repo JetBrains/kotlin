@@ -2522,6 +2522,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
+            @TestMetadata("adaptedArrayOf.kt")
+            public void testAdaptedArrayOf() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/adaptedArrayOf.kt");
+            }
+
             @TestMetadata("adaptedVarargFunImportedFromObject.kt")
             public void testAdaptedVarargFunImportedFromObject() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/adaptedVarargFunImportedFromObject.kt");
@@ -32112,6 +32117,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("kt4753_2.kt")
         public void testKt4753_2() throws Exception {
             runTest("compiler/testData/codegen/box/sam/kt4753_2.kt");
+        }
+
+        @TestMetadata("kt49226.kt")
+        public void testKt49226() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/kt49226.kt");
         }
 
         @TestMetadata("nonInlinedSamWrapper.kt")
