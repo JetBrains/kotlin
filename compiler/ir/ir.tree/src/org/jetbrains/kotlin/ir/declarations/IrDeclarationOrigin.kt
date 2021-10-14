@@ -35,6 +35,7 @@ interface IrDeclarationOrigin {
     object METHOD_HANDLER_IN_DEFAULT_FUNCTION : IrDeclarationOriginImpl("METHOD_HANDLER_IN_DEFAULT_FUNCTION", isSynthetic = true)
     object MOVED_DISPATCH_RECEIVER : IrDeclarationOriginImpl("MOVED_DISPATCH_RECEIVER")
     object MOVED_EXTENSION_RECEIVER : IrDeclarationOriginImpl("MOVED_EXTENSION_RECEIVER")
+    object MOVED_CONTEXT_RECEIVER : IrDeclarationOriginImpl("MOVED_CONTEXT_RECEIVER")
 
     object FILE_CLASS : IrDeclarationOriginImpl("FILE_CLASS")
     object SYNTHETIC_FILE_CLASS : IrDeclarationOriginImpl("SYNTHETIC_FILE_CLASS", isSynthetic = true)

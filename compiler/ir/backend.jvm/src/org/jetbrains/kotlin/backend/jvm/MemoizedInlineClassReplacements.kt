@@ -185,6 +185,7 @@ class MemoizedInlineClassReplacements(
                 // The function's name will be mangled, so preserve the old receiver name.
                 this, index = -1, name = Name.identifier(function.extensionReceiverName(context.state))
             )
+            contextReceiverParametersCount = function.contextReceiverParametersCount
             valueParameters = function.valueParameters.mapIndexed { index, parameter ->
                 parameter.copyTo(this, index = index, defaultValue = null).also {
                     // Assuming that constructors and non-override functions are always replaced with the unboxed
@@ -206,13 +207,21 @@ class MemoizedInlineClassReplacements(
                     type = function.parentAsClass.defaultType, origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
                 )
             }
+            if (function.contextReceiverParametersCount != 0) {
+                function.valueParameters.take(function.contextReceiverParametersCount).forEachIndexed { i, contextReceiver ->
+                    newValueParameters += contextReceiver.copyTo(
+                        this, index = newValueParameters.size, name = Name.identifier("contextReceiver$i"),
+                        origin = IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER
+                    )
+                }
+            }
             function.extensionReceiverParameter?.let {
                 newValueParameters += it.copyTo(
                     this, index = newValueParameters.size, name = Name.identifier(function.extensionReceiverName(context.state)),
                     origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
                 )
             }
-            for (parameter in function.valueParameters) {
+            for (parameter in function.valueParameters.drop(function.contextReceiverParametersCount)) {
                 newValueParameters += parameter.copyTo(this, index = newValueParameters.size, defaultValue = null).also {
                     // See comment next to a similar line above.
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
