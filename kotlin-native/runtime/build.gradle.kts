@@ -5,8 +5,12 @@
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.testing.native.*
 import org.jetbrains.kotlin.bitcode.CompileToBitcode
+import org.jetbrains.kotlin.konan.properties.loadProperties
+import org.jetbrains.kotlin.konan.properties.saveProperties
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
 import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
+import org.jetbrains.kotlin.konan.file.File as KFile
 
 plugins {
     id("compile-to-bitcode")
@@ -440,7 +444,19 @@ targetList.forEach { target ->
         dependsOn("${target}Runtime")
 
         destinationDir = project.buildDir.resolve("${target}Stdlib")
-        from(project.buildDir.resolve("stdlib/$target/stdlib"))
+        from(project.buildDir.resolve("stdlib/${hostName}/stdlib"))
+
+        if (target != hostName) {
+            doLast {
+                // Change target in manifest file
+                with(KFile(destinationDir.resolve("default/manifest").absolutePath)) {
+                    loadProperties().also {
+                        it[KLIB_PROPERTY_NATIVE_TARGETS] = target
+                        saveProperties(it)
+                    }
+                }
+            }
+        }
     }
 }
 
