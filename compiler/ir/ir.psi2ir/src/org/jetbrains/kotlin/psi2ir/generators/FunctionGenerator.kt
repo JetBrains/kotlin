@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -18,10 +19,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
-import org.jetbrains.kotlin.ir.types.IrErrorType
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.name.Name
@@ -39,6 +36,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
+@ObsoleteDescriptorBasedAPI
 class FunctionGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
 
     constructor(context: GeneratorContext) : this(DeclarationGenerator(context))
@@ -74,30 +72,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                     .buildWithScope { irFunction ->
                         generateFunctionParameterDeclarationsAndReturnType(irFunction, ktElement, null)
                     }
-                    .takeUnless { irFunction ->
-                        irFunction.containsErrorTypesInSignature()
-                    }
             }
-
-    private fun IrSimpleFunction.containsErrorTypesInSignature(): Boolean {
-        if (this.typeParameters.any { it.superTypes.any { it.containsErrorType() } }) return true
-        this.dispatchReceiverParameter?.let {
-            if (it.type.containsErrorType()) return true
-        }
-        this.extensionReceiverParameter?.let {
-            if (it.type.containsErrorType()) return true
-        }
-        if (this.valueParameters.any { it.type.containsErrorType() }) return true
-        if (this.returnType.containsErrorType()) return true
-        return false
-    }
-
-    private fun IrType.containsErrorType(): Boolean =
-        when (this) {
-            is IrErrorType -> true
-            is IrSimpleType -> arguments.any { it is IrTypeProjection && it.type.containsErrorType() }
-            else -> false
-        }
 
     private inline fun declareSimpleFunction(
         ktFunction: KtFunction,
@@ -234,8 +209,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         property: PropertyDescriptor,
         irAccessor: IrSimpleFunction
     ): IrExpression? {
-        val containingDeclaration = property.containingDeclaration
-        return when (containingDeclaration) {
+        return when (val containingDeclaration = property.containingDeclaration) {
             is ClassDescriptor -> {
                 val thisAsReceiverParameter = containingDeclaration.thisAsReceiverParameter
                 IrGetValueImpl(

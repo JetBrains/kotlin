@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
+import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorForNotFoundClasses
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
 import org.jetbrains.kotlin.psi2ir.generators.fragments.FragmentContext
@@ -145,10 +146,11 @@ open class JvmIrCodegenFactory(
             irLinker.deserializeIrModuleHeader(it, kotlinLibrary, _moduleName = it.name.asString())
         }
 
+        val stubGeneratorForMissingClasses = DeclarationStubGeneratorForNotFoundClasses(stubGenerator)
         val irProviders = if (evaluatorFragmentInfoForPsi2Ir != null) {
-            listOf(stubGenerator, irLinker)
+            listOf(stubGenerator, irLinker, stubGeneratorForMissingClasses)
         } else {
-            listOf(irLinker)
+            listOf(irLinker, stubGeneratorForMissingClasses)
         }
 
         val irModuleFragment =

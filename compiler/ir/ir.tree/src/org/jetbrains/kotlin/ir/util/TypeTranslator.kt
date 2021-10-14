@@ -145,9 +145,6 @@ abstract class TypeTranslator(
                         lowerType.constructor.declarationDescriptor as? ClassDescriptor
                             ?: throw AssertionError("No class descriptor for lower type $lowerType of $approximatedType")
                     annotations = translateTypeAnnotations(upperType, approximatedType)
-                    if (lowerTypeDescriptor is NotFoundClasses.MockClassDescriptor) {
-                        return IrErrorTypeImpl(approximatedType, annotations, variance)
-                    }
                     classifier = symbolTable.referenceClass(lowerTypeDescriptor)
                     arguments = when {
                         approximatedType is RawType ->

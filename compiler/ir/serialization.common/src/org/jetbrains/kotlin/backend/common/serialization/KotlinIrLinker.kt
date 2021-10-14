@@ -130,7 +130,6 @@ abstract class KotlinIrLinker(
     }
 
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
-
         if (!symbol.isPublicApi) {
             if (symbol.hasDescriptor) {
                 val descriptor = symbol.descriptor
@@ -142,7 +141,9 @@ abstract class KotlinIrLinker(
 
         if (!symbol.isBound) {
             try {
-                findDeserializedDeclarationForSymbol(symbol) ?: tryResolveCustomDeclaration(symbol) ?: return null
+                findDeserializedDeclarationForSymbol(symbol)
+                    ?: tryResolveCustomDeclaration(symbol)
+                    ?: return null
             } catch (e: IrSymbolTypeMismatchException) {
                 throw SymbolTypeMismatch(e, deserializersForModules.values, userVisibleIrModulesSupport).raiseIssue(messageLogger)
             }
