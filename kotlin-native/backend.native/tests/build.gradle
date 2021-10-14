@@ -1652,6 +1652,11 @@ standaloneTest("initializers_return2") {
     goldValue = "42\n"
 }
 
+standaloneTest("initializers_object") {
+    source = "codegen/initializers/object.kt"
+    flags = ['-Xir-property-lazy-initialization=enable']
+}
+
 linkTest("initializers_linkTest1") {
     goldValue = "1200\n"
     source = "codegen/initializers/linkTest1_main.kt"
