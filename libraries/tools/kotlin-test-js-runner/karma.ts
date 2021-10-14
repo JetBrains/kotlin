@@ -6,21 +6,27 @@
 import {CliArgsParser, getDefaultCliDescription} from "./src/CliArgsParser";
 import {runWithFilteringAndConsoleAdapters} from "./src/Adapter";
 
-const kotlin_test = require('kotlin-test');
+let kotlin_test
+try {
+    kotlin_test = require('kotlin-test');
+} catch {
+}
 
-const parser = new CliArgsParser(
-    getDefaultCliDescription(),
-    (exitCode) => {
-        throw new Error(`Exit with ${exitCode}`)
-    }
-);
-const untypedArgs = parser.parse(window.__karma__.config.args);
+if (kotlin_test) {
+    const parser = new CliArgsParser(
+        getDefaultCliDescription(),
+        (exitCode) => {
+            throw new Error(`Exit with ${exitCode}`)
+        }
+    );
+    const untypedArgs = parser.parse(window.__karma__.config.args);
 
-const initialAdapter = kotlin_test.kotlin.test.detectAdapter_8be2vx$();
-kotlin_test.setAdapter(runWithFilteringAndConsoleAdapters(initialAdapter, untypedArgs));
+    const initialAdapter = kotlin_test.kotlin.test.detectAdapter_8be2vx$();
+    kotlin_test.setAdapter(runWithFilteringAndConsoleAdapters(initialAdapter, untypedArgs));
 
-const resultFun = window.__karma__.result;
-window.__karma__.result = function (result) {
-    console.log(`--END_KOTLIN_TEST--\n${JSON.stringify(result)}`);
-    resultFun(result)
-};
+    const resultFun = window.__karma__.result;
+    window.__karma__.result = function (result) {
+        console.log(`--END_KOTLIN_TEST--\n${JSON.stringify(result)}`);
+        resultFun(result)
+    };
+}
