@@ -261,7 +261,7 @@ object ClasspathChangesComputer {
         allClassIds.forEach { classId ->
             val fqName = classId.asSingleFqName()
             check(!fqNameToClassId.contains(fqName)) {
-                "Ambiguous FqName $fqName correspond to two different `ClassId`s: ${fqNameToClassId[fqName]} and $classId"
+                "Ambiguous FqName $fqName corresponds to two different `ClassId`s: ${fqNameToClassId[fqName]} and $classId"
             }
             fqNameToClassId[fqName] = classId
         }
@@ -377,7 +377,7 @@ private object ImpactAnalysis {
             }
             is RegularJavaClassSnapshot -> supertypes.mapNotNull {
                 // The following call returns null if supertype is outside the considered class snapshots (e.g., "java/lang/Object").
-                // We don't need to collect those supertypes (see getClassIdToSubclassesMap).
+                // Use `mapNotNull` as we don't need to collect those supertypes (see getClassIdToSubclassesMap).
                 classIdResolver.invoke(it)
             }
             is ProtoBasedJavaClassSnapshot -> {

@@ -26,9 +26,9 @@
       "publicProperty",
       "getPublicProperty",
       "()I",
-      "privateMethod",
+      "privateFunction",
       "",
-      "publicMethod"
+      "publicFunction"
     ],
     "constantsMap": {},
     "inlineFunctionsMap": {},

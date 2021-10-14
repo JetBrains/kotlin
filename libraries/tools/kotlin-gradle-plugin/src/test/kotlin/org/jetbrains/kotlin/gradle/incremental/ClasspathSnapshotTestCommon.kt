@@ -94,7 +94,12 @@ abstract class ClasspathSnapshotTestCommon {
 
         /** Compiles the source files in the given directory and returns all generated .class files. */
         fun compileAll(srcDir: File, classpath: List<File>, tmpDir: TemporaryFolder): List<ClassFile> {
-            return compileKotlin(srcDir, classpath, tmpDir) + compileJava(srcDir, classpath, tmpDir)
+            val kotlinClasses = compileKotlin(srcDir, classpath, tmpDir)
+
+            val javaClasspath = classpath + listOfNotNull(kotlinClasses.firstOrNull()?.classRoot)
+            val javaClasses = compileJava(srcDir, javaClasspath, tmpDir)
+
+            return kotlinClasses + javaClasses
         }
 
         private fun compileKotlin(srcDir: File, classpath: List<File>, tmpDir: TemporaryFolder): List<ClassFile> {
@@ -214,14 +219,14 @@ abstract class ClasspathSnapshotTestCommon {
     ) {
 
         override fun changePublicMethodSignature() = replace(
-            "publicMethod()", "changedPublicMethod()",
+            "publicFunction()", "publicFunction(newParam: Int)",
             preCompiledKotlinClassFile = ClassFile(
                 File(testDataDir, "classes/kotlin/changedPublicMethodSignature"), "com/example/SimpleKotlinClass.class"
             )
         )
 
         override fun changeMethodImplementation() = replace(
-            "I'm in a public method", "This method implementation has changed!",
+            "I'm in a public function", "This function's implementation has changed!",
             preCompiledKotlinClassFile = ClassFile(
                 File(testDataDir, "classes/kotlin/changedMethodImplementation"), "com/example/SimpleKotlinClass.class"
             )
@@ -232,9 +237,9 @@ abstract class ClasspathSnapshotTestCommon {
         JavaSourceFile(File(testDataDir, "src/java"), "com/example/SimpleJavaClass.java"), tmpDir
     ) {
 
-        override fun changePublicMethodSignature() = replace("publicMethod()", "changedPublicMethod()")
+        override fun changePublicMethodSignature() = replace("publicMethod()", "publicMethod(int newParam)")
 
-        override fun changeMethodImplementation() = replace("I'm in a public method", "This method implementation has changed!")
+        override fun changeMethodImplementation() = replace("I'm in a public method", "This method's implementation has changed!")
     }
 
     class JavaClassWithNestedClasses(tmpDir: TemporaryFolder) : ChangeableTestSourceFile(
@@ -244,8 +249,8 @@ abstract class ClasspathSnapshotTestCommon {
         /** The source file contains multiple classes, select the one that we want to test. */
         val nestedClassToTest = "com/example/JavaClassWithNestedClasses\$InnerClass"
 
-        override fun changePublicMethodSignature() = replace("publicMethod()", "changedPublicMethod()")
+        override fun changePublicMethodSignature() = replace("publicMethod()", "publicMethod(int newParam)")
 
-        override fun changeMethodImplementation() = replace("I'm in a public method", "This method implementation has changed!")
+        override fun changeMethodImplementation() = replace("I'm in a public method", "This method's implementation has changed!")
     }
 }

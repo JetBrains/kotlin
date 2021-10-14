@@ -6,11 +6,11 @@ class SimpleKotlinClass {
 
     private val privateProperty: Int = 0
 
-    fun publicMethod() {
-        println("I'm in a public method")
+    fun publicFunction() {
+        println("I'm in a public function")
     }
 
-    private fun privateMethod() {
-        println("I'm in a private method")
+    private fun privateFunction() {
+        println("I'm in a private function")
     }
 }
