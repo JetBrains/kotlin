@@ -6,9 +6,17 @@
 package org.jetbrains.kotlin.gradle.incremental
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.gradle.incremental.ImpactAnalysis.computeImpactedSet
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.storage.FileToCanonicalPathConverter
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.deserialization.supertypes
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import java.io.File
 import java.util.*
 
@@ -112,6 +120,21 @@ object ClasspathChangesComputer {
     }
 
     /**
+     * Returns all [ClassSnapshot]s in this [ClasspathSnapshot].
+     *
+     * If there are duplicate classes on the classpath, retain only the first one to match the compiler's behavior.
+     */
+    private fun ClasspathSnapshot.getNonDuplicateClassSnapshots(): List<ClassSnapshot> {
+        val classSnapshots = LinkedHashMap<String, ClassSnapshot>(classpathEntrySnapshots.sumOf { it.classSnapshots.size })
+        for (classpathEntrySnapshot in classpathEntrySnapshots) {
+            for ((unixStyleRelativePath, classSnapshot) in classpathEntrySnapshot.classSnapshots) {
+                classSnapshots.putIfAbsent(unixStyleRelativePath, classSnapshot)
+            }
+        }
+        return classSnapshots.values.toList()
+    }
+
+    /**
      * Computes changes between two lists of [ClassSnapshot]s.
      *
      * Each list must not contain duplicate classes.
@@ -122,8 +145,14 @@ object ClasspathChangesComputer {
             return ClasspathChanges.NotAvailable.UnableToCompute
         }
 
-        val (currentAsmBasedSnapshots, currentProtoBasedSnapshots) = currentClassSnapshots.partition { it is RegularJavaClassSnapshot }
-        val (previousAsmBasedSnapshots, previousProtoBasedSnapshots) = previousClassSnapshots.partition { it is RegularJavaClassSnapshot }
+        // Ignore `EmptyJavaClassSnapshot`s as they don't impact the result
+        val currentNonEmptyClassSnapshots = currentClassSnapshots.filter { it !is EmptyJavaClassSnapshot }
+        val previousNonEmptyClassSnapshots = previousClassSnapshots.filter { it !is EmptyJavaClassSnapshot }
+
+        val (currentAsmBasedSnapshots, currentProtoBasedSnapshots) =
+            currentNonEmptyClassSnapshots.partition { it is RegularJavaClassSnapshot }
+        val (previousAsmBasedSnapshots, previousProtoBasedSnapshots) =
+            previousNonEmptyClassSnapshots.partition { it is RegularJavaClassSnapshot }
 
         val changeSet1 = computeChangesForProtoBasedSnapshots(currentProtoBasedSnapshots, previousProtoBasedSnapshots)
 
@@ -131,18 +160,22 @@ object ClasspathChangesComputer {
         val changeSet2 = JavaClassChangesComputer.compute(
             currentAsmBasedSnapshots as List<RegularJavaClassSnapshot>,
             previousAsmBasedSnapshots as List<RegularJavaClassSnapshot>
-        ).toClasspathChanges()
-
-        return ClasspathChanges.Available(
-            lookupSymbols = changeSet1.lookupSymbols + changeSet2.lookupSymbols,
-            fqNames = changeSet1.fqNames + changeSet2.fqNames
         )
+
+        val allChanges = changeSet1 + changeSet2
+        if (allChanges.isEmpty()) {
+            return allChanges.toClasspathChanges()
+        }
+
+        val impactedSet = computeImpactedSet(allChanges, previousNonEmptyClassSnapshots)
+
+        return impactedSet.toClasspathChanges()
     }
 
     private fun computeChangesForProtoBasedSnapshots(
         currentClassSnapshots: List<ClassSnapshot>,
         previousClassSnapshots: List<ClassSnapshot>
-    ): ClasspathChanges.Available {
+    ): ChangeSet {
         val workingDir =
             FileUtil.createTempDirectory(this::class.java.simpleName, "_WorkingDir_${UUID.randomUUID()}", /* deleteOnExit */ true)
         val incrementalJvmCache = IncrementalJvmCache(workingDir, /* targetOutputDir */ null, FileToCanonicalPathConverter)
@@ -172,10 +205,7 @@ object ClasspathChangesComputer {
                     )
                     incrementalJvmCache.markDirty(JvmClassName.byClassId(previousSnapshot.serializedJavaClass.classId))
                 }
-                is EmptyJavaClassSnapshot -> {
-                    // Nothing to process as these classes don't impact the result.
-                }
-                is RegularJavaClassSnapshot, is ContentHashJavaClassSnapshot -> {
+                is RegularJavaClassSnapshot, is ContentHashJavaClassSnapshot, is EmptyJavaClassSnapshot -> {
                     error("Unexpected type (it should have been handled earlier): ${previousSnapshot.javaClass.name}")
                 }
             }
@@ -205,10 +235,7 @@ object ClasspathChangesComputer {
                         collector = changesCollector
                     )
                 }
-                is EmptyJavaClassSnapshot -> {
-                    // Nothing to process as these classes don't impact the result.
-                }
-                is RegularJavaClassSnapshot, is ContentHashJavaClassSnapshot -> {
+                is RegularJavaClassSnapshot, is ContentHashJavaClassSnapshot, is EmptyJavaClassSnapshot -> {
                     error("Unexpected type (it should have been handled earlier): ${currentSnapshot.javaClass.name}")
                 }
             }
@@ -225,24 +252,160 @@ object ClasspathChangesComputer {
         val dirtyData = changesCollector.getDirtyData(listOf(incrementalJvmCache), EmptyICReporter)
         workingDir.deleteRecursively()
 
-        return ClasspathChanges.Available(
-            lookupSymbols = dirtyData.dirtyLookupSymbols.toSet(),
-            fqNames = dirtyData.dirtyClassesFqNames.toSet()
-        )
+        return dirtyData.normalize(currentClassSnapshots, previousClassSnapshots)
+    }
+
+    private fun DirtyData.normalize(currentClassSnapshots: List<ClassSnapshot>, previousClassSnapshots: List<ClassSnapshot>): ChangeSet {
+        val allClassIds = currentClassSnapshots.map { it.getClassId() }.toSet() + previousClassSnapshots.map { it.getClassId() }
+        val fqNameToClassId = LinkedHashMap<FqName, ClassId>(allClassIds.size)
+        allClassIds.forEach { classId ->
+            val fqName = classId.asSingleFqName()
+            check(!fqNameToClassId.contains(fqName)) {
+                "Ambiguous FqName $fqName correspond to two different `ClassId`s: ${fqNameToClassId[fqName]} and $classId"
+            }
+            fqNameToClassId[fqName] = classId
+        }
+
+        return ChangeSet.Collector().run {
+            dirtyLookupSymbols.forEach {
+                fqNameToClassId[FqName(it.scope)]?.let { classIdOfScope ->
+                    // Scope is a class, lookup symbol is a class member
+                    addChangedClassMember(classIdOfScope, it.name)
+                } ?: run {
+                    // Scope is a package
+                    val potentialClassFqName = if (it.scope.isEmpty()) FqName(it.name) else FqName("${it.scope}.${it.name}")
+                    fqNameToClassId[potentialClassFqName]?.let { classId ->
+                        // Lookup symbol is a class
+                        addChangedClass(classId)
+                    } ?: run {
+                        // Lookup symbol is a top-level member
+                        addChangedTopLevelMember(FqName(it.scope), it.name)
+                    }
+                }
+            }
+            val changes = getChanges()
+
+            // dirtyClassesFqNames should be derived from dirtyLookupSymbols. Double-check that this is the case.
+            val changedFqNames: Set<FqName> =
+                changes.changedClasses.map { it.asSingleFqName() }.toSet() +
+                        changes.changedClassMembers.keys.map { it.asSingleFqName() } +
+                        changes.changedTopLevelMembers.keys
+            check(dirtyClassesFqNames.toSet() == changedFqNames) {
+                "Two sets differ:\n" +
+                        "dirtyClassesFqNames: $dirtyClassesFqNames\n" +
+                        "changedFqNames: $changedFqNames"
+            }
+
+            changes
+        }
+    }
+}
+
+private fun ClassSnapshot.getClassId(): ClassId {
+    return when (this) {
+        is KotlinClassSnapshot -> classInfo.classId
+        is RegularJavaClassSnapshot -> classId
+        is ProtoBasedJavaClassSnapshot -> serializedJavaClass.classId
+        is EmptyJavaClassSnapshot, is ContentHashJavaClassSnapshot -> {
+            error("Unexpected type (it should have been handled earlier): ${javaClass.name}")
+        }
+    }
+}
+
+private object ImpactAnalysis {
+
+    /**
+     * Computes the set of classes/class members that are impacted by the given changes.
+     *
+     * For example, if a superclass has changed, any of its subclasses will be impacted even if it has not changed, and unchanged source
+     * files in the previous compilation that depended on the subclasses will need to be recompiled.
+     *
+     * The returned set is also a [ChangeSet], which includes the given changes plus the impacted ones.
+     */
+    fun computeImpactedSet(changes: ChangeSet, previousClassSnapshots: List<ClassSnapshot>): ChangeSet {
+        val classIdToSubclasses = getClassIdToSubclassesMap(previousClassSnapshots)
+
+        return ChangeSet.Collector().run {
+            addChangedClasses(findSubclassesInclusive(changes.changedClasses, classIdToSubclasses))
+            for ((changedClass, changedClassMembers) in changes.changedClassMembers) {
+                findSubclassesInclusive(setOf(changedClass), classIdToSubclasses).forEach {
+                    addChangedClassMembers(it, changedClassMembers)
+                }
+            }
+            for ((changedPackage, changedClassMembers) in changes.changedTopLevelMembers) {
+                addChangedTopLevelMembers(changedPackage, changedClassMembers)
+            }
+            getChanges()
+        }
+    }
+
+    private fun getClassIdToSubclassesMap(classSnapshots: List<ClassSnapshot>): Map<ClassId, Set<ClassId>> {
+        val classIds = classSnapshots.map { it.getClassId() }
+        val classNameToClassId = classIds.associateBy { JvmClassName.byClassId(it) }
+        val classNameToClassIdResolver = { className: JvmClassName -> classNameToClassId[className] }
+
+        val classIdToSubclasses = mutableMapOf<ClassId, MutableSet<ClassId>>()
+        classSnapshots.forEach { classSnapshot ->
+            val classId = classSnapshot.getClassId()
+            classSnapshot.getSupertypes(classNameToClassIdResolver).forEach { supertype ->
+                // No need to collect supertypes outside the considered class snapshots (e.g., "java/lang/Object")
+                if (supertype in classIds) {
+                    classIdToSubclasses.computeIfAbsent(supertype) { mutableSetOf() }.add(classId)
+                }
+            }
+        }
+        return classIdToSubclasses
+    }
+
+    private fun ClassSnapshot.getSupertypes(classIdResolver: (JvmClassName) -> ClassId?): List<ClassId> {
+        return when (this) {
+            is KotlinClassSnapshot -> {
+                val (nameResolver, proto) = try {
+                    JvmProtoBufUtil.readClassDataFrom(classInfo.classHeaderData, classInfo.classHeaderStrings)
+                } catch (e: InvalidProtocolBufferException) {
+                    if (this.getClassId().asString().endsWith("Kt")) {
+                        // The above method call seems to fail on synthetic AbcKt.class with:
+                        //     org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException: Message was missing required fields.
+                        //     (Lite runtime could not determine which fields were missing)
+                        // TODO: Debug this issue
+                        return emptyList()
+                    } else {
+                        throw e
+                    }
+                }
+                proto.supertypes(TypeTable(proto.typeTable)).map { nameResolver.getClassId(it.className) }
+            }
+            is RegularJavaClassSnapshot -> supertypes.mapNotNull {
+                // The following call returns null if supertype is outside the considered class snapshots (e.g., "java/lang/Object").
+                // We don't need to collect those supertypes (see getClassIdToSubclassesMap).
+                classIdResolver.invoke(it)
+            }
+            is ProtoBasedJavaClassSnapshot -> {
+                val (proto, nameResolver) = serializedJavaClass.toProtoData()
+                proto.supertypes(TypeTable(proto.typeTable)).map { nameResolver.getClassId(it.className) }
+            }
+            is EmptyJavaClassSnapshot, is ContentHashJavaClassSnapshot -> {
+                error("Unexpected type (it should have been handled earlier): ${javaClass.name}")
+            }
+        }
     }
 
     /**
-     * Returns all [ClassSnapshot]s in this [ClasspathSnapshot].
-     *
-     * If there are duplicate classes on the classpath, retain only the first one to match the compiler's behavior.
+     * Finds direct and indirect subclasses of the given classes. The return set includes both the given classes and their direct and
+     * indirect subclasses.
      */
-    private fun ClasspathSnapshot.getNonDuplicateClassSnapshots(): List<ClassSnapshot> {
-        val classSnapshots = LinkedHashMap<String, ClassSnapshot>(classpathEntrySnapshots.sumOf { it.classSnapshots.size })
-        for (classpathEntrySnapshot in classpathEntrySnapshots) {
-            for ((unixStyleRelativePath, classSnapshot) in classpathEntrySnapshot.classSnapshots) {
-                classSnapshots.putIfAbsent(unixStyleRelativePath, classSnapshot)
+    private fun findSubclassesInclusive(classIds: Set<ClassId>, classIdsToSubclasses: Map<ClassId, Set<ClassId>>): Set<ClassId> {
+        val visitedClasses = mutableSetOf<ClassId>()
+        val toVisitClasses = classIds.toMutableSet()
+        while (toVisitClasses.isNotEmpty()) {
+            val nextToVisit = mutableSetOf<ClassId>()
+            toVisitClasses.forEach {
+                nextToVisit.addAll(classIdsToSubclasses[it] ?: emptyList())
             }
+            visitedClasses.addAll(toVisitClasses)
+            toVisitClasses.clear()
+            toVisitClasses.addAll(nextToVisit - visitedClasses)
         }
-        return classSnapshots.values.toList()
+        return visitedClasses
     }
 }

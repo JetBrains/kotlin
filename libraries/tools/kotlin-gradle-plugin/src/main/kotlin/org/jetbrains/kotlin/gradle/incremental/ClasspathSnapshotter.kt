@@ -320,4 +320,4 @@ private fun <K, V> List<K>.zipToMap(other: List<V>): LinkedHashMap<K, V> {
     return map
 }
 
-const val protoBasedDefaultValue = false
+private const val protoBasedDefaultValue = false

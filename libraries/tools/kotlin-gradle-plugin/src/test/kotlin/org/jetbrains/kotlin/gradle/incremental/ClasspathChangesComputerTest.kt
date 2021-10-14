@@ -212,10 +212,6 @@ class JavaClassesClasspathChangesComputerTest(private val protoBased: Boolean) :
 
                     // AddedClass
                     LookupSymbol(name = "AddedClass", scope = "com.example"),
-                    LookupSymbol(name = "someField", scope = "com.example.AddedClass"),
-                    LookupSymbol(name = "<init>", scope = "com.example.AddedClass"),
-                    LookupSymbol(name = "someMethod", scope = "com.example.AddedClass"),
-                    LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.AddedClass")
                 )
             } else {
                 emptySet()
