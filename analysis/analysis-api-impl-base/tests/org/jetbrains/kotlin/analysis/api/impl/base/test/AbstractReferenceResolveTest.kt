@@ -121,7 +121,7 @@ abstract class AbstractReferenceResolveTest : AbstractHLApiSingleModuleTest() {
             else -> return nonLocalFqName.asString()
         }
         val container = (symbol as? KtSymbolWithKind)?.getContainingSymbol() ?: return null
-        val parents = generateSequence(container) { it.getContainingSymbol() }
+        val parents = generateSequence(container) { it.getContainingSymbol() }.toList().asReversed()
         return "<local>: " + parents.joinToString(separator = ".") { (it as? KtNamedSymbol)?.name?.asString() ?: "<no name>" }
     }
 
