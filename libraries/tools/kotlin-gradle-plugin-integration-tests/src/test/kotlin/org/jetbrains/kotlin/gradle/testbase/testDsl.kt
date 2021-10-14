@@ -257,29 +257,33 @@ private fun setupProjectFromTestResources(
 }
 
 private fun Path.addDefaultBuildFiles() {
-    if (Files.exists(resolve("build.gradle"))) {
-        val settingsFile = resolve("settings.gradle")
-        settingsFile.addPluginManagementToSettings()
-    }
+    addPluginManagementToSettings()
 
     val buildSrc = resolve("buildSrc")
     if (Files.exists(buildSrc)) {
-        val settingsFile = buildSrc.resolve("settings.gradle")
-        settingsFile.addPluginManagementToSettings()
+        buildSrc.addPluginManagementToSettings()
     }
 }
 
 private fun Path.addPluginManagementToSettings() {
-    if (!Files.exists(this)) {
-        toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
+    val settingsGradle = resolve("settings.gradle")
+    val settingsGradleKts = resolve("settings.gradle.kts")
+    val fileToUpdate = when {
+        Files.exists(settingsGradle) -> settingsGradle
+        Files.exists(settingsGradleKts) -> settingsGradleKts
+        else -> null
+    }
+
+    if (fileToUpdate == null) {
+        settingsGradle.toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
     } else {
-        val settingsContent = toFile().readText()
+        val settingsContent = fileToUpdate.toFile().readText()
         if (!settingsContent
                 .lines()
                 .first { !it.startsWith("//") }
                 .startsWith("pluginManagement {")
         ) {
-            toFile().writeText(
+            fileToUpdate.toFile().writeText(
                 """
                     $DEFAULT_GROOVY_SETTINGS_FILE
                     
