@@ -12,7 +12,7 @@ fun box() {
 }
 
 // FORCE_STEP_INTO
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:11 box
 // test.kt:3 <init>
 // test.kt:11 box

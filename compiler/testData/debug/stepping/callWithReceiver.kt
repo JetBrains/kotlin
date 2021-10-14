@@ -14,7 +14,7 @@ fun box() {
      .bar()
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:9 box
 // test.kt:3 <init>
 // test.kt:9 box

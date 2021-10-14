@@ -23,46 +23,46 @@ fun box() {
 // of each of the conditions, but goes directly to the right body. The
 // JVM_IR stepping behavior here is the same as for `whenSubject.kt`.
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:18 box
 // test.kt:4 foo
 // test.kt:5 foo
 // test.kt:4 foo
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:5 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:6 foo
 // test.kt:4 foo
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:5 foo
 // test.kt:6 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:7 foo
 // test.kt:10 foo
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:11 foo
 // test.kt:12 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:13 foo
 // test.kt:10 foo
 // test.kt:15 foo
 // test.kt:6 foo
 // test.kt:10 foo
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:11 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:12 foo
 // test.kt:4 foo
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:5 foo
 // test.kt:6 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:7 foo
 // test.kt:10 foo
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:11 foo
 // test.kt:12 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:13 foo
 // test.kt:10 foo
 // test.kt:15 foo
@@ -73,41 +73,41 @@ fun box() {
 // test.kt:10 foo
 // test.kt:11 foo
 // test.kt:4 foo
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:5 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:6 foo
 // test.kt:4 foo
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:5 foo
 // test.kt:6 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:7 foo
 // test.kt:10 foo
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:11 foo
 // test.kt:12 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:13 foo
 // test.kt:10 foo
 // test.kt:15 foo
 // test.kt:6 foo
 // test.kt:10 foo
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:11 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:12 foo
 // test.kt:4 foo
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:5 foo
 // test.kt:6 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:7 foo
 // test.kt:10 foo
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:11 foo
 // test.kt:12 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:13 foo
 // test.kt:10 foo
 // test.kt:15 foo

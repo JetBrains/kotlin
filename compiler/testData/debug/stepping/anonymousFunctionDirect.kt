@@ -6,12 +6,12 @@ fun box() {
     }()
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:4 box
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:5 invoke
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:5 box$lambda-0
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:4 box
 // test.kt:7 box

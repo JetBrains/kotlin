@@ -8,7 +8,7 @@ fun box() {
     }
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:6 box
 // test.kt:3 eval
 // test.kt:7 invoke

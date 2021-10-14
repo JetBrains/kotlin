@@ -1,4 +1,4 @@
-// WITH_COROUTINES
+// WITH_RUNTIME
 // FILE: test.kt
 suspend fun foo(block: Long.() -> String): String {
     return 1L.block()
@@ -10,7 +10,7 @@ suspend fun box() {
     }
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:8 box
 // test.kt:4 foo
 // test.kt:9 invoke

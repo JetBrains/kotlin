@@ -1,4 +1,5 @@
-//FILE: test.kt
+// IGNORE_BACKEND: JVM
+// FILE: test.kt
 fun box() {
     var i = 0
     ++i
@@ -16,7 +17,6 @@ fun box() {
             1
 }
 
-// IGNORE_BACKEND: JVM
 // The current backend has strange stepping behavior for assignments.
 // It generates the line number for the assignment first, and then
 // the evaluation of the right hand side with line numbers.
@@ -26,22 +26,22 @@ fun box() {
 // the line number for the actual assignment makes more sense as
 // that is the actual evaluation order.
 
-// LINENUMBERS
-// test.kt:3 box
+// EXPECTATIONS
 // test.kt:4 box
 // test.kt:5 box
 // test.kt:6 box
 // test.kt:7 box
-// test.kt:6 box
 // test.kt:8 box
+// test.kt:7 box
 // test.kt:9 box
 // test.kt:10 box
-// test.kt:9 box
 // test.kt:11 box
-// test.kt:13 box
+// test.kt:10 box
 // test.kt:12 box
-// test.kt:15 box
+// test.kt:14 box
+// test.kt:13 box
+// test.kt:16 box
+// test.kt:17 box
 // test.kt:16 box
 // test.kt:15 box
-// test.kt:14 box
-// test.kt:17 box
+// test.kt:18 box

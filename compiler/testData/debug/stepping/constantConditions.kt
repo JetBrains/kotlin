@@ -14,11 +14,11 @@ fun test(): Long {
     return 1
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:5 box
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:9 test
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:10 test
 // test.kt:11 test
 // test.kt:5 box

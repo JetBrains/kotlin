@@ -8,7 +8,7 @@ fun box() {
 infix fun Int.foo(i: Int) {
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:4 box
 // test.kt:5 box
 // test.kt:4 box

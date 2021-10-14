@@ -16,12 +16,12 @@ fun box() {
 // those does not seem useful. This is consistent with javac behavior
 // as well. The JVM backend does generate these line numbers.
 
-// LINENUMBERS
-// LINENUMBERS JVM
+// EXPECTATIONS
+// EXPECTATIONS JVM
 // test.kt:4 box
 // test.kt:5 box
 // test.kt:6 box
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:7 box
 // test.kt:8 box
 // test.kt:9 box

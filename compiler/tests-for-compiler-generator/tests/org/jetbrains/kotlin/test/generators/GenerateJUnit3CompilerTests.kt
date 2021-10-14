@@ -12,10 +12,6 @@ import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.debugInformation.AbstractIrLocalVariableTest
-import org.jetbrains.kotlin.codegen.debugInformation.AbstractIrSteppingTest
-import org.jetbrains.kotlin.codegen.debugInformation.AbstractLocalVariableTest
-import org.jetbrains.kotlin.codegen.debugInformation.AbstractSteppingTest
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
@@ -289,14 +285,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("type/binding")
             }
 
-            testClass<AbstractSteppingTest>(useJunit4 = true) {
-                model("debug/stepping", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractLocalVariableTest>(useJunit4 = true) {
-                model("debug/localVariables", targetBackend = TargetBackend.JVM)
-            }
-
             testClass<AbstractLocalClassProtoTest> {
                 model("serialization/local")
             }
@@ -393,14 +381,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                     targetBackend = TargetBackend.JVM_IR
                 )
                 model("loadJava/sourceJava", extension = "java", testMethod = "doTestSourceJava", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractIrSteppingTest>(useJunit4 = true) {
-                model("debug/stepping", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractIrLocalVariableTest>(useJunit4 = true) {
-                model("debug/localVariables", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractIrScriptCodegenTest> {

@@ -37,7 +37,7 @@ fun box() {
 // does not. So on JVM there are direct jumps to the right branch for the
 // last two whens.
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:26 box
 // test.kt:4 stringSwitch
 // test.kt:5 stringSwitch
@@ -46,9 +46,9 @@ fun box() {
 // test.kt:11 stringSwitch
 // test.kt:10 stringSwitch
 // test.kt:17 stringSwitch
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:16 stringSwitch
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:19 stringSwitch
 // test.kt:16 stringSwitch
 // test.kt:23 stringSwitch
@@ -58,16 +58,16 @@ fun box() {
 // test.kt:6 stringSwitch
 // test.kt:4 stringSwitch
 // test.kt:10 stringSwitch
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:11 stringSwitch
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:12 stringSwitch
 // test.kt:10 stringSwitch
 // test.kt:17 stringSwitch
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:16 stringSwitch
 // test.kt:19 stringSwitch
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:20 stringSwitch
 // test.kt:16 stringSwitch
 // test.kt:23 stringSwitch
@@ -78,18 +78,18 @@ fun box() {
 // test.kt:7 stringSwitch
 // test.kt:4 stringSwitch
 // test.kt:10 stringSwitch
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:11 stringSwitch
 // test.kt:12 stringSwitch
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:13 stringSwitch
 // test.kt:10 stringSwitch
 // test.kt:17 stringSwitch
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:16 stringSwitch
 // test.kt:19 stringSwitch
 // test.kt:20 stringSwitch
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:21 stringSwitch
 // test.kt:16 stringSwitch
 // test.kt:23 stringSwitch

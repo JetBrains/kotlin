@@ -1,4 +1,4 @@
-// WITH_COROUTINES
+// WITH_RUNTIME
 // FILE: test.kt
 suspend fun foo(block: suspend Long.() -> String): String {
     return 1L.block()
@@ -10,15 +10,13 @@ suspend fun box() {
     }
 }
 
-// LINENUMBERS
+// This is the actual unfortunate stepping behavior in intellij.
+// There is a class exclusion filter for anything in the kotlin package.
+// That means that we never step into the lambda as that is only
+// called via code in the kotlin package.
+
+// EXPECTATIONS
 // test.kt:8 box
-// test.kt:4 foo
-// test.kt:-1 <init>
-// test.kt:-1 create
-// test.kt:-1 invoke
-// test.kt:8 invokeSuspend
-// test.kt:9 invokeSuspend
-// test.kt:-1 invoke
 // test.kt:4 foo
 // test.kt:8 box
 // test.kt:11 box

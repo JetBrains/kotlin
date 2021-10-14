@@ -13,7 +13,7 @@ inline fun getB(): Int {
     return 1
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:4 box
 // test.kt:13 box
 // test.kt:5 box

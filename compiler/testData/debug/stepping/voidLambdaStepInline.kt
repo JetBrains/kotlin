@@ -8,7 +8,7 @@ fun box(): String {
     return "OK"
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:4 box
 // fake.kt:1 box
 // test.kt:4 box

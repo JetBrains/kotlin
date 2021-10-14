@@ -41,23 +41,23 @@ inline fun html(init: () -> Unit) {
     return init(init)
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:19 box
 // test.kt:7 box
 // test.kt:9 box
-// 1.kt:18 box
-// 1.kt:6 box
+// 1.kt:41 box
+// 1.kt:29 box
 // test.kt:10 box
-// 1.kt:14 box
-// 1.kt:10 box
-// 1.kt:11 box
+// 1.kt:37 box
+// 1.kt:33 box
+// 1.kt:34 box
 // test.kt:11 box
 // test.kt:12 box
-// 1.kt:12 box
-// 1.kt:14 box
+// 1.kt:35 box
+// 1.kt:37 box
 // test.kt:13 box
-// 1.kt:7 box
-// 1.kt:18 box
+// 1.kt:30 box
+// 1.kt:41 box
 // test.kt:15 box
 // test.kt:19 box
 // test.kt:21 box

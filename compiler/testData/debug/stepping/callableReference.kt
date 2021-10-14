@@ -10,7 +10,7 @@ fun f(block: () -> Unit) {
     block()
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:3 box
 // test.kt:4 box
 // test.kt:10 f

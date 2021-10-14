@@ -11,12 +11,12 @@ fun test(a: Boolean, b: Boolean, c: Boolean): Boolean {
             && c
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:5 box
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:9 test
 // test.kt:10 test
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:11 test
 // test.kt:9 test
 // test.kt:5 box
