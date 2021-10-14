@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
-import com.intellij.psi.impl.light.LightParameterListBuilder
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_GETTER
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_SETTER
@@ -92,7 +91,7 @@ internal class FirLightAccessorMethodForSymbol(
         val annotationsFromAccessor = propertyAccessorSymbol.computeAnnotations(
             parent = this,
             nullability = NullabilityType.Unknown,
-            annotationUseSiteTarget = null,
+            annotationUseSiteTarget = accessorSite,
         )
 
         return annotationsFromProperty + annotationsFromAccessor

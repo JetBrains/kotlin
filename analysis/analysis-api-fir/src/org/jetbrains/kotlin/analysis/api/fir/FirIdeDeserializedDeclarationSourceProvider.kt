@@ -125,6 +125,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
 private fun KtElement.isCompiled(): Boolean = containingKtFile.isCompiled
 
 private val allowedFakeElementKinds = setOf(
+    FirFakeSourceElementKind.FromUseSiteTarget,
     FirFakeSourceElementKind.PropertyFromParameter,
     FirFakeSourceElementKind.ItLambdaParameter,
     FirFakeSourceElementKind.DataClassGeneratedMembers,

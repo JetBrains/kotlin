@@ -24,7 +24,7 @@ internal class FirLightSetterParameterForSymbol(
         val annotationsFromSetter = parameterSymbol.computeAnnotations(
             parent = this,
             nullability = NullabilityType.Unknown,
-            annotationUseSiteTarget = null,
+            annotationUseSiteTarget = AnnotationUseSiteTarget.SETTER_PARAMETER,
         )
 
         val annotationsFromProperty = containingPropertySymbol.computeAnnotations(
