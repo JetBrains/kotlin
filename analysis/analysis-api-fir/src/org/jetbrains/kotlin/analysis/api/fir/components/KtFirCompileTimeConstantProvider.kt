@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.fir.evaluate.KtFirConstantValueConverte
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.psi.KtExpression
 
 internal class KtFirCompileTimeConstantProvider(
@@ -28,6 +29,15 @@ internal class KtFirCompileTimeConstantProvider(
                 FirCompileTimeConstantEvaluator.evaluate(fir)?.let { KtFirConstantValueConverter.toConstantValue(it) }
                     ?: KtFirConstantValueConverter.toConstantValue(fir, firResolveState.rootModuleSession)
             }
+            // For invalid code like the following,
+            // ```
+            // when {
+            //   true, false -> {}
+            // }
+            // ```
+            // `false` does not have a corresponding elements on the FIR side and hence the containing `FirWhenBranch` is returned. In this
+            // case, we simply report null since FIR does not know about it.
+            is FirWhenBranch -> null
             else -> throwUnexpectedFirElementError(fir, expression)
         }
     }

@@ -43,6 +43,15 @@ internal class KtFirExpressionTypeProvider(
             is FirNamedReference -> fir.getReferencedElementType(firResolveState).asKtType()
             is FirStatement -> with(analysisSession) { builtinTypes.UNIT }
             is FirTypeRef, is FirImport, is FirPackageDirective, is FirLabel -> null
+            // For invalid code like the following,
+            // ```
+            // when {
+            //   true, false -> {}
+            // }
+            // ```
+            // `false` does not have a corresponding elements on the FIR side and hence the containing `FirWhenBranch` is returned. In this
+            // case, we simply report null since FIR does not know about it.
+            is FirWhenBranch -> null
             else -> error("Unexpected ${fir?.let { it::class }} for ${expression::class} with text `${expression.text}`")
         }
     }
