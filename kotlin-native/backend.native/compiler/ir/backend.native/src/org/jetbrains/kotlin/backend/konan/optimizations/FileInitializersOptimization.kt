@@ -439,10 +439,8 @@ internal object FileInitializersOptimization {
                     } else {
                         require(objectClass.isExternal || objectClass is IrLazyClass) { "No constructor for ${objectClass.render()}" }
                     }
-                    val file = objectClass.fileOrNull ?: return data
-                    val fileId = initializedFiles.fileIds[file]!!
-                    if (data.get(fileId)) return data
-                    return data.copy().also { it.set(fileId) }
+                    // Don't update [data] as the constructor might not be called here (the object might be initialized already).
+                    return data
                 }
 
                 private fun processCall(expression: IrFunctionAccessExpression, actualCallee: IrFunction, data: BitSet): BitSet {

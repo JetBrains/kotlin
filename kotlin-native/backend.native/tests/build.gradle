@@ -1622,6 +1622,11 @@ standaloneTest("initializers_return2") {
     useGoldenData = true
 }
 
+standaloneTest("initializers_object") {
+    source = "codegen/initializers/object.kt"
+    flags = ['-Xir-property-lazy-initialization=enable']
+}
+
 linkTest("initializers_linkTest1") {
     useGoldenData = true
     source = "codegen/initializers/linkTest1_main.kt"
