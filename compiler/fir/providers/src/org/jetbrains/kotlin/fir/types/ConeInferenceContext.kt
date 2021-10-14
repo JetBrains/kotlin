@@ -400,6 +400,20 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return ConeIntegerLiteralTypeImpl.findCommonSuperType(explicitSupertypes)
     }
 
+    override fun unionTypeAttributes(types: List<KotlinTypeMarker>): List<AnnotationMarker> {
+        @Suppress("UNCHECKED_CAST")
+        types as List<ConeKotlinType>
+        return types.map { it.attributes }.reduce { x, y -> x.union(y) }.toList()
+    }
+
+    override fun KotlinTypeMarker.replaceTypeAttributes(newAttributes: List<AnnotationMarker>): KotlinTypeMarker {
+        require(this is ConeKotlinType)
+        val typeAttributes = newAttributes.filterIsInstance<ConeAttribute<*>>()
+        require(typeAttributes.size == newAttributes.size)
+        if (newAttributes.isEmpty()) return this
+        return createSimpleType(this.typeConstructor(), this.getArguments(), this.isNullable, this.isExtensionFunctionType, typeAttributes)
+    }
+
     override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker {
         require(this is ConeIntegerLiteralType)
         return this.getApproximatedType()

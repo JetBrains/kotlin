@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
 interface TypeAttributesTranslator {
     fun toAttributes(annotations: Annotations): TypeAttributes
-    fun toAnnotations(attributes: TypeAttributes): Annotations?
+    fun toAnnotations(attributes: TypeAttributes): Annotations
 }
 
 object DefaultTypeAttributesTranslator : TypeAttributesTranslator {

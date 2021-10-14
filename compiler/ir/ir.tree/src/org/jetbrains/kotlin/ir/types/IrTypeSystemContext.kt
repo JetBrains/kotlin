@@ -383,6 +383,10 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? =
         irBuiltIns.intType as IrSimpleType
 
+    override fun KotlinTypeMarker.replaceTypeAttributes(newAttributes: List<AnnotationMarker>): KotlinTypeMarker = this
+
+    override fun unionTypeAttributes(types: List<KotlinTypeMarker>): List<AnnotationMarker> = emptyList()
+
     override fun KotlinTypeMarker.isNullableType(): Boolean =
         this is IrType && isNullable()
 
