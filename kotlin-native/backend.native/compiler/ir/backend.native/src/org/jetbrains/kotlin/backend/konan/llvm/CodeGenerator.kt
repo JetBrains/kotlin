@@ -894,7 +894,7 @@ internal abstract class FunctionGenerationContext(
     fun extractValue(aggregate: LLVMValueRef, index: Int, name: String = ""): LLVMValueRef =
             LLVMBuildExtractValue(builder, aggregate, index, name)!!
 
-    fun gxxLandingpad(numClauses: Int, name: String = "", switchThreadState: Boolean = false): LLVMValueRef {
+    fun gxxLandingpad(numClauses: Int, name: String = "", switchThreadState: Boolean = false, callFromCleanupBlock: Boolean = false): LLVMValueRef {
         val personalityFunction = context.llvm.gxxPersonalityFunction.llvmValue
 
         // Type of `landingpad` instruction result (depends on personality function):
@@ -907,7 +907,8 @@ internal abstract class FunctionGenerationContext(
         }
         call(context.llvm.setCurrentFrameFunction, listOf(slotsPhi!!))
         setCurrentFrameIsCalled = true
-        handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
+        if (!callFromCleanupBlock)
+            handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
 
         return landingpad
     }
@@ -1489,7 +1490,7 @@ internal abstract class FunctionGenerationContext(
 
         if (shouldHaveCleanupLandingpad) {
             appendingTo(cleanupLandingpad) {
-                val landingpad = gxxLandingpad(numClauses = 0)
+                val landingpad = gxxLandingpad(numClauses = 0, callFromCleanupBlock = true)
                 LLVMSetCleanup(landingpad, 1)
 
                 forwardingForeignExceptionsTerminatedWith?.let { terminator ->
