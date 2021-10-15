@@ -5,21 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.scopes.*
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionOverrideFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionOverridePropertySymbol
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolDeclarationOverridesProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirAnonymousObjectSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
@@ -27,6 +16,17 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionOverrideFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionOverridePropertySymbol
 
 internal class KtFirSymbolDeclarationOverridesProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -36,6 +36,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
     override fun <T : KtSymbol> getAllOverriddenSymbols(
         callableSymbol: T,
     ): List<KtCallableSymbol> {
+        if (callableSymbol is KtFirBackingFieldSymbol) return emptyList()
         val overriddenElement = mutableSetOf<FirCallableSymbol<*>>()
         processOverrides(callableSymbol) { firTypeScope, firCallableDeclaration ->
             firTypeScope.processAllOverriddenDeclarations(firCallableDeclaration) { overriddenDeclaration ->
@@ -46,6 +47,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
     }
 
     override fun <T : KtSymbol> getDirectlyOverriddenSymbols(callableSymbol: T): List<KtCallableSymbol> {
+        if (callableSymbol is KtFirBackingFieldSymbol) return emptyList()
         val overriddenElement = mutableSetOf<FirCallableSymbol<*>>()
         processOverrides(callableSymbol) { firTypeScope, firCallableDeclaration ->
             firTypeScope.processDirectOverriddenDeclarations(firCallableDeclaration) { overriddenDeclaration ->

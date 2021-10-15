@@ -25,6 +25,12 @@ public class OverriddenDeclarationProviderTestGenerated extends AbstractOverridd
     }
 
     @Test
+    @TestMetadata("backingField.kt")
+    public void testBackingField() throws Exception {
+        runTest("analysis/analysis-api/testData/components/overridenDeclarations/backingField.kt");
+    }
+
+    @Test
     @TestMetadata("inAnonymousClass.kt")
     public void testInAnonymousClass() throws Exception {
         runTest("analysis/analysis-api/testData/components/overridenDeclarations/inAnonymousClass.kt");
