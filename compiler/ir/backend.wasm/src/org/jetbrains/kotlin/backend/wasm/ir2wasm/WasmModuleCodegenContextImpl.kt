@@ -58,13 +58,6 @@ class WasmModuleCodegenContextImpl(
         return with(typeTransformer) { irType.toWasmResultType() }
     }
 
-    override fun transformExportedResultType(irType: IrType): WasmType? {
-        // Exported strings are passed as pointers to the raw memory
-        if (irType.getClass() == backendContext.irBuiltIns.stringType.getClass())
-            return WasmI32
-        return with(typeTransformer) { irType.toWasmResultType() }
-    }
-
     override fun transformBlockResultType(irType: IrType): WasmType? {
         return with(typeTransformer) { irType.toWasmBlockResultType() }
     }

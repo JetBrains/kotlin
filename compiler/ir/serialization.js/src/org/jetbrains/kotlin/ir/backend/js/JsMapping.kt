@@ -40,6 +40,10 @@ class JsMapping(val state: JsMappingState) : DefaultMapping(state) {
         state.newDeclarationToDeclarationMapping<IrSimpleFunction, IrSimpleFunction>()
 
     val suspendArityStore = state.newDeclarationToDeclarationCollectionMapping<IrClass, Collection<IrSimpleFunction>>()
+
+    // Wasm mappings
+    val wasmJsInteropFunctionToWrapper =
+        state.newDeclarationToDeclarationMapping<IrSimpleFunction, IrSimpleFunction>()
 }
 
 

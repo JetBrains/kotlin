@@ -195,7 +195,7 @@ abstract class BasicWasmBoxTest(
             
             wasmInstance.exports.startUnitTests?.();
 
-            const actualResult = importStringFromWasm(wasmInstance.exports.$testFunction());
+            const actualResult = wasmInstance.exports.$testFunction();
             if (actualResult !== "OK")
                 throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;
         """.trimIndent()

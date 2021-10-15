@@ -23,3 +23,9 @@ abstract class AbstractIrJsCodegenInlineTest : BasicIrBoxTest(
     "compiler/testData/codegen/boxInline/",
     "codegen/irBoxInline/"
 )
+
+
+abstract class AbstractIrCodegenWasmJsInteropJsTest : BasicIrBoxTest(
+    "compiler/testData/codegen/wasmJsInterop",
+    "codegen/wasmJsInteropJs"
+)

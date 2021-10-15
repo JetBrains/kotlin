@@ -12,9 +12,12 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.packageFqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.wasm.ir.*
 
 class WasmTypeTransformer(
@@ -93,13 +96,21 @@ class WasmTypeTransformer(
             symbols.voidType ->
                 error("Void type can't be used as a value")
 
-            // this also handles builtIns.stringType
             else -> {
                 val klass = this.getClass()
                 val ic = context.backendContext.inlineClassesUtils.getInlinedClass(this)
 
                 if (klass != null && (klass.hasWasmForeignAnnotation() || klass.isExternal)) {
-                    WasmExternRef
+                    WasmAnyRef
+                } else if (klass != null && isBuiltInWasmRefType(this)) {
+                    when (val name = klass.name.identifier) {
+                        "anyref" -> WasmAnyRef
+                        "eqref" -> WasmEqRef
+                        "dataref" -> WasmRefNullType(WasmHeapType.Simple.Data)
+                        "i31ref" -> WasmI31Ref
+                        "funcref" -> WasmRefNullType(WasmHeapType.Simple.Func)
+                        else -> error("Unknown reference type $name")
+                    }
                 } else if (ic != null) {
                     context.backendContext.inlineClassesUtils.getInlineClassUnderlyingType(ic).toWasmValueType()
                 } else {
@@ -109,6 +120,12 @@ class WasmTypeTransformer(
         }
 }
 
+fun isBuiltInWasmRefType(type: IrType): Boolean {
+    return type.classOrNull?.owner?.packageFqName == FqName("kotlin.wasm.internal.reftypes")
+}
+
+fun isExternalType(type: IrType): Boolean =
+    type.erasedUpperBound?.isExternal ?: false
 
 // Return null if upper bound is Any
 private val IrTypeParameter.erasedUpperBound: IrClass?

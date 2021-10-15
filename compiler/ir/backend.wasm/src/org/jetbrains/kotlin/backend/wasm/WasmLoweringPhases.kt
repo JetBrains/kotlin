@@ -66,7 +66,7 @@ private val expectDeclarationsRemovingPhase = makeWasmModulePhase(
     description = "Remove expect declaration from module fragment"
 )
 
-private val stringConstructorLowering = makeWasmModulePhase(
+private val stringConcatenationLowering = makeWasmModulePhase(
     ::StringConcatenationLowering,
     name = "StringConcatenation",
     description = "String concatenation lowering"
@@ -122,6 +122,18 @@ private val tailrecLoweringPhase = makeWasmModulePhase(
     description = "Replace `tailrec` call sites with equivalent loop"
 )
 
+private val jsInteropFunctionsLowering = makeWasmModulePhase(
+    ::JsInteropFunctionsLowering,
+    name = "JsInteropFunctionsLowering",
+    description = "Create delegates for JS interop",
+)
+
+private val jsInteropFunctionCallsLowering = makeWasmModulePhase(
+    ::JsInteropFunctionCallsLowering,
+    name = "JsInteropFunctionCallsLowering",
+    description = "Replace calls to delegates",
+)
+
 private val enumClassConstructorLoweringPhase = makeWasmModulePhase(
     ::EnumClassConstructorLowering,
     name = "EnumClassConstructorLowering",
@@ -133,7 +145,6 @@ private val enumClassConstructorBodyLoweringPhase = makeWasmModulePhase(
     name = "EnumClassConstructorBodyLowering",
     description = "Transform Enum Class into regular Class"
 )
-
 
 private val enumEntryInstancesLoweringPhase = makeWasmModulePhase(
     ::EnumEntryInstancesLowering,
@@ -431,6 +442,12 @@ private val objectUsageLoweringPhase = makeWasmModulePhase(
     description = "Transform IrGetObjectValue into instance generator call"
 )
 
+private val explicitlyCastExternalTypesPhase = makeWasmModulePhase(
+    ::ExplicitlyCastExternalTypesLowering,
+    name = "ExplicitlyCastExternalTypesLowering",
+    description = "Add explicit casts when converting between external and non-external types"
+)
+
 private val typeOperatorLoweringPhase = makeWasmModulePhase(
     ::WasmTypeOperatorLowering,
     name = "TypeOperatorLowering",
@@ -515,6 +532,9 @@ val wasmPhases = NamedCompilerPhase(
             delegateToPrimaryConstructorLoweringPhase then
             // Common prefix ends
 
+            jsInteropFunctionsLowering then
+            jsInteropFunctionCallsLowering then
+
             enumEntryInstancesLoweringPhase then
             enumEntryInstancesBodyLoweringPhase then
             enumClassCreateInitializerLoweringPhase then
@@ -536,7 +556,7 @@ val wasmPhases = NamedCompilerPhase(
 
             forLoopsLoweringPhase then
             propertyAccessorInlinerLoweringPhase then
-            stringConstructorLowering then
+            stringConcatenationLowering then
 
             defaultArgumentStubGeneratorPhase then
             defaultArgumentPatchOverridesPhase then
@@ -564,6 +584,7 @@ val wasmPhases = NamedCompilerPhase(
             builtInsLoweringPhase0 then
 
             autoboxingTransformerPhase then
+            explicitlyCastExternalTypesPhase then
             objectUsageLoweringPhase then
             typeOperatorLoweringPhase then
 

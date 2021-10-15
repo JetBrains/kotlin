@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -157,9 +158,7 @@ class WasmSymbols(
     val nullableFloatIeee754Equals = getInternalFunction("nullableFloatIeee754Equals")
     val nullableDoubleIeee754Equals = getInternalFunction("nullableDoubleIeee754Equals")
 
-    val exportString = getInternalFunction("exportString")
     val unsafeGetScratchRawMemory = getInternalFunction("unsafeGetScratchRawMemory")
-
     val startCoroutineUninterceptedOrReturnIntrinsics =
         (0..2).map { getInternalFunction("startCoroutineUninterceptedOrReturnIntrinsic$it") }
 
@@ -205,6 +204,29 @@ class WasmSymbols(
                 ?: error("Expected extension receiver for ${it.owner.render()}")
         }
     }
+
+    private val wasmDataRefClass = getIrClass(FqName("kotlin.wasm.internal.reftypes.dataref"))
+    val wasmDataRefType by lazy { wasmDataRefClass.defaultType }
+
+
+    inner class JsInteropAdapters {
+        val kotlinToJsStringAdapter = getInternalFunction("kotlinToJsStringAdapter")
+        val kotlinToJsBooleanAdapter = getInternalFunction("kotlinToJsBooleanAdapter")
+        val kotlinToJsAnyAdapter = getInternalFunction("kotlinToJsAnyAdapter")
+        val jsToKotlinAnyAdapter = getInternalFunction("jsToKotlinAnyAdapter")
+        val jsToKotlinStringAdapter = getInternalFunction("jsToKotlinStringAdapter")
+        val jsToKotlinByteAdapter = getInternalFunction("jsToKotlinByteAdapter")
+        val jsToKotlinShortAdapter = getInternalFunction("jsToKotlinShortAdapter")
+        val jsToKotlinCharAdapter = getInternalFunction("jsToKotlinCharAdapter")
+    }
+
+    val jsInteropAdapters = JsInteropAdapters()
+
+    private val jsExportClass = getIrClass(FqName("kotlin.js.JsExport"))
+    val jsExportConstructor by lazy { jsExportClass.constructors.single() }
+
+    private val jsNameClass = getIrClass(FqName("kotlin.js.JsName"))
+    val jsNameConstructor by lazy { jsNameClass.constructors.single() }
 
     private fun findClass(memberScope: MemberScope, name: Name): ClassDescriptor =
         memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor

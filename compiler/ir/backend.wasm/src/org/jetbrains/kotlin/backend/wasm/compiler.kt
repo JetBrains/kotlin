@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
+import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.loadIr
@@ -45,7 +46,7 @@ fun compileWasm(
     }
 
     val moduleDescriptor = moduleFragment.descriptor
-    val context = WasmBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, exportedDeclarations, configuration)
+    val context = WasmBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, configuration)
 
     // Load declarations referenced during `context` initialization
     allModules.forEach {
@@ -62,6 +63,8 @@ fun compileWasm(
 
     deserializer.postProcess()
     symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
+
+    moduleFragment.files.forEach { irFile -> markExportedDeclarations(context, irFile, exportedDeclarations) }
 
     wasmPhases.invokeToplevel(phaseConfig, context, moduleFragment)
 
@@ -89,8 +92,11 @@ fun compileWasm(
 
 
 fun WasmCompiledModuleFragment.generateJs(): String {
+    //language=js
     val runtime = """
     var wasmInstance = null;
+    
+    const externrefBoxes = new WeakMap();
     
     const runtime = {
         identity(x) {

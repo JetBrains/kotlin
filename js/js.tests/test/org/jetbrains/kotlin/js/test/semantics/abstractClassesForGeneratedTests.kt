@@ -24,11 +24,6 @@ abstract class AbstractJsCodegenInlineTest : BasicBoxTest(
     "codegen/boxInline"
 )
 
-abstract class AbstractIrCodegenWasmJsInteropJsTest : BasicBoxTest(
-    "compiler/testData/codegen/wasmJsInterop",
-    "codegen/wasmJsInteropWasm"
-)
-
 
 abstract class AbstractJsLegacyPrimitiveArraysBoxTest : BasicBoxTest(
     "compiler/testData/codegen/box/arrays/",

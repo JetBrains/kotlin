@@ -35,7 +35,6 @@ class WasmBackendContext(
     override val irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
     irModuleFragment: IrModuleFragment,
-    val additionalExportedDeclarations: Set<FqName>,
     override val configuration: CompilerConfiguration,
 ) : JsCommonBackendContext {
     override val builtIns = module.builtIns

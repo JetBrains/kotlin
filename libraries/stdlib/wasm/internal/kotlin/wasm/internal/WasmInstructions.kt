@@ -9,6 +9,11 @@
 
 package kotlin.wasm.internal
 
+import kotlin.wasm.internal.reftypes.anyref
+import kotlin.wasm.internal.reftypes.dataref
+import kotlin.wasm.internal.reftypes.funcref
+import kotlin.wasm.internal.reftypes.i31ref
+
 @WasmOp(WasmOp.UNREACHABLE)
 internal fun wasm_unreachable(): Nothing =
     implementedAsIntrinsic
@@ -330,3 +335,24 @@ public external fun wasm_i64_popcnt(a: Long): Long
 
 @WasmOp(WasmOp.I64_CTZ)
 public external fun wasm_i64_ctz(a: Long): Long
+
+
+// Reference type operators
+
+@WasmOp(WasmOp.REF_IS_FUNC)
+internal external fun wasm_ref_is_func(x: anyref): Boolean
+
+@WasmOp(WasmOp.REF_IS_DATA)
+internal external fun wasm_ref_is_data(x: anyref): Boolean
+
+@WasmOp(WasmOp.REF_IS_I31)
+internal external fun wasm_ref_is_i31(x: anyref): Boolean
+
+@WasmOp(WasmOp.REF_AS_FUNC)
+internal external fun wasm_ref_as_func(x: anyref): funcref
+
+@WasmOp(WasmOp.REF_AS_DATA)
+internal external fun wasm_ref_as_data(x: anyref): dataref
+
+@WasmOp(WasmOp.REF_AS_I31)
+internal external fun wasm_ref_as_i31(x: anyref): i31ref

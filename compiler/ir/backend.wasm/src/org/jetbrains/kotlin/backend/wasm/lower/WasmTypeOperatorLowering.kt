@@ -152,6 +152,8 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     private fun generateTypeCheckNonNull(argument: IrExpression, toType: IrType): IrExpression {
         assert(!toType.isMarkedNullable())
         return when {
+            // TODO: Use instanceof for classes later
+            toType.eraseToClassOrInterface.isExternal -> builder.irTrue()
             toType.isNothing() -> builder.irFalse()
             toType.isTypeParameter() -> generateTypeCheckWithTypeParameter(argument, toType)
             toType.isInterface() -> generateIsInterface(argument, toType)
@@ -190,7 +192,28 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             }
         }
 
-        if (fromType.eraseToClassOrInterface.isSubclassOf(toType.eraseToClassOrInterface)) {
+        val fromClass = fromType.eraseToClassOrInterface
+        val toClass = toType.eraseToClassOrInterface
+
+        if (fromClass.isExternal && toClass.isExternal) {
+            return value
+        }
+
+        if (fromClass.isExternal && !toClass.isExternal) {
+            val narrowingToAny = builder.irCall(symbols.jsInteropAdapters.jsToKotlinAnyAdapter).also {
+                it.putValueArgument(0, value)
+            }
+            // Continue narrowing from Any to expected type
+            return narrowType(context.irBuiltIns.anyType, toType, narrowingToAny)
+        }
+
+        if (toClass.isExternal && !fromClass.isExternal) {
+            return builder.irCall(symbols.jsInteropAdapters.kotlinToJsAnyAdapter).also {
+                it.putValueArgument(0, value)
+            }
+        }
+
+        if (fromClass.isSubclassOf(toClass)) {
             return value
         }
         if (toType.isNothing()) {

@@ -30,6 +30,11 @@ public class IrCodegenWasmJsInteropWasmTestGenerated extends AbstractIrCodegenWa
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
     }
 
+    @TestMetadata("externalTypeOperators.kt")
+    public void testExternalTypeOperators() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/externalTypeOperators.kt");
+    }
+
     @TestMetadata("externals.kt")
     public void testExternals() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/externals.kt");
@@ -38,5 +43,15 @@ public class IrCodegenWasmJsInteropWasmTestGenerated extends AbstractIrCodegenWa
     @TestMetadata("jsExport.kt")
     public void testJsExport() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/jsExport.kt");
+    }
+
+    @TestMetadata("nullableExternRefs.kt")
+    public void testNullableExternRefs() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/nullableExternRefs.kt");
+    }
+
+    @TestMetadata("types.kt")
+    public void testTypes() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/types.kt");
     }
 }
