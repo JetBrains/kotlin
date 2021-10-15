@@ -165,7 +165,7 @@ object KotlinTypeFactory {
             if (annotations.isEmpty())
                 it
             else
-                SimpleTypeWithAttributes(it, annotations.toAttributes())
+                SimpleTypeWithAttributes(it, annotations.toDefaultAttributes())
         }
 
     @JvmStatic
@@ -209,7 +209,7 @@ object KotlinTypeFactory {
                 if (annotations.isEmpty())
                     it
                 else
-                    SimpleTypeWithAttributes(it, annotations.toAttributes())
+                    SimpleTypeWithAttributes(it, annotations.toDefaultAttributes())
             }
 
     @JvmStatic

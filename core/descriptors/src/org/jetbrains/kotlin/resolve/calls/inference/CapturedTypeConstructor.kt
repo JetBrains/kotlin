@@ -104,7 +104,7 @@ class CapturedType(
     }
 
     override fun replaceAnnotations(newAnnotations: Annotations): CapturedType =
-        CapturedType(typeProjection, constructor, isMarkedNullable, newAnnotations.toAttributes())
+        CapturedType(typeProjection, constructor, isMarkedNullable, newAnnotations.toDefaultAttributes())
 
     override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType =
         CapturedType(typeProjection, constructor, isMarkedNullable, newAttributes)

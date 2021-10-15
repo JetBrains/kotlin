@@ -213,7 +213,7 @@ class NewCapturedType(
         get() = ErrorUtils.createErrorScope("No member resolution should be done on captured type!", true)
 
     override fun replaceAnnotations(newAnnotations: Annotations) =
-        NewCapturedType(captureStatus, constructor, lowerType, newAnnotations.toAttributes(), isMarkedNullable)
+        NewCapturedType(captureStatus, constructor, lowerType, newAnnotations.toDefaultAttributes(), isMarkedNullable)
 
     override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType =
         NewCapturedType(captureStatus, constructor, lowerType, newAttributes, isMarkedNullable)

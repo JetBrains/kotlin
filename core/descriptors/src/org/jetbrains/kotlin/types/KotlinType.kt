@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeArgumentListMarker
-import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 /**
  * [KotlinType] has only two direct subclasses: [WrappedType] and [UnwrappedType].
@@ -54,7 +53,7 @@ sealed class KotlinType : Annotated, KotlinTypeMarker {
     abstract val memberScope: MemberScope
     abstract val attributes: TypeAttributes
     override val annotations: Annotations
-        get() = attributes.toAnnotations()
+        get() = attributes.toDefaultAnnotations()
 
     abstract fun unwrap(): UnwrappedType
 

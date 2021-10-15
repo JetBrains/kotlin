@@ -35,8 +35,10 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
 import org.jetbrains.kotlin.serialization.deserialization.memberKind
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
+import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import java.util.*
 
 class DescriptorSerializer private constructor(
@@ -46,7 +48,8 @@ class DescriptorSerializer private constructor(
     val typeTable: MutableTypeTable,
     private val versionRequirementTable: MutableVersionRequirementTable?,
     private val serializeTypeTableToFunction: Boolean,
-    val plugins: List<DescriptorSerializerPlugin> = emptyList()
+    val plugins: List<DescriptorSerializerPlugin> = emptyList(),
+    val typeAttributeTranslators: TypeAttributeTranslators? = null
 ) {
     private val contractSerializer = ContractSerializer()
 
@@ -60,7 +63,7 @@ class DescriptorSerializer private constructor(
     private fun createChildSerializer(descriptor: DeclarationDescriptor): DescriptorSerializer =
         DescriptorSerializer(
             descriptor, Interner(typeParameters), extension, typeTable, versionRequirementTable,
-            serializeTypeTableToFunction = false
+            serializeTypeTableToFunction = false, typeAttributeTranslators = typeAttributeTranslators
         )
 
     val stringTable: DescriptorAwareStringTable
@@ -698,7 +701,11 @@ class DescriptorSerializer private constructor(
             }
         }
 
-        extension.serializeType(type, builder)
+        val typeWithUpdatedAnnotations = typeAttributeTranslators?.let {
+            type.replaceAnnotations(it.toAnnotations(type.attributes))
+        } ?: type
+
+        extension.serializeType(typeWithUpdatedAnnotations, builder)
 
         return builder
     }
@@ -859,9 +866,10 @@ class DescriptorSerializer private constructor(
 
     companion object {
         @JvmStatic
-        fun createTopLevel(extension: SerializerExtension): DescriptorSerializer =
+        fun createTopLevel(extension: SerializerExtension, project: Project? = null): DescriptorSerializer =
             DescriptorSerializer(
-                null, Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(), serializeTypeTableToFunction = false
+                null, Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(), serializeTypeTableToFunction = false,
+                typeAttributeTranslators = project?.let { TypeAttributeTranslatorExtension.createTranslators(it) }
             )
 
         @JvmStatic
@@ -883,6 +891,7 @@ class DescriptorSerializer private constructor(
             else
                 createTopLevel(extension)
             val plugins = project?.let { DescriptorSerializerPlugin.getInstances(it) }.orEmpty()
+            val typeAttributeTranslators = project?.let { TypeAttributeTranslators(project) }
 
             // Calculate type parameter ids for the outer class beforehand, as it would've had happened if we were always
             // serializing outer classes before nested classes.
@@ -895,7 +904,8 @@ class DescriptorSerializer private constructor(
                 if (container is ClassDescriptor && !isVersionRequirementTableWrittenCorrectly(extension.metadataVersion))
                     parent.versionRequirementTable else MutableVersionRequirementTable(),
                 serializeTypeTableToFunction = false,
-                plugins
+                plugins,
+                typeAttributeTranslators
             )
             for (typeParameter in descriptor.declaredTypeParameters) {
                 serializer.typeParameters.intern(typeParameter)

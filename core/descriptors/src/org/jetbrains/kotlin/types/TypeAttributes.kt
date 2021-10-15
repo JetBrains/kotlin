@@ -113,12 +113,12 @@ class TypeAttributes private constructor(attributes: List<TypeAttribute<*>>) : A
         get() = Companion
 }
 
-fun TypeAttributes.toAnnotations(): Annotations =
+fun TypeAttributes.toDefaultAnnotations(): Annotations =
     DefaultTypeAttributesTranslator.toAnnotations(this)
 
-fun Annotations.toAttributes(): TypeAttributes = DefaultTypeAttributesTranslator.toAttributes(this)
+fun Annotations.toDefaultAttributes(): TypeAttributes = DefaultTypeAttributesTranslator.toAttributes(this)
 
 fun TypeAttributes.replaceAnnotations(newAnnotations: Annotations): TypeAttributes {
     val withoutCustom = (custom?.let { this.remove(it) } ?: this)
-    return withoutCustom.add(newAnnotations.toAttributes())
+    return withoutCustom.add(newAnnotations.toDefaultAttributes())
 }
