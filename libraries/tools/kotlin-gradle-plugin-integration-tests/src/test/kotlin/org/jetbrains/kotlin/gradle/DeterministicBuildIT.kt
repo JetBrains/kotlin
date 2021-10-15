@@ -5,89 +5,98 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.allJavaFiles
-import org.junit.Test
+import org.junit.jupiter.api.DisplayName
 import java.io.File
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 
-/** Tests that the outputs of a build are deterministic. */
-class DeterministicBuildIT : BaseGradleIT() {
+@DisplayName("Tests that the outputs of a build are deterministic")
+@SimpleGradlePluginTests
+@OptIn(ExperimentalPathApi::class)
+class DeterministicBuildIT : KGPBaseTest() {
 
-    @Test
-    fun `test KaptGenerateStubsTask - KT-40882`() = with(
-        Project("simple", directoryPrefix = "kapt2")
-    ) {
-        setupWorkingDir()
-        projectDir
-            .resolve("src/main/java/Foo.kt")
-            .writeText(
-                """
-                class Foo : Bar {
-                    // The fields and methods are ordered such that any sorting by KGP will be detected.
-                    val fooField1 = 1
-                    val fooField3 = 3
-                    val fooField2 = 2
-                    fun fooMethod1() {}
-                    fun fooMethod3() {}
-                    fun fooMethod2() {}
-                }
-                """.trimIndent()
-            )
-        projectDir
-            .resolve("src/main/java/Bar.kt")
-            .writeText(
-                """
-                interface Bar {
-                    val barField1 = 1
-                    val barField3 = 3
-                    val barField2 = 2
-                    fun barMethod1() {}
-                    fun barMethod3() {}
-                    fun barMethod2() {}
-                }
-                """.trimIndent()
-            )
+    @DisplayName("Kapt generate stubs task - KT-40882")
+    @GradleTest
+    fun testKaptGenerateStubsTask(gradleVersion: GradleVersion) {
+        project("kapt2/simple", gradleVersion) {
+            javaSourcesDir()
+                .resolve("Foo.kt")
+                .writeText(
+                    """
+                    class Foo : Bar {
+                        // The fields and methods are ordered such that any sorting by KGP will be detected.
+                        val fooField1 = 1
+                        val fooField3 = 3
+                        val fooField2 = 2
+                        fun fooMethod1() {}
+                        fun fooMethod3() {}
+                        fun fooMethod2() {}
+                    }
+                    """.trimIndent()
+                )
+            javaSourcesDir()
+                .resolve("Bar.kt")
+                .writeText(
+                    """
+                    interface Bar {
+                        val barField1 = 1
+                        val barField3 = 3
+                        val barField2 = 2
+                        fun barMethod1() {}
+                        fun barMethod3() {}
+                        fun barMethod2() {}
+                    }
+                    """.trimIndent()
+                )
 
-        val buildAndSnapshotStubFiles: () -> Map<File, String> = {
-            lateinit var stubFiles: Map<File, String>
-            build(":kaptGenerateStubsKotlin") {
-                assertSuccessful()
-                assertTasksExecuted(":kaptGenerateStubsKotlin")
-                stubFiles = fileInWorkingDir("build/tmp/kapt3/stubs").allJavaFiles().map {
-                    it to it.readText()
-                }.toMap()
+            fun TestProject.buildAndSnapshotStubFiles(): Map<File, String> {
+                lateinit var stubFiles: Map<File, String>
+                build(":kaptGenerateStubsKotlin") {
+                    assertTasksExecuted(":kaptGenerateStubsKotlin")
+                    stubFiles = projectPath
+                        .resolve("build/tmp/kapt3/stubs")
+                        .toFile()
+                        .allJavaFiles()
+                        .associateWith {
+                            it.readText()
+                        }
+                }
+                return stubFiles
             }
-            stubFiles
-        }
 
-        // Run the first build
-        val stubFilesAfterFirstBuild = buildAndSnapshotStubFiles()
+            // Run the first build
+            val stubFilesAfterFirstBuild = buildAndSnapshotStubFiles()
 
-        // Make a change
-        projectDir.resolve("src/main/java/Foo.kt").also {
-            it.writeText(
-                """
-                class Foo : Bar {
-                    val fooField1 = 1
-                    val fooField3 = 3
-                    val fooField2 = 2
-                    fun fooMethod1() { println("Method body changed!") }
-                    fun fooMethod3() {}
-                    fun fooMethod2() {}
-                }
-                """.trimIndent()
-            )
-        }
+            // Make a change
+            javaSourcesDir()
+                .resolve("Foo.kt")
+                .writeText(
+                    """
+                    class Foo : Bar {
+                        val fooField1 = 1
+                        val fooField3 = 3
+                        val fooField2 = 2
+                        fun fooMethod1() { println("Method body changed!") }
+                        fun fooMethod3() {}
+                        fun fooMethod2() {}
+                    }
+                    """.trimIndent()
+                )
 
-        // Run the second build
-        val stubFilesAfterSecondBuild = buildAndSnapshotStubFiles()
+            // Run the second build
+            val stubFilesAfterSecondBuild = buildAndSnapshotStubFiles()
 
-        // Check that the build outputs are deterministic
-        assertEquals(stubFilesAfterFirstBuild.size, stubFilesAfterSecondBuild.size)
-        for (file in stubFilesAfterFirstBuild.keys) {
-            val fileContentsAfterFirstBuild = stubFilesAfterFirstBuild[file]
-            val fileContentsAfterSecondBuild = stubFilesAfterSecondBuild[file]
-            assertEquals(fileContentsAfterFirstBuild, fileContentsAfterSecondBuild)
+            // Check that the build outputs are deterministic
+            assertEquals(stubFilesAfterFirstBuild.size, stubFilesAfterSecondBuild.size)
+            for (file in stubFilesAfterFirstBuild.keys) {
+                val fileContentsAfterFirstBuild = stubFilesAfterFirstBuild[file]
+                val fileContentsAfterSecondBuild = stubFilesAfterSecondBuild[file]
+                assertEquals(fileContentsAfterFirstBuild, fileContentsAfterSecondBuild)
+            }
         }
     }
 }
