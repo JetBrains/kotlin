@@ -12,18 +12,18 @@ abstract class AbstractKotlinSuppressCache<Element> {
     // The cache is weak: we're OK with losing it
     protected val suppressors = ContainerUtil.createConcurrentWeakValueMap<Element, Suppressor<Element>>()
 
-    fun isSuppressed(element: Element, suppressionKey: String, severity: Severity) =
-        isSuppressed(StringSuppressRequest(element, severity, suppressionKey.lowercase()))
+    fun isSuppressed(element: Element, rootElement: Element, suppressionKey: String, severity: Severity) =
+        isSuppressed(StringSuppressRequest(element, rootElement, severity, suppressionKey.lowercase()))
 
     protected open fun isSuppressed(request: SuppressRequest<Element>): Boolean {
 
-        val annotated = getParentAnnotatedElement(request.element, false) ?: return false
+        val annotated = getClosestAnnotatedAncestorElement(request.element, request.rootElement, false) ?: return false
 
-        return isSuppressedByAnnotated(request.suppressKey, request.severity, annotated, 0)
+        return isSuppressedByAnnotated(request.suppressKey, request.severity, annotated, request.rootElement, 0)
 
     }
 
-    protected abstract fun getParentAnnotatedElement(element: Element, strict: Boolean): Element?
+    protected abstract fun getClosestAnnotatedAncestorElement(element: Element, rootElement: Element, excludeSelf: Boolean): Element?
 
     /*
        The cache is optimized for the case where no warnings are suppressed (most frequent one)
@@ -58,14 +58,15 @@ abstract class AbstractKotlinSuppressCache<Element> {
         suppressionKey: String,
         severity: Severity,
         annotated: Element,
+        rootElement: Element,
         debugDepth: Int
     ): Boolean {
         val suppressor = getOrCreateSuppressor(annotated)
         if (suppressor.isSuppressed(suppressionKey, severity)) return true
 
-        val annotatedAbove = getParentAnnotatedElement(suppressor.annotatedElement, true) ?: return false
+        val annotatedAbove = getClosestAnnotatedAncestorElement(suppressor.annotatedElement, rootElement, true) ?: return false
 
-        val suppressed = isSuppressedByAnnotated(suppressionKey, severity, annotatedAbove, debugDepth + 1)
+        val suppressed = isSuppressedByAnnotated(suppressionKey, severity, annotatedAbove, rootElement, debugDepth + 1)
         val suppressorAbove = suppressors[annotatedAbove]
         if (suppressorAbove != null && suppressorAbove.dominates(suppressor)) {
             suppressors[annotated] = suppressorAbove
@@ -126,12 +127,14 @@ abstract class AbstractKotlinSuppressCache<Element> {
 
     protected interface SuppressRequest<Element> {
         val element: Element
+        val rootElement: Element
         val severity: Severity
         val suppressKey: String
     }
 
     private class StringSuppressRequest<Element>(
         override val element: Element,
+        override val rootElement: Element,
         override val severity: Severity,
         override val suppressKey: String
     ) : SuppressRequest<Element>

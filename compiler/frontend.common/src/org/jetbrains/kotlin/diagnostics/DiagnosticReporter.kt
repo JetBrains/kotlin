@@ -35,7 +35,7 @@ open class KtDiagnosticReporterWithContext(
 ) : DiagnosticReporter() {
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) = diagnosticReporter.report(diagnostic, context)
 
-    fun at(sourceElement: AbstractKtSourceElement?, containingFilePath: String): DiagnosticContextImpl =
+    open fun at(sourceElement: AbstractKtSourceElement?, containingFilePath: String): DiagnosticContextImpl =
         DiagnosticContextImpl(sourceElement, containingFilePath)
 
     open inner class DiagnosticContextImpl(

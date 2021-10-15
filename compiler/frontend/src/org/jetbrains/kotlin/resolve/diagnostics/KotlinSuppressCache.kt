@@ -99,11 +99,12 @@ abstract class KotlinSuppressCache : AbstractKotlinSuppressCache<PsiElement>() {
         return super.isSuppressed(request)
     }
 
-    override fun getParentAnnotatedElement(element: PsiElement, strict: Boolean) =
-        KtStubbedPsiUtil.getPsiOrStubParent(element, KtAnnotated::class.java, strict)
+    override fun getClosestAnnotatedAncestorElement(element: PsiElement, rootElement: PsiElement, excludeSelf: Boolean): PsiElement? =
+        KtStubbedPsiUtil.getPsiOrStubParent(element, KtAnnotated::class.java, excludeSelf)
 
     protected class DiagnosticSuppressRequest(val diagnostic: Diagnostic) : SuppressRequest<PsiElement> {
         override val element: PsiElement get() = diagnostic.psiElement
+        override val rootElement: PsiElement get() = element.containingFile
         override val severity: Severity get() = diagnostic.severity
         override val suppressKey: String get() = getDiagnosticSuppressKey(diagnostic)
     }
