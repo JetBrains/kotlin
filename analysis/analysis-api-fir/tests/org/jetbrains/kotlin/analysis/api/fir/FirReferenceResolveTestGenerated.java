@@ -217,6 +217,24 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
     }
 
     @Test
+    @TestMetadata("implicitExtensionInvoke.kt")
+    public void testImplicitExtensionInvoke() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/implicitExtensionInvoke.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitFunctionInvoke.kt")
+    public void testImplicitFunctionInvoke() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/implicitFunctionInvoke.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitFunctionalInterfaceInvoke.kt")
+    public void testImplicitFunctionalInterfaceInvoke() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/implicitFunctionalInterfaceInvoke.kt");
+    }
+
+    @Test
     @TestMetadata("ImportFromRootScope.kt")
     public void testImportFromRootScope() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/ImportFromRootScope.kt");
