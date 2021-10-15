@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -20,13 +21,14 @@ import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.types.Variance
 
 // TODO replace with structural type comparison?
 object KtDeclarationAndFirDeclarationEqualityChecker {
-    fun representsTheSameDeclaration(psi: KtFunction, fir: FirFunction): Boolean {
+    fun representsTheSameDeclaration(psi: KtCallableDeclaration, fir: FirCallableDeclaration): Boolean {
         if ((fir.receiverTypeRef != null) != (psi.receiverTypeReference != null)) return false
         if (fir.receiverTypeRef != null
             && !isTheSameTypes(
@@ -37,18 +39,20 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
         ) {
             return false
         }
-        if (fir.valueParameters.size != psi.valueParameters.size) return false
-        fir.valueParameters.zip(psi.valueParameters) { expectedParameter, candidateParameter ->
-            if (expectedParameter.name.toString() != candidateParameter.name) return false
-            if (expectedParameter.isVararg != candidateParameter.isVarArg) return false
-            val candidateParameterType = candidateParameter.typeReference ?: return false
-            if (!isTheSameTypes(
-                    candidateParameterType,
-                    expectedParameter.returnTypeRef,
-                    isVararg = expectedParameter.isVararg
-                )
-            ) {
-                return false
+        if (fir is FirFunction) {
+            if (fir.valueParameters.size != psi.valueParameters.size) return false
+            fir.valueParameters.zip(psi.valueParameters) { expectedParameter, candidateParameter ->
+                if (expectedParameter.name.toString() != candidateParameter.name) return false
+                if (expectedParameter.isVararg != candidateParameter.isVarArg) return false
+                val candidateParameterType = candidateParameter.typeReference ?: return false
+                if (!isTheSameTypes(
+                        candidateParameterType,
+                        expectedParameter.returnTypeRef,
+                        isVararg = expectedParameter.isVararg
+                    )
+                ) {
+                    return false
+                }
             }
         }
         return true

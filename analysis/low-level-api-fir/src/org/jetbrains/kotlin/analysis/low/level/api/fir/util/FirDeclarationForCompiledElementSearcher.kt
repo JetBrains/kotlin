@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.KtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.KtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
@@ -56,7 +56,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
 
         val functionCandidate =
             symbolProvider.findFunctionCandidates(declaration)
-                .singleOrNull { representSameFunction(declaration, it.fir) }
+                .singleOrNull { KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(declaration, it.fir) }
                 ?: error("We should be able to find a symbol for function ${declaration.name}: ${declaration.getElementTextInContext()}")
 
         return functionCandidate.fir
@@ -67,7 +67,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
 
         val propertyCandidate =
             symbolProvider.findPropertyCandidates(declaration)
-                .singleOrNull()
+                .singleOrNull { KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(declaration, it.fir) }
                 ?: error("We should be able to find a symbol for property ${declaration.name}: ${declaration.getElementTextInContext()}")
 
         return propertyCandidate.fir
@@ -95,9 +95,6 @@ private fun FirSymbolProvider.findCallableCandidates(
     return getClassDeclaredFunctionSymbols(containerClassId, declaration.nameAsSafeName) +
             getClassDeclaredPropertySymbols(containerClassId, declaration.nameAsSafeName)
 }
-
-private fun representSameFunction(psiFunction: KtNamedFunction, it: FirFunction): Boolean =
-    KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(psiFunction, it)
 
 private fun representSameConstructor(psiConstructor: KtConstructor<*>, firConstructor: FirConstructor): Boolean {
     if ((firConstructor.isPrimary) != (psiConstructor is KtPrimaryConstructor)) {
