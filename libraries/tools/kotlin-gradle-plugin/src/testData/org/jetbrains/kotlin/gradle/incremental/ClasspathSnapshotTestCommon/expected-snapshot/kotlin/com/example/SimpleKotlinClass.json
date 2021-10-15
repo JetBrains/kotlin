@@ -36,5 +36,10 @@
       "initializer": {},
       "_value": {}
     }
-  }
+  },
+  "supertypes": [
+    {
+      "internalName": "kotlin/Any"
+    }
+  ]
 }

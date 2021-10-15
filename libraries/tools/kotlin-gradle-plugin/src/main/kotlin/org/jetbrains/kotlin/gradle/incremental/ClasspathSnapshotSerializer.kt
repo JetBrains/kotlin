@@ -59,10 +59,14 @@ object KotlinClassSnapshotExternalizer : DataExternalizer<KotlinClassSnapshot> {
 
     override fun save(output: DataOutput, snapshot: KotlinClassSnapshot) {
         KotlinClassInfoExternalizer.save(output, snapshot.classInfo)
+        ListExternalizer(JvmClassNameExternalizer).save(output, snapshot.supertypes)
     }
 
     override fun read(input: DataInput): KotlinClassSnapshot {
-        return KotlinClassSnapshot(classInfo = KotlinClassInfoExternalizer.read(input))
+        return KotlinClassSnapshot(
+            classInfo = KotlinClassInfoExternalizer.read(input),
+            supertypes = ListExternalizer(JvmClassNameExternalizer).read(input)
+        )
     }
 }
 

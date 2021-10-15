@@ -7,8 +7,16 @@ package org.jetbrains.kotlin.gradle.incremental
 
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.deserialization.supertypes
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.ClassVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
 import java.util.zip.ZipInputStream
 
@@ -93,7 +101,33 @@ object ClassSnapshotter {
     /** Creates [KotlinClassSnapshot] of the given class, or returns `null` if the class is not a Kotlin class. */
     private fun trySnapshotKotlinClass(clazz: ClassFileWithContents): KotlinClassSnapshot? {
         return KotlinClassInfo.tryCreateFrom(clazz.contents)?.let {
-            KotlinClassSnapshot(it)
+            KotlinClassSnapshot(it, computeSupertypes(it, clazz.contents))
+        }
+    }
+
+    // TODO: Find a faster way to get supertypes without loading protos (e.g., attach to an existing ASM visitor)
+    private fun computeSupertypes(classInfo: KotlinClassInfo, classContents: ByteArray): List<JvmClassName> {
+        return try {
+            val (nameResolver, proto) = JvmProtoBufUtil.readClassDataFrom(classInfo.classHeaderData, classInfo.classHeaderStrings)
+            val supertypeClassIds = proto.supertypes(TypeTable(proto.typeTable)).map { nameResolver.getClassId(it.className) }
+            supertypeClassIds.map { JvmClassName.byClassId(it) }
+        } catch (e: Exception) {
+            // The above method call currently fails on a few classes for some reason:
+            //   - org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException: Message was missing required fields.
+            //     (Lite runtime could not determine which fields were missing) for SomeClassKt.class
+            //   - java.lang.NullPointerException: parseDelimitedFrom(this, EXTENSION_REGISTRY) must not be null for
+            //     kotlin-stdlib-1.6.255-SNAPSHOT.jar
+            // Fall back to ASM visitor to get the supertypes.
+            val supertypeClassNames = mutableListOf<String>()
+            ClassReader(classContents).accept(object : ClassVisitor(Opcodes.API_VERSION) {
+                override fun visit(
+                    version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<String>?
+                ) {
+                    superName?.let { supertypeClassNames.add(it) }
+                    interfaces?.let { supertypeClassNames.addAll(it) }
+                }
+            }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG)
+            supertypeClassNames.map { JvmClassName.byInternalName(it) }
         }
     }
 

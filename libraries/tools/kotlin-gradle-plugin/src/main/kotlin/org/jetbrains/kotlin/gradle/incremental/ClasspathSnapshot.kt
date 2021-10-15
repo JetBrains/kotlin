@@ -39,7 +39,10 @@ class ClasspathEntrySnapshot(
 sealed class ClassSnapshot
 
 /** [ClassSnapshot] of a Kotlin class. */
-class KotlinClassSnapshot(val classInfo: KotlinClassInfo) : ClassSnapshot()
+class KotlinClassSnapshot(
+    val classInfo: KotlinClassInfo,
+    val supertypes: List<JvmClassName>
+) : ClassSnapshot()
 
 /** [ClassSnapshot] of a Java class. */
 sealed class JavaClassSnapshot : ClassSnapshot()

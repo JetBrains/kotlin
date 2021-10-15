@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.storage.FileToCanonicalPathConverter
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.supertypes
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import java.io.File
@@ -359,25 +357,13 @@ private object ImpactAnalysis {
 
     private fun ClassSnapshot.getSupertypes(classIdResolver: (JvmClassName) -> ClassId?): List<ClassId> {
         return when (this) {
-            is KotlinClassSnapshot -> {
-                val (nameResolver, proto) = try {
-                    JvmProtoBufUtil.readClassDataFrom(classInfo.classHeaderData, classInfo.classHeaderStrings)
-                } catch (e: InvalidProtocolBufferException) {
-                    if (this.getClassId().asString().endsWith("Kt")) {
-                        // The above method call seems to fail on synthetic AbcKt.class with:
-                        //     org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException: Message was missing required fields.
-                        //     (Lite runtime could not determine which fields were missing)
-                        // TODO: Debug this issue
-                        return emptyList()
-                    } else {
-                        throw e
-                    }
-                }
-                proto.supertypes(TypeTable(proto.typeTable)).map { nameResolver.getClassId(it.className) }
-            }
             is RegularJavaClassSnapshot -> supertypes.mapNotNull {
                 // The following call returns null if supertype is outside the considered class snapshots (e.g., "java/lang/Object").
                 // Use `mapNotNull` as we don't need to collect those supertypes (see getClassIdToSubclassesMap).
+                classIdResolver.invoke(it)
+            }
+            is KotlinClassSnapshot -> supertypes.mapNotNull {
+                // Same as above
                 classIdResolver.invoke(it)
             }
             is ProtoBasedJavaClassSnapshot -> {
