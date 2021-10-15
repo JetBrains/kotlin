@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -21,7 +20,9 @@ abstract class FirCollectionLiteral : FirExpression() {
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
     abstract val kind: CollectionLiteralKind
-    abstract val argumentType: ConeKotlinType?
+    abstract val argumentType: FirTypeRef?
+    abstract val keyArgumentType: FirTypeRef?
+    abstract val valueArgumentType: FirTypeRef?
     abstract val expressions: List<FirCollectionLiteralEntry>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCollectionLiteral(this, data)
@@ -32,7 +33,11 @@ abstract class FirCollectionLiteral : FirExpression() {
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract fun replaceArgumentType(newArgumentType: ConeKotlinType?)
+    abstract fun replaceArgumentType(newArgumentType: FirTypeRef?)
+
+    abstract fun replaceKeyArgumentType(newKeyArgumentType: FirTypeRef?)
+
+    abstract fun replaceValueArgumentType(newValueArgumentType: FirTypeRef?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCollectionLiteral
 

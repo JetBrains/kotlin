@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.expressions.CollectionLiteralKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
 import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralEntry
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
@@ -24,7 +23,9 @@ internal class FirCollectionLiteralImpl(
     override val source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override val kind: CollectionLiteralKind,
-    override var argumentType: ConeKotlinType?,
+    override var argumentType: FirTypeRef?,
+    override var keyArgumentType: FirTypeRef?,
+    override var valueArgumentType: FirTypeRef?,
     override val expressions: MutableList<FirCollectionLiteralEntry>,
 ) : FirCollectionLiteral() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
@@ -32,12 +33,18 @@ internal class FirCollectionLiteralImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
+        argumentType?.accept(visitor, data)
+        keyArgumentType?.accept(visitor, data)
+        valueArgumentType?.accept(visitor, data)
         expressions.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirCollectionLiteralImpl {
         typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
+        argumentType = argumentType?.transform(transformer, data)
+        keyArgumentType = keyArgumentType?.transform(transformer, data)
+        valueArgumentType = valueArgumentType?.transform(transformer, data)
         transformExpressions(transformer, data)
         return this
     }
@@ -56,7 +63,15 @@ internal class FirCollectionLiteralImpl(
         typeRef = newTypeRef
     }
 
-    override fun replaceArgumentType(newArgumentType: ConeKotlinType?) {
+    override fun replaceArgumentType(newArgumentType: FirTypeRef?) {
         argumentType = newArgumentType
+    }
+
+    override fun replaceKeyArgumentType(newKeyArgumentType: FirTypeRef?) {
+        keyArgumentType = newKeyArgumentType
+    }
+
+    override fun replaceValueArgumentType(newValueArgumentType: FirTypeRef?) {
+        valueArgumentType = newValueArgumentType
     }
 }

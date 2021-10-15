@@ -40,7 +40,8 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     }
 
     override fun TypeConstructorMarker.isCollectionLiteralTypeConstructor(): Boolean {
-        TODO("check for CLT not implemented in $this")
+        require(this is TypeConstructor, this::errorMessage)
+        return false
     }
 
     override fun TypeConstructorMarker.isLocalType(): Boolean {

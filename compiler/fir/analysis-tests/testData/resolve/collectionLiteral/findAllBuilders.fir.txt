@@ -1,11 +1,11 @@
 FILE: findAllBuilders.kt
-    public final fun <T> R|kotlin/collections/Set.Companion|.buildSeq(size: R|kotlin/Int|, init: R|kotlin/collections/CollectionLiteralBuilder<kotlin/collections/Set<T>, T>.() -> kotlin/Unit| = fun R|kotlin/collections/CollectionLiteralBuilder<kotlin/collections/Set<T>, T>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    public final fun <T> R|kotlin/collections/Set.Companion|.buildSeq(size: R|kotlin/Int|, init: R|kotlin/collections/SeqCollectionLiteralBuilder<kotlin/collections/Set<T>, T>.() -> kotlin/Unit| = fun R|kotlin/collections/SeqCollectionLiteralBuilder<kotlin/collections/Set<T>, T>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         ^ Unit
     }
     ): R|kotlin/collections/Set<T>| {
         ^buildSeq R|kotlin/TODO|()
     }
-    public final fun <T> R|kotlin/collections/List.Companion|.buildSeq(size: R|kotlin/Int|, init: R|kotlin/collections/CollectionLiteralBuilder<kotlin/collections/List<T>, T>.() -> kotlin/Unit| = fun R|kotlin/collections/CollectionLiteralBuilder<kotlin/collections/List<T>, T>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    public final fun <T> R|kotlin/collections/List.Companion|.buildSeq(size: R|kotlin/Int|, init: R|kotlin/collections/SeqCollectionLiteralBuilder<kotlin/collections/List<T>, T>.() -> kotlin/Unit| = fun R|kotlin/collections/SeqCollectionLiteralBuilder<kotlin/collections/List<T>, T>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         ^ Unit
     }
     ): R|kotlin/collections/List<T>| {
@@ -21,7 +21,7 @@ FILE: findAllBuilders.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final fun <T> buildSeq(size: R|kotlin/Int|, init: R|kotlin/collections/CollectionLiteralBuilder<A, T>.() -> kotlin/Unit| = fun R|kotlin/collections/CollectionLiteralBuilder<A, T>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            public final fun <T> buildSeq(size: R|kotlin/Int|, init: R|kotlin/collections/SeqCollectionLiteralBuilder<A, T>.() -> kotlin/Unit| = fun R|kotlin/collections/SeqCollectionLiteralBuilder<A, T>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 ^ Unit
             }
             ): R|A| {
@@ -32,22 +32,22 @@ FILE: findAllBuilders.kt
 
     }
     public final fun f(): R|kotlin/Unit| {
-        lval a: R|kotlin/collections/Set<kotlin/Int>| = Q|kotlin/collections/Set|.R|/buildSeq|<R|kotlin/Int|>(Int(3), <L> = buildSeq@fun R|kotlin/collections/CollectionLiteralBuilder<kotlin/collections/Set<kotlin/Int>, kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/CollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(1))
-            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/CollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(2))
-            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/CollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(3))
+        lval a: R|kotlin/collections/Set<kotlin/Int>| = Q|kotlin/collections/Set|.R|/buildSeq|<R|kotlin/Int|>(Int(3), <L> = buildSeq@fun R|kotlin/collections/SeqCollectionLiteralBuilder<kotlin/collections/Set<kotlin/Int>, kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/SeqCollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(1))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/SeqCollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(2))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/SeqCollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(3))
         }
         )
-        lval b: R|kotlin/collections/List<kotlin/Int>| = Q|kotlin/collections/List|.R|/buildSeq|<R|kotlin/Int|>(Int(3), <L> = buildSeq@fun R|kotlin/collections/CollectionLiteralBuilder<kotlin/collections/List<kotlin/Int>, kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/CollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(1))
-            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/CollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(2))
-            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/CollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(3))
+        lval b: R|kotlin/collections/List<kotlin/Int>| = Q|kotlin/collections/List|.R|/buildSeq|<R|kotlin/Int|>(Int(3), <L> = buildSeq@fun R|kotlin/collections/SeqCollectionLiteralBuilder<kotlin/collections/List<kotlin/Int>, kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/SeqCollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(1))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/SeqCollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(2))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/SeqCollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(3))
         }
         )
-        lval c: R|A| = Q|A|.R|/A.Companion.buildSeq|<R|kotlin/Int|>(Int(3), <L> = buildSeq@fun R|kotlin/collections/CollectionLiteralBuilder<A, kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/CollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(1))
-            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/CollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(2))
-            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/CollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(3))
+        lval c: R|A| = Q|A|.R|/A.Companion.buildSeq|<R|kotlin/Int|>(Int(3), <L> = buildSeq@fun R|kotlin/collections/SeqCollectionLiteralBuilder<A, kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/SeqCollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(1))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/SeqCollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(2))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/SeqCollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(3))
         }
         )
     }

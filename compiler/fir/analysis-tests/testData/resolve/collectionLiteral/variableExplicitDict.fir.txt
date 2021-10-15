@@ -1,0 +1,28 @@
+FILE: variableExplicitDict.kt
+    public final fun <K, V> R|kotlin/Int.Companion|.buildDict(size: R|kotlin/Int|, init: R|kotlin/collections/DictCollectionLiteralBuilder<kotlin/Int, K, V>.() -> kotlin/Unit| = fun R|kotlin/collections/DictCollectionLiteralBuilder<kotlin/Int, K, V>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        ^ Unit
+    }
+    ): R|kotlin/Int| {
+        ^buildDict R|kotlin/TODO|()
+    }
+    public final fun <K, V> R|kotlin/Double.Companion|.buildDict(size: R|kotlin/Int|, init: R|kotlin/collections/DictCollectionLiteralBuilder<kotlin/Double, K, V>.() -> kotlin/Unit| = fun R|kotlin/collections/DictCollectionLiteralBuilder<kotlin/Double, K, V>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        ^ Unit
+    }
+    ): R|kotlin/Double| {
+        ^buildDict R|kotlin/TODO|()
+    }
+    public final fun main(): R|kotlin/Unit| {
+        lval a: R|kotlin/Int| = Q|kotlin/Int|.R|/buildDict|<R|kotlin/Int|, R|kotlin/Int|>(Int(3), <L> = buildDict@fun R|kotlin/collections/DictCollectionLiteralBuilder<kotlin/Int, kotlin/Int, kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/DictCollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(1), Int(1))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/DictCollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(2), Int(2))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/DictCollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(3), Int(3))
+        }
+        )
+        lval b: R|kotlin/collections/Map<kotlin/Int, kotlin/Int>| = ERROR_EXPR(Collection literal has no builder for Map in the current scope)
+        lval c: R|kotlin/Double| = Q|kotlin/Double|.R|/buildDict|<R|kotlin/String|, R|kotlin/Int|>(Int(3), <L> = buildDict@fun R|kotlin/collections/DictCollectionLiteralBuilder<kotlin/Double, kotlin/String, kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/DictCollectionLiteralBuilder.add: R|kotlin/Unit|>|(String(1), Int(1))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/DictCollectionLiteralBuilder.add: R|kotlin/Unit|>|(String(2), Int(2))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/DictCollectionLiteralBuilder.add: R|kotlin/Unit|>|(String(3), Int(3))
+        }
+        )
+    }

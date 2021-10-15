@@ -1148,9 +1148,21 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("functionAmbiguityDict.kt")
+            public void testFunctionAmbiguityDict() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionAmbiguityDict.kt");
+            }
+
+            @Test
             @TestMetadata("functionExplicit.kt")
             public void testFunctionExplicit() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionExplicit.kt");
+            }
+
+            @Test
+            @TestMetadata("functionExplicitDict.kt")
+            public void testFunctionExplicitDict() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionExplicitDict.kt");
             }
 
             @Test
@@ -1160,9 +1172,33 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("functionVariableDict.kt")
+            public void testFunctionVariableDict() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionVariableDict.kt");
+            }
+
+            @Test
             @TestMetadata("functionVariableWithUpperBound.kt")
             public void testFunctionVariableWithUpperBound() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionVariableWithUpperBound.kt");
+            }
+
+            @Test
+            @TestMetadata("functionVariableWithUpperBoundDict.kt")
+            public void testFunctionVariableWithUpperBoundDict() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionVariableWithUpperBoundDict.kt");
+            }
+
+            @Test
+            @TestMetadata("genericInArgument.kt")
+            public void testGenericInArgument() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/genericInArgument.kt");
+            }
+
+            @Test
+            @TestMetadata("nestedCollectionLiterals.kt")
+            public void testNestedCollectionLiterals() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/nestedCollectionLiterals.kt");
             }
 
             @Test
@@ -1172,9 +1208,21 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("variableExplicitDict.kt")
+            public void testVariableExplicitDict() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/variableExplicitDict.kt");
+            }
+
+            @Test
             @TestMetadata("variableImplicit.kt")
             public void testVariableImplicit() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/variableImplicit.kt");
+            }
+
+            @Test
+            @TestMetadata("variableImplicitDict.kt")
+            public void testVariableImplicitDict() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/variableImplicitDict.kt");
             }
         }
 

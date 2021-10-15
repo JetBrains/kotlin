@@ -1,0 +1,20 @@
+FILE: functionAmbiguityDict.kt
+    public final fun <K, V> R|kotlin/Int.Companion|.buildDict(size: R|kotlin/Int|, init: R|kotlin/collections/DictCollectionLiteralBuilder<kotlin/Int, K, V>.() -> kotlin/Unit| = fun R|kotlin/collections/DictCollectionLiteralBuilder<kotlin/Int, K, V>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        ^ Unit
+    }
+    ): R|kotlin/Int| {
+        ^buildDict R|kotlin/TODO|()
+    }
+    public final fun <K, V> R|kotlin/Double.Companion|.buildDict(size: R|kotlin/Int|, init: R|kotlin/collections/DictCollectionLiteralBuilder<kotlin/Double, K, V>.() -> kotlin/Unit| = fun R|kotlin/collections/DictCollectionLiteralBuilder<kotlin/Double, K, V>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        ^ Unit
+    }
+    ): R|kotlin/Double| {
+        ^buildDict R|kotlin/TODO|()
+    }
+    public final fun fOver(a: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun fOver(a: R|kotlin/Double|): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        <Ambiguity: fOver, [/fOver, /fOver]>#(CollectionLiteral R|it(kotlin/Int & kotlin/Double)| [String(1) : Int(1), String(2) : Int(2), String(3) : Int(3), ] )
+    }

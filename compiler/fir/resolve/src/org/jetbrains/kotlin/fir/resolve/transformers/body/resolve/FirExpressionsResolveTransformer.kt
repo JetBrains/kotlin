@@ -274,55 +274,6 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         return checkedSafeCallSubject
     }
 
-    private fun fixAndResolve(functionCall: FirFunctionCall): FirFunctionCall {
-        val newArgumentLists = cartesianProductOfArguments(functionCall.argumentList)
-        val newCalls = newArgumentLists.map {
-            functionCall.copy(argumentList = it)
-        }
-        val resolvedCalls = newCalls.map { it.transformSingle(this, ResolutionMode.ContextDependent) } // TODO не уверен на счёт контекста
-        val successful = resolvedCalls.filter { it.calleeReference !is FirErrorNamedReference }
-        return when {
-            successful.isEmpty() -> functionCall // TODO some diagnostic
-            successful.size == 1 -> successful.first()
-            else -> functionCall
-        }
-    }
-
-
-    private fun cartesianProductOfArguments(arguments: FirArgumentList): List<FirArgumentList> {
-        @Suppress("NAME_SHADOWING")
-        val arguments = arguments.arguments.map { expression ->
-            if (expression is FirCollectionLiteral) {
-                expression.typeRef.coneTypeUnsafe<ConeCollectionLiteralType>().let {
-                    it.possibleTypes.map { type ->
-                        // TODO создавать один и тот же билдер только один раз
-                        createFunctionCallForCollectionLiteral(
-                            expression.kind,
-                            type.classId!!.shortClassName,
-                            expression.expressions,
-                            it.argumentType!!.toFirResolvedTypeRef()
-                        )
-                    }
-                }
-            } else {
-                setOf(expression)
-            }
-        }
-
-        fun cartesianProduct(vararg collections: Collection<FirExpression>): List<List<FirExpression>> =
-            (collections)
-                .fold(listOf(listOf())) { acc, set ->
-                    acc.flatMap { list -> set.map { element -> list + element } }
-                }
-
-
-        return cartesianProduct(*arguments.toTypedArray()).map {
-            buildArgumentList {
-                this.arguments.addAll(it)
-            }
-        }
-    }
-
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement {
         val calleeReference = functionCall.calleeReference
         if (
@@ -374,13 +325,13 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     }
 
     override fun transformCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: ResolutionMode): FirStatement {
-        collectionLiteral.transformChildren(transformer, data)
+        collectionLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
 
         // check if
 
         val processedCL = when (collectionLiteral.kind) {
             CollectionLiteralKind.SEQ_LITERAL -> collectionLiteralResolver.processSequenceLiteral(collectionLiteral)
-            CollectionLiteralKind.DICT_LITERAL -> TODO()
+            CollectionLiteralKind.DICT_LITERAL -> collectionLiteralResolver.processDictionaryLiteral(collectionLiteral)
         }
         if (processedCL is FirErrorExpression) {
             return processedCL
@@ -394,92 +345,6 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 )
             else -> processedCL
         }
-    }
-
-    private fun createFunctionCallForCollectionLiteral(
-        kind: CollectionLiteralKind,
-        receiverName: Name,
-        arguments: List<FirCollectionLiteralEntry>,
-        typeOfArguments: FirResolvedTypeRef? = null
-    ): FirFunctionCall {
-        val adds = arguments.map {
-            buildFunctionCall {
-                calleeReference = buildSimpleNamedReference { name = Name.identifier("add") }
-                argumentList = when (kind) {
-                    CollectionLiteralKind.SEQ_LITERAL -> buildUnaryArgumentList((it as FirCollectionLiteralEntrySingle).expression)
-                    CollectionLiteralKind.DICT_LITERAL -> (it as FirCollectionLiteralEntryPair).let { entry ->
-                        buildBinaryArgumentList(entry.key, entry.value)
-                    }
-                }
-            }
-        }
-        val lambda = buildLambdaArgumentExpression {
-            expression = buildAnonymousFunctionExpression {
-                anonymousFunction = buildAnonymousFunction {
-                    origin = FirDeclarationOrigin.Synthetic
-                    moduleData = session.moduleData
-                    body = buildBlock {
-                        statements.addAll(adds)
-                    }
-                    returnTypeRef = buildImplicitTypeRef()
-                    receiverTypeRef = buildImplicitTypeRef()
-                    symbol = FirAnonymousFunctionSymbol()
-                    isLambda = true
-                    label = buildLabel {
-                        name = when (kind) {
-                            CollectionLiteralKind.SEQ_LITERAL -> OperatorNameConventions.BUILD_LIST_CL
-                            CollectionLiteralKind.DICT_LITERAL -> OperatorNameConventions.BUILD_MAP_CL
-                        }.identifier
-                    }
-
-                }
-            }
-        }
-
-        val explicitReceiver = buildQualifiedAccessExpression {
-            calleeReference = buildSimpleNamedReference {
-                name = receiverName
-            }
-        }
-        return buildFunctionCall {
-            this.explicitReceiver = explicitReceiver
-            calleeReference = buildSimpleNamedReference {
-                name = when (kind) {
-                    CollectionLiteralKind.SEQ_LITERAL -> OperatorNameConventions.BUILD_LIST_CL
-                    CollectionLiteralKind.DICT_LITERAL -> OperatorNameConventions.BUILD_MAP_CL
-                }
-            }
-            typeOfArguments?.let {
-                typeArguments.add(buildTypeProjectionWithVariance {
-                    typeRef = it
-                    variance = Variance.INVARIANT
-                })
-            }
-            argumentList = buildBinaryArgumentList(
-                buildConstExpression(null, ConstantValueKind.Int, arguments.size),
-                lambda
-            )
-        }
-    }
-
-    // TODO вынести построение констр системы из чекера сюда
-    private fun getTypeOfCLArguments(
-//        clt: ConeCollectionLiteralType,
-        clt: ConeKotlinType,
-        c: NewConstraintSystemImpl
-    ): ConeKotlinType? {
-        require(c.notFixedTypeVariables.size == 1) // TODO replace require
-        val (_, typeVariable) = c.notFixedTypeVariables.entries.first()
-
-        val direction = TypeVariableDirectionCalculator(c, emptyList(), clt)
-            .getDirection(typeVariable) // TODO add direction for CLT (now UNKNOWN)
-        val resultType = inferenceComponents.resultTypeResolver.findResultType(
-            c, typeVariable, direction
-        )
-        val variable = typeVariable.typeVariable
-
-        c.fixVariable(variable, resultType, ConeFixVariableConstraintPosition(variable))
-        return c.asReadOnlyStorage().fixedTypeVariables.entries.first().value as? ConeKotlinType
     }
 
     override fun transformBlock(block: FirBlock, data: ResolutionMode): FirStatement {

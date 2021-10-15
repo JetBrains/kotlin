@@ -1,3 +1,4 @@
+package main
 
 fun <T> Set.Companion.buildSeq(size: Int, init: SeqCollectionLiteralBuilder<Set<T>, T>.() -> Unit = {}): Set<T> {
     return TODO()
@@ -7,18 +8,19 @@ fun <T> List.Companion.buildSeq(size: Int, init: SeqCollectionLiteralBuilder<Lis
     return TODO()
 }
 
-fun <T> Int.Companion.buildSeq(size: Int, init: SeqCollectionLiteralBuilder<Int, T>.() -> Unit = {}) : Int {
+fun <T> Int.Companion.buildSeq(size: Int, init: SeqCollectionLiteralBuilder<Int, T>.() -> Unit = {}): Int {
     return TODO()
 }
 
-fun <T> Double.Companion.buildSeq(size: Int, init: SeqCollectionLiteralBuilder<Double, T>.() -> Unit = {}) : Double {
+fun <T> Double.Companion.buildSeq(size: Int, init: SeqCollectionLiteralBuilder<Double, T>.() -> Unit = {}): Double {
     return TODO()
 }
 
 fun f(set: Set<Int>) {}
-fun b(a: Int) {}
+fun <T> b(): T {
+    return TODO()
+}
 
 fun main() {
-    f([1, 2, 3])
-    b([1, 2, 3])
+    val a: List<Int> =[b(), 1]
 }

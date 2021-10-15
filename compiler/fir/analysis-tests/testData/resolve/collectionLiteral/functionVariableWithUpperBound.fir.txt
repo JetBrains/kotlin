@@ -14,7 +14,7 @@ FILE: functionVariableWithUpperBound.kt
         }
 
     }
-    public final fun <T> R|B.Companion|.buildSeq(size: R|kotlin/Int|, init: R|kotlin/collections/CollectionLiteralBuilder<B, T>.() -> kotlin/Unit| = fun R|kotlin/collections/CollectionLiteralBuilder<B, T>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    public final fun <T> R|B.Companion|.buildSeq(size: R|kotlin/Int|, init: R|kotlin/collections/SeqCollectionLiteralBuilder<B, T>.() -> kotlin/Unit| = fun R|kotlin/collections/SeqCollectionLiteralBuilder<B, T>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         ^ Unit
     }
     ): R|B| {
@@ -33,7 +33,7 @@ FILE: functionVariableWithUpperBound.kt
         }
 
     }
-    public final fun <T> R|C.Companion|.buildSeq(size: R|kotlin/Int|, init: R|kotlin/collections/CollectionLiteralBuilder<C, T>.() -> kotlin/Unit| = fun R|kotlin/collections/CollectionLiteralBuilder<C, T>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    public final fun <T> R|C.Companion|.buildSeq(size: R|kotlin/Int|, init: R|kotlin/collections/SeqCollectionLiteralBuilder<C, T>.() -> kotlin/Unit| = fun R|kotlin/collections/SeqCollectionLiteralBuilder<C, T>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         ^ Unit
     }
     ): R|C| {
@@ -42,10 +42,10 @@ FILE: functionVariableWithUpperBound.kt
     public final fun <T : R|C|> fVariableWithUpperBound(a: R|T|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        R|/fVariableWithUpperBound|<R|C|>(Q|C|.R|/buildSeq|<R|kotlin/Int|>(Int(3), <L> = buildSeq@fun R|kotlin/collections/CollectionLiteralBuilder<C, kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/CollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(1))
-            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/CollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(2))
-            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/CollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(3))
+        R|/fVariableWithUpperBound|<R|C|>(Q|C|.R|/buildSeq|<R|kotlin/Int|>(Int(3), <L> = buildSeq@fun R|kotlin/collections/SeqCollectionLiteralBuilder<C, kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/SeqCollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(1))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/SeqCollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(2))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/SeqCollectionLiteralBuilder.add: R|kotlin/Unit|>|(Int(3))
         }
         ))
     }

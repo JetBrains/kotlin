@@ -565,11 +565,6 @@ object AbstractTypeChecker {
             }
         }
 
-        checkSubtypeForCollectionLiteralType(context, subType.lowerBoundIfFlexible(), superType.lowerBoundIfFlexible())?.let {
-            context.addSubtypeConstraint(subType, superType)
-            return it
-        }
-
         return null
     }
 

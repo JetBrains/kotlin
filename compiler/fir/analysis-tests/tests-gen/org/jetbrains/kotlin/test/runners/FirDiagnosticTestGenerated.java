@@ -1130,9 +1130,27 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("findAllBuilders.kt")
+            public void testFindAllBuilders() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/findAllBuilders.kt");
+            }
+
+            @Test
+            @TestMetadata("findAllBuildersModule.kt")
+            public void testFindAllBuildersModule() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/findAllBuildersModule.kt");
+            }
+
+            @Test
             @TestMetadata("functionAmbiguity.kt")
             public void testFunctionAmbiguity() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionAmbiguity.kt");
+            }
+
+            @Test
+            @TestMetadata("functionAmbiguityDict.kt")
+            public void testFunctionAmbiguityDict() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionAmbiguityDict.kt");
             }
 
             @Test
@@ -1142,15 +1160,33 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("functionExplicitDict.kt")
+            public void testFunctionExplicitDict() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionExplicitDict.kt");
+            }
+
+            @Test
             @TestMetadata("functionVariable.kt")
             public void testFunctionVariable() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionVariable.kt");
             }
 
             @Test
+            @TestMetadata("functionVariableDict.kt")
+            public void testFunctionVariableDict() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionVariableDict.kt");
+            }
+
+            @Test
             @TestMetadata("functionVariableWithUpperBound.kt")
             public void testFunctionVariableWithUpperBound() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionVariableWithUpperBound.kt");
+            }
+
+            @Test
+            @TestMetadata("functionVariableWithUpperBoundDict.kt")
+            public void testFunctionVariableWithUpperBoundDict() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionVariableWithUpperBoundDict.kt");
             }
 
             @Test
@@ -1172,9 +1208,21 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("variableExplicitDict.kt")
+            public void testVariableExplicitDict() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/variableExplicitDict.kt");
+            }
+
+            @Test
             @TestMetadata("variableImplicit.kt")
             public void testVariableImplicit() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/variableImplicit.kt");
+            }
+
+            @Test
+            @TestMetadata("variableImplicitDict.kt")
+            public void testVariableImplicitDict() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/variableImplicitDict.kt");
             }
         }
 

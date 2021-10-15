@@ -1,11 +1,11 @@
 FILE: functionVariable.kt
-    public final fun <T> R|kotlin/Int.Companion|.buildSeq(size: R|kotlin/Int|, init: R|kotlin/collections/CollectionLiteralBuilder<kotlin/Int, T>.() -> kotlin/Unit| = fun R|kotlin/collections/CollectionLiteralBuilder<kotlin/Int, T>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    public final fun <T> R|kotlin/Int.Companion|.buildSeq(size: R|kotlin/Int|, init: R|kotlin/collections/SeqCollectionLiteralBuilder<kotlin/Int, T>.() -> kotlin/Unit| = fun R|kotlin/collections/SeqCollectionLiteralBuilder<kotlin/Int, T>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         ^ Unit
     }
     ): R|kotlin/Int| {
         ^buildSeq R|kotlin/TODO|()
     }
-    public final fun <T> R|kotlin/Double.Companion|.buildSeq(size: R|kotlin/Int|, init: R|kotlin/collections/CollectionLiteralBuilder<kotlin/Double, T>.() -> kotlin/Unit| = fun R|kotlin/collections/CollectionLiteralBuilder<kotlin/Double, T>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    public final fun <T> R|kotlin/Double.Companion|.buildSeq(size: R|kotlin/Int|, init: R|kotlin/collections/SeqCollectionLiteralBuilder<kotlin/Double, T>.() -> kotlin/Unit| = fun R|kotlin/collections/SeqCollectionLiteralBuilder<kotlin/Double, T>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         ^ Unit
     }
     ): R|kotlin/Double| {

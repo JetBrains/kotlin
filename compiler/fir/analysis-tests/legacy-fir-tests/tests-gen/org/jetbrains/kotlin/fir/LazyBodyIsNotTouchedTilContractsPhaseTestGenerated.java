@@ -991,9 +991,19 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionAmbiguity.kt");
         }
 
+        @TestMetadata("functionAmbiguityDict.kt")
+        public void testFunctionAmbiguityDict() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionAmbiguityDict.kt");
+        }
+
         @TestMetadata("functionExplicit.kt")
         public void testFunctionExplicit() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionExplicit.kt");
+        }
+
+        @TestMetadata("functionExplicitDict.kt")
+        public void testFunctionExplicitDict() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionExplicitDict.kt");
         }
 
         @TestMetadata("functionVariable.kt")
@@ -1001,9 +1011,29 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionVariable.kt");
         }
 
+        @TestMetadata("functionVariableDict.kt")
+        public void testFunctionVariableDict() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionVariableDict.kt");
+        }
+
         @TestMetadata("functionVariableWithUpperBound.kt")
         public void testFunctionVariableWithUpperBound() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionVariableWithUpperBound.kt");
+        }
+
+        @TestMetadata("functionVariableWithUpperBoundDict.kt")
+        public void testFunctionVariableWithUpperBoundDict() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/functionVariableWithUpperBoundDict.kt");
+        }
+
+        @TestMetadata("genericInArgument.kt")
+        public void testGenericInArgument() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/genericInArgument.kt");
+        }
+
+        @TestMetadata("nestedCollectionLiterals.kt")
+        public void testNestedCollectionLiterals() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/nestedCollectionLiterals.kt");
         }
 
         @TestMetadata("variableExplicit.kt")
@@ -1011,9 +1041,19 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/variableExplicit.kt");
         }
 
+        @TestMetadata("variableExplicitDict.kt")
+        public void testVariableExplicitDict() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/variableExplicitDict.kt");
+        }
+
         @TestMetadata("variableImplicit.kt")
         public void testVariableImplicit() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/variableImplicit.kt");
+        }
+
+        @TestMetadata("variableImplicitDict.kt")
+        public void testVariableImplicitDict() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteral/variableImplicitDict.kt");
         }
     }
 
