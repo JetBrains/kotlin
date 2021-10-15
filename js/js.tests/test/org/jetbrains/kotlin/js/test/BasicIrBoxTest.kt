@@ -581,10 +581,10 @@ abstract class BasicIrBoxTest(
             esModules = false,
         )
 
-        val cacheProvider = icCache.cacheProvider()
-        val newBinaryAsts = dirtyFiles.associateWith { cacheProvider.binaryAst(it) }
-
         // TODO: enable asserts when binary stability is achieved
+//        val cacheProvider = icCache.cacheProvider()
+//        val newBinaryAsts = dirtyFiles.associateWith { cacheProvider.binaryAst(it) }
+//
 //        for (file in dirtyFiles) {
 //            val oldBinaryAst = oldBinaryAsts[file]
 //            val newBinaryAst = newBinaryAsts[file]

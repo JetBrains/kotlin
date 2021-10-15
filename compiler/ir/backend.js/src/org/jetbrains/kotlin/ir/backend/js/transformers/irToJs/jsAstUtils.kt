@@ -474,7 +474,7 @@ private inline fun <T : JsNode> T.addSourceInfoIfNeed(node: IrElement, context: 
 
     if (node.startOffset == UNDEFINED_OFFSET || node.endOffset == UNDEFINED_OFFSET) return
 
-    val fileEntry = context.currentFile?.fileEntry ?: return
+    val fileEntry = context.currentFile.fileEntry
 
     val path = fileEntry.name
     val startLine = fileEntry.getLineNumber(node.startOffset)

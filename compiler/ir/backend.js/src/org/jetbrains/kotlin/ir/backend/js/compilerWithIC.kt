@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.ByteArrayInputStream
 
+@Suppress("UNUSED_PARAMETER")
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 fun compileWithIC(
     module: IrModuleFragment,
@@ -81,8 +82,8 @@ fun compileWithIC(
     deserializer.postProcess()
     symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
 
-    allModules.forEach { module ->
-        moveBodilessDeclarationsToSeparatePlace(context, module)
+    allModules.forEach {
+        moveBodilessDeclarationsToSeparatePlace(context, it)
     }
 
     generateJsTests(context, mainModule)
