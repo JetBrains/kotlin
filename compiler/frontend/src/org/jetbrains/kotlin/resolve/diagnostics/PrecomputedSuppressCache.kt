@@ -59,3 +59,52 @@ class PrecomputedSuppressCache(context: BindingContext, files: List<KtFile>) : K
     override fun getSuppressionAnnotations(annotated: PsiElement): List<AnnotationDescriptor> =
         storage[annotated].orEmpty()
 }
+
+class OnDemandSuppressCache(private val context: BindingContext) : KotlinSuppressCache() {
+
+    private val processedRoots = mutableSetOf<KtFile>()
+
+    private val storage = mutableMapOf<PsiElement, List<AnnotationDescriptor>>()
+
+    @Synchronized
+    private fun ensureRootProcessed(rootElement: PsiElement) {
+        require(rootElement is KtFile)
+        if (!processedRoots.contains(rootElement)) {
+            val visitor = PrecomputingVisitor(storage, BindingContextSuppressCache(context))
+            rootElement.accept(visitor, null)
+            processedRoots.add(rootElement)
+        }
+    }
+
+    private class PrecomputingVisitor(
+        val storage: MutableMap<PsiElement, List<AnnotationDescriptor>>,
+        val computer: KotlinSuppressCache,
+    ) : KtTreeVisitorVoid() {
+        override fun visitKtElement(element: KtElement) {
+            super.visitKtElement(element)
+            if (element is KtAnnotated) {
+                computeAnnotations(element)
+            }
+        }
+
+        override fun visitKtFile(file: KtFile) {
+            super.visitKtFile(file)
+            computeAnnotations(file)
+        }
+
+        private fun computeAnnotations(element: KtAnnotated) {
+            val suppressions = computer.getSuppressionAnnotations(element).filter { it.fqName == StandardNames.FqNames.suppress }
+            if (suppressions.isNotEmpty()) {
+                storage[element] = suppressions
+            }
+        }
+    }
+
+    override fun getSuppressionAnnotations(annotated: PsiElement): List<AnnotationDescriptor> =
+        storage[annotated].orEmpty()
+
+    override fun getClosestAnnotatedAncestorElement(element: PsiElement, rootElement: PsiElement, excludeSelf: Boolean): PsiElement? {
+        ensureRootProcessed(rootElement)
+        return super.getClosestAnnotatedAncestorElement(element, rootElement, excludeSelf)
+    }
+}
