@@ -8,37 +8,149 @@ package org.jetbrains.kotlin
 import org.jetbrains.kotlin.backend.common.psi.PsiSourceManager
 import org.jetbrains.kotlin.backend.common.sourceElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.AbstractKotlinSuppressCache
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticReporterWithContext
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import java.util.*
 
 class KtDiagnosticReporterWithImplicitIrBasedContext(
     diagnosticReporter: DiagnosticReporter,
     languageVersionSettings: LanguageVersionSettings
 ) : KtDiagnosticReporterWithContext(diagnosticReporter, languageVersionSettings) {
 
-    fun at(irElement: IrElement, containingIrFile: IrFile): DiagnosticContextImpl =
-        at(
-            PsiSourceManager.findPsiElement(irElement, containingIrFile)?.let(::KtRealPsiSourceElement)
-                ?: irElement.sourceElement(),
-            containingIrFile.path
-        )
+    private val suppressCache = IrBasedSuppressCache()
 
-    fun atFirstValidFrom(vararg irElements: IrElement, containingIrFile: IrFile): DiagnosticContextImpl {
-        require(irElements.isNotEmpty())
-        val sourceElement =
-            irElements.firstNotNullOfOrNull { PsiSourceManager.findPsiElement(it, containingIrFile) }?.let(::KtRealPsiSourceElement)
-                ?: (irElements.find { it.startOffset >= 0 } ?: irElements.first()).sourceElement()
-        return at(sourceElement, containingIrFile.path)
+    private fun IrElement.toSourceElement(containingIrFile: IrFile) =
+        (PsiSourceManager.findPsiElement(this, containingIrFile)?.let(::KtRealPsiSourceElement)
+            ?: sourceElement())
+
+    fun atFirstValidFrom(vararg irElements: IrElement, containingIrFile: IrFile): DiagnosticContextImpl? =
+        atFirstValidFrom(irElements.asIterable(), containingIrFile)
+
+    fun atFirstValidFrom(irElements: Iterable<IrElement>, containingIrFile: IrFile): DiagnosticContextImpl? {
+        var irElement: IrElement? = null
+        for (e in irElements) {
+            PsiSourceManager.findPsiElement(e, containingIrFile)?.let {
+                return at(KtRealPsiSourceElement(it), e, containingIrFile)
+            }
+            if (irElement == null && e.startOffset >= 0) {
+                irElement = e
+            }
+        }
+        return irElement?.let { at(it.sourceElement(), it, containingIrFile) }
     }
 
     fun at(irElement: IrElement, containingIrDeclaration: IrDeclaration): DiagnosticContextImpl =
         at(irElement, containingIrDeclaration.file)
 
     fun at(irDeclaration: IrDeclaration): DiagnosticContextImpl =
-        at(irDeclaration, irDeclaration)
+        at(irDeclaration, irDeclaration.file)
+
+    fun at(irElement: IrElement, containingIrFile: IrFile): DiagnosticContextImpl =
+        at(irElement.toSourceElement(containingIrFile), irElement, containingIrFile)
+
+    fun at(
+        sourceElement: AbstractKtSourceElement?,
+        irElement: IrElement,
+        containingFile: IrFile
+    ): DiagnosticContextImpl =
+        DiagnosticContextWithSuppressionImpl(sourceElement, irElement, containingFile)
+
+    override fun at(sourceElement: AbstractKtSourceElement?, containingFilePath: String): DiagnosticContextImpl {
+        error("Should not be called directly")
+    }
+
+    internal inner class DiagnosticContextWithSuppressionImpl(
+        sourceElement: AbstractKtSourceElement?,
+        private val irElement: IrElement,
+        private val containingFile: IrFile
+    ) : DiagnosticContextImpl(sourceElement, containingFile.path) {
+
+        override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean =
+            suppressCache.isSuppressed(
+                irElement, containingFile, diagnostic.factory.name.lowercase(), diagnostic.severity
+            )
+    }
 }
 
+internal class IrBasedSuppressCache : AbstractKotlinSuppressCache<IrElement>() {
+
+    private val annotatedAncestorsPerRoot = mutableMapOf<IrElement, MutableMap<IrElement, IrElement>>()
+
+    private val annotationKeys = mutableMapOf<IrElement, Set<String>>()
+
+    @Synchronized
+    private fun ensureRootProcessed(rootElement: IrElement) =
+        annotatedAncestorsPerRoot.getOrPut(rootElement) {
+            val visitor = AnnotatedTreeVisitor()
+            rootElement.accept(visitor, Stack())
+            visitor.annotatedAncestors
+        }
+
+    private inner class AnnotatedTreeVisitor : IrElementVisitor<Unit, Stack<IrElement>> {
+
+        val annotatedAncestors = mutableMapOf<IrElement, IrElement>()
+
+        override fun visitElement(element: IrElement, data: Stack<IrElement>) {
+            if (data.isNotEmpty()) {
+                annotatedAncestors[element] = data.peek()
+            }
+            val isAnnotated = collectSuppressAnnotationKeys(element)
+            if (isAnnotated) {
+                data.push(element)
+            }
+            element.acceptChildren(this, data)
+            if (isAnnotated) {
+                data.pop()
+            }
+        }
+
+        private fun collectSuppressAnnotationKeys(element: IrElement): Boolean =
+            (element as? IrAnnotationContainer)?.annotations?.filter {
+                it.type.classifierOrNull?.signature == SUPPRESS
+            }?.flatMap {
+                buildList {
+                    fun addIfStringConst(irConst: IrConst<*>) {
+                        if (irConst.kind == IrConstKind.String) {
+                            add((irConst.value as String).lowercase())
+                        }
+                    }
+
+                    for (i in 0 until it.valueArgumentsCount) {
+                        when (val arg = it.getValueArgument(i)) {
+                            is IrConst<*> -> addIfStringConst(arg)
+                            is IrConstantArray -> arg.elements.filterIsInstance<IrConstantPrimitive>().forEach {
+                                addIfStringConst(it.value)
+                            }
+                            // TODO: consider leaving only this branch
+                            is IrVararg -> arg.elements.filterIsInstance<IrConst<*>>().forEach {
+                                addIfStringConst(it)
+                            }
+                        }
+                    }
+                }
+            }?.takeIf { it.isNotEmpty() }?.also {
+                annotationKeys[element] = it.toSet()
+            } != null
+    }
+
+    override fun getClosestAnnotatedAncestorElement(element: IrElement, rootElement: IrElement, excludeSelf: Boolean): IrElement? {
+        val annotatedAncestors = ensureRootProcessed(rootElement)
+        return if (!excludeSelf && annotationKeys.containsKey(element)) element else annotatedAncestors[element]
+    }
+
+    override fun getSuppressingStrings(annotated: IrElement): Set<String> = annotationKeys[annotated].orEmpty()
+}
+
+private val SUPPRESS = IdSignature.CommonSignature("kotlin", "Suppress", null, 0)

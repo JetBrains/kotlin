@@ -85,6 +85,7 @@ abstract class AbstractKotlinSuppressCache<Element> {
             }
         }
 
+    // TODO: consider replacing set with list, assuming that the list of suppresses is usually very small
     protected abstract fun getSuppressingStrings(annotated: Element): Set<String>
 
     companion object {
