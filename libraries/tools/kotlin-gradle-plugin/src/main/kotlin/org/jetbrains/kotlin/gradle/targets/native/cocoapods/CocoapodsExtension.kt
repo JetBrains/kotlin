@@ -360,14 +360,14 @@ open class CocoapodsExtension(private val project: Project) {
 
     class SpecRepos {
         @get:Internal
-        internal val specRepos = mutableSetOf(URI("https://cdn.cocoapods.org"))
+        internal val specRepos = mutableSetOf("https://cdn.cocoapods.org")
 
         fun url(url: String) {
-            specRepos.add(URI(url))
+            specRepos.add(url)
         }
 
         @Input
-        internal fun getAll(): Collection<URI> {
+        internal fun getAll(): Collection<String> {
             return specRepos
         }
     }

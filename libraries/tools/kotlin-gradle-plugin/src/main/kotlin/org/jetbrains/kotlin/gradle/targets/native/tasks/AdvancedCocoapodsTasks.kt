@@ -663,6 +663,23 @@ private object CocoapodsErrorHandlingUtil {
                 |       
             """.trimMargin()
             return message
+        } else if (
+            error.contains("Unable to add a source with url") ||
+            error.contains("Couldn't determine repo name for URL") ||
+            error.contains("Unable to find a specification")
+        ) {
+            message += """
+                |
+                |        Possible reason: spec repos are not configured correctly.
+                |        Ensure that spec repos are correctly configured for all private pod dependencies:
+                |        cocoapods {
+                |           specRepos {
+                |               url("<private spec repo url>")
+                |           }
+                |        }
+                |       
+            """.trimMargin()
+            return message
         }
         return null
     }
