@@ -26,6 +26,7 @@ struct EmptyPayload {
 } // namespace
 
 TEST(ExtraObjectDataTest, Install) {
+    ScopedMemoryInit init;
     test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
     test_support::Object<EmptyPayload> object(type.typeInfo());
     auto* typeInfo = object.header()->type_info();
@@ -45,6 +46,7 @@ TEST(ExtraObjectDataTest, Install) {
 }
 
 TEST(ExtraObjectDataTest, ConcurrentInstall) {
+    ScopedMemoryInit init;
     test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
     test_support::Object<EmptyPayload> object(type.typeInfo());
 
@@ -57,6 +59,7 @@ TEST(ExtraObjectDataTest, ConcurrentInstall) {
 
     for (int i = 0; i < kThreadCount; ++i) {
         threads.emplace_back([i, &actual, &object, &canStart, &readyCount]() {
+            ScopedMemoryInit init;
             ++readyCount;
             while (!canStart) {
             }

@@ -14,6 +14,7 @@
 #include "Memory.h"
 #include "TypeInfo.h"
 #include "Utils.hpp"
+#include "MultiSourceQueue.hpp"
 
 namespace kotlin {
 namespace mm {
@@ -51,9 +52,9 @@ public:
     bool HasWeakReferenceCounter() noexcept;
     void ClearWeakReferenceCounter() noexcept;
 
-private:
     explicit ExtraObjectData(const TypeInfo* typeInfo) noexcept : typeInfo_(typeInfo) {}
     ~ExtraObjectData();
+private:
 
     // Must be first to match `TypeInfo` layout.
     const TypeInfo* typeInfo_;

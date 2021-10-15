@@ -25,9 +25,17 @@ public:
     // and to not store the iterator.
     class Node : private Pinned, public KonanAllocatorAware {
     public:
-        Node(const T& value, Producer* owner) noexcept : value_(value), owner_(owner) {}
+        Node(Producer* owner, const T& value) noexcept : value_(value), owner_(owner) {}
+
+        template <typename... Args, typename = std::enable_if_t<std::is_constructible_v<T, Args...>>>
+        explicit Node(Producer* owner, Args&& ...args) noexcept : value_(std::forward<Args>(args)...), owner_(owner) {}
 
         T& operator*() noexcept { return value_; }
+
+        static Node& fromValue(T& t) noexcept {
+            static_assert(std::is_base_of_v<Pinned, T>, "fromValue function only makes sense for non-movable object");
+            return *reinterpret_cast<Node*>(reinterpret_cast<uintptr_t>(&t) - offsetof(Node, value_));
+        }
 
     private:
         friend class MultiSourceQueue;
@@ -44,7 +52,15 @@ public:
         ~Producer() { Publish(); }
 
         Node* Insert(const T& value) noexcept {
-            queue_.emplace_back(value, this);
+            queue_.emplace_back(this, value);
+            auto& node = queue_.back();
+            node.position_ = std::prev(queue_.end());
+            return &node;
+        }
+
+        template <typename... Args, typename = std::enable_if_t<std::is_constructible_v<T, Args...>>>
+        Node* Emplace(Args&& ...value) noexcept {
+            queue_.emplace_back(this, std::forward<Args>(value)...);
             auto& node = queue_.back();
             node.position_ = std::prev(queue_.end());
             return &node;

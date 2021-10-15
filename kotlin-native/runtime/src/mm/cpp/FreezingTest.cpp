@@ -12,6 +12,7 @@
 #include "Memory.h"
 #include "ObjectTestSupport.hpp"
 #include "Utils.hpp"
+#include "TestSupport.hpp"
 
 using namespace kotlin;
 
@@ -153,6 +154,7 @@ TYPED_TEST(FreezingEmptyNoHookTest, PermanentIsFrozen) {
 }
 
 TYPED_TEST(FreezingEmptyNoHookTest, FailToEnsureNeverFrozen) {
+    ScopedMemoryInit init;
     TypeParam object;
     ASSERT_THAT(mm::FreezeSubgraph(object.header()), nullptr);
     ASSERT_TRUE(mm::IsFrozen(object.header()));
@@ -167,12 +169,14 @@ TYPED_TEST(FreezingEmptyNoHookTest, FailToEnsureNeverFrozenPermanent) {
 }
 
 TYPED_TEST(FreezingEmptyNoHookTest, Freeze) {
+    ScopedMemoryInit init;
     TypeParam object;
     EXPECT_THAT(mm::FreezeSubgraph(object.header()), nullptr);
     EXPECT_TRUE(mm::IsFrozen(object.header()));
 }
 
 TYPED_TEST(FreezingEmptyNoHookTest, FreezePermanent) {
+    ScopedMemoryInit init;
     TypeParam object;
     object.MakePermanent();
     EXPECT_THAT(mm::FreezeSubgraph(object.header()), nullptr);
@@ -180,6 +184,7 @@ TYPED_TEST(FreezingEmptyNoHookTest, FreezePermanent) {
 }
 
 TYPED_TEST(FreezingEmptyNoHookTest, FreezeTwice) {
+    ScopedMemoryInit init;
     TypeParam object;
     EXPECT_THAT(mm::FreezeSubgraph(object.header()), nullptr);
     EXPECT_THAT(mm::FreezeSubgraph(object.header()), nullptr);
@@ -187,6 +192,7 @@ TYPED_TEST(FreezingEmptyNoHookTest, FreezeTwice) {
 }
 
 TYPED_TEST(FreezingEmptyNoHookTest, FreezeForbidden) {
+    ScopedMemoryInit init;
     TypeParam object;
     ASSERT_TRUE(mm::EnsureNeverFrozen(object.header()));
     EXPECT_THAT(mm::FreezeSubgraph(object.header()), object.header());
@@ -194,6 +200,7 @@ TYPED_TEST(FreezingEmptyNoHookTest, FreezeForbidden) {
 }
 
 TYPED_TEST(FreezingEmptyWithHookTest, Freeze) {
+    ScopedMemoryInit init;
     TypeParam object;
     EXPECT_CALL(this->freezeHook(), Call(object.header()));
     EXPECT_THAT(mm::FreezeSubgraph(object.header()), nullptr);
@@ -201,6 +208,7 @@ TYPED_TEST(FreezingEmptyWithHookTest, Freeze) {
 }
 
 TYPED_TEST(FreezingEmptyWithHookTest, FreezePermanent) {
+    ScopedMemoryInit init;
     TypeParam object;
     object.MakePermanent();
     EXPECT_CALL(this->freezeHook(), Call(_)).Times(0);
@@ -209,6 +217,7 @@ TYPED_TEST(FreezingEmptyWithHookTest, FreezePermanent) {
 }
 
 TYPED_TEST(FreezingEmptyWithHookTest, FreezeTwice) {
+    ScopedMemoryInit init;
     TypeParam object;
     // Only called for the first freeze.
     EXPECT_CALL(this->freezeHook(), Call(object.header()));
@@ -219,6 +228,7 @@ TYPED_TEST(FreezingEmptyWithHookTest, FreezeTwice) {
 }
 
 TYPED_TEST(FreezingEmptyWithHookTest, FreezeForbidden) {
+    ScopedMemoryInit init;
     TypeParam object;
     ASSERT_TRUE(mm::EnsureNeverFrozen(object.header()));
     EXPECT_CALL(this->freezeHook(), Call(object.header()));
@@ -227,12 +237,14 @@ TYPED_TEST(FreezingEmptyWithHookTest, FreezeForbidden) {
 }
 
 TYPED_TEST(FreezingNoHookTest, Freeze) {
+    ScopedMemoryInit init;
     TypeParam object;
     EXPECT_THAT(mm::FreezeSubgraph(object.header()), nullptr);
     EXPECT_TRUE(mm::IsFrozen(object.header()));
 }
 
 TYPED_TEST(FreezingNoHookTest, FreezePermanent) {
+    ScopedMemoryInit init;
     TypeParam object;
     object.MakePermanent();
     EXPECT_THAT(mm::FreezeSubgraph(object.header()), nullptr);
@@ -240,6 +252,7 @@ TYPED_TEST(FreezingNoHookTest, FreezePermanent) {
 }
 
 TYPED_TEST(FreezingNoHookTest, FreezeTwice) {
+    ScopedMemoryInit init;
     TypeParam object;
     EXPECT_THAT(mm::FreezeSubgraph(object.header()), nullptr);
     EXPECT_THAT(mm::FreezeSubgraph(object.header()), nullptr);
@@ -247,6 +260,7 @@ TYPED_TEST(FreezingNoHookTest, FreezeTwice) {
 }
 
 TYPED_TEST(FreezingNoHookTest, FreezeForbidden) {
+    ScopedMemoryInit init;
     TypeParam object;
     ASSERT_TRUE(mm::EnsureNeverFrozen(object.header()));
     EXPECT_THAT(mm::FreezeSubgraph(object.header()), object.header());
@@ -254,6 +268,7 @@ TYPED_TEST(FreezingNoHookTest, FreezeForbidden) {
 }
 
 TYPED_TEST(FreezingNoHookTest, FreezeTree) {
+    ScopedMemoryInit init;
     TypeParam object;
     TypeParam field1;
     TypeParam field2;
@@ -269,6 +284,7 @@ TYPED_TEST(FreezingNoHookTest, FreezeTree) {
 }
 
 TYPED_TEST(FreezingNoHookTest, FreezeTreePermanent) {
+    ScopedMemoryInit init;
     TypeParam object;
     object.MakePermanent();
     TypeParam field1;
@@ -288,6 +304,7 @@ TYPED_TEST(FreezingNoHookTest, FreezeTreePermanent) {
 }
 
 TYPED_TEST(FreezingNoHookTest, FreezeTreePermanentLeaf) {
+    ScopedMemoryInit init;
     TypeParam object;
     TypeParam field1;
     field1.MakePermanent();
@@ -304,6 +321,7 @@ TYPED_TEST(FreezingNoHookTest, FreezeTreePermanentLeaf) {
 }
 
 TYPED_TEST(FreezingNoHookTest, FreezeTreeTwice) {
+    ScopedMemoryInit init;
     TypeParam object;
     TypeParam field1;
     TypeParam field2;
@@ -320,6 +338,7 @@ TYPED_TEST(FreezingNoHookTest, FreezeTreeTwice) {
 }
 
 TYPED_TEST(FreezingNoHookTest, FreezeTreeForbidden) {
+    ScopedMemoryInit init;
     TypeParam object;
     TypeParam field1;
     TypeParam field2;
@@ -336,6 +355,7 @@ TYPED_TEST(FreezingNoHookTest, FreezeTreeForbidden) {
 }
 
 TYPED_TEST(FreezingNoHookTest, FreezeTreeForbiddenByField) {
+    ScopedMemoryInit init;
     TypeParam object;
     TypeParam field1;
     TypeParam field2;
@@ -352,6 +372,7 @@ TYPED_TEST(FreezingNoHookTest, FreezeTreeForbiddenByField) {
 }
 
 TYPED_TEST(FreezingNoHookTest, FreezeTreeRecursive) {
+    ScopedMemoryInit init;
     TypeParam object;
     TypeParam inner1;
     TypeParam inner2;
@@ -365,6 +386,7 @@ TYPED_TEST(FreezingNoHookTest, FreezeTreeRecursive) {
 }
 
 TYPED_TEST(FreezingNoHookTest, FreezeTreeRecursivePermanent) {
+    ScopedMemoryInit init;
     TypeParam object;
     object.MakePermanent();
     TypeParam inner1;
@@ -381,6 +403,7 @@ TYPED_TEST(FreezingNoHookTest, FreezeTreeRecursivePermanent) {
 }
 
 TYPED_TEST(FreezingWithHookTest, Freeze) {
+    ScopedMemoryInit init;
     TypeParam object;
     EXPECT_CALL(this->freezeHook(), Call(object.header()));
     EXPECT_THAT(mm::FreezeSubgraph(object.header()), nullptr);
@@ -388,6 +411,7 @@ TYPED_TEST(FreezingWithHookTest, Freeze) {
 }
 
 TYPED_TEST(FreezingWithHookTest, FreezePermanent) {
+    ScopedMemoryInit init;
     TypeParam object;
     object.MakePermanent();
     EXPECT_CALL(this->freezeHook(), Call(_)).Times(0);
@@ -396,6 +420,7 @@ TYPED_TEST(FreezingWithHookTest, FreezePermanent) {
 }
 
 TYPED_TEST(FreezingWithHookTest, FreezeTwice) {
+    ScopedMemoryInit init;
     TypeParam object;
     // Only called for the first freeze.
     EXPECT_CALL(this->freezeHook(), Call(object.header()));
@@ -406,6 +431,7 @@ TYPED_TEST(FreezingWithHookTest, FreezeTwice) {
 }
 
 TYPED_TEST(FreezingWithHookTest, FreezeForbidden) {
+    ScopedMemoryInit init;
     TypeParam object;
     ASSERT_TRUE(mm::EnsureNeverFrozen(object.header()));
     EXPECT_CALL(this->freezeHook(), Call(object.header()));
@@ -414,6 +440,7 @@ TYPED_TEST(FreezingWithHookTest, FreezeForbidden) {
 }
 
 TYPED_TEST(FreezingWithHookTest, FreezeTree) {
+    ScopedMemoryInit init;
     TypeParam object;
     TypeParam field1;
     TypeParam field2;
@@ -433,6 +460,7 @@ TYPED_TEST(FreezingWithHookTest, FreezeTree) {
 }
 
 TYPED_TEST(FreezingWithHookTest, FreezeTreePermanent) {
+    ScopedMemoryInit init;
     TypeParam object;
     object.MakePermanent();
     TypeParam field1;
@@ -453,6 +481,7 @@ TYPED_TEST(FreezingWithHookTest, FreezeTreePermanent) {
 }
 
 TYPED_TEST(FreezingWithHookTest, FreezeTreePermanentLeaf) {
+    ScopedMemoryInit init;
     TypeParam object;
     TypeParam field1;
     field1.MakePermanent();
@@ -473,6 +502,7 @@ TYPED_TEST(FreezingWithHookTest, FreezeTreePermanentLeaf) {
 }
 
 TYPED_TEST(FreezingWithHookTest, FreezeTreeTwice) {
+    ScopedMemoryInit init;
     TypeParam object;
     TypeParam field1;
     TypeParam field2;
@@ -495,6 +525,7 @@ TYPED_TEST(FreezingWithHookTest, FreezeTreeTwice) {
 }
 
 TYPED_TEST(FreezingWithHookTest, FreezeTreeForbidden) {
+    ScopedMemoryInit init;
     TypeParam object;
     TypeParam field1;
     TypeParam field2;
@@ -515,6 +546,7 @@ TYPED_TEST(FreezingWithHookTest, FreezeTreeForbidden) {
 }
 
 TYPED_TEST(FreezingWithHookTest, FreezeTreeForbiddenByField) {
+    ScopedMemoryInit init;
     TypeParam object;
     TypeParam field1;
     TypeParam field2;
@@ -535,6 +567,7 @@ TYPED_TEST(FreezingWithHookTest, FreezeTreeForbiddenByField) {
 }
 
 TYPED_TEST(FreezingWithHookTest, FreezeTreeRecursive) {
+    ScopedMemoryInit init;
     TypeParam object;
     TypeParam inner1;
     TypeParam inner2;
@@ -551,6 +584,7 @@ TYPED_TEST(FreezingWithHookTest, FreezeTreeRecursive) {
 }
 
 TYPED_TEST(FreezingWithHookTest, FreezeTreeRecursivePermanent) {
+    ScopedMemoryInit init;
     TypeParam object;
     object.MakePermanent();
     TypeParam inner1;
@@ -568,6 +602,7 @@ TYPED_TEST(FreezingWithHookTest, FreezeTreeRecursivePermanent) {
 }
 
 TYPED_TEST(FreezingWithHookTest, FreezeTreeWithHookRewrite) {
+    ScopedMemoryInit init;
     TypeParam object;
     TypeParam field1;
     TypeParam field2;
@@ -597,6 +632,7 @@ TYPED_TEST(FreezingWithHookTest, FreezeTreeWithHookRewrite) {
 }
 
 TYPED_TEST(FreezingWithHookTest, FreezeTreeForbiddenByHook) {
+    ScopedMemoryInit init;
     TypeParam object;
     TypeParam field1;
     TypeParam field2;

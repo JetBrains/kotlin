@@ -8,6 +8,7 @@
 #include "ObjectOps.hpp"
 #include "PointerBits.h"
 #include "Weak.h"
+#include "ExtraObjectDataFactory.hpp"
 
 #ifdef KONAN_OBJC_INTEROP
 #include "ObjCMMAPI.h"
@@ -42,16 +43,17 @@ mm::ExtraObjectData& mm::ExtraObjectData::Install(ObjHeader* object) noexcept {
 
     RuntimeCheck(!hasPointerBits(typeInfo, OBJECT_TAG_MASK), "Object must not be tagged");
 
-    auto* data = new ExtraObjectData(typeInfo);
+    auto *threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    auto& data = mm::ExtraObjectDataFactory::Instance().CreateExtraObjectDataForObject(threadData, typeInfo);
 
-    TypeInfo* old = __sync_val_compare_and_swap(&object->typeInfoOrMeta_, typeInfo, reinterpret_cast<TypeInfo*>(data));
+    TypeInfo* old = __sync_val_compare_and_swap(&object->typeInfoOrMeta_, typeInfo, reinterpret_cast<TypeInfo*>(&data));
     if (old != typeInfo) {
         // Somebody else created `mm::ExtraObjectData` for this object
-        delete data;
+        mm::ExtraObjectDataFactory::Instance().DestroyExtraObjectData(threadData, data);
         return *reinterpret_cast<mm::ExtraObjectData*>(old);
     }
 
-    return *data;
+    return data;
 }
 
 // static
@@ -62,7 +64,12 @@ void mm::ExtraObjectData::Uninstall(ObjHeader* object) noexcept {
 
     *const_cast<const TypeInfo**>(&object->typeInfoOrMeta_) = data.typeInfo_;
 
-    delete &data;
+    auto *threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+#ifdef KONAN_OBJC_INTEROP
+    Kotlin_ObjCExport_releaseAssociatedObject(data.associatedObject_);
+    data.associatedObject_ = nullptr;
+#endif
+    mm::ExtraObjectDataFactory::Instance().DestroyExtraObjectData(threadData, data);
 }
 
 void mm::ExtraObjectData::DetachAssociatedObject() noexcept {
@@ -89,6 +96,6 @@ mm::ExtraObjectData::~ExtraObjectData() {
     RuntimeAssert(!HasWeakReferenceCounter(), "Object must have cleared weak references");
 
 #ifdef KONAN_OBJC_INTEROP
-    Kotlin_ObjCExport_releaseAssociatedObject(associatedObject_);
+    RuntimeAssert(associatedObject_ == nullptr, "Object must have cleared associated object");
 #endif
 }
