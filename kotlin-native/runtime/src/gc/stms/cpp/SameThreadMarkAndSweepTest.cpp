@@ -1126,3 +1126,44 @@ TEST_F(SameThreadMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
         EXPECT_THAT(newMutators[i].Alive(), testing::UnorderedElementsAreArray(aliveForThisThread));
     }
 }
+
+
+TEST_F(SameThreadMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
+    KStdVector<Mutator> mutators(2);
+    std::atomic<test_support::Object<Payload>*> object1 = nullptr;
+    std::atomic<WeakCounter*> weak = nullptr;
+    std::atomic<bool> done = false;
+    auto f0 = mutators[0].Execute([&](mm::ThreadData& threadData, Mutator &) {
+        GlobalObjectHolder global1{threadData};
+        auto& object1_local = AllocateObject(threadData);
+        object1 = &object1_local;
+        global1->field1 = object1_local.header();
+        while (weak.load() == nullptr);
+        threadData.gc().PerformFullGC();
+
+        ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(object1_local.header(), weak.load()->header(), global1.header()));
+        ASSERT_THAT(GetColor(global1.header()), Color::kWhite);
+        ASSERT_THAT(GetColor(object1_local.header()), Color::kWhite);
+        ASSERT_THAT(GetColor(weak.load()->header()), Color::kWhite);
+        ASSERT_THAT((*weak.load())->referred, object1_local.header());
+
+        global1->field1 = nullptr;
+
+        threadData.gc().PerformFullGC();
+
+        EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global1.header()));
+        done = true;
+    });
+    
+    auto f1 = mutators[1].Execute([&](mm::ThreadData& threadData, Mutator &) {
+        while (object1.load() == nullptr) {}
+        ObjHolder holder;
+        auto &weak_local = InstallWeakCounter(threadData, object1.load()->header(), holder.slot());
+        weak = &weak_local;
+        *holder.slot() = nullptr;
+        while (!done) threadData.gc().SafePointLoopBody();
+    });
+
+    f0.wait();
+    f1.wait();
+}
