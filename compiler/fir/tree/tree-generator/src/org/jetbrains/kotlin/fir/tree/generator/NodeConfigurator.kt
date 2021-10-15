@@ -282,6 +282,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
                 isMutable = true
             }
             +booleanField("isLambda")
+            +booleanField("hasExplicitParameterList")
             +typeParameters
             +field(typeRef, withReplace = true)
         }

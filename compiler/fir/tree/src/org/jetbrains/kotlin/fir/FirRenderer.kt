@@ -626,6 +626,12 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
             print(".")
         }
         print("<anonymous>")
+        if (anonymousFunction.valueParameters.isEmpty() &&
+            anonymousFunction.hasExplicitParameterList &&
+            anonymousFunction.returnTypeRef is FirImplicitTypeRef
+        ) {
+            print("(<no-parameters>)")
+        }
         anonymousFunction.valueParameters.renderParameters()
         print(": ")
         anonymousFunction.returnTypeRef.accept(this)

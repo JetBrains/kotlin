@@ -59,7 +59,7 @@ fun extractLambdaInfoFromFunctionalType(
 
     var coerceFirstParameterToExtensionReceiver = false
     val argumentValueParameters = argument.valueParameters
-    val parameters = if (argument.isLambda && argumentValueParameters.isEmpty() && expectedParameters.size < 2) {
+    val parameters = if (argument.isLambda && !argument.hasExplicitParameterList && expectedParameters.size < 2) {
         expectedParameters // Infer existence of a parameter named `it` of an appropriate type.
     } else {
         if (duringCompletion &&

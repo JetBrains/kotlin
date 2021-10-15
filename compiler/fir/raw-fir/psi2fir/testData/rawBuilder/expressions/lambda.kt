@@ -31,4 +31,6 @@ fun test(list: List<Int>) {
 
 val simple = { }
 
+val simpleWithArrow = { -> }
+
 val another = { 42 }

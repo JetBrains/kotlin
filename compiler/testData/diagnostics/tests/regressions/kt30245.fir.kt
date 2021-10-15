@@ -130,7 +130,7 @@ fun test4() { // to non-extension lambda 2
 }
 
 open class A(a: () -> Unit) {
-    constructor(f: (String) -> Unit) : <!OVERLOAD_RESOLUTION_AMBIGUITY!>this<!>({ -> f("") })
+    constructor(f: (String) -> Unit) : this({ -> f("") })
 }
 
 class B: A({ s -> "1" })

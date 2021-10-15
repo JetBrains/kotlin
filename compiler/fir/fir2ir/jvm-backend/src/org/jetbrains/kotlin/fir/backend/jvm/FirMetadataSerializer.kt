@@ -86,6 +86,7 @@ class FirMetadataSerializer(
             returnTypeRef = function.returnTypeRef.approximated(toSuper = true, typeParameterSet)
             receiverTypeRef = function.receiverTypeRef?.approximated(toSuper = false, typeParameterSet)
             isLambda = (function as? FirAnonymousFunction)?.isLambda == true
+            hasExplicitParameterList = (function as? FirAnonymousFunction)?.hasExplicitParameterList == true
             valueParameters.addAll(function.valueParameters.map {
                 buildValueParameterCopy(it) {
                     returnTypeRef = it.returnTypeRef.approximated(toSuper = false, typeParameterSet)

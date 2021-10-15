@@ -125,10 +125,12 @@ class ExpressionsConverter(
     private fun convertLambdaExpression(lambdaExpression: LighterASTNode): FirExpression {
         val valueParameterList = mutableListOf<ValueParameter>()
         var block: LighterASTNode? = null
+        var hasArrow = false
         lambdaExpression.getChildNodesByType(FUNCTION_LITERAL).first().forEachChildren {
             when (it.tokenType) {
                 VALUE_PARAMETER_LIST -> valueParameterList += declarationsConverter.convertValueParameters(it, ValueParameterDeclaration.LAMBDA)
                 BLOCK -> block = it
+                ARROW -> hasArrow = true
             }
         }
 
@@ -142,6 +144,7 @@ class ExpressionsConverter(
             receiverTypeRef = implicitType
             symbol = FirAnonymousFunctionSymbol()
             isLambda = true
+            hasExplicitParameterList = hasArrow
             label = context.getLastLabel(lambdaExpression) ?: context.calleeNamesForLambda.lastOrNull()?.let {
                 buildLabel {
                     source = expressionSource.fakeElement(FirFakeSourceElementKind.GeneratedLambdaLabel)

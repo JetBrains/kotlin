@@ -23,5 +23,7 @@ FILE: lambda.kt
     public? final? fun test(list: List<Int>): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? val simple: <implicit> = LAZY_EXPRESSION
         public? get(): <implicit>
+    public? final? val simpleWithArrow: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
     public? final? val another: <implicit> = LAZY_EXPRESSION
         public? get(): <implicit>

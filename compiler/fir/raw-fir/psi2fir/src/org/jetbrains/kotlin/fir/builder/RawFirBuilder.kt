@@ -1223,6 +1223,7 @@ open class RawFirBuilder(
                     receiverTypeRef = receiverType
                     symbol = FirAnonymousFunctionSymbol()
                     isLambda = false
+                    hasExplicitParameterList = true
                     label = context.getLastLabel(function)
                     labelName = label?.name ?: context.calleeNamesForLambda.lastOrNull()?.identifier
                 }
@@ -1338,6 +1339,7 @@ open class RawFirBuilder(
                 receiverTypeRef = receiverType
                 symbol = FirAnonymousFunctionSymbol()
                 isLambda = true
+                hasExplicitParameterList = expression.functionLiteral.arrow != null
 
                 val destructuringStatements = mutableListOf<FirStatement>()
                 for (valueParameter in literal.valueParameters) {

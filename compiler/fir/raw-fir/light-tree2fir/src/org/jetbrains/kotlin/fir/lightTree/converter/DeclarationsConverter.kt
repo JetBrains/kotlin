@@ -1548,6 +1548,7 @@ class DeclarationsConverter(
                 receiverTypeRef = receiverType
                 symbol = functionSymbol
                 isLambda = false
+                hasExplicitParameterList = true
                 label = context.getLastLabel(functionDeclaration)
                 val labelName = label?.name ?: context.calleeNamesForLambda.lastOrNull()?.identifier
                 target = FirFunctionTarget(labelName = labelName, isLambda = false)

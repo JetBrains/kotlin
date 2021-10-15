@@ -71,6 +71,11 @@ FILE: lambda.kt
     }
 
         public? get(): <implicit>
+    public? final? val simpleWithArrow: <implicit> = fun <implicit>.<anonymous>(<no-parameters>)(): <implicit> <inline=Unknown>  {
+        ^ Unit
+    }
+
+        public? get(): <implicit>
     public? final? val another: <implicit> = fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
         IntegerLiteral(42)
     }

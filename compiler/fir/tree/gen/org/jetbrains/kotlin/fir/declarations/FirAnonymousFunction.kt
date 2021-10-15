@@ -45,6 +45,7 @@ abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner {
     abstract val invocationKind: EventOccurrencesRange?
     abstract val inlineStatus: InlineStatus
     abstract val isLambda: Boolean
+    abstract val hasExplicitParameterList: Boolean
     abstract override val typeParameters: List<FirTypeParameter>
     abstract val typeRef: FirTypeRef
 

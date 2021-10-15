@@ -167,6 +167,7 @@ open class FirContractResolveTransformer(
                 receiverTypeRef = buildImplicitTypeRef()
                 symbol = FirAnonymousFunctionSymbol()
                 isLambda = true
+                hasExplicitParameterList = true
 
                 body = buildBlock {
                     contractDescription.rawEffects.forEach {

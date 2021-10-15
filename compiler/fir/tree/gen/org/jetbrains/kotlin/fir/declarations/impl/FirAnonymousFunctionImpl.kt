@@ -52,6 +52,7 @@ internal class FirAnonymousFunctionImpl(
     override var invocationKind: EventOccurrencesRange?,
     override var inlineStatus: InlineStatus,
     override val isLambda: Boolean,
+    override val hasExplicitParameterList: Boolean,
     override val typeParameters: MutableList<FirTypeParameter>,
     override var typeRef: FirTypeRef,
 ) : FirAnonymousFunction() {

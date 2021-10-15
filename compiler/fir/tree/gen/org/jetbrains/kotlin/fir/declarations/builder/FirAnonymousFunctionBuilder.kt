@@ -59,6 +59,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     var invocationKind: EventOccurrencesRange? = null
     var inlineStatus: InlineStatus = InlineStatus.Unknown
     var isLambda: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    var hasExplicitParameterList: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
@@ -82,6 +83,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
             invocationKind,
             inlineStatus,
             isLambda,
+            hasExplicitParameterList,
             typeParameters,
             typeRef,
         )

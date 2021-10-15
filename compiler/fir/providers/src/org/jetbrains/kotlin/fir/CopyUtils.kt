@@ -99,6 +99,7 @@ fun FirAnonymousFunction.copy(
         this.receiverTypeRef = receiverTypeRef
         symbol = this@copy.symbol
         isLambda = this@copy.isLambda
+        hasExplicitParameterList = this@copy.hasExplicitParameterList
         this.valueParameters.addAll(valueParameters)
         this.body = body
         this.annotations.addAll(annotations)
