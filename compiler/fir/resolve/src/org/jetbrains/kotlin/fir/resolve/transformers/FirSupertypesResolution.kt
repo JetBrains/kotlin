@@ -84,13 +84,17 @@ fun <F : FirClassLikeDeclaration> F.runSupertypeResolvePhaseForLocalClass(
     currentScopeList: List<FirScope>,
     localClassesNavigationInfo: LocalClassesNavigationInfo,
     firProviderInterceptor: FirProviderInterceptor?,
+    useSiteFile: FirFile,
+    containingDeclarations: List<FirDeclaration>,
 ): F {
     val supertypeComputationSession = SupertypeComputationSession()
     val supertypeResolverVisitor = FirSupertypeResolverVisitor(
         session, supertypeComputationSession, scopeSession,
         currentScopeList.toPersistentList(),
         localClassesNavigationInfo,
-        firProviderInterceptor
+        firProviderInterceptor,
+        useSiteFile,
+        containingDeclarations,
     )
 
     this.accept(supertypeResolverVisitor, null)
@@ -204,9 +208,19 @@ open class FirSupertypeResolverVisitor(
     private val scopeForLocalClass: PersistentList<FirScope>? = null,
     private val localClassesNavigationInfo: LocalClassesNavigationInfo? = null,
     private val firProviderInterceptor: FirProviderInterceptor? = null,
+    private val useSiteFile: FirFile? = null,
+    containingDeclarations: List<FirDeclaration> = emptyList(),
 ) : FirDefaultVisitor<Unit, Any?>() {
     private val supertypeGenerationExtensions = session.extensionService.supertypeGenerators
     private val classDeclarationsStack = ArrayDeque<FirRegularClass>()
+
+    init {
+        containingDeclarations.forEach {
+            if (it is FirRegularClass) {
+                classDeclarationsStack.add(it)
+            }
+        }
+    }
 
     private fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? =
         if (firProviderInterceptor != null) firProviderInterceptor.getFirClassifierContainerFileIfAny(symbol)
@@ -301,10 +315,12 @@ open class FirSupertypeResolverVisitor(
         val scopes = prepareScopes(classLikeDeclaration)
 
         val transformer = FirSpecificTypeResolverTransformer(session)
-        val resolvedTypesRefs = resolveSuperTypeRefs(
-            transformer,
-            ScopeClassDeclaration(scopes, classDeclarationsStack.lastOrNull())
-        )
+        val resolvedTypesRefs = transformer.withFile(useSiteFile) {
+            resolveSuperTypeRefs(
+                transformer,
+                ScopeClassDeclaration(scopes, classDeclarationsStack)
+            )
+        }
 
         supertypeComputationSession.storeSupertypes(classLikeDeclaration, resolvedTypesRefs)
         return resolvedTypesRefs

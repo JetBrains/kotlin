@@ -115,7 +115,7 @@ private class FirAnnotationResolveTransformer(
     ): FirStatement {
         return annotation.transformAnnotationTypeRef(
             typeResolverTransformer,
-            ScopeClassDeclaration(scopes, classDeclarationsStack.lastOrNull())
+            ScopeClassDeclaration(scopes, classDeclarationsStack)
         )
     }
 

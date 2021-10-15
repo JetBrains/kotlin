@@ -12478,6 +12478,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("InaccessiblePrivateInFile.kt")
+            public void testInaccessiblePrivateInFile() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/imports/InaccessiblePrivateInFile.kt");
+            }
+
+            @Test
             @TestMetadata("invisibleFakeReferenceInImport.kt")
             public void testInvisibleFakeReferenceInImport() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/imports/invisibleFakeReferenceInImport.kt");

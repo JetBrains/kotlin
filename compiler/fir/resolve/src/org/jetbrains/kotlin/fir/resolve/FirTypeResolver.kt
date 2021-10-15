@@ -7,12 +7,19 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 abstract class FirTypeResolver : FirSessionComponent {
-    abstract fun resolveType(typeRef: FirTypeRef, scopeClassDeclaration: ScopeClassDeclaration, areBareTypesAllowed: Boolean, isOperandOfIsOperator: Boolean): ConeKotlinType
+    abstract fun resolveType(
+        typeRef: FirTypeRef,
+        scopeClassDeclaration: ScopeClassDeclaration,
+        areBareTypesAllowed: Boolean,
+        isOperandOfIsOperator: Boolean,
+        useSiteFile: FirFile?
+    ): ConeKotlinType
 }
 
 val FirSession.typeResolver: FirTypeResolver by FirSession.sessionComponentAccessor()

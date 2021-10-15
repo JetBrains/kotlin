@@ -73,7 +73,16 @@ class FirSpecificTypeResolverTransformer(
         val scopeOwnerLookupNames = data.scopes.flatMap { it.scopeOwnerLookupNames }
         session.lookupTracker?.recordTypeLookup(typeRef, scopeOwnerLookupNames, currentFile?.source)
         typeRef.transformChildren(this, data)
-        return transformType(typeRef, typeResolver.resolveType(typeRef, data, areBareTypesAllowed, isOperandOfIsOperator))
+        return transformType(
+            typeRef,
+            typeResolver.resolveType(
+                typeRef,
+                data,
+                areBareTypesAllowed,
+                isOperandOfIsOperator,
+                currentFile,
+            )
+        )
     }
 
     @OptIn(PrivateForInline::class)
@@ -84,7 +93,13 @@ class FirSpecificTypeResolverTransformer(
         functionTypeRef.transformChildren(this, data)
         val scopeOwnerLookupNames = data.scopes.flatMap { it.scopeOwnerLookupNames }
         session.lookupTracker?.recordTypeLookup(functionTypeRef, scopeOwnerLookupNames, currentFile?.source)
-        val resolvedType = typeResolver.resolveType(functionTypeRef, data, areBareTypesAllowed, isOperandOfIsOperator).takeIfAcceptable()
+        val resolvedType = typeResolver.resolveType(
+            functionTypeRef,
+            data,
+            areBareTypesAllowed,
+            isOperandOfIsOperator,
+            currentFile,
+        ).takeIfAcceptable()
         return if (resolvedType != null && resolvedType !is ConeClassErrorType) {
             buildResolvedTypeRef {
                 source = functionTypeRef.source
