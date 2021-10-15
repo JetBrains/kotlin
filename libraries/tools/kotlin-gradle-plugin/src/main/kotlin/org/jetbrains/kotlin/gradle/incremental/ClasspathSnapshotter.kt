@@ -40,7 +40,7 @@ object ClasspathEntrySnapshotter {
         val snapshots = try {
             ClassSnapshotter.snapshot(classes, protoBased)
         } catch (e: Throwable) {
-            if ((protoBased ?: protoBasedDefaultValue) && isKnownProblematicClasspathEntry(classpathEntry)) {
+            if (isKnownProblematicClasspathEntry(classpathEntry)) {
                 classes.map { ContentHashJavaClassSnapshot(it.contents.md5()) }
             } else throw e
         }

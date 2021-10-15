@@ -62,7 +62,16 @@ object JavaClassSnapshotter {
 
     private fun Int.isPrivate() = (this and Opcodes.ACC_PRIVATE) != 0
 
-    private val gson by lazy { GsonBuilder().setPrettyPrinting().create() }
+    private val gson by lazy {
+        // Use serializeSpecialFloatingPointValues() to avoid
+        //    "java.lang.IllegalArgumentException: NaN is not a valid double value as per JSON specification. To override this behavior, use
+        //    GsonBuilder.serializeSpecialFloatingPointValues() method."
+        // on jars such as ~/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/203.8084.24/artifacts/lib/rhino-1.7.12.jar.
+        GsonBuilder()
+            .serializeSpecialFloatingPointValues()
+            .setPrettyPrinting()
+            .create()
+    }
 
     private fun snapshotJavaElement(javaElement: Any, javaElementName: String, includeDebugInfoInSnapshot: Boolean? = null): AbiSnapshot {
         // TODO: Optimize this method later if necessary. Currently we focus on correctness first.
