@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.hasContinuation
 import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeSuspendOfContinuation
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.defaultValue
+import org.jetbrains.kotlin.backend.jvm.ir.suspendFunctionOriginal
 import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
@@ -384,7 +385,9 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
 // the result is called 'view', just to be consistent with old backend.
 private fun IrSimpleFunction.suspendFunctionViewOrStub(context: JvmBackendContext): IrSimpleFunction {
     if (!isSuspend) return this
-    return context.suspendFunctionOriginalToView.getOrPut(this) { createSuspendFunctionStub(context) }
+    // We need to use suspend function originals here, since if we use 'this' here,
+    // turing FlowCollector into 'fun interface' leads to AbstractMethodError
+    return context.suspendFunctionOriginalToView.getOrPut(suspendFunctionOriginal()) { createSuspendFunctionStub(context) }
 }
 
 private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContext): IrSimpleFunction {
