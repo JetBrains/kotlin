@@ -157,11 +157,15 @@ open class DelegatingBindingTrace(
         mutableDiagnostics.report(diagnostic)
     }
 
+    @Volatile
     protected var diagnosticsCallback: DiagnosticSink.DiagnosticsCallback? = null
 
-    override fun setCallback(callback: DiagnosticSink.DiagnosticsCallback) {
-        diagnosticsCallback = callback
-        mutableDiagnostics?.setCallback(callback)
+    override fun setCallbackIfNotSet(callback: DiagnosticSink.DiagnosticsCallback): Boolean {
+        val callbackIfNotSet = mutableDiagnostics?.setCallbackIfNotSet(callback) ?: false
+        if (callbackIfNotSet) {
+            diagnosticsCallback = callback
+        }
+        return callbackIfNotSet
     }
 
     override fun resetCallback() {

@@ -80,6 +80,11 @@ public class DiagnosticsWithSuppression implements Diagnostics {
     }
 
     @Override
+    public boolean setCallbackIfNotSet(@NotNull DiagnosticSink.DiagnosticsCallback callback) {
+        return false;
+    }
+
+    @Override
     public void resetCallback() {
 
     }
