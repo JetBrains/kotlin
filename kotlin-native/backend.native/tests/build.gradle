@@ -5717,6 +5717,21 @@ tasks.register("override_konan_properties0", KonanDriverTest) {
     }
 }
 
+tasks.register("llvm_variant_dev", KonanDriverTest) {
+    // We use clang from Xcode on macOS for apple targets,
+    // so it is hard to reliably detect LLVM variant for these targets.
+    disabled = isAppleTarget(project)
+    flags = [
+            "-Xllvm-variant=dev",
+            "-Xverbose-phases=ObjectFiles"
+    ]
+    compilerMessages = true
+    source = "link/ir_providers/hello.kt"
+    // User LLVM variant has "essentials" suffix.
+    def message = "-essentials"
+    outputChecker = { out -> !out.contains(message) }
+}
+
 createStdlibTest('stdlibTest', /* inWorker = */ false)
 createStdlibTest('stdlibTestInWorker', /*inWorker = */ true)
 
