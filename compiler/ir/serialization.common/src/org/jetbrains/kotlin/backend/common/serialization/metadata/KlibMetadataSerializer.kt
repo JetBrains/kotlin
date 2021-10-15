@@ -56,7 +56,7 @@ abstract class KlibMetadataSerializer(
         )
         return SerializerContext(
             extension,
-            DescriptorSerializer.createTopLevel(extension)
+            DescriptorSerializer.createTopLevel(extension, project)
         )
     }
 

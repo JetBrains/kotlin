@@ -138,7 +138,7 @@ open class MetadataSerializer(
         private val extension = createSerializerExtension()
 
         fun run() {
-            val serializer = DescriptorSerializer.createTopLevel(extension)
+            val serializer = DescriptorSerializer.createTopLevel(extension, project)
             serializeClasses(classes, serializer, project)
             serializeMembers(members, serializer)
             serializeStringTable()

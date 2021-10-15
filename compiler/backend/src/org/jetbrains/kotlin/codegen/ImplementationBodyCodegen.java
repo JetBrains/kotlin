@@ -128,7 +128,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 descriptor, extension,
                 parentCodegen instanceof ImplementationBodyCodegen
                 ? ((ImplementationBodyCodegen) parentCodegen).serializer
-                : DescriptorSerializer.createTopLevel(extension),
+                : DescriptorSerializer.createTopLevel(extension, null),
                 state.getProject()
         );
 
