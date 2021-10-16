@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.analyse
 import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
-import org.jetbrains.kotlin.analysis.api.fir.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.api.fir.test.framework.AbstractHLApiSingleFileTest
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.expressionMarkerProvider
