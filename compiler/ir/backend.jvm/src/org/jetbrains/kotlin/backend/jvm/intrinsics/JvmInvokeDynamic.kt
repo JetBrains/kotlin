@@ -5,19 +5,18 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.ir.findSuperDeclaration
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.overrides.buildFakeOverrideMember
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -36,24 +35,17 @@ object JvmInvokeDynamic : IntrinsicMethod() {
         )
             fail("Unexpected dynamicCallee: '${dynamicCallee.render()}'")
 
-        val bootstrapMethodTag = expression.getValueArgument(1)?.getIntConst()
-            ?: fail("'bootstrapMethodTag' is expected to be an int const")
-        val bootstrapMethodOwner = expression.getValueArgument(2)?.getStringConst()
-            ?: fail("'bootstrapMethodOwner' is expected to be a string const")
-        val bootstrapMethodName = expression.getValueArgument(3)?.getStringConst()
-            ?: fail("'bootstrapMethodName' is expected to be a string const")
-        val bootstrapMethodDesc = expression.getValueArgument(4)?.getStringConst()
-            ?: fail("'bootstrapMethodDesc' is expected to be a string const")
-        val bootstrapMethodArgs = (expression.getValueArgument(5)?.safeAs<IrVararg>()
-            ?: fail("'bootstrapMethodArgs' is expected to be a vararg"))
+        val bootstrapMethodHandleArg = expression.getValueArgument(1) as? IrCall
+            ?: fail("'bootstrapMethodHandle' should be a call")
+        val bootstrapMethodHandle = evalMethodHandle(bootstrapMethodHandleArg)
 
+        val bootstrapMethodArgs = (expression.getValueArgument(2)?.safeAs<IrVararg>()
+            ?: fail("'bootstrapMethodArgs' is expected to be a vararg"))
         val asmBootstrapMethodArgs = bootstrapMethodArgs.elements
             .map { generateBootstrapMethodArg(it, codegen) }
             .toTypedArray()
 
         val dynamicCalleeMethod = codegen.methodSignatureMapper.mapAsmMethod(dynamicCallee)
-        val bootstrapMethodHandle = Handle(bootstrapMethodTag, bootstrapMethodOwner, bootstrapMethodName, bootstrapMethodDesc, false)
-
         val dynamicCallGenerator = IrCallGenerator.DefaultCallGenerator
         val dynamicCalleeArgumentTypes = dynamicCalleeMethod.argumentTypes
         for (i in dynamicCallee.valueParameters.indices) {
@@ -76,14 +68,8 @@ object JvmInvokeDynamic : IntrinsicMethod() {
             is IrRawFunctionReference ->
                 generateMethodHandle(element, codegen)
             is IrCall ->
-                when (element.symbol) {
-                    codegen.context.ir.symbols.jvmOriginalMethodTypeIntrinsic ->
-                        generateOriginalMethodType(element, codegen)
-                    codegen.context.ir.symbols.jvmSubstitutedMethodTypeIntrinsic ->
-                        generateSubstitutedMethodType(element, codegen)
-                    else ->
-                        throw AssertionError("Unexpected callee in bootstrap method argument:\n${element.dump()}")
-                }
+                evalBootstrapArgumentIntrinsicCall(element, codegen)
+                    ?: throw AssertionError("Unexpected callee in bootstrap method argument:\n${element.dump()}")
             is IrConst<*> ->
                 when (element.kind) {
                     IrConstKind.Byte -> (element.value as Byte).toInt()
@@ -100,40 +86,38 @@ object JvmInvokeDynamic : IntrinsicMethod() {
                 throw AssertionError("Unexpected bootstrap method argument:\n${element.dump()}")
         }
 
-    private fun generateMethodHandle(irRawFunctionReference: IrRawFunctionReference, codegen: ExpressionCodegen): Handle {
-        val irFun = when (val irFun0 = irRawFunctionReference.symbol.owner) {
-            is IrConstructor ->
-                irFun0
-            is IrSimpleFunction -> {
-                // Note that if the given function is a fake override, we emit a method handle with explicit super class.
-                // This has the same binary compatibility guarantees as in Java.
-                findSuperDeclaration(irFun0, false, codegen.state.jvmDefaultMode)
-            }
+    private fun evalBootstrapArgumentIntrinsicCall(irCall: IrCall, codegen: ExpressionCodegen): Any? {
+        return when (irCall.symbol) {
+            codegen.context.ir.symbols.jvmOriginalMethodTypeIntrinsic ->
+                evalOriginalMethodType(irCall, codegen)
+            codegen.context.ir.symbols.jvmMethodType ->
+                evalMethodType(irCall)
+            codegen.context.ir.symbols.jvmMethodHandle ->
+                evalMethodHandle(irCall)
             else ->
-                throw java.lang.AssertionError("Simple function or constructor expected: ${irFun0.render()}")
+                null
         }
-
-        val irParentClass = irFun.parent as? IrClass
-            ?: throw AssertionError("Unexpected parent: ${irFun.parent.render()}")
-        val owner = codegen.typeMapper.mapOwner(irParentClass)
-
-        val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(irFun)
-
-        val handleTag = when {
-            irFun is IrConstructor ->
-                Opcodes.H_NEWINVOKESPECIAL
-            irFun.dispatchReceiverParameter == null ->
-                Opcodes.H_INVOKESTATIC
-            irParentClass.isJvmInterface ->
-                Opcodes.H_INVOKEINTERFACE
-            else ->
-                Opcodes.H_INVOKEVIRTUAL
-        }
-
-        return Handle(handleTag, owner.internalName, asmMethod.name, asmMethod.descriptor, irParentClass.isJvmInterface)
     }
 
-    private fun generateOriginalMethodType(irCall: IrCall, codegen: ExpressionCodegen): Type {
+    private fun evalMethodType(irCall: IrCall): Type {
+        val descriptor = irCall.getStringConstArgument(0)
+        return Type.getMethodType(descriptor)
+    }
+
+    private fun evalMethodHandle(irCall: IrCall): Handle {
+        val tag = irCall.getIntConstArgument(0)
+        val owner = irCall.getStringConstArgument(1)
+        val name = irCall.getStringConstArgument(2)
+        val descriptor = irCall.getStringConstArgument(3)
+        val isInterface = irCall.getBooleanConstArgument(4)
+        return Handle(tag, owner, name, descriptor, isInterface)
+    }
+
+    fun generateMethodHandle(irRawFunctionReference: IrRawFunctionReference, codegen: ExpressionCodegen): Handle {
+        return generateMethodHandle(codegen.context, irRawFunctionReference)
+    }
+
+    private fun evalOriginalMethodType(irCall: IrCall, codegen: ExpressionCodegen): Type {
         val irRawFunRef = irCall.getValueArgument(0) as? IrRawFunctionReference
             ?: throw AssertionError(
                 "Argument in ${irCall.symbol.owner.name} call is expected to be a raw function reference:\n" +
@@ -144,64 +128,75 @@ object JvmInvokeDynamic : IntrinsicMethod() {
         return Type.getMethodType(asmMethod.descriptor)
     }
 
-    private fun generateSubstitutedMethodType(irCall: IrCall, codegen: ExpressionCodegen): Type {
-        fun fail(message: String): Nothing =
-            throw AssertionError("$message; irCall:\n${irCall.dump()}")
+}
 
-        val irRawFunRef = irCall.getValueArgument(0) as? IrRawFunctionReference
-            ?: fail("Argument in ${irCall.symbol.owner.name} call is expected to be a raw function reference")
-        val irOriginalFun = irRawFunRef.symbol.owner as? IrSimpleFunction
-            ?: fail("IrSimpleFunction expected: ${irRawFunRef.symbol.owner.render()}")
+fun IrCall.getIntConstArgument(i: Int) =
+    getValueArgument(i)?.getIntConst()
+        ?: throw AssertionError("Value argument #$i should be an Int const: ${dump()}")
 
-        val superType = irCall.getTypeArgument(0) as? IrSimpleType
-            ?: fail("Type argument expected")
-        val patchedSuperType = replaceTypeArgumentsWithNullable(superType)
+fun IrCall.getStringConstArgument(i: Int) =
+    getValueArgument(i)?.getStringConst()
+        ?: throw AssertionError("Value argument #$i should be a String const: ${dump()}")
 
-        val fakeClass = codegen.context.irFactory.buildClass { name = Name.special("<fake>") }
-        fakeClass.parent = codegen.context.ir.symbols.kotlinJvmInternalInvokeDynamicPackage
-        val irFakeOverride = buildFakeOverrideMember(patchedSuperType, irOriginalFun, fakeClass) as IrSimpleFunction
-        irFakeOverride.overriddenSymbols = listOf(irOriginalFun.symbol)
+fun IrCall.getBooleanConstArgument(i: Int) =
+    getValueArgument(i)?.getBooleanConst()
+        ?: throw AssertionError("Value argument #$i should be a Boolean const: ${dump()}")
 
-        val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(irFakeOverride)
-        return Type.getMethodType(asmMethod.descriptor)
+
+internal fun IrExpression.getIntConst() =
+    if (this is IrConst<*> && kind == IrConstKind.Int)
+        this.value as Int
+    else
+        null
+
+internal fun IrExpression.getStringConst() =
+    if (this is IrConst<*> && kind == IrConstKind.String)
+        this.value as String
+    else
+        null
+
+internal fun IrExpression.getBooleanConst() =
+    if (this is IrConst<*> && kind == IrConstKind.Boolean)
+        this.value as Boolean
+    else
+        null
+
+internal fun generateMethodHandle(jvmBackendContext: JvmBackendContext, irRawFunctionReference: IrRawFunctionReference): Handle {
+    return generateMethodHandle(jvmBackendContext, irRawFunctionReference.symbol.owner)
+}
+
+fun generateMethodHandle(jvmBackendContext: JvmBackendContext, irFun: IrFunction): Handle {
+    val irNonFakeFun = when (irFun) {
+        is IrConstructor ->
+            irFun
+        is IrSimpleFunction -> {
+            findSuperDeclaration(irFun, false, jvmBackendContext.state.jvmDefaultMode)
+        }
+        else ->
+            throw java.lang.AssertionError("Simple function or constructor expected: ${irFun.render()}")
     }
 
-    // Given the following functional interface
-    //  fun interface IFoo<T> {
-    //      fun foo(x: T): T
-    //  }
-    // To comply with java.lang.invoke.LambdaMetafactory requirements, we need an instance method that accepts references
-    // (not primitives, and not unboxed inline classes).
-    // In order to do so, we replace type arguments with nullable types.
-    private fun replaceTypeArgumentsWithNullable(substitutedType: IrSimpleType) =
-        substitutedType.classifier.typeWithArguments(
-            substitutedType.arguments.map { typeArgument ->
-                when (typeArgument) {
-                    is IrStarProjection -> typeArgument
-                    is IrTypeProjection -> {
-                        val type = typeArgument.type
-                        if (type !is IrSimpleType || type.hasQuestionMark)
-                            typeArgument
-                        else {
-                            makeTypeProjection(type.withHasQuestionMark(true), typeArgument.variance)
-                        }
-                    }
-                    else ->
-                        throw AssertionError("Unexpected type argument '$typeArgument' :: ${typeArgument::class.simpleName}")
-                }
-            }
-        )
+    val irParentClass = irNonFakeFun.parent as? IrClass
+        ?: throw AssertionError("Unexpected parent: ${irNonFakeFun.parent.render()}")
+    val owner = jvmBackendContext.typeMapper.mapOwner(irParentClass)
 
-    private fun IrExpression.getIntConst() =
-        if (this is IrConst<*> && kind == IrConstKind.Int)
-            this.value as Int
-        else
-            null
+    val asmMethod = jvmBackendContext.methodSignatureMapper.mapAsmMethod(irNonFakeFun)
 
-    private fun IrExpression.getStringConst() =
-        if (this is IrConst<*> && kind == IrConstKind.String)
-            this.value as String
-        else
-            null
+    val handleTag = getMethodKindTag(irNonFakeFun)
 
+    return Handle(handleTag, owner.internalName, asmMethod.name, asmMethod.descriptor, irParentClass.isJvmInterface)
 }
+
+internal fun getMethodKindTag(irFun: IrFunction) =
+    when {
+        irFun is IrConstructor ->
+            Opcodes.H_NEWINVOKESPECIAL
+        irFun.dispatchReceiverParameter == null ->
+            Opcodes.H_INVOKESTATIC
+        irFun.parentAsClass.isJvmInterface ->
+            Opcodes.H_INVOKEINTERFACE
+        else ->
+            Opcodes.H_INVOKEVIRTUAL
+    }
+
+

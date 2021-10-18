@@ -504,6 +504,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 putValueArgument(1, lambdaMetafactoryArguments.implMethodReference)
                 putValueArgument(2, irRawFunctionRef(lambdaMetafactoryArguments.fakeInstanceMethod))
                 putValueArgument(3, irVarargOfRawFunctionRefs(lambdaMetafactoryArguments.extraOverriddenMethods))
+                putValueArgument(4, irBoolean(lambdaMetafactoryArguments.shouldBeSerializable))
             }
         }
     }

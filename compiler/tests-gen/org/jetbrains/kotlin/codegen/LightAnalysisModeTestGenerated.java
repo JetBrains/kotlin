@@ -19158,6 +19158,134 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 }
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/box/invokedynamic/serializable")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Serializable extends AbstractLightAnalysisModeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInSerializable() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/serializable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("multipleTopLevelFunRefs.kt")
+            public void testMultipleTopLevelFunRefs() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/multipleTopLevelFunRefs.kt");
+            }
+
+            @TestMetadata("sameImplMethodDifferentInterfaces.kt")
+            public void testSameImplMethodDifferentInterfaces() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/sameImplMethodDifferentInterfaces.kt");
+            }
+
+            @TestMetadata("serializableBoundClassMemberFunRef.kt")
+            public void testSerializableBoundClassMemberFunRef() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableBoundClassMemberFunRef.kt");
+            }
+
+            @TestMetadata("serializableBoundInnerConstructorRef.kt")
+            public void testSerializableBoundInnerConstructorRef() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableBoundInnerConstructorRef.kt");
+            }
+
+            @TestMetadata("serializableBoundInterfaceMemberFunRef.kt")
+            public void testSerializableBoundInterfaceMemberFunRef() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableBoundInterfaceMemberFunRef.kt");
+            }
+
+            @TestMetadata("serializableBoundTopLevelExtensionFunRef.kt")
+            public void testSerializableBoundTopLevelExtensionFunRef() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableBoundTopLevelExtensionFunRef.kt");
+            }
+
+            @TestMetadata("serializableBoundTopLevelExtensionFunRefPrimitiveReceiver.kt")
+            public void testSerializableBoundTopLevelExtensionFunRefPrimitiveReceiver() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableBoundTopLevelExtensionFunRefPrimitiveReceiver.kt");
+            }
+
+            @TestMetadata("serializableClassMemberFunRef.kt")
+            public void testSerializableClassMemberFunRef() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableClassMemberFunRef.kt");
+            }
+
+            @TestMetadata("serializableConstructorRef.kt")
+            public void testSerializableConstructorRef() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableConstructorRef.kt");
+            }
+
+            @TestMetadata("serializableFakeOverrideFunRef.kt")
+            public void testSerializableFakeOverrideFunRef() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableFakeOverrideFunRef.kt");
+            }
+
+            @TestMetadata("serializableInnerConstructorRef.kt")
+            public void testSerializableInnerConstructorRef() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableInnerConstructorRef.kt");
+            }
+
+            @TestMetadata("serializableInterfaceMemberFunRef.kt")
+            public void testSerializableInterfaceMemberFunRef() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableInterfaceMemberFunRef.kt");
+            }
+
+            @TestMetadata("serializableJavaStaticMethodRef.kt")
+            public void testSerializableJavaStaticMethodRef() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableJavaStaticMethodRef.kt");
+            }
+
+            @TestMetadata("serializableLambda.kt")
+            public void testSerializableLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableLambda.kt");
+            }
+
+            @TestMetadata("serializableLambdaCapturingBoxedInlineClassAny.kt")
+            public void testSerializableLambdaCapturingBoxedInlineClassAny() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableLambdaCapturingBoxedInlineClassAny.kt");
+            }
+
+            @TestMetadata("serializableLambdaCapturingInlineClassAny.kt")
+            public void testSerializableLambdaCapturingInlineClassAny() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableLambdaCapturingInlineClassAny.kt");
+            }
+
+            @TestMetadata("serializableLambdaCapturingInlineClassInt.kt")
+            public void testSerializableLambdaCapturingInlineClassInt() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableLambdaCapturingInlineClassInt.kt");
+            }
+
+            @TestMetadata("serializableLambdaCapturingNullableInlineClassAny.kt")
+            public void testSerializableLambdaCapturingNullableInlineClassAny() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableLambdaCapturingNullableInlineClassAny.kt");
+            }
+
+            @TestMetadata("serializableLambdaToKotlinInterface.kt")
+            public void testSerializableLambdaToKotlinInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableLambdaToKotlinInterface.kt");
+            }
+
+            @TestMetadata("serializableLambdaWithCapture.kt")
+            public void testSerializableLambdaWithCapture() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableLambdaWithCapture.kt");
+            }
+
+            @TestMetadata("serializableTopLevelFunRef.kt")
+            public void testSerializableTopLevelFunRef() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableTopLevelFunRef.kt");
+            }
+
+            @TestMetadata("serializableTopLevelFunRefAsGenericInterface.kt")
+            public void testSerializableTopLevelFunRefAsGenericInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableTopLevelFunRefAsGenericInterface.kt");
+            }
+
+            @TestMetadata("serializableWithBridge.kt")
+            public void testSerializableWithBridge() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableWithBridge.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/ir")
