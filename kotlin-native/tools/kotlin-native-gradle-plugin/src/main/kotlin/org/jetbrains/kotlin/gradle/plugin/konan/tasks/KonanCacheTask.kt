@@ -49,8 +49,7 @@ open class KonanCacheTask: DefaultTask() {
     }
 
     @get:Input
-    @get:Optional
-    var cachedLibrary: String? = null
+    var cachedLibraries: Map<File, File> = emptyMap()
 
     @TaskAction
     fun compile() {
@@ -70,7 +69,7 @@ open class KonanCacheTask: DefaultTask() {
             "-produce", cacheKind.outputKind.name.toLowerCase(),
             "-Xadd-cache=${originalKlib.absolutePath}",
             "-Xcache-directory=${cacheDirectory.absolutePath}"
-        ) + additionalCacheFlags + (cachedLibrary?.let { "-Xcached-library=$it" } ?: "")
+        ) + additionalCacheFlags + cachedLibraries.map { "-Xcached-library=${it.key},${it.value}" }
         KonanCompilerRunner(project, konanHome = konanHome).run(args)
     }
 }

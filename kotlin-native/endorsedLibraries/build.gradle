@@ -77,7 +77,9 @@ targetList.each { target ->
                 cacheRoot = library.project.file("build/cache/$target").path
                 compilerDistributionPath.set(distDir)
                 // TODO: should depend on stdlib producer task and its properties
-                cachedLibrary = "${dist}/klib/common/stdlib,${dist}/klib/cache/${target}-gSTATIC/stdlib-cache"
+                def clibs = [:]
+                clibs.put(project.file("$dist/klib/common/stdlib"), project.file("$dist/klib/cache/${target}-gSTATIC/stdlib-cache"))
+                cachedLibraries = clibs
 
                 dependsOn "$library.projectName:${target}${library.taskName}"
                 dependsOn ":kotlin-native:${target}CrossDistRuntime"
