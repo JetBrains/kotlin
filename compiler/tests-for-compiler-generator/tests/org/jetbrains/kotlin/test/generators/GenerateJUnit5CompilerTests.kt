@@ -163,46 +163,6 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
         }
 
-        // ---------------------------------------------- JS tests ----------------------------------------------
-
-        testGroup(testsRoot = "js/js.tests/tests-gen", testDataRoot = "js/js.translator/testData") {
-            testClass<AbstractBoxJsTest> {
-                model("box/", pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("incremental"))
-            }
-
-            testClass<AbstractSourceMapGenerationSmokeTest> {
-                model("sourcemap/")
-            }
-
-            testClass<AbstractOutputPrefixPostfixTest> {
-                model("outputPrefixPostfix/")
-            }
-
-            testClass<AbstractMultiModuleOrderTest> {
-                model("multiModuleOrder/")
-            }
-        }
-
-        testGroup(testsRoot = "js/js.tests/tests-gen", testDataRoot = "compiler/testData") {
-            val jvmOnlyBoxTests = listOf(
-                "testsWithJava9",
-                "testsWithJava15",
-                "testsWithJava17",
-            )
-
-            testClass<AbstractJsCodegenBoxTest> {
-                model("codegen/box", excludeDirs = jvmOnlyBoxTests + "compileKotlinAgainstKotlin")
-            }
-
-            testClass<AbstractJsCodegenInlineTest> {
-                model("codegen/boxInline")
-            }
-
-            testClass<AbstractJsLegacyPrimitiveArraysBoxTest> {
-                model("codegen/box/arrays")
-            }
-        }
-
         // ---------------------------------------------- FIR tests ----------------------------------------------
 
         testGroup(testsRoot = "compiler/fir/analysis-tests/tests-gen", testDataRoot = "compiler/testData") {
