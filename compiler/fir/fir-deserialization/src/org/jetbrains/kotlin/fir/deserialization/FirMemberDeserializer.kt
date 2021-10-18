@@ -49,7 +49,7 @@ class FirDeserializationContext(
     val constDeserializer: FirConstDeserializer,
     val containerSource: DeserializedContainerSource?,
     val outerClassSymbol: FirRegularClassSymbol?,
-    outerTypeParameters: List<FirTypeParameterSymbol>
+    val outerTypeParameters: List<FirTypeParameterSymbol>
 ) {
     val session: FirSession = moduleData.session
 
@@ -527,6 +527,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             origin = FirDeclarationOrigin.Library
             returnTypeRef = delegatedSelfType
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
+            val isInner = classBuilder.status.isInner
             status = FirResolvedDeclarationStatusImpl(
                 visibility,
                 Modality.FINAL,
@@ -535,9 +536,14 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
                 isActual = false
                 isOverride = false
-                isInner = classBuilder.status.isInner
+                this.isInner = isInner
             }
             this.symbol = symbol
+            dispatchReceiverType =
+                if (!isInner) null
+                else with(c) {
+                    ClassId(packageFqName, relativeClassName.parent(), false).defaultType(outerTypeParameters)
+                }
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             this.typeParameters +=
                 typeParameters.filterIsInstance<FirTypeParameter>()

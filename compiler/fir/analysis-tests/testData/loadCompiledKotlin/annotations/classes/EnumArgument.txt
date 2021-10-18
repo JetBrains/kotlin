@@ -13,7 +13,7 @@ public final annotation class Anno : R|kotlin/Annotation| {
     }
 
     @R|test/Anno|(t = R|java/lang/annotation/ElementType.PARAMETER|()) public final inner class Inner : R|kotlin/Any| {
-        public constructor(): R|test/Class.Inner|
+        public test/Class.constructor(): R|test/Class.Inner|
 
     }
 
