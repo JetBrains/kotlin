@@ -1,0 +1,21 @@
+@kotlin.Metadata
+public final class ClassKt {
+    // source: 'class.kt'
+    public final static method f(@org.jetbrains.annotations.NotNull p0: Outer): void
+}
+
+@kotlin.Metadata
+public final class Inner {
+    // source: 'class.kt'
+    private synthetic final field contextReceiverField0: Outer
+    public method <init>(@org.jetbrains.annotations.NotNull p0: Outer, @org.jetbrains.annotations.NotNull p1: java.lang.Object): void
+    public final method bar(): int
+}
+
+@kotlin.Metadata
+public final class Outer {
+    // source: 'class.kt'
+    private final field x: int
+    public method <init>(): void
+    public final method getX(): int
+}

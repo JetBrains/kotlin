@@ -848,6 +848,26 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/contextReceivers")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ContextReceivers {
+        @Test
+        public void testAllFilesPresentInContextReceivers() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/bytecodeListing/contextReceivers/fromKEEP")
+        @TestDataPath("$PROJECT_ROOT")
+        public class FromKEEP {
+            @Test
+            public void testAllFilesPresentInFromKEEP() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/contextReceivers/fromKEEP"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/bytecodeListing/coroutines")
     @TestDataPath("$PROJECT_ROOT")
     public class Coroutines {

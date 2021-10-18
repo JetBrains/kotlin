@@ -1,0 +1,28 @@
+@kotlin.Metadata
+public interface Canvas {
+    // source: 'canvas.kt'
+    public abstract @org.jetbrains.annotations.NotNull method getSuffix(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Circle {
+    // source: 'canvas.kt'
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method draw(@org.jetbrains.annotations.NotNull p0: Canvas): java.lang.String
+}
+
+@kotlin.Metadata
+public final class MyCanvas {
+    // source: 'canvas.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: MyCanvas
+    private final static @org.jetbrains.annotations.NotNull field suffix: java.lang.String
+    static method <clinit>(): void
+    private method <init>(): void
+    public @org.jetbrains.annotations.NotNull method getSuffix(): java.lang.String
+}
+
+@kotlin.Metadata
+public interface Shape {
+    // source: 'canvas.kt'
+    public abstract @org.jetbrains.annotations.NotNull method draw(@org.jetbrains.annotations.NotNull p0: Canvas): java.lang.String
+}
