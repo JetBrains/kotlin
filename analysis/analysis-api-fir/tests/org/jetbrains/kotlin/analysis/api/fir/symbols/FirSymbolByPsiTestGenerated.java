@@ -79,6 +79,12 @@ public class FirSymbolByPsiTestGenerated extends AbstractFirSymbolByPsiTest {
     }
 
     @Test
+    @TestMetadata("delegateField.kt")
+    public void testDelegateField() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/delegateField.kt");
+    }
+
+    @Test
     @TestMetadata("deprecated.kt")
     public void testDeprecated() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/deprecated.kt");

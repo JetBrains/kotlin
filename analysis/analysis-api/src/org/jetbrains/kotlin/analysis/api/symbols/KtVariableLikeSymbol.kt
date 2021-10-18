@@ -90,6 +90,7 @@ public sealed class KtPropertySymbol : KtVariableSymbol(),
 
     public abstract val hasBackingField: Boolean
 
+    public abstract val isDelegatedProperty: Boolean
     public abstract val isFromPrimaryConstructor: Boolean
     public abstract val isOverride: Boolean
     public abstract val isStatic: Boolean
@@ -109,6 +110,7 @@ public abstract class KtKotlinPropertySymbol : KtPropertySymbol() {
 
 public abstract class KtSyntheticJavaPropertySymbol : KtPropertySymbol() {
     final override val hasBackingField: Boolean get() = true
+    final override val isDelegatedProperty: Boolean get() = false
     final override val hasGetter: Boolean get() = true
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.CLASS_MEMBER
 

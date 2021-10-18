@@ -76,6 +76,7 @@ KtSyntheticJavaPropertySymbol:
   hasGetter: true
   hasSetter: false
   initializer: null
+  isDelegatedProperty: false
   isExtension: false
   isFromPrimaryConstructor: false
   isOverride: false

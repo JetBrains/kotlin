@@ -101,6 +101,8 @@ internal class KtFirKotlinPropertySymbol(
     // NB: `field` in accessors indicates the property should have a backing field. To see that, though, we need BODY_RESOLVE.
     override val hasBackingField: Boolean get() = firRef.withFir(FirResolvePhase.BODY_RESOLVE) { it.hasBackingField }
 
+    override val isDelegatedProperty: Boolean get() = firRef.withFir { it.delegateFieldSymbol != null }
+
     override val isLateInit: Boolean get() = firRef.withFir { it.isLateInit }
 
     override val isConst: Boolean get() = firRef.withFir { it.isConst }

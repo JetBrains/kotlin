@@ -74,6 +74,11 @@ internal class KtFe10PsiKotlinPropertySymbol(
             bindingContext[BindingContext.BACKING_FIELD_REQUIRED, descriptor] == true
         }
 
+    override val isDelegatedProperty: Boolean
+        get() = withValidityAssertion {
+            psi.hasDelegate()
+        }
+
     override val isFromPrimaryConstructor: Boolean
         get() = withValidityAssertion { false }
 
