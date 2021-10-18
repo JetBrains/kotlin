@@ -27,7 +27,8 @@ class JsGenerationContext(
     val currentFile: IrFile,
     val currentFunction: IrFunction?,
     val staticContext: JsStaticContext,
-    val localNames: LocalNameGenerator? = null
+    val localNames: LocalNameGenerator? = null,
+    private val nameCache: MutableMap<IrElement, JsName> = mutableMapOf()
 ): IrNamer by staticContext {
     fun newFile(file: IrFile, func: IrFunction? = null, localNames: LocalNameGenerator? = null): JsGenerationContext {
         return JsGenerationContext(
@@ -35,9 +36,8 @@ class JsGenerationContext(
             currentFunction = func,
             staticContext = staticContext,
             localNames = localNames,
-        ).also {
-            it.nameCache += nameCache
-        }
+            nameCache = nameCache,
+        )
     }
 
     fun newDeclaration(func: IrFunction? = null, localNames: LocalNameGenerator? = null): JsGenerationContext {
@@ -46,12 +46,9 @@ class JsGenerationContext(
             currentFunction = func,
             staticContext = staticContext,
             localNames = localNames,
-        ).also {
-            it.nameCache += nameCache
-        }
+            nameCache = nameCache,
+        )
     }
-
-    private val nameCache = mutableMapOf<IrElement, JsName>()
 
     fun getNameForValueDeclaration(declaration: IrDeclarationWithName): JsName {
         return nameCache.getOrPut(declaration) {
