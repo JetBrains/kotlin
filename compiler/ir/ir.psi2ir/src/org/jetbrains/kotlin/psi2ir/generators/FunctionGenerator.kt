@@ -329,8 +329,8 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
         val contextReceiverParametersCount = functionDescriptor.contextReceiverParameters.size
         irFunction.contextReceiverParametersCount = contextReceiverParametersCount
-        irFunction.valueParameters += functionDescriptor.contextReceiverParameters.mapIndexed { i, additionalReceiver ->
-            declareParameter(additionalReceiver, ktContextReceiverParameterElements.getOrNull(i) ?: ktParameterOwner, irFunction, null, i)
+        irFunction.valueParameters += functionDescriptor.contextReceiverParameters.mapIndexed { i, contextReceiver ->
+            declareParameter(contextReceiver, ktContextReceiverParameterElements.getOrNull(i) ?: ktParameterOwner, irFunction, null, i)
         }
 
         // Declare all the value parameters up first.

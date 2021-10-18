@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
-class DescriptorStorageForAdditionalReceivers {
+class DescriptorStorageForContextReceivers {
     private val variableStorage: MutableMap<KtExpression, VariableDescriptor> = mutableMapOf()
     private val syntheticFieldStorage: MutableMap<ReceiverValue, IrField> = mutableMapOf()
 

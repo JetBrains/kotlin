@@ -12,16 +12,16 @@ class Outer {
 }
 
 class Inner {
-  private /* final field */ val additionalReceiverField0: Outer
+  private /* final field */ val contextReceiverField0: Outer
   constructor(<this>: Outer, arg: Any) /* primary */ {
     super/*Any*/()
-    <this>.#additionalReceiverField0 = <this>
+    <this>.#contextReceiverField0 = <this>
     /* <init>() */
 
   }
 
   fun bar(): Int {
-    return <this>.#additionalReceiverField0.<get-x>()
+    return <this>.#contextReceiverField0.<get-x>()
   }
 
 }
