@@ -5064,6 +5064,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("baseIntrospector.kt")
+            public void testBaseIntrospector() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/baseIntrospector.kt");
+            }
+
+            @Test
             @TestMetadata("DailyAggregatedDoubleFactor.kt")
             public void testDailyAggregatedDoubleFactor() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/DailyAggregatedDoubleFactor.kt");

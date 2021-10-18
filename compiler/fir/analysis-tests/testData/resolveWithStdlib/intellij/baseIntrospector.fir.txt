@@ -1,0 +1,67 @@
+Module: m1
+FILE: m1.kt
+    package m1
+
+    public abstract interface BasicDatabase : R|kotlin/Any| {
+    }
+    public abstract interface BasicSchema : R|kotlin/Any| {
+    }
+    public abstract class BaseIntrospector<D : R|m1/BasicDatabase|, S : R|m1/BasicSchema|> : R|kotlin/Any| {
+        public constructor<D : R|m1/BasicDatabase|, S : R|m1/BasicSchema|>(): R|m1/BaseIntrospector<D, S>| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected abstract fun createDatabaseRetriever(database: R|D|): R|m1/BaseIntrospector.AbstractDatabaseRetriever<out D, D, S>|
+
+        protected abstract inner class AbstractDatabaseRetriever<D : R|m1/BasicDatabase|, D : R|m1/BasicDatabase|, S : R|m1/BasicSchema|> : R|m1/BaseIntrospector.AbstractRetriever<D, S>| {
+            protected m1/BaseIntrospector<D, S>.constructor<D : R|m1/BasicDatabase|>(database: R|D|): R|m1/BaseIntrospector.AbstractDatabaseRetriever<D, D, S>| {
+                this@R|m1/BaseIntrospector|.super<R|m1/BaseIntrospector.AbstractRetriever<D, S>|>()
+            }
+
+            protected final val database: R|D| = R|<local>/database|
+                protected get(): R|D|
+
+        }
+
+        protected abstract inner class AbstractRetriever<D : R|m1/BasicDatabase|, S : R|m1/BasicSchema|> : R|kotlin/Any| {
+            public m1/BaseIntrospector<D, S>.constructor(): R|m1/BaseIntrospector.AbstractRetriever<D, S>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public abstract interface BasicSingleDatabase : R|m1/BasicDatabase| {
+    }
+    public abstract interface BasicModSchema : R|m1/BasicSchema| {
+    }
+    public abstract class BaseSingleDatabaseIntrospector<D : R|m1/BasicSingleDatabase|, S : R|m1/BasicModSchema|> : R|m1/BaseIntrospector<D, S>| {
+        protected constructor<D : R|m1/BasicSingleDatabase|, S : R|m1/BasicModSchema|>(): R|m1/BaseSingleDatabaseIntrospector<D, S>| {
+            super<R|m1/BaseIntrospector<D, S>|>()
+        }
+
+    }
+Module: m2
+FILE: m2.kt
+    package m2
+
+    public abstract interface SqliteRoot : R|m1/BasicSingleDatabase| {
+    }
+    public abstract interface SqliteSchema : R|m1/BasicModSchema| {
+    }
+    public final class SqliteIntrospector : R|m1/BaseSingleDatabaseIntrospector<m2/SqliteRoot, m2/SqliteSchema>| {
+        public constructor(): R|m2/SqliteIntrospector| {
+            super<R|m1/BaseSingleDatabaseIntrospector<m2/SqliteRoot, m2/SqliteSchema>|>()
+        }
+
+        protected final override fun createDatabaseRetriever(database: R|m2/SqliteRoot|): R|m1/BaseIntrospector.AbstractDatabaseRetriever<m2/SqliteRoot, m2/SqliteRoot, m2/SqliteSchema>| {
+            ^createDatabaseRetriever object : R|m1/BaseIntrospector.AbstractDatabaseRetriever<m2/SqliteRoot, m2/SqliteRoot, m2/SqliteSchema>| {
+                private constructor(): R|<anonymous>| {
+                    this@R|m2/SqliteIntrospector|.super<R|m1/BaseIntrospector.AbstractDatabaseRetriever<m2/SqliteRoot, m2/SqliteRoot, m2/SqliteSchema>|>(R|<local>/database|)
+                }
+
+            }
+
+        }
+
+    }
