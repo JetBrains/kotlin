@@ -1,0 +1,17 @@
+@kotlin.Metadata
+public interface A {
+    // source: 'property.kt'
+    public abstract method a(): int
+}
+
+@kotlin.Metadata
+public interface B {
+    // source: 'property.kt'
+    public abstract method b(): int
+}
+
+@kotlin.Metadata
+public final class PropertyKt {
+    // source: 'property.kt'
+    public final static method getC(@org.jetbrains.annotations.NotNull p0: B, @org.jetbrains.annotations.NotNull p1: A): int
+}

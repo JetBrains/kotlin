@@ -896,6 +896,74 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/contextReceivers")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ContextReceivers {
+        @Test
+        public void testAllFilesPresentInContextReceivers() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("class.kt")
+        public void testClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/contextReceivers/class.kt");
+        }
+
+        @Test
+        @TestMetadata("function.kt")
+        public void testFunction() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/contextReceivers/function.kt");
+        }
+
+        @Test
+        @TestMetadata("property.kt")
+        public void testProperty() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/contextReceivers/property.kt");
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/bytecodeListing/contextReceivers/fromKEEP")
+        @TestDataPath("$PROJECT_ROOT")
+        public class FromKEEP {
+            @Test
+            public void testAllFilesPresentInFromKEEP() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/contextReceivers/fromKEEP"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("canvas.kt")
+            public void testCanvas() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/contextReceivers/fromKEEP/canvas.kt");
+            }
+
+            @Test
+            @TestMetadata("compareTo.kt")
+            public void testCompareTo() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/contextReceivers/fromKEEP/compareTo.kt");
+            }
+
+            @Test
+            @TestMetadata("dp.kt")
+            public void testDp() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/contextReceivers/fromKEEP/dp.kt");
+            }
+
+            @Test
+            @TestMetadata("functionalType.kt")
+            public void testFunctionalType() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/contextReceivers/fromKEEP/functionalType.kt");
+            }
+
+            @Test
+            @TestMetadata("monoidSum.kt")
+            public void testMonoidSum() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/contextReceivers/fromKEEP/monoidSum.kt");
+            }
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/bytecodeListing/coroutines")
     @TestDataPath("$PROJECT_ROOT")
     public class Coroutines {
