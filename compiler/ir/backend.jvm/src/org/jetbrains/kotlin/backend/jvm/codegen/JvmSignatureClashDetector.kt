@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.common.psi.PsiSourceManager
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -183,6 +184,7 @@ class JvmSignatureClashDetector(
             IrDeclarationOrigin.IR_BUILTINS_STUB,
             JvmLoweredDeclarationOrigin.TO_ARRAY,
             JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE,
+            ANNOTATION_IMPLEMENTATION
         )
 
         val PREDEFINED_SIGNATURES = listOf(
