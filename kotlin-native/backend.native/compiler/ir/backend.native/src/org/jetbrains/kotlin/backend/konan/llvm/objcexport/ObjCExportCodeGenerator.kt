@@ -53,6 +53,9 @@ internal class ObjCExportFunctionGenerationContext(
 ) : FunctionGenerationContext(builder) {
     private val objCExportCodegen = builder.objCExportCodegen
 
+    override val needLeaveFrameInUnwindEpilogue: Boolean
+        get() = true
+
     // Note: we could generate single "epilogue" and make all [ret]s just branch to it (like [DefaultFunctionGenerationContext]),
     // but this would be useless for most of the usages, which have only one [ret].
     // Remaining usages can be optimized ad hoc.
