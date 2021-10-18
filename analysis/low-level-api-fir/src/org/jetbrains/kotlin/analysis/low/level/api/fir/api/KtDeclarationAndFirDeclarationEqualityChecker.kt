@@ -20,11 +20,13 @@ import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 // TODO replace with structural type comparison?
 object KtDeclarationAndFirDeclarationEqualityChecker {
@@ -40,19 +42,50 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
             return false
         }
         if (fir is FirFunction) {
-            if (fir.valueParameters.size != psi.valueParameters.size) return false
-            fir.valueParameters.zip(psi.valueParameters) { expectedParameter, candidateParameter ->
-                if (expectedParameter.name.toString() != candidateParameter.name) return false
-                if (expectedParameter.isVararg != candidateParameter.isVarArg) return false
-                val candidateParameterType = candidateParameter.typeReference ?: return false
+            if (!typeParametersMatch(fir, psi) || !valueParametersMatch(fir, psi)) return false
+        }
+        return true
+    }
+
+    private fun typeParametersMatch(firFunction: FirCallableDeclaration, psiFunction: KtCallableDeclaration): Boolean {
+        if (firFunction.typeParameters.size != psiFunction.typeParameters.size) return false
+        val boundsByName = psiFunction.typeConstraints.groupBy { it.subjectTypeParameterName?.getReferencedName() }
+        firFunction.typeParameters.zip(psiFunction.typeParameters) { expectedTypeParameter, candidateTypeParameter ->
+            if (expectedTypeParameter.symbol.name.toString() != candidateTypeParameter.name) return false
+            val candidateBounds = mutableListOf<KtTypeReference>()
+            candidateBounds.addIfNotNull(candidateTypeParameter.extendsBound)
+            boundsByName[candidateTypeParameter.name]?.forEach {
+                candidateBounds.addIfNotNull(it.boundTypeReference)
+            }
+            val expectedBounds = expectedTypeParameter.symbol.resolvedBounds.filter { it !is FirImplicitNullableAnyTypeRef }
+            if (candidateBounds.size != expectedBounds.size) return false
+            expectedBounds.zip(candidateBounds) { expectedBound, candidateBound ->
                 if (!isTheSameTypes(
-                        candidateParameterType,
-                        expectedParameter.returnTypeRef,
-                        isVararg = expectedParameter.isVararg
+                        candidateBound,
+                        expectedBound,
+                        isVararg = false
                     )
                 ) {
                     return false
                 }
+            }
+        }
+        return true
+    }
+
+    private fun valueParametersMatch(firFunction: FirFunction, psiFunction: KtCallableDeclaration): Boolean {
+        if (firFunction.valueParameters.size != psiFunction.valueParameters.size) return false
+        firFunction.valueParameters.zip(psiFunction.valueParameters) { expectedParameter, candidateParameter ->
+            if (expectedParameter.name.toString() != candidateParameter.name) return false
+            if (expectedParameter.isVararg != candidateParameter.isVarArg) return false
+            val candidateParameterType = candidateParameter.typeReference ?: return false
+            if (!isTheSameTypes(
+                    candidateParameterType,
+                    expectedParameter.returnTypeRef,
+                    isVararg = expectedParameter.isVararg
+                )
+            ) {
+                return false
             }
         }
         return true
@@ -88,6 +121,9 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
                     }
                     if (parameters.isNotEmpty()) {
                         append(parameters.joinToString(prefix = "<", postfix = ">") { it.renderTypeAsKotlinType() })
+                    }
+                    if (isMarkedNullable) {
+                        append("?")
                     }
                 }
             }
