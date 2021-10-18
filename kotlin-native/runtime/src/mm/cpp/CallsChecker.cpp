@@ -110,6 +110,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "memcmp",
         "memmem",
         "munmap",
+        "\x01_munmap",
         "nextafter",
         "nextafterf",
         "pow",
