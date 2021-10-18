@@ -98,7 +98,7 @@ class ClassGenerator(
                 classDescriptor.thisAsReceiverParameter.type.toIrType()
             )
 
-            generateFieldsForAdditionalReceivers(irClass, classDescriptor)
+            generateFieldsForContextReceivers(irClass, classDescriptor)
 
             val irPrimaryConstructor = generatePrimaryConstructor(irClass, ktClassOrObject)
             if (irPrimaryConstructor != null) {
@@ -434,13 +434,13 @@ class ClassGenerator(
         EnumClassMembersGenerator(declarationGenerator).generateSpecialMembers(irClass)
     }
 
-    private fun generateFieldsForAdditionalReceivers(irClass: IrClass, classDescriptor: ClassDescriptor) {
+    private fun generateFieldsForContextReceivers(irClass: IrClass, classDescriptor: ClassDescriptor) {
         for ((fieldIndex, receiverDescriptor) in classDescriptor.contextReceivers.withIndex()) {
             val irField = context.irFactory.createField(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 IrDeclarationOrigin.FIELD_FOR_CLASS_CONTEXT_RECEIVER,
                 IrFieldSymbolImpl(),
-                Name.identifier("additionalReceiverField$fieldIndex"),
+                Name.identifier("contextReceiverField$fieldIndex"),
                 receiverDescriptor.type.toIrType(),
                 DescriptorVisibilities.PRIVATE,
                 isFinal = true,

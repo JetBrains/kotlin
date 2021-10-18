@@ -184,7 +184,7 @@ class BodyGenerator(
 
         val classDescriptor = (scopeOwner as ClassConstructorDescriptor).containingDeclaration
         if (classDescriptor.contextReceivers.isNotEmpty()) {
-            generateSetAdditionalFieldForPrimaryConstructorBody(classDescriptor, irConstructor, irBlockBody)
+            generateSetContextReceiverFieldForPrimaryConstructorBody(classDescriptor, irConstructor, irBlockBody)
         }
         irBlockBody.statements.add(
             IrInstanceInitializerCallImpl(
@@ -334,7 +334,7 @@ class BodyGenerator(
             pregenerateCall(constructorCall)
         )
 
-    private fun generateSetAdditionalFieldForPrimaryConstructorBody(
+    private fun generateSetContextReceiverFieldForPrimaryConstructorBody(
         classDescriptor: ClassDescriptor,
         irConstructor: IrConstructor,
         irBlockBody: IrBlockBody

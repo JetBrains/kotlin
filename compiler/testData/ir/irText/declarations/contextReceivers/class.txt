@@ -31,13 +31,13 @@ FILE fqName:<root> fileName:/class.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Inner modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Inner
-    FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:additionalReceiverField0 type:<root>.Outer visibility:private [final]
+    FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.Outer visibility:private [final]
     CONSTRUCTOR visibility:public <> (<this>:<root>.Outer, arg:kotlin.Any) returnType:<root>.Inner [primary]
       VALUE_PARAMETER name:<this> index:0 type:<root>.Outer
       VALUE_PARAMETER name:arg index:1 type:kotlin.Any
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:additionalReceiverField0 type:<root>.Outer visibility:private [final]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.Outer visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.Inner declared in <root>.Inner' type=<root>.Inner origin=null
           value: GET_VAR '<this>: <root>.Outer declared in <root>.Inner.<init>' type=<root>.Outer origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:public superTypes:[kotlin.Any]'
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/class.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun bar (): kotlin.Int declared in <root>.Inner'
           CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Outer' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:additionalReceiverField0 type:<root>.Outer visibility:private [final]' type=<root>.Outer origin=null
+            $this: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.Outer visibility:private [final]' type=<root>.Outer origin=null
               receiver: GET_VAR '<this>: <root>.Inner declared in <root>.Inner.bar' type=<root>.Inner origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
