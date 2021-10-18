@@ -34,7 +34,12 @@ object LambdaWithSuspendModifierCallChecker : CallChecker {
             }
             else -> {
                 if ((calleeName == "suspend" || variableCalleeName == "suspend") && call.hasFormOfSuspendModifierForLambdaOrFun()) {
-                    context.trace.report(Errors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND.on(reportOn))
+                    if (call.hasNoArgumentListButDanglingLambdas() || call.isInfixWithRightLambda()) {
+                        context.trace.report(Errors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND.on(reportOn))
+                    } else {
+                        require(call.isInfixWithRightFun())
+                        context.trace.report(Errors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN.on(reportOn))
+                    }
                 }
             }
         }
@@ -43,7 +48,7 @@ object LambdaWithSuspendModifierCallChecker : CallChecker {
     private fun Call.hasFormOfSuspendModifierForLambdaOrFun() =
         !isCallableReference()
                 && typeArguments.isEmpty()
-                && (hasNoArgumentListButDanglingLambdas() || isInfixWithRightLambdaOrFun())
+                && (hasNoArgumentListButDanglingLambdas() || isInfixWithRightLambda() || isInfixWithRightFun())
 
     private fun Call.referencedName() =
         calleeExpression?.safeAs<KtSimpleNameExpression>()?.getReferencedName()
@@ -51,7 +56,11 @@ object LambdaWithSuspendModifierCallChecker : CallChecker {
     private fun Call.hasNoArgumentListButDanglingLambdas() =
         valueArgumentList?.leftParenthesis == null && functionLiteralArguments.isNotEmpty()
 
-    private fun Call.isInfixWithRightLambdaOrFun() =
+    private fun Call.isInfixWithRightLambda() =
         isInfixCall(this)
-                && callElement.safeAs<KtBinaryExpression>()?.right.let { it is KtLambdaExpression || it is KtNamedFunction }
+                && callElement.safeAs<KtBinaryExpression>()?.right is KtLambdaExpression
+
+    private fun Call.isInfixWithRightFun() =
+        isInfixCall(this)
+                && callElement.safeAs<KtBinaryExpression>()?.right is KtNamedFunction
 }
