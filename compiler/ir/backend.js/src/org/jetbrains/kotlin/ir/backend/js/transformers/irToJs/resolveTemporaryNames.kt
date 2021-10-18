@@ -8,6 +8,21 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.js.backend.ast.*
 
 fun JsNode.resolveTemporaryNames() {
+    object : JsVisitorWithContextImpl() {
+        override fun endVisit(x: JsNameRef, ctx: JsContext<JsNode>) {
+            x.name?.ident?.let {
+                if (it.contains('.')) {
+                    val parts = it.split('.').map { JsName(it, false) }
+                    var result = JsNameRef(parts[0])
+                    for (i in 1 until parts.size) {
+                        result = JsNameRef(parts[i], result)
+                    }
+                    ctx.replaceMe(result)
+                }
+            }
+        }
+    }.accept(this)
+
     val renamings = resolveNames()
     accept(object : RecursiveJsVisitor() {
         override fun visitElement(node: JsNode) {
