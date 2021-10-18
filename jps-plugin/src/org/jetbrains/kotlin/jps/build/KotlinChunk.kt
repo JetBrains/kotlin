@@ -45,24 +45,30 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
 
     private val defaultLanguageVersion = VersionView.RELEASED_VERSION
 
-    val compilerArguments = representativeTarget.jpsModuleBuildTarget.module.kotlinCompilerArguments.also {
-        it.reportOutputFiles = true
+    val compilerArguments by lazy {
+        representativeTarget.jpsModuleBuildTarget.module.kotlinCompilerArguments.also {
+            it.reportOutputFiles = true
 
-        // Always report the version to help diagnosing user issues if they submit the compiler output
-        it.version = true
+            // Always report the version to help diagnosing user issues if they submit the compiler output
+            it.version = true
 
-        if (it.languageVersion == null) it.languageVersion = defaultLanguageVersion.versionString
+            if (it.languageVersion == null) it.languageVersion = defaultLanguageVersion.versionString
+        }
     }
 
-    val langVersion =
+    val langVersion by lazy {
         compilerArguments.languageVersion?.let { LanguageVersion.fromVersionString(it) }
             ?: defaultLanguageVersion // use default language version when version string is invalid (todo: report warning?)
+    }
 
-    val apiVersion =
+    val apiVersion by lazy {
         compilerArguments.apiVersion?.let { ApiVersion.parse(it) }
             ?: ApiVersion.createByLanguageVersion(langVersion) // todo: report version parse error?
+    }
 
-    val isEnabled: Boolean = representativeTarget.isEnabled(compilerArguments)
+    val isEnabled: Boolean by lazy {
+        representativeTarget.isEnabled(compilerArguments)
+    }
 
     fun shouldRebuild(): Boolean {
         val buildMetaInfo = representativeTarget.buildMetaInfoFactory.create(compilerArguments)
