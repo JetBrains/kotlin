@@ -1,7 +1,6 @@
 // This test checks that suppressing conflicting signature / accidental override errors works.
 // This is used in libraries for binary-compatible migration, as well as in some cases in multiplatform projects.
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 // FILE: box.kt
 
 open class B {
