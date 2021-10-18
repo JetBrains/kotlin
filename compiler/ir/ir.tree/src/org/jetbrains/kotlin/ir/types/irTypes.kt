@@ -79,7 +79,7 @@ val IrType.classifierOrNull: IrClassifierSymbol?
 
 val IrType.classOrNull: IrClassSymbol?
     get() =
-        when (val classifier = classifierOrNull)  {
+        when (val classifier = classifierOrNull) {
             is IrClassSymbol -> classifier
             is IrScriptSymbol -> classifier.owner.targetClass
             else -> null
@@ -172,31 +172,28 @@ val IrClassSymbol.starProjectedType: IrSimpleType
 
 val IrClass.typeConstructorParameters: Sequence<IrTypeParameter>
     get() =
-        generateSequence(
-            this as IrTypeParametersContainer,
-            { current ->
-                val parent = current.parent as? IrTypeParametersContainer
-                when {
-                    parent is IrSimpleFunction && parent.isPropertyAccessor -> {
-                        // KT-42151
-                        // Property type parameters for local classes declared inside property accessors are not captured in FE descriptors.
-                        // In order to match type parameters against type arguments in IR types translated from KotlinTypes,
-                        // we should stop on property accessor here.
-                        // NB this can potentially cause problems with inline properties with reified type parameters.
-                        // Ideally this should be fixed in FE.
-                        null
-                    }
-                    current.isAnonymousObject -> {
-                        // Anonymous classes don't capture type parameters.
-                        null
-                    }
-                    parent is IrClass && current is IrClass && !current.isInner ->
-                        null
-                    else ->
-                        parent
+        generateSequence(this as IrTypeParametersContainer) { current ->
+            val parent = current.parent as? IrTypeParametersContainer
+            when {
+                parent is IrSimpleFunction && parent.isPropertyAccessor -> {
+                    // KT-42151
+                    // Property type parameters for local classes declared inside property accessors are not captured in FE descriptors.
+                    // In order to match type parameters against type arguments in IR types translated from KotlinTypes,
+                    // we should stop on property accessor here.
+                    // NB this can potentially cause problems with inline properties with reified type parameters.
+                    // Ideally this should be fixed in FE.
+                    null
                 }
+                current.isAnonymousObject -> {
+                    // Anonymous classes don't capture type parameters.
+                    null
+                }
+                parent is IrClass && current is IrClass && !current.isInner ->
+                    null
+                else ->
+                    parent
             }
-        ).flatMap { it.typeParameters }
+        }.flatMap { it.typeParameters }
 
 fun IrClassifierSymbol.typeWithParameters(parameters: List<IrTypeParameter>): IrSimpleType =
     typeWith(parameters.map { it.defaultType })
