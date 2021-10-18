@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 
 // TODO: Implement as a part of the gradle plugin
-open class KlibInstall: Exec() {
-    @Input
-    lateinit var klib: Provider<File>
+open class KlibInstall : Exec() {
+    @get:InputFile
+    var klib: Provider<File> = project.provider { project.buildDir }
 
-    @Internal
+    @get:Internal
     var repo: File = project.rootDir
 
     @get:Input
@@ -31,13 +31,13 @@ open class KlibInstall: Exec() {
             project.file("${repo.absolutePath}/$klibName")
         }
 
-    @Input
+    @get:Input
     var target: String = HostManager.hostName
 
     override fun configure(config: Closure<*>): Task {
         val result = super.configure(config)
         val konanHome = project.kotlinNativeDist
-        val suffix = if (HostManager.host == KonanTarget.MINGW_X64) ".bat" else  ""
+        val suffix = if (HostManager.host == KonanTarget.MINGW_X64) ".bat" else ""
         val klibProgram = "$konanHome/bin/klib$suffix"
 
         doFirst {
