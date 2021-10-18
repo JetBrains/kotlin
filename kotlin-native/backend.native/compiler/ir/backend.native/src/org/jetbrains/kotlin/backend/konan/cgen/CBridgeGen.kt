@@ -708,11 +708,11 @@ private fun KotlinStubs.mapType(
     type.isFloat() -> TrivialValuePassing(irBuiltIns.floatType, CTypes.float)
     type.isDouble() -> TrivialValuePassing(irBuiltIns.doubleType, CTypes.double)
     type.isCPointer(symbols) -> TrivialValuePassing(type, CTypes.voidPtr)
-    type.isTypeOfNullLiteral() && variadic  -> TrivialValuePassing(symbols.interopCPointer.typeWithStarProjections.makeNullable(), CTypes.voidPtr)
-    type.isUByte() -> UnsignedValuePassing(type, CTypes.signedChar, CTypes.unsignedChar)
-    type.isUShort() -> UnsignedValuePassing(type, CTypes.short, CTypes.unsignedShort)
-    type.isUInt() -> UnsignedValuePassing(type, CTypes.int, CTypes.unsignedInt)
-    type.isULong() -> UnsignedValuePassing(type, CTypes.longLong, CTypes.unsignedLongLong)
+    type.isTypeOfNullLiteral() && variadic -> TrivialValuePassing(symbols.interopCPointer.typeWithStarProjections.makeNullable(), CTypes.voidPtr)
+    type.isUByte() -> TrivialValuePassing(type, CTypes.unsignedChar)
+    type.isUShort() -> TrivialValuePassing(type, CTypes.unsignedShort)
+    type.isUInt() -> TrivialValuePassing(type, CTypes.unsignedInt)
+    type.isULong() -> TrivialValuePassing(type, CTypes.unsignedLongLong)
 
     type.isVector() -> TrivialValuePassing(type, CTypes.vector128)
 
@@ -837,21 +837,6 @@ private class TrivialValuePassing(val kotlinType: IrType, override val cType: CT
     override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: KonanSymbols): IrExpression = expression
     override fun bridgedToC(expression: String): String = expression
     override fun cToBridged(expression: String): String = expression
-}
-
-private class UnsignedValuePassing(val kotlinType: IrType, val cSignedType: CType, override val cType: CType) : SimpleValuePassing() {
-    override val kotlinBridgeType: IrType
-        get() = kotlinType
-    override val cBridgeType: CType
-        get() = cSignedType
-
-    override fun IrBuilderWithScope.kotlinToBridged(expression: IrExpression): IrExpression = expression
-
-    override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: KonanSymbols): IrExpression = expression
-
-    override fun bridgedToC(expression: String): String = cType.cast(expression)
-
-    override fun cToBridged(expression: String): String = cBridgeType.cast(expression)
 }
 
 private class BooleanValuePassing(override val cType: CType, private val irBuiltIns: IrBuiltIns) : SimpleValuePassing() {
