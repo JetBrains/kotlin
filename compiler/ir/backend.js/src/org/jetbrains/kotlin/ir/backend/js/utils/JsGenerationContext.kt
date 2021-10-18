@@ -35,7 +35,9 @@ class JsGenerationContext(
             currentFunction = func,
             staticContext = staticContext,
             localNames = localNames,
-        )
+        ).also {
+            it.nameCache += nameCache
+        }
     }
 
     fun newDeclaration(func: IrFunction? = null, localNames: LocalNameGenerator? = null): JsGenerationContext {
@@ -44,7 +46,9 @@ class JsGenerationContext(
             currentFunction = func,
             staticContext = staticContext,
             localNames = localNames,
-        )
+        ).also {
+            it.nameCache += nameCache
+        }
     }
 
     private val nameCache = mutableMapOf<IrElement, JsName>()
