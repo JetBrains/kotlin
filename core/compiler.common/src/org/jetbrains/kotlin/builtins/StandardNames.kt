@@ -66,6 +66,8 @@ object StandardNames {
     @JvmField
     val TEXT_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("text"))
 
+    val KOTLIN_INTERNAL_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
+
     @JvmField
     val BUILT_INS_PACKAGE_FQ_NAMES = setOf(
         BUILT_INS_PACKAGE_FQ_NAME,
@@ -73,7 +75,7 @@ object StandardNames {
         RANGES_PACKAGE_FQ_NAME,
         ANNOTATION_PACKAGE_FQ_NAME,
         KOTLIN_REFLECT_FQ_NAME,
-        BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal")),
+        KOTLIN_INTERNAL_FQ_NAME,
         COROUTINES_PACKAGE_FQ_NAME
     )
 
