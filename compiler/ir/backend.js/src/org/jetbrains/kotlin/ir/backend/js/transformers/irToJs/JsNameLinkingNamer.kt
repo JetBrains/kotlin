@@ -76,20 +76,12 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext) : IrNamerBase(
     override fun getNameForMemberField(field: IrField): JsName {
         require(!field.isStatic)
         // TODO this looks funny. Rethink.
-        return JsName(field.parentAsClass.fieldData().pickFieldName(field), false)
+        return JsName(field.parentAsClass.fieldData()[field]!!, false)
     }
 
-    private class FieldData(private val nameCnt: Map<String, Int>) {
-        fun pickFieldName(field: IrField): String {
-            val fieldName = field.safeName()
-            val cnt = nameCnt[fieldName] ?: error("Unexpected field: ${field.render()}")
-            return fieldName + "_$cnt"
-        }
-    }
+    private val fieldDataCache = mutableMapOf<IrClass, Map<IrField, String>>()
 
-    private val fieldDataCache = mutableMapOf<IrClass, FieldData>()
-
-    private fun IrClass.fieldData(): FieldData {
+    private fun IrClass.fieldData(): Map<IrField, String> {
         return fieldDataCache.getOrPut(this) {
             val nameCnt = mutableMapOf<String, Int>()
 
@@ -99,12 +91,16 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext) : IrNamerBase(
                 }
             }
 
-            allClasses.forEach {
+            val result = mutableMapOf<IrField, String>()
+
+            allClasses.reversed().forEach {
                 it.declarations.forEach {
                     when {
                         it is IrField -> {
                             val safeName = it.safeName()
-                            nameCnt[safeName] = nameCnt.getOrDefault(safeName, 0) + 1
+                            val suffix = nameCnt.getOrDefault(safeName, 0) + 1
+                            nameCnt[safeName] = suffix
+                            result[it] = safeName + "_$suffix"
                         }
                         it is IrFunction && it.dispatchReceiverParameter != null -> {
                             nameCnt[jsFunctionSignature(it, context)] = 1 // avoid clashes with member functions
@@ -113,7 +109,7 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext) : IrNamerBase(
                 }
             }
 
-            return FieldData(nameCnt)
+            return result
         }
     }
 }
