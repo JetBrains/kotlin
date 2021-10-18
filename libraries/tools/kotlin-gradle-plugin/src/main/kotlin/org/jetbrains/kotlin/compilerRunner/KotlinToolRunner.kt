@@ -14,7 +14,8 @@ import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 import java.util.concurrent.ConcurrentHashMap
 
-internal abstract class KotlinToolRunner(
+// Note: this class is public because it is used in the K/N build infrastructure.
+abstract class KotlinToolRunner(
     val project: Project
 ) {
     // name that will be used in logs
