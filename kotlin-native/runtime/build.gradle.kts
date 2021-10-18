@@ -5,6 +5,7 @@
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.testing.native.*
 import org.jetbrains.kotlin.bitcode.CompileToBitcode
+import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.properties.saveProperties
 import org.jetbrains.kotlin.konan.target.*
@@ -437,25 +438,37 @@ konanArtifacts {
     }
 }
 
-targetList.forEach { target ->
-    tasks.register("${target}Stdlib", Copy::class.java) {
+targetList.forEach { targetName ->
+    tasks.register("${targetName}Stdlib", Copy::class.java) {
         require(::stdlibBuildTask.isInitialized)
         dependsOn(stdlibBuildTask)
-        dependsOn("${target}Runtime")
+        dependsOn("${targetName}Runtime")
 
-        destinationDir = project.buildDir.resolve("${target}Stdlib")
+        destinationDir = project.buildDir.resolve("${targetName}Stdlib")
         from(project.buildDir.resolve("stdlib/${hostName}/stdlib"))
 
-        if (target != hostName) {
+        if (targetName != hostName) {
             doLast {
                 // Change target in manifest file
                 with(KFile(destinationDir.resolve("default/manifest").absolutePath)) {
                     loadProperties().also {
-                        it[KLIB_PROPERTY_NATIVE_TARGETS] = target
+                        it[KLIB_PROPERTY_NATIVE_TARGETS] = targetName
                         saveProperties(it)
                     }
                 }
             }
+        }
+    }
+
+    val cacheableTargetNames: List<String> by project
+
+    if (targetName in cacheableTargetNames) {
+        tasks.register("${targetName}StdlibCache", KonanCacheTask::class.java) {
+            target = targetName
+            originalKlib = project.buildDir.resolve("${targetName}Stdlib")
+            cacheRoot = project.buildDir.resolve("cache/$targetName").absolutePath
+
+            dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
         }
     }
 }

@@ -55,17 +55,6 @@ rootProject.project("kotlin-native").ext.platformManager.enabled.each { target -
     ArrayList<TaskProvider> installTasks = []
     ArrayList<TaskProvider> cacheTasks = []
 
-    if (target in cacheableTargets) {
-        tasks.register("${targetName}StdlibCache", KonanCacheTask) {
-            it.target = targetName
-            def runtimeBuild = project(":kotlin-native:runtime").buildDir
-            it.originalKlib = project.file("$runtimeBuild/${target}Stdlib")
-            it.cacheRoot = project.file("$runtimeBuild/cache/$target").path
-
-            it.dependsOn ":kotlin-native:${targetName}CrossDistRuntime"
-        }
-    }
-
     targetDefFiles(target).each { df ->
         def libName = defFileToLibName(targetName, df.name)
         def fileNamePrefix = PlatformLibsInfo.namePrefix
@@ -107,7 +96,7 @@ rootProject.project("kotlin-native").ext.platformManager.enabled.each { target -
             def cacheTask = tasks.register("${libName}Cache", KonanCacheTask) {
                 it.target = targetName
                 it.originalKlib = tasks[libName].installDir.get()
-                it.cacheRoot = file("$konanHome/klib/cache")
+                it.cacheRoot = file("$konanHome/klib/cache").absolutePath
 
                 it.dependsOn ":kotlin-native:${targetName}StdlibCache"
                 it.dependsOn tasks[libName]

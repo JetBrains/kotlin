@@ -471,7 +471,7 @@ targetList.each { target ->
     if (target in cacheableTargetNames) {
         task ("${target}StdlibCache", type: Copy) {
             dependsOn "${target}CrossDistStdlib"
-            dependsOn ":kotlin-native:platformLibs:${target}StdlibCache"
+            dependsOn ":kotlin-native:runtime:${target}StdlibCache"
 
             destinationDir project.file("$distDir/klib/cache/")
 
