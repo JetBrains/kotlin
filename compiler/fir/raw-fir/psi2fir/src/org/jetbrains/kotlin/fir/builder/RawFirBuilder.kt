@@ -1133,6 +1133,8 @@ open class RawFirBuilder(
                             )
                         }
 
+                        initCompanionObjectSymbolAttr()
+
                         context.popFirTypeParameters()
                     }
                 }

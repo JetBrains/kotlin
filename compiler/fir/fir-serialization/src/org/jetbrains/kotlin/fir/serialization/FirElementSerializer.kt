@@ -174,7 +174,7 @@ class FirElementSerializer private constructor(
             }
         }
 
-        val companionObject = regularClass?.companionObject
+        val companionObject = regularClass?.companionObjectSymbol?.fir
         if (companionObject != null) {
             builder.companionObjectName = getSimpleNameIndex(companionObject.name)
         }

@@ -250,7 +250,7 @@ open class FirTypeResolveTransformer(
             }
             session.nestedClassifierScope(firClass)?.let(scopes::add)
             if (firClass is FirRegularClass) {
-                val companionObject = firClass.companionObject
+                val companionObject = firClass.companionObjectSymbol?.fir
                 if (companionObject != null) {
                     session.nestedClassifierScope(companionObject)?.let(scopes::add)
                 }

@@ -45,7 +45,7 @@ internal class FirRegularClassImpl(
     override val scopeProvider: FirScopeProvider,
     override val name: Name,
     override val symbol: FirRegularClassSymbol,
-    override var companionObject: FirRegularClass?,
+    override var companionObjectSymbol: FirRegularClassSymbol?,
     override val superTypeRefs: MutableList<FirTypeRef>,
 ) : FirRegularClass() {
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
@@ -70,7 +70,6 @@ internal class FirRegularClassImpl(
         transformDeclarations(transformer, data)
         transformAnnotations(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
-        companionObject = declarations.asSequence().filterIsInstance<FirRegularClass>().firstOrNull { it.status.isCompanion }
         transformSuperTypeRefs(transformer, data)
         return this
     }
@@ -95,11 +94,6 @@ internal class FirRegularClassImpl(
         return this
     }
 
-    override fun <D> transformCompanionObject(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
-        companionObject = companionObject?.transform(transformer, data)
-        return this
-    }
-
     override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         superTypeRefs.transformInplace(transformer, data)
         return this
@@ -115,6 +109,10 @@ internal class FirRegularClassImpl(
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
+    }
+
+    override fun replaceCompanionObjectSymbol(newCompanionObjectSymbol: FirRegularClassSymbol?) {
+        companionObjectSymbol = newCompanionObjectSymbol
     }
 
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {

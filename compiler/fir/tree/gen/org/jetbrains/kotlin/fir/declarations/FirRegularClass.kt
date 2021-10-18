@@ -38,8 +38,8 @@ abstract class FirRegularClass : FirClass(), FirControlFlowGraphOwner {
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract val name: Name
     abstract override val symbol: FirRegularClassSymbol
-    abstract val companionObject: FirRegularClass?
     abstract val hasLazyNestedClassifiers: Boolean
+    abstract val companionObjectSymbol: FirRegularClassSymbol?
     abstract override val superTypeRefs: List<FirTypeRef>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitRegularClass(this, data)
@@ -54,6 +54,8 @@ abstract class FirRegularClass : FirClass(), FirControlFlowGraphOwner {
 
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
+    abstract fun replaceCompanionObjectSymbol(newCompanionObjectSymbol: FirRegularClassSymbol?)
+
     abstract override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirRegularClass
@@ -63,8 +65,6 @@ abstract class FirRegularClass : FirClass(), FirControlFlowGraphOwner {
     abstract override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirRegularClass
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirRegularClass
-
-    abstract fun <D> transformCompanionObject(transformer: FirTransformer<D>, data: D): FirRegularClass
 
     abstract override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirRegularClass
 }

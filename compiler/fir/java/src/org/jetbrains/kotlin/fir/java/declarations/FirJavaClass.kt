@@ -61,9 +61,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 
-    override val companionObject: FirRegularClass?
-        get() = null
-
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
         superTypeRefs.clear()
         superTypeRefs.addAll(newSuperTypeRefs)
@@ -78,6 +75,11 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {}
+
+    override val companionObjectSymbol: FirRegularClassSymbol?
+        get() = null
+
+    override fun replaceCompanionObjectSymbol(newCompanionObjectSymbol: FirRegularClassSymbol?) {}
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }
@@ -113,10 +115,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirJavaClass {
         declarations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformCompanionObject(transformer: FirTransformer<D>, data: D): FirJavaClass {
         return this
     }
 
@@ -165,13 +163,6 @@ internal class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationCont
             existingNestedClassifierNames
         )
     }
-
-    @Deprecated("Modification of 'hasLazyNestedClassifiers' has no impact for FirRegularClassImplBuilder", level = DeprecationLevel.HIDDEN)
-    override var companionObject: FirRegularClass?
-        get() = throw IllegalStateException()
-        set(@Suppress("UNUSED_PARAMETER") value) {
-            throw IllegalStateException()
-        }
 
     @Deprecated("Modification of 'origin' has no impact for FirJavaClassBuilder", level = DeprecationLevel.HIDDEN)
     override var origin: FirDeclarationOrigin

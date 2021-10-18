@@ -54,7 +54,7 @@ data class ImplicitReceivers(
 fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType: ConeKotlinType): TowerElementsForClass {
     val allImplicitCompanionValues = mutableListOf<ImplicitReceiverValue<*>>()
 
-    val companionObject = (owner as? FirRegularClass)?.companionObject
+    val companionObject = (owner as? FirRegularClass)?.companionObjectSymbol?.fir
     val companionReceiver = companionObject?.let { companion ->
         ImplicitDispatchReceiverValue(
             companion.symbol, session, scopeSession
@@ -72,9 +72,9 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType:
             ?.asTowerDataElement(isLocal = false)
             ?.let(superClassesStaticsAndCompanionReceivers::add)
 
-        (superClass as? FirRegularClass)?.companionObject?.let { companion ->
+        (superClass as? FirRegularClass)?.companionObjectSymbol?.let {
             val superCompanionReceiver = ImplicitDispatchReceiverValue(
-                companion.symbol, session, scopeSession
+                it, session, scopeSession
             )
 
             superClassesStaticsAndCompanionReceivers += superCompanionReceiver.asTowerDataElement()

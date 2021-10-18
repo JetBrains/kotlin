@@ -77,7 +77,7 @@ internal object FirReferenceResolveHelper {
                 val callee = calleeReference.resolvedSymbol.fir as? FirCallableDeclaration
                 // TODO: check callee owner directly?
                 if (callee !is FirConstructor && callee?.isStatic != true) {
-                    classLikeDeclaration.companionObject?.let { return it.buildSymbol(symbolBuilder) }
+                    classLikeDeclaration.companionObjectSymbol?.let { return it.fir.buildSymbol(symbolBuilder) }
                 }
             }
         }
@@ -398,7 +398,7 @@ internal object FirReferenceResolveHelper {
         symbolBuilder: KtSymbolByFirBuilder
     ): Collection<KtSymbol> {
         val referencedSymbol = if (fir.resolvedToCompanionObject) {
-            (fir.symbol?.fir as? FirRegularClass)?.companionObject?.symbol
+            (fir.symbol?.fir as? FirRegularClass)?.companionObjectSymbol
         } else {
             fir.symbol
         }

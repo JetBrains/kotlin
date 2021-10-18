@@ -178,10 +178,10 @@ internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, resultTy
                 declaration.symbol.constructType(emptyArray(), false),
             )
         } else {
-            val companionObject = declaration.companionObject
-            if (companionObject != null) {
+            val companionObjectSymbol = declaration.companionObjectSymbol
+            if (companionObjectSymbol != null) {
                 return resultType.resolvedTypeFromPrototype(
-                    companionObject.symbol.constructType(emptyArray(), false),
+                    companionObjectSymbol.constructType(emptyArray(), false),
                 )
             }
         }

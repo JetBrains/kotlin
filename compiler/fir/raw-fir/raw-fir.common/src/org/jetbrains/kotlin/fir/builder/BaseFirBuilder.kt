@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnderscoreIsReserved
@@ -1200,6 +1201,10 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 containingClassForLocalAttr = currentDispatchReceiverType.lookupTag
             }
         }
+    }
+
+    protected fun FirRegularClassBuilder.initCompanionObjectSymbolAttr() {
+        companionObjectSymbol = (declarations.firstOrNull { it is FirRegularClass && it.isCompanion } as FirRegularClass?)?.symbol
     }
 
     protected fun FirCallableDeclaration.initContainingClassAttr() {

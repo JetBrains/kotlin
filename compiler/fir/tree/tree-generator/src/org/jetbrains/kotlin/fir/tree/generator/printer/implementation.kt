@@ -105,7 +105,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
 
 
             element.allFields.filter {
-                it.withBindThis && it.type.contains("Symbol") && it !is FieldList
+                it.withBindThis && it.type.contains("Symbol") && it !is FieldList && it.name != "companionObjectSymbol"
             }.takeIf {
                 it.isNotEmpty() && !isInterface && !isAbstract &&
                         !element.type.contains("Reference")
@@ -224,10 +224,6 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                             }
 
                             field.name in setOf("dispatchReceiver", "extensionReceiver") -> {}
-
-                            field.name == "companionObject" -> {
-                                println("companionObject = declarations.asSequence().filterIsInstance<FirRegularClass>().firstOrNull { it.status.isCompanion }")
-                            }
 
                             field.needsSeparateTransform -> {
                                 if (!(element.needTransformOtherChildren && field.needTransformInOtherChildren)) {

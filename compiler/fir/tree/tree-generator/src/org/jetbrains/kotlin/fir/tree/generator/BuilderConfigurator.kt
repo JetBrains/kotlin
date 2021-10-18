@@ -40,7 +40,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         builder(regularClass) {
             parents += classBuilder
             parents += typeParameterRefsOwnerBuilder
-            defaultNull("companionObject")
+            defaultNull("companionObjectSymbol")
             openBuilder()
             withCopy()
         }

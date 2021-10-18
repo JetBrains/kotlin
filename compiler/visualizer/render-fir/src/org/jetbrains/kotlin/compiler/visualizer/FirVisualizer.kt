@@ -780,7 +780,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: StringBuilder) {
             val fir = resolvedQualifier.symbol?.fir
             when {
-                fir is FirRegularClass && fir.classKind != ClassKind.ENUM_CLASS && fir.companionObject?.defaultType() == resolvedQualifier.typeRef.coneTypeSafe() -> {
+                fir is FirRegularClass && fir.classKind != ClassKind.ENUM_CLASS && fir.companionObjectSymbol?.defaultType() == resolvedQualifier.typeRef.coneTypeSafe() -> {
                     data.append("companion object ")
                     data.append(resolvedQualifier.typeRef.render()).append(": ")
                     data.append(fir.symbol.classId.asString().removeCurrentFilePackage())

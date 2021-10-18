@@ -18,14 +18,13 @@ import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.fir.visitors.acceptAllElements
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirEnumCompanionInEnumConstructorCallChecker : FirEnumEntryChecker() {
     override fun check(declaration: FirEnumEntry, context: CheckerContext, reporter: DiagnosticReporter) {
         val enumClass = context.containingDeclarations.lastIsInstanceOrNull<FirRegularClass>() ?: return
         if (enumClass.classKind != ClassKind.ENUM_CLASS) return
-        val companionOfEnumSymbol = enumClass.companionObject?.symbol ?: return
+        val companionOfEnumSymbol = enumClass.companionObjectSymbol ?: return
         val initializerObject = (declaration.initializer as? FirAnonymousObjectExpression)?.anonymousObject ?: return
         val delegatingConstructorCall = initializerObject.primaryConstructorIfAny(context.session)?.resolvedDelegatedConstructorCall ?: return
         val visitor = Visitor(context, reporter, companionOfEnumSymbol)

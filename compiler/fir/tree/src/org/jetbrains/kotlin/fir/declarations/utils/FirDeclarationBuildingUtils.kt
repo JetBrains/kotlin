@@ -21,9 +21,6 @@ fun FirTypeParameterBuilder.addDefaultBoundIfNecessary() {
 
 fun FirRegularClassBuilder.addDeclaration(declaration: FirDeclaration) {
     declarations += declaration
-    if (companionObject == null && declaration is FirRegularClass && declaration.isCompanion) {
-        companionObject = declaration
-    }
 }
 
 fun FirRegularClassBuilder.addDeclarations(declarations: Collection<FirDeclaration>) {

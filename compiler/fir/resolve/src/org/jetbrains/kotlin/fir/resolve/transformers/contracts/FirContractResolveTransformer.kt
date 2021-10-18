@@ -223,7 +223,6 @@ open class FirContractResolveTransformer(
         }
 
         override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
-            regularClass.transformCompanionObject(this, data)
             context.withRegularClass(regularClass, components, forContracts = true) {
                 transformDeclarationContent(regularClass, data)
             }
