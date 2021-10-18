@@ -94,7 +94,7 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
                     if: CONST Boolean type=kotlin.Boolean value=true
                     then: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Int' type=kotlin.Double origin=null
                       $this: GET_VAR 'val tmp_2: kotlin.Int? [val] declared in <root>.testDI2' type=kotlin.Int? origin=null
-              arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+              arg1: TYPE_OP type=kotlin.Double? origin=IMPLICIT_CAST typeOperand=kotlin.Double?
                 GET_VAR 'y: kotlin.Any? declared in <root>.testDI2' type=kotlin.Any? origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true

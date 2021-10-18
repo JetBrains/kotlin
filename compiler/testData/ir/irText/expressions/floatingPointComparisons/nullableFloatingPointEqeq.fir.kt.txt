@@ -39,7 +39,8 @@ fun testDI2(x: Any?, y: Any?): Boolean {
         EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null
         else -> tmp2_safe_receiver.toDouble()
       }
-    }, arg1 = y /*as Double */)
+    }, arg1 = y /*as Double? */)
     else -> false
   }
 }
+
