@@ -168,7 +168,10 @@ class IrModuleToJsTransformerTmp(
 
         staticContext.classModels.entries.forEach { (symbol, model) ->
             result.classes[nameGenerator.getNameForClass(symbol.owner)] =
-                JsIrIcClassModel(model.klass.superTypes.map { staticContext.getNameForClass((it.classifierOrFail as IrClassSymbol).owner) })
+                JsIrIcClassModel(model.klass.superTypes.map { staticContext.getNameForClass((it.classifierOrFail as IrClassSymbol).owner) }).also {
+                    it.preDeclarationBlock.statements += model.preDeclarationBlock.statements
+                    it.postDeclarationBlock.statements += model.postDeclarationBlock.statements
+                }
         }
 
         result.initializers.statements += staticContext.initializerBlock.statements
