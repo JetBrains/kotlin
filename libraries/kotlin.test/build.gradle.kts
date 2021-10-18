@@ -288,7 +288,6 @@ val wasmComponent = componentFactory.adhoc("wasm").apply {
     }
 }
 
-
 val commonMetadata by configurations.creating {
     isCanBeConsumed = true
     isCanBeResolved = false
@@ -358,12 +357,6 @@ publishing {
             from(jsComponent)
             artifact(tasks.getByPath(":kotlin-test:kotlin-test-js:sourcesJar") as Jar)
             configureKotlinPomAttributes(project, "Kotlin Test for JS")
-        }
-        create("wasm", MavenPublication::class) {
-            artifactId = "kotlin-test-wasm"
-            from(wasmComponent)
-            // TODO: artifact(tasks.getByPath(":kotlin-test:kotlin-test-wasm:jsSourcesJar"))
-            configureKotlinPomAttributes(project, "Kotlin Test for WASM")
         }
         create("common", MavenPublication::class) {
             artifactId = "kotlin-test-common"
