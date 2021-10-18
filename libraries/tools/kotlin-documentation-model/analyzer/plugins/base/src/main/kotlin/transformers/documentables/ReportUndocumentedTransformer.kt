@@ -132,7 +132,7 @@ internal class ReportUndocumentedTransformer : DocumentableTransformer {
         if (documentable is WithSources) {
             return documentable.sources[sourceSet]
                 .safeAs<DescriptorDocumentableSource>()?.descriptor
-                .safeAs()
+                .safeAs<CallableMemberDescriptor>()
         }
 
         return null
