@@ -477,8 +477,13 @@ ALWAYS_INLINE bool isShareable(const ObjHeader* obj) {
     return containerFor(obj)->shareable();
 }
 
-ObjHeader** ObjHeader::GetWeakCounterLocation() {
-    return &this->meta_object()->WeakReference.counter_;
+ObjHeader* ObjHeader::GetWeakCounter() {
+    return this->meta_object()->WeakReference.counter_;
+}
+
+ObjHeader* ObjHeader::GetOrSetWeakCounter(ObjHeader* counter) {
+    UpdateHeapRefIfNull(&meta_object()->WeakReference.counter_, counter);
+    return GetWeakCounter();
 }
 
 #if KONAN_OBJC_INTEROP

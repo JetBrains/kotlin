@@ -15,6 +15,7 @@
 #include "TypeInfo.h"
 #include "Utils.hpp"
 #include "MultiSourceQueue.hpp"
+#include "Weak.h"
 
 namespace kotlin {
 namespace mm {
@@ -27,6 +28,8 @@ public:
         FLAGS_FROZEN = 1 << 0,
         FLAGS_NEVER_FROZEN = 1 << 1,
     };
+
+    static constexpr unsigned WEAK_REF_TAG = 1;
 
     MetaObjHeader* AsMetaObjHeader() noexcept { return reinterpret_cast<MetaObjHeader*>(this); }
     static ExtraObjectData& FromMetaObjHeader(MetaObjHeader* header) noexcept { return *reinterpret_cast<ExtraObjectData*>(header); }
@@ -45,14 +48,35 @@ public:
 #endif
     void DetachAssociatedObject() noexcept;
 
-    ObjHeader** GetWeakCounterLocation() noexcept { return &weakReferenceCounter_; }
-
     std::atomic<Flags>& flags() noexcept { return flags_; }
 
-    bool HasWeakReferenceCounter() noexcept;
+    bool HasWeakReferenceCounter() noexcept { return hasPointerBits(weakReferenceCounterOrBaseObject_.load(), WEAK_REF_TAG); }
     void ClearWeakReferenceCounter() noexcept;
+    ObjHeader* GetWeakReferenceCounter() noexcept {
+        auto *pointer = weakReferenceCounterOrBaseObject_.load();
+        if (hasPointerBits(pointer, WEAK_REF_TAG)) return clearPointerBits(pointer, WEAK_REF_TAG);
+        return nullptr;
+    }
+    ObjHeader* GetOrSetWeakReferenceCounter(ObjHeader* object, ObjHeader* counter) noexcept {
+        if (weakReferenceCounterOrBaseObject_.compare_exchange_strong(object, setPointerBits(counter, WEAK_REF_TAG))) {
+            return counter;
+        } else {
+            return clearPointerBits(object, WEAK_REF_TAG); // on fail current value of counter is stored to object
+        }
+    }
+    ObjHeader* GetBaseObject() noexcept {
+        auto *header = weakReferenceCounterOrBaseObject_.load();
+        if (hasPointerBits(header, WEAK_REF_TAG)) {
+            return UnsafeWeakReferenceCounterGet(clearPointerBits(header, WEAK_REF_TAG));
+        } else {
+            return header;
+        }
+    }
 
-    explicit ExtraObjectData(const TypeInfo* typeInfo) noexcept : typeInfo_(typeInfo) {}
+    // info must be equal to objHeader->type_info(), but it needs to be loaded in advance to avoid data races
+    explicit ExtraObjectData(ObjHeader* objHeader, const TypeInfo *info) noexcept :
+        typeInfo_(info), weakReferenceCounterOrBaseObject_(objHeader) {
+    }
     ~ExtraObjectData();
 private:
 
@@ -65,7 +89,7 @@ private:
     void* associatedObject_ = nullptr;
 #endif
 
-    ObjHeader* weakReferenceCounter_ = nullptr;
+    std::atomic<ObjHeader*> weakReferenceCounterOrBaseObject_;
 };
 
 } // namespace mm

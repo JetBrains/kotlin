@@ -208,7 +208,8 @@ WeakCounter& InstallWeakCounter(mm::ThreadData& threadData, ObjHeader* objHeader
     mm::AllocateObject(&threadData, typeHolderWeakCounter.typeInfo(), location);
     auto& weakCounter = WeakCounter::FromObjHeader(*location);
     auto& extraObjectData = mm::ExtraObjectData::GetOrInstall(objHeader);
-    *extraObjectData.GetWeakCounterLocation() = weakCounter.header();
+    auto *setCounter = extraObjectData.GetOrSetWeakReferenceCounter(objHeader, weakCounter.header());
+    EXPECT_EQ(setCounter, weakCounter.header());
     weakCounter->referred = objHeader;
     return weakCounter;
 }
@@ -222,6 +223,7 @@ public:
 
     ~SameThreadMarkAndSweepTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
+        mm::GlobalData::Instance().extraObjectDataFactory().ClearForTests();
         mm::GlobalData::Instance().objectFactory().ClearForTests();
         mm::GlobalData::Instance().gcScheduler().ReplaceGCSchedulerDataForTests(
                 [](auto& config, auto scheduleGC) { return gc::internal::MakeGCSchedulerData(config, std::move(scheduleGC)); });

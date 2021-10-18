@@ -48,8 +48,12 @@ ALWAYS_INLINE mm::StableRefRegistry::Node* FromForeignRefManager(ForeignRefManag
 
 } // namespace
 
-ObjHeader** ObjHeader::GetWeakCounterLocation() {
-    return mm::ExtraObjectData::FromMetaObjHeader(this->meta_object()).GetWeakCounterLocation();
+ObjHeader* ObjHeader::GetWeakCounter() {
+    return mm::ExtraObjectData::FromMetaObjHeader(this->meta_object()).GetWeakReferenceCounter();
+}
+
+ObjHeader* ObjHeader::GetOrSetWeakCounter(ObjHeader* counter) {
+    return mm::ExtraObjectData::FromMetaObjHeader(this->meta_object()).GetOrSetWeakReferenceCounter(this, counter);
 }
 
 #ifdef KONAN_OBJC_INTEROP

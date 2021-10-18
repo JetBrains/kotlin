@@ -44,7 +44,7 @@ mm::ExtraObjectData& mm::ExtraObjectData::Install(ObjHeader* object) noexcept {
     RuntimeCheck(!hasPointerBits(typeInfo, OBJECT_TAG_MASK), "Object must not be tagged");
 
     auto *threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    auto& data = mm::ExtraObjectDataFactory::Instance().CreateExtraObjectDataForObject(threadData, typeInfo);
+    auto& data = mm::ExtraObjectDataFactory::Instance().CreateExtraObjectDataForObject(threadData, object, typeInfo);
 
     TypeInfo* old = __sync_val_compare_and_swap(&object->typeInfoOrMeta_, typeInfo, reinterpret_cast<TypeInfo*>(&data));
     if (old != typeInfo) {
@@ -78,18 +78,15 @@ void mm::ExtraObjectData::DetachAssociatedObject() noexcept {
 #endif
 }
 
-bool mm::ExtraObjectData::HasWeakReferenceCounter() noexcept {
-    return weakReferenceCounter_ != nullptr;
-}
-
 void mm::ExtraObjectData::ClearWeakReferenceCounter() noexcept {
     if (!HasWeakReferenceCounter()) return;
 
-    WeakReferenceCounterClear(weakReferenceCounter_);
+    auto *object = GetBaseObject();
+    WeakReferenceCounterClear(GetWeakReferenceCounter());
     // Not using `mm::SetHeapRef here`, because this code is called during sweep phase by the GC thread,
     // and so cannot affect marking.
     // TODO: Asserts on the above?
-    weakReferenceCounter_ = nullptr;
+    weakReferenceCounterOrBaseObject_ = object;
 }
 
 mm::ExtraObjectData::~ExtraObjectData() {

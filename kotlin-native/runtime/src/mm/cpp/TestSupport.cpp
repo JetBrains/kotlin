@@ -22,37 +22,38 @@ bool isEmpty(T& iterable) {
     return iterable.begin() == iterable.end();
 }
 
-template <typename E, typename T>
-std::vector<E> collect(T& iterable) {
-    std::vector<E> result;
-    for (E element : iterable) {
+template <typename T>
+auto collectCopy(T& iterable) {
+    std::vector<std::remove_reference_t<decltype(*iterable.begin())>> result;
+    for (const auto &element : iterable) {
         result.push_back(element);
     }
-    return std::move(result);
-}
-
-std::vector<mm::ThreadData*> collect(mm::ThreadRegistry::Iterable& iterable) {
-    std::vector<mm::ThreadData*> result;
-    for (mm::ThreadData& element : iterable) {
-        result.push_back(&element);
-    }
-    // Do not use std::move because clang complains that it prevents copy elision.
     return result;
 }
 
+template <typename T>
+auto collectPointers(T& iterable) {
+    std::vector<const std::remove_reference_t<decltype(*iterable.begin())>*> result;
+    for (const auto &element : iterable) {
+        result.push_back(&element);
+    }
+    return result;
+}
 } // namespace
 
 extern "C" void Kotlin_TestSupport_AssertClearGlobalState() {
     // Validate that global registries are empty.
     auto globals = mm::GlobalsRegistry::Instance().LockForIter();
+    auto extraObjects = mm::GlobalData::Instance().extraObjectDataFactory().LockForIter();
     auto objects = mm::GlobalData::Instance().objectFactory().LockForIter();
     auto stableRefs = mm::StableRefRegistry::Instance().LockForIter();
     auto threads = mm::ThreadRegistry::Instance().LockForIter();
 
-    EXPECT_THAT(collect<ObjHeader**>(globals), testing::UnorderedElementsAre());
-    EXPECT_THAT(collect<mm::ObjectFactory<gc::GC>::NodeRef>(objects), testing::UnorderedElementsAre());
-    EXPECT_THAT(collect<ObjHeader*>(stableRefs), testing::UnorderedElementsAre());
-    EXPECT_THAT(collect(threads), testing::UnorderedElementsAre());
+    EXPECT_THAT(collectCopy(globals), testing::UnorderedElementsAre());
+    EXPECT_THAT(collectPointers(extraObjects), testing::UnorderedElementsAre());
+    EXPECT_THAT(collectCopy(objects), testing::UnorderedElementsAre());
+    EXPECT_THAT(collectCopy(stableRefs), testing::UnorderedElementsAre());
+    EXPECT_THAT(collectPointers(threads), testing::UnorderedElementsAre());
 }
 
 void kotlin::DeinitMemoryForTests(MemoryState* memoryState) {

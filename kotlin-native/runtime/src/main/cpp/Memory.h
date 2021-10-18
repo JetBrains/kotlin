@@ -68,7 +68,9 @@ struct ObjHeader {
 
   MetaObjHeader* meta_object_or_null() const noexcept { return AsMetaObject(typeInfoOrMeta_); }
 
-  ALWAYS_INLINE ObjHeader** GetWeakCounterLocation();
+  ALWAYS_INLINE ObjHeader* GetWeakCounter();
+  ALWAYS_INLINE ObjHeader* GetOrSetWeakCounter(ObjHeader* counter);
+
 
 #ifdef KONAN_OBJC_INTEROP
   ALWAYS_INLINE void* GetAssociatedObject();

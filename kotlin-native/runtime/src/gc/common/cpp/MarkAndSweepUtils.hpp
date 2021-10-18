@@ -40,7 +40,7 @@ void Mark(KStdVector<ObjHeader*> graySet) noexcept {
         }
 
         if (auto* extraObjectData = mm::ExtraObjectData::Get(top)) {
-            auto* weakCounter = *extraObjectData->GetWeakCounterLocation();
+            auto weakCounter = extraObjectData->GetWeakReferenceCounter();
             if (!isNullOrMarker(weakCounter)) {
                 graySet.push_back(weakCounter);
             }

@@ -68,14 +68,14 @@ OBJ_GETTER(Konan_getWeakReferenceImpl, ObjHeader* referred) {
   }
 #endif // KONAN_OBJC_INTEROP
 
-  ObjHeader** weakCounterLocation = referred->GetWeakCounterLocation();
-  if (*weakCounterLocation == nullptr) {
+  ObjHeader* weakCounter = referred->GetWeakCounter();
+  if (weakCounter == nullptr) {
       ObjHolder counterHolder;
       // Cast unneeded, just to emphasize we store an object reference as void*.
       ObjHeader* counter = makeWeakReferenceCounter(reinterpret_cast<void*>(referred), counterHolder.slot());
-      UpdateHeapRefIfNull(weakCounterLocation, counter);
+      weakCounter = referred->GetOrSetWeakCounter(counter);
   }
-  RETURN_OBJ(*weakCounterLocation);
+  RETURN_OBJ(weakCounter);
 }
 
 // Materialize a weak reference to either null or the real reference.
@@ -87,6 +87,10 @@ OBJ_GETTER(Konan_WeakReferenceCounter_get, ObjHeader* counter) {
   auto* weakCounter = asWeakReferenceCounter(counter);
   RETURN_RESULT_OF(ReadHeapRefLocked, referredAddress,  &weakCounter->lock,  &weakCounter->cookie);
 #endif
+}
+
+ALWAYS_INLINE ObjHeader* UnsafeWeakReferenceCounterGet(ObjHeader* counter) {
+    return asWeakReferenceCounter(counter)->referred;
 }
 
 void WeakReferenceCounterClear(ObjHeader* counter) {

@@ -33,9 +33,11 @@ public:
 
     static ExtraObjectDataFactory& Instance() noexcept;
 
-    ExtraObjectData& CreateExtraObjectDataForObject(mm::ThreadData* threadData, TypeInfo* info) noexcept;
+    ExtraObjectData& CreateExtraObjectDataForObject(mm::ThreadData* threadData, ObjHeader* baseObject, const TypeInfo* info) noexcept;
+    ExtraObjectData& CreateExtraObjectDataForObject(ThreadQueue& threadQueue, ObjHeader* baseObject, const TypeInfo* info) noexcept;
 
     void DestroyExtraObjectData(mm::ThreadData* threadData, ExtraObjectData& data) noexcept;
+    void DestroyExtraObjectData(ThreadQueue& threadQueue, ExtraObjectData& data) noexcept;
 
     // Collect extra data objects from thread corresponding to `threadData`. Must be called by the thread
     // when it's asked by GC to stop.

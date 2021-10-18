@@ -15,12 +15,24 @@ mm::ExtraObjectDataFactory& mm::ExtraObjectDataFactory::Instance() noexcept {
     return GlobalData::Instance().extraObjectDataFactory();
 }
 
-mm::ExtraObjectData& mm::ExtraObjectDataFactory::CreateExtraObjectDataForObject(mm::ThreadData* threadData, TypeInfo* info) noexcept {
-    return **threadData->extraObjectDataThreadQueue().Emplace(info);
+mm::ExtraObjectData& mm::ExtraObjectDataFactory::CreateExtraObjectDataForObject(
+        mm::ThreadData* threadData, ObjHeader* baseObject, const TypeInfo* info
+        ) noexcept {
+    return CreateExtraObjectDataForObject(threadData->extraObjectDataThreadQueue(), baseObject, info);
 }
 
 void mm::ExtraObjectDataFactory::DestroyExtraObjectData(mm::ThreadData* threadData, ExtraObjectData& data) noexcept {
-    threadData->extraObjectDataThreadQueue().Erase(&Queue::Node::fromValue(data));
+        DestroyExtraObjectData(threadData->extraObjectDataThreadQueue(), data);
+}
+
+mm::ExtraObjectData& mm::ExtraObjectDataFactory::CreateExtraObjectDataForObject(
+        ThreadQueue& threadQueue, ObjHeader* baseObject, const TypeInfo* info
+        ) noexcept {
+    return **threadQueue.Emplace(baseObject, info);
+}
+
+void mm::ExtraObjectDataFactory::DestroyExtraObjectData(ThreadQueue& threadQueue, ExtraObjectData& data) noexcept {
+    threadQueue.Erase(&Queue::Node::fromValue(data));
 }
 
 void mm::ExtraObjectDataFactory::ProcessThread(mm::ThreadData* threadData) noexcept {
