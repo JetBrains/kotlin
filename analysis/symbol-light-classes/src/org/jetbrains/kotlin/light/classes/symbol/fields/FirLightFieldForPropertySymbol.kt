@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtLiteralConstantValue
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
 
 internal class FirLightFieldForPropertySymbol(
     private val propertySymbol: KtPropertySymbol,
@@ -29,9 +30,16 @@ internal class FirLightFieldForPropertySymbol(
 
     private val _returnedType: PsiType by lazyPub {
         analyzeWithSymbolAsContext(propertySymbol) {
-            propertySymbol.annotatedType.type.asPsiType(this@FirLightFieldForPropertySymbol)
-                ?: this@FirLightFieldForPropertySymbol.nonExistentType()
-        }
+            val isDelegated = (propertySymbol as? KtKotlinPropertySymbol)?.isDelegatedProperty == true
+            when {
+                isDelegated ->
+                    (kotlinOrigin as? KtProperty)?.delegateExpression?.let {
+                        it.getKtType()?.asPsiType(this@FirLightFieldForPropertySymbol)
+                    }
+                else ->
+                    propertySymbol.annotatedType.type.asPsiType(this@FirLightFieldForPropertySymbol)
+            }
+        } ?: nonExistentType()
     }
 
     private val _isDeprecated: Boolean by lazyPub {

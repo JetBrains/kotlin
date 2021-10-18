@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.*
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
@@ -287,7 +288,8 @@ internal fun FirLightClassBase.createField(
             property.modality == Modality.ABSTRACT -> false
             property.isHiddenOrSynthetic(project) -> false
             property.isLateInit -> true
-            //TODO Fix it when KtFirConstructorValueParameterSymbol be ready
+            property.isDelegatedProperty -> true
+            property.isFromPrimaryConstructor -> true
             property.psi.let { it == null || it is KtParameter } -> true
             property.hasJvmSyntheticAnnotation(AnnotationUseSiteTarget.FIELD) -> false
             else -> property.hasBackingField
@@ -296,10 +298,15 @@ internal fun FirLightClassBase.createField(
 
     if (!hasBackingField(declaration)) return
 
+    val isDelegated = (declaration as? KtKotlinPropertySymbol)?.isDelegatedProperty == true
+    val fieldName = nameGenerator.generateUniqueFieldName(
+        declaration.name.asString() + (if (isDelegated) JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX else "")
+    )
+
     result.add(
         FirLightFieldForPropertySymbol(
             propertySymbol = declaration,
-            fieldName = nameGenerator.generateUniqueFieldName(declaration.name.asString()),
+            fieldName = fieldName,
             containingClass = this,
             lightMemberOrigin = null,
             isTopLevel = isTopLevel,
