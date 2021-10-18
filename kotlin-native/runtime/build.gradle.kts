@@ -451,7 +451,12 @@ targetList.forEach { targetName ->
         dependsOn("${targetName}Runtime")
 
         destinationDir = project.buildDir.resolve("${targetName}Stdlib")
+
         from(project.buildDir.resolve("stdlib/${hostName}/stdlib"))
+        from(project.buildDir.resolve("bitcode/main/$targetName")) {
+            include("runtime.bc")
+            into("default/targets/$targetName/native")
+        }
 
         if (targetName != hostName) {
             doLast {

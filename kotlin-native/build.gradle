@@ -400,22 +400,10 @@ def endorsedLibsCopyTask = task("crossDistEndorsedLibrariesCopy", type: Copy) {
 }
 
 targetList.each { target ->
-    task("${target}CopyStdlibRuntimeBitcode", type: Copy) {
+    task("${target}CrossDistStdlib", type: Copy) {
         dependsOn ":kotlin-native:runtime:${target}Stdlib"
 
-        destinationDir project(':kotlin-native:runtime')
-                .file("build/${target}Stdlib/default")
-
-        from(project(':kotlin-native:runtime').file("build/bitcode/main/$target")) {
-            include("runtime.bc")
-            into("targets/$target/native")
-        }
-    }
-
-    task ("${target}CrossDistStdlib", type: Copy) {
         destinationDir project.file("$distDir/$stdlib")
-
-        dependsOn ":kotlin-native:${target}CopyStdlibRuntimeBitcode"
 
         from(project(':kotlin-native:runtime').file("build/${target}Stdlib")) {
             include('**')
