@@ -23,11 +23,10 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.typeWithStarProjections
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -67,10 +66,108 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         containingDeclarations: List<FirDeclaration>,
         dispatchReceiver: ReceiverValue?,
         isCallToPropertySetter: Boolean = false,
+        // There's no need to check if containing class is visible in case we check if a member might be overridden in a subclass
+        // because visibility for its supertype that contain overridden member is being checked when resolving the type reference.
+        // Such flag is not necessary in FE1.0, since there are full structure of fake overrides and containing declaration for overridden
+        // is always visible since it's a supertype of a derived class.
+        skipCheckForContainingClassVisibility: Boolean = false,
     ): Boolean {
-        require(declaration is FirDeclaration)
-        val provider = session.firProvider
+        if (!isSpecificDeclarationVisible(
+                declaration,
+                session,
+                useSiteFile,
+                containingDeclarations,
+                dispatchReceiver,
+                isCallToPropertySetter
+            )
+        ) {
+            return false
+        }
+
+        if (skipCheckForContainingClassVisibility) return true
+
+        val parentClass = declaration.containingNonLocalClass(session, dispatchReceiver) ?: return true
+        return generateSequence(parentClass) { it.containingNonLocalClass(session) }.all { parent ->
+            isSpecificDeclarationVisible(
+                parent,
+                session,
+                useSiteFile,
+                containingDeclarations,
+                dispatchReceiver,
+                isCallToPropertySetter
+            )
+        }
+    }
+
+    private fun FirMemberDeclaration.containingNonLocalClass(
+        session: FirSession,
+        dispatchReceiverValue: ReceiverValue?
+    ): FirClassLikeDeclaration? {
+        return when (this) {
+            is FirCallableDeclaration -> {
+                if (dispatchReceiverValue != null && dispatchReceiverType != null) {
+                    dispatchReceiverValue.type.findClassRepresentation(dispatchReceiverType!!, session)?.let { return it }
+                }
+
+                this.containingClass()?.toSymbol(session)?.fir
+            }
+            is FirClassLikeDeclaration -> containingNonLocalClass(session)
+        }
+    }
+
+    private fun FirClassLikeDeclaration.containingNonLocalClass(session: FirSession): FirClassLikeDeclaration? {
+        return when (this) {
+            is FirClass -> {
+                if (isLocal) return null
+
+                this.classId.outerClassId?.let { session.symbolProvider.getClassLikeSymbolByClassId(it)?.fir }
+            }
+            // Currently, type aliases are only top-level
+            is FirTypeAlias -> null
+        }
+    }
+
+    private fun ConeKotlinType.findClassRepresentation(
+        dispatchReceiverParameterType: ConeKotlinType,
+        session: FirSession
+    ): FirClassLikeDeclaration? =
+        when (this) {
+            is ConeClassLikeType -> this.fullyExpandedType(session).lookupTag.toSymbol(session)?.fir
+            is ConeFlexibleType -> lowerBound.findClassRepresentation(dispatchReceiverParameterType, session)
+            is ConeCapturedType -> constructor.supertypes.orEmpty()
+                .findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
+            is ConeDefinitelyNotNullType -> original.findClassRepresentation(dispatchReceiverParameterType, session)
+            is ConeIntegerLiteralType -> possibleTypes.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
+            is ConeIntersectionType -> intersectedTypes.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
+            is ConeTypeParameterType -> lookupTag.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
+            is ConeTypeVariableType -> (this.lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag)
+                ?.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
+            is ConeStubType -> (this.variable.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)
+                ?.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
+            is ConeLookupTagBasedType -> null
+        }
+
+    private fun ConeTypeParameterLookupTag.findClassRepresentationThatIsSubtypeOf(
+        supertype: ConeKotlinType,
+        session: FirSession
+    ): FirClassLikeDeclaration? =
+        typeParameterSymbol.fir.bounds.map { it.coneType }.findClassRepresentationThatIsSubtypeOf(supertype, session)
+
+    private fun Collection<ConeKotlinType>.findClassRepresentationThatIsSubtypeOf(
+        supertype: ConeKotlinType,
+        session: FirSession
+    ): FirClassLikeDeclaration? = firstOrNull { it.isSubtypeOf(supertype, session) }?.findClassRepresentation(supertype, session)
+
+    private fun isSpecificDeclarationVisible(
+        declaration: FirMemberDeclaration,
+        session: FirSession,
+        useSiteFile: FirFile,
+        containingDeclarations: List<FirDeclaration>,
+        dispatchReceiver: ReceiverValue?,
+        isCallToPropertySetter: Boolean = false,
+    ): Boolean {
         val symbol = declaration.symbol
+        val provider = session.firProvider
         return when (declaration.visibility) {
             Visibilities.Internal -> {
                 declaration.moduleData == session.moduleData || session.moduleVisibilityChecker?.isInFriendModule(declaration) == true

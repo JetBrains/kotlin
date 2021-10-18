@@ -40,12 +40,12 @@ fun test() {
     f(<!INVISIBLE_REFERENCE!>D<!>)
 
     A.foo()
-    <!INVISIBLE_REFERENCE!>B<!>.bar()
-    C.baz()
-    <!INVISIBLE_REFERENCE!>D<!>.quux()
+    <!INVISIBLE_REFERENCE!>B<!>.<!INVISIBLE_REFERENCE!>bar<!>()
+    C.<!INVISIBLE_REFERENCE!>baz<!>()
+    <!INVISIBLE_REFERENCE!>D<!>.<!INVISIBLE_REFERENCE!>quux<!>()
 
     a.A.foo()
-    a.C.baz()
+    a.C.<!INVISIBLE_REFERENCE!>baz<!>()
 }
 
 fun f(unused: Any) {}

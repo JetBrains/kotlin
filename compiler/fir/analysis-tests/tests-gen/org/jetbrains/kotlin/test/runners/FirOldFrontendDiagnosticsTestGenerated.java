@@ -32020,6 +32020,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("overrideOfMemberInPackagePrivateClass.kt")
+            public void testOverrideOfMemberInPackagePrivateClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/overrideOfMemberInPackagePrivateClass.kt");
+            }
+
+            @Test
+            @TestMetadata("privateCompanionInSuperClass.kt")
+            public void testPrivateCompanionInSuperClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/privateCompanionInSuperClass.kt");
+            }
+
+            @Test
             @TestMetadata("protectedInternal.kt")
             public void testProtectedInternal() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/protectedInternal.kt");

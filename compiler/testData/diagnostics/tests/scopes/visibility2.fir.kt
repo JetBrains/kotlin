@@ -24,7 +24,7 @@ import a.PO
 
 fun test() {
     val y = makeA()
-    y.bar()
+    y.<!INVISIBLE_REFERENCE!>bar<!>()
     <!INVISIBLE_REFERENCE!>foo<!>()
 
     val u : A = <!INVISIBLE_REFERENCE!>A<!>()

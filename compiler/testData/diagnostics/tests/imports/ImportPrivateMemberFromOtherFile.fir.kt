@@ -22,5 +22,5 @@ import B.JC.JC1
 
 fun test() {
     <!INVISIBLE_REFERENCE!>O1<!>
-    JC1()
+    <!INVISIBLE_REFERENCE!>JC1<!>()
 }

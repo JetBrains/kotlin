@@ -5,7 +5,7 @@ fun test() {
   A.Companion.<!INVISIBLE_REFERENCE!>f<!>
   B.D
   CCC
-  CCC.classObjectVar
+  CCC.<!INVISIBLE_REFERENCE!>classObjectVar<!>
 }
 
 class A() {

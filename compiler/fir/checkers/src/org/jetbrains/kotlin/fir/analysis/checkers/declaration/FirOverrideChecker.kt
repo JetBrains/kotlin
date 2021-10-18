@@ -167,7 +167,14 @@ object FirOverrideChecker : FirClassChecker() {
             it.ensureResolved(FirResolvePhase.STATUS)
             @OptIn(SymbolInternals::class)
             val fir = it.fir
-            visibilityChecker.isVisible(fir, context.session, file, containingDeclarations, null)
+            visibilityChecker.isVisible(
+                fir,
+                context.session,
+                file,
+                containingDeclarations,
+                null,
+                skipCheckForContainingClassVisibility = true
+            )
         }
         if (!hasVisibleBase) {
             //NB: Old FE reports this in an attempt to override private member,
