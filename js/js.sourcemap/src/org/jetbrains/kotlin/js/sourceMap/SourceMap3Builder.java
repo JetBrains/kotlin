@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.js.parser.sourcemaps.*;
 import org.jetbrains.kotlin.js.util.TextOutput;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,8 +82,16 @@ public class SourceMap3Builder implements SourceMapBuilder {
     private void appendSourcesContent(JsonObject json) {
         JsonArray array = new JsonArray();
         for (Supplier<Reader> contentSupplier : orderedSourceContentSuppliers) {
-            Reader reader = contentSupplier.get();
-            array.getElements().add(reader != null ? new JsonString(TextStreamsKt.readText(reader)) : JsonNull.INSTANCE);
+            try (Reader reader = contentSupplier.get()) {
+                array.getElements().add(reader != null ? new JsonString(TextStreamsKt.readText(reader)) : JsonNull.INSTANCE);
+            }
+            catch (IOException e) {
+                //noinspection UseOfSystemOutOrSystemErr
+                System.err.println("An exception occured during embedding sources into source map");
+                //noinspection CallToPrintStackTrace
+                e.printStackTrace();
+                // can't close the content reader or read from it
+            }
         }
         json.getProperties().put("sourcesContent", array);
     }
