@@ -78,7 +78,7 @@ targetList.each { target ->
                 compilerDistributionPath.set(distDir)
                 // TODO: should depend on stdlib producer task and its properties
                 def clibs = [:]
-                clibs.put(project.file("$dist/klib/common/stdlib"), project.file("$dist/klib/cache/${target}-gSTATIC/stdlib-cache"))
+                clibs.put(project.file("$dist/klib/common/stdlib"), project.file("$dist/klib/cache/${target}-g$cacheKind/stdlib-cache"))
                 cachedLibraries = clibs
 
                 dependsOn "$library.projectName:${target}${library.taskName}"

@@ -408,18 +408,18 @@ lateinit var stdlibBuildTask: TaskProvider<Task>
 konanArtifacts {
     library("stdlib") {
         baseDir(project.buildDir.resolve("stdlib"))
+        enableMultiplatform(true)
         extraOpts(args + project.globalBuildArgs)
         extraOpts(
                 "-module-name", "stdlib",
-                "-Xmulti-platform",
                 "-opt-in=kotlin.RequiresOptIn",
                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                 "-opt-in=kotlin.ExperimentalMultiplatform",
                 "-opt-in=kotlin.native.internal.InternalForKotlinNative",
                 "-opt-in=kotlin.native.SymbolNameIsDeprecated"
         )
-        commonStdlibSrcDirs.forEach { extraOpts(it) }
         srcFiles(commonBuiltinsSrc)
+        commonStdlibSrcDirs.forEach { extraOpts(it) }
         testAnnotationCommonSrcDir.forEach { extraOpts(it) }
         testCommonSrcDir.forEach { extraOpts(it) }
         extraOpts(interopRuntimeCommonSrcDir)
@@ -432,9 +432,15 @@ konanArtifacts {
         stdLibSrcDirs.forEach { srcDir(it) }
     }
 
-    stdlibBuildTask = project.findKonanBuildTask("stdlib", project.platformManager.hostPlatform.target)
-    stdlibBuildTask.configure {
-        dependsOn(":kotlin-native:distCompiler")
+    stdlibBuildTask = project.findKonanBuildTask("stdlib", project.platformManager.hostPlatform.target).apply {
+        configure {
+            dependsOn(":kotlin-native:distCompiler")
+
+            // Configure inputs and outputs
+            stdLibSrcDirs.forEach { inputs.dir(it) }
+            commonStdlibSrcDirs.forEach { inputs.dir(it) }
+            outputs.dir(project.buildDir.resolve("stdlib"))
+        }
     }
 }
 
@@ -468,6 +474,7 @@ targetList.forEach { targetName ->
             originalKlib = project.buildDir.resolve("${targetName}Stdlib")
             cacheRoot = project.buildDir.resolve("cache/$targetName").absolutePath
 
+            dependsOn("${targetName}Stdlib")
             dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
         }
     }
