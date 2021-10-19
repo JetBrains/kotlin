@@ -138,6 +138,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         else -> error("Type should be simple or flexible: $this")
     }
 
+    override fun StubTypeMarker.getOriginalTypeVariable(): TypeVariableTypeConstructorMarker {
+        require(this is ConeStubType)
+        return this.variable.typeConstructor
+    }
+
     override fun SimpleTypeMarker.typeDepth(): Int {
         require(this is ConeKotlinType)
         // if (this is TypeUtils.SpecialType) return 0 // TODO: WTF?

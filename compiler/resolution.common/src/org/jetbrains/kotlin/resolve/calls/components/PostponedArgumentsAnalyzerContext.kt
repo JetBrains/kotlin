@@ -19,6 +19,8 @@ interface PostponedArgumentsAnalyzerContext : TypeSystemInferenceExtensionContex
 
     fun hasUpperOrEqualUnitConstraint(type: KotlinTypeMarker): Boolean
 
+    fun removePostponedTypeVariablesFromConstraints(postponedTypeVariables: Set<TypeConstructorMarker>)
+
     // mutable operations
     fun addOtherSystem(otherSystem: ConstraintStorage)
 

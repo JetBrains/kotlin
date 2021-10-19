@@ -94,6 +94,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this is StubTypeForBuilderInference || isDefNotNullStubType<StubTypeForBuilderInference>()
     }
 
+    override fun StubTypeMarker.getOriginalTypeVariable(): TypeVariableTypeConstructorMarker {
+        require(this is AbstractStubType, this::errorMessage)
+        return this.originalTypeVariable as TypeVariableTypeConstructorMarker
+    }
+
     override fun CapturedTypeMarker.lowerType(): KotlinTypeMarker? {
         require(this is NewCapturedType, this::errorMessage)
         return this.lowerType
