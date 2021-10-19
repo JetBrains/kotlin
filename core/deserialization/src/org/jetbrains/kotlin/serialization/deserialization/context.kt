@@ -27,11 +27,12 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
-import org.jetbrains.kotlin.resolve.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.DefaultTypeAttributeTranslator
+import org.jetbrains.kotlin.types.TypeAttributeTranslator
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 
 class DeserializationComponents(
@@ -53,7 +54,8 @@ class DeserializationComponents(
     val extensionRegistryLite: ExtensionRegistryLite,
     val kotlinTypeChecker: NewKotlinTypeChecker = NewKotlinTypeChecker.Default,
     val samConversionResolver: SamConversionResolver,
-    val platformDependentTypeTransformer: PlatformDependentTypeTransformer = PlatformDependentTypeTransformer.None
+    val platformDependentTypeTransformer: PlatformDependentTypeTransformer = PlatformDependentTypeTransformer.None,
+    val typeAttributeTranslators: List<TypeAttributeTranslator> = listOf(DefaultTypeAttributeTranslator)
 ) {
     val classDeserializer: ClassDeserializer = ClassDeserializer(this)
 

@@ -67,6 +67,13 @@ class TypeDeserializer(
         return simpleType(proto, expandTypeAliases = true)
     }
 
+    private fun List<TypeAttributeTranslator>.toAttributes(annotations: Annotations): TypeAttributes {
+        val translated = this.map { translator ->
+            translator.toAttributes(annotations)
+        }.flatten()
+        return TypeAttributes.create(translated)
+    }
+
     fun simpleType(proto: ProtoBuf.Type, expandTypeAliases: Boolean = true): SimpleType {
         val localClassifierType = when {
             proto.hasClassName() -> computeLocalClassifierReplacementType(proto.className)
@@ -85,6 +92,8 @@ class TypeDeserializer(
             c.components.annotationAndConstantLoader.loadTypeAnnotations(proto, c.nameResolver)
         }
 
+        val attributes = c.components.typeAttributeTranslators.toAttributes(annotations)
+
         fun ProtoBuf.Type.collectAllArguments(): List<ProtoBuf.Type.Argument> =
             argumentList + outerType(c.typeTable)?.collectAllArguments().orEmpty()
 
@@ -97,14 +106,17 @@ class TypeDeserializer(
         val simpleType = when {
             expandTypeAliases && declarationDescriptor is TypeAliasDescriptor -> {
                 val expandedType = with(KotlinTypeFactory) { declarationDescriptor.computeExpandedType(arguments) }
+                val expandedAttributes = c.components.typeAttributeTranslators.toAttributes(
+                    Annotations.create(annotations + expandedType.annotations)
+                )
                 expandedType
                     .makeNullableAsSpecified(expandedType.isNullable() || proto.nullable)
-                    .replaceAnnotations(Annotations.create(annotations + expandedType.annotations))
+                    .replaceAttributes(expandedAttributes)
             }
             Flags.SUSPEND_TYPE.get(proto.flags) ->
-                createSuspendFunctionType(annotations, constructor, arguments, proto.nullable)
+                createSuspendFunctionType(attributes, constructor, arguments, proto.nullable)
             else ->
-                KotlinTypeFactory.simpleType(annotations, constructor, arguments, proto.nullable).let {
+                KotlinTypeFactory.simpleType(attributes, constructor, arguments, proto.nullable).let {
                     if (Flags.DEFINITELY_NOT_NULL_TYPE.get(proto.flags))
                         DefinitelyNotNullType.makeDefinitelyNotNull(it) ?: error("null DefinitelyNotNullType for '$it'")
                     else
@@ -157,19 +169,19 @@ class TypeDeserializer(
     }
 
     private fun createSuspendFunctionType(
-        annotations: Annotations,
+        attributes: TypeAttributes,
         functionTypeConstructor: TypeConstructor,
         arguments: List<TypeProjection>,
         nullable: Boolean
     ): SimpleType {
         val result = when (functionTypeConstructor.parameters.size - arguments.size) {
-            0 -> createSuspendFunctionTypeForBasicCase(annotations, functionTypeConstructor, arguments, nullable)
+            0 -> createSuspendFunctionTypeForBasicCase(attributes, functionTypeConstructor, arguments, nullable)
             // This case for types written by eap compiler 1.1
             1 -> {
                 val arity = arguments.size - 1
                 if (arity >= 0) {
                     KotlinTypeFactory.simpleType(
-                        annotations,
+                        attributes,
                         functionTypeConstructor.builtIns.getSuspendFunction(arity).typeConstructor,
                         arguments,
                         nullable
@@ -187,12 +199,12 @@ class TypeDeserializer(
     }
 
     private fun createSuspendFunctionTypeForBasicCase(
-        annotations: Annotations,
+        attributes: TypeAttributes,
         functionTypeConstructor: TypeConstructor,
         arguments: List<TypeProjection>,
         nullable: Boolean
     ): SimpleType? {
-        val functionType = KotlinTypeFactory.simpleType(annotations, functionTypeConstructor, arguments, nullable)
+        val functionType = KotlinTypeFactory.simpleType(attributes, functionTypeConstructor, arguments, nullable)
         return if (!functionType.isFunctionType) null
         else transformRuntimeFunctionTypeToSuspendFunction(functionType)
     }
