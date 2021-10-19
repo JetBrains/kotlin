@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize.test.runners
 
+import org.jetbrains.kotlin.parcelize.fir.FirParcelizeExtensionRegistrar
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeMainClassProvider
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeRuntimeClasspathProvider
@@ -14,19 +15,26 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.classic.ClassicBackendInput
 import org.jetbrains.kotlin.test.backend.classic.ClassicJvmBackendFacade
+import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
+import org.jetbrains.kotlin.test.bind
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureClassicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
+import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
@@ -63,10 +71,16 @@ abstract class AbstractParcelizeBoxTestBase<R : ResultingArtifact.FrontendOutput
             )
         }
 
+        configureIrHandlersStep {
+            useHandlers(::IrTextDumpHandler)
+        }
+
         configureCommonHandlersForBoxTest()
 
         useCustomRuntimeClasspathProviders(::ParcelizeRuntimeClasspathProvider)
-        useConfigurators(::ParcelizeEnvironmentConfigurator)
+
+        useConfigurators(::ParcelizeEnvironmentConfigurator.bind(targetFrontend == FrontendKinds.FIR))
+
         useAdditionalSourceProviders(::ParcelizeUtilSourcesProvider)
 
         useAdditionalServices(service<JvmBoxMainClassProvider>(::ParcelizeMainClassProvider))
@@ -103,4 +117,30 @@ open class AbstractParcelizeIrBoxTest : AbstractParcelizeBoxTestBase<ClassicFron
 
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
         get() = ::JvmIrBackendFacade
+}
+
+open class AbstractParcelizeFirBoxTest : AbstractParcelizeBoxTestBase<FirOutputArtifact, IrBackendInput>(
+    FrontendKinds.FIR,
+    TargetBackend.JVM_IR
+) {
+    override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
+        get() = { testServices ->
+            FirFrontendFacade(testServices) {
+                it.registerExtensions(FirParcelizeExtensionRegistrar().configure())
+            }
+        }
+
+    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
+        get() = ::Fir2IrResultsConverter
+    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
+        get() = ::JvmIrBackendFacade
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                +ENABLE_PLUGIN_PHASES
+            }
+        }
+    }
 }

@@ -24,6 +24,17 @@ dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
 
+    // FIR dependencies
+    compileOnly(project(":compiler:fir:cones"))
+    compileOnly(project(":compiler:fir:tree"))
+    compileOnly(project(":compiler:fir:resolve"))
+    compileOnly(project(":compiler:fir:checkers"))
+    compileOnly(project(":compiler:fir:fir2ir"))
+    compileOnly(project(":compiler:ir.backend.common"))
+    compileOnly(project(":compiler:ir.tree.impl"))
+    compileOnly(project(":compiler:fir:entrypoint"))
+    compileOnly(project(":kotlin-reflect-api"))
+
     testApiJUnit5()
 
     testApi(project(":compiler:util"))
@@ -38,6 +49,15 @@ dependencies {
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
+
+    // FIR dependencies
+    testApi(project(":compiler:fir:checkers"))
+    testApi(project(":compiler:fir:checkers:checkers.jvm"))
+    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
+
+    testCompileOnly(project(":kotlin-reflect-api"))
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":core:descriptors.runtime"))
 
     testApi(commonDep("junit:junit"))
 

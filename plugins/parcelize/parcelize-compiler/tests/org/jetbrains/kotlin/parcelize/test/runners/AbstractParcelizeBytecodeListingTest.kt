@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.parcelize.test.runners
 
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.IR_DIFFERENCE
 import org.jetbrains.kotlin.test.runners.codegen.AbstractAsmLikeInstructionListingTest
@@ -29,5 +30,5 @@ private fun TestConfigurationBuilder.configureParcelizeSpecific() {
     defaultDirectives {
         +IR_DIFFERENCE
     }
-    useConfigurators(::ParcelizeEnvironmentConfigurator)
+    useConfigurators(::ParcelizeEnvironmentConfigurator.bind(false))
 }

@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.kapt3.test.AbstractIrKotlinKaptContextTest
 import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
 import org.jetbrains.kotlin.lombok.AbstractLombokCompileTest
 import org.jetbrains.kotlin.noarg.*
-import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeBoxTest
-import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeBytecodeListingTest
-import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeIrBoxTest
-import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeIrBytecodeListingTest
+import org.jetbrains.kotlin.parcelize.test.runners.*
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverScriptTest
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverTest
 import org.jetbrains.kotlin.test.TargetBackend
@@ -359,6 +356,10 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractParcelizeIrBoxTest> {
+                model("box")
+            }
+
+            testClass<AbstractParcelizeFirBoxTest> {
                 model("box")
             }
 
