@@ -50,7 +50,6 @@ class MutableDiagnosticsWithSuppression(
 
     override fun setCallback(callback: DiagnosticSink.DiagnosticsCallback) {
         diagnosticsCallback?.let {
-            Logger.getInstance(MutableDiagnosticsWithSuppression::class.java).error("diagnostic callback has been already registered")
             return
         }
         diagnosticsCallback = callback
