@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.testbase
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.extension
-import kotlin.io.path.relativeTo
+import kotlin.io.path.relativeTo import kotlin.io.path.isRegularFile
 import kotlin.streams.asSequence
 import kotlin.streams.toList
 
@@ -19,6 +19,28 @@ import kotlin.streams.toList
  */
 internal fun Path.findInPath(name: String): Path? = Files
     .walk(this).use { stream -> stream.asSequence().find { it.fileName.toString() == name } }
+
+/**
+ * Find all Kotlin source files (ends with '.kt') in the given [Path].
+ */
+internal val Path.allKotlinSources: List<Path>
+    get() = Files.walk(this)
+        .use { files ->
+            files.asSequence()
+                .filter { it.isRegularFile() && it.extension == "kt" }
+                .toList()
+        }
+
+/**
+ * Find all Java source files (ends with '.java') in the given [Path].
+ */
+internal val Path.allJavaSources: List<Path>
+    get() = Files.walk(this)
+        .use { files ->
+            files.asSequence()
+                .filter { it.isRegularFile() && it.extension == "java" }
+                .toList()
+        }
 
 /**
  * Create a temporary directory that will be cleaned up on normal JVM termination, but will be left on non-zero exit status.
