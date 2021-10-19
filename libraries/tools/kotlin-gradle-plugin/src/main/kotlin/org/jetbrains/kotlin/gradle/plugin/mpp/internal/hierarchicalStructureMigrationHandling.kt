@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 
 internal fun handleHierarchicalStructureFlagsMigration(project: Project) {
-    SingleActionPerProject.run(project.rootProject, "handleHierarchicalStructureFlagsMigration - rootProject") {
-        doHandleHierarchicalStructureFlagsMigration(project.rootProject)
+    if (project.rootProject === project) {
+        SingleActionPerProject.run(project.rootProject, "handleHierarchicalStructureFlagsMigration - rootProject") {
+            doHandleHierarchicalStructureFlagsMigration(project.rootProject)
+        }
+    } else {
+        doHandleHierarchicalStructureFlagsMigration(project)
     }
-
-    doHandleHierarchicalStructureFlagsMigration(project)
 }
 
 private fun doHandleHierarchicalStructureFlagsMigration(project: Project) {

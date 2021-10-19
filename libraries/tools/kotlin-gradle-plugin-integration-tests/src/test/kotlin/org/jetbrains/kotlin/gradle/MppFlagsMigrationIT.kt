@@ -20,6 +20,7 @@ internal class MppFlagsMigrationIT : BaseGradleIT() {
         var dependencyPropagationFlag: Boolean? = null,
         var expectedToPass: Boolean = true,
         var expectedPhraseInOutput: String? = null,
+        var notExpectedPhraseInOutput: String? = null,
     ) {
         constructor(configure: TestCase.() -> Unit) : this() {
             configure()
@@ -32,6 +33,13 @@ internal class MppFlagsMigrationIT : BaseGradleIT() {
     companion object {
         @OptIn(ExperimentalStdlibApi::class)
         private val testCases = buildList {
+            add(TestCase {
+                hierarchiesByDefault = true
+                granularMetadataFlag = null
+                dependencyPropagationFlag = null
+                expectedToPass = true
+                notExpectedPhraseInOutput = "It is safe to remove the property."
+            })
             add(TestCase {
                 hierarchiesByDefault = true
                 granularMetadataFlag = true
@@ -100,6 +108,7 @@ internal class MppFlagsMigrationIT : BaseGradleIT() {
         Project("new-mpp-published").apply {
             setupWorkingDir()
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+            gradleProperties().delete()
         }
     }
 
@@ -128,6 +137,7 @@ internal class MppFlagsMigrationIT : BaseGradleIT() {
                 assertFailed()
 
             testCase.expectedPhraseInOutput?.let { assertContains(it, ignoreCase = true) }
+            testCase.notExpectedPhraseInOutput?.let { assertDoesNotContain(it, ignoreCase = true) }
         }
     }
 }
