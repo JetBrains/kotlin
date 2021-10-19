@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.filterUseSiteTarget
 import org.jetbrains.kotlin.fir.builder.initContainingClassAttr
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -112,6 +114,7 @@ class ValueParameter(
             if (firValueParameter.isVararg) {
                 this.isFromVararg = true
             }
+            firValueParameter.correspondingProperty = this
             this.fromPrimaryConstructor = true
         }
     }

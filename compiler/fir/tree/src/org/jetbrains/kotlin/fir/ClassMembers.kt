@@ -123,3 +123,10 @@ private object MatchingParameterFunctionTypeKey : FirDeclarationDataKey()
  */
 var <D : FirAnonymousFunction>
         D.matchingParameterFunctionType: ConeKotlinType? by FirDeclarationDataRegistry.data(MatchingParameterFunctionTypeKey)
+
+private object CorrespondingProperty : FirDeclarationDataKey()
+
+/**
+ * The corresponding [FirProperty] if the current value parameter is a `val` or `var` declared inside the primary constructor.
+ */
+var FirValueParameter.correspondingProperty: FirProperty? by FirDeclarationDataRegistry.data(CorrespondingProperty)

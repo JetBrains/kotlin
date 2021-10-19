@@ -12,7 +12,7 @@ FILE: annotation.kt
 
     }
     @base() public? final? class correct : R|kotlin/Any| {
-        public? [ContainingClassKey=correct] constructor(@base() x: Int): R|correct| {
+        public? [ContainingClassKey=correct] constructor([CorrespondingProperty=/correct.x] @base() x: Int): R|correct| {
             super<R|kotlin/Any|>()
         }
 

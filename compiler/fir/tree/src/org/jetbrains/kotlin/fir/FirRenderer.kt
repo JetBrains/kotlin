@@ -437,6 +437,7 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
     private fun Any.renderAsDeclarationAttributeValue() = when (this) {
         is FirCallableSymbol<*> -> callableId.toString()
         is FirClassLikeSymbol<*> -> classId.asString()
+        is FirProperty -> symbol.callableId.toString()
         else -> toString()
     }
 

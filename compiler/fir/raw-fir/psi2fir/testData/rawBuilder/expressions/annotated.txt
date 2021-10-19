@@ -21,7 +21,7 @@ FILE: annotated.kt
         ^foo IntegerLiteral(42)
     }
     public? final? data class Two : R|kotlin/Any| {
-        public? [ContainingClassKey=Two] constructor(x: Int, y: Int): R|Two| {
+        public? [ContainingClassKey=Two] constructor([CorrespondingProperty=/Two.x] x: Int, [CorrespondingProperty=/Two.y] y: Int): R|Two| {
             super<R|kotlin/Any|>()
         }
 
