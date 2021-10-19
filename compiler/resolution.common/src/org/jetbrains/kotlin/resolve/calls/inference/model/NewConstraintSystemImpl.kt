@@ -531,4 +531,12 @@ class NewConstraintSystemImpl(
                     it.type.lowerBoundIfFlexible().isUnit()
         }
     }
+
+    override fun removePostponedTypeVariablesFromConstraints(postponedTypeVariables: Set<TypeConstructorMarker>) {
+        for ((_, variableWithConstraints) in storage.notFixedTypeVariables) {
+            variableWithConstraints.removeConstrains { constraint ->
+                constraint.type.contains { it is StubTypeMarker && it.getOriginalTypeVariable() in postponedTypeVariables }
+            }
+        }
+    }
 }

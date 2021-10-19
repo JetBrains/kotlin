@@ -129,6 +129,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.isExtensionFunctionType
     }
 
+    override fun StubTypeMarker.getOriginalTypeVariable(): TypeVariableTypeConstructorMarker {
+        require(this is ConeStubType)
+        return this.variable.typeConstructor
+    }
+
     override fun KotlinTypeMarker.typeDepth() = when (this) {
         is ConeSimpleKotlinType -> typeDepth()
         is ConeFlexibleType -> maxOf(lowerBound().typeDepth(), upperBound().typeDepth())
