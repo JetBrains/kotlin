@@ -88,7 +88,9 @@ object JavaScopeProvider : FirScopeProvider() {
                 if (regularClass.isThereLoopInSupertypes(useSiteSession))
                     listOf(StandardClassIds.Any.constructClassLikeType(emptyArray(), isNullable = false))
                 else
-                    lookupSuperTypes(regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
+                    lookupSuperTypes(
+                        regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession, substituteTypes = true
+                    )
 
             val superTypeScopes = superTypes.mapNotNull {
                 it.scopeForSupertype(useSiteSession, scopeSession, subClass = regularClass)

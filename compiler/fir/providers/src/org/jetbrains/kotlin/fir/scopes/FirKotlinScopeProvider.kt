@@ -51,10 +51,11 @@ class FirKotlinScopeProvider(
                 }
 
 
-            val scopes = lookupSuperTypes(klass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
-                .mapNotNull { useSiteSuperType ->
-                    useSiteSuperType.scopeForSupertype(useSiteSession, scopeSession, klass)
-                }
+            val scopes = lookupSuperTypes(
+                klass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession, substituteTypes = true
+            ).mapNotNull { useSiteSuperType ->
+                useSiteSuperType.scopeForSupertype(useSiteSession, scopeSession, klass)
+            }
             FirClassUseSiteMemberScope(
                 useSiteSession,
                 FirTypeIntersectionScope.prepareIntersectionScope(
