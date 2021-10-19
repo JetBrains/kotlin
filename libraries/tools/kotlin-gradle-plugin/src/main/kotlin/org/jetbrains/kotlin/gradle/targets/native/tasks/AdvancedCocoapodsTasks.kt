@@ -74,7 +74,12 @@ open class PodInstallTask : DefaultTask() {
             runCommand(podInstallCommand,
                        project.logger,
                        errorHandler = { returnCode, output, _ ->
-                           CocoapodsErrorHandlingUtil.handlePodInstallError(returnCode, output, project, frameworkName.get())
+                           CocoapodsErrorHandlingUtil.handlePodInstallError(
+                               podInstallCommand.joinToString(" "),
+                               returnCode,
+                               output,
+                               project,
+                               frameworkName.get())
                        },
                        exceptionHandler = { e: IOException ->
                            CocoapodsErrorHandlingUtil.handle(e, podInstallCommand)
@@ -112,16 +117,21 @@ open class PodDownloadUrlTask : DownloadCocoapodsTask() {
     }
 
     @get:Internal
-    internal val permittedFileExtensions = listOf("zip", "tar", "tgz", "tbz", "txz", "gzip", "tar.gz", "tar.bz2", "tar.xz", "jar")
+    internal val permittedFileExtensions = listOf("tar.gz", "tar.bz2", "tar.xz", "tar", "tgz", "tbz", "txz", "zip", "gzip", "jar")
 
     @TaskAction
     fun download() {
         val podLocation = podSource.get()
         val fileName = podLocation.url.toString().substringAfterLast("/")
-        val fileNameWithoutExtension = fileName.substringBefore(".")
-        val extension = fileName.substringAfter(".")
-        require(permittedFileExtensions.contains(extension)) { "Unknown file extension" }
-
+        val permittedFileNameFormat = Regex(".*(\\.)(${permittedFileExtensions.joinToString("|") { it.replace(".", "\\.") }})")
+        val extension = permittedFileNameFormat.matchEntire(fileName)?.groups?.lastOrNull()?.value
+        require(extension != null) {
+            """
+                $fileName has an unsupported file extension 
+                Only the following extensions are supported: ${permittedFileExtensions.joinToString(", ")}
+            """.trimIndent()
+        }
+        val fileNameWithoutExtension = fileName.substringBeforeLast(".$extension")
         val repo = setupRepo(podLocation)
         val dependency = createDependency(fileNameWithoutExtension, extension)
         val configuration = project.configurations.detachedConfiguration(dependency)
@@ -275,7 +285,16 @@ open class PodDownloadGitTask : DownloadCocoapodsTask() {
             "${podspecLocation.url}",
             podName.get()
         )
-        runCommand(cloneAllCommand, project.logger) { directory(gitDir) }
+        runCommand(
+            cloneAllCommand,
+            project.logger,
+            errorHandler = { retCode, error, _ ->
+                CocoapodsErrorHandlingUtil.handlePodDownloadError(podName.get(), cloneAllCommand.joinToString(" "), retCode, error)
+            },
+            processConfiguration = {
+                directory(gitDir)
+            }
+        )
     }
 }
 
@@ -328,7 +347,7 @@ private fun runCommand(
     )
 
     check(retCode == 0) {
-        errorHandler?.invoke(retCode, inputText, process)
+        errorHandler?.invoke(retCode, inputText.ifBlank { errorText }, process)
             ?: """
                 |Executing of '${command.joinToString(" ")}' failed with code $retCode and message: 
                 |
@@ -403,7 +422,7 @@ open class PodGenTask : DefaultTask() {
                 CocoapodsErrorHandlingUtil.handle(e, podGenProcessArgs)
             },
             errorHandler = { retCode, output, _ ->
-                CocoapodsErrorHandlingUtil.handlePodGenError(retCode, output, family)
+                CocoapodsErrorHandlingUtil.handlePodGenError(podGenProcessArgs.joinToString(" "), retCode, output, family)
             },
             processConfiguration = {
                 directory(syntheticDir)
@@ -589,6 +608,8 @@ private object CocoapodsErrorHandlingUtil {
                |'${command.take(2).joinToString(" ")}' command failed with an exception:
                | ${e.message}
                |        
+               |        Full command: ${command.joinToString(" ")}
+               |        
                |        Possible reason: CocoaPods is not installed
                |        Please check that CocoaPods v1.10 or above and cocoapods-generate plugin are installed.
                |        
@@ -604,25 +625,26 @@ private object CocoapodsErrorHandlingUtil {
         }
     }
 
-    fun handlePodInstallError(retCode: Int, error: String, project: Project, frameworkName: String): String {
+    fun handlePodInstallError(command: String, retCode: Int, error: String, project: Project, frameworkName: String): String {
         val specReposMessages = retrieveSpecRepos(project)?.let { MissingSpecReposMessage(it).missingMessage }
         val cocoapodsMessages = retrievePods(project)?.map { MissingCocoapodsMessage(it, project).missingMessage }
 
         return listOfNotNull(
             "'pod install' command failed with code $retCode.",
+            "Full command: $command",
             "Error message:",
             error,
             specReposMessages?.let {
                 """
-                    |       Please, check that podfile contains following lines in header:
-                    |       $it
+                    |        Please, check that podfile contains following lines in header:
+                    |        $it
                     |
                 """.trimMargin()
             },
             cocoapodsMessages?.let {
                 """
-                   |        Please, check that each target depended on $frameworkName contains following dependencies:
-                   |        ${it.joinToString("\n")}
+                   |         Please, check that each target depended on $frameworkName contains following dependencies:
+                   |         ${it.joinToString("\n")}
                    |        
                 """.trimMargin()
             }
@@ -630,12 +652,14 @@ private object CocoapodsErrorHandlingUtil {
         ).joinToString("\n")
     }
 
-    fun handlePodGenError(retCode: Int, error: String, family: Family): String? {
-
+    fun handlePodGenError(command: String, retCode: Int, error: String, family: Family): String? {
         var message = """
             |'pod gen' command failed with return code: $retCode
             |
-            |       Error: ${error.lines().filter { it.contains("[!]") }?.joinToString("\n")}
+            |        Full command: $command
+            |
+            |        Error: ${error.lines().filter { it.contains("[!]") }.joinToString("\n")}
+            |       
         """.trimMargin()
 
         if (error.contains("Unknown command: `gen`")) {
@@ -652,7 +676,7 @@ private object CocoapodsErrorHandlingUtil {
             error.contains("no platform was specified")
         ) {
             message += """
-                |       
+                |
                 |       Possible reason: ${family.name.toLowerCase()} deployment target is not configured
                 |       Configure deployment_target for ALL targets as follows:
                 |       cocoapods {
@@ -682,5 +706,18 @@ private object CocoapodsErrorHandlingUtil {
             return message
         }
         return null
+    }
+
+    fun handlePodDownloadError(podName: String, command: String, retCode: Int, error: String): String {
+        return """
+            |'git clone' command failed with return code: $retCode
+            |
+            |       Full command: $command
+            |
+            |       Error: ${error.lines().filter { it.contains("fatal", true) }.joinToString("\n")}
+            |       
+            |       Possible reason: source of a pod '$podName' is invalid or inaccessible
+            |       
+        """.trimMargin()
     }
 }
