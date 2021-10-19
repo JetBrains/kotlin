@@ -28897,6 +28897,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("kt49209.kt")
+        public void testKt49209() throws Exception {
+            runTest("compiler/testData/codegen/box/platformTypes/kt49209.kt");
+        }
+
+        @Test
         @TestMetadata("rawTypeWithNestedClass.kt")
         public void testRawTypeWithNestedClass() throws Exception {
             runTest("compiler/testData/codegen/box/platformTypes/rawTypeWithNestedClass.kt");
