@@ -49,6 +49,20 @@ void Mark(KStdVector<ObjHeader*> graySet) noexcept {
 }
 
 template <typename Traits>
+void SweepExtraObjects(typename Traits::ExtraObjectsFactory& objectFactory) noexcept {
+    objectFactory.ProcessDeletions();
+    auto iter = objectFactory.LockForIter();
+    for (auto it = iter.begin(); it != iter.end();) {
+        auto &extraObject = *it;
+        if (!Traits::IsMarkedByExtraObject(extraObject)) {
+            extraObject.ClearWeakReferenceCounter();
+            extraObject.DetachAssociatedObject();
+        }
+        ++it;
+    }
+}
+
+template <typename Traits>
 typename Traits::ObjectFactory::FinalizerQueue Sweep(typename Traits::ObjectFactory& objectFactory) noexcept {
     typename Traits::ObjectFactory::FinalizerQueue finalizerQueue;
 
@@ -59,10 +73,6 @@ typename Traits::ObjectFactory::FinalizerQueue Sweep(typename Traits::ObjectFact
             continue;
         }
         auto* objHeader = it->IsArray() ? it->GetArrayHeader()->obj() : it->GetObjHeader();
-        if (auto* extraObject = mm::ExtraObjectData::Get(objHeader)) {
-            extraObject->ClearWeakReferenceCounter();
-            extraObject->DetachAssociatedObject();
-        }
         if (HasFinalizers(objHeader)) {
             iter.MoveAndAdvance(finalizerQueue, it);
         } else {

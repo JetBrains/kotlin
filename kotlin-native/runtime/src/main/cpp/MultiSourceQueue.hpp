@@ -165,6 +165,10 @@ public:
         deletionQueue_.clear();
     }
 
+    size_t GetSizeUnsafe() noexcept {
+        return queue_.size();
+    }
+
 private:
     // Using `KStdList` as it allows to implement `Collect` without memory allocations,
     // which is important for GC mark phase.

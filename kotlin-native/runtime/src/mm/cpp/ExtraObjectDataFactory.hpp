@@ -51,6 +51,8 @@ public:
 
     void ClearForTests() noexcept { extraObjects_.ClearForTests(); }
 
+    size_t GetSizeUnsafe() noexcept { return extraObjects_.GetSizeUnsafe(); }
+
 private:
     Queue extraObjects_;
 };

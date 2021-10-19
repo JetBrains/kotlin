@@ -38,6 +38,14 @@ struct MarkTraits {
 
 struct SweepTraits {
     using ObjectFactory = mm::ObjectFactory<gc::SameThreadMarkAndSweep>;
+    using ExtraObjectsFactory = mm::ExtraObjectDataFactory;
+
+    static bool IsMarkedByExtraObject(mm::ExtraObjectData &object) noexcept {
+        auto *baseObject = object.GetBaseObject();
+        if (!baseObject->heap()) return true;
+        auto& objectData = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(baseObject).GCObjectData();
+        return objectData.color() == gc::SameThreadMarkAndSweep::ObjectData::Color::kBlack;
+    }
 
     static bool TryResetMark(ObjectFactory::NodeRef node) noexcept {
         auto& objectData = node.GCObjectData();
@@ -192,12 +200,16 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
         gc::Mark<MarkTraits>(std::move(graySet));
         auto timeMarkUs = konan::getTimeMicros();
         RuntimeLogDebug({kTagGC}, "Marked in %" PRIu64 " microseconds", timeMarkUs - timeRootSetUs);
+        gc::SweepExtraObjects<SweepTraits>(mm::GlobalData::Instance().extraObjectDataFactory());
+        auto timeSweepExtraObjectsUs = konan::getTimeMicros();
+        RuntimeLogDebug({kTagGC}, "Sweeped extra objects in %" PRIu64 " microseconds", timeSweepExtraObjectsUs - timeMarkUs);
         finalizerQueue = gc::Sweep<SweepTraits>(mm::GlobalData::Instance().objectFactory());
         auto timeSweepUs = konan::getTimeMicros();
-        RuntimeLogDebug({kTagGC}, "Sweeped in %" PRIu64 " microseconds", timeSweepUs - timeMarkUs);
+        RuntimeLogDebug({kTagGC}, "Sweeped in %" PRIu64 " microseconds", timeSweepUs - timeSweepExtraObjectsUs);
 
         // Can be unsafe, because we've stopped the world.
         auto objectsCountAfter = mm::GlobalData::Instance().objectFactory().GetSizeUnsafe();
+        auto extraObjectsCountAfter = mm::GlobalData::Instance().extraObjectDataFactory().GetSizeUnsafe();
 
         gSafepointFlag = SafepointFlag::kNone;
         mm::ResumeThreads();
@@ -210,9 +222,9 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
 
         RuntimeLogInfo(
                 {kTagGC},
-                "Finished GC epoch %zu. Collected %zu objects, to be finalized %zu objects, %zu objects remain. Total pause time %" PRIu64
+                "Finished GC epoch %zu. Collected %zu objects, to be finalized %zu objects, %zu objects and %zd extra data objects remain. Total pause time %" PRIu64
                 " microseconds",
-                epoch_, collectedCount, finalizersCount, objectsCountAfter, timeResumeUs - timeStartUs);
+                epoch_, collectedCount, finalizersCount, objectsCountAfter, extraObjectsCountAfter, timeResumeUs - timeStartUs);
         ++epoch_;
         lastGCTimestampUs_ = timeResumeUs;
     }
