@@ -31,7 +31,11 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirPredi
     abstract fun needToGenerateAdditionalMembersInClass(klass: FirClass): Boolean
     abstract fun needToGenerateNestedClassifiersInClass(klass: FirClass): Boolean
 
-    // Can be called on SUPERTYPES stage
+    /*
+     * Can be called on SUPERTYPES stage
+     *
+     * If classId has `outerClassId.Companion` format then generated class should be a companion object
+     */
     open fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? = null
 
     // Can be called on STATUS stage

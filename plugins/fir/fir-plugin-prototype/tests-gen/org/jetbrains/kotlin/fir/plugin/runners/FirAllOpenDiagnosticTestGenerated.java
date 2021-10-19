@@ -56,6 +56,12 @@ public class FirAllOpenDiagnosticTestGenerated extends AbstractFirAllOpenDiagnos
         }
 
         @Test
+        @TestMetadata("classWithCompanionObject.kt")
+        public void testClassWithCompanionObject() throws Exception {
+            runTest("plugins/fir/fir-plugin-prototype/testData/diagnostics/memberGen/classWithCompanionObject.kt");
+        }
+
+        @Test
         @TestMetadata("classWithGeneratedMembersAndNestedClass.kt")
         public void testClassWithGeneratedMembersAndNestedClass() throws Exception {
             runTest("plugins/fir/fir-plugin-prototype/testData/diagnostics/memberGen/classWithGeneratedMembersAndNestedClass.kt");

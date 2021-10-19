@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -24,7 +26,7 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
     session: FirSession,
     cachesFactory: FirCachesFactory,
     private val extensions: List<FirDeclarationGenerationExtension>
-) : FirSymbolProvider(session) {
+) : FirSymbolProvider(session), FirSessionComponent {
     companion object {
         fun create(session: FirSession): FirExtensionDeclarationsSymbolProvider? {
             val extensions = session.extensionService.declarationGenerators
@@ -101,3 +103,5 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
         return fqName.takeIf { packageCache.getValue(fqName, null) }
     }
 }
+
+val FirSession.generatedDeclarationsSymbolProvider: FirExtensionDeclarationsSymbolProvider? by FirSession.nullableSessionComponentAccessor()

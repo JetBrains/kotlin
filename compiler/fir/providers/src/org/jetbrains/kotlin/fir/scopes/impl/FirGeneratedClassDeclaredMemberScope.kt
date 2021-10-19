@@ -10,10 +10,8 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirLazyValue
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
@@ -133,6 +131,13 @@ class FirGeneratedClassNestedClassifierScope(
         }
 
     private fun generateNestedClassifier(name: Name): FirRegularClassSymbol? {
+        if (klass is FirRegularClass) {
+            val companion = klass.companionObjectSymbol
+            if (companion != null && companion.origin.generated && companion.classId.shortClassName == name) {
+                return companion
+            }
+        }
+
         if (name !in getClassifierNames()) return null
         val generatedClass = useSiteSession.symbolProvider.getClassLikeSymbolByClassId(klass.classId.createNestedClassId(name))
         require(generatedClass is FirRegularClassSymbol?) { "Only regular class are allowed as nested classes" }
