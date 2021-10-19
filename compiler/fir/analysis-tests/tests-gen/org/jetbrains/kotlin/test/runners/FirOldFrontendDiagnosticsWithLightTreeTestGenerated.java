@@ -13705,6 +13705,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("kt49101.kt")
+                public void testKt49101() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/kt49101.kt");
+                }
+
+                @Test
                 @TestMetadata("memberScopeOfCaptured.kt")
                 public void testMemberScopeOfCaptured() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/memberScopeOfCaptured.kt");
