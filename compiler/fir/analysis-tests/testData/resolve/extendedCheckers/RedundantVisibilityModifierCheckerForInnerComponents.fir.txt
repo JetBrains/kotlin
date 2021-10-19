@@ -1,0 +1,153 @@
+FILE: RedundantVisibilityModifierCheckerForInnerComponents.kt
+    public abstract class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract var id: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+            protected set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        protected open val a: R|kotlin/String| = String(test)
+            protected get(): R|kotlin/String|
+
+    }
+    public final class Bar : R|Foo| {
+        public constructor(): R|Bar| {
+            super<R|Foo|>()
+        }
+
+        public final override var id: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final override val a: R|kotlin/String| = String(rest)
+            public get(): R|kotlin/String|
+
+    }
+    public abstract class A1 : R|kotlin/Any| {
+        public constructor(): R|A1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open var attribute: R|kotlin/String| = String(a)
+            public get(): R|kotlin/String|
+            protected set(value: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public final class C1 : R|A1| {
+        public constructor(): R|C1| {
+            super<R|A1|>()
+        }
+
+        public final override var attribute: R|kotlin/String| = this@R|/C1|.super<R|A1|>.R|/A1.attribute|
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public final fun test1(): R|kotlin/Unit| {
+        R|/C1.C1|().R|/C1.attribute| = String(c)
+    }
+    public abstract class A2 : R|kotlin/Any| {
+        public constructor(): R|A2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open var attribute: R|kotlin/String| = String(a)
+            public get(): R|kotlin/String|
+            protected set(value: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public final class C2 : R|A2| {
+        public constructor(): R|C2| {
+            super<R|A2|>()
+        }
+
+        public final override var attribute: R|kotlin/String| = this@R|/C2|.super<R|A2|>.R|/A2.attribute|
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public abstract class A3 : R|kotlin/Any| {
+        public constructor(): R|A3| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open var attribute: R|kotlin/String| = String(a)
+            public get(): R|kotlin/String|
+            protected set(value: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public abstract class B3 : R|A3| {
+        public constructor(): R|B3| {
+            super<R|A3|>()
+        }
+
+        public open override var attribute: R|kotlin/String| = String(b)
+            public get(): R|kotlin/String|
+            protected set(value: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public final class C3 : R|B3| {
+        public constructor(): R|C3| {
+            super<R|B3|>()
+        }
+
+        public final override var attribute: R|kotlin/String| = this@R|/C3|.super<R|B3|>.R|/B3.attribute|
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public abstract class A4 : R|kotlin/Any| {
+        public constructor(): R|A4| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open var attribute: R|kotlin/String| = String(a)
+            public get(): R|kotlin/String|
+            protected set(value: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public abstract class B4 : R|A4| {
+        public constructor(): R|B4| {
+            super<R|A4|>()
+        }
+
+        public open override var attribute: R|kotlin/String| = String(b)
+            public get(): R|kotlin/String|
+            protected set(value: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public final class C4 : R|B4| {
+        public constructor(): R|C4| {
+            super<R|B4|>()
+        }
+
+        public final override var attribute: R|kotlin/String| = this@R|/C4|.super<R|B4|>.R|/B4.attribute|
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public abstract class A5 : R|kotlin/Any| {
+        public constructor(): R|A5| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open var attribute: R|kotlin/String| = String(a)
+            public get(): R|kotlin/String|
+            protected set(value: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public final class B5 : R|A5| {
+        public constructor(): R|B5| {
+            super<R|A5|>()
+        }
+
+        public final override var attribute: R|kotlin/String| = String(b)
+            public get(): R|kotlin/String|
+            protected set(value: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public final fun test5(): R|kotlin/Unit| {
+        R|/B5.B5|().R|/B5.attribute| = String(c)
+    }
