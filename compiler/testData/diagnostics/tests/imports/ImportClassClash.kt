@@ -47,3 +47,7 @@ import a.B
 // FILE: 6.kt
 import a.<!CONFLICTING_IMPORT!>B<!>
 import b.<!CONFLICTING_IMPORT!>B<!>
+
+// FILE: 7.kt
+import a.B as <!CONFLICTING_IMPORT!>Foo<!>
+import b.B as <!CONFLICTING_IMPORT!>Foo<!>

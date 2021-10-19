@@ -879,6 +879,23 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val IMPORT_ALIAS: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            tree.findChildByType(node, KtNodeTypes.IMPORT_ALIAS)?.let {
+                tree.findChildByType(it, KtTokens.IDENTIFIER)?.let {
+                    return markElement(it, startOffset, endOffset, tree, node)
+                }
+            }
+            return IMPORT_LAST_NAME.mark(node, startOffset, endOffset, tree)
+        }
+    }
+
+
     val SPREAD_OPERATOR: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,

@@ -330,6 +330,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.TAILREC_MODIFIER
     )
 
+    val IMPORT_ALIAS = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.IMPORT_ALIAS,
+        PositioningStrategies.IMPORT_ALIAS
+    )
+
     val PROPERTY_DELEGATE = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.PROPERTY_DELEGATE,
         PositioningStrategies.PROPERTY_DELEGATE

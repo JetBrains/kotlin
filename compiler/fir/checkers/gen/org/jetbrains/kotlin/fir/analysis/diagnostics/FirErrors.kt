@@ -684,7 +684,7 @@ object FirErrors {
     val CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON by error1<KtImportDirective, Name>(SourceElementPositioningStrategies.IMPORT_LAST_NAME)
     val PACKAGE_CANNOT_BE_IMPORTED by error0<KtImportDirective>(SourceElementPositioningStrategies.IMPORT_LAST_NAME)
     val CANNOT_BE_IMPORTED by error1<KtImportDirective, Name>(SourceElementPositioningStrategies.IMPORT_LAST_NAME)
-    val CONFLICTING_IMPORT by error1<KtImportDirective, Name>(SourceElementPositioningStrategies.IMPORT_LAST_NAME)
+    val CONFLICTING_IMPORT by error1<KtImportDirective, Name>(SourceElementPositioningStrategies.IMPORT_ALIAS)
     val OPERATOR_RENAMED_ON_IMPORT by error0<KtImportDirective>(SourceElementPositioningStrategies.IMPORT_LAST_NAME)
 
     // Suspend errors

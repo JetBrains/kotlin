@@ -1322,7 +1322,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Name>("name")
         }
 
-        val CONFLICTING_IMPORT by error<KtImportDirective>(PositioningStrategy.IMPORT_LAST_NAME) {
+        val CONFLICTING_IMPORT by error<KtImportDirective>(PositioningStrategy.IMPORT_ALIAS) {
             parameter<Name>("name")
         }
 
