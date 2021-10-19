@@ -29,7 +29,7 @@ buildscript {
     dependencies {
         bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
 
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.32")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.34")
         classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
         classpath(kotlin("serialization", bootstrapKotlinVersion))
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
