@@ -334,6 +334,7 @@ extra["compilerArtifactsForIde"] = listOf(
     ":kotlin-scripting-compiler",
     ":kotlin-scripting-compiler-impl",
     ":kotlin-android-extensions-runtime",
+    ":plugins:parcelize:parcelize-runtime",
     ":kotlin-stdlib-common",
     ":kotlin-stdlib",
     ":kotlin-stdlib-jdk7",
