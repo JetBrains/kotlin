@@ -926,12 +926,6 @@ public class ForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated exte
             }
 
             @Test
-            @TestMetadata("kt48778.kt")
-            public void testKt48778() throws Exception {
-                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/kt48778.kt");
-            }
-
-            @Test
             @TestMetadata("methodWithTypeParameter.kt")
             public void testMethodWithTypeParameter() throws Exception {
                 runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/methodWithTypeParameter.kt");
