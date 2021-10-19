@@ -111,9 +111,10 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
         signatures: MultiMap<RawSignature, JvmDeclarationOrigin>
     ) {
         for (predefinedSignature in PREDEFINED_SIGNATURES) {
-            if (!signatures.containsKey(predefinedSignature)) continue
+            val signature = signatures[predefinedSignature]
+            if (signature.isEmpty()) continue
 
-            val origins = signatures[predefinedSignature] + JvmDeclarationOrigin.NO_ORIGIN
+            val origins = signature + JvmDeclarationOrigin.NO_ORIGIN
 
             val diagnostic = computeDiagnosticToReport(classOrigin, classInternalName, predefinedSignature, origins) ?: continue
             diagnostics.report(ErrorsJvm.CONFLICTING_INHERITED_JVM_DECLARATIONS.on(diagnostic.element, diagnostic.data))

@@ -485,19 +485,19 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         AccessorKey key = new AccessorKey(descriptor, superCallTarget, accessorKind);
 
         // NB should check for property accessor factory first (or change property accessor tracking under propertyAccessorFactory creation)
-        if (propertyAccessorFactories.containsKey(key)) {
-            return (D) propertyAccessorFactories.get(key).getOrCreateAccessorIfNeeded(getterAccessorRequired, setterAccessorRequired);
+        AccessorForPropertyDescriptorFactory propertyAccessorFactory = propertyAccessorFactories.get(key);
+        if (propertyAccessorFactory != null) {
+            return (D) propertyAccessorFactory.getOrCreateAccessorIfNeeded(getterAccessorRequired, setterAccessorRequired);
         }
 
-        if (accessors.containsKey(key)) {
-            AccessorForCallableDescriptor<?> accessor = accessors.get(key);
+        AccessorForCallableDescriptor<?> accessor = accessors.get(key);
+        if (accessor != null) {
             assert accessorKind == AccessorKind.NORMAL ||
                    accessor instanceof AccessorForPropertyBackingField : "There is already exists accessor with isForBackingField = false in this context";
             return (D) accessor;
         }
 
         String nameSuffix = SyntheticAccessorUtilKt.getAccessorNameSuffix(descriptor, key.superCallLabelTarget, accessorKind);
-        AccessorForCallableDescriptor<?> accessor;
         if (descriptor instanceof SimpleFunctionDescriptor) {
             accessor = new AccessorForFunctionDescriptor((FunctionDescriptor) descriptor, contextDescriptor, superCallTarget, nameSuffix, accessorKind);
         }

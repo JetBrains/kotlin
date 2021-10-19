@@ -117,10 +117,11 @@ object FirMemberPropertiesChecker : FirClassChecker() {
             }
 
             for (propertySymbol in memberPropertySymbols) {
-                if (map.containsKey(propertySymbol)) {
+                val item = map[propertySymbol]
+                if (item != null) {
                     // Accumulation:
                     //   range join for class constructors, range plus for class's anonymous initializers and property initializations
-                    map[propertySymbol] = acc.invoke(map[propertySymbol]!!, info[propertySymbol] ?: EventOccurrencesRange.ZERO)
+                    map[propertySymbol] = acc.invoke(item, info[propertySymbol] ?: EventOccurrencesRange.ZERO)
                 } else {
                     // Initial assignment.
                     // NB: we should not use `acc` here to not weaken ranges. For example, if we visit one and only constructor where

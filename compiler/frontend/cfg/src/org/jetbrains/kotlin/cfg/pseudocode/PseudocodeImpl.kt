@@ -161,8 +161,9 @@ class PseudocodeImpl(override val correspondingElement: KtElement, override val 
         instruction.owner = this
 
         if (instruction is KtElementInstruction) {
-            if (!representativeInstructions.containsKey(instruction.element)) {
-                representativeInstructions.put(instruction.element, instruction)
+            val element = instruction.element
+            if (!representativeInstructions.containsKey(element)) {
+                representativeInstructions[element] = instruction
             }
         }
 
@@ -430,8 +431,9 @@ class PseudocodeImpl(override val correspondingElement: KtElement, override val 
     private fun copyInstruction(instruction: Instruction, originalToCopy: Map<Label, PseudocodeLabel>): Instruction {
         if (instruction is AbstractJumpInstruction) {
             val originalTarget = instruction.targetLabel
-            if (originalToCopy.containsKey(originalTarget)) {
-                return instruction.copy(originalToCopy[originalTarget]!!)
+            val item = originalToCopy[originalTarget]
+            if (item != null) {
+                return instruction.copy(item)
             }
         }
         if (instruction is NondeterministicJumpInstruction) {

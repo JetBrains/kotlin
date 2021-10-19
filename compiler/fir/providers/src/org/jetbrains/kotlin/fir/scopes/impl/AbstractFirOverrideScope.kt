@@ -48,7 +48,8 @@ abstract class AbstractFirOverrideScope(
 
     // Receiver is super-type function here
     protected open fun FirCallableSymbol<*>.getOverridden(overrideCandidates: Set<FirCallableSymbol<*>>): FirCallableSymbol<*>? {
-        if (overrideByBase.containsKey(this)) return overrideByBase[this]
+        val overrideByBaseItem = overrideByBase[this]
+        if (overrideByBaseItem != null) return overrideByBaseItem
 
         val baseDeclaration = (this as FirBasedSymbol<*>).fir as FirCallableDeclaration
         val override = overrideCandidates.firstOrNull {
