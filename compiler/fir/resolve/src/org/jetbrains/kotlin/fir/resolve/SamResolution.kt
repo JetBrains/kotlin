@@ -251,7 +251,8 @@ private fun FirRegularClass.getSingleAbstractMethodOrNull(
 
 private fun FirRegularClass.computeSamCandidateNames(session: FirSession): Set<Name> {
     val classes =
-        lookupSuperTypes(this, lookupInterfaces = true, deep = true, useSiteSession = session)
+        // Note: we search only for names in this function, so substitution is not needed      V
+        lookupSuperTypes(this, lookupInterfaces = true, deep = true, useSiteSession = session, substituteTypes = false)
             .mapNotNullTo(mutableListOf(this)) {
                 (session.symbolProvider.getSymbolByLookupTag(it.lookupTag) as? FirRegularClassSymbol)?.fir
             }
