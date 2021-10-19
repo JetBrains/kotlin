@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClass
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirQualifiedSupertypeExtendedByOtherSupertypeChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.QualifiedSupertypeMayBeExtendedByOtherSupertype)) return
         // require to be called over a super reference
         val superReference = expression.calleeReference.safeAs<FirSuperReference>()
             ?.takeIf { it.hadExplicitTypeInSource() }

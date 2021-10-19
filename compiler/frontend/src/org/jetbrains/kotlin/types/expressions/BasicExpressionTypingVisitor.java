@@ -500,7 +500,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.report(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER.on(redundantTypeArguments));
             }
 
-            if (result != null && (validClassifier || validType)) {
+            if (!components.languageVersionSettings.supportsFeature(LanguageFeature.QualifiedSupertypeMayBeExtendedByOtherSupertype) &&
+                result != null &&
+                (validClassifier || validType)
+            ) {
                 checkResolvedExplicitlyQualifiedSupertype(context.trace, result, supertypes, superTypeQualifier);
             }
         }

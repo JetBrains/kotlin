@@ -1,4 +1,5 @@
 // !JVM_TARGET: 1.8
+// !LANGUAGE: -QualifiedSupertypeMayBeExtendedByOtherSupertype
 // FILE: 1.kt
 interface A {
     <!JVM_DEFAULT_IN_DECLARATION!>@<!DEPRECATION!>JvmDefault<!><!>

@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// !LANGUAGE: +QualifiedSupertypeMayBeExtendedByOtherSupertype
 interface IBase {
     fun foo() {}
     fun bar() {}
@@ -17,8 +18,8 @@ class Test : IDerived1, IBase, IDerived2 {
     override fun foo() {}
 
     fun test() {
-        super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>IBase<!>>.foo()
-        super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>IBase<!>>.bar()
+        super<IBase>.foo()
+        super<IBase>.bar()
 
         super<IDerived1>.foo()
         super<IDerived1>.bar()
