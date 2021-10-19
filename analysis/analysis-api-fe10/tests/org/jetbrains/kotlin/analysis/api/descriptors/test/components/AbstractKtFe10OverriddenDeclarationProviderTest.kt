@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.test.components
 
 import org.jetbrains.kotlin.analysis.api.descriptors.test.KtFe10FrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.AbstractOverriddenDeclarationProviderTest
 
-abstract class AbstractKtFe10OverriddenDeclarationProviderTest : AbstractOverriddenDeclarationProviderTest() {
-    override val configurator: FrontendApiTestConfiguratorService
-        get() = KtFe10FrontendApiTestConfiguratorService
-}
+abstract class AbstractKtFe10OverriddenDeclarationProviderTest :
+    AbstractOverriddenDeclarationProviderTest(KtFe10FrontendApiTestConfiguratorService)

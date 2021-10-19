@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.AbstractRendererTest
 
-abstract class AbstractFirRendererTest : AbstractRendererTest() {
-    override val configurator: FrontendApiTestConfiguratorService
-        get() = FirFrontendApiTestConfiguratorService
-}
+abstract class AbstractFirRendererTest : AbstractRendererTest(FirFrontendApiTestConfiguratorService)

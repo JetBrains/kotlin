@@ -7,14 +7,10 @@ package org.jetbrains.kotlin.analysis.api.descriptors.test.scopes
 
 import org.jetbrains.kotlin.analysis.api.descriptors.test.KtFe10FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.descriptors.test.KtFe10TestWithOutOfBlockModification
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.test.scopes.AbstractMemberScopeByFqNameTest
 import org.jetbrains.kotlin.psi.KtFile
 
-abstract class AbstractKtFe10MemberScopeByFqNameTest : AbstractMemberScopeByFqNameTest() {
-    override val configurator: FrontendApiTestConfiguratorService
-        get() = KtFe10FrontendApiTestConfiguratorService
-
+abstract class AbstractKtFe10MemberScopeByFqNameTest : AbstractMemberScopeByFqNameTest(KtFe10FrontendApiTestConfiguratorService) {
     override fun doOutOfBlockModification(ktFile: KtFile) {
         KtFe10TestWithOutOfBlockModification.doOutOfBlockModification(ktFile)
     }

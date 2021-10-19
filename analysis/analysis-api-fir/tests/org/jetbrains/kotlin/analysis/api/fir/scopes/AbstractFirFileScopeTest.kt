@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
 import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.test.scopes.AbstractFileScopeTest
 
-abstract class AbstractFirFileScopeTest : AbstractFileScopeTest() {
-    override val configurator: FrontendApiTestConfiguratorService
-        get() = FirFrontendApiTestConfiguratorService
-}
+abstract class AbstractFirFileScopeTest : AbstractFileScopeTest(FirFrontendApiTestConfiguratorService)

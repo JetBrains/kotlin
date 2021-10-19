@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.symbols
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.psi.KtFile
@@ -13,7 +14,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AbstractSymbolByFqNameTest : AbstractSymbolTest() {
+abstract class AbstractSymbolByFqNameTest(configurator: FrontendApiTestConfiguratorService) : AbstractSymbolTest(configurator) {
     override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): List<KtSymbol> {
         val symbolData = SymbolByFqName.getSymbolDataFromFile(testDataPath)
         return with(symbolData) { toSymbols() }

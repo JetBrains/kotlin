@@ -7,14 +7,10 @@ package org.jetbrains.kotlin.analysis.api.fir.scopes
 
 import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.fir.FirTestWithOutOfBlockModification
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.test.scopes.AbstractMemberScopeByFqNameTest
 import org.jetbrains.kotlin.psi.KtFile
 
-abstract class AbstractFirMemberScopeByFqNameTest : AbstractMemberScopeByFqNameTest() {
-    override val configurator: FrontendApiTestConfiguratorService
-        get() = FirFrontendApiTestConfiguratorService
-
+abstract class AbstractFirMemberScopeByFqNameTest : AbstractMemberScopeByFqNameTest(FirFrontendApiTestConfiguratorService) {
     override fun doOutOfBlockModification(ktFile: KtFile) {
         FirTestWithOutOfBlockModification.doOutOfBlockModification(ktFile)
     }

@@ -5,10 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.test
 
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.test.AbstractReferenceResolveTest
 
-abstract class AbstractKtFe10ReferenceResolveTest : AbstractReferenceResolveTest() {
-    override val configurator: FrontendApiTestConfiguratorService
-        get() = KtFe10FrontendApiTestConfiguratorService
-}
+abstract class AbstractKtFe10ReferenceResolveTest : AbstractReferenceResolveTest(KtFe10FrontendApiTestConfiguratorService)

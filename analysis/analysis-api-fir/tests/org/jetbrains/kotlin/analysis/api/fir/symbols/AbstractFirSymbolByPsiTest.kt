@@ -7,14 +7,10 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.fir.FirTestWithOutOfBlockModification
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.psi.KtFile
 
-abstract class AbstractFirSymbolByPsiTest : AbstractSymbolByPsiTest() {
-    override val configurator: FrontendApiTestConfiguratorService
-        get() = FirFrontendApiTestConfiguratorService
-
+abstract class AbstractFirSymbolByPsiTest : AbstractSymbolByPsiTest(FirFrontendApiTestConfiguratorService) {
     override fun doOutOfBlockModification(ktFile: KtFile) {
         FirTestWithOutOfBlockModification.doOutOfBlockModification(ktFile)
     }

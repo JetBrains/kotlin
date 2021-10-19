@@ -51,7 +51,7 @@ interface FrontendApiTestConfiguratorService {
     fun prepareTestFiles(files: List<KtFile>, module: TestModule, testServices: TestServices) {}
 }
 
-abstract class AbstractFrontendApiTest : TestWithDisposable() {
+abstract class AbstractFrontendApiTest(val configurator: FrontendApiTestConfiguratorService) : TestWithDisposable() {
     protected open val enableTestInDependedMode: Boolean = true
 
     protected lateinit var testInfo: KotlinTestInfo
@@ -61,8 +61,6 @@ abstract class AbstractFrontendApiTest : TestWithDisposable() {
 
     protected lateinit var testDataPath: Path
         private set
-
-    protected abstract val configurator: FrontendApiTestConfiguratorService
 
     protected open fun configureTest(builder: TestConfigurationBuilder) {
         with(configurator) {

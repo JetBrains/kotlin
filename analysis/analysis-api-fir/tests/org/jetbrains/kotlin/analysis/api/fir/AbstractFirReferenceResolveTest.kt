@@ -5,10 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir
 
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.test.AbstractReferenceResolveTest
 
-abstract class AbstractFirReferenceResolveTest : AbstractReferenceResolveTest() {
-    override val configurator: FrontendApiTestConfiguratorService
-        get() = FirFrontendApiTestConfiguratorService
-}
+abstract class AbstractFirReferenceResolveTest : AbstractReferenceResolveTest(FirFrontendApiTestConfiguratorService)

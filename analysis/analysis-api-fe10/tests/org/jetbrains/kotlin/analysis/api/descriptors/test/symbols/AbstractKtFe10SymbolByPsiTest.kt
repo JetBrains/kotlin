@@ -7,14 +7,10 @@ package org.jetbrains.kotlin.analysis.api.descriptors.test.symbols
 
 import org.jetbrains.kotlin.analysis.api.descriptors.test.KtFe10FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.descriptors.test.KtFe10TestWithOutOfBlockModification
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.psi.KtFile
 
-abstract class AbstractKtFe10SymbolByPsiTest : AbstractSymbolByPsiTest() {
-    override val configurator: FrontendApiTestConfiguratorService
-        get() = KtFe10FrontendApiTestConfiguratorService
-
+abstract class AbstractKtFe10SymbolByPsiTest : AbstractSymbolByPsiTest(KtFe10FrontendApiTestConfiguratorService) {
     override fun doOutOfBlockModification(ktFile: KtFile) {
         KtFe10TestWithOutOfBlockModification.doOutOfBlockModification(ktFile)
     }

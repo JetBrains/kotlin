@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.components
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.api.impl.barebone.parentsOfType
+import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleModuleTest
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
@@ -19,7 +20,9 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractOverriddenDeclarationProviderTest : AbstractHLApiSingleModuleTest() {
+abstract class AbstractOverriddenDeclarationProviderTest(
+    configurator: FrontendApiTestConfiguratorService
+) : AbstractHLApiSingleModuleTest(configurator) {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         super.doTestByFileStructure(ktFiles, module, testServices)
 

@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.test.components
 
 import org.jetbrains.kotlin.analysis.api.descriptors.test.KtFe10FrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.AbstractHasCommonSubtypeTest
 
-abstract class AbstractKtFe10HasCommonSubtypeTest : AbstractHasCommonSubtypeTest() {
-    override val configurator: FrontendApiTestConfiguratorService
-        get() = KtFe10FrontendApiTestConfiguratorService
-}
+abstract class AbstractKtFe10HasCommonSubtypeTest : AbstractHasCommonSubtypeTest(KtFe10FrontendApiTestConfiguratorService)
