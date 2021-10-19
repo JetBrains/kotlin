@@ -4,6 +4,10 @@
  */
 package org.jetbrains.kotlin.backend.konan
 
+import kotlinx.cinterop.alloc
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.ptr
+import kotlinx.cinterop.toKStringFromUtf8
 import llvm.*
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
@@ -51,6 +55,17 @@ internal fun produceCStubs(context: Context) {
             context.inVerbosePhase
     ).forEach {
         parseAndLinkBitcodeFile(context, llvmModule, it.absolutePath)
+    }
+    // TODO: Consider adding LLVM_IR compiler output kind.
+    if (context.configuration.getBoolean(KonanConfigKeys.SAVE_LLVM_IR)) {
+        val moduleName: String = memScoped {
+            val sizeVar = alloc<size_tVar>()
+            LLVMGetModuleIdentifier(context.llvmModule, sizeVar.ptr)!!.toKStringFromUtf8()
+        }
+        val output = context.config.tempFiles.create(moduleName,".ll")
+        if (LLVMPrintModuleToFile(context.llvmModule, output.absolutePath, null) != 0) {
+            error("Can't dump LLVM IR to ${output.absolutePath}")
+        }
     }
 }
 
