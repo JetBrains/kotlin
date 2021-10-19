@@ -1106,13 +1106,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
         variableStorage.getOrCreateRealVariable(flow, initializer.symbol, initializer)
             ?.let { initializerVariable ->
-                val isInitializerStable = initializerVariable.stability == PropertyStability.STABLE_VALUE ||
-                        (initializerVariable.stability == PropertyStability.LOCAL_VAR &&
-                                initializer is FirQualifiedAccessExpression &&
-                                !isAccessToUnstableLocalVariable(initializer))
+                val isInitializerStable =
+                    initializerVariable.isStable || (initializerVariable.hasLocalStability && initializer.isAccessToStableVariable())
 
-                if (isInitializerStable && (propertyVariable.stability == PropertyStability.STABLE_VALUE || propertyVariable.stability == PropertyStability.LOCAL_VAR)
-                ) {
+                if (isInitializerStable && (propertyVariable.hasLocalStability || propertyVariable.isStable)) {
                     logicSystem.addLocalVariableAlias(
                         flow, propertyVariable,
                         RealVariableAndType(initializerVariable, initializer.coneType)
@@ -1140,6 +1137,12 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             flow.addTypeStatement(propertyVariable typeEq initializer.typeRef.coneType)
         }
     }
+
+    private fun FirExpression.isAccessToStableVariable(): Boolean =
+        this is FirQualifiedAccessExpression && !isAccessToUnstableLocalVariable(this)
+
+    private val RealVariable.isStable get() = stability == PropertyStability.STABLE_VALUE
+    private val RealVariable.hasLocalStability get() = stability == PropertyStability.LOCAL_VAR
 
 
     fun exitThrowExceptionNode(throwExpression: FirThrowExpression) {
