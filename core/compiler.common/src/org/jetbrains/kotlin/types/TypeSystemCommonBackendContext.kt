@@ -53,6 +53,7 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
 
 interface TypeSystemCommonBackendContextForTypeMapping : TypeSystemCommonBackendContext {
     fun TypeConstructorMarker.isTypeParameter(): Boolean
+    fun TypeConstructorMarker.asTypeParameter(): TypeParameterMarker
     fun TypeConstructorMarker.defaultType(): KotlinTypeMarker
     fun TypeConstructorMarker.isScript(): Boolean
 

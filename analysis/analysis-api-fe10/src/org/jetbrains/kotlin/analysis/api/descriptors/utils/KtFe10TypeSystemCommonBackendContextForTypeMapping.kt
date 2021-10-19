@@ -28,8 +28,16 @@ internal class KtFe10TypeSystemCommonBackendContextForTypeMapping(
     override fun TypeConstructorMarker.isTypeParameter(): Boolean {
         require(this is TypeConstructor)
         return when (this) {
-            is NewTypeVariableConstructor -> true
+            is NewTypeVariableConstructor -> originalTypeParameter != null
             else -> declarationDescriptor is TypeParameterDescriptor
+        }
+    }
+
+    override fun TypeConstructorMarker.asTypeParameter(): TypeParameterMarker {
+        require(this is TypeConstructor)
+        return when (this) {
+            is NewTypeVariableConstructor -> originalTypeParameter!!
+            else -> declarationDescriptor as TypeParameterDescriptor
         }
     }
 
