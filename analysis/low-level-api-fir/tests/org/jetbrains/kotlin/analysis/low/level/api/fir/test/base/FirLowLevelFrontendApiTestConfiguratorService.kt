@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.ModuleRegistrarPreAnalysisHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalKtFile
+import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -34,4 +36,9 @@ object FirLowLevelFrontendApiTestConfiguratorService : FrontendApiTestConfigurat
 
     override fun registerProjectServices(project: MockProject) {}
     override fun registerApplicationServices(application: MockApplication) {}
+
+    override fun doOutOfBlockModification(file: KtFile) {
+        ServiceManager.getService(file.project, KotlinModificationTrackerFactory::class.java)
+            .incrementModificationsCount()
+    }
 }

@@ -29,8 +29,6 @@ abstract class AbstractSymbolTest(configurator: FrontendApiTestConfiguratorServi
 
     abstract fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): List<KtSymbol>
 
-    abstract fun doOutOfBlockModification(ktFile: KtFile)
-
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         super.doTestByFileStructure(ktFile, module, testServices)
 
@@ -46,8 +44,7 @@ abstract class AbstractSymbolTest(configurator: FrontendApiTestConfiguratorServi
 
         compareResults(pointersWithRendered, testServices)
 
-        doOutOfBlockModification(ktFile)
-
+        configurator.doOutOfBlockModification(ktFile)
 
         if (createPointers) {
             restoreSymbolsInOtherReadActionAndCompareResults(ktFile, pointersWithRendered, testServices)

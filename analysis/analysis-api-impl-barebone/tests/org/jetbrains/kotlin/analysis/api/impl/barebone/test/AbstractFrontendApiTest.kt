@@ -49,6 +49,8 @@ interface FrontendApiTestConfiguratorService {
     fun registerApplicationServices(application: MockApplication)
 
     fun prepareTestFiles(files: List<KtFile>, module: TestModule, testServices: TestServices) {}
+
+    fun doOutOfBlockModification(file: KtFile)
 }
 
 abstract class AbstractFrontendApiTest(val configurator: FrontendApiTestConfiguratorService) : TestWithDisposable() {

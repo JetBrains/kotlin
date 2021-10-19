@@ -6,12 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.test.symbols
 
 import org.jetbrains.kotlin.analysis.api.descriptors.test.KtFe10FrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.api.descriptors.test.KtFe10TestWithOutOfBlockModification
 import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.AbstractSymbolByFqNameTest
-import org.jetbrains.kotlin.psi.KtFile
 
-abstract class AbstractKtFe10SymbolByFqNameTest : AbstractSymbolByFqNameTest(KtFe10FrontendApiTestConfiguratorService) {
-    override fun doOutOfBlockModification(ktFile: KtFile) {
-        KtFe10TestWithOutOfBlockModification.doOutOfBlockModification(ktFile)
-    }
-}
+abstract class AbstractKtFe10SymbolByFqNameTest : AbstractSymbolByFqNameTest(KtFe10FrontendApiTestConfiguratorService)

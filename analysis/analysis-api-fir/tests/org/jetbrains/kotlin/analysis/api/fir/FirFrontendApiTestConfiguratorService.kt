@@ -45,4 +45,8 @@ object FirFrontendApiTestConfiguratorService : FrontendApiTestConfiguratorServic
             application.registerService(KotlinReferenceProviderContributor::class.java, KotlinFirReferenceContributor::class.java)
         }
     }
+
+    override fun doOutOfBlockModification(file: KtFile) {
+        FirLowLevelFrontendApiTestConfiguratorService.doOutOfBlockModification(file)
+    }
 }

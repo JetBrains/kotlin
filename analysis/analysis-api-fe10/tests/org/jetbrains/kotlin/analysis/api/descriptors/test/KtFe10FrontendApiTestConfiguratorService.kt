@@ -57,4 +57,8 @@ object KtFe10FrontendApiTestConfiguratorService : FrontendApiTestConfiguratorSer
         val packageProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(module)
         JvmResolveUtil.analyze(project, files, compilerConfiguration, packageProviderFactory)
     }
+
+    override fun doOutOfBlockModification(file: KtFile) {
+        // TODO not supported yet
+    }
 }
