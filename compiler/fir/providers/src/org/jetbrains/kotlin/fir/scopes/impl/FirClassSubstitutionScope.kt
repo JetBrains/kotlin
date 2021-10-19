@@ -189,10 +189,11 @@ class FirClassSubstitutionScope(
             return original
         }
 
-        return FirFakeOverrideGenerator.createSubstitutionOverrideConstructor(
+        return FirFakeOverrideGenerator.createCopyForFirConstructor(
             FirConstructorSymbol(original.callableId),
             session,
             constructor,
+            FirDeclarationOrigin.SubstitutionOverride,
             newDispatchReceiverType,
             newReturnType,
             newParameterTypes,

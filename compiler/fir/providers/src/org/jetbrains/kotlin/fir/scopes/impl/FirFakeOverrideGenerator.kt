@@ -118,10 +118,11 @@ object FirFakeOverrideGenerator {
         }
     }
 
-    fun createSubstitutionOverrideConstructor(
+    fun createCopyForFirConstructor(
         fakeOverrideSymbol: FirConstructorSymbol,
         session: FirSession,
         baseConstructor: FirConstructor,
+        origin: FirDeclarationOrigin,
         newDispatchReceiverType: ConeKotlinType?,
         newReturnType: ConeKotlinType?,
         newParameterTypes: List<ConeKotlinType?>?,
@@ -133,7 +134,7 @@ object FirFakeOverrideGenerator {
         // As second alternative, we can invent some light-weight kind of FirRegularClass
         return buildConstructor {
             moduleData = session.moduleData
-            origin = FirDeclarationOrigin.SubstitutionOverride
+            this.origin = origin
             receiverTypeRef = baseConstructor.receiverTypeRef?.withReplacedConeType(null)
             status = baseConstructor.status.copy(isExpect)
             symbol = fakeOverrideSymbol

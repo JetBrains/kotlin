@@ -1674,7 +1674,7 @@ KtConstructorSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: null
-  containingClassIdIfNonLocal: java/lang/Integer
+  containingClassIdIfNonLocal: kotlin/Int
   dispatchType: null
   hasStableParameterNames: false
   isExtension: false
