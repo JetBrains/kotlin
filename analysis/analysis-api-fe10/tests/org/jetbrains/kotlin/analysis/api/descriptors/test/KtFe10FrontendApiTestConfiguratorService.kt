@@ -10,8 +10,10 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analysis.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.descriptors.CliFe10AnalysisFacade
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisHandlerExtension
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10CliAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.references.base.KtFe10KotlinReferenceProviderContributor
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
@@ -33,7 +35,8 @@ object KtFe10FrontendApiTestConfiguratorService : FrontendApiTestConfiguratorSer
 
     @OptIn(InvalidWayOfUsingAnalysisSession::class)
     override fun registerProjectServices(project: MockProject) {
-        project.registerService(KtAnalysisSessionProvider::class.java, KtFe10CliAnalysisSessionProvider(project))
+        project.registerService(KtAnalysisSessionProvider::class.java, KtFe10AnalysisSessionProvider())
+        project.registerService(Fe10AnalysisFacade::class.java, CliFe10AnalysisFacade(project))
         AnalysisHandlerExtension.registerExtension(project, KtFe10AnalysisHandlerExtension())
     }
 

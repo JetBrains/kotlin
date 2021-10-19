@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.references
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.references.base.KtFe10Reference
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
@@ -19,7 +20,7 @@ internal class KtFe10InvokeFunctionReference(expression: KtCallExpression) : KtI
     override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
         require(this is KtFe10AnalysisSession)
 
-        val bindingContext = analyze(expression, KtFe10AnalysisSession.AnalysisMode.PARTIAL)
+        val bindingContext = analyze(expression, AnalysisMode.PARTIAL)
         val descriptor = expression.getResolvedCall(bindingContext)?.resultingDescriptor
         return listOfNotNull(descriptor?.toKtCallableSymbol(this))
     }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
@@ -39,7 +40,7 @@ internal class KtFe10PsiFunctionSymbol(
     override val analysisSession: KtFe10AnalysisSession
 ) : KtFunctionSymbol(), KtFe10PsiSymbol<KtNamedFunction, FunctionDescriptor> {
     override val descriptor: FunctionDescriptor? by cached {
-        val bindingContext = analysisSession.analyze(psi, KtFe10AnalysisSession.AnalysisMode.PARTIAL)
+        val bindingContext = analysisSession.analyze(psi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.FUNCTION, psi]
     }
 

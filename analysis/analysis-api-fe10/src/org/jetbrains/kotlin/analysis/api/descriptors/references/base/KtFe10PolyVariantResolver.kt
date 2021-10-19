@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import org.jetbrains.kotlin.analysis.api.analyse
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.impl.base.util.runInPossiblyEdtThread
 import org.jetbrains.kotlin.analysis.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
@@ -28,7 +29,7 @@ object KtFe10PolyVariantResolver : ResolveCache.PolyVariantResolver<KtReference>
             val expression = reference.expression
             analyse(reference.expression) {
                 val session = this as KtFe10AnalysisSession
-                val bindingContext = session.analyze(expression, KtFe10AnalysisSession.AnalysisMode.PARTIAL)
+                val bindingContext = session.analyze(expression, AnalysisMode.PARTIAL)
                 val descriptor = when (expression) {
                     is KtReferenceExpression -> bindingContext[BindingContext.REFERENCE_TARGET, expression]
                     else -> expression.getResolvedCall(bindingContext)?.resultingDescriptor

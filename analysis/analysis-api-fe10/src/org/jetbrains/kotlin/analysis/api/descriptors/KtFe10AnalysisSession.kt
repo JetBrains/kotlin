@@ -5,20 +5,20 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors
 
-import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.components.*
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProvider
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.psi.KtFile
 
 @Suppress("LeakingThis")
-abstract class KtFe10AnalysisSession(val contextElement: KtElement, token: ValidityToken) : KtAnalysisSession(token) {
+open class KtFe10AnalysisSession(
+    private val contextElement: PsiElement, token: ValidityToken
+) : KtAnalysisSession(token), Fe10AnalysisFacade by ServiceManager.getService(contextElement.project, Fe10AnalysisFacade::class.java) {
     override val smartCastProviderImpl: KtSmartCastProvider = KtFe10SmartCastProvider(this)
     override val diagnosticProviderImpl: KtDiagnosticProvider = KtFe10DiagnosticProvider(this)
     override val scopeProviderImpl: KtScopeProvider = KtFe10ScopeProvider(this)
@@ -45,16 +45,7 @@ abstract class KtFe10AnalysisSession(val contextElement: KtElement, token: Valid
     override val jvmTypeMapperImpl: KtJvmTypeMapper = KtFe10JvmTypeMapper(this)
     override val symbolInfoProviderImpl: KtSymbolInfoProvider = KtFe10SymbolInfoProvider(this)
 
-    abstract val resolveSession: ResolveSession
-    abstract val deprecationResolver: DeprecationResolver
-
-    abstract fun analyze(element: KtElement, mode: AnalysisMode = AnalysisMode.FULL): BindingContext
-
-    abstract fun getOrigin(file: VirtualFile): KtSymbolOrigin
-
-    enum class AnalysisMode {
-        FULL,
-        PARTIAL_WITH_DIAGNOSTICS,
-        PARTIAL
+    override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession {
+        return KtFe10AnalysisSession(elementToReanalyze, token)
     }
 }

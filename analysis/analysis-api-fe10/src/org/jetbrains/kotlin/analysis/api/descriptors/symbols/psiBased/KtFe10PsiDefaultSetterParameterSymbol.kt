@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeAndAnnotations
@@ -29,7 +30,7 @@ internal class KtFe10PsiDefaultSetterParameterSymbol(
     override val analysisSession: KtFe10AnalysisSession
 ) : KtValueParameterSymbol(), KtFe10Symbol {
     private val descriptor: VariableDescriptor? by cached {
-        val bindingContext = analysisSession.analyze(accessorPsi, KtFe10AnalysisSession.AnalysisMode.PARTIAL)
+        val bindingContext = analysisSession.analyze(accessorPsi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.PROPERTY_ACCESSOR, accessorPsi]?.valueParameters?.single()
     }
 

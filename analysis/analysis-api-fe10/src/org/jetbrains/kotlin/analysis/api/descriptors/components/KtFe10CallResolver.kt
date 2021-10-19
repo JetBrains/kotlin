@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.calls.*
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescPropertyGetterSymbol
@@ -41,7 +42,7 @@ internal class KtFe10CallResolver(override val analysisSession: KtFe10AnalysisSe
         get() = analysisSession.token
 
     override fun resolveAccessorCall(call: KtSimpleNameExpression): KtCall? {
-        val bindingContext = analysisSession.analyze(call, KtFe10AnalysisSession.AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
+        val bindingContext = analysisSession.analyze(call, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
         val resolvedCall = call.getResolvedCall(bindingContext) ?: return null
         val resultingDescriptor = resolvedCall.resultingDescriptor
 
@@ -114,7 +115,7 @@ internal class KtFe10CallResolver(override val analysisSession: KtFe10AnalysisSe
      * @param isUsualCall `true` if the call is a usual function call (`foo()` or `foo {}`).
      */
     private fun resolveCall(call: KtElement, isUsualCall: Boolean): KtCall? {
-        val bindingContext = analysisSession.analyze(call, KtFe10AnalysisSession.AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
+        val bindingContext = analysisSession.analyze(call, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
         val resolvedCall = call.getResolvedCall(bindingContext) ?: return getUnresolvedCall(call)
 
         val argumentMapping = createArgumentMapping(resolvedCall)

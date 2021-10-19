@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtConstantValue
@@ -39,7 +40,7 @@ internal class KtFe10PsiKotlinPropertySymbol(
     override val analysisSession: KtFe10AnalysisSession
 ) : KtKotlinPropertySymbol(), KtFe10PsiSymbol<KtProperty, PropertyDescriptor> {
     override val descriptor: PropertyDescriptor? by cached {
-        val bindingContext = analysisSession.analyze(psi, KtFe10AnalysisSession.AnalysisMode.PARTIAL)
+        val bindingContext = analysisSession.analyze(psi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.VARIABLE, psi] as? PropertyDescriptor
     }
 
@@ -69,7 +70,7 @@ internal class KtFe10PsiKotlinPropertySymbol(
 
     override val hasBackingField: Boolean
         get() = withValidityAssertion {
-            val bindingContext = analysisSession.analyze(psi, KtFe10AnalysisSession.AnalysisMode.PARTIAL)
+            val bindingContext = analysisSession.analyze(psi, AnalysisMode.PARTIAL)
             bindingContext[BindingContext.BACKING_FIELD_REQUIRED, descriptor] == true
         }
 

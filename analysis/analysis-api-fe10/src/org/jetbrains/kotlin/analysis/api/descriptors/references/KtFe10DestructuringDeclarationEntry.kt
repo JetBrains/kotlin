@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.references
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.references.base.KtFe10Reference
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
@@ -20,7 +21,7 @@ internal class KtFe10DestructuringDeclarationEntry(
     override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
         check(this is KtFe10AnalysisSession)
 
-        val bindingContext = analyze(element, KtFe10AnalysisSession.AnalysisMode.PARTIAL)
+        val bindingContext = analyze(element, AnalysisMode.PARTIAL)
         val descriptor = bindingContext[BindingContext.COMPONENT_RESOLVED_CALL, element]?.resultingDescriptor
         return listOfNotNull(descriptor?.toKtCallableSymbol(this))
     }

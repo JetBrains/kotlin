@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
@@ -27,7 +28,7 @@ internal class KtFe10PsiLocalVariableSymbol(
     override val analysisSession: KtFe10AnalysisSession
 ) : KtLocalVariableSymbol(), KtFe10PsiSymbol<KtVariableDeclaration, VariableDescriptor> {
     override val descriptor: VariableDescriptor? by cached {
-        val bindingContext = analysisSession.analyze(psi, KtFe10AnalysisSession.AnalysisMode.PARTIAL)
+        val bindingContext = analysisSession.analyze(psi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.VARIABLE, psi]
     }
 
