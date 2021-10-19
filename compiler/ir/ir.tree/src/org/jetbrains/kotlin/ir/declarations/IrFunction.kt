@@ -48,6 +48,9 @@ abstract class IrFunction :
 
     abstract var body: IrBody?
 
+    /**
+     * The first `contextReceiverParametersCount` value parameters are context receivers
+     */
     var contextReceiverParametersCount: Int = 0
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
