@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.types.checker.NewKotlinTypeCheckerImpl
 import org.jetbrains.kotlin.types.expressions.DeclarationScopeProviderForLocalClassifierAnalyzer
 import org.jetbrains.kotlin.types.expressions.LocalClassDescriptorHolder
 import org.jetbrains.kotlin.types.expressions.LocalLazyDeclarationResolver
+import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 import org.jetbrains.kotlin.util.ProgressManagerBasedCancellationChecker
 
 fun StorageComponentContainer.configureModule(
@@ -78,6 +79,8 @@ fun StorageComponentContainer.configureModule(
 
     analyzerServices.platformConfigurator.configureModuleComponents(this)
     analyzerServices.platformConfigurator.configureModuleDependentCheckers(this)
+
+    useInstance(TypeAttributeTranslators(moduleContext.project).translators)
 
     for (extension in StorageComponentContainerContributor.getInstances(moduleContext.project)) {
         extension.registerModuleComponents(this, platform, moduleContext.module)

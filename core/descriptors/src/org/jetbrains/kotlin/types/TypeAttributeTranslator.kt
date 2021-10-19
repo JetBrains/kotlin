@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
-interface TypeAttributesTranslator {
+interface TypeAttributeTranslator {
     fun toAttributes(annotations: Annotations): TypeAttributes
     fun toAnnotations(attributes: TypeAttributes): Annotations
 }
 
-object DefaultTypeAttributesTranslator : TypeAttributesTranslator {
+object DefaultTypeAttributeTranslator : TypeAttributeTranslator {
     override fun toAnnotations(attributes: TypeAttributes): Annotations {
         return attributes.customAnnotations
     }

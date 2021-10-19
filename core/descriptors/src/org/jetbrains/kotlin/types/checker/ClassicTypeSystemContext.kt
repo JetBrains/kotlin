@@ -524,7 +524,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
         @Suppress("UNCHECKED_CAST")
         return KotlinTypeFactory.simpleType(
-            DefaultTypeAttributesTranslator.toAttributes(resultingAnnotations),
+            DefaultTypeAttributeTranslator.toAttributes(resultingAnnotations),
             constructor,
             arguments as List<TypeProjection>,
             nullable

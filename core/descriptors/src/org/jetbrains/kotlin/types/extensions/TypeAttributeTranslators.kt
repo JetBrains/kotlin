@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.types.*
 
-interface TypeAttributeTranslatorExtension : TypeAttributesTranslator
+interface TypeAttributeTranslatorExtension : TypeAttributeTranslator
 
-class TypeAttributeTranslators(project: Project) {
-    val translators: List<TypeAttributesTranslator> =
-        getInstances(project) + DefaultTypeAttributesTranslator
+class TypeAttributeTranslators private constructor(val translators: List<TypeAttributeTranslator>) {
+
+    constructor(project: Project) : this(getInstances(project) + DefaultTypeAttributeTranslator)
+
 
     fun toAttributes(annotations: Annotations): TypeAttributes {
         val translated = translators.map { translator ->
@@ -34,5 +35,7 @@ class TypeAttributeTranslators(project: Project) {
         ProjectExtensionDescriptor<TypeAttributeTranslatorExtension>(
             "org.jetbrains.kotlin.extensions.typeAttribute",
             TypeAttributeTranslatorExtension::class.java
-        )
+        ) {
+        val Default = TypeAttributeTranslators(listOf(DefaultTypeAttributeTranslator))
+    }
 }

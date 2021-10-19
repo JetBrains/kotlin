@@ -114,9 +114,9 @@ class TypeAttributes private constructor(attributes: List<TypeAttribute<*>>) : A
 }
 
 fun TypeAttributes.toDefaultAnnotations(): Annotations =
-    DefaultTypeAttributesTranslator.toAnnotations(this)
+    DefaultTypeAttributeTranslator.toAnnotations(this)
 
-fun Annotations.toDefaultAttributes(): TypeAttributes = DefaultTypeAttributesTranslator.toAttributes(this)
+fun Annotations.toDefaultAttributes(): TypeAttributes = DefaultTypeAttributeTranslator.toAttributes(this)
 
 fun TypeAttributes.replaceAnnotations(newAnnotations: Annotations): TypeAttributes {
     val withoutCustom = (custom?.let { this.remove(it) } ?: this)
