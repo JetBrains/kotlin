@@ -455,8 +455,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     }
 
     override fun CapturedTypeMarker.typeConstructorProjection(): TypeArgumentMarker {
-        require(this is NewCapturedType, this::errorMessage)
-        return this.constructor.projection
+        return when (this) {
+            is NewCapturedType -> this.constructor.projection
+            is CapturedType -> this.typeProjection
+            else -> error("Unsupported captured type")
+        }
     }
 
     override fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker {
