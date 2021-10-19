@@ -27,6 +27,8 @@ where advanced options include:
   -Xemit-jvm-type-annotations Emit JVM type annotations in bytecode
   -Xjvm-enable-preview       Allow using features from Java language that are in preview phase.
                              Works as `--enable-preview` in Java. All class files are marked as preview-generated thus it won't be possible to use them in release environment
+  -Xenhance-type-parameter-types-to-def-not-null
+                             Enhance not null annotated type parameter's types to definitely not null types (@NotNull T => T & Any)
   -Xfriend-paths=<path>      Paths to output directories for friend modules (whose internals should be visible)
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xmodule-path=<path>       Paths where to find Java 9+ modules

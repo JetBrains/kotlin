@@ -505,6 +505,12 @@ default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise""
     )
     var validateBytecode: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xenhance-type-parameter-types-to-def-not-null",
+        description = "Enhance not null annotated type parameter's types to definitely not null types (@NotNull T => T & Any)"
+    )
+    var enhanceTypeParameterTypesToDefNotNull: Boolean by FreezableVar(false)
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector, languageVersion)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics
@@ -533,6 +539,10 @@ default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise""
         if (typeEnhancementImprovementsInStrictMode) {
             result[LanguageFeature.TypeEnhancementImprovementsInStrictMode] = LanguageFeature.State.ENABLED
         }
+        if (enhanceTypeParameterTypesToDefNotNull) {
+            result[LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated] = LanguageFeature.State.ENABLED
+        }
+
         return result
     }
 

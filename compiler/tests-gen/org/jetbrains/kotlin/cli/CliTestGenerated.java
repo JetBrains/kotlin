@@ -631,6 +631,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/kt22304.args");
         }
 
+        @TestMetadata("kt49209.args")
+        public void testKt49209() throws Exception {
+            runTest("compiler/testData/cli/jvm/kt49209.args");
+        }
+
         @TestMetadata("languageVersion.args")
         public void testLanguageVersion() throws Exception {
             runTest("compiler/testData/cli/jvm/languageVersion.args");
