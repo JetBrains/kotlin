@@ -32,6 +32,9 @@ object KtFe10FrontendApiTestConfiguratorService : FrontendApiTestConfiguratorSer
     override val testPrefix: String
         get() = "descriptors"
 
+    override val allowDependedAnalysisSession: Boolean
+        get() = false
+
     override fun TestConfigurationBuilder.configureTest(disposable: Disposable) {
         usePreAnalysisHandlers(::KtFe10ModuleRegistrarPreAnalysisHandler.bind(disposable))
     }

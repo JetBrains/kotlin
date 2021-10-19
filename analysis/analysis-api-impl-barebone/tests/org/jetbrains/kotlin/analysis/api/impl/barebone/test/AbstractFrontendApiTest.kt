@@ -40,6 +40,9 @@ interface FrontendApiTestConfiguratorService {
     val testPrefix: String?
         get() = null
 
+    val allowDependedAnalysisSession: Boolean
+        get() = true
+
     fun TestConfigurationBuilder.configureTest(disposable: Disposable)
 
     fun processTestFiles(files: List<KtFile>): List<KtFile> = files
@@ -54,7 +57,8 @@ interface FrontendApiTestConfiguratorService {
 }
 
 abstract class AbstractFrontendApiTest(val configurator: FrontendApiTestConfiguratorService) : TestWithDisposable() {
-    protected open val enableTestInDependedMode: Boolean = true
+    protected open val enableTestInDependedMode: Boolean
+        get() = configurator.allowDependedAnalysisSession
 
     protected lateinit var testInfo: KotlinTestInfo
         private set
