@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.components
 
-import org.jetbrains.kotlin.analysis.api.analyse
 import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
-import org.jetbrains.kotlin.analysis.api.impl.base.test.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleFileTest
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
@@ -17,6 +15,8 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractRendererTest : AbstractHLApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
+        super.doTestByFileStructure(ktFile, module, testServices)
+
         val options = KtDeclarationRendererOptions.DEFAULT.copy(
             approximateTypes = true,
             renderContainingDeclarations = true,

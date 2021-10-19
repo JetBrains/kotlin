@@ -23,7 +23,9 @@ abstract class AbstractHLApiSingleModuleTest : AbstractFrontendApiTest() {
         doTestByFileStructure(ktFiles, singleModule, testServices)
     }
 
-    protected abstract fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices)
+    protected open fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
+        configurator.prepareTestFiles(ktFiles, module, testServices)
+    }
 
     protected inline fun <R> analyseOnPooledThreadInReadAction(context: KtElement, crossinline action: KtAnalysisSession.() -> R): R =
         executeOnPooledThreadInReadAction {

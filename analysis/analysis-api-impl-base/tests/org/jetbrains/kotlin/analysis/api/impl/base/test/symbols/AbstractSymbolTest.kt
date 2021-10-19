@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.symbols
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.impl.base.test.analyseOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleFileTest
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
@@ -32,6 +31,8 @@ abstract class AbstractSymbolTest : AbstractHLApiSingleFileTest() {
     abstract fun doOutOfBlockModification(ktFile: KtFile)
 
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
+        super.doTestByFileStructure(ktFile, module, testServices)
+
         val createPointers = SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE !in module.directives
         val pointersWithRendered = analyseOnPooledThreadInReadAction(ktFile) {
             collectSymbols(ktFile, testServices).map { symbol ->

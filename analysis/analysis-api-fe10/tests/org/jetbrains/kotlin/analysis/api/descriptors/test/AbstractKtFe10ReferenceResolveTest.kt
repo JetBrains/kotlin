@@ -7,16 +7,8 @@ package org.jetbrains.kotlin.analysis.api.descriptors.test
 
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.test.AbstractReferenceResolveTest
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractKtFe10ReferenceResolveTest : AbstractReferenceResolveTest() {
     override val configurator: FrontendApiTestConfiguratorService
         get() = KtFe10FrontendApiTestConfiguratorService
-
-    override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
-        analyzeTestFiles(ktFiles, module, testServices)
-        super.doTestByFileStructure(ktFiles, module, testServices)
-    }
 }

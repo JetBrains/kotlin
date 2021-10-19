@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -46,6 +47,8 @@ interface FrontendApiTestConfiguratorService {
 
     fun registerProjectServices(project: MockProject)
     fun registerApplicationServices(application: MockApplication)
+
+    fun prepareTestFiles(files: List<KtFile>, module: TestModule, testServices: TestServices) {}
 }
 
 abstract class AbstractFrontendApiTest : TestWithDisposable() {

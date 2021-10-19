@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.calls.KtErrorCallTarget
 import org.jetbrains.kotlin.analysis.api.calls.KtSuccessCallTarget
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.KtMapBackedSubstitutor
-import org.jetbrains.kotlin.analysis.api.impl.base.test.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleModuleTest
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
@@ -30,6 +29,8 @@ import kotlin.reflect.jvm.javaGetter
 
 abstract class AbstractResolveCallTest : AbstractHLApiSingleModuleTest() {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
+        super.doTestByFileStructure(ktFiles, module, testServices)
+
         val ktFile = ktFiles.first()
         val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
 

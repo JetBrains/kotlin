@@ -49,12 +49,12 @@ object KtFe10FrontendApiTestConfiguratorService : FrontendApiTestConfiguratorSer
             application.registerService(KotlinReferenceProviderContributor::class.java, KtFe10KotlinReferenceProviderContributor::class.java)
         }
     }
-}
 
-fun analyzeTestFiles(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
-    val compilerConfigurationProvider = testServices.compilerConfigurationProvider
-    val project = compilerConfigurationProvider.getProject(module)
-    val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(module)
-    val packageProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(module)
-    JvmResolveUtil.analyze(project, ktFiles, compilerConfiguration, packageProviderFactory)
+    override fun prepareTestFiles(files: List<KtFile>, module: TestModule, testServices: TestServices) {
+        val compilerConfigurationProvider = testServices.compilerConfigurationProvider
+        val project = compilerConfigurationProvider.getProject(module)
+        val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(module)
+        val packageProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(module)
+        JvmResolveUtil.analyze(project, files, compilerConfiguration, packageProviderFactory)
+    }
 }

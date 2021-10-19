@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.scopes
 
-import org.jetbrains.kotlin.analysis.api.analyse
-import org.jetbrains.kotlin.analysis.api.impl.base.test.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleFileTest
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.psi.KtFile
@@ -16,6 +14,8 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractFileScopeTest : AbstractHLApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
+        super.doTestByFileStructure(ktFile, module, testServices)
+
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(ktFile) {
                 val symbol = ktFile.getFileSymbol()
