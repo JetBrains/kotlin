@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.diagnostics
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDefaultErrorMessages
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
@@ -73,6 +72,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATED_A
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATED_ANNOTATION_WITH_CONTAINER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.STRICTFP_ON_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SUPER_CALL_WITH_DEFAULT_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SUSPENSION_POINT_INSIDE_CRITICAL_SECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_IN_INTERFACE
@@ -225,6 +225,10 @@ object FirJvmDefaultErrorMessages {
             map.put(
                 INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER,
                 "Interfaces can call default methods via super only within @JvmDefault members. Please annotate the containing interface member with @JvmDefault"
+            )
+            map.put(
+                SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC,
+                "Using protected members which are not @JvmStatic in the superclass companion is unsupported yet"
             )
             map.put(
                 DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET,

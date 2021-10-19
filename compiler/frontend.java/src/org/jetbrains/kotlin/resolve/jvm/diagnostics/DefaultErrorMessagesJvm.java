@@ -92,7 +92,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                                              "Make sure you have kotlin-reflect.jar in the classpath");
 
         MAP.put(INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, "Interfaces can call default methods via super only within @JvmDefault members. Please annotate the containing interface member with @JvmDefault");
-        MAP.put(SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC, "Using non-JVM static members protected in the superclass companion is unsupported yet");
+        MAP.put(SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC, "Using protected members which are not @JvmStatic in the superclass companion is unsupported yet");
 
         MAP.put(NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, "Type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE);
         MAP.put(UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS, "Type argument is not within its bounds: should be subtype of ''{0}''", RENDER_TYPE, RENDER_TYPE);
