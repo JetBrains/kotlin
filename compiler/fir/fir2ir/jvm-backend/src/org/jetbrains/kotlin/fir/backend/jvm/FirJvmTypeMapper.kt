@@ -207,6 +207,11 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
         return this is ConeTypeParameterLookupTag
     }
 
+    override fun TypeConstructorMarker.asTypeParameter(): TypeParameterMarker {
+        require(isTypeParameter())
+        return this as ConeTypeParameterLookupTag
+    }
+
     override fun TypeConstructorMarker.defaultType(): ConeSimpleKotlinType {
         require(this is ConeClassifierLookupTag)
         return when (this) {
