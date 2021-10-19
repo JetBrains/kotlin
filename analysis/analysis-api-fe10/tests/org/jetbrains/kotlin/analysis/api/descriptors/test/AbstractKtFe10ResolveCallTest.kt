@@ -12,9 +12,6 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractKtFe10ResolveCallTest : AbstractResolveCallTest() {
-    override val testPrefix: String?
-        get() = "descriptors"
-
     override val configurator: FrontendApiTestConfiguratorService
         get() = KtFe10FrontendApiTestConfiguratorService
 

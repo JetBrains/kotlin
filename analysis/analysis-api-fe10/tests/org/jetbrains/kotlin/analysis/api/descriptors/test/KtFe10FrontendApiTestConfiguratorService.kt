@@ -29,6 +29,9 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 
 object KtFe10FrontendApiTestConfiguratorService : FrontendApiTestConfiguratorService {
+    override val testPrefix: String
+        get() = "descriptors"
+
     override fun TestConfigurationBuilder.configureTest(disposable: Disposable) {
         usePreAnalysisHandlers(::KtFe10ModuleRegistrarPreAnalysisHandler.bind(disposable))
     }

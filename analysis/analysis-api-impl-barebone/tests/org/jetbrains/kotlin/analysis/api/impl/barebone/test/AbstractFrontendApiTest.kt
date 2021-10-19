@@ -36,6 +36,9 @@ import java.util.concurrent.ExecutionException
 import kotlin.io.path.nameWithoutExtension
 
 interface FrontendApiTestConfiguratorService {
+    val testPrefix: String?
+        get() = null
+
     fun TestConfigurationBuilder.configureTest(disposable: Disposable)
 
     fun processTestFiles(files: List<KtFile>): List<KtFile> = files
@@ -58,9 +61,6 @@ abstract class AbstractFrontendApiTest : TestWithDisposable() {
 
     protected abstract val configurator: FrontendApiTestConfiguratorService
 
-    protected open val testPrefix: String?
-        get() = null
-
     protected open fun configureTest(builder: TestConfigurationBuilder) {
         with(configurator) {
             builder.configureTest(disposable)
@@ -73,7 +73,7 @@ abstract class AbstractFrontendApiTest : TestWithDisposable() {
         val extensionWithDot = "." + extension.removePrefix(".")
         val baseName = testDataPath.nameWithoutExtension
 
-        val testPrefix = this.testPrefix
+        val testPrefix = configurator.testPrefix
         if (testPrefix != null) {
             val prefixedFile = testDataPath.resolveSibling("$baseName.$testPrefix$extensionWithDot")
             if (prefixedFile.exists()) {
