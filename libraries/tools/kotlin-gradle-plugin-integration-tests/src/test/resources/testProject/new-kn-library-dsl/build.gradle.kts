@@ -1,20 +1,34 @@
-buildscript {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-        mavenLocal()
-    }
-
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${property("kotlin_version")}")
-    }
-}
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType.*
+import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.library
+import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.nativeLibrary
+import org.jetbrains.kotlin.konan.target.KonanTarget.*
 
 allprojects {
     repositories {
-        google()
-        mavenCentral()
         mavenLocal()
+        mavenCentral()
     }
+}
+
+plugins {
+    kotlin("multiplatform").apply(false)
+}
+
+//:shared:assembleDebugSharedMylibLinuxX64
+nativeLibrary("mylib") {
+    targets = listOf(LINUX_X64)
+    artifact = library
+    from(project(":shared"))
+}
+
+//:shared:assembleDebugStaticMyslibLinuxX64
+nativeLibrary("myslib") {
+    targets = listOf(LINUX_X64)
+    artifact = library
+    modes = setOf(DEBUG)
+    isStatic = true
+    from(
+        project(":shared"),
+        project(":lib")
+    )
 }

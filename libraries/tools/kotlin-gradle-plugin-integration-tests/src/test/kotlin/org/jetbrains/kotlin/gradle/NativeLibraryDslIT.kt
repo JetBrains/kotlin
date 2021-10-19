@@ -16,14 +16,14 @@ class NativeLibraryDslIT : BaseGradleIT() {
             build(":tasks") {
                 assertSuccessful()
                 assertTasksRegistered(
-                    ":shared:assembleDebugSharedMylibLinuxX64",
-                    ":shared:assembleDebugStaticMyslibLinuxX64",
-                    ":shared:assembleReleaseSharedMylibLinuxX64",
-                    ":shared:assembleSharedMylib",
-                    ":shared:assembleStaticMyslib"
+                    ":assembleDebugSharedMylibLinuxX64",
+                    ":assembleDebugStaticMyslibLinuxX64",
+                    ":assembleReleaseSharedMylibLinuxX64",
+                    ":assembleSharedMylib",
+                    ":assembleStaticMyslib"
                 )
                 assertTasksNotRegistered(
-                    ":shared:assembleReleaseStaticMyslibLinuxX64"
+                    ":assembleReleaseStaticMyslibLinuxX64"
                 )
             }
         }
@@ -32,15 +32,15 @@ class NativeLibraryDslIT : BaseGradleIT() {
     @Test
     fun `link static library from two gradle modules`() {
         with(Project("new-kn-library-dsl")) {
-            build(":shared:assembleDebugStaticMyslibLinuxX64") {
+            build(":assembleDebugStaticMyslibLinuxX64") {
                 assertSuccessful()
                 assertTasksExecuted(
                     ":lib:compileKotlinLinuxX64",
                     ":shared:compileKotlinLinuxX64",
-                    ":shared:assembleDebugStaticMyslibLinuxX64"
+                    ":assembleDebugStaticMyslibLinuxX64"
                 )
-                assertFileExists("/shared/build/out/static/linux_x64/Debug/libmyslib.a")
-                assertFileExists("/shared/build/out/static/linux_x64/Debug/libmyslib_api.h")
+                assertFileExists("/build/out/static/linux_x64/Debug/libmyslib.a")
+                assertFileExists("/build/out/static/linux_x64/Debug/libmyslib_api.h")
             }
         }
     }
@@ -48,17 +48,17 @@ class NativeLibraryDslIT : BaseGradleIT() {
     @Test
     fun `link shared library from single gradle module`() {
         with(Project("new-kn-library-dsl")) {
-            build(":shared:assembleDebugSharedMylibLinuxX64") {
+            build(":assembleDebugSharedMylibLinuxX64") {
                 assertSuccessful()
                 assertTasksExecuted(
                     ":shared:compileKotlinLinuxX64",
-                    ":shared:assembleDebugSharedMylibLinuxX64"
+                    ":assembleDebugSharedMylibLinuxX64"
                 )
                 assertTasksNotExecuted(
                     ":lib:compileKotlinLinuxX64"
                 )
-                assertFileExists("/shared/build/out/dynamic/linux_x64/Debug/libmylib.so")
-                assertFileExists("/shared/build/out/dynamic/linux_x64/Debug/libmylib_api.h")
+                assertFileExists("/build/out/dynamic/linux_x64/Debug/libmylib.so")
+                assertFileExists("/build/out/dynamic/linux_x64/Debug/libmylib_api.h")
             }
         }
     }
