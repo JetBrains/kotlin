@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
@@ -284,24 +287,8 @@ private class ElementsToShortenCollector(
 
     override fun visitValueParameter(valueParameter: FirValueParameter) {
         super.visitValueParameter(valueParameter)
-        valueParameter.getCorrespondingProperty()?.let { visitProperty(it) }
+        valueParameter.correspondingProperty?.let { visitProperty(it) }
     }
-
-    private fun FirValueParameter.getCorrespondingProperty(): FirProperty? {
-        val parameter = psi as? KtParameter
-        val containingFunction = parameter?.getContainingFunction()
-        if (containingFunction is KtPrimaryConstructor && parameter.valOrVarKeyword != null) {
-            // also check the FirProperty corresponding to this parameter in the primary constructor
-            return (containingFunction.parent as? KtClass)
-                ?.getOrBuildFirSafe<FirClass>(firResolveState)
-                ?.declarations
-                ?.firstOrNull { it.source?.kind == FirFakeSourceElementKind.PropertyFromParameter && it.psi == parameter } as FirProperty
-        }
-        return null
-    }
-
-    private fun KtParameter.getContainingFunction(): KtFunction? = (parent as? KtParameterList)?.parent as? KtFunction
-
 
     override fun visitProperty(property: FirProperty) {
         if (visitedProperty.add(property)) {
