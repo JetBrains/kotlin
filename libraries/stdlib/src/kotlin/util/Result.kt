@@ -18,8 +18,8 @@ import kotlin.jvm.JvmName
  * or a failure with an arbitrary [Throwable] exception.
  */
 @SinceKotlin("1.3")
-@JvmInline
-public value class Result<out T> @PublishedApi internal constructor(
+@Suppress("INLINE_CLASS_DEPRECATED")
+public inline class Result<out T> @PublishedApi internal constructor(
     @PublishedApi
     internal val value: Any?
 ) : Serializable {
