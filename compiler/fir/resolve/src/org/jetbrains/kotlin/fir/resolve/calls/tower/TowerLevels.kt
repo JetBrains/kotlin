@@ -46,23 +46,16 @@ abstract class TowerLevel {
 
     abstract fun processObjectsByName(info: CallInfo, processor: Processor<FirBasedSymbol<*>>): ProcessResult
 
-    class Context(
-        val dispatchReceiverValue: ReceiverValue?,
-        val extensionReceiverValue: ReceiverValue?,
-        val scope: FirScope,
-        val builtInExtensionFunctionReceiverValue: ReceiverValue? = null,
-        val objectsByName: Boolean = false,
-    )
-
-    fun interface Processor<in T : FirBasedSymbol<*>> {
-        fun consumeSymbol(symbol: T, levelContext: Context)
+    interface Processor<in T : FirBasedSymbol<*>> {
+        fun consumeSymbol(
+            symbol: T,
+            dispatchReceiverValue: ReceiverValue?,
+            extensionReceiverValue: ReceiverValue?,
+            scope: FirScope,
+            builtInExtensionFunctionReceiverValue: ReceiverValue? = null,
+            objectsByName: Boolean = false,
+        )
     }
-}
-
-fun buildTowerLevelProcessor(
-    lambda: TowerLevel.Processor<FirBasedSymbol<*>>
-): TowerLevel.Processor<FirBasedSymbol<*>> {
-    return lambda
 }
 
 abstract class SessionBasedTowerLevel(val session: FirSession) : TowerLevel() {
@@ -105,32 +98,26 @@ class MemberTowerLevel(
 
                 processor.consumeSymbol(
                     symbol,
-                    Context(
-                        dispatchReceiverValue,
-                        extensionReceiver,
-                        scope
-                    )
+                    dispatchReceiverValue,
+                    extensionReceiver,
+                    scope
                 )
 
                 if (implicitExtensionInvokeMode) {
                     processor.consumeSymbol(
                         symbol,
-                        Context(
-                            dispatchReceiverValue,
-                            null,
-                            scope,
-                            builtInExtensionFunctionReceiverValue = this.extensionReceiver
-                        )
+                        dispatchReceiverValue,
+                        null,
+                        scope,
+                        builtInExtensionFunctionReceiverValue = this.extensionReceiver
                     )
                 }
             } else if (symbol is FirClassLikeSymbol<*>) {
                 processor.consumeSymbol(
                     symbol,
-                    Context(
-                        null,
-                        extensionReceiver,
-                        scope
-                    )
+                    null,
+                    extensionReceiver,
+                    scope
                 )
             }
         }
@@ -141,11 +128,9 @@ class MemberTowerLevel(
                 empty = false
                 processor.consumeSymbol(
                     symbol,
-                    Context(
-                        dispatchReceiverValue,
-                        null,
-                        scope
-                    )
+                    dispatchReceiverValue,
+                    null,
+                    scope
                 )
             }
         }
@@ -319,11 +304,9 @@ class ScopeTowerLevel(
         @Suppress("UNCHECKED_CAST")
         processor.consumeSymbol(
             unwrappedSymbol as T,
-            Context(
-                dispatchReceiverValue,
-                extensionReceiver,
-                scope
-            )
+            dispatchReceiverValue,
+            extensionReceiver,
+            scope
         )
     }
 
@@ -368,12 +351,10 @@ class ScopeTowerLevel(
             empty = false
             processor.consumeSymbol(
                 it,
-                Context(
-                    null,
-                    null,
-                    scope,
-                    objectsByName = true
-                )
+                null,
+                null,
+                scope,
+                objectsByName = true
             )
         }
         return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND

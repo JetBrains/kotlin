@@ -14,28 +14,13 @@ internal class CandidateFactoriesAndCollectors(
     val resultCollector: CandidateCollector,
 )
 
-internal fun TowerLevel.Processor<FirBasedSymbol<*>>.withSuccess(
-    isSuccess: () -> Boolean
-): TowerLevelHandler.Processor {
-    return object : TowerLevelHandler.Processor {
-        override val isSuccess: Boolean get() = isSuccess()
-
-        override fun consumeSymbol(
-            symbol: FirBasedSymbol<*>,
-            levelContext: TowerLevel.Context
-        ) {
-            this@withSuccess.consumeSymbol(symbol, levelContext)
-        }
-    }
-}
-
 internal class TowerLevelHandler {
 
     // Try to avoid adding additional state here
     private var processResult = ProcessResult.SCOPE_EMPTY
 
-    interface Processor : TowerLevel.Processor<FirBasedSymbol<*>> {
-        val isSuccess: Boolean
+    abstract class Processor : TowerLevel.Processor<FirBasedSymbol<*>> {
+        abstract val isSuccess: Boolean
     }
 
     fun handleLevel(

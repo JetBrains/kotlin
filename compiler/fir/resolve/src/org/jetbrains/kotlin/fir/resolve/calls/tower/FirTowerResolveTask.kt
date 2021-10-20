@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -128,20 +129,46 @@ internal abstract class FirBaseTowerResolveTask(
         val finalGroup = interceptTowerGroup(group)
         manager.requestGroup(finalGroup)
 
-        val processor = buildTowerLevelProcessor { symbol, levelData ->
-            collector.consumeCandidate(
-                finalGroup,
-                candidateFactory.createCandidate(callInfo, symbol, explicitReceiverKind, levelData),
-                candidateFactory.context
-            )
-        }.withSuccess {
-            collector.isSuccess()
-        }
-
+        val processor = CollectorBasedProcessor(finalGroup, candidateFactory, callInfo, explicitReceiverKind, collector)
         val result = handler.handleLevel(callInfo, towerLevel, processor)
 
         if (collector.isSuccess()) onSuccessfulLevel(finalGroup)
         return result == ProcessResult.SCOPE_EMPTY
+    }
+
+    private class CollectorBasedProcessor(
+        private val group: TowerGroup,
+        private val candidateFactory: CandidateFactory,
+        private val callInfo: CallInfo,
+        private val explicitReceiverKind: ExplicitReceiverKind,
+        private val collector: CandidateCollector,
+    ) : TowerLevelHandler.Processor() {
+        override val isSuccess: Boolean
+            get() = collector.isSuccess()
+
+        override fun consumeSymbol(
+            symbol: FirBasedSymbol<*>,
+            dispatchReceiverValue: ReceiverValue?,
+            extensionReceiverValue: ReceiverValue?,
+            scope: FirScope,
+            builtInExtensionFunctionReceiverValue: ReceiverValue?,
+            objectsByName: Boolean
+        ) {
+            collector.consumeCandidate(
+                group,
+                candidateFactory.createCandidate(
+                    callInfo,
+                    symbol,
+                    explicitReceiverKind,
+                    scope,
+                    dispatchReceiverValue,
+                    extensionReceiverValue,
+                    builtInExtensionFunctionReceiverValue,
+                    objectsByName,
+                ),
+                candidateFactory.context
+            )
+        }
     }
 }
 

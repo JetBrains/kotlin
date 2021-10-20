@@ -47,22 +47,6 @@ class CandidateFactory private constructor(
         callInfo: CallInfo,
         symbol: FirBasedSymbol<*>,
         explicitReceiverKind: ExplicitReceiverKind,
-        levelContext: TowerLevel.Context,
-    ) = createCandidate(
-        callInfo,
-        symbol,
-        explicitReceiverKind,
-        levelContext.scope,
-        levelContext.dispatchReceiverValue,
-        levelContext.extensionReceiverValue,
-        levelContext.builtInExtensionFunctionReceiverValue,
-        levelContext.objectsByName,
-    )
-
-    fun createCandidate(
-        callInfo: CallInfo,
-        symbol: FirBasedSymbol<*>,
-        explicitReceiverKind: ExplicitReceiverKind,
         scope: FirScope?,
         dispatchReceiverValue: ReceiverValue? = null,
         extensionReceiverValue: ReceiverValue? = null,
