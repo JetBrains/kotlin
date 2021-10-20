@@ -2378,6 +2378,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         val bbInit = basicBlock("label_init", null)
         val bbExit = basicBlock("label_continue", null)
+        moveBlockAfterEntry(bbExit)
+        moveBlockAfterEntry(bbInit)
         // TODO: Is it ok to use non-volatile read here since once value is FILE_INITIALIZED, it is no longer change?
         val state = load(statePtr)
         LLVMSetVolatile(state, 1)
@@ -2399,6 +2401,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val bbInit = basicBlock("label_init", null)
         val bbCheckLocalState = basicBlock("label_check_local", null)
         val bbExit = basicBlock("label_continue", null)
+        moveBlockAfterEntry(bbExit)
+        moveBlockAfterEntry(bbCheckLocalState)
+        moveBlockAfterEntry(bbInit)
         val globalState = load(globalStatePtr)
         LLVMSetVolatile(globalState, 1)
         // Make sure we're not in the middle of global initializer invocation -
@@ -2421,6 +2426,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         val bbInit = basicBlock("label_init", null)
         val bbExit = basicBlock("label_continue", null)
+        moveBlockAfterEntry(bbExit)
+        moveBlockAfterEntry(bbInit)
         condBr(icmpEq(load(statePtr), Int32(FILE_INITIALIZED).llvm), bbExit, bbInit)
         positionAtEnd(bbInit)
         call(context.llvm.callInitThreadLocal, listOf(kNullInt32Ptr, statePtr, initializerPtr),

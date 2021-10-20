@@ -520,6 +520,15 @@ internal abstract class FunctionGenerationContext(
         return result
     }
 
+    /**
+     *  This function shouldn't be used normally.
+     *  It is used to move block with strange debug info in the middle of function, to avoid last debug info being too strange,
+     *  because it will break heuristics in CoreSymbolication
+     */
+    fun moveBlockAfterEntry(block: LLVMBasicBlockRef) {
+        LLVMMoveBasicBlockAfter(block, this.entryBb)
+    }
+
     fun alloca(type: LLVMTypeRef?, name: String = "", variableLocation: VariableDebugLocation? = null): LLVMValueRef {
         if (isObjectType(type!!)) {
             appendingTo(localsInitBb) {
