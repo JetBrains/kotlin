@@ -13,6 +13,8 @@ import com.android.build.gradle.api.SourceKind
 import org.gradle.api.*
 import org.gradle.api.artifacts.maven.Conf2ScopeMappingContainer
 import org.gradle.api.artifacts.maven.MavenResolver
+import org.gradle.api.artifacts.repositories.ArtifactRepository
+import org.gradle.api.attributes.Bundling
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileTree
@@ -576,14 +578,12 @@ internal abstract class AbstractKotlinPlugin(
                 project.configurations.getByName(kotlinTarget.apiElementsConfigurationName).run {
                     attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(kotlinTarget))
                     attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-                    setupAsPublicConfigurationIfSupported(kotlinTarget)
                     usesPlatformOf(kotlinTarget)
                 }
 
                 project.configurations.getByName(kotlinTarget.runtimeElementsConfigurationName).run {
                     attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(kotlinTarget))
                     attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-                    setupAsPublicConfigurationIfSupported(kotlinTarget)
                     usesPlatformOf(kotlinTarget)
                 }
             }

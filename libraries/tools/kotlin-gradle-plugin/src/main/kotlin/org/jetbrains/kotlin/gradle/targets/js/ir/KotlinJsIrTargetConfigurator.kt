@@ -157,7 +157,6 @@ open class KotlinJsIrTargetConfigurator() :
             isCanBeConsumed = true
             attributes.attribute<Usage>(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
             attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
-            setupAsPublicConfigurationIfSupported(target)
         }
     }
 }
