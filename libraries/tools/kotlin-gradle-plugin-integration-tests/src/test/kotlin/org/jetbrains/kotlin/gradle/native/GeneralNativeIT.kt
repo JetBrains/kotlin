@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 import org.junit.Assume
 import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ErrorCollector
 import java.io.File
 import java.util.*
 import kotlin.test.assertEquals
@@ -980,6 +982,51 @@ class GeneralNativeIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testCinteropConfigurationsVariantAwareResolution() = with(transformNativeTestProjectWithPluginDsl("native-cinterop")) {
+        build(":publishedLibrary:publish") {
+            assertSuccessful()
+        }
+
+        fun CompiledProject.assertVariantInDependencyInsight(variantName: String) {
+            try {
+                assertContains("variant \"$variantName\" [")
+            } catch (originalError: AssertionError) {
+                val matchedVariants = Regex("variant \"(.*?)\" \\[").findAll(output).toList()
+                throw AssertionError(
+                    "Expected variant $variantName. " +
+                            if (matchedVariants.isNotEmpty())
+                                "Matched instead: " + matchedVariants.joinToString { it.groupValues[1] }
+                            else "No match.",
+                    originalError
+                )
+            }
+        }
+
+        build(":dependencyInsight", "--configuration", "hostTestTestNumberCInterop", "--dependency", "org.example:publishedLibrary") {
+            assertSuccessful()
+            assertVariantInDependencyInsight("hostApiElements-published")
+        }
+
+        gradleBuildScript("projectLibrary").appendText(
+            "\n" + """
+            configurations.create("ktlint") {
+                def bundlingAttribute = Attribute.of("org.gradle.dependency.bundling", String)
+                attributes.attribute(bundlingAttribute, "external")
+            }
+        """.trimIndent()
+        )
+
+        build(":dependencyInsight", "--configuration", "hostTestTestNumberCInterop", "--dependency", ":projectLibrary") {
+            assertSuccessful()
+            assertVariantInDependencyInsight("hostCInteropApiElements")
+        }
+        build(":dependencyInsight", "--configuration", "hostCompileKlibraries", "--dependency", ":projectLibrary") {
+            assertSuccessful()
+            assertVariantInDependencyInsight("hostApiElements")
+        }
+    }
+
     companion object {
         fun List<String>.containsSequentially(vararg elements: String): Boolean {
             check(elements.isNotEmpty())
@@ -1016,7 +1063,7 @@ class GeneralNativeIT : BaseGradleIT() {
             check(settingsHeader != null && settingsPrefix in settingsHeader) {
                 "Cannot find setting '${settingsKind.title}' for task ${taskPath}"
             }
-            
+
             return if (settingsHeader.trimEnd().endsWith(']'))
                 emptySequence() // No parameters.
             else
@@ -1046,7 +1093,7 @@ class GeneralNativeIT : BaseGradleIT() {
             toolName: String = "konanc",
             check: (List<String>) -> Unit
         ) = taskPaths.forEach { taskPath -> check(extractNativeCompilerClasspath(taskPath, toolName)) }
-        
+
         fun CompiledProject.checkNativeCustomEnvironment(
             vararg taskPaths: String,
             toolName: String = "konanc",
