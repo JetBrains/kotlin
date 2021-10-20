@@ -1270,11 +1270,13 @@ internal class SpreadOfNullableImpl(
 ) : KtFirDiagnostic.SpreadOfNullable(), KtAbstractFirDiagnostic<PsiElement>
 
 internal class AssigningSingleElementToVarargInNamedFormFunctionErrorImpl(
+    override val expectedArrayType: KtType,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.AssigningSingleElementToVarargInNamedFormFunctionError(), KtAbstractFirDiagnostic<KtExpression>
 
 internal class AssigningSingleElementToVarargInNamedFormFunctionWarningImpl(
+    override val expectedArrayType: KtType,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.AssigningSingleElementToVarargInNamedFormFunctionWarning(), KtAbstractFirDiagnostic<KtExpression>

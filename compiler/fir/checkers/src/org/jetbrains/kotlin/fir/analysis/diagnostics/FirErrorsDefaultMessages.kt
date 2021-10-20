@@ -839,7 +839,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(SPREAD_OF_NULLABLE, "The spread operator (*foo) may not be applied to an argument of nullable type")
         map.put(
             ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION,
-            "Assigning single elements to varargs in named form is forbidden"
+            "Assigning single elements to varargs in named form is forbidden",
+            NOT_RENDERED
         )
         map.put(
             ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION,

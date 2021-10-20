@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isArrayType
 
 object FirNamedVarargChecker : FirCallChecker() {
@@ -28,9 +30,6 @@ object FirNamedVarargChecker : FirCallChecker() {
             expression !is FirDelegatedConstructorCall &&
             expression !is FirArrayOfCall) return
         val isAnnotation = expression is FirAnnotation
-        val singleElementToVarargErrorFactory =
-            if (isAnnotation) FirErrors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION
-            else FirErrors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION
         val redundantSpreadWarningFactory =
             if (isAnnotation) FirErrors.REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION
             else FirErrors.REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION
@@ -40,7 +39,7 @@ object FirNamedVarargChecker : FirCallChecker() {
             else LanguageFeature.AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
         )
 
-        fun checkArgument(argument: FirExpression, isVararg: Boolean) {
+        fun checkArgument(argument: FirExpression, isVararg: Boolean, expectedArrayType: ConeKotlinType?) {
             if (argument !is FirNamedArgumentExpression) return
             if (argument.isSpread) {
                 if (isVararg && (expression as? FirResolvable)?.calleeReference !is FirErrorNamedReference) {
@@ -53,20 +52,34 @@ object FirNamedVarargChecker : FirCallChecker() {
             if (argument.expression is FirArrayOfCall) return
             if (allowAssignArray && typeRef.isArrayType) return
 
-            reporter.reportOn(argument.expression.source, singleElementToVarargErrorFactory, context)
+            if (isAnnotation) {
+                reporter.reportOn(
+                    argument.expression.source,
+                    FirErrors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION,
+                    context
+                )
+            } else {
+                require(expectedArrayType != null) { "expectedArrayType must be passed for function call" }
+                reporter.reportOn(
+                    argument.expression.source,
+                    FirErrors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION,
+                    expectedArrayType,
+                    context,
+                )
+            }
         }
 
         if (expression is FirArrayOfCall) {
             // FirArrayOfCall has the `vararg` argument expression pre-flattened and doesn't have an argument mapping.
-            expression.arguments.forEach { checkArgument(it, it is FirNamedArgumentExpression) }
+            expression.arguments.forEach { checkArgument(it, it is FirNamedArgumentExpression, null /* not used for annotation call */) }
         } else {
             val argumentMap = expression.argumentMapping ?: return
             for ((argument, parameter) in argumentMap) {
                 if (!parameter.isVararg) continue
                 if (argument is FirVarargArgumentsExpression) {
-                    argument.arguments.forEach { checkArgument(it, true) }
+                    argument.arguments.forEach { checkArgument(it, true, parameter.returnTypeRef.coneType) }
                 } else {
-                    checkArgument(argument, false)
+                    checkArgument(argument, false, parameter.returnTypeRef.coneType)
                 }
             }
         }
