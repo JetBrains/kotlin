@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.light.classes.symbol.parameters.FirLightParameterList
-import org.jetbrains.kotlin.light.classes.symbol.parameters.FirLightSetterParameterForSymbol
 import org.jetbrains.kotlin.load.java.JvmAbi.getterName
 import org.jetbrains.kotlin.load.java.JvmAbi.setterName
 import org.jetbrains.kotlin.psi.KtDeclaration

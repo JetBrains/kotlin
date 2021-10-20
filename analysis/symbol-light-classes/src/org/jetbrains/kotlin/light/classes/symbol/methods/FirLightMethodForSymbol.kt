@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.analysis.api.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
-import org.jetbrains.kotlin.light.classes.symbol.parameters.FirLightParameterList
+import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 import java.util.*
 
@@ -42,6 +42,14 @@ internal abstract class FirLightMethodForSymbol(
                         )
                     )
                 }
+            }
+            if ((functionSymbol as? KtFunctionSymbol)?.isSuspend == true) {
+                builder.addParameter(
+                    FirLightSuspendContinuationParameter(
+                        functionSymbol = functionSymbol,
+                        containingMethod = this@FirLightMethodForSymbol
+                    )
+                )
             }
         }
     }
