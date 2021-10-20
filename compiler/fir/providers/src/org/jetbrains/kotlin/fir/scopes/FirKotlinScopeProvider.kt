@@ -9,10 +9,9 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.utils.delegateFields
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -40,16 +39,14 @@ class FirKotlinScopeProvider(
         return scopeSession.getOrBuild(klass.symbol, USE_SITE) {
             val declaredScope = useSiteSession.declaredMemberScope(klass)
 
-            val delegateFields = klass.declarations.filterIsInstance<FirField>().filter { it.isSynthetic }
-
             val decoratedDeclaredMemberScope =
                 declaredMemberScopeDecorator(klass, declaredScope, useSiteSession, scopeSession).let {
+                    val delegateFields = klass.delegateFields
                     if (delegateFields.isEmpty())
                         it
                     else
                         FirDelegatedMemberScope(useSiteSession, scopeSession, klass, it, delegateFields)
                 }
-
 
             val scopes = lookupSuperTypes(
                 klass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession, substituteTypes = true

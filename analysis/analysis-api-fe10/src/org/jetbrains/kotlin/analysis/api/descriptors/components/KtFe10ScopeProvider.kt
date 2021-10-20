@@ -66,7 +66,20 @@ internal class KtFe10ScopeProvider(override val analysisSession: KtFe10AnalysisS
                 override val owner get() = classSymbol
             }
 
+        // TODO: need to return declared members only
         return object : KtFe10ScopeMember(descriptor.unsubstitutedMemberScope, analysisSession), KtDeclaredMemberScope {
+            override val owner get() = classSymbol
+        }
+    }
+
+    override fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtDelegatedMemberScope = withValidityAssertion {
+        val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
+            ?: return object : KtFe10EmptyScope(token), KtDelegatedMemberScope {
+                override val owner get() = classSymbol
+            }
+
+        // TODO: need to return delegated members only
+        return object : KtFe10ScopeMember(descriptor.unsubstitutedMemberScope, analysisSession), KtDelegatedMemberScope {
             override val owner get() = classSymbol
         }
     }

@@ -34,6 +34,9 @@ val FirClass.superConeTypes: List<ConeClassLikeType> get() = superTypeRefs.mapNo
 val FirClass.anonymousInitializers: List<FirAnonymousInitializer>
     get() = declarations.filterIsInstance<FirAnonymousInitializer>()
 
+val FirClass.delegateFields: List<FirField>
+    get() = declarations.filterIsInstance<FirField>().filter { it.isSynthetic }
+
 val FirQualifiedAccess.referredPropertySymbol: FirPropertySymbol?
     get() {
         val reference = calleeReference as? FirResolvedNamedReference ?: return null

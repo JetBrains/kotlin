@@ -86,6 +86,10 @@ public interface KtDeclaredMemberScope : KtDeclarationScope<KtSymbolWithMembers>
     override val owner: KtSymbolWithMembers
 }
 
+public interface KtDelegatedMemberScope : KtDeclarationScope<KtSymbolWithMembers> {
+    override val owner: KtSymbolWithMembers
+}
+
 public interface KtDeclarationScope<out T : KtSymbolWithDeclarations> : KtScope {
     public val owner: T
 }

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.fir.declarations.utils.delegateFields
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
@@ -54,6 +55,7 @@ internal class KtFirScopeProvider(
 
     private val memberScopeCache = IdentityHashMap<KtSymbolWithMembers, KtMemberScope>()
     private val declaredMemberScopeCache = IdentityHashMap<KtSymbolWithMembers, KtDeclaredMemberScope>()
+    private val delegatedMemberScopeCache = IdentityHashMap<KtSymbolWithMembers, KtDelegatedMemberScope>()
     private val fileScopeCache = IdentityHashMap<KtFileSymbol, KtDeclarationScope<KtSymbolWithDeclarations>>()
     private val packageMemberScopeCache = IdentityHashMap<KtPackageSymbol, KtPackageScope>()
 
@@ -98,6 +100,27 @@ internal class KtFirScopeProvider(
             } ?: return@getOrPut KtFirEmptyMemberScope(classSymbol)
 
             KtFirDeclaredMemberScope(classSymbol, firScope, token, builder)
+        }
+    }
+
+    override fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtDelegatedMemberScope = withValidityAssertion {
+        val declaredScope = (getDeclaredMemberScope(classSymbol) as? KtFirDeclaredMemberScope)?.firScope
+            ?: return delegatedMemberScopeCache.getOrPut(classSymbol) { KtFirEmptyMemberScope(classSymbol) }
+        delegatedMemberScopeCache.getOrPut(classSymbol) {
+            val firScope = classSymbol.withFirForScope { fir ->
+                val delegateFields = fir.delegateFields
+                if (delegateFields.isNotEmpty()) {
+                    FirDelegatedMemberScope(
+                        analysisSession.rootModuleSession,
+                        ScopeSession(),
+                        fir,
+                        declaredScope,
+                        delegateFields
+                    )
+                } else null
+            } ?: return@getOrPut KtFirEmptyMemberScope(classSymbol)
+
+            KtFirDelegatedMemberScope(classSymbol, firScope, token, builder)
         }
     }
 

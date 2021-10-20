@@ -1,0 +1,24 @@
+KtFunctionSymbol:
+  annotatedType: [] kotlin/Unit
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: /I2.bar
+  dispatchType: B
+  hasStableParameterNames: true
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: bar
+  origin: DELEGATED
+  receiverType: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  deprecationStatus: null

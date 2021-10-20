@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName
 import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.AbstractSymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AbstractMemberScopeByFqNameTest(
+abstract class AbstractDelegateMemberScopeTest(
     configurator: FrontendApiTestConfiguratorService
 ) : AbstractSymbolByFqNameTest(configurator) {
 
@@ -23,6 +23,6 @@ abstract class AbstractMemberScopeByFqNameTest(
         val symbols = with(symbolData) { toSymbols() }
         val classSymbol = symbols.singleOrNull() as? KtClassOrObjectSymbol
             ?: error("Should be a single class symbol, but $symbols found")
-        return classSymbol.getMemberScope().getAllSymbols().toList()
+        return classSymbol.getDelegatedMemberScope().getCallableSymbols().toList()
     }
 }

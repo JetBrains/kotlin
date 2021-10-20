@@ -204,11 +204,8 @@ internal class FirLightClassForSymbol(
         }
 
         analyzeWithSymbolAsContext(classOrObjectSymbol) {
-            // NB: delegated members are not available at _declared_ member scope.
-            // Thus, use member scope to get "all" callable members, including members from (interface) supertypes,
-            // and accept fake overrides with delegated origin to create delegate methods.
-            classOrObjectSymbol.getMemberScope().getCallableSymbols().forEach { functionSymbol ->
-                if (functionSymbol is KtFunctionSymbol && functionSymbol.origin == KtSymbolOrigin.DELEGATED) {
+            classOrObjectSymbol.getDelegatedMemberScope().getCallableSymbols().forEach { functionSymbol ->
+                if (functionSymbol is KtFunctionSymbol) {
                     createDelegateMethod(functionSymbol)
                 }
             }

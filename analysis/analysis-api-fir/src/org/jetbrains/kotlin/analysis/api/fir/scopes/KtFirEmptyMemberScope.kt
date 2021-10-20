@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.scopes
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
 import org.jetbrains.kotlin.analysis.api.scopes.KtDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.KtDelegatedMemberScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtMemberScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
@@ -16,7 +17,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.name.Name
 
-internal class KtFirEmptyMemberScope(override val owner: KtSymbolWithMembers) : KtMemberScope, KtDeclaredMemberScope, ValidityTokenOwner {
+internal class KtFirEmptyMemberScope(
+    override val owner: KtSymbolWithMembers
+) : KtMemberScope, KtDeclaredMemberScope, KtDelegatedMemberScope, ValidityTokenOwner {
     override fun getPossibleCallableNames(): Set<Name> = emptySet()
 
     override fun getPossibleClassifierNames(): Set<Name> = emptySet()

@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractFileStructureTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractInnerDeclarationsResolvePhaseTest
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.analysis.api.descriptors.test.components.*
+import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByFqNameTest
+import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByReferenceTest
 import org.jetbrains.kotlin.analysis.api.fir.components.AbstractFirExpectedExpressionTypeTest
 import org.jetbrains.kotlin.analysis.api.fir.components.AbstractFirHLExpressionTypeTest
 import org.jetbrains.kotlin.analysis.api.fir.components.AbstractFirOverriddenDeclarationProviderTest
@@ -24,9 +27,7 @@ import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirMemberScopeByFqNa
 import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractFirSymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractFirSymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractFirSymbolByReferenceTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.components.*
-import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByFqNameTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByReferenceTest
+import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirDelegateMemberScopeTest
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration
 import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
@@ -50,6 +51,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirFileScopeTest> {
                 model("scopes/fileScopeTest", extension = "kt")
+            }
+
+            testClass<AbstractFirDelegateMemberScopeTest> {
+                model("scopes/delegatedMemberScope")
             }
 
             testClass<AbstractFirSymbolByPsiTest> {
