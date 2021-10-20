@@ -98,29 +98,6 @@ class JsIrBackendContext(
 
     private val internalPackageFragmentDescriptor = EmptyPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal"))
 
-    private fun syntheticFile(name: String, module: IrModuleFragment): IrFile {
-        return IrFileImpl(object : IrFileEntry {
-            override val name = "<$name>"
-            override val maxOffset = UNDEFINED_OFFSET
-
-            override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int) =
-                SourceRangeInfo(
-                    "",
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET
-                )
-
-            override fun getLineNumber(offset: Int) = UNDEFINED_OFFSET
-            override fun getColumnNumber(offset: Int) = UNDEFINED_OFFSET
-        }, internalPackageFragmentDescriptor, module).also {
-            module.files += it
-        }
-    }
-
     val testFunsPerFile = mutableMapOf<IrFile, IrSimpleFunction>()
 
     override fun createTestContainerFun(irFile: IrFile): IrSimpleFunction {
