@@ -3,11 +3,7 @@ package org.jetbrains.kotlin
 import groovy.lang.Closure
 import org.gradle.api.Task
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Exec
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
@@ -34,21 +30,18 @@ open class KlibInstall : Exec() {
     @get:Input
     var target: String = HostManager.hostName
 
-    override fun configure(config: Closure<*>): Task {
-        val result = super.configure(config)
+    @TaskAction
+    override fun exec() {
         val konanHome = project.kotlinNativeDist
         val suffix = if (HostManager.host == KonanTarget.MINGW_X64) ".bat" else ""
         val klibProgram = "$konanHome/bin/klib$suffix"
 
-        doFirst {
-            repo.mkdirs()
+        commandLine(klibProgram,
+                "install", klib.get().absolutePath,
+                "-target", target,
+                "-repository", repo.absolutePath
+        )
 
-            commandLine(klibProgram,
-                    "install", klib.get().absolutePath,
-                    "-target", target,
-                    "-repository", repo.absolutePath
-            )
-        }
-        return result
+        super.exec()
     }
 }
