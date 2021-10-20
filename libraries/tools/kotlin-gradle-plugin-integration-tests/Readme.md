@@ -1,34 +1,89 @@
 ### Gradle Plugin Integration Tests
 
-This module contains integration tests for [`libraries/tools/kotlin-gradle-plugin`](https://github.com/JetBrains/kotlin/tree/master/libraries/tools/kotlin-gradle-plugin) (and the subplugins mentioned there).
+This module contains integration tests for main [`libraries/tools/kotlin-gradle-plugin`](../kotlin-gradle-plugin/ReadMe.md) plugin 
+and other Gradle subplugins ('kapt', 'allopen', etc...).
 
 #### How to run
 
-There are three Gradle tasks that run the tests:
+To run all tests for all Gradle plugins use `check` task.
 
-* Run all tests with the oldest possible Gradle version for each test:
+More fine-grained test tasks exist covering different parts of Gradle plugins:
+- `kgpJvmTests` - runs all tests for Kotlin Gradle Plugin/Jvm platform (parallel execution)
+- `kgpJsTests` - runs all tests for Kotlin Gradle Plugin/Js platform (parallel execution)
+- `kgpDaemonTests` - runs all tests for Gradle and Kotlin daemons (sequential execution)
+- `kgpAllParallelTests` - run all tests for all platforms except daemons tests (parallel execution)
 
-      ./gradlew :kotlin-gradle-plugin-integration-tests:test
-    
-* Run with the new Gradle release, choose only the tests that support this Gradle version:
+Also, few deprecated tasks still exist until all tests will be migrated to the new setup:
+- `kgpSimpleTests` - runs all migrated Kotlin Gradle Plugin tests (parallel execution)
+- `test` - runs all tests with the oldest supported Gradle version (sequential execution)
+- `testAdvancedGradleVersion` - runs all tests with the latest supported Gradle version (sequential execution)
 
-      ./gradlew :kotlin-gradle-plugin-integration-tests:testAdvanceGradleVersion
-    
-* Run the incremental compilation tests generated from the JPS ones
+The old tests that use the Gradle plugins DSL ([`PluginsDslIT`](../kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/PluginsDslIT.kt)) 
+also require the Gradle plugin marker artifacts to be installed:
+```shell
+./gradlew :kotlin-gradle-plugin:plugin-marker:install :kotlin-noarg:plugin-marker:install :kotlin-allopen:plugin-marker:install
+./gradlew :kotlin-gradle-plugin-integration-tests:test
+```
 
-      ./gradlew :kotlin-gradle-plugin-integration-tests:testFromJps
-    
-The tests that use the Gradle plugins DSL ([`PluginsDslIT`](../kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/PluginsDslIT.kt)) also require the Gradle plugin marker artifacts to be installed:
-
-    ./gradlew -Pdeploy_version=1.2-test :kotlin-gradle-plugin:plugin-marker:install :kotlin-noarg:plugin-marker:install :kotlin-allopen:plugin-marker:install
-    ./gradlew -Pdeploy_version=1.2-test :kotlin-gradle-plugin-integration-tests:test
-    
-If you want to run only one test class, you need to set flag `--tests` with value of test class, which you want to run
-
-      ./gradlew :kotlin-gradle-plugin-integration-tests:test --tests <class-name-with-package>
-
+If you want to run only one test class, you need to append `--tests` flag with value of test class, which you want to run
+```shell
+./gradlew :kotlin-gradle-plugin-integration-tests:kgpAllTests --tests <class-name-with-package>
+```
 
 #### How to work with the tests
+
+Few rules you should follow while writing tests:
+- All tests should be written using [JUnit 5 platform](https://junit.org/junit5/docs/current/user-guide/#overview).
+- Consider writing tests for specific supported platform in plugin rather than for specific supported Gradle feature.  For example, 
+if you want to add some tests for Gradle build cache, add them in the related test suites for Kotlin/Jvm, Kotlin/Js, etc...
+- Don't create one big test suite (class). Consider splitting tests into smaller suites. All tests are running in parallel (except daemon tests)
+and having small tests suites should improve overall tests running time.
+- In tests consider using more specific tasks over general one. For example, use `assemble` instead of `build` when test does not need to also
+compile tests and run them. This should reduce test execution time.
+- By default, tests are running with `LogLevel.INFO` log level. Don't set `LogLevel.DEBUG` unless it is really required. Debug log level produces
+a lot of output, that slows down test execution.
+- Add `@DisplayName(...)` with meaningful description both for test class and methods inside. This will allow developers easier 
+to understand what test is about.
+- Consider using [Gradle Plugin DSL](https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block) while adding new/modifying 
+existing test projects.
+
+Tests run using [Gradle TestKit](https://docs.gradle.org/current/userguide/test_kit.html) and may reuse already active Gradle TestKit daemon.
+Shared TestKit caches are located in [./.testKitDir](.testKitDir) directory. It is cleared on CI after test run is finished, but not locally.
+You could clean it locally by running `cleanTestKitCache` task.
+
+##### Adding new test suite
+
+Select appropriate tag [annotation](src/test/kotlin/org/jetbrains/kotlin/gradle/testbase/testTags.kt) and add it to the test class, 
+so it will be assigned to the related test task. Extend test class from [KGPBaseTest](src/test/kotlin/org/jetbrains/kotlin/gradle/testbase/KGPBaseTest.kt).
+
+For each test method add `@GradleTest` annotation and `gradleVersion: GradleVersion` method parameter.
+All tests annotated with `@GradleTest` are [parameterized tests](https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests),
+where provided parameter is Gradle version. By default, test will receive minimal and latest supported Gradle versions. It is possible 
+to modify/add additional Gradle versions by adding `@GradleTestVersions` annotation either to the whole suite or to the specific test method.
+
+Use test DSL defined [here](src/test/kotlin/org/jetbrains/kotlin/gradle/testbase/testDsl.kt) to write actual test case:
+```kotlin
+project("someProject", gradleVersion) {
+    build("assemble") {
+        assertTasksExecuted(":compileKotlin")
+    }
+}
+```
+
+All test projects are located in [resources/testProject](src/test/resources/testProject) directory. You could use existing test projects
+or add a new one. Test setup, on running the test, will automatically add [new](src/test/kotlin/org/jetbrains/kotlin/gradle/testbase/projectSetupDefaults.kt)
+`settings.gradle` file or missing `pluginsManagement { ... }` block into existing file, so you could just use plugins without version
+in build scripts:
+```groovy
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+}
+```
+
+A bunch of additional useful assertions available to use, such as file assertions, output assertions and task assertions. If you want to
+add a new assertion, add as a reviewer someone from Kotlin build tools team.
+
+##### Deprecated tests setup
 
 When you create a new test, figure out which Gradle versions it is supposed to run on. Then, when you instantiate a test project, specify one of:
 
