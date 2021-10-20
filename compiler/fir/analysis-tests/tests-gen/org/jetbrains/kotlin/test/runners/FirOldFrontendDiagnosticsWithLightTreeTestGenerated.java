@@ -17216,6 +17216,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("rawOverride.kt")
+            public void testRawOverride() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/rawOverride.kt");
+            }
+
+            @Test
             @TestMetadata("recursionWithJavaSyntheticProperty.kt")
             public void testRecursionWithJavaSyntheticProperty() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/recursionWithJavaSyntheticProperty.kt");
