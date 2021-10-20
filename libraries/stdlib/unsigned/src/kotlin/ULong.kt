@@ -12,8 +12,8 @@ import kotlin.jvm.*
 
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalUnsignedTypes::class)
-@JvmInline
-public value class ULong @PublishedApi internal constructor(@PublishedApi internal val data: Long) : Comparable<ULong> {
+@Suppress("INLINE_CLASS_DEPRECATED")
+public inline class ULong @PublishedApi internal constructor(@PublishedApi internal val data: Long) : Comparable<ULong> {
 
     companion object {
         /**

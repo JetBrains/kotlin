@@ -12,8 +12,8 @@ import kotlin.jvm.*
 
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalUnsignedTypes::class)
-@JvmInline
-public value class UShort @PublishedApi internal constructor(@PublishedApi internal val data: Short) : Comparable<UShort> {
+@Suppress("INLINE_CLASS_DEPRECATED")
+public inline class UShort @PublishedApi internal constructor(@PublishedApi internal val data: Short) : Comparable<UShort> {
 
     companion object {
         /**
