@@ -32,10 +32,10 @@ fun test(s: bar.Sub<String>) {
     s.<!INVISIBLE_REFERENCE!>doSomething<!>()
     s.doSomething2()
     val s2: Super<String> = s
-    s2.<!INVISIBLE_REFERENCE!>name<!>
-    s2.<!INVISIBLE_REFERENCE!>name<!> = ""
+    s2.name
+    s2.name = ""
     s2.name2
-    <!INVISIBLE_SETTER!>s2.name2<!> = ""
-    s2.<!INVISIBLE_REFERENCE!>doSomething<!>()
+    s2.name2 = ""
+    s2.doSomething()
     s2.doSomething2()
 }

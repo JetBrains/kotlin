@@ -307,6 +307,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         assert(variable.isLocal)
         variable.transformDelegate(transformer, ResolutionMode.ContextDependentDelegate)
         val delegate = variable.delegate
+
+        val hadExplicitType = variable.returnTypeRef !is FirImplicitTypeRef
+
         if (delegate != null) {
             transformPropertyAccessorsWithDelegate(variable, delegate)
             if (variable.delegateFieldSymbol != null) {
@@ -326,7 +329,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
         variable.transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
         context.storeVariable(variable)
-        dataFlowAnalyzer.exitLocalVariableDeclaration(variable)
+        dataFlowAnalyzer.exitLocalVariableDeclaration(variable, hadExplicitType)
         return variable
     }
 

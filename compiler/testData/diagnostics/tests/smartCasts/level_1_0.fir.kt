@@ -7,7 +7,7 @@ fun foo(arg: Int?) {
     }
     val y: Any? = arg
     if (y != null) {
-        arg.hashCode()
+        arg<!UNSAFE_CALL!>.<!>hashCode()
     }
     val yy: Any?
     yy = arg

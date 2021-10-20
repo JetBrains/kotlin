@@ -1068,10 +1068,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         graphBuilder.exitConstExpression(constExpression).mergeIncomingFlow()
     }
 
-    fun exitLocalVariableDeclaration(variable: FirProperty) {
+    fun exitLocalVariableDeclaration(variable: FirProperty, hadExplicitType: Boolean) {
         val node = graphBuilder.exitVariableDeclaration(variable).mergeIncomingFlow()
         val initializer = variable.initializer ?: return
-        exitVariableInitialization(node, initializer, variable, assignment = null)
+        exitVariableInitialization(node, initializer, variable, assignment = null, hadExplicitType)
     }
 
     fun exitVariableAssignment(assignment: FirVariableAssignment) {
@@ -1079,7 +1079,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val property = (assignment.lValue as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirProperty ?: return
         // TODO: add unstable smartcast
         if (property.isLocal || !property.isVar) {
-            exitVariableInitialization(node, assignment.rValue, property, assignment)
+            exitVariableInitialization(node, assignment.rValue, property, assignment, hasExplicitType = false)
         }
         processConditionalContract(assignment)
     }
@@ -1088,7 +1088,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         node: CFGNode<*>,
         initializer: FirExpression,
         property: FirProperty,
-        assignment: FirVariableAssignment?
+        assignment: FirVariableAssignment?,
+        hasExplicitType: Boolean,
     ) {
         val flow = node.flow
         val propertyVariable = variableStorage.getOrCreateRealVariableWithoutUnwrappingAlias(
@@ -1109,7 +1110,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 val isInitializerStable =
                     initializerVariable.isStable || (initializerVariable.hasLocalStability && initializer.isAccessToStableVariable())
 
-                if (isInitializerStable && (propertyVariable.hasLocalStability || propertyVariable.isStable)) {
+                if (!hasExplicitType && isInitializerStable && (propertyVariable.hasLocalStability || propertyVariable.isStable)) {
                     logicSystem.addLocalVariableAlias(
                         flow, propertyVariable,
                         RealVariableAndType(initializerVariable, initializer.coneType)

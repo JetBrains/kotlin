@@ -102,10 +102,10 @@ fun case8() {
 // TESTCASE NUMBER: 9
 fun case9() {
     val flag: Any = A.A1
-    val l1 = when (flag) {
+    val l1 = <!NO_ELSE_IN_WHEN!>when<!> (flag) {
         A.A1 -> B()
         A.A2 -> B()
     }
-    val x1 = C(l1)
+    val x1 = C(<!ARGUMENT_TYPE_MISMATCH!>l1<!>)
 }
 
