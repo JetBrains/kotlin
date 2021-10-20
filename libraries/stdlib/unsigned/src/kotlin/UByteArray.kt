@@ -12,8 +12,8 @@ import kotlin.jvm.*
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@JvmInline
-public value class UByteArray
+@Suppress("INLINE_CLASS_DEPRECATED")
+public inline class UByteArray
 @PublishedApi
 internal constructor(@PublishedApi internal val storage: ByteArray) : Collection<UByte> {
 

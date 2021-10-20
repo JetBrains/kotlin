@@ -12,8 +12,8 @@ import kotlin.jvm.*
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@JvmInline
-public value class ULongArray
+@Suppress("INLINE_CLASS_DEPRECATED")
+public inline class ULongArray
 @PublishedApi
 internal constructor(@PublishedApi internal val storage: LongArray) : Collection<ULong> {
 

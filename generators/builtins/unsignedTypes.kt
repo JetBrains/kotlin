@@ -67,8 +67,8 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
         out.println("@SinceKotlin(\"1.5\")")
         out.println("@WasExperimental(ExperimentalUnsignedTypes::class)")
-        out.println("@JvmInline")
-        out.println("public value class $className @kotlin.internal.IntrinsicConstEvaluation @PublishedApi internal constructor(@PublishedApi internal val data: $storageType) : Comparable<$className> {")
+        out.println("""@Suppress("INLINE_CLASS_DEPRECATED")""")
+        out.println("public inline class $className @kotlin.internal.IntrinsicConstEvaluation @PublishedApi internal constructor(@PublishedApi internal val data: $storageType) : Comparable<$className> {")
         out.println()
         out.println("""    public companion object {
         /**
@@ -469,8 +469,8 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
 
         out.println("@SinceKotlin(\"1.3\")")
         out.println("@ExperimentalUnsignedTypes")
-        out.println("@JvmInline")
-        out.println("public value class $arrayType")
+        out.println("""@Suppress("INLINE_CLASS_DEPRECATED")""")
+        out.println("public inline class $arrayType")
         out.println("@PublishedApi")
         out.println("internal constructor(@PublishedApi internal val storage: $storageArrayType) : Collection<$elementType> {")
         out.println(
