@@ -130,9 +130,13 @@ internal class FirLightSimpleMethodForSymbol(
     private val _returnedType: PsiType by lazyPub {
         if (isVoidReturnType) return@lazyPub PsiType.VOID
         analyzeWithSymbolAsContext(functionSymbol) {
-            functionSymbol.annotatedType.type.asPsiType(this@FirLightSimpleMethodForSymbol)
-                ?: this@FirLightSimpleMethodForSymbol.nonExistentType()
-        }
+            val ktType =
+                if (functionSymbol.isSuspend)
+                    analysisSession.builtinTypes.NULLABLE_ANY
+                else
+                    functionSymbol.annotatedType.type
+            ktType.asPsiType(this@FirLightSimpleMethodForSymbol)
+        } ?: nonExistentType()
     }
 
     override fun getReturnType(): PsiType = _returnedType
