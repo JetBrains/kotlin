@@ -422,7 +422,10 @@ private class ConstantExpressionEvaluatorVisitor(
         if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSimplificationOfNonTrivialConstBooleanExpressions)) {
             return true
         } else {
-            val parent = expression.parent
+            var parent = expression.parent
+            while (parent is KtParenthesizedExpression) {
+                parent = parent.parent
+            }
             if (
                 parent is KtWhenConditionWithExpression ||
                 parent is KtContainerNode && (parent.parent is KtWhileExpression || parent.parent is KtDoWhileExpression)
