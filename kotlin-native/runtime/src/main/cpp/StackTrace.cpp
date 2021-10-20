@@ -157,6 +157,32 @@ static size_t snprintf_with_addr(char* buf, size_t size, size_t frame, const voi
 }
 #endif // ! KONAN_NO_BACKTRACE
 
+
+/*
+ * This is hack for better traces.
+ * In some cases backtrace function returns address after call instruction, while address detection need call instruction itself.
+ * adjustAddressForSourceInfo function tries to fix it with some heuristics.
+ *
+ * For honest solution, we should distinguish backtrace symbols got from signal handlers frames, ordinary frames,
+ * and addresses got from somewhere else. But for now, we assume all addresses are ordinary backtrace frames.
+ */
+
+#if (defined(KONAN_X64) || defined(KONAN_X86)) && !defined(KONAN_WINDOWS)
+KNativePtr adjustAddressForSourceInfo(KNativePtr address) {
+    return reinterpret_cast<KNativePtr>(reinterpret_cast<uintptr_t>(address) - 1);
+}
+#elif (defined(KONAN_ARM32) || defined(KONAN_ARM64)) && !defined(KONAN_WINDOWS)
+KNativePtr adjustAddressForSourceInfo(KNativePtr address) {
+    /*
+     * On arm instructions are always 2-bytes aligned. But odd bit can be used to encode instruction set.
+     * Not sure, if this can happen in our code, but let's just clear it.
+     */
+    return reinterpret_cast<KNativePtr>((reinterpret_cast<uintptr_t>(address) & ~1) - 1);
+}
+#else
+KNativePtr adjustAddressForSourceInfo(KNativePtr address) { return address; }
+#endif
+
 KStdVector<KStdString> kotlin::GetStackTraceStrings(void* const* stackTrace, size_t stackTraceSize) noexcept {
 #if KONAN_NO_BACKTRACE
     KStdVector<KStdString> strings;
@@ -170,6 +196,7 @@ KStdVector<KStdString> kotlin::GetStackTraceStrings(void* const* stackTrace, siz
         for (size_t index = 0; index < stackTraceSize; ++index) {
             KNativePtr address = stackTrace[index];
             if (!address || reinterpret_cast<uintptr_t>(address) == 1) continue;
+            address = adjustAddressForSourceInfo(address);
             int frames_or_overflow = getSourceInfo(address, buffer, std::size(buffer));
             int frames = std::min<int>(frames_or_overflow, std::size(buffer));
             bool isSomethingPrinted = false;

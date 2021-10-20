@@ -10,13 +10,6 @@
 
 extern "C" int Kotlin_getSourceInfo_libbacktrace(void* addr, SourceInfo *result, int result_size) {
     if (result_size == 0) return 0;
-    /**
-     * This is hack for better traces.
-     * backtrace function returns address after call instruction, and address detection need call instruction itself
-     * For honest solution, we should distinguish backtrace symbols got from signal handlers frames, ordinary frames,
-     * and addresses got from somewhere else. But for now, we assume all addresses are ordinary backtrace frames.
-     */
-    addr = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(addr) - 1);
     auto ignore_error = [](void*, const char*, int){};
     static auto state = backtrace_create_state(nullptr, 1, ignore_error, nullptr);
     if (!state) return 0;
