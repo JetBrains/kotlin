@@ -1056,7 +1056,3 @@ fun OutputFile.writeToDir(directory: File) =
     FileUtil.writeToFile(File(directory, relativePath), asByteArray())
 
 fun Collection<OutputFile>.writeToDir(directory: File) = forEach { it.writeToDir(directory) }
-
-fun tmpDir(name: String): File {
-    return FileUtil.createTempDirectory(name, "", false).canonicalFile
-}
