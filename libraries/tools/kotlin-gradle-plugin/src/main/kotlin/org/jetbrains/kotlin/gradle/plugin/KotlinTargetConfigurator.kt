@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.COMPILE
 import org.jetbrains.kotlin.gradle.utils.RUNTIME
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.util.concurrent.Callable
 import kotlin.reflect.KMutableProperty1
@@ -182,7 +185,6 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                 runtimeConfiguration?.let { extendsFrom(it) }
             }
             usesPlatformOf(target)
-            setupAsPublicConfigurationIfSupported(target)
         }
 
         if (mainCompilation is KotlinCompilationToRunnableFiles<*>) {
@@ -199,7 +201,6 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                     extendsFrom(runtimeOnlyConfiguration)
                 runtimeConfiguration?.let { extendsFrom(it) }
                 usesPlatformOf(target)
-                setupAsPublicConfigurationIfSupported(target)
             }
         }
 
@@ -500,6 +501,12 @@ internal fun Project.categoryByName(categoryName: String): Category =
 fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
     attributes.attribute(KotlinPlatformType.attribute, target.platformType)
 
+    when (target.platformType) {
+        KotlinPlatformType.jvm -> setJavaTargetEnvironmentAttributeIfSupported(target.project, "standard-jvm")
+        KotlinPlatformType.androidJvm -> setJavaTargetEnvironmentAttributeIfSupported(target.project, "android")
+        else -> Unit
+    }
+
     if (target is KotlinJsTarget) {
         attributes.attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.legacy)
     }
@@ -513,6 +520,19 @@ fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
         attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.konanTarget.name)
     }
     return this
+}
+
+private fun Configuration.setJavaTargetEnvironmentAttributeIfSupported(project: Project, value: String) {
+    if (isGradleVersionAtLeast(7, 0)) {
+        @Suppress("UNCHECKED_CAST")
+        val attributeClass = Class.forName("org.gradle.api.attributes.java.TargetJvmEnvironment") as Class<out Named>
+
+        @Suppress("UNCHECKED_CAST")
+        val attributeKey = attributeClass.getField("TARGET_JVM_ENVIRONMENT_ATTRIBUTE").get(null) as Attribute<Named>
+
+        val attributeValue = project.objects.named(attributeClass, value)
+        attributes.attribute(attributeKey, attributeValue)
+    }
 }
 
 internal val Project.commonKotlinPluginClasspath get() = configurations.getByName(PLUGIN_CLASSPATH_CONFIGURATION_NAME)

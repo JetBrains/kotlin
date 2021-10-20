@@ -62,7 +62,6 @@ internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: Kotl
     return configurations.create(configurationName).apply {
         isCanBeResolved = false
         isCanBeConsumed = true
-        setupAsPublicConfigurationIfSupported(target)
 
         usesPlatformOf(target)
         attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())

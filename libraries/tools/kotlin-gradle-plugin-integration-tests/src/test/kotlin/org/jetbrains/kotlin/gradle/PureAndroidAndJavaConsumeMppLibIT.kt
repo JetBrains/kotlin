@@ -8,29 +8,63 @@ package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.checkedReplace
-import org.jetbrains.kotlin.gradle.util.isWindows
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assume
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ErrorCollector
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
-import java.util.*
 import java.lang.Boolean as RefBoolean
 
+/**
+ * It is important to run both pre-7.0 and post-7.0 tests, as Gradle 7.0 + AGP 7 introduces a new attribute to distinguish JVM vs Android
+ */
+class PureAndroidAndJavaConsumeMppLibPreGradle7IT : PureAndroidAndJavaConsumeMppLibIT() {
+    override val agpVersion: AGPVersion
+        get() = AGPVersion.v4_2_0
+
+    override val gradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.Exact("6.9")
+}
+
+/**
+ * It is important to run both pre-7.0 and post-7.0 tests, as Gradle 7.0 + AGP 7 introduces a new attribute to distinguish JVM vs Android
+ */
+class PureAndroidAndJavaConsumeMppLibGradle7PlusIT : PureAndroidAndJavaConsumeMppLibIT() {
+    override val agpVersion: AGPVersion
+        get() = AGPVersion.v7_0_0
+
+    override val gradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.AtLeast("7.0")
+}
+
 @RunWith(Parameterized::class)
-class PureAndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
+abstract class PureAndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
+    abstract val agpVersion: AGPVersion
+    abstract val gradleVersion: GradleVersionRequired
+
+    @field:Rule
+    @JvmField
+    var collector: ErrorCollector = ErrorCollector()
+
     companion object {
         @JvmStatic
-        @Parameterized.Parameters(name = "useFlavors: {0}, isAndroidDebugOnly: {1}")
+        @Parameterized.Parameters(name = "useFlavors: {0}, isAndroidPublishDebugOnly: {1}, isPublishedLibrary: {2}")
         fun testCases(): List<Array<Boolean>> =
-            listOf( /* useFlavors, isAndroidDebugOnly */
-                arrayOf(false, false),
-                arrayOf(false, true),
-                arrayOf(true, false),
-                arrayOf(true, true)
+            listOf(
+                /* useFlavors, isAndroidPublishDebugOnly, isPublishedLibrary */
+                arrayOf(false, false, false),
+                arrayOf(false, true, false),
+                arrayOf(true, false, false),
+                arrayOf(true, true, false),
+                arrayOf(false, false, true),
+                arrayOf(false, true, true),
+                arrayOf(true, false, true),
+                arrayOf(true, true, true),
             )
     }
 
@@ -38,7 +72,7 @@ class PureAndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
     lateinit var useFlavorsParameter: RefBoolean
 
     @Parameterized.Parameter(1)
-    lateinit var isAndroidDebugOnlyParameter: RefBoolean
+    lateinit var isAndroidPublishDebugOnlyParameter: RefBoolean
 
     lateinit var buildOptions: BuildOptions
 
@@ -50,28 +84,30 @@ class PureAndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
         buildOptions = defaultBuildOptions().copy(
             javaHome = jdk11Home,
             androidHome = KtTestUtil.findAndroidSdk(),
-            androidGradlePluginVersion = AGPVersion.v7_0_0
+            androidGradlePluginVersion = agpVersion
         )
         buildOptions.androidHome?.let { acceptAndroidSdkLicenses(it) }
 
         super.setUp()
     }
 
+    @Parameterized.Parameter(2)
+    lateinit var isPublishedLibraryParameter: RefBoolean
+
     @Test
     fun test() {
-        val gradleVersionRequirement = GradleVersionRequired.AtLeast("7.0")
-
-        val isAndroidDebugOnly = isAndroidDebugOnlyParameter.booleanValue()
+        val isAndroidPublishDebugOnly = isAndroidPublishDebugOnlyParameter.booleanValue()
         val useFlavors = useFlavorsParameter.booleanValue()
+        val isPublishedLibrary = isPublishedLibraryParameter.booleanValue()
 
-        val publishedProject = Project("new-mpp-android", gradleVersionRequirement).apply {
+        val dependencyProject = Project("new-mpp-android", gradleVersion).apply {
             projectDir.deleteRecursively()
             setupWorkingDir()
             // Don't need custom attributes here
             gradleBuildScript("lib").modify { text ->
                 text.lines().filterNot { it.trimStart().startsWith("attribute(") }.joinToString("\n")
                     .let {
-                        if (isAndroidDebugOnly) it.checkedReplace(
+                        if (isAndroidPublishDebugOnly) it.checkedReplace(
                             "publishAllLibraryVariants()",
                             "publishLibraryVariants(\"${if (useFlavors) "flavor1Debug" else "debug"}\")"
                         ) else it
@@ -87,18 +123,52 @@ class PureAndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
                                     }
                                     """.trimIndent()
                         } else it
+                    }.let {
+                        // Simulate the behavior with user-defined consumable configuration added with no proper attributes:
+                        it + "\n" + """
+                            configurations.create("legacyConfiguration") {
+                                def bundlingAttribute = Attribute.of("org.gradle.dependency.bundling", String)
+                                attributes.attribute(bundlingAttribute, "external")
+                            }
+                        """.trimIndent()
                     }
             }
         }
 
-        publishedProject.build(":lib:publish", options = buildOptions) {
-            assertSuccessful()
+        if (isPublishedLibrary) {
+            dependencyProject.build(":lib:publish", options = buildOptions) {
+                assertSuccessful()
+            }
         }
-        val repoDir = publishedProject.projectDir.resolve("lib/build/repo")
 
-        val consumerProject = Project("AndroidProject", gradleVersionRequirement).apply {
+        val repositoryLinesIfNeeded = if (isPublishedLibrary) """
+                repositories {
+                    maven { setUrl("${dependencyProject.projectDir.resolve("lib/build/repo").toURI()}") }                    
+                }
+            """.trimIndent() else ""
+
+        val dependencyNotation =
+            if (isPublishedLibrary)
+                """"com.example:lib:1.0""""
+            else "project(\":${dependencyProject.projectName}:lib\")"
+
+        val variantNamePublishedSuffix = if (isPublishedLibrary) "-published" else ""
+
+        val dependencyInsightModuleName =
+            if (isPublishedLibrary)
+                "com.example:lib"
+            else ":${dependencyProject.projectName}:lib"
+
+        val consumerProject = Project("AndroidProject", gradleVersion).apply {
             projectDir.deleteRecursively()
+            if (!isPublishedLibrary) {
+                embedProject(dependencyProject)
+                gradleSettingsScript().appendText(
+                    "\ninclude(\":${dependencyProject.projectName}:lib\")"
+                )
+            }
             setupWorkingDir()
+
             gradleBuildScript("Lib").apply {
                 writeText(
                     // Remove the Kotlin plugin from the consumer project to check how pure-AGP Kotlin-less consumers resolve the dependency
@@ -112,35 +182,45 @@ class PureAndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
                             create("staging") { initWith(getByName("debug")) }
                         }
                     }
-                    repositories {
-                        maven { setUrl("${repoDir.absolutePath}") }                    
-                    }
+                    $repositoryLinesIfNeeded
                     dependencies {
-                        implementation("com.example:lib:1.0")
+                        implementation($dependencyNotation)
                     }
                 """.trimIndent()
                 )
             }
         }
-        val variantForReleaseAndStaging =
-            if (isAndroidDebugOnly) "debugApiElements-published" else "releaseApiElements-published"
+        val variantForReleaseAndStaging = if (isAndroidPublishDebugOnly && isPublishedLibrary)
+            "debugApiElements$variantNamePublishedSuffix"
+        else "releaseApiElements$variantNamePublishedSuffix"
 
         fun nameWithFlavorIfNeeded(name: String) = if (useFlavors) "flavor1${name.capitalize()}" else name
 
         val configurationToExpectedVariant = listOf(
-            nameWithFlavorIfNeeded("debugCompileClasspath") to nameWithFlavorIfNeeded("debugApiElements-published"),
+            nameWithFlavorIfNeeded("debugCompileClasspath") to nameWithFlavorIfNeeded("debugApiElements$variantNamePublishedSuffix"),
             nameWithFlavorIfNeeded("releaseCompileClasspath") to nameWithFlavorIfNeeded(variantForReleaseAndStaging),
-            nameWithFlavorIfNeeded("stagingCompileClasspath") to nameWithFlavorIfNeeded(variantForReleaseAndStaging)
+            nameWithFlavorIfNeeded("stagingCompileClasspath") to
+                    if (isPublishedLibrary)
+                        nameWithFlavorIfNeeded(variantForReleaseAndStaging)
+                    // NB: unlike published library, both the release and debug variants provide the build type attribute
+                    //     and therefore are not compatible with the "staging" consumer. So it can only use the JVM variant
+                    else "jvmLibApiElements"
         )
         configurationToExpectedVariant.forEach { (configuration, expected) ->
             consumerProject.build(
                 ":Lib:dependencyInsight",
                 "--configuration", configuration,
-                "--dependency", "com.example:lib",
+                "--dependency", dependencyInsightModuleName,
                 options = buildOptions
             ) {
                 assertSuccessful()
-                assertContains("variant \"$expected\" [")
+                if (project.testGradleVersionBelow("7.0") && !isPublishedLibrary) {
+                    /* TODO: the issue KT-30961 is only fixed for Gradle 7.0+ and AGP 7+. Older versions still reproduce the issue;
+                     *  This test asserts the existing incorrect behavior for older Gradle versions in order to detect unintentional changes
+                     */
+                    assertVariantInDependencyInsight("jvmLibApiElements")
+                } else
+                    assertVariantInDependencyInsight(expected)
             }
         }
 
@@ -152,11 +232,9 @@ class PureAndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
                     plugins {
                         java
                     }
-                    repositories {
-                        maven { setUrl("${repoDir.absolutePath}") }                    
-                    }
+                    $repositoryLinesIfNeeded
                     dependencies {
-                        implementation("com.example:lib:1.0")
+                        implementation($dependencyNotation)
                     }
                     """.trimIndent()
             )
@@ -164,12 +242,27 @@ class PureAndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
             build(
                 ":pure-java:dependencyInsight",
                 "--configuration", "compileClasspath",
-                "--dependency", "com.example:lib",
+                "--dependency", dependencyInsightModuleName,
                 options = buildOptions
             ) {
                 assertSuccessful()
-                assertContains("variant \"jvmLibApiElements-published\" [")
+                assertVariantInDependencyInsight("jvmLibApiElements$variantNamePublishedSuffix")
             }
+        }
+    }
+
+    private fun CompiledProject.assertVariantInDependencyInsight(variantName: String) {
+        try {
+            assertContains("variant \"$variantName\" [")
+        } catch (originalError: AssertionError) {
+            val matchedVariants = Regex("variant \"(.*?)\" \\[").findAll(output).toList()
+            val failure = AssertionError(
+                "Expected variant $variantName. " + if (matchedVariants.isNotEmpty()) "Matched instead: " + matchedVariants
+                    .joinToString { it.groupValues[1] } else "No match.",
+                originalError
+            )
+            this.output
+            collector.addError(failure)
         }
     }
 }
