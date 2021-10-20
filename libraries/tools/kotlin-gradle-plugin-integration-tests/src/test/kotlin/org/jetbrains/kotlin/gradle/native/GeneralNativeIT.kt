@@ -26,7 +26,9 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.junit.Assume
 import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ErrorCollector
 import java.io.File
 import java.util.*
 import kotlin.test.assertEquals
@@ -1031,6 +1033,51 @@ class GeneralNativeIT : BaseGradleIT() {
                 // Options set in the DSL have higher priority than options set in project properties.
                 assertTrue(it.contains("-Xbinary=memoryModel=experimental"))
             }
+        }
+    }
+
+    @Test
+    fun testCinteropConfigurationsVariantAwareResolution() = with(transformNativeTestProjectWithPluginDsl("native-cinterop")) {
+        build(":publishedLibrary:publish") {
+            assertSuccessful()
+        }
+
+        fun CompiledProject.assertVariantInDependencyInsight(variantName: String) {
+            try {
+                assertContains("variant \"$variantName\" [")
+            } catch (originalError: AssertionError) {
+                val matchedVariants = Regex("variant \"(.*?)\" \\[").findAll(output).toList()
+                throw AssertionError(
+                    "Expected variant $variantName. " +
+                            if (matchedVariants.isNotEmpty())
+                                "Matched instead: " + matchedVariants.joinToString { it.groupValues[1] }
+                            else "No match.",
+                    originalError
+                )
+            }
+        }
+
+        build(":dependencyInsight", "--configuration", "hostTestTestNumberCInterop", "--dependency", "org.example:publishedLibrary") {
+            assertSuccessful()
+            assertVariantInDependencyInsight("hostApiElements-published")
+        }
+
+        gradleBuildScript("projectLibrary").appendText(
+            "\n" + """
+            configurations.create("ktlint") {
+                def bundlingAttribute = Attribute.of("org.gradle.dependency.bundling", String)
+                attributes.attribute(bundlingAttribute, "external")
+            }
+        """.trimIndent()
+        )
+
+        build(":dependencyInsight", "--configuration", "hostTestTestNumberCInterop", "--dependency", ":projectLibrary") {
+            assertSuccessful()
+            assertVariantInDependencyInsight("hostCInteropApiElements")
+        }
+        build(":dependencyInsight", "--configuration", "hostCompileKlibraries", "--dependency", ":projectLibrary") {
+            assertSuccessful()
+            assertVariantInDependencyInsight("hostApiElements")
         }
     }
 
