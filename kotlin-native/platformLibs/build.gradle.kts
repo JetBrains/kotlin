@@ -29,13 +29,13 @@ plugins {
 val targetsWithoutZlib: List<KonanTarget> by project
 
 // region: Util functions.
-fun targetDefFiles(target: KonanTarget) =
-    project.fileTree("src/platform/${target.family.visibleName}")
+fun KonanTarget.defFiles() =
+    project.fileTree("src/platform/${family.visibleName}")
             .filter { it.name.endsWith(".def") }
             // The libz.a/libz.so and zlib.h are missing in MIPS sysroots.
             // Just workaround it until we have sysroots corrected.
-            .filter { ! ((target in targetsWithoutZlib) && it.name == "zlib.def") }
-            .map { DefFile(it, target) }
+            .filterNot { (this in targetsWithoutZlib) && it.name == "zlib.def" }
+            .map { DefFile(it, this) }
 
 
 fun defFileToLibName(target: String, name: String) = "$target-$name"
@@ -55,7 +55,7 @@ konanTargetList.forEach { target ->
     val installTasks = mutableListOf<TaskProvider<out Task>>()
     val cacheTasks = mutableListOf<TaskProvider<out Task>>()
 
-    targetDefFiles(target).forEach { df ->
+    target.defFiles().forEach { df ->
         val libName = defFileToLibName(targetName, df.name)
         val fileNamePrefix = PlatformLibsInfo.namePrefix
 
@@ -104,7 +104,7 @@ konanTargetList.forEach { target ->
                 cacheRoot = file("$konanHome/klib/cache").absolutePath
 
                 dependsOn(":kotlin-native:${targetName}StdlibCache")
-                dependsOn(tasks[libName])
+                dependsOn(tasks.named(libName))
                 dependsOn(df.config.depends.map {
                     val depName = defFileToLibName(targetName, it)
                     "${depName}Cache"
