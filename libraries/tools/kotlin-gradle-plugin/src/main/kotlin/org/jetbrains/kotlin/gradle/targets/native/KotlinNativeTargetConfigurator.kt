@@ -432,7 +432,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                         "compilation for target '${compilation.platformType.name}'."
                 it.enabled = compilation.konanTarget.enabledOnCurrentHost
 
-                it.destinationDir = project.klibOutputDirectory(compilation).resolve("klib")
+                it.destinationDirectory.set(project.klibOutputDirectory(compilation).resolve("klib"))
             }
 
 
