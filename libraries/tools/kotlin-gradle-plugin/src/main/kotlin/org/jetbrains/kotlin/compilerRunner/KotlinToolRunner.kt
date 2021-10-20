@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.compilerRunner
 
 import com.intellij.openapi.util.text.StringUtil.escapeStringCharacters
 import org.gradle.api.Project
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.lang.reflect.InvocationTargetException
@@ -100,7 +101,9 @@ internal abstract class KotlinToolRunner(
         )
 
         project.javaexec { spec ->
-            spec.main = mainClass
+            @Suppress("DEPRECATION")
+            if (GradleVersion.current() >= GradleVersion.version("7.0")) spec.mainClass.set(mainClass)
+            else spec.main = mainClass
             spec.classpath = classpath
             spec.jvmArgs(jvmArgs)
             spec.systemProperties(systemProperties)
