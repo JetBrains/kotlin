@@ -1,3 +1,5 @@
+// MAIN_ARGS: []
+
 fun main(args: Array<String>) {
     cases("Hello")
     cases(1)

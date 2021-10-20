@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.testNew.converters
 
+import com.google.common.collect.Lists
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
@@ -82,8 +83,11 @@ class ClassicJsBackendFacade(
 
         val units = unitsByPath.entries.sortedBy { it.key }.map { it.value }
 
-        val mainCallParameters = when (JsEnvironmentConfigurationDirectives.CALL_MAIN) {
-            in module.directives -> MainCallParameters.mainWithArguments(listOf())
+        val mainCallParameters = when {
+            JsEnvironmentConfigurationDirectives.CALL_MAIN in module.directives -> MainCallParameters.mainWithArguments(listOf())
+            JsEnvironmentConfigurationDirectives.MAIN_ARGS in module.directives -> {
+                MainCallParameters.mainWithArguments(module.directives[JsEnvironmentConfigurationDirectives.MAIN_ARGS].first())
+            }
             else -> MainCallParameters.noCall()
         }
 

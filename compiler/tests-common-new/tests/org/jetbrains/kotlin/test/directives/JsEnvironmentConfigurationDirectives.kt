@@ -134,6 +134,12 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global,
     )
 
+    val MAIN_ARGS by valueDirective(
+        description = "Specify arguments that will be passes to main fun",
+        applicability = DirectiveApplicability.Global,
+        parser = { it.subSequence(1, it.length - 1).split(",") }
+    )
+
     // Next directives are used only inside test system and must not be present in test file
 
     val PATH_TO_TEST_DIR by stringDirective(

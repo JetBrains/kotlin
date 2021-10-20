@@ -1,3 +1,5 @@
+// MAIN_ARGS: [Pavel]
+
 class Greeter(name: String) {
     val name = name
     fun greet() {

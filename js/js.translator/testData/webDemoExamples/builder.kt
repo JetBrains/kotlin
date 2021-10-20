@@ -1,3 +1,5 @@
+// MAIN_ARGS: [over9000]
+
 /**
  * This is an example of a Type-Safe Groovy-style Builder
  *

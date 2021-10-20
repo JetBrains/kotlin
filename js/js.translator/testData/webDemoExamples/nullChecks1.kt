@@ -1,3 +1,5 @@
+// MAIN_ARGS: []
+
 // Return null if str does not hold a number
 fun myParseInt(str: String): Int? = str.toIntOrNull().also {
     if (it == null) println("One of arguments isn't Int")

@@ -1,3 +1,5 @@
+// MAIN_ARGS: []
+
 fun main(args: Array<String>) {
     println(getStringLength("aaa"))
     println(getStringLength(1))

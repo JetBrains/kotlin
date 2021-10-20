@@ -136,3 +136,22 @@ open class AbstractMultiModuleOrderTest : AbstractJsTest(
         }
     }
 }
+
+open class AbstractWebDemoExamplesTest : AbstractJsTest(
+    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/webDemoExamples/",
+    testGroupOutputDirPrefix = "webDemoExamples/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
+                JsEnvironmentConfigurationDirectives.DONT_RUN_GENERATED_CODE.with("JS")
+            }
+
+            configureJsArtifactsHandlersStep {
+                useHandlers(::MainCallWithArgumentsHandler)
+            }
+        }
+    }
+}

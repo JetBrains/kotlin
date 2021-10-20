@@ -1,3 +1,5 @@
+// MAIN_ARGS: [123]
+
 fun main(args: Array<String>) {
     for (arg in args)
         println(arg)

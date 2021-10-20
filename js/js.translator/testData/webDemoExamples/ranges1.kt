@@ -1,3 +1,4 @@
+// MAIN_ARGS: [4]
 
 fun main(args: Array<String>) {
     val x = args[0].toInt()

@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.js.test.es6.semantics.AbstractIrJsCodegenBoxES6Test
 import org.jetbrains.kotlin.js.test.es6.semantics.AbstractIrJsCodegenInlineES6Test
 import org.jetbrains.kotlin.js.test.es6.semantics.AbstractIrJsTypeScriptExportES6Test
 import org.jetbrains.kotlin.js.test.ir.semantics.*
-import org.jetbrains.kotlin.js.test.semantics.*
 import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractIrCodegenBoxWasmTest
 import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractIrCodegenWasmJsInteropWasmTest
 import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractJsTranslatorWasmTest
 import org.jetbrains.kotlin.js.testNew.*
+import org.jetbrains.kotlin.js.testNew.AbstractWebDemoExamplesTest
 import org.jetbrains.kotlin.test.TargetBackend
 
 fun main(args: Array<String>) {
@@ -136,6 +136,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractMultiModuleOrderTest> {
                 model("multiModuleOrder/")
+            }
+
+            testClass<AbstractWebDemoExamplesTest> {
+                model("webDemoExamples/")
             }
         }
 

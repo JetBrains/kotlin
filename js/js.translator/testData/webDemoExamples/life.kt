@@ -1,3 +1,5 @@
+// MAIN_ARGS: [2]
+
 /**
  * This is a straightforward implementation of The Game of Life
  * See http://en.wikipedia.org/wiki/Conway's_Game_of_Life
