@@ -274,7 +274,7 @@ internal class Kotlin2JsSourceSetProcessor(
                                 "Gradle will not be able to build the project because of the root directory lock.\n" +
                                 "To fix this, consider using the default outputFile location instead of providing it explicitly."
                     )
-                kotlinTaskInstance.destinationDir = outputDir
+                kotlinTaskInstance.destinationDirectory.set(outputDir)
 
                 if (
                     kotlinOptions.freeCompilerArgs.contains(PRODUCE_JS) ||
