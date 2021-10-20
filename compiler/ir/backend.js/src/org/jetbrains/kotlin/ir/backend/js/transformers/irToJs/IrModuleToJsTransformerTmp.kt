@@ -47,7 +47,7 @@ class IrModuleToJsTransformerTmp(
 
         val exportData = modules.associate { module ->
             module to module.files.associate { file ->
-                file to exportModelGenerator.generateExport(file)
+                file to exportModelGenerator.generateExportWithExternals(file)
             }
         }
 
@@ -72,7 +72,7 @@ class IrModuleToJsTransformerTmp(
         val exportModelGenerator = ExportModelGenerator(backendContext, generateNamespacesForPackages = true)
 
         val exportData = files.associate { file ->
-            file to exportModelGenerator.generateExport(file)
+            file to exportModelGenerator.generateExportWithExternals(file)
         }
 
         files.forEach { StaticMembersLowering(backendContext).lower(it) }
@@ -90,6 +90,12 @@ class IrModuleToJsTransformerTmp(
         }
 
         return result
+    }
+
+    private fun ExportModelGenerator.generateExportWithExternals(irFile: IrFile): List<ExportedDeclaration> {
+        val exports = generateExport(irFile)
+        val additionalExports = backendContext.externalPackageFragment[irFile.symbol]?.let { generateExport(it) } ?: emptyList()
+        return additionalExports + exports
     }
 
     private fun generateProgramFragments(
