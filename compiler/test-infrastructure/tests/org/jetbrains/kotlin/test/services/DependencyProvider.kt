@@ -12,13 +12,16 @@ abstract class DependencyProvider : TestService {
     abstract fun getTestModule(name: String): TestModule
 
     abstract fun <A : ResultingArtifact<A>> getArtifact(module: TestModule, kind: TestArtifactKind<A>): A
+
+    abstract fun unregisterAllArtifacts(module: TestModule)
+    abstract fun copy(): DependencyProvider
 }
 
 val TestServices.dependencyProvider: DependencyProvider by TestServices.testServiceAccessor()
 
 class DependencyProviderImpl(
     private val testServices: TestServices,
-    testModules: List<TestModule>
+    private val testModules: List<TestModule>
 ) : DependencyProvider() {
     private val assertions: Assertions
         get() = testServices.assertions
@@ -42,6 +45,16 @@ class DependencyProviderImpl(
         val kind = artifact.kind
         val previousValue = artifactsByModule.getMap(module).put(kind, artifact)
         if (previousValue != null) error("Artifact with kind $kind already registered for module ${module.name}")
+    }
+
+    override fun unregisterAllArtifacts(module: TestModule) {
+        artifactsByModule.remove(module)
+    }
+
+    override fun copy(): DependencyProvider {
+        return DependencyProviderImpl(testServices, testModules).also {
+            artifactsByModule.putAll(artifactsByModule.mapValues { (_, map) -> map.toMutableMap() })
+        }
     }
 
     private fun <K, V, R> MutableMap<K, MutableMap<V, R>>.getMap(key: K): MutableMap<V, R> {

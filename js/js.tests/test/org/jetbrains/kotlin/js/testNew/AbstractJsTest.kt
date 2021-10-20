@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.testNew
 
 import org.jetbrains.kotlin.js.testNew.converters.ClassicJsBackendFacade
+import org.jetbrains.kotlin.js.testNew.converters.RecompileModuleJsBackendFacade
 import org.jetbrains.kotlin.js.testNew.handlers.*
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
@@ -33,6 +34,9 @@ abstract class AbstractJsTest(
 
     override val backendFacade: Constructor<BackendFacade<ClassicBackendInput, BinaryArtifacts.Js>>
         get() = ::ClassicJsBackendFacade
+
+    override val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
+        get() = { RecompileModuleJsBackendFacade(it, frontendFacade, frontendToBackendConverter) }
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

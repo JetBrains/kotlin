@@ -7,15 +7,16 @@ package org.jetbrains.kotlin.js.testNew.converters
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.facade.K2JSTranslator
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationResult
 import org.jetbrains.kotlin.js.facade.TranslationUnit
+import org.jetbrains.kotlin.js.testNew.utils.JsClassicIncrementalDataProvider
+import org.jetbrains.kotlin.js.testNew.utils.jsClassicIncrementalDataProvider
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.backend.classic.ClassicBackendFacade
 import org.jetbrains.kotlin.test.backend.classic.ClassicBackendInput
@@ -23,20 +24,25 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import java.io.ByteArrayOutputStream
+import org.jetbrains.kotlin.test.services.service
 import java.io.File
-import java.io.PrintStream
-import java.nio.charset.Charset
 
 class ClassicJsBackendFacade(
-    testServices: TestServices
+    testServices: TestServices,
+    val incrementalCompilationEnabled: Boolean
 ) : ClassicBackendFacade<BinaryArtifacts.Js>(testServices, ArtifactKinds.Js) {
     companion object {
         const val KOTLIN_TEST_INTERNAL = "\$kotlin_test_internal\$"
     }
+
+    constructor(testServices: TestServices) : this(testServices, incrementalCompilationEnabled = false)
+
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(service(::JsClassicIncrementalDataProvider))
 
     private fun wrapWithModuleEmulationMarkers(content: String, moduleKind: ModuleKind, moduleId: String): String {
         val escapedModuleId = StringUtil.escapeStringCharacters(moduleId)
@@ -57,13 +63,25 @@ class ClassicJsBackendFacade(
         }
     }
 
-    override fun transform(module: TestModule, inputArtifact: ClassicBackendInput): BinaryArtifacts.Js? {
+    override fun transform(module: TestModule, inputArtifact: ClassicBackendInput): BinaryArtifacts.Js {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val (psiFiles, analysisResult, project, _) = inputArtifact
 
         // TODO how to reuse this config from frontend
         val jsConfig = JsEnvironmentConfigurator.createJsConfig(project, configuration)
-        val units = psiFiles.map(TranslationUnit::SourceFile)
+
+        val unitsByPath: MutableMap<String, TranslationUnit> = psiFiles.associateTo(mutableMapOf()) {
+            (it.virtualFile.canonicalPath ?: "") to TranslationUnit.SourceFile(it)
+        }
+        if (incrementalCompilationEnabled) {
+            val incrementalData = testServices.jsClassicIncrementalDataProvider.getIncrementalData(module)
+            for ((file, data) in incrementalData.translatedFiles) {
+                unitsByPath[file.canonicalPath] = TranslationUnit.BinaryAst(data.binaryAst, data.inlineData)
+            }
+        }
+
+        val units = unitsByPath.entries.sortedBy { it.key }.map { it.value }
+
         val mainCallParameters = when (JsEnvironmentConfigurationDirectives.CALL_MAIN) {
             in module.directives -> MainCallParameters.mainWithArguments(listOf())
             else -> MainCallParameters.noCall()
@@ -73,6 +91,22 @@ class ClassicJsBackendFacade(
         val translationResult = translator.translateUnits(
             JsEnvironmentConfigurator.Companion.ExceptionThrowingReporter, units, mainCallParameters, analysisResult as? JsAnalysisResult
         )
+
+        if (!incrementalCompilationEnabled) {
+            jsConfig.configuration[JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]?.let {
+                val incrementalData = JsClassicIncrementalDataProvider.IncrementalData()
+                val incrementalService = it as IncrementalResultsConsumerImpl
+
+                for ((srcFile, data) in incrementalService.packageParts) {
+                    incrementalData.translatedFiles[srcFile] = data
+                }
+
+                incrementalData.packageMetadata += incrementalService.packageMetadata
+
+                incrementalData.header = incrementalService.headerMetadata
+                testServices.jsClassicIncrementalDataProvider.recordIncrementalData(module, incrementalData)
+            }
+        }
 
         val outputFile = File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name) + ".js")
         if (translationResult !is TranslationResult.Success) {

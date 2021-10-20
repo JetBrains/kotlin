@@ -21,7 +21,7 @@ class JsTranslationResultHandler(testServices: TestServices) : JsBinaryArtifactH
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {
-        val result = (info as? BinaryArtifacts.Js.OldJsArtifact)?.translationResult
+        val result = (info.unwrap() as? BinaryArtifacts.Js.OldJsArtifact)?.translationResult
             ?: throw IllegalArgumentException("JsTranslationResultHandler suppose to work only with old js backend")
 
         if (result !is TranslationResult.Success) {

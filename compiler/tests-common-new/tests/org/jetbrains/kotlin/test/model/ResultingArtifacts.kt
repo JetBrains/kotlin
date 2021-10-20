@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.model
 
 import org.jetbrains.kotlin.codegen.ClassFileFactory
+import org.jetbrains.kotlin.incremental.js.TranslationResultValue
 import org.jetbrains.kotlin.ir.backend.js.CompilerResult
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.facade.TranslationResult
@@ -22,9 +23,19 @@ object BinaryArtifacts {
         override val kind: BinaryKind<Js>
             get() = ArtifactKinds.Js
 
-        class OldJsArtifact(override val outputFile: File, val translationResult: TranslationResult) : Js()
+        open fun unwrap(): Js = this
 
+        class OldJsArtifact(override val outputFile: File, val translationResult: TranslationResult) : Js()
         class JsIrArtifact(override val outputFile: File, val compilerResult: CompilerResult) : Js()
+
+        data class IncrementalJsArtifact(val originalArtifact: Js, val recompiledArtifact: Js) : Js() {
+            override val outputFile: File
+                get() = unwrap().outputFile
+
+            override fun unwrap(): Js {
+                return originalArtifact
+            }
+        }
     }
 
     class Native : ResultingArtifact.Binary<Native>() {

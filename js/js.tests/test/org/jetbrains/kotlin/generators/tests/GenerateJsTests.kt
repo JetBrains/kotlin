@@ -36,10 +36,6 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuite(args) {
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
-            testClass<org.jetbrains.kotlin.js.test.semantics.AbstractBoxJsTest> {
-                model("box/incremental/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
-            }
-
             testClass<AbstractIrBoxJsTest> {
                 model("box/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS_IR)
             }
@@ -126,8 +122,8 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
-            testClass<org.jetbrains.kotlin.js.testNew.AbstractBoxJsTest> {
-                model("box/", pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("incremental"))
+            testClass<AbstractBoxJsTest> {
+                model("box/", pattern = "^([^_](.+))\\.kt$")
             }
 
             testClass<AbstractSourceMapGenerationSmokeTest> {

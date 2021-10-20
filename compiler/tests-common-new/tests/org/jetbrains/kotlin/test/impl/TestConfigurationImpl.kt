@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.impl
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -45,12 +46,15 @@ class TestConfigurationImpl(
     directives: List<DirectivesContainer>,
     override val defaultRegisteredDirectives: RegisteredDirectives,
     override val startingArtifactFactory: (TestModule) -> ResultingArtifact<*>,
-    additionalServices: List<ServiceRegistrationData>
-) : TestConfiguration() {
+    additionalServices: List<ServiceRegistrationData>,
+
+    val originalBuilder: TestConfigurationBuilder.ReadOnlyBuilder
+) : TestConfiguration(), TestService {
     override val rootDisposable: Disposable = TestDisposable()
     override val testServices: TestServices = TestServices()
 
     init {
+        testServices.register(TestConfigurationImpl::class, this)
         testServices.register(KotlinTestInfo::class, testInfo)
         val runtimeClassPathProviders = runtimeClasspathProviders.map { it.invoke(testServices) }
         testServices.register(RuntimeClasspathProvidersContainer::class, RuntimeClasspathProvidersContainer(runtimeClassPathProviders))
@@ -133,3 +137,6 @@ class TestConfigurationImpl(
         this.forEach { it.registerDirectivesAndServices() }
     }
 }
+
+@TestInfrastructureInternals
+val TestServices.testConfiguration: TestConfigurationImpl by TestServices.testServiceAccessor()

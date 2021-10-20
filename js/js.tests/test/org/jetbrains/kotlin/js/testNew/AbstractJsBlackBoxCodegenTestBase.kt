@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.js.testNew
 
-import org.jetbrains.kotlin.js.testNew.handlers.JsArtifactsDumpHandler
-import org.jetbrains.kotlin.js.testNew.handlers.JsBoxRunner
-import org.jetbrains.kotlin.js.testNew.handlers.JsMinifierRunner
-import org.jetbrains.kotlin.js.testNew.handlers.NodeJsGeneratorHandler
+import org.jetbrains.kotlin.js.testNew.handlers.*
+import org.jetbrains.kotlin.js.testNew.utils.JsIncrementalEnvironmentConfigurator
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
@@ -37,6 +35,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
     abstract val frontendFacade: Constructor<FrontendFacade<R>>
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>
     abstract val backendFacade: Constructor<BackendFacade<I, BinaryArtifacts.Js>>
+    abstract val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
 
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
@@ -58,6 +57,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::JsEnvironmentConfigurator,
+            ::JsIncrementalEnvironmentConfigurator
         )
 
         useAdditionalSourceProviders(
@@ -80,12 +80,14 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
         irHandlersStep()
 
         facadeStep(backendFacade)
+        facadeStep(recompileFacade)
         jsArtifactsHandlersStep {
             useHandlers(
                 ::JsBoxRunner,
                 ::NodeJsGeneratorHandler,
                 ::JsMinifierRunner,
                 ::JsArtifactsDumpHandler,
+                ::JsRecompiledArtifactsIdentityHandler
             )
         }
     }

@@ -53,11 +53,14 @@ class TestConfigurationBuilder {
 
     lateinit var startingArtifactFactory: (TestModule) -> ResultingArtifact<*>
 
+    private val globalDefaultsConfigurators: MutableList<DefaultsProviderBuilder.() -> Unit> = mutableListOf()
+    private val defaultDirectiveConfigurators: MutableList<RegisteredDirectivesBuilder.() -> Unit> = mutableListOf()
+
     inline fun <reified T : TestService> useAdditionalService(noinline serviceConstructor: (TestServices) -> T) {
-        useAdditionalService(service(serviceConstructor))
+        useAdditionalServices(service(serviceConstructor))
     }
 
-    fun useAdditionalService(serviceRegistrationData: ServiceRegistrationData) {
+    fun useAdditionalServices(vararg serviceRegistrationData: ServiceRegistrationData) {
         additionalServices += serviceRegistrationData
     }
 
@@ -88,7 +91,8 @@ class TestConfigurationBuilder {
         configurationsByNegativeTestDataCondition += pattern to configuration
     }
 
-    inline fun globalDefaults(init: DefaultsProviderBuilder.() -> Unit) {
+    fun globalDefaults(init: DefaultsProviderBuilder.() -> Unit) {
+        globalDefaultsConfigurators += init
         defaultsProviderBuilder.apply(init)
     }
 
@@ -196,7 +200,8 @@ class TestConfigurationBuilder {
         afterAnalysisCheckers += checkers
     }
 
-    inline fun defaultDirectives(init: RegisteredDirectivesBuilder.() -> Unit) {
+    fun defaultDirectives(init: RegisteredDirectivesBuilder.() -> Unit) {
+        defaultDirectiveConfigurators += init
         defaultRegisteredDirectivesBuilder.apply(init)
     }
 
@@ -237,8 +242,58 @@ class TestConfigurationBuilder {
             directives,
             defaultRegisteredDirectivesBuilder.build(),
             startingArtifactFactory,
-            additionalServices
+            additionalServices,
+            originalBuilder = ReadOnlyBuilder(this, testDataPath)
         )
+    }
+
+    class ReadOnlyBuilder(private val builder: TestConfigurationBuilder, val testDataPath: String) {
+        val defaultsProviderBuilder: DefaultsProviderBuilder
+            get() = builder.defaultsProviderBuilder
+        val assertions: AssertionsService
+            get() = builder.assertions
+        val sourcePreprocessors: List<Constructor<SourceFilePreprocessor>>
+            get() = builder.sourcePreprocessors
+        val additionalMetaInfoProcessors: List<Constructor<AdditionalMetaInfoProcessor>>
+            get() = builder.additionalMetaInfoProcessors
+        val environmentConfigurators: List<Constructor<EnvironmentConfigurator>>
+            get() = builder.environmentConfigurators
+        val preAnalysisHandlers: List<Constructor<PreAnalysisHandler>>
+            get() = builder.preAnalysisHandlers
+        val additionalSourceProviders: List<Constructor<AdditionalSourceProvider>>
+            get() = builder.additionalSourceProviders
+        val moduleStructureTransformers: List<ModuleStructureTransformer>
+            get() = builder.moduleStructureTransformers
+        val metaTestConfigurators: List<Constructor<MetaTestConfigurator>>
+            get() = builder.metaTestConfigurators
+        val afterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>
+            get() = builder.afterAnalysisCheckers
+        val metaInfoHandlerEnabled: Boolean
+            get() = builder.metaInfoHandlerEnabled
+        val directives: List<DirectivesContainer>
+            get() = builder.directives
+
+        val defaultDirectiveConfigurators: List<RegisteredDirectivesBuilder.() -> Unit>
+            get() = builder.defaultDirectiveConfigurators
+
+        val globalDefaultsConfigurators: List<DefaultsProviderBuilder.() -> Unit>
+            get() = builder.globalDefaultsConfigurators
+
+        val configurationsByPositiveTestDataCondition: List<Pair<Regex, TestConfigurationBuilder.() -> Unit>>
+            get() = builder.configurationsByPositiveTestDataCondition
+        val configurationsByNegativeTestDataCondition: List<Pair<Regex, TestConfigurationBuilder.() -> Unit>>
+            get() = builder.configurationsByNegativeTestDataCondition
+        val additionalServices: List<ServiceRegistrationData>
+            get() = builder.additionalServices
+
+        val compilerConfigurationProvider: ((Disposable, List<EnvironmentConfigurator>) -> CompilerConfigurationProvider)?
+            get() = builder.compilerConfigurationProvider
+        val runtimeClasspathProviders: List<Constructor<RuntimeClasspathProvider>>
+            get() = builder.runtimeClasspathProviders
+        val testInfo: KotlinTestInfo
+            get() = builder.testInfo
+        val startingArtifactFactory: (TestModule) -> ResultingArtifact<*>
+            get() = builder.startingArtifactFactory
     }
 }
 
