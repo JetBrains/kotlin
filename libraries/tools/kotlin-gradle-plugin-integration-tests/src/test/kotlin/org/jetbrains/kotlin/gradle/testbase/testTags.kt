@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.testbase
 import org.junit.jupiter.api.Tag
 
 /**
- * Add it to test classes performing simple KGP checks.
+ * Add it to test classes performing simple KGP checks (deprecated).
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
@@ -18,7 +18,23 @@ annotation class SimpleGradlePluginTests
 /**
  * Add it to test classes performing Gradle or Kotlin daemon checks.
  */
-@Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("DaemonsKGP")
 annotation class DaemonsGradlePluginTests
+
+/**
+ * Add it to tests covering Kotlin Gradle Plugin/JVM platform.
+ */
+@Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+@Tag("JvmKGP")
+annotation class JvmGradlePluginTests
+
+/**
+ * Add it to tests covering Kotlin Gradle Plugin/JS platform.
+ */
+@Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+@Tag("JsKGP")
+annotation class JsGradlePluginTests

@@ -161,14 +161,47 @@ if (isTeamcityBuild) {
 }
 
 val KGP_TEST_TASKS_GROUP = "Kotlin Gradle Plugin Verification"
+val maxParallelTestForks = (Runtime.getRuntime().availableProcessors() / 4).coerceAtLeast(1)
+
+val allParallelTestsTask = tasks.register<Test>("kgpAllParallelTests") {
+    group = KGP_TEST_TASKS_GROUP
+    description = "Runs all tests for Kotlin Gradle plugins except daemon ones"
+
+    maxParallelForks = maxParallelTestForks
+
+    useJUnitPlatform {
+        excludeTags("DaemonsKGP")
+        includeEngines("junit-jupiter")
+    }
+}
 
 val simpleTestsTask = tasks.register<Test>("kgpSimpleTests") {
     group = KGP_TEST_TASKS_GROUP
-    description = "Run only simple tests for Kotlin Gradle Plugin"
-    maxParallelForks = (Runtime.getRuntime().availableProcessors() / 4).coerceAtLeast(1)
+    description = "Run only simple tests for Kotlin Gradle Plugin (deprecated)"
+    maxParallelForks = maxParallelTestForks
 
     useJUnitPlatform {
         includeTags("SimpleKGP")
+        includeEngines("junit-jupiter")
+    }
+}
+
+val jvmTestsTask = tasks.register<Test>("kgpJvmTests") {
+    group = KGP_TEST_TASKS_GROUP
+    description = "Run tests for Kotlin/JVM part of Gradle plugin"
+    maxParallelForks = maxParallelTestForks
+    useJUnitPlatform {
+        includeTags("JvmKGP")
+        includeEngines("junit-jupiter")
+    }
+}
+
+val jsTestsTask = tasks.register<Test>("kgpJsTests") {
+    group = KGP_TEST_TASKS_GROUP
+    description = "Run tests for Kotlin/JS part of Gradle plugin"
+    maxParallelForks = maxParallelTestForks
+    useJUnitPlatform {
+        includeTags("JsKGP")
         includeEngines("junit-jupiter")
     }
 }
@@ -189,7 +222,7 @@ val daemonsTestsTask = tasks.register<Test>("kgpDaemonTests") {
 
 tasks.named<Task>("check") {
     dependsOn("testAdvanceGradleVersion")
-    dependsOn(simpleTestsTask, daemonsTestsTask)
+    dependsOn(simpleTestsTask, jvmTestsTask, jsTestsTask, daemonsTestsTask)
     if (isTeamcityBuild) {
         dependsOn("testAdvanceGradleVersionMppAndAndroid")
         dependsOn("testMppAndAndroid")
@@ -234,7 +267,10 @@ tasks.withType<Test> {
     useAndroidSdk()
 
     val shouldApplyJunitPlatform = name !in setOf(
+        allParallelTestsTask.name,
         simpleTestsTask.name,
+        jvmTestsTask.name,
+        jsTestsTask.name,
         daemonsTestsTask.name
     )
     if (shouldApplyJunitPlatform) {
