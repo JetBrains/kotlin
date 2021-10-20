@@ -10,8 +10,8 @@ fun test_0(b: Boolean): String = when (b) {
 
 // Deprecated
 fun test_1(b: Boolean): String = <!NO_ELSE_IN_WHEN!>when<!> (b) {
-    1 == 1 -> "true"
-    "" != "" -> "false"
+    (1 == 1) -> "true"
+    ("" != "") -> "false"
 }
 
 const val TRUE = true
@@ -28,5 +28,5 @@ const val s2 = "s2"
 // Already not working
 fun test_3(b: Boolean): String = <!NO_ELSE_IN_WHEN!>when<!>(b) {
     true -> "true"
-    s1 == s2 -> "false"
+    (s1 == s2) -> "false"
 }

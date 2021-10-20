@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.RttiOperation
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT
 import org.jetbrains.kotlin.resolve.calls.smartcasts.*
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.checkers.ConfusingWhenBranchSyntaxChecker
 import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonCallChecker
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
@@ -248,6 +249,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
 
         val branchesType = branchesTypeInfo.type ?: return noTypeInfo(resultDataFlowInfo)
         val resultType = components.dataFlowAnalyzer.checkType(branchesType, expression, contextWithExpectedType)
+
+        ConfusingWhenBranchSyntaxChecker.check(expression, contextWithExpectedType.languageVersionSettings, trace)
 
         return createTypeInfo(resultType, resultDataFlowInfo, branchesTypeInfo.jumpOutPossible, contextWithExpectedType.dataFlowInfo)
     }

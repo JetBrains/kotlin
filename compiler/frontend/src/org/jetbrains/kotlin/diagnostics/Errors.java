@@ -997,6 +997,7 @@ public interface Errors {
     DiagnosticFactory0<KtElement> SENSELESS_NULL_IN_WHEN = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<PsiElement> INVALID_IF_AS_EXPRESSION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactoryForDeprecation0<PsiElement> CONFUSING_BRANCH_CONDITION = DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitConfusingSyntaxInWhenBranches);
 
     // Nullability
 

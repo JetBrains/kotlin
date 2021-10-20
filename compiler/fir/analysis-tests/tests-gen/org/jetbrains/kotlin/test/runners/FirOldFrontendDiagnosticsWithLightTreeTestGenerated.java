@@ -32096,6 +32096,24 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("deprecatedSyntaxInConditionsNoSubject.kt")
+            public void testDeprecatedSyntaxInConditionsNoSubject() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/deprecatedSyntaxInConditionsNoSubject.kt");
+            }
+
+            @Test
+            @TestMetadata("deprecatedSyntaxInConditions_after.kt")
+            public void testDeprecatedSyntaxInConditions_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/deprecatedSyntaxInConditions_after.kt");
+            }
+
+            @Test
+            @TestMetadata("deprecatedSyntaxInConditions_before.kt")
+            public void testDeprecatedSyntaxInConditions_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/deprecatedSyntaxInConditions_before.kt");
+            }
+
+            @Test
             @TestMetadata("DuplicatedLabels.kt")
             public void testDuplicatedLabels() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/when/DuplicatedLabels.kt");

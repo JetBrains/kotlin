@@ -14,7 +14,7 @@
 fun foo(arg: Boolean): String {
     // Must be exhaustive
     return <!NO_ELSE_IN_WHEN!>when<!>(arg) {
-        2 == 2 -> "truth"
-        2 == 1 -> "falsehood"
+        (2 == 2) -> "truth"
+        (2 == 1) -> "falsehood"
     }
 }

@@ -833,6 +833,7 @@ public class DefaultErrorMessages {
         MAP.put(SENSELESS_NULL_IN_WHEN, "Expression under 'when' is never equal to null");
 
         MAP.put(INVALID_IF_AS_EXPRESSION, "'if' must have both main and 'else' branches if used as an expression");
+        MAP.put(CONFUSING_BRANCH_CONDITION, "The logical expressions may be understood ambiguously in when with subject branches. Please wrap it with parenthesis");
 
         MAP.put(OVERRIDING_FINAL_MEMBER, "''{0}'' in ''{1}'' is final and cannot be overridden", NAME, NAME);
         MAP.put(CANNOT_WEAKEN_ACCESS_PRIVILEGE, "Cannot weaken access privilege ''{0}'' for ''{1}'' in ''{2}''", VISIBILITY, NAME, NAME);

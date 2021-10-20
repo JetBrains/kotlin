@@ -19,7 +19,7 @@ fun case_1(value_1: Boolean?): String = when (value_1) {
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Boolean?): String = when (value_1) {
-    <!NON_TRIVIAL_BOOLEAN_CONSTANT!>true && false && ((true || false)) || true && !!!false && !!!true<!> -> ""
-    <!NON_TRIVIAL_BOOLEAN_CONSTANT!>true && false && ((true || false)) || true && !!!false<!> -> ""
+    <!CONFUSING_BRANCH_CONDITION_WARNING, NON_TRIVIAL_BOOLEAN_CONSTANT!>true && false && ((true || false)) || true && !!!false && !!!true<!> -> ""
+    <!CONFUSING_BRANCH_CONDITION_WARNING, NON_TRIVIAL_BOOLEAN_CONSTANT!>true && false && ((true || false)) || true && !!!false<!> -> ""
     null -> ""
 }
