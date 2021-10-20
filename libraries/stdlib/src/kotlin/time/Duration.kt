@@ -31,8 +31,8 @@ import kotlin.math.*
  */
 @SinceKotlin("1.6")
 @WasExperimental(ExperimentalTime::class)
-@JvmInline
-public value class Duration internal constructor(private val rawValue: Long) : Comparable<Duration> {
+@Suppress("INLINE_CLASS_DEPRECATED")
+public inline class Duration internal constructor(private val rawValue: Long) : Comparable<Duration> {
 
     private val value: Long get() = rawValue shr 1
     private inline val unitDiscriminator: Int get() = rawValue.toInt() and 1

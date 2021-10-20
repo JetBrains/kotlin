@@ -13,8 +13,8 @@ import kotlin.jvm.*
 
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalUnsignedTypes::class)
-@JvmInline
-public value class UByte @kotlin.internal.IntrinsicConstEvaluation @PublishedApi internal constructor(@PublishedApi internal val data: Byte) : Comparable<UByte> {
+@Suppress("INLINE_CLASS_DEPRECATED")
+public inline class UByte @kotlin.internal.IntrinsicConstEvaluation @PublishedApi internal constructor(@PublishedApi internal val data: Byte) : Comparable<UByte> {
 
     public companion object {
         /**

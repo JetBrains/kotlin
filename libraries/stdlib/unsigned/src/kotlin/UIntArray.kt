@@ -12,8 +12,8 @@ import kotlin.jvm.*
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@JvmInline
-public value class UIntArray
+@Suppress("INLINE_CLASS_DEPRECATED")
+public inline class UIntArray
 @PublishedApi
 internal constructor(@PublishedApi internal val storage: IntArray) : Collection<UInt> {
 

@@ -2491,7 +2491,6 @@ public final annotation class RequiresOptIn : kotlin.Annotation {
 }
 
 @kotlin.SinceKotlin(version = "1.3")
-@kotlin.jvm.JvmInline
 public final inline class Result<out T> : kotlin.io.Serializable {
     public final val isFailure: kotlin.Boolean { get; }
 
@@ -2835,7 +2834,6 @@ public final data class Triple<out A, out B, out C> : kotlin.io.Serializable {
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
-@kotlin.jvm.JvmInline
 public final inline class UByte : kotlin.Comparable<kotlin.UByte> {
     @kotlin.internal.InlineOnly
     public final inline infix fun and(other: kotlin.UByte): kotlin.UByte
@@ -3008,7 +3006,6 @@ public final inline class UByte : kotlin.Comparable<kotlin.UByte> {
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.jvm.JvmInline
 public final inline class UByteArray : kotlin.collections.Collection<kotlin.UByte> {
     public constructor UByteArray(size: kotlin.Int)
 
@@ -3035,7 +3032,6 @@ public final inline class UByteArray : kotlin.collections.Collection<kotlin.UByt
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
-@kotlin.jvm.JvmInline
 public final inline class UInt : kotlin.Comparable<kotlin.UInt> {
     @kotlin.internal.InlineOnly
     public final inline infix fun and(other: kotlin.UInt): kotlin.UInt
@@ -3214,7 +3210,6 @@ public final inline class UInt : kotlin.Comparable<kotlin.UInt> {
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.jvm.JvmInline
 public final inline class UIntArray : kotlin.collections.Collection<kotlin.UInt> {
     public constructor UIntArray(size: kotlin.Int)
 
@@ -3241,7 +3236,6 @@ public final inline class UIntArray : kotlin.collections.Collection<kotlin.UInt>
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
-@kotlin.jvm.JvmInline
 public final inline class ULong : kotlin.Comparable<kotlin.ULong> {
     @kotlin.internal.InlineOnly
     public final inline infix fun and(other: kotlin.ULong): kotlin.ULong
@@ -3420,7 +3414,6 @@ public final inline class ULong : kotlin.Comparable<kotlin.ULong> {
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.jvm.JvmInline
 public final inline class ULongArray : kotlin.collections.Collection<kotlin.ULong> {
     public constructor ULongArray(size: kotlin.Int)
 
@@ -3447,7 +3440,6 @@ public final inline class ULongArray : kotlin.collections.Collection<kotlin.ULon
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
-@kotlin.jvm.JvmInline
 public final inline class UShort : kotlin.Comparable<kotlin.UShort> {
     @kotlin.internal.InlineOnly
     public final inline infix fun and(other: kotlin.UShort): kotlin.UShort
@@ -3620,7 +3612,6 @@ public final inline class UShort : kotlin.Comparable<kotlin.UShort> {
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.jvm.JvmInline
 public final inline class UShortArray : kotlin.collections.Collection<kotlin.UShort> {
     public constructor UShortArray(size: kotlin.Int)
 
