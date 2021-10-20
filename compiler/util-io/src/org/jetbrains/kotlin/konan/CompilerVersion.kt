@@ -22,7 +22,7 @@ interface CompilerVersion : Serializable {
 
     companion object {
         // major.minor.patch-meta-build where patch, meta and build are optional.
-        val versionPattern = "(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-(\\p{Alpha}\\p{Alnum}|[\\p{Alpha}-]*))?(?:-(\\d+))?".toRegex()
+        val versionPattern = "(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-(\\p{Alpha}*\\p{Alnum}|[\\p{Alpha}-]*))?(?:-(\\d+))?".toRegex()
 
         fun fromString(version: String): CompilerVersion {
             val (major, minor, maintenance, metaString, build) =
