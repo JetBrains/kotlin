@@ -504,6 +504,9 @@ targetList.each { target ->
         def endorsedLibsBuildTask = ":kotlin-native:endorsedLibraries:${target}EndorsedLibraries"
         dependsOn endorsedLibsBuildTask
         dependsOn endorsedLibsCopyTask
+        // There is only one copy task for endorsed libs, because they are already copied into a single dir,
+        // while having target-tasks will make Gradle issue warnings on incorrect inputs and outputs usage.
+        // So this copy task should run after the all build tasks.
         endorsedLibsCopyTask.mustRunAfter(endorsedLibsBuildTask)
     }
 }
