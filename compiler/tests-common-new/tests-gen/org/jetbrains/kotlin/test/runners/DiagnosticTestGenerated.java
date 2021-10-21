@@ -17240,6 +17240,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("rawTypeScope.kt")
+            public void testRawTypeScope() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/rawTypeScope.kt");
+            }
+
+            @Test
             @TestMetadata("rawUpperBounds.kt")
             public void testRawUpperBounds() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/rawUpperBounds.kt");
