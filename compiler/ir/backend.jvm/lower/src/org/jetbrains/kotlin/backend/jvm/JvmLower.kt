@@ -324,7 +324,6 @@ private val jvmFilePhases = listOf(
 
     inventNamesForLocalClassesPhase,
     kCallableNamePropertyPhase,
-    repeatedAnnotationPhase,
     annotationPhase,
     annotationImplementationPhase,
     polymorphicSignaturePhase,
@@ -437,6 +436,7 @@ private val jvmLoweringPhases = NamedCompilerPhase(
             scriptsToClassesPhase then
             fileClassPhase then
             jvmStaticInObjectPhase then
+            repeatedAnnotationPhase then
             performByIrFile(lower = jvmFilePhases) then
             generateMultifileFacadesPhase then
             resolveInlineCallsPhase then
