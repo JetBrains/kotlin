@@ -288,7 +288,7 @@ public actual fun CharArray.concatToString(startIndex: Int, endIndex: Int): Stri
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public actual fun String.toCharArray(): CharArray = this.chars
+public actual fun String.toCharArray(): CharArray = this.chars.copyOf()
 
 /**
  * Returns a [CharArray] containing characters of this string or its substring.
