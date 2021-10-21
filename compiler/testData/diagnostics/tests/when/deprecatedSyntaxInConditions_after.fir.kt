@@ -55,18 +55,18 @@ fun testWithSubject_ok(x: A, y: A?, any: Any, z: B) {
 fun testWithSubject_bad_1(x: A) {
     // bad
     when (x) {
-        x in x -> {}
-        x !in x -> {}
-        x is String -> {}
-        x !is String -> {}
-        x < x -> {}
-        x > x -> {}
-        x <= x -> {}
-        x >= x -> {}
-        x == x -> {}
-        x != x -> {}
-        x === x -> {}
-        x !== x -> {}
+        <!CONFUSING_BRANCH_CONDITION_ERROR!>x in x<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_ERROR!>x !in x<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_ERROR!>x is String<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_ERROR!>x !is String<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_ERROR!>x < x<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_ERROR!>x > x<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_ERROR!>x <= x<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_ERROR!>x >= x<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_ERROR!>x == x<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_ERROR!>x != x<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_ERROR!>x === x<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_ERROR!>x !== x<!> -> {}
     }
     // ok
     when (x) {
@@ -88,8 +88,8 @@ fun testWithSubject_bad_1(x: A) {
 fun testWithSubject_bad_2(b: Boolean) {
     // bad
     when (b) {
-        b && b -> {}
-        b || b -> {}
+        <!CONFUSING_BRANCH_CONDITION_ERROR!>b && b<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_ERROR!>b || b<!> -> {}
     }
     // ok
     when (b) {
@@ -159,18 +159,18 @@ fun testWithRange_ok(x: A, y: A?, any: Any, z: B) {
 fun testWithRange_bad_1(x: A) {
     // bad
     when (x) {
-        in x in x -> {}
-        in x !in x -> {}
-        in x is String -> {}
-        in x !is String -> {}
-        in x < x -> {}
-        in x > x -> {}
-        in x <= x -> {}
-        in x >= x -> {}
-        in x == x -> {}
-        in x != x -> {}
-        in x === x -> {}
-        in x !== x -> {}
+        in <!CONFUSING_BRANCH_CONDITION_ERROR!>x in x<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_ERROR!>x !in x<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_ERROR!>x is String<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_ERROR!>x !is String<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_ERROR!>x < x<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_ERROR!>x > x<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_ERROR!>x <= x<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_ERROR!>x >= x<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_ERROR!>x == x<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_ERROR!>x != x<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_ERROR!>x === x<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_ERROR!>x !== x<!> -> {}
     }
     // ok
     when (x) {
@@ -192,8 +192,8 @@ fun testWithRange_bad_1(x: A) {
 fun testWithRange_bad_2(b: Boolean) {
     // bad
     when (b) {
-        in b && b -> {}
-        in b || b -> {}
+        in <!CONFUSING_BRANCH_CONDITION_ERROR!>b && b<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_ERROR!>b || b<!> -> {}
     }
     // ok
     when (b) {

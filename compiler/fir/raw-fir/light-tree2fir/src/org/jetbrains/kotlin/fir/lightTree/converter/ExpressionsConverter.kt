@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.ElementTypeUtils.getOperationSymbol
+import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -837,7 +839,7 @@ class ExpressionsConverter(
                 it.tokenType == OPERATION_REFERENCE -> {
                     conditionSource = it.toFirSourceElement()
                 }
-                else -> if (it.isExpression()) firExpression = getAsFirExpression(it)
+                else -> if (it.isExpression()) firExpression = getAsFirExpression(it, "No range in condition with range")
             }
         }
 

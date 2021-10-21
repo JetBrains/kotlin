@@ -5,9 +5,16 @@
 
 package org.jetbrains.kotlin
 
+import com.intellij.lang.LighterASTNode
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.IErrorCounterReparseableElementType
+import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.lexer.KotlinLexer
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.parsing.KotlinExpressionParsing
+import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
 
 object ElementTypeUtils {
     @JvmStatic
@@ -31,5 +38,30 @@ object ElementTypeUtils {
             lexer.advance()
         }
         return balance
+    }
+
+    fun String.getOperationSymbol(): IElementType {
+        KotlinExpressionParsing.ALL_OPERATIONS.types.forEach {
+            if (it is KtSingleValueToken && it.value == this) return it
+        }
+        if (this == "as?") return KtTokens.AS_SAFE
+        return KtTokens.IDENTIFIER
+    }
+
+    private val expressionSet = listOf(
+        REFERENCE_EXPRESSION,
+        DOT_QUALIFIED_EXPRESSION,
+        LAMBDA_EXPRESSION,
+        FUN
+    )
+
+    fun LighterASTNode.isExpression(): Boolean {
+        return when (this.tokenType) {
+            is KtNodeType,
+            is KtConstantExpressionElementType,
+            is KtStringTemplateExpressionElementType,
+            in expressionSet -> true
+            else -> false
+        }
     }
 }

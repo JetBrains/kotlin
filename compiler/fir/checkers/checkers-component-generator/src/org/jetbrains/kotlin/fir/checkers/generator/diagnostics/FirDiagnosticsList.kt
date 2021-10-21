@@ -1117,6 +1117,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT by error<PsiElement>(PositioningStrategy.COMMAS)
         val DUPLICATE_LABEL_IN_WHEN by warning<KtElement>()
+        val CONFUSING_BRANCH_CONDITION by deprecationError<PsiElement>(LanguageFeature.ProhibitConfusingSyntaxInWhenBranches)
     }
 
     val CONTEXT_TRACKING by object : DiagnosticGroup("Context tracking") {
