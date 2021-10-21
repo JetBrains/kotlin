@@ -13,10 +13,13 @@ import kotlin.math.*
  * Represents the amount of time one instant of time is away from another instant.
  *
  * A negative duration is possible in a situation when the second instant is earlier than the first one.
- * An infinite duration value [Duration.INFINITE] can be used to represent infinite timeouts.
  *
  * The type can store duration values up to ±146 years with nanosecond precision,
  * and up to ±146 million years with millisecond precision.
+ * If a duration-returning operation provided in `kotlin.time` produces a duration value that doesn't fit into the above range,
+ * the returned `Duration` is infinite.
+ *
+ * An infinite duration value [Duration.INFINITE] can be used to represent infinite timeouts.
  *
  * To construct a duration use either the extension function [toDuration],
  * or the extension properties [hours], [minutes], [seconds], and so on,
@@ -74,6 +77,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         /**
          * Returns a [Duration] equal to this [Double] number of nanoseconds.
          *
+         * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
+         *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
          */
         @kotlin.internal.InlineOnly
@@ -90,6 +95,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
 
         /**
          * Returns a [Duration] equal to this [Double] number of microseconds.
+         *
+         * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
          *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
          */
@@ -108,6 +115,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         /**
          * Returns a [Duration] equal to this [Double] number of milliseconds.
          *
+         * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
+         *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
          */
         @kotlin.internal.InlineOnly
@@ -124,6 +133,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
 
         /**
          * Returns a [Duration] equal to this [Double] number of seconds.
+         *
+         * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
          *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
          */
@@ -142,6 +153,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         /**
          * Returns a [Duration] equal to this [Double] number of minutes.
          *
+         * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
+         *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
          */
         @kotlin.internal.InlineOnly
@@ -159,6 +172,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         /**
          * Returns a [Duration] equal to this [Double] number of hours.
          *
+         * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
+         *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
          */
         @kotlin.internal.InlineOnly
@@ -175,6 +190,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
 
         /**
          * Returns a [Duration] equal to this [Double] number of days.
+         *
+         * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
          *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
          */
@@ -531,6 +548,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * Returns a duration whose value is this duration value multiplied by the given [scale] number.
      *
+     * The operation may involve rounding when the result cannot be represented exactly with a [Double] number.
+     *
      * @throws IllegalArgumentException if the operation results in an undefined value for the given arguments,
      * e.g. when multiplying an infinite duration by zero.
      */
@@ -716,6 +735,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
 
     /**
      * Returns the value of this duration expressed as a [Double] number of the specified [unit].
+     *
+     * The operation may involve rounding when the result cannot be represented exactly with a [Double] number.
      *
      * An infinite duration value is converted either to [Double.POSITIVE_INFINITY] or [Double.NEGATIVE_INFINITY] depending on its sign.
      */
@@ -1068,6 +1089,8 @@ public fun Long.toDuration(unit: DurationUnit): Duration {
 /**
  * Returns a [Duration] equal to this [Double] number of the specified [unit].
  *
+ * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
+ *
  * @throws IllegalArgumentException if this `Double` value is `NaN`.
  */
 @SinceKotlin("1.6")
@@ -1277,6 +1300,8 @@ public inline operator fun Int.times(duration: Duration): Duration = duration * 
 
 /**
  * Returns a duration whose value is the specified [duration] value multiplied by this number.
+ *
+ * The operation may involve rounding when the result cannot be represented exactly with a [Double] number.
  *
  * @throws IllegalArgumentException if the operation results in a `NaN` value.
  */
