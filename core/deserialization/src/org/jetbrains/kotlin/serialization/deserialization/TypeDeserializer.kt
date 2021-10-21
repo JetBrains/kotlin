@@ -67,9 +67,13 @@ class TypeDeserializer(
         return simpleType(proto, expandTypeAliases = true)
     }
 
-    private fun List<TypeAttributeTranslator>.toAttributes(annotations: Annotations): TypeAttributes {
+    private fun List<TypeAttributeTranslator>.toAttributes(
+        annotations: Annotations,
+        constructor: TypeConstructor,
+        containingDeclaration: DeclarationDescriptor
+    ): TypeAttributes {
         val translated = this.map { translator ->
-            translator.toAttributes(annotations)
+            translator.toAttributes(annotations, constructor, containingDeclaration)
         }.flatten()
         return TypeAttributes.create(translated)
     }
@@ -92,7 +96,7 @@ class TypeDeserializer(
             c.components.annotationAndConstantLoader.loadTypeAnnotations(proto, c.nameResolver)
         }
 
-        val attributes = c.components.typeAttributeTranslators.toAttributes(annotations)
+        val attributes = c.components.typeAttributeTranslators.toAttributes(annotations, constructor, c.containingDeclaration)
 
         fun ProtoBuf.Type.collectAllArguments(): List<ProtoBuf.Type.Argument> =
             argumentList + outerType(c.typeTable)?.collectAllArguments().orEmpty()
@@ -107,7 +111,9 @@ class TypeDeserializer(
             expandTypeAliases && declarationDescriptor is TypeAliasDescriptor -> {
                 val expandedType = with(KotlinTypeFactory) { declarationDescriptor.computeExpandedType(arguments) }
                 val expandedAttributes = c.components.typeAttributeTranslators.toAttributes(
-                    Annotations.create(annotations + expandedType.annotations)
+                    Annotations.create(annotations + expandedType.annotations),
+                    constructor,
+                    c.containingDeclaration
                 )
                 expandedType
                     .makeNullableAsSpecified(expandedType.isNullable() || proto.nullable)

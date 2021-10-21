@@ -53,7 +53,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
     val kMutableProperty2: ClassDescriptor by ClassLookup(3)
 
     fun getKClassType(annotations: Annotations, type: KotlinType, variance: Variance): KotlinType =
-            KotlinTypeFactory.simpleNotNullType(annotations, kClass, listOf(TypeProjectionImpl(variance, type)))
+            KotlinTypeFactory.simpleNotNullType(annotations.toDefaultAttributes(), kClass, listOf(TypeProjectionImpl(variance, type)))
 
     fun getKFunctionType(
         annotations: Annotations,
@@ -69,7 +69,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
             getFunctionTypeArgumentProjections(receiverType, contextReceiverTypes, parameterTypes, parameterNames, returnType, builtIns)
         val classDescriptor =
             if (isSuspend) getKSuspendFunction(arguments.size - 1 /* return type */) else getKFunction(arguments.size - 1 /* return type */)
-        return KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)
+        return KotlinTypeFactory.simpleNotNullType(annotations.toDefaultAttributes(), classDescriptor, arguments)
     }
 
     fun getKPropertyType(annotations: Annotations, receiverTypes: List<KotlinType>, returnType: KotlinType, mutable: Boolean): SimpleType {
@@ -90,7 +90,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
         }
 
         val arguments = (receiverTypes + returnType).map(::TypeProjectionImpl)
-        return KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)
+        return KotlinTypeFactory.simpleNotNullType(annotations.toDefaultAttributes(), classDescriptor, arguments)
     }
 
     companion object {
@@ -184,7 +184,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
 
         fun createKPropertyStarType(module: ModuleDescriptor): KotlinType? {
             val kPropertyClass = module.findClassAcrossModuleDependencies(StandardNames.FqNames.kProperty) ?: return null
-            return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kPropertyClass,
+            return KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, kPropertyClass,
                                                        listOf(StarProjectionImpl(kPropertyClass.typeConstructor.parameters.single())))
         }
 

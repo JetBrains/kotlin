@@ -150,7 +150,7 @@ class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings
         ).compositeAnnotationsOrSingle()
 
         val enhancedType = KotlinTypeFactory.simpleType(
-            newAnnotations,
+            newAnnotations.toDefaultAttributes(),
             typeConstructor,
             enhancedArguments.zip(arguments) { enhanced, original -> enhanced ?: original },
             enhancedNullability ?: isMarkedNullable
@@ -252,7 +252,6 @@ internal class NotNullTypeParameterImpl(override val delegate: SimpleType) : Not
         return NotNullTypeParameterImpl(result)
     }
 
-    override fun replaceAnnotations(newAnnotations: Annotations) = NotNullTypeParameterImpl(delegate.replaceAnnotations(newAnnotations))
     override fun replaceAttributes(newAttributes: TypeAttributes) = NotNullTypeParameterImpl(delegate.replaceAttributes(newAttributes))
     override fun makeNullableAsSpecified(newNullability: Boolean) =
         if (newNullability) delegate.makeNullableAsSpecified(true) else this

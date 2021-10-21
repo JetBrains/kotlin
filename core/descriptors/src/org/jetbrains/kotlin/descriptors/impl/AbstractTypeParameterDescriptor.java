@@ -71,7 +71,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
             @Override
             public SimpleType invoke() {
                 return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-                        Annotations.Companion.getEMPTY(),
+                        TypeAttributes.Companion.getEmpty(),
                         getTypeConstructor(), Collections.<TypeProjection>emptyList(), false,
                         new LazyScopeAdapter(
                                 new Function0<MemberScope>() {

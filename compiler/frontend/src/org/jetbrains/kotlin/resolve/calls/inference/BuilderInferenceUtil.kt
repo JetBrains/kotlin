@@ -54,8 +54,6 @@ class TypeTemplate(
     typeVariable.originalTypeParameter.builtIns.nothingType,
     typeVariable.originalTypeParameter.builtIns.anyType.makeNullableAsSpecified(nullable)
 ) {
-    override fun replaceAnnotations(newAnnotations: Annotations) = this
-
     override fun replaceAttributes(newAttributes: TypeAttributes) = this
 
     override fun makeNullableAsSpecified(newNullability: Boolean) = TypeTemplate(typeVariable, builderInferenceData, newNullability)

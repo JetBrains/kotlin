@@ -105,7 +105,7 @@ class TypeResolver(
 
     fun resolveExpandedTypeForTypeAlias(typeAliasDescriptor: TypeAliasDescriptor): SimpleType {
         val typeAliasExpansion = TypeAliasExpansion.createWithFormalArguments(typeAliasDescriptor)
-        val expandedType = TypeAliasExpander.NON_REPORTING.expandWithoutAbbreviation(typeAliasExpansion, Annotations.EMPTY)
+        val expandedType = TypeAliasExpander.NON_REPORTING.expandWithoutAbbreviation(typeAliasExpansion, TypeAttributes.Empty)
         return expandedType
     }
 
@@ -523,7 +523,7 @@ class TypeResolver(
             ErrorUtils.createErrorType("?")
         else
             KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-                typeAttributeTranslators.toAttributes(annotations),
+                typeAttributeTranslators.toAttributes(annotations, typeParameter.typeConstructor, containing),
                 typeParameter.typeConstructor,
                 listOf(),
                 false,
@@ -605,7 +605,11 @@ class TypeResolver(
         }
 
         val resultingType =
-            KotlinTypeFactory.simpleNotNullType(typeAttributeTranslators.toAttributes(annotations), classDescriptor, arguments)
+            KotlinTypeFactory.simpleNotNullType(
+                typeAttributeTranslators.toAttributes(annotations, classDescriptor.typeConstructor, c.scope.ownerDescriptor),
+                classDescriptor,
+                arguments
+            )
 
         // We create flexible types by convention here
         // This is not intended to be used in normal users' environments, only for tests and debugger etc
@@ -701,9 +705,11 @@ class TypeResolver(
             return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
         }
 
+        val attributes = typeAttributeTranslators.toAttributes(annotations, descriptor.typeConstructor, c.scope.ownerDescriptor)
+
         return if (c.abbreviated) {
             val abbreviatedType = KotlinTypeFactory.simpleType(
-                typeAttributeTranslators.toAttributes(annotations),
+                attributes,
                 descriptor.typeConstructor,
                 arguments,
                 false
@@ -711,7 +717,7 @@ class TypeResolver(
             type(abbreviatedType)
         } else {
             val typeAliasExpansion = TypeAliasExpansion.create(null, descriptor, arguments)
-            val expandedType = TypeAliasExpander(reportStrategy, c.checkBounds).expand(typeAliasExpansion, annotations)
+            val expandedType = TypeAliasExpander(reportStrategy, c.checkBounds).expand(typeAliasExpansion, attributes)
             type(expandedType)
         }
     }

@@ -56,18 +56,18 @@ fun KClassifier.createType(
 
     // TODO: throw exception if argument does not satisfy bounds
 
-    val typeAnnotations =
-        if (annotations.isEmpty()) Annotations.EMPTY
-        else Annotations.EMPTY // TODO: support type annotations
+    val typeAttributes =
+        if (annotations.isEmpty()) TypeAttributes.Empty
+        else TypeAttributes.Empty // TODO: support type annotations
 
-    return KTypeImpl(createKotlinType(typeAnnotations, typeConstructor, arguments, nullable))
+    return KTypeImpl(createKotlinType(typeAttributes, typeConstructor, arguments, nullable))
 }
 
 private fun createKotlinType(
-    typeAnnotations: Annotations, typeConstructor: TypeConstructor, arguments: List<KTypeProjection>, nullable: Boolean
+    attributes: TypeAttributes, typeConstructor: TypeConstructor, arguments: List<KTypeProjection>, nullable: Boolean
 ): SimpleType {
     val parameters = typeConstructor.parameters
-    return KotlinTypeFactory.simpleType(typeAnnotations, typeConstructor, arguments.mapIndexed { index, typeProjection ->
+    return KotlinTypeFactory.simpleType(attributes, typeConstructor, arguments.mapIndexed { index, typeProjection ->
         val type = (typeProjection.type as KTypeImpl?)?.type
         when (typeProjection.variance) {
             KVariance.INVARIANT -> TypeProjectionImpl(Variance.INVARIANT, type!!)

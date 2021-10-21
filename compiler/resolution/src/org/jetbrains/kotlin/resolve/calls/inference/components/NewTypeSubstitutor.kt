@@ -148,7 +148,9 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
         // simple classifier type
         var replacement = substituteNotNullTypeWithConstructor(typeConstructor) ?: return null
         if (keepAnnotation) {
-            replacement = replacement.replaceAnnotations(CompositeAnnotations(replacement.annotations, type.annotations))
+            replacement = replacement.replaceAttributes(
+                replacement.attributes.add(type.attributes)
+            )
         }
         if (type.isMarkedNullable) {
             replacement = replacement.makeNullableAsSpecified(true)

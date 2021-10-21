@@ -48,7 +48,9 @@ import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.DefaultTypeAttributeTranslator
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
+import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslatorsForInjection
 
 // This class is needed only for easier injection: exact types of needed components are specified in the constructor here.
 // Otherwise injector generator is not smart enough to deduce, for example, which package fragment provider DeserializationComponents needs
@@ -63,7 +65,8 @@ class DeserializationComponentsForJava(
     errorReporter: ErrorReporter,
     lookupTracker: LookupTracker,
     contractDeserializer: ContractDeserializer,
-    kotlinTypeChecker: NewKotlinTypeChecker
+    kotlinTypeChecker: NewKotlinTypeChecker,
+    typeAttributeTranslators: TypeAttributeTranslatorsForInjection
 ) {
     val components: DeserializationComponents
 
@@ -77,7 +80,8 @@ class DeserializationComponentsForJava(
             additionalClassPartsProvider = jvmBuiltIns?.customizer ?: AdditionalClassPartsProvider.None,
             platformDependentDeclarationFilter = jvmBuiltIns?.customizer ?: PlatformDependentDeclarationFilter.NoPlatformDependent,
             extensionRegistryLite = JvmProtoBufUtil.EXTENSION_REGISTRY,
-            kotlinTypeChecker = kotlinTypeChecker, samConversionResolver = SamConversionResolverImpl(storageManager, emptyList())
+            kotlinTypeChecker = kotlinTypeChecker, samConversionResolver = SamConversionResolverImpl(storageManager, emptyList()),
+            typeAttributeTranslators = typeAttributeTranslators.translators
         )
     }
 
@@ -188,6 +192,7 @@ fun makeDeserializationComponentsForJava(
     return DeserializationComponentsForJava(
         storageManager, module, DeserializationConfiguration.Default, javaClassDataFinder,
         binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider, notFoundClasses,
-        errorReporter, LookupTracker.DO_NOTHING, ContractDeserializer.DEFAULT, NewKotlinTypeChecker.Default
+        errorReporter, LookupTracker.DO_NOTHING, ContractDeserializer.DEFAULT, NewKotlinTypeChecker.Default,
+        TypeAttributeTranslatorsForInjection(listOf(DefaultTypeAttributeTranslator))
     )
 }

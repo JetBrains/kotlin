@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
 abstract class LazyAnnotationsContext(
     val annotationResolver: AnnotationResolver,

@@ -665,7 +665,10 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public SimpleType getArrayType(@NotNull Variance projectionType, @NotNull KotlinType argument, @NotNull Annotations annotations) {
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
-        return KotlinTypeFactory.simpleNotNullType(annotations, getArray(), types);
+        return KotlinTypeFactory.simpleNotNullType(
+                TypeAttributesKt.toDefaultAttributes(annotations),
+                getArray(),
+                types);
     }
 
     @NotNull
@@ -677,7 +680,7 @@ public abstract class KotlinBuiltIns {
     public SimpleType getEnumType(@NotNull SimpleType argument) {
         Variance projectionType = Variance.INVARIANT;
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
-        return KotlinTypeFactory.simpleNotNullType(Annotations.Companion.getEMPTY(), getEnum(), types);
+        return KotlinTypeFactory.simpleNotNullType(TypeAttributes.Companion.getEmpty(), getEnum(), types);
     }
 
     @NotNull

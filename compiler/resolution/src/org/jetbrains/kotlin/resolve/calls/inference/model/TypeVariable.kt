@@ -23,15 +23,11 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.model.PostponableKotlinCallArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasOnlyInputTypesAnnotation
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.TypeConstructor
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
-import org.jetbrains.kotlin.types.TypeRefinement
 
 
 class TypeVariableTypeConstructor(
@@ -74,7 +70,7 @@ sealed class NewTypeVariable(
 fun TypeConstructor.typeForTypeVariable(): SimpleType {
     require(this is TypeVariableTypeConstructor)
     return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-        Annotations.EMPTY, this, arguments = emptyList(),
+        TypeAttributes.Empty, this, arguments = emptyList(),
         nullable = false, memberScope = builtIns.any.unsubstitutedMemberScope
     )
 }

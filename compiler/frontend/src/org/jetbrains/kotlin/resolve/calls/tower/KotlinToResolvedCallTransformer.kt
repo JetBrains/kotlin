@@ -394,7 +394,7 @@ class KotlinToResolvedCallTransformer(
         val value = constant.getValue(TypeUtils.NO_EXPECTED_TYPE).safeAs<Number>()?.toLong() ?: return null
         val typeConstructor = IntegerLiteralTypeConstructor(value, moduleDescriptor, constant.parameters)
         return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-            Annotations.EMPTY, typeConstructor, emptyList(), false,
+            TypeAttributes.Empty, typeConstructor, emptyList(), false,
             ErrorUtils.createErrorScope("Scope for number value type ($typeConstructor)", true),
         )
     }

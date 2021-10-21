@@ -48,9 +48,6 @@ abstract class DelegatingSimpleType : SimpleType() {
 class AbbreviatedType(override val delegate: SimpleType, val abbreviation: SimpleType) : DelegatingSimpleType() {
     val expandedType: SimpleType get() = delegate
 
-    override fun replaceAnnotations(newAnnotations: Annotations) =
-        AbbreviatedType(delegate.replaceAnnotations(newAnnotations), abbreviation)
-
     override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType =
         AbbreviatedType(delegate.replaceAttributes(newAttributes), abbreviation)
 
@@ -171,9 +168,6 @@ class DefinitelyNotNullType private constructor(
 
     override fun substitutionResult(replacement: KotlinType): KotlinType =
         replacement.unwrap().makeDefinitelyNotNullOrNotNull(useCorrectedNullabilityForTypeParameters)
-
-    override fun replaceAnnotations(newAnnotations: Annotations): DefinitelyNotNullType =
-        DefinitelyNotNullType(delegate.replaceAnnotations(newAnnotations), useCorrectedNullabilityForTypeParameters)
 
     override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType =
         DefinitelyNotNullType(delegate.replaceAttributes(newAttributes), useCorrectedNullabilityForTypeParameters)

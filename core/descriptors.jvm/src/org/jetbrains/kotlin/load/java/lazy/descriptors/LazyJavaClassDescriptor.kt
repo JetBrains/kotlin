@@ -281,7 +281,7 @@ class LazyJavaClassDescriptor(
                 else -> return null
             }
 
-            return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, classDescriptor, parametersAsTypeProjections)
+            return KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, classDescriptor, parametersAsTypeProjections)
         }
 
         private fun getPurelyImplementsFqNameFromAnnotation(): FqName? {

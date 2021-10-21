@@ -125,9 +125,6 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
         }.inheritEnhancement(unwrapped)
     }
 
-    override fun replaceAnnotations(newAnnotations: Annotations): UnwrappedType =
-        KotlinTypeFactory.flexibleType(lowerBound.replaceAnnotations(newAnnotations), upperBound.replaceAnnotations(newAnnotations))
-
     override fun replaceAttributes(newAttributes: TypeAttributes): UnwrappedType =
         KotlinTypeFactory.flexibleType(lowerBound.replaceAttributes(newAttributes), upperBound.replaceAttributes(newAttributes))
 

@@ -286,7 +286,7 @@ open class IrBasedTypeParameterDescriptor(owner: IrTypeParameter) : TypeParamete
 
     private val _defaultType: SimpleType by lazy {
         KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-            Annotations.EMPTY, typeConstructor, emptyList(), false,
+            TypeAttributes.Empty, typeConstructor, emptyList(), false,
             LazyScopeAdapter {
                 TypeIntersectionScope.create(
                     "Scope for type parameter " + name.asString(),

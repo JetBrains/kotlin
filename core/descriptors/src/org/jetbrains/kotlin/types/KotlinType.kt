@@ -52,8 +52,6 @@ sealed class KotlinType : Annotated, KotlinTypeMarker {
     abstract val isMarkedNullable: Boolean
     abstract val memberScope: MemberScope
     abstract val attributes: TypeAttributes
-    override val annotations: Annotations
-        get() = attributes.toDefaultAnnotations()
 
     abstract fun unwrap(): UnwrappedType
 
@@ -163,7 +161,6 @@ abstract class WrappedType : KotlinType() {
  * todo: specify what happens with internal structure when we apply some [TypeSubstitutor]
  */
 sealed class UnwrappedType : KotlinType() {
-    abstract fun replaceAnnotations(newAnnotations: Annotations): UnwrappedType
     abstract fun replaceAttributes(newAttributes: TypeAttributes): UnwrappedType
     abstract fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType
 
@@ -179,7 +176,6 @@ sealed class UnwrappedType : KotlinType() {
  * Or more precisely, all instances are subclasses of [SimpleType] or [WrappedType] (which contains [SimpleType] inside).
  */
 abstract class SimpleType : UnwrappedType(), SimpleTypeMarker, TypeArgumentListMarker {
-    abstract override fun replaceAnnotations(newAnnotations: Annotations): SimpleType
     abstract override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType
     abstract override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType
 
