@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.ES6_INIT_BOX_PARAMETER
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -130,16 +128,38 @@ class ExportModelGenerator(
         )
     }
 
+    private fun exportEnumEntry(field: IrField): ExportedProperty? {
+        if (field.origin != IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY) return null
+
+        val irEnumEntry = context.mapping.fieldToEnumEntry[field]
+            ?: error("Unable to find enum entry for ${field.fqNameWhenAvailable}")
+
+        val parentClass = field.parent as IrClass
+
+        return ExportedProperty(
+            name = irEnumEntry.getExportedIdentifier(),
+            type = exportType(parentClass.defaultType),
+            mutable = false,
+            isMember = true,
+            isStatic = true,
+            isAbstract = false,
+            isProtected = parentClass.visibility == DescriptorVisibilities.PROTECTED,
+            irGetter = context.mapping.enumEntryToGetInstanceFun[irEnumEntry]
+                ?: error("Unable to find get instance fun for ${field.fqNameWhenAvailable}"),
+            irSetter = null
+        )
+    }
+
     private fun classExportability(klass: IrClass): Exportability {
         when (klass.kind) {
-            ClassKind.ANNOTATION_CLASS,
-            ClassKind.ENUM_CLASS,
-            ClassKind.ENUM_ENTRY ->
+            ClassKind.ANNOTATION_CLASS ->
                 return Exportability.Prohibited("Class ${klass.fqNameWhenAvailable} with kind: ${klass.kind}")
 
             ClassKind.OBJECT,
             ClassKind.CLASS,
-            ClassKind.INTERFACE -> {
+            ClassKind.INTERFACE,
+            ClassKind.ENUM_CLASS,
+            ClassKind.ENUM_ENTRY -> {
             }
         }
 
@@ -155,7 +175,8 @@ class ExportModelGenerator(
         when (val exportability = classExportability(klass)) {
             is Exportability.Prohibited -> error(exportability.reason)
             is Exportability.NotNeeded -> return null
-            Exportability.Allowed -> {}
+            Exportability.Allowed -> {
+            }
         }
 
         val members = mutableListOf<ExportedDeclaration>()
@@ -186,12 +207,14 @@ class ExportModelGenerator(
 
                 is IrField -> {
                     assert(
-                        candidate.origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
+                        candidate.origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE ||
+                                candidate.origin == IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY
                                 || candidate.origin == IrDeclarationOrigin.FIELD_FOR_OUTER_THIS
                                 || candidate.correspondingPropertySymbol != null
                     ) {
                         "Unexpected field without property ${candidate.fqNameWhenAvailable}"
                     }
+                    members.addIfNotNull(exportEnumEntry(candidate))
                 }
 
                 else -> error("Can't export member declaration $declaration")
@@ -346,6 +369,12 @@ class ExportModelGenerator(
             function.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION ||
             function.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT
         ) {
+            return Exportability.NotNeeded
+        }
+
+        val parentClass = function.parent as? IrClass
+
+        if (parentClass != null && context.mapping.enumClassToInitEntryInstancesFun[parentClass] == function) {
             return Exportability.NotNeeded
         }
 
