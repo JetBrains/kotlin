@@ -98,6 +98,12 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     }
 
     @Test
+    @TestMetadata("deserializeLambdaMethod.kt")
+    public void testDeserializeLambdaMethod() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/deserializeLambdaMethod.kt");
+    }
+
+    @Test
     @TestMetadata("enum.kt")
     public void testEnum() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/enum.kt");

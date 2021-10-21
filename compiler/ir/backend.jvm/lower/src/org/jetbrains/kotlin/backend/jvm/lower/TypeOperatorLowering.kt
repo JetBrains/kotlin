@@ -264,6 +264,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
         val deserializeLambdaFun = context.irFactory.buildFun {
             name = Name.identifier("\$deserializeLambda\$")
             visibility = DescriptorVisibilities.PRIVATE
+            origin = JvmLoweredDeclarationOrigin.DESERIALIZE_LAMBDA_FUN
         }
         deserializeLambdaFun.parent = irClass
         val lambdaParameter = deserializeLambdaFun.addValueParameter("lambda", context.ir.symbols.serializedLambda.irType)

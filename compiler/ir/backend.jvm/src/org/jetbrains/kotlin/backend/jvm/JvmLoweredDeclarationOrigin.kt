@@ -50,4 +50,5 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object INLINE_LAMBDA : IrDeclarationOriginImpl("INLINE_LAMBDA")
     object PROXY_FUN_FOR_METAFACTORY : IrDeclarationOriginImpl("PROXY_FUN_FOR_METAFACTORY")
     object SYNTHETIC_PROXY_FUN_FOR_METAFACTORY : IrDeclarationOriginImpl("SYNTHETIC_PROXY_FUN_FOR_METAFACTORY", isSynthetic = true)
+    object DESERIALIZE_LAMBDA_FUN : IrDeclarationOriginImpl("DESERIALIZE_LAMBDA_FUN", isSynthetic = true)
 }
