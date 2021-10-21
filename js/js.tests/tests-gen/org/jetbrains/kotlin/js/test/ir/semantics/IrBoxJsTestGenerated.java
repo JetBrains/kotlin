@@ -6692,6 +6692,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/native/exception.kt");
         }
 
+        @TestMetadata("externalNestedEnum.kt")
+        public void testExternalNestedEnum() throws Exception {
+            runTest("js/js.translator/testData/box/native/externalNestedEnum.kt");
+        }
+
         @TestMetadata("inheritanceFromNativeClass.kt")
         public void testInheritanceFromNativeClass() throws Exception {
             runTest("js/js.translator/testData/box/native/inheritanceFromNativeClass.kt");

@@ -88,10 +88,9 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             assert(fieldParent.isEnumClass) {
                 "${field.render()} in non-external class ${fieldParent.render()}"
             }
-            return JsNameRef(
-                field.getJsNameOrKotlinName().identifier,
-                context.getNameForClass(fieldParent).makeRef()
-            ).withSource(expression, context)
+
+            val receiver = expression.receiver?.accept(this, context) ?: error("Expect expression.receiver to not be null")
+            return JsNameRef(field.getJsNameOrKotlinName().identifier, receiver).withSource(expression, context)
         }
 
         if (fieldParent is IrClass && fieldParent.isInline) {
