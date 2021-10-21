@@ -381,6 +381,9 @@ class NewResolutionOldInference(
         override val isNewInferenceEnabled: Boolean
             get() = resolutionContext.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
 
+        override val areContextReceiversEnabled: Boolean
+            get() = resolutionContext.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
+
         override val languageVersionSettings: LanguageVersionSettings
             get() = resolutionContext.languageVersionSettings
 

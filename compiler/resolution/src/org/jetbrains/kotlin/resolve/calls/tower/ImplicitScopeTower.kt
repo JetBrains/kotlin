@@ -53,6 +53,8 @@ interface ImplicitScopeTower {
 
     val isNewInferenceEnabled: Boolean
 
+    val areContextReceiversEnabled: Boolean
+
     val languageVersionSettings: LanguageVersionSettings
 
     val typeApproximator: TypeApproximator
