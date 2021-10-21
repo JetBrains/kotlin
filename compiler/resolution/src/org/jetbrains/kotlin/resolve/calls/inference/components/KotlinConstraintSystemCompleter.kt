@@ -291,7 +291,7 @@ class KotlinConstraintSystemCompleter(
         csBuilder.registerVariable(returnVariable)
         val functionalType: KotlinType = csBuilder.buildCurrentSubstitutor().safeSubstitute(candidate.getSystem().asConstraintSystemCompleterContext(), atom.expectedType!!) as KotlinType
         val expectedType = KotlinTypeFactory.simpleType(
-            functionalType.annotations,
+            functionalType.attributes,
             functionalType.constructor,
             functionalType.arguments.dropLast(1) + returnVariable.defaultType.asTypeProjection(),
             functionalType.isMarkedNullable

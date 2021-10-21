@@ -631,17 +631,15 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun unionTypeAttributes(types: List<KotlinTypeMarker>): List<AnnotationMarker> {
         @Suppress("UNCHECKED_CAST")
-        types as List<KotlinType>
-        return types.map { it.unwrap().attributes }.reduce { x, y -> x.union(y) }.toList()
+        return (types as List<KotlinType>).map { it.unwrap().attributes }.reduce { x, y -> x.union(y) }.toList()
     }
 
     override fun KotlinTypeMarker.replaceTypeAttributes(newAttributes: List<AnnotationMarker>): KotlinTypeMarker {
         require(this is KotlinType)
-        val typeAttributes = newAttributes.filterIsInstance<TypeAttribute<*>>()
-        require(typeAttributes.size == newAttributes.size)
         if (newAttributes.isEmpty()) return this
+        @Suppress("UNCHECKED_CAST")
         return this.unwrap().replaceAttributes(
-            TypeAttributes.create(typeAttributes)
+            TypeAttributes.create(newAttributes as List<TypeAttribute<*>>)
         )
     }
 
@@ -663,6 +661,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun KotlinTypeMarker.getAttributes(): List<AnnotationMarker> {
         require(this is KotlinType, this::errorMessage)
         return this.attributes.toList()
+    }
+
+    override fun KotlinTypeMarker.getCustomAttributes(): List<AnnotationMarker> {
+        require(this is KotlinType, this::errorMessage)
+        return this.attributes.filterNot { it is AnnotationsTypeAttribute }
     }
 
     override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? {

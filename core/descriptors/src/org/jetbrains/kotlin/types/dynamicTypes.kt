@@ -52,9 +52,6 @@ class DynamicType(
 
     override val isMarkedNullable: Boolean get() = false
 
-    override fun replaceAnnotations(newAnnotations: Annotations): DynamicType =
-        DynamicType(delegate.builtIns, attributes.replaceAnnotations(newAnnotations))
-
     override fun replaceAttributes(newAttributes: TypeAttributes): DynamicType =
         DynamicType(delegate.builtIns, newAttributes)
 

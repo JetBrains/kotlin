@@ -49,7 +49,7 @@ fun transformSuspendFunctionToRuntimeFunctionType(suspendFunType: KotlinType): S
             suspendFunType.getContextReceiverTypesFromFunctionType(),
             suspendFunType.getValueParameterTypesFromFunctionType().map(TypeProjection::getType) +
                 KotlinTypeFactory.simpleType(
-                    Annotations.EMPTY,
+                    TypeAttributes.Empty,
                     // Continuation interface is not a part of built-ins anymore, it has been moved to stdlib.
                     // While it must be somewhere in the dependencies, but here we don't have a reference to the module,
                     // and it's rather complicated to inject it by now, so we just use a fake class descriptor.

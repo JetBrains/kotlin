@@ -257,7 +257,7 @@ fun createFunctionType(
     if (contextReceiverTypes.isNotEmpty()) typeAnnotations =
         typeAnnotations.withContextReceiversFunctionAnnotation(builtIns, contextReceiverTypes.size)
 
-    return KotlinTypeFactory.simpleNotNullType(typeAnnotations, classDescriptor, arguments)
+    return KotlinTypeFactory.simpleNotNullType(typeAnnotations.toDefaultAttributes(), classDescriptor, arguments)
 }
 
 fun Annotations.hasExtensionFunctionAnnotation() = hasAnnotation(StandardNames.FqNames.extensionFunctionType)

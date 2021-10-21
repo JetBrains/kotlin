@@ -498,7 +498,7 @@ class DoubleColonExpressionResolver(
 
             val arguments = descriptor.typeConstructor.parameters.map(TypeUtils::makeStarProjection)
             KotlinTypeFactory.simpleType(
-                Annotations.EMPTY, descriptor.typeConstructor, arguments,
+                TypeAttributes.Empty, descriptor.typeConstructor, arguments,
                 possiblyBareType.isNullable || doubleColonExpression.hasQuestionMarks
             )
         } else {

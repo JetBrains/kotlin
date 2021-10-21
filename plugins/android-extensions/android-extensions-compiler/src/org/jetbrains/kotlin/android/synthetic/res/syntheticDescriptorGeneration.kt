@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.StarProjectionImpl
+import org.jetbrains.kotlin.types.*
 
 private class XmlSourceElement(override val psi: PsiElement) : PsiSourceElement
 
@@ -70,7 +67,7 @@ internal fun genPropertyForWidget(
         }
         else {
             KotlinTypeFactory.simpleNotNullType(
-                    Annotations.EMPTY, classDescriptor, defaultType.constructor.parameters.map(::StarProjectionImpl))
+                TypeAttributes.Empty, classDescriptor, defaultType.constructor.parameters.map(::StarProjectionImpl))
         }
     } ?: context.view
 

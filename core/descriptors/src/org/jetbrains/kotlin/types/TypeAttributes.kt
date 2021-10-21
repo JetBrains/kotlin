@@ -41,9 +41,7 @@ class TypeAttributes private constructor(attributes: List<TypeAttribute<*>>) : A
             return generateNullableAccessor<TypeAttribute<*>, T>(T::class) as ReadOnlyProperty<TypeAttributes, T?>
         }
 
-        val Empty: TypeAttributes = TypeAttributes(emptyList())
-
-        private fun TypeAttribute<*>.predefined(): Pair<TypeAttribute<*>, TypeAttributes> = this to TypeAttributes(this)
+        val Empty: TypeAttributes = TypeAttributes(listOf(AnnotationsTypeAttribute(Annotations.EMPTY)))
 
         fun create(attributes: List<TypeAttribute<*>>): TypeAttributes {
             return if (attributes.isEmpty()) {
@@ -119,6 +117,6 @@ fun TypeAttributes.toDefaultAnnotations(): Annotations =
 fun Annotations.toDefaultAttributes(): TypeAttributes = DefaultTypeAttributeTranslator.toAttributes(this)
 
 fun TypeAttributes.replaceAnnotations(newAnnotations: Annotations): TypeAttributes {
-    val withoutCustom = (custom?.let { this.remove(it) } ?: this)
+    val withoutCustom = (annotationsAttribute?.let { this.remove(it) } ?: this)
     return withoutCustom.add(newAnnotations.toDefaultAttributes())
 }

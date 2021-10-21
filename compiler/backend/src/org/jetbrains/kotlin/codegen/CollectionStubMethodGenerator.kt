@@ -341,7 +341,7 @@ class CollectionStubMethodGenerator(
         }
 
     private fun newType(classDescriptor: ClassDescriptor, typeArguments: List<TypeProjection>): KotlinType {
-        return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, classDescriptor, typeArguments)
+        return KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, classDescriptor, typeArguments)
     }
 
     private fun FunctionDescriptor.signature(): JvmMethodGenericSignature =

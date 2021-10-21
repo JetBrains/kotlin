@@ -143,7 +143,7 @@ public class LazySubstitutingClassDescriptor extends ModuleAwareClassDescriptor 
     public SimpleType getDefaultType() {
         List<TypeProjection> typeProjections = TypeUtils.getDefaultTypeProjections(getTypeConstructor().getParameters());
         return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-                getAnnotations(),
+                DefaultTypeAttributeTranslator.INSTANCE.toAttributes(getAnnotations(), null, null),
                 getTypeConstructor(),
                 typeProjections,
                 false,

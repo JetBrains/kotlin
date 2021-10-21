@@ -144,7 +144,7 @@ private fun captureFromArguments(type: UnwrappedType, status: CaptureStatus): Un
 }
 
 private fun UnwrappedType.replaceArguments(arguments: List<TypeProjection>) =
-    KotlinTypeFactory.simpleType(annotations, constructor, arguments, isMarkedNullable)
+    KotlinTypeFactory.simpleType(attributes, constructor, arguments, isMarkedNullable)
 
 private fun captureArguments(type: UnwrappedType, status: CaptureStatus): List<TypeProjection>? {
     if (type.arguments.size != type.constructor.parameters.size) return null
@@ -207,13 +207,13 @@ class NewCapturedType(
         captureStatus: CaptureStatus, lowerType: UnwrappedType?, projection: TypeProjection, typeParameter: TypeParameterDescriptor
     ) : this(captureStatus, NewCapturedTypeConstructor(projection, typeParameter = typeParameter), lowerType)
 
+    override val annotations: Annotations
+        get() = attributes.toDefaultAnnotations()
+
     override val arguments: List<TypeProjection> get() = listOf()
 
     override val memberScope: MemberScope // todo what about foo().bar() where foo() return captured type?
         get() = ErrorUtils.createErrorScope("No member resolution should be done on captured type!", true)
-
-    override fun replaceAnnotations(newAnnotations: Annotations) =
-        NewCapturedType(captureStatus, constructor, lowerType, newAnnotations.toDefaultAttributes(), isMarkedNullable)
 
     override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType =
         NewCapturedType(captureStatus, constructor, lowerType, newAttributes, isMarkedNullable)

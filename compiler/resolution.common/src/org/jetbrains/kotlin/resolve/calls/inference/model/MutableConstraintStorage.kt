@@ -60,7 +60,14 @@ class MutableVariableWithConstraints private constructor(
                 && previousConstraint.isNullabilityConstraint == constraint.isNullabilityConstraint
             ) {
                 if (newConstraintIsUseless(previousConstraint, constraint)) {
-                    return previousConstraint to false
+                    // Preserve constraints with different custom type attributes.
+                    // This allows us to union type attributes in NewCommonSuperTypeCalculator.kt
+                    with(context) {
+                        val prevAttributes = previousConstraint.type.getCustomAttributes()
+                        if (prevAttributes.isEmpty() || prevAttributes == constraint.type.getCustomAttributes()) {
+                            return previousConstraint to false
+                        }
+                    }
                 }
 
                 val isMatchingForSimplification = when (previousConstraint.kind) {
@@ -138,11 +145,7 @@ class MutableVariableWithConstraints private constructor(
             return false
 
         return when (old.kind) {
-            ConstraintKind.EQUALITY -> {
-                with(context) {
-                    old.type.getAttributes() == new.type.getAttributes()
-                }
-            }
+            ConstraintKind.EQUALITY -> true
             ConstraintKind.LOWER -> new.kind.isLower()
             ConstraintKind.UPPER -> new.kind.isUpper()
         }

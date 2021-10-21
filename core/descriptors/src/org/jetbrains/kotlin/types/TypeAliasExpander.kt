@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.containsTypeAliasParameters
 import org.jetbrains.kotlin.types.typeUtil.requiresTypeAliasExpansion
 
@@ -19,21 +18,21 @@ class TypeAliasExpander(
     private val shouldCheckBounds: Boolean
 ) {
 
-    fun expand(typeAliasExpansion: TypeAliasExpansion, annotations: Annotations) =
+    fun expand(typeAliasExpansion: TypeAliasExpansion, attributes: TypeAttributes) =
         expandRecursively(
-            typeAliasExpansion, annotations,
+            typeAliasExpansion, attributes,
             isNullable = false, recursionDepth = 0, withAbbreviatedType = true
         )
 
-    fun expandWithoutAbbreviation(typeAliasExpansion: TypeAliasExpansion, annotations: Annotations) =
+    fun expandWithoutAbbreviation(typeAliasExpansion: TypeAliasExpansion, attributes: TypeAttributes) =
         expandRecursively(
-            typeAliasExpansion, annotations,
+            typeAliasExpansion, attributes,
             isNullable = false, recursionDepth = 0, withAbbreviatedType = false
         )
 
     private fun expandRecursively(
         typeAliasExpansion: TypeAliasExpansion,
-        annotations: Annotations,
+        attributes: TypeAttributes,
         isNullable: Boolean,
         recursionDepth: Int,
         withAbbreviatedType: Boolean
@@ -51,19 +50,19 @@ class TypeAliasExpander(
             "Type alias expansion: result for ${typeAliasExpansion.descriptor} is ${expandedProjection.projectionKind}, should be invariant"
         }
 
-        checkRepeatedAnnotations(expandedType.annotations, annotations)
+        checkRepeatedAnnotations(expandedType.annotations, attributes.annotations)
         val expandedTypeWithExtraAnnotations =
-            expandedType.combineAnnotations(annotations).let { TypeUtils.makeNullableIfNeeded(it, isNullable) }
+            expandedType.combineAttributes(attributes).let { TypeUtils.makeNullableIfNeeded(it, isNullable) }
 
         return if (withAbbreviatedType)
-            expandedTypeWithExtraAnnotations.withAbbreviation(typeAliasExpansion.createAbbreviation(annotations, isNullable))
+            expandedTypeWithExtraAnnotations.withAbbreviation(typeAliasExpansion.createAbbreviation(attributes, isNullable))
         else
             expandedTypeWithExtraAnnotations
     }
 
-    private fun TypeAliasExpansion.createAbbreviation(annotations: Annotations, isNullable: Boolean) =
+    private fun TypeAliasExpansion.createAbbreviation(attributes: TypeAttributes, isNullable: Boolean) =
         KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-            annotations,
+            attributes,
             descriptor.typeConstructor,
             arguments,
             isNullable,
@@ -125,23 +124,23 @@ class TypeAliasExpander(
 
         val substitutedType =
             if (argumentType is DynamicType)
-                argumentType.combineAnnotations(underlyingType.annotations)
+                argumentType.combineAttributes(underlyingType.attributes)
             else
                 argumentType.asSimpleType().combineNullabilityAndAnnotations(underlyingType)
 
         return TypeProjectionImpl(resultingVariance, substitutedType)
     }
 
-    private fun DynamicType.combineAnnotations(newAnnotations: Annotations): DynamicType =
-        replaceAnnotations(createCombinedAnnotations(newAnnotations))
+    private fun DynamicType.combineAttributes(newAttributes: TypeAttributes): DynamicType =
+        replaceAttributes(createdCombinedAttributes(newAttributes))
 
-    private fun SimpleType.combineAnnotations(newAnnotations: Annotations): SimpleType =
-        if (isError) this else replace(newAnnotations = createCombinedAnnotations(newAnnotations))
+    private fun SimpleType.combineAttributes(newAttributes: TypeAttributes): SimpleType =
+        if (isError) this else replaceAttributes(newAttributes = createdCombinedAttributes(newAttributes))
 
-    private fun KotlinType.createCombinedAnnotations(newAnnotations: Annotations): Annotations {
-        if (isError) return annotations
+    private fun KotlinType.createdCombinedAttributes(newAttributes: TypeAttributes): TypeAttributes {
+        if (isError) return attributes
 
-        return composeAnnotations(newAnnotations, annotations)
+        return newAttributes.add(attributes)
     }
 
     private fun checkRepeatedAnnotations(existingAnnotations: Annotations, newAnnotations: Annotations) {
@@ -158,7 +157,7 @@ class TypeAliasExpander(
         TypeUtils.makeNullableIfNeeded(this, fromType.isMarkedNullable)
 
     private fun SimpleType.combineNullabilityAndAnnotations(fromType: KotlinType) =
-        combineNullability(fromType).combineAnnotations(fromType.annotations)
+        combineNullability(fromType).combineAttributes(fromType.attributes)
 
     private fun expandNonArgumentTypeProjection(
         originalProjection: TypeProjection,
@@ -201,7 +200,7 @@ class TypeAliasExpander(
                     TypeAliasExpansion.create(typeAliasExpansion, typeDescriptor, expandedArguments)
 
                 val nestedExpandedType = expandRecursively(
-                    nestedExpansion, type.annotations,
+                    nestedExpansion, type.attributes,
                     isNullable = type.isMarkedNullable,
                     recursionDepth = recursionDepth + 1,
                     withAbbreviatedType = false

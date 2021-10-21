@@ -77,6 +77,10 @@ class CapturedType(
     override val isMarkedNullable: Boolean = false,
     override val attributes: TypeAttributes = TypeAttributes.Empty
 ) : SimpleType(), SubtypingRepresentatives, CapturedTypeMarker {
+
+    override val annotations: Annotations
+        get() = attributes.toDefaultAnnotations()
+
     override val arguments: List<TypeProjection>
         get() = listOf()
 
@@ -102,9 +106,6 @@ class CapturedType(
         if (newNullability == isMarkedNullable) return this
         return CapturedType(typeProjection, constructor, newNullability, attributes)
     }
-
-    override fun replaceAnnotations(newAnnotations: Annotations): CapturedType =
-        CapturedType(typeProjection, constructor, isMarkedNullable, newAnnotations.toDefaultAttributes())
 
     override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType =
         CapturedType(typeProjection, constructor, isMarkedNullable, newAttributes)

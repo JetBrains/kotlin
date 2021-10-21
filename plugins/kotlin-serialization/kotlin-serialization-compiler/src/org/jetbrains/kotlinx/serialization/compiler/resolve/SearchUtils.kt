@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.TypeAttributes
 
 internal fun ClassConstructorDescriptor.isSerializationCtor(): Boolean {
     /*kind == CallableMemberDescriptor.Kind.SYNTHESIZED does not work because DeserializedClassConstructorDescriptor loses its kind*/
@@ -117,7 +118,7 @@ internal fun ClassDescriptor.getClassFromInternalSerializationPackage(classSimpl
     module.getClassFromInternalSerializationPackage(classSimpleName)
 
 fun ClassDescriptor.toSimpleType(nullable: Boolean = false) =
-    KotlinTypeFactory.simpleType(Annotations.EMPTY, this.typeConstructor, emptyList(), nullable)
+    KotlinTypeFactory.simpleType(TypeAttributes.Empty, this.typeConstructor, emptyList(), nullable)
 
 internal fun Annotated.annotationsWithArguments(): List<Triple<ClassDescriptor, List<ValueArgument>, List<ValueParameterDescriptor>>> =
     annotations.asSequence()

@@ -160,12 +160,14 @@ fun SimpleType.replace(
 ): SimpleType {
     if (newArguments.isEmpty() && newAnnotations === annotations) return this
 
+    val newAttributes = attributes.replaceAnnotations(newAnnotations)
+
     if (newArguments.isEmpty()) {
-        return replaceAnnotations(newAnnotations)
+        return replaceAttributes(newAttributes)
     }
 
     return KotlinTypeFactory.simpleType(
-        newAnnotations,
+        newAttributes,
         constructor,
         newArguments,
         isMarkedNullable

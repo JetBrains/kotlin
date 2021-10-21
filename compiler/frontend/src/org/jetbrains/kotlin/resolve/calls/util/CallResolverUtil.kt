@@ -70,7 +70,7 @@ fun replaceReturnTypeForCallable(type: KotlinType, given: KotlinType): KotlinTyp
 fun replaceReturnTypeByUnknown(type: KotlinType) = replaceReturnTypeForCallable(type, DONT_CARE)
 
 private fun replaceTypeArguments(type: KotlinType, newArguments: List<TypeProjection>) =
-    KotlinTypeFactory.simpleType(type.annotations, type.constructor, newArguments, type.isMarkedNullable)
+    KotlinTypeFactory.simpleType(type.attributes, type.constructor, newArguments, type.isMarkedNullable)
 
 private fun getParameterArgumentsOfCallableType(type: KotlinType) =
     type.arguments.dropLast(1)
@@ -126,7 +126,7 @@ fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterDescript
     }
 
     return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-        receiverType.annotations, receiverTypeConstructor, fakeTypeArguments,
+        receiverType.attributes, receiverTypeConstructor, fakeTypeArguments,
         receiverType.isMarkedNullable, ErrorUtils.createErrorScope("Error scope for erased receiver type", /*throwExceptions=*/true)
     )
 }

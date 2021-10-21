@@ -6,20 +6,29 @@
 package org.jetbrains.kotlin.types.extensions
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.types.*
 
 interface TypeAttributeTranslatorExtension : TypeAttributeTranslator
 
+class TypeAttributeTranslatorsForInjection(project: Project) {
+    val translators: List<TypeAttributeTranslator> = TypeAttributeTranslators(project).translators
+}
+
 class TypeAttributeTranslators private constructor(val translators: List<TypeAttributeTranslator>) {
 
     constructor(project: Project) : this(getInstances(project) + DefaultTypeAttributeTranslator)
 
 
-    fun toAttributes(annotations: Annotations): TypeAttributes {
+    fun toAttributes(
+        annotations: Annotations,
+        typeConstructor: TypeConstructor,
+        containingDeclaration: DeclarationDescriptor? = null
+    ): TypeAttributes {
         val translated = translators.map { translator ->
-            translator.toAttributes(annotations)
+            translator.toAttributes(annotations, typeConstructor, containingDeclaration)
         }.flatten()
         return TypeAttributes.create(translated)
     }

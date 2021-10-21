@@ -398,6 +398,11 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         return this.annotations.map { object : AnnotationMarker, IrElement by it {} }
     }
 
+    override fun KotlinTypeMarker.getCustomAttributes(): List<AnnotationMarker> {
+        require(this is IrType)
+        return emptyList()
+    }
+
     override fun createErrorType(debugName: String): SimpleTypeMarker {
         TODO("IrTypeSystemContext doesn't support constraint system resolution")
     }

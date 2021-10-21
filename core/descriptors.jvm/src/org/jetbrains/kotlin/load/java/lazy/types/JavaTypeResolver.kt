@@ -119,8 +119,8 @@ class JavaTypeResolver(
         attr: JavaTypeAttributes,
         lowerResult: SimpleType?
     ): SimpleType? {
-        val annotations =
-            lowerResult?.annotations ?: LazyJavaAnnotations(c, javaType)
+        val attributes =
+            lowerResult?.attributes ?: LazyJavaAnnotations(c, javaType).toDefaultAttributes()
         val constructor = computeTypeConstructor(javaType, attr) ?: return null
         val isNullable = attr.isNullable()
 
@@ -130,7 +130,7 @@ class JavaTypeResolver(
 
         val arguments = computeArguments(javaType, attr, constructor)
 
-        return KotlinTypeFactory.simpleType(annotations, constructor, arguments, isNullable)
+        return KotlinTypeFactory.simpleType(attributes, constructor, arguments, isNullable)
     }
 
     private fun computeTypeConstructor(javaType: JavaClassifierType, attr: JavaTypeAttributes): TypeConstructor? {

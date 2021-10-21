@@ -180,7 +180,7 @@ class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(value) {
     constructor(classId: ClassId, arrayDimensions: Int) : this(ClassLiteralValue(classId, arrayDimensions))
 
     override fun getType(module: ModuleDescriptor): KotlinType =
-        KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, module.builtIns.kClass, listOf(TypeProjectionImpl(getArgumentType(module))))
+        KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, module.builtIns.kClass, listOf(TypeProjectionImpl(getArgumentType(module))))
 
     fun getArgumentType(module: ModuleDescriptor): KotlinType {
         when (value) {

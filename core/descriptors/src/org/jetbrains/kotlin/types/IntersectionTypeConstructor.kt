@@ -77,7 +77,7 @@ class IntersectionTypeConstructor(typesToIntersect: Collection<KotlinType>) : Ty
     @OptIn(TypeRefinement::class)
     fun createType(): SimpleType =
         KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-            Annotations.EMPTY, this, listOf(), false, this.createScopeForKotlinType()
+            TypeAttributes.Empty, this, listOf(), false, this.createScopeForKotlinType()
         ) { kotlinTypeRefiner ->
             this.refine(kotlinTypeRefiner).createType()
         }

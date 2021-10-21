@@ -114,7 +114,7 @@ class FunctionClassDescriptor(
                     TypeProjectionImpl(it.defaultType)
                 }
 
-                KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, descriptor, arguments)
+                KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, descriptor, arguments)
             }.toList()
         }
 
