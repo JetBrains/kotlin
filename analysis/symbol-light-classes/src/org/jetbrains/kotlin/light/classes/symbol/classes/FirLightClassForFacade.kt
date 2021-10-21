@@ -40,6 +40,12 @@ class FirLightClassForFacade(
 
     init {
         require(files.isNotEmpty())
+        /*
+        Actually, here should be the following check
+        require(files.all { it.getKtModule() is KtSourceModule })
+        but it is quite expensive
+         */
+        require(files.none { it.isCompiled })
     }
 
     private val firstFileInFacade by lazyPub { files.first() }
