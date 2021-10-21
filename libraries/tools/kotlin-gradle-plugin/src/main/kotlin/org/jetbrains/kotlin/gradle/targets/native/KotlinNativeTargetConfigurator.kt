@@ -86,7 +86,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             project.afterEvaluate {
                 val task = taskProvider.get()
                 val artifactFile = when (task) {
-                    is FatFrameworkTask -> task.fatFrameworkDir
+                    is FatFrameworkTask -> task.fatFramework
                     else -> binary.outputFile
                 }
                 val linkArtifact = project.artifacts.add(name, artifactFile) { artifact ->
