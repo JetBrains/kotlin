@@ -98,5 +98,22 @@ declare namespace JS_TESTS {
                 readonly prop: string;
             }
         }
+        class TestEnumClass {
+            private constructor();
+            readonly constructorParameter: string;
+            static readonly A: foo.TestEnumClass;
+            static readonly B: foo.TestEnumClass;
+            readonly foo: number;
+            bar(value: string): string;
+            bay(): string;
+            static values(): Array<foo.TestEnumClass>;
+            static valueOf(value: string): foo.TestEnumClass;
+        }
+        namespace TestEnumClass {
+            class Nested {
+                constructor();
+                readonly prop: string;
+            }
+        }
     }
 }

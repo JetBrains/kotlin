@@ -164,3 +164,19 @@ data class TestDataClass(val name: String) {
         val prop: String = "hello"
     }
 }
+
+@JsExport
+enum class TestEnumClass(val constructorParameter: String) {
+    A("aConstructorParameter"),
+    B("bConstructorParameter");
+
+    val foo = ordinal
+
+    fun bar(value: String) = value
+
+    fun bay() = name
+
+    class Nested {
+        val prop: String = "hello2"
+    }
+}
