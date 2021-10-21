@@ -8,16 +8,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.file.FileTree
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.tasks.dependsOn
-import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
-import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -43,10 +39,7 @@ internal class XCFrameworkTaskHolder(
     companion object {
         fun create(project: Project, xcFrameworkName: String, buildType: NativeBuildType): XCFrameworkTaskHolder {
             require(xcFrameworkName.isNotBlank())
-
-            val parentTask = project.parentAssembleXCFrameworkTask(xcFrameworkName)
             val task = project.registerAssembleXCFrameworkTask(xcFrameworkName, buildType)
-            parentTask.dependsOn(task)
 
             val fatTasks = AppleTarget.values().associate { fatTarget ->
                 val fatTask = project.registerAssembleFatForXCFrameworkTask(xcFrameworkName, buildType, fatTarget)
@@ -62,13 +55,17 @@ internal class XCFrameworkTaskHolder(
 class XCFrameworkConfig {
     private val taskHolders: List<XCFrameworkTaskHolder>
 
-    constructor(project: Project, xcFrameworkName: String) {
-        taskHolders = NativeBuildType.values().map { buildType ->
-            XCFrameworkTaskHolder.create(project, xcFrameworkName, buildType)
+    constructor(project: Project, xcFrameworkName: String, buildTypes: Set<NativeBuildType>) {
+        val parentTask = project.parentAssembleXCFrameworkTask(xcFrameworkName)
+        taskHolders = buildTypes.map { buildType ->
+            XCFrameworkTaskHolder.create(project, xcFrameworkName, buildType).also {
+                parentTask.dependsOn(it.task)
+            }
         }
     }
 
     constructor(project: Project) : this(project, project.name)
+    constructor(project: Project, xcFrameworkName: String) : this(project, xcFrameworkName, NativeBuildType.values().toSet())
 
     /**
      * Adds the specified frameworks in this XCFramework.
@@ -156,21 +153,15 @@ abstract class XCFrameworkTask : DefaultTask() {
     @Input
     var buildType: NativeBuildType = NativeBuildType.RELEASE
 
-    /**
-     * A collection of frameworks used ot build the XCFramework.
-     */
-    private val allFrameworks: MutableSet<Framework> = mutableSetOf()
-
-    @get:Internal  // We take it into account as an input in the inputFrameworkFiles property.
-    val frameworks: List<Framework>
-        get() = allFrameworks.filter { it.buildType == buildType }
+    private data class XCFrameworkFile(val file: File, val isStatic: Boolean)
+    private val groupedFrameworkFiles: MutableMap<AppleTarget, MutableList<XCFrameworkFile>> = mutableMapOf()
 
     @get:IgnoreEmptyDirectories
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:SkipWhenEmpty
-    protected val inputFrameworkFiles: Iterable<FileTree>
-        get() = frameworks.map { project.fileTree(it.outputFile) }
+    val inputFrameworkFiles: Collection<File>
+        get() = groupedFrameworkFiles.values.flatten().map { it.file }
 
     /**
      * A parent directory for the XCFramework.
@@ -197,32 +188,31 @@ abstract class XCFrameworkTask : DefaultTask() {
             require(framework.konanTarget.family.isAppleFamily) {
                 "XCFramework supports Apple frameworks only"
             }
-            allFrameworks.add(framework)
+            val group = AppleTarget.values().first { it.targets.contains(framework.konanTarget) }
+            groupedFrameworkFiles.getOrPut(group, { mutableListOf() }).add(XCFrameworkFile(framework.outputFile, framework.isStatic))
             dependsOn(framework.linkTask)
         }
     }
 
+    fun from(target: KonanTarget, frameworkFile: File, isStatic: Boolean) {
+        val group = AppleTarget.values().first { it.targets.contains(target) }
+        groupedFrameworkFiles.getOrPut(group, { mutableListOf() }).add(XCFrameworkFile(frameworkFile, isStatic))
+    }
+
     @TaskAction
     fun assemble() {
-        val frameworksForXCFramework = AppleTarget.values().mapNotNull { appleTarget ->
-            val group = frameworks.filter { it.konanTarget in appleTarget.targets }
+        val frameworksForXCFramework = groupedFrameworkFiles.entries.mapNotNull { (group, files) ->
             when {
-                group.size == 1 -> {
-                    XCFrameworkFile(group.first().outputFile, group.first().isStatic)
-                }
-                group.size > 1 -> {
-                    XCFrameworkFile(
-                        fatFrameworksDir.resolve(appleTarget.targetName).resolve("${xcFrameworkName.get()}.framework"),
-                        group.all { it.isStatic }
-                    )
-                }
+                files.size == 1 -> files.first()
+                files.size > 1 -> XCFrameworkFile(
+                    fatFrameworksDir.resolve(group.targetName).resolve("${xcFrameworkName.get()}.framework"),
+                    files.all { it.isStatic }
+                )
                 else -> null
             }
         }
         createXCFramework(frameworksForXCFramework, outputXCFrameworkFile, buildType)
     }
-
-    private data class XCFrameworkFile (val file: File, val isStatic: Boolean)
 
     private fun createXCFramework(frameworkFiles: List<XCFrameworkFile>, output: File, buildType: NativeBuildType) {
         if (output.exists()) output.deleteRecursively()
