@@ -26272,6 +26272,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("sealedInheritorErrorMessage.kt")
+            public void testSealedInheritorErrorMessage() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/sealed/sealedInheritorErrorMessage.kt");
+            }
+
+            @Test
             @TestMetadata("TreeWhen.kt")
             public void testTreeWhen() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sealed/TreeWhen.kt");

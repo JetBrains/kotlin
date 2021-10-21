@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
@@ -669,7 +670,13 @@ public class BodyResolver {
                         }
                     }
                     else {
-                        trace.report(SEALED_SUPERTYPE_IN_LOCAL_CLASS.on(typeReference));
+                        String declarationName;
+                        if (supertypeOwner.getName() == SpecialNames.NO_NAME_PROVIDED) {
+                            declarationName = "Anonymous object";
+                        } else {
+                            declarationName = "Local class";
+                        }
+                        trace.report(SEALED_SUPERTYPE_IN_LOCAL_CLASS.on(typeReference, declarationName, classDescriptor.getKind()));
                     }
                 }
                 else if (ModalityUtilsKt.isFinalOrEnum(classDescriptor)) {

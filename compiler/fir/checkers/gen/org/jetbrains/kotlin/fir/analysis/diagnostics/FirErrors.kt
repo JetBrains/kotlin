@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.config.LanguageFeature.RestrictRetentionForExpressio
 import org.jetbrains.kotlin.config.LanguageFeature.RestrictionOfValReassignmentViaBackingField
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
@@ -174,7 +175,7 @@ object FirErrors {
     val SUPERTYPE_APPEARS_TWICE by error0<KtTypeReference>()
     val CLASS_IN_SUPERTYPE_FOR_ENUM by error0<KtTypeReference>()
     val SEALED_SUPERTYPE by error0<KtTypeReference>()
-    val SEALED_SUPERTYPE_IN_LOCAL_CLASS by error0<KtTypeReference>()
+    val SEALED_SUPERTYPE_IN_LOCAL_CLASS by error2<KtTypeReference, String, ClassKind>()
     val SEALED_INHERITOR_IN_DIFFERENT_PACKAGE by error0<KtTypeReference>()
     val SEALED_INHERITOR_IN_DIFFERENT_MODULE by error0<KtTypeReference>()
     val CLASS_INHERITS_JAVA_SEALED_CLASS by error0<KtTypeReference>()

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.utils.classId
@@ -65,10 +66,17 @@ object FirSealedSupertypeChecker : FirClassChecker() {
                 continue
             }
 
-            val classSymbol = context.session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: continue
+            val superClassSymbol = context.session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: continue
 
-            if (classSymbol.modality == Modality.SEALED) {
-                reporter.reportOn(it.source, FirErrors.SEALED_SUPERTYPE_IN_LOCAL_CLASS, context)
+            if (superClassSymbol.modality == Modality.SEALED) {
+                val declarationType = if (declaration is FirAnonymousObject) "Anonymous object" else "Local class"
+                reporter.reportOn(
+                    it.source,
+                    FirErrors.SEALED_SUPERTYPE_IN_LOCAL_CLASS,
+                    declarationType,
+                    superClassSymbol.classKind,
+                    context
+                )
                 return
             }
         }

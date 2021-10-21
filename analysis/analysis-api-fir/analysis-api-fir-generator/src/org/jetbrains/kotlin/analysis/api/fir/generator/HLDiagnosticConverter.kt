@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.ClassId
@@ -341,7 +342,8 @@ private object FirToKtConversionCreator {
         FirModuleData::class,
         ExpectActualCompatibility.Incompatible::class,
         DeprecationInfo::class,
-        CallableId::class
+        CallableId::class,
+        ClassKind::class,
     )
 
     private val KType.kClass: KClass<*>

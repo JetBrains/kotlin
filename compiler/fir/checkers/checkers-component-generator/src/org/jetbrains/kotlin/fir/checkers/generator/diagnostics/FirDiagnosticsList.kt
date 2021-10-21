@@ -10,6 +10,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
@@ -170,7 +171,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val SUPERTYPE_APPEARS_TWICE by error<KtTypeReference>()
         val CLASS_IN_SUPERTYPE_FOR_ENUM by error<KtTypeReference>()
         val SEALED_SUPERTYPE by error<KtTypeReference>()
-        val SEALED_SUPERTYPE_IN_LOCAL_CLASS by error<KtTypeReference>()
+        val SEALED_SUPERTYPE_IN_LOCAL_CLASS by error<KtTypeReference> {
+            parameter<String>("declarationType")
+            parameter<ClassKind>("sealedClassKind")
+        }
         val SEALED_INHERITOR_IN_DIFFERENT_PACKAGE by error<KtTypeReference>()
         val SEALED_INHERITOR_IN_DIFFERENT_MODULE by error<KtTypeReference>()
         val CLASS_INHERITS_JAVA_SEALED_CLASS by error<KtTypeReference>()
