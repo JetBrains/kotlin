@@ -645,6 +645,18 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
         }
 
         @Test
+        @TestMetadata("ReserveYieldNoMore.kt")
+        public void testReserveYieldNoMore() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/ReserveYieldNoMore.kt");
+        }
+
+        @Test
+        @TestMetadata("ReserveYieldNoMore2.kt")
+        public void testReserveYieldNoMore2() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/ReserveYieldNoMore2.kt");
+        }
+
+        @Test
         @TestMetadata("ResolveOfJavaGenerics.kt")
         public void testResolveOfJavaGenerics() throws Exception {
             runTest("compiler/testData/diagnostics/tests/ResolveOfJavaGenerics.kt");

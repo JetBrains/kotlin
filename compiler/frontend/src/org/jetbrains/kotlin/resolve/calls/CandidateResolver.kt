@@ -138,7 +138,7 @@ class CandidateResolver(
 
     private fun <D : CallableDescriptor> CallCandidateResolutionContext<D>.mapArguments() = check {
         val argumentMappingStatus = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(
-            call, tracing, candidateCall
+            call, tracing, candidateCall, languageVersionSettings
         )
         if (!argumentMappingStatus.isSuccess) {
             candidateCall.addStatus(ARGUMENTS_MAPPING_ERROR)

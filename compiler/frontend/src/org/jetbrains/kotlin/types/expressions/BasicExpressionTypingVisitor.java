@@ -166,7 +166,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public KotlinTypeInfo visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression, ExpressionTypingContext context) {
-        ReservedCheckingKt.checkReservedYield(expression, context.trace);
+        if (!components.languageVersionSettings.supportsFeature(LanguageFeature.YieldIsNoMoreReserved)) {
+            ReservedCheckingKt.checkReservedYield(expression, context.trace);
+        }
 
         // TODO : other members
         // TODO : type substitutions???
@@ -884,7 +886,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             boolean isStatement
     ) {
         KtSimpleNameExpression labelExpression = expression.getTargetLabel();
-        ReservedCheckingKt.checkReservedYield(labelExpression, context.trace);
+        if (!components.languageVersionSettings.supportsFeature(LanguageFeature.YieldIsNoMoreReserved)) {
+            ReservedCheckingKt.checkReservedYield(labelExpression, context.trace);
+        }
         if (labelExpression != null) {
             PsiElement labelIdentifier = labelExpression.getIdentifier();
             UnderscoreChecker.INSTANCE.checkIdentifier(labelIdentifier, context.trace, components.languageVersionSettings);

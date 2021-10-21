@@ -245,6 +245,7 @@ enum class LanguageFeature(
     ProperInternalVisibilityCheckInImportingScope(KOTLIN_1_7, kind = BUG_FIX),
     InlineClassImplementationByDelegation(KOTLIN_1_7),
     QualifiedSupertypeMayBeExtendedByOtherSupertype(KOTLIN_1_7),
+    YieldIsNoMoreReserved(KOTLIN_1_7),
 
     // 1.8
 

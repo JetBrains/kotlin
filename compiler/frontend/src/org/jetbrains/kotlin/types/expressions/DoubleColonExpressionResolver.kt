@@ -743,7 +743,9 @@ class DoubleColonExpressionResolver(
         return when {
             resolutionResults.isNothing -> null
             else -> ResolutionResultsAndTraceCommitCallback(resolutionResults) {
-                checkReservedYield(reference, outerContext.trace)
+                if (!languageVersionSettings.supportsFeature(LanguageFeature.YieldIsNoMoreReserved)) {
+                    checkReservedYield(reference, outerContext.trace)
+                }
                 if (resolutionMode != ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS || resolutionResults.isSuccess) {
                     temporaryTrace.commit()
                 }

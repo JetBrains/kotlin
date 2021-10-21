@@ -149,7 +149,9 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 
     override fun visitLambdaExpression(expression: KtLambdaExpression, context: ExpressionTypingContext): KotlinTypeInfo? {
-        checkReservedYieldBeforeLambda(expression, context.trace)
+        if (!components.languageVersionSettings.supportsFeature(LanguageFeature.YieldIsNoMoreReserved)) {
+            checkReservedYieldBeforeLambda(expression, context.trace)
+        }
         if (!expression.functionLiteral.hasBody()) return null
 
         val expectedType = context.expectedType

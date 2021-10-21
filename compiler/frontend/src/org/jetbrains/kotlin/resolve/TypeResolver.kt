@@ -255,7 +255,9 @@ class TypeResolver(
 
                 val referenceExpression = type.referenceExpression ?: return
 
-                checkReservedYield(referenceExpression, c.trace)
+                if (!languageVersionSettings.supportsFeature(LanguageFeature.YieldIsNoMoreReserved)) {
+                    checkReservedYield(referenceExpression, c.trace)
+                }
                 c.trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifier)
 
                 result = resolveTypeForClassifier(c, classifier, qualifierResolutionResult, type, annotations)

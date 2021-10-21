@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ConditionalJumpInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ThrowExceptionInstruction
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.psi.*
@@ -115,7 +116,9 @@ fun getExpectedTypePredicate(
                 TracingStrategy.EMPTY,
                 DataFlowInfoForArgumentsImpl(DataFlowInfo.EMPTY, call)
             )
-            val status = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(call, TracingStrategy.EMPTY, candidateCall)
+            val status = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(
+                call, TracingStrategy.EMPTY, candidateCall, LanguageVersionSettingsImpl.DEFAULT
+            )
             if (!status.isSuccess) continue
 
             val candidateArgumentMap = candidateCall.valueArguments

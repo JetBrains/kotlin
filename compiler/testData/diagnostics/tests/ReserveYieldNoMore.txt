@@ -1,0 +1,23 @@
+package
+
+package p1 {
+
+    package p1.yield {
+        public val yield: kotlin.Int = 5
+        public fun bar(/*0*/ yield: kotlin.Int = ...): kotlin.Unit
+        public fun foo(): kotlin.Unit
+        public fun yield(/*0*/ i: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+        public fun yield(/*0*/ yield: kotlin.Int): kotlin.Unit
+    }
+}
+
+package p2 {
+
+    package p2.yield {
+        public val yield: kotlin.Int = 5
+        public fun bar(/*0*/ yield: kotlin.Int = ...): kotlin.Unit
+        public fun foo(): kotlin.Unit
+        public fun yield(/*0*/ i: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+        public fun yield(/*0*/ yield: kotlin.Int): kotlin.Unit
+    }
+}

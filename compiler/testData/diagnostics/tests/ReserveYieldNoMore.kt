@@ -1,5 +1,6 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION -UNREACHABLE_CODE -UNUSED_VARIABLE
-// !LANGUAGE: -YieldIsNoMoreReserved
+// !LANGUAGE: +YieldIsNoMoreReserved
 
 // FILE: 1.kt
 package p1.yield
@@ -13,24 +14,24 @@ fun foo(){}
 fun bar(yield: Int = 4) {}
 
 fun yield(yield: Int) {
-    "$<!YIELD_IS_RESERVED!>yield<!>"
-    "${<!YIELD_IS_RESERVED!>yield<!>}"
+    "$yield"
+    "${yield}"
 
-    <!YIELD_IS_RESERVED!>yield<!>
-    val foo = <!YIELD_IS_RESERVED!>yield<!> + <!YIELD_IS_RESERVED!>yield<!>
-    val foo2 = <!YIELD_IS_RESERVED!>yield<!>
+    yield
+    val foo = yield + yield
+    val foo2 = yield
 
     bar(yield = 5)
 
     yield(4)
-    <!YIELD_IS_RESERVED!>yield<!> {}
+    yield {}
 
-    class yield<T: <!YIELD_IS_RESERVED!>yield<!><T>>
+    class yield<T: yield<T>>
 
-    return@<!YIELD_IS_RESERVED!>yield<!>
-    return@<!YIELD_IS_RESERVED!>yield<!> Unit
+    return@yield
+    return@yield Unit
 
-    val foo5: <!YIELD_IS_RESERVED!>yield<!><*>
+    val foo5: yield<*>
 }
 
 fun yield(i: (Int) -> Unit) {}

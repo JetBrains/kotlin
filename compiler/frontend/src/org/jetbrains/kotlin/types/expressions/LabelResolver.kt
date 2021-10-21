@@ -116,7 +116,9 @@ object LabelResolver {
 
     fun resolveControlLabel(expression: KtExpressionWithLabel, context: ResolutionContext<*>): KtElement? {
         val labelElement = expression.getTargetLabel()
-        checkReservedYield(labelElement, context.trace)
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.YieldIsNoMoreReserved)) {
+            checkReservedYield(labelElement, context.trace)
+        }
 
         val labelName = expression.getLabelNameAsName()
         if (labelElement == null || labelName == null) return null
