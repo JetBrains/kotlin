@@ -19,7 +19,6 @@ open class KonanCacheTask: DefaultTask() {
     @get:InputDirectory
     lateinit var originalKlib: File
 
-    // Taken into account by the [cacheFile] property.
     @get:Input
     lateinit var cacheRoot: String
 
@@ -29,9 +28,7 @@ open class KonanCacheTask: DefaultTask() {
     @get:Internal
     // TODO: Reuse NativeCacheKind from Big Kotlin plugin when it is available.
     val cacheDirectory: File
-        get() = File(cacheRoot).apply {
-            if (!exists()) mkdir()
-        }.resolve("$target-g$cacheKind")
+        get() = File("$cacheRoot/$target-g$cacheKind")
 
     @get:OutputDirectory
     val cacheFile: File
@@ -62,6 +59,7 @@ open class KonanCacheTask: DefaultTask() {
             val deleted = cacheFile.deleteRecursively()
             check(deleted) { "Cannot delete stale cache: ${cacheFile.absolutePath}" }
         }
+        cacheDirectory.mkdirs()
         val konanHome = compilerDistributionPath.get().absolutePath
         val additionalCacheFlags = PlatformManager(konanHome).let {
             it.targetByName(target).let(it::loader).additionalCacheFlags
