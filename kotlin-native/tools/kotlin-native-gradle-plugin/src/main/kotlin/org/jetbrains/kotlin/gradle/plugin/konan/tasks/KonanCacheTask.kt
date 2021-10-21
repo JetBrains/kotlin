@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle.plugin.konan.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.Directory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanCompilerRunner
@@ -17,7 +18,7 @@ enum class KonanCacheKind(val outputKind: CompilerOutputKind) {
 
 open class KonanCacheTask: DefaultTask() {
     @get:InputDirectory
-    lateinit var originalKlib: File
+    var originalKlib: File? = null
 
     @get:Input
     lateinit var cacheRoot: String
@@ -33,7 +34,7 @@ open class KonanCacheTask: DefaultTask() {
     @get:OutputDirectory
     val cacheFile: File
         get() {
-            val klibName = originalKlib.let {
+            val klibName = originalKlib?.let {
                 if (it.isDirectory) it.name else it.nameWithoutExtension
             }
             return cacheDirectory.resolve("${klibName}-cache")
@@ -63,11 +64,12 @@ open class KonanCacheTask: DefaultTask() {
         val additionalCacheFlags = PlatformManager(konanHome).let {
             it.targetByName(target).let(it::loader).additionalCacheFlags
         }
+        requireNotNull(originalKlib)
         val args = listOf(
             "-g",
             "-target", target,
             "-produce", cacheKind.outputKind.name.toLowerCase(),
-            "-Xadd-cache=${originalKlib.absolutePath}",
+            "-Xadd-cache=${originalKlib?.absolutePath}",
             "-Xcache-directory=${cacheDirectory.absolutePath}"
         ) + additionalCacheFlags + cachedLibraries.map { "-Xcached-library=${it.key},${it.value}" }
         KonanCompilerRunner(project, konanHome = konanHome).run(args)
