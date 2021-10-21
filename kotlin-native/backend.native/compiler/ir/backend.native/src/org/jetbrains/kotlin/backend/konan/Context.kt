@@ -50,6 +50,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
+import org.jetbrains.kotlin.konan.target.Architecture
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.disposeNativeMemoryAllocator
 import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
@@ -505,6 +507,20 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     val inlineFunctionBodies = mutableListOf<SerializedInlineFunctionReference>()
 
     val classFields = mutableListOf<SerializedClassFields>()
+
+    val targetAbiInfo: TargetAbiInfo by lazy {
+        when {
+            config.target == KonanTarget.MINGW_X64 -> {
+                WindowsX64TargetAbiInfo()
+            }
+            !config.target.family.isAppleFamily && config.target.architecture == Architecture.ARM64 -> {
+                AAPCS64TargetAbiInfo()
+            }
+            else -> {
+                DefaultTargetAbiInfo()
+            }
+        }
+    }
 }
 
 private fun MemberScope.getContributedClassifier(name: String) =

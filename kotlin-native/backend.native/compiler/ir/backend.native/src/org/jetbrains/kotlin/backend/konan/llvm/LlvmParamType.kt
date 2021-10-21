@@ -26,9 +26,11 @@ class LlvmParamType(val llvmType: LLVMTypeRef, val attributes: List<LlvmParamete
  */
 typealias LlvmRetType = LlvmParamType
 
-internal fun RuntimeAware.getLlvmFunctionParameterTypes(function: IrFunction): List<LlvmParamType> {
+internal fun ContextUtils.getLlvmFunctionParameterTypes(function: IrFunction): List<LlvmParamType> {
     val returnType = getLlvmFunctionReturnType(function).llvmType
-    val paramTypes = ArrayList(function.allParameters.map { LlvmParamType(getLLVMType(it.type), defaultParameterAttributesForIrType(it.type)) })
+    val paramTypes = ArrayList(function.allParameters.map {
+        LlvmParamType(getLLVMType(it.type), argumentAbiInfo.defaultParameterAttributesForIrType(it.type))
+    })
     if (function.isSuspend)
         paramTypes.add(LlvmParamType(kObjHeaderPtr))                       // Suspend functions have implicit parameter of type Continuation<>.
     if (isObjectType(returnType))
@@ -37,42 +39,14 @@ internal fun RuntimeAware.getLlvmFunctionParameterTypes(function: IrFunction): L
     return paramTypes
 }
 
-internal fun RuntimeAware.getLlvmFunctionReturnType(function: IrFunction): LlvmRetType {
+internal fun ContextUtils.getLlvmFunctionReturnType(function: IrFunction): LlvmRetType {
     val returnType = when {
         function is IrConstructor -> LlvmParamType(voidType)
         function.isSuspend -> LlvmParamType(kObjHeaderPtr)                // Suspend functions return Any?.
-        else -> LlvmParamType(getLLVMReturnType(function.returnType), defaultParameterAttributesForIrType(function.returnType))
+        else -> LlvmParamType(
+                getLLVMReturnType(function.returnType),
+                argumentAbiInfo.defaultParameterAttributesForIrType(function.returnType)
+        )
     }
     return returnType
-}
-
-// Note: Probably, this function should become target-dependent in the future.
-private fun defaultParameterAttributesForIrType(irType: IrType): List<LlvmParameterAttribute> {
-    // TODO: We perform type unwrapping twice: one to get the underlying type, and then this one.
-    //  Unwrapping is not cheap, so it might affect compilation time.
-    return irType.unwrapToPrimitiveOrReference(
-            eachInlinedClass = { inlinedClass, _ ->
-                when (inlinedClass.classId) {
-                    UnsignedType.UBYTE.classId -> return listOf(LlvmParameterAttribute.ZeroExt)
-                    UnsignedType.USHORT.classId -> return listOf(LlvmParameterAttribute.ZeroExt)
-                }
-            },
-            ifPrimitive = { primitiveType, _ ->
-                when (primitiveType) {
-                    KonanPrimitiveType.BOOLEAN -> listOf(LlvmParameterAttribute.ZeroExt)
-                    KonanPrimitiveType.CHAR -> listOf(LlvmParameterAttribute.ZeroExt)
-                    KonanPrimitiveType.BYTE -> listOf(LlvmParameterAttribute.SignExt)
-                    KonanPrimitiveType.SHORT -> listOf(LlvmParameterAttribute.SignExt)
-                    KonanPrimitiveType.INT -> emptyList()
-                    KonanPrimitiveType.LONG -> emptyList()
-                    KonanPrimitiveType.FLOAT -> emptyList()
-                    KonanPrimitiveType.DOUBLE -> emptyList()
-                    KonanPrimitiveType.NON_NULL_NATIVE_PTR -> emptyList()
-                    KonanPrimitiveType.VECTOR128 -> emptyList()
-                }
-            },
-            ifReference = {
-                return listOf()
-            },
-    )
 }

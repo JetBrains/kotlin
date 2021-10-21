@@ -10,6 +10,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.CachedLibraries
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.TargetAbiInfo
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
@@ -143,6 +144,9 @@ internal interface ContextUtils : RuntimeAware {
 
     override val runtime: Runtime
         get() = context.llvm.runtime
+
+    val argumentAbiInfo: TargetAbiInfo
+        get() = context.targetAbiInfo
 
     /**
      * Describes the target platform.

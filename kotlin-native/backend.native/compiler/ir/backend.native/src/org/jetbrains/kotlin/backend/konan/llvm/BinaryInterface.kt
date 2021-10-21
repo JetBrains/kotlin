@@ -129,7 +129,7 @@ private fun String.replaceSpecialSymbols() =
 fun IrDeclaration.isExported() = KonanBinaryInterface.isExported(this)
 
 // TODO: bring here dependencies of this method?
-internal fun RuntimeAware.getLlvmFunctionType(function: IrFunction): LLVMTypeRef = functionType(
+internal fun ContextUtils.getLlvmFunctionType(function: IrFunction): LLVMTypeRef = functionType(
         returnType = getLlvmFunctionReturnType(function).llvmType,
         isVarArg = false,
         paramTypes = getLlvmFunctionParameterTypes(function).map { it.llvmType }
