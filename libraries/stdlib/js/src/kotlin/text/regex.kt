@@ -38,6 +38,10 @@ public actual data class MatchGroup(actual val value: String)
  * For pattern syntax reference see [MDN RegExp](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp#Special_characters_meaning_in_regular_expressions)
  * and [http://www.w3schools.com/jsref/jsref_obj_regexp.asp](https://www.w3schools.com/jsref/jsref_obj_regexp.asp).
  *
+ * Note that `RegExp` objects under the hood are constructed with [the "u" flag](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/unicode)
+ * that enables Unicode-related features in regular expressions. This also makes the pattern syntax more strict,
+ * for example, prohibiting unnecessary escape sequences.
+ *
  * @constructor Creates a regular expression from the specified [pattern] string and the specified set of [options].
  */
 public actual class Regex actual constructor(pattern: String, options: Set<RegexOption>) {
