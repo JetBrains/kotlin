@@ -280,7 +280,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     }
 
     val reflectionTypes: KonanReflectionTypes by lazy(PUBLICATION) {
-        KonanReflectionTypes(moduleDescriptor, KonanFqNames.internalPackageName)
+        KonanReflectionTypes(moduleDescriptor)
     }
 
     // TODO: Remove after adding special <userData> property to IrDeclaration.
