@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -287,6 +288,7 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
 class EnumEntryInstancesLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
 
     private var IrEnumEntry.correspondingField by context.mapping.enumEntryToCorrespondingField
+    private var IrField.fieldToEnumEntry by context.mapping.fieldToEnumEntry
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrEnumEntry) {
@@ -305,6 +307,7 @@ class EnumEntryInstancesLowering(val context: JsCommonBackendContext) : Declarat
         val result = context.irFactory.buildField {
             name = Name.identifier("${enumName}_${enumEntry.name.identifier}_instance")
             type = enumEntry.getType(irClass).makeNullable()
+            origin = IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY
             isStatic = true
         }.apply {
             parent = irClass
@@ -312,6 +315,7 @@ class EnumEntryInstancesLowering(val context: JsCommonBackendContext) : Declarat
         }
 
         enumEntry.correspondingField = result
+        result.fieldToEnumEntry = enumEntry
 
         return result
     }
@@ -374,6 +378,7 @@ class EnumClassCreateInitializerLowering(val context: JsCommonBackendContext) : 
         val enumName = irClass.name.identifier
         name = Name.identifier("${enumName}_entriesInitialized")
         type = context.irBuiltIns.booleanType
+        visibility = PRIVATE
         isStatic = true
     }.apply {
         parent = irClass

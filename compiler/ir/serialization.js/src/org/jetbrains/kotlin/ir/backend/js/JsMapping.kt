@@ -34,6 +34,7 @@ class JsMapping(val state: JsMappingState) : DefaultMapping(state) {
     val enumClassToCorrespondingEnumEntry = state.newDeclarationToDeclarationMapping<IrClass, IrEnumEntry>()
     val enumConstructorOldToNewValueParameters = state.newDeclarationToDeclarationMapping<IrValueDeclaration, IrValueParameter>()
     val enumEntryToCorrespondingField = state.newDeclarationToDeclarationMapping<IrEnumEntry, IrField>()
+    val fieldToEnumEntry = state.newDeclarationToDeclarationMapping<IrField, IrEnumEntry>()
     val enumClassToInitEntryInstancesFun = state.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
 
     val suspendFunctionsToFunctionWithContinuations =
