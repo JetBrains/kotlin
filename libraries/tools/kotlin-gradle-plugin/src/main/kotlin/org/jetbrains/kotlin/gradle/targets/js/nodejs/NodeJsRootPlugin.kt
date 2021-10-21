@@ -41,17 +41,17 @@ open class NodeJsRootPlugin : Plugin<Project> {
 
         val rootClean = project.rootProject.tasks.named(BasePlugin.CLEAN_TASK_NAME)
 
+        val setupFileHasherTask = registerTask<KotlinNpmCachesSetup>(KotlinNpmCachesSetup.NAME) {
+            it.description = "Setup file hasher for caches"
+        }
+
         registerTask<KotlinNpmInstallTask>(KotlinNpmInstallTask.NAME) {
             it.dependsOn(setupTask)
+            it.dependsOn(setupFileHasherTask)
             it.group = TASKS_GROUP_NAME
             it.description = "Find, download and link NPM dependencies and projects"
 
             it.mustRunAfter(rootClean)
-        }
-
-        registerTask<KotlinNpmCachesSetup>(KotlinNpmCachesSetup.NAME) {
-            it.group = TASKS_GROUP_NAME
-            it.description = "Setup file hasher for caches"
         }
 
         registerTask<Task>(PACKAGE_JSON_UMBRELLA_TASK_NAME)

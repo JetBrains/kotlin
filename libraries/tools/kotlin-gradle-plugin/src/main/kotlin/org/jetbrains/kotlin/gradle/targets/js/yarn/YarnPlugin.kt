@@ -41,6 +41,7 @@ open class YarnPlugin : Plugin<Project> {
         val rootClean = project.rootProject.tasks.named(BasePlugin.CLEAN_TASK_NAME)
 
         val rootPackageJson = tasks.register(RootPackageJsonTask.NAME, RootPackageJsonTask::class.java) { task ->
+            task.dependsOn(nodeJs.npmCachesSetupTaskProvider)
             task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
             task.description = "Create root package.json"
 
