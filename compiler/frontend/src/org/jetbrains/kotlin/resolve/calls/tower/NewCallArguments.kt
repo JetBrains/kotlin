@@ -286,16 +286,24 @@ private fun resolveParametersTypes(
     }
 }
 
+@JvmName("resolveTypeWithGivenTypeReference")
+internal fun resolveType(
+    context: BasicCallResolutionContext,
+    typeReference: KtTypeReference,
+    typeResolver: TypeResolver
+): UnwrappedType {
+    val type = typeResolver.resolveType(context.scope, typeReference, context.trace, checkBounds = true)
+    ForceResolveUtil.forceResolveAllContents(type)
+    return type.unwrap()
+}
+
 internal fun resolveType(
     context: BasicCallResolutionContext,
     typeReference: KtTypeReference?,
     typeResolver: TypeResolver
 ): UnwrappedType? {
     if (typeReference == null) return null
-
-    val type = typeResolver.resolveType(context.scope, typeReference, context.trace, checkBounds = true)
-    ForceResolveUtil.forceResolveAllContents(type)
-    return type.unwrap()
+    return resolveType(context, typeReference, typeResolver)
 }
 
 

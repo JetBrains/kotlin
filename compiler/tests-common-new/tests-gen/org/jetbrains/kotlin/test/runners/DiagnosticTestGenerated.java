@@ -13084,6 +13084,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("illegalUnderscoredTypeArgument.kt")
+            public void testIllegalUnderscoredTypeArgument() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/illegalUnderscoredTypeArgument.kt");
+            }
+
+            @Test
             @TestMetadata("immutableArrayList.kt")
             public void testImmutableArrayList() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/immutableArrayList.kt");

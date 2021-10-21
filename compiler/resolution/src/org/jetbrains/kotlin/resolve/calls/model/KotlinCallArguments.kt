@@ -133,7 +133,7 @@ interface CollectionLiteralKotlinCallArgument : PostponableKotlinCallArgument
 
 interface TypeArgument
 
-// todo allow '_' in frontend
+// Used as a stub or underscored type argument
 object TypeArgumentPlaceholder : TypeArgument
 
 interface SimpleTypeArgument : TypeArgument {

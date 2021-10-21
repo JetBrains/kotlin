@@ -687,8 +687,11 @@ class PSICallResolver(
             }
             ModifierCheckerCore.check(projection, context.trace, null, languageVersionSettings)
 
-            resolveType(context, projection.typeReference, typeResolver)?.let { SimpleTypeArgumentImpl(projection, it) }
-                ?: TypeArgumentPlaceholder
+            val typeReference = projection.typeReference
+
+            if (typeReference == null || typeReference.isPlaceholder) return@map TypeArgumentPlaceholder
+
+            SimpleTypeArgumentImpl(projection, resolveType(context, typeReference, typeResolver))
         }
 
     private fun resolveArgumentsInParenthesis(

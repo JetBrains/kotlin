@@ -150,7 +150,7 @@ object DebugInfoUtil {
                         target = "[" + labelTargets.size + " elements]"
                     }
                 }
-                if (MAY_BE_UNRESOLVED.contains(referencedNameElementType)) {
+                if (MAY_BE_UNRESOLVED.contains(referencedNameElementType) || (expression is KtNameReferenceExpression && expression.isPlaceholder)) {
                     return
                 }
                 val resolved = target != null

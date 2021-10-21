@@ -731,6 +731,26 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/TypealiasIsKeyword.kt");
         }
 
+        @TestMetadata("UnderscoredTypeArgumentsOfCall.kt")
+        public void testUnderscoredTypeArgumentsOfCall() throws Exception {
+            runTest("compiler/testData/psi/UnderscoredTypeArgumentsOfCall.kt");
+        }
+
+        @TestMetadata("UnderscoredTypeArgumentsOfCallIllegal.kt")
+        public void testUnderscoredTypeArgumentsOfCallIllegal() throws Exception {
+            runTest("compiler/testData/psi/UnderscoredTypeArgumentsOfCallIllegal.kt");
+        }
+
+        @TestMetadata("UnderscoredTypeArgumentsOfType.kt")
+        public void testUnderscoredTypeArgumentsOfType() throws Exception {
+            runTest("compiler/testData/psi/UnderscoredTypeArgumentsOfType.kt");
+        }
+
+        @TestMetadata("UnderscoredTypeParameters.kt")
+        public void testUnderscoredTypeParameters() throws Exception {
+            runTest("compiler/testData/psi/UnderscoredTypeParameters.kt");
+        }
+
         @TestMetadata("UnsignedLiteral.kt")
         public void testUnsignedLiteral() throws Exception {
             runTest("compiler/testData/psi/UnsignedLiteral.kt");
