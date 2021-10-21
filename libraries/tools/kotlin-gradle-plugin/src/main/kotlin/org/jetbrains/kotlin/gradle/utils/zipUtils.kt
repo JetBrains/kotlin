@@ -11,7 +11,7 @@ import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 
 internal fun copyZipFilePartially(sourceZipFile: File, destinationZipFile: File, path: String) {
-    require(path.endsWith("/")) { "Expected path to end with '/', found '$path'" }
+    requireValidZipPath(path)
 
     ZipFile(sourceZipFile).use { zip ->
         val entries = zip.entries().asSequence()
@@ -35,11 +35,23 @@ internal fun copyZipFilePartially(sourceZipFile: File, destinationZipFile: File,
     }
 }
 
+internal fun ZipFile.listDescendants(path: String): Sequence<ZipEntry> {
+    requireValidZipPath(path)
+    return entries().asSequence().filter { entry ->
+        entry.name != path && entry.name.startsWith(path)
+    }
+}
+
+internal fun ZipFile.listChildren(path: String): Sequence<ZipEntry> {
+    requireValidZipPath(path)
+    return listDescendants(path).filter { entry ->
+        entry.name.removePrefix(path).count { it == '/' } == 1
+    }
+}
+
 internal fun ZipFile.listDescendants(zipEntry: ZipEntry): Sequence<ZipEntry> {
     require(zipEntry.isDirectory)
-    return entries().asSequence().filter { entry ->
-        entry.name != zipEntry.name && entry.name.startsWith(zipEntry.name)
-    }
+    return listDescendants(zipEntry.name)
 }
 
 internal fun ZipFile.listChildren(zipEntry: ZipEntry): Sequence<ZipEntry> {
@@ -47,3 +59,5 @@ internal fun ZipFile.listChildren(zipEntry: ZipEntry): Sequence<ZipEntry> {
         entry.name.removePrefix(zipEntry.name).count { it == '/' } == 1
     }
 }
+
+private fun requireValidZipPath(path: String) = require(path.endsWith("/")) { "Expected path to end with '/', found '$path'" }

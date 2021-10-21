@@ -71,20 +71,17 @@ private class CompositeMetadataJarImpl(
         val artifactFile = getArtifactFile(sourceSetName)
         val moduleOutputDirectory = outputDirectory.resolve(moduleIdentifier).also(File::mkdirs)
 
-        ZipFile(getArtifactFile(sourceSetName)).use { compoundMetadataArtifactZipFile ->
-            val cinteropRootDirectory = compoundMetadataArtifactZipFile.entries().asSequence()
-                .firstOrNull { zipEntry -> zipEntry.name == "$sourceSetName-cinterop/" && zipEntry.isDirectory }
-                ?: return emptySet()
+        ZipFile(getArtifactFile(sourceSetName)).use { artifactZipFile ->
+            val cinteropRootPath = "$sourceSetName-cinterop/"
+            val cinteropEntries = artifactZipFile.listChildren(cinteropRootPath)
+            val cinteropNames = cinteropEntries.map { entry ->
+                entry.name.removePrefix(cinteropRootPath).split("/", limit = 2).first()
+            }.toSet()
 
-            val cinterops = compoundMetadataArtifactZipFile.listChildren(cinteropRootDirectory)
-
-            val cinteropsByOutputFile = cinterops.associateBy { cinteropZipEntry ->
-                moduleOutputDirectory.resolve("${cinteropZipEntry.name.removePrefix(cinteropRootDirectory.name).removeSuffix("/")}.klib")
-            }
-
+            val cinteropsByOutputFile = cinteropNames.associateBy { cinteropName -> moduleOutputDirectory.resolve("$cinteropName.klib") }
             if (materializeFiles) {
-                cinteropsByOutputFile.forEach { (cinteropOutputFile, cinteropZipEntry) ->
-                    copyZipFilePartially(artifactFile, cinteropOutputFile, cinteropZipEntry.name)
+                cinteropsByOutputFile.forEach { (cinteropOutputFile, cinteropName) ->
+                    copyZipFilePartially(artifactFile, cinteropOutputFile, "$cinteropRootPath$cinteropName/")
                 }
             }
 
