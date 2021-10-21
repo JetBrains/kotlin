@@ -133,8 +133,19 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 // Don't generate `defineProperty` if the property overrides a property from an exported class,
                 // because we've already generated `defineProperty` for the base class property.
                 // In other words, we only want to generate `defineProperty` once for each property.
+                // The exception is case when we override val with var,
+                // so we need regenerate `defineProperty` with setter.
+                val noOverriddenGetter = property.getter?.overriddenSymbols?.isEmpty() == true
+
+                val overriddenExportedGetter = property.getter?.overriddenSymbols?.isNotEmpty() == true &&
+                        property.getter?.isOverriddenExported(context.staticContext.backendContext) == true
+
+                val noOverriddenExportedSetter = property.setter?.isOverriddenExported(context.staticContext.backendContext) == false
+
+                val needOverrideBySetter = overriddenExportedGetter && noOverriddenExportedSetter
+
                 if (irClass.isExported(context.staticContext.backendContext) &&
-                    property.getter?.isOverriddenExported(context.staticContext.backendContext) == false ||
+                    (noOverriddenGetter || needOverrideBySetter) ||
                     property.getter?.overridesExternal() == true ||
                     property.getJsName() != null
                 ) {
