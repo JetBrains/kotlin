@@ -163,7 +163,7 @@ configure(project.tasks.findByName("compileKonanBaseTestClass${UtilsKt.getTestTa
   UtilsKt.dependsOnDist(it)
 }
 
-def installTestLib = tasks.register("installTestLibrary", KlibInstall) {
+def installTestLib = tasks.register("installTestLibrary", KonanKlibInstallTask) {
     dependsOn "compileKonanTestLibraryHost"
     klib = project.provider { konanArtifacts.testLibrary.getArtifactByTarget('host') }
     repo = rootProject.file(testLibraryDir)

@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-import org.jetbrains.kotlin.KlibInstall
+import org.jetbrains.kotlin.KonanKlibInstallTask
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanInteropTask
 import org.jetbrains.kotlin.konan.target.*
@@ -89,7 +89,7 @@ konanTargetList.forEach { target ->
             }
         }
 
-        val klibInstallTask = tasks.register(libName, KlibInstall::class.java) {
+        val klibInstallTask = tasks.register(libName, KonanKlibInstallTask::class.java) {
             klib = project.provider { libTask?.get()?.artifact }
             repo = file("$konanHome/klib/platform/$targetName")
             this.target = targetName

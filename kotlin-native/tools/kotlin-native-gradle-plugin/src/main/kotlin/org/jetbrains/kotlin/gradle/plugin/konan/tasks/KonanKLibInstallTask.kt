@@ -1,15 +1,21 @@
+/*
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin
 
 import groovy.lang.Closure
 import org.gradle.api.Task
+import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.gradle.plugin.konan.KonanKlibRunner
 import java.io.File
 
-// TODO: Implement as a part of the gradle plugin
-open class KlibInstall : Exec() {
+open class KonanKlibInstallTask : DefaultTask() {
     @get:InputFile
     var klib: Provider<File> = project.provider { project.buildDir }
 
@@ -31,17 +37,12 @@ open class KlibInstall : Exec() {
     var target: String = HostManager.hostName
 
     @TaskAction
-    override fun exec() {
-        val konanHome = project.kotlinNativeDist
-        val suffix = if (HostManager.host == KonanTarget.MINGW_X64) ".bat" else ""
-        val klibProgram = "$konanHome/bin/klib$suffix"
-
-        commandLine(klibProgram,
+    fun exec() {
+        val args = listOf(
                 "install", klib.get().absolutePath,
                 "-target", target,
                 "-repository", repo.absolutePath
         )
-
-        super.exec()
+        KonanKlibRunner(project, args, konanHome = project.kotlinNativeDist.absolutePath)
     }
 }
