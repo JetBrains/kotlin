@@ -17,9 +17,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptionsImpl
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvider
-import org.jetbrains.kotlin.gradle.targets.metadata.createTransformedMetadataClasspath
+import org.jetbrains.kotlin.gradle.targets.metadata.createMetadataDependencyTransformationClasspath
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -59,7 +58,7 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
         get() = compileAllTask.name
 
     override val compileDependencyFiles: FileCollection by project.provider {
-        createTransformedMetadataClasspath(
+        createMetadataDependencyTransformationClasspath(
             project,
             resolvableMetadataConfiguration(fragment.containingModule),
             lazy { fragment.refinesClosure.minus(fragment).map { metadataCompilationRegistry.byFragment(it).output.classesDirs } },

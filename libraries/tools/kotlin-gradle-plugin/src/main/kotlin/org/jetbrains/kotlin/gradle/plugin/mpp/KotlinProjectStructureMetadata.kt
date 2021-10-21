@@ -13,7 +13,6 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
@@ -28,6 +27,7 @@ import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
+import java.io.Serializable
 import java.io.StringWriter
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -35,7 +35,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 open class ModuleDependencyIdentifier(
     open val groupId: String?,
     open val moduleId: String
-) {
+) : Serializable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is ModuleDependencyIdentifier) return false
@@ -54,6 +54,10 @@ open class ModuleDependencyIdentifier(
 
     operator fun component1(): String? = groupId
     operator fun component2(): String = moduleId
+
+    override fun toString(): String {
+        return "${groupId}-${moduleId}"
+    }
 }
 
 class ChangingModuleDependencyIdentifier(
@@ -71,7 +75,7 @@ sealed class SourceSetMetadataLayout(
     val name: String,
     @get:Internal
     val archiveExtension: String
-) {
+) : Serializable {
     object METADATA : SourceSetMetadataLayout("metadata", "jar")
     object KLIB : SourceSetMetadataLayout("klib", "klib")
 
@@ -109,7 +113,7 @@ data class KotlinProjectStructureMetadata(
 
     @Input
     val formatVersion: String = FORMAT_VERSION_0_3_1
-) {
+) : Serializable {
     @Suppress("UNUSED") // Gradle input
     @get:Input
     internal val sourceSetModuleDependenciesInput: Map<String, Set<Pair<String, String>>>
@@ -296,7 +300,7 @@ internal fun parseKotlinSourceSetMetadataFromXml(document: Document): KotlinProj
     val nodeNamed: Element.(String) -> Element? = { name -> getElementsByTagName(name).elements.singleOrNull() }
     val valueNamed: Element.(String) -> String? =
         { name -> getElementsByTagName(name).run { if (length > 0) item(0).textContent else null } }
-    val multiObjects: Element.(String) -> Iterable<Element> = { name -> nodeNamed(name)?.childNodes?.elements ?: emptyList()}
+    val multiObjects: Element.(String) -> Iterable<Element> = { name -> nodeNamed(name)?.childNodes?.elements ?: emptyList() }
     val multiValues: Element.(String) -> Iterable<String> = { name -> getElementsByTagName(name).elements.map { it.textContent } }
 
     return parseKotlinSourceSetMetadata(

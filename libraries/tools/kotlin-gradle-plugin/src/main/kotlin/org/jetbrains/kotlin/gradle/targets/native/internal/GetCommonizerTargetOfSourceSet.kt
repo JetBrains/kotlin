@@ -24,3 +24,7 @@ internal fun Project.getCommonizerTarget(sourceSet: KotlinSourceSet): Commonizer
         else -> SharedCommonizerTarget(compilationTargets.allLeaves())
     }
 }
+
+internal fun Project.getSharedCommonizerTarget(sourceSet: KotlinSourceSet): SharedCommonizerTarget? {
+    return getCommonizerTarget(sourceSet) as? SharedCommonizerTarget
+}

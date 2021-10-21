@@ -155,7 +155,6 @@ class DefaultKotlinSourceSet(
         return getDependenciesTransformation(scope)
     }
 
-    @Suppress("unused") // Used in IDE import
     fun getAdditionalVisibleSourceSets(): List<KotlinSourceSet> =
         getVisibleSourceSetsFromAssociateCompilations(project, this)
 
@@ -184,10 +183,14 @@ class DefaultKotlinSourceSet(
                     MetadataDependencyTransformation(group, name, projectPath, null, emptySet(), emptyMap())
 
                 is MetadataDependencyResolution.ChooseVisibleSourceSets -> {
-                    val filesBySourceSet = resolution.getMetadataFilesBySourceSet(
-                        baseDir,
-                        createFiles = true
-                    ).filter { it.value.any { it.exists() } }
+                    val filesBySourceSet = resolution.visibleSourceSetNamesExcludingDependsOn.associateWith { visibleSourceSetName ->
+                        resolution.metadataProvider.getSourceSetCompiledMetadata(
+                            project,
+                            sourceSetName = visibleSourceSetName,
+                            outputDirectoryWhenMaterialised = baseDir,
+                            materializeFilesIfNecessary = true
+                        )
+                    }.filter { (_, files) -> files.any(File::exists) }
 
                     MetadataDependencyTransformation(
                         group, name, projectPath,

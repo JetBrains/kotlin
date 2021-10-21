@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.base64Hash
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.ensureMaxFileNameLength
 import org.jetbrains.kotlin.commonizer.identityString
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.gradle.utils.outputFilesProvider
 import java.io.File
 
 internal abstract class AbstractCInteropCommonizerTask : DefaultTask() {
@@ -33,12 +34,10 @@ internal fun AbstractCInteropCommonizerTask.outputDirectory(group: CInteropCommo
 }
 
 internal fun AbstractCInteropCommonizerTask.commonizedOutputLibraries(dependent: CInteropCommonizerDependent): FileCollection {
-    val fileProvider = project.filesProvider {
-        (commonizedOutputDirectory(dependent) ?: return@filesProvider emptySet<File>())
+    return outputFilesProvider {
+        (commonizedOutputDirectory(dependent) ?: return@outputFilesProvider emptySet<File>())
             .listFiles().orEmpty().toSet()
     }
-
-    return fileProvider.builtBy(this)
 }
 
 internal fun AbstractCInteropCommonizerTask.commonizedOutputDirectory(dependent: CInteropCommonizerDependent): File? {

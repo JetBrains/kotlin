@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import org.gradle.api.Project
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.ChooseVisibleSourceSetsImpl
-import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
-import org.jetbrains.kotlin.gradle.plugin.mpp.getMetadataExtractor
-import org.jetbrains.kotlin.gradle.plugin.mpp.getProjectStructureMetadata
+import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.Companion.asMetadataProvider
 import org.jetbrains.kotlin.project.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
-import java.util.ArrayDeque
+import java.io.File
+import java.util.*
 
 internal class FragmentGranularMetadataResolver(
     private val requestingFragment: KotlinGradleFragment,
@@ -80,33 +78,46 @@ internal class FragmentGranularMetadataResolver(
                     MetadataDependencyResolution.KeepOriginalDependency(resolvedComponentResult, isResolvedAsProject)
                 }
                 else -> run {
+
                     val metadataSourceComponent = dependencyNode.run { metadataSourceComponent ?: selectedComponent }
-
-                    val metadataExtractor = getMetadataExtractor(project, resolvedComponentResult, configurationToResolve, true)
-
-                    if (dependencyModule is ExternalImportedKotlinModule &&
-                        metadataExtractor is JarArtifactMppDependencyMetadataExtractor &&
-                        chosenFragments != null
-                    ) {
-                        resolveHostSpecificMetadataArtifacts(dependencyModule, chosenFragments, metadataExtractor)
-                    }
-
-                    val projectStructureMetadata = (dependencyModule as? ExternalImportedKotlinModule)?.projectStructureMetadata
-                        ?: checkNotNull(metadataExtractor?.getProjectStructureMetadata())
 
                     val visibleFragmentNames = visibleFragments.map { it.fragmentName }.toSet()
                     val visibleFragmentNamesExcludingVisibleByParents =
-                        visibleFragmentNames
-                            .minus(fragmentsNamesVisibleByParents(metadataSourceComponent.toSingleModuleIdentifier()))
+                        visibleFragmentNames.minus(fragmentsNamesVisibleByParents(metadataSourceComponent.toSingleModuleIdentifier()))
 
-                    ChooseVisibleSourceSetsImpl(
-                        metadataSourceComponent,
-                        isResolvedAsProject,
-                        projectStructureMetadata,
-                        visibleFragmentNames,
-                        visibleFragmentNamesExcludingVisibleByParents,
+                    val metadataExtractor = MppDependencyProjectStructureMetadataExtractor.create(
+                        project, resolvedComponentResult, configurationToResolve, true
+                    ) ?: error("Failed to create 'MppDependencyProjectStructureMetadataExtractor' for ${resolvedComponentResult.id}")
+
+                    val projectStructureMetadata = (dependencyModule as? ExternalImportedKotlinModule)?.projectStructureMetadata
+                        ?: checkNotNull(metadataExtractor.getProjectStructureMetadata())
+
+
+                    val metadataProvider = when (metadataExtractor) {
+                        is ProjectMppDependencyProjectStructureMetadataExtractor -> ProjectMetadataProvider(
+                            dependencyProject = metadataExtractor.dependencyProject,
+                            moduleIdentifier = metadataExtractor.moduleIdentifier
+                        )
+
+                        is JarMppDependencyProjectStructureMetadataExtractor -> CompositeMetadataJar(
+                            moduleIdentifier = ModuleIds.fromComponent(project, metadataSourceComponent).toString(),
+                            projectStructureMetadata = projectStructureMetadata,
+                            primaryArtifactFile = metadataExtractor.primaryArtifactFile,
+                            hostSpecificArtifactsBySourceSet = if (
+                                dependencyModule is ExternalImportedKotlinModule && chosenFragments != null
+                            ) resolveHostSpecificMetadataArtifacts(dependencyModule, chosenFragments) else emptyMap(),
+                        ).asMetadataProvider()
+                    }
+
+                    MetadataDependencyResolution.ChooseVisibleSourceSets(
+                        dependency = metadataSourceComponent,
+                        projectDependency = isResolvedAsProject,
+                        projectStructureMetadata = projectStructureMetadata,
+                        allVisibleSourceSetNames = visibleFragmentNames,
+                        visibleSourceSetNamesExcludingDependsOn = visibleFragmentNamesExcludingVisibleByParents,
+                        visibleTransitiveDependencies =
                         visibleTransitiveDependencies.map { resolvedDependenciesByModuleId.getValue(it.module.moduleIdentifier) }.toSet(),
-                        checkNotNull(metadataExtractor)
+                        metadataProvider = metadataProvider
                     )
                 }
             }
@@ -124,19 +135,18 @@ internal class FragmentGranularMetadataResolver(
 
     private fun fragmentsNamesVisibleByParents(kotlinModuleIdentifier: KotlinModuleIdentifier): MutableSet<String> {
         val parentResolutionsForDependency = parentResultsByModuleIdentifier[kotlinModuleIdentifier].orEmpty()
-        return parentResolutionsForDependency.filterIsInstance<ChooseVisibleSourceSetsImpl>()
+        return parentResolutionsForDependency.filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
             .flatMapTo(mutableSetOf()) { it.allVisibleSourceSetNames }
     }
 
     private fun resolveHostSpecificMetadataArtifacts(
         dependencyModule: ExternalImportedKotlinModule,
         chosenFragments: FragmentResolution.ChosenFragments,
-        metadataExtractor: JarArtifactMppDependencyMetadataExtractor
-    ) {
+    ): Map<String, File> {
         val visibleFragments = chosenFragments.visibleFragments
         val variantResolutions = chosenFragments.variantResolutions
         val hostSpecificFragments = dependencyModule.hostSpecificFragments
-        val hostSpecificFragmentToArtifact = visibleFragments.intersect(hostSpecificFragments).mapNotNull { hostSpecificFragment ->
+        return visibleFragments.intersect(hostSpecificFragments).mapNotNull { hostSpecificFragment ->
             val relevantVariantResolution = variantResolutions
                 .filterIsInstance<VariantResolution.VariantMatch>()
                 // find some of our variants that resolved a dependency's variant containing the fragment
@@ -152,7 +162,6 @@ internal class FragmentGranularMetadataResolver(
                     )
                 hostSpecificArtifact?.let { hostSpecificFragment.fragmentName to it }
             }
-        }
-        metadataExtractor.metadataArtifactBySourceSet.putAll(hostSpecificFragmentToArtifact)
+        }.toMap()
     }
 }

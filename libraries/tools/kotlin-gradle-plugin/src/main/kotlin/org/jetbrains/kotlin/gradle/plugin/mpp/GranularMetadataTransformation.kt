@@ -13,24 +13,14 @@ import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleModuleIdentifier
+import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.Companion.asMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_RUNTIME_METADATA_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
-import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
-import java.io.File
-import java.io.InputStream
 import java.util.*
-import java.util.zip.ZipEntry
-import java.util.zip.ZipFile
-import java.util.zip.ZipOutputStream
-import javax.xml.parsers.DocumentBuilderFactory
 
 internal sealed class MetadataDependencyResolution(
     @field:Transient // can't be used with Gradle Instant Execution, but fortunately not needed when deserialized
@@ -60,23 +50,31 @@ internal sealed class MetadataDependencyResolution(
         projectDependency: Project?
     ) : MetadataDependencyResolution(dependency, projectDependency)
 
-    abstract class ChooseVisibleSourceSets(
+    class ChooseVisibleSourceSets internal constructor(
         dependency: ResolvedComponentResult,
         projectDependency: Project?,
         val projectStructureMetadata: KotlinProjectStructureMetadata,
         val allVisibleSourceSetNames: Set<String>,
         val visibleSourceSetNamesExcludingDependsOn: Set<String>,
-        val visibleTransitiveDependencies: Set<ResolvedDependencyResult>
+        val visibleTransitiveDependencies: Set<ResolvedDependencyResult>,
+        internal val metadataProvider: MetadataProvider
     ) : MetadataDependencyResolution(dependency, projectDependency) {
-        /** Returns the mapping of source set names to files which should be used as the [dependency] parts representing the source sets.
-         * If any temporary files need to be created, their paths are built from the [baseDir].
-         * If [createFiles] is true, these temporary files are actually re-created during the call,
-         * otherwise only their paths are returned, while the files might be missing.
-         */
-        fun getMetadataFilesBySourceSet(baseDir: File, createFiles: Boolean): Map<String, FileCollection> =
-            getExtractableMetadataFiles(baseDir).getMetadataFilesPerSourceSet(createFiles)
 
-        abstract fun getExtractableMetadataFiles(baseDir: File): ExtractableMetadataFiles
+        internal sealed class MetadataProvider {
+            class JarMetadataProvider(private val compositeMetadataArtifact: CompositeMetadataJar) :
+                MetadataProvider(), CompositeMetadataJar by compositeMetadataArtifact
+
+            abstract class ProjectMetadataProvider : MetadataProvider() {
+                enum class MetadataConsumer { Ide, Cli }
+
+                abstract fun getSourceSetCompiledMetadata(sourceSetName: String): FileCollection
+                abstract fun getSourceSetCInteropMetadata(sourceSetName: String, consumer: MetadataConsumer): FileCollection
+            }
+
+            companion object {
+                fun CompositeMetadataJar.asMetadataProvider() = JarMetadataProvider(this)
+            }
+        }
 
         override fun toString(): String =
             super.toString() + ", sourceSets = " + allVisibleSourceSetNames.joinToString(", ", "[", "]") {
@@ -109,7 +107,7 @@ internal class GranularMetadataTransformation(
     private val allSourceSetsConfiguration: Configuration =
         commonMetadataDependenciesConfigurationForScopes(project, sourceSetRequestedScopes)
 
-    private val configurationToResolve: Configuration by lazy {
+    internal val configurationToResolve: Configuration by lazy {
         resolvableMetadataConfiguration(project, allSourceSetsConfiguration, requestedDependencies)
     }
 
@@ -204,10 +202,8 @@ internal class GranularMetadataTransformation(
         parentResolutionsForModule: Iterable<MetadataDependencyResolution>,
         parent: ResolvedComponentResult?
     ): MetadataDependencyResolution {
-        val mppDependencyMetadataExtractor = getMetadataExtractor(
-            project,
-            module,
-            configurationToResolve,
+        val mppDependencyMetadataExtractor = MppDependencyProjectStructureMetadataExtractor.create(
+            project, module, configurationToResolve,
             resolveViaAvailableAt = false // we will process the available-at module as a dependency later in the queue
         )
 
@@ -224,10 +220,6 @@ internal class GranularMetadataTransformation(
                 projectStructureMetadata,
                 resolvedToProject
             )
-
-        if (mppDependencyMetadataExtractor is JarArtifactMppDependencyMetadataExtractor) {
-            mppDependencyMetadataExtractor.metadataArtifactBySourceSet.putAll(sourceSetVisibility.hostSpecificMetadataArtifactBySourceSet)
-        }
 
         val allVisibleSourceSets = sourceSetVisibility.visibleSourceSetNames
 
@@ -253,31 +245,30 @@ internal class GranularMetadataTransformation(
 
         val visibleSourceSetsExcludingDependsOn = allVisibleSourceSets.filterTo(mutableSetOf()) { it !in sourceSetsVisibleInParents }
 
-        return ChooseVisibleSourceSetsImpl(
-            module, resolvedToProject, projectStructureMetadata, allVisibleSourceSets, visibleSourceSetsExcludingDependsOn,
-            transitiveDependenciesToVisit, mppDependencyMetadataExtractor
+        val metadataProvider = when (mppDependencyMetadataExtractor) {
+            is ProjectMppDependencyProjectStructureMetadataExtractor -> ProjectMetadataProvider(
+                dependencyProject = mppDependencyMetadataExtractor.dependencyProject,
+                moduleIdentifier = mppDependencyMetadataExtractor.moduleIdentifier
+            )
+
+            is JarMppDependencyProjectStructureMetadataExtractor -> CompositeMetadataJar(
+                moduleIdentifier = ModuleIds.fromComponent(project, module).toString(),
+                projectStructureMetadata = projectStructureMetadata,
+                primaryArtifactFile = mppDependencyMetadataExtractor.primaryArtifactFile,
+                hostSpecificArtifactsBySourceSet = sourceSetVisibility.hostSpecificMetadataArtifactBySourceSet,
+            ).asMetadataProvider()
+        }
+
+        return MetadataDependencyResolution.ChooseVisibleSourceSets(
+            dependency = module,
+            projectDependency = resolvedToProject,
+            projectStructureMetadata = projectStructureMetadata,
+            allVisibleSourceSetNames = allVisibleSourceSets,
+            visibleSourceSetNamesExcludingDependsOn = visibleSourceSetsExcludingDependsOn,
+            visibleTransitiveDependencies = transitiveDependenciesToVisit,
+            metadataProvider = metadataProvider
         )
     }
-}
-
-internal class ChooseVisibleSourceSetsImpl(
-    dependency: ResolvedComponentResult,
-    projectDependency: Project?,
-    projectStructureMetadata: KotlinProjectStructureMetadata,
-    allVisibleSourceSetNames: Set<String>,
-    visibleSourceSetNamesExcludingDependsOn: Set<String>,
-    visibleTransitiveDependencies: Set<ResolvedDependencyResult>,
-    private val metadataExtractor: MppDependencyMetadataExtractor
-) : MetadataDependencyResolution.ChooseVisibleSourceSets(
-    dependency,
-    projectDependency,
-    projectStructureMetadata,
-    allVisibleSourceSetNames,
-    visibleSourceSetNamesExcludingDependsOn,
-    visibleTransitiveDependencies
-) {
-    override fun getExtractableMetadataFiles(baseDir: File): ExtractableMetadataFiles =
-        metadataExtractor.getExtractableMetadataFiles(visibleSourceSetNamesExcludingDependsOn, baseDir)
 }
 
 internal fun ResolvedComponentResult.toProjectOrNull(currentProject: Project): Project? {
@@ -354,283 +345,3 @@ internal fun requestedDependencies(
     val otherContributingSourceSets = dependsOnClosureWithInterCompilationDependencies(project, sourceSet)
     return listOf(sourceSet, *otherContributingSourceSets.toTypedArray()).flatMap(::collectScopedDependenciesFromSourceSet)
 }
-
-
-internal abstract class MppDependencyMetadataExtractor(val project: Project, val component: ResolvedComponentResult) {
-    abstract fun getProjectStructureMetadata(): KotlinProjectStructureMetadata?
-
-    abstract fun getExtractableMetadataFiles(
-        visibleSourceSetNames: Set<String>,
-        baseDir: File
-    ): ExtractableMetadataFiles
-}
-
-private class ProjectMppDependencyMetadataExtractor(
-    project: Project,
-    dependency: ResolvedComponentResult,
-    val moduleIdentifier: KotlinModuleIdentifier,
-    val dependencyProject: Project
-) : MppDependencyMetadataExtractor(project, dependency) {
-    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? {
-        return when (val topLevelExtension = dependencyProject.topLevelExtension) {
-            is KotlinPm20ProjectExtension -> buildProjectStructureMetadata(
-                topLevelExtension.modules.single { it.moduleIdentifier == moduleIdentifier }
-            )
-            else -> buildKotlinProjectStructureMetadata(dependencyProject)
-        }
-    }
-
-    override fun getExtractableMetadataFiles(
-        visibleSourceSetNames: Set<String>,
-        baseDir: File
-    ): ExtractableMetadataFiles {
-        val result = when (val projectExtension = dependencyProject.topLevelExtension) {
-            is KotlinMultiplatformExtension -> projectExtension.targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME).compilations
-                .filter { it.name in visibleSourceSetNames }.associate { it.defaultSourceSet.name to it.output.classesDirs }
-            is KotlinPm20ProjectExtension -> {
-                val moduleId = moduleIdentifier
-                val module = projectExtension.modules.single { it.moduleIdentifier == moduleId }
-                val metadataCompilationRegistry = projectExtension.metadataCompilationRegistryByModuleId.getValue(moduleId)
-                visibleSourceSetNames.associateWith {
-                    metadataCompilationRegistry.byFragment(module.fragments.getByName(it)).output.classesDirs
-                }
-            }
-            else -> error("unexpected top-level Kotlin extension $projectExtension")
-        }
-
-        return object : ExtractableMetadataFiles() {
-            override fun getMetadataFilesPerSourceSet(createFiles: Boolean): Map<String, FileCollection> = result
-        }
-    }
-}
-
-private class IncludedBuildMetadataExtractor(
-    project: Project,
-    dependency: ResolvedComponentResult,
-    primaryArtifact: File
-) : JarArtifactMppDependencyMetadataExtractor(project, dependency, primaryArtifact) {
-
-    private val id: ProjectComponentIdentifier
-
-    init {
-        val id = dependency.id
-        require(id is ProjectComponentIdentifier) { "dependency should resolve to a project" }
-        require(!id.build.isCurrentBuild) { "should be a project from an included build" }
-        this.id = id
-    }
-
-    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? =
-        GlobalProjectStructureMetadataStorage.getProjectStructureMetadata(project, id.build.name, id.projectPath)
-}
-
-internal open class JarArtifactMppDependencyMetadataExtractor(
-    project: Project,
-    dependency: ResolvedComponentResult,
-    val primaryArtifact: File
-) : MppDependencyMetadataExtractor(project, dependency) {
-
-    // TODO: add proper API to make an artifact extractor with just the composite artifact "evolve" into one with host-specific artifacts
-    val metadataArtifactBySourceSet: MutableMap<String, File> = mutableMapOf()
-
-    private fun parseJsonProjectStructureMetadata(input: InputStream) =
-        parseKotlinSourceSetMetadataFromJson(input.reader().readText())
-
-    private fun parseXmlProjectStructureMetadata(input: InputStream) =
-        parseKotlinSourceSetMetadataFromXml(DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(input))
-
-    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? {
-        return ZipFile(primaryArtifact).use { zip ->
-            val (metadata, parseFunction) =
-                zip.getEntry("META-INF/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME")?.to(::parseJsonProjectStructureMetadata)
-                    ?: zip.getEntry("META-INF/$MULTIPLATFORM_PROJECT_METADATA_FILE_NAME")?.to(::parseXmlProjectStructureMetadata)
-                    ?: return null
-
-            zip.getInputStream(metadata).use(parseFunction)
-        }
-    }
-
-    override fun getExtractableMetadataFiles(
-        visibleSourceSetNames: Set<String>,
-        baseDir: File
-    ): ExtractableMetadataFiles {
-        val primaryArtifact = primaryArtifact
-        val moduleId = ModuleIds.fromComponent(project, component)
-
-        return JarExtractableMetadataFiles(
-            module = moduleId,
-            project = project,
-            baseDir = baseDir,
-            artifactBySourceSet = visibleSourceSetNames.associateWith { (metadataArtifactBySourceSet[it] ?: primaryArtifact) },
-            projectStructureMetadata = checkNotNull(getProjectStructureMetadata()) {
-                "project structure metadata is needed to extract files"
-            }
-        )
-    }
-
-    private class JarExtractableMetadataFiles(
-        private val module: ModuleDependencyIdentifier,
-        private val project: Project,
-        private val baseDir: File,
-        private val artifactBySourceSet: Map<String, File>,
-        private val projectStructureMetadata: KotlinProjectStructureMetadata
-    ) : ExtractableMetadataFiles() {
-
-        override fun getMetadataFilesPerSourceSet(createFiles: Boolean): Map<String, FileCollection> {
-            return artifactBySourceSet.mapValues { (sourceSetName, artifact) ->
-                project.files(
-                    getCompiledSourceSetMetadata(sourceSetName, artifact, createFiles)
-                )
-            }
-        }
-
-        private fun getCompiledSourceSetMetadata(sourceSetName: String, artifact: File, createFiles: Boolean): File {
-            val moduleString = "${module.groupId}-${module.moduleId}"
-            val transformedModuleRoot = run { baseDir.resolve(moduleString).also { it.mkdirs() } }
-
-            val extension = projectStructureMetadata.sourceSetBinaryLayout[sourceSetName]?.archiveExtension
-                ?: SourceSetMetadataLayout.METADATA.archiveExtension
-
-            val metadataOutputFile = transformedModuleRoot.resolve("$moduleString-$sourceSetName.$extension")
-
-            /** In composite builds, we don't really need tro process the file in IDE import, so ignore it if it's missing */
-            // refactor: allow only included builds to provide no artifacts, and allow this only in IDE import
-            if (!artifact.isFile) {
-                return metadataOutputFile
-            }
-
-            if (!createFiles) {
-                return metadataOutputFile
-            }
-
-            if (metadataOutputFile.exists()) {
-                metadataOutputFile.delete()
-            }
-
-            ZipFile(artifact).use { zip ->
-                val entries = zip.entries().asSequence().filter { it.name.startsWith("$sourceSetName/") }.toList()
-
-                // TODO: once IJ supports non-JAR metadata dependencies, extract to a directory, not a JAR
-                // Also, if both IJ and the CLI compiler can read metadata from a path inside a JAR, then no operations will be needed
-
-                if (entries.any()) {
-                    ZipOutputStream(metadataOutputFile.outputStream()).use { resultZipOutput ->
-                        for (entry in entries) {
-                            if (entry.isDirectory)
-                                continue
-
-                            // Drop the source set name from the entry path
-                            val resultEntry = ZipEntry(entry.name.substringAfter("/"))
-
-                            zip.getInputStream(entry).use { inputStream ->
-                                resultZipOutput.putNextEntry(resultEntry)
-                                inputStream.copyTo(resultZipOutput)
-                                resultZipOutput.closeEntry()
-                            }
-                        }
-                    }
-                }
-            }
-
-            return metadataOutputFile
-        }
-    }
-}
-
-internal fun getMetadataExtractor(
-    project: Project,
-    resolvedComponentResult: ResolvedComponentResult,
-    configuration: Configuration,
-    resolveViaAvailableAt: Boolean
-): MppDependencyMetadataExtractor? {
-    val resolvedMppVariantsProvider = ResolvedMppVariantsProvider.get(project)
-    val moduleIdentifier =
-        resolvedComponentResult.toSingleModuleIdentifier() // FIXME this loses information about auxiliary module deps
-    // TODO check how this code works with multi-capability resolutions
-
-    return mppDependencyMetadataExtractor(
-        resolvedMppVariantsProvider,
-        moduleIdentifier,
-        configuration,
-        resolveViaAvailableAt,
-        resolvedComponentResult,
-        project
-    )
-}
-
-internal fun getMetadataExtractor(
-    project: Project,
-    resolvedComponentResult: ResolvedComponentResult,
-    moduleIdentifier: KotlinModuleIdentifier,
-    configuration: Configuration
-): MppDependencyMetadataExtractor? {
-    val resolvedMppVariantsProvider = ResolvedMppVariantsProvider.get(project)
-    return mppDependencyMetadataExtractor(
-        resolvedMppVariantsProvider,
-        moduleIdentifier,
-        configuration,
-        true,
-        resolvedComponentResult,
-        project
-    )
-}
-
-private fun mppDependencyMetadataExtractor(
-    resolvedMppVariantsProvider: ResolvedMppVariantsProvider,
-    moduleIdentifier: KotlinModuleIdentifier,
-    configuration: Configuration,
-    resolveViaAvailableAt: Boolean,
-    resolvedComponentResult: ResolvedComponentResult,
-    project: Project
-): MppDependencyMetadataExtractor? {
-    var resolvedViaAvailableAt = false
-
-    val metadataArtifact = resolvedMppVariantsProvider.getResolvedArtifactByPlatformModule(
-        moduleIdentifier,
-        configuration
-    ) ?: if (resolveViaAvailableAt) {
-        resolvedMppVariantsProvider.getHostSpecificMetadataArtifactByRootModule(
-            moduleIdentifier,
-            configuration
-        )?.also {
-            resolvedViaAvailableAt = true
-        }
-    } else null
-
-    val actualComponent = if (resolvedViaAvailableAt) {
-        resolvedComponentResult.dependencies.filterIsInstance<ResolvedDependencyResult>().singleOrNull()?.selected
-            ?: resolvedComponentResult
-    } else resolvedComponentResult
-
-    val moduleId = actualComponent.id
-    return when {
-        moduleId is ProjectComponentIdentifier -> when {
-            moduleId.build.isCurrentBuild ->
-                ProjectMppDependencyMetadataExtractor(project, actualComponent, moduleIdentifier, project.project(moduleId.projectPath))
-            metadataArtifact != null ->
-                IncludedBuildMetadataExtractor(project, actualComponent, metadataArtifact)
-            else -> null
-        }
-        metadataArtifact != null -> JarArtifactMppDependencyMetadataExtractor(project, actualComponent, metadataArtifact)
-        else -> null
-    }
-}
-
-internal fun getProjectStructureMetadata(
-    project: Project,
-    module: ResolvedComponentResult,
-    configuration: Configuration,
-    moduleIdentifier: KotlinModuleIdentifier? = null
-): KotlinProjectStructureMetadata? {
-    val extractor = if (moduleIdentifier != null)
-        getMetadataExtractor(project, module, moduleIdentifier, configuration)
-    else
-        getMetadataExtractor(project, module, configuration, resolveViaAvailableAt = true)
-
-    return extractor?.getProjectStructureMetadata()
-}
-
-// This class is needed to encapsulate how we extract the files and point to them in a way that doesn't capture the Gradle project state
-internal abstract class ExtractableMetadataFiles {
-    abstract fun getMetadataFilesPerSourceSet(createFiles: Boolean): Map<String, FileCollection>
-}
-

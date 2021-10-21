@@ -113,7 +113,7 @@ class KotlinMetadataTargetConfigurator :
     override fun setupCompilationDependencyFiles(compilation: KotlinCompilation<KotlinCommonOptions>) {
         val project = compilation.target.project
 
-        /** See [createTransformedMetadataClasspath] and its usage. */
+        /** See [createMetadataDependencyTransformationClasspath] and its usage. */
         if (project.isKotlinGranularMetadataEnabled && compilation.name != KotlinCompilation.MAIN_COMPILATION_NAME)
             compilation.compileDependencyFiles = project.files()
         else
@@ -332,10 +332,14 @@ class KotlinMetadataTargetConfigurator :
             listOf(sourceSet)
         ) { }
 
-        compilation.compileDependencyFiles += createTransformedMetadataClasspath(
+        compilation.compileDependencyFiles += createMetadataDependencyTransformationClasspath(
             project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME),
             compilation
         )
+
+        if (compilation is KotlinSharedNativeCompilation && sourceSet is DefaultKotlinSourceSet) {
+            compilation.compileDependencyFiles += project.createCInteropMetadataDependencyClasspath(sourceSet)
+        }
     }
 
     private fun setupDependencyTransformationForSourceSet(
@@ -418,7 +422,7 @@ class KotlinMetadataTargetConfigurator :
         }
     }
 
-    private fun createTransformedMetadataClasspath(
+    private fun createMetadataDependencyTransformationClasspath(
         fromFiles: Configuration,
         compilation: AbstractKotlinCompilation<*>
     ): FileCollection {
@@ -440,7 +444,7 @@ class KotlinMetadataTargetConfigurator :
             transformationTaskHolders.map { SourceSetResolvedMetadataProvider(it) }
         }
 
-        return createTransformedMetadataClasspath(
+        return createMetadataDependencyTransformationClasspath(
             project,
             fromFiles,
             dependsOnCompilationOutputs,
@@ -492,14 +496,14 @@ internal fun Project.createGenerateProjectStructureMetadataTask(): TaskProvider<
 internal interface ResolvedMetadataFilesProvider {
     val buildDependencies: Iterable<TaskProvider<*>>
     val metadataResolutions: Iterable<MetadataDependencyResolution>
-    val metadataFilesByResolution: Map<MetadataDependencyResolution, FileCollection>
+    val metadataFilesByResolution: Map<out MetadataDependencyResolution, FileCollection>
 }
 
-internal fun createTransformedMetadataClasspath(
+internal fun createMetadataDependencyTransformationClasspath(
     project: Project,
     fromFiles: Configuration,
     parentCompiledMetadataFiles: Lazy<Iterable<FileCollection>>,
-    metadataResolutionProviders: Lazy<Iterable<ResolvedMetadataFilesProvider>>
+    metadataResolutionProviders: Lazy<Iterable<ResolvedMetadataFilesProvider>>,
 ): FileCollection {
     return project.files(
         Callable {
@@ -547,7 +551,7 @@ internal fun createTransformedMetadataClasspath(
 }
 
 internal fun isSharedNativeSourceSet(project: Project, sourceSet: KotlinSourceSet): Boolean {
-    val compilations = CompilationSourceSetUtil.compilationsBySourceSets(project)[sourceSet].orEmpty()
+    val compilations = compilationsBySourceSets(project)[sourceSet].orEmpty()
     return compilations.isNotEmpty() && compilations.all {
         it.platformType == KotlinPlatformType.common || it.platformType == KotlinPlatformType.native
     }
