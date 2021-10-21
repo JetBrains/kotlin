@@ -92,13 +92,24 @@ KInt Kotlin_AtomicInt_get(KRef thiz) {
     return getImpl<KInt>(thiz);
 }
 
-KLong Kotlin_AtomicLong_addAndGet(KRef thiz, KLong delta) {
-    return addAndGetImpl(thiz, delta);
-}
-
 #if KONAN_NO_64BIT_ATOMIC
 static int lock64 = 0;
 #endif
+
+KLong Kotlin_AtomicLong_addAndGet(KRef thiz, KLong delta) {
+#if KONAN_NO_64BIT_ATOMIC
+    // Potentially huge performance penalty, but correct.
+    while (compareAndSwap(&lock64, 0, 1) != 0);
+    volatile KLong* address = getValueLocation<KLong>(thiz);
+    KLong old = *address;
+    KLong newValue = old + delta;
+    *address = newValue;
+    compareAndSwap(&lock64, 1, 0);
+    return newValue;
+#else
+    return addAndGetImpl(thiz, delta);
+#endif
+}
 
 KLong Kotlin_AtomicLong_compareAndSwap(KRef thiz, KLong expectedValue, KLong newValue) {
 #if KONAN_NO_64BIT_ATOMIC
