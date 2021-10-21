@@ -16255,6 +16255,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 public void testMonoidSum() throws Exception {
                     runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/monoidSum.kt");
                 }
+
+                @Test
+                @TestMetadata("structuredConcurrency.kt")
+                public void testStructuredConcurrency() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/structuredConcurrency.kt");
+                }
             }
         }
     }
