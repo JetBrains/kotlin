@@ -394,6 +394,7 @@ class PSICallResolver(
         override val syntheticScopes: SyntheticScopes get() = this@PSICallResolver.syntheticScopes
         override val isDebuggerContext: Boolean get() = context.isDebuggerContext
         override val isNewInferenceEnabled: Boolean get() = context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
+        override val areContextReceiversEnabled: Boolean get() = context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
         override val languageVersionSettings: LanguageVersionSettings get() = context.languageVersionSettings
         override val lexicalScope: LexicalScope get() = context.scope
         override val typeApproximator: TypeApproximator get() = this@PSICallResolver.typeApproximator
