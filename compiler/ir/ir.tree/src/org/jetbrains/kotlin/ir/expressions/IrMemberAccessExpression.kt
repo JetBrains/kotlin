@@ -20,6 +20,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
+// todo: autogenerate
+/**
+ * A non-leaf IR tree element.
+ */
 abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference() {
     var dispatchReceiver: IrExpression? = null
     var extensionReceiver: IrExpression? = null

@@ -68,6 +68,25 @@ inline fun <reified T : Any> Iterable<*>.lastIsInstanceOrNull(): T? {
     }
 }
 
+inline fun <T, reified R> Iterable<T>.partitionIsInstance(): Pair<List<R>, List<T>> {
+    val first = ArrayList<R>()
+    val second = ArrayList<T>()
+    for (element in this) {
+        if (element is R) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+inline fun <reified T> Iterable<*>.castAll(): Iterable<T> {
+    for (element in this) element as T
+    @Suppress("UNCHECKED_CAST")
+    return this as Iterable<T>
+}
+
 fun <T> sequenceOfLazyValues(vararg elements: () -> T): Sequence<T> = elements.asSequence().map { it() }
 
 fun <T1, T2> Pair<T1, T2>.swap(): Pair<T2, T1> = Pair(second, first)

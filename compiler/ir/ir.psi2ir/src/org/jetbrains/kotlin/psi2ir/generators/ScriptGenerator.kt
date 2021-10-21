@@ -110,33 +110,35 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                 makeParameter(it.thisAsReceiverParameter, IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER, parametersIndex++)
             }
 
-            irScript.providedProperties = descriptor.scriptProvidedProperties.zip(descriptor.scriptProvidedPropertiesParameters)
-                .map { (providedProperty, parameter) ->
-                    // TODO: initializer
-                    // TODO: do not keep direct links
-                    val type = providedProperty.type.toIrType()
-                    val valueParameter = context.symbolTable.declareValueParameter(
+            descriptor.scriptProvidedProperties.zip(descriptor.scriptProvidedPropertiesParameters) { providedProperty, parameter ->
+                // TODO: initializer
+                // TODO: do not keep direct links
+                val type = providedProperty.type.toIrType()
+                val valueParameter = context.symbolTable.declareValueParameter(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, parameter, type
+                ) { symbol ->
+                    context.irFactory.createValueParameter(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, parameter, type
-                    ) { symbol ->
-                        context.irFactory.createValueParameter(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                            IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, symbol, descriptor.name,
-                            parametersIndex, type, null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
-                        ).also { it.parent = irScript }
-                    }
-                    parametersIndex++
-                    val irProperty =
-                        PropertyGenerator(declarationGenerator).generateSyntheticProperty(
-                            ktScript,
-                            providedProperty,
-                            valueParameter,
-                            generateSyntheticAccessors = true
-                        )
-                    irProperty.origin = IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY
-                    irScript.statements += irProperty
-                    valueParameter to irProperty.symbol
+                        IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, symbol, descriptor.name,
+                        parametersIndex, type, null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
+                    ).also { it.parent = irScript }
                 }
+                parametersIndex++
+                val irProperty =
+                    PropertyGenerator(declarationGenerator).generateSyntheticProperty(
+                        ktScript,
+                        providedProperty,
+                        valueParameter,
+                        generateSyntheticAccessors = true
+                    )
+                irProperty.origin = IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY
+                irScript.statements += irProperty
+                valueParameter to irProperty.symbol
+            }.unzip().let { (params, props) ->
+                irScript.providedProperties = props
+                irScript.providedPropertiesParameters = params
+            }
 
             irScript.constructor = with(IrFunctionBuilder().apply {
                 isPrimary = true
@@ -155,7 +157,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                     addIfNotNull(irScript.earlierScriptsParameter)
                     addAll(irScript.explicitCallParameters)
                     addAll(irScript.implicitReceiversParameters)
-                    irScript.providedProperties.forEach { add(it.first) }
+                    addAll(irScript.providedPropertiesParameters)
                 }
                 irConstructor.parent = irScript
                 irConstructor.metadata = DescriptorMetadataSource.Function(descriptor.unsubstitutedPrimaryConstructor)

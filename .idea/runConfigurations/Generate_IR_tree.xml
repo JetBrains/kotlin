@@ -1,0 +1,21 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Generate IR tree" type="GradleRunConfiguration" factoryName="Gradle" folderName="Generators">
+    <ExternalSystemSettings>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/compiler/ir/ir.tree" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list>
+          <option value="generateTree" />
+        </list>
+      </option>
+      <option name="vmOptions" value="" />
+    </ExternalSystemSettings>
+    <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
+    <method v="2" />
+  </configuration>
+</component>
