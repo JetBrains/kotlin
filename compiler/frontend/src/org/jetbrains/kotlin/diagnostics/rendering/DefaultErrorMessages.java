@@ -165,7 +165,7 @@ public class DefaultErrorMessages {
         MAP.put(OPT_IN_OVERRIDE, "{1}", TO_STRING, STRING);
         MAP.put(OPT_IN_OVERRIDE_ERROR, "{1}", TO_STRING, STRING);
 
-        MAP.put(OPT_IN_IS_NOT_ENABLED, "This class can only be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'");
+        MAP.put(OPT_IN_IS_NOT_ENABLED, "This annotation should be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'");
         MAP.put(OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION, "This class can only be used as an annotation");
         MAP.put(OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN, "This class can only be used as an annotation or as an argument to @OptIn");
 
