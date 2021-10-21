@@ -9,10 +9,13 @@ import org.intellij.lang.annotations.Language
 import org.intellij.lang.annotations.RegExp
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
-import org.jetbrains.kotlin.commonizer.parseCommonizerTargetOrNull
+import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
 import org.jetbrains.kotlin.commonizer.util.transitiveClosure
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.BaseGradleIT.CompiledProject
+import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
+import org.jetbrains.kotlin.library.commonizerTarget
+import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import java.io.File
 import javax.annotation.RegEx
 import kotlin.test.fail
@@ -28,29 +31,29 @@ data class SourceSetCommonizerDependencies(
     val dependencies: Set<SourceSetCommonizerDependency>
 ) {
 
-    fun onlyCInterops(): SourceSetCommonizerDependencies {
+    fun withoutNativeDistributionDependencies(): SourceSetCommonizerDependencies {
         return SourceSetCommonizerDependencies(
             sourceSetName,
-            dependencies.filter { dependency ->
-                /* Cinterop dependencies are located in the project's '.gradle' directory */
-                dependency.file.allParents.any { parentFile -> parentFile.name == ".gradle" }
-            }.toSet()
+            dependencies.filter { dependency -> !dependency.isFromNativeDistribution() }.toSet()
         )
     }
 
-    fun onlyNativeDistribution(): SourceSetCommonizerDependencies {
+    fun onlyNativeDistributionDependencies(): SourceSetCommonizerDependencies {
+        return SourceSetCommonizerDependencies(
+            sourceSetName,
+            dependencies.filter { dependency -> dependency.isFromNativeDistribution() }.toSet()
+        )
+    }
+
+    private fun SourceSetCommonizerDependency.isFromNativeDistribution(): Boolean {
         val konanDataDir = System.getenv("KONAN_DATA_DIR")?.let(::File)
-
-        return SourceSetCommonizerDependencies(
-            sourceSetName,
-            dependencies.filter { dependency ->
-                (if (konanDataDir != null) dependency.file.startsWith(konanDataDir) else false) ||
-                        dependency.file.allParents.any { parentFile -> parentFile.name == ".konan" }
-            }.toSet()
-        )
+        if (konanDataDir != null) {
+            return file.startsWith(konanDataDir)
+        }
+        return file.allParents.any { parentFile -> parentFile.name == ".konan" }
     }
 
-    fun assertTargetOnAllDependencies(target: CommonizerTarget) {
+    fun assertTargetOnAllDependencies(target: CommonizerTarget) = apply {
         dependencies.forEach { dependency ->
             if (dependency.target != target) {
                 fail("$sourceSetName: Expected target $target but found dependency with target ${dependency.target}\n$dependency")
@@ -58,27 +61,27 @@ data class SourceSetCommonizerDependencies(
         }
     }
 
-    fun assertEmpty() {
+    fun assertEmpty() = apply {
         if (dependencies.isNotEmpty()) {
             fail("$sourceSetName: Expected no dependencies in set. Found $dependencies")
         }
     }
 
-    fun assertNotEmpty() {
+    fun assertNotEmpty() = apply {
         if (dependencies.isEmpty()) {
             fail("$sourceSetName: Missing dependencies")
         }
     }
 
-    fun assertDependencyFilesMatches(@Language("RegExp") @RegEx @RegExp vararg fileMatchers: String?) {
+    fun assertDependencyFilesMatches(@Language("RegExp") @RegEx @RegExp vararg fileMatchers: String?) = apply {
         assertDependencyFilesMatches(fileMatchers.filterNotNull().map(::Regex).toSet())
     }
 
-    fun assertDependencyFilesMatches(vararg fileMatchers: Regex?) {
+    fun assertDependencyFilesMatches(vararg fileMatchers: Regex?) = apply {
         assertDependencyFilesMatches(fileMatchers.filterNotNull().toSet())
     }
 
-    fun assertDependencyFilesMatches(fileMatchers: Set<Regex>) {
+    fun assertDependencyFilesMatches(fileMatchers: Set<Regex>) = apply {
         val unmatchedDependencies = dependencies.filter { dependency ->
             fileMatchers.none { matcher -> dependency.file.absolutePath.matches(matcher) }
         }
@@ -107,7 +110,8 @@ fun interface WithSourceSetCommonizerDependencies {
 
 fun BaseGradleIT.reportSourceSetCommonizerDependencies(
     project: BaseGradleIT.Project,
-    vararg additionalBuildParameters: String,
+    subproject: String? = null,
+    options: BaseGradleIT.BuildOptions = defaultBuildOptions(),
     test: WithSourceSetCommonizerDependencies.(compiledProject: CompiledProject) -> Unit
 ) = with(project) {
 
@@ -115,15 +119,18 @@ fun BaseGradleIT.reportSourceSetCommonizerDependencies(
         setupWorkingDir()
     }
 
-    gradleBuildScript().apply {
+    gradleBuildScript(subproject).apply {
         appendText("\n\n")
         appendText(taskSourceCode)
         appendText("\n\n")
     }
 
-    build(
-        *(listOf(":reportCommonizerSourceSetDependencies") + additionalBuildParameters).toTypedArray(),
-    ) {
+    val taskName = buildString {
+        if (subproject != null) append(":$subproject")
+        append(":reportCommonizerSourceSetDependencies")
+    }
+
+    build(taskName, options = options) {
         assertSuccessful()
 
         val dependencyReports = output.lineSequence().filter { line -> line.contains("SourceSetCommonizerDependencyReport") }.toList()
@@ -134,20 +141,29 @@ fun BaseGradleIT.reportSourceSetCommonizerDependencies(
             val reportForSourceSet = dependencyReports.firstOrNull { line -> line.contains(reportMarker) }
                 ?: fail("Missing dependency report for $sourceSetName")
 
-            val files = reportForSourceSet.split(reportMarker, limit = 2).last().split("|#+#|").map(::File)
-            val dependencies = files.mapNotNull { file ->
-                val allParents = file.allParents
-                if (allParents.any { it.name == "commonized" } || allParents.any { it.name == "commonizer" }) {
-                    val target = parseCommonizerTargetOrNull(file.parentFile.name) as? SharedCommonizerTarget ?: return@mapNotNull null
-                    SourceSetCommonizerDependency(sourceSetName, target, file)
-                } else null
-            }
-            SourceSetCommonizerDependencies(sourceSetName, dependencies.toSet())
+            val files = reportForSourceSet.split(reportMarker, limit = 2).last().split("|#+#|")
+                .map(String::trim).filter(String::isNotEmpty).map(::File)
+
+            val dependencies = files.mapNotNull { file -> createSourceSetCommonizerDependencyOrNull(sourceSetName, file) }.toSet()
+            SourceSetCommonizerDependencies(sourceSetName, dependencies)
         }
 
         withSourceSetCommonizerDependencies.test(this)
     }
 }
+
+private fun createSourceSetCommonizerDependencyOrNull(sourceSetName: String, libraryFile: File): SourceSetCommonizerDependency? {
+    return SourceSetCommonizerDependency(
+        sourceSetName,
+        file = libraryFile,
+        target = inferCommonizerTargetOrNull(libraryFile) as? SharedCommonizerTarget ?: return null,
+    )
+}
+
+private fun inferCommonizerTargetOrNull(libraryFile: File): CommonizerTarget? = resolveSingleFileKlib(
+    libraryFile = org.jetbrains.kotlin.konan.file.File(libraryFile.path),
+    strategy = ToolingSingleFileKlibResolveStrategy
+).commonizerTarget?.let(::parseCommonizerTarget)
 
 private val File.allParents: Set<File> get() = transitiveClosure(this) { listOfNotNull(parentFile) }
 

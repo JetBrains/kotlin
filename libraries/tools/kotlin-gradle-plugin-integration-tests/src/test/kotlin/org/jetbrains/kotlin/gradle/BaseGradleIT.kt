@@ -976,3 +976,7 @@ Finished executing task ':$taskName'|
 
     private fun String.normalizePath() = replace("\\", "/")
 }
+
+fun BaseGradleIT.BuildOptions.withFreeCommandLineArgument(argument: String) = copy(
+    freeCommandLineArgs = freeCommandLineArgs + argument
+)
