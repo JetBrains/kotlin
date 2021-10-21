@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.printer.generateElements
-import org.jetbrains.kotlin.fir.tree.generator.util.*
+import org.jetbrains.kotlin.fir.tree.generator.util.configureInterfacesAndAbstractClasses
+import org.jetbrains.kotlin.fir.tree.generator.util.detectBaseTransformerTypes
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
+import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil.collectPreviouslyGeneratedFiles
+import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil.removeExtraFilesFromPreviousGeneration
 import java.io.File
 
 

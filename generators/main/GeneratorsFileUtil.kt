@@ -13,6 +13,13 @@ import kotlin.io.path.*
 object GeneratorsFileUtil {
     val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
 
+    val GENERATED_MESSAGE = """
+    /*
+     * This file was generated automatically
+     * DO NOT MODIFY IT MANUALLY
+     */
+     """.trimIndent()
+
     @OptIn(ExperimentalPathApi::class)
     @JvmStatic
     @JvmOverloads
@@ -51,7 +58,7 @@ object GeneratorsFileUtil {
         println()
     }
 
-    fun failOnTeamCity(message: String): Boolean {
+    private fun failOnTeamCity(message: String): Boolean {
         if (!isTeamCityBuild) return false
 
         fun String.escapeForTC(): String = StringBuilder(length).apply {
@@ -84,5 +91,23 @@ object GeneratorsFileUtil {
             return true
         }
         return StringUtil.convertLineSeparators(content) != currentContent
+    }
+
+    fun collectPreviouslyGeneratedFiles(generationPath: File): List<File> {
+        return generationPath.walkTopDown().filter {
+            it.isFile && it.readText().contains(GENERATED_MESSAGE)
+        }.toList()
+    }
+
+    fun removeExtraFilesFromPreviousGeneration(previouslyGeneratedFiles: List<File>, generatedFiles: List<File>) {
+        val generatedFilesPath = generatedFiles.mapTo(mutableSetOf()) { it.absolutePath }
+
+        for (file in previouslyGeneratedFiles) {
+            if (file.absolutePath !in generatedFilesPath) {
+                if (failOnTeamCity("File delete `${file.absolutePath}`")) continue
+                println("Deleted: ${file.absolutePath}")
+                file.delete()
+            }
+        }
     }
 }
