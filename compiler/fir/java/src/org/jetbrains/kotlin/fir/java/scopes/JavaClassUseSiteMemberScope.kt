@@ -75,8 +75,8 @@ class JavaClassUseSiteMemberScope(
                 moduleData = session.moduleData
                 name = property.name
                 symbol = FirAccessorSymbol(
-                    accessorId = getterSymbol.callableId,
-                    callableId = CallableId(getterSymbol.callableId.packageName, getterSymbol.callableId.className, property.name)
+                    getterId = getterSymbol.callableId,
+                    propertyId = CallableId(getterSymbol.callableId.packageName, getterSymbol.callableId.className, property.name)
                 )
                 delegateGetter = getterSymbol.fir
                 delegateSetter = setterSymbol?.fir

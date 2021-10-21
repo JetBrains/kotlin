@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 class FirSyntheticPropertySymbol(
-    callableId: CallableId,
-    override val accessorId: CallableId
-) : FirAccessorSymbol(callableId, accessorId), SyntheticSymbol
+    propertyId: CallableId,
+    getterId: CallableId
+) : FirAccessorSymbol(propertyId, getterId), SyntheticSymbol
 
 class FirSyntheticFunctionSymbol(
     callableId: CallableId
@@ -114,8 +114,8 @@ class FirSyntheticPropertiesScope(
             moduleData = session.moduleData
             name = propertyName
             symbol = FirSyntheticPropertySymbol(
-                accessorId = getterSymbol.callableId,
-                callableId = CallableId(packageName, className, propertyName)
+                getterId = getterSymbol.callableId,
+                propertyId = CallableId(packageName, className, propertyName)
             )
             delegateGetter = getter
             delegateSetter = matchingSetter

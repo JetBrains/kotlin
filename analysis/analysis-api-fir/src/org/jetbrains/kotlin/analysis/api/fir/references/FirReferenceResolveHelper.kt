@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -89,9 +89,9 @@ internal object FirReferenceResolveHelper {
             }
             is FirResolvedNamedReference -> {
                 val fir = when (val symbol = resolvedSymbol) {
-                    is FirSyntheticPropertySymbol -> {
+                    is FirAccessorSymbol -> {
                         val syntheticProperty = symbol.fir as FirSyntheticProperty
-                        if (syntheticProperty.getter.delegate.symbol.callableId == symbol.accessorId) {
+                        if (syntheticProperty.getter.delegate.symbol.callableId == symbol.getterId) {
                             syntheticProperty.getter.delegate
                         } else {
                             syntheticProperty.setter!!.delegate

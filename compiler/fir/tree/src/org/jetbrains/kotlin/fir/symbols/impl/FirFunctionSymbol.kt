@@ -81,9 +81,9 @@ class FirConstructorSymbol(
 }
 
 open class FirAccessorSymbol(
-    callableId: CallableId,
-    open val accessorId: CallableId
-) : FirPropertySymbol(callableId)
+    propertyId: CallableId,
+    val getterId: CallableId
+) : FirPropertySymbol(propertyId)
 
 // ------------------------ unnamed ------------------------
 

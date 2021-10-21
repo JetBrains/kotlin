@@ -154,7 +154,7 @@ class FirSignatureEnhancement(
                 return buildSyntheticProperty {
                     moduleData = this@FirSignatureEnhancement.moduleData
                     this.name = name
-                    symbol = FirAccessorSymbol(accessorSymbol.callableId, accessorSymbol.accessorId)
+                    symbol = FirAccessorSymbol(accessorSymbol.callableId, accessorSymbol.getterId)
                     delegateGetter = enhancedGetterSymbol.fir as FirSimpleFunction
                     delegateSetter = enhancedSetterSymbol?.fir as FirSimpleFunction?
                     status = firElement.status
