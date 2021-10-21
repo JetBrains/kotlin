@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.getArguments
+import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -82,7 +82,7 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
         if (!expression.isBoxOrUnboxCall())
             return super.visitCall(expression)
 
-        val argument = expression.getArguments().single().second
+        val argument = expression.getArgumentsWithIr().single().second
         val foldedArgument = fold(
                 expression           = argument,
                 coercion             = expression,
@@ -133,7 +133,7 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
             if (it.isBoxOrUnboxCall()) {
                 val result =
                         if (coercionDeclaringClass == (it as IrCall).symbol.owner.getCoercedClass())
-                            it.getArguments().single().second
+                            it.getArgumentsWithIr().single().second
                         else expression
 
                 return PossiblyFoldedExpression(result.transformIfAsked(), result != expression)

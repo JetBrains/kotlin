@@ -49,7 +49,6 @@ internal class Autoboxing(val context: Context) : FileLoweringPass {
 }
 
 private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTransformer(
-        context.builtIns,
         context.ir.symbols,
         context.irBuiltIns
 ) {

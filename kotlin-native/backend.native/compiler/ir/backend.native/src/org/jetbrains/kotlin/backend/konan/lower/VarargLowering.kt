@@ -177,7 +177,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
 
     private fun arrayType(type: IrType): ArrayHandle {
         val arrayClass = type.classifierOrFail
-        return arrayToHandle[arrayClass] ?: error(arrayClass.descriptor)
+        return arrayToHandle[arrayClass] ?: error(arrayClass)
     }
 
     private fun IrBuilderWithScope.intPlus() = irCall(intPlusInt)
@@ -194,6 +194,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
             putValueArgument(0, value)
         })
     }
+
     private fun calculateArraySize(arrayHandle: ArrayHandle, hasSpreadElement: Boolean, scope:Scope, expression: IrVararg, vars: Map<IrVarargElement, IrVariable>): IrExpression {
         context.createIrBuilder(scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
             if (!hasSpreadElement)

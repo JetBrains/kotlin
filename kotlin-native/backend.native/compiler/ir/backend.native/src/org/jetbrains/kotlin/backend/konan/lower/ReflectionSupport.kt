@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.konan.InteropFqNames
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
+import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.ir.typeWithStarProjections
 import org.jetbrains.kotlin.backend.konan.isObjCClass
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -20,8 +19,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.types.Variance
 
 private fun IrBuilderWithScope.irConstantString(string: String) = irConstantPrimitive(irString(string))
@@ -181,13 +178,16 @@ internal class KTypeGenerator(
 
 internal fun IrBuilderWithScope.irKClass(context: KonanBackendContext, symbol: IrClassSymbol): IrConstantValue {
     val symbols = context.ir.symbols
+
+    fun IrClass.isNativePointedChild() : Boolean =
+            this.symbol == context.ir.symbols.nativePointed || getSuperClassNotAny()?.isNativePointedChild() == true
+
     return when {
-        symbol.descriptor.isObjCClass() ->
+        symbol.owner.isObjCClass() ->
             irKClassUnsupported(context, "KClass for Objective-C classes is not supported yet")
 
-        symbol.descriptor.getAllSuperClassifiers().any {
-            it is ClassDescriptor && it.fqNameUnsafe == InteropFqNames.nativePointed
-        } -> irKClassUnsupported(context, "KClass for interop types is not supported yet")
+        symbol.owner.isNativePointedChild() ->
+            irKClassUnsupported(context, "KClass for interop types is not supported yet")
 
         else -> irConstantObject(symbols.kClassImplIntrinsicConstructor, emptyList(), listOf(symbol.typeWithStarProjections))
     }

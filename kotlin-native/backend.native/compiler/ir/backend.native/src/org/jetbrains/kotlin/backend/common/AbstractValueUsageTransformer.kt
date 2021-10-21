@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -37,7 +36,6 @@ import java.lang.IllegalStateException
  * TODO: consider making this visitor non-recursive to make it more general.
  */
 internal abstract class AbstractValueUsageTransformer(
-        val builtIns: KotlinBuiltIns,
         val symbols: KonanSymbols,
         val irBuiltIns: IrBuiltIns
 ): IrElementTransformerVoid() {

@@ -112,7 +112,7 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                         overriddenFunction = overriddenJobDescriptor,
                         targetSymbol = jobFunction.symbol)
                 bridges += bridge
-                expression.putValueArgument(3, IrFunctionReferenceImpl.fromSymbolDescriptor(
+                expression.putValueArgument(3, IrFunctionReferenceImpl.fromSymbolOwner(
                         startOffset   = job.startOffset,
                         endOffset     = job.endOffset,
                         type          = job.type,
@@ -183,7 +183,7 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
 
 internal class DECLARATION_ORIGIN_BRIDGE_METHOD(val bridgeTarget: IrFunction) : IrDeclarationOrigin {
     override fun toString(): String {
-        return "BRIDGE_METHOD(target=${bridgeTarget.descriptor})"
+        return "BRIDGE_METHOD(target=${bridgeTarget.symbol})"
     }
 }
 
@@ -241,7 +241,7 @@ private fun Context.buildBridge(startOffset: Int, endOffset: Int,
         val typeSafeBarrierDescription = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(overriddenFunction.overriddenFunction.descriptor)
         typeSafeBarrierDescription?.let { buildTypeSafeBarrier(bridge, overriddenFunction.function, it) }
 
-        val delegatingCall = IrCallImpl.fromSymbolDescriptor(
+        val delegatingCall = IrCallImpl.fromSymbolOwner(
                 startOffset,
                 endOffset,
                 targetSymbol.owner.returnType,

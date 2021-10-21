@@ -56,7 +56,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
 
             irBuiltins.checkNotNullSymbol -> lowerCheckNotNull(expression)
 
-            irBuiltins.noWhenBranchMatchedExceptionSymbol -> IrCallImpl.fromSymbolDescriptor(
+            irBuiltins.noWhenBranchMatchedExceptionSymbol -> IrCallImpl.fromSymbolOwner(
                     expression.startOffset, expression.endOffset,
                     context.ir.symbols.throwNoWhenBranchMatchedException.owner.returnType,
                     context.ir.symbols.throwNoWhenBranchMatchedException,
