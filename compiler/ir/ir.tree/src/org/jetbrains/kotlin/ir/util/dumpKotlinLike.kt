@@ -163,16 +163,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         if (options.printRegionsPerFile) p.println("//endregion")
     }
 
-    override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: IrDeclaration?) {
-        // TODO support
-        super.visitExternalPackageFragment(declaration, data)
-    }
-
-    override fun visitScript(declaration: IrScript, data: IrDeclaration?) {
-        // TODO support
-        super.visitScript(declaration, data)
-    }
-
     override fun visitClass(declaration: IrClass, data: IrDeclaration?) {
         // TODO omit super class for enums, annotations?
         // TODO omit Companion name for companion objects?
@@ -1459,18 +1449,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             arg.accept(this, data)
             p.printWithNoIndent("; ")
         }
-    }
-
-    override fun visitSuspendableExpression(expression: IrSuspendableExpression, data: IrDeclaration?) {
-        // TODO support
-        // TODO no test
-        super.visitSuspendableExpression(expression, data)
-    }
-
-    override fun visitSuspensionPoint(expression: IrSuspensionPoint, data: IrDeclaration?) {
-        // TODO support
-        // TODO no test
-        super.visitSuspensionPoint(expression, data)
     }
 
     private fun p(condition: Boolean, s: String) {

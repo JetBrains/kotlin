@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.IrType
 
@@ -25,4 +26,6 @@ class IrDoWhileLoopImpl(
     override val endOffset: Int,
     override var type: IrType,
     override val origin: IrStatementOrigin?,
-) : IrDoWhileLoop()
+) : IrDoWhileLoop() {
+    override lateinit var condition: IrExpression
+}
