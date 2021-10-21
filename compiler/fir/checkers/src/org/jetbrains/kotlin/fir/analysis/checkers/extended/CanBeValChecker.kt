@@ -108,7 +108,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
     private fun FirPropertySymbol.getDestructuringChildrenCount(): Int? {
         val source = source ?: return null
         return source.lighterASTNode.getChildren(source.treeStructure).count {
-            it?.tokenType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY
+            it.tokenType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY
         }
     }
 

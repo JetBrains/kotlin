@@ -83,10 +83,10 @@ private val FILLER_TOKENS = setOf(
 )
 
 private fun LighterASTNode.nonFillerFirstChildOrSelf(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode =
-    getChildren(tree).firstOrNull { it != null && !it.isFiller() } ?: this
+    getChildren(tree).firstOrNull { !it.isFiller() } ?: this
 
 internal fun LighterASTNode.nonFillerLastChildOrSelf(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode =
-    getChildren(tree).lastOrNull { it != null && !it.isFiller() } ?: this
+    getChildren(tree).lastOrNull { !it.isFiller() } ?: this
 
 internal fun LighterASTNode.isFiller() = tokenType in FILLER_TOKENS
 

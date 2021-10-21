@@ -41,7 +41,7 @@ sealed class FirModifierList {
         override val modifiers: List<FirModifier.FirLightModifier>
             get() {
                 val modifierNodes = modifierList.getChildren(tree)
-                return modifierNodes.filterNotNull()
+                return modifierNodes
                     .filter { it.tokenType is KtModifierKeywordToken }
                     .map { FirModifier.FirLightModifier(it, it.tokenType as KtModifierKeywordToken, tree, offsetDelta) }
             }
@@ -86,7 +86,7 @@ fun FirSourceElement?.getModifierList(): FirModifierList? {
         null -> null
         is FirPsiSourceElement -> (psi as? KtModifierListOwner)?.modifierList?.let { FirModifierList.FirPsiModifierList(it) }
         is FirLightSourceElement -> {
-            val modifierListNode = lighterASTNode.getChildren(treeStructure).find { it?.tokenType == KtNodeTypes.MODIFIER_LIST }
+            val modifierListNode = lighterASTNode.getChildren(treeStructure).find { it.tokenType == KtNodeTypes.MODIFIER_LIST }
                 ?: return null
             val offsetDelta = startOffset - lighterASTNode.startOffset
             FirModifierList.FirLightModifierList(modifierListNode, treeStructure, offsetDelta)
