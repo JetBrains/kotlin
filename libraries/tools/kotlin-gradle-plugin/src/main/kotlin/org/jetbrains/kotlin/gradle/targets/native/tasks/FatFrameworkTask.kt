@@ -12,38 +12,36 @@ import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.util.visibleName
 import java.io.ByteArrayOutputStream
 import java.io.File
 
-private val Framework.files: IosFrameworkFiles
-    get() = IosFrameworkFiles(outputFile)
-
-private class IosDsymFiles(val rootDir: File) {
-
-    val frameworkName = rootDir.name.removeSuffix(".framework.dSYM")
+class FrameworkDsymLayout(val rootDir: File) {
+    private val frameworkName = rootDir.name.removeSuffix(".framework.dSYM")
 
     val binaryDir = rootDir.resolve("Contents/Resources/DWARF")
     val binary = binaryDir.resolve(frameworkName)
     val infoPlist = rootDir.resolve("Contents/Info.plist")
 
+    fun exists() = rootDir.exists()
+
     fun mkdirs() {
         binaryDir.mkdirs()
     }
-
-    fun exists(): Boolean = rootDir.exists()
 }
 
-private class IosFrameworkFiles(val rootDir: File) {
+class FrameworkLayout(val rootDir: File) {
+    init {
+        require(rootDir.extension == "framework")
+    }
 
-    constructor(parentDir: File, frameworkName: String):
-            this(parentDir.resolve("$frameworkName.framework"))
-
-    val frameworkName: String = rootDir.nameWithoutExtension
+    private val frameworkName = rootDir.nameWithoutExtension
 
     val headerDir = rootDir.resolve("Headers")
     val modulesDir = rootDir.resolve("Modules")
@@ -53,7 +51,9 @@ private class IosFrameworkFiles(val rootDir: File) {
     val moduleFile = modulesDir.resolve("module.modulemap")
     val infoPlist = rootDir.resolve("Info.plist")
 
-    val dSYM: IosDsymFiles = IosDsymFiles(rootDir.parentFile.resolve("$frameworkName.framework.dSYM"))
+    val dSYM = FrameworkDsymLayout(rootDir.parentFile.resolve("$frameworkName.framework.dSYM"))
+
+    fun exists() = rootDir.exists()
 
     fun mkdirs() {
         rootDir.mkdirs()
@@ -62,17 +62,34 @@ private class IosFrameworkFiles(val rootDir: File) {
     }
 }
 
-/**
- * Task running lipo to create a fat framework from several simple frameworks. It also merges headers, plists and module files.
- */
+class FrameworkDescriptor(
+    val file: File,
+    val isStatic: Boolean,
+    val target: KonanTarget
+) {
+    constructor(framework: Framework) : this(
+        framework.outputFile,
+        framework.isStatic,
+        framework.konanTarget
+    )
+
+    init {
+        require(NativeOutputKind.FRAMEWORK.availableFor(target))
+    }
+
+    val name = file.nameWithoutExtension
+    val files = FrameworkLayout(file)
+}
+
 open class FatFrameworkTask : DefaultTask() {
+    private val archToFramework: MutableMap<Architecture, FrameworkDescriptor> = mutableMapOf()
 
     //region DSL properties.
     /**
      * A collection of frameworks used ot build the fat framework.
      */
     @get:Internal  // We take it into account as an input in the inputFrameworkFiles property.
-    val frameworks: Collection<Framework>
+    val frameworks: Collection<FrameworkDescriptor>
         get() = archToFramework.values
 
     /**
@@ -87,33 +104,23 @@ open class FatFrameworkTask : DefaultTask() {
     @OutputDirectory
     var destinationDir: File = project.buildDir.resolve("fat-framework")
 
-    @get:Internal // We take it into account as an input in the destinationDir property.
-    val fatFrameworkDir: File
-        get() = fatFramework.rootDir
-
-    @get:Internal  // We take it into account as an input in the destinationDir property.
-    val fatDsymDir: File
-        get() = fatDsym.rootDir
-    // endregion.
-
-    private val archToFramework: MutableMap<Architecture, Framework> = mutableMapOf()
-
     @get:Internal
     val fatFrameworkName: String
         get() = baseName.asValidFrameworkName()
 
-    private val fatFramework: IosFrameworkFiles
-        get() = IosFrameworkFiles(destinationDir, fatFrameworkName)
+    @get:Internal
+    val fatFramework: File
+        get() = destinationDir.resolve(fatFrameworkName + ".framework")
 
-    private val fatDsym: IosDsymFiles
-        get() = fatFramework.dSYM
+    private val fatFrameworkLayout: FrameworkLayout
+        get() = FrameworkLayout(fatFramework)
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
     @get:InputFiles
     @get:SkipWhenEmpty
     protected val inputFrameworkFiles: Iterable<FileTree>
-        get() = frameworks.map { project.fileTree(it.outputFile) }
+        get() = frameworks.map { project.fileTree(it.file) }
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
@@ -137,9 +144,17 @@ open class FatFrameworkTask : DefaultTask() {
      * Adds the specified frameworks in this fat framework.
      */
     fun from(frameworks: Iterable<Framework>) {
+        fromFrameworkDescriptors(frameworks.map { FrameworkDescriptor(it) })
+        frameworks.forEach { dependsOn(it.linkTask) }
+    }
+
+    /**
+     * Adds the specified frameworks in this fat framework.
+     */
+    fun fromFrameworkDescriptors(frameworks: Iterable<FrameworkDescriptor>) {
         frameworks.forEach { framework ->
-            val arch = framework.konanTarget.architecture
-            val family = framework.konanTarget.family
+            val arch = framework.target.architecture
+            val family = framework.target.family
             val fatFrameworkFamily = getFatFrameworkFamily()
             require(fatFrameworkFamily == null || family == fatFrameworkFamily) {
                 "Cannot add a binary with platform family '${family.visibleName}' to the fat framework:\n" +
@@ -154,30 +169,28 @@ open class FatFrameworkTask : DefaultTask() {
             }
 
             require(archToFramework.all { it.value.isStatic == framework.isStatic }) {
-                fun Framework.staticOrDynamic(): String = if (isStatic) "static" else "dynamic"
+                fun staticName(isStatic: Boolean) = if (isStatic) "static" else "dynamic"
 
                 buildString {
                     append("Cannot create a fat framework from:\n")
-                    archToFramework.forEach { append("${it.value.baseName} - ${it.key.name.toLowerCase()} - ${it.value.staticOrDynamic()}\n") }
-                    append("${framework.baseName} - ${arch.name.toLowerCase()} - ${framework.staticOrDynamic()}\n")
+                    archToFramework.forEach { append("${it.value.name} - ${it.key.name.toLowerCase()} - ${staticName(it.value.isStatic)}\n") }
+                    append("${framework.name} - ${arch.name.toLowerCase()} - ${staticName(framework.isStatic)}\n")
                     append("All input frameworks must be either static or dynamic")
                 }
             }
 
             archToFramework[arch] = framework
-            dependsOn(framework.linkTask)
-
         }
     }
     // endregion.
 
     private fun getFatFrameworkFamily(): Family? {
-        assert(archToFramework.values.distinctBy { it.konanTarget.family }.size <= 1)
-        return archToFramework.values.firstOrNull()?.konanTarget?.family
+        assert(archToFramework.values.distinctBy { it.target.family }.size <= 1)
+        return archToFramework.values.firstOrNull()?.target?.family
     }
 
     private val Architecture.clangMacro: String
-        get() = when(this) {
+        get() = when (this) {
             Architecture.X86 -> "__i386__"
             Architecture.X64 -> "__x86_64__"
             Architecture.ARM32 -> "__arm__"
@@ -185,12 +198,12 @@ open class FatFrameworkTask : DefaultTask() {
             else -> error("Fat frameworks are not supported for architecture `$name`")
         }
 
-    private val Framework.plistPlatform: String
-        get() = when (konanTarget) {
+    private val FrameworkDescriptor.plistPlatform: String
+        get() = when (target) {
             IOS_ARM32, IOS_ARM64, IOS_X64, IOS_SIMULATOR_ARM64 -> "iPhoneOS"
             TVOS_ARM64, TVOS_X64, TVOS_SIMULATOR_ARM64 -> "AppleTVOS"
             WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X86, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64 -> "WatchOS"
-            else -> error("Fat frameworks are not supported for platform `${konanTarget.visibleName}`")
+            else -> error("Fat frameworks are not supported for platform `${target.visibleName}`")
         }
 
     // Runs the PlistBuddy utility with the given commands to configure the given plist file.
@@ -248,7 +261,7 @@ open class FatFrameworkTask : DefaultTask() {
 
         runLipo(archToFramework.values.map { it.files.binary }, outputFile)
 
-        if (archToFramework.values.any{ it.isStatic.not() && it.baseName != fatFrameworkName }) {
+        if (archToFramework.values.any { !it.isStatic && it.name != fatFrameworkName }) {
             runInstallNameTool(outputFile, fatFrameworkName)
         }
     }
@@ -344,6 +357,7 @@ open class FatFrameworkTask : DefaultTask() {
             return
         }
 
+        val fatDsym = fatFrameworkLayout.dSYM
         fatDsym.mkdirs()
 
         // Merge dSYM binary.
@@ -360,13 +374,13 @@ open class FatFrameworkTask : DefaultTask() {
 
     @TaskAction
     protected fun createFatFramework() {
-        fatFramework.mkdirs()
+        val outFramework = fatFrameworkLayout
 
-        val frameworkName = fatFramework.frameworkName
-        mergeBinaries(fatFramework.binary)
-        mergeHeaders(fatFramework.header)
-        createModuleFile(fatFramework.moduleFile, frameworkName)
-        mergePlists(fatFramework.infoPlist, frameworkName)
+        outFramework.mkdirs()
+        mergeBinaries(outFramework.binary)
+        mergeHeaders(outFramework.header)
+        createModuleFile(outFramework.moduleFile, fatFrameworkName)
+        mergePlists(outFramework.infoPlist, fatFrameworkName)
         mergeDSYM()
     }
 
