@@ -32576,6 +32576,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("whenOnClass.kt")
+            public void testWhenOnClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/whenOnClass.kt");
+            }
+
+            @Test
             @TestMetadata("whenOnNothing.kt")
             public void testWhenOnNothing() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/when/whenOnNothing.kt");
