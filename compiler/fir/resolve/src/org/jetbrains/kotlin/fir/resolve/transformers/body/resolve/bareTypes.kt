@@ -97,7 +97,7 @@ private fun BodyResolveComponents.doUnify(
     }
 
     // Foo? ~ X?  =>  Foo ~ X
-    if (originalType?.nullability?.isNullable == true && typeWithParameters?.nullability?.isNullable == true) {
+    if (originalType?.nullability == ConeNullability.NULLABLE && typeWithParameters?.nullability == ConeNullability.NULLABLE) {
         return doUnify(
             originalTypeProjection.removeQuestionMark(session.typeContext),
             typeWithParametersProjection.removeQuestionMark(session.typeContext),
@@ -113,17 +113,14 @@ private fun BodyResolveComponents.doUnify(
 
     if (typeWithParameters is ConeFlexibleType) {
         return doUnify(
-            if (originalType?.nullability?.isNullable == true)
-                originalTypeProjection.removeQuestionMark(session.typeContext)
-            else
-                originalTypeProjection,
+            originalTypeProjection,
             typeWithParametersProjection.replaceType(typeWithParameters.lowerBound),
             targetTypeParameters, result,
         )
     }
 
     // Foo ~ X? => fail
-    if (originalType?.nullability?.isNullable != true && typeWithParameters?.nullability?.isNullable == true) {
+    if (originalType?.nullability != ConeNullability.NULLABLE && typeWithParameters?.nullability == ConeNullability.NULLABLE) {
         return true
     }
 
