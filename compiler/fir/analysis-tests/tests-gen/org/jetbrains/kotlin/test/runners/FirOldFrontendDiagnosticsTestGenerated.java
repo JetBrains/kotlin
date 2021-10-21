@@ -10378,6 +10378,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("propertyInPrivateConstructorError.kt")
+            public void testPropertyInPrivateConstructorError() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/exposed/propertyInPrivateConstructorError.kt");
+            }
+
+            @Test
             @TestMetadata("propertyInSimpleConstructor.kt")
             public void testPropertyInSimpleConstructor() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/exposed/propertyInSimpleConstructor.kt");

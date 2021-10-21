@@ -903,13 +903,21 @@ internal class ExposedPropertyTypeImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ExposedPropertyType(), KtAbstractFirDiagnostic<KtNamedDeclaration>
 
-internal class ExposedPropertyTypeInConstructorImpl(
+internal class ExposedPropertyTypeInConstructorErrorImpl(
     override val elementVisibility: EffectiveVisibility,
     override val restrictingDeclaration: KtSymbol,
     override val restrictingVisibility: EffectiveVisibility,
     override val firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExposedPropertyTypeInConstructor(), KtAbstractFirDiagnostic<KtNamedDeclaration>
+) : KtFirDiagnostic.ExposedPropertyTypeInConstructorError(), KtAbstractFirDiagnostic<KtNamedDeclaration>
+
+internal class ExposedPropertyTypeInConstructorWarningImpl(
+    override val elementVisibility: EffectiveVisibility,
+    override val restrictingDeclaration: KtSymbol,
+    override val restrictingVisibility: EffectiveVisibility,
+    override val firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ExposedPropertyTypeInConstructorWarning(), KtAbstractFirDiagnostic<KtNamedDeclaration>
 
 internal class ExposedParameterTypeImpl(
     override val elementVisibility: EffectiveVisibility,
