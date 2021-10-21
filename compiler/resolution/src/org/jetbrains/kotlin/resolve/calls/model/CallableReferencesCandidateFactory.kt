@@ -333,7 +333,10 @@ class CallableReferencesCandidateFactory(
         builtins: KotlinBuiltIns,
         buildTypeWithConversions: Boolean = true
     ): Pair<UnwrappedType, CallableReferenceAdaptation?> {
-        val argumentsAndReceivers = ArrayList<KotlinType>(descriptor.valueParameters.size + 2)
+        val argumentsAndReceivers = ArrayList<KotlinType>(descriptor.valueParameters.size + 2 + descriptor.contextReceiverParameters.size)
+
+        val contextReceiversTypes = descriptor.contextReceiverParameters.map { it.type }
+        argumentsAndReceivers.addAll(contextReceiversTypes)
 
         if (dispatchReceiver is CallableReceiver.UnboundReference) {
             argumentsAndReceivers.add(dispatchReceiver.receiver.stableType)
