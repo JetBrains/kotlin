@@ -318,6 +318,8 @@ extra["compilerArtifactsForIde"] = listOf(
     ":prepare:ide-plugin-dependencies:kotlin-stdlib-minimal-for-test-for-ide",
     ":prepare:ide-plugin-dependencies:low-level-api-fir-for-ide",
     ":prepare:ide-plugin-dependencies:high-level-api-for-ide",
+    ":prepare:ide-plugin-dependencies:high-level-api-impl-base-for-ide",
+    ":prepare:ide-plugin-dependencies:high-level-api-impl-base-tests-for-ide",
     ":prepare:ide-plugin-dependencies:high-level-api-fir-for-ide",
     ":prepare:ide-plugin-dependencies:high-level-api-fir-tests-for-ide",
     ":prepare:ide-plugin-dependencies:high-level-api-fe10-for-ide",
