@@ -5900,6 +5900,11 @@ fileCheckTest("filecheck_bce") {
 
 fileCheckTest("filecheck_signext_zeroext0") {
     annotatedSource = project.file('filecheck/signext_zeroext0.kt')
+    if (project.testTarget == 'mingw_x64') {
+        checkPrefix = "CHECK-WINDOWSX64"
+    } else if (!target.family.appleFamily && target.architecture == Architecture.ARM64) {
+        checkPrefix = "CHECK-AAPCS"
+    }
 }
 
 createInterop("filecheck_signext_zeroext_interop_input") {
@@ -5909,6 +5914,11 @@ createInterop("filecheck_signext_zeroext_interop_input") {
 fileCheckTest("filecheck_signext_zeroext_interop") {
     annotatedSource = project.file('filecheck/signext_zeroext_interop.kt')
     interop = "filecheck_signext_zeroext_interop_input"
+    if (project.testTarget == 'mingw_x64') {
+        checkPrefix = "CHECK-WINDOWSX64"
+    } else if (!target.family.appleFamily && target.architecture == Architecture.ARM64) {
+        checkPrefix = "CHECK-AAPCS"
+    }
 }
 
 fileCheckTest("filecheck_signext_zeroext_objc_export") {
