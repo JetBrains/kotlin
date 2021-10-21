@@ -30262,6 +30262,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("localFunctions.kt")
+            public void testLocalFunctions() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithExplicitApi/localFunctions.kt");
+            }
+
+            @Test
             @TestMetadata("mustBeEffectivelyPublic.kt")
             public void testMustBeEffectivelyPublic() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/testsWithExplicitApi/mustBeEffectivelyPublic.kt");

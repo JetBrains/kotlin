@@ -76,6 +76,8 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
      * 4. Getters and setters (because getters can't change visibility and setter-only explicit visibility looks ugly)
      * 5. Properties of annotations in public API
      * 6. Value parameter declaration
+     * 7. An anonymous function
+     * 8. A local named function
      *
      * TODO: Do we need something like @PublicApiFile to disable (or invert) this inspection per-file?
      */
@@ -86,7 +88,9 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
             // 4
             is FirPropertyAccessor,
             // 6
-            is FirValueParameter -> true
+            is FirValueParameter,
+            // 7
+            is FirAnonymousFunction -> true
             is FirCallableDeclaration -> {
                 val containingClass = context.containingDeclarations.lastOrNull() as? FirRegularClass
                 // 2, 5
@@ -97,8 +101,8 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
                     return true
                 }
 
-                // 3
-                declaration.isOverride
+                // 3, 8
+                declaration.isOverride || declaration.isLocalMember
             }
             else -> false
         }

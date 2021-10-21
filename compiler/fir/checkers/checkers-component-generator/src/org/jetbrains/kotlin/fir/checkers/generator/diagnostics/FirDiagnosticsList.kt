@@ -386,7 +386,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("message")
         }
 
-        val NO_EXPLICIT_VISIBILITY_IN_API_MODE by warning<KtDeclaration>(PositioningStrategy.DECLARATION_START_TO_NAME)
+        val NO_EXPLICIT_VISIBILITY_IN_API_MODE by error<KtDeclaration>(PositioningStrategy.DECLARATION_START_TO_NAME)
         val NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING by warning<KtDeclaration>(PositioningStrategy.DECLARATION_START_TO_NAME)
 
         val NO_EXPLICIT_RETURN_TYPE_IN_API_MODE by error<KtDeclaration>(PositioningStrategy.DECLARATION_NAME)
