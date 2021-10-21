@@ -100,7 +100,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
         classBlock.statements += generateClassMetadata()
 
-        if (!irClass.isInterface && !irClass.isEnumClass && !irClass.isEnumEntry) {
+        if (!irClass.isInterface && !irClass.isEnumEntry) {
             for (property in properties) {
                 if (property.getter?.extensionReceiverParameter != null || property.setter?.extensionReceiverParameter != null)
                     continue
