@@ -6290,6 +6290,18 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("nonExhaustiveIfInElvis_after.kt")
+            public void testNonExhaustiveIfInElvis_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/nonExhaustiveIfInElvis_after.kt");
+            }
+
+            @Test
+            @TestMetadata("nonExhaustiveIfInElvis_before.kt")
+            public void testNonExhaustiveIfInElvis_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/nonExhaustiveIfInElvis_before.kt");
+            }
+
+            @Test
             @TestMetadata("notAFunctionLabel_after.kt")
             public void testNotAFunctionLabel_after() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlStructures/notAFunctionLabel_after.kt");

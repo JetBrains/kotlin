@@ -997,6 +997,7 @@ public interface Errors {
     DiagnosticFactory0<KtElement> SENSELESS_NULL_IN_WHEN = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<PsiElement> INVALID_IF_AS_EXPRESSION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INVALID_IF_AS_EXPRESSION_WARNING = DiagnosticFactory0.create(WARNING);
     DiagnosticFactoryForDeprecation0<PsiElement> CONFUSING_BRANCH_CONDITION = DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitConfusingSyntaxInWhenBranches);
 
     // Nullability
@@ -1079,6 +1080,7 @@ public interface Errors {
     DiagnosticFactory0<KtWhenEntry> ELSE_MISPLACED_IN_WHEN = DiagnosticFactory0.create(ERROR, ELSE_ENTRY);
     DiagnosticFactory0<KtWhenEntry> REDUNDANT_ELSE_IN_WHEN = DiagnosticFactory0.create(WARNING, ELSE_ENTRY);
     DiagnosticFactory1<KtWhenExpression, List<WhenMissingCase>> NO_ELSE_IN_WHEN = DiagnosticFactory1.create(ERROR, WHEN_EXPRESSION);
+    DiagnosticFactory1<KtWhenExpression, List<WhenMissingCase>> NO_ELSE_IN_WHEN_WARNING = DiagnosticFactory1.create(WARNING, WHEN_EXPRESSION);
     DiagnosticFactory1<KtWhenExpression, List<WhenMissingCase>> NON_EXHAUSTIVE_WHEN = DiagnosticFactory1.create(WARNING, WHEN_EXPRESSION);
     DiagnosticFactory2<KtWhenExpression, String, List<WhenMissingCase>> NON_EXHAUSTIVE_WHEN_STATEMENT = DiagnosticFactory2.create(WARNING, WHEN_EXPRESSION);
     DiagnosticFactory1<KtWhenExpression, List<WhenMissingCase>>

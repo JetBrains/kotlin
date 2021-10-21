@@ -632,6 +632,7 @@ public class DefaultErrorMessages {
         MAP.put(ILLEGAL_DECLARATION_IN_WHEN_SUBJECT, "Illegal variable declaration in 'when' subject: {0}. Should be a simple val with an initializer", STRING);
 
         MAP.put(NO_ELSE_IN_WHEN, "''when'' expression must be exhaustive, add necessary {0}", RENDER_WHEN_MISSING_CASES);
+        MAP.put(NO_ELSE_IN_WHEN_WARNING, "''when'' expression must be exhaustive, add necessary {0}", RENDER_WHEN_MISSING_CASES);
         MAP.put(NON_EXHAUSTIVE_WHEN, "''when'' expression on enum is recommended to be exhaustive, add {0}", RENDER_WHEN_MISSING_CASES);
         MAP.put(NON_EXHAUSTIVE_WHEN_STATEMENT, "Non exhaustive ''when'' statements on {0} will be prohibited in 1.7, add {1}", STRING, RENDER_WHEN_MISSING_CASES);
         MAP.put(NON_EXHAUSTIVE_WHEN_ON_SEALED_CLASS, "''when'' expression on sealed classes is recommended to be exhaustive, add {0}", RENDER_WHEN_MISSING_CASES);
@@ -833,6 +834,7 @@ public class DefaultErrorMessages {
         MAP.put(SENSELESS_NULL_IN_WHEN, "Expression under 'when' is never equal to null");
 
         MAP.put(INVALID_IF_AS_EXPRESSION, "'if' must have both main and 'else' branches if used as an expression");
+        MAP.put(INVALID_IF_AS_EXPRESSION_WARNING, "'if' must have both main and 'else' branches if used as an expression");
         MAP.put(CONFUSING_BRANCH_CONDITION, "The logical expressions may be understood ambiguously in when with subject branches. Please wrap it with parenthesis");
 
         MAP.put(OVERRIDING_FINAL_MEMBER, "''{0}'' in ''{1}'' is final and cannot be overridden", NAME, NAME);
