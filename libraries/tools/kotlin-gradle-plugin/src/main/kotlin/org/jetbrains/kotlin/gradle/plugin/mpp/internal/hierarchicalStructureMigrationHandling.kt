@@ -14,11 +14,12 @@ import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 
 internal fun handleHierarchicalStructureFlagsMigration(project: Project) {
-    if (project.rootProject === project) {
-        SingleActionPerProject.run(project.rootProject, "handleHierarchicalStructureFlagsMigration - rootProject") {
-            doHandleHierarchicalStructureFlagsMigration(project.rootProject)
-        }
-    } else {
+    SingleActionPerProject.run(project.rootProject, "handleHierarchicalStructureFlagsMigration - rootProject") {
+        doHandleHierarchicalStructureFlagsMigration(project.rootProject)
+    }
+
+    // rootProject will be handled with the SingleActionPerProject above
+    if (project.rootProject !== project) {
         doHandleHierarchicalStructureFlagsMigration(project)
     }
 }
@@ -41,7 +42,7 @@ private fun PropertiesProvider.checkHmppFeatureFlagsForConsistency(project: Proj
         if (hierarchicalStructureSupport) {
             if (project === project.rootProject) {
                 when (enableGranularSourceSetsMetadata) {
-                    true -> warnGranularMetadataTrueHasNoEffect(project)
+                    true -> if (!mpp13XFlagsSetByPlugin) warnGranularMetadataTrueHasNoEffect(project)
                     false -> errorGranularMetadataFalseUnsupported()
                     null -> Unit
                 }

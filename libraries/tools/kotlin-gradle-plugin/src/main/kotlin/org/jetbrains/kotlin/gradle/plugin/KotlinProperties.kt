@@ -145,7 +145,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     var mpp13XFlagsSetByPlugin: Boolean
         get() = booleanProperty("kotlin.internal.mpp.13X.flags.setByPlugin") ?: false
-        set(value) { project.extensions.extraProperties.set("kotlin.internal.mpp.13X.flags.setByPlugin") { "$value" } }
+        set(value) { project.extensions.extraProperties.set("kotlin.internal.mpp.13X.flags.setByPlugin", "$value") }
 
     val mppHierarchicalStructureByDefault: Boolean
         get() = booleanProperty(KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT) ?: false
