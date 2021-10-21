@@ -1,3 +1,4 @@
 warning: '-Xuse-experimental' is deprecated and will be removed in a future release, please use -opt-in instead
+warning: '-Xopt-in' is deprecated and will be removed in a future release, please use -opt-in instead
 warning: opt-in requirement marker org.test.Warning is deprecated. Warning
 OK
