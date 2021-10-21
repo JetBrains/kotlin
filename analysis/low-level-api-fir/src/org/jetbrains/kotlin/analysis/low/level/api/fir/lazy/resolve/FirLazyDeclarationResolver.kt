@@ -237,6 +237,17 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
                 return firDeclarationToResolve
             }
         }
+        if (firDeclarationToResolve is FirSyntheticPropertyAccessor) {
+            lazyResolveDeclaration(
+                firDeclarationToResolve.delegate,
+                moduleFileCache,
+                scopeSession,
+                toPhase,
+                checkPCE,
+                skipLocalDeclaration
+            )
+            return firDeclarationToResolve
+        }
         if (!firDeclarationToResolve.isValidForResolve()) return firDeclarationToResolve
         if (firDeclarationToResolve.resolvePhase >= toPhase) return firDeclarationToResolve
 
