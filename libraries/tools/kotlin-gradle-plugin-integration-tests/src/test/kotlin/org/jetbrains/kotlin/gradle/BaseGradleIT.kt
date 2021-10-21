@@ -493,13 +493,6 @@ abstract class BaseGradleIT {
         return this
     }
 
-    fun CompiledProject.assertDoesNotContain(vararg notExpected: String, ignoreCase: Boolean = false): CompiledProject {
-        for (str in notExpected) {
-            assertFalse(output.contains(str.normalize(), ignoreCase), "Output should not contain '$str'")
-        }
-        return this
-    }
-
     fun CompiledProject.assertContainsRegex(expected: Regex): CompiledProject {
         assertTrue(expected.containsMatchIn(output), "Output should contain pattern '$expected'")
         return this
