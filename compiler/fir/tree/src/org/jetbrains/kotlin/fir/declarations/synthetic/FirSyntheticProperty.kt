@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -25,7 +24,7 @@ class FirSyntheticProperty(
     override val moduleData: FirModuleData,
     override val name: Name,
     override val isVar: Boolean,
-    override val symbol: FirAccessorSymbol,
+    override val symbol: FirSyntheticPropertySymbol,
     override val status: FirDeclarationStatus,
     override var resolvePhase: FirResolvePhase,
     override val getter: FirSyntheticPropertyAccessor,

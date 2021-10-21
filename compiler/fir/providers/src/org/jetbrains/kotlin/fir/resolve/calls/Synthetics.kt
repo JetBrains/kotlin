@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -27,10 +27,18 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
-class FirSyntheticPropertySymbol(
+/**
+ * This symbol is bound to a synthetic property based on Java getter/setter call
+ *
+ * See details about such properties here: https://kotlinlang.org/docs/java-interop.html#getters-and-setters).
+ * Frontend IR creates this kind of symbol each time when x.foo should be resolved to x.getFoo() or x.setFoo().
+ */
+class FirSimpleSyntheticPropertySymbol(
     propertyId: CallableId,
     getterId: CallableId
-) : FirAccessorSymbol(propertyId, getterId), SyntheticSymbol
+) : FirSyntheticPropertySymbol(propertyId, getterId), SyntheticSymbol {
+    override fun copy(): FirSyntheticPropertySymbol = FirSimpleSyntheticPropertySymbol(callableId, getterId)
+}
 
 class FirSyntheticFunctionSymbol(
     callableId: CallableId
@@ -113,7 +121,7 @@ class FirSyntheticPropertiesScope(
         val property = buildSyntheticProperty {
             moduleData = session.moduleData
             name = propertyName
-            symbol = FirSyntheticPropertySymbol(
+            symbol = FirSimpleSyntheticPropertySymbol(
                 getterId = getterSymbol.callableId,
                 propertyId = CallableId(packageName, className, propertyName)
             )

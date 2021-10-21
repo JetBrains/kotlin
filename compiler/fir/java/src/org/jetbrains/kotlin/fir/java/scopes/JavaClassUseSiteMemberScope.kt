@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethodCopy
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameterCopy
+import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
@@ -50,7 +51,7 @@ class JavaClassUseSiteMemberScope(
 ) {
     private val typeParameterStack = klass.javaTypeParameterStack
     private val specialFunctions = hashMapOf<Name, Collection<FirNamedFunctionSymbol>>()
-    private val accessorByNameMap = hashMapOf<Name, FirAccessorSymbol>()
+    private val accessorByNameMap = hashMapOf<Name, FirSyntheticPropertySymbol>()
     
     private val canUseSpecialGetters: Boolean by lazy { !klass.hasKotlinSuper(session) }
 
@@ -69,12 +70,12 @@ class JavaClassUseSiteMemberScope(
         setterSymbol: FirNamedFunctionSymbol?,
         property: FirProperty,
         takeModalityFromGetter: Boolean,
-    ): FirAccessorSymbol {
+    ): FirSyntheticPropertySymbol {
         return accessorByNameMap.getOrPut(property.name) {
             buildSyntheticProperty {
                 moduleData = session.moduleData
                 name = property.name
-                symbol = FirAccessorSymbol(
+                symbol = FirJavaOverriddenSyntheticPropertySymbol(
                     getterId = getterSymbol.callableId,
                     propertyId = CallableId(getterSymbol.callableId.packageName, getterSymbol.callableId.className, property.name)
                 )

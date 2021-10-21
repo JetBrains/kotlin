@@ -43,7 +43,7 @@ class FirClassSubstitutionScope(
             get() = when (this) {
                 is FirPropertySymbol,
                 is FirFieldSymbol,
-                is FirAccessorSymbol -> true
+                is FirSyntheticPropertySymbol -> true
                 else -> false
             }
     }
@@ -294,7 +294,7 @@ class FirClassSubstitutionScope(
         return FirFakeOverrideGenerator.createSubstitutionOverrideField(session, member, original, newReturnType, newOwnerClassId)
     }
 
-    fun createSubstitutionOverrideAccessor(original: FirAccessorSymbol): FirAccessorSymbol {
+    fun createSubstitutionOverrideSyntheticProperty(original: FirSyntheticPropertySymbol): FirSyntheticPropertySymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
         val member = original.fir as FirSyntheticProperty
         if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
@@ -319,7 +319,7 @@ class FirClassSubstitutionScope(
             return original
         }
 
-        return FirFakeOverrideGenerator.createSubstitutionOverrideAccessor(
+        return FirFakeOverrideGenerator.createSubstitutionOverrideSyntheticProperty(
             session,
             member,
             original,
@@ -363,7 +363,7 @@ class FirSubstitutionOverrideStorage(val session: FirSession) : FirSessionCompon
                 when (original) {
                     is FirPropertySymbol -> scope.createSubstitutionOverrideProperty(original)
                     is FirFieldSymbol -> scope.createSubstitutionOverrideField(original)
-                    is FirAccessorSymbol -> scope.createSubstitutionOverrideAccessor(original)
+                    is FirSyntheticPropertySymbol -> scope.createSubstitutionOverrideSyntheticProperty(original)
                     else -> error("symbol $original is not overridable")
                 }
             }

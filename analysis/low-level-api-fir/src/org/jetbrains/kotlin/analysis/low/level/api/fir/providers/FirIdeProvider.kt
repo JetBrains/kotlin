@@ -75,7 +75,7 @@ internal class FirIdeProvider(
         symbol.fir.originalForSubstitutionOverride?.symbol?.let {
             return getFirCallableContainerFile(it)
         }
-        if (symbol is FirAccessorSymbol) {
+        if (symbol is FirSyntheticPropertySymbol) {
             val fir = symbol.fir
             if (fir is FirSyntheticProperty) {
                 return getFirCallableContainerFile(fir.getter.delegate.symbol)

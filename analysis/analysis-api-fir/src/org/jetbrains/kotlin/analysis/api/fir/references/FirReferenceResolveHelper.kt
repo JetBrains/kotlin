@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -89,7 +89,7 @@ internal object FirReferenceResolveHelper {
             }
             is FirResolvedNamedReference -> {
                 val fir = when (val symbol = resolvedSymbol) {
-                    is FirAccessorSymbol -> {
+                    is FirSyntheticPropertySymbol -> {
                         val syntheticProperty = symbol.fir as FirSyntheticProperty
                         if (syntheticProperty.getter.delegate.symbol.callableId == symbol.getterId) {
                             syntheticProperty.getter.delegate

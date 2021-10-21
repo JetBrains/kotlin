@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -45,7 +45,7 @@ object FirJavaVisibilityChecker : FirVisibilityChecker() {
                     ) return true
 
                     // FE1.0 allows calling public setters with property assignment syntax if the getter is protected.
-                    if (!isCallToPropertySetter || symbol !is FirSyntheticPropertySymbol) return false
+                    if (!isCallToPropertySetter || symbol !is FirSimpleSyntheticPropertySymbol) return false
                     symbol.setterSymbol?.visibility == Visibilities.Public
                 }
             }

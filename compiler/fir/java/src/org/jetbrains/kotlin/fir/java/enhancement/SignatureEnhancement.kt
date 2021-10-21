@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
+import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -154,7 +155,7 @@ class FirSignatureEnhancement(
                 return buildSyntheticProperty {
                     moduleData = this@FirSignatureEnhancement.moduleData
                     this.name = name
-                    symbol = FirAccessorSymbol(accessorSymbol.callableId, accessorSymbol.getterId)
+                    symbol = FirJavaOverriddenSyntheticPropertySymbol(accessorSymbol.callableId, accessorSymbol.getterId)
                     delegateGetter = enhancedGetterSymbol.fir as FirSimpleFunction
                     delegateSetter = enhancedSetterSymbol?.fir as FirSimpleFunction?
                     status = firElement.status
@@ -162,7 +163,7 @@ class FirSignatureEnhancement(
                 }.symbol
             }
             else -> {
-                if (original is FirPropertySymbol || original is FirAccessorSymbol) return original
+                if (original is FirPropertySymbol || original is FirSyntheticPropertySymbol) return original
                 error("Can't make enhancement for $original: `${firElement.render()}`")
             }
         }

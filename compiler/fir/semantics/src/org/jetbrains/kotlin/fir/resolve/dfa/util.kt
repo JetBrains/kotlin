@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -102,7 +102,7 @@ val FirElement.symbol: FirBasedSymbol<*>?
         else -> null
     }?.takeIf {
         (this as? FirExpression)?.unwrapSmartcastExpression() is FirThisReceiverExpression ||
-                (it !is FirFunctionSymbol<*> && it !is FirAccessorSymbol)
+                (it !is FirFunctionSymbol<*> && it !is FirSyntheticPropertySymbol)
     }
 
 @DfaInternals
