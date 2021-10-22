@@ -15,9 +15,6 @@ val String.extensionProperty<!>
     get() = this.length
 
 @JsExport
-enum class <!WRONG_EXPORTED_DECLARATION("enum class")!>EnumClass<!> { ENTRY1, ENTRY2 }
-
-@JsExport
 annotation class <!WRONG_EXPORTED_DECLARATION("annotation class")!>AnnotationClass<!>
 
 @JsExport
