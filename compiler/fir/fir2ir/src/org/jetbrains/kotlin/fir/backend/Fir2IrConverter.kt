@@ -221,7 +221,13 @@ class Fir2IrConverter(
     }
 
     private fun registerClassAndNestedClasses(regularClass: FirRegularClass, parent: IrDeclarationParent): IrClass {
-        val irClass = classifierStorage.registerIrClass(regularClass, parent)
+        val irClass =
+            // Local classes might be referenced before they declared (see usages of Fir2IrClassifierStorage.createLocalIrClass)
+            // So, we only need to set its parent properly
+            classifierStorage.getCachedIrClass(regularClass)?.apply {
+                this.parent = parent
+            }
+                ?: classifierStorage.registerIrClass(regularClass, parent)
         regularClass.declarations.forEach {
             if (it is FirRegularClass) {
                 registerClassAndNestedClasses(it, irClass)

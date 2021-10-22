@@ -168,7 +168,7 @@ class Fir2IrClassifierStorage(
         }
     }
 
-    private fun createIrClass(klass: FirClass, parent: IrDeclarationParent? = null): IrClass {
+    private fun createLocalIrClass(klass: FirClass, parent: IrDeclarationParent? = null): IrClass {
         // NB: klass can be either FirRegularClass or FirAnonymousObject
         if (klass is FirAnonymousObject) {
             return createIrAnonymousObject(klass, irParent = parent)
@@ -434,7 +434,7 @@ class Fir2IrClassifierStorage(
         val firClass = firClassSymbol.fir
         getCachedIrClass(firClass)?.let { return it.symbol }
         if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.Local) {
-            return createIrClass(firClass).symbol
+            return createLocalIrClass(firClass).symbol
         }
         val signature = signatureComposer.composeSignature(firClass)!!
         symbolTable.referenceClassIfAny(signature)?.let { irClassSymbol ->

@@ -15963,6 +15963,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/localClasses/localClassInParameterInitializer.kt");
         }
 
+        @TestMetadata("localClassUsedBeforeDeclaration.kt")
+        public void testLocalClassUsedBeforeDeclaration() throws Exception {
+            runTest("compiler/testData/codegen/box/localClasses/localClassUsedBeforeDeclaration.kt");
+        }
+
         @TestMetadata("localDataClass.kt")
         public void testLocalDataClass() throws Exception {
             runTest("compiler/testData/codegen/box/localClasses/localDataClass.kt");

@@ -18705,6 +18705,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("localClassUsedBeforeDeclaration.kt")
+        public void testLocalClassUsedBeforeDeclaration() throws Exception {
+            runTest("compiler/testData/codegen/box/localClasses/localClassUsedBeforeDeclaration.kt");
+        }
+
+        @Test
         @TestMetadata("localDataClass.kt")
         public void testLocalDataClass() throws Exception {
             runTest("compiler/testData/codegen/box/localClasses/localDataClass.kt");
