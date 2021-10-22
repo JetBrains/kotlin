@@ -84,7 +84,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
         ) {
             conflictingSymbol.ensureResolved(FirResolvePhase.STATUS)
             @OptIn(SymbolInternals::class)
-            val conflicting = conflictingSymbol.fir as? FirDeclaration ?: return
+            val conflicting = conflictingSymbol.fir
             if (declaration.moduleData != conflicting.moduleData) return
             val actualConflictingPresentation = conflictingPresentation ?: presenter.represent(conflicting)
             if (conflicting == declaration || actualConflictingPresentation != declarationPresentation) return
