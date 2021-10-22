@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.kotlin.dsl.support.unzipTo
 import org.gradle.kotlin.dsl.support.zipTo
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompositeMetadataJar
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
@@ -120,6 +119,7 @@ class CompositeMetadataJarTest {
             "Expected correct archiveExtension for extracted sourceSetA"
         )
         assertZipContentEquals(
+            temporaryFolder,
             primaryArtifactContent.resolve("sourceSetA"), sourceSetAMetadataFile,
             "Expected correct content of extracted 'sourceSetA'"
         )
@@ -132,6 +132,7 @@ class CompositeMetadataJarTest {
             "Expected correct archiveExtension for extracted sourceSetB"
         )
         assertZipContentEquals(
+            temporaryFolder,
             primaryArtifactContent.resolve("sourceSetB"), sourceSetBMetadataFile,
             "Expected correct content of extracted 'sourceSetA'"
         )
@@ -180,6 +181,7 @@ class CompositeMetadataJarTest {
                 val interopA0MetadataFile = sourceSetAInteropMetadataFiles.firstOrNull { it.name == "interopA0.klib" }
                     ?: fail("Failed to find 'interopA0.klib'")
                 assertZipContentEquals(
+                    temporaryFolder,
                     primaryArtifactContent.resolve("sourceSetA-cinterop/interopA0"), interopA0MetadataFile,
                     "Expected correct content for extracted 'interopA0'"
                 )
@@ -190,6 +192,7 @@ class CompositeMetadataJarTest {
                 val interopA1MetadataFile = sourceSetAInteropMetadataFiles.firstOrNull { it.name == "interopA1.klib" }
                     ?: fail("Failed to find 'interopA1.klib")
                 assertZipContentEquals(
+                    temporaryFolder,
                     primaryArtifactContent.resolve("sourceSetA-cinterop/interopA1"), interopA1MetadataFile,
                     "Expected correct content for extracted 'interopA1'"
                 )
@@ -205,42 +208,10 @@ class CompositeMetadataJarTest {
             val interopB0MetadataFile = sourceSetBInteropMetadataFiles.firstOrNull { it.name == "interopB0.klib" }
                 ?: fail("Failed to find 'interopB0.klib'")
             assertZipContentEquals(
+                temporaryFolder,
                 primaryArtifactContent.resolve("sourceSetB-cinterop/interopB0"), interopB0MetadataFile,
                 "Expected correct content for extracted 'interopB0'"
             )
-        }
-    }
-
-    private fun assertZipContentEquals(expectedContent: File, zipFile: File, message: String) {
-        val zipOutputDirectory = temporaryFolder.newFolder()
-        unzipTo(zipOutputDirectory, zipFile)
-        assertContentEquals(expectedContent, zipOutputDirectory, message)
-    }
-
-    private fun assertContentEquals(expected: File, actual: File, message: String) {
-        assertTrue(expected.isDirectory, "Expected $expected to be directory")
-        assertTrue(actual.isDirectory, "Expected $actual to be directory")
-
-        val expectedFiles = expected.listFiles().orEmpty()
-        val actualFiles = actual.listFiles().orEmpty()
-
-        val expectedFileNames = expectedFiles.map { it.name }.sorted().toSet()
-        val actualFileNames = actualFiles.map { it.name }.sorted().toSet()
-        assertEquals(expectedFileNames, actualFileNames, "$message: ${expected.name} does not contain the same files")
-
-        expectedFiles.forEach { expectedFile ->
-            val actualFile = actualFiles.single { it.name == expectedFile.name }
-
-            if (expectedFile.isFile && actualFile.isFile) {
-                assertTrue(
-                    expectedFile.readBytes().contentEquals(actualFile.readBytes()),
-                    "$message: ${expectedFile.name} does not match in ${expected.name}"
-                )
-            } else if (expectedFile.isDirectory && actualFile.isDirectory) {
-                assertContentEquals(expectedFile, actualFile, message)
-            } else {
-                fail("Expected $expectedFile to be 'file' or 'directory'")
-            }
         }
     }
 }

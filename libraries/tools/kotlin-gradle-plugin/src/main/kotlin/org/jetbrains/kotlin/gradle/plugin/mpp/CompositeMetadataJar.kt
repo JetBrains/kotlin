@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.utils.copyZipFilePartially
-import org.jetbrains.kotlin.gradle.utils.listChildren
+import org.jetbrains.kotlin.gradle.utils.listDescendants
 import java.io.File
 import java.util.zip.ZipFile
 
@@ -73,7 +73,7 @@ private class CompositeMetadataJarImpl(
 
         ZipFile(getArtifactFile(sourceSetName)).use { artifactZipFile ->
             val cinteropRootPath = "$sourceSetName-cinterop/"
-            val cinteropEntries = artifactZipFile.listChildren(cinteropRootPath)
+            val cinteropEntries = artifactZipFile.listDescendants(cinteropRootPath)
             val cinteropNames = cinteropEntries.map { entry ->
                 entry.name.removePrefix(cinteropRootPath).split("/", limit = 2).first()
             }.toSet()

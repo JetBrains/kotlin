@@ -14,22 +14,21 @@ internal fun copyZipFilePartially(sourceZipFile: File, destinationZipFile: File,
     requireValidZipPath(path)
 
     ZipFile(sourceZipFile).use { zip ->
-        val entries = zip.entries().asSequence()
-            .filter { it.name.startsWith(path) }
-            .filter { !it.isDirectory }.toList()
-
+        val entries = zip.listDescendants(path).toList()
         if (entries.isEmpty()) return
 
         ZipOutputStream(destinationZipFile.outputStream()).use { destinationZipOutputStream ->
-            entries.forEach { entry ->
-                // Drop the source set name from the entry path
-                val destinationEntry = ZipEntry(entry.name.substringAfter(path))
+            entries.forEach { sourceEntry ->
+                val destinationEntry = ZipEntry(sourceEntry.name.substringAfter(path))
+                destinationZipOutputStream.putNextEntry(destinationEntry)
 
-                zip.getInputStream(entry).use { inputStream ->
-                    destinationZipOutputStream.putNextEntry(destinationEntry)
-                    inputStream.copyTo(destinationZipOutputStream)
-                    destinationZipOutputStream.closeEntry()
+                if (!sourceEntry.isDirectory) {
+                    zip.getInputStream(sourceEntry).use { inputStream ->
+                        inputStream.copyTo(destinationZipOutputStream)
+                    }
                 }
+
+                destinationZipOutputStream.closeEntry()
             }
         }
     }
@@ -42,22 +41,6 @@ internal fun ZipFile.listDescendants(path: String): Sequence<ZipEntry> {
     }
 }
 
-internal fun ZipFile.listChildren(path: String): Sequence<ZipEntry> {
-    requireValidZipPath(path)
-    return listDescendants(path).filter { entry ->
-        entry.name.removePrefix(path).count { it == '/' } == 1
-    }
+private fun requireValidZipPath(path: String) = require(path.isEmpty() || path.endsWith("/")) {
+    "Expected path to end with '/', found '$path'"
 }
-
-internal fun ZipFile.listDescendants(zipEntry: ZipEntry): Sequence<ZipEntry> {
-    require(zipEntry.isDirectory)
-    return listDescendants(zipEntry.name)
-}
-
-internal fun ZipFile.listChildren(zipEntry: ZipEntry): Sequence<ZipEntry> {
-    return listDescendants(zipEntry).filter { entry ->
-        entry.name.removePrefix(zipEntry.name).count { it == '/' } == 1
-    }
-}
-
-private fun requireValidZipPath(path: String) = require(path.endsWith("/")) { "Expected path to end with '/', found '$path'" }
