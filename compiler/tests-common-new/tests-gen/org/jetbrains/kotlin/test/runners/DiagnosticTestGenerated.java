@@ -16496,6 +16496,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("synchronizedForbidden.kt")
+            public void testSynchronizedForbidden() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/synchronizedForbidden.kt");
+            }
+
+            @Test
             @TestMetadata("unsignedLiteralsWithoutArtifactOnClasspath.kt")
             public void testUnsignedLiteralsWithoutArtifactOnClasspath() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/unsignedLiteralsWithoutArtifactOnClasspath.kt");
