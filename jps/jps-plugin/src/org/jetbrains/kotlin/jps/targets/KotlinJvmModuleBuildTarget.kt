@@ -367,7 +367,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
 
                 // process inlineConstTracker
                 for (sourceFile: File in sourceFiles) {
-                    val cRefs = inlineConstTracker.inlineConstMap[sourceFile.path]?.map { cRef: ConstantRef ->
+                    val cRefs = inlineConstTracker.inlineConstMap[sourceFile.path]?.mapNotNull { cRef: ConstantRef ->
                         val descriptor = when (cRef.constType) {
                             "Byte" -> "B"
                             "Short" -> "S"
@@ -378,8 +378,8 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                             "Boolean" -> "Z"
                             "Char" -> "C"
                             "String" -> "Ljava/lang/String;"
-                            else -> ""
-                        }
+                            else -> null
+                        } ?: return@mapNotNull null
                         Callbacks.createConstantReference(cRef.owner, cRef.name, descriptor)
                     } ?: continue
 
