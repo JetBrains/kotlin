@@ -402,6 +402,7 @@ class GenerationState private constructor(
             this[KOTLIN_1_5] = JvmMetadataVersion(1, 5, 1)
             this[KOTLIN_1_6] = JvmMetadataVersion.INSTANCE
             this[KOTLIN_1_7] = JvmMetadataVersion(1, 7, 0)
+            this[KOTLIN_1_8] = JvmMetadataVersion(1, 8, 0)
 
             check(size == LanguageVersion.values().size) {
                 "Please add mappings from the missing LanguageVersion instances to the corresponding JvmMetadataVersion " +

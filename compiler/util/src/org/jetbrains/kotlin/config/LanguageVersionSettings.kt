@@ -343,6 +343,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
     KOTLIN_1_5(1, 5),
     KOTLIN_1_6(1, 6),
     KOTLIN_1_7(1, 7),
+    KOTLIN_1_8(1, 8),
     ;
 
     override val isStable: Boolean
@@ -368,7 +369,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
             str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }
 
         // Version status
-        //            1.0  1.1  1.2   1.3  1.4           1.5  1.6     1.7
+        //            1.0  1.1  1.2   1.3  1.4           1.5  1.6     1.7  1.8
         // Language:  UNSUPPORTED -------> DEPRECATED -> STABLE ---> EXPERIMENTAL
         // API:       UNSUPPORTED --> DEPRECATED ------> STABLE ---> EXPERIMENTAL
 
