@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
 import org.jetbrains.kotlin.resolve.calls.SPECIAL_FUNCTION_NAMES
-import org.jetbrains.kotlin.resolve.calls.util.isBinaryRemOperator
-import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
@@ -37,11 +35,12 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
 import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
-import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.isUnderscoreNamed
+import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
@@ -687,9 +686,14 @@ class PSICallResolver(
             }
             ModifierCheckerCore.check(projection, context.trace, null, languageVersionSettings)
 
-            val typeReference = projection.typeReference
+            val typeReference = projection.typeReference ?: return@map TypeArgumentPlaceholder
 
-            if (typeReference == null || typeReference.isPlaceholder) return@map TypeArgumentPlaceholder
+            if (typeReference.isPlaceholder) {
+                ForceResolveUtil.forceResolveAllContents(
+                    typeResolver.resolveTypeAnnotations(context.trace, context.scope, typeReference)
+                )
+                return@map TypeArgumentPlaceholder
+            }
 
             SimpleTypeArgumentImpl(projection, resolveType(context, typeReference, typeResolver))
         }
