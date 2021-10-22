@@ -45,6 +45,11 @@ class WasmSymbols(
     private val kotlinTestPackage: PackageViewDescriptor =
         context.module.getPackage(FqName("kotlin.test"))
 
+    private val kotlinReflectPackage: PackageViewDescriptor =
+        context.module.getPackage(FqName("kotlin.reflect"))
+
+    val typeOf = getFunction("typeOf", kotlinReflectPackage)
+
     override val throwNullPointerException = getInternalFunction("THROW_NPE")
     override val throwISE = getInternalFunction("THROW_ISE")
     override val throwTypeCastException = getInternalFunction("THROW_CCE")
