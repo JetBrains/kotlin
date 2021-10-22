@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getPropertyNameCandidatesBySpecialGetterName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeFirstWord
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmartForCompiler
+import java.util.ArrayList
 
 fun propertyNameByGetMethodName(methodName: Name): Name? =
     propertyNameFromAccessorMethodName(methodName, "get") ?: propertyNameFromAccessorMethodName(methodName, "is", removePrefix = false)
@@ -59,4 +62,33 @@ fun getPropertyNamesCandidatesByAccessorName(name: Name): List<Name> {
     }
 
     return getPropertyNameCandidatesBySpecialGetterName(name)
+}
+
+fun possibleGetMethodNames(propertyName: Name): List<Name> {
+    val result = ArrayList<Name>(3)
+    val identifier = propertyName.identifier
+
+    if (JvmAbi.startsWithIsPrefix(identifier)) {
+        result.add(propertyName)
+    }
+
+    val capitalize1 = identifier.capitalizeAsciiOnly()
+    val capitalize2 = identifier.capitalizeFirstWord(asciiOnly = true)
+    result.add(Name.identifier("get$capitalize1"))
+    if (capitalize2 != capitalize1) {
+        result.add(Name.identifier("get$capitalize2"))
+    }
+
+    return result
+        .filter { propertyNameByGetMethodName(it) == propertyName } // don't accept "uRL" for "getURL" etc
+}
+
+fun setMethodName(getMethodName: Name): Name {
+    val identifier = getMethodName.identifier
+    val prefix = when {
+        identifier.startsWith("get") -> "get"
+        identifier.startsWith("is") -> "is"
+        else -> throw IllegalArgumentException()
+    }
+    return Name.identifier("set" + identifier.removePrefix(prefix))
 }
