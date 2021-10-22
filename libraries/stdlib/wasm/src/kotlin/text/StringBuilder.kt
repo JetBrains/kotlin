@@ -15,7 +15,7 @@ internal fun insertString(array: CharArray, distIndex: Int, value: String, sourc
 }
 
 internal fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int): String =
-    kotlin.String(array.copyOfRange(start, start + size))
+    String.unsafeFromCharArray(array.copyOfRange(start, start + size))
 
 internal fun insertInt(array: CharArray, start: Int, value: Int): Int {
     val valueString = value.toString()

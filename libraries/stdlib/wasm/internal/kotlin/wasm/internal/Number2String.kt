@@ -64,7 +64,7 @@ internal fun itoa32(inputValue: Int, radix: Int): String {
     if (sign == 1)
         buf[0] = CharCodes.MINUS.code.toChar()
 
-    return kotlin.String(buf)
+    return String.unsafeFromCharArray(buf)
 }
 
 private fun utoaDecSimple(buffer: CharArray, numInput: Int, offsetInput: Int) {
@@ -144,7 +144,7 @@ internal fun itoa64(inputValue: Long, radix: Int): String {
     if (sign == 1)
         buf[0] = CharCodes.MINUS.code.toChar()
 
-    return kotlin.String(buf)
+    return String.unsafeFromCharArray(buf)
 }
 
 // Count number of decimals for u64 values
@@ -178,7 +178,7 @@ internal fun dtoa(value: Double): String {
     val size = dtoaCore(buf, value)
     val ret = CharArray(size)
     buf.copyInto(ret, 0, 0, size)
-    return kotlin.String(ret)
+    return String.unsafeFromCharArray(ret)
 }
 
 private fun dtoaCore(buffer: CharArray, valueInp: Double): Int {
