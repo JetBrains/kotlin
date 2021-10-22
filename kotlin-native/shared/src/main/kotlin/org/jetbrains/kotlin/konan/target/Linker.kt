@@ -145,8 +145,8 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
         return listOf(Command(clang).apply {
             +"-o"
             +executable
-            +"-fPIC"
-            +"-shared"
+            if (dynamic) +"-fPIC" else +listOf("-fPIE", "-pie")
+            if (dynamic) +"-shared"
             +"-target"
             +clangTarget
             +libDirs
