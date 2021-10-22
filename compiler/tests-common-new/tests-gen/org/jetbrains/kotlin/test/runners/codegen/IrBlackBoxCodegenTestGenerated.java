@@ -23024,6 +23024,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("sameInterfaceDifferentCapturedValueTypes.kt")
+            public void testSameInterfaceDifferentCapturedValueTypes() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/sameInterfaceDifferentCapturedValueTypes.kt");
+            }
+
+            @Test
+            @TestMetadata("sameInterfaceDifferentCapturedValues.kt")
+            public void testSameInterfaceDifferentCapturedValues() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/sameInterfaceDifferentCapturedValues.kt");
+            }
+
+            @Test
             @TestMetadata("serializableBoundClassMemberFunRef.kt")
             public void testSerializableBoundClassMemberFunRef() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableBoundClassMemberFunRef.kt");

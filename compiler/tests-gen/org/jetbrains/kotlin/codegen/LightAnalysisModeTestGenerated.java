@@ -19181,6 +19181,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/invokedynamic/serializable/sameImplMethodDifferentInterfaces.kt");
             }
 
+            @TestMetadata("sameInterfaceDifferentCapturedValueTypes.kt")
+            public void testSameInterfaceDifferentCapturedValueTypes() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/sameInterfaceDifferentCapturedValueTypes.kt");
+            }
+
+            @TestMetadata("sameInterfaceDifferentCapturedValues.kt")
+            public void testSameInterfaceDifferentCapturedValues() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/serializable/sameInterfaceDifferentCapturedValues.kt");
+            }
+
             @TestMetadata("serializableBoundClassMemberFunRef.kt")
             public void testSerializableBoundClassMemberFunRef() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableBoundClassMemberFunRef.kt");
