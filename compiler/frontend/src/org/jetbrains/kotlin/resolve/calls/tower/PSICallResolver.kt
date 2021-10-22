@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isUnderscoreNamed
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.*
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
@@ -689,9 +690,14 @@ class PSICallResolver(
             val typeReference = projection.typeReference ?: return@map TypeArgumentPlaceholder
 
             if (typeReference.isPlaceholder) {
-                ForceResolveUtil.forceResolveAllContents(
-                    typeResolver.resolveTypeAnnotations(context.trace, context.scope, typeReference)
-                )
+                val resolvedAnnotations = typeResolver.resolveTypeAnnotations(context.trace, context.scope, typeReference)
+                    .apply(ForceResolveUtil::forceResolveAllContents)
+
+                for (annotation in resolvedAnnotations) {
+                    val annotationElement = annotation.source.getPsi() ?: continue
+                    context.trace.report(Errors.UNSUPPORTED.on(annotationElement, "annotations on an underscored type argument"))
+                }
+
                 return@map TypeArgumentPlaceholder
             }
 
