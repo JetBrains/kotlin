@@ -65,6 +65,22 @@ class ResolverOptionsTest : TestCase() {
         assertEquals(options.flag("option3"), true)
     }
 
+    fun testParserAcceptsSpecialSymbols() {
+        val parser = SimpleExternalDependenciesResolverOptionsParser
+        val options = parser("option1=/User/path/file.kt option2=C:\\\\User\\\\file.pem option3=\$MY_ENV").valueOrThrow()
+        assertEquals(options.value("option1"), "/User/path/file.kt")
+        assertEquals(options.value("option2"), "C:\\User\\file.pem")
+        assertEquals(options.value("option3"), "\$MY_ENV")
+    }
+
+    fun testParserAcceptsValuesWithSpaces() {
+        val parser = SimpleExternalDependenciesResolverOptionsParser
+        val options = parser("option1= spaced\\ \\ value\\  option2=\\ x option3=line1\\nline2").valueOrThrow()
+        assertEquals(options.value("option1"), "spaced  value ")
+        assertEquals(options.value("option2"), " x")
+        assertEquals(options.value("option3"), "line1\nline2")
+    }
+
     fun testParserReturnsMixOfValuesAndFlags() {
         val parser = SimpleExternalDependenciesResolverOptionsParser
         val options = parser("option1 = hello option2 option3=world option4 option5 = false").valueOrThrow()
