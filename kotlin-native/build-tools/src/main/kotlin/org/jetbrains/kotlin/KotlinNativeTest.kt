@@ -141,6 +141,9 @@ fun <T : KonanTestExecutable> Project.createTest(name: String, type: Class<T>, c
                     this.dependsOn(buildTask)
                     doBeforeBuild?.let { buildTask.doFirst(it) }
                     buildTask.enabled = enabled
+
+                    // Connect task inputs to build tasks outputs
+                    inputs.files(buildTask.outputs.files)
                 }
             }
         }
