@@ -278,7 +278,14 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val entryPointName: String by lazy {
         if (target.family == Family.ANDROID) {
-            val androidProgramType = configuration.get(BinaryOptions.androidProgramType) ?: AndroidProgramType.Default
+            val androidProgramTypeOrNull = configuration.get(BinaryOptions.androidProgramType)
+            if (androidProgramTypeOrNull == null) {
+                configuration.report(CompilerMessageSeverity.WARNING,
+                        "Android Native executables are currently built as shared libraries with NativeActivity support, but the " +
+                                "default behavior is going to change to build regular executables instead. To keep using NativeActivity " +
+                                "support, please add the compiler flag '-Xbinary=androidProgramType=nativeActivity'.")
+            }
+            val androidProgramType = androidProgramTypeOrNull ?: AndroidProgramType.Default
             if (androidProgramType.konanMainOverride != null) {
                 return@lazy androidProgramType.konanMainOverride
             }
