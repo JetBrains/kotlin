@@ -60,6 +60,8 @@ For each test method add `@GradleTest` annotation and `gradleVersion: GradleVers
 All tests annotated with `@GradleTest` are [parameterized tests](https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests),
 where provided parameter is Gradle version. By default, test will receive minimal and latest supported Gradle versions. It is possible 
 to modify/add additional Gradle versions by adding `@GradleTestVersions` annotation either to the whole suite or to the specific test method.
+Prefer using [TestVersions](src/test/kotlin/org/jetbrains/kotlin/gradle/testbase/TestVersions.kt) to define required versions instead of
+writing them directly as String.
 
 Use test DSL defined [here](src/test/kotlin/org/jetbrains/kotlin/gradle/testbase/testDsl.kt) to write actual test case:
 ```kotlin

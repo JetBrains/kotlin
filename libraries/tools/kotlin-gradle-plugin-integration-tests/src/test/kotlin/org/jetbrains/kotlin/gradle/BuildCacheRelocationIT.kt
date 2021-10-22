@@ -119,7 +119,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     }
 
     @DisplayName("works with Android project")
-    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
     fun testRelocationAndroidProject(gradleVersion: GradleVersion) {
         val (firstProject, secondProject) = prepareTestProjects(
@@ -143,7 +143,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     }
 
     @DisplayName("Test relocation for Android with dagger project")
-    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
     fun testRelocationAndroidDagger(gradleVersion: GradleVersion) {
         val (firstProject, secondProject) = prepareTestProjects(

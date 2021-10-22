@@ -22,7 +22,7 @@ import kotlin.io.path.writeText
 class JvmTargetValidationTest : KGPBaseTest() {
 
     @DisplayName("Should produce warning if java and kotlin jvm targets are different")
-    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
     internal fun shouldWarnIfJavaAndKotlinJvmTargetsAreDifferent(gradleVersion: GradleVersion) {
         project(
@@ -43,7 +43,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Should fail the build if verification mode is 'error' and kotlin and java targets are different")
-    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
     internal fun shouldFailBuildIfJavaAndKotlinJvmTargetsAreDifferent(gradleVersion: GradleVersion) {
         project(
@@ -70,7 +70,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Should ignore if verification mode is 'ignore' and kotlin and java targets are different")
-    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
     internal fun shouldNotPrintAnythingIfJavaAndKotlinJvmTargetsAreDifferent(
         gradleVersion: GradleVersion
@@ -99,7 +99,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Should not produce warning when java and kotlin jvm targets are the same")
-    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
     internal fun shouldNotWarnOnJavaAndKotlinSameJvmTargets(gradleVersion: GradleVersion) {
         project(
@@ -118,7 +118,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Should produce Java-Kotlin jvm target incompatibility warning only for related tasks")
-    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
     internal fun shouldProduceJavaKotlinJvmTargetDifferenceWarningOnlyForRelatedTasks(
         gradleVersion: GradleVersion
@@ -160,7 +160,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Should correctly validate JVM targets in mixed Kotlin/Java projects that are using <JDK1.8")
-    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
     internal fun oldJdkMixedJavaKotlinTargetVerification(gradleVersion: GradleVersion) {
         project(
@@ -192,7 +192,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Should fail the build if verification mode is 'error' and kotlin and java targets are different with no kotlin sources")
-    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
     internal fun shouldFailBuildIfJavaAndKotlinJvmTargetsAreDifferentWithNoKotlinSources(gradleVersion: GradleVersion) {
         project(
@@ -240,7 +240,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Should do JVM target validation if java sources are added and configuration cache is reused")
-    @GradleTestVersions(minVersion = "6.6.1")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_6)
     @GradleTest
     @ExperimentalPathApi
     internal fun shouldDoJvmTargetValidationOnNewJavaSourcesAndConfigurationCacheReuse(gradleVersion: GradleVersion) {

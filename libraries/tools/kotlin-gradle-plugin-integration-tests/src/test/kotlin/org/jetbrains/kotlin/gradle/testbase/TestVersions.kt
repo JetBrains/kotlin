@@ -9,8 +9,21 @@ import org.jetbrains.kotlin.gradle.utils.minSupportedGradleVersion
 
 interface TestVersions {
     object Gradle {
+        const val G_6_1 = "6.1.1"
+        const val G_6_2 = "6.2.2"
+        const val G_6_3 = "6.3"
+        const val G_6_4 = "6.4.1"
+        const val G_6_5 = "6.5.1"
+        const val G_6_6 = "6.6.1"
+        const val G_6_7 = "6.7.1"
+        const val G_6_8 = "6.8.3"
+        const val G_6_9 = "6.9.1"
+        const val G_7_0 = "7.0.2"
+        const val G_7_1 = "7.1.1"
+        const val G_7_2 = "7.2"
+        const val G_7_3 = "7.3-rc-2"
         const val MIN_SUPPORTED = minSupportedGradleVersion
-        const val MAX_SUPPORTED = "7.0"
+        const val MAX_SUPPORTED = G_7_0
     }
 
     object Kotlin {

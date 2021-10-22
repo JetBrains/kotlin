@@ -36,7 +36,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     }
 
     @DisplayName("Android tasks are not configured")
-    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
     fun testAndroidUnrelatedTaskNotConfigured(gradleVersion: GradleVersion) {
         project(

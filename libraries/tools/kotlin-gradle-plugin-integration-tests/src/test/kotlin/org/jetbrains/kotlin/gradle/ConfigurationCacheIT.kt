@@ -98,7 +98,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     // Set min Gradle version to 6.8 because of using DependencyResolutionManagement API to add repositories.
     @DisplayName("with instance execution")
-    @GradleTestVersions(minVersion = "6.8.3")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_8)
     @GradleTest
     fun testInstantExecution(gradleVersion: GradleVersion) {
         project("instantExecution", gradleVersion) {
@@ -121,7 +121,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     }
 
     @DisplayName("instant execution works with included build plugin")
-    @GradleTestVersions(minVersion = "6.8.3")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_8)
     @GradleTest
     fun testInstantExecutionWithIncludedBuildPlugin(gradleVersion: GradleVersion) {
         project("instantExecutionWithIncludedBuildPlugin", gradleVersion) {
@@ -196,7 +196,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     }
 
     @DisplayName("works in MPP withJava project")
-    @GradleTestVersions(minVersion = "7.0.2", maxVersion = "7.1.1")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0, maxVersion = TestVersions.Gradle.G_7_1)
     @GradleTest
     fun testJvmWithJavaConfigurationCache(gradleVersion: GradleVersion) {
         project("mppJvmWithJava", gradleVersion) {
@@ -223,7 +223,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 }
 
 @SimpleGradlePluginTests
-@KGPBaseTest.GradleTestVersions(minVersion = "6.6.1")
+@GradleTestVersions(minVersion = TestVersions.Gradle.G_6_6)
 abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
     override val defaultBuildOptions =
         super.defaultBuildOptions.copy(configurationCache = true)
