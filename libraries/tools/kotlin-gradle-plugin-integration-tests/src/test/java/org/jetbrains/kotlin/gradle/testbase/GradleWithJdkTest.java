@@ -18,7 +18,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @GradleTestVersions
-@ParameterizedTest(name = "{0}: {displayName}")
-@ArgumentsSource(GradleArgumentsProvider.class)
-public @interface GradleTest {
+@JdkVersions
+@ParameterizedTest(name = "{1} with {0}: {displayName}")
+@ArgumentsSource(GradleAndJdkArgumentsProvider.class)
+public @interface GradleWithJdkTest {
 }

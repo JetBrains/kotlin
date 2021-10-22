@@ -85,6 +85,23 @@ plugins {
 A bunch of additional useful assertions available to use, such as file assertions, output assertions and task assertions. If you want to
 add a new assertion, add as a reviewer someone from Kotlin build tools team.
 
+##### Additional test helpers
+
+Whenever you need to test combination of different JDKs and Gradle versions - you could use `@GradleWithJdkTest` instead of `@GradleTest`. 
+Then test method will receive requires JDKs as a second parameter:
+```kotlin
+@JdkVersions(version = [JavaVersion.VERSION_11, JavaVersion.VERSION_17])
+@GradleWithJdkTest
+fun someTest(
+    gradleVersion: GradleVersion, 
+    providedJdk: JdkVersions.ProvidedJdk
+) {
+    project("simple", gradleVersion, buildJdk = providedJdk.location) {
+        build("assemble")
+    }
+}
+```
+
 ##### Deprecated tests setup
 
 When you create a new test, figure out which Gradle versions it is supposed to run on. Then, when you instantiate a test project, specify one of:
