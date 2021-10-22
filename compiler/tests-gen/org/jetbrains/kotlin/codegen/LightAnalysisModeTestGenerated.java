@@ -26858,6 +26858,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/ranges/forInDownTo/forInDownToWithPossibleUnderflow.kt");
             }
 
+            @TestMetadata("forInSumDownToSum.kt")
+            public void testForInSumDownToSum() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/forInDownTo/forInSumDownToSum.kt");
+            }
+
             @TestMetadata("forIntInDownTo.kt")
             public void testForIntInDownTo() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/forInDownTo/forIntInDownTo.kt");

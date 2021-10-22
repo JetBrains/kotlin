@@ -31682,6 +31682,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("forInSumDownToSum.kt")
+            public void testForInSumDownToSum() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/forInDownTo/forInSumDownToSum.kt");
+            }
+
+            @Test
             @TestMetadata("forIntInDownTo.kt")
             public void testForIntInDownTo() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/forInDownTo/forIntInDownTo.kt");
