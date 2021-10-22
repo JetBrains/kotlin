@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import org.jetbrains.kotlin.utils.join
 import java.io.File
 import java.io.IOException
+import java.lang.IllegalArgumentException
 
 enum class ProduceKind {
     DEFAULT,  // Determine what to produce based on js-v1 options
@@ -320,7 +321,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 val outputWatFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "wat")!!
                 outputWatFile.writeText(res.wat)
 
-                val runner = """
+                val esmRunner = """
                     export default WebAssembly.instantiateStreaming(fetch('${outputWasmFile.name}'), { runtime, js_code }).then((it) => {
                         wasmInstance = it.instance;
                         wasmInstance.exports.__init?.();
@@ -329,6 +330,27 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                         return it.instance.exports;
                     });
                 """.trimIndent()
+
+                val nodeRunner = """
+                    const fs = require('fs');
+                    var path = require('path');
+                    const wasmBuffer = fs.readFileSync(path.resolve(__dirname, './${outputWasmFile.name}'));
+                    
+                    module.exports = WebAssembly.instantiate(wasmBuffer, { runtime, js_code }).then(wasm => {
+                        wasmInstance = wasm.instance;
+                    
+                        wasmInstance.exports.__init?.();
+                        wasmInstance.exports.startUnitTests?.();
+                    
+                        return wasmInstance.exports
+                    });
+                """.trimIndent()
+
+                val runner = when (arguments.wasmLauncher) {
+                    "esm" -> esmRunner
+                    "nodejs" -> nodeRunner
+                    else -> throw IllegalArgumentException("Unrecognized flavor for the wasm launcher")
+                }
 
                 outputFile.writeText(res.js + "\n" + runner)
                 return OK
