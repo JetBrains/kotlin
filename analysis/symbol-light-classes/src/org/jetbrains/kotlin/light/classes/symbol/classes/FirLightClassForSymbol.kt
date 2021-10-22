@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
@@ -17,10 +18,12 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
@@ -157,29 +160,40 @@ internal open class FirLightClassForSymbol(
             )
         }
 
-        analyzeWithSymbolAsContext(classOrObjectSymbol) {
-            val componentAndCopyFunctions = mutableListOf<KtFunctionSymbol>()
-            val functionsFromAny = mutableMapOf<Name, KtFunctionSymbol>()
-            // NB: componentN and copy are added during RAW FIR, but synthetic members from `Any` are not.
-            // Thus, using declared member scope is not sufficient to lookup "all" synthetic members.
-            classOrObjectSymbol.getMemberScope().getCallableSymbols().forEach { functionSymbol ->
-                if (functionSymbol is KtFunctionSymbol) {
-                    val name = functionSymbol.name
-                    if (functionSymbol.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED &&
-                        (DataClassResolver.isCopy(name) || DataClassResolver.isComponentLike(name))
-                    ) {
-                        componentAndCopyFunctions.add(functionSymbol)
-                    }
-                    if (functionSymbol.dispatchType?.isAny == true && name.isFromAny) {
-                        functionsFromAny[name] = functionSymbol
-                    }
-                }
+        fun KtAnalysisSession.actuallyComesFromAny(functionSymbol: KtFunctionSymbol): Boolean {
+            require(functionSymbol.name.isFromAny) {
+                "This function's name should one of three Any's function names, but it was ${functionSymbol.name}"
             }
-            createMethods(componentAndCopyFunctions.asSequence(), result)
+
+            if (functionSymbol.callableIdIfNonLocal?.classId == StandardClassIds.Any) return true
+
+            return functionSymbol.getAllOverriddenSymbols().any { it.callableIdIfNonLocal?.classId == StandardClassIds.Any }
+        }
+
+        // NB: componentN and copy are added during RAW FIR, but synthetic members from `Any` are not.
+        // That's why we use declared scope for 'component*' and 'copy', and member scope for 'equals/hashCode/toString'
+        analyzeWithSymbolAsContext(classOrObjectSymbol) {
+            val componentAndCopyFunctions = classOrObjectSymbol.getDeclaredMemberScope()
+                .getCallableSymbols { name -> DataClassResolver.isCopy(name) || DataClassResolver.isComponentLike(name) }
+                .filter { it.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED }
+                .filterIsInstance<KtFunctionSymbol>()
+
+            createMethods(componentAndCopyFunctions, result)
+
+            // Compiler will generate 'equals/hashCode/toString' for data class if they are not final.
+            // We want to mimic that.
+            val nonFinalFunctionsFromAny = classOrObjectSymbol.getMemberScope()
+                .getCallableSymbols { name -> name.isFromAny }
+                .filterIsInstance<KtFunctionSymbol>()
+                .filterNot { it.modality == Modality.FINAL }
+                .filter { actuallyComesFromAny(it) }
+
+            val functionsFromAnyByName = nonFinalFunctionsFromAny.associateBy { it.name }
+
             // NB: functions from `Any` are not in an alphabetic order.
-            functionsFromAny[TO_STRING]?.let { createMethodFromAny(it) }
-            functionsFromAny[HASHCODE_NAME]?.let { createMethodFromAny(it) }
-            functionsFromAny[EQUALS]?.let { createMethodFromAny(it) }
+            functionsFromAnyByName[TO_STRING]?.let { createMethodFromAny(it) }
+            functionsFromAnyByName[HASHCODE_NAME]?.let { createMethodFromAny(it) }
+            functionsFromAnyByName[EQUALS]?.let { createMethodFromAny(it) }
         }
     }
 
