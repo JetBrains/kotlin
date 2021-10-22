@@ -144,6 +144,9 @@ fun <T : KonanTestExecutable> Project.createTest(name: String, type: Class<T>, c
 
                     // Connect task inputs to build tasks outputs
                     inputs.files(buildTask.outputs.files)
+
+                    // Turn-off UP-TO-DATE checks for build tasks
+                    buildTask.outputs.upToDateWhen { false }
                 }
             }
         }
