@@ -54,11 +54,11 @@ val commonMainSources by task<Sync> {
 }
 
 kotlin {
-    js(IR) {
+    wasm {
         nodejs()
     }
     sourceSets {
-        val jsMain by getting {
+        val wasmMain by getting {
             kotlin.srcDirs("builtins", "internal", "runtime", "src", "stubs")
             kotlin.srcDirs("../native-wasm/")
             kotlin.srcDirs(files(builtInsSources.map { it.destinationDir }))
@@ -84,7 +84,7 @@ tasks.withType<KotlinCompile<*>>().configureEach {
     )
 }
 
-tasks.named("compileKotlinJs") {
+tasks.named("compileKotlinWasm") {
     (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
     dependsOn(commonMainSources)
     dependsOn(builtInsSources)
@@ -95,7 +95,7 @@ val apiElements by configurations.creating {}
 
 publish {
     pom.packaging = "klib"
-    artifact(tasks.named("jsJar")) {
+    artifact(tasks.named("wasmJar")) {
         extension = "klib"
     }
 }

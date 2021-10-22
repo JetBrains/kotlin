@@ -371,11 +371,11 @@ projectTest("wasmTest", true) {
 
     include("org/jetbrains/kotlin/js/test/wasm/semantics/*")
 
-    dependsOn(":kotlin-stdlib-wasm:compileKotlinJs")
-    systemProperty("kotlin.wasm.stdlib.path", "libraries/stdlib/wasm/build/classes/kotlin/js/main")
+    dependsOn(":kotlin-stdlib-wasm:compileKotlinWasm")
+    systemProperty("kotlin.wasm.stdlib.path", "libraries/stdlib/wasm/build/classes/kotlin/wasm/main")
 
-    dependsOn(":kotlin-test:kotlin-test-wasm:compileKotlinJs")
-    systemProperty("kotlin.wasm.kotlin.test.path", "libraries/kotlin.test/wasm/build/classes/kotlin/js/main")
+    dependsOn(":kotlin-test:kotlin-test-wasm:compileKotlinWasm")
+    systemProperty("kotlin.wasm.kotlin.test.path", "libraries/kotlin.test/wasm/build/classes/kotlin/wasm/main")
 
     setUpBoxTests()
 }

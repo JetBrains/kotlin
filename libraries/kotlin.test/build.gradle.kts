@@ -263,7 +263,7 @@ val (wasmApi, wasmRuntime) = listOf("api", "runtime").map { usage ->
         isCanBeResolved = false
         attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named("kotlin-$usage"))
-            attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+            attribute(KotlinPlatformType.attribute, KotlinPlatformType.wasm)
         }
     }
 }
@@ -274,7 +274,7 @@ dependencies {
 }
 
 artifacts {
-    val wasmJar = tasks.getByPath(":kotlin-test:kotlin-test-wasm:jsJar")
+    val wasmJar = tasks.getByPath(":kotlin-test:kotlin-test-wasm:wasmJar")
     add(wasmApi.name, wasmJar)
     add(wasmRuntime.name, wasmJar)
 }

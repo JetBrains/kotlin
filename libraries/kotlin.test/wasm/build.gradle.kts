@@ -18,7 +18,7 @@ val commonMainSources by task<Sync> {
 }
 
 kotlin {
-    js(IR) {
+    wasm {
         nodejs()
     }
 
@@ -29,7 +29,7 @@ kotlin {
             }
             kotlin.srcDir(commonMainSources.get().destinationDir)
         }
-        val jsMain by getting {
+        val wasmMain by getting {
             dependencies {
                 api(project(":kotlin-stdlib-wasm"))
             }
@@ -46,7 +46,7 @@ tasks.withType<KotlinCompile<*>>().configureEach {
     )
 }
 
-tasks.named("compileKotlinJs") {
+tasks.named("compileKotlinWasm") {
     (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin-test"
     dependsOn(commonMainSources)
 }
