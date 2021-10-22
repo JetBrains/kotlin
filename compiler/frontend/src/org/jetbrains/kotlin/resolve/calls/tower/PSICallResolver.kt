@@ -77,6 +77,8 @@ class PSICallResolver(
 ) {
     private val givenCandidatesName = Name.special("<given candidates>")
 
+    private val arePartiallySpecifiedTypeArgumentsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.PartiallySpecifiedTypeArguments)
+
     val defaultResolutionKinds = setOf(
         NewResolutionOldInference.ResolutionKind.Function,
         NewResolutionOldInference.ResolutionKind.Variable,
@@ -689,7 +691,7 @@ class PSICallResolver(
 
             val typeReference = projection.typeReference ?: return@map TypeArgumentPlaceholder
 
-            if (typeReference.isPlaceholder) {
+            if (typeReference.isPlaceholder && arePartiallySpecifiedTypeArgumentsEnabled) {
                 val resolvedAnnotations = typeResolver.resolveTypeAnnotations(context.trace, context.scope, typeReference)
                     .apply(ForceResolveUtil::forceResolveAllContents)
 

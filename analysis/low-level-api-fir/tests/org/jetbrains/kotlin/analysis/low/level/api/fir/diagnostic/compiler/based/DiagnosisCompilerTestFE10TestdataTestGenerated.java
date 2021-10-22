@@ -13480,6 +13480,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("underscoredTypeArgument.kt")
+            public void testUnderscoredTypeArgument() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/underscoredTypeArgument.kt");
+            }
+
+            @Test
             @TestMetadata("useFunctionLiteralsToInferType.kt")
             public void testUseFunctionLiteralsToInferType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/useFunctionLiteralsToInferType.kt");

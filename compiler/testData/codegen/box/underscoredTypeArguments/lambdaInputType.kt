@@ -1,3 +1,5 @@
+// !LANGUAGE: +PartiallySpecifiedTypeArguments
+
 sealed class MyResult<out T>{
     data class Success<T>(val value: T): MyResult<T>()
     data class Failure(val exception: Throwable): MyResult<Nothing>()

@@ -1,0 +1,4 @@
+package
+
+public fun box(): kotlin.String
+public fun </*0*/ K, /*1*/ T> foo(/*0*/ x: (K) -> T): kotlin.Pair<K, T>
