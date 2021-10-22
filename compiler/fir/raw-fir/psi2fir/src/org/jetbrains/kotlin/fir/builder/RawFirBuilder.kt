@@ -1775,10 +1775,6 @@ open class RawFirBuilder(
             }
         }
 
-        // TODO introduce placeholder projection type
-        private fun KtTypeProjection.isPlaceholderProjection() =
-            projectionKind == KtProjectionKind.NONE && (typeReference?.typeElement as? KtUserType)?.referencedName == "_"
-
         override fun visitTypeProjection(typeProjection: KtTypeProjection, data: Unit): FirElement {
             val projectionKind = typeProjection.projectionKind
             val projectionSource = typeProjection.toFirSourceElement()
@@ -1787,10 +1783,10 @@ open class RawFirBuilder(
                     source = projectionSource
                 }
             }
-            if (typeProjection.isPlaceholderProjection()) {
+            val typeReference = typeProjection.typeReference
+            if (typeReference?.isPlaceholder == true) {
                 return FirTypePlaceholderProjection
             }
-            val typeReference = typeProjection.typeReference
             val firType = typeReference.toFirOrErrorType()
             return buildTypeProjectionWithVariance {
                 source = projectionSource
