@@ -594,7 +594,7 @@ class ExpressionsConverter(
                         additionalArgument = getAsFirExpression(node, "Incorrect invoke receiver")
                     }
                     TYPE_ARGUMENT_LIST -> {
-                        firTypeArguments += declarationsConverter.convertTypeArguments(node)
+                        firTypeArguments += declarationsConverter.convertTypeArguments(node, allowedUnderscoredTypeArgument = true)
                     }
                     VALUE_ARGUMENT_LIST, LAMBDA_ARGUMENT -> {
                         hasArguments = true

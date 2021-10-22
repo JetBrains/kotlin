@@ -51,9 +51,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
-import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
+import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
@@ -2010,7 +2008,7 @@ class DeclarationsConverter(
                 }
                 TYPE_ARGUMENT_LIST -> {
                     typeArgumentsSource = it.toFirSourceElement()
-                    firTypeArguments += convertTypeArguments(it)
+                    firTypeArguments += convertTypeArguments(it, allowedUnderscoredTypeArgument = false)
                 }
             }
         }
@@ -2040,10 +2038,10 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeArgumentList
      */
-    fun convertTypeArguments(typeArguments: LighterASTNode): List<FirTypeProjection> {
+    fun convertTypeArguments(typeArguments: LighterASTNode, allowedUnderscoredTypeArgument: Boolean): List<FirTypeProjection> {
         return typeArguments.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
-                TYPE_PROJECTION -> container += convertTypeProjection(node)
+                TYPE_PROJECTION -> container += convertTypeProjection(node, allowedUnderscoredTypeArgument)
             }
         }
     }
@@ -2051,7 +2049,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.tryParseTypeArgumentList
      */
-    private fun convertTypeProjection(typeProjection: LighterASTNode): FirTypeProjection {
+    private fun convertTypeProjection(typeProjection: LighterASTNode, allowedUnderscoredTypeArgument: Boolean): FirTypeProjection {
         var modifiers = TypeProjectionModifier()
         lateinit var firType: FirTypeRef
         var isStarProjection = false
@@ -2064,11 +2062,14 @@ class DeclarationsConverter(
         }
 
         //annotations from modifiers must be ignored
-        return if (isStarProjection) buildStarProjection { source = typeProjection.toFirSourceElement() }
-        else buildTypeProjectionWithVariance {
-            source = typeProjection.toFirSourceElement()
-            typeRef = firType
-            variance = modifiers.getVariance()
+        return when {
+            isStarProjection -> buildStarProjection { source = typeProjection.toFirSourceElement() }
+            allowedUnderscoredTypeArgument && (firType as? FirUserTypeRef)?.isUnderscored == true -> FirTypePlaceholderProjection
+            else -> buildTypeProjectionWithVariance {
+                source = typeProjection.toFirSourceElement()
+                typeRef = firType
+                variance = modifiers.getVariance()
+            }
         }
     }
 
