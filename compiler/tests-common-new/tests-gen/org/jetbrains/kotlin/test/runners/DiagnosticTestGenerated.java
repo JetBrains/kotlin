@@ -17276,6 +17276,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("safeCallDefinitelyNotNull.kt")
+            public void testSafeCallDefinitelyNotNull() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/safeCallDefinitelyNotNull.kt");
+            }
+
+            @Test
             @TestMetadata("samInConstructorWithGenerics.kt")
             public void testSamInConstructorWithGenerics() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/samInConstructorWithGenerics.kt");

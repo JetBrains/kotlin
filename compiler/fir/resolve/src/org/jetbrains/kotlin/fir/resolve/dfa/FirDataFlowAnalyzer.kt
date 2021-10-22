@@ -890,7 +890,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
         safeCall.receiver.let { receiver ->
             val type = receiver.coneType.takeIf { it.isMarkedNullable }
-                ?.withNullability(ConeNullability.NOT_NULL, components.session.typeContext)
+                ?.makeConeTypeDefinitelyNotNullOrNotNull(components.session.typeContext)
                 ?: return@let
 
             val variable = variableStorage.getOrCreateVariable(flow, receiver)
