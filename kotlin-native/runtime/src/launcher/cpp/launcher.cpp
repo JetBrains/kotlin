@@ -21,7 +21,7 @@
 #include "Types.h"
 #include "Worker.h"
 
-#ifndef KONAN_ANDROID
+#include "launcher.h"
 
 //--- Setup args --------------------------------------------------------------//
 
@@ -38,8 +38,6 @@ OBJ_GETTER(setupArgs, int argc, const char** argv) {
 }
 
 //--- main --------------------------------------------------------------------//
-extern "C" KInt Konan_start(const ObjHeader*);
-
 extern "C" KInt Konan_run_start(int argc, const char** argv) {
     ObjHolder args;
     setupArgs(argc, argv, args.slot());
@@ -64,7 +62,11 @@ extern "C" RUNTIME_USED int Init_and_run_start(int argc, const char** argv, int 
   return exitStatus;
 }
 
+#ifndef KONAN_ANDROID
 extern "C" RUNTIME_USED int Konan_main(int argc, const char** argv) {
+#else
+extern "C" RUNTIME_USED int Konan_main_standalone(int argc, const char** argv) {
+#endif
     return Init_and_run_start(argc, argv, 1);
 }
 
@@ -82,7 +84,5 @@ extern "C" RUNTIME_USED int Konan_js_main(int argc, int memoryDeInit) {
     }
     return Init_and_run_start(argc, (const char**)argv, memoryDeInit);
 }
-
-#endif 
 
 #endif
