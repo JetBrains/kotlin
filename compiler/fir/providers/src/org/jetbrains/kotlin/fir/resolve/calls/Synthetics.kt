@@ -85,33 +85,31 @@ class FirSyntheticPropertiesScope(
         var matchingSetter: FirSimpleFunction? = null
         if (getterReturnType != null) {
             val setterName = syntheticNamesProvider.setterNameByGetterName(getterName)
-            if (setterName != null) {
-                baseScope.processFunctionsByName(setterName, fun(setterSymbol: FirFunctionSymbol<*>) {
-                    if (matchingSetter != null) return
-                    val setter = setterSymbol.fir as? FirSimpleFunction ?: return
-                    val parameter = setter.valueParameters.singleOrNull() ?: return
-                    if (setter.typeParameters.isNotEmpty() || setter.isStatic) return
-                    val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.type ?: return
-                    // TODO: at this moment it works for cases like
-                    // class Base {
-                    //     void setSomething(Object value) {}
-                    // }
-                    // class Derived extends Base {
-                    //     String getSomething() { return ""; }
-                    // }
-                    // In FE 1.0, we should have also Object getSomething() in class Base for this to work
-                    // I think details here are worth designing
-                    if (!AbstractTypeChecker.isSubtypeOf(
-                            session.typeContext,
-                            getterReturnType.withNullability(NOT_NULL, session.typeContext),
-                            parameterType.withNullability(NOT_NULL, session.typeContext)
-                        )
-                    ) {
-                        return
-                    }
-                    matchingSetter = setter
-                })
-            }
+            baseScope.processFunctionsByName(setterName, fun(setterSymbol: FirFunctionSymbol<*>) {
+                if (matchingSetter != null) return
+                val setter = setterSymbol.fir as? FirSimpleFunction ?: return
+                val parameter = setter.valueParameters.singleOrNull() ?: return
+                if (setter.typeParameters.isNotEmpty() || setter.isStatic) return
+                val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.type ?: return
+                // TODO: at this moment it works for cases like
+                // class Base {
+                //     void setSomething(Object value) {}
+                // }
+                // class Derived extends Base {
+                //     String getSomething() { return ""; }
+                // }
+                // In FE 1.0, we should have also Object getSomething() in class Base for this to work
+                // I think details here are worth designing
+                if (!AbstractTypeChecker.isSubtypeOf(
+                        session.typeContext,
+                        getterReturnType.withNullability(NOT_NULL, session.typeContext),
+                        parameterType.withNullability(NOT_NULL, session.typeContext)
+                    )
+                ) {
+                    return
+                }
+                matchingSetter = setter
+            })
         }
 
         val classLookupTag = getterSymbol.originalOrSelf().dispatchReceiverClassOrNull()

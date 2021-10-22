@@ -29875,6 +29875,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("nonAsciiSecondChar.kt")
+                public void testNonAsciiSecondChar() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/nonAsciiSecondChar.kt");
+                }
+
+                @Test
                 @TestMetadata("OnlyAscii.kt")
                 public void testOnlyAscii() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/OnlyAscii.kt");
