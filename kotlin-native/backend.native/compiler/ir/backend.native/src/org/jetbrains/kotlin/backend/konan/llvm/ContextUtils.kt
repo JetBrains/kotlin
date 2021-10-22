@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.toKString
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.BoxCache
 import org.jetbrains.kotlin.backend.konan.CachedLibraries
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.backend.konan.Context
@@ -586,6 +587,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
     var fileUsesThreadLocalObjects = false
     val globalSharedObjects = mutableSetOf<LLVMValueRef>()
     val initializersGenerationState = InitializersGenerationState()
+    val boxCacheGlobals = mutableMapOf<BoxCache, StaticData.Global>()
+
 
     private object lazyRtFunction {
         operator fun provideDelegate(

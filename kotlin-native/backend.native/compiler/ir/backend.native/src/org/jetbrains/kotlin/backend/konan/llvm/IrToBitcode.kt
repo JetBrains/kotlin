@@ -1845,7 +1845,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                         require(codegen.getLLVMType(value.type) == codegen.kObjHeaderPtr) {
                             "Can't wrap ${value.value.kind.asString} constant to type ${value.type.render()}"
                         }
-                        context.llvm.staticData.createConstKotlinObject(
+                        value.toBoxCacheValue(context) ?: context.llvm.staticData.createConstKotlinObject(
                                 constructedType.getClass()!!,
                                 evaluateConst(value.value)
                         )

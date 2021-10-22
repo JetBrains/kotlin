@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import llvm.LLVMConstInt
-import llvm.LLVMTypeRef
+import llvm.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -15,6 +14,8 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.ir.expressions.IrConstantPrimitive
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultOrNullableType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.getContainingFile
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.Name
 
@@ -168,13 +168,13 @@ internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.
  * If output target is native binary then the cache is created.
  */
 internal fun initializeCachedBoxes(context: Context) {
-    if (context.producedLlvmModuleContainsStdlib) {
-        BoxCache.values().forEach { cache ->
-            val cacheName = "${cache.name}_CACHE"
-            val rangeStart = "${cache.name}_RANGE_FROM"
-            val rangeEnd = "${cache.name}_RANGE_TO"
-            initCache(cache, context, cacheName, rangeStart, rangeEnd)
-        }
+    BoxCache.values().forEach { cache ->
+        val cacheName = "${cache.name}_CACHE"
+        val rangeStart = "${cache.name}_RANGE_FROM"
+        val rangeEnd = "${cache.name}_RANGE_TO"
+        initCache(cache, context, cacheName, rangeStart, rangeEnd,
+                declareOnly = !context.producedLlvmModuleContainsStdlib
+        ).also { context.llvm.boxCacheGlobals[cache] = it }
     }
 }
 
@@ -182,22 +182,55 @@ internal fun initializeCachedBoxes(context: Context) {
  * Adds global that refers to the cache.
  */
 private fun initCache(cache: BoxCache, context: Context, cacheName: String,
-                      rangeStartName: String, rangeEndName: String) {
+                      rangeStartName: String, rangeEndName: String, declareOnly: Boolean) : StaticData.Global {
 
     val kotlinType = context.irBuiltIns.getKotlinClass(cache)
     val staticData = context.llvm.staticData
     val llvmType = staticData.getLLVMType(kotlinType.defaultType)
-
-    val (start, end) = context.config.target.getBoxCacheRange(cache)
-    // Constancy of these globals allows LLVM's constant propagation and DCE
-    // to remove fast path of boxing function in case of empty range.
-    staticData.placeGlobal(rangeStartName, createConstant(llvmType, start), true)
-            .setConstant(true)
-    staticData.placeGlobal(rangeEndName, createConstant(llvmType, end), true)
-            .setConstant(true)
-    val values = (start..end).map { staticData.createInitializer(kotlinType, createConstant(llvmType, it)) }
     val llvmBoxType = structType(context.llvm.runtime.objHeaderType, llvmType)
-    staticData.placeGlobalConstArray(cacheName, llvmBoxType, values, true).llvm
+    val (start, end) = context.config.target.getBoxCacheRange(cache)
+
+    return if (declareOnly) {
+        staticData.createGlobal(LLVMArrayType(llvmBoxType, end - start + 1)!!, cacheName, true)
+    } else {
+        // Constancy of these globals allows LLVM's constant propagation and DCE
+        // to remove fast path of boxing function in case of empty range.
+        staticData.placeGlobal(rangeStartName, createConstant(llvmType, start), true)
+                .setConstant(true)
+        staticData.placeGlobal(rangeEndName, createConstant(llvmType, end), true)
+                .setConstant(true)
+        val values = (start..end).map { staticData.createInitializer(kotlinType, createConstant(llvmType, it)) }
+        staticData.placeGlobalArray(cacheName, llvmBoxType, values, true).also {
+            it.setConstant(true)
+        }
+    }
+}
+
+internal fun IrConstantPrimitive.toBoxCacheValue(context: Context): ConstValue? {
+    val cacheType = when (value.type) {
+        context.irBuiltIns.booleanType -> BoxCache.BOOLEAN
+        context.irBuiltIns.byteType -> BoxCache.BYTE
+        context.irBuiltIns.shortType -> BoxCache.SHORT
+        context.irBuiltIns.charType -> BoxCache.CHAR
+        context.irBuiltIns.intType -> BoxCache.INT
+        context.irBuiltIns.longType -> BoxCache.LONG
+        else -> return null
+    }
+    val value = when (value.kind) {
+        IrConstKind.Boolean -> if (value.value as Boolean) 1L else 0L
+        IrConstKind.Byte -> (value.value as Byte).toLong()
+        IrConstKind.Short -> (value.value as Short).toLong()
+        IrConstKind.Char -> (value.value as Char).code.toLong()
+        IrConstKind.Int -> (value.value as Int).toLong()
+        IrConstKind.Long -> value.value as Long
+        else -> throw IllegalArgumentException("IrConst of kind ${value.kind} can't be converted to box cache")
+    }
+    val (start, end) = context.config.target.getBoxCacheRange(cacheType)
+    return if (value in start..end) {
+        context.llvm.boxCacheGlobals[cacheType]?.pointer?.getElementPtr(value.toInt() - start)?.getElementPtr(0)
+    } else {
+        null
+    }
 }
 
 private fun createConstant(llvmType: LLVMTypeRef, value: Int): ConstValue =
