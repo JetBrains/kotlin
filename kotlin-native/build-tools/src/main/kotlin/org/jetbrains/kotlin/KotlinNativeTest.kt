@@ -54,7 +54,7 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
     /**
      * Test executable arguments.
      */
-    @Input
+    @get:Input
     var arguments = mutableListOf<String>()
 
     /**
@@ -65,13 +65,13 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
     /**
      * Test source.
      */
-    @Internal
+    @get:Internal
     lateinit var source: String
 
     /**
      * Sets test filtering to choose the exact test in the executable built with TestRunner.
      */
-    @Input
+    @get:Input
     var useFilter = true
 
     /**
@@ -79,10 +79,10 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
      * As this run task comes after the build task all actions for doFirst
      * should be done before the build and not run.
      */
-    @Internal
+    @get:Internal
     override var doBeforeBuild: Action<in Task>? = null
 
-    @Internal
+    @get:Internal
     override var doBeforeRun: Action<in Task>? = null
 
     @get:Internal
@@ -159,14 +159,14 @@ open class KonanGTest : KonanTest() {
     override val executable: String
         get() = "$outputDirectory/${project.testTarget.name}/$name.${project.testTarget.family.exeSuffix}"
 
-    @Internal
+    @get:Internal
     var statistics = Statistics()
 
     @TaskAction
     override fun run() {
         doBeforeRun?.execute(this)
         runProcess(
-                executor = { project.executor.execute(it) },
+                executor = project.executor::execute,
                 executable = executable,
                 args = arguments
         ).run {
@@ -211,23 +211,23 @@ open class KonanLocalTest : KonanTest() {
 
     override var testLogger = Logger.SILENT
 
-    @Input
-    @Optional
+    @get:Input
+    @get:Optional
     var expectedExitStatus: Int? = null
 
-    @Internal
+    @get:Internal
     var expectedExitStatusChecker: (Int) -> Boolean = { it == (expectedExitStatus ?: 0) }
 
     /**
      * Should this test fail or not.
      */
-    @Input
+    @get:Input
     var expectedFail = false
 
     /**
      * Used to validate output against the golden data.
      */
-    @Input
+    @get:Input
     var useGoldenData: Boolean = false
 
     @get:InputFile
@@ -255,7 +255,7 @@ open class KonanLocalTest : KonanTest() {
     /**
      * Checks test's output against gold value and returns true if the output matches the expectation.
      */
-    @Internal
+    @get:Internal
     var outputChecker: (String) -> Boolean = { output ->
         if (useGoldenData) goldenData == output else true
     }
@@ -263,7 +263,7 @@ open class KonanLocalTest : KonanTest() {
     /**
      * Input test data to be passed to process stdin.
      */
-    @Input
+    @get:Input
     var useTestData: Boolean = false
 
     @get:InputFile
@@ -287,14 +287,14 @@ open class KonanLocalTest : KonanTest() {
     /**
      * Should compiler message be read and validated with output checker or gold value.
      */
-    @Input
+    @get:Input
     var compilerMessages = false
 
-    @Input
+    @get:Input
     var multiRuns = false
 
-    @Input
-    @Optional
+    @get:Input
+    @get:Optional
     var multiArguments: List<List<String>>? = null
 
     @TaskAction
@@ -386,16 +386,16 @@ open class KonanStandaloneTest : KonanLocalTest() {
     override val executable: String
         get() = "$outputDirectory/${project.testTarget.name}/$name.${project.testTarget.family.exeSuffix}"
 
-    @Input
+    @get:Input
     var enableKonanAssertions = true
 
-    @Input
+    @get:Input
     var verifyIr = true
 
     /**
      * Compiler flags used to build a test.
      */
-    @Internal
+    @get:Internal
     var flags: List<String> = listOf()
         get() {
             val result = field.toMutableList()
@@ -465,12 +465,12 @@ open class KonanInteropTest : KonanStandaloneTest() {
     /**
      * Name of the interop library
      */
-    @Input
+    @get:Input
     lateinit var interop: String
 }
 
 open class KonanLinkTest : KonanStandaloneTest() {
-    @Input
+    @get:Input
     lateinit var lib: String
 }
 
@@ -492,14 +492,14 @@ open class KonanDynamicTest : KonanStandaloneTest() {
     @get:Input
     lateinit var cSource: String
 
-    @Input
+    @get:Input
     var clangTool = "clang"
 
-    @Input
+    @get:Input
     var clangFlags: List<String> = listOf()
 
-    @Input
-    @Optional
+    @get:Input
+    @get:Optional
     var interop: String? = null
 
     override fun computeGoldenDataFile(): File {
