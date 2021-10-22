@@ -96,7 +96,38 @@ internal fun runToolInSeparateProcess(
     val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
     val classpathString = classpath.joinToString(separator = File.pathSeparator) { it.absolutePath }
 
-    val compilerOptions = writeArgumentsToFile(buildDir, argsArray)
+    val extraPreSuffix =
+        if (compilerClassName.contains("K2JVMCompiler")) {
+            "jvm"
+        } else if (compilerClassName.contains("K2JSCompiler")) {
+            "js"
+        } else if (compilerClassName.contains("K2JSDce")) {
+            "dce"
+        } else {
+            "null"
+        }
+    val compilerOptions = writeArgumentsToFile(File("/home/erokhins/IdeaProjects_closed/space_build/"), argsArray, extraPreSuffix)
+
+    println()
+    println()
+
+    listOf(
+        javaBin,
+        *(jvmArgs.toTypedArray()),
+        "-cp",
+        classpathString,
+        compilerClassName,
+        "@${compilerOptions.absolutePath}"
+    ).forEach {
+        println(it)
+    }
+
+    while (true) {
+        Thread.sleep(400)
+        if (!File(compilerOptions.absolutePath).exists()) {
+            return ExitCode.OK
+        }
+    }
 
     val builder = ProcessBuilder(
         javaBin,
@@ -133,9 +164,9 @@ internal fun runToolInSeparateProcess(
     return exitCodeFromProcessExitCode(logger, exitCode)
 }
 
-private fun writeArgumentsToFile(directory: File, argsArray: Array<String>): File {
+private fun writeArgumentsToFile(directory: File, argsArray: Array<String>, extraPreSuffix: String = ""): File {
     val prefix = LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE) + "_"
-    val suffix = ".compiler.options"
+    val suffix = "$extraPreSuffix.compiler.options"
     val compilerOptions = if (directory.exists())
         Files.createTempFile(directory.toPath(), prefix, suffix).toFile()
     else

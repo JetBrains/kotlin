@@ -161,6 +161,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         return if (executionStrategy == IN_PROCESS_EXECUTION_STRATEGY || isGradleDaemonUsed == false) {
             compileInProcess(messageCollector)
         } else {
+            println("Compiling OOP")
             compileOutOfProcess()
         }
     }

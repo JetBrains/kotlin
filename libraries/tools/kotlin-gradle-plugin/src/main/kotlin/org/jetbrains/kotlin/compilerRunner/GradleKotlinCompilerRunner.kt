@@ -42,7 +42,7 @@ import java.lang.ref.WeakReference
 
 internal const val KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY = "kotlin.compiler.execution.strategy"
 internal const val DAEMON_EXECUTION_STRATEGY = "daemon"
-internal const val IN_PROCESS_EXECUTION_STRATEGY = "in-process"
+internal const val IN_PROCESS_EXECUTION_STRATEGY = "in-f-process"
 internal const val OUT_OF_PROCESS_EXECUTION_STRATEGY = "out-of-process"
 const val CREATED_CLIENT_FILE_PREFIX = "Created client-is-alive flag file: "
 const val EXISTING_CLIENT_FILE_PREFIX = "Existing client-is-alive flag file: "
