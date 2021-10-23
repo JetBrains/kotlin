@@ -33,3 +33,6 @@ val KotlinBuildProperties.pathToYoutrackModularizedTestData: String?
 
 val KotlinBuildProperties.isObsoleteJdkOverrideEnabled: Boolean
     get() = getBoolean("kotlin.build.isObsoleteJdkOverrideEnabled", false)
+
+val KotlinBuildProperties.isNativeRuntimeDebugInfoEnabled: Boolean
+    get() = getBoolean("kotlin.native.isNativeRuntimeDebugInfoEnabled", false)
