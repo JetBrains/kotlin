@@ -45,11 +45,11 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractFirMemberScopeByFqNameTest> {
-                model("memberScopeByFqName")
+                model("scopes/memberScopeByFqName")
             }
 
             testClass<AbstractFirFileScopeTest> {
-                model("fileScopeTest", extension = "kt")
+                model("scopes/fileScopeTest", extension = "kt")
             }
 
             testClass<AbstractFirSymbolByPsiTest> {
@@ -111,11 +111,11 @@ fun main(args: Array<String>) {
 //            }
 
 //            testClass<AbstractKtFe10MemberScopeByFqNameTest> {
-//                model("memberScopeByFqName")
+//                model("scopes/memberScopeByFqName")
 //            }
 
 //            testClass<AbstractKtFe10FileScopeTest> {
-//                model("fileScopeTest", extension = "kt")
+//                model("scopes/fileScopeTest", extension = "kt")
 //            }
 
 //            testClass<AbstractKtFe10SymbolByPsiTest> {
