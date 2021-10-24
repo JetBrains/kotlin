@@ -73,7 +73,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractFirOverriddenDeclarationProviderTest> {
-                model("components/overridenDeclarations")
+                model("components/overriddenDeclarations")
             }
 
             testClass<AbstractFirHLExpressionTypeTest> {
@@ -139,7 +139,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractKtFe10OverriddenDeclarationProviderTest> {
-                model("components/overridenDeclarations")
+                model("components/overriddenDeclarations")
             }
 
             testClass<AbstractKtFe10HLExpressionTypeTest> {
