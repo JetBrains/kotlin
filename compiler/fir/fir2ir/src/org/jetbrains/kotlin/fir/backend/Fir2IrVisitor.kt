@@ -542,8 +542,56 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun List<FirStatement>.mapToIrStatements(): List<IrStatement?> {
-        return map { it.toIrStatement() }
+    private fun List<FirStatement>.mapToIrStatements(recognizePostfixIncDec: Boolean = true): List<IrStatement?> {
+        var index = 0
+        val result = ArrayList<IrStatement?>(size)
+        while (index < size) {
+            var irStatement: IrStatement? = null
+            if (recognizePostfixIncDec) {
+                val statementsOrigin = getStatementsOrigin(index)
+                if (statementsOrigin != null) {
+                    val subStatements = this.subList(index, index + 3).mapNotNull { it.toIrStatement() }
+                    irStatement = IrBlockImpl(
+                        subStatements[0].startOffset,
+                        subStatements[2].endOffset,
+                        (subStatements[0] as IrVariable).type,
+                        statementsOrigin,
+                        subStatements
+                    )
+                    index += 3
+                }
+            }
+
+            if (irStatement == null) {
+                irStatement = this[index].toIrStatement()
+                index++
+            }
+            result.add(irStatement)
+        }
+
+        return result
+    }
+
+    private fun List<FirStatement>.getStatementsOrigin(index: Int): IrStatementOrigin? {
+        if (index + 3 > size) return null
+
+        val statement0 = this[index]
+        if (statement0 !is FirProperty || !statement0.isLocal) return null
+        val unarySymbol = statement0.symbol
+        if (unarySymbol.callableId.callableName != SpecialNames.UNARY) return null
+        val variable = statement0.initializer?.toResolvedCallableSymbol() ?: return null
+
+        val statement2 = this[index + 2]
+        if (statement2 !is FirPropertyAccessExpression) return null
+        if (statement2.calleeReference.toResolvedCallableSymbol() != unarySymbol) return null
+
+        val incrementStatement = this[index + 1]
+        if (incrementStatement !is FirVariableAssignment) return null
+
+        if (incrementStatement.lValue.toResolvedCallableSymbol() != variable) return null
+
+        val origin = incrementStatement.getIrAssignmentOrigin()
+        return if (origin == IrStatementOrigin.EQ) null else origin
     }
 
     internal fun convertToIrBlockBody(block: FirBlock): IrBlockBody {
@@ -591,35 +639,23 @@ class Fir2IrVisitor(
         else
             (lastOrNull() as? FirExpression)?.typeRef?.toIrType() ?: irBuiltIns.unitType
         return source.convertWithOffsets { startOffset, endOffset ->
-            val itStatements = mapToIrStatements().filterNotNull()
             if (origin == IrStatementOrigin.DO_WHILE_LOOP) {
-                IrCompositeImpl(startOffset, endOffset, type, origin, itStatements)
+                IrCompositeImpl(
+                    startOffset, endOffset, type, origin,
+                    mapToIrStatements(recognizePostfixIncDec = false).filterNotNull()
+                )
             } else {
-                IrBlockImpl(startOffset, endOffset, type, getStatementsOrigin() ?: origin, itStatements)
+                val irStatements = mapToIrStatements()
+                val singleStatement = irStatements.singleOrNull()
+                if (singleStatement is IrBlock &&
+                    (singleStatement.origin == IrStatementOrigin.POSTFIX_INCR || singleStatement.origin == IrStatementOrigin.POSTFIX_DECR)
+                ) {
+                    singleStatement
+                } else {
+                    IrBlockImpl(startOffset, endOffset, type, origin, irStatements.filterNotNull())
+                }
             }
         }
-    }
-
-    private fun List<FirStatement>.getStatementsOrigin(): IrStatementOrigin? {
-        if (size != 3) return null
-
-        val statement0 = this[0]
-        if (statement0 !is FirProperty || !statement0.isLocal) return null
-        val unarySymbol = statement0.symbol
-        if (unarySymbol.callableId.callableName != SpecialNames.UNARY) return null
-
-        val statement2 = this[2]
-        if (statement2 !is FirPropertyAccessExpression) return null
-        if (statement2.calleeReference.toResolvedCallableSymbol() != unarySymbol) return null
-
-        val incrementStatement = this[1]
-        if (incrementStatement !is FirVariableAssignment) return null
-
-        val variable = statement0.initializer?.toResolvedCallableSymbol() ?: return null
-        if (incrementStatement.lValue.toResolvedCallableSymbol() != variable) return null
-
-        val origin = incrementStatement.getIrAssignmentOrigin()
-        return if (origin == IrStatementOrigin.EQ) null else origin
     }
 
     override fun visitErrorExpression(errorExpression: FirErrorExpression, data: Any?): IrElement {
