@@ -479,7 +479,6 @@ internal abstract class FunctionGenerationContext(
     // because there is no guarantee of catching Kotlin exception in Kotlin code.
     protected open val needLeaveFrame: Boolean
         get() = irFunction?.annotations?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true
-                || irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE
 
     private var setCurrentFrameIsCalled: Boolean = false
 
@@ -1427,14 +1426,14 @@ internal abstract class FunctionGenerationContext(
     }
 
     internal fun epilogue() {
-        val needLeaveFrameInUnwindEpilogue = this.needLeaveFrame
+        val needLeaveFrame = this.needLeaveFrame
 
         appendingTo(prologueBb) {
-            val slots = if (needSlotsPhi || needLeaveFrameInUnwindEpilogue)
+            val slots = if (needSlotsPhi || needLeaveFrame)
                 LLVMBuildArrayAlloca(builder, kObjHeaderPtr, Int32(slotCount).llvm, "")!!
             else
                 kNullObjHeaderPtrPtr
-            if (needSlots || needLeaveFrameInUnwindEpilogue) {
+            if (needSlots || needLeaveFrame) {
                 check(!forbidRuntime) { "Attempt to start a frame where runtime usage is forbidden" }
                 // Zero-init slots.
                 val slotsMem = bitcast(kInt8Ptr, slots)
@@ -1478,7 +1477,7 @@ internal abstract class FunctionGenerationContext(
             if (needStateSwitch) {
                 switchThreadState(Runnable)
             }
-            if (needSlots || needLeaveFrameInUnwindEpilogue) {
+            if (needSlots || needLeaveFrame) {
                 call(context.llvm.enterFrameFunction, listOf(slotsPhi!!, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))
             } else {
                 check(!setCurrentFrameIsCalled)
@@ -1489,7 +1488,7 @@ internal abstract class FunctionGenerationContext(
 
         processReturns()
 
-        val shouldHaveCleanupLandingpad = needLeaveFrameInUnwindEpilogue ||
+        val shouldHaveCleanupLandingpad = needLeaveFrame ||
                 (!stackLocalsManager.isEmpty() && context.memoryModel != MemoryModel.EXPERIMENTAL) ||
                 (context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable)
 
