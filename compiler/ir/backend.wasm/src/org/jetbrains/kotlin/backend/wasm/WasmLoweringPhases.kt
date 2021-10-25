@@ -504,6 +504,9 @@ val wasmPhases = NamedCompilerPhase(
             excludeDeclarationsFromCodegenPhase then
             expectDeclarationsRemovingPhase then
 
+            jsInteropFunctionsLowering then
+            jsInteropFunctionCallsLowering then
+
             // TODO: Need some helpers from stdlib
             // arrayConstructorPhase then
             wrapInlineDeclarationsWithReifiedTypeParametersPhase then
@@ -531,9 +534,6 @@ val wasmPhases = NamedCompilerPhase(
             primaryConstructorLoweringPhase then
             delegateToPrimaryConstructorLoweringPhase then
             // Common prefix ends
-
-            jsInteropFunctionsLowering then
-            jsInteropFunctionCallsLowering then
 
             enumEntryInstancesLoweringPhase then
             enumEntryInstancesBodyLoweringPhase then

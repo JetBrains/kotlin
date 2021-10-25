@@ -208,6 +208,8 @@ class WasmSymbols(
     private val wasmDataRefClass = getIrClass(FqName("kotlin.wasm.internal.reftypes.dataref"))
     val wasmDataRefType by lazy { wasmDataRefClass.defaultType }
 
+    private val externalInterfaceClass = getIrClass(FqName("kotlin.wasm.internal.ExternalInterfaceType"))
+    val externalInterfaceType by lazy { externalInterfaceClass.defaultType }
 
     inner class JsInteropAdapters {
         val kotlinToJsStringAdapter = getInternalFunction("kotlinToJsStringAdapter")
@@ -227,6 +229,9 @@ class WasmSymbols(
 
     private val jsNameClass = getIrClass(FqName("kotlin.js.JsName"))
     val jsNameConstructor by lazy { jsNameClass.constructors.single() }
+
+    private val jsFunClass = getIrClass(FqName("kotlin.JsFun"))
+    val jsFunConstructor by lazy { jsFunClass.constructors.single() }
 
     private fun findClass(memberScope: MemberScope, name: Name): ClassDescriptor =
         memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
