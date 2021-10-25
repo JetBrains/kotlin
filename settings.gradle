@@ -652,6 +652,7 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':kotlin-native:endorsedLibraries'
     include ':kotlin-native:Interop:StubGenerator'
     include ':kotlin-native:backend.native'
+    include ':kotlin-native:backend.native.mobile'
     include ':kotlin-native:Interop:Runtime'
     include ':kotlin-native:Interop:Indexer'
     include ':kotlin-native:Interop:JsRuntime'
