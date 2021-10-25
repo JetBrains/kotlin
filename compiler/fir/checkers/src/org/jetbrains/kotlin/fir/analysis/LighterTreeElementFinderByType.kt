@@ -22,11 +22,13 @@ class LighterTreeElementFinderByType(
     }
 
     private fun visitNode(node: LighterASTNode, currentDepth: Int): LighterASTNode? {
-        if (node.tokenType in types) {
-            if (index == 0) {
-                return node
+        if (currentDepth != 0) {
+            if (node.tokenType in types) {
+                if (index == 0) {
+                    return node
+                }
+                index--
             }
-            index--
         }
 
         if (currentDepth == depth) return null

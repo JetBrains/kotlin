@@ -19,11 +19,13 @@ class PsiElementFinderByType(
     }
 
     private fun visitElement(element: PsiElement, currentDepth: Int): PsiElement? {
-        if (element.node.elementType in types) {
-            if (index == 0) {
-                return element
+        if (currentDepth != 0) {
+            if (element.node.elementType in types) {
+                if (index == 0) {
+                    return element
+                }
+                index--
             }
-            index--
         }
 
         if (currentDepth == depth) return null
