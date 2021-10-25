@@ -94,8 +94,7 @@ class JavaOverrideChecker internal constructor(
     ): Boolean =
         when {
             candidateTypeProjection is ConeKotlinTypeProjection && baseTypeProjection is ConeKotlinTypeProjection ->
-                candidateTypeProjection.kind == baseTypeProjection.kind &&
-                        isEqualTypes(candidateTypeProjection.type, baseTypeProjection.type, substitutor)
+                isEqualTypes(candidateTypeProjection.type, baseTypeProjection.type, substitutor)
             candidateTypeProjection is ConeStarProjection && baseTypeProjection is ConeStarProjection -> true
             else -> false
         }

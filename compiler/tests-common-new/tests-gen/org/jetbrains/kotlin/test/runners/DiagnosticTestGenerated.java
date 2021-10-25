@@ -17997,6 +17997,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 public void testTypeParameter() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/types/typeParameter.kt");
                 }
+
+                @Test
+                @TestMetadata("varargOverride.kt")
+                public void testVarargOverride() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/types/varargOverride.kt");
+                }
             }
         }
 
