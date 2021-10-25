@@ -47,6 +47,9 @@ class ClassicFrontend2IrConverter(
             .diagnosticReporter(DiagnosticReporterFactory.createReporter())
             .build()
 
-        return IrBackendInput(state, codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationState(state)))
+        return IrBackendInput.JvmIrBackendInput(
+            state,
+            codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationState(state))
+        )
     }
 }

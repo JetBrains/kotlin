@@ -27,7 +27,7 @@ open class IrInterpreterBackendHandler(testServices: TestServices) : AbstractIrH
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        val moduleFragment = info.backendInput.irModuleFragment
+        val moduleFragment = info.irModuleFragment
         val evaluator = Evaluator(IrInterpreter(moduleFragment.irBuiltins), globalMetadataInfoHandler)
         for ((irFile, testFile) in moduleFragment.files.zip(module.files)) {
             if (testFile.isAdditional) continue

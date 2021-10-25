@@ -36,7 +36,7 @@ class IrPrettyKotlinDumpHandler(testServices: TestServices) : AbstractIrHandler(
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (DUMP_KT_IR !in module.directives || SKIP_KT_DUMP in module.directives) return
 
-        val irFiles = info.backendInput.irModuleFragment.files
+        val irFiles = info.irModuleFragment.files
         val builder = dumper.builderForModule(module)
         val filteredIrFiles = irFiles.groupWithTestFiles(module).filterNot {
             it.first?.directives?.contains(EXTERNAL_FILE) == true

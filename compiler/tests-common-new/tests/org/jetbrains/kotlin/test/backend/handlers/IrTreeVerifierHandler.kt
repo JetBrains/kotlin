@@ -22,7 +22,7 @@ class IrTreeVerifierHandler(testServices: TestServices) : AbstractIrHandler(test
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (CodegenTestDirectives.DUMP_IR !in module.directives) return
-        val irFiles = info.backendInput.irModuleFragment.files
+        val irFiles = info.irModuleFragment.files
         val testFileToIrFile = irFiles.groupWithTestFiles(module)
         for ((testFile, irFile) in testFileToIrFile) {
             if (testFile?.directives?.contains(EXTERNAL_FILE) == true) continue
