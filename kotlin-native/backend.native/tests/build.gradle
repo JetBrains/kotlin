@@ -5894,6 +5894,10 @@ fileCheckTest("filecheck_escape_analysis_disabled") {
     checkPrefix = "CHECK-DEBUG"
 }
 
+fileCheckTest("filecheck_suspend_returnNothing") {
+    annotatedSource = project.file('filecheck/suspend_returnNothing.kt')
+}
+
 fileCheckTest("filecheck_bce") {
     annotatedSource = project.file('filecheck/bce.kt')
 }
