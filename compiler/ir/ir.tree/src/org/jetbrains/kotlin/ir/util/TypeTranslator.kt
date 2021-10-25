@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeAbbreviation
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
@@ -44,6 +43,8 @@ abstract class TypeTranslator(
     private val typeParametersResolver by threadLocal { typeParametersResolverBuilder() }
 
     private val erasureStack = Stack<PropertyDescriptor>()
+
+    private val supportDefinitelyNotNullTypes: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.DefinitelyNonNullableTypes)
 
     protected abstract fun isTypeAliasAccessibleHere(typeAliasDescriptor: TypeAliasDescriptor): Boolean
 
@@ -86,17 +87,20 @@ abstract class TypeTranslator(
             ?: symbolTable.referenceTypeParameter(originalTypeParameter)
     }
 
-    fun translateType(kotlinType: KotlinType): IrType =
-        translateType(kotlinType, Variance.INVARIANT).type
+    fun translateType(kotlinType: KotlinType): IrType {
+        return translateType(kotlinType, Variance.INVARIANT).type
+    }
 
     private fun translateType(kotlinType: KotlinType, variance: Variance): IrTypeProjection {
-        val approximatedType = approximate(kotlinType)
+        val approximatedType = approximate(kotlinType.unwrap())
 
         when {
             approximatedType.isError ->
                 return IrErrorTypeImpl(approximatedType, translateTypeAnnotations(approximatedType), variance)
             approximatedType.isDynamic() ->
                 return IrDynamicTypeImpl(approximatedType, translateTypeAnnotations(approximatedType), variance)
+            supportDefinitelyNotNullTypes && approximatedType is DefinitelyNotNullType ->
+                return makeTypeProjection(IrDefinitelyNotNullTypeImpl(approximatedType, translateType(approximatedType.original)), variance)
         }
 
         val upperType = approximatedType.upperIfFlexible()
