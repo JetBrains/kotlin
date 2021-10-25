@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.js.testNew.handlers.JsBoxRunner.Companion.TEST_FUNCT
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.INFER_MAIN_MODULE
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.NO_JS_MODULE_SYSTEM
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.RUN_PLAIN_BOX_FUNCTION
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.getMainModule
 import java.io.File
 
 private const val MODULE_EMULATION_FILE = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/moduleEmulation.js"
@@ -52,6 +52,19 @@ private fun extractJsFiles(
     return before to after
 }
 
+private fun extractMjsFiles(esmOutputDir: File, modulesToArtifact: Map<TestModule, BinaryArtifacts.Js>): List<String> {
+    fun copyInputMjsFile(inputMjsFile: TestFile): String {
+        val targetFile = File(esmOutputDir, inputMjsFile.name)
+        targetFile.writeText(inputMjsFile.originalContent)
+        return targetFile.absolutePath
+    }
+
+    return modulesToArtifact
+        .flatMap { moduleToArtifact -> moduleToArtifact.key.files }
+        .filter { it.isMjsFile }
+        .map { copyInputMjsFile(it) }
+}
+
 private fun getAdditionalFiles(testServices: TestServices): List<String> {
     val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
 
@@ -65,6 +78,14 @@ private fun getAdditionalFiles(testServices: TestServices): List<String> {
         ?.let { additionalFiles += it.absolutePath }
 
     return additionalFiles
+}
+
+private fun getAdditionalMjsFiles(testServices: TestServices): List<String> {
+    val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
+
+    return originalFile.parentFile.resolve(originalFile.nameWithoutExtension + ".mjs")
+        .takeIf { it.exists() }
+        ?.let { listOf(it.absolutePath) } ?: emptyList()
 }
 
 private fun getAdditionalMainFiles(testServices: TestServices): List<String> {
@@ -98,32 +119,60 @@ fun getAllFilesForRunner(
     val additionalFiles = getAdditionalFiles(testServices)
     val additionalMainFiles = getAdditionalMainFiles(testServices)
 
-    val artifactsPaths = modulesToArtifact.values.map { it.outputFile.absolutePath }
-    val dceJsFiles = artifactsPaths.map { it.replace(outputDir.absolutePath, dceOutputDir.absolutePath) }
-    val pirJsFiles = artifactsPaths.map { it.replace(outputDir.absolutePath, pirOutputDir.absolutePath) }
+    val artifactsPaths = modulesToArtifact.values.map { it.outputFile.absolutePath }.filter { !File(it).isDirectory }
+    val klibDependencies = modulesToArtifact.values
+        .filterIsInstance<BinaryArtifacts.Js.JsIrArtifact>()
+        .singleOrNull()?.let { artifact ->
+            artifact.compilerResult?.outputs?.dependencies?.map { (moduleId, _) ->
+                artifact.outputFile.absolutePath.replace("_v5.js", "-${moduleId}_v5.js")
+            }
+        } ?: emptyList()
+    val dceJsFiles = (klibDependencies + artifactsPaths).map { it.replace(outputDir.absolutePath, dceOutputDir.absolutePath) }
+    val pirJsFiles = (klibDependencies + artifactsPaths).map { it.replace(outputDir.absolutePath, pirOutputDir.absolutePath) }
 
-    val allJsFiles = additionalFiles + inputJsFilesBefore + artifactsPaths + commonFiles + additionalMainFiles + inputJsFilesAfter
+    val allJsFiles = additionalFiles + inputJsFilesBefore + klibDependencies + artifactsPaths + commonFiles + additionalMainFiles + inputJsFilesAfter
     val dceAllJsFiles = additionalFiles + inputJsFilesBefore + dceJsFiles + commonFiles + additionalMainFiles + inputJsFilesAfter
     val pirAllJsFiles = additionalFiles + inputJsFilesBefore + pirJsFiles + commonFiles + additionalMainFiles + inputJsFilesAfter
 
     return Triple(allJsFiles, dceAllJsFiles, pirAllJsFiles)
 }
 
+fun extractAllFilesForEsRunner(
+    testServices: TestServices, modulesToArtifact: Map<TestModule, BinaryArtifacts.Js>, esmOutputDir: File
+): Pair<List<String>, List<String>> {
+    val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
+
+    val commonFiles = JsAdditionalSourceProvider.getAdditionalJsFiles(originalFile.parent).map { it.absolutePath }
+    val (inputJsFilesBefore, inputJsFilesAfter) = extractJsFiles(testServices, modulesToArtifact)
+    val additionalFiles = getAdditionalFiles(testServices)
+    val additionalMjsFiles = getAdditionalMjsFiles(testServices)
+    val additionalMainFiles = getAdditionalMainFiles(testServices)
+
+    val allNonEsModuleFiles = additionalFiles + inputJsFilesBefore + commonFiles
+
+    // Copy __main file if present
+    if (additionalMainFiles.isNotEmpty()) {
+        val newFileName = File(esmOutputDir, "test.mjs")
+        newFileName.delete()
+        File(additionalMainFiles.first()).copyTo(newFileName)
+    }
+
+    // Copy all .mjs files into generated directory
+    modulesToArtifact
+        .flatMap { moduleToArtifact -> moduleToArtifact.key.files }
+        .filter { it.isMjsFile }
+        .map { File(esmOutputDir, it.name).writeText(it.originalContent) }
+
+    additionalMjsFiles.forEach { mjsFile ->
+        val outFile = File(esmOutputDir, File(mjsFile).name)
+        File(mjsFile).copyTo(outFile, overwrite = true)
+    }
+
+    return Pair(allNonEsModuleFiles, inputJsFilesAfter)
+}
+
 fun getOnlyJsFilesForRunner(testServices: TestServices, modulesToArtifact: Map<TestModule, BinaryArtifacts.Js>): List<String> {
     return getAllFilesForRunner(testServices, modulesToArtifact).first
-}
-
-private fun getMainModule(testServices: TestServices): TestModule {
-    val modules = testServices.moduleStructure.modules
-    val inferMainModule = INFER_MAIN_MODULE in testServices.moduleStructure.allDirectives
-    return when {
-        inferMainModule -> modules.last()
-        else -> modules.singleOrNull { it.name == ModuleStructureExtractor.DEFAULT_MODULE_NAME } ?: modules.single()
-    }
-}
-
-fun getMainModuleName(testServices: TestServices): String {
-    return getMainModule(testServices).name
 }
 
 fun getTestModuleName(testServices: TestServices): String? {
@@ -144,10 +193,10 @@ fun extractTestPackage(testServices: TestServices): String? {
             }
     }
 
-    return ktFiles.single { ktFile ->
+    return ktFiles.singleOrNull { ktFile ->
         val boxFunction = ktFile.declarations.find { it is KtNamedFunction && it.name == TEST_FUNCTION }
         boxFunction != null
-    }.packageFqName.asString().takeIf { it.isNotEmpty() }
+    }?.packageFqName?.asString()?.takeIf { it.isNotEmpty() }
 }
 
 fun getTestChecker(testServices: TestServices): AbstractJsTestChecker {

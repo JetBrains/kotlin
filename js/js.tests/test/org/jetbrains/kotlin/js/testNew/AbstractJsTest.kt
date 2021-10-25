@@ -35,6 +35,9 @@ abstract class AbstractJsTest(
     override val backendFacade: Constructor<BackendFacade<ClassicBackendInput, BinaryArtifacts.Js>>
         get() = ::ClassicJsBackendFacade
 
+    override val afterBackendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>?
+        get() = null
+
     override val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
         get() = { RecompileModuleJsBackendFacade(it, frontendFacade, frontendToBackendConverter) }
 

@@ -6,14 +6,18 @@
 package org.jetbrains.kotlin.test.services.configuration
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.MODULE_KIND
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.NO_INLINE
@@ -39,6 +43,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         const val OLD_MODULE_SUFFIX = "_old"
 
         private const val OUTPUT_DIR_NAME = "outputDir"
+        private const val OUTPUT_KLIB_DIR_NAME = "outputKlibDir"
         private const val DCE_OUTPUT_DIR_NAME = "dceOutputDir"
         private const val PIR_OUTPUT_DIR_NAME = "pirOutputDir"
         private const val MINIFICATION_OUTPUT_DIR_NAME = "minOutputDir"
@@ -66,8 +71,24 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             return getJsArtifactsOutputDir(testServices).absolutePath + "/" + getJsArtifactSimpleName(testServices, moduleName) + "_v5"
         }
 
+        fun getJsKlibArtifactPath(testServices: TestServices, moduleName: String): String {
+            return getJsKlibOutputDir(testServices).absolutePath + "/" + getJsArtifactSimpleName(testServices, moduleName)
+        }
+
+        fun getDceJsArtifactPath(testServices: TestServices, moduleName: String): String {
+            return getDceJsArtifactsOutputDir(testServices).absolutePath + "/" + getJsArtifactSimpleName(testServices, moduleName) + "_v5"
+        }
+
+        fun getPirJsArtifactPath(testServices: TestServices, moduleName: String): String {
+            return getPirJsArtifactsOutputDir(testServices).absolutePath + "/" + getJsArtifactSimpleName(testServices, moduleName) + "_v5"
+        }
+
         fun getJsArtifactsOutputDir(testServices: TestServices): File {
             return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(OUTPUT_DIR_NAME)
+        }
+
+        fun getJsKlibOutputDir(testServices: TestServices): File {
+            return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(OUTPUT_KLIB_DIR_NAME)
         }
 
         fun getDceJsArtifactsOutputDir(testServices: TestServices): File {
@@ -98,6 +119,39 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
                 project, configuration, CompilerEnvironment, METADATA_CACHE, (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).toSet()
             )
         }
+
+        fun getMainModule(testServices: TestServices): TestModule {
+            val modules = testServices.moduleStructure.modules
+            val inferMainModule = JsEnvironmentConfigurationDirectives.INFER_MAIN_MODULE in testServices.moduleStructure.allDirectives
+            return when {
+                inferMainModule -> modules.last()
+                else -> modules.singleOrNull { it.name == ModuleStructureExtractor.DEFAULT_MODULE_NAME } ?: modules.single()
+            }
+        }
+
+        fun isMainModule(module: TestModule, testServices: TestServices): Boolean {
+            return module == getMainModule(testServices)
+        }
+
+        fun getMainModuleName(testServices: TestServices): String {
+            return getMainModule(testServices).name
+        }
+
+        fun getStdlibPathsForModule(module: TestModule): List<String> {
+            val needsFullIrRuntime = JsEnvironmentConfigurationDirectives.KJS_WITH_FULL_RUNTIME in module.directives ||
+                    ConfigurationDirectives.WITH_STDLIB in module.directives ||
+                    ConfigurationDirectives.WITH_RUNTIME in module.directives
+
+            val names = if (needsFullIrRuntime) listOf("full.stdlib", "kotlin.test") else listOf("reduced.stdlib")
+            return names.map { System.getProperty("kotlin.js.$it.path") }
+        }
+
+        fun getMainCallParametersForModule(module: TestModule): MainCallParameters {
+            return when (JsEnvironmentConfigurationDirectives.CALL_MAIN) {
+                in module.directives -> MainCallParameters.mainWithArguments(listOf())
+                else -> MainCallParameters.noCall()
+            }
+        }
     }
 
 
@@ -111,7 +165,8 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         val registeredDirectives = module.directives
         val moduleKinds = registeredDirectives[MODULE_KIND]
         val moduleKind = when (moduleKinds.size) {
-            0 -> testServices.moduleStructure.allDirectives[MODULE_KIND].singleOrNull() ?: ModuleKind.PLAIN
+            0 -> testServices.moduleStructure.allDirectives[MODULE_KIND].singleOrNull()
+                ?: if (JsEnvironmentConfigurationDirectives.ES_MODULES in registeredDirectives) ModuleKind.ES else ModuleKind.PLAIN
             1 -> moduleKinds.single()
             else -> error("Too many module kinds passed ${moduleKinds.joinToArrayString()}")
         }
@@ -143,6 +198,9 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         if (errorIgnorancePolicy.allowErrors) {
             configuration.put(JSConfigurationKeys.DEVELOPER_MODE, true)
         }
+        if (errorIgnorancePolicy != ErrorTolerancePolicy.DEFAULT) {
+            configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+        }
 
         val multiModule = testServices.moduleStructure.modules.size > 1
         configuration.put(JSConfigurationKeys.META_INFO, multiModule)
@@ -160,10 +218,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
 
         configuration.put(
             JSConfigurationKeys.FILE_PATHS_PREFIX_MAP,
-            mapOf(
-                // tmpDir.absolutePath to "<TMP>", // TODO check do we need this on js ir tests
-                File(".").absolutePath.removeSuffix(".") to ""
-            )
+            mapOf(File(".").absolutePath.removeSuffix(".") to "")
         )
 
         configuration.put(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER, EXPECT_ACTUAL_LINKER in registeredDirectives)

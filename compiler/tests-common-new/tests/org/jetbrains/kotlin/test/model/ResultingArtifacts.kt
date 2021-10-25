@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.test.model
 
 import org.jetbrains.kotlin.codegen.ClassFileFactory
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue
 import org.jetbrains.kotlin.ir.backend.js.CompilerResult
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.ir.backend.js.LoweredIr
 import org.jetbrains.kotlin.js.facade.TranslationResult
 import java.io.File
 
@@ -26,7 +29,12 @@ object BinaryArtifacts {
         open fun unwrap(): Js = this
 
         class OldJsArtifact(override val outputFile: File, val translationResult: TranslationResult) : Js()
+
         class JsIrArtifact(override val outputFile: File, val compilerResult: CompilerResult) : Js()
+
+        class JsKlibArtifact(override val outputFile: File, val descriptor: ModuleDescriptor, val library: KotlinLibrary) : Js()
+
+        class JsEsArtifact(override val outputFile: File, val outputDceFile: File?) : Js()
 
         data class IncrementalJsArtifact(val originalArtifact: Js, val recompiledArtifact: Js) : Js() {
             override val outputFile: File

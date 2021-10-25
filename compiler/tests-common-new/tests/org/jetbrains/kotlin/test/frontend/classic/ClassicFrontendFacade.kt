@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JVMConfigurationKeys.JVM_TARGET
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
@@ -30,7 +32,16 @@ import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.ir.backend.js.JsFactories
+import org.jetbrains.kotlin.ir.backend.js.TopDownAnalyzerFacadeForJSIR
+import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
+import org.jetbrains.kotlin.ir.backend.js.toResolverLogger
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.konan.properties.propertyList
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
+import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.name.Name
@@ -49,7 +60,9 @@ import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
@@ -163,7 +176,10 @@ class ClassicFrontendFacade(
                 friendsDescriptors,
                 hasCommonModules
             )
-            targetPlatform.isJs() -> performJsModuleResolve(project, configuration, files, dependentDescriptors)
+            targetPlatform.isJs() -> when {
+                module.targetBackend?.isIR != true -> performJsModuleResolve(project, configuration, files, dependentDescriptors)
+                else -> performJsIrModuleResolve(module, project, configuration, files, dependentDescriptors, friendsDescriptors)
+            }
             targetPlatform.isNative() -> performNativeModuleResolve(module, project, files)
             targetPlatform.isCommon() -> performCommonModuleResolve(module, files)
             else -> error("Should not be here")
@@ -255,6 +271,77 @@ class ClassicFrontendFacade(
             friendModuleDescriptors = jsConfig.friendModuleDescriptors,
             targetEnvironment = jsConfig.targetEnvironment,
         )
+    }
+
+    private fun loadKlib(names: List<String>, configuration: CompilerConfiguration): List<ModuleDescriptorImpl> {
+        val resolvedLibraries = jsResolveLibraries(
+            names,
+            configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList(),
+            configuration[IrMessageLogger.IR_MESSAGE_LOGGER].toResolverLogger()
+        ).getFullResolvedList()
+
+        var builtInsModule: KotlinBuiltIns? = null
+        val dependencies = mutableListOf<ModuleDescriptorImpl>()
+
+        return resolvedLibraries.zip(names).map { (resolvedLibrary, klibPath) ->
+            testServices.jsLibraryProvider.getOrCreateStdlibByPath(klibPath) {
+                val storageManager = LockBasedStorageManager("ModulesStructure")
+                val isBuiltIns = resolvedLibrary.library.unresolvedDependencies.isEmpty()
+
+                val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+                    resolvedLibrary.library,
+                    configuration.languageVersionSettings,
+                    storageManager,
+                    builtInsModule,
+                    packageAccessHandler = null,
+                    lookupTracker = LookupTracker.DO_NOTHING
+                )
+                if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns
+                dependencies += moduleDescriptor
+                moduleDescriptor.setDependencies(dependencies)
+
+                Pair(moduleDescriptor, resolvedLibrary.library)
+            }
+        }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun performJsIrModuleResolve(
+        module: TestModule,
+        project: Project,
+        configuration: CompilerConfiguration,
+        files: List<KtFile>,
+        dependentDescriptors: List<ModuleDescriptorImpl>,
+        friendsDescriptors: List<ModuleDescriptorImpl>,
+    ): AnalysisResult {
+//        val jsConfig = JsEnvironmentConfigurator.createJsConfig(project, configuration)
+
+        val runtimeKlibsNames = JsEnvironmentConfigurator.getStdlibPathsForModule(module)
+        val runtimeKlibs = loadKlib(runtimeKlibsNames, configuration)
+        val transitiveLibraries = configuration[JSConfigurationKeys.TRANSITIVE_LIBRARIES]!!.map {
+            testServices.jsLibraryProvider.getDescriptorByPath(File(it).absolutePath.replace("_v5.meta.js", "").replace("outputDir", "outputKlibDir"))
+        }
+        val friendLibraries = configuration[JSConfigurationKeys.FRIEND_PATHS]!!.map {
+            testServices.jsLibraryProvider.getDescriptorByPath(File(it).absolutePath.replace("_v5.meta.js", "").replace("outputDir", "outputKlibDir"))
+        }
+        val allDependencies = runtimeKlibs + dependentDescriptors + transitiveLibraries
+
+        val analyzer = AnalyzerWithCompilerReport(configuration)
+        val builtInModuleDescriptor = allDependencies.firstNotNullOfOrNull { it.builtIns }?.builtInsModule
+        analyzer.analyzeAndReport(files) {
+            TopDownAnalyzerFacadeForJSIR.analyzeFiles(
+                files,
+                project,
+                configuration,
+                allDependencies,
+                friendsDescriptors + friendLibraries,
+                CompilerEnvironment,
+                thisIsBuiltInsModule = builtInModuleDescriptor == null,
+                customBuiltInsModule = builtInModuleDescriptor
+            )
+        }
+
+        return analyzer.analysisResult
     }
 
     private fun performNativeModuleResolve(

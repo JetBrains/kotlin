@@ -288,9 +288,11 @@ projectTest("jsTest", parallel = true, jUnitMode = JUnitMode.Mix) {
     useJUnitPlatform()
 }
 
-projectTest("jsIrTest", true) {
+projectTest("jsIrTest", true, jUnitMode = JUnitMode.JUnit5) {
     systemProperty("kotlin.js.ir.pir", "false")
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true)
+    maxHeapSize = "3g"
+    useJUnitPlatform()
 }
 
 projectTest("jsEs6IrTest", true) {
@@ -315,9 +317,11 @@ projectTest("jsEs6IrTest", true) {
     setUpBoxTests()
 }
 
-projectTest("jsPirTest", true) {
+projectTest("jsPirTest", parallel = true, jUnitMode = JUnitMode.JUnit5) {
     systemProperty("kotlin.js.ir.skipRegularMode", "true")
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true)
+    maxHeapSize = "3g"
+    useJUnitPlatform()
 }
 
 projectTest("quickTest", parallel = true, jUnitMode = JUnitMode.Mix) {

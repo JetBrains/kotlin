@@ -28,8 +28,9 @@ class JsMinifierRunner(testServices: TestServices) : AbstractJsArtifactsCollecto
         val globalDirectives = testServices.moduleStructure.allDirectives
         val dontRunGeneratedCode = globalDirectives[JsEnvironmentConfigurationDirectives.DONT_RUN_GENERATED_CODE]
             .contains(testServices.defaultsProvider.defaultTargetBackend?.name)
+        val esModules = JsEnvironmentConfigurationDirectives.ES_MODULES in globalDirectives
 
-        if (dontRunGeneratedCode) return
+        if (dontRunGeneratedCode || esModules) return
 
         val allJsFiles = getOnlyJsFilesForRunner(testServices, modulesToArtifact)
 

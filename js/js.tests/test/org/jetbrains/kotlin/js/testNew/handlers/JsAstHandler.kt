@@ -25,9 +25,12 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {
         val ktFiles = module.files.filter { it.isKtFile }.map { it.originalContent }
-        val result = (info.unwrap() as? BinaryArtifacts.Js.OldJsArtifact)?.translationResult
-            ?: throw IllegalArgumentException("JsBoxRunner suppose to work only with old js backend")
-        processJsProgram((result as TranslationResult.Success).program, ktFiles, module.targetBackend!!) {
+        val jsProgram = when (val artifact = info.unwrap()) {
+            is BinaryArtifacts.Js.OldJsArtifact -> (artifact.translationResult as TranslationResult.Success).program
+            is BinaryArtifacts.Js.JsIrArtifact -> artifact.compilerResult.outputs?.jsProgram ?: return
+            else -> return
+        }
+        processJsProgram(jsProgram, ktFiles, module.targetBackend!!) {
             testServices.assertions.fail { it }
         }
     }

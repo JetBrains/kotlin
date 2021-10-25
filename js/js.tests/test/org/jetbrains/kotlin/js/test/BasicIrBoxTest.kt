@@ -462,9 +462,9 @@ abstract class BasicIrBoxTest(
             dtsFile.write(compiledModule.tsDefinitions ?: error("No ts definitions"))
         }
 
-                compiledOutput.jsProgram?.let {
-                    JsAstHandler.processUnitsOfJsProgram(it, units, targetBackend = TargetBackend.JS_IR) { Assert.fail(it) }
-                }
+        compiledOutput.jsProgram?.let {
+            JsAstHandler.processUnitsOfJsProgram(it, units, targetBackend = TargetBackend.JS_IR) { Assert.fail(it) }
+        }
     }
 
     private fun generateTestFile(outputDir: File, config: JsConfig, customTestModule: String?) {

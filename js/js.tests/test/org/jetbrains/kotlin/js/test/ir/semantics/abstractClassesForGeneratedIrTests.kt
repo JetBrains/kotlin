@@ -7,24 +7,6 @@ package org.jetbrains.kotlin.js.test.ir.semantics
 
 import org.jetbrains.kotlin.js.test.BasicIrBoxTest
 
-abstract class AbstractIrBoxJsTest : BasicIrBoxTest(TEST_DATA_DIR_PATH + "box/", "irBox/")
-
-abstract class AbstractIrJsCodegenBoxTest : BasicIrBoxTest(
-    "compiler/testData/codegen/box/",
-    "codegen/irBox/"
-)
-
-abstract class AbstractIrJsCodegenBoxErrorTest : BasicIrBoxTest(
-    "compiler/testData/codegen/boxError/",
-    "codegen/irBoxError/"
-)
-
-abstract class AbstractIrJsCodegenInlineTest : BasicIrBoxTest(
-    "compiler/testData/codegen/boxInline/",
-    "codegen/irBoxInline/"
-)
-
-
 abstract class AbstractIrCodegenWasmJsInteropJsTest : BasicIrBoxTest(
     "compiler/testData/codegen/wasmJsInterop",
     "codegen/wasmJsInteropJs"

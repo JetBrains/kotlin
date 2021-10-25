@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHan
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.runners.codegen.commonClassicFrontendHandlersForCodegenTest
+import org.jetbrains.kotlin.test.services.JsLibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
@@ -35,7 +36,8 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
     abstract val frontendFacade: Constructor<FrontendFacade<R>>
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>
     abstract val backendFacade: Constructor<BackendFacade<I, BinaryArtifacts.Js>>
-    abstract val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
+    abstract val afterBackendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>?
+    abstract val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>?
 
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
@@ -52,6 +54,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
             +JsEnvironmentConfigurationDirectives.TYPED_ARRAYS
             +JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
             if (skipMinification) +JsEnvironmentConfigurationDirectives.SKIP_MINIFICATION
+            if (getBoolean("kotlin.js.ir.skipRegularMode")) +JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE
         }
 
         useConfigurators(
@@ -64,6 +67,8 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
             ::JsAdditionalSourceProvider,
             ::CoroutineHelpersSourceFilesProvider,
         )
+
+        useAdditionalService(::JsLibraryProvider)
 
         useAfterAnalysisCheckers(
             ::JsFailingTestSuppressor,
@@ -80,7 +85,8 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
         irHandlersStep()
 
         facadeStep(backendFacade)
-        facadeStep(recompileFacade)
+        afterBackendFacade?.let { facadeStep(it) }
+        recompileFacade?.let { facadeStep(it) }
         jsArtifactsHandlersStep {
             useHandlers(
                 ::JsBoxRunner,

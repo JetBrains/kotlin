@@ -5,17 +5,28 @@
 
 package org.jetbrains.kotlin.js.testNew.handlers
 
+import org.jetbrains.kotlin.js.test.esModulesSubDir
+import org.jetbrains.kotlin.js.test.v8tool
 import org.jetbrains.kotlin.js.testNew.utils.*
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
+import java.io.File
 
 class JsBoxRunner(testServices: TestServices) : AbstractJsArtifactsCollector(testServices) {
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (someAssertionWasFailed) return
 
+        if (JsEnvironmentConfigurationDirectives.ES_MODULES in testServices.moduleStructure.allDirectives) {
+            runEsCode()
+        } else {
+            runJsCode()
+        }
+    }
+
+    private fun runJsCode() {
         val globalDirectives = testServices.moduleStructure.allDirectives
         val dontRunGeneratedCode = globalDirectives[JsEnvironmentConfigurationDirectives.DONT_RUN_GENERATED_CODE]
             .contains(testServices.defaultsProvider.defaultTargetBackend?.name)
@@ -43,6 +54,35 @@ class JsBoxRunner(testServices: TestServices) : AbstractJsArtifactsCollector(tes
         if (runIrPir && dontSkipDceDriven) {
             runGeneratedCode(pirAllJsFiles, testModuleName, testPackage, withModuleSystem)
         }
+    }
+
+    private fun runEsCode() {
+        val globalDirectives = testServices.moduleStructure.allDirectives
+
+        val esmOutputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices).esModulesSubDir
+        val esmDceOutputDir = JsEnvironmentConfigurator.getDceJsArtifactsOutputDir(testServices).esModulesSubDir
+        val esmPirOutputDir = JsEnvironmentConfigurator.getPirJsArtifactsOutputDir(testServices).esModulesSubDir
+
+        val dontSkipRegularMode = JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE !in globalDirectives
+        val dontSkipDceDriven = JsEnvironmentConfigurationDirectives.SKIP_DCE_DRIVEN !in globalDirectives
+        val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in globalDirectives
+        val runIrPir = JsEnvironmentConfigurationDirectives.RUN_IR_PIR in globalDirectives
+        if (dontSkipRegularMode) {
+            singleRunEsCode(esmOutputDir)
+            if (runIrDce) {
+                singleRunEsCode(esmDceOutputDir)
+            }
+        }
+
+        if (runIrPir && dontSkipDceDriven) {
+            singleRunEsCode(esmPirOutputDir)
+        }
+    }
+
+    private fun singleRunEsCode(esmOutputDir: File) {
+        val perFileEsModuleFile = "$esmOutputDir/test.mjs"
+        val (allNonEsModuleFiles, inputJsFilesAfter) = extractAllFilesForEsRunner(testServices, modulesToArtifact, esmOutputDir)
+        v8tool.run(*allNonEsModuleFiles.toTypedArray(), perFileEsModuleFile, *inputJsFilesAfter.toTypedArray())
     }
 
     private fun runGeneratedCode(jsFiles: List<String>, testModuleName: String?, testPackage: String?, withModuleSystem: Boolean) {
