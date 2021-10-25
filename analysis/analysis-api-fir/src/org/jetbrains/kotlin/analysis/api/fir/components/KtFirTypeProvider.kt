@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.CaptureStatus
+import org.jetbrains.kotlin.util.bfs
 
 internal class KtFirTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -176,14 +177,10 @@ internal class KtFirTypeProvider(
 
     override fun getAllSuperTypes(type: KtType, shouldApproximate: Boolean): List<KtType> {
         require(type is KtFirType)
-        val queue = type.coneType.getDirectSuperTypes(shouldApproximate).toCollection(ArrayDeque())
-        return buildSet {
-            while (queue.isNotEmpty()) {
-                val current = queue.removeFirst()
-                if (!add(current)) continue
-                queue.addAll(current.getDirectSuperTypes(shouldApproximate))
-            }
-        }.map { it.asKtType() }
+        return listOf(type.coneType)
+            .bfs { it.getDirectSuperTypes(shouldApproximate).iterator() }
+            .drop(1)
+            .mapTo(mutableListOf()) { it.asKtType() }
     }
 }
 
