@@ -1,0 +1,5 @@
+language = C
+
+---
+
+void runAndCatch(void(*f)(void));
