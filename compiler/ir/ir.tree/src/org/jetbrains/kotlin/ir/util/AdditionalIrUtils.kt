@@ -175,9 +175,10 @@ val File.lineStartOffsets: IntArray
         return buffer.toIntArray()
     }
 
-val IrFileEntry.lineStartOffsets
-    get() = File(name).let {
-        if (it.exists() && it.isFile) it.lineStartOffsets else IntArray(0)
+val IrFileEntry.lineStartOffsets: IntArray
+    get() = when (this) {
+        is PsiIrFileEntry -> this.getLineOffsets()
+        else -> File(name).let { if (it.exists() && it.isFile) it.lineStartOffsets else IntArray(0) }
     }
 
 class NaiveSourceBasedFileEntryImpl(
