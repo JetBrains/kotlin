@@ -3,7 +3,7 @@
 // DONT_TARGET_EXACT_BACKEND: JS
 // ES_MODULES
 
-// MODULE: overriden-external-method-with-same-name-method
+// MODULE: overriden_external_method_with_same_name_method
 // FILE: lib.kt
 external abstract class Foo {
     abstract fun o(): String
@@ -32,7 +32,7 @@ Foo.prototype.k = function() {
 
 // FILE: entry.mjs
 // ENTRY_ES_MODULE
-import { Baz } from "./overriden-external-method-with-same-name-method/index.js";
+import { Baz } from "./overriden_external_method_with_same_name_method/index.js";
 
 function test(foo) {
     return foo.o() + foo.k()

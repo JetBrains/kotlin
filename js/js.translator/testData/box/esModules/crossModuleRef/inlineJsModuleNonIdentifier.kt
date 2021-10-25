@@ -1,11 +1,11 @@
 // DONT_TARGET_EXACT_BACKEND: JS
 // ES_MODULES
+// MODULE: lib2
 // FILE: lib-1.mjs
 export default function foo() {
     return "OK";
 }
 
-// MODULE: lib2
 // FILE: lib2.kt
 @JsModule("./lib-1.mjs")
 external fun foo(): String

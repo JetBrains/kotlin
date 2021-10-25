@@ -3,7 +3,7 @@
 // INFER_MAIN_MODULE
 // ES_MODULES
 
-// MODULE: export-all-file
+// MODULE: export_all_file
 // FILE: lib.kt
 @file:JsExport
 
@@ -19,5 +19,5 @@ class B : A() {
 
 // FILE: entry.mjs
 // ENTRY_ES_MODULE
-import { B } from "./export-all-file/index.js";
+import { B } from "./export_all_file/index.js";
 console.assert(new B().foo("K") == "OK");

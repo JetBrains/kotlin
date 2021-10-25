@@ -4,7 +4,7 @@
 // SKIP_NODE_JS
 // ES_MODULES
 
-// MODULE: non-identifier-module-name
+// MODULE: non_identifier_module_name
 // FILE: lib.kt
 @JsName("foo")
 @JsExport
@@ -12,5 +12,5 @@ public fun foo(k: String): String = "O$k"
 
 // FILE: entry.mjs
 // ENTRY_ES_MODULE
-import { foo } from "./non-identifier-module-name/index.js";
+import { foo } from "./non_identifier_module_name/index.js";
 console.assert(foo("K") == "OK");

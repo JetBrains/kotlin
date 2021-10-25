@@ -3,7 +3,7 @@
 // INFER_MAIN_MODULE
 
 // ES_MODULES
-// MODULE: overriden-chain-non-export-intermediate
+// MODULE: overriden_chain_non_export_intermediate
 // FILE: lib.kt
 @JsExport
 abstract class A {
@@ -28,7 +28,7 @@ class C : B() {
 
 // FILE: entry.mjs
 // ENTRY_ES_MODULE
-import { C } from "./overriden-chain-non-export-intermediate/index.js";
+import { C } from "./overriden_chain_non_export_intermediate/index.js";
 
 function test(c) {
     if (c.foo() === "foo" && c.bar() === "bar" && c.bay() == "bay") return "OK"

@@ -1,11 +1,11 @@
 // DONT_TARGET_EXACT_BACKEND: JS
 // ES_MODULES
+// MODULE: lib2
 // FILE: lib1.mjs
 export function foo() {
     return "OK";
 }
 
-// MODULE: lib2
 // FILE: lib2.kt
 @file:JsModule("./lib1.mjs")
 
