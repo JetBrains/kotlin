@@ -9817,6 +9817,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("simpleWithDefaultValue.kt")
+        public void testSimpleWithDefaultValue() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/simpleWithDefaultValue.kt");
+        }
+
+        @Test
         @TestMetadata("simpleWithHandleResult.kt")
         public void testSimpleWithHandleResult() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/simpleWithHandleResult.kt");
