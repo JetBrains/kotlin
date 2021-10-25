@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isNullable
@@ -73,14 +76,14 @@ open class DefaultArgumentStubGenerator(
         newIrFunction.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             statements += builder.irBlockBody(newIrFunction) {
                 val params = mutableListOf<IrValueDeclaration>()
-                val variables = mutableMapOf<IrValueDeclaration, IrValueDeclaration>()
+                val variables = mutableMapOf<IrValueSymbol, IrValueSymbol>()
 
                 irFunction.dispatchReceiverParameter?.let {
-                    variables[it] = newIrFunction.dispatchReceiverParameter!!
+                    variables[it.symbol] = newIrFunction.dispatchReceiverParameter?.symbol!!
                 }
 
                 irFunction.extensionReceiverParameter?.let {
-                    variables[it] = newIrFunction.extensionReceiverParameter!!
+                    variables[it.symbol] = newIrFunction.extensionReceiverParameter?.symbol!!
                 }
 
                 // In order to deal with forward references in default value lambdas,
@@ -93,8 +96,8 @@ open class DefaultArgumentStubGenerator(
                 //
                 // works correctly so that `f() { "OK" }` returns "OK" and
                 // `f()` throws a NullPointerException.
-                irFunction.valueParameters.associateWithTo(variables) {
-                    newIrFunction.valueParameters[it.index]
+                irFunction.valueParameters.forEach {
+                    variables[it.symbol] = newIrFunction.valueParameters[it.index].symbol
                 }
 
                 generateSuperCallHandlerCheckIfNeeded(irFunction, newIrFunction)
@@ -116,19 +119,13 @@ open class DefaultArgumentStubGenerator(
 
                         val expression = defaultValue.expression
                             .prepareToBeUsedIn(newIrFunction)
-                            .transform(object : IrElementTransformerVoid() {
-                                override fun visitGetValue(expression: IrGetValue): IrExpression {
-                                    log { "GetValue: ${expression.symbol.owner}" }
-                                    val valueSymbol = variables[expression.symbol.owner] ?: return expression
-                                    return irGet(valueSymbol)
-                                }
-                            }, null)
+                            .transform(ValueRemapper(variables), null)
 
                         selectArgumentOrDefault(defaultFlag, parameter, expression)
                     } ?: parameter
 
                     params.add(remapped)
-                    variables[valueParameter] = remapped
+                    variables[valueParameter.symbol] = remapped.symbol
                 }
 
                 when (irFunction) {
