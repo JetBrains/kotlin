@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractSymbolByFqNameTest(configurator: FrontendApiTestConfiguratorService) : AbstractSymbolTest(configurator) {
@@ -24,7 +24,7 @@ abstract class AbstractSymbolByFqNameTest(configurator: FrontendApiTestConfigura
         super.configureTest(builder)
         with(builder) {
             defaultDirectives {
-                +JvmEnvironmentConfigurationDirectives.WITH_STDLIB
+                +ConfigurationDirectives.WITH_STDLIB
             }
         }
     }

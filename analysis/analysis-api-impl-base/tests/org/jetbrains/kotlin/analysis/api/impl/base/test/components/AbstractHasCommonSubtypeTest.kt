@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
@@ -93,7 +93,7 @@ abstract class AbstractHasCommonSubtypeTest(configurator: FrontendApiTestConfigu
         super.configureTest(builder)
         builder.useAdditionalSourceProviders(::TestHelperProvider)
         builder.defaultDirectives {
-            +JvmEnvironmentConfigurationDirectives.WITH_STDLIB
+            +ConfigurationDirectives.WITH_STDLIB
         }
     }
 

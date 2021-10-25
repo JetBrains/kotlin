@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -33,7 +33,7 @@ abstract class AbstractReferenceResolveTest(configurator: FrontendApiTestConfigu
         super.configureTest(builder)
         with(builder) {
             defaultDirectives {
-                +JvmEnvironmentConfigurationDirectives.WITH_STDLIB
+                +ConfigurationDirectives.WITH_STDLIB
             }
             useDirectives(Directives)
         }

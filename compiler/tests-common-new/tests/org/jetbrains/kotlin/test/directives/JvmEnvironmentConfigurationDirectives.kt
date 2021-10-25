@@ -22,13 +22,6 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     val FULL_JDK by directive("Add full java standard library to classpath")
     val STDLIB_JDK8 by directive("Add Java 8 stdlib to classpath")
 
-    val WITH_RUNTIME by directive(
-        description = """
-            Add Kotlin stdlib to classpath
-            This directive is deprecated, use WITH_STDLIB instead
-        """.trimIndent()
-    )
-    val WITH_STDLIB by directive("Add Kotlin runtime to classpath")
     val WITH_REFLECT by directive("Add Kotlin reflect to classpath")
     val NO_RUNTIME by directive("Don't add any runtime libs to classpath")
 
