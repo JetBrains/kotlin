@@ -199,12 +199,19 @@ internal val copyDefaultValuesToActualPhase = konanUnitPhase(
  */
 internal val checkSamSuperTypesPhase = konanUnitPhase(
         op = {
+            // Handling types in current module not recursively:
+            // psi2ir can produce SAM conversions with variances in type arguments of type arguments.
+            // See https://youtrack.jetbrains.com/issue/KT-49384.
+            // So don't go deeper than top-level arguments to avoid the compiler emitting false-positive errors.
+            // Lowerings can handle this.
+            // Also such variances are allowed in the language for manual implementations of interfaces.
             irModule!!.files
-                    .forEach { SamSuperTypesChecker(this, it, mode = SamSuperTypesChecker.Mode.THROW).run() }
+                    .forEach { SamSuperTypesChecker(this, it, mode = SamSuperTypesChecker.Mode.THROW, recurse = false).run() }
             // TODO: This is temporary for handling klibs produced with earlier compiler versions.
+            // Handling types in dependencies recursively, just to be extra safe: don't change something that works.
             irModules.values
                     .flatMap { it.files }
-                    .forEach { SamSuperTypesChecker(this, it, mode = SamSuperTypesChecker.Mode.ERASE).run() }
+                    .forEach { SamSuperTypesChecker(this, it, mode = SamSuperTypesChecker.Mode.ERASE, recurse = true).run() }
         },
         name = "CheckSamSuperTypes",
         description = "Check SAM conversions super types"
