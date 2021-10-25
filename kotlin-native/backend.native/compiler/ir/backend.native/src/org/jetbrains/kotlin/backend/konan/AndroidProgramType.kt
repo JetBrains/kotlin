@@ -13,13 +13,17 @@ import org.jetbrains.kotlin.konan.target.LinkerOutputKind
  * - [NativeActivity] is a shared library in which the Konan entry point matches Android NDK's NativeActivity
  *   signature ( https://developer.android.com/ndk/reference/group/native-activity#anativeactivity_createfunc ).
  */
-enum class AndroidProgramType(val konanMainOverride: String?, val linkerOutputKindOverride: LinkerOutputKind?) {
+enum class AndroidProgramType(
+        val konanMainOverride: String?,
+        val linkerOutputKindOverride: LinkerOutputKind?,
+        val consolePrintsToLogcat: Boolean
+) {
 
     /** Regular executable. The runtime entry point name is not Konan_main for historical reasons. */
-    Standalone("Konan_main_standalone", null),
+    Standalone("Konan_main_standalone", null, false),
 
     /** Native activity "executable" - a shared library with a specific entry point. */
-    NativeActivity(null, LinkerOutputKind.DYNAMIC_LIBRARY);
+    NativeActivity(null, LinkerOutputKind.DYNAMIC_LIBRARY, true);
 
     companion object {
         val Default = NativeActivity
