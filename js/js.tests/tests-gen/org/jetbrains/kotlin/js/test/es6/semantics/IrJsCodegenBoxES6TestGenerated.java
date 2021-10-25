@@ -13414,6 +13414,16 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/inlineArgsInPlace/kotlinReflect.kt");
         }
 
+        @TestMetadata("kt49370.kt")
+        public void testKt49370() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineArgsInPlace/kt49370.kt");
+        }
+
+        @TestMetadata("kt49407.kt")
+        public void testKt49407() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineArgsInPlace/kt49407.kt");
+        }
+
         @TestMetadata("mapSet.kt")
         public void testMapSet() throws Exception {
             runTest("compiler/testData/codegen/box/inlineArgsInPlace/mapSet.kt");
