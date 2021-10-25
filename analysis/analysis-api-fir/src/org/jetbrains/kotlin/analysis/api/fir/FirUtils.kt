@@ -15,13 +15,23 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.fir.expressions.FirImplicitInvokeCall
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+/**
+ * Checks if the function call is an implicit invoke call with a simple qualified receiver, or looks like it.
+ *
+ * For example, `foo()` and `foo.bar()` have simple qualified receivers, while `foo!!()`, `{}()` and `(foo ?: bar)()` - don't.
+ *
+ * @return `true` if the function call has a simple qualified receiver and is an implicit invoke call,
+ * or looks like it and resolves to the `invoke` function.
+ */
 fun FirFunctionCall.isImplicitFunctionCall(): Boolean {
     if (extensionReceiver !is FirQualifiedAccessExpression && dispatchReceiver !is FirQualifiedAccessExpression) return false
-    return calleeReference.getCandidateSymbols().any(FirBasedSymbol<*>::isInvokeFunction)
+
+    return this is FirImplicitInvokeCall ||
+            calleeReference.getCandidateSymbols().any(FirBasedSymbol<*>::isInvokeFunction)
 }
 
 private fun FirBasedSymbol<*>.isInvokeFunction() =
