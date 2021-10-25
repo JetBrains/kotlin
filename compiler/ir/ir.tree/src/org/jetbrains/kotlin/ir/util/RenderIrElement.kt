@@ -113,6 +113,8 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
 
             is IrErrorType -> "IrErrorType(${if (verboseErrorTypes) originalKotlinType else null})"
 
+            is IrDefinitelyNotNullType -> "{${original.render()} & Any}"
+
             is IrSimpleType -> buildTrimEnd {
                 append(classifier.renderClassifierFqn())
                 if (arguments.isNotEmpty()) {

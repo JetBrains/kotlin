@@ -35,7 +35,7 @@ abstract class IrAbstractSimpleType(kotlinType: KotlinType?) : IrTypeBase(kotlin
                 arguments.hashCode()
 }
 
-abstract class IrDelegatedSimpleType : IrAbstractSimpleType(null) {
+abstract class IrDelegatedSimpleType(kotlinType: KotlinType? = null) : IrAbstractSimpleType(kotlinType) {
 
     protected abstract val delegate: IrSimpleType
 
@@ -51,6 +51,14 @@ abstract class IrDelegatedSimpleType : IrAbstractSimpleType(null) {
         get() = delegate.annotations
 }
 
+// TODO: This implementation is aligned with FE representation of DefinitelyNotNull (DNN) type but
+//       in fact DNN is special case of more general `IntersectionType`
+//       so someday it should be reconsidered
+class IrDefinitelyNotNullTypeImpl(kotlinType: KotlinType?, original: IrType) : IrDelegatedSimpleType(kotlinType), IrDefinitelyNotNullType {
+    override val delegate: IrSimpleType = original as IrSimpleType
+    override val original: IrType
+        get() = delegate
+}
 
 class IrSimpleTypeImpl(
     kotlinType: KotlinType?,
@@ -123,6 +131,7 @@ class IrTypeProjectionImpl internal constructor(
 fun makeTypeProjection(type: IrType, variance: Variance): IrTypeProjection =
     when {
         type is IrCapturedType -> IrTypeProjectionImpl(type, variance)
+        type is IrDefinitelyNotNullType -> IrTypeProjectionImpl(type, variance)
         type is IrTypeProjection && type.variance == variance -> type
         type is IrSimpleType -> type.toBuilder().apply { this.variance = variance }.buildTypeProjection()
         type is IrDynamicType -> IrDynamicTypeImpl(null, type.annotations, variance)

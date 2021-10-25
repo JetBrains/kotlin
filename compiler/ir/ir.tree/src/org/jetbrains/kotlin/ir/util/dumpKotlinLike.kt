@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.ir.util
 
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -415,6 +418,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO don't print `Any?` as upper bound?
         printAnnotationsWithNoIndent()
         when (this) {
+            is IrDefinitelyNotNullType -> {
+                p.printWithNoIndent("(")
+                original.printTypeWithNoIndent()
+                p.printWithNoIndent(" & Any)")
+            }
             is IrSimpleType -> {
                 // TODO abbreviation
 

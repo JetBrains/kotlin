@@ -34,6 +34,7 @@ fun IrType.isSubtypeOf(superType: IrType, typeSystem: IrTypeSystemContext): Bool
 
 fun IrType.isNullable(): Boolean =
     when (this) {
+        is IrDefinitelyNotNullType -> false
         is IrSimpleType -> when (val classifier = classifier) {
             is IrClassSymbol -> hasQuestionMark
             is IrTypeParameterSymbol -> hasQuestionMark || classifier.owner.superTypes.any(IrType::isNullable)
