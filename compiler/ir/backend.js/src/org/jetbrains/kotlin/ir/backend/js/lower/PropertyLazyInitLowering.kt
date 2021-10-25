@@ -279,10 +279,9 @@ private fun <T> IrDeclaration.withPersistentSafe(transform: IrDeclaration.() -> 
     } else null
 
 private fun IrDeclaration.isCompatibleDeclaration(context: JsIrBackendContext) =
-    correspondingProperty
-        ?.hasAnnotation(context.intrinsics.jsEagerInitializationAnnotationSymbol) != true &&
-            withPersistentSafe { origin in compatibleOrigins } == true
-
+    correspondingProperty?.let {
+        it.isForLazyInit() && !it.hasAnnotation(context.intrinsics.jsEagerInitializationAnnotationSymbol)
+    } ?: true && withPersistentSafe { origin in compatibleOrigins } == true
 
 private fun IrDeclaration.assertCompatibleDeclaration() {
     assert(this !is PersistentIrElementBase<*> || this.createdOn <= this.factory.stageController.currentStage)

@@ -57,12 +57,24 @@ class IrModuleToJsTransformerTmp(
             module.files.forEach { StaticMembersLowering(backendContext).lower(it) }
         }
 
-        val jsCode = if (fullJs) generateWrappedModuleBody(mainModuleName, moduleKind, generateProgramFragments(modules, exportData)) else null
+        val jsCode = if (fullJs) generateWrappedModuleBody(
+            multiModule,
+            mainModuleName,
+            moduleKind,
+            generateProgramFragments(modules, exportData),
+            relativeRequirePath
+        ) else null
 
         val dceJsCode = if (dceJs) {
             eliminateDeadDeclarations(modules, backendContext, removeUnusedAssociatedObjects)
 
-            generateWrappedModuleBody(mainModuleName, moduleKind, generateProgramFragments(modules, exportData))
+            generateWrappedModuleBody(
+                multiModule,
+                mainModuleName,
+                moduleKind,
+                generateProgramFragments(modules, exportData),
+                relativeRequirePath
+            )
         } else null
 
         return CompilerResult(jsCode, dceJsCode, dts)
@@ -98,20 +110,23 @@ class IrModuleToJsTransformerTmp(
         return additionalExports + exports
     }
 
+    private fun IrModuleFragment.externalModuleName(): String {
+        return moduleToName[this] ?: sanitizeName(safeName)
+    }
+
     private fun generateProgramFragments(
         modules: Iterable<IrModuleFragment>,
         exportData: Map<IrModuleFragment, Map<IrFile, List<ExportedDeclaration>>>,
-    ): List<List<JsIrProgramFragment>> {
+    ): JsIrProgram {
 
-        val fragments = mutableMapOf<IrFile, JsIrProgramFragment>()
-        modules.forEach { m ->
-            m.files.forEach { f ->
-                val exports = exportData[m]!![f]!! // TODO
-                fragments[f] = generateProgramFragment(f, exports)
+        return JsIrProgram(
+            modules.map { m ->
+                JsIrModule(m.safeName, m.externalModuleName(), m.files.map { f ->
+                    val exports = exportData[m]!![f]!!
+                    generateProgramFragment(f, exports)
+                })
             }
-        }
-
-        return modules.map { it.files.map { fragments[it]!! } }
+        )
     }
 
     private val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
@@ -213,6 +228,10 @@ class IrModuleToJsTransformerTmp(
             result.imports[tag] = importExpression
         }
 
+        file.declarations.forEach {
+            result.definitions += computeTag(it)
+        }
+
         return result
     }
 
@@ -236,17 +255,66 @@ class IrModuleToJsTransformerTmp(
     }
 }
 
-fun generateWrappedModuleBody(
+private fun generateWrappedModuleBody(
+    multiModule: Boolean,
+    mainModuleName: String,
+    moduleKind: ModuleKind,
+    program: JsIrProgram,
+    relativeRequirePath: Boolean,
+): CompilationOutputs {
+    if (multiModule) {
+
+        val moduleToRef = program.crossModuleDependencies(relativeRequirePath)
+
+        val main = program.modules.last()
+        val others = program.modules.dropLast(1)
+
+        val mainModule = generateSingleWrappedModuleBody(
+            mainModuleName,
+            moduleKind,
+            main.fragments,
+            moduleToRef[main]!!,
+            generateCallToMain = true,
+        )
+
+        val dependencies = others.map { module ->
+            val moduleName = module.moduleName
+
+            moduleName to generateSingleWrappedModuleBody(
+                moduleName,
+                moduleKind,
+                module.fragments,
+                moduleToRef[module]!!,
+                generateCallToMain = false,
+            )
+        }
+
+        return CompilationOutputs(mainModule.jsCode, mainModule.jsProgram, mainModule.sourceMap, dependencies)
+    } else {
+        return generateSingleWrappedModuleBody(
+            mainModuleName,
+            moduleKind,
+            program.modules.flatMap { it.fragments },
+            generateCallToMain = true,
+        )
+    }
+}
+
+fun generateSingleWrappedModuleBody(
     moduleName: String,
     moduleKind: ModuleKind,
-    fragments: List<List<JsIrProgramFragment>>
+    fragments: List<JsIrProgramFragment>,
+    crossModuleReferences: CrossModuleReferences = CrossModuleReferences.Empty,
+    generateCallToMain: Boolean,
 ): CompilationOutputs {
     val program = Merger(
         moduleName,
         moduleKind,
         fragments,
-        false,
-        true
+        crossModuleReferences,
+        generateScriptModule = false,
+        generateRegionComments = true,
+        generateCallToMain,
     ).merge()
 
     program.resolveTemporaryNames()
