@@ -53,7 +53,9 @@ internal class ObjCExportFunctionGenerationContext(
 ) : FunctionGenerationContext(builder) {
     private val objCExportCodegen = builder.objCExportCodegen
 
-    override val needLeaveFrameInUnwindEpilogue: Boolean
+    // All generated bridges by ObjCExport should have `LeaveFrame`
+    // because there is no guarantee of catching Kotlin exception in Kotlin code.
+    override val needLeaveFrame: Boolean
         get() = true
 
     // Note: we could generate single "epilogue" and make all [ret]s just branch to it (like [DefaultFunctionGenerationContext]),

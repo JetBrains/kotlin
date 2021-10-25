@@ -475,10 +475,12 @@ internal abstract class FunctionGenerationContext(
     private val entryBb = basicBlockInFunction("entry", startLocation)
     protected val cleanupLandingpad = basicBlockInFunction("cleanup_landingpad", endLocation)
 
-    protected open val needLeaveFrameInUnwindEpilogue: Boolean
+    // Functions that can be exported and called not only from Kotlin code should have `LeaveFrame`
+    // because there is no guarantee of catching Kotlin exception in Kotlin code.
+    protected open val needLeaveFrame: Boolean
         get() = irFunction?.annotations?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true
-                || forwardingForeignExceptionsTerminatedWith != null
                 || irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE
+
     private var setCurrentFrameIsCalled: Boolean = false
 
     val stackLocalsManager = StackLocalsManagerImpl(this, stackLocalsInitBb)
@@ -1051,7 +1053,6 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun generateFrameCheck() {
-        assert(slotsPhi != null)
         call(context.llvm.checkCurrentFrameFunction, listOf(slotsPhi!!))
     }
 
@@ -1426,7 +1427,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     internal fun epilogue() {
-        val needLeaveFrameInUnwindEpilogue = this.needLeaveFrameInUnwindEpilogue
+        val needLeaveFrameInUnwindEpilogue = this.needLeaveFrame
 
         appendingTo(prologueBb) {
             val slots = if (needSlotsPhi || needLeaveFrameInUnwindEpilogue)
@@ -1715,7 +1716,7 @@ internal abstract class FunctionGenerationContext(
         }
 
     private fun releaseVars() {
-        if (needLeaveFrameInUnwindEpilogue || needSlots) {
+        if (needLeaveFrame || needSlots) {
             check(!forbidRuntime) { "Attempt to leave a frame where runtime usage is forbidden" }
             call(context.llvm.leaveFrameFunction,
                     listOf(slotsPhi!!, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))

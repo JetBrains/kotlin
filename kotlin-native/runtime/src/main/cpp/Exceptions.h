@@ -28,7 +28,7 @@ void ThrowException(KRef exception);
 
 void SetKonanTerminateHandler();
 
-void HandleCurrentExceptionForCInterop();
+void HandleCurrentExceptionWhenLeavingKotlinCode();
 
 RUNTIME_NOTHROW OBJ_GETTER(Kotlin_getExceptionObject, void* holder);
 

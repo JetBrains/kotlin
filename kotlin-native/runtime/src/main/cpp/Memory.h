@@ -18,7 +18,6 @@
 #define RUNTIME_MEMORY_H
 
 #include <utility>
-#include <functional>
 
 #include "KAssert.h"
 #include "Common.h"

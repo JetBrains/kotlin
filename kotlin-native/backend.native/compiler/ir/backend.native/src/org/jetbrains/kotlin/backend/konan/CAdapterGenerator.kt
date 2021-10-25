@@ -469,7 +469,7 @@ private class ExportedElement(val kind: ElementKind,
         }
         builder.append("   } catch (...) {")
         builder.append("       SetCurrentFrame(reinterpret_cast<KObjHeader**>(frame));\n")
-        builder.append("       HandleCurrentExceptionForCInterop();\n")
+        builder.append("       HandleCurrentExceptionWhenLeavingKotlinCode();\n")
         builder.append("   } \n")
 
         builder.append("}\n")
@@ -936,7 +936,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |void Kotlin_initRuntimeIfNeeded();
         |void Kotlin_mm_switchThreadStateRunnable() RUNTIME_NOTHROW;
         |void Kotlin_mm_switchThreadStateNative() RUNTIME_NOTHROW;
-        |void HandleCurrentExceptionForCInterop();
+        |void HandleCurrentExceptionWhenLeavingKotlinCode();
         |
         |KObjHeader* CreateStringFromCString(const char*, KObjHeader**);
         |char* CreateCStringFromString(const KObjHeader*);

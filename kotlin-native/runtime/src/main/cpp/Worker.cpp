@@ -1080,7 +1080,7 @@ JobKind Worker::processQueueElement(bool blocking) {
       #if !KONAN_NO_EXCEPTIONS
         FrameOverlay* currentFrame = getCurrentFrame();
       #else
-        RuntimeFail("Exceptions aren't supported!\n");
+        #error "Exceptions aren't supported!"
       #endif
       try {
         #if KONAN_OBJC_INTEROP
