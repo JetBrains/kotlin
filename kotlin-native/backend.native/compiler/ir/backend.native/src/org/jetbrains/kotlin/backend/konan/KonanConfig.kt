@@ -280,10 +280,16 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         if (target.family == Family.ANDROID) {
             val androidProgramTypeOrNull = configuration.get(BinaryOptions.androidProgramType)
             if (androidProgramTypeOrNull == null) {
-                configuration.report(CompilerMessageSeverity.WARNING,
-                        "Android Native executables are currently built as shared libraries with NativeActivity support, but the " +
-                                "default behavior is going to change to build regular executables instead. To keep using NativeActivity " +
-                                "support, please add the compiler flag '-Xbinary=androidProgramType=nativeActivity'.")
+                configuration.report(CompilerMessageSeverity.WARNING, """
+                    Android Native executables are currently built as shared libraries with NativeActivity support, but the default behavior is going to change in 1.7.0 to build regular executables instead.
+                    To keep using NativeActivity support, add binaryOptions["androidProgramType"] = "nativeActivity" to your androidNative executable configuration block in Gradle script:
+                    binaries {
+                        executable {
+                            binaryOptions["androidProgramType"] = "nativeActivity"
+                        }
+                    }
+                    See https://youtrack.jetbrains.com/issue/KT-49406 for more details.
+                """.trimIndent())
             }
             val androidProgramType = androidProgramTypeOrNull ?: AndroidProgramType.Default
             if (androidProgramType.konanMainOverride != null) {
