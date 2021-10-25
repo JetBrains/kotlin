@@ -68,8 +68,6 @@ internal class ClassMemberGenerator(
                     convertFunctionContent(irPrimaryConstructor, primaryConstructor, containingClass = klass)
                 }
             }
-            fakeOverrideGenerator.bindOverriddenSymbols(irClass.declarations)
-            components.delegatedMemberGenerator.bindDelegatedMembersOverriddenSymbols(irClass)
 
             allDeclarations.forEach { declaration ->
                 when {

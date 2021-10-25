@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND_FIR: JVM_IR
 // FILE: test.kt
 
 fun box(): String {

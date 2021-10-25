@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.B
                 GET_VAR 'x: kotlin.Any declared in <root>.A.testA1' type=kotlin.Any origin=null
-              then: CALL 'public final fun f (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
+              then: CALL 'public final fun f (): kotlin.Int [fake_override] declared in <root>.B' type=kotlin.Int origin=null
                 $this: TYPE_OP type=<root>.B origin=IMPLICIT_CAST typeOperand=<root>.B
                   GET_VAR 'x: kotlin.Any declared in <root>.A.testA1' type=kotlin.Any origin=null
             BRANCH
@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.B
                 GET_VAR 'x: kotlin.Any declared in <root>.A.testA2' type=kotlin.Any origin=null
-              then: CALL 'public final fun <get-aVal> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
+              then: CALL 'public final fun <get-aVal> (): kotlin.Int [fake_override] declared in <root>.B' type=kotlin.Int origin=GET_PROPERTY
                 $this: TYPE_OP type=<root>.B origin=IMPLICIT_CAST typeOperand=<root>.B
                   GET_VAR 'x: kotlin.Any declared in <root>.A.testA2' type=kotlin.Any origin=null
             BRANCH

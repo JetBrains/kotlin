@@ -57,6 +57,7 @@ class Fir2IrConverter(
         val irClass = registerClassAndNestedClasses(regularClass, parent)
         processClassAndNestedClassHeaders(regularClass)
         processClassMembers(regularClass, irClass)
+        bindFakeOverridesInClass(irClass)
     }
 
     fun processRegisteredLocalClassAndNestedClasses(regularClass: FirRegularClass, irClass: IrClass) {
@@ -203,6 +204,25 @@ class Fir2IrConverter(
         }
 
         return irClass
+    }
+
+    fun bindFakeOverridesInFile(file: FirFile) {
+        val irFile = declarationStorage.getIrFile(file)
+        for (irDeclaration in irFile.declarations) {
+            if (irDeclaration is IrClass) {
+                bindFakeOverridesInClass(irDeclaration)
+            }
+        }
+    }
+
+    fun bindFakeOverridesInClass(klass: IrClass) {
+        fakeOverrideGenerator.bindOverriddenSymbols(klass.declarations)
+        delegatedMemberGenerator.bindDelegatedMembersOverriddenSymbols(klass)
+        for (irDeclaration in klass.declarations) {
+            if (irDeclaration is IrClass) {
+                bindFakeOverridesInClass(irDeclaration)
+            }
+        }
     }
 
     private fun delegatedMembers(irClass: IrClass): List<FirDeclaration> {
@@ -378,6 +398,9 @@ class Fir2IrConverter(
             }
             for (firFile in allFirFiles) {
                 converter.processFileAndClassMembers(firFile)
+            }
+            for (firFile in allFirFiles) {
+                converter.bindFakeOverridesInFile(firFile)
             }
 
             for (firFile in allFirFiles) {
