@@ -183,19 +183,6 @@ enum class LanguageFeature(
 
     // 1.6
 
-    /*
-     * Improvements include the following:
-     *  - taking into account for type enhancement freshly supported type use annotations: KT-11454
-     *  - use annotations in the type parameter position to enhance corresponding types: KT-11454
-     *  - proper support of the type enhancement of the annotated java arrays: KT-24392
-     *  - proper support of the type enhancement of the annotated java varargs' elements: KT-18768
-     *  - type enhancement based on annotated bounds of type parameters
-     *  - type enhancement within type arguments of the base classes and interfaces
-     *  - support type enhancement based on type use annotations on java fields
-     *  - preference of a type use annotation to annotation of another type: KT-24392
-     *      (if @NotNull has TYPE_USE and METHOD target, then `@NotNull Integer []` -> `Array<Int>..Array<out Int>?` instead of `Array<Int>..Array<out Int>`)
-     */
-    TypeEnhancementImprovementsInStrictMode(KOTLIN_1_6),
     ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor(KOTLIN_1_6, kind = BUG_FIX),
     PrivateInFileEffectiveVisibility(KOTLIN_1_6, kind = BUG_FIX),
     ProhibitSelfCallsInNestedObjects(KOTLIN_1_6, kind = BUG_FIX),
@@ -218,6 +205,19 @@ enum class LanguageFeature(
 
     // 1.7
 
+    /*
+     * Improvements include the following:
+     *  - taking into account for type enhancement freshly supported type use annotations: KT-11454
+     *  - use annotations in the type parameter position to enhance corresponding types: KT-11454
+     *  - proper support of the type enhancement of the annotated java arrays: KT-24392
+     *  - proper support of the type enhancement of the annotated java varargs' elements: KT-18768
+     *  - type enhancement based on annotated bounds of type parameters
+     *  - type enhancement within type arguments of the base classes and interfaces
+     *  - support type enhancement based on type use annotations on java fields
+     *  - preference of a type use annotation to annotation of another type: KT-24392
+     *      (if @NotNull has TYPE_USE and METHOD target, then `@NotNull Integer []` -> `Array<Int>..Array<out Int>?` instead of `Array<Int>..Array<out Int>`)
+     */
+    TypeEnhancementImprovementsInStrictMode(KOTLIN_1_7),
     ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(KOTLIN_1_7, kind = BUG_FIX),
     OptInRelease(KOTLIN_1_7),
     ProhibitNonExhaustiveWhenOnAlgebraicTypes(KOTLIN_1_7, kind = BUG_FIX),
