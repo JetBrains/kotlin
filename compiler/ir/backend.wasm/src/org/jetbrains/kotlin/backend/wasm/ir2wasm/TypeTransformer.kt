@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
-import org.jetbrains.kotlin.backend.wasm.utils.hasWasmForeignAnnotation
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
@@ -100,7 +99,7 @@ class WasmTypeTransformer(
                 val klass = this.getClass()
                 val ic = context.backendContext.inlineClassesUtils.getInlinedClass(this)
 
-                if (klass != null && (klass.hasWasmForeignAnnotation() || klass.isExternal)) {
+                if (klass != null && klass.isExternal) {
                     WasmAnyRef
                 } else if (klass != null && isBuiltInWasmRefType(this)) {
                     when (val name = klass.name.identifier) {

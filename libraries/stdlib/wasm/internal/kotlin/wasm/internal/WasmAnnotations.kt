@@ -19,10 +19,6 @@ internal annotation class WasmImport(val module: String, val name: String)
 
 @Target(CLASS)
 @Retention(AnnotationRetention.BINARY)
-internal annotation class WasmForeign
-
-@Target(CLASS)
-@Retention(AnnotationRetention.BINARY)
 internal annotation class WasmArrayOf(
     val type: KClass<*>,
     val isNullable: Boolean,

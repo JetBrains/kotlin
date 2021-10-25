@@ -26,9 +26,6 @@ fun IrAnnotationContainer.getWasmOpAnnotation(): String? =
 fun IrAnnotationContainer.hasWasmNoOpCastAnnotation(): Boolean =
     hasAnnotation(FqName("kotlin.wasm.internal.WasmNoOpCast"))
 
-fun IrAnnotationContainer.hasWasmForeignAnnotation(): Boolean =
-    hasAnnotation(FqName("kotlin.wasm.internal.WasmForeign"))
-
 fun IrAnnotationContainer.hasWasmAutoboxedAnnotation(): Boolean =
     hasAnnotation(FqName("kotlin.wasm.internal.WasmAutoboxed"))
 
