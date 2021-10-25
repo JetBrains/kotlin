@@ -3180,6 +3180,10 @@ task funInterface_kt43887(type: KonanLocalTest) {
     source = "codegen/funInterface/kt43887.kt"
 }
 
+task funInterface_kt49384(type: KonanLocalTest) {
+    source = "codegen/funInterface/kt49384.kt"
+}
+
 task objectExpression1(type: KonanLocalTest) {
     goldValue = "aabb\n"
     source = "codegen/objectExpression/expr1.kt"
