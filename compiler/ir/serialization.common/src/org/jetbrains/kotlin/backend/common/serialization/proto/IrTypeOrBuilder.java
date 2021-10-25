@@ -33,4 +33,13 @@ public interface IrTypeOrBuilder extends
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType error = 3;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType getError();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
+   */
+  boolean hasDnn();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType getDnn();
 }

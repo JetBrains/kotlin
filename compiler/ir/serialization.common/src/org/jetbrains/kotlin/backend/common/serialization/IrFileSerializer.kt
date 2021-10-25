@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrContinue as ProtoContinue
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase as ProtoDeclarationBase
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType as ProtoDefinitelyNotNullType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDelegatingConstructorCall as ProtoDelegatingConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDoWhile as ProtoDoWhile
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicMemberExpression as ProtoDynamicMemberExpression
@@ -437,9 +438,17 @@ open class IrFileSerializer(
         .addAllAnnotation(serializeAnnotations(type.annotations))
         .build()
 
+    private fun serializeDefinitelyNotNullType(type: IrDefinitelyNotNullType): ProtoDefinitelyNotNullType =
+        ProtoDefinitelyNotNullType.newBuilder()
+            .addTypes(serializeIrType(type.original))
+//            .addTypes(serializeIrType(kotlin.Any))
+            .build()
+
     private fun serializeIrTypeData(type: IrType): ProtoType {
         val proto = ProtoType.newBuilder()
         when (type) {
+            is IrDefinitelyNotNullType ->
+                proto.dnn = serializeDefinitelyNotNullType(type)
             is IrSimpleType ->
                 proto.simple = serializeSimpleType(type)
             is IrDynamicType ->
@@ -454,7 +463,8 @@ open class IrFileSerializer(
     enum class IrTypeKind {
         SIMPLE,
         DYNAMIC,
-        ERROR
+        ERROR,
+        DEFINITELY_NOT_NULL
     }
 
     enum class IrTypeArgumentKind {
@@ -481,6 +491,7 @@ open class IrFileSerializer(
     private val IrType.toIrTypeKey: IrTypeKey
         get() = IrTypeKey(
             kind = when (this) {
+                is IrDefinitelyNotNullType -> IrTypeKind.DEFINITELY_NOT_NULL
                 is IrSimpleType -> IrTypeKind.SIMPLE
                 is IrDynamicType -> IrTypeKind.DYNAMIC
                 is IrErrorType -> IrTypeKind.ERROR

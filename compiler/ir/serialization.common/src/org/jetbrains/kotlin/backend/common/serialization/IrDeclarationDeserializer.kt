@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructor as 
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase as ProtoDeclarationBase
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType as ProtoDefinitelyNotNullType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType as ProtoDynamicType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumEntry as ProtoEnumEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorDeclaration as ProtoErrorDeclaration
@@ -155,8 +156,15 @@ class IrDeclarationDeserializer(
         return IrErrorTypeImpl(null, annotations, Variance.INVARIANT)
     }
 
+    private fun deserializeDefinitelyNotNullType(proto: ProtoDefinitelyNotNullType): IrDefinitelyNotNullType {
+        assert(proto.typesCount == 1) { "Only DefinitelyNotNull type is now supported" }
+        // TODO support general case of intersection type
+        return IrDefinitelyNotNullTypeImpl(null, deserializeIrType(proto.typesList[0]))
+    }
+
     private fun deserializeIrTypeData(proto: ProtoType): IrType {
         return when (proto.kindCase) {
+            DNN -> deserializeDefinitelyNotNullType(proto.dnn)
             SIMPLE -> deserializeSimpleType(proto.simple)
             DYNAMIC -> deserializeDynamicType(proto.dynamic)
             ERROR -> deserializeErrorType(proto.error)

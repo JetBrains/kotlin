@@ -109,6 +109,11 @@ message IrDynamicType {
   repeated IrConstructorCall annotation = 1;
 }
 
+message IrDefinitelyNotNullType {
+  // In fact that is an `IntersectionType` so let represent it as it. In future it could be easy to support general case
+  repeated int32 types = 1 [packed=true];
+}
+
 message IrErrorType {
   repeated IrConstructorCall annotation = 1;
 }
@@ -118,6 +123,7 @@ message IrType {
     IrSimpleType simple = 1;
     IrDynamicType dynamic = 2;
     IrErrorType error = 3;
+    IrDefinitelyNotNullType dnn = 4;
   }
 }
 
