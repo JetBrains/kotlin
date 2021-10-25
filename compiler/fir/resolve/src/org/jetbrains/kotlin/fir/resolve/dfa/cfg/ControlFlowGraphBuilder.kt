@@ -641,6 +641,7 @@ class ControlFlowGraphBuilder {
         addNewSimpleNode(node)
         whenExitNodes.push(createWhenExitNode(whenExpression))
         whenBranchIndices.push(whenExpression.branches.mapIndexed { index, branch -> branch to index }.toMap())
+        notCompletedFunctionCalls.push(mutableListOf())
         levelCounter++
         return node
     }
@@ -676,6 +677,7 @@ class ControlFlowGraphBuilder {
         val whenExitNode = whenExitNodes.pop()
         // exit from last condition node still on stack
         // we should remove it
+        notCompletedFunctionCalls.pop().forEach(::completeFunctionCall)
         val lastWhenConditionExit = lastNodes.pop()
         val syntheticElseBranchNode = if (!whenExpression.isProperlyExhaustive) {
             createWhenSyntheticElseBranchNode(whenExpression).apply {
@@ -985,7 +987,7 @@ class ControlFlowGraphBuilder {
         catchNodeStorages.pop()
         val catchExitNodes = catchExitNodeStorages.pop()
         val tryMainExitNode = tryMainExitNodes.pop()
-        
+
         notCompletedFunctionCalls.pop().forEach(::completeFunctionCall)
 
         val node = tryExitNodes.pop()
@@ -1396,14 +1398,15 @@ class ControlFlowGraphBuilder {
             tryExitNodes.top().fir.finallyBlock == null -> {
                 // (3)... without finally ...(4)
                 // Either in try-main or catch.
-                if (tryMainExitNodes.top().followingNodes.isNotEmpty()) {
+                val tryMainExitNode = tryMainExitNodes.top()
+                if (tryMainExitNode.followingNodes.isNotEmpty()) {
                     // (4)... in catch, i.e., re-throw.
                     exitTargetsForTry.top()
                 } else {
                     // (4)... in try-main. Route to exit of try main block.
                     // We already have edges from the exit of try main block to each catch clause.
                     // This edge makes the remaining part of try main block, e.g., following `when` branches, marked as dead.
-                    tryMainExitNodes.top()
+                    tryMainExitNode
                 }
             }
             // (3)... within finally.

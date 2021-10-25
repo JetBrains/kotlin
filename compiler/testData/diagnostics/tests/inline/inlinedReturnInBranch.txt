@@ -1,0 +1,5 @@
+package
+
+public fun bar(/*0*/ arg: kotlin.Boolean): kotlin.Int
+public fun foo(): kotlin.Int
+public inline fun </*0*/ T> myRun(/*0*/ f: () -> T): T
