@@ -2,6 +2,7 @@
 // SOURCE_RETENTION_ANNOTATIONS
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // JSR305_GLOBAL_REPORT: strict
+// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 
 // FILE: spr/Nullable.java
 package spr;
