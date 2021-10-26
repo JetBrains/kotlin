@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 @Suppress("LeakingThis")
-open class KtFe10AnalysisSession(
+class KtFe10AnalysisSession(
     private val contextElement: PsiElement, token: ValidityToken
 ) : KtAnalysisSession(token), Fe10AnalysisFacade by ServiceManager.getService(contextElement.project, Fe10AnalysisFacade::class.java) {
     override val smartCastProviderImpl: KtSmartCastProvider = KtFe10SmartCastProvider(this)
