@@ -238,8 +238,7 @@ internal class KotlinRootNpmResolver internal constructor(
                     services,
                     logger,
                     nodeJs,
-                    yarnConfigured.executable,
-                    yarnConfigured.standalone,
+                    yarnConfigured,
                     allNpmPackages,
                     args
                 )

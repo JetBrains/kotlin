@@ -51,8 +51,7 @@ class Yarn : NpmApi {
         services: ServiceRegistry,
         logger: Logger,
         nodeJs: NodeJsRootExtension,
-        command: String,
-        isStandalone: Boolean,
+        yarn: YarnEnv,
         npmProjects: Collection<KotlinCompilationNpmResolution>,
         cliArgs: List<String>
     ) {
@@ -61,8 +60,7 @@ class Yarn : NpmApi {
                 services,
                 logger,
                 nodeJs,
-                command,
-                isStandalone,
+                yarn,
                 npmProjects,
                 cliArgs
             )

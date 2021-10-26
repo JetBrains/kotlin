@@ -10,6 +10,7 @@ import org.gradle.api.logging.Logger
 import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
 import java.io.File
 
 /**
@@ -35,8 +36,7 @@ interface NpmApi {
         services: ServiceRegistry,
         logger: Logger,
         nodeJs: NodeJsRootExtension,
-        command: String,
-        isStandalone: Boolean,
+        yarn: YarnEnv,
         npmProjects: Collection<KotlinCompilationNpmResolution>,
         cliArgs: List<String>
     )

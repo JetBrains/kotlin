@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
+import org.jetbrains.kotlin.gradle.testbase.assertFileExists
+import org.jetbrains.kotlin.gradle.testbase.build
+import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Assert
 import org.junit.Assume.assumeFalse
@@ -25,6 +28,7 @@ import org.junit.Test
 import java.io.File
 import java.io.FileFilter
 import java.util.zip.ZipFile
+import kotlin.io.path.readText
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -1026,6 +1030,17 @@ class GeneralKotlin2JsGradlePluginIT : BaseGradleIT() {
 
         build("checkIfLastModifiedNotNow", "--rerun-tasks") {
             assertSuccessful()
+        }
+    }
+
+    @Test
+    fun testYarnLockStore(gradleVersion: GradleVersion) {
+        project("cleanTask", gradleVersion) {
+            buildGradle.modify(::transformBuildScriptWithPluginsDsl)
+            build("assemble") {
+                assertFileExists(projectPath.resolve("kotlin-js-store").resolve("yarn.lock"))
+                assert(projectPath.resolve("kotlin-js-store").resolve("yarn.lock").readText() == projectPath.resolve("build/js/yarn.lock").readText())
+            }
         }
     }
 }

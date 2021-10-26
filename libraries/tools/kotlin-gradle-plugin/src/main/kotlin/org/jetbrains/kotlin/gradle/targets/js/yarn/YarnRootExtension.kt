@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.implementing
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
+import java.io.File
 
 open class YarnRootExtension(
     @Transient
@@ -38,6 +39,10 @@ open class YarnRootExtension(
     var command by Property("yarn")
 
     var download by Property(true)
+    var lockFileName by Property("yarn.lock")
+    var lockFileDirectory: File by Property(project.rootDir.resolve("kotlin-js-store"))
+
+    var ignoreScripts by Property(true)
 
     val yarnSetupTaskProvider: TaskProvider<YarnSetupTask>
         get() = project.tasks
@@ -100,7 +105,8 @@ open class YarnRootExtension(
             home = home,
             executable = getExecutable("yarn", command, "cmd"),
             standalone = !download,
-            ivyDependency = "com.yarnpkg:yarn:$version@tar.gz"
+            ivyDependency = "com.yarnpkg:yarn:$version@tar.gz",
+            ignoreScripts = ignoreScripts,
         )
     }
 
