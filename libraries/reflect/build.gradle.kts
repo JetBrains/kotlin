@@ -20,8 +20,6 @@ plugins {
     `java-library`
 }
 
-val jarBaseName = property("archivesBaseName") as String
-
 configureJavaOnlyToolchain(JdkMajorVersion.JDK_1_6)
 
 publish()
@@ -121,7 +119,7 @@ val reflectShadowJar by task<ShadowJar> {
 val stripMetadata by tasks.registering {
     dependsOn(reflectShadowJar)
     val inputJar = provider { reflectShadowJar.get().outputs.files.singleFile }
-    val outputJar = fileFrom(base.libsDirectory.asFile.get(), "kotlin-reflect-stripped.jar")
+    val outputJar = fileFrom(base.libsDirectory.asFile.get(), "${base.archivesName.get()}-$version-stripped.jar")
 
     inputs.file(inputJar).withNormalizer(ClasspathNormalizer::class.java)
 
@@ -144,7 +142,7 @@ val proguard by task<CacheableProguardTask> {
 
     injars(mapOf("filter" to "!META-INF/versions/**"), stripMetadata.get().outputs.files)
     injars(mapOf("filter" to "!META-INF/**,!**/*.kotlin_builtins"), proguardAdditionalInJars)
-    outjars(fileFrom(base.libsDirectory.asFile.get(), "$jarBaseName-$version-proguard.jar"))
+    outjars(fileFrom(base.libsDirectory.asFile.get(), "${base.archivesName.get()}-$version-proguard.jar"))
 
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_6))
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardDeps)
