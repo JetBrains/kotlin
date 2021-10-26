@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.analysis.api.components.KtBuiltinTypes
 import org.jetbrains.kotlin.analysis.api.components.KtTypeProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.fir.utils.toConeNullability
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.isCompatible
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClass
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
@@ -182,6 +185,18 @@ internal class KtFirTypeProvider(
             .bfs { it.getDirectSuperTypes(shouldApproximate).iterator() }
             .drop(1)
             .mapTo(mutableListOf()) { it.asKtType() }
+    }
+
+    override fun getDispatchReceiverType(symbol: KtPossibleMemberSymbol): KtType? {
+        require(symbol is KtFirSymbol<*>)
+
+        return symbol.firRef.withFir { declaration ->
+            check(declaration is FirCallableDeclaration) {
+                "Fir declaration should be FirCallableDeclaration; instead it was ${declaration::class}"
+            }
+
+            declaration.dispatchReceiverType?.asKtType()
+        }
     }
 }
 

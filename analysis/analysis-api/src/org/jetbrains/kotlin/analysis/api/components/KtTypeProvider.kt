@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
@@ -37,6 +38,7 @@ public abstract class KtTypeProvider : KtAnalysisSessionComponent() {
 
     public abstract fun getAllSuperTypes(type: KtType, shouldApproximate: Boolean): List<KtType>
 
+    public abstract fun getDispatchReceiverType(symbol: KtPossibleMemberSymbol): KtType?
 }
 
 public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
@@ -118,6 +120,21 @@ public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
      */
     public fun KtType.getAllSuperTypes(shouldApproximate: Boolean = false): List<KtType> =
         analysisSession.typeProvider.getAllSuperTypes(this, shouldApproximate)
+
+    /**
+     * This function is provided for a few use-cases where it's hard to go without it.
+     *
+     * **Please avoid using it**; it will probably be removed in the future.
+     *
+     * The function is instantly deprecated, so it's not shown in the completion.
+     *
+     * @receiver A target callable symbol.
+     * @return A dispatch receiver type for this symbol if it has any.
+     */
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("Avoid using this function")
+    public fun KtPossibleMemberSymbol.getDispatchReceiverType(): KtType? =
+        analysisSession.typeProvider.getDispatchReceiverType(this)
 }
 
 @Suppress("PropertyName")
