@@ -27,19 +27,21 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirInterfaceDefaultMethodCallChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        val supportsDefaults = !context.isJvm6()
-
         val symbol = expression.calleeReference.toResolvedCallableSymbol()
         val classId = symbol?.callableId?.classId ?: return
         if (classId.isLocal) return
-        val typeSymbol = context.session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return
 
-        if (!supportsDefaults &&
-            symbol.isStatic &&
-            typeSymbol.isInterface &&
-            typeSymbol.origin == FirDeclarationOrigin.Java
-        ) {
-            reporter.reportOn(expression.source, FirJvmErrors.INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET, context)
+        fun getTypeSymbol(): FirRegularClassSymbol? {
+            return context.session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
+        }
+
+        val supportsDefaults = !context.isJvm6()
+        var typeSymbol: FirRegularClassSymbol? = null
+        if (!supportsDefaults && symbol.isStatic) {
+            typeSymbol = getTypeSymbol() ?: return
+            if (typeSymbol.isInterface && typeSymbol.origin == FirDeclarationOrigin.Java) {
+                reporter.reportOn(expression.source, FirJvmErrors.INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET, context)
+            }
         }
 
         if (expression.explicitReceiver.safeAs<FirQualifiedAccessExpression>()
@@ -49,6 +51,8 @@ object FirInterfaceDefaultMethodCallChecker : FirQualifiedAccessExpressionChecke
         }
 
         val containingDeclaration = context.findClosest<FirRegularClass>() ?: return
+
+        if (typeSymbol == null) typeSymbol = getTypeSymbol() ?: return
 
         val jvmDefaultMode = context.session.jvmDefaultModeState
         if (typeSymbol.isInterface && (typeSymbol.origin == FirDeclarationOrigin.Java || symbol.isCompiledToJvmDefault(jvmDefaultMode))) {
