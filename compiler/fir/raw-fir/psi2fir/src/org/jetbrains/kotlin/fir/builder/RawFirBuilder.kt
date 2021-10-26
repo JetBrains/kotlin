@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
-import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -1785,7 +1784,9 @@ open class RawFirBuilder(
             }
             val typeReference = typeProjection.typeReference
             if (typeReference?.isPlaceholder == true) {
-                return FirTypePlaceholderProjection
+                return buildPlaceholderProjection {
+                    source = projectionSource
+                }
             }
             val firType = typeReference.toFirOrErrorType()
             return buildTypeProjectionWithVariance {

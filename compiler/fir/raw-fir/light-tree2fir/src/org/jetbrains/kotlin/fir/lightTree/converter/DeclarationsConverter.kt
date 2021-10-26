@@ -2064,7 +2064,9 @@ class DeclarationsConverter(
         //annotations from modifiers must be ignored
         return when {
             isStarProjection -> buildStarProjection { source = typeProjection.toFirSourceElement() }
-            allowedUnderscoredTypeArgument && (firType as? FirUserTypeRef)?.isUnderscored == true -> FirTypePlaceholderProjection
+            allowedUnderscoredTypeArgument && (firType as? FirUserTypeRef)?.isUnderscored == true -> buildPlaceholderProjection {
+                source = typeProjection.toFirSourceElement()
+            }
             else -> buildTypeProjectionWithVariance {
                 source = typeProjection.toFirSourceElement()
                 typeRef = firType

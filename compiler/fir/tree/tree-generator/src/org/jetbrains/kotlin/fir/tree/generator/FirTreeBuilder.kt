@@ -85,6 +85,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val constExpression by element(Expression, expression)
     val typeProjection by element(TypeRef)
     val starProjection by element(TypeRef, typeProjection)
+    val placeholderProjection by element(TypeRef, typeProjection)
     val typeProjectionWithVariance by element(TypeRef, typeProjection)
     val argumentList by element(Expression)
     val call by sealedElement(Expression, statement) // TODO: may smth like `CallWithArguments` or `ElementWithArguments`?

@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.fir.expressions.FirTryExpression
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirStarProjection
+import org.jetbrains.kotlin.fir.types.FirPlaceholderProjection
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirCall
@@ -190,6 +191,8 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: D): R  = visitExpression(constExpression, data)
 
     override fun visitStarProjection(starProjection: FirStarProjection, data: D): R  = visitTypeProjection(starProjection, data)
+
+    override fun visitPlaceholderProjection(placeholderProjection: FirPlaceholderProjection, data: D): R  = visitTypeProjection(placeholderProjection, data)
 
     override fun visitTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance, data: D): R  = visitTypeProjection(typeProjectionWithVariance, data)
 

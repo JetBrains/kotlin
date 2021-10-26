@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -873,7 +872,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 generate(typeProjection.typeRef)
             }
             is FirStarProjection -> +"*"
-            is FirTypePlaceholderProjection -> +"_"
+            is FirPlaceholderProjection -> +"_"
         }
     }
 

@@ -453,11 +453,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             default("name", "Name.special(\"<\${diagnostic.reason}>\")")
         }
 
-        impl(typeProjection, "FirTypePlaceholderProjection") {
-            kind = Object
-            noSource()
-        }
-
         impl(breakExpression) {
             defaultTypeRefWithSource("FirImplicitNothingTypeRef")
             useTypes(implicitNothingTypeRefType)

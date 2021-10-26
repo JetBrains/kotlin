@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
@@ -80,7 +79,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                         ?: context.session.builtinTypes.nullableAnyType.type,
                     SimpleConstraintSystemConstraintPosition
                 )
-                else -> assert(typeArgument == FirTypePlaceholderProjection) {
+                else -> assert(typeArgument is FirPlaceholderProjection) {
                     "Unexpected typeArgument: ${typeArgument.renderWithType()}"
                 }
             }
