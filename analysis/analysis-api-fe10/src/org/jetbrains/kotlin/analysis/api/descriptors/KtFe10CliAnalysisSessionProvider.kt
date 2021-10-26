@@ -26,7 +26,7 @@ class KtFe10AnalysisSessionProvider : KtAnalysisSessionProvider() {
             return contextSymbol.analysisSession
         } else {
             val contextElement = contextSymbol.psi
-            if (contextElement != null) {
+            if (contextElement is KtElement) {
                 return KtFe10AnalysisSession(contextElement, contextSymbol.token)
             }
         }

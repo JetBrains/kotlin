@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.descriptors
 
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.components.*
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.psi.KtFile
 
 @Suppress("LeakingThis")
 class KtFe10AnalysisSession(
-    private val contextElement: PsiElement, token: ValidityToken
+    private val contextElement: KtElement, token: ValidityToken
 ) : KtAnalysisSession(token), Fe10AnalysisFacade by ServiceManager.getService(contextElement.project, Fe10AnalysisFacade::class.java) {
     override val smartCastProviderImpl: KtSmartCastProvider = KtFe10SmartCastProvider(this)
     override val diagnosticProviderImpl: KtDiagnosticProvider = KtFe10DiagnosticProvider(this)
