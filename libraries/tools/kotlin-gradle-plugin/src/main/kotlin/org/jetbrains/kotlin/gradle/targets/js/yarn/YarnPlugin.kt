@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.attributes.Usage
 import org.gradle.api.plugins.BasePlugin
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
-import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.implementing
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
@@ -48,7 +46,8 @@ open class YarnPlugin : Plugin<Project> {
             task.mustRunAfter(rootClean)
         }
 
-        tasks.named(KotlinNpmInstallTask.NAME).configure {
+        val kotlinNpmInstall = tasks.named(KotlinNpmInstallTask.NAME)
+        kotlinNpmInstall.configure {
             it.dependsOn(rootPackageJson)
             it.dependsOn(setupTask)
         }
@@ -56,6 +55,56 @@ open class YarnPlugin : Plugin<Project> {
         tasks.register("yarn" + CleanDataTask.NAME_SUFFIX, CleanDataTask::class.java) {
             it.cleanableStoreProvider = provider { yarnRootExtension.requireConfigured().cleanableStore }
             it.description = "Clean unused local yarn version"
+        }
+
+        val packageJsonUmbrella = nodeJs
+            .packageJsonUmbrellaTaskProvider
+
+        yarnRootExtension.rootPackageJsonTaskProvider.configure {
+            it.dependsOn(packageJsonUmbrella)
+        }
+
+        project.allprojects
+            .forEach {
+                it.tasks.implementing(RequiresNpmDependencies::class).all {}
+            }
+
+        val storeYarnLock = tasks.register("kotlinStoreYarnLock") {
+            it.dependsOn(kotlinNpmInstall)
+            val yarnLock = nodeJs.rootPackageDir.resolve("yarn.lock")
+
+            it.doLast {
+                copy { copy ->
+                    copy.from(yarnLock)
+                    copy.rename { yarnRootExtension.lockFileName }
+                    copy.into(yarnRootExtension.lockFileDirectory)
+                }
+            }
+
+            it.inputs.file(yarnLock).withPropertyName("inputFile")
+            it.outputs.file(yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName)).withPropertyName("outputFile")
+        }
+
+        val restoreYarnLock = tasks.register("kotlinRestoreYarnLock") {
+            val lockFile = yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName)
+            it.onlyIf {
+                lockFile.exists()
+            }
+            it.doLast {
+                copy { copy ->
+                    copy.from(lockFile)
+                    copy.rename { "yarn.lock" }
+                    copy.into(nodeJs.rootPackageDir)
+                }
+            }
+
+            it.inputs.file(lockFile).withPropertyName("inputFile")
+            it.outputs.file(nodeJs.rootPackageDir.resolve("yarn.lock")).withPropertyName("outputFile")
+        }
+
+        kotlinNpmInstall.configure {
+            it.dependsOn(restoreYarnLock)
+            it.finalizedBy(storeYarnLock)
         }
     }
 

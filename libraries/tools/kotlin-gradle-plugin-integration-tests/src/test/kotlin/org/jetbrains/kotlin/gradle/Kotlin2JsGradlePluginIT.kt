@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.jsCompilerType
 import org.jetbrains.kotlin.gradle.util.normalizePath
+import org.junit.Test
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledIf
@@ -1038,6 +1039,17 @@ class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
             build("checkDownloadedFolder")
 
             build("checkIfLastModifiedNotNow", "--rerun-tasks")
+        }
+    }
+
+    @DisplayName("Yarn.lock persistence")
+    @GradleTest
+    fun testYarnLockStore() = with(transformProjectWithPluginsDsl("cleanTask")) {
+
+        build("assemble") {
+            assertSuccessful()
+            assertFileExists("kotlin-yarn.lock")
+            assert(fileInWorkingDir("kotlin-yarn.lock").readText() == fileInWorkingDir("build/js/yarn.lock").readText())
         }
     }
 }
