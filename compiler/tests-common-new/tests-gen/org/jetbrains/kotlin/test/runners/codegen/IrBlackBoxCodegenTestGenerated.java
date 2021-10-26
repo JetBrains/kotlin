@@ -31924,6 +31924,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             public void testForNullableIntInDownTo() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/forInDownTo/forNullableIntInDownTo.kt");
             }
+
+            @Test
+            @TestMetadata("kt49411.kt")
+            public void testKt49411() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/forInDownTo/kt49411.kt");
+            }
         }
 
         @Nested
