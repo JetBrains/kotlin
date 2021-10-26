@@ -369,6 +369,10 @@ fun main(args: Array<String>) {
             testClass<AbstractParcelizeIrBytecodeListingTest> {
                 model("codegen")
             }
+
+            testClass<AbstractParcelizeDiagnosticTest> {
+                model("diagnostics")
+            }
         }
 
         testGroup("plugins/fir/fir-plugin-prototype/tests-gen", "plugins/fir/fir-plugin-prototype/testData") {

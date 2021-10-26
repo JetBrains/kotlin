@@ -6,32 +6,32 @@ import android.os.Parcelable
 
 @Parcelize
 class A(val firstName: String) : Parcelable {
-    val <warning descr="[PROPERTY_WONT_BE_SERIALIZED] Property would not be serialized into a 'Parcel'. Add '@IgnoredOnParcel' annotation to remove the warning">secondName</warning>: String = ""
+    val <!PROPERTY_WONT_BE_SERIALIZED!>secondName<!>: String = ""
 
-    val <warning descr="[PROPERTY_WONT_BE_SERIALIZED] Property would not be serialized into a 'Parcel'. Add '@IgnoredOnParcel' annotation to remove the warning">delegated</warning> by lazy { "" }
+    val <!PROPERTY_WONT_BE_SERIALIZED!>delegated<!> by lazy { "" }
 
-    lateinit var <warning descr="[PROPERTY_WONT_BE_SERIALIZED] Property would not be serialized into a 'Parcel'. Add '@IgnoredOnParcel' annotation to remove the warning">lateinit</warning>: String
+    lateinit var <!PROPERTY_WONT_BE_SERIALIZED!>lateinit<!>: String
 
     val customGetter: String
         get() = ""
 
     var customSetter: String
         get() = ""
-        set(<warning descr="[UNUSED_PARAMETER] Parameter 'v' is never used">v</warning>) {}
+        set(v) {}
 }
 
 @Parcelize
 @Suppress("WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET")
-class B(<warning descr="[INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY] '@IgnoredOnParcel' is inapplicable to properties declared in the primary constructor">@IgnoredOnParcel</warning> val firstName: String) : Parcelable {
+class B(<!INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY!>@IgnoredOnParcel<!> val firstName: String) : Parcelable {
     @IgnoredOnParcel
     var a: String = ""
 
     @field:IgnoredOnParcel
-    var <warning descr="[PROPERTY_WONT_BE_SERIALIZED] Property would not be serialized into a 'Parcel'. Add '@IgnoredOnParcel' annotation to remove the warning">b</warning>: String = ""
+    var <!PROPERTY_WONT_BE_SERIALIZED!>b<!>: String = ""
 
     @get:IgnoredOnParcel
     var c: String = ""
 
     @set:IgnoredOnParcel
-    var <warning descr="[PROPERTY_WONT_BE_SERIALIZED] Property would not be serialized into a 'Parcel'. Add '@IgnoredOnParcel' annotation to remove the warning">d</warning>: String = ""
+    var <!PROPERTY_WONT_BE_SERIALIZED!>d<!>: String = ""
 }

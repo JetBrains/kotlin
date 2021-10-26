@@ -4,7 +4,7 @@ import kotlinx.parcelize.Parcelize
 import android.os.Parcelable
 
 @Parcelize
-class <error descr="[NO_PARCELABLE_SUPERTYPE] No 'Parcelable' supertype">Without</error>(val firstName: String, val secondName: String, val age: Int)
+class <!NO_PARCELABLE_SUPERTYPE!>Without<!>(val firstName: String, val secondName: String, val age: Int)
 
 @Parcelize
 class With(val firstName: String, val secondName: String, val age: Int) : Parcelable

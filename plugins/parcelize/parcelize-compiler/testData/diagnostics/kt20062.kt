@@ -17,4 +17,4 @@ class Foo(val box: Box): Parcelable {
 }
 
 @Parcelize
-class Foo2(val box: <error descr="[PARCELABLE_TYPE_NOT_SUPPORTED] Type is not directly supported by 'Parcelize'. Annotate the parameter type with '@RawValue' if you want it to be serialized using 'writeValue()'">Box</error>): Parcelable
+class Foo2(val box: <!PARCELABLE_TYPE_NOT_SUPPORTED!>Box<!>): Parcelable
