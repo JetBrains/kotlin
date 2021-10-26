@@ -8,9 +8,23 @@ package kotlin.script.experimental.dependencies.impl
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.ExternalDependenciesResolver
 
-private val nameRegex = Regex("^[^\\S\\r\\n]*([a-zA-Z][a-zA-Z0-9-_]*)\\b")
-private val valueRegex = Regex("^[^\\S\\r\\n]*([a-zA-Z0-9-_,]+)\\b")
+private val nameRegex = Regex("^[^\\S\\r\\n]*([a-zA-Z][a-zA-Z0-9-_]*)[^\\S\\r\\n]?")
+private val valueRegex = Regex("^[^\\S\\r\\n]*((([a-zA-Z0-9-_,/$.:])|(\\\\[\\\\ nt]))+)[^\\S\\r\\n]?")
 private val equalsRegex = Regex("^[^\\S\\r\\n]*=")
+private val escapeRegex = Regex("\\\\(.)")
+
+private fun String.unescape(): String {
+    return replace(escapeRegex) { match ->
+        when (val c = match.groups[1]!!.value.single()) {
+            '\\' -> "\\"
+            ' ' -> " "
+            'n' -> "\n"
+            't' -> "\t"
+            // Impossible situation: all possible values are mentioned in the regex
+            else -> error("Unknown escaped symbol: $c")
+        }
+    }
+}
 
 /**
  * Simple lightweight options parser for external dependency resolvers.
@@ -42,7 +56,7 @@ object SimpleExternalDependenciesResolverOptionsParser {
             }
 
         fun takeName(): Token.Name? = take(nameRegex)?.let { Token.Name(it.groups[1]!!.value) }
-        fun takeValue(): Token.Value? = take(valueRegex)?.let { Token.Value(it.groups[1]!!.value) }
+        fun takeValue(): Token.Value? = take(valueRegex)?.let { Token.Value(it.groups[1]!!.value.unescape()) }
         fun takeEquals(): Token.Equals? = take(equalsRegex)?.let { Token.Equals }
 
         fun hasFinished(): Boolean = remaining.isBlank()
