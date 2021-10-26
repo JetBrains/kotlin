@@ -2745,6 +2745,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                             functionType(int32Type, false, int8TypePtr, int8TypePtr, int32Type))
             overrideRuntimeGlobal("Kotlin_getSourceInfo_Function", constValue(getSourceInfoFunction!!))
         }
+        if (context.config.target.family == Family.ANDROID && context.config.produce == CompilerOutputKind.PROGRAM) {
+            val configuration = context.config.configuration
+            val programType = configuration.get(BinaryOptions.androidProgramType) ?: AndroidProgramType.Default
+            overrideRuntimeGlobal("Kotlin_printToAndroidLogcat", Int32(if (programType.consolePrintsToLogcat) 1 else 0))
+        }
     }
 
     //-------------------------------------------------------------------------//

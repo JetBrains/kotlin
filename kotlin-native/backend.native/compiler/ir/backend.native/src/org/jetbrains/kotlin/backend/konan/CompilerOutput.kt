@@ -85,8 +85,9 @@ private fun insertAliasToEntryPoint(context: Context) {
     if (context.config.produce != CompilerOutputKind.PROGRAM || nomain)
         return
     val module = context.llvmModule
-    val entryPoint = LLVMGetNamedFunction(module, "Konan_main")
-            ?: error("Module doesn't contain `Konan_main`")
+    val entryPointName = context.config.entryPointName
+    val entryPoint = LLVMGetNamedFunction(module, entryPointName)
+            ?: error("Module doesn't contain `$entryPointName`")
     LLVMAddAlias(module, LLVMTypeOf(entryPoint)!!, entryPoint, "main")
 }
 

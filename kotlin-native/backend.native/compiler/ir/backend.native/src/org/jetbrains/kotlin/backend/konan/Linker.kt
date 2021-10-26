@@ -21,7 +21,16 @@ internal fun determineLinkerOutput(context: Context): LinkerOutputKind =
             CompilerOutputKind.DYNAMIC -> LinkerOutputKind.DYNAMIC_LIBRARY
             CompilerOutputKind.STATIC_CACHE,
             CompilerOutputKind.STATIC -> LinkerOutputKind.STATIC_LIBRARY
-            CompilerOutputKind.PROGRAM -> LinkerOutputKind.EXECUTABLE
+            CompilerOutputKind.PROGRAM -> run {
+                if (context.config.target.family == Family.ANDROID) {
+                    val configuration = context.config.configuration
+                    val androidProgramType = configuration.get(BinaryOptions.androidProgramType) ?: AndroidProgramType.Default
+                    if (androidProgramType.linkerOutputKindOverride != null) {
+                        return@run androidProgramType.linkerOutputKindOverride
+                    }
+                }
+                LinkerOutputKind.EXECUTABLE
+            }
             else -> TODO("${context.config.produce} should not reach native linker stage")
         }
 
