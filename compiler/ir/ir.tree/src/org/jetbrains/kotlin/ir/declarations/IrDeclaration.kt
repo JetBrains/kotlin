@@ -48,9 +48,7 @@ interface IrDeclaration : IrStatement, IrSymbolOwner, IrMutableAnnotationContain
 
 abstract class IrDeclarationBase : IrElementBase(), IrDeclaration
 
-interface IrOverridableDeclaration<S : IrSymbol> : IrOverridableMember {
-    override val symbol: S
-    val isFakeOverride: Boolean
+interface IrOverridableDeclaration<S : IrSymbol> : IrDeclaration {
     var overriddenSymbols: List<S>
 }
 

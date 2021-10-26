@@ -159,6 +159,7 @@ class FakeOverrideBuilder(
 
     private fun provideFakeOverrides(klass: IrClass) {
         buildFakeOverrideChainsForClass(klass)
+        propertyOverriddenSymbols.clear()
         irOverridingUtil.clear()
         haveFakeOverrides.add(klass)
     }

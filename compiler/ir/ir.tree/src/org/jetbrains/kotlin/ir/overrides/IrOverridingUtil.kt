@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.collectAndFilterRealOverrides
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
@@ -35,6 +36,9 @@ abstract class FakeOverrideBuilderStrategy {
 
     protected abstract fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction)
     protected abstract fun linkPropertyFakeOverride(declaration: IrFakeOverrideProperty)
+
+    // TODO: need to make IrProperty carry overriddenSymbols.
+    val propertyOverriddenSymbols: MutableMap<IrOverridableMember, List<IrSymbol>> = mutableMapOf()
 }
 
 fun buildFakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember {
@@ -85,32 +89,35 @@ class IrOverridingUtil(
         originalSuperTypes.clear()
     }
 
-    private val IrOverridableMember.overriddenSymbols: List<IrSymbol>
-        get() = (this as? IrOverridableDeclaration<*>)?.overriddenSymbols
-            ?: error("Unexpected IrOverridableMember: $this")
-
-    private fun IrOverridableMember.setOverriddenSymbols(value: List<IrSymbol>) {
-        when (this) {
-            is IrSimpleFunction -> this.overriddenSymbols =
-                value.map { it as? IrSimpleFunctionSymbol ?: error("Unexpected function overridden symbol: $it") }
-            is IrProperty -> {
-                this.overriddenSymbols =
-                    value.map { it as? IrPropertySymbol ?: error("Unexpected property overridden symbol: $it") }
-                val getter = this.getter ?: error("Property has no getter: ${render()}")
-                getter.overriddenSymbols = value.map { (it.owner as IrProperty).getter!!.symbol }
-                this.setter?.let { setter ->
-                    setter.overriddenSymbols = value.mapNotNull { (it.owner as IrProperty).setter?.symbol }
-                }
-            }
+    private var IrOverridableMember.overriddenSymbols: List<IrSymbol>
+        get() = when (this) {
+            is IrSimpleFunction -> this.overriddenSymbols
+            is IrProperty -> fakeOverrideBuilder.propertyOverriddenSymbols[this]
+                ?: error("No overridden symbols for ${this.render()}")
             else -> error("Unexpected declaration for overriddenSymbols: $this")
         }
-    }
+        set(value) {
+            when (this) {
+                is IrSimpleFunction -> this.overriddenSymbols =
+                    value.map { it as? IrSimpleFunctionSymbol ?: error("Unexpected function overridden symbol: $it") }
+                is IrProperty -> {
+                    fakeOverrideBuilder.propertyOverriddenSymbols[this] =
+                        value.map { it as? IrPropertySymbol ?: error("Unexpected property overridden symbol: $it") }
+                    val getter = this.getter ?: error("Property has no getter: ${render()}")
+                    getter.overriddenSymbols = value.map { (it.owner as IrProperty).getter!!.symbol }
+                    this.setter?.let { setter ->
+                        setter.overriddenSymbols = value.mapNotNull { (it.owner as IrProperty).setter?.symbol }
+                    }
+                }
+                else -> error("Unexpected declaration for overriddenSymbols: $this")
+            }
+        }
 
     fun buildFakeOverridesForClass(clazz: IrClass) {
         val superTypes = clazz.superTypes
 
         @Suppress("UNCHECKED_CAST")
-        val fromCurrent = clazz.declarations.filterIsInstance<IrOverridableMember>()
+        val fromCurrent = clazz.declarations.filter { it is IrOverridableMember } as List<IrOverridableMember>
 
         val allFromSuper = superTypes.flatMap { superType ->
             val superClass = superType.getClass() ?: error("Unexpected super type: $superType")
@@ -140,8 +147,19 @@ class IrOverridingUtil(
         clazz: IrClass,
         implementedMembers: List<IrOverridableMember> = emptyList()
     ): List<IrOverridableMember> {
+        fakeOverrideBuilder.propertyOverriddenSymbols.clear()
+
         val overriddenMembers = (clazz.declarations.filterIsInstance<IrOverridableMember>() + implementedMembers)
-            .flatMap { member -> member.overriddenSymbols.map { it.owner } }
+            .flatMap {
+                when (it) {
+                    is IrSimpleFunction -> it.overriddenSymbols.map { it.owner }
+                    // TODO: use IrProperty.overriddenSymbols instead: KT-47019
+                    is IrProperty -> (it.getter ?: it.setter)?.overriddenSymbols
+                        ?.map { it.owner.correspondingPropertySymbol!!.owner }
+                        ?: emptyList()
+                    else -> error("Unexpected IrOverridableMember: $it")
+                }
+            }
             .toSet()
 
         val unoverriddenSuperMembers = clazz.superTypes.flatMap { superType ->
@@ -224,7 +242,7 @@ class IrOverridingUtil(
             }
         }
         //strategy.setOverriddenDescriptors(fromCurrent, overridden)
-        fromCurrent.setOverriddenSymbols(overridden.map { it.original.symbol })
+        fromCurrent.overriddenSymbols = overridden.map { it.original.symbol }
 
         return bound
     }
@@ -382,7 +400,7 @@ class IrOverridingUtil(
             }
         }
 
-        fakeOverride.setOverriddenSymbols(effectiveOverridden.map { it.original.symbol })
+        fakeOverride.overriddenSymbols = effectiveOverridden.map { it.original.symbol }
 
         assert(
             fakeOverride.overriddenSymbols.isNotEmpty()
