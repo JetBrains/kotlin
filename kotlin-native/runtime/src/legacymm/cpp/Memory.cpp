@@ -2546,6 +2546,7 @@ template <bool Strict>
 void leaveFrame(ObjHeader** start, int parameters, int count) {
   MEMORY_LOG("LeaveFrame %p: %d parameters %d locals\n", start, parameters, count)
   FrameOverlay* frame = reinterpret_cast<FrameOverlay*>(start);
+  RuntimeAssert(currentFrame == frame, "Frame to leave is expected to be %p, but current frame is %p", frame, currentFrame);
   if (Strict) {
     currentFrame = frame->previous;
   } else {
