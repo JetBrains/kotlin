@@ -45,7 +45,7 @@ sealed class TargetPlatformKind<out Version : TargetPlatformVersion>(
 }
 
 sealed class VersionView : DescriptionAware {
-    abstract val version: LanguageVersion
+    abstract val version: LanguageOrApiVersion
 
     object LatestStable : VersionView() {
         override val version: LanguageVersion = LanguageVersion.LATEST_STABLE
@@ -54,7 +54,7 @@ sealed class VersionView : DescriptionAware {
             get() = "Latest stable (${version.versionString})"
     }
 
-    class Specific(override val version: LanguageVersion) : VersionView() {
+    class Specific(override val version: LanguageOrApiVersion) : VersionView() {
         override val description: String
             get() = version.description
 
