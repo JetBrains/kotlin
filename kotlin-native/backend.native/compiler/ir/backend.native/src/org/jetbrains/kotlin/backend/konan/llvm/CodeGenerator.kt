@@ -475,10 +475,12 @@ internal abstract class FunctionGenerationContext(
     private val entryBb = basicBlockInFunction("entry", startLocation)
     protected val cleanupLandingpad = basicBlockInFunction("cleanup_landingpad", endLocation)
 
-    // Functions that can be exported and called not only from Kotlin code should have `LeaveFrame`
+    // Functions that can be exported and called not only from Kotlin code should have cleanup_landingpad and `LeaveFrame`
     // because there is no guarantee of catching Kotlin exception in Kotlin code.
-    protected open val needLeaveFrame: Boolean
-        get() = irFunction?.annotations?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true
+    protected open val needCleanupLandingpadAndLeaveFrame: Boolean
+        get() = irFunction?.annotations?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true ||     // Exported to foreign code
+                (!stackLocalsManager.isEmpty() && context.memoryModel != MemoryModel.EXPERIMENTAL) ||
+                (context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable)
 
     private var setCurrentFrameIsCalled: Boolean = false
 
@@ -908,7 +910,11 @@ internal abstract class FunctionGenerationContext(
         }
         call(context.llvm.setCurrentFrameFunction, listOf(slotsPhi!!))
         setCurrentFrameIsCalled = true
-        //handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
+        if (context.memoryModel == MemoryModel.EXPERIMENTAL) {
+            if (!forbidRuntime) {
+                call(context.llvm.Kotlin_mm_safePointExceptionUnwind, emptyList())
+            }
+        }
 
         return landingpad
     }
@@ -1426,14 +1432,14 @@ internal abstract class FunctionGenerationContext(
     }
 
     internal fun epilogue() {
-        val needLeaveFrame = this.needLeaveFrame
+        val needCleanupLandingpadAndLeaveFrame = this.needCleanupLandingpadAndLeaveFrame
 
         appendingTo(prologueBb) {
-            val slots = if (needSlotsPhi || needLeaveFrame)
+            val slots = if (needSlotsPhi || needCleanupLandingpadAndLeaveFrame)
                 LLVMBuildArrayAlloca(builder, kObjHeaderPtr, Int32(slotCount).llvm, "")!!
             else
                 kNullObjHeaderPtrPtr
-            if (needSlots || needLeaveFrame) {
+            if (needSlots || needCleanupLandingpadAndLeaveFrame) {
                 check(!forbidRuntime) { "Attempt to start a frame where runtime usage is forbidden" }
                 // Zero-init slots.
                 val slotsMem = bitcast(kInt8Ptr, slots)
@@ -1461,38 +1467,7 @@ internal abstract class FunctionGenerationContext(
             br(stackLocalsInitBb)
         }
 
-
-        appendingTo(stackLocalsInitBb) {
-            /**
-             * Function calls need to have !dbg, otherwise llvm rejects full module debug information
-             * On the other hand, we don't want prologue to have debug info, because it can lead to debugger stops in
-             * places with inconsistent stack layout. So we setup debug info only for this part of bb.
-             */
-            startLocation?.let { debugLocation(it, it) }
-            val needStateSwitch = context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable
-            if (needsRuntimeInit || needStateSwitch) {
-                check(!forbidRuntime) { "Attempt to init runtime where runtime usage is forbidden" }
-                call(context.llvm.initRuntimeIfNeeded, emptyList())
-            }
-            if (needStateSwitch) {
-                switchThreadState(Runnable)
-            }
-            if (needSlots || needLeaveFrame) {
-                call(context.llvm.enterFrameFunction, listOf(slotsPhi!!, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))
-            } else {
-                check(!setCurrentFrameIsCalled)
-            }
-            resetDebugLocation()
-            br(entryBb)
-        }
-
-        processReturns()
-
-        val shouldHaveCleanupLandingpad = needLeaveFrame ||
-                (!stackLocalsManager.isEmpty() && context.memoryModel != MemoryModel.EXPERIMENTAL) ||
-                (context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable)
-
-        if (shouldHaveCleanupLandingpad) {
+        if (needCleanupLandingpadAndLeaveFrame) {
             appendingTo(cleanupLandingpad) {
                 val landingpad = gxxLandingpad(numClauses = 0)
                 LLVMSetCleanup(landingpad, 1)
@@ -1529,7 +1504,35 @@ internal abstract class FunctionGenerationContext(
                 handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
                 LLVMBuildResume(builder, landingpad)
             }
-        } else {
+        }
+
+        appendingTo(stackLocalsInitBb) {
+            /**
+             * Function calls need to have !dbg, otherwise llvm rejects full module debug information
+             * On the other hand, we don't want prologue to have debug info, because it can lead to debugger stops in
+             * places with inconsistent stack layout. So we setup debug info only for this part of bb.
+             */
+            startLocation?.let { debugLocation(it, it) }
+            val needStateSwitch = context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable
+            if (needsRuntimeInit || needStateSwitch) {
+                check(!forbidRuntime) { "Attempt to init runtime where runtime usage is forbidden" }
+                call(context.llvm.initRuntimeIfNeeded, emptyList())
+            }
+            if (needStateSwitch) {
+                switchThreadState(Runnable)
+            }
+            if (needSlots || needCleanupLandingpadAndLeaveFrame) {
+                call(context.llvm.enterFrameFunction, listOf(slotsPhi!!, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))
+            } else {
+                check(!setCurrentFrameIsCalled)
+            }
+            resetDebugLocation()
+            br(entryBb)
+        }
+
+        processReturns()
+
+        if (!needCleanupLandingpadAndLeaveFrame) {
             // Replace invokes with calls and branches.
             invokeInstructions.forEach { functionInvokeInfo ->
                 positionBefore(functionInvokeInfo.invokeInstruction)
@@ -1715,7 +1718,7 @@ internal abstract class FunctionGenerationContext(
         }
 
     private fun releaseVars() {
-        if (needLeaveFrame || needSlots) {
+        if (needCleanupLandingpadAndLeaveFrame || needSlots) {
             check(!forbidRuntime) { "Attempt to leave a frame where runtime usage is forbidden" }
             call(context.llvm.leaveFrameFunction,
                     listOf(slotsPhi!!, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))

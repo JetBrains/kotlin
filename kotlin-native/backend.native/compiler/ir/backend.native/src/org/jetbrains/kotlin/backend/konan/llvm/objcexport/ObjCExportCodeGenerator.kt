@@ -55,7 +55,7 @@ internal class ObjCExportFunctionGenerationContext(
 
     // All generated bridges by ObjCExport should have `LeaveFrame`
     // because there is no guarantee of catching Kotlin exception in Kotlin code.
-    override val needLeaveFrame: Boolean
+    override val needCleanupLandingpadAndLeaveFrame: Boolean
         get() = true
 
     // Note: we could generate single "epilogue" and make all [ret]s just branch to it (like [DefaultFunctionGenerationContext]),
