@@ -11078,6 +11078,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/fakeOverride/internalFromFriendModule.kt");
         }
 
+        @TestMetadata("kt49371.kt")
+        public void testKt49371() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/kt49371.kt");
+        }
+
         @TestMetadata("privateFakeOverrides0.kt")
         public void testPrivateFakeOverrides0() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/privateFakeOverrides0.kt");
