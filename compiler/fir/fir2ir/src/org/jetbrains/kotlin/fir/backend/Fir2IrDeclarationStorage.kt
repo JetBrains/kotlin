@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.types.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -162,6 +163,14 @@ class Fir2IrDeclarationStorage(
                 }
                 else -> {}
             }
+        }
+        val scope = firClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+        scope.getCallableNames().forEach { callableName ->
+            buildList {
+                fakeOverrideGenerator.generateFakeOverridesForName(
+                    irClass, scope, callableName, firClass, this, realDeclarationSymbols = emptySet()
+                )
+            }.also(fakeOverrideGenerator::bindOverriddenSymbols)
         }
     }
 

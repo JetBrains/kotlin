@@ -101,7 +101,7 @@ class FakeOverrideGenerator(
         )
     }
 
-    private fun generateFakeOverridesForName(
+    internal fun generateFakeOverridesForName(
         irClass: IrClass,
         useSiteMemberScope: FirTypeScope,
         name: Name,
