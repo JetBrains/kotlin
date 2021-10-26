@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProvider
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
 @Suppress("LeakingThis")
 class KtFe10AnalysisSession(
@@ -43,6 +45,9 @@ class KtFe10AnalysisSession(
     override val importOptimizerImpl: KtImportOptimizer = KtFe10ImportOptimizer(this)
     override val jvmTypeMapperImpl: KtJvmTypeMapper = KtFe10JvmTypeMapper(this)
     override val symbolInfoProviderImpl: KtSymbolInfoProvider = KtFe10SymbolInfoProvider(this)
+
+    val resolveSession: ResolveSession = getResolveSession(contextElement)
+    val deprecationResolver: DeprecationResolver = getDeprecationResolver(contextElement)
 
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession {
         return KtFe10AnalysisSession(elementToReanalyze, token)

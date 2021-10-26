@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
 interface Fe10AnalysisFacade {
-    val resolveSession: ResolveSession
-    val deprecationResolver: DeprecationResolver
+    fun getResolveSession(element: KtElement): ResolveSession
+    fun getDeprecationResolver(element: KtElement): DeprecationResolver
 
     fun analyze(element: KtElement, mode: AnalysisMode = AnalysisMode.FULL): BindingContext
 

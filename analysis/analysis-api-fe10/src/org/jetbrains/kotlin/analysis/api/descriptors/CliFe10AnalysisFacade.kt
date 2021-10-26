@@ -26,14 +26,16 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 class CliFe10AnalysisFacade(project: Project) : Fe10AnalysisFacade {
     private val handler by lazy { KtFe10AnalysisHandlerExtension.getInstance(project) }
 
-    override val resolveSession: ResolveSession
-        get() = handler.resolveSession ?: error("Resolution is not performed")
+    override fun getResolveSession(element: KtElement): ResolveSession {
+        return handler.resolveSession ?: error("Resolution is not performed")
+    }
 
-    override val deprecationResolver: DeprecationResolver
-        get() = handler.deprecationResolver ?: error("Resolution is not performed")
+    override fun getDeprecationResolver(element: KtElement): DeprecationResolver {
+        return handler.deprecationResolver ?: error("Resolution is not performed")
+    }
 
     override fun analyze(element: KtElement, mode: Fe10AnalysisFacade.AnalysisMode): BindingContext {
-        return resolveSession.bindingContext
+        return getResolveSession(element).bindingContext
     }
 
     override fun getOrigin(file: VirtualFile): KtSymbolOrigin {
