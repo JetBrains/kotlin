@@ -146,17 +146,11 @@ class JavaSyntheticPropertiesScope(
         name: Name,
         ownerClass: ClassDescriptor
     ): SyntheticPropertyHolder {
-        if (name.isSpecial) return SyntheticPropertyHolder.EMPTY
-
-        val identifier = name.identifier
-        if (identifier.isEmpty()) return SyntheticPropertyHolder.EMPTY
-
-        val firstChar = identifier[0]
-        if (!firstChar.isJavaIdentifierStart() || firstChar in 'A'..'Z') return SyntheticPropertyHolder.EMPTY
+        val possibleGetMethodNames = possibleGetMethodNames(name)
+        if (possibleGetMethodNames.isEmpty()) return SyntheticPropertyHolder.EMPTY
 
         val memberScope = ownerClass.unsubstitutedMemberScope
 
-        val possibleGetMethodNames = possibleGetMethodNames(name)
         val getMethod = possibleGetMethodNames
             .flatMap { memberScope.getContributedFunctions(it, NoLookupLocation.FROM_SYNTHETIC_SCOPE) }
             .singleOrNull {

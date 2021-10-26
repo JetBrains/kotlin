@@ -65,8 +65,15 @@ fun getPropertyNamesCandidatesByAccessorName(name: Name): List<Name> {
 }
 
 fun possibleGetMethodNames(propertyName: Name): List<Name> {
-    val result = ArrayList<Name>(3)
+    if (propertyName.isSpecial) return emptyList()
+
     val identifier = propertyName.identifier
+    if (identifier.isEmpty()) return emptyList()
+
+    val firstChar = identifier[0]
+    if (!firstChar.isJavaIdentifierStart() || firstChar in 'A'..'Z') return emptyList()
+
+    val result = ArrayList<Name>(3)
 
     if (JvmAbi.startsWithIsPrefix(identifier)) {
         result.add(propertyName)

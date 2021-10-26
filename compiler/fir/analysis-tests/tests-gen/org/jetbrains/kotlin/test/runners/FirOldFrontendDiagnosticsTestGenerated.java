@@ -29881,6 +29881,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("nonValidFirstChar.kt")
+                public void testNonValidFirstChar() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/nonValidFirstChar.kt");
+                }
+
+                @Test
                 @TestMetadata("OnlyAscii.kt")
                 public void testOnlyAscii() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/OnlyAscii.kt");
