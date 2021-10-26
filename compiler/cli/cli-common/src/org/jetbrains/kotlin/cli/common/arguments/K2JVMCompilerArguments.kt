@@ -97,7 +97,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     // Advanced options
 
-    @DeprecatedOption(removeAfter = "1.5", level = DeprecationLevel.WARNING)
+    @DeprecatedOption(removeAfter = "1.6", level = DeprecationLevel.HIDDEN)
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(
         value = "-Xuse-ir",
