@@ -746,25 +746,25 @@ open class RawFirBuilder(
             classKind: ClassKind,
             containerTypeParameters: List<FirTypeParameterRef>,
             containingClassIsExpectClass: Boolean
-        ): FirTypeRef {
+        ): Pair<FirTypeRef, Map<Int, FirFieldSymbol>?> {
             var superTypeCallEntry: KtSuperTypeCallEntry? = null
             var delegatedSuperTypeRef: FirTypeRef? = null
-            val delegateFields = mutableListOf<FirField>()
-            for (superTypeListEntry in superTypeListEntries) {
+            val delegateFieldsMap = mutableMapOf<Int, FirFieldSymbol>()
+            superTypeListEntries.forEachIndexed { index, superTypeListEntry ->
                 when (superTypeListEntry) {
                     is KtSuperTypeEntry -> {
                         container.superTypeRefs += superTypeListEntry.typeReference.toFirOrErrorType()
                     }
                     is KtSuperTypeCallEntry -> {
                         delegatedSuperTypeRef = superTypeListEntry.calleeExpression.typeReference.toFirOrErrorType()
-                        container.superTypeRefs += delegatedSuperTypeRef
+                        container.superTypeRefs += delegatedSuperTypeRef!!
                         superTypeCallEntry = superTypeListEntry
                     }
                     is KtDelegatedSuperTypeEntry -> {
                         val type = superTypeListEntry.typeReference.toFirOrErrorType()
                         val delegateExpression = { superTypeListEntry.delegateExpression }.toFirExpression("Should have delegate")
                         container.superTypeRefs += type
-                        val delegateName = Name.special("<\$\$delegate_${delegateFields.size}>")
+                        val delegateName = Name.special("<\$\$delegate_${delegateFieldsMap.size}>")
                         val delegateSource =
                             superTypeListEntry.delegateExpression?.toFirSourceElement(KtFakeSourceElementKind.ClassDelegationField)
                         val delegateField = buildField {
@@ -778,7 +778,7 @@ open class RawFirBuilder(
                             status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                             initializer = delegateExpression
                         }
-                        delegateFields.add(delegateField)
+                        delegateFieldsMap[index] = delegateField.symbol
                     }
                 }
             }
@@ -798,7 +798,7 @@ open class RawFirBuilder(
                             isNullable = false,
                         )
                     }
-                    container.superTypeRefs += delegatedSuperTypeRef
+                    container.superTypeRefs += delegatedSuperTypeRef!!
                 }
                 this is KtClass && classKind == ClassKind.ANNOTATION_CLASS -> {
                     container.superTypeRefs += implicitAnnotationType
@@ -828,16 +828,16 @@ open class RawFirBuilder(
             if ((this !is KtClass || !this.isInterface()) && (primaryConstructor != null || !shouldNotGenerateImplicitPrimaryConstructor)) {
                 val firPrimaryConstructor = primaryConstructor.toFirConstructor(
                     superTypeCallEntry,
-                    delegatedSuperTypeRef,
-                    delegatedSelfTypeRef ?: delegatedSuperTypeRef,
+                    delegatedSuperTypeRef!!,
+                    delegatedSelfTypeRef ?: delegatedSuperTypeRef!!,
                     owner = this,
                     containerTypeParameters,
                     body = null
                 )
                 container.declarations += firPrimaryConstructor
             }
-            container.declarations += delegateFields
-            return delegatedSuperTypeRef
+            delegateFieldsMap.values.mapTo(container.declarations) { it.fir }
+            return delegatedSuperTypeRef!! to delegateFieldsMap.takeIf { it.isNotEmpty() }
         }
 
         private fun KtPrimaryConstructor?.toFirConstructor(
@@ -1045,6 +1045,7 @@ open class RawFirBuilder(
                 }
 
                 withCapturedTypeParameters(status.isInner || isLocal, listOf()) {
+                    var delegatedFieldsMap: Map<Int, FirFieldSymbol>?
                     buildRegularClass {
                         source = classOrObject.toFirSourceElement()
                         moduleData = baseModuleData
@@ -1067,7 +1068,7 @@ open class RawFirBuilder(
                         val delegatedSelfType = classOrObject.toDelegatedSelfType(this)
                         registerSelfType(delegatedSelfType)
 
-                        val delegatedSuperType = classOrObject.extractSuperTypeListEntriesTo(
+                        val (delegatedSuperType, extractedDelegatedFieldsMap) = classOrObject.extractSuperTypeListEntriesTo(
                             this,
                             delegatedSelfType,
                             null,
@@ -1075,6 +1076,7 @@ open class RawFirBuilder(
                             typeParameters,
                             containingClassIsExpectClass = classIsExpect
                         )
+                        delegatedFieldsMap = extractedDelegatedFieldsMap
 
                         val primaryConstructor = classOrObject.primaryConstructor
                         val firPrimaryConstructor = declarations.firstOrNull { it is FirConstructor } as? FirConstructor
@@ -1136,6 +1138,8 @@ open class RawFirBuilder(
                         initCompanionObjectSymbolAttr()
 
                         context.popFirTypeParameters()
+                    }.also {
+                        it.delegateFieldsMap = delegatedFieldsMap
                     }
                 }
             }.also {
@@ -1147,6 +1151,7 @@ open class RawFirBuilder(
         override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression, data: Unit): FirElement {
             val objectDeclaration = expression.objectDeclaration
             return withChildClassName(SpecialNames.ANONYMOUS, forceLocalContext = true, isExpect = false) {
+                var delegatedFieldsMap: Map<Int, FirFieldSymbol>?
                 buildAnonymousObjectExpression {
                     val sourceElement = objectDeclaration.toFirSourceElement()
                     source = sourceElement
@@ -1162,7 +1167,7 @@ open class RawFirBuilder(
                         val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)
                         registerSelfType(delegatedSelfType)
                         objectDeclaration.extractAnnotationsTo(this)
-                        val delegatedSuperType = objectDeclaration.extractSuperTypeListEntriesTo(
+                        val (delegatedSuperType, extractedDelegatedFieldsMap) = objectDeclaration.extractSuperTypeListEntriesTo(
                             this,
                             delegatedSelfType,
                             null,
@@ -1170,6 +1175,7 @@ open class RawFirBuilder(
                             containerTypeParameters = emptyList(),
                             containingClassIsExpectClass = false
                         )
+                        delegatedFieldsMap = extractedDelegatedFieldsMap
 
                         for (declaration in objectDeclaration.declarations) {
                             declarations += declaration.toFirDeclaration(
@@ -1180,6 +1186,8 @@ open class RawFirBuilder(
                                 ownerTypeParameters = emptyList()
                             )
                         }
+                    }.also {
+                        it.delegateFieldsMap = delegatedFieldsMap
                     }
                 }
             }
