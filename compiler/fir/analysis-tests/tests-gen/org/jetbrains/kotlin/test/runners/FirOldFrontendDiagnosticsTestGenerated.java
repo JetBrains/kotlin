@@ -32927,6 +32927,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Test
+        @TestMetadata("pairReference.kt")
+        public void testPairReference() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/pairReference.kt");
+        }
+
+        @Test
         @TestMetadata("PropertyDelegateWithPrivateSet.kt")
         public void testPropertyDelegateWithPrivateSet() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/PropertyDelegateWithPrivateSet.kt");
