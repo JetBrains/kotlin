@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.references
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.references.base.CliKtFe10Reference
 import org.jetbrains.kotlin.analysis.api.descriptors.references.base.KtFe10Reference
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.idea.references.KtCollectionLiteralReference
 import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 
-internal class KtFe10CollectionLiteralReference(
+abstract class KtFe10CollectionLiteralReference(
     expression: KtCollectionLiteralExpression
 ) : KtCollectionLiteralReference(expression), KtFe10Reference {
     override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
@@ -26,3 +27,7 @@ internal class KtFe10CollectionLiteralReference(
         return listOfNotNull(descriptor?.toKtCallableSymbol(this))
     }
 }
+
+internal class CliKtFe10CollectionLiteralReference(
+    expression: KtCollectionLiteralExpression
+) : KtFe10CollectionLiteralReference(expression), CliKtFe10Reference

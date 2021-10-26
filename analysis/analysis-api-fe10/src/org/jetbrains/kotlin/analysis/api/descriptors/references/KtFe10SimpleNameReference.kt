@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.references.base.CliKtFe10Reference
 import org.jetbrains.kotlin.analysis.api.descriptors.references.base.KtFe10Reference
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 
-internal class KtFe10SimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleNameReference(expression), KtFe10Reference {
+abstract class KtFe10SimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleNameReference(expression), KtFe10Reference {
     override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
         require(this is KtFe10AnalysisSession)
 
@@ -30,28 +31,32 @@ internal class KtFe10SimpleNameReference(expression: KtSimpleNameExpression) : K
 
         return listOfNotNull(descriptor?.toKtSymbol(this))
     }
+}
 
+internal class CliKtFe10SimpleNameReference(
+    expression: KtSimpleNameExpression
+) : KtFe10SimpleNameReference(expression), CliKtFe10Reference {
     override fun doCanBeReferenceTo(candidateTarget: PsiElement): Boolean {
-        return true // TODO
+        return true
     }
 
     override fun isReferenceTo(element: PsiElement): Boolean {
-        return resolve() == element // TODO
+        return resolve() == element
     }
 
     override fun handleElementRename(newElementName: String): PsiElement? {
-        TODO("Not yet implemented")
+        throw NotImplementedError("Renaming is not supported")
     }
 
     override fun bindToElement(element: PsiElement, shorteningMode: ShorteningMode): PsiElement {
-        TODO("Not yet implemented")
+        throw NotImplementedError("Binding is not supported")
     }
 
     override fun bindToFqName(fqName: FqName, shorteningMode: ShorteningMode, targetElement: PsiElement?): PsiElement {
-        TODO("Not yet implemented")
+        throw NotImplementedError("Binding is not supported")
     }
 
     override fun getImportAlias(): KtImportAlias? {
-        TODO("Not yet implemented")
+        return null
     }
 }

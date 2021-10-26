@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
 class KtFe10KotlinReferenceProviderContributor : KotlinReferenceProviderContributor {
     override fun registerReferenceProviders(registrar: KotlinPsiReferenceRegistrar) {
         with(registrar) {
-            registerProvider(factory = ::KtFe10SimpleNameReference)
-            registerProvider(factory = ::KtFe10ForLoopInReference)
-            registerProvider(factory = ::KtFe10InvokeFunctionReference)
-            registerProvider(factory = ::KtFe10PropertyDelegationMethodsReference)
-            registerProvider(factory = ::KtFe10DestructuringDeclarationEntry)
-            registerProvider(factory = ::KtFe10ArrayAccessReference)
-            registerProvider(factory = ::KtFe10ConstructorDelegationReference)
-            registerProvider(factory = ::KtFe10CollectionLiteralReference)
+            registerProvider(factory = ::CliKtFe10SimpleNameReference)
+            registerProvider(factory = ::CliKtFe10ForLoopInReference)
+            registerProvider(factory = ::CliKtFe10InvokeFunctionReference)
+            registerProvider(factory = ::CliKtFe10PropertyDelegationMethodsReference)
+            registerProvider(factory = ::CliKtFe10DestructuringDeclarationEntry)
+            registerProvider(factory = ::CliKtFe10ArrayAccessReference)
+            registerProvider(factory = ::CliKtFe10ConstructorDelegationReference)
+            registerProvider(factory = ::CliKtFe10CollectionLiteralReference)
         }
     }
 }
