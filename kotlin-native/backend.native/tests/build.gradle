@@ -6005,4 +6005,14 @@ if (UtilsKt.supportsRunningTestsOnDevice(target)) {
             .configureEach { it.enabled = false }
 }
 
+project.afterEvaluate {
+    // Don't treat any task as up-to-date, no matter what.
+    // Note: this project should contain only test tasks, including ones that build binaries,
+    // and ones that run binaries.
+    // So the configuration below mostly means "tests aren't up-to-date".
+    tasks.configureEach {
+        outputs.upToDateWhen { false }
+    }
+}
+
 
