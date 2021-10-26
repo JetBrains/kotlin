@@ -1192,6 +1192,17 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.inlineModifier(declaration: Li
 fun FlyweightCapableTreeStructure<LighterASTNode>.typeParametersList(declaration: LighterASTNode): LighterASTNode? =
     findChildByType(declaration, KtNodeTypes.TYPE_PARAMETER_LIST)
 
+fun FlyweightCapableTreeStructure<LighterASTNode>.annotations(node: LighterASTNode): List<LighterASTNode>? {
+    val typeReference = findChildByType(node, KtNodeTypes.TYPE_REFERENCE) ?: return null
+    val modifiers = modifierList(typeReference) ?: return null
+    return collectDescendantsOfType(modifiers, KtNodeTypes.ANNOTATION_ENTRY)
+}
+
+fun FlyweightCapableTreeStructure<LighterASTNode>.userType(node: LighterASTNode): LighterASTNode? {
+    val typeReference = findChildByType(node, KtNodeTypes.TYPE_REFERENCE) ?: return null
+    return findChildByType(typeReference, KtNodeTypes.USER_TYPE)
+}
+
 private fun FlyweightCapableTreeStructure<LighterASTNode>.supertypesList(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtNodeTypes.SUPER_TYPE_LIST)
 
