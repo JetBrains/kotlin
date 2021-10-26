@@ -90,6 +90,7 @@ val ConeKotlinType.isNullableBoolean: Boolean get() = isBuiltinType(StandardClas
 val ConeKotlinType.isBooleanOrNullableBoolean: Boolean get() = isAnyOfBuiltinType(setOf(StandardClassIds.Boolean))
 val ConeKotlinType.isEnum: Boolean get() = isBuiltinType(StandardClassIds.Enum, false)
 val ConeKotlinType.isString: Boolean get() = isBuiltinType(StandardClassIds.String, false)
+val ConeKotlinType.isInt: Boolean get() = isBuiltinType(StandardClassIds.Int, false)
 val ConeKotlinType.isPrimitiveOrNullablePrimitive: Boolean get() = isAnyOfBuiltinType(StandardClassIds.primitiveTypes)
 val ConeKotlinType.isPrimitive: Boolean get() = isPrimitiveOrNullablePrimitive && nullability == ConeNullability.NOT_NULL
 val ConeKotlinType.isArrayType: Boolean

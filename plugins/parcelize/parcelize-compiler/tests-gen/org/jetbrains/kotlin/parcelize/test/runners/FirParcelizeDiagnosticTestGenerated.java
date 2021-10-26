@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/parcelize/parcelize-compiler/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
-public class ParcelizeDiagnosticTestGenerated extends AbstractParcelizeDiagnosticTest {
+public class FirParcelizeDiagnosticTestGenerated extends AbstractFirParcelizeDiagnosticTest {
     @Test
     public void testAllFilesPresentInDiagnostics() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-compiler/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);

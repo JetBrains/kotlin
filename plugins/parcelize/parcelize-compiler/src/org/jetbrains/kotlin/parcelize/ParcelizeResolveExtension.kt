@@ -31,11 +31,7 @@ import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent.ComponentKind.
 import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent.ComponentKind.WRITE_TO_PARCEL
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -174,33 +170,39 @@ interface ParcelizeSyntheticComponent {
     }
 }
 
-val TYPE_PARCELER_FQ_NAMES = listOf(
-    FqName("kotlinx.parcelize.TypeParceler"),
-    FqName("kotlinx.android.parcel.TypeParceler")
+val PACKAGES_FQ_NAMES = listOf(
+    FqName("kotlinx.parcelize"),
+    FqName("kotlinx.android.parcel")
 )
 
-val WRITE_WITH_FQ_NAMES = listOf(
-    FqName("kotlinx.parcelize.WriteWith"),
-    FqName("kotlinx.android.parcel.WriteWith")
-)
+private fun createClassIds(name: String): List<ClassId> {
+    return PACKAGES_FQ_NAMES.map { ClassId(it, Name.identifier(name)) }
+}
 
-val IGNORED_ON_PARCEL_FQ_NAMES = listOf(
-    FqName("kotlinx.parcelize.IgnoredOnParcel"),
-    FqName("kotlinx.android.parcel.IgnoredOnParcel")
-)
+private fun List<ClassId>.fqNames(): List<FqName> {
+    return map { it.asSingleFqName() }
+}
 
-val PARCELIZE_CLASS_FQ_NAMES: List<FqName> = listOf(
-    FqName("kotlinx.parcelize.Parcelize"),
-    FqName("kotlinx.android.parcel.Parcelize")
-)
+val TYPE_PARCELER_CLASS_IDS = createClassIds("TypeParceler")
+val TYPE_PARCELER_FQ_NAMES = TYPE_PARCELER_CLASS_IDS.fqNames()
 
-val RAW_VALUE_ANNOTATION_FQ_NAMES = listOf(
-    FqName("kotlinx.parcelize.RawValue"),
-    FqName("kotlinx.android.parcel.RawValue")
-)
+val WRITE_WITH_CLASS_IDS = createClassIds("WriteWith")
+val WRITE_WITH_FQ_NAMES = WRITE_WITH_CLASS_IDS.fqNames()
 
-internal val PARCELER_FQNAME = FqName("kotlinx.parcelize.Parceler")
-internal val OLD_PARCELER_FQNAME = FqName("kotlinx.android.parcel.Parceler")
+val IGNORED_ON_PARCEL_CLASS_IDS = createClassIds("IgnoredOnParcel")
+val IGNORED_ON_PARCEL_FQ_NAMES = IGNORED_ON_PARCEL_CLASS_IDS.fqNames()
+
+val PARCELIZE_CLASS_CLASS_IDS = createClassIds("Parcelize")
+val PARCELIZE_CLASS_FQ_NAMES: List<FqName> = PARCELIZE_CLASS_CLASS_IDS.fqNames()
+
+val RAW_VALUE_ANNOTATION_CLASS_IDS = createClassIds("RawValue")
+val RAW_VALUE_ANNOTATION_FQ_NAMES = RAW_VALUE_ANNOTATION_CLASS_IDS.fqNames()
+
+internal val PARCELER_CLASS_ID = ClassId(FqName("kotlinx.parcelize"), Name.identifier("Parceler"))
+internal val PARCELER_FQNAME = PARCELER_CLASS_ID.asSingleFqName()
+
+internal val OLD_PARCELER_CLASS_ID = ClassId(FqName("kotlinx.android.parcel"), Name.identifier("Parceler"))
+internal val OLD_PARCELER_FQNAME = OLD_PARCELER_CLASS_ID.asSingleFqName()
 
 val ClassDescriptor.hasParcelizeAnnotation: Boolean
     get() = PARCELIZE_CLASS_FQ_NAMES.any(annotations::hasAnnotation)

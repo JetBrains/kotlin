@@ -10,5 +10,6 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 class FirParcelizeExtensionRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::FirParcelizeDeclarationGenerator
+        +::FirParcelizeCheckersExtension
     }
 }

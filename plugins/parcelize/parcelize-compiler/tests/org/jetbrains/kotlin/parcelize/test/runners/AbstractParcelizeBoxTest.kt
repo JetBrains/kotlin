@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize.test.runners
 
-import org.jetbrains.kotlin.parcelize.fir.FirParcelizeExtensionRegistrar
-import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
-import org.jetbrains.kotlin.parcelize.test.services.ParcelizeMainClassProvider
-import org.jetbrains.kotlin.parcelize.test.services.ParcelizeRuntimeClasspathProvider
-import org.jetbrains.kotlin.parcelize.test.services.ParcelizeUtilSourcesProvider
+import org.jetbrains.kotlin.parcelize.test.services.*
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
@@ -20,9 +16,6 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.*
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.configureClassicFrontendHandlersStep
-import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
@@ -33,7 +26,6 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
@@ -124,11 +116,7 @@ open class AbstractParcelizeFirBoxTest : AbstractParcelizeBoxTestBase<FirOutputA
     TargetBackend.JVM_IR
 ) {
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = { testServices ->
-            FirFrontendFacade(testServices) {
-                it.registerExtensions(FirParcelizeExtensionRegistrar().configure())
-            }
-        }
+        get() = FirFacadeWithParcelizeExtension
 
     override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
         get() = ::Fir2IrResultsConverter

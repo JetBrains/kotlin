@@ -123,6 +123,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.DATA_MODIFIER
     )
 
+    val OBJECT_KEYWORD = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.OBJECT_KEYWORD,
+        PositioningStrategies.OBJECT_KEYWORD
+    )
+
     val OPERATOR = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.OPERATOR,
         PositioningStrategies.OPERATOR
@@ -343,5 +348,10 @@ object SourceElementPositioningStrategies {
     val DECLARATION_START_TO_NAME = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DECLARATION_START_TO_NAME,
         PositioningStrategies.DECLARATION_START_TO_NAME
+    )
+
+    val DELEGATED_SUPERTYPE_BY_KEYWORD = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.DELEGATED_SUPERTYPE_BY_KEYWORD,
+        PositioningStrategies.DELEGATED_SUPERTYPE_BY_KEYWORD
     )
 }
