@@ -5,7 +5,7 @@ fun test(foo: Foo?) {
         // Correct
         <!DEBUG_INFO_SMARTCAST!>foo<!>.bar?.length
         // Unnecessary
-        foo<!UNNECESSARY_SAFE_CALL!>?.<!>bar?.length
+        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>foo<!UNNECESSARY_SAFE_CALL!>?.<!>bar<!>?.length
     }
     <!DEBUG_INFO_SMARTCAST!>foo<!>.bar?.length
 }

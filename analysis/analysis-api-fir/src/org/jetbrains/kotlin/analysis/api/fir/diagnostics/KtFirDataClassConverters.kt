@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtReturnExpression
+import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.psi.KtTypeAlias
@@ -3037,6 +3038,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.UNNECESSARY_SAFE_CALL) { firDiagnostic ->
         UnnecessarySafeCallImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.SAFE_CALL_WILL_CHANGE_NULLABILITY) { firDiagnostic ->
+        SafeCallWillChangeNullabilityImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )

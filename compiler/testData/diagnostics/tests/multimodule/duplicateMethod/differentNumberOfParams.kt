@@ -29,6 +29,6 @@ import p.*
 
 fun test(b: B?) {
     if (b is C) {
-        <!DEBUG_INFO_SMARTCAST!>b<!><!UNNECESSARY_SAFE_CALL!>?.<!>foo(1, "")
+        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!><!DEBUG_INFO_SMARTCAST!>b<!><!UNNECESSARY_SAFE_CALL!>?.<!>foo(1, "")<!>
     }
 }

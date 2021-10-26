@@ -1007,6 +1007,7 @@ public interface Errors {
     DiagnosticFactory3<KtExpression, PsiElement, String, PsiElement> UNSAFE_INFIX_CALL = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory3<KtExpression, PsiElement, String, PsiElement> UNSAFE_OPERATOR_CALL = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory1<PsiElement, KotlinType> UNNECESSARY_SAFE_CALL = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory0<PsiElement> SAFE_CALL_WILL_CHANGE_NULLABILITY = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> UNEXPECTED_SAFE_CALL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, KotlinType> UNNECESSARY_NOT_NULL_ASSERTION = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory0<PsiElement> NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION = DiagnosticFactory0.create(WARNING);

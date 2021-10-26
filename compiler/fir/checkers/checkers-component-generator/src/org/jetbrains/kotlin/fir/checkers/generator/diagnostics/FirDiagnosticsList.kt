@@ -1084,6 +1084,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNNECESSARY_SAFE_CALL by warning<PsiElement>(PositioningStrategy.SAFE_ACCESS) {
             parameter<ConeKotlinType>("receiverType")
         }
+        val SAFE_CALL_WILL_CHANGE_NULLABILITY by warning<KtSafeQualifiedExpression>()
         val UNEXPECTED_SAFE_CALL by error<PsiElement>(PositioningStrategy.SAFE_ACCESS)
         val UNNECESSARY_NOT_NULL_ASSERTION by warning<KtExpression>(PositioningStrategy.OPERATOR) {
             parameter<ConeKotlinType>("receiverType")

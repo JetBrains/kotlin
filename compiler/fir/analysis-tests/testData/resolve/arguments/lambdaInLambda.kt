@@ -16,7 +16,7 @@ fun test(ordinal: Int) {
     buildString {
         insert(KDocTemplate()) {
             definition {
-                ordinal<!UNNECESSARY_SAFE_CALL!>?.<!>let {}
+                <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>ordinal<!UNNECESSARY_SAFE_CALL!>?.<!>let {}<!>
             }
         }
     }

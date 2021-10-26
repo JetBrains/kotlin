@@ -366,7 +366,14 @@ class CallExpressionResolver(
                 )
             }
             if (!receiverCanBeNull) {
-                reportUnnecessarySafeCall(context.trace, receiver.type, callOperationNode, receiver)
+                reportUnnecessarySafeCall(
+                    context.trace,
+                    receiver.type,
+                    element.qualified,
+                    callOperationNode,
+                    receiver,
+                    context.languageVersionSettings
+                )
             }
         }
 
@@ -530,13 +537,18 @@ class CallExpressionResolver(
         fun reportUnnecessarySafeCall(
             trace: BindingTrace,
             type: KotlinType,
+            callElement: KtQualifiedExpression,
             callOperationNode: ASTNode,
-            explicitReceiver: Receiver?
+            explicitReceiver: Receiver?,
+            languageVersionSettings: LanguageVersionSettings
         ) {
             if (explicitReceiver is ExpressionReceiver && explicitReceiver.expression is KtSuperExpression) {
                 trace.report(UNEXPECTED_SAFE_CALL.on(callOperationNode.psi))
             } else if (!type.isError) {
                 trace.report(UNNECESSARY_SAFE_CALL.on(callOperationNode.psi, type))
+                if (!languageVersionSettings.supportsFeature(LanguageFeature.SafeCallsAreAlwaysNullable)) {
+                    trace.report(SAFE_CALL_WILL_CHANGE_NULLABILITY.on(callElement))
+                }
             }
         }
 

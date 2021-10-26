@@ -9,7 +9,7 @@ fun <N : Number?> test(arg: N) {
 
     makeDefinitelyNotNull(arg)<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
 
-    makeDefinitelyNotNull(arg)<!UNNECESSARY_SAFE_CALL!>?.<!>toInt()
+    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>makeDefinitelyNotNull(arg)<!UNNECESSARY_SAFE_CALL!>?.<!>toInt()<!>
 
     val nullImposible = when (val dnn = makeDefinitelyNotNull(arg)) {
         <!SENSELESS_NULL_IN_WHEN!>null<!> -> false

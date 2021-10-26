@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtReturnExpression
+import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.psi.KtTypeAlias
@@ -2126,6 +2127,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
     abstract class UnnecessarySafeCall : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = UnnecessarySafeCall::class
         abstract val receiverType: KtType
+    }
+
+    abstract class SafeCallWillChangeNullability : KtFirDiagnostic<KtSafeQualifiedExpression>() {
+        override val diagnosticClass get() = SafeCallWillChangeNullability::class
     }
 
     abstract class UnexpectedSafeCall : KtFirDiagnostic<PsiElement>() {

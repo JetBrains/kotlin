@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtReturnExpression
+import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.psi.KtTypeAlias
@@ -2561,6 +2562,11 @@ internal class UnnecessarySafeCallImpl(
     override val firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.UnnecessarySafeCall(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class SafeCallWillChangeNullabilityImpl(
+    override val firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.SafeCallWillChangeNullability(), KtAbstractFirDiagnostic<KtSafeQualifiedExpression>
 
 internal class UnexpectedSafeCallImpl(
     override val firDiagnostic: FirPsiDiagnostic,

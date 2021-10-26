@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.coneType
@@ -25,6 +27,9 @@ object FirUnnecessarySafeCallChecker : FirSafeCallExpressionChecker() {
         }
         if (!receiverType.canBeNull) {
             reporter.reportOn(expression.source, FirErrors.UNNECESSARY_SAFE_CALL, receiverType, context)
+            if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.SafeCallsAreAlwaysNullable)) {
+                reporter.reportOn(expression.source, FirErrors.SAFE_CALL_WILL_CHANGE_NULLABILITY, context)
+            }
         }
     }
 }
