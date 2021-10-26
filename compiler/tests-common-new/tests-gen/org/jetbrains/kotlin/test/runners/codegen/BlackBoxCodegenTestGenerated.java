@@ -15819,6 +15819,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("kt49371.kt")
+        public void testKt49371() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/kt49371.kt");
+        }
+
+        @Test
         @TestMetadata("privateFakeOverrides0.kt")
         public void testPrivateFakeOverrides0() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/privateFakeOverrides0.kt");

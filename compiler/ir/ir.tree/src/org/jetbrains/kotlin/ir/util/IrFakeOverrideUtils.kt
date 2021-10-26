@@ -98,7 +98,7 @@ fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverride(
     allowAbstract: Boolean = false,
     toSkip: (T) -> Boolean = { false }
 ): T? {
-    if (!isFakeOverride) return this
+    if (!isFakeOverride && !toSkip(this)) return this
     return if (allowAbstract) {
         val reals = collectRealOverrides(toSkip)
         if (reals.isEmpty()) error("No real overrides for ${this.render()}")
