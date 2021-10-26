@@ -24,30 +24,24 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames.dep
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val JAVA_ORIGINS = setOf(FirDeclarationOrigin.Java, FirDeclarationOrigin.Enhancement)
 
 fun FirBasedSymbol<*>.getDeprecation(callSite: FirElement?): DeprecationInfo? {
-    val deprecationInfos = mutableListOf<DeprecationInfo>()
-    when (this) {
+    return when (this) {
         is FirPropertySymbol ->
             when (callSite) {
                 is FirVariableAssignment ->
-                    deprecationInfos.addIfNotNull(
-                        getDeprecationForCallSite(AnnotationUseSiteTarget.PROPERTY_SETTER, AnnotationUseSiteTarget.PROPERTY)
-                    )
+                    getDeprecationForCallSite(AnnotationUseSiteTarget.PROPERTY_SETTER, AnnotationUseSiteTarget.PROPERTY)
                 is FirPropertyAccessExpression ->
-                    deprecationInfos.addIfNotNull(
-                        getDeprecationForCallSite(AnnotationUseSiteTarget.PROPERTY_GETTER, AnnotationUseSiteTarget.PROPERTY)
-                    )
-                else -> deprecationInfos.addIfNotNull(getDeprecationForCallSite(AnnotationUseSiteTarget.PROPERTY))
+                    getDeprecationForCallSite(AnnotationUseSiteTarget.PROPERTY_GETTER, AnnotationUseSiteTarget.PROPERTY)
+                else ->
+                    getDeprecationForCallSite(AnnotationUseSiteTarget.PROPERTY)
             }
-        else -> deprecationInfos.addIfNotNull(getDeprecationForCallSite())
+        else ->
+            getDeprecationForCallSite()
     }
-
-    return deprecationInfos.firstOrNull()
 }
 
 fun FirAnnotationContainer.getDeprecationInfos(currentVersion: ApiVersion): DeprecationsPerUseSite {
