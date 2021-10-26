@@ -96,17 +96,6 @@ fun <D> FirBlock.transformStatementsIndexed(transformer: FirTransformer<D>, data
     return this
 }
 
-fun <D> FirBlock.transformAllStatementsExceptLast(transformer: FirTransformer<D>, data: D): FirBlock {
-    val threshold = statements.size - 1
-    return transformStatementsIndexed(transformer) { index ->
-        if (index < threshold) {
-            TransformData.Data(data)
-        } else {
-            TransformData.Nothing
-        }
-    }
-}
-
 fun FirBlock.replaceFirstStatement(statement: FirStatement): FirStatement {
     require(this is FirBlockImpl) {
         "replaceFirstStatement should not be called for ${this::class.simpleName}"
