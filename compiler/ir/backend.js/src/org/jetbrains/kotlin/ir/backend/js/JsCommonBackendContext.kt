@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.atMostOne
-import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -17,7 +16,9 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
@@ -29,9 +30,15 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 interface JsCommonBackendContext : CommonBackendContext {
     override val mapping: JsMapping
 
+    val intrinsics: Intrinsics
+
+    val dynamicType: IrDynamicType
+
     val inlineClassesUtils: InlineClassesUtils
 
     val coroutineSymbols: JsCommonCoroutineSymbols
+
+    val primitiveClassesObject: IrClassSymbol
 
     val catchAllThrowableType: IrType
         get() = irBuiltIns.throwableType
@@ -50,7 +57,7 @@ internal fun <T> BackendContext.lazy2(fn: () -> T) = lazy { irFactory.stageContr
 
 class JsCommonCoroutineSymbols(
     symbolTable: SymbolTable,
-    module: ModuleDescriptor,
+    val module: ModuleDescriptor,
     val context: JsCommonBackendContext
 ) {
     val coroutinePackage = module.getPackage(COROUTINE_PACKAGE_FQNAME)
@@ -114,10 +121,10 @@ class JsCommonCoroutineSymbols(
     }
 }
 
-internal fun findClass(memberScope: MemberScope, name: Name): ClassDescriptor =
+fun findClass(memberScope: MemberScope, name: Name): ClassDescriptor =
     memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
 
-internal fun findFunctions(memberScope: MemberScope, name: Name): List<SimpleFunctionDescriptor> =
+fun findFunctions(memberScope: MemberScope, name: Name): List<SimpleFunctionDescriptor> =
     memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).toList()
 
 interface InlineClassesUtils {

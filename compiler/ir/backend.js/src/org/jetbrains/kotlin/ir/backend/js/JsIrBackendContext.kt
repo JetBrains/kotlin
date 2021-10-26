@@ -68,6 +68,7 @@ class JsIrBackendContext(
     val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
 
     override val builtIns = module.builtIns
+
     override val typeSystem: IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
 
     override val irFactory: IrFactory = symbolTable.irFactory
@@ -156,9 +157,8 @@ class JsIrBackendContext(
 
     private val internalPackage = module.getPackage(JS_PACKAGE_FQNAME)
 
-
-    val dynamicType: IrDynamicType = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
-    val intrinsics = JsIntrinsics(irBuiltIns, this)
+    override val dynamicType: IrDynamicType = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
+    override val intrinsics = JsIntrinsics(irBuiltIns, this)
 
     override val catchAllThrowableType: IrType
         get() = dynamicType
@@ -284,7 +284,7 @@ class JsIrBackendContext(
     val errorCodeSymbol: IrSimpleFunctionSymbol? =
         if (errorPolicy.allowErrors) symbolTable.referenceSimpleFunction(getJsInternalFunction("errorCode")) else null
 
-    val primitiveClassesObject = getIrClass(FqName("kotlin.reflect.js.internal.PrimitiveClasses"))
+    override val primitiveClassesObject = getIrClass(FqName("kotlin.reflect.js.internal.PrimitiveClasses"))
 
     val throwableClass = getIrClass(JsIrBackendContext.KOTLIN_PACKAGE_FQN.child(Name.identifier("Throwable")))
 
@@ -322,16 +322,6 @@ class JsIrBackendContext(
 
     override val suiteFun = getFunctions(FqName("kotlin.test.suite")).singleOrNull()?.let { symbolTable.referenceSimpleFunction(it) }
     override val testFun = getFunctions(FqName("kotlin.test.test")).singleOrNull()?.let { symbolTable.referenceSimpleFunction(it) }
-
-    val primitiveClassProperties by lazy2 {
-        primitiveClassesObject.owner.declarations.filterIsInstance<IrProperty>()
-    }
-
-    val primitiveClassFunctionClass by lazy2 {
-        primitiveClassesObject.owner.declarations
-            .filterIsInstance<IrSimpleFunction>()
-            .find { it.name == Name.identifier("functionClass") }!!
-    }
 
     val throwableConstructors by lazy2 { throwableClass.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol } }
     val defaultThrowableCtor by lazy2 { throwableConstructors.single { !it.owner.isPrimary && it.owner.valueParameters.size == 0 } }

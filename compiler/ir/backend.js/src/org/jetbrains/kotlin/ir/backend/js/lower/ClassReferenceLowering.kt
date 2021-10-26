@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.toJsArrayLiteral
 import org.jetbrains.kotlin.ir.declarations.*
@@ -24,12 +23,19 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.*
 
-class ClassReferenceLowering(val context: JsIrBackendContext) : BodyLoweringPass {
-    private val intrinsics = context.intrinsics
+class ClassReferenceLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
+
+    private val primitiveClassProperties by lazy {
+        primitiveClassesObject.owner.declarations.filterIsInstance<IrProperty>()
+    }
+
+    private val primitiveClassFunctionClass by lazy {
+        primitiveClassesObject.owner.declarations
+            .filterIsInstance<IrSimpleFunction>()
+            .find { it.name == Name.identifier("functionClass") }!!
+    }
 
     private val primitiveClassesObject = context.primitiveClassesObject
-
-    private val primitiveClassProperties = context.primitiveClassProperties
 
     private fun primitiveClassProperty(name: String) =
         primitiveClassProperties.singleOrNull { it.name == Name.identifier(name) }?.getter
@@ -74,7 +80,7 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : BodyLoweringPass
         if (primitiveKClass != null)
             return JsIrBuilder.buildBlock(returnType, listOf(argument, primitiveKClass))
 
-        return JsIrBuilder.buildCall(intrinsics.jsGetKClassFromExpression, returnType, listOf(typeArgument)).apply {
+        return JsIrBuilder.buildCall(context.intrinsics.jsGetKClassFromExpression, returnType, listOf(typeArgument)).apply {
             putValueArgument(0, argument)
         }
     }
@@ -103,7 +109,7 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : BodyLoweringPass
         if (typeArgument.isFunction()) {
             val functionInterface = typeArgument.getClass()!!
             val arity = functionInterface.typeParameters.size - 1
-            return getPrimitiveClass(context.primitiveClassFunctionClass, returnType).apply {
+            return getPrimitiveClass(primitiveClassFunctionClass, returnType).apply {
                 putValueArgument(0, JsIrBuilder.buildInt(context.irBuiltIns.intType, arity))
             }
         }
@@ -112,7 +118,7 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : BodyLoweringPass
     }
 
     private fun callGetKClass(
-        returnType: IrType = intrinsics.jsGetKClass.owner.returnType,
+        returnType: IrType = context.intrinsics.jsGetKClass.owner.returnType,
         typeArgument: IrType
     ): IrCall {
         val primitiveKClass =
@@ -121,7 +127,7 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : BodyLoweringPass
         if (primitiveKClass != null)
             return primitiveKClass
 
-        return JsIrBuilder.buildCall(intrinsics.jsGetKClass, returnType, listOf(typeArgument))
+        return JsIrBuilder.buildCall(context.intrinsics.jsGetKClass, returnType, listOf(typeArgument))
             .apply {
                 putValueArgument(0, callJsClass(typeArgument))
             }
@@ -129,7 +135,7 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : BodyLoweringPass
 
     private fun callJsClass(type: IrType) =
         JsIrBuilder.buildCall(
-            intrinsics.jsClass,
+            context.intrinsics.jsClass,
             typeArguments = listOf(type),
             origin = JsLoweredDeclarationOrigin.CLASS_REFERENCE
         )

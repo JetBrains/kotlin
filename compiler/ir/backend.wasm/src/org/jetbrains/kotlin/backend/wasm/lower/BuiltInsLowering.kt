@@ -12,18 +12,21 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irCallConstructor
 import org.jetbrains.kotlin.ir.builders.irComposite
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.name.parentOrNull
 
 class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
     private val irBuiltins = context.irBuiltIns
@@ -124,6 +127,25 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 val arity = symbols.startCoroutineUninterceptedOrReturnIntrinsics.indexOf(symbol)
                 val newSymbol = irBuiltins.suspendFunctionN(arity).getSimpleFunction("invoke")!!
                 return irCall(call, newSymbol, argumentsAsReceivers = true)
+            }
+            symbols.jsClass -> {
+                val infoDataCtor = symbols.wasmTypeInfoData.constructors.first()
+                val type = call.getTypeArgument(0)!!
+                val fqName = type.classFqName!!
+                val packageName = fqName.parentOrNull()?.asString() ?: ""
+                val typeName = fqName.shortName().asString()
+
+                return with(builder) {
+                    val typeId = irCall(symbols.wasmTypeId).also {
+                        it.putTypeArgument(0, type)
+                    }
+
+                    irCallConstructor(infoDataCtor, emptyList()).also {
+                        it.putValueArgument(0, typeId)
+                        it.putValueArgument(1, packageName.toIrConst(context.irBuiltIns.stringType))
+                        it.putValueArgument(2, typeName.toIrConst(context.irBuiltIns.stringType))
+                    }
+                }
             }
         }
 

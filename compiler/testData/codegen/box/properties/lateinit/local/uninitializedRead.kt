@@ -1,8 +1,5 @@
 // WITH_RUNTIME
 
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: REFLECTION
-
 import kotlin.UninitializedPropertyAccessException
 
 fun box(): String {

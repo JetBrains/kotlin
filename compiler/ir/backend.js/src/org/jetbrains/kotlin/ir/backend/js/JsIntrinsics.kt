@@ -21,7 +21,21 @@ import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.*
 
-class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendContext) {
+interface Intrinsics {
+    val jsGetKClassFromExpression: IrSimpleFunctionSymbol
+    val jsGetKClass: IrSimpleFunctionSymbol
+    val jsClass: IrSimpleFunctionSymbol
+    val createKType: IrSimpleFunctionSymbol?
+    val createDynamicKType: IrSimpleFunctionSymbol?
+    val createKTypeParameter: IrSimpleFunctionSymbol?
+    val getStarKTypeProjection: IrSimpleFunctionSymbol?
+    val createCovariantKTypeProjection: IrSimpleFunctionSymbol?
+    val createInvariantKTypeProjection: IrSimpleFunctionSymbol?
+    val createContravariantKTypeProjection: IrSimpleFunctionSymbol?
+    val arrayLiteral: IrSimpleFunctionSymbol
+}
+
+class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendContext) : Intrinsics {
 
     // TODO: Should we drop operator intrinsics in favor of IrDynamicOperatorExpression?
 
@@ -169,10 +183,10 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         getInternalWithoutPackage("kotlin.coroutines.intrinsics.invokeSuspendSuperTypeWithReceiver")
     val jsInvokeSuspendSuperTypeWithReceiverAndParam =
         getInternalWithoutPackage("kotlin.coroutines.intrinsics.invokeSuspendSuperTypeWithReceiverAndParam")
-    val jsGetKClass = getInternalWithoutPackage("getKClass")
-    val jsGetKClassFromExpression = getInternalWithoutPackage("getKClassFromExpression")
 
-    val jsClass = getInternalFunction("jsClassIntrinsic")
+    override val jsGetKClass = getInternalWithoutPackage("getKClass")
+    override val jsGetKClassFromExpression = getInternalWithoutPackage("getKClassFromExpression")
+    override val jsClass = getInternalFunction("jsClassIntrinsic")
 
     val jsNumberRangeToNumber = getInternalFunction("numberRangeToNumber")
     val jsNumberRangeToLong = getInternalFunction("numberRangeToLong")
@@ -235,7 +249,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsPrimitiveArrayIteratorFunctions =
         PrimitiveType.values().associate { it to getInternalFunction("${it.typeName.asString().toLowerCaseAsciiOnly()}ArrayIterator") }
 
-    val arrayLiteral = getInternalFunction("arrayLiteral")
+    override val arrayLiteral = getInternalFunction("arrayLiteral")
 
     val primitiveToTypedArrayMap = EnumMap(
         mapOf(
@@ -247,13 +261,13 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         )
     )
 
-    val createKType = getInternalWithoutPackageOrNull("createKType")
-    val createDynamicKType = getInternalWithoutPackageOrNull("createDynamicKType")
-    val createKTypeParameter = getInternalWithoutPackageOrNull("createKTypeParameter")
-    val getStarKTypeProjection = getInternalWithoutPackageOrNull("getStarKTypeProjection")
-    val createCovariantKTypeProjection = getInternalWithoutPackageOrNull("createCovariantKTypeProjection")
-    val createInvariantKTypeProjection = getInternalWithoutPackageOrNull("createInvariantKTypeProjection")
-    val createContravariantKTypeProjection = getInternalWithoutPackageOrNull("createContravariantKTypeProjection")
+    override val createKType = getInternalWithoutPackageOrNull("createKType")
+    override val createDynamicKType = getInternalWithoutPackageOrNull("createDynamicKType")
+    override val createKTypeParameter = getInternalWithoutPackageOrNull("createKTypeParameter")
+    override val getStarKTypeProjection = getInternalWithoutPackageOrNull("getStarKTypeProjection")
+    override val createCovariantKTypeProjection = getInternalWithoutPackageOrNull("createCovariantKTypeProjection")
+    override val createInvariantKTypeProjection = getInternalWithoutPackageOrNull("createInvariantKTypeProjection")
+    override val createContravariantKTypeProjection = getInternalWithoutPackageOrNull("createContravariantKTypeProjection")
 
     val primitiveToSizeConstructor =
         PrimitiveType.values().associate { type ->
@@ -314,8 +328,6 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val writeSharedBox = getInternalFunction("sharedBoxWrite")
 
     val jsUndefined = getInternalFunction("jsUndefined")
-
-    // Helpers:
 
     private fun getInternalFunction(name: String) =
         context.symbolTable.referenceSimpleFunction(context.getJsInternalFunction(name))
