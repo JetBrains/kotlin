@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND_FIR: JVM_IR
 // Completely incorrect bytecode - see `box/inlineClasses/toStringOfUnboxedNullable.kt`
 // IGNORE_BACKEND: JVM
 
