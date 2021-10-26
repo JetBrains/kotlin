@@ -196,6 +196,6 @@ fun ImplicitReceiverValue<*>.asTowerDataElement(): FirTowerDataElement =
 fun FirScope.asTowerDataElement(isLocal: Boolean): FirTowerDataElement =
     FirTowerDataElement(this, implicitReceiver = null, isLocal)
 
-private fun FirClass.staticScope(sessionHolder: SessionHolder) =
+fun FirClass.staticScope(sessionHolder: SessionHolder) =
     scopeProvider.getStaticScope(this, sessionHolder.session, sessionHolder.scopeSession)
 typealias FirLocalScopes = PersistentList<FirLocalScope>

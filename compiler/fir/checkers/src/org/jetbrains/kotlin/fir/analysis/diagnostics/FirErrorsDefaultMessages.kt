@@ -476,6 +476,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_LATEI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_NOT_NULL_ASSERTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_SAFE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNREACHABLE_CODE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_IMPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER
@@ -578,6 +579,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             NAME_OF_CONTAINING_DECLARATION_OR_FILE
         )
         map.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", NULLABLE_STRING)
+        map.put(UNRESOLVED_IMPORT, "Unresolved reference: {0}", NULLABLE_STRING) // &
         map.put(UNRESOLVED_LABEL, "Unresolved label")
         map.put(DESERIALIZATION_ERROR, "Deserialization error")
         map.put(ERROR_FROM_JAVA_RESOLUTION, "Java resolution error")

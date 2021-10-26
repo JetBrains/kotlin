@@ -14,7 +14,8 @@ class LighterTreeElementFinderByType(
     private val tree: FlyweightCapableTreeStructure<LighterASTNode>,
     private var types: Collection<IElementType>,
     private var index: Int,
-    private val depth: Int
+    private val depth: Int,
+    private val reverse: Boolean,
 ) {
     fun find(node: LighterASTNode?): LighterASTNode? {
         if (node == null) return null
@@ -33,7 +34,8 @@ class LighterTreeElementFinderByType(
 
         if (currentDepth == depth) return null
 
-        for (child in node.getChildren()) {
+        val children = if (reverse) node.getChildren().asReversed() else node.getChildren()
+        for (child in children) {
             val result = visitNode(child, currentDepth + 1)
             if (result != null) return result
         }

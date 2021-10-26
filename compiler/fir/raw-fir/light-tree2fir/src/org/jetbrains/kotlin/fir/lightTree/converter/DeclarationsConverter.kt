@@ -194,7 +194,12 @@ class DeclarationsConverter(
         var aliasSource: KtSourceElement? = null
         importDirective.forEachChildren {
             when (it.tokenType) {
-                DOT_QUALIFIED_EXPRESSION, REFERENCE_EXPRESSION -> importedFqName = FqName(it.asText)
+                REFERENCE_EXPRESSION, DOT_QUALIFIED_EXPRESSION -> {
+                    importedFqName = mutableListOf<String>()
+                        .apply { collectSegments(it) }
+                        .joinToString(".")
+                        .let { FqName(it) }
+                }
                 MUL -> isAllUnder = true
                 IMPORT_ALIAS -> {
                     val importAlias = convertImportAlias(it)
@@ -212,6 +217,18 @@ class DeclarationsConverter(
             this.isAllUnder = isAllUnder
             this.aliasName = aliasName?.let { Name.identifier(it) }
             this.aliasSource = aliasSource
+        }
+    }
+
+    private fun MutableList<String>.collectSegments(expression: LighterASTNode) {
+        when (expression.tokenType) {
+            REFERENCE_EXPRESSION -> add(expression.asText)
+            DOT_QUALIFIED_EXPRESSION -> {
+                expression.forEachChildren {
+                    collectSegments(it)
+                }
+            }
+            else -> {}
         }
     }
 

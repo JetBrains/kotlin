@@ -26024,6 +26024,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                     }
 
                     @Test
+                    @TestMetadata("staticFunAndPropertyImport.kt")
+                    public void testStaticFunAndPropertyImport() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/staticFunAndPropertyImport.kt");
+                    }
+
+                    @Test
                     @TestMetadata("staticFunVsImport.kt")
                     public void testStaticFunVsImport() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/staticFunVsImport.kt");

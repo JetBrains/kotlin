@@ -18,7 +18,7 @@ interface IInterfaceOutput<out T> {
 
 package mypackage.nestedpackage
 
-import mypackage.nestedpackage.Bar.Baz
+import mypackage.nestedpackage.Bar.<!UNRESOLVED_IMPORT!>Baz<!>
 import anotherpackage.IInterfaceInput
 import anotherpackage.IInterfaceOutput
 

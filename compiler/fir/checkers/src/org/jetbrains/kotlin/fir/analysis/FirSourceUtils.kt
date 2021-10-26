@@ -10,33 +10,33 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.*
 
-fun KtSourceElement.getChild(type: IElementType, index: Int = 0, depth: Int = -1): KtSourceElement? {
-    return getChild(setOf(type), index, depth)
+fun KtSourceElement.getChild(type: IElementType, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? {
+    return getChild(setOf(type), index, depth, reverse)
 }
 
-fun KtSourceElement.getChild(types: TokenSet, index: Int = 0, depth: Int = -1): KtSourceElement? {
-    return getChild(types.types.toSet(), index, depth)
+fun KtSourceElement.getChild(types: TokenSet, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? {
+    return getChild(types.types.toSet(), index, depth, reverse)
 }
 
-fun KtSourceElement.getChild(types: Set<IElementType>, index: Int = 0, depth: Int = -1): KtSourceElement? {
+fun KtSourceElement.getChild(types: Set<IElementType>, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? {
     return when (this) {
         is KtPsiSourceElement -> {
-            getChild(types, index, depth)
+            getChild(types, index, depth, reverse)
         }
         is KtLightSourceElement -> {
-            getChild(types, index, depth)
+            getChild(types, index, depth, reverse)
         }
         else -> null
     }
 }
 
-private fun KtPsiSourceElement.getChild(types: Set<IElementType>, index: Int, depth: Int): KtSourceElement? {
-    val visitor = PsiElementFinderByType(types, index, depth)
+private fun KtPsiSourceElement.getChild(types: Set<IElementType>, index: Int, depth: Int, reverse: Boolean): KtSourceElement? {
+    val visitor = PsiElementFinderByType(types, index, depth, reverse)
     return visitor.find(psi)?.toKtPsiSourceElement()
 }
 
-private fun KtLightSourceElement.getChild(types: Set<IElementType>, index: Int, depth: Int): KtSourceElement? {
-    val visitor = LighterTreeElementFinderByType(treeStructure, types, index, depth)
+private fun KtLightSourceElement.getChild(types: Set<IElementType>, index: Int, depth: Int, reverse: Boolean): KtSourceElement? {
+    val visitor = LighterTreeElementFinderByType(treeStructure, types, index, depth, reverse)
     val childNode = visitor.find(lighterASTNode) ?: return null
     return buildChildSourceElement(childNode)
 }

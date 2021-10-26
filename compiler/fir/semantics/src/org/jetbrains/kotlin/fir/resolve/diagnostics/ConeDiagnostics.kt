@@ -198,6 +198,11 @@ class ConeImportFromSingleton(val name: Name) : ConeDiagnostic {
 
 open class ConeUnsupported(override val reason: String, val source: KtSourceElement? = null) : ConeDiagnostic
 
+class ConeUnresolvedParentInImport(val parentClassId: ClassId) : ConeDiagnostic {
+    override val reason: String
+        get() = "unresolved import"
+}
+
 class ConeUnsupportedDynamicType : ConeUnsupported("Dynamic types are not supported in this context")
 
 class ConeDeprecated(

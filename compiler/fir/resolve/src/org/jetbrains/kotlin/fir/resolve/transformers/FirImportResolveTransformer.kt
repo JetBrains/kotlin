@@ -13,9 +13,11 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildErrorImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeImportFromSingleton
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedParentInImport
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -73,7 +75,13 @@ open class FirImportResolveTransformer protected constructor(
         get() = true
 
     private fun transformImportForFqName(fqName: FqName, delegate: FirImport): FirImport {
-        val (packageFqName, relativeClassFqName, classSymbol) = resolveToPackageOrClass(symbolProvider, fqName) ?: return delegate
+        val (packageFqName, relativeClassFqName, classSymbol) = when (val result = resolveToPackageOrClass(symbolProvider, fqName)) {
+            is PackageResolutionResult.Error -> return buildErrorImport {
+                this.delegate = delegate
+                this.diagnostic = result.diagnostic
+            }
+            is PackageResolutionResult.PackageOrClass -> result
+        }
         val firClass = classSymbol?.fir as? FirRegularClass
         if (delegate.isAllUnder && firClass?.classKind?.isSingleton == true) {
             return buildErrorImport {
@@ -89,7 +97,7 @@ open class FirImportResolveTransformer protected constructor(
     }
 }
 
-fun resolveToPackageOrClass(symbolProvider: FirSymbolProvider, fqName: FqName): PackageOrClass? {
+fun resolveToPackageOrClass(symbolProvider: FirSymbolProvider, fqName: FqName): PackageResolutionResult {
     var currentPackage = fqName
 
     val pathSegments = fqName.pathSegments()
@@ -102,14 +110,21 @@ fun resolveToPackageOrClass(symbolProvider: FirSymbolProvider, fqName: FqName): 
         prefixSize--
     }
 
-    if (currentPackage == fqName) return PackageOrClass(currentPackage, null, null)
-    val relativeClassFqName =
-        FqName.fromSegments((prefixSize until pathSegments.size).map { pathSegments[it].asString() })
+    if (currentPackage == fqName) return PackageResolutionResult.PackageOrClass(currentPackage, null, null)
+    val relativeClassFqName = FqName.fromSegments((prefixSize until pathSegments.size).map { pathSegments[it].asString() })
 
     val classId = ClassId(currentPackage, relativeClassFqName, false)
-    val symbol = symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
+    val symbol = symbolProvider.getClassLikeSymbolByClassId(classId) ?: return PackageResolutionResult.Error(
+        ConeUnresolvedParentInImport(classId)
+    )
 
-    return PackageOrClass(currentPackage, relativeClassFqName, symbol)
+    return PackageResolutionResult.PackageOrClass(currentPackage, relativeClassFqName, symbol)
 }
 
-data class PackageOrClass(val packageFqName: FqName, val relativeClassFqName: FqName?, val classSymbol: FirClassLikeSymbol<*>?)
+sealed class PackageResolutionResult {
+    data class PackageOrClass(
+        val packageFqName: FqName, val relativeClassFqName: FqName?, val classSymbol: FirClassLikeSymbol<*>?
+    ) : PackageResolutionResult()
+
+    class Error(val diagnostic: ConeDiagnostic) : PackageResolutionResult()
+}

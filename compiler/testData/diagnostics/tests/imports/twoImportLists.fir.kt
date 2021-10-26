@@ -8,15 +8,15 @@ import b.ext      //extension function
 import b.value    //property
 import b.C.Companion.bar    //function from companion object
 import b.C.Companion.cValue //property from companion object
-import b.constant.fff     //function from val
-import b.constant.dValue  //property from val
+import b.<!UNRESOLVED_IMPORT!>constant<!>.fff     //function from val
+import b.<!UNRESOLVED_IMPORT!>constant<!>.dValue  //property from val
 import smth.illegal
-import b.C.smth.illegal
+import b.C.<!UNRESOLVED_IMPORT!>smth<!>.illegal
 
 <!SYNTAX!><<!><!SYNTAX!><<!><!SYNTAX!><<!><!SYNTAX!>HEAD<!><!SYNTAX!><!>
-import b.bar.smth
-import b.bar.*
-import b.unr.unr.unr
+import b.<!UNRESOLVED_IMPORT!>bar<!>.smth
+import b.<!UNRESOLVED_IMPORT!>bar<!>.*
+import b.<!UNRESOLVED_IMPORT!>unr<!>.unr.unr
 import unr.unr.unr
 import b.constant
 import b.E.Companion.f      //val from companion object
