@@ -1177,7 +1177,7 @@ class KotlinGradleIT : BaseGradleIT() {
             ":lib1:compileDebugUnitTestKotlin",
             options = defaultBuildOptions().copy(
                 androidGradlePluginVersion = AGPVersion.v4_2_0,
-                androidHome = KtTestUtil.findAndroidSdk(),
+                androidHome = KtTestUtil.findAndroidSdk().also { acceptAndroidSdkLicenses(it) },
             ),
         ) {
             assertSuccessful()
