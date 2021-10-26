@@ -188,6 +188,16 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val GENERATE_DTS by directive(
+        description = "Will generate corresponding dts files",
+        applicability = DirectiveApplicability.Global
+    )
+
+    val UPDATE_REFERENCE_DTS_FILES by directive(
+        description = "",
+        applicability = DirectiveApplicability.Global
+    )
+
     // Directives for IR tests
 
     val RUN_IR_DCE by directive(
@@ -201,6 +211,11 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     )
 
     val RUN_IC by directive(
+        description = "",
+        applicability = DirectiveApplicability.Global
+    )
+
+    val SKIP_IR_INCREMENTAL_CHECKS by directive(
         description = "",
         applicability = DirectiveApplicability.Global
     )

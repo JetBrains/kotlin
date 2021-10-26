@@ -260,7 +260,7 @@ fun Test.setUpBoxTests() {
     }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.Mix) {
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = true)
     systemProperty("kotlin.js.ir.pir", "false")
     maxHeapSize = "3g"
@@ -280,7 +280,7 @@ projectTest(parallel = true, jUnitMode = JUnitMode.Mix) {
     configureTestDistribution()
 }
 
-projectTest("jsTest", parallel = true, jUnitMode = JUnitMode.Mix) {
+projectTest("jsTest", parallel = true, jUnitMode = JUnitMode.JUnit5) {
     // PIR temporary disabled
     systemProperty("kotlin.js.ir.pir", "false")
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false)
@@ -324,7 +324,7 @@ projectTest("jsPirTest", parallel = true, jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
 }
 
-projectTest("quickTest", parallel = true, jUnitMode = JUnitMode.Mix) {
+projectTest("quickTest", parallel = true, jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false)
     maxHeapSize = "3g"
     systemProperty("kotlin.js.skipMinificationTest", "true")

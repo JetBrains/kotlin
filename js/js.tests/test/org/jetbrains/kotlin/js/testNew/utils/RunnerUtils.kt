@@ -25,9 +25,7 @@ import java.io.File
 
 private const val MODULE_EMULATION_FILE = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/moduleEmulation.js"
 
-private fun extractJsFiles(
-    testServices: TestServices, modulesToArtifact: Map<TestModule, BinaryArtifacts.Js>
-): Pair<List<String>, List<String>> {
+private fun extractJsFiles(testServices: TestServices, modules: List<TestModule>): Pair<List<String>, List<String>> {
     val outputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices)
 
     fun copyInputJsFile(module: TestModule, inputJsFile: TestFile): String {
@@ -37,8 +35,8 @@ private fun extractJsFiles(
         return targetFile.absolutePath
     }
 
-    val inputJsFiles = modulesToArtifact
-        .flatMap { moduleToArtifact -> moduleToArtifact.key.files.map { moduleToArtifact.key to it } }
+    val inputJsFiles = modules
+        .flatMap { module -> module.files.map { module to it } }
         .filter { it.second.isJsFile }
 
 
@@ -50,19 +48,6 @@ private fun extractJsFiles(
         .map { (module, inputJsFile) -> copyInputJsFile(module, inputJsFile) }
 
     return before to after
-}
-
-private fun extractMjsFiles(esmOutputDir: File, modulesToArtifact: Map<TestModule, BinaryArtifacts.Js>): List<String> {
-    fun copyInputMjsFile(inputMjsFile: TestFile): String {
-        val targetFile = File(esmOutputDir, inputMjsFile.name)
-        targetFile.writeText(inputMjsFile.originalContent)
-        return targetFile.absolutePath
-    }
-
-    return modulesToArtifact
-        .flatMap { moduleToArtifact -> moduleToArtifact.key.files }
-        .filter { it.isMjsFile }
-        .map { copyInputMjsFile(it) }
 }
 
 private fun getAdditionalFiles(testServices: TestServices): List<String> {
@@ -115,7 +100,7 @@ fun getAllFilesForRunner(
     val pirOutputDir = JsEnvironmentConfigurator.getPirJsArtifactsOutputDir(testServices)
 
     val commonFiles = JsAdditionalSourceProvider.getAdditionalJsFiles(originalFile.parent).map { it.absolutePath }
-    val (inputJsFilesBefore, inputJsFilesAfter) = extractJsFiles(testServices, modulesToArtifact)
+    val (inputJsFilesBefore, inputJsFilesAfter) = extractJsFiles(testServices, testServices.moduleStructure.modules)
     val additionalFiles = getAdditionalFiles(testServices)
     val additionalMainFiles = getAdditionalMainFiles(testServices)
 
@@ -123,7 +108,7 @@ fun getAllFilesForRunner(
     val klibDependencies = modulesToArtifact.values
         .filterIsInstance<BinaryArtifacts.Js.JsIrArtifact>()
         .singleOrNull()?.let { artifact ->
-            artifact.compilerResult?.outputs?.dependencies?.map { (moduleId, _) ->
+            artifact.compilerResult.outputs?.dependencies?.map { (moduleId, _) ->
                 artifact.outputFile.absolutePath.replace("_v5.js", "-${moduleId}_v5.js")
             }
         } ?: emptyList()
@@ -137,13 +122,12 @@ fun getAllFilesForRunner(
     return Triple(allJsFiles, dceAllJsFiles, pirAllJsFiles)
 }
 
-fun extractAllFilesForEsRunner(
-    testServices: TestServices, modulesToArtifact: Map<TestModule, BinaryArtifacts.Js>, esmOutputDir: File
-): Pair<List<String>, List<String>> {
+fun extractAllFilesForEsRunner(testServices: TestServices, esmOutputDir: File): Pair<List<String>, List<String>> {
+    val modules = testServices.moduleStructure.modules
     val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
 
     val commonFiles = JsAdditionalSourceProvider.getAdditionalJsFiles(originalFile.parent).map { it.absolutePath }
-    val (inputJsFilesBefore, inputJsFilesAfter) = extractJsFiles(testServices, modulesToArtifact)
+    val (inputJsFilesBefore, inputJsFilesAfter) = extractJsFiles(testServices, modules)
     val additionalFiles = getAdditionalFiles(testServices)
     val additionalMjsFiles = getAdditionalMjsFiles(testServices)
     val additionalMainFiles = getAdditionalMainFiles(testServices)
@@ -158,8 +142,7 @@ fun extractAllFilesForEsRunner(
     }
 
     // Copy all .mjs files into generated directory
-    modulesToArtifact
-        .flatMap { moduleToArtifact -> moduleToArtifact.key.files }
+    modules.flatMap { it.files }
         .filter { it.isMjsFile }
         .map { File(esmOutputDir, it.name).writeText(it.originalContent) }
 

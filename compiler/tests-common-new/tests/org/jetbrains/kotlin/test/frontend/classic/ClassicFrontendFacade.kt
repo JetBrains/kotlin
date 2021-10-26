@@ -314,8 +314,6 @@ class ClassicFrontendFacade(
         dependentDescriptors: List<ModuleDescriptorImpl>,
         friendsDescriptors: List<ModuleDescriptorImpl>,
     ): AnalysisResult {
-//        val jsConfig = JsEnvironmentConfigurator.createJsConfig(project, configuration)
-
         val runtimeKlibsNames = JsEnvironmentConfigurator.getStdlibPathsForModule(module)
         val runtimeKlibs = loadKlib(runtimeKlibsNames, configuration)
         val transitiveLibraries = configuration[JSConfigurationKeys.TRANSITIVE_LIBRARIES]!!.map {

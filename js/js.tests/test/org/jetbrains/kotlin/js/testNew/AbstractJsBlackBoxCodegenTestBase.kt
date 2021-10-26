@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.js.testNew
 
 import org.jetbrains.kotlin.js.testNew.handlers.*
-import org.jetbrains.kotlin.js.testNew.utils.JsIncrementalEnvironmentConfigurator
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import java.lang.Boolean.getBoolean
 
-abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>>(
+abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>, A : ResultingArtifact.Binary<A>>(
     val targetFrontend: FrontendKind<R>,
     targetBackend: TargetBackend,
     private val pathToTestDir: String,
@@ -35,9 +34,9 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
     abstract val frontendFacade: Constructor<FrontendFacade<R>>
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>
-    abstract val backendFacade: Constructor<BackendFacade<I, BinaryArtifacts.Js>>
-    abstract val afterBackendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>?
-    abstract val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>?
+    abstract val backendFacade: Constructor<BackendFacade<I, A>>
+    abstract val afterBackendFacade: Constructor<AbstractTestFacade<A, BinaryArtifacts.Js>>?
+    abstract val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
 
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
@@ -60,7 +59,6 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::JsEnvironmentConfigurator,
-            ::JsIncrementalEnvironmentConfigurator
         )
 
         useAdditionalSourceProviders(
@@ -86,14 +84,13 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
 
         facadeStep(backendFacade)
         afterBackendFacade?.let { facadeStep(it) }
-        recompileFacade?.let { facadeStep(it) }
+        facadeStep(recompileFacade)
         jsArtifactsHandlersStep {
             useHandlers(
                 ::JsBoxRunner,
                 ::NodeJsGeneratorHandler,
                 ::JsMinifierRunner,
                 ::JsArtifactsDumpHandler,
-                ::JsRecompiledArtifactsIdentityHandler
             )
         }
     }

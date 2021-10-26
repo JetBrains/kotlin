@@ -10,8 +10,11 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.facade.MainCallParameters
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
@@ -26,6 +29,7 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.EXPECT_ACTUAL_LINKER
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.TYPED_ARRAYS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
@@ -151,6 +155,35 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
                 in module.directives -> MainCallParameters.mainWithArguments(listOf())
                 else -> MainCallParameters.noCall()
             }
+        }
+
+        fun getAllRecursiveDependenciesFor(module: TestModule, testServices: TestServices): Set<ModuleDescriptorImpl> {
+            val visited = mutableSetOf<ModuleDescriptorImpl>()
+            fun getRecursive(descriptor: ModuleDescriptorImpl) {
+                descriptor.allDependencyModules.forEach {
+                    if (it is ModuleDescriptorImpl && it !in visited) {
+                        visited += it
+                        getRecursive(it)
+                    }
+                }
+            }
+
+            getRecursive(testServices.moduleDescriptorProvider.getModuleDescriptor(module))
+            return visited
+        }
+
+        fun getAllRecursiveLibrariesFor(module: TestModule, testServices: TestServices): Map<KotlinLibrary, ModuleDescriptorImpl> {
+            val dependencies = getAllRecursiveDependenciesFor(module, testServices)
+            return dependencies.associateBy { testServices.jsLibraryProvider.getCompiledLibraryByDescriptor(it) }
+        }
+
+        fun TestModule.hasFilesToRecompile(): Boolean {
+            return files.any { JsEnvironmentConfigurationDirectives.RECOMPILE in it.directives }
+        }
+
+        fun incrementalEnabledFor(module: TestModule, testServices: TestServices): Boolean {
+            return JsEnvironmentConfigurationDirectives.SKIP_IR_INCREMENTAL_CHECKS !in testServices.moduleStructure.allDirectives &&
+                    module.hasFilesToRecompile()
         }
     }
 

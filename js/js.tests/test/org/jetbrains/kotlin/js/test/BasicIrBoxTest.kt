@@ -320,11 +320,9 @@ abstract class BasicIrBoxTest(
                             generateEsModules(ir, dceOutputFile.esModulesSubDir, granularity, config, customTestModule, mainArguments)
                         }
                     } else {
-                        val jsOutputFile = if (recompile) File(outputFile.parentFile, outputFile.nameWithoutExtension + "-recompiled.js")
-                        else outputFile
                         generateOldModuleSystems(
                             ir.oldIr2Js(granularity, runIrDce, mainArguments),
-                            jsOutputFile,
+                            outputFile,
                             dceOutputFile,
                             config,
                             units,

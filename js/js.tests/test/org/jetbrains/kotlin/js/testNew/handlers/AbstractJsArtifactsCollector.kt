@@ -16,6 +16,6 @@ abstract class AbstractJsArtifactsCollector(testServices: TestServices) : JsBina
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {
         if (module.name.endsWith(JsEnvironmentConfigurator.OLD_MODULE_SUFFIX)) return
-        modulesToArtifact[module] = info
+        modulesToArtifact[module] = info.unwrap()
     }
 }

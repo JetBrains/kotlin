@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.js.testNew.handlers
 
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.backend.js.CompilationOutputs
-import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
-import org.jetbrains.kotlin.ir.backend.js.toResolverLogger
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.esModulesSubDir
 import org.jetbrains.kotlin.js.testNew.converters.ClassicJsBackendFacade.Companion.wrapWithModuleEmulationMarkers
@@ -19,9 +15,12 @@ import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.util.DummyLogger
+import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.services.sourceFileProvider
+import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 
 class JsIrArtifactsDumpHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
@@ -35,6 +34,7 @@ class JsIrArtifactsDumpHandler(testServices: TestServices) : JsBinaryArtifactHan
                 val outputDceFile = File(JsEnvironmentConfigurator.getDceJsArtifactPath(testServices, module.name) + ".js")
                 val outputPirFile = File(JsEnvironmentConfigurator.getPirJsArtifactPath(testServices, module.name) + ".js")
 
+                val generateDts = JsEnvironmentConfigurationDirectives.GENERATE_DTS in module.directives
                 val runIrPir = JsEnvironmentConfigurationDirectives.RUN_IR_PIR in module.directives
                 val dontSkipDceDriven = JsEnvironmentConfigurationDirectives.SKIP_DCE_DRIVEN !in module.directives
                 val dontSkipRegularMode = JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE !in module.directives
@@ -48,9 +48,11 @@ class JsIrArtifactsDumpHandler(testServices: TestServices) : JsBinaryArtifactHan
                     TODO("unreachable")
                 }
 
-            }
-            is BinaryArtifacts.Js.JsKlibArtifact -> {
-                testServices.jsLibraryProvider.setDescriptorAndLibraryByName(info.outputFile.absolutePath, artifact.descriptor as ModuleDescriptorImpl, artifact.library)
+                if (generateDts) {
+                    outputFile
+                        .withReplacedExtensionOrNull("_v5.js", ".d.ts")!!
+                        .write(artifact.compilerResult.tsDefinitions ?: error("No ts definitions"))
+                }
             }
             is BinaryArtifacts.Js.JsEsArtifact -> {
                 val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
@@ -63,8 +65,6 @@ class JsIrArtifactsDumpHandler(testServices: TestServices) : JsBinaryArtifactHan
             }
             else -> return
         }
-
-        // TODO write dts
     }
 
     private fun createEsTestFile(file: File, moduleName: String) {

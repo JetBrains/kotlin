@@ -30,9 +30,7 @@ object BinaryArtifacts {
 
         class OldJsArtifact(override val outputFile: File, val translationResult: TranslationResult) : Js()
 
-        class JsIrArtifact(override val outputFile: File, val compilerResult: CompilerResult) : Js()
-
-        class JsKlibArtifact(override val outputFile: File, val descriptor: ModuleDescriptor, val library: KotlinLibrary) : Js()
+        class JsIrArtifact(override val outputFile: File, val compilerResult: CompilerResult, val icCache: Map<String, ByteArray>? = null) : Js()
 
         class JsEsArtifact(override val outputFile: File, val outputDceFile: File?) : Js()
 
@@ -51,7 +49,7 @@ object BinaryArtifacts {
             get() = ArtifactKinds.Native
     }
 
-    class KLib : ResultingArtifact.Binary<KLib>() {
+    class KLib(val outputFile: File) : ResultingArtifact.Binary<KLib>() {
         override val kind: BinaryKind<KLib>
             get() = ArtifactKinds.KLib
     }

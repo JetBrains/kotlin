@@ -41,12 +41,15 @@ class JsBoxRunner(testServices: TestServices) : AbstractJsArtifactsCollector(tes
 
         val dontSkipRegularMode = JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE !in globalDirectives
         val dontSkipDceDriven = JsEnvironmentConfigurationDirectives.SKIP_DCE_DRIVEN !in globalDirectives
+        val dontSkipIrIc = JsEnvironmentConfigurationDirectives.SKIP_IR_INCREMENTAL_CHECKS !in globalDirectives
+        val recompile = testServices.moduleStructure.modules
+            .flatMap { it.files }.any { JsEnvironmentConfigurationDirectives.RECOMPILE in it.directives }
         val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in globalDirectives
         val runIrPir = JsEnvironmentConfigurationDirectives.RUN_IR_PIR in globalDirectives
         if (dontSkipRegularMode) {
             runGeneratedCode(allJsFiles, testModuleName, testPackage, withModuleSystem)
 
-            if (runIrDce) {
+            if (runIrDce && !(dontSkipIrIc && recompile)) {
                 runGeneratedCode(dceAllJsFiles, testModuleName, testPackage, withModuleSystem)
             }
         }
@@ -81,7 +84,7 @@ class JsBoxRunner(testServices: TestServices) : AbstractJsArtifactsCollector(tes
 
     private fun singleRunEsCode(esmOutputDir: File) {
         val perFileEsModuleFile = "$esmOutputDir/test.mjs"
-        val (allNonEsModuleFiles, inputJsFilesAfter) = extractAllFilesForEsRunner(testServices, modulesToArtifact, esmOutputDir)
+        val (allNonEsModuleFiles, inputJsFilesAfter) = extractAllFilesForEsRunner(testServices, esmOutputDir)
         v8tool.run(*allNonEsModuleFiles.toTypedArray(), perFileEsModuleFile, *inputJsFilesAfter.toTypedArray())
     }
 

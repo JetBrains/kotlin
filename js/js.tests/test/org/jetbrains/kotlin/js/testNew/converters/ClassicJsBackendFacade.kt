@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.js.testNew.converters
 
-import com.google.common.collect.Lists
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.output.writeAllTo

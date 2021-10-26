@@ -7,15 +7,14 @@ package org.jetbrains.kotlin.js.testNew
 
 import org.jetbrains.kotlin.js.testNew.converters.JsIrBackendFacade
 import org.jetbrains.kotlin.js.testNew.converters.JsKlibBackendFacade
+import org.jetbrains.kotlin.js.testNew.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.testNew.handlers.*
 import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.backend.classic.ClassicBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureJsArtifactsHandlersStep
-import org.jetbrains.kotlin.test.builders.jsArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -27,7 +26,7 @@ import java.lang.Boolean.getBoolean
 abstract class AbstractJsIrTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-) : AbstractJsBlackBoxCodegenTestBase<ClassicFrontendOutputArtifact, IrBackendInput>(
+) : AbstractJsBlackBoxCodegenTestBase<ClassicFrontendOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
     FrontendKinds.ClassicFrontend, TargetBackend.JS_IR, pathToTestDir, testGroupOutputDirPrefix, skipMinification = true
 ) {
     override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
@@ -36,14 +35,14 @@ abstract class AbstractJsIrTest(
     override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
         get() = ::ClassicFrontend2IrConverter
 
-    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Js>>
+    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
         get() = ::JsKlibBackendFacade
 
-    override val afterBackendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>?
+    override val afterBackendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>?
         get() = ::JsIrBackendFacade
 
-    override val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>?
-        get() = null
+    override val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
+        get() = { RecompileModuleJsIrBackendFacade(it) }
 
     private fun getBoolean(s: String, default: Boolean) = System.getProperty(s)?.let { parseBoolean(it) } ?: default
 
@@ -70,6 +69,7 @@ abstract class AbstractJsIrTest(
                     ::NodeJsGeneratorHandler,
                     ::JsMinifierRunner,
                     ::JsArtifactsDumpHandler,
+                    ::JsIrRecompiledArtifactsIdentityHandler,
                 )
             }
         }
@@ -96,3 +96,28 @@ open class AbstractIrJsCodegenInlineTest : AbstractJsIrTest(
     testGroupOutputDirPrefix = "codegen/irBoxInline/"
 )
 
+open class AbstractIrJsTypeScriptExportTest : AbstractJsIrTest(
+    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/",
+    testGroupOutputDirPrefix = "typescript-export/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                +JsEnvironmentConfigurationDirectives.GENERATE_DTS
+                if (getBoolean("kotlin.js.updateReferenceDtsFiles")) +JsEnvironmentConfigurationDirectives.UPDATE_REFERENCE_DTS_FILES
+            }
+
+            configureJsArtifactsHandlersStep {
+                useHandlers(
+                    ::JsDtsHandler
+                )
+            }
+        }
+    }
+}
+
+open class AbstractIrCodegenWasmJsInteropJsTest : AbstractJsIrTest(
+    pathToTestDir = "compiler/testData/codegen/wasmJsInterop",
+    testGroupOutputDirPrefix = "codegen/wasmJsInteropJs"
+)

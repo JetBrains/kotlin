@@ -9,15 +9,17 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProviderImpl
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.hasFilesToRecompile
 import org.jetbrains.kotlin.utils.JsMetadataVersion
 
 class JsIncrementalEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
-        if (module.files.any { JsEnvironmentConfigurationDirectives.RECOMPILE in it.directives }) {
+        if (module.hasFilesToRecompile()) {
             val incrementalData = testServices.jsClassicIncrementalDataProvider.getIncrementalDataIfAny(module)
             val header = incrementalData?.header
             if (header != null) {
