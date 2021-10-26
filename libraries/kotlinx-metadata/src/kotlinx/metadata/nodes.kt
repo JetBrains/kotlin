@@ -536,7 +536,7 @@ class KmTypeAlias(
     val versionRequirements: MutableList<KmVersionRequirement> = ArrayList(0)
 
     private val extensions: List<KmTypeAliasExtension> =
-        MetadataExtensions.INSTANCES.map(MetadataExtensions::createTypeAliasExtension)
+        MetadataExtensions.INSTANCES.mapNotNull(MetadataExtensions::createTypeAliasExtension)
 
     override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor =
         KmTypeParameter(flags, name, id, variance).addTo(typeParameters)
@@ -594,7 +594,7 @@ class KmValueParameter(
     var varargElementType: KmType? = null
 
     private val extensions: List<KmValueParameterExtension> =
-        MetadataExtensions.INSTANCES.map(MetadataExtensions::createValueParameterExtension)
+        MetadataExtensions.INSTANCES.mapNotNull(MetadataExtensions::createValueParameterExtension)
 
     override fun visitType(flags: Flags): KmTypeVisitor =
         KmType(flags).also { type = it }

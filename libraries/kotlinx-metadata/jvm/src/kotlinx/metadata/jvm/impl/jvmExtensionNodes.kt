@@ -188,17 +188,3 @@ internal class JvmTypeExtension : JvmTypeExtensionVisitor(), KmTypeExtension {
         visitor.visitEnd()
     }
 }
-
-internal class JvmTypeAliasExtension : JvmTypeAliasExtensionVisitor(), KmTypeAliasExtension {
-    override fun accept(visitor: KmTypeAliasExtensionVisitor) {
-        require(visitor is JvmTypeAliasExtensionVisitor)
-        visitor.visitEnd()
-    }
-}
-
-internal class JvmValueParameterExtension : JvmValueParameterExtensionVisitor(), KmValueParameterExtension {
-    override fun accept(visitor: KmValueParameterExtensionVisitor) {
-        require(visitor is JvmValueParameterExtensionVisitor)
-        visitor.visitEnd()
-    }
-}

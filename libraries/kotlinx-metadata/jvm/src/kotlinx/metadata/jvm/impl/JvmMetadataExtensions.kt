@@ -310,9 +310,9 @@ internal class JvmMetadataExtensions : MetadataExtensions {
 
     override fun createTypeExtension(): KmTypeExtension = JvmTypeExtension()
 
-    override fun createTypeAliasExtension(): KmTypeAliasExtension = JvmTypeAliasExtension()
+    override fun createTypeAliasExtension(): KmTypeAliasExtension? = null
 
-    override fun createValueParameterExtension(): KmValueParameterExtension = JvmValueParameterExtension()
+    override fun createValueParameterExtension(): KmValueParameterExtension? = null
 
     private fun JvmMemberSignature.toJvmMethodSignature(c: WriteContext): JvmProtoBuf.JvmMethodSignature =
         JvmProtoBuf.JvmMethodSignature.newBuilder().apply {

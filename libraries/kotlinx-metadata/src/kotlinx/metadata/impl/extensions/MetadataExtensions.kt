@@ -76,9 +76,9 @@ interface MetadataExtensions {
 
     fun createTypeExtension(): KmTypeExtension
 
-    fun createTypeAliasExtension(): KmTypeAliasExtension
+    fun createTypeAliasExtension(): KmTypeAliasExtension?
 
-    fun createValueParameterExtension(): KmValueParameterExtension
+    fun createValueParameterExtension(): KmValueParameterExtension?
 
     companion object {
         val INSTANCES: List<MetadataExtensions> by lazy {

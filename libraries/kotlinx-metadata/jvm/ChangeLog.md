@@ -8,6 +8,7 @@
   - `JvmFlag.Class.HAS_METHOD_BODIES_IN_INTERFACE`
   - `JvmFlag.Class.IS_COMPILED_IN_COMPATIBILITY_MODE`
 - [`KT-48965`](https://youtrack.jetbrains.com/issue/KT-48965) Make the type of `KmValueParameter.type` non-null `KmType`
+- Remove unused `JvmTypeAliasExtensionVisitor` and `JvmValueParameterExtensionVisitor`
 
 ## 0.3.0
 
