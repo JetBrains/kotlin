@@ -584,12 +584,13 @@ class KmValueParameter(
     var name: String
 ) : KmValueParameterVisitor() {
     /**
-     * Type of the value parameter, if this is **not** a `vararg` parameter.
+     * Type of the value parameter.
+     * If this is a `vararg` parameter of type `X`, returns the type `Array<out X>`.
      */
     lateinit var type: KmType
 
     /**
-     * Type of the value parameter, if this is a `vararg` parameter.
+     * Type of the `vararg` value parameter, or `null` if this is not a `vararg` parameter.
      */
     var varargElementType: KmType? = null
 
