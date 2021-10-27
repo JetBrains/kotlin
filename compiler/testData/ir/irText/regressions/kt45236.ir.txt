@@ -181,7 +181,7 @@ FILE fqName:<root> fileName:/kt45236.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:isError visibility:public modality:FINAL <T> ($receiver:<root>.NetRequestStatus<T of <root>.isError>) returnType:kotlin.Boolean
     annotations:
-      OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalContracts modality:FINAL visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.contracts.ExperimentalContracts>])
+      OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalContracts modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.contracts.ExperimentalContracts>])
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]
     $receiver: VALUE_PARAMETER name:<this> type:<root>.NetRequestStatus<T of <root>.isError>
     BLOCK_BODY
