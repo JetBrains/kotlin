@@ -1,5 +1,5 @@
-// MODULE: lib
 // WITH_RUNTIME
+// MODULE: lib
 // FILE: lib.kt
 
 @Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
