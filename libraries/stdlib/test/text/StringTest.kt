@@ -123,6 +123,19 @@ class StringTest {
         assertFailsWith<IndexOutOfBoundsException> { s.toCharArray(-1) }
         assertFailsWith<IndexOutOfBoundsException> { s.toCharArray(0, 6) }
         assertFailsWith<IllegalArgumentException> { s.toCharArray(3, 1) }
+
+        // Array modifications must not affect original string
+        val a = s.toCharArray()
+        for (i in a.indices) {
+            a[i] = ' '
+        }
+        assertContentEquals(charArrayOf(' ', ' ', ' ', ' ', ' '), a)
+        val a13 = s.toCharArray(1, 3)
+        for (i in a13.indices) {
+            a13[i] = ' '
+        }
+        assertContentEquals(charArrayOf(' ', ' '), a13)
+        assertEquals("hello", s)
     }
 
     @Test fun isEmptyAndBlank() = withOneCharSequenceArg { arg1 ->
