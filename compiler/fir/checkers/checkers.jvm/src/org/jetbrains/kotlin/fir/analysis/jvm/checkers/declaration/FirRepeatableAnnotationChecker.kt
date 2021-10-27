@@ -40,10 +40,11 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
     private val REPEATABLE_ANNOTATION_CONTAINER_NAME = Name.identifier(JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME)
 
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        val annotations = declaration.annotations
+        if (annotations.isEmpty()) return
         val annotationsMap = hashMapOf<ConeKotlinType, MutableList<AnnotationUseSiteTarget?>>()
 
         val session = context.session
-        val annotations = declaration.annotations
         for (annotation in annotations) {
             val classId = annotation.classId ?: continue
             val annotationClassId = annotation.toAnnotationClassId() ?: continue

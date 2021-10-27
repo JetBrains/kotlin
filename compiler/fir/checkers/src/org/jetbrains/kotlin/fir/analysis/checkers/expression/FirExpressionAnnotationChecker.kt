@@ -32,9 +32,12 @@ object FirExpressionAnnotationChecker : FirBasicExpressionChecker() {
             expression is FirBlock && expression.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
         ) return
 
+        val annotations = expression.annotations
+        if (annotations.isEmpty()) return
+
         val annotationsMap = hashMapOf<ConeKotlinType, MutableList<AnnotationUseSiteTarget?>>()
 
-        for (annotation in expression.annotations) {
+        for (annotation in annotations) {
             val useSiteTarget = annotation.useSiteTarget ?: expression.getDefaultUseSiteTarget(annotation, context)
             val existingTargetsForAnnotation = annotationsMap.getOrPut(annotation.annotationTypeRef.coneType) { arrayListOf() }
 

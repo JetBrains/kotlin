@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.types.type
 object FirPropertyTypeParametersChecker : FirPropertyChecker() {
 
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        val boundsByName = declaration.typeParameters.map { it.name to it.bounds }.toMap()
+        val boundsByName = declaration.typeParameters.associate { it.name to it.bounds }
         val usedTypes = HashSet<ConeKotlinType>()
         fun collectAllTypes(type: ConeKotlinType) {
             if (usedTypes.add(type)) {

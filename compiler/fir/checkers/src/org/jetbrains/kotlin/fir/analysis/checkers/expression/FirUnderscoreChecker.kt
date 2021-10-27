@@ -29,8 +29,10 @@ object FirUnderscoreChecker : FirBasicExpressionChecker() {
                 checkResolvedToUnderscoreNamedCatchParameter(expression, context, reporter)
             }
             is FirResolvedQualifier -> {
-                for (reservedUnderscoreDiagnostic in expression.nonFatalDiagnostics.filterIsInstance<ConeUnderscoreUsageWithoutBackticks>()) {
-                    reporter.reportOn(reservedUnderscoreDiagnostic.source, FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS, context)
+                for (reservedUnderscoreDiagnostic in expression.nonFatalDiagnostics) {
+                    if (reservedUnderscoreDiagnostic is ConeUnderscoreUsageWithoutBackticks) {
+                        reporter.reportOn(reservedUnderscoreDiagnostic.source, FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS, context)
+                    }
                 }
             }
         }

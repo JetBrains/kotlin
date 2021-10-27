@@ -24,7 +24,7 @@ class JavaClassMembersEnhancementScope(
     private val overriddenFunctions = mutableMapOf<FirNamedFunctionSymbol, Collection<FirNamedFunctionSymbol>>()
     private val overriddenProperties = mutableMapOf<FirPropertySymbol, Collection<FirPropertySymbol>>()
 
-    private val overrideBindCache = mutableMapOf<Name, Map<FirCallableSymbol<*>?, List<FirCallableSymbol<*>>>>()
+    private val overrideBindCache = mutableMapOf<Name, Map<FirCallableSymbol<*>?, List<FirCallableDeclaration>>>()
     private val signatureEnhancement = FirSignatureEnhancement(owner.fir, session) {
         overriddenMembers(name)
     }
@@ -66,12 +66,14 @@ class JavaClassMembersEnhancementScope(
 
     private fun FirCallableDeclaration.overriddenMembers(name: Name): List<FirCallableDeclaration> {
         val backMap = overrideBindCache.getOrPut(name) {
-            useSiteMemberScope
-                .overrideByBase
-                .toList()
-                .groupBy({ (_, key) -> key }, { (value) -> value })
+            val result = mutableMapOf<FirCallableSymbol<*>?, MutableList<FirCallableDeclaration>>()
+            for ((key, value) in useSiteMemberScope.overrideByBase) {
+                val resultItem = result.getOrPut(value) { mutableListOf() }
+                resultItem.add(key.fir)
+            }
+            result
         }
-        return backMap[this.symbol]?.map { it.fir } ?: emptyList()
+        return backMap[this.symbol] ?: emptyList()
     }
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {

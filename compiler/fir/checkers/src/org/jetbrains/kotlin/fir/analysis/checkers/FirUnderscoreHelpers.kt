@@ -19,7 +19,9 @@ fun checkUnderscoreDiagnostics(
     reporter: DiagnosticReporter,
     isExpression: Boolean
 ) {
-    if (source != null && (source.kind is KtRealSourceElementKind || source.kind is KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)) {
+    val sourceKind = source?.kind ?: return
+
+    if (sourceKind is KtRealSourceElementKind || sourceKind is KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess) {
         with(SourceNavigator.forSource(source)) {
             if (source.getRawIdentifier()?.isUnderscore == true) {
                 reporter.reportOn(

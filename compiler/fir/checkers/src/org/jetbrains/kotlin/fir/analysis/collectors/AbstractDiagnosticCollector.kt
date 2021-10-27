@@ -41,16 +41,24 @@ abstract class AbstractDiagnosticCollector(
         private val SUPPRESS_NAMES_NAME = Name.identifier("names")
 
         fun getDiagnosticsSuppressedForContainer(annotationContainer: FirAnnotationContainer): List<String>? {
-            val annotations = annotationContainer.annotations.filter {
-                val type = it.annotationTypeRef.coneType as? ConeClassLikeType ?: return@filter false
-                type.lookupTag.classId == StandardClassIds.Annotations.Suppress
+            var result: MutableList<String>? = null
+
+            for (annotation in annotationContainer.annotations) {
+                val type = annotation.annotationTypeRef.coneType as? ConeClassLikeType ?: continue
+                if (type.lookupTag.classId != StandardClassIds.Annotations.Suppress) continue
+                val argumentValues = annotation.findArgumentByName(SUPPRESS_NAMES_NAME)?.unwrapVarargValue() ?: continue
+
+                for (argumentValue in argumentValues) {
+                    val value = (argumentValue as? FirConstExpression<*>)?.value as? String ?: continue
+
+                    if (result == null) {
+                        result = mutableListOf()
+                    }
+                    result.add(value)
+                }
             }
-            if (annotations.isEmpty()) return null
-            return annotations.flatMap { annotationCall ->
-                annotationCall.findArgumentByName(SUPPRESS_NAMES_NAME)?.unwrapVarargValue()?.mapNotNull {
-                    (it as? FirConstExpression<*>)?.value as? String?
-                } ?: emptyList()
-            }
+
+            return result
         }
     }
 }
