@@ -66,7 +66,7 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker
 
     }
 
-    fun lightTreeMatcher(
+    private fun lightTreeMatcher(
         variable: LighterASTNode,
         expression: LighterASTNode,
         source: KtLightSourceElement,

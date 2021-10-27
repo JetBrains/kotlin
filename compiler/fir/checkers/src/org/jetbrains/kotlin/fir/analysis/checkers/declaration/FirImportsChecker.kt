@@ -32,10 +32,11 @@ object FirImportsChecker : FirFileChecker() {
     override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.imports.forEach { import ->
             if (import is FirErrorImport) return@forEach
-            if (import.isAllUnder && import !is FirResolvedImport) {
-                checkAllUnderFromEnumEntry(import, context, reporter)
-            }
-            if (!import.isAllUnder) {
+            if (import.isAllUnder) {
+                if (import !is FirResolvedImport) {
+                    checkAllUnderFromEnumEntry(import, context, reporter)
+                }
+            } else {
                 checkCanBeImported(import, context, reporter)
                 if (import is FirResolvedImport) {
                     checkOperatorRename(import, context, reporter)

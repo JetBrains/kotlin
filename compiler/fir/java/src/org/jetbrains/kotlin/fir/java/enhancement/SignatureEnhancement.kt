@@ -76,8 +76,9 @@ class FirSignatureEnhancement(
     ): FirFunctionSymbol<*> {
         return enhancements.getOrPut(function) {
             enhance(function, name).also { enhancedVersion ->
-                (enhancedVersion.fir.initialSignatureAttr as? FirSimpleFunction)?.let {
-                    enhancedVersion.fir.initialSignatureAttr = enhancedFunction(it.symbol, it.name).fir
+                val enhancedVersionFir = enhancedVersion.fir
+                (enhancedVersionFir.initialSignatureAttr as? FirSimpleFunction)?.let {
+                    enhancedVersionFir.initialSignatureAttr = enhancedFunction(it.symbol, it.name).fir
                 }
             }
         } as FirFunctionSymbol<*>

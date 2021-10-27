@@ -52,7 +52,7 @@ class JavaClassUseSiteMemberScope(
     private val typeParameterStack = klass.javaTypeParameterStack
     private val specialFunctions = hashMapOf<Name, Collection<FirNamedFunctionSymbol>>()
     private val syntheticPropertyByNameMap = hashMapOf<Name, FirSyntheticPropertySymbol>()
-    
+
     private val canUseSpecialGetters: Boolean by lazy { !klass.hasKotlinSuper(session) }
 
     private val callableNamesCached by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -161,11 +161,8 @@ class JavaClassUseSiteMemberScope(
         scope: FirScope,
     ): FirNamedFunctionSymbol? {
         val specialGetterName = if (canUseSpecialGetters) getBuiltinSpecialPropertyGetterName() else null
-        if (specialGetterName != null) {
-            return findGetterByName(specialGetterName.asString(), scope)
-        }
-
-        return findGetterByName(JvmAbi.getterName(fir.name.asString()), scope)
+        val name = specialGetterName?.asString() ?: JvmAbi.getterName(fir.name.asString())
+        return findGetterByName(name, scope)
     }
 
     private fun FirPropertySymbol.findGetterByName(

@@ -176,7 +176,8 @@ abstract class AbstractDiagnosticCollectorVisitor(
         // Assuming no errors, the children of FirResolvedTypeRef (currently this can be FirAnnotationCalls) will also be present
         // as children in delegatedTypeRef. We should make sure those elements are only visited once, otherwise diagnostics will be
         // collected twice: once through resolvedTypeRef's children and another through resolvedTypeRef.delegatedTypeRef's children.
-        if (resolvedTypeRef.type is ConeClassErrorType) {
+        val resolvedTypeRefType = resolvedTypeRef.type
+        if (resolvedTypeRefType is ConeClassErrorType) {
             super.visitResolvedTypeRef(resolvedTypeRef, data)
         }
         if (resolvedTypeRef.source?.kind is KtFakeSourceElementKind) return
@@ -184,7 +185,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         //the note about is just wrong
         //if we don't visit resolved type we can't make any diagnostics on them
         //so here we check resolvedTypeRef
-        if (resolvedTypeRef.type !is ConeClassErrorType) {
+        if (resolvedTypeRefType !is ConeClassErrorType) {
             withAnnotationContainer(resolvedTypeRef) {
                 checkElement(resolvedTypeRef)
             }
@@ -319,13 +320,14 @@ abstract class AbstractDiagnosticCollectorVisitor(
     inline fun <R> withAnnotationContainer(annotationContainer: FirAnnotationContainer, block: () -> R): R {
         val existingContext = context
         addSuppressedDiagnosticsToContext(annotationContainer)
-        if (annotationContainer.annotations.isNotEmpty()) {
+        val notEmptyAnnotations = annotationContainer.annotations.isNotEmpty()
+        if (notEmptyAnnotations) {
             context = context.addAnnotationContainer(annotationContainer)
         }
         return try {
             block()
         } finally {
-            if (annotationContainer.annotations.isNotEmpty()) {
+            if (notEmptyAnnotations) {
                 existingContext.dropAnnotationContainer()
             }
             context = existingContext

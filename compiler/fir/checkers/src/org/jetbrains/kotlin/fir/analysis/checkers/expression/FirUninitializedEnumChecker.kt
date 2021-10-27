@@ -109,8 +109,9 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
             it.getContainingClassSymbol(context.session) == enumClassSymbol
         }?.symbol ?: return
 
-        val enumMemberProperties = enumClassSymbol.declarationSymbols.filterIsInstance<FirPropertySymbol>()
-        val enumEntries = enumClassSymbol.declarationSymbols.filterIsInstance<FirEnumEntrySymbol>()
+        val declarationSymbols = enumClassSymbol.declarationSymbols
+        val enumMemberProperties = declarationSymbols.filterIsInstance<FirPropertySymbol>()
+        val enumEntries = declarationSymbols.filterIsInstance<FirEnumEntrySymbol>()
 
         // When checking enum member properties, accesses to enum entries in lazy delegation is legitimate, e.g.,
         //   enum JvmTarget(...) {

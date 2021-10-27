@@ -22,8 +22,9 @@ object ArrayEqualityCanBeReplacedWithEquals : FirBasicExpressionChecker() {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression !is FirEqualityOperatorCall) return
         if (expression.operation != FirOperation.EQ && expression.operation != FirOperation.NOT_EQ) return
-        val left = expression.arguments.getOrNull(0) ?: return
-        val right = expression.arguments.getOrNull(1) ?: return
+        val arguments = expression.arguments
+        val left = arguments.getOrNull(0) ?: return
+        val right = arguments.getOrNull(1) ?: return
 
         if (left.typeRef.coneType.classId != StandardClassIds.Array) return
         if (right.typeRef.coneType.classId != StandardClassIds.Array) return
