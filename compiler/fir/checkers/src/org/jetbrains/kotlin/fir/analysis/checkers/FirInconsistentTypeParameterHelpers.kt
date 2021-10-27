@@ -58,6 +58,7 @@ private fun buildDeepSubstitutionMultimap(
 ): Map<FirTypeParameterSymbol, ClassSymbolAndProjections> {
     val result = mutableMapOf<FirTypeParameterSymbol, ClassSymbolAndProjections>()
     val substitution = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
+    val visitedSupertypes = mutableSetOf<ConeKotlinType>()
     val session = context.session
     val typeContext = session.typeContext
 
@@ -94,9 +95,12 @@ private fun buildDeepSubstitutionMultimap(
         }
 
         for (superTypeRef in classSymbol.resolvedSuperTypeRefs) {
+            val fullyExpandedType = superTypeRef.coneType.fullyExpandedType(session)
+            if (!visitedSupertypes.add(fullyExpandedType))
+                return
+
+            val superClassSymbol = fullyExpandedType.toRegularClassSymbol(session)
             withSuppressedDiagnostics(superTypeRef, context) {
-                val fullyExpandedType = superTypeRef.coneType.fullyExpandedType(session)
-                val superClassSymbol = fullyExpandedType.toRegularClassSymbol(session)
                 if (!fullyExpandedType.isEnum && superClassSymbol != null) {
                     fillInDeepSubstitutor(fullyExpandedType.typeArguments, superClassSymbol)
                 }
