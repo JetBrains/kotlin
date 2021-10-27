@@ -923,11 +923,6 @@ class KotlinGradleIT : BaseGradleIT() {
             assertSuccessful()
             assertContains("Kotlin build report is written to")
         }
-
-        build("clean", "assemble", "-Pkotlin.build.report.enable=true") {
-            assertSuccessful()
-            assertContains("Kotlin build report is written to")
-        }
     }
 
     @Test
