@@ -434,7 +434,7 @@ internal abstract class FunctionGenerationContext(
         val codegen: CodeGenerator,
         private val startLocation: LocationInfo?,
         private val endLocation: LocationInfo?,
-        private val switchToRunnable: Boolean,
+        switchToRunnable: Boolean,
         internal val irFunction: IrFunction? = null
 ) : ContextUtils {
 
@@ -480,9 +480,12 @@ internal abstract class FunctionGenerationContext(
     protected open val needCleanupLandingpadAndLeaveFrame: Boolean
         get() = irFunction?.annotations?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true ||     // Exported to foreign code
                 (!stackLocalsManager.isEmpty() && context.memoryModel != MemoryModel.EXPERIMENTAL) ||
-                (context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable)
+                switchToRunnable
 
     private var setCurrentFrameIsCalled: Boolean = false
+
+    private val switchToRunnable: Boolean =
+            context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable
 
     val stackLocalsManager = StackLocalsManagerImpl(this, stackLocalsInitBb)
 
@@ -910,11 +913,6 @@ internal abstract class FunctionGenerationContext(
         }
         call(context.llvm.setCurrentFrameFunction, listOf(slotsPhi!!))
         setCurrentFrameIsCalled = true
-        if (context.memoryModel == MemoryModel.EXPERIMENTAL) {
-            if (!forbidRuntime) {
-                call(context.llvm.Kotlin_mm_safePointExceptionUnwind, emptyList())
-            }
-        }
 
         return landingpad
     }
@@ -1502,7 +1500,7 @@ internal abstract class FunctionGenerationContext(
                 }
 
                 releaseVars()
-                handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
+                handleEpilogueExperimentalMM()
                 LLVMBuildResume(builder, landingpad)
             }
         }
@@ -1514,14 +1512,11 @@ internal abstract class FunctionGenerationContext(
              * places with inconsistent stack layout. So we setup debug info only for this part of bb.
              */
             startLocation?.let { debugLocation(it, it) }
-            val needStateSwitch = context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable
-            if (needsRuntimeInit || needStateSwitch) {
+            if (needsRuntimeInit || switchToRunnable) {
                 check(!forbidRuntime) { "Attempt to init runtime where runtime usage is forbidden" }
                 call(context.llvm.initRuntimeIfNeeded, emptyList())
             }
-            if (needStateSwitch) {
-                switchThreadState(Runnable)
-            }
+            handlePrologueExperimentalMM()
             if (needSlots || needCleanupLandingpadAndLeaveFrame) {
                 call(context.llvm.enterFrameFunction, listOf(slotsPhi!!, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))
             } else {
@@ -1577,18 +1572,22 @@ internal abstract class FunctionGenerationContext(
 
     protected fun onReturn() {
         releaseVars()
-        handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointFunctionEpilogue)
+        handleEpilogueExperimentalMM()
     }
 
-    private fun handleEpilogueForExperimentalMM(safePointFunction: LlvmCallable) {
-        if (context.memoryModel == MemoryModel.EXPERIMENTAL) {
-            if (!forbidRuntime) {
-                call(safePointFunction, emptyList())
-            }
-            if (switchToRunnable) {
-                check(!forbidRuntime) { "Generating a bridge when runtime is forbidden" }
-                switchThreadState(Native)
-            }
+    private fun handlePrologueExperimentalMM() {
+        if (switchToRunnable) {
+            switchThreadState(Runnable)
+        }
+        if (context.memoryModel == MemoryModel.EXPERIMENTAL && !forbidRuntime) {
+            call(context.llvm.Kotlin_mm_safePointFunctionPrologue, emptyList())
+        }
+    }
+
+    private fun handleEpilogueExperimentalMM() {
+        if (switchToRunnable) {
+            check(!forbidRuntime) { "Generating a bridge when runtime is forbidden" }
+            switchThreadState(Native)
         }
     }
 

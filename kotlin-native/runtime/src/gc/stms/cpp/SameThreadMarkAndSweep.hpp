@@ -52,7 +52,7 @@ public:
         explicit ThreadData(SameThreadMarkAndSweep& gc, mm::ThreadData& threadData) noexcept : gc_(gc), threadData_(threadData) {}
         ~ThreadData() = default;
 
-        void SafePointFunctionEpilogue() noexcept;
+        void SafePointFunctionPrologue() noexcept;
         void SafePointLoopBody() noexcept;
         void SafePointExceptionUnwind() noexcept;
         void SafePointAllocation(size_t size) noexcept;

@@ -507,9 +507,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
     private val Kotlin_ObjCExport_NSIntegerTypeProvider by lazyRtFunction
     private val Kotlin_longTypeProvider by lazyRtFunction
 
-    val Kotlin_mm_safePointFunctionEpilogue by lazyRtFunction
+    val Kotlin_mm_safePointFunctionPrologue by lazyRtFunction
     val Kotlin_mm_safePointWhileLoopBody by lazyRtFunction
-    val Kotlin_mm_safePointExceptionUnwind by lazyRtFunction
 
     val tlsMode by lazy {
         when (target) {

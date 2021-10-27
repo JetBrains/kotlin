@@ -67,9 +67,8 @@ public:
 
 class GCSchedulerThreadData {
 public:
-    static constexpr size_t kFunctionEpilogueWeight = 1;
+    static constexpr size_t kFunctionPrologueWeight = 1;
     static constexpr size_t kLoopBodyWeight = 1;
-    static constexpr size_t kExceptionUnwindWeight = 1;
 
     explicit GCSchedulerThreadData(GCSchedulerConfig& config, std::function<void(GCSchedulerThreadData&)> onSafePoint) noexcept :
         config_(config), onSafePoint_(std::move(onSafePoint)) {

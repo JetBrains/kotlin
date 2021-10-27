@@ -33,9 +33,8 @@ public:
         explicit ThreadData(NoOpGC& gc, mm::ThreadData& threadData) noexcept {}
         ~ThreadData() = default;
 
-        void SafePointFunctionEpilogue() noexcept {}
+        void SafePointFunctionPrologue() noexcept {}
         void SafePointLoopBody() noexcept {}
-        void SafePointExceptionUnwind() noexcept {}
         void SafePointAllocation(size_t size) noexcept {}
 
         void PerformFullGC() noexcept {}
