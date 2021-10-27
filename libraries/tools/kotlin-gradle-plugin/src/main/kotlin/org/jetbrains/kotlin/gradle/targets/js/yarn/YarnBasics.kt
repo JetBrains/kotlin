@@ -29,15 +29,15 @@ abstract class YarnBasics : NpmApi {
         services: ServiceRegistry,
         logger: Logger,
         nodeJs: NpmEnvironment,
-        command: String,
-        isStandalone: Boolean,
+        yarn: YarnEnv,
         dir: File,
         description: String,
         args: List<String>
     ) {
         services.execWithProgress(description) { exec ->
             val arguments = args +
-                    if (logger.isDebugEnabled) "--verbose" else ""
+                    if (logger.isDebugEnabled) "--verbose" else "" +
+                            if (yarn.ignoreScripts) "--ignore-scripts" else ""
 
             val nodeExecutable = nodeJs.nodeExecutable
             exec.environment(
@@ -45,7 +45,8 @@ abstract class YarnBasics : NpmApi {
                 "$nodeExecutable${File.pathSeparator}${System.getenv("PATH")}"
             )
 
-            if (isStandalone) {
+            val command = yarn.executable
+            if (yarn.standalone) {
                 exec.executable = command
                 exec.args = arguments
             } else {

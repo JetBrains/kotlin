@@ -42,6 +42,8 @@ open class YarnRootExtension(
     var lockFileName by Property("kotlin-yarn.lock")
     var lockFileDirectory: File by Property(project.rootDir)
 
+    var ignoreScripts by Property(true)
+
     val yarnSetupTaskProvider: TaskProvider<YarnSetupTask>
         get() = project.tasks
             .withType(YarnSetupTask::class.java)
@@ -103,7 +105,8 @@ open class YarnRootExtension(
             home = home,
             executable = getExecutable("yarn", command, "cmd"),
             standalone = !download,
-            ivyDependency = "com.yarnpkg:yarn:$version@tar.gz"
+            ivyDependency = "com.yarnpkg:yarn:$version@tar.gz",
+            ignoreScripts = ignoreScripts,
         )
     }
 
