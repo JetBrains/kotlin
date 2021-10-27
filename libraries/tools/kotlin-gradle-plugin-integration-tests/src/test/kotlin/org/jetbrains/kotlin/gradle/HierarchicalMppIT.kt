@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.internals.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 import org.jetbrains.kotlin.gradle.internals.parseKotlinSourceSetMetadataFromJson
 import org.jetbrains.kotlin.gradle.native.transformNativeTestProjectWithPluginDsl
@@ -213,7 +214,12 @@ class HierarchicalMppIT : BaseGradleIT() {
 
     @Test
     fun testMultiModulesHmppKt48370() = with(Project("hierarchical-mpp-multi-modules", GradleVersionRequired.FOR_MPP_SUPPORT)) {
-        build("assemble", options = defaultBuildOptions().copy(parallelTasksInProject = true)) {
+        build(
+            "assemble", options = defaultBuildOptions().copy(
+                parallelTasksInProject = true,
+                warningMode = WarningMode.Summary
+            )
+        ) {
             assertSuccessful()
         }
     }

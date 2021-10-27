@@ -15,7 +15,7 @@ dependencies {
 [compileKotlin, compileTestKotlin]*.configure {
     kotlinOptions {
         kotlinOptions.jvmTarget = "1.8"
-        freeCompilerArgs += ["-Xprogressive", "-XXLanguage:+NewInference", "-XXLanguage:+SamConversionForKotlinFunctions"]
+        freeCompilerArgs += ["-progressive", "-XXLanguage:+NewInference", "-XXLanguage:+SamConversionForKotlinFunctions"]
     }
 }
 

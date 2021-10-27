@@ -139,7 +139,10 @@ class Kapt3Android42IT : Kapt3BaseIT() {
         get() = GradleVersionRequired.AtLeast("6.7.1")
 
     override fun defaultBuildOptions(): BuildOptions =
-        super.defaultBuildOptions().copy(androidGradlePluginVersion = AGPVersion.v4_2_0)
+        super.defaultBuildOptions().copy(
+            androidHome = KtTestUtil.findAndroidSdk(),
+            androidGradlePluginVersion = AGPVersion.v4_2_0
+        )
 
     /** Regression test for https://youtrack.jetbrains.com/issue/KT-44020. */
     @Test
