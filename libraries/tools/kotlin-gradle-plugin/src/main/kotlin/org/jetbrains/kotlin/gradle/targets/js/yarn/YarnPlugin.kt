@@ -79,37 +79,21 @@ open class YarnPlugin : Plugin<Project> {
                 }
             }
 
-        val storeYarnLock = tasks.register("kotlinStoreYarnLock") {
+        val storeYarnLock = tasks.register("kotlinStoreYarnLock", YarnLockCopyTask::class.java) {
             it.dependsOn(kotlinNpmInstall)
-            val yarnLock = nodeJs.rootPackageDir.resolve("yarn.lock")
-
-            it.doLast {
-                copy { copy ->
-                    copy.from(yarnLock)
-                    copy.rename { yarnRootExtension.lockFileName }
-                    copy.into(yarnRootExtension.lockFileDirectory)
-                }
-            }
-
-            it.inputs.file(yarnLock).withPropertyName("inputFile")
-            it.outputs.file(yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName)).withPropertyName("outputFile")
+            it.inputFile.set(nodeJs.rootPackageDir.resolve("yarn.lock"))
+            it.outputDirectory.set(yarnRootExtension.lockFileDirectory)
+            it.fileName.set(yarnRootExtension.lockFileName)
         }
 
-        val restoreYarnLock = tasks.register("kotlinRestoreYarnLock") {
+        val restoreYarnLock = tasks.register("kotlinRestoreYarnLock", YarnLockCopyTask::class.java) {
             val lockFile = yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName)
+            it.inputFile.set(yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName))
+            it.outputDirectory.set(nodeJs.rootPackageDir)
+            it.fileName.set("yarn.lock")
             it.onlyIf {
                 lockFile.exists()
             }
-            it.doLast {
-                copy { copy ->
-                    copy.from(lockFile)
-                    copy.rename { "yarn.lock" }
-                    copy.into(nodeJs.rootPackageDir)
-                }
-            }
-
-            it.inputs.file(lockFile).withPropertyName("inputFile")
-            it.outputs.file(nodeJs.rootPackageDir.resolve("yarn.lock")).withPropertyName("outputFile")
         }
 
         kotlinNpmInstall.configure {
