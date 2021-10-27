@@ -38,6 +38,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultFalse("hasLazyNestedClassifiers", withGetter = true)
         }
 
+        impl(anonymousInitializer) {
+            defaultEmptyList("annotations")
+        }
+
         impl(anonymousObject)
         noImpl(anonymousObjectExpression)
 
@@ -73,7 +77,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             delegateFields(listOf("aliasName", "importedFqName", "isAllUnder", "source"), "delegate")
         }
 
-        fun ImplementationContext.commonAnnotationConfig(): Unit {
+        fun ImplementationContext.commonAnnotationConfig() {
             defaultEmptyList("annotations")
             default("typeRef") {
                 value = "annotationTypeRef"

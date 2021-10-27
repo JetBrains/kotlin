@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isCompiledToJvmDefault
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isJvm6
 import org.jetbrains.kotlin.fir.containingClass
@@ -22,56 +22,53 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.jvmDefaultModeState
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassUseSiteMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_CLASS_ID
 import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID
 
 object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         val jvmDefaultMode = context.session.jvmDefaultModeState
-        var defaultAnnotation: FirAnnotation? = null
         val containingDeclaration = context.findClosest<FirClassLikeDeclaration>()
 
-        if (declaration is FirAnnotatedDeclaration) {
-            val isJvm6 = context.isJvm6()
-            defaultAnnotation = declaration.getAnnotationByClassId(JVM_DEFAULT_CLASS_ID)
+        val isJvm6 = context.isJvm6()
+        val defaultAnnotation = declaration.getAnnotationByClassId(JVM_DEFAULT_CLASS_ID)
 
-            if (defaultAnnotation != null) {
-                if (containingDeclaration !is FirClass || !containingDeclaration.isInterface) {
-                    reporter.reportOn(defaultAnnotation.source, FirJvmErrors.JVM_DEFAULT_NOT_IN_INTERFACE, context)
-                    return
-                } else if (isJvm6) {
-                    reporter.reportOn(defaultAnnotation.source, FirJvmErrors.JVM_DEFAULT_IN_JVM6_TARGET, "JvmDefault", context)
+        if (defaultAnnotation != null) {
+            if (containingDeclaration !is FirClass || !containingDeclaration.isInterface) {
+                reporter.reportOn(defaultAnnotation.source, FirJvmErrors.JVM_DEFAULT_NOT_IN_INTERFACE, context)
+                return
+            } else if (isJvm6) {
+                reporter.reportOn(defaultAnnotation.source, FirJvmErrors.JVM_DEFAULT_IN_JVM6_TARGET, "JvmDefault", context)
+                return
+            } else if (!jvmDefaultMode.isEnabled) {
+                reporter.reportOn(defaultAnnotation.source, FirJvmErrors.JVM_DEFAULT_IN_DECLARATION, "JvmDefault", context)
+                return
+            }
+        } else {
+            val annotation = declaration.getAnnotationByClassId(JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID)
+            if (annotation != null) {
+                if (isJvm6) {
+                    reporter.reportOn(
+                        annotation.source,
+                        FirJvmErrors.JVM_DEFAULT_IN_JVM6_TARGET,
+                        "JvmDefaultWithoutCompatibility",
+                        context
+                    )
                     return
                 } else if (!jvmDefaultMode.isEnabled) {
-                    reporter.reportOn(defaultAnnotation.source, FirJvmErrors.JVM_DEFAULT_IN_DECLARATION, "JvmDefault", context)
+                    reporter.reportOn(
+                        annotation.source,
+                        FirJvmErrors.JVM_DEFAULT_IN_DECLARATION,
+                        "JvmDefaultWithoutCompatibility",
+                        context
+                    )
                     return
-                }
-            } else {
-                val annotation = declaration.getAnnotationByClassId(JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID)
-                if (annotation != null) {
-                    if (isJvm6) {
-                        reporter.reportOn(
-                            annotation.source,
-                            FirJvmErrors.JVM_DEFAULT_IN_JVM6_TARGET,
-                            "JvmDefaultWithoutCompatibility",
-                            context
-                        )
-                        return
-                    } else if (!jvmDefaultMode.isEnabled) {
-                        reporter.reportOn(
-                            annotation.source,
-                            FirJvmErrors.JVM_DEFAULT_IN_DECLARATION,
-                            "JvmDefaultWithoutCompatibility",
-                            context
-                        )
-                        return
-                    }
                 }
             }
         }

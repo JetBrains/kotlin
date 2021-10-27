@@ -6,17 +6,14 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.findArgumentByName
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -27,14 +24,14 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenProperties
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.utils.SmartSet
@@ -57,10 +54,10 @@ object FirOptInUsageBaseChecker {
     fun FirBasedSymbol<*>.loadExperimentalitiesFromAnnotationTo(session: FirSession, result: MutableCollection<Experimentality>) {
         ensureResolved(FirResolvePhase.STATUS)
         @OptIn(SymbolInternals::class)
-        (fir as? FirAnnotatedDeclaration)?.loadExperimentalitiesFromAnnotationTo(session, result)
+        fir.loadExperimentalitiesFromAnnotationTo(session, result)
     }
 
-    private fun FirAnnotatedDeclaration.loadExperimentalitiesFromAnnotationTo(
+    private fun FirDeclaration.loadExperimentalitiesFromAnnotationTo(
         session: FirSession,
         result: MutableCollection<Experimentality>
     ) {
@@ -104,12 +101,12 @@ object FirOptInUsageBaseChecker {
     private fun FirBasedSymbol<*>.loadExperimentalities(
         context: CheckerContext,
         knownExperimentalities: SmartSet<Experimentality>?,
-        visited: MutableSet<FirAnnotatedDeclaration>,
+        visited: MutableSet<FirDeclaration>,
         fromSetter: Boolean,
         dispatchReceiverType: ConeKotlinType?,
     ): Set<Experimentality> {
         ensureResolved(FirResolvePhase.STATUS)
-        val fir = this.fir as? FirAnnotatedDeclaration ?: return emptySet()
+        val fir = this.fir
         if (!visited.add(fir)) return emptySet()
         val result = knownExperimentalities ?: SmartSet.create()
         val session = context.session
@@ -176,7 +173,7 @@ object FirOptInUsageBaseChecker {
     private fun ConeKotlinType?.addExperimentalities(
         context: CheckerContext,
         result: SmartSet<Experimentality>,
-        visited: MutableSet<FirAnnotatedDeclaration> = mutableSetOf()
+        visited: MutableSet<FirDeclaration> = mutableSetOf()
     ) {
         if (this !is ConeClassLikeType) return
         lookupTag.toSymbol(context.session)?.loadExperimentalities(

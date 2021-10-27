@@ -5,18 +5,20 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
+import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
@@ -370,7 +373,7 @@ private fun lowerThanBound(context: ConeInferenceContext, argument: ConeKotlinTy
 }
 
 fun FirMemberDeclaration.isInlineOnly(): Boolean =
-    isInline && (this as FirAnnotatedDeclaration).hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID)
+    isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID)
 
 fun isSubtypeForTypeMismatch(context: ConeInferenceContext, subtype: ConeKotlinType, supertype: ConeKotlinType): Boolean {
     val subtypeFullyExpanded = subtype.fullyExpandedType(context.session)

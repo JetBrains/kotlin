@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
@@ -88,12 +91,12 @@ internal class FirIdeProvider(
 
 
     @FirProviderInternals
-    override fun recordGeneratedClass(owner: FirAnnotatedDeclaration, klass: FirRegularClass) {
+    override fun recordGeneratedClass(owner: FirDeclaration, klass: FirRegularClass) {
         TODO()
     }
 
     @FirProviderInternals
-    override fun recordGeneratedMember(owner: FirAnnotatedDeclaration, klass: FirDeclaration) {
+    override fun recordGeneratedMember(owner: FirDeclaration, klass: FirDeclaration) {
         TODO()
     }
 

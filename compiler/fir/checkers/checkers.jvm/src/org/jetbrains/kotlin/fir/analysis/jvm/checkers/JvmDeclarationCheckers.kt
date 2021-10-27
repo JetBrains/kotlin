@@ -14,13 +14,9 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
             FirJvmExternalDeclarationChecker,
             FirJvmNameChecker,
             FirJvmDefaultChecker,
-            FirJvmFunctionDelegateMemberNameClashChecker
-        )
-
-    override val annotatedDeclarationCheckers: Set<FirAnnotatedDeclarationChecker>
-        get() = setOf(
+            FirJvmFunctionDelegateMemberNameClashChecker,
             FirJvmStaticChecker,
-            FirRepeatableAnnotationChecker
+            FirRepeatableAnnotationChecker,
         )
 
     override val classCheckers: Set<FirClassChecker>

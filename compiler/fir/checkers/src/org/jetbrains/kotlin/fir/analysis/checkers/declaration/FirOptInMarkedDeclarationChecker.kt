@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationClassForOptInMarker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 
-object FirOptInMarkedDeclarationChecker : FirAnnotatedDeclarationChecker() {
-    override fun check(declaration: FirAnnotatedDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirOptInMarkedDeclarationChecker : FirBasicDeclarationChecker() {
+    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         for (annotation in declaration.annotations) {
             val annotationClass = annotation.getAnnotationClassForOptInMarker(context.session) ?: continue
             withSuppressedDiagnostics(annotation, context) {

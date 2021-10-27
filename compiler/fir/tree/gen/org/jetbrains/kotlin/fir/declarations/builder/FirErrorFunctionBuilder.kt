@@ -39,11 +39,11 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @FirBuilderDsl
 class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var moduleData: FirModuleData
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     var deprecation: DeprecationsPerUseSite? = null
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeKotlinType? = null
@@ -54,11 +54,11 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirErrorFunction {
         return FirErrorFunctionImpl(
             source,
+            annotations,
             moduleData,
             resolvePhase,
             origin,
             attributes,
-            annotations,
             deprecation,
             containerSource,
             dispatchReceiverType,

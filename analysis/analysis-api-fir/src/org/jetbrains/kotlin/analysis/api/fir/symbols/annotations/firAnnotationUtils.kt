@@ -8,31 +8,31 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.annotations
 import org.jetbrains.kotlin.analysis.api.fir.utils.FirRefWithValidityCheck
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.resolved
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
+import org.jetbrains.kotlin.fir.declarations.resolved
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
 
 internal fun FirAnnotation.getClassId(session: FirSession): ClassId? =
     coneClassLikeType?.fullyExpandedType(session)?.classId
 
-internal fun FirRefWithValidityCheck<FirAnnotatedDeclaration>.toAnnotationsList() = withFir { fir ->
+internal fun FirRefWithValidityCheck<FirDeclaration>.toAnnotationsList() = withFir { fir ->
     fir.annotations.map { KtFirAnnotationCall(this, it) }
 }
 
-internal fun FirRefWithValidityCheck<FirAnnotatedDeclaration>.containsAnnotation(classId: ClassId): Boolean =
+internal fun FirRefWithValidityCheck<FirDeclaration>.containsAnnotation(classId: ClassId): Boolean =
     withFirByType(ResolveType.AnnotationType) { fir ->
         fir.annotations.any { it.getClassId(fir.moduleData.session) == classId }
     }
 
-internal fun FirRefWithValidityCheck<FirAnnotatedDeclaration>.getAnnotationClassIds(): Collection<ClassId> =
+internal fun FirRefWithValidityCheck<FirDeclaration>.getAnnotationClassIds(): Collection<ClassId> =
     withFirByType(ResolveType.AnnotationType) { fir ->
         fir.annotations.mapNotNull { it.getClassId(fir.moduleData.session) }
     }

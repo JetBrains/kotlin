@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.FirPhaseRunner
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsResolveTransformer
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.analysis.low.level.api.fir.FirPhaseRunner
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
 
 internal class FirDesignatedAnnotationArgumentsResolveTransformerForIDE(
     private val designation: FirDeclarationDesignationWithFile,
@@ -67,11 +67,9 @@ internal class FirDesignatedAnnotationArgumentsResolveTransformerForIDE(
     }
 
     override fun ensureResolved(declaration: FirDeclaration) {
-        if (declaration is FirAnnotatedDeclaration) {
-            val unresolvedAnnotation = declaration.annotations.firstOrNull { it.annotationTypeRef !is FirResolvedTypeRef }
-            check(unresolvedAnnotation == null) {
-                "Unexpected annotationTypeRef annotation, expected resolvedType but actual ${unresolvedAnnotation?.annotationTypeRef}"
-            }
+        val unresolvedAnnotation = declaration.annotations.firstOrNull { it.annotationTypeRef !is FirResolvedTypeRef }
+        check(unresolvedAnnotation == null) {
+            "Unexpected annotationTypeRef annotation, expected resolvedType but actual ${unresolvedAnnotation?.annotationTypeRef}"
         }
         when (declaration) {
             is FirSimpleFunction, is FirConstructor, is FirAnonymousInitializer ->

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
@@ -152,6 +151,8 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitExpression(expression: FirExpression)  = visitStatement(expression)
 
+    override fun visitDeclaration(declaration: FirDeclaration)  = visitAnnotationContainer(declaration)
+
     override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner)  = visitTypeParameterRefsOwner(typeParametersOwner)
 
     override fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration)  = visitMemberDeclaration(typedDeclaration)
@@ -162,7 +163,7 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry)  = visitVariable(enumEntry)
 
-    override fun visitFile(file: FirFile)  = visitAnnotatedDeclaration(file)
+    override fun visitFile(file: FirFile)  = visitDeclaration(file)
 
     override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression)  = visitExpression(anonymousFunctionExpression)
 

@@ -12,7 +12,7 @@ import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -82,7 +82,7 @@ private class FirPartialImportResolveTransformer(
 private class FirAnnotationResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession
-) : FirAbstractAnnotationResolveTransformer<Multimap<AnnotationFqn, FirRegularClass>, PersistentList<FirAnnotatedDeclaration>>(session, scopeSession) {
+) : FirAbstractAnnotationResolveTransformer<Multimap<AnnotationFqn, FirRegularClass>, PersistentList<FirDeclaration>>(session, scopeSession) {
     private val predicateBasedProvider = session.predicateBasedProvider as FirPredicateBasedProviderImpl
 
     var metaAnnotations: Set<AnnotationFqn> = emptySet()
@@ -91,16 +91,16 @@ private class FirAnnotationResolveTransformer(
         errorTypeAsResolved = false
     )
 
-    private var owners: PersistentList<FirAnnotatedDeclaration> = persistentListOf()
+    private var owners: PersistentList<FirDeclaration> = persistentListOf()
     private val classDeclarationsStack = ArrayDeque<FirRegularClass>()
 
-    override fun beforeChildren(declaration: FirAnnotatedDeclaration): PersistentList<FirAnnotatedDeclaration> {
+    override fun beforeChildren(declaration: FirDeclaration): PersistentList<FirDeclaration> {
         val current = owners
         owners = owners.add(declaration)
         return current
     }
 
-    override fun afterChildren(state: PersistentList<FirAnnotatedDeclaration>?) {
+    override fun afterChildren(state: PersistentList<FirDeclaration>?) {
         requireNotNull(state)
         owners = state
     }
@@ -135,12 +135,9 @@ private class FirAnnotationResolveTransformer(
         }
     }
 
-    override fun transformAnnotatedDeclaration(
-        annotatedDeclaration: FirAnnotatedDeclaration,
-        data: Multimap<AnnotationFqn, FirRegularClass>
-    ): FirAnnotatedDeclaration {
-        return super.transformAnnotatedDeclaration(annotatedDeclaration, data).also {
-            predicateBasedProvider.registerAnnotatedDeclaration(annotatedDeclaration, owners)
+    override fun transformDeclaration(declaration: FirDeclaration, data: Multimap<AnnotationFqn, FirRegularClass>): FirDeclaration {
+        return super.transformDeclaration(declaration, data).also {
+            predicateBasedProvider.registerAnnotatedDeclaration(declaration, owners)
         }
     }
 }

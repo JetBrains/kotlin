@@ -11,7 +11,7 @@ import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.NoMutableState
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.extensions.predicate.*
 import org.jetbrains.kotlin.fir.resolve.fqName
@@ -25,11 +25,11 @@ abstract class FirPredicateBasedProvider : FirSessionComponent {
     }
 
     abstract fun getSymbolsByPredicate(predicate: DeclarationPredicate): List<FirBasedSymbol<*>>
-    abstract fun getOwnersOfDeclaration(declaration: FirAnnotatedDeclaration): List<FirBasedSymbol<*>>?
+    abstract fun getOwnersOfDeclaration(declaration: FirDeclaration): List<FirBasedSymbol<*>>?
     abstract fun fileHasPluginAnnotations(file: FirFile): Boolean
-    abstract fun matches(predicate: DeclarationPredicate, declaration: FirAnnotatedDeclaration): Boolean
+    abstract fun matches(predicate: DeclarationPredicate, declaration: FirDeclaration): Boolean
 
-    fun matches(predicates: List<DeclarationPredicate>, declaration: FirAnnotatedDeclaration): Boolean {
+    fun matches(predicates: List<DeclarationPredicate>, declaration: FirDeclaration): Boolean {
         return predicates.any { matches(it, declaration) }
     }
 }
@@ -52,7 +52,7 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
         return file in cache.filesWithPluginAnnotations
     }
 
-    fun registerAnnotatedDeclaration(declaration: FirAnnotatedDeclaration, owners: PersistentList<FirAnnotatedDeclaration>) {
+    fun registerAnnotatedDeclaration(declaration: FirDeclaration, owners: PersistentList<FirDeclaration>) {
         cache.ownersForDeclaration[declaration] = owners
         registerOwnersDeclarations(declaration, owners)
 
@@ -66,11 +66,11 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
         cache.filesWithPluginAnnotations += file
     }
 
-    override fun getOwnersOfDeclaration(declaration: FirAnnotatedDeclaration): List<FirBasedSymbol<*>>? {
+    override fun getOwnersOfDeclaration(declaration: FirDeclaration): List<FirBasedSymbol<*>>? {
         return cache.ownersForDeclaration[declaration]?.map { it.symbol }
     }
 
-    private fun registerOwnersDeclarations(declaration: FirAnnotatedDeclaration, owners: PersistentList<FirAnnotatedDeclaration>) {
+    private fun registerOwnersDeclarations(declaration: FirDeclaration, owners: PersistentList<FirDeclaration>) {
         val lastOwner = owners.lastOrNull() ?: return
         val annotationsFromLastOwner = cache.annotationsOfDeclaration[lastOwner]
         val annotationsFromPreviousOwners = cache.parentAnnotationsOfDeclaration[lastOwner]
@@ -82,53 +82,53 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
 
     // ---------------------------------- Matching ----------------------------------
 
-    override fun matches(predicate: DeclarationPredicate, declaration: FirAnnotatedDeclaration): Boolean {
+    override fun matches(predicate: DeclarationPredicate, declaration: FirDeclaration): Boolean {
         return predicate.accept(matcher, declaration)
     }
 
     private val matcher = Matcher()
 
-    private inner class Matcher : DeclarationPredicateVisitor<Boolean, FirAnnotatedDeclaration>() {
-        override fun visitPredicate(predicate: DeclarationPredicate, data: FirAnnotatedDeclaration): Boolean {
+    private inner class Matcher : DeclarationPredicateVisitor<Boolean, FirDeclaration>() {
+        override fun visitPredicate(predicate: DeclarationPredicate, data: FirDeclaration): Boolean {
             throw IllegalStateException("Should not be there")
         }
 
-        override fun visitAny(predicate: DeclarationPredicate.Any, data: FirAnnotatedDeclaration): Boolean {
+        override fun visitAny(predicate: DeclarationPredicate.Any, data: FirDeclaration): Boolean {
             return true
         }
 
-        override fun visitAnd(predicate: DeclarationPredicate.And, data: FirAnnotatedDeclaration): Boolean {
+        override fun visitAnd(predicate: DeclarationPredicate.And, data: FirDeclaration): Boolean {
             return predicate.a.accept(this, data) && predicate.b.accept(this, data)
         }
 
-        override fun visitOr(predicate: DeclarationPredicate.Or, data: FirAnnotatedDeclaration): Boolean {
+        override fun visitOr(predicate: DeclarationPredicate.Or, data: FirDeclaration): Boolean {
             return predicate.a.accept(this, data) || predicate.b.accept(this, data)
         }
 
-        override fun visitAnnotatedWith(predicate: AnnotatedWith, data: FirAnnotatedDeclaration): Boolean {
+        override fun visitAnnotatedWith(predicate: AnnotatedWith, data: FirDeclaration): Boolean {
             return matchWith(data, predicate.annotations)
         }
 
-        override fun visitUnderAnnotatedWith(predicate: UnderAnnotatedWith, data: FirAnnotatedDeclaration): Boolean {
+        override fun visitUnderAnnotatedWith(predicate: UnderAnnotatedWith, data: FirDeclaration): Boolean {
             return matchUnder(data, predicate.annotations)
         }
 
-        override fun visitAnnotatedWithMeta(predicate: AnnotatedWithMeta, data: FirAnnotatedDeclaration): Boolean {
+        override fun visitAnnotatedWithMeta(predicate: AnnotatedWithMeta, data: FirDeclaration): Boolean {
             return matchWith(data, predicate.userDefinedAnnotations)
         }
 
-        override fun visitUnderMetaAnnotated(predicate: UnderMetaAnnotated, data: FirAnnotatedDeclaration): Boolean {
+        override fun visitUnderMetaAnnotated(predicate: UnderMetaAnnotated, data: FirDeclaration): Boolean {
             return matchUnder(data, predicate.userDefinedAnnotations)
         }
 
         private val MetaAnnotated.userDefinedAnnotations: Set<AnnotationFqn>
             get() = metaAnnotations.flatMapTo(mutableSetOf()) { registeredPluginAnnotations.getAnnotationsWithMetaAnnotation(it) }
 
-        private fun matchWith(declaration: FirAnnotatedDeclaration, annotations: Set<AnnotationFqn>): Boolean {
+        private fun matchWith(declaration: FirDeclaration, annotations: Set<AnnotationFqn>): Boolean {
             return cache.annotationsOfDeclaration[declaration].any { it in annotations }
         }
 
-        private fun matchUnder(declaration: FirAnnotatedDeclaration, annotations: Set<AnnotationFqn>): Boolean {
+        private fun matchUnder(declaration: FirDeclaration, annotations: Set<AnnotationFqn>): Boolean {
             return cache.parentAnnotationsOfDeclaration[declaration].any { it in annotations }
         }
     }
@@ -136,13 +136,13 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
     // ---------------------------------- Cache ----------------------------------
 
     private class Cache {
-        val declarationByAnnotation: Multimap<AnnotationFqn, FirAnnotatedDeclaration> = LinkedHashMultimap.create()
-        val annotationsOfDeclaration: LinkedHashMultimap<FirAnnotatedDeclaration, AnnotationFqn> = LinkedHashMultimap.create()
+        val declarationByAnnotation: Multimap<AnnotationFqn, FirDeclaration> = LinkedHashMultimap.create()
+        val annotationsOfDeclaration: LinkedHashMultimap<FirDeclaration, AnnotationFqn> = LinkedHashMultimap.create()
 
-        val declarationsUnderAnnotated: Multimap<AnnotationFqn, FirAnnotatedDeclaration> = LinkedHashMultimap.create()
-        val parentAnnotationsOfDeclaration: LinkedHashMultimap<FirAnnotatedDeclaration, AnnotationFqn> = LinkedHashMultimap.create()
+        val declarationsUnderAnnotated: Multimap<AnnotationFqn, FirDeclaration> = LinkedHashMultimap.create()
+        val parentAnnotationsOfDeclaration: LinkedHashMultimap<FirDeclaration, AnnotationFqn> = LinkedHashMultimap.create()
 
-        val ownersForDeclaration: MutableMap<FirAnnotatedDeclaration, PersistentList<FirAnnotatedDeclaration>> = mutableMapOf()
+        val ownersForDeclaration: MutableMap<FirDeclaration, PersistentList<FirDeclaration>> = mutableMapOf()
 
         val filesWithPluginAnnotations: MutableSet<FirFile> = mutableSetOf()
     }

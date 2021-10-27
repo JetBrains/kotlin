@@ -40,7 +40,7 @@ private data class FirSinceKotlinValue(
     val wasExperimentalMarkerClasses: List<FirRegularClassSymbol>
 )
 
-fun FirAnnotatedDeclaration.checkSinceKotlinVersionAccessibility(context: CheckerContext): FirSinceKotlinAccessibility {
+fun FirDeclaration.checkSinceKotlinVersionAccessibility(context: CheckerContext): FirSinceKotlinAccessibility {
     val value = getOwnSinceKotlinVersion(context.session)
     val version = value?.apiVersion
     val languageVersionSettings = context.session.languageVersionSettings
@@ -59,11 +59,11 @@ fun FirAnnotatedDeclaration.checkSinceKotlinVersionAccessibility(context: Checke
     return FirSinceKotlinAccessibility.NotAccessible(version)
 }
 
-private fun FirAnnotatedDeclaration.getOwnSinceKotlinVersion(session: FirSession): FirSinceKotlinValue? {
+private fun FirDeclaration.getOwnSinceKotlinVersion(session: FirSession): FirSinceKotlinValue? {
     var result: FirSinceKotlinValue? = null
 
     // TODO: use-site targeted annotations
-    fun FirAnnotatedDeclaration.consider() {
+    fun FirDeclaration.consider() {
         val sinceKotlinSingleArgument = getAnnotationByClassId(StandardClassIds.Annotations.SinceKotlin)?.findArgumentByName(StandardClassIds.Annotations.ParameterNames.sinceKotlinVersion)
         val apiVersion = ((sinceKotlinSingleArgument as? FirConstExpression<*>)?.value as? String)?.let(ApiVersion.Companion::parse)
         if (apiVersion != null) {
@@ -96,7 +96,7 @@ private fun FirAnnotatedDeclaration.getOwnSinceKotlinVersion(session: FirSession
     return result
 }
 
-private fun FirAnnotatedDeclaration.loadWasExperimentalMarkerClasses(): List<FirRegularClassSymbol> {
+private fun FirDeclaration.loadWasExperimentalMarkerClasses(): List<FirRegularClassSymbol> {
     val wasExperimental = getAnnotationByClassId(OptInNames.WAS_EXPERIMENTAL_CLASS_ID) ?: return emptyList()
     val annotationClasses = wasExperimental.findArgumentByName(OptInNames.WAS_EXPERIMENTAL_ANNOTATION_CLASS) ?: return emptyList()
     return annotationClasses.extractClassesFromArgument()

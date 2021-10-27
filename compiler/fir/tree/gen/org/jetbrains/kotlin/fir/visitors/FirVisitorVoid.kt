@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
@@ -200,10 +199,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner) {
         visitElement(typeParametersOwner)
-    }
-
-    open fun visitAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration) {
-        visitElement(annotatedDeclaration)
     }
 
     open fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
@@ -728,10 +723,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: Nothing?) {
         visitTypeParametersOwner(typeParametersOwner)
-    }
-
-    final override fun visitAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration, data: Nothing?) {
-        visitAnnotatedDeclaration(annotatedDeclaration)
     }
 
     final override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: Nothing?) {

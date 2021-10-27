@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
@@ -26,12 +26,12 @@ class AllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExtens
         private val PREDICATE: DeclarationPredicate = hasOrUnder(ALL_OPEN) or metaHasOrUnder(ALL_OPEN)
     }
 
-    override fun transformStatus(status: FirDeclarationStatus, declaration: FirAnnotatedDeclaration): FirDeclarationStatus {
+    override fun transformStatus(status: FirDeclarationStatus, declaration: FirDeclaration): FirDeclarationStatus {
         if (status.modality != null) return status
         return status.transform(modality = Modality.OPEN)
     }
 
-    override fun needTransformStatus(declaration: FirAnnotatedDeclaration): Boolean {
+    override fun needTransformStatus(declaration: FirDeclaration): Boolean {
         return session.predicateBasedProvider.matches(PREDICATE, declaration)
     }
 

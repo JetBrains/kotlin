@@ -87,7 +87,7 @@ class FirSignatureEnhancement(
         return enhancements.getOrPut(property) { enhance(property, name) } as FirVariableSymbol<*>
     }
 
-    private fun FirAnnotatedDeclaration.computeDefaultQualifiers() =
+    private fun FirDeclaration.computeDefaultQualifiers() =
         typeQualifierResolver.extractAndMergeDefaultQualifiers(contextQualifiers, annotations)
 
     private fun enhance(

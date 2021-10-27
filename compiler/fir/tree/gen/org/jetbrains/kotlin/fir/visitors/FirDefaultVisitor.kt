@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
@@ -152,6 +151,8 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitExpression(expression: FirExpression, data: D): R  = visitStatement(expression, data)
 
+    override fun visitDeclaration(declaration: FirDeclaration, data: D): R  = visitAnnotationContainer(declaration, data)
+
     override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): R  = visitTypeParameterRefsOwner(typeParametersOwner, data)
 
     override fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: D): R  = visitMemberDeclaration(typedDeclaration, data)
@@ -162,7 +163,7 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): R  = visitVariable(enumEntry, data)
 
-    override fun visitFile(file: FirFile, data: D): R  = visitAnnotatedDeclaration(file, data)
+    override fun visitFile(file: FirFile, data: D): R  = visitDeclaration(file, data)
 
     override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: D): R  = visitExpression(anonymousFunctionExpression, data)
 

@@ -78,16 +78,16 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
     }
 
     @FirProviderInternals
-    override fun recordGeneratedClass(owner: FirAnnotatedDeclaration, klass: FirRegularClass) {
+    override fun recordGeneratedClass(owner: FirDeclaration, klass: FirRegularClass) {
         klass.accept(FirRecorder, FirRecorderData(state, owner.file, session.nameConflictsTracker))
     }
 
     @FirProviderInternals
-    override fun recordGeneratedMember(owner: FirAnnotatedDeclaration, klass: FirDeclaration) {
+    override fun recordGeneratedMember(owner: FirDeclaration, klass: FirDeclaration) {
         klass.accept(FirRecorder, FirRecorderData(state, owner.file, session.nameConflictsTracker))
     }
 
-    private val FirAnnotatedDeclaration.file: FirFile
+    private val FirDeclaration.file: FirFile
         get() = when (this) {
             is FirFile -> this
             is FirRegularClass -> getFirClassifierContainerFile(this.symbol.classId)

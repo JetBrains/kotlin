@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
@@ -201,10 +200,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): FirTypeParametersOwner {
         return transformElement(typeParametersOwner, data)
-    }
-
-    open fun transformAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration, data: D): FirAnnotatedDeclaration {
-        return transformElement(annotatedDeclaration, data)
     }
 
     open fun transformMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: D): FirMemberDeclaration {
@@ -729,10 +724,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): FirTypeParametersOwner {
         return transformTypeParametersOwner(typeParametersOwner, data)
-    }
-
-    final override fun visitAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration, data: D): FirAnnotatedDeclaration {
-        return transformAnnotatedDeclaration(annotatedDeclaration, data)
     }
 
     final override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: D): FirMemberDeclaration {

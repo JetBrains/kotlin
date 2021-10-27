@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
@@ -31,6 +32,7 @@ internal class FirAnonymousInitializerImpl(
     override var body: FirBlock?,
     override val symbol: FirAnonymousInitializerSymbol,
 ) : FirAnonymousInitializer() {
+    override val annotations: List<FirAnnotation> get() = emptyList()
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     init {
@@ -45,6 +47,10 @@ internal class FirAnonymousInitializerImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousInitializerImpl {
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         body = body?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousInitializerImpl {
         return this
     }
 

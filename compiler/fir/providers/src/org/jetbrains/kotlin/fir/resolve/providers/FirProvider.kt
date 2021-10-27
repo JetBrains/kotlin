@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.fir.resolve.providers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -42,10 +45,10 @@ abstract class FirProvider : FirSessionComponent {
     abstract fun getFirFilesByPackage(fqName: FqName): List<FirFile>
 
     @FirProviderInternals
-    abstract fun recordGeneratedClass(owner: FirAnnotatedDeclaration, klass: FirRegularClass)
+    abstract fun recordGeneratedClass(owner: FirDeclaration, klass: FirRegularClass)
 
     @FirProviderInternals
-    abstract fun recordGeneratedMember(owner: FirAnnotatedDeclaration, klass: FirDeclaration)
+    abstract fun recordGeneratedMember(owner: FirDeclaration, klass: FirDeclaration)
 
     abstract fun getClassNamesInPackage(fqName: FqName): Set<Name>
 }

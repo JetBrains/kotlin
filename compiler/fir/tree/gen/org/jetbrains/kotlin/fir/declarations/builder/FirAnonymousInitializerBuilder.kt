@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.FirDeclarationBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousInitializerImpl
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
@@ -26,7 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 @FirBuilderDsl
-class FirAnonymousInitializerBuilder : FirDeclarationBuilder {
+class FirAnonymousInitializerBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
     override lateinit var moduleData: FirModuleData
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
@@ -47,6 +49,9 @@ class FirAnonymousInitializerBuilder : FirDeclarationBuilder {
         )
     }
 
+
+    @Deprecated("Modification of 'annotations' has no impact for FirAnonymousInitializerBuilder", level = DeprecationLevel.HIDDEN)
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
 }
 
 @OptIn(ExperimentalContracts::class)

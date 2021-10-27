@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
@@ -272,4 +272,4 @@ class FirStubTypeTransformer(
 private val BUILDER_INFERENCE_ANNOTATION_CLASS_ID = ClassId.topLevel(BUILDER_INFERENCE_ANNOTATION_FQ_NAME)
 
 fun FirElement.hasBuilderInferenceAnnotation(): Boolean =
-    (this as? FirAnnotatedDeclaration)?.hasAnnotation(BUILDER_INFERENCE_ANNOTATION_CLASS_ID) == true
+    (this as? FirDeclaration)?.hasAnnotation(BUILDER_INFERENCE_ANNOTATION_CLASS_ID) == true

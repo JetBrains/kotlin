@@ -26,16 +26,15 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
 
     val statement by element(Expression, annotationContainer)
     val expression by element(Expression, statement)
-    val declaration by sealedElement(Declaration)
+    val declaration by sealedElement(Declaration, annotationContainer)
     val typeParameterRefsOwner by sealedElement(Declaration)
     val typeParametersOwner by sealedElement(Declaration, typeParameterRefsOwner)
-    val annotatedDeclaration by sealedElement(Declaration, declaration, annotationContainer)
-    val memberDeclaration by sealedElement(Declaration, annotatedDeclaration, typeParameterRefsOwner)
+    val memberDeclaration by sealedElement(Declaration, declaration, typeParameterRefsOwner)
     val anonymousInitializer by element(Declaration, declaration, controlFlowGraphOwner)
     val typedDeclaration by sealedElement(Declaration, memberDeclaration)
     val callableDeclaration by sealedElement(Declaration, typedDeclaration)
     val typeParameterRef by element(Declaration)
-    val typeParameter by element(Declaration, typeParameterRef, annotatedDeclaration)
+    val typeParameter by element(Declaration, typeParameterRef, declaration)
 
     val variable by sealedElement(Declaration, callableDeclaration, statement)
     val valueParameter by element(Declaration, variable, controlFlowGraphOwner)
@@ -55,7 +54,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val propertyAccessor by element(Declaration, function, contractDescriptionOwner, typeParametersOwner)
     val backingField by element(Declaration, variable, typeParametersOwner, statement)
     val constructor by element(Declaration, function, typeParameterRefsOwner)
-    val file by element(Declaration, annotatedDeclaration)
+    val file by element(Declaration, declaration)
     val packageDirective by element(Other)
 
     val anonymousFunction by element(Declaration, function, typeParametersOwner)

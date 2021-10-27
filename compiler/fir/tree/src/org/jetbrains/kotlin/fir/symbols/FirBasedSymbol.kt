@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.symbols
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -34,7 +33,7 @@ abstract class FirBasedSymbol<E : FirDeclaration> {
         get() = fir.moduleData
 
     val annotations: List<FirAnnotation>
-        get() = (fir as? FirAnnotatedDeclaration)?.annotations ?: emptyList()
+        get() = fir.annotations
 }
 
 @RequiresOptIn

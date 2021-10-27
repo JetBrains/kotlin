@@ -42,10 +42,10 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @FirBuilderDsl
 class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var returnTypeRef: FirTypeRef
     var receiverTypeRef: FirTypeRef? = null
     override var deprecation: DeprecationsPerUseSite? = null
@@ -66,10 +66,10 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     override fun build(): FirAnonymousFunction {
         return FirAnonymousFunctionImpl(
             source,
+            annotations,
             moduleData,
             origin,
             attributes,
-            annotations,
             returnTypeRef,
             receiverTypeRef,
             deprecation,

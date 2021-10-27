@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
  * DO NOT MODIFY IT MANUALLY
  */
 
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
@@ -38,7 +37,6 @@ typealias FirRegularClassChecker = FirDeclarationChecker<FirRegularClass>
 typealias FirConstructorChecker = FirDeclarationChecker<FirConstructor>
 typealias FirFileChecker = FirDeclarationChecker<FirFile>
 typealias FirTypeParameterChecker = FirDeclarationChecker<FirTypeParameter>
-typealias FirAnnotatedDeclarationChecker = FirDeclarationChecker<FirAnnotatedDeclaration>
 typealias FirTypeAliasChecker = FirDeclarationChecker<FirTypeAlias>
 typealias FirAnonymousFunctionChecker = FirDeclarationChecker<FirAnonymousFunction>
 typealias FirPropertyAccessorChecker = FirDeclarationChecker<FirPropertyAccessor>

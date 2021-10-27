@@ -28,7 +28,6 @@ abstract class DeclarationCheckers {
     open val constructorCheckers: Set<FirConstructorChecker> = emptySet()
     open val fileCheckers: Set<FirFileChecker> = emptySet()
     open val typeParameterCheckers: Set<FirTypeParameterChecker> = emptySet()
-    open val annotatedDeclarationCheckers: Set<FirAnnotatedDeclarationChecker> = emptySet()
     open val typeAliasCheckers: Set<FirTypeAliasChecker> = emptySet()
     open val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker> = emptySet()
     open val propertyAccessorCheckers: Set<FirPropertyAccessorChecker> = emptySet()
@@ -42,21 +41,20 @@ abstract class DeclarationCheckers {
     open val variableAssignmentCfaBasedCheckers: Set<AbstractFirPropertyInitializationChecker> = emptySet()
 
     @CheckersComponentInternal internal val allBasicDeclarationCheckers: Set<FirBasicDeclarationChecker> by lazy { basicDeclarationCheckers }
-    @CheckersComponentInternal internal val allFunctionCheckers: Set<FirFunctionChecker> by lazy { functionCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
-    @CheckersComponentInternal internal val allSimpleFunctionCheckers: Set<FirSimpleFunctionChecker> by lazy { simpleFunctionCheckers + functionCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
-    @CheckersComponentInternal internal val allPropertyCheckers: Set<FirPropertyChecker> by lazy { propertyCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
-    @CheckersComponentInternal internal val allClassCheckers: Set<FirClassChecker> by lazy { classCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
-    @CheckersComponentInternal internal val allRegularClassCheckers: Set<FirRegularClassChecker> by lazy { regularClassCheckers + classCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
-    @CheckersComponentInternal internal val allConstructorCheckers: Set<FirConstructorChecker> by lazy { constructorCheckers + functionCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
-    @CheckersComponentInternal internal val allFileCheckers: Set<FirFileChecker> by lazy { fileCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
-    @CheckersComponentInternal internal val allTypeParameterCheckers: Set<FirTypeParameterChecker> by lazy { typeParameterCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
-    @CheckersComponentInternal internal val allAnnotatedDeclarationCheckers: Set<FirAnnotatedDeclarationChecker> by lazy { annotatedDeclarationCheckers + basicDeclarationCheckers }
-    @CheckersComponentInternal internal val allTypeAliasCheckers: Set<FirTypeAliasChecker> by lazy { typeAliasCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
-    @CheckersComponentInternal internal val allAnonymousFunctionCheckers: Set<FirAnonymousFunctionChecker> by lazy { anonymousFunctionCheckers + functionCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
-    @CheckersComponentInternal internal val allPropertyAccessorCheckers: Set<FirPropertyAccessorChecker> by lazy { propertyAccessorCheckers + functionCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
-    @CheckersComponentInternal internal val allBackingFieldCheckers: Set<FirBackingFieldChecker> by lazy { backingFieldCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
-    @CheckersComponentInternal internal val allValueParameterCheckers: Set<FirValueParameterChecker> by lazy { valueParameterCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
-    @CheckersComponentInternal internal val allEnumEntryCheckers: Set<FirEnumEntryChecker> by lazy { enumEntryCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
-    @CheckersComponentInternal internal val allAnonymousObjectCheckers: Set<FirAnonymousObjectChecker> by lazy { anonymousObjectCheckers + classCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
+    @CheckersComponentInternal internal val allFunctionCheckers: Set<FirFunctionChecker> by lazy { functionCheckers + basicDeclarationCheckers }
+    @CheckersComponentInternal internal val allSimpleFunctionCheckers: Set<FirSimpleFunctionChecker> by lazy { simpleFunctionCheckers + functionCheckers + basicDeclarationCheckers }
+    @CheckersComponentInternal internal val allPropertyCheckers: Set<FirPropertyChecker> by lazy { propertyCheckers + basicDeclarationCheckers }
+    @CheckersComponentInternal internal val allClassCheckers: Set<FirClassChecker> by lazy { classCheckers + basicDeclarationCheckers }
+    @CheckersComponentInternal internal val allRegularClassCheckers: Set<FirRegularClassChecker> by lazy { regularClassCheckers + classCheckers + basicDeclarationCheckers }
+    @CheckersComponentInternal internal val allConstructorCheckers: Set<FirConstructorChecker> by lazy { constructorCheckers + functionCheckers + basicDeclarationCheckers }
+    @CheckersComponentInternal internal val allFileCheckers: Set<FirFileChecker> by lazy { fileCheckers + basicDeclarationCheckers }
+    @CheckersComponentInternal internal val allTypeParameterCheckers: Set<FirTypeParameterChecker> by lazy { typeParameterCheckers + basicDeclarationCheckers }
+    @CheckersComponentInternal internal val allTypeAliasCheckers: Set<FirTypeAliasChecker> by lazy { typeAliasCheckers + basicDeclarationCheckers }
+    @CheckersComponentInternal internal val allAnonymousFunctionCheckers: Set<FirAnonymousFunctionChecker> by lazy { anonymousFunctionCheckers + functionCheckers + basicDeclarationCheckers }
+    @CheckersComponentInternal internal val allPropertyAccessorCheckers: Set<FirPropertyAccessorChecker> by lazy { propertyAccessorCheckers + functionCheckers + basicDeclarationCheckers }
+    @CheckersComponentInternal internal val allBackingFieldCheckers: Set<FirBackingFieldChecker> by lazy { backingFieldCheckers + basicDeclarationCheckers }
+    @CheckersComponentInternal internal val allValueParameterCheckers: Set<FirValueParameterChecker> by lazy { valueParameterCheckers + basicDeclarationCheckers }
+    @CheckersComponentInternal internal val allEnumEntryCheckers: Set<FirEnumEntryChecker> by lazy { enumEntryCheckers + basicDeclarationCheckers }
+    @CheckersComponentInternal internal val allAnonymousObjectCheckers: Set<FirAnonymousObjectChecker> by lazy { anonymousObjectCheckers + classCheckers + basicDeclarationCheckers }
     @CheckersComponentInternal internal val allAnonymousInitializerCheckers: Set<FirAnonymousInitializerChecker> by lazy { anonymousInitializerCheckers + basicDeclarationCheckers }
 }

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.plugin
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
@@ -42,7 +41,7 @@ class AllPublicVisibilityTransformer(session: FirSession) : FirStatusTransformer
         private val PREDICATE: DeclarationPredicate = hasOrUnder(AllPublicClassId.asSingleFqName())
     }
 
-    override fun transformStatus(status: FirDeclarationStatus, declaration: FirAnnotatedDeclaration): FirDeclarationStatus {
+    override fun transformStatus(status: FirDeclarationStatus, declaration: FirDeclaration): FirDeclarationStatus {
         val owners = session.predicateBasedProvider.getOwnersOfDeclaration(declaration) ?: emptyList()
         val visibility = findVisibility(declaration, owners) ?: return status
         if (visibility == status.visibility) return status
@@ -72,7 +71,7 @@ class AllPublicVisibilityTransformer(session: FirSession) : FirStatusTransformer
         }
     }
 
-    override fun needTransformStatus(declaration: FirAnnotatedDeclaration): Boolean {
+    override fun needTransformStatus(declaration: FirDeclaration): Boolean {
         return session.predicateBasedProvider.matches(PREDICATE, declaration)
     }
 

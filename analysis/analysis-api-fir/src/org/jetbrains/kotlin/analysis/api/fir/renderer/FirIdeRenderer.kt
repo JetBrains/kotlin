@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.renderer
 
+import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
+import org.jetbrains.kotlin.analysis.api.components.RendererModifier
+import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.PsiSourceNavigator.getRawName
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -18,10 +22,6 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
-import org.jetbrains.kotlin.analysis.api.components.RendererModifier
-import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
-import org.jetbrains.kotlin.fir.analysis.checkers.PsiSourceNavigator.getRawName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.renderer.render
@@ -37,7 +37,7 @@ internal class FirIdeRenderer private constructor(
 
     private val typeIdeRenderer: ConeTypeIdeRenderer = ConeTypeIdeRenderer(session, options.typeRendererOptions)
 
-    private fun StringBuilder.renderAnnotations(annotated: FirAnnotatedDeclaration) {
+    private fun StringBuilder.renderAnnotations(annotated: FirDeclaration) {
         if (RendererModifier.ANNOTATIONS in options.modifiers) {
             renderAnnotations(typeIdeRenderer, annotated.annotations, session)
         }
