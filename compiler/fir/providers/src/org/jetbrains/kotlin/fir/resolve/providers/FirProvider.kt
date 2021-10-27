@@ -17,9 +17,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-@RequiresOptIn
-annotation class FirProviderInternals
-
 abstract class FirProvider : FirSessionComponent {
     /**
      * [symbolProvider] for [FirProvider] may provide only symbols from sources of current module
@@ -43,12 +40,6 @@ abstract class FirProvider : FirSessionComponent {
     abstract fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile?
 
     abstract fun getFirFilesByPackage(fqName: FqName): List<FirFile>
-
-    @FirProviderInternals
-    abstract fun recordGeneratedClass(owner: FirDeclaration, klass: FirRegularClass)
-
-    @FirProviderInternals
-    abstract fun recordGeneratedMember(owner: FirDeclaration, klass: FirDeclaration)
 
     abstract fun getClassNamesInPackage(fqName: FqName): Set<Name>
 }

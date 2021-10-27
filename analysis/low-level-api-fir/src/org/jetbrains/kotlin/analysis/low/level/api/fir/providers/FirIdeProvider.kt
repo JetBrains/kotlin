@@ -15,13 +15,10 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -89,16 +86,6 @@ internal class FirIdeProvider(
 
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> = error("Should not be called in FIR IDE")
 
-
-    @FirProviderInternals
-    override fun recordGeneratedClass(owner: FirDeclaration, klass: FirRegularClass) {
-        TODO()
-    }
-
-    @FirProviderInternals
-    override fun recordGeneratedMember(owner: FirDeclaration, klass: FirDeclaration) {
-        TODO()
-    }
 
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> =
         declarationProvider.getClassNamesInPackage(fqName)

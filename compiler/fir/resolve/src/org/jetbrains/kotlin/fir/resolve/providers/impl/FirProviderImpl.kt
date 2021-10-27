@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -75,16 +74,6 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             if (fqName in state.allSubPackages) return fqName
             return null
         }
-    }
-
-    @FirProviderInternals
-    override fun recordGeneratedClass(owner: FirDeclaration, klass: FirRegularClass) {
-        klass.accept(FirRecorder, FirRecorderData(state, owner.file, session.nameConflictsTracker))
-    }
-
-    @FirProviderInternals
-    override fun recordGeneratedMember(owner: FirDeclaration, klass: FirDeclaration) {
-        klass.accept(FirRecorder, FirRecorderData(state, owner.file, session.nameConflictsTracker))
     }
 
     private val FirDeclaration.file: FirFile
