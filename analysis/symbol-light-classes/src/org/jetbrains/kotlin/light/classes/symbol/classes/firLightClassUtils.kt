@@ -191,74 +191,7 @@ internal fun FirLightClassBase.createMethods(
                     }
                 }
             }
-            is KtPropertySymbol -> {
-
-                if (declaration is KtKotlinPropertySymbol && declaration.isConst) return
-
-                if (declaration.visibility.isPrivateOrPrivateToThis() &&
-                    declaration.getter?.hasBody == false &&
-                    declaration.setter?.hasBody == false
-                ) return
-
-                if (declaration.hasJvmFieldAnnotation()) return
-
-                fun KtPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
-                    if (isInline) return false
-                    if (!hasBody && visibility.isPrivateOrPrivateToThis()) return false
-                    if (declaration.isHiddenOrSynthetic(project, siteTarget)) return false
-                    if (isHiddenOrSynthetic(project)) return false
-                    return true
-                }
-
-                val originalElement = declaration.psi as? KtDeclaration
-
-                val getter = declaration.getter?.takeIf {
-                    it.needToCreateAccessor(AnnotationUseSiteTarget.PROPERTY_GETTER)
-                }
-
-                if (getter != null) {
-                    val lightMemberOrigin = originalElement?.let {
-                        LightMemberOriginForDeclaration(
-                            originalElement = it,
-                            originKind = JvmDeclarationOriginKind.OTHER,
-                            auxiliaryOriginalElement = getter.psi as? KtDeclaration
-                        )
-                    }
-
-                    result.add(
-                        FirLightAccessorMethodForSymbol(
-                            propertyAccessorSymbol = getter,
-                            containingPropertySymbol = declaration,
-                            lightMemberOrigin = lightMemberOrigin,
-                            containingClass = this@createMethods,
-                            isTopLevel = isTopLevel
-                        )
-                    )
-                }
-
-                val setter = declaration.setter?.takeIf {
-                    !isAnnotationType && it.needToCreateAccessor(AnnotationUseSiteTarget.PROPERTY_SETTER)
-                }
-
-                if (setter != null) {
-                    val lightMemberOrigin = originalElement?.let {
-                        LightMemberOriginForDeclaration(
-                            originalElement = it,
-                            originKind = JvmDeclarationOriginKind.OTHER,
-                            auxiliaryOriginalElement = setter.psi as? KtDeclaration
-                        )
-                    }
-                    result.add(
-                        FirLightAccessorMethodForSymbol(
-                            propertyAccessorSymbol = setter,
-                            containingPropertySymbol = declaration,
-                            lightMemberOrigin = lightMemberOrigin,
-                            containingClass = this@createMethods,
-                            isTopLevel = isTopLevel
-                        )
-                    )
-                }
-            }
+            is KtPropertySymbol -> createPropertyAccessors(result, declaration, isTopLevel)
             is KtConstructorSymbol -> error("Constructors should be handled separately and not passed to this function")
         }
     }
@@ -270,6 +203,78 @@ internal fun FirLightClassBase.createMethods(
     // Then, properties from the primary constructor parameters
     declarationGroups[true]?.forEach {
         handleDeclaration(it)
+    }
+}
+
+internal fun FirLightClassBase.createPropertyAccessors(
+    result: MutableList<KtLightMethod>,
+    declaration: KtPropertySymbol,
+    isTopLevel: Boolean,
+) {
+    if (declaration is KtKotlinPropertySymbol && declaration.isConst) return
+
+    if (declaration.visibility.isPrivateOrPrivateToThis() &&
+        declaration.getter?.hasBody == false &&
+        declaration.setter?.hasBody == false
+    ) return
+
+    if (declaration.hasJvmFieldAnnotation()) return
+
+    fun KtPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
+        if (isInline) return false
+        if (!hasBody && visibility.isPrivateOrPrivateToThis()) return false
+        if (declaration.isHiddenOrSynthetic(project, siteTarget)) return false
+        if (isHiddenOrSynthetic(project)) return false
+        return true
+    }
+
+    val originalElement = declaration.psi as? KtDeclaration
+
+    val getter = declaration.getter?.takeIf {
+        it.needToCreateAccessor(AnnotationUseSiteTarget.PROPERTY_GETTER)
+    }
+
+    if (getter != null) {
+        val lightMemberOrigin = originalElement?.let {
+            LightMemberOriginForDeclaration(
+                originalElement = it,
+                originKind = JvmDeclarationOriginKind.OTHER,
+                auxiliaryOriginalElement = getter.psi as? KtDeclaration
+            )
+        }
+
+        result.add(
+            FirLightAccessorMethodForSymbol(
+                propertyAccessorSymbol = getter,
+                containingPropertySymbol = declaration,
+                lightMemberOrigin = lightMemberOrigin,
+                containingClass = this@createPropertyAccessors,
+                isTopLevel = isTopLevel
+            )
+        )
+    }
+
+    val setter = declaration.setter?.takeIf {
+        !isAnnotationType && it.needToCreateAccessor(AnnotationUseSiteTarget.PROPERTY_SETTER)
+    }
+
+    if (setter != null) {
+        val lightMemberOrigin = originalElement?.let {
+            LightMemberOriginForDeclaration(
+                originalElement = it,
+                originKind = JvmDeclarationOriginKind.OTHER,
+                auxiliaryOriginalElement = setter.psi as? KtDeclaration
+            )
+        }
+        result.add(
+            FirLightAccessorMethodForSymbol(
+                propertyAccessorSymbol = setter,
+                containingPropertySymbol = declaration,
+                lightMemberOrigin = lightMemberOrigin,
+                containingClass = this@createPropertyAccessors,
+                isTopLevel = isTopLevel
+            )
+        )
     }
 }
 
