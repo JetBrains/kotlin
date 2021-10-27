@@ -55,7 +55,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
     private fun resolveToSymbol(
         typeRef: FirTypeRef,
-        scope: FirScope,
+        scopes: List<FirScope>,
     ): Pair<FirBasedSymbol<*>?, ConeSubstitutor?> {
         return when (typeRef) {
             is FirResolvedTypeRef -> {
@@ -68,25 +68,30 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 var resolvedSymbol: FirBasedSymbol<*>? = null
                 var substitutor: ConeSubstitutor? = null
                 val qualifier = typeRef.qualifier
-                scope.processClassifiersByNameWithSubstitution(qualifier.first().name) { symbol, substitutorFromScope ->
-                    if (resolvedSymbol != null) return@processClassifiersByNameWithSubstitution
-                    resolvedSymbol = when (symbol) {
-                        is FirClassLikeSymbol<*> -> {
-                            if (qualifier.size == 1) {
-                                symbol
-                            } else {
-                                resolveLocalClassChain(symbol, qualifier)
-                                    ?: qualifierResolver.resolveSymbolWithPrefix(qualifier, symbol.classId)
-                                    ?: qualifierResolver.resolveEnumEntrySymbol(qualifier, symbol.classId)
-                            }
-                        }
-                        is FirTypeParameterSymbol -> {
-                            assert(qualifier.size == 1)
-                            symbol
-                        }
-                        else -> error("!")
+                for (scope in scopes) {
+                    if (resolvedSymbol != null) {
+                        break
                     }
-                    substitutor = substitutorFromScope
+                    scope.processClassifiersByNameWithSubstitution(qualifier.first().name) { symbol, substitutorFromScope ->
+                        if (resolvedSymbol != null) return@processClassifiersByNameWithSubstitution
+                        resolvedSymbol = when (symbol) {
+                            is FirClassLikeSymbol<*> -> {
+                                if (qualifier.size == 1) {
+                                    symbol
+                                } else {
+                                    resolveLocalClassChain(symbol, qualifier)
+                                        ?: qualifierResolver.resolveSymbolWithPrefix(qualifier, symbol.classId)
+                                        ?: qualifierResolver.resolveEnumEntrySymbol(qualifier, symbol.classId)
+                                }
+                            }
+                            is FirTypeParameterSymbol -> {
+                                assert(qualifier.size == 1)
+                                symbol
+                            }
+                            else -> error("!")
+                        }
+                        substitutor = substitutorFromScope
+                    }
                 }
 
                 // TODO: Imports
@@ -376,7 +381,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         return when (typeRef) {
             is FirResolvedTypeRef -> typeRef.type
             is FirUserTypeRef -> {
-                val (symbol, substitutor) = resolveToSymbol(typeRef, scopeClassDeclaration.scope)
+                val (symbol, substitutor) = resolveToSymbol(typeRef, scopeClassDeclaration.scopes)
                 resolveUserType(
                     typeRef,
                     symbol,

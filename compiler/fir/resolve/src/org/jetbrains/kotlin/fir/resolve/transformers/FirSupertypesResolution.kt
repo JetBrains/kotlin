@@ -303,7 +303,7 @@ open class FirSupertypeResolverVisitor(
         val transformer = FirSpecificTypeResolverTransformer(session)
         val resolvedTypesRefs = resolveSuperTypeRefs(
             transformer,
-            ScopeClassDeclaration(FirCompositeScope(scopes), classDeclarationsStack.lastOrNull())
+            ScopeClassDeclaration(scopes, classDeclarationsStack.lastOrNull())
         )
 
         supertypeComputationSession.storeSupertypes(classLikeDeclaration, resolvedTypesRefs)
@@ -335,7 +335,8 @@ open class FirSupertypeResolverVisitor(
                 session.lookupTracker?.let {
                     val fileSource = getFirClassifierContainerFileIfAny(classLikeDeclaration.symbol)?.source
                     for (supertypeRef in supertypeRefs) {
-                        it.recordTypeLookup(supertypeRef, scopeDeclaration.scope.scopeOwnerLookupNames, fileSource)
+                        val scopeOwnerLookupNames = scopeDeclaration.scopes.flatMap { scope -> scope.scopeOwnerLookupNames }
+                        it.recordTypeLookup(supertypeRef, scopeOwnerLookupNames, fileSource)
                     }
                 }
             }

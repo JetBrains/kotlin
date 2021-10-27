@@ -24,10 +24,10 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
 ) : FirDefaultTransformer<D>() {
     abstract override fun transformAnnotation(annotation: FirAnnotation, data: D): FirStatement
 
-    protected lateinit var scope: FirScope
+    protected lateinit var scopes: List<FirScope>
 
     override fun transformFile(file: FirFile, data: D): FirFile {
-        scope = FirCompositeScope(createImportingScopes(file, session, scopeSession, useCaching = false))
+        scopes = createImportingScopes(file, session, scopeSession, useCaching = false)
         val state = beforeChildren(file)
         file.transformDeclarations(this, data)
         afterChildren(state)

@@ -9,6 +9,6 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.scopes.FirScope
 
 data class ScopeClassDeclaration(
-    val scope: FirScope,
+    val scopes: List<FirScope>,
     val topDeclaration: FirRegularClass?
 )

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
-import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.getNestedClassifierScope
@@ -47,7 +46,7 @@ open class FirTypeResolveTransformer(
 ) : FirAbstractTreeTransformer<Any?>(FirResolvePhase.TYPES) {
     private val classDeclarationsStack = ArrayDeque<FirRegularClass>()
     private val scopes = mutableListOf<FirScope>()
-    private val towerScope = FirCompositeScope(scopes.asReversed())
+    private val towerScope = scopes.asReversed()
 
     init {
         scopes.addAll(initialScopes.asReversed())

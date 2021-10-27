@@ -69,7 +69,7 @@ open class FirBodyResolveTransformer(
                 transformTypeRef(
                     typeRef,
                     ScopeClassDeclaration(
-                        FirCompositeScope(components.createCurrentScopeList()),
+                        components.createCurrentScopeList(),
                         context.topClassDeclaration
                     )
                 )
