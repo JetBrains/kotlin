@@ -267,19 +267,19 @@ object ClasspathChangesComputer {
         return ChangeSet.Collector().run {
             dirtyLookupSymbols.forEach {
                 fqNameToClassId[FqName(it.scope)]?.let { classIdOfScope ->
-                    // Scope is a class, lookup symbol is a class member
-                    addChangedClassMember(classIdOfScope, it.name)
-                } ?: run {
-                    // Scope is a package
-                    val potentialClassFqName = if (it.scope.isEmpty()) FqName(it.name) else FqName("${it.scope}.${it.name}")
-                    fqNameToClassId[potentialClassFqName]?.let { classId ->
-                        // Lookup symbol is a class
-                        addChangedClass(classId)
-                    } ?: run {
-                        // Lookup symbol is a top-level member
-                        addChangedTopLevelMember(FqName(it.scope), it.name)
-                    }
+                    // If scope is a class, lookup symbol is a class member and maybe inner class
+                    fqNameToClassId[FqName("${it.scope}.${it.name}")]?.let { innerClass ->
+                        addChangedClass(innerClass)
+                    } ?: addChangedClassMember(classIdOfScope, it.name)
+                    return@forEach
                 }
+
+                // scope is a package, so changed symbol is a top-level member and maybe a class
+                val potentialClassFqName = if (it.scope.isEmpty()) FqName(it.name) else FqName("${it.scope}.${it.name}")
+                fqNameToClassId[potentialClassFqName]?.let { classId ->
+                    // Lookup symbol is a class
+                    addChangedClass(classId)
+                } ?: addChangedTopLevelMember(FqName(it.scope), it.name)
             }
             val changes = getChanges()
 
@@ -293,7 +293,6 @@ object ClasspathChangesComputer {
                         "dirtyClassesFqNames: $dirtyClassesFqNames\n" +
                         "changedFqNames: $changedFqNames"
             }
-
             changes
         }
     }
