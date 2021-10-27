@@ -50,9 +50,11 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
         declaration.takeIf { declaration.isAnnotationClass }?.constructors?.singleOrNull()?.apply {
-            // Compatibility hack. Now, frontend generates constructor body for annotations
-            // but, if one gets annotation from pre-1.6.20 klib, it would have none, so we need to generate it's body
+            // Compatibility hack. Now, frontend generates constructor body for annotations and makes them open
+            // but, if one gets annotation from pre-1.6.20 klib, it would have no constructor body and would be final,
+            // so we need to fix it
             if (body == null) {
+                declaration.modality = Modality.OPEN
                 body = context.createIrBuilder(symbol)
                     .irBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET) {
                         +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
