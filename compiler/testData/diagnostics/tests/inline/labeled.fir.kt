@@ -24,17 +24,17 @@ inline fun foo(bar1: (String.() -> Int) -> Int, bar2: (()->Int) -> Int) {
 }
 
 inline fun foo2(bar1: (String.() -> Int) -> Int) {
-    <!REDUNDANT_LABEL_WARNING!>l1@<!> <!USAGE_IS_NOT_INLINABLE!>bar1<!>
+    l1@ <!USAGE_IS_NOT_INLINABLE!>bar1<!>
 
-    <!REDUNDANT_LABEL_WARNING!>l2@<!> bar1 {
+    l2@ bar1 {
         11
     }
 
-    (<!REDUNDANT_LABEL_WARNING!>l3@<!> bar1) {
+    (l3@ bar1) {
         11
     }
 
-    (<!REDUNDANT_LABEL_WARNING!>l5@<!> (<!REDUNDANT_LABEL_WARNING!>l4@<!> bar1)) {
+    (l5@ (l4@ bar1)) {
         11
     }
 }

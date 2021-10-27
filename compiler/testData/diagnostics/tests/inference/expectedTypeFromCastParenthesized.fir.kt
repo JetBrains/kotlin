@@ -11,7 +11,7 @@ fun <V> id(value: V) = value
 val par1 = (foo()) as String
 val par2 = ((foo())) as String
 
-val par3 = (<!REDUNDANT_LABEL_WARNING!>dd@<!> (foo())) as String
+val par3 = (dd@ (foo())) as String
 
 val par4 = ( @bar() (foo())) as String
 

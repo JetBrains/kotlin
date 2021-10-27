@@ -10,7 +10,7 @@ fun testAnnotatedLambdaLabel() = lambda@ @Ann {}
 
 fun testParenthesizedLambdaLabel() = lambda@ ( {} )
 
-fun testLabelBoundToInvokeOperatorExpression() = <!REDUNDANT_LABEL_WARNING!>l@<!> { 42 }()
+fun testLabelBoundToInvokeOperatorExpression() = l@ { 42 }()
 
 fun testLabelBoundToLambda() = (l@ { 42 })()
 
@@ -27,13 +27,13 @@ fun testForLoopLabel(xs: List<Any>) {
 }
 
 fun testValLabel() {
-    <!REDUNDANT_LABEL_WARNING!>L@<!> val fn = {}
+    L@ val fn = {}
     fn()
 }
 
 fun testHighOrderFunctionCallLabel() {
-    <!REDUNDANT_LABEL_WARNING!>L@<!> run {}
+    L@ run {}
 }
 
 fun testAnonymousObjectLabel() =
-    <!REDUNDANT_LABEL_WARNING!>L@<!> object {}
+    L@ object {}
