@@ -691,13 +691,17 @@ class PSICallResolver(
 
             val typeReference = projection.typeReference ?: return@map TypeArgumentPlaceholder
 
-            if (typeReference.isPlaceholder && arePartiallySpecifiedTypeArgumentsEnabled) {
+            if (typeReference.isPlaceholder) {
                 val resolvedAnnotations = typeResolver.resolveTypeAnnotations(context.trace, context.scope, typeReference)
                     .apply(ForceResolveUtil::forceResolveAllContents)
 
                 for (annotation in resolvedAnnotations) {
                     val annotationElement = annotation.source.getPsi() ?: continue
                     context.trace.report(Errors.UNSUPPORTED.on(annotationElement, "annotations on an underscored type argument"))
+                }
+
+                if (!arePartiallySpecifiedTypeArgumentsEnabled) {
+                    context.trace.report(Errors.UNSUPPORTED.on(typeReference, "underscored type argument"))
                 }
 
                 return@map TypeArgumentPlaceholder

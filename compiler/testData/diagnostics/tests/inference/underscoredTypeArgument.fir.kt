@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// !LANGUAGE: -PartiallySpecifiedTypeArguments
 // !DIAGNOSTICS: -UNCHECKED_CAST
 // WITH_RUNTIME
 
