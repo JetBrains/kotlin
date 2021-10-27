@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.addFakeOverrides
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
@@ -221,16 +222,17 @@ class AnnotationImplementationMemberGenerator(
     override fun IrBuilderWithScope.shiftResultOfHashCode(irResultVar: IrVariable): IrExpression = irGet(irResultVar) // no default (* 31)
 
     override fun getHashCodeOf(builder: IrBuilderWithScope, property: IrProperty, irValue: IrExpression): IrExpression = with(builder) {
-        val propertyValueHashCode = getHashCodeOf(property.backingField!!.type, irValue)
+        val propertyValueHashCode = getHashCodeOf(property.type, irValue)
         val propertyNameHashCode = getHashCodeOf(backendContext.irBuiltIns.stringType, irString(property.name.toString()))
         val multiplied = irCallOp(context.irBuiltIns.intTimesSymbol, context.irBuiltIns.intType, propertyNameHashCode, irInt(127))
         return irCallOp(context.irBuiltIns.intXorSymbol, context.irBuiltIns.intType, multiplied, propertyValueHashCode)
     }
 
-    // Manual implementation of equals is required for two reasons:
+    // Manual implementation of equals is required for following reasons:
     // 1. `other` should be casted to interface instead of implementation
     // 2. Properties should be retrieved using getters without accessing backing fields
     //    (DataClassMembersGenerator typically tries to access fields)
+    // 3. Custom equals function should be used on properties
     fun generateEqualsUsingGetters(equalsFun: IrSimpleFunction, typeForEquals: IrType, properties: List<IrProperty>) = equalsFun.apply {
         body = backendContext.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
             val irType = typeForEquals
@@ -245,7 +247,7 @@ class AnnotationImplementationMemberGenerator(
             for (property in properties) {
                 val arg1 = property.get(irThis())
                 val arg2 = property.get(irGet(irType, otherWithCast.symbol))
-                +irIfThenReturnFalse(irNot(selectEquals(property.getter?.returnType ?: property.backingField!!.type, arg1, arg2)))
+                +irIfThenReturnFalse(irNot(selectEquals(property.type, arg1, arg2)))
             }
             +irReturnTrue()
         }

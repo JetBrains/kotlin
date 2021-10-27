@@ -48,6 +48,9 @@ abstract class DataClassMembersGenerator(
             }
         }
 
+    protected val IrProperty.type
+        get() = this.backingField?.type ?: this.getter?.returnType ?: error("Can't find type of ${this.render()}")
+
     private inner class MemberFunctionBuilder(
         startOffset: Int = SYNTHETIC_OFFSET,
         endOffset: Int = SYNTHETIC_OFFSET,
@@ -172,7 +175,7 @@ abstract class DataClassMembersGenerator(
 
         private fun getHashCodeOfProperty(property: IrProperty): IrExpression {
             return when {
-                property.backingField!!.type.isNullable() ->
+                property.type.isNullable() ->
                     irIfNull(
                         context.irBuiltIns.intType,
                         irGetProperty(irThis(), property),
@@ -195,7 +198,7 @@ abstract class DataClassMembersGenerator(
 
                 val irPropertyValue = irGetProperty(irThis(), property)
 
-                val classifier = property.backingField!!.type.classifierOrNull
+                val classifier = property.type.classifierOrNull
                 val irPropertyStringValue =
                     if (classifier.isArrayOrPrimitiveArray)
                         irCall(context.irBuiltIns.dataClassArrayMemberToStringSymbol, context.irBuiltIns.stringType).apply {
@@ -216,7 +219,7 @@ abstract class DataClassMembersGenerator(
         irCallOp(context.irBuiltIns.intTimesSymbol, context.irBuiltIns.intType, irGet(irResultVar), irInt(31))
 
     protected open fun getHashCodeOf(builder: IrBuilderWithScope, property: IrProperty, irValue: IrExpression) =
-        builder.getHashCodeOf(property.backingField!!.type, irValue)
+        builder.getHashCodeOf(property.type, irValue)
 
     protected fun IrBuilderWithScope.getHashCodeOf(type: IrType, irValue: IrExpression): IrExpression {
         val hashCodeFunctionInfo = getHashCodeFunctionInfo(type)
@@ -241,9 +244,6 @@ abstract class DataClassMembersGenerator(
     fun getIrProperty(property: PropertyDescriptor): IrProperty =
         irPropertiesByDescriptor[property]
             ?: throw AssertionError("Class: ${irClass.descriptor}: unexpected property descriptor: $property")
-
-    fun getBackingField(property: PropertyDescriptor): IrField =
-        getIrProperty(property).backingField!!
 
     val IrClassifierSymbol?.isArrayOrPrimitiveArray: Boolean
         get() = this == context.irBuiltIns.arrayClass || this in context.irBuiltIns.primitiveArraysToPrimitiveTypes
