@@ -434,7 +434,7 @@ internal abstract class FunctionGenerationContext(
         val codegen: CodeGenerator,
         private val startLocation: LocationInfo?,
         private val endLocation: LocationInfo?,
-        private val switchToRunnable: Boolean,
+        switchToRunnable: Boolean,
         internal val irFunction: IrFunction? = null
 ) : ContextUtils {
 
@@ -485,6 +485,9 @@ internal abstract class FunctionGenerationContext(
             val success: LLVMBasicBlockRef,
             val attributeProvider: LlvmFunctionAttributeProvider?
     )
+
+    private val switchToRunnable: Boolean =
+            context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable
 
     private val invokeInstructions = mutableListOf<FunctionInvokeInformation>()
 
@@ -1507,7 +1510,7 @@ internal abstract class FunctionGenerationContext(
                 }
 
                 releaseVars()
-                handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
+                handleEpilogueExperimentalMM()
                 LLVMBuildResume(builder, landingpad)
             }
         } else {
@@ -1554,18 +1557,22 @@ internal abstract class FunctionGenerationContext(
 
     protected fun onReturn() {
         releaseVars()
-        handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointFunctionEpilogue)
+        handleEpilogueExperimentalMM()
     }
 
-    private fun handleEpilogueForExperimentalMM(safePointFunction: LlvmCallable) {
-        if (context.memoryModel == MemoryModel.EXPERIMENTAL) {
-            if (!forbidRuntime) {
-                call(safePointFunction, emptyList())
-            }
-            if (switchToRunnable) {
-                check(!forbidRuntime) { "Generating a bridge when runtime is forbidden" }
-                switchThreadState(Native)
-            }
+    private fun handlePrologueExperimentalMM() {
+        if (switchToRunnable) {
+            switchThreadState(Runnable)
+        }
+        if (context.memoryModel == MemoryModel.EXPERIMENTAL && !forbidRuntime) {
+            call(context.llvm.Kotlin_mm_safePointFunctionPrologue, emptyList())
+        }
+    }
+
+    private fun handleEpilogueExperimentalMM() {
+        if (switchToRunnable) {
+            check(!forbidRuntime) { "Generating a bridge when runtime is forbidden" }
+            switchThreadState(Native)
         }
     }
 

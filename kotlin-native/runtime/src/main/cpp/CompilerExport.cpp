@@ -44,7 +44,6 @@ void EnsureDeclarationsEmitted() {
     ensureUsed(CheckGlobalsAccessible);
     ensureUsed(Kotlin_mm_switchThreadStateNative);
     ensureUsed(Kotlin_mm_switchThreadStateRunnable);
-    ensureUsed(Kotlin_mm_safePointFunctionEpilogue);
+    ensureUsed(Kotlin_mm_safePointFunctionPrologue);
     ensureUsed(Kotlin_mm_safePointWhileLoopBody);
-    ensureUsed(Kotlin_mm_safePointExceptionUnwind);
 }

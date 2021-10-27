@@ -64,16 +64,12 @@ std::atomic<gc::SameThreadMarkAndSweep::SafepointFlag> gSafepointFlag = gc::Same
 
 } // namespace
 
-ALWAYS_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointFunctionEpilogue() noexcept {
-    SafePointRegular(GCSchedulerThreadData::kFunctionEpilogueWeight);
+ALWAYS_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointFunctionPrologue() noexcept {
+    SafePointRegular(GCSchedulerThreadData::kFunctionPrologueWeight);
 }
 
 ALWAYS_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointLoopBody() noexcept {
     SafePointRegular(GCSchedulerThreadData::kLoopBodyWeight);
-}
-
-ALWAYS_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointExceptionUnwind() noexcept {
-    SafePointRegular(GCSchedulerThreadData::kExceptionUnwindWeight);
 }
 
 void gc::SameThreadMarkAndSweep::ThreadData::SafePointAllocation(size_t size) noexcept {

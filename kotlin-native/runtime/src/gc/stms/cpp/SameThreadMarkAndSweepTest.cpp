@@ -785,7 +785,7 @@ TEST_F(SameThreadMarkAndSweepTest, MultipleMutatorsCollect) {
 
     for (int i = 1; i < kDefaultThreadCount; ++i) {
         gcFutures[i] =
-                mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().SafePointFunctionEpilogue(); });
+                mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().SafePointFunctionPrologue(); });
     }
 
     for (auto& future : gcFutures) {
@@ -906,7 +906,7 @@ TEST_F(SameThreadMarkAndSweepTest, MultipleMutatorsAddToRootSetAfterCollectionRe
     for (int i = 1; i < kDefaultThreadCount; ++i) {
         gcFutures[i] = mutators[i].Execute([i, expandRootSet](mm::ThreadData& threadData, Mutator& mutator) {
             expandRootSet(threadData, mutator, i);
-            threadData.gc().SafePointFunctionEpilogue();
+            threadData.gc().SafePointFunctionPrologue();
         });
     }
 
@@ -970,7 +970,7 @@ TEST_F(SameThreadMarkAndSweepTest, CrossThreadReference) {
 
     for (int i = 1; i < kDefaultThreadCount; ++i) {
         gcFutures[i] =
-                mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().SafePointFunctionEpilogue(); });
+                mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().SafePointFunctionPrologue(); });
     }
 
     for (auto& future : gcFutures) {
@@ -1034,7 +1034,7 @@ TEST_F(SameThreadMarkAndSweepTest, MultipleMutatorsWeaks) {
 
     for (int i = 1; i < kDefaultThreadCount; ++i) {
         gcFutures[i] = mutators[i].Execute([weak](mm::ThreadData& threadData, Mutator& mutator) {
-            threadData.gc().SafePointFunctionEpilogue();
+            threadData.gc().SafePointFunctionPrologue();
             EXPECT_THAT((*weak)->referred, nullptr);
         });
     }
@@ -1092,7 +1092,7 @@ TEST_F(SameThreadMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
     // All the other threads are stopping at safe points.
     for (int i = 1; i < kDefaultThreadCount; ++i) {
         gcFutures[i] =
-                mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().SafePointFunctionEpilogue(); });
+                mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().SafePointFunctionPrologue(); });
     }
 
     // GC will be completed first
