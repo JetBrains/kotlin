@@ -3,10 +3,8 @@
 Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
   out/production/module/Utils.class
-  out/production/module/Utils__PartBKt.class
-End of files
-Cleaning output files:
   out/production/module/Utils__PartAKt.class
+  out/production/module/Utils__PartBKt.class
   out/production/module/Utils__PartCKt.class
 End of files
 Compiling files:

@@ -540,20 +540,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
                 val targetDirtyFiles = dirtyFilesHolder.byTarget[jpsTarget]
                 if (cache != null && targetDirtyFiles != null) {
-                    val dirtyFiles = targetDirtyFiles.dirty.keys + targetDirtyFiles.removed
-                    val complementaryFiles = cache.getComplementaryFilesRecursive(dirtyFiles)
+                    val complementaryFiles = cache.getComplementaryFilesRecursive(targetDirtyFiles.dirty.keys + targetDirtyFiles.removed)
 
-                    // Get all parts of @JvmMultifileClass file for simultaneous rebuild
-                    var dirtyMultifileClassFiles: Collection<File> = emptyList()
-                    if (cache is IncrementalJvmCache) {
-                        dirtyMultifileClassFiles = cache.classesBySources(dirtyFiles)
-                            .filter { cache.isMultifileFacade(it) }
-                            .flatMap { cache.getAllPartsOfMultifileFacade(it).orEmpty() }
-                            .flatMap { cache.sourcesByInternalName(it) }
-                            .distinct()
-                            .filter { !dirtyFiles.contains(it) }
-                    }
-                    fsOperations.markFilesForCurrentRound(jpsTarget, complementaryFiles + dirtyMultifileClassFiles)
+                    fsOperations.markFilesForCurrentRound(jpsTarget, complementaryFiles)
 
                     cache.markDirty(targetDirtyFiles.dirty.keys + targetDirtyFiles.removed)
                 }
