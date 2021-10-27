@@ -5866,6 +5866,10 @@ fileCheckTest("filecheck_escape_analysis_disabled") {
     checkPrefix = "CHECK-DEBUG"
 }
 
+fileCheckTest("filecheck_bce") {
+    annotatedSource = project.file('filecheck/bce.kt')
+}
+
 dependencies {
     nopPluginApi project(kotlinCompilerModule)
     nopPluginApi project(":native:kotlin-native-utils")
