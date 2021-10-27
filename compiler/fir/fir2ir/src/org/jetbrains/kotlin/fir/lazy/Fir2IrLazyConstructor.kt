@@ -97,6 +97,8 @@ class Fir2IrLazyConstructor(
             error("Mutating Fir2Ir lazy elements is not possible")
         }
 
+    override var contextReceiverParametersCount: Int = 0
+
     override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
         declarationStorage.enterScope(this)
         fir.valueParameters.mapIndexed { index, valueParameter ->

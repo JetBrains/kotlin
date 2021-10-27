@@ -61,6 +61,8 @@ class Fir2IrLazySimpleFunction(
         }
     }
 
+    override var contextReceiverParametersCount: Int = 0
+
     override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
         declarationStorage.enterScope(this)
         fir.valueParameters.mapIndexed { index, valueParameter ->

@@ -152,6 +152,8 @@ internal abstract class PersistentIrFunctionCommon(
             }
         }
 
+    override var contextReceiverParametersCount: Int = 0
+
     override var bodyField: IrBody? = null
 
     override var body: IrBody?
