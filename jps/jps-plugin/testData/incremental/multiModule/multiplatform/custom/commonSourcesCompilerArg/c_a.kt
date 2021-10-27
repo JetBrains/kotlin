@@ -1,4 +1,4 @@
-@file:Suppress("OPT_IN_USAGE_ERROR")
+@file:OptIn(kotlin.ExperimentalMultiplatform::class)
 
 @OptionalExpectation
 expect annotation class Optional(val value: String)
