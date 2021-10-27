@@ -1198,6 +1198,10 @@ standaloneTest("atomic1") {
     source = "runtime/workers/atomic1.kt"
 }
 
+task atomic2(type: KonanLocalTest) {
+    source = "runtime/workers/atomic2.kt"
+}
+
 task lazy0(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
     useGoldenData = true
