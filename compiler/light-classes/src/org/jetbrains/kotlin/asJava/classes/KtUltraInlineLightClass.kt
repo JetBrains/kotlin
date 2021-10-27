@@ -54,7 +54,7 @@ class KtUltraLightInlineClass(
             ?.valueParameters
             ?.firstOrNull()
 
-        if (inlineClassParameter !== null) {
+        if (inlineClassParameter != null) {
             membersBuilder.propertyAccessors(
                 inlineClassParameter,
                 mutable = false,
@@ -65,7 +65,7 @@ class KtUltraLightInlineClass(
             }
         }
 
-        result;
+        result
     }
 
     override fun getOwnFields(): List<KtLightField> = emptyList()
