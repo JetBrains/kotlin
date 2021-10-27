@@ -23,9 +23,7 @@ fun box(): String {
     val z2: Pair<Int, Float> = foo<<!UNSUPPORTED!>@Anno3("")<!> /**/ _, @[/**/ <!UNSUPPORTED!>Anno<!>    /**/ <!UNSUPPORTED!>Anno3("")<!> /**/] _,> { it.toFloat() }
 
     val z31: Pair<@Anno3("") <!UNRESOLVED_REFERENCE!>_<!>, Float> = 1 to 1f
-    val z32: Pair<<!UNRESOLVED_REFERENCE!>_<!>, Float> = 1 to 1f
     val z33: Pair<@Anno3("") (<!UNRESOLVED_REFERENCE!>_<!>), Float> = 1 to 1f
-    val z34: Pair<((<!UNRESOLVED_REFERENCE!>_<!>)), Float> = 1 to 1f
     val z35: Pair<(@Anno3("") (<!UNRESOLVED_REFERENCE!>_<!>)), Float> = 1 to 1f
 
     return "OK"

@@ -13486,6 +13486,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("underscoredTypeInForbiddenPositions.kt")
+            public void testUnderscoredTypeInForbiddenPositions() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/underscoredTypeInForbiddenPositions.kt");
+            }
+
+            @Test
             @TestMetadata("useFunctionLiteralsToInferType.kt")
             public void testUseFunctionLiteralsToInferType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/useFunctionLiteralsToInferType.kt");
