@@ -168,6 +168,8 @@ internal class PersistentIrConstructor(
             }
         }
 
+    override var contextReceiverParametersCount: Int = 0
+
     override var metadata: MetadataSource? = null
 
     override var visibilityField: DescriptorVisibility = visibility

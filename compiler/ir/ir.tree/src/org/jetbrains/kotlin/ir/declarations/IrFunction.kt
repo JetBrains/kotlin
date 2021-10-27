@@ -46,12 +46,12 @@ abstract class IrFunction :
     abstract var extensionReceiverParameter: IrValueParameter?
     abstract var valueParameters: List<IrValueParameter>
 
-    abstract var body: IrBody?
-
     /**
      * The first `contextReceiverParametersCount` value parameters are context receivers
      */
-    var contextReceiverParametersCount: Int = 0
+    abstract var contextReceiverParametersCount: Int
+
+    abstract var body: IrBody?
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }

@@ -54,6 +54,8 @@ abstract class IrFunctionCommonImpl(
     override var extensionReceiverParameter: IrValueParameter? = null
     override var valueParameters: List<IrValueParameter> = emptyList()
 
+    override var contextReceiverParametersCount: Int = 0
+
     override var body: IrBody? = null
 
     override var metadata: MetadataSource? = null

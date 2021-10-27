@@ -73,6 +73,8 @@ class Fir2IrLazyPropertyAccessor(
         }
     }
 
+    override var contextReceiverParametersCount: Int = 0
+
     override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
         if (!isSetter) emptyList()
         else {
