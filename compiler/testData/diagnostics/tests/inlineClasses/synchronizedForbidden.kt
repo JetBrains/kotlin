@@ -25,24 +25,43 @@ value class A(val a: Int) {
 
     <!SYNCHRONIZED_ON_VALUE_CLASS!>@Synchronized<!>
     fun A.f5() = Unit
+
+    val f6
+        <!SYNCHRONIZED_ON_VALUE_CLASS!>@Synchronized<!>
+        get() = Unit
+
+    val A.f7
+        <!SYNCHRONIZED_ON_VALUE_CLASS!>@Synchronized<!>
+        get() = Unit
+
+    val String.f8
+        <!SYNCHRONIZED_ON_VALUE_CLASS!>@Synchronized<!>
+        get() = Unit
 }
 
 class Usual {
 
     @get:Synchronized
-    val A.f6
+    val A.f9
         get() = Unit
 
     @Synchronized
-    fun A.f7() = Unit
+    fun A.f10() = Unit
 
+    val A.f11
+        @Synchronized
+        get() = Unit
 }
 
 @Synchronized
-fun A.f8() = Unit
+fun A.f12() = Unit
 
 @get:Synchronized
-val A.f9
+val A.f13
+    get() = Unit
+
+val A.f14
+    @Synchronized
     get() = Unit
 
 fun main() {
@@ -59,8 +78,11 @@ fun main() {
     <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(2F) {}
     <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(2.0) {}
     <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>('2') {}
+    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(block={}, lock='2')
+    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(block={}, lock=a)
     for (b in listOf(a)) {
         <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(b) {}
         <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(b.to(1).first) {}
+        <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(block={}, lock=a)
     }
 }
