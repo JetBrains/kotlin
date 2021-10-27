@@ -52,15 +52,12 @@ internal class KFunctionProxy(
         // TODO check arity
         var index = 0
         val dispatchReceiver = state.irFunction.dispatchReceiverParameter?.let { environment.convertToState(args[index++], it.type) }
-        val contextReceiverParametersCount = state.irFunction.contextReceiverParametersCount
-        val contextReceivers = state.irFunction.valueParameters.take(contextReceiverParametersCount).map {
-            environment.convertToState(args[index++], it.type)
-        }
         val extensionReceiver = state.irFunction.extensionReceiverParameter?.let { environment.convertToState(args[index++], it.type) }
-        val argsVariables = state.irFunction.valueParameters.drop(contextReceiverParametersCount).map { parameter ->
+        // TODO context receivers
+        val argsVariables = state.irFunction.valueParameters.map { parameter ->
             environment.convertToState(args[index++], parameter.type)
         }
-        val valueArguments = listOfNotNull(dispatchReceiver) + contextReceivers + listOfNotNull(extensionReceiver) + argsVariables
+        val valueArguments = listOfNotNull(dispatchReceiver, extensionReceiver) + argsVariables
         return callInterceptor.interceptProxy(state.irFunction, valueArguments)
     }
 
