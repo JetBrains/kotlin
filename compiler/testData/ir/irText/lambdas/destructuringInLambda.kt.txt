@@ -55,10 +55,11 @@ data class A {
 }
 
 var fn: Function1<A, Int>
-  field = local fun <anonymous>($dstr$_u24__u24$y: A): Int {
-    val y: Int = $dstr$_u24__u24$y.component2()
+  field = local fun <anonymous>(<name for destructuring parameter 0>: A): Int {
+    val y: Int = <name for destructuring parameter 0>.component2()
     return 42.plus(other = y)
   }
 
   get
   set
+

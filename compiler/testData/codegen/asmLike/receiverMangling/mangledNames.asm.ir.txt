@@ -116,7 +116,7 @@ final class MangledNamesKt$foo$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functi
             0 this: LMangledNamesKt$foo$1;
     }
 
-    public final void invoke(Arr $dstr$a_u20b$b_u24c$c_u2dd$b_u24_u24c_u2d_u2dd$a_u28_u29§_u26_u2a_u26_u5e_u40あ化) {
+    public final void invoke(Arr p0) {
         Local variables:
             2 a b: I
             3 b$c: I
@@ -124,7 +124,6 @@ final class MangledNamesKt$foo$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functi
             5 b$$c--d: I
             6 a()§&*&^@あ化: I
             0 this: LMangledNamesKt$foo$1;
-            1 $dstr$a_u20b$b_u24c$c_u2dd$b_u24_u24c_u2d_u2dd$a_u28_u29§_u26_u2a_u26_u5e_u40あ化: LArr;
     }
 
     public java.lang.Object invoke(java.lang.Object p1) {

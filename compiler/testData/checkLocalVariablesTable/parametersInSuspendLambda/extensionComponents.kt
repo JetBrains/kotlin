@@ -33,7 +33,6 @@ suspend fun test() = B.bar()
 
 // JVM_IR_TEMPLATES
 // METHOD : ExtensionComponentsKt$bar$2.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
-// VARIABLE : NAME=$dstr$x_param$y_param$z_param TYPE=LA; INDEX=2
 // VARIABLE : NAME=x_param TYPE=Ljava/lang/String; INDEX=2
 // VARIABLE : NAME=y_param TYPE=Ljava/lang/String; INDEX=3
 // VARIABLE : NAME=z_param TYPE=I INDEX=4
