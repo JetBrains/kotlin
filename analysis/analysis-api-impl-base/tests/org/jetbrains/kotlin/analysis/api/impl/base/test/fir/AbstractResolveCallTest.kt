@@ -44,11 +44,6 @@ abstract class AbstractResolveCallTest(configurator: FrontendApiTestConfigurator
     }
 
     private fun KtAnalysisSession.resolveCall(element: PsiElement): KtCall? = when (element) {
-        is KtCallElement -> element.resolveCall()
-        is KtBinaryExpression -> element.resolveCall()
-        is KtUnaryExpression -> element.resolveCall()
-        is KtArrayAccessExpression -> element.resolveCall()
-        is KtSimpleNameExpression -> element.resolveAccessorCall()
         is KtValueArgument -> resolveCall(element.getArgumentExpression()!!)
         is KtDeclarationModifierList -> {
             val annotationEntry = element.annotationEntries.singleOrNull()
@@ -60,6 +55,8 @@ abstract class AbstractResolveCallTest(configurator: FrontendApiTestConfigurator
                 ?: error("Only single annotation entry is supported for now")
             annotationEntry.resolveCall()
         }
+        is KtSimpleNameExpression -> element.resolveAccessorCall()
+        is KtElement -> element.resolveCallIfPossible()
         else -> error("Selected element type (${element::class.simpleName}) is not supported for resolveCall()")
     }
 
