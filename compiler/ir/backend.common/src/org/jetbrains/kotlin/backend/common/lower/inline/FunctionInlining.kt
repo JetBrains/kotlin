@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isPure
+import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -26,10 +27,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.typeOrNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -75,10 +73,16 @@ open class DefaultInlineFunctionResolver(open val context: CommonBackendContext)
 
 class FunctionInlining(
     val context: CommonBackendContext,
-    val inlineFunctionResolver: InlineFunctionResolver
+    val inlineFunctionResolver: InlineFunctionResolver,
+    val innerClassesSupport: InnerClassesSupport? = null
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
 
-    constructor(context: CommonBackendContext) : this(context, DefaultInlineFunctionResolver(context))
+    constructor(context: CommonBackendContext) : this(context, DefaultInlineFunctionResolver(context), null)
+    constructor(context: CommonBackendContext, innerClassesSupport: InnerClassesSupport) : this(
+        context,
+        DefaultInlineFunctionResolver(context),
+        innerClassesSupport
+    )
 
     private var containerScope: ScopeWithIr? = null
 
@@ -145,7 +149,6 @@ class FunctionInlining(
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
 
         fun inline() = inlineFunction(callSite, callee, true)
-
 
         private fun inlineFunction(
             callSite: IrFunctionAccessExpression,
@@ -407,6 +410,40 @@ class FunctionInlining(
                 }
         }
 
+
+        private fun ParameterToArgument.andAllOuterClasses(): List<ParameterToArgument> {
+            val allParametersReplacements = mutableListOf(this)
+
+            if (innerClassesSupport == null) return allParametersReplacements
+
+            var currentThisSymbol = parameter.symbol
+            var parameterClassDeclaration = parameter.type.classifierOrNull?.owner as? IrClass ?: return allParametersReplacements
+
+            while (parameterClassDeclaration.isInner) {
+                val outerClass = parameterClassDeclaration.parentAsClass
+                val outerClassThis = outerClass.thisReceiver ?: error("${outerClass.name} has a null `thisReceiver` property")
+
+                val parameterToArgument = ParameterToArgument(
+                    parameter = outerClassThis,
+                    argumentExpression = IrGetFieldImpl(
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        innerClassesSupport.getOuterThisField(parameterClassDeclaration).symbol,
+                        outerClassThis.type,
+                        IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, currentThisSymbol)
+                    )
+                )
+
+                allParametersReplacements.add(parameterToArgument)
+
+                currentThisSymbol = outerClassThis.symbol
+                parameterClassDeclaration = outerClass
+            }
+
+
+            return allParametersReplacements
+        }
+
         // callee might be a copied version of callsite.symbol.owner
         private fun buildParameterToArgument(callSite: IrFunctionAccessExpression, callee: IrFunction): List<ParameterToArgument> {
 
@@ -416,7 +453,7 @@ class FunctionInlining(
                 parameterToArgument += ParameterToArgument(
                     parameter = callee.dispatchReceiverParameter!!,
                     argumentExpression = callSite.dispatchReceiver!!
-                )
+                ).andAllOuterClasses()
 
             val valueArguments =
                 callSite.symbol.owner.valueParameters.map { callSite.getValueArgument(it.index) }.toMutableList()

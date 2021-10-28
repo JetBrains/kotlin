@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // FILE: 1.kt
 class E(val x: String) {
     inner class Inner {

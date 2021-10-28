@@ -2603,6 +2603,30 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         }
 
         @Test
+        @TestMetadata("innerInlineFunCapturesOuterByAnotherInlineFun.kt")
+        public void testInnerInlineFunCapturesOuterByAnotherInlineFun() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/innerClasses/innerInlineFunCapturesOuterByAnotherInlineFun.kt");
+        }
+
+        @Test
+        @TestMetadata("innerInlineFunCapturesOuterDeep.kt")
+        public void testInnerInlineFunCapturesOuterDeep() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/innerClasses/innerInlineFunCapturesOuterDeep.kt");
+        }
+
+        @Test
+        @TestMetadata("innerInlineFunCapturesOuterFunRef.kt")
+        public void testInnerInlineFunCapturesOuterFunRef() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/innerClasses/innerInlineFunCapturesOuterFunRef.kt");
+        }
+
+        @Test
+        @TestMetadata("innerInlineFunCapturesOuterWithInlineClass.kt")
+        public void testInnerInlineFunCapturesOuterWithInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/innerClasses/innerInlineFunCapturesOuterWithInlineClass.kt");
+        }
+
+        @Test
         @TestMetadata("innerLambda.kt")
         public void testInnerLambda() throws Exception {
             runTest("compiler/testData/codegen/boxInline/innerClasses/innerLambda.kt");
