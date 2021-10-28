@@ -9,11 +9,13 @@ FILE fqName:<root> fileName:/kt48806.kt
       FIELD PROPERTY_BACKING_FIELD name:test_1 type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           TRY type=kotlin.Int
-            try: THROW type=kotlin.Nothing
-              CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.RuntimeException' type=java.lang.RuntimeException origin=null
+            try: BLOCK type=kotlin.Nothing origin=null
+              THROW type=kotlin.Nothing
+                CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.RuntimeException' type=java.lang.RuntimeException origin=null
             CATCH parameter=val e: java.lang.Exception [val] declared in <root>.A.test_1
               VAR name:e type:java.lang.Exception [val]
-              CONST Int type=kotlin.Int value=1
+              BLOCK type=kotlin.Int origin=null
+                CONST Int type=kotlin.Int value=1
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_1> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:test_1 visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.A
@@ -25,11 +27,13 @@ FILE fqName:<root> fileName:/kt48806.kt
       FIELD PROPERTY_BACKING_FIELD name:test_2 type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           TRY type=kotlin.Int
-            try: CONST Int type=kotlin.Int value=1
+            try: BLOCK type=kotlin.Int origin=null
+              CONST Int type=kotlin.Int value=1
             CATCH parameter=val e: java.lang.Exception [val] declared in <root>.A.test_2
               VAR name:e type:java.lang.Exception [val]
-              THROW type=kotlin.Nothing
-                CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.RuntimeException' type=java.lang.RuntimeException origin=null
+              BLOCK type=kotlin.Nothing origin=null
+                THROW type=kotlin.Nothing
+                  CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.RuntimeException' type=java.lang.RuntimeException origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_2> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:test_2 visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.A

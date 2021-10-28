@@ -1,6 +1,6 @@
 // This test depends on line numbers
 // WITH_RUNTIME
-// IGNORE_BACKEND_FIR: JVM_IR
+
 // FILE: 1.kt
 package test
 

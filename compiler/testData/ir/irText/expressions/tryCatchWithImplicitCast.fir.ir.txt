@@ -10,8 +10,10 @@ FILE fqName:<root> fileName:/tryCatchWithImplicitCast.kt
             GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       VAR name:t type:kotlin.String [val]
         TRY type=kotlin.String
-          try: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
-            GET_VAR 'a: kotlin.Any declared in <root>.testImplicitCast' type=kotlin.Any origin=null
+          try: BLOCK type=kotlin.String origin=null
+            TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+              GET_VAR 'a: kotlin.Any declared in <root>.testImplicitCast' type=kotlin.Any origin=null
           CATCH parameter=val e: kotlin.Throwable [val] declared in <root>.testImplicitCast
             VAR name:e type:kotlin.Throwable [val]
-            CONST String type=kotlin.String value=""
+            BLOCK type=kotlin.String origin=null
+              CONST String type=kotlin.String value=""

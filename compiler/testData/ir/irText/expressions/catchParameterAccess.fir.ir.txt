@@ -4,9 +4,11 @@ FILE fqName:<root> fileName:/catchParameterAccess.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (f: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>'
         TRY type=kotlin.Unit
-          try: CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
-            $this: GET_VAR 'f: kotlin.Function0<kotlin.Unit> declared in <root>.test' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+          try: BLOCK type=kotlin.Unit origin=null
+            CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+              $this: GET_VAR 'f: kotlin.Function0<kotlin.Unit> declared in <root>.test' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
           CATCH parameter=val e: java.lang.Exception [val] declared in <root>.test
             VAR name:e type:java.lang.Exception [val]
-            THROW type=kotlin.Nothing
-              GET_VAR 'val e: java.lang.Exception [val] declared in <root>.test' type=java.lang.Exception origin=null
+            BLOCK type=kotlin.Nothing origin=null
+              THROW type=kotlin.Nothing
+                GET_VAR 'val e: java.lang.Exception [val] declared in <root>.test' type=java.lang.Exception origin=null

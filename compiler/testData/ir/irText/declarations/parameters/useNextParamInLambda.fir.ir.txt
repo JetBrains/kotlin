@@ -25,7 +25,8 @@ FILE fqName:<root> fileName:/useNextParamInLambda.kt
         CONST String type=kotlin.String value="fail"
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         TRY type=kotlin.Any
-          try: CALL 'public final fun f (f1: kotlin.Function0<kotlin.String>, f2: kotlin.Function0<kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
+          try: BLOCK type=kotlin.String origin=null
+            CALL 'public final fun f (f1: kotlin.Function0<kotlin.String>, f2: kotlin.Function0<kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
           CATCH parameter=val e: java.lang.Exception [val] declared in <root>.box
             VAR name:e type:java.lang.Exception [val]
             BLOCK type=kotlin.Unit origin=null
