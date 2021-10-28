@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
-internal class FirLightClassForSymbol(
+internal open class FirLightClassForSymbol(
     private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,
     manager: PsiManager
 ) : FirLightClassForClassOrObjectSymbol(classOrObjectSymbol, manager) {

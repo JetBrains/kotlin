@@ -70,7 +70,11 @@ fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? = 
 
     return when {
         classOrObject is KtEnumEntry -> lightClassForEnumEntry(classOrObject)
-        classOrObject.hasModifier(KtTokens.INLINE_KEYWORD) -> return null //TODO
+        classOrObject.hasModifier(KtTokens.INLINE_KEYWORD) -> {
+            analyseForLightClasses(classOrObject) {
+                classOrObject.getNamedClassOrObjectSymbol()?.let { FirLightInlineClass(it, classOrObject.manager) }
+            }
+        }
         else -> {
             analyseForLightClasses(classOrObject) {
                 classOrObject.getClassOrObjectSymbol().createLightClassNoCache(classOrObject.manager)
@@ -210,6 +214,7 @@ internal fun FirLightClassBase.createPropertyAccessors(
     result: MutableList<KtLightMethod>,
     declaration: KtPropertySymbol,
     isTopLevel: Boolean,
+    isMutable: Boolean = !declaration.isVal,
 ) {
     if (declaration is KtKotlinPropertySymbol && declaration.isConst) return
 
@@ -258,7 +263,7 @@ internal fun FirLightClassBase.createPropertyAccessors(
         !isAnnotationType && it.needToCreateAccessor(AnnotationUseSiteTarget.PROPERTY_SETTER)
     }
 
-    if (setter != null) {
+    if (isMutable && setter != null) {
         val lightMemberOrigin = originalElement?.let {
             LightMemberOriginForDeclaration(
                 originalElement = it,
