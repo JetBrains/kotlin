@@ -47,7 +47,7 @@ class ExposedVisibilityChecker(
         if (!languageVersionSettings.supportsFeature(LanguageFeature.PrivateInFileEffectiveVisibility) &&
             elementVisibility == EffectiveVisibility.PrivateInFile
         ) {
-            trace.report(EXPOSED_FROM_PRIVATE_IN_FILE.on(element, restrictingDescriptor, restrictingVisibility))
+            trace.report(EXPOSED_FROM_PRIVATE_IN_FILE.on(element, elementVisibility, restrictingDescriptor, restrictingVisibility))
         } else {
             trace.report(diagnostic.on(element, elementVisibility, restrictingDescriptor, restrictingVisibility))
         }
