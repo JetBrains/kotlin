@@ -51,7 +51,7 @@ class JavaClassUseSiteMemberScope(
 ) {
     private val typeParameterStack = klass.javaTypeParameterStack
     private val specialFunctions = hashMapOf<Name, Collection<FirNamedFunctionSymbol>>()
-    private val accessorByNameMap = hashMapOf<Name, FirSyntheticPropertySymbol>()
+    private val syntheticPropertyByNameMap = hashMapOf<Name, FirSyntheticPropertySymbol>()
     
     private val canUseSpecialGetters: Boolean by lazy { !klass.hasKotlinSuper(session) }
 
@@ -65,13 +65,13 @@ class JavaClassUseSiteMemberScope(
         return declaredMemberScope.getClassifierNames() + superTypesScope.getClassifierNames()
     }
 
-    private fun generateAccessorSymbol(
+    private fun generateSyntheticPropertySymbol(
         getterSymbol: FirNamedFunctionSymbol,
         setterSymbol: FirNamedFunctionSymbol?,
         property: FirProperty,
         takeModalityFromGetter: Boolean,
     ): FirSyntheticPropertySymbol {
-        return accessorByNameMap.getOrPut(property.name) {
+        return syntheticPropertyByNameMap.getOrPut(property.name) {
             buildSyntheticProperty {
                 moduleData = session.moduleData
                 name = property.name
@@ -152,7 +152,7 @@ class JavaClassUseSiteMemberScope(
                 null
         if (setterSymbol != null && setterSymbol.fir.modality != getterSymbol.fir.modality) return null
 
-        return generateAccessorSymbol(getterSymbol, setterSymbol, fir, takeModalityFromGetter)
+        return generateSyntheticPropertySymbol(getterSymbol, setterSymbol, fir, takeModalityFromGetter)
     }
 
     private fun FirPropertySymbol.findGetterOverride(
