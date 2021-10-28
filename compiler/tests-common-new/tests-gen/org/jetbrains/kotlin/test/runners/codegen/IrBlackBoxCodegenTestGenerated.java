@@ -15857,6 +15857,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("contextualPrimaryConstructorWithParams.kt")
+        public void testContextualPrimaryConstructorWithParams() throws Exception {
+            runTest("compiler/testData/codegen/box/extensionClasses/contextualPrimaryConstructorWithParams.kt");
+        }
+
+        @Test
         @TestMetadata("edouble.kt")
         public void testEdouble() throws Exception {
             runTest("compiler/testData/codegen/box/extensionClasses/edouble.kt");

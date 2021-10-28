@@ -183,8 +183,7 @@ FILE fqName:<root> fileName:/compareTo.kt
                   <T>: T of <root>.<get-min>
                   $receiver: CALL 'public final fun <get-first> (): A of <root>.Pair declared in <root>.Pair' type=T of <root>.<get-min> origin=GET_PROPERTY
                     $this: GET_VAR '<this>: <root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> declared in <root>.<get-min>' type=<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> origin=null
-                  <this>: TYPE_OP type=T of <root>.<get-min> origin=IMPLICIT_CAST typeOperand=T of <root>.<get-min>
-                    GET_VAR '<this>: java.util.Comparator<T of <root>.<get-min>>{ kotlin.TypeAliasesKt.Comparator<T of <root>.<get-min>> } declared in <root>.<get-min>' type=java.util.Comparator<T of <root>.<get-min>>{ kotlin.TypeAliasesKt.Comparator<T of <root>.<get-min>> } origin=null
+                  <this>: GET_VAR '<this>: java.util.Comparator<T of <root>.<get-min>>{ kotlin.TypeAliasesKt.Comparator<T of <root>.<get-min>> } declared in <root>.<get-min>' type=java.util.Comparator<T of <root>.<get-min>>{ kotlin.TypeAliasesKt.Comparator<T of <root>.<get-min>> } origin=null
                   other: CALL 'public final fun <get-second> (): B of <root>.Pair declared in <root>.Pair' type=T of <root>.<get-min> origin=GET_PROPERTY
                     $this: GET_VAR '<this>: <root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> declared in <root>.<get-min>' type=<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> origin=null
                 arg1: CONST Int type=kotlin.Int value=0

@@ -742,6 +742,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             }
 
             @Test
+            @TestMetadata("contextualPrimaryConstructorWithParams.kt")
+            public void testContextualPrimaryConstructorWithParams() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/contextualPrimaryConstructorWithParams.kt");
+            }
+
+            @Test
             @TestMetadata("function.kt")
             public void testFunction() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/contextReceivers/function.kt");

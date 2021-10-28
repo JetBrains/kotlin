@@ -590,6 +590,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
                 runTest("compiler/testData/ir/irText/declarations/contextReceivers/class.kt");
             }
 
+            @TestMetadata("contextualPrimaryConstructorWithParams.kt")
+            public void testContextualPrimaryConstructorWithParams() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/contextualPrimaryConstructorWithParams.kt");
+            }
+
             @TestMetadata("function.kt")
             public void testFunction() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/contextReceivers/function.kt");

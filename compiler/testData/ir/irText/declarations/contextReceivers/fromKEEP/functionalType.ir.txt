@@ -105,8 +105,7 @@ FILE fqName:<root> fileName:/functionalType.kt
                   CALL 'public final fun f <T> (<this>: <root>.O, g: @[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.O, <root>.K, <root>.Param, T of <root>.f>): T of <root>.f declared in <root>' type=kotlin.String origin=null
                     <T>: kotlin.String
                     $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.K' type=<root>.K origin=null
-                    <this>: TYPE_OP type=@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.O, <root>.K, <root>.Param, kotlin.String> origin=IMPLICIT_CAST typeOperand=@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.O, <root>.K, <root>.Param, kotlin.String>
-                      GET_VAR '$this$with: <root>.O declared in <root>.box.<anonymous>' type=<root>.O origin=null
+                    <this>: GET_VAR '$this$with: <root>.O declared in <root>.box.<anonymous>' type=<root>.O origin=null
                     g: FUN_EXPR type=@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.O, <root>.K, <root>.Param, kotlin.String> origin=LAMBDA
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.K, <this>:<root>.O, it:<root>.Param) returnType:kotlin.String
                         $receiver: VALUE_PARAMETER name:$this$f type:<root>.K

@@ -70,25 +70,25 @@ fun test() {
 
   with<C, Unit>(receiver = C(), block = local fun C.<anonymous>() {
     with<R, Unit>(receiver = R(), block = local fun R.<anonymous>() {
-      $this$with.f1(<this> = $this$with /*as @ExtensionFunctionType @ContextFunctionTypeParams(count = 1) Function3<C, R, Param, Unit> */, g = lf1)
-      $this$with.f1(<this> = $this$with /*as @ExtensionFunctionType @ContextFunctionTypeParams(count = 1) Function3<C, R, Param, Unit> */, g = local fun R.<anonymous>(<this>: C, $noName_0: Param) {
+      $this$with.f1(<this> = $this$with, g = lf1)
+      $this$with.f1(<this> = $this$with, g = local fun R.<anonymous>(<this>: C, $noName_0: Param) {
         $this$f1.<get-r>() /*~> Unit */
         $this$with.<get-c>() /*~> Unit */
       }
 )
-      f2(<this> = $this$with /*as @ContextFunctionTypeParams(count = 1) Function2<C, Param, Unit> */, g = lf2)
-      f2(<this> = $this$with /*as @ContextFunctionTypeParams(count = 1) Function2<C, Param, Unit> */, g = local fun <anonymous>(<this>: C, $noName_0: Param) {
+      f2(<this> = $this$with, g = lf2)
+      f2(<this> = $this$with, g = local fun <anonymous>(<this>: C, $noName_0: Param) {
         $this$with.<get-c>() /*~> Unit */
       }
 )
-      $this$with.f3(<this> = $this$with /*as @ExtensionFunctionType @ContextFunctionTypeParams(count = 1) Function2<C, R, Unit> */, g = lf3)
-      $this$with.f3(<this> = $this$with /*as @ExtensionFunctionType @ContextFunctionTypeParams(count = 1) Function2<C, R, Unit> */, g = local fun R.<anonymous>(<this>: C) {
+      $this$with.f3(<this> = $this$with, g = lf3)
+      $this$with.f3(<this> = $this$with, g = local fun R.<anonymous>(<this>: C) {
         $this$f3.<get-r>() /*~> Unit */
         $this$with.<get-c>() /*~> Unit */
       }
 )
-      f4(<this> = $this$with /*as @ContextFunctionTypeParams(count = 1) Function1<C, Unit> */, g = lf4)
-      f4(<this> = $this$with /*as @ContextFunctionTypeParams(count = 1) Function1<C, Unit> */, g = local fun <anonymous>(<this>: C) {
+      f4(<this> = $this$with, g = lf4)
+      f4(<this> = $this$with, g = local fun <anonymous>(<this>: C) {
         $this$with.<get-c>() /*~> Unit */
       }
 )

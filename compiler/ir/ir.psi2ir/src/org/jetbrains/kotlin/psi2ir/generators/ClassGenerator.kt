@@ -474,7 +474,7 @@ class ClassGenerator(
             }
 
             ktPrimaryConstructor.valueParameters.forEachIndexed { i, ktParameter ->
-                val irValueParameter = irPrimaryConstructor.valueParameters[i]
+                val irValueParameter = irPrimaryConstructor.valueParameters[i + ktClassOrObject.contextReceivers.size]
                 if (ktParameter.hasValOrVar()) {
                     val irProperty = PropertyGenerator(declarationGenerator)
                         .generatePropertyForPrimaryConstructorParameter(ktParameter, irValueParameter)
